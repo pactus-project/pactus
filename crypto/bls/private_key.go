@@ -22,8 +22,8 @@ type PrivateKey struct {
 	fr bls12381.Fr
 }
 
-// PrivateKeyFromString decodes the string encoding of a BLS private key
-// and returns the private key if text is a valid encoding for BLS private key.
+// PrivateKeyFromString decodes the input string and returns the PrivateKey
+// if the string is a valid bech32m encoding of a BLS public key.
 func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	// Decode the bech32m encoded private key.
 	hrp, typ, data, err := bech32m.DecodeToBase256WithTypeNoLimit(text)

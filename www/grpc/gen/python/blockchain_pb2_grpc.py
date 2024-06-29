@@ -152,7 +152,7 @@ class BlockchainServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetTxPoolContent(self, request, context):
-        """GetTxPoolContent retrieves current transactions on the TXPool.
+        """GetTxPoolContent retrieves current transactions in the transaction pool.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')

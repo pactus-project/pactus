@@ -33,6 +33,8 @@ func Hash160(data []byte) []byte {
 	return h.Sum(nil)
 }
 
+// FromString decodes the input string and returns the Hash
+// if the string is a valid hexadecimal encoding of a hash.
 func FromString(str string) (Hash, error) {
 	data, err := hex.DecodeString(str)
 	if err != nil {
@@ -45,6 +47,7 @@ func FromString(str string) (Hash, error) {
 	return FromBytes(data)
 }
 
+// FromBytes constructs a Hash from the raw bytes.
 func FromBytes(data []byte) (Hash, error) {
 	if len(data) != HashSize {
 		return Hash{}, fmt.Errorf("Hash should be %d bytes, but it is %v bytes", HashSize, len(data))
@@ -62,10 +65,12 @@ func CalcHash(data []byte) Hash {
 	return h
 }
 
+// String returns the hex-encoded string representation of the hash.
 func (h Hash) String() string {
 	return hex.EncodeToString(h[:])
 }
 
+// Bytes returns the raw byte representation of the hash.
 func (h Hash) Bytes() []byte {
 	return h[:]
 }

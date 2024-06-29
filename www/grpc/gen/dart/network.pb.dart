@@ -447,7 +447,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'agent')
     ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId')
     ..pPS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'consensusKeys')
-    ..pPS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'consensusAddress')
+    ..pPS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'consensusAddresses')
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'services', $pb.PbFieldType.OU3)
     ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHash')
     ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
@@ -472,7 +472,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.String? agent,
     $core.String? peerId,
     $core.Iterable<$core.String>? consensusKeys,
-    $core.Iterable<$core.String>? consensusAddress,
+    $core.Iterable<$core.String>? consensusAddresses,
     $core.int? services,
     $core.String? lastBlockHash,
     $core.int? height,
@@ -504,8 +504,8 @@ class PeerInfo extends $pb.GeneratedMessage {
     if (consensusKeys != null) {
       _result.consensusKeys.addAll(consensusKeys);
     }
-    if (consensusAddress != null) {
-      _result.consensusAddress.addAll(consensusAddress);
+    if (consensusAddresses != null) {
+      _result.consensusAddresses.addAll(consensusAddresses);
     }
     if (services != null) {
       _result.services = services;
@@ -612,7 +612,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   $core.List<$core.String> get consensusKeys => $_getList(4);
 
   @$pb.TagNumber(6)
-  $core.List<$core.String> get consensusAddress => $_getList(5);
+  $core.List<$core.String> get consensusAddresses => $_getList(5);
 
   @$pb.TagNumber(7)
   $core.int get services => $_getIZ(6);

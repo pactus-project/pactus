@@ -42,7 +42,7 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host,
 ) *peerMgr {
 	peerStore, err := loadPeerStore(conf.PeerStorePath)
 	if err != nil {
-		log.Error("failed to load peer store", "err", err)
+		log.Debug("failed to load peer store", "err", err)
 	}
 	log.Info("peer store loaded successfully")
 

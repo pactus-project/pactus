@@ -1376,7 +1376,7 @@ impl serde::Serialize for ConsensusInfo {
             struct_ser.serialize_field("address", &self.address)?;
         }
         if self.active {
-            struct_ser.serialize_field("Active", &self.active)?;
+            struct_ser.serialize_field("active", &self.active)?;
         }
         if self.height != 0 {
             struct_ser.serialize_field("height", &self.height)?;
@@ -1398,7 +1398,7 @@ impl<'de> serde::Deserialize<'de> for ConsensusInfo {
     {
         const FIELDS: &[&str] = &[
             "address",
-            "Active",
+            "active",
             "height",
             "round",
             "votes",
@@ -1433,7 +1433,7 @@ impl<'de> serde::Deserialize<'de> for ConsensusInfo {
                     {
                         match value {
                             "address" => Ok(GeneratedField::Address),
-                            "Active" => Ok(GeneratedField::Active),
+                            "active" => Ok(GeneratedField::Active),
                             "height" => Ok(GeneratedField::Height),
                             "round" => Ok(GeneratedField::Round),
                             "votes" => Ok(GeneratedField::Votes),
@@ -1471,7 +1471,7 @@ impl<'de> serde::Deserialize<'de> for ConsensusInfo {
                         }
                         GeneratedField::Active => {
                             if active__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("Active"));
+                                return Err(serde::de::Error::duplicate_field("active"));
                             }
                             active__ = Some(map.next_value()?);
                         }
@@ -7368,7 +7368,7 @@ impl serde::Serialize for PeerInfo {
         if !self.consensus_keys.is_empty() {
             len += 1;
         }
-        if !self.consensus_address.is_empty() {
+        if !self.consensus_addresses.is_empty() {
             len += 1;
         }
         if self.services != 0 {
@@ -7429,8 +7429,8 @@ impl serde::Serialize for PeerInfo {
         if !self.consensus_keys.is_empty() {
             struct_ser.serialize_field("consensusKeys", &self.consensus_keys)?;
         }
-        if !self.consensus_address.is_empty() {
-            struct_ser.serialize_field("consensusAddress", &self.consensus_address)?;
+        if !self.consensus_addresses.is_empty() {
+            struct_ser.serialize_field("consensusAddresses", &self.consensus_addresses)?;
         }
         if self.services != 0 {
             struct_ser.serialize_field("services", &self.services)?;
@@ -7495,8 +7495,8 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
             "peerId",
             "consensus_keys",
             "consensusKeys",
-            "consensus_address",
-            "consensusAddress",
+            "consensus_addresses",
+            "consensusAddresses",
             "services",
             "last_block_hash",
             "lastBlockHash",
@@ -7529,7 +7529,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
             Agent,
             PeerId,
             ConsensusKeys,
-            ConsensusAddress,
+            ConsensusAddresses,
             Services,
             LastBlockHash,
             Height,
@@ -7570,7 +7570,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                             "agent" => Ok(GeneratedField::Agent),
                             "peerId" | "peer_id" => Ok(GeneratedField::PeerId),
                             "consensusKeys" | "consensus_keys" => Ok(GeneratedField::ConsensusKeys),
-                            "consensusAddress" | "consensus_address" => Ok(GeneratedField::ConsensusAddress),
+                            "consensusAddresses" | "consensus_addresses" => Ok(GeneratedField::ConsensusAddresses),
                             "services" => Ok(GeneratedField::Services),
                             "lastBlockHash" | "last_block_hash" => Ok(GeneratedField::LastBlockHash),
                             "height" => Ok(GeneratedField::Height),
@@ -7609,7 +7609,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                 let mut agent__ = None;
                 let mut peer_id__ = None;
                 let mut consensus_keys__ = None;
-                let mut consensus_address__ = None;
+                let mut consensus_addresses__ = None;
                 let mut services__ = None;
                 let mut last_block_hash__ = None;
                 let mut height__ = None;
@@ -7658,11 +7658,11 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                             }
                             consensus_keys__ = Some(map.next_value()?);
                         }
-                        GeneratedField::ConsensusAddress => {
-                            if consensus_address__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("consensusAddress"));
+                        GeneratedField::ConsensusAddresses => {
+                            if consensus_addresses__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("consensusAddresses"));
                             }
-                            consensus_address__ = Some(map.next_value()?);
+                            consensus_addresses__ = Some(map.next_value()?);
                         }
                         GeneratedField::Services => {
                             if services__.is_some() {
@@ -7778,7 +7778,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                     agent: agent__.unwrap_or_default(),
                     peer_id: peer_id__.unwrap_or_default(),
                     consensus_keys: consensus_keys__.unwrap_or_default(),
-                    consensus_address: consensus_address__.unwrap_or_default(),
+                    consensus_addresses: consensus_addresses__.unwrap_or_default(),
                     services: services__.unwrap_or_default(),
                     last_block_hash: last_block_hash__.unwrap_or_default(),
                     height: height__.unwrap_or_default(),

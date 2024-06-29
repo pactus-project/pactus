@@ -32,8 +32,8 @@ var TreasuryAddress = Address{0}
 
 type Address [AddressSize]byte
 
-// AddressFromString decodes the string encoding of an address and returns
-// the Address if text is a valid encoding for a known address type.
+// AddressFromString decodes the input string and returns the Address
+// if the string is a valid bech32m encoding of an address.
 func AddressFromString(text string) (Address, error) {
 	if text == treasuryAddressString {
 		return TreasuryAddress, nil

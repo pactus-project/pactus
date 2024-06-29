@@ -63,7 +63,7 @@ func _NetworkGetNetworkInfoCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().BoolVar(&req.OnlyConnected, cfg.FlagNamer("OnlyConnected"), false, "Only returns the peers with connected status")
+	cmd.PersistentFlags().BoolVar(&req.OnlyConnected, cfg.FlagNamer("OnlyConnected"), false, "If true, only returns peers with connected status.")
 
 	return cmd
 }

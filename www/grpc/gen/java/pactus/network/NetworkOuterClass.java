@@ -20,7 +20,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Only returns the peers with connected status
+     * If true, only returns peers with connected status.
      * </pre>
      *
      * <code>bool only_connected = 1 [json_name = "onlyConnected"];</code>
@@ -76,7 +76,7 @@ public final class NetworkOuterClass {
     private boolean onlyConnected_;
     /**
      * <pre>
-     * Only returns the peers with connected status
+     * If true, only returns peers with connected status.
      * </pre>
      *
      * <code>bool only_connected = 1 [json_name = "onlyConnected"];</code>
@@ -410,7 +410,7 @@ public final class NetworkOuterClass {
       private boolean onlyConnected_ ;
       /**
        * <pre>
-       * Only returns the peers with connected status
+       * If true, only returns peers with connected status.
        * </pre>
        *
        * <code>bool only_connected = 1 [json_name = "onlyConnected"];</code>
@@ -422,7 +422,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Only returns the peers with connected status
+       * If true, only returns peers with connected status.
        * </pre>
        *
        * <code>bool only_connected = 1 [json_name = "onlyConnected"];</code>
@@ -437,7 +437,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Only returns the peers with connected status
+       * If true, only returns peers with connected status.
        * </pre>
        *
        * <code>bool only_connected = 1 [json_name = "onlyConnected"];</code>
@@ -3009,7 +3009,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Total number of the connection.
+     * Total number of connections.
      * </pre>
      *
      * <code>uint64 connections = 1 [json_name = "connections"];</code>
@@ -3039,7 +3039,7 @@ public final class NetworkOuterClass {
   }
   /**
    * <pre>
-   * Response message containing information about the overall network.
+   * Response message containing information about the node's connections.
    * </pre>
    *
    * Protobuf type {@code pactus.ConnectionInfo}
@@ -3085,7 +3085,7 @@ public final class NetworkOuterClass {
     private long connections_;
     /**
      * <pre>
-     * Total number of the connection.
+     * Total number of connections.
      * </pre>
      *
      * <code>uint64 connections = 1 [json_name = "connections"];</code>
@@ -3308,7 +3308,7 @@ public final class NetworkOuterClass {
     }
     /**
      * <pre>
-     * Response message containing information about the overall network.
+     * Response message containing information about the node's connections.
      * </pre>
      *
      * Protobuf type {@code pactus.ConnectionInfo}
@@ -3495,7 +3495,7 @@ public final class NetworkOuterClass {
       private long connections_ ;
       /**
        * <pre>
-       * Total number of the connection.
+       * Total number of connections.
        * </pre>
        *
        * <code>uint64 connections = 1 [json_name = "connections"];</code>
@@ -3507,7 +3507,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Total number of the connection.
+       * Total number of connections.
        * </pre>
        *
        * <code>uint64 connections = 1 [json_name = "connections"];</code>
@@ -3522,7 +3522,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Total number of the connection.
+       * Total number of connections.
        * </pre>
        *
        * <code>uint64 connections = 1 [json_name = "connections"];</code>
@@ -3932,7 +3932,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Clock offset
+     * Clock offset of the node.
      * </pre>
      *
      * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
@@ -3942,7 +3942,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Connection information
+     * Information about the node's connections.
      * </pre>
      *
      * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -3951,7 +3951,7 @@ public final class NetworkOuterClass {
     boolean hasConnectionInfo();
     /**
      * <pre>
-     * Connection information
+     * Information about the node's connections.
      * </pre>
      *
      * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -3960,7 +3960,7 @@ public final class NetworkOuterClass {
     pactus.network.NetworkOuterClass.ConnectionInfo getConnectionInfo();
     /**
      * <pre>
-     * Connection information
+     * Information about the node's connections.
      * </pre>
      *
      * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -4415,7 +4415,7 @@ public final class NetworkOuterClass {
     private double clockOffset_;
     /**
      * <pre>
-     * Clock offset
+     * Clock offset of the node.
      * </pre>
      *
      * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
@@ -4430,7 +4430,7 @@ public final class NetworkOuterClass {
     private pactus.network.NetworkOuterClass.ConnectionInfo connectionInfo_;
     /**
      * <pre>
-     * Connection information
+     * Information about the node's connections.
      * </pre>
      *
      * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -4442,7 +4442,7 @@ public final class NetworkOuterClass {
     }
     /**
      * <pre>
-     * Connection information
+     * Information about the node's connections.
      * </pre>
      *
      * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -4454,7 +4454,7 @@ public final class NetworkOuterClass {
     }
     /**
      * <pre>
-     * Connection information
+     * Information about the node's connections.
      * </pre>
      *
      * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -6091,7 +6091,7 @@ public final class NetworkOuterClass {
       private double clockOffset_ ;
       /**
        * <pre>
-       * Clock offset
+       * Clock offset of the node.
        * </pre>
        *
        * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
@@ -6103,7 +6103,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Clock offset
+       * Clock offset of the node.
        * </pre>
        *
        * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
@@ -6118,7 +6118,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Clock offset
+       * Clock offset of the node.
        * </pre>
        *
        * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
@@ -6136,7 +6136,7 @@ public final class NetworkOuterClass {
           pactus.network.NetworkOuterClass.ConnectionInfo, pactus.network.NetworkOuterClass.ConnectionInfo.Builder, pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder> connectionInfoBuilder_;
       /**
        * <pre>
-       * Connection information
+       * Information about the node's connections.
        * </pre>
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -6147,7 +6147,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Connection information
+       * Information about the node's connections.
        * </pre>
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -6162,7 +6162,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Connection information
+       * Information about the node's connections.
        * </pre>
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -6182,7 +6182,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Connection information
+       * Information about the node's connections.
        * </pre>
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -6200,7 +6200,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Connection information
+       * Information about the node's connections.
        * </pre>
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -6222,7 +6222,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Connection information
+       * Information about the node's connections.
        * </pre>
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -6240,7 +6240,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Connection information
+       * Information about the node's connections.
        * </pre>
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -6252,7 +6252,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Connection information
+       * Information about the node's connections.
        * </pre>
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -6267,7 +6267,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Connection information
+       * Information about the node's connections.
        * </pre>
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
@@ -6466,44 +6466,44 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Consensus address of the peer.
+     * Consensus addresses of the peer.
      * </pre>
      *
-     * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
-     * @return A list containing the consensusAddress.
+     * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
+     * @return A list containing the consensusAddresses.
      */
     java.util.List<java.lang.String>
-        getConsensusAddressList();
+        getConsensusAddressesList();
     /**
      * <pre>
-     * Consensus address of the peer.
+     * Consensus addresses of the peer.
      * </pre>
      *
-     * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
-     * @return The count of consensusAddress.
+     * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
+     * @return The count of consensusAddresses.
      */
-    int getConsensusAddressCount();
+    int getConsensusAddressesCount();
     /**
      * <pre>
-     * Consensus address of the peer.
+     * Consensus addresses of the peer.
      * </pre>
      *
-     * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
+     * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
      * @param index The index of the element to return.
-     * @return The consensusAddress at the given index.
+     * @return The consensusAddresses at the given index.
      */
-    java.lang.String getConsensusAddress(int index);
+    java.lang.String getConsensusAddresses(int index);
     /**
      * <pre>
-     * Consensus address of the peer.
+     * Consensus addresses of the peer.
      * </pre>
      *
-     * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
+     * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
      * @param index The index of the value to return.
-     * @return The bytes of the consensusAddress at the given index.
+     * @return The bytes of the consensusAddresses at the given index.
      */
     com.google.protobuf.ByteString
-        getConsensusAddressBytes(int index);
+        getConsensusAddressesBytes(int index);
 
     /**
      * <pre>
@@ -6537,7 +6537,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Height of the peer in the blockchain.
+     * Blockchain height of the peer.
      * </pre>
      *
      * <code>uint32 height = 9 [json_name = "height"];</code>
@@ -6547,7 +6547,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Count of received bundles.
+     * Number of received bundles.
      * </pre>
      *
      * <code>int32 received_bundles = 10 [json_name = "receivedBundles"];</code>
@@ -6557,7 +6557,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Count of invalid bundles received.
+     * Number of invalid bundles received.
      * </pre>
      *
      * <code>int32 invalid_bundles = 11 [json_name = "invalidBundles"];</code>
@@ -6776,7 +6776,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Total sessions with the peer.
+     * Total download sessions with the peer.
      * </pre>
      *
      * <code>int32 total_sessions = 19 [json_name = "totalSessions"];</code>
@@ -6786,7 +6786,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Completed sessions with the peer.
+     * Completed download sessions with the peer.
      * </pre>
      *
      * <code>int32 completed_sessions = 20 [json_name = "completedSessions"];</code>
@@ -6815,7 +6815,7 @@ public final class NetworkOuterClass {
       agent_ = "";
       peerId_ = "";
       consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      consensusAddress_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      consensusAddresses_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       lastBlockHash_ = "";
       address_ = "";
       direction_ = "";
@@ -7065,55 +7065,55 @@ public final class NetworkOuterClass {
       return consensusKeys_.getByteString(index);
     }
 
-    public static final int CONSENSUS_ADDRESS_FIELD_NUMBER = 6;
-    private com.google.protobuf.LazyStringList consensusAddress_;
+    public static final int CONSENSUS_ADDRESSES_FIELD_NUMBER = 6;
+    private com.google.protobuf.LazyStringList consensusAddresses_;
     /**
      * <pre>
-     * Consensus address of the peer.
+     * Consensus addresses of the peer.
      * </pre>
      *
-     * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
-     * @return A list containing the consensusAddress.
+     * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
+     * @return A list containing the consensusAddresses.
      */
     public com.google.protobuf.ProtocolStringList
-        getConsensusAddressList() {
-      return consensusAddress_;
+        getConsensusAddressesList() {
+      return consensusAddresses_;
     }
     /**
      * <pre>
-     * Consensus address of the peer.
+     * Consensus addresses of the peer.
      * </pre>
      *
-     * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
-     * @return The count of consensusAddress.
+     * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
+     * @return The count of consensusAddresses.
      */
-    public int getConsensusAddressCount() {
-      return consensusAddress_.size();
+    public int getConsensusAddressesCount() {
+      return consensusAddresses_.size();
     }
     /**
      * <pre>
-     * Consensus address of the peer.
+     * Consensus addresses of the peer.
      * </pre>
      *
-     * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
+     * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
      * @param index The index of the element to return.
-     * @return The consensusAddress at the given index.
+     * @return The consensusAddresses at the given index.
      */
-    public java.lang.String getConsensusAddress(int index) {
-      return consensusAddress_.get(index);
+    public java.lang.String getConsensusAddresses(int index) {
+      return consensusAddresses_.get(index);
     }
     /**
      * <pre>
-     * Consensus address of the peer.
+     * Consensus addresses of the peer.
      * </pre>
      *
-     * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
+     * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
      * @param index The index of the value to return.
-     * @return The bytes of the consensusAddress at the given index.
+     * @return The bytes of the consensusAddresses at the given index.
      */
     public com.google.protobuf.ByteString
-        getConsensusAddressBytes(int index) {
-      return consensusAddress_.getByteString(index);
+        getConsensusAddressesBytes(int index) {
+      return consensusAddresses_.getByteString(index);
     }
 
     public static final int SERVICES_FIELD_NUMBER = 7;
@@ -7181,7 +7181,7 @@ public final class NetworkOuterClass {
     private int height_;
     /**
      * <pre>
-     * Height of the peer in the blockchain.
+     * Blockchain height of the peer.
      * </pre>
      *
      * <code>uint32 height = 9 [json_name = "height"];</code>
@@ -7196,7 +7196,7 @@ public final class NetworkOuterClass {
     private int receivedBundles_;
     /**
      * <pre>
-     * Count of received bundles.
+     * Number of received bundles.
      * </pre>
      *
      * <code>int32 received_bundles = 10 [json_name = "receivedBundles"];</code>
@@ -7211,7 +7211,7 @@ public final class NetworkOuterClass {
     private int invalidBundles_;
     /**
      * <pre>
-     * Count of invalid bundles received.
+     * Number of invalid bundles received.
      * </pre>
      *
      * <code>int32 invalid_bundles = 11 [json_name = "invalidBundles"];</code>
@@ -7593,7 +7593,7 @@ public final class NetworkOuterClass {
     private int totalSessions_;
     /**
      * <pre>
-     * Total sessions with the peer.
+     * Total download sessions with the peer.
      * </pre>
      *
      * <code>int32 total_sessions = 19 [json_name = "totalSessions"];</code>
@@ -7608,7 +7608,7 @@ public final class NetworkOuterClass {
     private int completedSessions_;
     /**
      * <pre>
-     * Completed sessions with the peer.
+     * Completed download sessions with the peer.
      * </pre>
      *
      * <code>int32 completed_sessions = 20 [json_name = "completedSessions"];</code>
@@ -7648,8 +7648,8 @@ public final class NetworkOuterClass {
       for (int i = 0; i < consensusKeys_.size(); i++) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, consensusKeys_.getRaw(i));
       }
-      for (int i = 0; i < consensusAddress_.size(); i++) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, consensusAddress_.getRaw(i));
+      for (int i = 0; i < consensusAddresses_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 6, consensusAddresses_.getRaw(i));
       }
       if (services_ != 0) {
         output.writeUInt32(7, services_);
@@ -7731,11 +7731,11 @@ public final class NetworkOuterClass {
       }
       {
         int dataSize = 0;
-        for (int i = 0; i < consensusAddress_.size(); i++) {
-          dataSize += computeStringSizeNoTag(consensusAddress_.getRaw(i));
+        for (int i = 0; i < consensusAddresses_.size(); i++) {
+          dataSize += computeStringSizeNoTag(consensusAddresses_.getRaw(i));
         }
         size += dataSize;
-        size += 1 * getConsensusAddressList().size();
+        size += 1 * getConsensusAddressesList().size();
       }
       if (services_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -7831,8 +7831,8 @@ public final class NetworkOuterClass {
           .equals(other.getPeerId())) return false;
       if (!getConsensusKeysList()
           .equals(other.getConsensusKeysList())) return false;
-      if (!getConsensusAddressList()
-          .equals(other.getConsensusAddressList())) return false;
+      if (!getConsensusAddressesList()
+          .equals(other.getConsensusAddressesList())) return false;
       if (getServices()
           != other.getServices()) return false;
       if (!getLastBlockHash()
@@ -7884,9 +7884,9 @@ public final class NetworkOuterClass {
         hash = (37 * hash) + CONSENSUS_KEYS_FIELD_NUMBER;
         hash = (53 * hash) + getConsensusKeysList().hashCode();
       }
-      if (getConsensusAddressCount() > 0) {
-        hash = (37 * hash) + CONSENSUS_ADDRESS_FIELD_NUMBER;
-        hash = (53 * hash) + getConsensusAddressList().hashCode();
+      if (getConsensusAddressesCount() > 0) {
+        hash = (37 * hash) + CONSENSUS_ADDRESSES_FIELD_NUMBER;
+        hash = (53 * hash) + getConsensusAddressesList().hashCode();
       }
       hash = (37 * hash) + SERVICES_FIELD_NUMBER;
       hash = (53 * hash) + getServices();
@@ -8092,7 +8092,7 @@ public final class NetworkOuterClass {
 
         consensusKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000001);
-        consensusAddress_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        consensusAddresses_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
         services_ = 0;
 
@@ -8157,10 +8157,10 @@ public final class NetworkOuterClass {
         }
         result.consensusKeys_ = consensusKeys_;
         if (((bitField0_ & 0x00000002) != 0)) {
-          consensusAddress_ = consensusAddress_.getUnmodifiableView();
+          consensusAddresses_ = consensusAddresses_.getUnmodifiableView();
           bitField0_ = (bitField0_ & ~0x00000002);
         }
-        result.consensusAddress_ = consensusAddress_;
+        result.consensusAddresses_ = consensusAddresses_;
         result.services_ = services_;
         result.lastBlockHash_ = lastBlockHash_;
         result.height_ = height_;
@@ -8254,13 +8254,13 @@ public final class NetworkOuterClass {
           }
           onChanged();
         }
-        if (!other.consensusAddress_.isEmpty()) {
-          if (consensusAddress_.isEmpty()) {
-            consensusAddress_ = other.consensusAddress_;
+        if (!other.consensusAddresses_.isEmpty()) {
+          if (consensusAddresses_.isEmpty()) {
+            consensusAddresses_ = other.consensusAddresses_;
             bitField0_ = (bitField0_ & ~0x00000002);
           } else {
-            ensureConsensusAddressIsMutable();
-            consensusAddress_.addAll(other.consensusAddress_);
+            ensureConsensusAddressesIsMutable();
+            consensusAddresses_.addAll(other.consensusAddresses_);
           }
           onChanged();
         }
@@ -8368,8 +8368,8 @@ public final class NetworkOuterClass {
               } // case 42
               case 50: {
                 java.lang.String s = input.readStringRequireUtf8();
-                ensureConsensusAddressIsMutable();
-                consensusAddress_.add(s);
+                ensureConsensusAddressesIsMutable();
+                consensusAddresses_.add(s);
                 break;
               } // case 50
               case 56: {
@@ -8943,148 +8943,148 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private com.google.protobuf.LazyStringList consensusAddress_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureConsensusAddressIsMutable() {
+      private com.google.protobuf.LazyStringList consensusAddresses_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureConsensusAddressesIsMutable() {
         if (!((bitField0_ & 0x00000002) != 0)) {
-          consensusAddress_ = new com.google.protobuf.LazyStringArrayList(consensusAddress_);
+          consensusAddresses_ = new com.google.protobuf.LazyStringArrayList(consensusAddresses_);
           bitField0_ |= 0x00000002;
          }
       }
       /**
        * <pre>
-       * Consensus address of the peer.
+       * Consensus addresses of the peer.
        * </pre>
        *
-       * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
-       * @return A list containing the consensusAddress.
+       * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
+       * @return A list containing the consensusAddresses.
        */
       public com.google.protobuf.ProtocolStringList
-          getConsensusAddressList() {
-        return consensusAddress_.getUnmodifiableView();
+          getConsensusAddressesList() {
+        return consensusAddresses_.getUnmodifiableView();
       }
       /**
        * <pre>
-       * Consensus address of the peer.
+       * Consensus addresses of the peer.
        * </pre>
        *
-       * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
-       * @return The count of consensusAddress.
+       * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
+       * @return The count of consensusAddresses.
        */
-      public int getConsensusAddressCount() {
-        return consensusAddress_.size();
+      public int getConsensusAddressesCount() {
+        return consensusAddresses_.size();
       }
       /**
        * <pre>
-       * Consensus address of the peer.
+       * Consensus addresses of the peer.
        * </pre>
        *
-       * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
+       * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
        * @param index The index of the element to return.
-       * @return The consensusAddress at the given index.
+       * @return The consensusAddresses at the given index.
        */
-      public java.lang.String getConsensusAddress(int index) {
-        return consensusAddress_.get(index);
+      public java.lang.String getConsensusAddresses(int index) {
+        return consensusAddresses_.get(index);
       }
       /**
        * <pre>
-       * Consensus address of the peer.
+       * Consensus addresses of the peer.
        * </pre>
        *
-       * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
+       * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
        * @param index The index of the value to return.
-       * @return The bytes of the consensusAddress at the given index.
+       * @return The bytes of the consensusAddresses at the given index.
        */
       public com.google.protobuf.ByteString
-          getConsensusAddressBytes(int index) {
-        return consensusAddress_.getByteString(index);
+          getConsensusAddressesBytes(int index) {
+        return consensusAddresses_.getByteString(index);
       }
       /**
        * <pre>
-       * Consensus address of the peer.
+       * Consensus addresses of the peer.
        * </pre>
        *
-       * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
+       * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
        * @param index The index to set the value at.
-       * @param value The consensusAddress to set.
+       * @param value The consensusAddresses to set.
        * @return This builder for chaining.
        */
-      public Builder setConsensusAddress(
+      public Builder setConsensusAddresses(
           int index, java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureConsensusAddressIsMutable();
-        consensusAddress_.set(index, value);
+  ensureConsensusAddressesIsMutable();
+        consensusAddresses_.set(index, value);
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * Consensus address of the peer.
+       * Consensus addresses of the peer.
        * </pre>
        *
-       * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
-       * @param value The consensusAddress to add.
+       * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
+       * @param value The consensusAddresses to add.
        * @return This builder for chaining.
        */
-      public Builder addConsensusAddress(
+      public Builder addConsensusAddresses(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureConsensusAddressIsMutable();
-        consensusAddress_.add(value);
+  ensureConsensusAddressesIsMutable();
+        consensusAddresses_.add(value);
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * Consensus address of the peer.
+       * Consensus addresses of the peer.
        * </pre>
        *
-       * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
-       * @param values The consensusAddress to add.
+       * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
+       * @param values The consensusAddresses to add.
        * @return This builder for chaining.
        */
-      public Builder addAllConsensusAddress(
+      public Builder addAllConsensusAddresses(
           java.lang.Iterable<java.lang.String> values) {
-        ensureConsensusAddressIsMutable();
+        ensureConsensusAddressesIsMutable();
         com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, consensusAddress_);
+            values, consensusAddresses_);
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * Consensus address of the peer.
+       * Consensus addresses of the peer.
        * </pre>
        *
-       * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
+       * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
        * @return This builder for chaining.
        */
-      public Builder clearConsensusAddress() {
-        consensusAddress_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      public Builder clearConsensusAddresses() {
+        consensusAddresses_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * Consensus address of the peer.
+       * Consensus addresses of the peer.
        * </pre>
        *
-       * <code>repeated string consensus_address = 6 [json_name = "consensusAddress"];</code>
-       * @param value The bytes of the consensusAddress to add.
+       * <code>repeated string consensus_addresses = 6 [json_name = "consensusAddresses"];</code>
+       * @param value The bytes of the consensusAddresses to add.
        * @return This builder for chaining.
        */
-      public Builder addConsensusAddressBytes(
+      public Builder addConsensusAddressesBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        ensureConsensusAddressIsMutable();
-        consensusAddress_.add(value);
+        ensureConsensusAddressesIsMutable();
+        consensusAddresses_.add(value);
         onChanged();
         return this;
       }
@@ -9231,7 +9231,7 @@ public final class NetworkOuterClass {
       private int height_ ;
       /**
        * <pre>
-       * Height of the peer in the blockchain.
+       * Blockchain height of the peer.
        * </pre>
        *
        * <code>uint32 height = 9 [json_name = "height"];</code>
@@ -9243,7 +9243,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Height of the peer in the blockchain.
+       * Blockchain height of the peer.
        * </pre>
        *
        * <code>uint32 height = 9 [json_name = "height"];</code>
@@ -9258,7 +9258,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Height of the peer in the blockchain.
+       * Blockchain height of the peer.
        * </pre>
        *
        * <code>uint32 height = 9 [json_name = "height"];</code>
@@ -9274,7 +9274,7 @@ public final class NetworkOuterClass {
       private int receivedBundles_ ;
       /**
        * <pre>
-       * Count of received bundles.
+       * Number of received bundles.
        * </pre>
        *
        * <code>int32 received_bundles = 10 [json_name = "receivedBundles"];</code>
@@ -9286,7 +9286,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Count of received bundles.
+       * Number of received bundles.
        * </pre>
        *
        * <code>int32 received_bundles = 10 [json_name = "receivedBundles"];</code>
@@ -9301,7 +9301,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Count of received bundles.
+       * Number of received bundles.
        * </pre>
        *
        * <code>int32 received_bundles = 10 [json_name = "receivedBundles"];</code>
@@ -9317,7 +9317,7 @@ public final class NetworkOuterClass {
       private int invalidBundles_ ;
       /**
        * <pre>
-       * Count of invalid bundles received.
+       * Number of invalid bundles received.
        * </pre>
        *
        * <code>int32 invalid_bundles = 11 [json_name = "invalidBundles"];</code>
@@ -9329,7 +9329,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Count of invalid bundles received.
+       * Number of invalid bundles received.
        * </pre>
        *
        * <code>int32 invalid_bundles = 11 [json_name = "invalidBundles"];</code>
@@ -9344,7 +9344,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Count of invalid bundles received.
+       * Number of invalid bundles received.
        * </pre>
        *
        * <code>int32 invalid_bundles = 11 [json_name = "invalidBundles"];</code>
@@ -10096,7 +10096,7 @@ public final class NetworkOuterClass {
       private int totalSessions_ ;
       /**
        * <pre>
-       * Total sessions with the peer.
+       * Total download sessions with the peer.
        * </pre>
        *
        * <code>int32 total_sessions = 19 [json_name = "totalSessions"];</code>
@@ -10108,7 +10108,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Total sessions with the peer.
+       * Total download sessions with the peer.
        * </pre>
        *
        * <code>int32 total_sessions = 19 [json_name = "totalSessions"];</code>
@@ -10123,7 +10123,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Total sessions with the peer.
+       * Total download sessions with the peer.
        * </pre>
        *
        * <code>int32 total_sessions = 19 [json_name = "totalSessions"];</code>
@@ -10139,7 +10139,7 @@ public final class NetworkOuterClass {
       private int completedSessions_ ;
       /**
        * <pre>
-       * Completed sessions with the peer.
+       * Completed download sessions with the peer.
        * </pre>
        *
        * <code>int32 completed_sessions = 20 [json_name = "completedSessions"];</code>
@@ -10151,7 +10151,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Completed sessions with the peer.
+       * Completed download sessions with the peer.
        * </pre>
        *
        * <code>int32 completed_sessions = 20 [json_name = "completedSessions"];</code>
@@ -10166,7 +10166,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Completed sessions with the peer.
+       * Completed download sessions with the peer.
        * </pre>
        *
        * <code>int32 completed_sessions = 20 [json_name = "completedSessions"];</code>
@@ -10331,35 +10331,35 @@ public final class NetworkOuterClass {
       "alAddrs\022\034\n\tprotocols\030\t \003(\tR\tprotocols\022!\n" +
       "\014clock_offset\030\r \001(\001R\013clockOffset\022?\n\017conn" +
       "ection_info\030\016 \001(\0132\026.pactus.ConnectionInf" +
-      "oR\016connectionInfo\"\351\006\n\010PeerInfo\022\026\n\006status" +
+      "oR\016connectionInfo\"\355\006\n\010PeerInfo\022\026\n\006status" +
       "\030\001 \001(\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007moniker" +
       "\022\024\n\005agent\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\tR" +
       "\006peerId\022%\n\016consensus_keys\030\005 \003(\tR\rconsens" +
-      "usKeys\022+\n\021consensus_address\030\006 \003(\tR\020conse" +
-      "nsusAddress\022\032\n\010services\030\007 \001(\rR\010services\022" +
-      "&\n\017last_block_hash\030\010 \001(\tR\rlastBlockHash\022" +
-      "\026\n\006height\030\t \001(\rR\006height\022)\n\020received_bund" +
-      "les\030\n \001(\005R\017receivedBundles\022\'\n\017invalid_bu" +
-      "ndles\030\013 \001(\005R\016invalidBundles\022\033\n\tlast_sent" +
-      "\030\014 \001(\003R\010lastSent\022#\n\rlast_received\030\r \001(\003R" +
-      "\014lastReceived\022>\n\nsent_bytes\030\016 \003(\0132\037.pact" +
-      "us.PeerInfo.SentBytesEntryR\tsentBytes\022J\n" +
-      "\016received_bytes\030\017 \003(\0132#.pactus.PeerInfo." +
-      "ReceivedBytesEntryR\rreceivedBytes\022\030\n\007add" +
-      "ress\030\020 \001(\tR\007address\022\034\n\tdirection\030\021 \001(\tR\t" +
-      "direction\022\034\n\tprotocols\030\022 \003(\tR\tprotocols\022" +
-      "%\n\016total_sessions\030\023 \001(\005R\rtotalSessions\022-" +
-      "\n\022completed_sessions\030\024 \001(\005R\021completedSes" +
-      "sions\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R\003ke" +
-      "y\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n\022ReceivedB" +
-      "ytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001" +
-      "(\003R\005value:\0028\0012\242\001\n\007Network\022O\n\016GetNetworkI" +
-      "nfo\022\035.pactus.GetNetworkInfoRequest\032\036.pac" +
-      "tus.GetNetworkInfoResponse\022F\n\013GetNodeInf" +
-      "o\022\032.pactus.GetNodeInfoRequest\032\033.pactus.G" +
-      "etNodeInfoResponseBB\n\016pactus.networkZ0gi" +
-      "thub.com/pactus-project/pactus/www/grpc/" +
-      "pactusb\006proto3"
+      "usKeys\022/\n\023consensus_addresses\030\006 \003(\tR\022con" +
+      "sensusAddresses\022\032\n\010services\030\007 \001(\rR\010servi" +
+      "ces\022&\n\017last_block_hash\030\010 \001(\tR\rlastBlockH" +
+      "ash\022\026\n\006height\030\t \001(\rR\006height\022)\n\020received_" +
+      "bundles\030\n \001(\005R\017receivedBundles\022\'\n\017invali" +
+      "d_bundles\030\013 \001(\005R\016invalidBundles\022\033\n\tlast_" +
+      "sent\030\014 \001(\003R\010lastSent\022#\n\rlast_received\030\r " +
+      "\001(\003R\014lastReceived\022>\n\nsent_bytes\030\016 \003(\0132\037." +
+      "pactus.PeerInfo.SentBytesEntryR\tsentByte" +
+      "s\022J\n\016received_bytes\030\017 \003(\0132#.pactus.PeerI" +
+      "nfo.ReceivedBytesEntryR\rreceivedBytes\022\030\n" +
+      "\007address\030\020 \001(\tR\007address\022\034\n\tdirection\030\021 \001" +
+      "(\tR\tdirection\022\034\n\tprotocols\030\022 \003(\tR\tprotoc" +
+      "ols\022%\n\016total_sessions\030\023 \001(\005R\rtotalSessio" +
+      "ns\022-\n\022completed_sessions\030\024 \001(\005R\021complete" +
+      "dSessions\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005" +
+      "R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n\022Recei" +
+      "vedBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value" +
+      "\030\002 \001(\003R\005value:\0028\0012\242\001\n\007Network\022O\n\016GetNetw" +
+      "orkInfo\022\035.pactus.GetNetworkInfoRequest\032\036" +
+      ".pactus.GetNetworkInfoResponse\022F\n\013GetNod" +
+      "eInfo\022\032.pactus.GetNodeInfoRequest\032\033.pact" +
+      "us.GetNodeInfoResponseBB\n\016pactus.network" +
+      "Z0github.com/pactus-project/pactus/www/g" +
+      "rpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -10412,7 +10412,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
-        new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "ConsensusAddress", "Services", "LastBlockHash", "Height", "ReceivedBundles", "InvalidBundles", "LastSent", "LastReceived", "SentBytes", "ReceivedBytes", "Address", "Direction", "Protocols", "TotalSessions", "CompletedSessions", });
+        new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "ConsensusAddresses", "Services", "LastBlockHash", "Height", "ReceivedBundles", "InvalidBundles", "LastSent", "LastReceived", "SentBytes", "ReceivedBytes", "Address", "Direction", "Protocols", "TotalSessions", "CompletedSessions", });
     internal_static_pactus_PeerInfo_SentBytesEntry_descriptor =
       internal_static_pactus_PeerInfo_descriptor.getNestedTypes().get(0);
     internal_static_pactus_PeerInfo_SentBytesEntry_fieldAccessorTable = new

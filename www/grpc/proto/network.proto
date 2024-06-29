@@ -15,7 +15,7 @@ service Network {
 
 // Request message for retrieving overall network information.
 message GetNetworkInfoRequest {
-  // Only returns the peers with connected status
+  // If true, only returns peers with connected status.
   bool only_connected = 1;
 }
 
@@ -41,9 +41,9 @@ message GetNetworkInfoResponse {
 // network.
 message GetNodeInfoRequest {}
 
-// Response message containing information about the overall network.
+// Response message containing information about the node's connections.
 message ConnectionInfo {
-  // Total number of the connection.
+  // Total number of connections.
   uint64 connections = 1;
   // Number of inbound connections.
   uint64 inbound_connections = 2;
@@ -71,9 +71,9 @@ message GetNodeInfoResponse {
   repeated string local_addrs = 8;
   // List of protocols supported by the node.
   repeated string protocols = 9;
-  // Clock offset
+  // Clock offset of the node.
   double clock_offset = 13;
-  // Connection information
+  // Information about the node's connections.
   ConnectionInfo connection_info = 14;
 }
 
@@ -89,17 +89,17 @@ message PeerInfo {
   string peer_id = 4;
   // Consensus keys used by the peer.
   repeated string consensus_keys = 5;
-  // Consensus address of the peer.
-  repeated string consensus_address = 6;
+  // Consensus addresses of the peer.
+  repeated string consensus_addresses = 6;
   // Services provided by the peer.
   uint32 services = 7;
   // Hash of the last block the peer knows.
   string last_block_hash = 8;
-  // Height of the peer in the blockchain.
+  // Blockchain height of the peer.
   uint32 height = 9;
-  // Count of received bundles.
+  // Number of received bundles.
   int32 received_bundles = 10;
-  // Count of invalid bundles received.
+  // Number of invalid bundles received.
   int32 invalid_bundles = 11;
   // Timestamp of the last sent bundle.
   int64 last_sent = 12;
@@ -115,8 +115,8 @@ message PeerInfo {
   string direction = 17;
   // List of protocols supported by the peer.
   repeated string protocols = 18;
-  // Total sessions with the peer.
+  // Total download sessions with the peer.
   int32 total_sessions = 19;
-  // Completed sessions with the peer.
+  // Completed download sessions with the peer.
   int32 completed_sessions = 20;
 }

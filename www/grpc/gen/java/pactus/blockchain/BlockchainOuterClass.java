@@ -16,7 +16,7 @@ public final class BlockchainOuterClass {
   }
   /**
    * <pre>
-   * Enumeration for verbosity level when requesting block information.
+   * Enumeration for verbosity levels when requesting block information.
    * </pre>
    *
    * Protobuf enum {@code pactus.BlockVerbosity}
@@ -25,7 +25,7 @@ public final class BlockchainOuterClass {
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
      * <pre>
-     * Request block data only.
+     * Request only block data.
      * </pre>
      *
      * <code>BLOCK_DATA = 0;</code>
@@ -41,7 +41,7 @@ public final class BlockchainOuterClass {
     BLOCK_INFO(1),
     /**
      * <pre>
-     * Request block information and transaction details.
+     * Request block information and detailed transaction data.
      * </pre>
      *
      * <code>BLOCK_TRANSACTIONS = 2;</code>
@@ -52,7 +52,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Request block data only.
+     * Request only block data.
      * </pre>
      *
      * <code>BLOCK_DATA = 0;</code>
@@ -68,7 +68,7 @@ public final class BlockchainOuterClass {
     public static final int BLOCK_INFO_VALUE = 1;
     /**
      * <pre>
-     * Request block information and transaction details.
+     * Request block information and detailed transaction data.
      * </pre>
      *
      * <code>BLOCK_TRANSACTIONS = 2;</code>
@@ -327,7 +327,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Address of the account.
+     * The address of the account to retrieve information for.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -336,7 +336,7 @@ public final class BlockchainOuterClass {
     java.lang.String getAddress();
     /**
      * <pre>
-     * Address of the account.
+     * The address of the account to retrieve information for.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -394,7 +394,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object address_;
     /**
      * <pre>
-     * Address of the account.
+     * The address of the account to retrieve information for.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -415,7 +415,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Address of the account.
+     * The address of the account to retrieve information for.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -758,7 +758,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object address_ = "";
       /**
        * <pre>
-       * Address of the account.
+       * The address of the account to retrieve information for.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -778,7 +778,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the account.
+       * The address of the account to retrieve information for.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -799,7 +799,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the account.
+       * The address of the account to retrieve information for.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -818,7 +818,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the account.
+       * The address of the account to retrieve information for.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -832,7 +832,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the account.
+       * The address of the account to retrieve information for.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -920,7 +920,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Account information.
+     * Detailed information about the account.
      * </pre>
      *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -929,7 +929,7 @@ public final class BlockchainOuterClass {
     boolean hasAccount();
     /**
      * <pre>
-     * Account information.
+     * Detailed information about the account.
      * </pre>
      *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -938,7 +938,7 @@ public final class BlockchainOuterClass {
     pactus.blockchain.BlockchainOuterClass.AccountInfo getAccount();
     /**
      * <pre>
-     * Account information.
+     * Detailed information about the account.
      * </pre>
      *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -993,7 +993,7 @@ public final class BlockchainOuterClass {
     private pactus.blockchain.BlockchainOuterClass.AccountInfo account_;
     /**
      * <pre>
-     * Account information.
+     * Detailed information about the account.
      * </pre>
      *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -1005,7 +1005,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Account information.
+     * Detailed information about the account.
      * </pre>
      *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -1017,7 +1017,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Account information.
+     * Detailed information about the account.
      * </pre>
      *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -1366,7 +1366,7 @@ public final class BlockchainOuterClass {
           pactus.blockchain.BlockchainOuterClass.AccountInfo, pactus.blockchain.BlockchainOuterClass.AccountInfo.Builder, pactus.blockchain.BlockchainOuterClass.AccountInfoOrBuilder> accountBuilder_;
       /**
        * <pre>
-       * Account information.
+       * Detailed information about the account.
        * </pre>
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -1377,7 +1377,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account information.
+       * Detailed information about the account.
        * </pre>
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -1392,7 +1392,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account information.
+       * Detailed information about the account.
        * </pre>
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -1412,7 +1412,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account information.
+       * Detailed information about the account.
        * </pre>
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -1430,7 +1430,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account information.
+       * Detailed information about the account.
        * </pre>
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -1452,7 +1452,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account information.
+       * Detailed information about the account.
        * </pre>
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -1470,7 +1470,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account information.
+       * Detailed information about the account.
        * </pre>
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -1482,7 +1482,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account information.
+       * Detailed information about the account.
        * </pre>
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -1497,7 +1497,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account information.
+       * Detailed information about the account.
        * </pre>
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
@@ -2682,7 +2682,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Address of the validator.
+     * The address of the validator to retrieve information for.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -2691,7 +2691,7 @@ public final class BlockchainOuterClass {
     java.lang.String getAddress();
     /**
      * <pre>
-     * Address of the validator.
+     * The address of the validator to retrieve information for.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -2749,7 +2749,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object address_;
     /**
      * <pre>
-     * Address of the validator.
+     * The address of the validator to retrieve information for.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -2770,7 +2770,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Address of the validator.
+     * The address of the validator to retrieve information for.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -3113,7 +3113,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object address_ = "";
       /**
        * <pre>
-       * Address of the validator.
+       * The address of the validator to retrieve information for.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -3133,7 +3133,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator.
+       * The address of the validator to retrieve information for.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -3154,7 +3154,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator.
+       * The address of the validator to retrieve information for.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -3173,7 +3173,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator.
+       * The address of the validator to retrieve information for.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -3187,7 +3187,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator.
+       * The address of the validator to retrieve information for.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -3275,7 +3275,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Validator number.
+     * The unique number of the validator to retrieve information for.
      * </pre>
      *
      * <code>int32 number = 1 [json_name = "number"];</code>
@@ -3331,7 +3331,7 @@ public final class BlockchainOuterClass {
     private int number_;
     /**
      * <pre>
-     * Validator number.
+     * The unique number of the validator to retrieve information for.
      * </pre>
      *
      * <code>int32 number = 1 [json_name = "number"];</code>
@@ -3664,7 +3664,7 @@ public final class BlockchainOuterClass {
       private int number_ ;
       /**
        * <pre>
-       * Validator number.
+       * The unique number of the validator to retrieve information for.
        * </pre>
        *
        * <code>int32 number = 1 [json_name = "number"];</code>
@@ -3676,7 +3676,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator number.
+       * The unique number of the validator to retrieve information for.
        * </pre>
        *
        * <code>int32 number = 1 [json_name = "number"];</code>
@@ -3691,7 +3691,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator number.
+       * The unique number of the validator to retrieve information for.
        * </pre>
        *
        * <code>int32 number = 1 [json_name = "number"];</code>
@@ -3773,7 +3773,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Validator information.
+     * Detailed information about the validator.
      * </pre>
      *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -3782,7 +3782,7 @@ public final class BlockchainOuterClass {
     boolean hasValidator();
     /**
      * <pre>
-     * Validator information.
+     * Detailed information about the validator.
      * </pre>
      *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -3791,7 +3791,7 @@ public final class BlockchainOuterClass {
     pactus.blockchain.BlockchainOuterClass.ValidatorInfo getValidator();
     /**
      * <pre>
-     * Validator information.
+     * Detailed information about the validator.
      * </pre>
      *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -3846,7 +3846,7 @@ public final class BlockchainOuterClass {
     private pactus.blockchain.BlockchainOuterClass.ValidatorInfo validator_;
     /**
      * <pre>
-     * Validator information.
+     * Detailed information about the validator.
      * </pre>
      *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -3858,7 +3858,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Validator information.
+     * Detailed information about the validator.
      * </pre>
      *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -3870,7 +3870,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Validator information.
+     * Detailed information about the validator.
      * </pre>
      *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -4219,7 +4219,7 @@ public final class BlockchainOuterClass {
           pactus.blockchain.BlockchainOuterClass.ValidatorInfo, pactus.blockchain.BlockchainOuterClass.ValidatorInfo.Builder, pactus.blockchain.BlockchainOuterClass.ValidatorInfoOrBuilder> validatorBuilder_;
       /**
        * <pre>
-       * Validator information.
+       * Detailed information about the validator.
        * </pre>
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -4230,7 +4230,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator information.
+       * Detailed information about the validator.
        * </pre>
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -4245,7 +4245,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator information.
+       * Detailed information about the validator.
        * </pre>
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -4265,7 +4265,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator information.
+       * Detailed information about the validator.
        * </pre>
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -4283,7 +4283,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator information.
+       * Detailed information about the validator.
        * </pre>
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -4305,7 +4305,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator information.
+       * Detailed information about the validator.
        * </pre>
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -4323,7 +4323,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator information.
+       * Detailed information about the validator.
        * </pre>
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -4335,7 +4335,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator information.
+       * Detailed information about the validator.
        * </pre>
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -4350,7 +4350,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator information.
+       * Detailed information about the validator.
        * </pre>
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
@@ -4438,7 +4438,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Address for which public key is requested.
+     * The address for which to retrieve the public key.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -4447,7 +4447,7 @@ public final class BlockchainOuterClass {
     java.lang.String getAddress();
     /**
      * <pre>
-     * Address for which public key is requested.
+     * The address for which to retrieve the public key.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -4505,7 +4505,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object address_;
     /**
      * <pre>
-     * Address for which public key is requested.
+     * The address for which to retrieve the public key.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -4526,7 +4526,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Address for which public key is requested.
+     * The address for which to retrieve the public key.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -4869,7 +4869,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object address_ = "";
       /**
        * <pre>
-       * Address for which public key is requested.
+       * The address for which to retrieve the public key.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -4889,7 +4889,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address for which public key is requested.
+       * The address for which to retrieve the public key.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -4910,7 +4910,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address for which public key is requested.
+       * The address for which to retrieve the public key.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -4929,7 +4929,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address for which public key is requested.
+       * The address for which to retrieve the public key.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -4943,7 +4943,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address for which public key is requested.
+       * The address for which to retrieve the public key.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -5031,7 +5031,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Public key of the account.
+     * The public key associated with the provided address.
      * </pre>
      *
      * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -5040,7 +5040,7 @@ public final class BlockchainOuterClass {
     java.lang.String getPublicKey();
     /**
      * <pre>
-     * Public key of the account.
+     * The public key associated with the provided address.
      * </pre>
      *
      * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -5098,7 +5098,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object publicKey_;
     /**
      * <pre>
-     * Public key of the account.
+     * The public key associated with the provided address.
      * </pre>
      *
      * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -5119,7 +5119,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Public key of the account.
+     * The public key associated with the provided address.
      * </pre>
      *
      * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -5462,7 +5462,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object publicKey_ = "";
       /**
        * <pre>
-       * Public key of the account.
+       * The public key associated with the provided address.
        * </pre>
        *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -5482,7 +5482,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Public key of the account.
+       * The public key associated with the provided address.
        * </pre>
        *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -5503,7 +5503,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Public key of the account.
+       * The public key associated with the provided address.
        * </pre>
        *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -5522,7 +5522,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Public key of the account.
+       * The public key associated with the provided address.
        * </pre>
        *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -5536,7 +5536,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Public key of the account.
+       * The public key associated with the provided address.
        * </pre>
        *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -5624,7 +5624,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Height of the block.
+     * The height of the block to retrieve.
      * </pre>
      *
      * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -5634,7 +5634,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Verbosity level for block information.
+     * The verbosity level for block information.
      * </pre>
      *
      * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -5643,7 +5643,7 @@ public final class BlockchainOuterClass {
     int getVerbosityValue();
     /**
      * <pre>
-     * Verbosity level for block information.
+     * The verbosity level for block information.
      * </pre>
      *
      * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -5653,7 +5653,7 @@ public final class BlockchainOuterClass {
   }
   /**
    * <pre>
-   * Message to request block information based on height and verbosity.
+   * Message to request block information based on height and verbosity level.
    * </pre>
    *
    * Protobuf type {@code pactus.GetBlockRequest}
@@ -5700,7 +5700,7 @@ public final class BlockchainOuterClass {
     private int height_;
     /**
      * <pre>
-     * Height of the block.
+     * The height of the block to retrieve.
      * </pre>
      *
      * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -5715,7 +5715,7 @@ public final class BlockchainOuterClass {
     private int verbosity_;
     /**
      * <pre>
-     * Verbosity level for block information.
+     * The verbosity level for block information.
      * </pre>
      *
      * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -5726,7 +5726,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Verbosity level for block information.
+     * The verbosity level for block information.
      * </pre>
      *
      * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -5905,7 +5905,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Message to request block information based on height and verbosity.
+     * Message to request block information based on height and verbosity level.
      * </pre>
      *
      * Protobuf type {@code pactus.GetBlockRequest}
@@ -6081,7 +6081,7 @@ public final class BlockchainOuterClass {
       private int height_ ;
       /**
        * <pre>
-       * Height of the block.
+       * The height of the block to retrieve.
        * </pre>
        *
        * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -6093,7 +6093,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Height of the block.
+       * The height of the block to retrieve.
        * </pre>
        *
        * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -6108,7 +6108,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Height of the block.
+       * The height of the block to retrieve.
        * </pre>
        *
        * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -6124,7 +6124,7 @@ public final class BlockchainOuterClass {
       private int verbosity_ = 0;
       /**
        * <pre>
-       * Verbosity level for block information.
+       * The verbosity level for block information.
        * </pre>
        *
        * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -6135,7 +6135,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Verbosity level for block information.
+       * The verbosity level for block information.
        * </pre>
        *
        * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -6150,7 +6150,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Verbosity level for block information.
+       * The verbosity level for block information.
        * </pre>
        *
        * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -6164,7 +6164,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Verbosity level for block information.
+       * The verbosity level for block information.
        * </pre>
        *
        * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -6182,7 +6182,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Verbosity level for block information.
+       * The verbosity level for block information.
        * </pre>
        *
        * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
@@ -6264,7 +6264,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Height of the block.
+     * The height of the block.
      * </pre>
      *
      * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -6274,7 +6274,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Hash of the block.
+     * The hash of the block.
      * </pre>
      *
      * <code>string hash = 2 [json_name = "hash"];</code>
@@ -6283,7 +6283,7 @@ public final class BlockchainOuterClass {
     java.lang.String getHash();
     /**
      * <pre>
-     * Hash of the block.
+     * The hash of the block.
      * </pre>
      *
      * <code>string hash = 2 [json_name = "hash"];</code>
@@ -6294,7 +6294,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Block data, only available if the verbosity level is set to BLOCK_DATA.
+     * Block data, available only if verbosity level is set to BLOCK_DATA.
      * </pre>
      *
      * <code>string data = 3 [json_name = "data"];</code>
@@ -6303,7 +6303,7 @@ public final class BlockchainOuterClass {
     java.lang.String getData();
     /**
      * <pre>
-     * Block data, only available if the verbosity level is set to BLOCK_DATA.
+     * Block data, available only if verbosity level is set to BLOCK_DATA.
      * </pre>
      *
      * <code>string data = 3 [json_name = "data"];</code>
@@ -6314,7 +6314,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Block timestamp.
+     * The timestamp of the block.
      * </pre>
      *
      * <code>uint32 block_time = 4 [json_name = "blockTime"];</code>
@@ -6324,7 +6324,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Block header information.
+     * Header information of the block.
      * </pre>
      *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -6333,7 +6333,7 @@ public final class BlockchainOuterClass {
     boolean hasHeader();
     /**
      * <pre>
-     * Block header information.
+     * Header information of the block.
      * </pre>
      *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -6342,7 +6342,7 @@ public final class BlockchainOuterClass {
     pactus.blockchain.BlockchainOuterClass.BlockHeaderInfo getHeader();
     /**
      * <pre>
-     * Block header information.
+     * Header information of the block.
      * </pre>
      *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -6378,8 +6378,8 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * List of transactions in the block.
-     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+     * List of transactions in the block, available when verbosity level is set to
+     * BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6388,8 +6388,8 @@ public final class BlockchainOuterClass {
         getTxsList();
     /**
      * <pre>
-     * List of transactions in the block.
-     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+     * List of transactions in the block, available when verbosity level is set to
+     * BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6397,8 +6397,8 @@ public final class BlockchainOuterClass {
     pactus.transaction.TransactionOuterClass.TransactionInfo getTxs(int index);
     /**
      * <pre>
-     * List of transactions in the block.
-     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+     * List of transactions in the block, available when verbosity level is set to
+     * BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6406,8 +6406,8 @@ public final class BlockchainOuterClass {
     int getTxsCount();
     /**
      * <pre>
-     * List of transactions in the block.
-     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+     * List of transactions in the block, available when verbosity level is set to
+     * BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6416,8 +6416,8 @@ public final class BlockchainOuterClass {
         getTxsOrBuilderList();
     /**
      * <pre>
-     * List of transactions in the block.
-     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+     * List of transactions in the block, available when verbosity level is set to
+     * BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6476,7 +6476,7 @@ public final class BlockchainOuterClass {
     private int height_;
     /**
      * <pre>
-     * Height of the block.
+     * The height of the block.
      * </pre>
      *
      * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -6491,7 +6491,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object hash_;
     /**
      * <pre>
-     * Hash of the block.
+     * The hash of the block.
      * </pre>
      *
      * <code>string hash = 2 [json_name = "hash"];</code>
@@ -6512,7 +6512,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Hash of the block.
+     * The hash of the block.
      * </pre>
      *
      * <code>string hash = 2 [json_name = "hash"];</code>
@@ -6537,7 +6537,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object data_;
     /**
      * <pre>
-     * Block data, only available if the verbosity level is set to BLOCK_DATA.
+     * Block data, available only if verbosity level is set to BLOCK_DATA.
      * </pre>
      *
      * <code>string data = 3 [json_name = "data"];</code>
@@ -6558,7 +6558,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Block data, only available if the verbosity level is set to BLOCK_DATA.
+     * Block data, available only if verbosity level is set to BLOCK_DATA.
      * </pre>
      *
      * <code>string data = 3 [json_name = "data"];</code>
@@ -6583,7 +6583,7 @@ public final class BlockchainOuterClass {
     private int blockTime_;
     /**
      * <pre>
-     * Block timestamp.
+     * The timestamp of the block.
      * </pre>
      *
      * <code>uint32 block_time = 4 [json_name = "blockTime"];</code>
@@ -6598,7 +6598,7 @@ public final class BlockchainOuterClass {
     private pactus.blockchain.BlockchainOuterClass.BlockHeaderInfo header_;
     /**
      * <pre>
-     * Block header information.
+     * Header information of the block.
      * </pre>
      *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -6610,7 +6610,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Block header information.
+     * Header information of the block.
      * </pre>
      *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -6622,7 +6622,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Block header information.
+     * Header information of the block.
      * </pre>
      *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -6674,8 +6674,8 @@ public final class BlockchainOuterClass {
     private java.util.List<pactus.transaction.TransactionOuterClass.TransactionInfo> txs_;
     /**
      * <pre>
-     * List of transactions in the block.
-     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+     * List of transactions in the block, available when verbosity level is set to
+     * BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6686,8 +6686,8 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * List of transactions in the block.
-     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+     * List of transactions in the block, available when verbosity level is set to
+     * BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6699,8 +6699,8 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * List of transactions in the block.
-     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+     * List of transactions in the block, available when verbosity level is set to
+     * BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6711,8 +6711,8 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * List of transactions in the block.
-     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+     * List of transactions in the block, available when verbosity level is set to
+     * BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -6723,8 +6723,8 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * List of transactions in the block.
-     * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+     * List of transactions in the block, available when verbosity level is set to
+     * BLOCK_TRANSACTIONS.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7267,7 +7267,7 @@ public final class BlockchainOuterClass {
       private int height_ ;
       /**
        * <pre>
-       * Height of the block.
+       * The height of the block.
        * </pre>
        *
        * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -7279,7 +7279,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Height of the block.
+       * The height of the block.
        * </pre>
        *
        * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -7294,7 +7294,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Height of the block.
+       * The height of the block.
        * </pre>
        *
        * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -7310,7 +7310,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object hash_ = "";
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block.
        * </pre>
        *
        * <code>string hash = 2 [json_name = "hash"];</code>
@@ -7330,7 +7330,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block.
        * </pre>
        *
        * <code>string hash = 2 [json_name = "hash"];</code>
@@ -7351,7 +7351,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block.
        * </pre>
        *
        * <code>string hash = 2 [json_name = "hash"];</code>
@@ -7370,7 +7370,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block.
        * </pre>
        *
        * <code>string hash = 2 [json_name = "hash"];</code>
@@ -7384,7 +7384,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block.
        * </pre>
        *
        * <code>string hash = 2 [json_name = "hash"];</code>
@@ -7406,7 +7406,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object data_ = "";
       /**
        * <pre>
-       * Block data, only available if the verbosity level is set to BLOCK_DATA.
+       * Block data, available only if verbosity level is set to BLOCK_DATA.
        * </pre>
        *
        * <code>string data = 3 [json_name = "data"];</code>
@@ -7426,7 +7426,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block data, only available if the verbosity level is set to BLOCK_DATA.
+       * Block data, available only if verbosity level is set to BLOCK_DATA.
        * </pre>
        *
        * <code>string data = 3 [json_name = "data"];</code>
@@ -7447,7 +7447,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block data, only available if the verbosity level is set to BLOCK_DATA.
+       * Block data, available only if verbosity level is set to BLOCK_DATA.
        * </pre>
        *
        * <code>string data = 3 [json_name = "data"];</code>
@@ -7466,7 +7466,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block data, only available if the verbosity level is set to BLOCK_DATA.
+       * Block data, available only if verbosity level is set to BLOCK_DATA.
        * </pre>
        *
        * <code>string data = 3 [json_name = "data"];</code>
@@ -7480,7 +7480,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block data, only available if the verbosity level is set to BLOCK_DATA.
+       * Block data, available only if verbosity level is set to BLOCK_DATA.
        * </pre>
        *
        * <code>string data = 3 [json_name = "data"];</code>
@@ -7502,7 +7502,7 @@ public final class BlockchainOuterClass {
       private int blockTime_ ;
       /**
        * <pre>
-       * Block timestamp.
+       * The timestamp of the block.
        * </pre>
        *
        * <code>uint32 block_time = 4 [json_name = "blockTime"];</code>
@@ -7514,7 +7514,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block timestamp.
+       * The timestamp of the block.
        * </pre>
        *
        * <code>uint32 block_time = 4 [json_name = "blockTime"];</code>
@@ -7529,7 +7529,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block timestamp.
+       * The timestamp of the block.
        * </pre>
        *
        * <code>uint32 block_time = 4 [json_name = "blockTime"];</code>
@@ -7547,7 +7547,7 @@ public final class BlockchainOuterClass {
           pactus.blockchain.BlockchainOuterClass.BlockHeaderInfo, pactus.blockchain.BlockchainOuterClass.BlockHeaderInfo.Builder, pactus.blockchain.BlockchainOuterClass.BlockHeaderInfoOrBuilder> headerBuilder_;
       /**
        * <pre>
-       * Block header information.
+       * Header information of the block.
        * </pre>
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -7558,7 +7558,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block header information.
+       * Header information of the block.
        * </pre>
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -7573,7 +7573,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block header information.
+       * Header information of the block.
        * </pre>
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -7593,7 +7593,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block header information.
+       * Header information of the block.
        * </pre>
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -7611,7 +7611,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block header information.
+       * Header information of the block.
        * </pre>
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -7633,7 +7633,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block header information.
+       * Header information of the block.
        * </pre>
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -7651,7 +7651,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block header information.
+       * Header information of the block.
        * </pre>
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -7663,7 +7663,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block header information.
+       * Header information of the block.
        * </pre>
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -7678,7 +7678,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block header information.
+       * Header information of the block.
        * </pre>
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
@@ -7866,8 +7866,8 @@ public final class BlockchainOuterClass {
 
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7881,8 +7881,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7896,8 +7896,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7911,8 +7911,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7933,8 +7933,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7952,8 +7952,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7973,8 +7973,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -7995,8 +7995,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -8014,8 +8014,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -8033,8 +8033,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -8053,8 +8053,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -8071,8 +8071,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -8089,8 +8089,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -8101,8 +8101,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -8116,8 +8116,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -8132,8 +8132,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -8144,8 +8144,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -8157,8 +8157,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of transactions in the block.
-       * Transaction information is available when the verbosity level is set to BLOCK_TRANSACTIONS.
+       * List of transactions in the block, available when verbosity level is set to
+       * BLOCK_TRANSACTIONS.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
@@ -8251,7 +8251,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Height of the block.
+     * The height of the block to retrieve the hash for.
      * </pre>
      *
      * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -8307,7 +8307,7 @@ public final class BlockchainOuterClass {
     private int height_;
     /**
      * <pre>
-     * Height of the block.
+     * The height of the block to retrieve the hash for.
      * </pre>
      *
      * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -8640,7 +8640,7 @@ public final class BlockchainOuterClass {
       private int height_ ;
       /**
        * <pre>
-       * Height of the block.
+       * The height of the block to retrieve the hash for.
        * </pre>
        *
        * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -8652,7 +8652,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Height of the block.
+       * The height of the block to retrieve the hash for.
        * </pre>
        *
        * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -8667,7 +8667,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Height of the block.
+       * The height of the block to retrieve the hash for.
        * </pre>
        *
        * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -8749,7 +8749,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Hash of the block.
+     * The hash of the block.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -8758,7 +8758,7 @@ public final class BlockchainOuterClass {
     java.lang.String getHash();
     /**
      * <pre>
-     * Hash of the block.
+     * The hash of the block.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -8816,7 +8816,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object hash_;
     /**
      * <pre>
-     * Hash of the block.
+     * The hash of the block.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -8837,7 +8837,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Hash of the block.
+     * The hash of the block.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9180,7 +9180,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object hash_ = "";
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9200,7 +9200,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9221,7 +9221,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9240,7 +9240,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9254,7 +9254,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9342,7 +9342,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Hash of the block.
+     * The hash of the block to retrieve the height for.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9351,7 +9351,7 @@ public final class BlockchainOuterClass {
     java.lang.String getHash();
     /**
      * <pre>
-     * Hash of the block.
+     * The hash of the block to retrieve the height for.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9409,7 +9409,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object hash_;
     /**
      * <pre>
-     * Hash of the block.
+     * The hash of the block to retrieve the height for.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9430,7 +9430,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Hash of the block.
+     * The hash of the block to retrieve the height for.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9773,7 +9773,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object hash_ = "";
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block to retrieve the height for.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9793,7 +9793,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block to retrieve the height for.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9814,7 +9814,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block to retrieve the height for.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9833,7 +9833,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block to retrieve the height for.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9847,7 +9847,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block.
+       * The hash of the block to retrieve the height for.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -9935,7 +9935,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Height of the block.
+     * The height of the block.
      * </pre>
      *
      * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -9991,7 +9991,7 @@ public final class BlockchainOuterClass {
     private int height_;
     /**
      * <pre>
-     * Height of the block.
+     * The height of the block.
      * </pre>
      *
      * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -10324,7 +10324,7 @@ public final class BlockchainOuterClass {
       private int height_ ;
       /**
        * <pre>
-       * Height of the block.
+       * The height of the block.
        * </pre>
        *
        * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -10336,7 +10336,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Height of the block.
+       * The height of the block.
        * </pre>
        *
        * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -10351,7 +10351,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Height of the block.
+       * The height of the block.
        * </pre>
        *
        * <code>uint32 height = 1 [json_name = "height"];</code>
@@ -10841,7 +10841,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Height of the last block.
+     * The height of the last block in the blockchain.
      * </pre>
      *
      * <code>uint32 last_block_height = 1 [json_name = "lastBlockHeight"];</code>
@@ -10851,7 +10851,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Hash of the last block.
+     * The hash of the last block in the blockchain.
      * </pre>
      *
      * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
@@ -10860,7 +10860,7 @@ public final class BlockchainOuterClass {
     java.lang.String getLastBlockHash();
     /**
      * <pre>
-     * Hash of the last block.
+     * The hash of the last block in the blockchain.
      * </pre>
      *
      * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
@@ -10871,7 +10871,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Total number of accounts.
+     * The total number of accounts in the blockchain.
      * </pre>
      *
      * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
@@ -10881,7 +10881,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Total number of validators.
+     * The total number of validators in the blockchain.
      * </pre>
      *
      * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
@@ -10891,7 +10891,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Total power in the blockchain.
+     * The total power of the blockchain.
      * </pre>
      *
      * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
@@ -10901,7 +10901,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Power of the committee.
+     * The power of the committee.
      * </pre>
      *
      * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
@@ -11003,7 +11003,7 @@ public final class BlockchainOuterClass {
     private int lastBlockHeight_;
     /**
      * <pre>
-     * Height of the last block.
+     * The height of the last block in the blockchain.
      * </pre>
      *
      * <code>uint32 last_block_height = 1 [json_name = "lastBlockHeight"];</code>
@@ -11018,7 +11018,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object lastBlockHash_;
     /**
      * <pre>
-     * Hash of the last block.
+     * The hash of the last block in the blockchain.
      * </pre>
      *
      * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
@@ -11039,7 +11039,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Hash of the last block.
+     * The hash of the last block in the blockchain.
      * </pre>
      *
      * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
@@ -11064,7 +11064,7 @@ public final class BlockchainOuterClass {
     private int totalAccounts_;
     /**
      * <pre>
-     * Total number of accounts.
+     * The total number of accounts in the blockchain.
      * </pre>
      *
      * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
@@ -11079,7 +11079,7 @@ public final class BlockchainOuterClass {
     private int totalValidators_;
     /**
      * <pre>
-     * Total number of validators.
+     * The total number of validators in the blockchain.
      * </pre>
      *
      * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
@@ -11094,7 +11094,7 @@ public final class BlockchainOuterClass {
     private long totalPower_;
     /**
      * <pre>
-     * Total power in the blockchain.
+     * The total power of the blockchain.
      * </pre>
      *
      * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
@@ -11109,7 +11109,7 @@ public final class BlockchainOuterClass {
     private long committeePower_;
     /**
      * <pre>
-     * Power of the committee.
+     * The power of the committee.
      * </pre>
      *
      * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
@@ -11684,7 +11684,7 @@ public final class BlockchainOuterClass {
       private int lastBlockHeight_ ;
       /**
        * <pre>
-       * Height of the last block.
+       * The height of the last block in the blockchain.
        * </pre>
        *
        * <code>uint32 last_block_height = 1 [json_name = "lastBlockHeight"];</code>
@@ -11696,7 +11696,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Height of the last block.
+       * The height of the last block in the blockchain.
        * </pre>
        *
        * <code>uint32 last_block_height = 1 [json_name = "lastBlockHeight"];</code>
@@ -11711,7 +11711,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Height of the last block.
+       * The height of the last block in the blockchain.
        * </pre>
        *
        * <code>uint32 last_block_height = 1 [json_name = "lastBlockHeight"];</code>
@@ -11727,7 +11727,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object lastBlockHash_ = "";
       /**
        * <pre>
-       * Hash of the last block.
+       * The hash of the last block in the blockchain.
        * </pre>
        *
        * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
@@ -11747,7 +11747,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the last block.
+       * The hash of the last block in the blockchain.
        * </pre>
        *
        * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
@@ -11768,7 +11768,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the last block.
+       * The hash of the last block in the blockchain.
        * </pre>
        *
        * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
@@ -11787,7 +11787,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the last block.
+       * The hash of the last block in the blockchain.
        * </pre>
        *
        * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
@@ -11801,7 +11801,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the last block.
+       * The hash of the last block in the blockchain.
        * </pre>
        *
        * <code>string last_block_hash = 2 [json_name = "lastBlockHash"];</code>
@@ -11823,7 +11823,7 @@ public final class BlockchainOuterClass {
       private int totalAccounts_ ;
       /**
        * <pre>
-       * Total number of accounts.
+       * The total number of accounts in the blockchain.
        * </pre>
        *
        * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
@@ -11835,7 +11835,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Total number of accounts.
+       * The total number of accounts in the blockchain.
        * </pre>
        *
        * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
@@ -11850,7 +11850,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Total number of accounts.
+       * The total number of accounts in the blockchain.
        * </pre>
        *
        * <code>int32 total_accounts = 3 [json_name = "totalAccounts"];</code>
@@ -11866,7 +11866,7 @@ public final class BlockchainOuterClass {
       private int totalValidators_ ;
       /**
        * <pre>
-       * Total number of validators.
+       * The total number of validators in the blockchain.
        * </pre>
        *
        * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
@@ -11878,7 +11878,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Total number of validators.
+       * The total number of validators in the blockchain.
        * </pre>
        *
        * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
@@ -11893,7 +11893,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Total number of validators.
+       * The total number of validators in the blockchain.
        * </pre>
        *
        * <code>int32 total_validators = 4 [json_name = "totalValidators"];</code>
@@ -11909,7 +11909,7 @@ public final class BlockchainOuterClass {
       private long totalPower_ ;
       /**
        * <pre>
-       * Total power in the blockchain.
+       * The total power of the blockchain.
        * </pre>
        *
        * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
@@ -11921,7 +11921,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Total power in the blockchain.
+       * The total power of the blockchain.
        * </pre>
        *
        * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
@@ -11936,7 +11936,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Total power in the blockchain.
+       * The total power of the blockchain.
        * </pre>
        *
        * <code>int64 total_power = 5 [json_name = "totalPower"];</code>
@@ -11952,7 +11952,7 @@ public final class BlockchainOuterClass {
       private long committeePower_ ;
       /**
        * <pre>
-       * Power of the committee.
+       * The power of the committee.
        * </pre>
        *
        * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
@@ -11964,7 +11964,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Power of the committee.
+       * The power of the committee.
        * </pre>
        *
        * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
@@ -11979,7 +11979,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Power of the committee.
+       * The power of the committee.
        * </pre>
        *
        * <code>int64 committee_power = 6 [json_name = "committeePower"];</code>
@@ -13676,7 +13676,8 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Payload type of tranactions in the tx pool, 0 is all types.
+     * The type of transactions to retrieve from the transaction pool. 0 means all
+     * types.
      * </pre>
      *
      * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
@@ -13685,7 +13686,8 @@ public final class BlockchainOuterClass {
     int getPayloadTypeValue();
     /**
      * <pre>
-     * Payload type of tranactions in the tx pool, 0 is all types.
+     * The type of transactions to retrieve from the transaction pool. 0 means all
+     * types.
      * </pre>
      *
      * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
@@ -13695,7 +13697,7 @@ public final class BlockchainOuterClass {
   }
   /**
    * <pre>
-   * Request message to retirve transaction pool transactions.
+   * Request message to retrieve transactions in the transaction pool.
    * </pre>
    *
    * Protobuf type {@code pactus.GetTxPoolContentRequest}
@@ -13742,7 +13744,8 @@ public final class BlockchainOuterClass {
     private int payloadType_;
     /**
      * <pre>
-     * Payload type of tranactions in the tx pool, 0 is all types.
+     * The type of transactions to retrieve from the transaction pool. 0 means all
+     * types.
      * </pre>
      *
      * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
@@ -13753,7 +13756,8 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Payload type of tranactions in the tx pool, 0 is all types.
+     * The type of transactions to retrieve from the transaction pool. 0 means all
+     * types.
      * </pre>
      *
      * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
@@ -13921,7 +13925,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Request message to retirve transaction pool transactions.
+     * Request message to retrieve transactions in the transaction pool.
      * </pre>
      *
      * Protobuf type {@code pactus.GetTxPoolContentRequest}
@@ -14086,7 +14090,8 @@ public final class BlockchainOuterClass {
       private int payloadType_ = 0;
       /**
        * <pre>
-       * Payload type of tranactions in the tx pool, 0 is all types.
+       * The type of transactions to retrieve from the transaction pool. 0 means all
+       * types.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
@@ -14097,7 +14102,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Payload type of tranactions in the tx pool, 0 is all types.
+       * The type of transactions to retrieve from the transaction pool. 0 means all
+       * types.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
@@ -14112,7 +14118,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Payload type of tranactions in the tx pool, 0 is all types.
+       * The type of transactions to retrieve from the transaction pool. 0 means all
+       * types.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
@@ -14126,7 +14133,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Payload type of tranactions in the tx pool, 0 is all types.
+       * The type of transactions to retrieve from the transaction pool. 0 means all
+       * types.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
@@ -14144,7 +14152,8 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Payload type of tranactions in the tx pool, 0 is all types.
+       * The type of transactions to retrieve from the transaction pool. 0 means all
+       * types.
        * </pre>
        *
        * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
@@ -14226,7 +14235,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * List of the transaction in the pool.
+     * List of transactions currently in the pool.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14235,7 +14244,7 @@ public final class BlockchainOuterClass {
         getTxsList();
     /**
      * <pre>
-     * List of the transaction in the pool.
+     * List of transactions currently in the pool.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14243,7 +14252,7 @@ public final class BlockchainOuterClass {
     pactus.transaction.TransactionOuterClass.TransactionInfo getTxs(int index);
     /**
      * <pre>
-     * List of the transaction in the pool.
+     * List of transactions currently in the pool.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14251,7 +14260,7 @@ public final class BlockchainOuterClass {
     int getTxsCount();
     /**
      * <pre>
-     * List of the transaction in the pool.
+     * List of transactions currently in the pool.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14260,7 +14269,7 @@ public final class BlockchainOuterClass {
         getTxsOrBuilderList();
     /**
      * <pre>
-     * List of the transaction in the pool.
+     * List of transactions currently in the pool.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14270,7 +14279,7 @@ public final class BlockchainOuterClass {
   }
   /**
    * <pre>
-   * Response message containing transaction pool transactions.
+   * Response message containing transactions in the transaction pool.
    * </pre>
    *
    * Protobuf type {@code pactus.GetTxPoolContentResponse}
@@ -14317,7 +14326,7 @@ public final class BlockchainOuterClass {
     private java.util.List<pactus.transaction.TransactionOuterClass.TransactionInfo> txs_;
     /**
      * <pre>
-     * List of the transaction in the pool.
+     * List of transactions currently in the pool.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14328,7 +14337,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * List of the transaction in the pool.
+     * List of transactions currently in the pool.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14340,7 +14349,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * List of the transaction in the pool.
+     * List of transactions currently in the pool.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14351,7 +14360,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * List of the transaction in the pool.
+     * List of transactions currently in the pool.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14362,7 +14371,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * List of the transaction in the pool.
+     * List of transactions currently in the pool.
      * </pre>
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14532,7 +14541,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Response message containing transaction pool transactions.
+     * Response message containing transactions in the transaction pool.
      * </pre>
      *
      * Protobuf type {@code pactus.GetTxPoolContentResponse}
@@ -14754,7 +14763,7 @@ public final class BlockchainOuterClass {
 
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14768,7 +14777,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14782,7 +14791,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14796,7 +14805,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14817,7 +14826,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14835,7 +14844,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14855,7 +14864,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14876,7 +14885,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14894,7 +14903,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14912,7 +14921,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14931,7 +14940,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14948,7 +14957,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14965,7 +14974,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14976,7 +14985,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -14990,7 +14999,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -15005,7 +15014,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -15016,7 +15025,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -15028,7 +15037,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * List of the transaction in the pool.
+       * List of transactions currently in the pool.
        * </pre>
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
@@ -15121,7 +15130,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Hash of the validator.
+     * The hash of the validator.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -15130,7 +15139,7 @@ public final class BlockchainOuterClass {
     java.lang.String getHash();
     /**
      * <pre>
-     * Hash of the validator.
+     * The hash of the validator.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -15141,7 +15150,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Validator data.
+     * The serialized data of the validator.
      * </pre>
      *
      * <code>string data = 2 [json_name = "data"];</code>
@@ -15150,7 +15159,7 @@ public final class BlockchainOuterClass {
     java.lang.String getData();
     /**
      * <pre>
-     * Validator data.
+     * The serialized data of the validator.
      * </pre>
      *
      * <code>string data = 2 [json_name = "data"];</code>
@@ -15161,7 +15170,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Public key of the validator.
+     * The public key of the validator.
      * </pre>
      *
      * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -15170,7 +15179,7 @@ public final class BlockchainOuterClass {
     java.lang.String getPublicKey();
     /**
      * <pre>
-     * Public key of the validator.
+     * The public key of the validator.
      * </pre>
      *
      * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -15181,7 +15190,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Validator number.
+     * The unique number assigned to the validator.
      * </pre>
      *
      * <code>int32 number = 4 [json_name = "number"];</code>
@@ -15191,7 +15200,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Validator stake in NanoPAC.
+     * The stake of the validator in NanoPAC.
      * </pre>
      *
      * <code>int64 stake = 5 [json_name = "stake"];</code>
@@ -15201,7 +15210,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Last bonding height.
+     * The height at which the validator last bonded.
      * </pre>
      *
      * <code>uint32 last_bonding_height = 6 [json_name = "lastBondingHeight"];</code>
@@ -15211,7 +15220,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Last sortition height.
+     * The height at which the validator last participated in sortition.
      * </pre>
      *
      * <code>uint32 last_sortition_height = 7 [json_name = "lastSortitionHeight"];</code>
@@ -15221,7 +15230,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Unbonding height.
+     * The height at which the validator will unbond.
      * </pre>
      *
      * <code>uint32 unbonding_height = 8 [json_name = "unbondingHeight"];</code>
@@ -15231,7 +15240,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Address of the validator.
+     * The address of the validator.
      * </pre>
      *
      * <code>string address = 9 [json_name = "address"];</code>
@@ -15240,7 +15249,7 @@ public final class BlockchainOuterClass {
     java.lang.String getAddress();
     /**
      * <pre>
-     * Address of the validator.
+     * The address of the validator.
      * </pre>
      *
      * <code>string address = 9 [json_name = "address"];</code>
@@ -15251,7 +15260,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Availability score of the validator.
+     * The availability score of the validator.
      * </pre>
      *
      * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
@@ -15311,7 +15320,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object hash_;
     /**
      * <pre>
-     * Hash of the validator.
+     * The hash of the validator.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -15332,7 +15341,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Hash of the validator.
+     * The hash of the validator.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -15357,7 +15366,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object data_;
     /**
      * <pre>
-     * Validator data.
+     * The serialized data of the validator.
      * </pre>
      *
      * <code>string data = 2 [json_name = "data"];</code>
@@ -15378,7 +15387,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Validator data.
+     * The serialized data of the validator.
      * </pre>
      *
      * <code>string data = 2 [json_name = "data"];</code>
@@ -15403,7 +15412,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object publicKey_;
     /**
      * <pre>
-     * Public key of the validator.
+     * The public key of the validator.
      * </pre>
      *
      * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -15424,7 +15433,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Public key of the validator.
+     * The public key of the validator.
      * </pre>
      *
      * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -15449,7 +15458,7 @@ public final class BlockchainOuterClass {
     private int number_;
     /**
      * <pre>
-     * Validator number.
+     * The unique number assigned to the validator.
      * </pre>
      *
      * <code>int32 number = 4 [json_name = "number"];</code>
@@ -15464,7 +15473,7 @@ public final class BlockchainOuterClass {
     private long stake_;
     /**
      * <pre>
-     * Validator stake in NanoPAC.
+     * The stake of the validator in NanoPAC.
      * </pre>
      *
      * <code>int64 stake = 5 [json_name = "stake"];</code>
@@ -15479,7 +15488,7 @@ public final class BlockchainOuterClass {
     private int lastBondingHeight_;
     /**
      * <pre>
-     * Last bonding height.
+     * The height at which the validator last bonded.
      * </pre>
      *
      * <code>uint32 last_bonding_height = 6 [json_name = "lastBondingHeight"];</code>
@@ -15494,7 +15503,7 @@ public final class BlockchainOuterClass {
     private int lastSortitionHeight_;
     /**
      * <pre>
-     * Last sortition height.
+     * The height at which the validator last participated in sortition.
      * </pre>
      *
      * <code>uint32 last_sortition_height = 7 [json_name = "lastSortitionHeight"];</code>
@@ -15509,7 +15518,7 @@ public final class BlockchainOuterClass {
     private int unbondingHeight_;
     /**
      * <pre>
-     * Unbonding height.
+     * The height at which the validator will unbond.
      * </pre>
      *
      * <code>uint32 unbonding_height = 8 [json_name = "unbondingHeight"];</code>
@@ -15524,7 +15533,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object address_;
     /**
      * <pre>
-     * Address of the validator.
+     * The address of the validator.
      * </pre>
      *
      * <code>string address = 9 [json_name = "address"];</code>
@@ -15545,7 +15554,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Address of the validator.
+     * The address of the validator.
      * </pre>
      *
      * <code>string address = 9 [json_name = "address"];</code>
@@ -15570,7 +15579,7 @@ public final class BlockchainOuterClass {
     private double availabilityScore_;
     /**
      * <pre>
-     * Availability score of the validator.
+     * The availability score of the validator.
      * </pre>
      *
      * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
@@ -16104,7 +16113,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object hash_ = "";
       /**
        * <pre>
-       * Hash of the validator.
+       * The hash of the validator.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -16124,7 +16133,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the validator.
+       * The hash of the validator.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -16145,7 +16154,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the validator.
+       * The hash of the validator.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -16164,7 +16173,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the validator.
+       * The hash of the validator.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -16178,7 +16187,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the validator.
+       * The hash of the validator.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -16200,7 +16209,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object data_ = "";
       /**
        * <pre>
-       * Validator data.
+       * The serialized data of the validator.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -16220,7 +16229,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator data.
+       * The serialized data of the validator.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -16241,7 +16250,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator data.
+       * The serialized data of the validator.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -16260,7 +16269,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator data.
+       * The serialized data of the validator.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -16274,7 +16283,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator data.
+       * The serialized data of the validator.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -16296,7 +16305,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object publicKey_ = "";
       /**
        * <pre>
-       * Public key of the validator.
+       * The public key of the validator.
        * </pre>
        *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -16316,7 +16325,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Public key of the validator.
+       * The public key of the validator.
        * </pre>
        *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -16337,7 +16346,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Public key of the validator.
+       * The public key of the validator.
        * </pre>
        *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -16356,7 +16365,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Public key of the validator.
+       * The public key of the validator.
        * </pre>
        *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -16370,7 +16379,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Public key of the validator.
+       * The public key of the validator.
        * </pre>
        *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -16392,7 +16401,7 @@ public final class BlockchainOuterClass {
       private int number_ ;
       /**
        * <pre>
-       * Validator number.
+       * The unique number assigned to the validator.
        * </pre>
        *
        * <code>int32 number = 4 [json_name = "number"];</code>
@@ -16404,7 +16413,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator number.
+       * The unique number assigned to the validator.
        * </pre>
        *
        * <code>int32 number = 4 [json_name = "number"];</code>
@@ -16419,7 +16428,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator number.
+       * The unique number assigned to the validator.
        * </pre>
        *
        * <code>int32 number = 4 [json_name = "number"];</code>
@@ -16435,7 +16444,7 @@ public final class BlockchainOuterClass {
       private long stake_ ;
       /**
        * <pre>
-       * Validator stake in NanoPAC.
+       * The stake of the validator in NanoPAC.
        * </pre>
        *
        * <code>int64 stake = 5 [json_name = "stake"];</code>
@@ -16447,7 +16456,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator stake in NanoPAC.
+       * The stake of the validator in NanoPAC.
        * </pre>
        *
        * <code>int64 stake = 5 [json_name = "stake"];</code>
@@ -16462,7 +16471,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Validator stake in NanoPAC.
+       * The stake of the validator in NanoPAC.
        * </pre>
        *
        * <code>int64 stake = 5 [json_name = "stake"];</code>
@@ -16478,7 +16487,7 @@ public final class BlockchainOuterClass {
       private int lastBondingHeight_ ;
       /**
        * <pre>
-       * Last bonding height.
+       * The height at which the validator last bonded.
        * </pre>
        *
        * <code>uint32 last_bonding_height = 6 [json_name = "lastBondingHeight"];</code>
@@ -16490,7 +16499,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Last bonding height.
+       * The height at which the validator last bonded.
        * </pre>
        *
        * <code>uint32 last_bonding_height = 6 [json_name = "lastBondingHeight"];</code>
@@ -16505,7 +16514,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Last bonding height.
+       * The height at which the validator last bonded.
        * </pre>
        *
        * <code>uint32 last_bonding_height = 6 [json_name = "lastBondingHeight"];</code>
@@ -16521,7 +16530,7 @@ public final class BlockchainOuterClass {
       private int lastSortitionHeight_ ;
       /**
        * <pre>
-       * Last sortition height.
+       * The height at which the validator last participated in sortition.
        * </pre>
        *
        * <code>uint32 last_sortition_height = 7 [json_name = "lastSortitionHeight"];</code>
@@ -16533,7 +16542,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Last sortition height.
+       * The height at which the validator last participated in sortition.
        * </pre>
        *
        * <code>uint32 last_sortition_height = 7 [json_name = "lastSortitionHeight"];</code>
@@ -16548,7 +16557,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Last sortition height.
+       * The height at which the validator last participated in sortition.
        * </pre>
        *
        * <code>uint32 last_sortition_height = 7 [json_name = "lastSortitionHeight"];</code>
@@ -16564,7 +16573,7 @@ public final class BlockchainOuterClass {
       private int unbondingHeight_ ;
       /**
        * <pre>
-       * Unbonding height.
+       * The height at which the validator will unbond.
        * </pre>
        *
        * <code>uint32 unbonding_height = 8 [json_name = "unbondingHeight"];</code>
@@ -16576,7 +16585,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Unbonding height.
+       * The height at which the validator will unbond.
        * </pre>
        *
        * <code>uint32 unbonding_height = 8 [json_name = "unbondingHeight"];</code>
@@ -16591,7 +16600,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Unbonding height.
+       * The height at which the validator will unbond.
        * </pre>
        *
        * <code>uint32 unbonding_height = 8 [json_name = "unbondingHeight"];</code>
@@ -16607,7 +16616,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object address_ = "";
       /**
        * <pre>
-       * Address of the validator.
+       * The address of the validator.
        * </pre>
        *
        * <code>string address = 9 [json_name = "address"];</code>
@@ -16627,7 +16636,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator.
+       * The address of the validator.
        * </pre>
        *
        * <code>string address = 9 [json_name = "address"];</code>
@@ -16648,7 +16657,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator.
+       * The address of the validator.
        * </pre>
        *
        * <code>string address = 9 [json_name = "address"];</code>
@@ -16667,7 +16676,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator.
+       * The address of the validator.
        * </pre>
        *
        * <code>string address = 9 [json_name = "address"];</code>
@@ -16681,7 +16690,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the validator.
+       * The address of the validator.
        * </pre>
        *
        * <code>string address = 9 [json_name = "address"];</code>
@@ -16703,7 +16712,7 @@ public final class BlockchainOuterClass {
       private double availabilityScore_ ;
       /**
        * <pre>
-       * Availability score of the validator.
+       * The availability score of the validator.
        * </pre>
        *
        * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
@@ -16715,7 +16724,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Availability score of the validator.
+       * The availability score of the validator.
        * </pre>
        *
        * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
@@ -16730,7 +16739,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Availability score of the validator.
+       * The availability score of the validator.
        * </pre>
        *
        * <code>double availability_score = 10 [json_name = "availabilityScore"];</code>
@@ -16812,7 +16821,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Hash of the account.
+     * The hash of the account.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -16821,7 +16830,7 @@ public final class BlockchainOuterClass {
     java.lang.String getHash();
     /**
      * <pre>
-     * Hash of the account.
+     * The hash of the account.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -16832,7 +16841,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Account data.
+     * The serialized data of the account.
      * </pre>
      *
      * <code>string data = 2 [json_name = "data"];</code>
@@ -16841,7 +16850,7 @@ public final class BlockchainOuterClass {
     java.lang.String getData();
     /**
      * <pre>
-     * Account data.
+     * The serialized data of the account.
      * </pre>
      *
      * <code>string data = 2 [json_name = "data"];</code>
@@ -16852,7 +16861,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Account number.
+     * The unique number assigned to the account.
      * </pre>
      *
      * <code>int32 number = 3 [json_name = "number"];</code>
@@ -16862,7 +16871,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Account balance in NanoPAC.
+     * The balance of the account in NanoPAC.
      * </pre>
      *
      * <code>int64 balance = 4 [json_name = "balance"];</code>
@@ -16872,7 +16881,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Address of the account.
+     * The address of the account.
      * </pre>
      *
      * <code>string address = 5 [json_name = "address"];</code>
@@ -16881,7 +16890,7 @@ public final class BlockchainOuterClass {
     java.lang.String getAddress();
     /**
      * <pre>
-     * Address of the account.
+     * The address of the account.
      * </pre>
      *
      * <code>string address = 5 [json_name = "address"];</code>
@@ -16941,7 +16950,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object hash_;
     /**
      * <pre>
-     * Hash of the account.
+     * The hash of the account.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -16962,7 +16971,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Hash of the account.
+     * The hash of the account.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -16987,7 +16996,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object data_;
     /**
      * <pre>
-     * Account data.
+     * The serialized data of the account.
      * </pre>
      *
      * <code>string data = 2 [json_name = "data"];</code>
@@ -17008,7 +17017,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Account data.
+     * The serialized data of the account.
      * </pre>
      *
      * <code>string data = 2 [json_name = "data"];</code>
@@ -17033,7 +17042,7 @@ public final class BlockchainOuterClass {
     private int number_;
     /**
      * <pre>
-     * Account number.
+     * The unique number assigned to the account.
      * </pre>
      *
      * <code>int32 number = 3 [json_name = "number"];</code>
@@ -17048,7 +17057,7 @@ public final class BlockchainOuterClass {
     private long balance_;
     /**
      * <pre>
-     * Account balance in NanoPAC.
+     * The balance of the account in NanoPAC.
      * </pre>
      *
      * <code>int64 balance = 4 [json_name = "balance"];</code>
@@ -17063,7 +17072,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object address_;
     /**
      * <pre>
-     * Address of the account.
+     * The address of the account.
      * </pre>
      *
      * <code>string address = 5 [json_name = "address"];</code>
@@ -17084,7 +17093,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Address of the account.
+     * The address of the account.
      * </pre>
      *
      * <code>string address = 5 [json_name = "address"];</code>
@@ -17516,7 +17525,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object hash_ = "";
       /**
        * <pre>
-       * Hash of the account.
+       * The hash of the account.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -17536,7 +17545,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the account.
+       * The hash of the account.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -17557,7 +17566,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the account.
+       * The hash of the account.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -17576,7 +17585,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the account.
+       * The hash of the account.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -17590,7 +17599,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the account.
+       * The hash of the account.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -17612,7 +17621,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object data_ = "";
       /**
        * <pre>
-       * Account data.
+       * The serialized data of the account.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -17632,7 +17641,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account data.
+       * The serialized data of the account.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -17653,7 +17662,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account data.
+       * The serialized data of the account.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -17672,7 +17681,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account data.
+       * The serialized data of the account.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -17686,7 +17695,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account data.
+       * The serialized data of the account.
        * </pre>
        *
        * <code>string data = 2 [json_name = "data"];</code>
@@ -17708,7 +17717,7 @@ public final class BlockchainOuterClass {
       private int number_ ;
       /**
        * <pre>
-       * Account number.
+       * The unique number assigned to the account.
        * </pre>
        *
        * <code>int32 number = 3 [json_name = "number"];</code>
@@ -17720,7 +17729,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account number.
+       * The unique number assigned to the account.
        * </pre>
        *
        * <code>int32 number = 3 [json_name = "number"];</code>
@@ -17735,7 +17744,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account number.
+       * The unique number assigned to the account.
        * </pre>
        *
        * <code>int32 number = 3 [json_name = "number"];</code>
@@ -17751,7 +17760,7 @@ public final class BlockchainOuterClass {
       private long balance_ ;
       /**
        * <pre>
-       * Account balance in NanoPAC.
+       * The balance of the account in NanoPAC.
        * </pre>
        *
        * <code>int64 balance = 4 [json_name = "balance"];</code>
@@ -17763,7 +17772,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account balance in NanoPAC.
+       * The balance of the account in NanoPAC.
        * </pre>
        *
        * <code>int64 balance = 4 [json_name = "balance"];</code>
@@ -17778,7 +17787,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Account balance in NanoPAC.
+       * The balance of the account in NanoPAC.
        * </pre>
        *
        * <code>int64 balance = 4 [json_name = "balance"];</code>
@@ -17794,7 +17803,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object address_ = "";
       /**
        * <pre>
-       * Address of the account.
+       * The address of the account.
        * </pre>
        *
        * <code>string address = 5 [json_name = "address"];</code>
@@ -17814,7 +17823,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the account.
+       * The address of the account.
        * </pre>
        *
        * <code>string address = 5 [json_name = "address"];</code>
@@ -17835,7 +17844,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the account.
+       * The address of the account.
        * </pre>
        *
        * <code>string address = 5 [json_name = "address"];</code>
@@ -17854,7 +17863,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the account.
+       * The address of the account.
        * </pre>
        *
        * <code>string address = 5 [json_name = "address"];</code>
@@ -17868,7 +17877,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the account.
+       * The address of the account.
        * </pre>
        *
        * <code>string address = 5 [json_name = "address"];</code>
@@ -17956,7 +17965,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Block version.
+     * The version of the block.
      * </pre>
      *
      * <code>int32 version = 1 [json_name = "version"];</code>
@@ -17966,7 +17975,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Hash of the previous block.
+     * The hash of the previous block.
      * </pre>
      *
      * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
@@ -17975,7 +17984,7 @@ public final class BlockchainOuterClass {
     java.lang.String getPrevBlockHash();
     /**
      * <pre>
-     * Hash of the previous block.
+     * The hash of the previous block.
      * </pre>
      *
      * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
@@ -17986,7 +17995,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * State root of the block.
+     * The state root hash of the blockchain.
      * </pre>
      *
      * <code>string state_root = 3 [json_name = "stateRoot"];</code>
@@ -17995,7 +18004,7 @@ public final class BlockchainOuterClass {
     java.lang.String getStateRoot();
     /**
      * <pre>
-     * State root of the block.
+     * The state root hash of the blockchain.
      * </pre>
      *
      * <code>string state_root = 3 [json_name = "stateRoot"];</code>
@@ -18006,7 +18015,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Sortition seed of the block.
+     * The sortition seed of the block.
      * </pre>
      *
      * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
@@ -18015,7 +18024,7 @@ public final class BlockchainOuterClass {
     java.lang.String getSortitionSeed();
     /**
      * <pre>
-     * Sortition seed of the block.
+     * The sortition seed of the block.
      * </pre>
      *
      * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
@@ -18026,7 +18035,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Address of the proposer of the block.
+     * The address of the proposer of the block.
      * </pre>
      *
      * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
@@ -18035,7 +18044,7 @@ public final class BlockchainOuterClass {
     java.lang.String getProposerAddress();
     /**
      * <pre>
-     * Address of the proposer of the block.
+     * The address of the proposer of the block.
      * </pre>
      *
      * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
@@ -18096,7 +18105,7 @@ public final class BlockchainOuterClass {
     private int version_;
     /**
      * <pre>
-     * Block version.
+     * The version of the block.
      * </pre>
      *
      * <code>int32 version = 1 [json_name = "version"];</code>
@@ -18111,7 +18120,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object prevBlockHash_;
     /**
      * <pre>
-     * Hash of the previous block.
+     * The hash of the previous block.
      * </pre>
      *
      * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
@@ -18132,7 +18141,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Hash of the previous block.
+     * The hash of the previous block.
      * </pre>
      *
      * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
@@ -18157,7 +18166,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object stateRoot_;
     /**
      * <pre>
-     * State root of the block.
+     * The state root hash of the blockchain.
      * </pre>
      *
      * <code>string state_root = 3 [json_name = "stateRoot"];</code>
@@ -18178,7 +18187,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * State root of the block.
+     * The state root hash of the blockchain.
      * </pre>
      *
      * <code>string state_root = 3 [json_name = "stateRoot"];</code>
@@ -18203,7 +18212,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object sortitionSeed_;
     /**
      * <pre>
-     * Sortition seed of the block.
+     * The sortition seed of the block.
      * </pre>
      *
      * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
@@ -18224,7 +18233,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Sortition seed of the block.
+     * The sortition seed of the block.
      * </pre>
      *
      * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
@@ -18249,7 +18258,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object proposerAddress_;
     /**
      * <pre>
-     * Address of the proposer of the block.
+     * The address of the proposer of the block.
      * </pre>
      *
      * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
@@ -18270,7 +18279,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Address of the proposer of the block.
+     * The address of the proposer of the block.
      * </pre>
      *
      * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
@@ -18701,7 +18710,7 @@ public final class BlockchainOuterClass {
       private int version_ ;
       /**
        * <pre>
-       * Block version.
+       * The version of the block.
        * </pre>
        *
        * <code>int32 version = 1 [json_name = "version"];</code>
@@ -18713,7 +18722,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block version.
+       * The version of the block.
        * </pre>
        *
        * <code>int32 version = 1 [json_name = "version"];</code>
@@ -18728,7 +18737,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Block version.
+       * The version of the block.
        * </pre>
        *
        * <code>int32 version = 1 [json_name = "version"];</code>
@@ -18744,7 +18753,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object prevBlockHash_ = "";
       /**
        * <pre>
-       * Hash of the previous block.
+       * The hash of the previous block.
        * </pre>
        *
        * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
@@ -18764,7 +18773,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the previous block.
+       * The hash of the previous block.
        * </pre>
        *
        * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
@@ -18785,7 +18794,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the previous block.
+       * The hash of the previous block.
        * </pre>
        *
        * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
@@ -18804,7 +18813,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the previous block.
+       * The hash of the previous block.
        * </pre>
        *
        * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
@@ -18818,7 +18827,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the previous block.
+       * The hash of the previous block.
        * </pre>
        *
        * <code>string prev_block_hash = 2 [json_name = "prevBlockHash"];</code>
@@ -18840,7 +18849,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object stateRoot_ = "";
       /**
        * <pre>
-       * State root of the block.
+       * The state root hash of the blockchain.
        * </pre>
        *
        * <code>string state_root = 3 [json_name = "stateRoot"];</code>
@@ -18860,7 +18869,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * State root of the block.
+       * The state root hash of the blockchain.
        * </pre>
        *
        * <code>string state_root = 3 [json_name = "stateRoot"];</code>
@@ -18881,7 +18890,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * State root of the block.
+       * The state root hash of the blockchain.
        * </pre>
        *
        * <code>string state_root = 3 [json_name = "stateRoot"];</code>
@@ -18900,7 +18909,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * State root of the block.
+       * The state root hash of the blockchain.
        * </pre>
        *
        * <code>string state_root = 3 [json_name = "stateRoot"];</code>
@@ -18914,7 +18923,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * State root of the block.
+       * The state root hash of the blockchain.
        * </pre>
        *
        * <code>string state_root = 3 [json_name = "stateRoot"];</code>
@@ -18936,7 +18945,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object sortitionSeed_ = "";
       /**
        * <pre>
-       * Sortition seed of the block.
+       * The sortition seed of the block.
        * </pre>
        *
        * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
@@ -18956,7 +18965,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Sortition seed of the block.
+       * The sortition seed of the block.
        * </pre>
        *
        * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
@@ -18977,7 +18986,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Sortition seed of the block.
+       * The sortition seed of the block.
        * </pre>
        *
        * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
@@ -18996,7 +19005,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Sortition seed of the block.
+       * The sortition seed of the block.
        * </pre>
        *
        * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
@@ -19010,7 +19019,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Sortition seed of the block.
+       * The sortition seed of the block.
        * </pre>
        *
        * <code>string sortition_seed = 4 [json_name = "sortitionSeed"];</code>
@@ -19032,7 +19041,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object proposerAddress_ = "";
       /**
        * <pre>
-       * Address of the proposer of the block.
+       * The address of the proposer of the block.
        * </pre>
        *
        * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
@@ -19052,7 +19061,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the proposer of the block.
+       * The address of the proposer of the block.
        * </pre>
        *
        * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
@@ -19073,7 +19082,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the proposer of the block.
+       * The address of the proposer of the block.
        * </pre>
        *
        * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
@@ -19092,7 +19101,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the proposer of the block.
+       * The address of the proposer of the block.
        * </pre>
        *
        * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
@@ -19106,7 +19115,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the proposer of the block.
+       * The address of the proposer of the block.
        * </pre>
        *
        * <code>string proposer_address = 5 [json_name = "proposerAddress"];</code>
@@ -19194,7 +19203,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Hash of the certificate.
+     * The hash of the certificate.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -19203,7 +19212,7 @@ public final class BlockchainOuterClass {
     java.lang.String getHash();
     /**
      * <pre>
-     * Hash of the certificate.
+     * The hash of the certificate.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -19214,7 +19223,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Round of the certificate.
+     * The round of the certificate.
      * </pre>
      *
      * <code>int32 round = 2 [json_name = "round"];</code>
@@ -19282,7 +19291,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Certificate signature.
+     * The signature of the certificate.
      * </pre>
      *
      * <code>string signature = 5 [json_name = "signature"];</code>
@@ -19291,7 +19300,7 @@ public final class BlockchainOuterClass {
     java.lang.String getSignature();
     /**
      * <pre>
-     * Certificate signature.
+     * The signature of the certificate.
      * </pre>
      *
      * <code>string signature = 5 [json_name = "signature"];</code>
@@ -19352,7 +19361,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object hash_;
     /**
      * <pre>
-     * Hash of the certificate.
+     * The hash of the certificate.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -19373,7 +19382,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Hash of the certificate.
+     * The hash of the certificate.
      * </pre>
      *
      * <code>string hash = 1 [json_name = "hash"];</code>
@@ -19398,7 +19407,7 @@ public final class BlockchainOuterClass {
     private int round_;
     /**
      * <pre>
-     * Round of the certificate.
+     * The round of the certificate.
      * </pre>
      *
      * <code>int32 round = 2 [json_name = "round"];</code>
@@ -19493,7 +19502,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object signature_;
     /**
      * <pre>
-     * Certificate signature.
+     * The signature of the certificate.
      * </pre>
      *
      * <code>string signature = 5 [json_name = "signature"];</code>
@@ -19514,7 +19523,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Certificate signature.
+     * The signature of the certificate.
      * </pre>
      *
      * <code>string signature = 5 [json_name = "signature"];</code>
@@ -20024,7 +20033,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object hash_ = "";
       /**
        * <pre>
-       * Hash of the certificate.
+       * The hash of the certificate.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -20044,7 +20053,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the certificate.
+       * The hash of the certificate.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -20065,7 +20074,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the certificate.
+       * The hash of the certificate.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -20084,7 +20093,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the certificate.
+       * The hash of the certificate.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -20098,7 +20107,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the certificate.
+       * The hash of the certificate.
        * </pre>
        *
        * <code>string hash = 1 [json_name = "hash"];</code>
@@ -20120,7 +20129,7 @@ public final class BlockchainOuterClass {
       private int round_ ;
       /**
        * <pre>
-       * Round of the certificate.
+       * The round of the certificate.
        * </pre>
        *
        * <code>int32 round = 2 [json_name = "round"];</code>
@@ -20132,7 +20141,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Round of the certificate.
+       * The round of the certificate.
        * </pre>
        *
        * <code>int32 round = 2 [json_name = "round"];</code>
@@ -20147,7 +20156,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Round of the certificate.
+       * The round of the certificate.
        * </pre>
        *
        * <code>int32 round = 2 [json_name = "round"];</code>
@@ -20377,7 +20386,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object signature_ = "";
       /**
        * <pre>
-       * Certificate signature.
+       * The signature of the certificate.
        * </pre>
        *
        * <code>string signature = 5 [json_name = "signature"];</code>
@@ -20397,7 +20406,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Certificate signature.
+       * The signature of the certificate.
        * </pre>
        *
        * <code>string signature = 5 [json_name = "signature"];</code>
@@ -20418,7 +20427,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Certificate signature.
+       * The signature of the certificate.
        * </pre>
        *
        * <code>string signature = 5 [json_name = "signature"];</code>
@@ -20437,7 +20446,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Certificate signature.
+       * The signature of the certificate.
        * </pre>
        *
        * <code>string signature = 5 [json_name = "signature"];</code>
@@ -20451,7 +20460,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Certificate signature.
+       * The signature of the certificate.
        * </pre>
        *
        * <code>string signature = 5 [json_name = "signature"];</code>
@@ -20539,7 +20548,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Type of the vote.
+     * The type of the vote.
      * </pre>
      *
      * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
@@ -20548,7 +20557,7 @@ public final class BlockchainOuterClass {
     int getTypeValue();
     /**
      * <pre>
-     * Type of the vote.
+     * The type of the vote.
      * </pre>
      *
      * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
@@ -20558,7 +20567,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Voter's address.
+     * The address of the voter.
      * </pre>
      *
      * <code>string voter = 2 [json_name = "voter"];</code>
@@ -20567,7 +20576,7 @@ public final class BlockchainOuterClass {
     java.lang.String getVoter();
     /**
      * <pre>
-     * Voter's address.
+     * The address of the voter.
      * </pre>
      *
      * <code>string voter = 2 [json_name = "voter"];</code>
@@ -20578,7 +20587,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Hash of the block being voted on.
+     * The hash of the block being voted on.
      * </pre>
      *
      * <code>string block_hash = 3 [json_name = "blockHash"];</code>
@@ -20587,7 +20596,7 @@ public final class BlockchainOuterClass {
     java.lang.String getBlockHash();
     /**
      * <pre>
-     * Hash of the block being voted on.
+     * The hash of the block being voted on.
      * </pre>
      *
      * <code>string block_hash = 3 [json_name = "blockHash"];</code>
@@ -20598,7 +20607,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Round of the vote.
+     * The consensus round of the vote.
      * </pre>
      *
      * <code>int32 round = 4 [json_name = "round"];</code>
@@ -20608,7 +20617,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Consensus round of the vote.
+     * The change-proposer round of the vote.
      * </pre>
      *
      * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
@@ -20618,7 +20627,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Consensus value of the vote.
+     * The change-proposer value of the vote.
      * </pre>
      *
      * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
@@ -20677,7 +20686,7 @@ public final class BlockchainOuterClass {
     private int type_;
     /**
      * <pre>
-     * Type of the vote.
+     * The type of the vote.
      * </pre>
      *
      * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
@@ -20688,7 +20697,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Type of the vote.
+     * The type of the vote.
      * </pre>
      *
      * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
@@ -20704,7 +20713,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object voter_;
     /**
      * <pre>
-     * Voter's address.
+     * The address of the voter.
      * </pre>
      *
      * <code>string voter = 2 [json_name = "voter"];</code>
@@ -20725,7 +20734,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Voter's address.
+     * The address of the voter.
      * </pre>
      *
      * <code>string voter = 2 [json_name = "voter"];</code>
@@ -20750,7 +20759,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object blockHash_;
     /**
      * <pre>
-     * Hash of the block being voted on.
+     * The hash of the block being voted on.
      * </pre>
      *
      * <code>string block_hash = 3 [json_name = "blockHash"];</code>
@@ -20771,7 +20780,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Hash of the block being voted on.
+     * The hash of the block being voted on.
      * </pre>
      *
      * <code>string block_hash = 3 [json_name = "blockHash"];</code>
@@ -20796,7 +20805,7 @@ public final class BlockchainOuterClass {
     private int round_;
     /**
      * <pre>
-     * Round of the vote.
+     * The consensus round of the vote.
      * </pre>
      *
      * <code>int32 round = 4 [json_name = "round"];</code>
@@ -20811,7 +20820,7 @@ public final class BlockchainOuterClass {
     private int cpRound_;
     /**
      * <pre>
-     * Consensus round of the vote.
+     * The change-proposer round of the vote.
      * </pre>
      *
      * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
@@ -20826,7 +20835,7 @@ public final class BlockchainOuterClass {
     private int cpValue_;
     /**
      * <pre>
-     * Consensus value of the vote.
+     * The change-proposer value of the vote.
      * </pre>
      *
      * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
@@ -21268,7 +21277,7 @@ public final class BlockchainOuterClass {
       private int type_ = 0;
       /**
        * <pre>
-       * Type of the vote.
+       * The type of the vote.
        * </pre>
        *
        * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
@@ -21279,7 +21288,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Type of the vote.
+       * The type of the vote.
        * </pre>
        *
        * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
@@ -21294,7 +21303,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Type of the vote.
+       * The type of the vote.
        * </pre>
        *
        * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
@@ -21308,7 +21317,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Type of the vote.
+       * The type of the vote.
        * </pre>
        *
        * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
@@ -21326,7 +21335,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Type of the vote.
+       * The type of the vote.
        * </pre>
        *
        * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
@@ -21342,7 +21351,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object voter_ = "";
       /**
        * <pre>
-       * Voter's address.
+       * The address of the voter.
        * </pre>
        *
        * <code>string voter = 2 [json_name = "voter"];</code>
@@ -21362,7 +21371,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Voter's address.
+       * The address of the voter.
        * </pre>
        *
        * <code>string voter = 2 [json_name = "voter"];</code>
@@ -21383,7 +21392,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Voter's address.
+       * The address of the voter.
        * </pre>
        *
        * <code>string voter = 2 [json_name = "voter"];</code>
@@ -21402,7 +21411,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Voter's address.
+       * The address of the voter.
        * </pre>
        *
        * <code>string voter = 2 [json_name = "voter"];</code>
@@ -21416,7 +21425,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Voter's address.
+       * The address of the voter.
        * </pre>
        *
        * <code>string voter = 2 [json_name = "voter"];</code>
@@ -21438,7 +21447,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object blockHash_ = "";
       /**
        * <pre>
-       * Hash of the block being voted on.
+       * The hash of the block being voted on.
        * </pre>
        *
        * <code>string block_hash = 3 [json_name = "blockHash"];</code>
@@ -21458,7 +21467,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block being voted on.
+       * The hash of the block being voted on.
        * </pre>
        *
        * <code>string block_hash = 3 [json_name = "blockHash"];</code>
@@ -21479,7 +21488,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block being voted on.
+       * The hash of the block being voted on.
        * </pre>
        *
        * <code>string block_hash = 3 [json_name = "blockHash"];</code>
@@ -21498,7 +21507,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block being voted on.
+       * The hash of the block being voted on.
        * </pre>
        *
        * <code>string block_hash = 3 [json_name = "blockHash"];</code>
@@ -21512,7 +21521,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Hash of the block being voted on.
+       * The hash of the block being voted on.
        * </pre>
        *
        * <code>string block_hash = 3 [json_name = "blockHash"];</code>
@@ -21534,7 +21543,7 @@ public final class BlockchainOuterClass {
       private int round_ ;
       /**
        * <pre>
-       * Round of the vote.
+       * The consensus round of the vote.
        * </pre>
        *
        * <code>int32 round = 4 [json_name = "round"];</code>
@@ -21546,7 +21555,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Round of the vote.
+       * The consensus round of the vote.
        * </pre>
        *
        * <code>int32 round = 4 [json_name = "round"];</code>
@@ -21561,7 +21570,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Round of the vote.
+       * The consensus round of the vote.
        * </pre>
        *
        * <code>int32 round = 4 [json_name = "round"];</code>
@@ -21577,7 +21586,7 @@ public final class BlockchainOuterClass {
       private int cpRound_ ;
       /**
        * <pre>
-       * Consensus round of the vote.
+       * The change-proposer round of the vote.
        * </pre>
        *
        * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
@@ -21589,7 +21598,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Consensus round of the vote.
+       * The change-proposer round of the vote.
        * </pre>
        *
        * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
@@ -21604,7 +21613,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Consensus round of the vote.
+       * The change-proposer round of the vote.
        * </pre>
        *
        * <code>int32 cp_round = 5 [json_name = "cpRound"];</code>
@@ -21620,7 +21629,7 @@ public final class BlockchainOuterClass {
       private int cpValue_ ;
       /**
        * <pre>
-       * Consensus value of the vote.
+       * The change-proposer value of the vote.
        * </pre>
        *
        * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
@@ -21632,7 +21641,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Consensus value of the vote.
+       * The change-proposer value of the vote.
        * </pre>
        *
        * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
@@ -21647,7 +21656,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Consensus value of the vote.
+       * The change-proposer value of the vote.
        * </pre>
        *
        * <code>int32 cp_value = 6 [json_name = "cpValue"];</code>
@@ -21729,7 +21738,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Address of the consensus instance.
+     * The address of the consensus instance.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -21738,7 +21747,7 @@ public final class BlockchainOuterClass {
     java.lang.String getAddress();
     /**
      * <pre>
-     * Address of the consensus instance.
+     * The address of the consensus instance.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -21749,17 +21758,18 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Whether the consensus instance is active.
+     * Indicates whether the consensus instance is active and part of the
+     * committee.
      * </pre>
      *
-     * <code>bool Active = 2 [json_name = "Active"];</code>
+     * <code>bool active = 2 [json_name = "active"];</code>
      * @return The active.
      */
     boolean getActive();
 
     /**
      * <pre>
-     * Height of the consensus instance.
+     * The height of the consensus instance.
      * </pre>
      *
      * <code>uint32 height = 3 [json_name = "height"];</code>
@@ -21769,7 +21779,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * Round of the consensus instance.
+     * The round of the consensus instance.
      * </pre>
      *
      * <code>int32 round = 4 [json_name = "round"];</code>
@@ -21823,7 +21833,7 @@ public final class BlockchainOuterClass {
   }
   /**
    * <pre>
-   * Message containing information about consensus.
+   * Message containing information about a consensus instance.
    * </pre>
    *
    * Protobuf type {@code pactus.ConsensusInfo}
@@ -21871,7 +21881,7 @@ public final class BlockchainOuterClass {
     private volatile java.lang.Object address_;
     /**
      * <pre>
-     * Address of the consensus instance.
+     * The address of the consensus instance.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -21892,7 +21902,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Address of the consensus instance.
+     * The address of the consensus instance.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -21917,10 +21927,11 @@ public final class BlockchainOuterClass {
     private boolean active_;
     /**
      * <pre>
-     * Whether the consensus instance is active.
+     * Indicates whether the consensus instance is active and part of the
+     * committee.
      * </pre>
      *
-     * <code>bool Active = 2 [json_name = "Active"];</code>
+     * <code>bool active = 2 [json_name = "active"];</code>
      * @return The active.
      */
     @java.lang.Override
@@ -21932,7 +21943,7 @@ public final class BlockchainOuterClass {
     private int height_;
     /**
      * <pre>
-     * Height of the consensus instance.
+     * The height of the consensus instance.
      * </pre>
      *
      * <code>uint32 height = 3 [json_name = "height"];</code>
@@ -21947,7 +21958,7 @@ public final class BlockchainOuterClass {
     private int round_;
     /**
      * <pre>
-     * Round of the consensus instance.
+     * The round of the consensus instance.
      * </pre>
      *
      * <code>int32 round = 4 [json_name = "round"];</code>
@@ -22221,7 +22232,7 @@ public final class BlockchainOuterClass {
     }
     /**
      * <pre>
-     * Message containing information about consensus.
+     * Message containing information about a consensus instance.
      * </pre>
      *
      * Protobuf type {@code pactus.ConsensusInfo}
@@ -22477,7 +22488,7 @@ public final class BlockchainOuterClass {
       private java.lang.Object address_ = "";
       /**
        * <pre>
-       * Address of the consensus instance.
+       * The address of the consensus instance.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -22497,7 +22508,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the consensus instance.
+       * The address of the consensus instance.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -22518,7 +22529,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the consensus instance.
+       * The address of the consensus instance.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -22537,7 +22548,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the consensus instance.
+       * The address of the consensus instance.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -22551,7 +22562,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Address of the consensus instance.
+       * The address of the consensus instance.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -22573,10 +22584,11 @@ public final class BlockchainOuterClass {
       private boolean active_ ;
       /**
        * <pre>
-       * Whether the consensus instance is active.
+       * Indicates whether the consensus instance is active and part of the
+       * committee.
        * </pre>
        *
-       * <code>bool Active = 2 [json_name = "Active"];</code>
+       * <code>bool active = 2 [json_name = "active"];</code>
        * @return The active.
        */
       @java.lang.Override
@@ -22585,10 +22597,11 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Whether the consensus instance is active.
+       * Indicates whether the consensus instance is active and part of the
+       * committee.
        * </pre>
        *
-       * <code>bool Active = 2 [json_name = "Active"];</code>
+       * <code>bool active = 2 [json_name = "active"];</code>
        * @param value The active to set.
        * @return This builder for chaining.
        */
@@ -22600,10 +22613,11 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Whether the consensus instance is active.
+       * Indicates whether the consensus instance is active and part of the
+       * committee.
        * </pre>
        *
-       * <code>bool Active = 2 [json_name = "Active"];</code>
+       * <code>bool active = 2 [json_name = "active"];</code>
        * @return This builder for chaining.
        */
       public Builder clearActive() {
@@ -22616,7 +22630,7 @@ public final class BlockchainOuterClass {
       private int height_ ;
       /**
        * <pre>
-       * Height of the consensus instance.
+       * The height of the consensus instance.
        * </pre>
        *
        * <code>uint32 height = 3 [json_name = "height"];</code>
@@ -22628,7 +22642,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Height of the consensus instance.
+       * The height of the consensus instance.
        * </pre>
        *
        * <code>uint32 height = 3 [json_name = "height"];</code>
@@ -22643,7 +22657,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Height of the consensus instance.
+       * The height of the consensus instance.
        * </pre>
        *
        * <code>uint32 height = 3 [json_name = "height"];</code>
@@ -22659,7 +22673,7 @@ public final class BlockchainOuterClass {
       private int round_ ;
       /**
        * <pre>
-       * Round of the consensus instance.
+       * The round of the consensus instance.
        * </pre>
        *
        * <code>int32 round = 4 [json_name = "round"];</code>
@@ -22671,7 +22685,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Round of the consensus instance.
+       * The round of the consensus instance.
        * </pre>
        *
        * <code>int32 round = 4 [json_name = "round"];</code>
@@ -22686,7 +22700,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * Round of the consensus instance.
+       * The round of the consensus instance.
        * </pre>
        *
        * <code>int32 round = 4 [json_name = "round"];</code>
@@ -23287,7 +23301,7 @@ public final class BlockchainOuterClass {
       "ash\030\003 \001(\tR\tblockHash\022\024\n\005round\030\004 \001(\005R\005rou" +
       "nd\022\031\n\010cp_round\030\005 \001(\005R\007cpRound\022\031\n\010cp_valu" +
       "e\030\006 \001(\005R\007cpValue\"\227\001\n\rConsensusInfo\022\030\n\007ad" +
-      "dress\030\001 \001(\tR\007address\022\026\n\006Active\030\002 \001(\010R\006Ac" +
+      "dress\030\001 \001(\tR\007address\022\026\n\006active\030\002 \001(\010R\006ac" +
       "tive\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005round\030\004 " +
       "\001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pactus.VoteI" +
       "nfoR\005votes*H\n\016BlockVerbosity\022\016\n\nBLOCK_DA" +

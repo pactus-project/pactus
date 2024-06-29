@@ -141,7 +141,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * The string representing the address.
+     * The address string.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -150,7 +150,7 @@ public final class WalletOuterClass {
     java.lang.String getAddress();
     /**
      * <pre>
-     * The string representing the address.
+     * The address string.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -161,7 +161,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * The public key that the address is derived from.
+     * The public key associated with the address.
      * </pre>
      *
      * <code>string public_key = 2 [json_name = "publicKey"];</code>
@@ -170,7 +170,7 @@ public final class WalletOuterClass {
     java.lang.String getPublicKey();
     /**
      * <pre>
-     * The public key that the address is derived from.
+     * The public key associated with the address.
      * </pre>
      *
      * <code>string public_key = 2 [json_name = "publicKey"];</code>
@@ -181,7 +181,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * The label that is associated with the address.
+     * A label associated with the address.
      * </pre>
      *
      * <code>string label = 3 [json_name = "label"];</code>
@@ -190,7 +190,7 @@ public final class WalletOuterClass {
     java.lang.String getLabel();
     /**
      * <pre>
-     * The label that is associated with the address.
+     * A label associated with the address.
      * </pre>
      *
      * <code>string label = 3 [json_name = "label"];</code>
@@ -221,7 +221,7 @@ public final class WalletOuterClass {
   }
   /**
    * <pre>
-   * Message of address information.
+   * Message containing address information.
    * </pre>
    *
    * Protobuf type {@code pactus.AddressInfo}
@@ -271,7 +271,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object address_;
     /**
      * <pre>
-     * The string representing the address.
+     * The address string.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -292,7 +292,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * The string representing the address.
+     * The address string.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -317,7 +317,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object publicKey_;
     /**
      * <pre>
-     * The public key that the address is derived from.
+     * The public key associated with the address.
      * </pre>
      *
      * <code>string public_key = 2 [json_name = "publicKey"];</code>
@@ -338,7 +338,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * The public key that the address is derived from.
+     * The public key associated with the address.
      * </pre>
      *
      * <code>string public_key = 2 [json_name = "publicKey"];</code>
@@ -363,7 +363,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object label_;
     /**
      * <pre>
-     * The label that is associated with the address.
+     * A label associated with the address.
      * </pre>
      *
      * <code>string label = 3 [json_name = "label"];</code>
@@ -384,7 +384,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * The label that is associated with the address.
+     * A label associated with the address.
      * </pre>
      *
      * <code>string label = 3 [json_name = "label"];</code>
@@ -637,7 +637,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Message of address information.
+     * Message containing address information.
      * </pre>
      *
      * Protobuf type {@code pactus.AddressInfo}
@@ -839,7 +839,7 @@ public final class WalletOuterClass {
       private java.lang.Object address_ = "";
       /**
        * <pre>
-       * The string representing the address.
+       * The address string.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -859,7 +859,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The string representing the address.
+       * The address string.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -880,7 +880,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The string representing the address.
+       * The address string.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -899,7 +899,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The string representing the address.
+       * The address string.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -913,7 +913,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The string representing the address.
+       * The address string.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -935,7 +935,7 @@ public final class WalletOuterClass {
       private java.lang.Object publicKey_ = "";
       /**
        * <pre>
-       * The public key that the address is derived from.
+       * The public key associated with the address.
        * </pre>
        *
        * <code>string public_key = 2 [json_name = "publicKey"];</code>
@@ -955,7 +955,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The public key that the address is derived from.
+       * The public key associated with the address.
        * </pre>
        *
        * <code>string public_key = 2 [json_name = "publicKey"];</code>
@@ -976,7 +976,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The public key that the address is derived from.
+       * The public key associated with the address.
        * </pre>
        *
        * <code>string public_key = 2 [json_name = "publicKey"];</code>
@@ -995,7 +995,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The public key that the address is derived from.
+       * The public key associated with the address.
        * </pre>
        *
        * <code>string public_key = 2 [json_name = "publicKey"];</code>
@@ -1009,7 +1009,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The public key that the address is derived from.
+       * The public key associated with the address.
        * </pre>
        *
        * <code>string public_key = 2 [json_name = "publicKey"];</code>
@@ -1031,7 +1031,7 @@ public final class WalletOuterClass {
       private java.lang.Object label_ = "";
       /**
        * <pre>
-       * The label that is associated with the address.
+       * A label associated with the address.
        * </pre>
        *
        * <code>string label = 3 [json_name = "label"];</code>
@@ -1051,7 +1051,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The label that is associated with the address.
+       * A label associated with the address.
        * </pre>
        *
        * <code>string label = 3 [json_name = "label"];</code>
@@ -1072,7 +1072,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The label that is associated with the address.
+       * A label associated with the address.
        * </pre>
        *
        * <code>string label = 3 [json_name = "label"];</code>
@@ -1091,7 +1091,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The label that is associated with the address.
+       * A label associated with the address.
        * </pre>
        *
        * <code>string label = 3 [json_name = "label"];</code>
@@ -1105,7 +1105,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The label that is associated with the address.
+       * A label associated with the address.
        * </pre>
        *
        * <code>string label = 3 [json_name = "label"];</code>
@@ -1289,7 +1289,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Hash of transaction.
+     * The transaction ID hash.
      * </pre>
      *
      * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -1298,7 +1298,7 @@ public final class WalletOuterClass {
     java.lang.String getTransactionId();
     /**
      * <pre>
-     * Hash of transaction.
+     * The transaction ID hash.
      * </pre>
      *
      * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -1309,7 +1309,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Transaction timestamp.
+     * The timestamp of the transaction.
      * </pre>
      *
      * <code>uint32 time = 2 [json_name = "time"];</code>
@@ -1319,7 +1319,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Type of transaction payload.
+     * The payload type of the transaction.
      * </pre>
      *
      * <code>string payload_type = 3 [json_name = "payloadType"];</code>
@@ -1328,7 +1328,7 @@ public final class WalletOuterClass {
     java.lang.String getPayloadType();
     /**
      * <pre>
-     * Type of transaction payload.
+     * The payload type of the transaction.
      * </pre>
      *
      * <code>string payload_type = 3 [json_name = "payloadType"];</code>
@@ -1339,7 +1339,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Description of transaction.
+     * A description of the transaction.
      * </pre>
      *
      * <code>string description = 4 [json_name = "description"];</code>
@@ -1348,7 +1348,7 @@ public final class WalletOuterClass {
     java.lang.String getDescription();
     /**
      * <pre>
-     * Description of transaction.
+     * A description of the transaction.
      * </pre>
      *
      * <code>string description = 4 [json_name = "description"];</code>
@@ -1359,7 +1359,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Amount of transaction.
+     * The amount involved in the transaction.
      * </pre>
      *
      * <code>int64 amount = 5 [json_name = "amount"];</code>
@@ -1369,7 +1369,7 @@ public final class WalletOuterClass {
   }
   /**
    * <pre>
-   * Message of address history information.
+   * Message containing transaction history information for an address.
    * </pre>
    *
    * Protobuf type {@code pactus.HistoryInfo}
@@ -1418,7 +1418,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object transactionId_;
     /**
      * <pre>
-     * Hash of transaction.
+     * The transaction ID hash.
      * </pre>
      *
      * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -1439,7 +1439,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Hash of transaction.
+     * The transaction ID hash.
      * </pre>
      *
      * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -1464,7 +1464,7 @@ public final class WalletOuterClass {
     private int time_;
     /**
      * <pre>
-     * Transaction timestamp.
+     * The timestamp of the transaction.
      * </pre>
      *
      * <code>uint32 time = 2 [json_name = "time"];</code>
@@ -1479,7 +1479,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object payloadType_;
     /**
      * <pre>
-     * Type of transaction payload.
+     * The payload type of the transaction.
      * </pre>
      *
      * <code>string payload_type = 3 [json_name = "payloadType"];</code>
@@ -1500,7 +1500,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Type of transaction payload.
+     * The payload type of the transaction.
      * </pre>
      *
      * <code>string payload_type = 3 [json_name = "payloadType"];</code>
@@ -1525,7 +1525,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object description_;
     /**
      * <pre>
-     * Description of transaction.
+     * A description of the transaction.
      * </pre>
      *
      * <code>string description = 4 [json_name = "description"];</code>
@@ -1546,7 +1546,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Description of transaction.
+     * A description of the transaction.
      * </pre>
      *
      * <code>string description = 4 [json_name = "description"];</code>
@@ -1571,7 +1571,7 @@ public final class WalletOuterClass {
     private long amount_;
     /**
      * <pre>
-     * Amount of transaction.
+     * The amount involved in the transaction.
      * </pre>
      *
      * <code>int64 amount = 5 [json_name = "amount"];</code>
@@ -1781,7 +1781,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Message of address history information.
+     * Message containing transaction history information for an address.
      * </pre>
      *
      * Protobuf type {@code pactus.HistoryInfo}
@@ -1993,7 +1993,7 @@ public final class WalletOuterClass {
       private java.lang.Object transactionId_ = "";
       /**
        * <pre>
-       * Hash of transaction.
+       * The transaction ID hash.
        * </pre>
        *
        * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -2013,7 +2013,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Hash of transaction.
+       * The transaction ID hash.
        * </pre>
        *
        * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -2034,7 +2034,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Hash of transaction.
+       * The transaction ID hash.
        * </pre>
        *
        * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -2053,7 +2053,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Hash of transaction.
+       * The transaction ID hash.
        * </pre>
        *
        * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -2067,7 +2067,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Hash of transaction.
+       * The transaction ID hash.
        * </pre>
        *
        * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -2089,7 +2089,7 @@ public final class WalletOuterClass {
       private int time_ ;
       /**
        * <pre>
-       * Transaction timestamp.
+       * The timestamp of the transaction.
        * </pre>
        *
        * <code>uint32 time = 2 [json_name = "time"];</code>
@@ -2101,7 +2101,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Transaction timestamp.
+       * The timestamp of the transaction.
        * </pre>
        *
        * <code>uint32 time = 2 [json_name = "time"];</code>
@@ -2116,7 +2116,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Transaction timestamp.
+       * The timestamp of the transaction.
        * </pre>
        *
        * <code>uint32 time = 2 [json_name = "time"];</code>
@@ -2132,7 +2132,7 @@ public final class WalletOuterClass {
       private java.lang.Object payloadType_ = "";
       /**
        * <pre>
-       * Type of transaction payload.
+       * The payload type of the transaction.
        * </pre>
        *
        * <code>string payload_type = 3 [json_name = "payloadType"];</code>
@@ -2152,7 +2152,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Type of transaction payload.
+       * The payload type of the transaction.
        * </pre>
        *
        * <code>string payload_type = 3 [json_name = "payloadType"];</code>
@@ -2173,7 +2173,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Type of transaction payload.
+       * The payload type of the transaction.
        * </pre>
        *
        * <code>string payload_type = 3 [json_name = "payloadType"];</code>
@@ -2192,7 +2192,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Type of transaction payload.
+       * The payload type of the transaction.
        * </pre>
        *
        * <code>string payload_type = 3 [json_name = "payloadType"];</code>
@@ -2206,7 +2206,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Type of transaction payload.
+       * The payload type of the transaction.
        * </pre>
        *
        * <code>string payload_type = 3 [json_name = "payloadType"];</code>
@@ -2228,7 +2228,7 @@ public final class WalletOuterClass {
       private java.lang.Object description_ = "";
       /**
        * <pre>
-       * Description of transaction.
+       * A description of the transaction.
        * </pre>
        *
        * <code>string description = 4 [json_name = "description"];</code>
@@ -2248,7 +2248,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Description of transaction.
+       * A description of the transaction.
        * </pre>
        *
        * <code>string description = 4 [json_name = "description"];</code>
@@ -2269,7 +2269,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Description of transaction.
+       * A description of the transaction.
        * </pre>
        *
        * <code>string description = 4 [json_name = "description"];</code>
@@ -2288,7 +2288,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Description of transaction.
+       * A description of the transaction.
        * </pre>
        *
        * <code>string description = 4 [json_name = "description"];</code>
@@ -2302,7 +2302,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Description of transaction.
+       * A description of the transaction.
        * </pre>
        *
        * <code>string description = 4 [json_name = "description"];</code>
@@ -2324,7 +2324,7 @@ public final class WalletOuterClass {
       private long amount_ ;
       /**
        * <pre>
-       * Amount of transaction.
+       * The amount involved in the transaction.
        * </pre>
        *
        * <code>int64 amount = 5 [json_name = "amount"];</code>
@@ -2336,7 +2336,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Amount of transaction.
+       * The amount involved in the transaction.
        * </pre>
        *
        * <code>int64 amount = 5 [json_name = "amount"];</code>
@@ -2351,7 +2351,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Amount of transaction.
+       * The amount involved in the transaction.
        * </pre>
        *
        * <code>int64 amount = 5 [json_name = "amount"];</code>
@@ -2433,7 +2433,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Name of the wallet.
+     * The name of the wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -2442,7 +2442,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * Name of the wallet.
+     * The name of the wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -2453,7 +2453,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Address to get the transaction history of it.
+     * The address to retrieve the transaction history for.
      * </pre>
      *
      * <code>string address = 2 [json_name = "address"];</code>
@@ -2462,7 +2462,7 @@ public final class WalletOuterClass {
     java.lang.String getAddress();
     /**
      * <pre>
-     * Address to get the transaction history of it.
+     * The address to retrieve the transaction history for.
      * </pre>
      *
      * <code>string address = 2 [json_name = "address"];</code>
@@ -2521,7 +2521,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * Name of the wallet.
+     * The name of the wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -2542,7 +2542,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Name of the wallet.
+     * The name of the wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -2567,7 +2567,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object address_;
     /**
      * <pre>
-     * Address to get the transaction history of it.
+     * The address to retrieve the transaction history for.
      * </pre>
      *
      * <code>string address = 2 [json_name = "address"];</code>
@@ -2588,7 +2588,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Address to get the transaction history of it.
+     * The address to retrieve the transaction history for.
      * </pre>
      *
      * <code>string address = 2 [json_name = "address"];</code>
@@ -2953,7 +2953,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -2973,7 +2973,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -2994,7 +2994,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -3013,7 +3013,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -3027,7 +3027,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -3049,7 +3049,7 @@ public final class WalletOuterClass {
       private java.lang.Object address_ = "";
       /**
        * <pre>
-       * Address to get the transaction history of it.
+       * The address to retrieve the transaction history for.
        * </pre>
        *
        * <code>string address = 2 [json_name = "address"];</code>
@@ -3069,7 +3069,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Address to get the transaction history of it.
+       * The address to retrieve the transaction history for.
        * </pre>
        *
        * <code>string address = 2 [json_name = "address"];</code>
@@ -3090,7 +3090,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Address to get the transaction history of it.
+       * The address to retrieve the transaction history for.
        * </pre>
        *
        * <code>string address = 2 [json_name = "address"];</code>
@@ -3109,7 +3109,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Address to get the transaction history of it.
+       * The address to retrieve the transaction history for.
        * </pre>
        *
        * <code>string address = 2 [json_name = "address"];</code>
@@ -3123,7 +3123,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Address to get the transaction history of it.
+       * The address to retrieve the transaction history for.
        * </pre>
        *
        * <code>string address = 2 [json_name = "address"];</code>
@@ -3211,7 +3211,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Array of address history and activities.
+     * Array of history information for the address.
      * </pre>
      *
      * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3220,7 +3220,7 @@ public final class WalletOuterClass {
         getHistoryInfoList();
     /**
      * <pre>
-     * Array of address history and activities.
+     * Array of history information for the address.
      * </pre>
      *
      * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3228,7 +3228,7 @@ public final class WalletOuterClass {
     pactus.wallet.WalletOuterClass.HistoryInfo getHistoryInfo(int index);
     /**
      * <pre>
-     * Array of address history and activities.
+     * Array of history information for the address.
      * </pre>
      *
      * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3236,7 +3236,7 @@ public final class WalletOuterClass {
     int getHistoryInfoCount();
     /**
      * <pre>
-     * Array of address history and activities.
+     * Array of history information for the address.
      * </pre>
      *
      * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3245,7 +3245,7 @@ public final class WalletOuterClass {
         getHistoryInfoOrBuilderList();
     /**
      * <pre>
-     * Array of address history and activities.
+     * Array of history information for the address.
      * </pre>
      *
      * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3255,7 +3255,7 @@ public final class WalletOuterClass {
   }
   /**
    * <pre>
-   * Response message to get an address transaction history.
+   * Response message containing the address transaction history.
    * </pre>
    *
    * Protobuf type {@code pactus.GetAddressHistoryResponse}
@@ -3302,7 +3302,7 @@ public final class WalletOuterClass {
     private java.util.List<pactus.wallet.WalletOuterClass.HistoryInfo> historyInfo_;
     /**
      * <pre>
-     * Array of address history and activities.
+     * Array of history information for the address.
      * </pre>
      *
      * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3313,7 +3313,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Array of address history and activities.
+     * Array of history information for the address.
      * </pre>
      *
      * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3325,7 +3325,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Array of address history and activities.
+     * Array of history information for the address.
      * </pre>
      *
      * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3336,7 +3336,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Array of address history and activities.
+     * Array of history information for the address.
      * </pre>
      *
      * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3347,7 +3347,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Array of address history and activities.
+     * Array of history information for the address.
      * </pre>
      *
      * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3517,7 +3517,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Response message to get an address transaction history.
+     * Response message containing the address transaction history.
      * </pre>
      *
      * Protobuf type {@code pactus.GetAddressHistoryResponse}
@@ -3739,7 +3739,7 @@ public final class WalletOuterClass {
 
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3753,7 +3753,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3767,7 +3767,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3781,7 +3781,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3802,7 +3802,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3820,7 +3820,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3840,7 +3840,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3861,7 +3861,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3879,7 +3879,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3897,7 +3897,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3916,7 +3916,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3933,7 +3933,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3950,7 +3950,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3961,7 +3961,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3975,7 +3975,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -3990,7 +3990,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -4001,7 +4001,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -4013,7 +4013,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Array of address history and activities.
+       * Array of history information for the address.
        * </pre>
        *
        * <code>repeated .pactus.HistoryInfo history_info = 1 [json_name = "historyInfo"];</code>
@@ -4106,7 +4106,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * The name of the wallet for which the new address is requested.
+     * The name of the wallet to generate a new address.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -4115,7 +4115,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * The name of the wallet for which the new address is requested.
+     * The name of the wallet to generate a new address.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -4126,7 +4126,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * The type of the new address.
+     * The type of address to generate.
      * </pre>
      *
      * <code>.pactus.AddressType address_type = 2 [json_name = "addressType"];</code>
@@ -4135,7 +4135,7 @@ public final class WalletOuterClass {
     int getAddressTypeValue();
     /**
      * <pre>
-     * The type of the new address.
+     * The type of address to generate.
      * </pre>
      *
      * <code>.pactus.AddressType address_type = 2 [json_name = "addressType"];</code>
@@ -4145,7 +4145,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * The label for the new address.
+     * A label for the new address.
      * </pre>
      *
      * <code>string label = 3 [json_name = "label"];</code>
@@ -4154,7 +4154,7 @@ public final class WalletOuterClass {
     java.lang.String getLabel();
     /**
      * <pre>
-     * The label for the new address.
+     * A label for the new address.
      * </pre>
      *
      * <code>string label = 3 [json_name = "label"];</code>
@@ -4214,7 +4214,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * The name of the wallet for which the new address is requested.
+     * The name of the wallet to generate a new address.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -4235,7 +4235,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * The name of the wallet for which the new address is requested.
+     * The name of the wallet to generate a new address.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -4260,7 +4260,7 @@ public final class WalletOuterClass {
     private int addressType_;
     /**
      * <pre>
-     * The type of the new address.
+     * The type of address to generate.
      * </pre>
      *
      * <code>.pactus.AddressType address_type = 2 [json_name = "addressType"];</code>
@@ -4271,7 +4271,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * The type of the new address.
+     * The type of address to generate.
      * </pre>
      *
      * <code>.pactus.AddressType address_type = 2 [json_name = "addressType"];</code>
@@ -4287,7 +4287,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object label_;
     /**
      * <pre>
-     * The label for the new address.
+     * A label for the new address.
      * </pre>
      *
      * <code>string label = 3 [json_name = "label"];</code>
@@ -4308,7 +4308,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * The label for the new address.
+     * A label for the new address.
      * </pre>
      *
      * <code>string label = 3 [json_name = "label"];</code>
@@ -4694,7 +4694,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * The name of the wallet for which the new address is requested.
+       * The name of the wallet to generate a new address.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -4714,7 +4714,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The name of the wallet for which the new address is requested.
+       * The name of the wallet to generate a new address.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -4735,7 +4735,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The name of the wallet for which the new address is requested.
+       * The name of the wallet to generate a new address.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -4754,7 +4754,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The name of the wallet for which the new address is requested.
+       * The name of the wallet to generate a new address.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -4768,7 +4768,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The name of the wallet for which the new address is requested.
+       * The name of the wallet to generate a new address.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -4790,7 +4790,7 @@ public final class WalletOuterClass {
       private int addressType_ = 0;
       /**
        * <pre>
-       * The type of the new address.
+       * The type of address to generate.
        * </pre>
        *
        * <code>.pactus.AddressType address_type = 2 [json_name = "addressType"];</code>
@@ -4801,7 +4801,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The type of the new address.
+       * The type of address to generate.
        * </pre>
        *
        * <code>.pactus.AddressType address_type = 2 [json_name = "addressType"];</code>
@@ -4816,7 +4816,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The type of the new address.
+       * The type of address to generate.
        * </pre>
        *
        * <code>.pactus.AddressType address_type = 2 [json_name = "addressType"];</code>
@@ -4830,7 +4830,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The type of the new address.
+       * The type of address to generate.
        * </pre>
        *
        * <code>.pactus.AddressType address_type = 2 [json_name = "addressType"];</code>
@@ -4848,7 +4848,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The type of the new address.
+       * The type of address to generate.
        * </pre>
        *
        * <code>.pactus.AddressType address_type = 2 [json_name = "addressType"];</code>
@@ -4864,7 +4864,7 @@ public final class WalletOuterClass {
       private java.lang.Object label_ = "";
       /**
        * <pre>
-       * The label for the new address.
+       * A label for the new address.
        * </pre>
        *
        * <code>string label = 3 [json_name = "label"];</code>
@@ -4884,7 +4884,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The label for the new address.
+       * A label for the new address.
        * </pre>
        *
        * <code>string label = 3 [json_name = "label"];</code>
@@ -4905,7 +4905,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The label for the new address.
+       * A label for the new address.
        * </pre>
        *
        * <code>string label = 3 [json_name = "label"];</code>
@@ -4924,7 +4924,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The label for the new address.
+       * A label for the new address.
        * </pre>
        *
        * <code>string label = 3 [json_name = "label"];</code>
@@ -4938,7 +4938,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The label for the new address.
+       * A label for the new address.
        * </pre>
        *
        * <code>string label = 3 [json_name = "label"];</code>
@@ -5026,7 +5026,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * The name of the wallet from which the address is created.
+     * The name of the wallet from which the address is generated.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -5035,7 +5035,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * The name of the wallet from which the address is created.
+     * The name of the wallet from which the address is generated.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -5046,7 +5046,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Information about the new address.
+     * Information about the newly generated address.
      * </pre>
      *
      * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5055,7 +5055,7 @@ public final class WalletOuterClass {
     boolean hasAddressInfo();
     /**
      * <pre>
-     * Information about the new address.
+     * Information about the newly generated address.
      * </pre>
      *
      * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5064,7 +5064,7 @@ public final class WalletOuterClass {
     pactus.wallet.WalletOuterClass.AddressInfo getAddressInfo();
     /**
      * <pre>
-     * Information about the new address.
+     * Information about the newly generated address.
      * </pre>
      *
      * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5073,7 +5073,7 @@ public final class WalletOuterClass {
   }
   /**
    * <pre>
-   * Response message containing the new address.
+   * Response message containing the newly generated address.
    * </pre>
    *
    * Protobuf type {@code pactus.GetNewAddressResponse}
@@ -5120,7 +5120,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * The name of the wallet from which the address is created.
+     * The name of the wallet from which the address is generated.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -5141,7 +5141,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * The name of the wallet from which the address is created.
+     * The name of the wallet from which the address is generated.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -5166,7 +5166,7 @@ public final class WalletOuterClass {
     private pactus.wallet.WalletOuterClass.AddressInfo addressInfo_;
     /**
      * <pre>
-     * Information about the new address.
+     * Information about the newly generated address.
      * </pre>
      *
      * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5178,7 +5178,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Information about the new address.
+     * Information about the newly generated address.
      * </pre>
      *
      * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5190,7 +5190,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Information about the new address.
+     * Information about the newly generated address.
      * </pre>
      *
      * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5372,7 +5372,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Response message containing the new address.
+     * Response message containing the newly generated address.
      * </pre>
      *
      * Protobuf type {@code pactus.GetNewAddressResponse}
@@ -5559,7 +5559,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * The name of the wallet from which the address is created.
+       * The name of the wallet from which the address is generated.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -5579,7 +5579,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The name of the wallet from which the address is created.
+       * The name of the wallet from which the address is generated.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -5600,7 +5600,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The name of the wallet from which the address is created.
+       * The name of the wallet from which the address is generated.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -5619,7 +5619,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The name of the wallet from which the address is created.
+       * The name of the wallet from which the address is generated.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -5633,7 +5633,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * The name of the wallet from which the address is created.
+       * The name of the wallet from which the address is generated.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -5657,7 +5657,7 @@ public final class WalletOuterClass {
           pactus.wallet.WalletOuterClass.AddressInfo, pactus.wallet.WalletOuterClass.AddressInfo.Builder, pactus.wallet.WalletOuterClass.AddressInfoOrBuilder> addressInfoBuilder_;
       /**
        * <pre>
-       * Information about the new address.
+       * Information about the newly generated address.
        * </pre>
        *
        * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5668,7 +5668,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Information about the new address.
+       * Information about the newly generated address.
        * </pre>
        *
        * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5683,7 +5683,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Information about the new address.
+       * Information about the newly generated address.
        * </pre>
        *
        * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5703,7 +5703,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Information about the new address.
+       * Information about the newly generated address.
        * </pre>
        *
        * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5721,7 +5721,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Information about the new address.
+       * Information about the newly generated address.
        * </pre>
        *
        * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5743,7 +5743,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Information about the new address.
+       * Information about the newly generated address.
        * </pre>
        *
        * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5761,7 +5761,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Information about the new address.
+       * Information about the newly generated address.
        * </pre>
        *
        * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5773,7 +5773,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Information about the new address.
+       * Information about the newly generated address.
        * </pre>
        *
        * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5788,7 +5788,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Information about the new address.
+       * Information about the newly generated address.
        * </pre>
        *
        * <code>.pactus.AddressInfo address_info = 2 [json_name = "addressInfo"];</code>
@@ -5876,7 +5876,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Name of the wallet to restore.
+     * The name of the wallet to restore.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -5885,7 +5885,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * Name of the wallet to restore.
+     * The name of the wallet to restore.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -5896,7 +5896,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Menomic for wallet recovery.
+     * The mnemonic for wallet recovery.
      * </pre>
      *
      * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -5905,7 +5905,7 @@ public final class WalletOuterClass {
     java.lang.String getMnemonic();
     /**
      * <pre>
-     * Menomic for wallet recovery.
+     * The mnemonic for wallet recovery.
      * </pre>
      *
      * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -5916,7 +5916,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Password for securing the wallet.
+     * The password for securing the wallet.
      * </pre>
      *
      * <code>string password = 3 [json_name = "password"];</code>
@@ -5925,7 +5925,7 @@ public final class WalletOuterClass {
     java.lang.String getPassword();
     /**
      * <pre>
-     * Password for securing the wallet.
+     * The password for securing the wallet.
      * </pre>
      *
      * <code>string password = 3 [json_name = "password"];</code>
@@ -5985,7 +5985,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * Name of the wallet to restore.
+     * The name of the wallet to restore.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -6006,7 +6006,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Name of the wallet to restore.
+     * The name of the wallet to restore.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -6031,7 +6031,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object mnemonic_;
     /**
      * <pre>
-     * Menomic for wallet recovery.
+     * The mnemonic for wallet recovery.
      * </pre>
      *
      * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -6052,7 +6052,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Menomic for wallet recovery.
+     * The mnemonic for wallet recovery.
      * </pre>
      *
      * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -6077,7 +6077,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object password_;
     /**
      * <pre>
-     * Password for securing the wallet.
+     * The password for securing the wallet.
      * </pre>
      *
      * <code>string password = 3 [json_name = "password"];</code>
@@ -6098,7 +6098,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Password for securing the wallet.
+     * The password for securing the wallet.
      * </pre>
      *
      * <code>string password = 3 [json_name = "password"];</code>
@@ -6485,7 +6485,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * Name of the wallet to restore.
+       * The name of the wallet to restore.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -6505,7 +6505,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet to restore.
+       * The name of the wallet to restore.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -6526,7 +6526,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet to restore.
+       * The name of the wallet to restore.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -6545,7 +6545,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet to restore.
+       * The name of the wallet to restore.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -6559,7 +6559,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet to restore.
+       * The name of the wallet to restore.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -6581,7 +6581,7 @@ public final class WalletOuterClass {
       private java.lang.Object mnemonic_ = "";
       /**
        * <pre>
-       * Menomic for wallet recovery.
+       * The mnemonic for wallet recovery.
        * </pre>
        *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -6601,7 +6601,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Menomic for wallet recovery.
+       * The mnemonic for wallet recovery.
        * </pre>
        *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -6622,7 +6622,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Menomic for wallet recovery.
+       * The mnemonic for wallet recovery.
        * </pre>
        *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -6641,7 +6641,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Menomic for wallet recovery.
+       * The mnemonic for wallet recovery.
        * </pre>
        *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -6655,7 +6655,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Menomic for wallet recovery.
+       * The mnemonic for wallet recovery.
        * </pre>
        *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -6677,7 +6677,7 @@ public final class WalletOuterClass {
       private java.lang.Object password_ = "";
       /**
        * <pre>
-       * Password for securing the wallet.
+       * The password for securing the wallet.
        * </pre>
        *
        * <code>string password = 3 [json_name = "password"];</code>
@@ -6697,7 +6697,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Password for securing the wallet.
+       * The password for securing the wallet.
        * </pre>
        *
        * <code>string password = 3 [json_name = "password"];</code>
@@ -6718,7 +6718,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Password for securing the wallet.
+       * The password for securing the wallet.
        * </pre>
        *
        * <code>string password = 3 [json_name = "password"];</code>
@@ -6737,7 +6737,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Password for securing the wallet.
+       * The password for securing the wallet.
        * </pre>
        *
        * <code>string password = 3 [json_name = "password"];</code>
@@ -6751,7 +6751,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Password for securing the wallet.
+       * The password for securing the wallet.
        * </pre>
        *
        * <code>string password = 3 [json_name = "password"];</code>
@@ -6839,7 +6839,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Name of the restored wallet.
+     * The name of the restored wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -6848,7 +6848,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * Name of the restored wallet.
+     * The name of the restored wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -6906,7 +6906,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * Name of the restored wallet.
+     * The name of the restored wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -6927,7 +6927,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Name of the restored wallet.
+     * The name of the restored wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -7270,7 +7270,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * Name of the restored wallet.
+       * The name of the restored wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -7290,7 +7290,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the restored wallet.
+       * The name of the restored wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -7311,7 +7311,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the restored wallet.
+       * The name of the restored wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -7330,7 +7330,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the restored wallet.
+       * The name of the restored wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -7344,7 +7344,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the restored wallet.
+       * The name of the restored wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -7432,7 +7432,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Name of the new wallet.
+     * The name of the new wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -7441,7 +7441,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * Name of the new wallet.
+     * The name of the new wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -7452,7 +7452,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Password for securing the wallet.
+     * The password for securing the wallet.
      * </pre>
      *
      * <code>string password = 4 [json_name = "password"];</code>
@@ -7461,7 +7461,7 @@ public final class WalletOuterClass {
     java.lang.String getPassword();
     /**
      * <pre>
-     * Password for securing the wallet.
+     * The password for securing the wallet.
      * </pre>
      *
      * <code>string password = 4 [json_name = "password"];</code>
@@ -7520,7 +7520,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * Name of the new wallet.
+     * The name of the new wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -7541,7 +7541,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Name of the new wallet.
+     * The name of the new wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -7566,7 +7566,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object password_;
     /**
      * <pre>
-     * Password for securing the wallet.
+     * The password for securing the wallet.
      * </pre>
      *
      * <code>string password = 4 [json_name = "password"];</code>
@@ -7587,7 +7587,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Password for securing the wallet.
+     * The password for securing the wallet.
      * </pre>
      *
      * <code>string password = 4 [json_name = "password"];</code>
@@ -7952,7 +7952,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * Name of the new wallet.
+       * The name of the new wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -7972,7 +7972,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the new wallet.
+       * The name of the new wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -7993,7 +7993,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the new wallet.
+       * The name of the new wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -8012,7 +8012,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the new wallet.
+       * The name of the new wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -8026,7 +8026,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the new wallet.
+       * The name of the new wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -8048,7 +8048,7 @@ public final class WalletOuterClass {
       private java.lang.Object password_ = "";
       /**
        * <pre>
-       * Password for securing the wallet.
+       * The password for securing the wallet.
        * </pre>
        *
        * <code>string password = 4 [json_name = "password"];</code>
@@ -8068,7 +8068,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Password for securing the wallet.
+       * The password for securing the wallet.
        * </pre>
        *
        * <code>string password = 4 [json_name = "password"];</code>
@@ -8089,7 +8089,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Password for securing the wallet.
+       * The password for securing the wallet.
        * </pre>
        *
        * <code>string password = 4 [json_name = "password"];</code>
@@ -8108,7 +8108,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Password for securing the wallet.
+       * The password for securing the wallet.
        * </pre>
        *
        * <code>string password = 4 [json_name = "password"];</code>
@@ -8122,7 +8122,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Password for securing the wallet.
+       * The password for securing the wallet.
        * </pre>
        *
        * <code>string password = 4 [json_name = "password"];</code>
@@ -8210,7 +8210,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Menomic for wallet recovery.
+     * The mnemonic for wallet recovery.
      * </pre>
      *
      * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -8219,7 +8219,7 @@ public final class WalletOuterClass {
     java.lang.String getMnemonic();
     /**
      * <pre>
-     * Menomic for wallet recovery.
+     * The mnemonic for wallet recovery.
      * </pre>
      *
      * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -8230,7 +8230,7 @@ public final class WalletOuterClass {
   }
   /**
    * <pre>
-   * Response message containing the name of the created wallet.
+   * Response message containing the mnemonic for wallet recovery.
    * </pre>
    *
    * Protobuf type {@code pactus.CreateWalletResponse}
@@ -8277,7 +8277,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object mnemonic_;
     /**
      * <pre>
-     * Menomic for wallet recovery.
+     * The mnemonic for wallet recovery.
      * </pre>
      *
      * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -8298,7 +8298,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Menomic for wallet recovery.
+     * The mnemonic for wallet recovery.
      * </pre>
      *
      * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -8475,7 +8475,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Response message containing the name of the created wallet.
+     * Response message containing the mnemonic for wallet recovery.
      * </pre>
      *
      * Protobuf type {@code pactus.CreateWalletResponse}
@@ -8641,7 +8641,7 @@ public final class WalletOuterClass {
       private java.lang.Object mnemonic_ = "";
       /**
        * <pre>
-       * Menomic for wallet recovery.
+       * The mnemonic for wallet recovery.
        * </pre>
        *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -8661,7 +8661,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Menomic for wallet recovery.
+       * The mnemonic for wallet recovery.
        * </pre>
        *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -8682,7 +8682,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Menomic for wallet recovery.
+       * The mnemonic for wallet recovery.
        * </pre>
        *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -8701,7 +8701,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Menomic for wallet recovery.
+       * The mnemonic for wallet recovery.
        * </pre>
        *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -8715,7 +8715,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Menomic for wallet recovery.
+       * The mnemonic for wallet recovery.
        * </pre>
        *
        * <code>string mnemonic = 2 [json_name = "mnemonic"];</code>
@@ -8803,7 +8803,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Name of the wallet to load.
+     * The name of the wallet to load.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -8812,7 +8812,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * Name of the wallet to load.
+     * The name of the wallet to load.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -8870,7 +8870,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * Name of the wallet to load.
+     * The name of the wallet to load.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -8891,7 +8891,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Name of the wallet to load.
+     * The name of the wallet to load.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9234,7 +9234,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * Name of the wallet to load.
+       * The name of the wallet to load.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9254,7 +9254,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet to load.
+       * The name of the wallet to load.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9275,7 +9275,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet to load.
+       * The name of the wallet to load.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9294,7 +9294,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet to load.
+       * The name of the wallet to load.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9308,7 +9308,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet to load.
+       * The name of the wallet to load.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9396,7 +9396,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Name of the loaded wallet.
+     * The name of the loaded wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9405,7 +9405,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * Name of the loaded wallet.
+     * The name of the loaded wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9463,7 +9463,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * Name of the loaded wallet.
+     * The name of the loaded wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9484,7 +9484,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Name of the loaded wallet.
+     * The name of the loaded wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9827,7 +9827,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * Name of the loaded wallet.
+       * The name of the loaded wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9847,7 +9847,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the loaded wallet.
+       * The name of the loaded wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9868,7 +9868,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the loaded wallet.
+       * The name of the loaded wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9887,7 +9887,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the loaded wallet.
+       * The name of the loaded wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9901,7 +9901,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the loaded wallet.
+       * The name of the loaded wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9989,7 +9989,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Name of the wallet to unload.
+     * The name of the wallet to unload.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -9998,7 +9998,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * Name of the wallet to unload.
+     * The name of the wallet to unload.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -10056,7 +10056,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * Name of the wallet to unload.
+     * The name of the wallet to unload.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -10077,7 +10077,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Name of the wallet to unload.
+     * The name of the wallet to unload.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -10420,7 +10420,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * Name of the wallet to unload.
+       * The name of the wallet to unload.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -10440,7 +10440,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet to unload.
+       * The name of the wallet to unload.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -10461,7 +10461,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet to unload.
+       * The name of the wallet to unload.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -10480,7 +10480,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet to unload.
+       * The name of the wallet to unload.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -10494,7 +10494,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet to unload.
+       * The name of the wallet to unload.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -10582,7 +10582,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Name of the unloaded wallet.
+     * The name of the unloaded wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -10591,7 +10591,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * Name of the unloaded wallet.
+     * The name of the unloaded wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -10649,7 +10649,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * Name of the unloaded wallet.
+     * The name of the unloaded wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -10670,7 +10670,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Name of the unloaded wallet.
+     * The name of the unloaded wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -11013,7 +11013,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * Name of the unloaded wallet.
+       * The name of the unloaded wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -11033,7 +11033,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the unloaded wallet.
+       * The name of the unloaded wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -11054,7 +11054,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the unloaded wallet.
+       * The name of the unloaded wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -11073,7 +11073,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the unloaded wallet.
+       * The name of the unloaded wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -11087,7 +11087,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the unloaded wallet.
+       * The name of the unloaded wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -11175,7 +11175,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Public key for which the validator address is requested.
+     * The public key for which the validator address is requested.
      * </pre>
      *
      * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -11184,7 +11184,7 @@ public final class WalletOuterClass {
     java.lang.String getPublicKey();
     /**
      * <pre>
-     * Public key for which the validator address is requested.
+     * The public key for which the validator address is requested.
      * </pre>
      *
      * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -11243,7 +11243,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object publicKey_;
     /**
      * <pre>
-     * Public key for which the validator address is requested.
+     * The public key for which the validator address is requested.
      * </pre>
      *
      * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -11264,7 +11264,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Public key for which the validator address is requested.
+     * The public key for which the validator address is requested.
      * </pre>
      *
      * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -11608,7 +11608,7 @@ public final class WalletOuterClass {
       private java.lang.Object publicKey_ = "";
       /**
        * <pre>
-       * Public key for which the validator address is requested.
+       * The public key for which the validator address is requested.
        * </pre>
        *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -11628,7 +11628,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Public key for which the validator address is requested.
+       * The public key for which the validator address is requested.
        * </pre>
        *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -11649,7 +11649,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Public key for which the validator address is requested.
+       * The public key for which the validator address is requested.
        * </pre>
        *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -11668,7 +11668,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Public key for which the validator address is requested.
+       * The public key for which the validator address is requested.
        * </pre>
        *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -11682,7 +11682,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Public key for which the validator address is requested.
+       * The public key for which the validator address is requested.
        * </pre>
        *
        * <code>string public_key = 1 [json_name = "publicKey"];</code>
@@ -11770,7 +11770,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Validator address associated with the public key.
+     * The validator address associated with the public key.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -11779,7 +11779,7 @@ public final class WalletOuterClass {
     java.lang.String getAddress();
     /**
      * <pre>
-     * Validator address associated with the public key.
+     * The validator address associated with the public key.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -11838,7 +11838,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object address_;
     /**
      * <pre>
-     * Validator address associated with the public key.
+     * The validator address associated with the public key.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -11859,7 +11859,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Validator address associated with the public key.
+     * The validator address associated with the public key.
      * </pre>
      *
      * <code>string address = 1 [json_name = "address"];</code>
@@ -12203,7 +12203,7 @@ public final class WalletOuterClass {
       private java.lang.Object address_ = "";
       /**
        * <pre>
-       * Validator address associated with the public key.
+       * The validator address associated with the public key.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -12223,7 +12223,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Validator address associated with the public key.
+       * The validator address associated with the public key.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -12244,7 +12244,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Validator address associated with the public key.
+       * The validator address associated with the public key.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -12263,7 +12263,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Validator address associated with the public key.
+       * The validator address associated with the public key.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -12277,7 +12277,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Validator address associated with the public key.
+       * The validator address associated with the public key.
        * </pre>
        *
        * <code>string address = 1 [json_name = "address"];</code>
@@ -12365,7 +12365,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Name of the wallet used for signing.
+     * The name of the wallet used for signing.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -12374,7 +12374,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * Name of the wallet used for signing.
+     * The name of the wallet used for signing.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -12385,7 +12385,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Raw transaction data to be signed.
+     * The raw transaction data to be signed.
      * </pre>
      *
      * <code>string raw_transaction = 2 [json_name = "rawTransaction"];</code>
@@ -12394,7 +12394,7 @@ public final class WalletOuterClass {
     java.lang.String getRawTransaction();
     /**
      * <pre>
-     * Raw transaction data to be signed.
+     * The raw transaction data to be signed.
      * </pre>
      *
      * <code>string raw_transaction = 2 [json_name = "rawTransaction"];</code>
@@ -12405,7 +12405,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Password for unlocking the wallet for signing.
+     * The password for unlocking the wallet for signing.
      * </pre>
      *
      * <code>string password = 3 [json_name = "password"];</code>
@@ -12414,7 +12414,7 @@ public final class WalletOuterClass {
     java.lang.String getPassword();
     /**
      * <pre>
-     * Password for unlocking the wallet for signing.
+     * The password for unlocking the wallet for signing.
      * </pre>
      *
      * <code>string password = 3 [json_name = "password"];</code>
@@ -12474,7 +12474,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * Name of the wallet used for signing.
+     * The name of the wallet used for signing.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -12495,7 +12495,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Name of the wallet used for signing.
+     * The name of the wallet used for signing.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -12520,7 +12520,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object rawTransaction_;
     /**
      * <pre>
-     * Raw transaction data to be signed.
+     * The raw transaction data to be signed.
      * </pre>
      *
      * <code>string raw_transaction = 2 [json_name = "rawTransaction"];</code>
@@ -12541,7 +12541,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Raw transaction data to be signed.
+     * The raw transaction data to be signed.
      * </pre>
      *
      * <code>string raw_transaction = 2 [json_name = "rawTransaction"];</code>
@@ -12566,7 +12566,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object password_;
     /**
      * <pre>
-     * Password for unlocking the wallet for signing.
+     * The password for unlocking the wallet for signing.
      * </pre>
      *
      * <code>string password = 3 [json_name = "password"];</code>
@@ -12587,7 +12587,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Password for unlocking the wallet for signing.
+     * The password for unlocking the wallet for signing.
      * </pre>
      *
      * <code>string password = 3 [json_name = "password"];</code>
@@ -12974,7 +12974,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * Name of the wallet used for signing.
+       * The name of the wallet used for signing.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -12994,7 +12994,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet used for signing.
+       * The name of the wallet used for signing.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -13015,7 +13015,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet used for signing.
+       * The name of the wallet used for signing.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -13034,7 +13034,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet used for signing.
+       * The name of the wallet used for signing.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -13048,7 +13048,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet used for signing.
+       * The name of the wallet used for signing.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -13070,7 +13070,7 @@ public final class WalletOuterClass {
       private java.lang.Object rawTransaction_ = "";
       /**
        * <pre>
-       * Raw transaction data to be signed.
+       * The raw transaction data to be signed.
        * </pre>
        *
        * <code>string raw_transaction = 2 [json_name = "rawTransaction"];</code>
@@ -13090,7 +13090,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Raw transaction data to be signed.
+       * The raw transaction data to be signed.
        * </pre>
        *
        * <code>string raw_transaction = 2 [json_name = "rawTransaction"];</code>
@@ -13111,7 +13111,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Raw transaction data to be signed.
+       * The raw transaction data to be signed.
        * </pre>
        *
        * <code>string raw_transaction = 2 [json_name = "rawTransaction"];</code>
@@ -13130,7 +13130,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Raw transaction data to be signed.
+       * The raw transaction data to be signed.
        * </pre>
        *
        * <code>string raw_transaction = 2 [json_name = "rawTransaction"];</code>
@@ -13144,7 +13144,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Raw transaction data to be signed.
+       * The raw transaction data to be signed.
        * </pre>
        *
        * <code>string raw_transaction = 2 [json_name = "rawTransaction"];</code>
@@ -13166,7 +13166,7 @@ public final class WalletOuterClass {
       private java.lang.Object password_ = "";
       /**
        * <pre>
-       * Password for unlocking the wallet for signing.
+       * The password for unlocking the wallet for signing.
        * </pre>
        *
        * <code>string password = 3 [json_name = "password"];</code>
@@ -13186,7 +13186,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Password for unlocking the wallet for signing.
+       * The password for unlocking the wallet for signing.
        * </pre>
        *
        * <code>string password = 3 [json_name = "password"];</code>
@@ -13207,7 +13207,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Password for unlocking the wallet for signing.
+       * The password for unlocking the wallet for signing.
        * </pre>
        *
        * <code>string password = 3 [json_name = "password"];</code>
@@ -13226,7 +13226,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Password for unlocking the wallet for signing.
+       * The password for unlocking the wallet for signing.
        * </pre>
        *
        * <code>string password = 3 [json_name = "password"];</code>
@@ -13240,7 +13240,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Password for unlocking the wallet for signing.
+       * The password for unlocking the wallet for signing.
        * </pre>
        *
        * <code>string password = 3 [json_name = "password"];</code>
@@ -13328,7 +13328,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * ID of the signed transaction.
+     * The ID of the signed transaction.
      * </pre>
      *
      * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -13337,7 +13337,7 @@ public final class WalletOuterClass {
     java.lang.String getTransactionId();
     /**
      * <pre>
-     * ID of the signed transaction.
+     * The ID of the signed transaction.
      * </pre>
      *
      * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -13348,7 +13348,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Signed raw transaction data.
+     * The signed raw transaction data.
      * </pre>
      *
      * <code>string signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
@@ -13357,7 +13357,7 @@ public final class WalletOuterClass {
     java.lang.String getSignedRawTransaction();
     /**
      * <pre>
-     * Signed raw transaction data.
+     * The signed raw transaction data.
      * </pre>
      *
      * <code>string signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
@@ -13416,7 +13416,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object transactionId_;
     /**
      * <pre>
-     * ID of the signed transaction.
+     * The ID of the signed transaction.
      * </pre>
      *
      * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -13437,7 +13437,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * ID of the signed transaction.
+     * The ID of the signed transaction.
      * </pre>
      *
      * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -13462,7 +13462,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object signedRawTransaction_;
     /**
      * <pre>
-     * Signed raw transaction data.
+     * The signed raw transaction data.
      * </pre>
      *
      * <code>string signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
@@ -13483,7 +13483,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Signed raw transaction data.
+     * The signed raw transaction data.
      * </pre>
      *
      * <code>string signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
@@ -13848,7 +13848,7 @@ public final class WalletOuterClass {
       private java.lang.Object transactionId_ = "";
       /**
        * <pre>
-       * ID of the signed transaction.
+       * The ID of the signed transaction.
        * </pre>
        *
        * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -13868,7 +13868,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ID of the signed transaction.
+       * The ID of the signed transaction.
        * </pre>
        *
        * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -13889,7 +13889,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ID of the signed transaction.
+       * The ID of the signed transaction.
        * </pre>
        *
        * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -13908,7 +13908,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ID of the signed transaction.
+       * The ID of the signed transaction.
        * </pre>
        *
        * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -13922,7 +13922,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ID of the signed transaction.
+       * The ID of the signed transaction.
        * </pre>
        *
        * <code>string transaction_id = 1 [json_name = "transactionId"];</code>
@@ -13944,7 +13944,7 @@ public final class WalletOuterClass {
       private java.lang.Object signedRawTransaction_ = "";
       /**
        * <pre>
-       * Signed raw transaction data.
+       * The signed raw transaction data.
        * </pre>
        *
        * <code>string signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
@@ -13964,7 +13964,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Signed raw transaction data.
+       * The signed raw transaction data.
        * </pre>
        *
        * <code>string signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
@@ -13985,7 +13985,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Signed raw transaction data.
+       * The signed raw transaction data.
        * </pre>
        *
        * <code>string signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
@@ -14004,7 +14004,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Signed raw transaction data.
+       * The signed raw transaction data.
        * </pre>
        *
        * <code>string signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
@@ -14018,7 +14018,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Signed raw transaction data.
+       * The signed raw transaction data.
        * </pre>
        *
        * <code>string signed_raw_transaction = 2 [json_name = "signedRawTransaction"];</code>
@@ -14106,7 +14106,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Name of the wallet.
+     * The name of the wallet to get the total balance.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -14115,7 +14115,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * Name of the wallet.
+     * The name of the wallet to get the total balance.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -14173,7 +14173,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * Name of the wallet.
+     * The name of the wallet to get the total balance.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -14194,7 +14194,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Name of the wallet.
+     * The name of the wallet to get the total balance.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -14537,7 +14537,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet to get the total balance.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -14557,7 +14557,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet to get the total balance.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -14578,7 +14578,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet to get the total balance.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -14597,7 +14597,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet to get the total balance.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -14611,7 +14611,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet to get the total balance.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -14699,7 +14699,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * Name of the wallet.
+     * The name of the wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -14708,7 +14708,7 @@ public final class WalletOuterClass {
     java.lang.String getWalletName();
     /**
      * <pre>
-     * Name of the wallet.
+     * The name of the wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -14776,7 +14776,7 @@ public final class WalletOuterClass {
     private volatile java.lang.Object walletName_;
     /**
      * <pre>
-     * Name of the wallet.
+     * The name of the wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -14797,7 +14797,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * Name of the wallet.
+     * The name of the wallet.
      * </pre>
      *
      * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -15178,7 +15178,7 @@ public final class WalletOuterClass {
       private java.lang.Object walletName_ = "";
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -15198,7 +15198,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -15219,7 +15219,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -15238,7 +15238,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>
@@ -15252,7 +15252,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * Name of the wallet.
+       * The name of the wallet.
        * </pre>
        *
        * <code>string wallet_name = 1 [json_name = "walletName"];</code>

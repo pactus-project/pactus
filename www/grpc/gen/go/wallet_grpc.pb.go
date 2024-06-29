@@ -55,7 +55,7 @@ type WalletClient interface {
 	GetValidatorAddress(ctx context.Context, in *GetValidatorAddressRequest, opts ...grpc.CallOption) (*GetValidatorAddressResponse, error)
 	// GetNewAddress generates a new address for the specified wallet.
 	GetNewAddress(ctx context.Context, in *GetNewAddressRequest, opts ...grpc.CallOption) (*GetNewAddressResponse, error)
-	// GetAddressHistory retrieve transaction history of an address.
+	// GetAddressHistory retrieves the transaction history of an address.
 	GetAddressHistory(ctx context.Context, in *GetAddressHistoryRequest, opts ...grpc.CallOption) (*GetAddressHistoryResponse, error)
 }
 
@@ -180,7 +180,7 @@ type WalletServer interface {
 	GetValidatorAddress(context.Context, *GetValidatorAddressRequest) (*GetValidatorAddressResponse, error)
 	// GetNewAddress generates a new address for the specified wallet.
 	GetNewAddress(context.Context, *GetNewAddressRequest) (*GetNewAddressResponse, error)
-	// GetAddressHistory retrieve transaction history of an address.
+	// GetAddressHistory retrieves the transaction history of an address.
 	GetAddressHistory(context.Context, *GetAddressHistoryRequest) (*GetAddressHistoryResponse, error)
 }
 
