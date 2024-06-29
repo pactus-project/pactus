@@ -26,12 +26,16 @@ type GatewayConfig struct {
 
 // getOpenAPIHandler serves an OpenAPI UI.
 func (*Server) getOpenAPIHandler() (http.Handler, error) {
-	swagger, err := fs.Sub(swaggerFS, "swaggerFS-ui")
-	if err != nil {
-		return nil, err
+	if _, err := swaggerFS.ReadFile("swagger-ui/index.html"); err == nil {
+		swagger, err := fs.Sub(swaggerFS, "swagger-ui")
+		if err != nil {
+			return nil, err
+		}
+
+		return http.FileServer(http.FS(swagger)), nil
 	}
 
-	return http.FileServer(http.FS(swagger)), nil
+	return http.FileServer(http.Dir("swagger-ui")), nil
 }
 
 func (s *Server) startGateway(grpcAddr string) error {
