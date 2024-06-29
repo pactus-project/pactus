@@ -63,8 +63,6 @@ docker:
 proto:
 	$(RM) www/grpc/gen
 	cd www/grpc/buf && buf generate --template buf.gen.yaml ../proto
-# Generate static assets for Swagger-UI
-	cd www/grpc/ && statik -m -f -src swagger-ui/
 
 ########################################
 ### Formatting the code
