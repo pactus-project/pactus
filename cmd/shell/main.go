@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+
 	"github.com/NathanBaulch/protoc-gen-cobra/client"
 	"github.com/NathanBaulch/protoc-gen-cobra/naming"
 	"github.com/pactus-project/pactus/cmd"
@@ -44,13 +45,14 @@ func main() {
 		return c
 	}
 
-	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+	rootCmd.PersistentPreRunE = func(cmd *cobra.Command, _ []string) error {
 		if username != "" && password != "" {
 			auth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", username, password)))
 			md := metadata.Pairs("authorization", "Basic "+auth)
 			ctx := metadata.NewOutgoingContext(cmd.Context(), md)
 			cmd.SetContext(ctx)
 		}
+
 		return nil
 	}
 
