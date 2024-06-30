@@ -6,7 +6,9 @@ import (
 	"flag"
 	"log"
 	"os"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 
 	"github.com/gofrs/flock"
 	"github.com/gotk3/gotk3/gdk"
@@ -120,6 +122,17 @@ func main() {
 		_ = fileLock.Unlock()
 		log.Println("application shutdown")
 	})
+
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		select {
+		case s := <-interrupt:
+			log.Printf("signal %s received", s.String())
+			os.Exit(0)
+		}
+	}()
 
 	// Launch the application
 	os.Exit(app.Run(nil))
