@@ -4,6 +4,7 @@ package main
 
 import (
 	"flag"
+	"github.com/pactus-project/pactus/node"
 	"log"
 	"os"
 	"os/signal"
@@ -85,6 +86,9 @@ func main() {
 		log.Println("application startup")
 	})
 
+	n, wlt, err := newNode(workingDir)
+	fatalErrorCheck(err)
+
 	// Connect function to application activate event
 	app.Connect("activate", func() {
 		log.Println("application activate")
@@ -107,9 +111,9 @@ func main() {
 			gtk.MainIteration()
 		}
 
-		// Running the start-up logic in a separate goroutine
+		// Running the run-up logic in a separate goroutine
 		glib.TimeoutAdd(uint(100), func() bool {
-			start(workingDir, app)
+			run(n, wlt, app)
 			splashDlg.Destroy()
 
 			// Ensures the function is not called again
@@ -120,6 +124,7 @@ func main() {
 	// Connect function to application shutdown event, this is not required.
 	app.Connect("shutdown", func() {
 		_ = fileLock.Unlock()
+		n.Stop()
 		log.Println("application shutdown")
 	})
 
@@ -130,6 +135,8 @@ func main() {
 		select {
 		case s := <-interrupt:
 			log.Printf("signal %s received", s.String())
+			_ = fileLock.Unlock()
+			n.Stop()
 			os.Exit(0)
 		}
 	}()
@@ -138,12 +145,11 @@ func main() {
 	os.Exit(app.Run(nil))
 }
 
-func start(workingDir string, app *gtk.Application) {
+func newNode(workingDir string) (*node.Node, *wallet.Wallet, error) {
 	// change working directory
 	if err := os.Chdir(workingDir); err != nil {
 		log.Println("Aborted! Unable to changes working directory. " + err.Error())
-
-		return
+		return nil, nil, err
 	}
 
 	passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
@@ -153,9 +159,15 @@ func start(workingDir string, app *gtk.Application) {
 
 		return getWalletPassword(wlt)
 	}
-	node, wlt, err := cmd.StartNode(workingDir, passwordFetcher)
-	fatalErrorCheck(err)
+	n, wlt, err := cmd.StartNode(workingDir, passwordFetcher)
+	if err != nil {
+		return nil, nil, err
+	}
 
+	return n, wlt, nil
+}
+
+func run(node *node.Node, wlt *wallet.Wallet, app *gtk.Application) {
 	grpcAddr := node.GRPC().Address()
 	cmd.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
 
