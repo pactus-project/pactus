@@ -4,12 +4,13 @@ package main
 
 import (
 	"flag"
-	"github.com/pactus-project/pactus/node"
 	"log"
 	"os"
 	"os/signal"
 	"path/filepath"
 	"syscall"
+
+	"github.com/pactus-project/pactus/node"
 
 	"github.com/gofrs/flock"
 	"github.com/gotk3/gotk3/gdk"
