@@ -133,13 +133,11 @@ func main() {
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
 	go func() {
-		select {
-		case s := <-interrupt:
-			log.Printf("signal %s received", s.String())
-			n.Stop()
-			_ = fileLock.Unlock()
-			os.Exit(0)
-		}
+		s := <-interrupt
+		log.Printf("signal %s received", s.String())
+		n.Stop()
+		_ = fileLock.Unlock()
+		os.Exit(0)
 	}()
 
 	// Launch the application
@@ -150,6 +148,7 @@ func newNode(workingDir string) (*node.Node, *wallet.Wallet, error) {
 	// change working directory
 	if err := os.Chdir(workingDir); err != nil {
 		log.Println("Aborted! Unable to changes working directory. " + err.Error())
+
 		return nil, nil, err
 	}
 
@@ -168,14 +167,14 @@ func newNode(workingDir string) (*node.Node, *wallet.Wallet, error) {
 	return n, wlt, nil
 }
 
-func run(node *node.Node, wlt *wallet.Wallet, app *gtk.Application) {
-	grpcAddr := node.GRPC().Address()
+func run(n *node.Node, wlt *wallet.Wallet, app *gtk.Application) {
+	grpcAddr := n.GRPC().Address()
 	cmd.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
 
 	wlt.SetServerAddr(grpcAddr)
 
-	nodeModel := newNodeModel(node)
-	walletModel := newWalletModel(wlt, node)
+	nodeModel := newNodeModel(n)
+	walletModel := newWalletModel(wlt, n)
 
 	// building main window
 	win := buildMainWindow(nodeModel, walletModel)
