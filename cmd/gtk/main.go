@@ -10,14 +10,13 @@ import (
 	"path/filepath"
 	"syscall"
 
-	"github.com/pactus-project/pactus/node"
-
 	"github.com/gofrs/flock"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
