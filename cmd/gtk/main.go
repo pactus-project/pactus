@@ -124,8 +124,8 @@ func main() {
 
 	// Connect function to application shutdown event, this is not required.
 	app.Connect("shutdown", func() {
-		_ = fileLock.Unlock()
 		n.Stop()
+		_ = fileLock.Unlock()
 		log.Println("application shutdown")
 	})
 
@@ -136,8 +136,8 @@ func main() {
 		select {
 		case s := <-interrupt:
 			log.Printf("signal %s received", s.String())
-			_ = fileLock.Unlock()
 			n.Stop()
+			_ = fileLock.Unlock()
 			os.Exit(0)
 		}
 	}()
