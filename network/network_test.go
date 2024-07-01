@@ -50,6 +50,7 @@ func testConfig() *Config {
 		ForcePrivateNetwork:  true,
 		NetworkName:          "test",
 		DefaultPort:          12345,
+		PeerStorePath:        util.TempFilePath(),
 	}
 }
 
