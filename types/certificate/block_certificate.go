@@ -32,16 +32,9 @@ func (cert *BlockCertificate) SignBytes(blockHash hash.Hash) []byte {
 }
 
 func (cert *BlockCertificate) Validate(validators []*validator.Validator, blockHash hash.Hash) error {
-	calcRequiredPowerFn := func(committeePower int64) int64 {
-		f := (committeePower - 1) / 3
-		p := (2 * f) + 1
-
-		return p
-	}
-
 	signBytes := cert.SignBytes(blockHash)
 
-	return cert.baseCertificate.validate(validators, signBytes, calcRequiredPowerFn)
+	return cert.baseCertificate.validate(validators, signBytes, require2Fp1Power)
 }
 
 func (cert *BlockCertificate) Clone() *BlockCertificate {

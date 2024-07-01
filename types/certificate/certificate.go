@@ -210,13 +210,6 @@ var require2Fp1Power = func(committeePower int64) int64 {
 	return p
 }
 
-var requireFp1Power = func(committeePower int64) int64 {
-	f := (committeePower - 1) / 3
-	p := (1 * f) + 1
-
-	return p
-}
-
 func (cert *baseCertificate) validate(validators []*validator.Validator,
 	signBytes []byte, requiredPowerFn requiredPowerFn,
 ) error {

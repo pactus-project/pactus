@@ -423,11 +423,11 @@ func (ts *TestSuite) GenerateTestBlock(height uint32, options ...func(bm *BlockM
 		opt(bm)
 	}
 
-	// blockCert := ts.GenerateTestBlockCertificate(height)
 	header := block.NewHeader(bm.Version, bm.Time, bm.PrevHash, bm.PrevHash, bm.Seed, bm.Proposer)
 	blk := block.NewBlock(header, bm.PrevCert, bm.Txs)
 
 	blockCert := ts.GenerateTestBlockCertificate(height)
+
 	return blk, blockCert
 }
 
@@ -482,6 +482,7 @@ type TransactionMaker struct {
 // NewTransactionMaker creates a new TransactionMaker instance with default values.
 func (ts *TestSuite) NewTransactionMaker() *TransactionMaker {
 	pub, prv := ts.RandBLSKeyPair()
+
 	return &TransactionMaker{
 		Amount: ts.RandAmount(),
 		Fee:    ts.RandFee(),
