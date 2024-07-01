@@ -15,17 +15,17 @@ var _ TxPool = &MockTxPool{}
 
 // MockTxPool is a testing mock.
 type MockTxPool struct {
-	Trxs []*tx.Tx
+	Txs []*tx.Tx
 }
 
 func MockingTxPool() *MockTxPool {
 	return &MockTxPool{
-		Trxs: make([]*tx.Tx, 0),
+		Txs: make([]*tx.Tx, 0),
 	}
 }
 func (*MockTxPool) SetNewSandboxAndRecheck(_ sandbox.Sandbox) {}
 func (m *MockTxPool) PendingTx(id tx.ID) *tx.Tx {
-	for _, t := range m.Trxs {
+	for _, t := range m.Txs {
 		if t.ID() == id {
 			return t
 		}
@@ -39,7 +39,7 @@ func (m *MockTxPool) QueryTx(id tx.ID) *tx.Tx {
 }
 
 func (m *MockTxPool) HasTx(id tx.ID) bool {
-	for _, t := range m.Trxs {
+	for _, t := range m.Txs {
 		if t.ID() == id {
 			return true
 		}
@@ -49,7 +49,7 @@ func (m *MockTxPool) HasTx(id tx.ID) bool {
 }
 
 func (m *MockTxPool) Size() int {
-	return len(m.Trxs)
+	return len(m.Txs)
 }
 
 func (*MockTxPool) String() string {
@@ -57,21 +57,21 @@ func (*MockTxPool) String() string {
 }
 
 func (m *MockTxPool) AppendTx(trx *tx.Tx) error {
-	m.Trxs = append(m.Trxs, trx)
+	m.Txs = append(m.Txs, trx)
 
 	return nil
 }
 
 func (m *MockTxPool) AppendTxAndBroadcast(trx *tx.Tx) error {
-	m.Trxs = append(m.Trxs, trx)
+	m.Txs = append(m.Txs, trx)
 
 	return nil
 }
 
 func (m *MockTxPool) RemoveTx(id hash.Hash) {
-	for i, trx := range m.Trxs {
+	for i, trx := range m.Txs {
 		if trx.ID() == id {
-			m.Trxs = slices.Delete(m.Trxs, i, i+1)
+			m.Txs = slices.Delete(m.Txs, i, i+1)
 
 			return
 		}
@@ -80,7 +80,7 @@ func (m *MockTxPool) RemoveTx(id hash.Hash) {
 
 func (m *MockTxPool) PrepareBlockTransactions() block.Txs {
 	txs := make([]*tx.Tx, m.Size())
-	copy(txs, m.Trxs)
+	copy(txs, m.Txs)
 
 	return txs
 }
