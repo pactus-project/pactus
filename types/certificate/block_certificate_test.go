@@ -31,7 +31,6 @@ func TestBlockCertificate(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, cert.Height(), uint32(0x01020304))
 	assert.Equal(t, cert.Round(), int16(0x0001))
-	assert.Equal(t, cert.FastPath(), false)
 	assert.Equal(t, cert.Committers(), []int32{1, 2, 3, 4, 5, 6})
 	assert.Equal(t, cert.Absentees(), []int32{2})
 	assert.Equal(t, cert.Hash(), certHash)
@@ -41,36 +40,6 @@ func TestBlockCertificate(t *testing.T) {
 		"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
 			"04030201" + // Height
 			"0100") // Round
-
-	assert.Equal(t, expectedSignByte, cert.SignBytes(blockHash))
-}
-
-func TestBlockCertificateFastPath(t *testing.T) {
-	expectedData, _ := hex.DecodeString(
-		"04030201" + // Height
-			"0180" + // Round
-			"06010203040506" + // Committers
-			"0102" + // Absentees
-			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6") // Signature
-
-	certHash, _ := hash.FromString("e4ef7d58c1e6e10537e9d8047b8e5d619c0d21745cd2ae528b94543ca016f32f")
-	r := bytes.NewReader(expectedData)
-	cert := new(certificate.BlockCertificate)
-	err := cert.Decode(r)
-	assert.NoError(t, err)
-	assert.Equal(t, cert.Height(), uint32(0x01020304))
-	assert.Equal(t, cert.Round(), int16(0x0001))
-	assert.Equal(t, cert.FastPath(), true)
-	assert.Equal(t, cert.Committers(), []int32{1, 2, 3, 4, 5, 6})
-	assert.Equal(t, cert.Absentees(), []int32{2})
-	assert.Equal(t, cert.Hash(), certHash)
-
-	blockHash, _ := hash.FromString("000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f")
-	expectedSignByte, _ := hex.DecodeString(
-		"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
-			"04030201" + // Height
-			"0100" + // Round
-			"50524550415245") // "Prepare"
 
 	assert.Equal(t, expectedSignByte, cert.SignBytes(blockHash))
 }
@@ -93,47 +62,13 @@ func TestBlockCertificateCBORMarshaling(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestBlockCertificateSignBytes(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	h := ts.RandHash()
-	height := ts.RandHeight()
-	round := ts.RandRound()
-	cert1 := certificate.NewBlockCertificate(height, round, true)
-	cert2 := certificate.NewBlockCertificate(height, round, false)
-
-	sb1 := cert1.SignBytes(h)
-	sb2 := cert2.SignBytes(h)
-
-	assert.NotEqual(t, sb1, sb2)
-	assert.Contains(t, string(sb1), "PREPARE")
-}
-
-func TestBlockCertificateHash(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	height := ts.RandHeight()
-	round := ts.RandRound()
-	committers := []int32{1, 2, 3, 4, 5, 6}
-	absentees := []int32{6}
-	sig := ts.RandBLSSignature()
-
-	cert1 := certificate.NewBlockCertificate(height, round, true)
-	cert1.SetSignature(committers, absentees, sig)
-
-	cert2 := certificate.NewBlockCertificate(height, round, false)
-	cert2.SetSignature(committers, absentees, sig)
-
-	assert.NotEqual(t, cert1.Hash(), cert2.Hash())
-}
-
 func TestBlockCertificateValidation(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	blockHash := ts.RandHash()
 	height := ts.RandHeight()
 	round := ts.RandRound()
-	cert := certificate.NewBlockCertificate(height, round, false)
+	cert := certificate.NewBlockCertificate(height, round)
 	signBytes := cert.SignBytes(blockHash)
 	committers := ts.RandSlice(6)
 	sigs := []*bls.Signature{}
@@ -174,15 +109,15 @@ func TestBlockCertificateValidation(t *testing.T) {
 		})
 	})
 
-	t.Run("Doesn't have 3t+1 majority", func(t *testing.T) {
-		absentees := committers[3:]
-		aggSig := bls.SignatureAggregate(sigs[:3]...)
+	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
+		absentees := committers[2:]
+		aggSig := bls.SignatureAggregate(sigs[:2]...)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.Validate(validators, blockHash)
 		assert.ErrorIs(t, err, certificate.InsufficientPowerError{
-			SignedPower:   3,
-			RequiredPower: 4,
+			SignedPower:   2,
+			RequiredPower: 3,
 		})
 	})
 
@@ -198,57 +133,6 @@ func TestBlockCertificateValidation(t *testing.T) {
 	t.Run("Ok, should return no error", func(t *testing.T) {
 		absentees := committers[4:]
 		aggSig := bls.SignatureAggregate(sigs[:4]...)
-		cert.SetSignature(committers, absentees, aggSig)
-
-		err := cert.Validate(validators, blockHash)
-		assert.NoError(t, err)
-	})
-}
-
-func TestBlockCertificateValidationFastPath(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	blockHash := ts.RandHash()
-	height := ts.RandHeight()
-	round := ts.RandRound()
-	cert := certificate.NewBlockCertificate(height, round, true)
-	signBytes := cert.SignBytes(blockHash)
-	committers := ts.RandSlice(6)
-	sigs := []*bls.Signature{}
-	validators := []*validator.Validator{}
-
-	for _, committer := range committers {
-		valKey := ts.RandValKey()
-		val := validator.NewValidator(valKey.PublicKey(), committer)
-		sig := valKey.Sign(signBytes)
-
-		validators = append(validators, val)
-		sigs = append(sigs, sig)
-	}
-
-	t.Run("Invalid signature", func(t *testing.T) {
-		aggSig := ts.RandBLSSignature()
-		cert.SetSignature(committers, nil, aggSig)
-
-		err := cert.Validate(validators, blockHash)
-		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
-	})
-
-	t.Run("Doesn't have 4t+1 majority", func(t *testing.T) {
-		absentees := committers[4:]
-		aggSig := bls.SignatureAggregate(sigs[:4]...)
-		cert.SetSignature(committers, absentees, aggSig)
-
-		err := cert.Validate(validators, blockHash)
-		assert.ErrorIs(t, err, certificate.InsufficientPowerError{
-			SignedPower:   4,
-			RequiredPower: 5,
-		})
-	})
-
-	t.Run("Ok, should return no error", func(t *testing.T) {
-		absentees := committers[5:]
-		aggSig := bls.SignatureAggregate(sigs[:5]...)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.Validate(validators, blockHash)

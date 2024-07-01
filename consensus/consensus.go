@@ -429,7 +429,7 @@ func (cs *consensus) announceNewBlock(blk *block.Block, cert *certificate.BlockC
 
 func (cs *consensus) makeBlockCertificate(votes map[crypto.Address]*vote.Vote,
 ) *certificate.BlockCertificate {
-	cert := certificate.NewBlockCertificate(cs.height, cs.round, false)
+	cert := certificate.NewBlockCertificate(cs.height, cs.round)
 	cert.SetSignature(cs.signersInfo(votes))
 
 	return cert

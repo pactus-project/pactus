@@ -1,6 +1,8 @@
 package txpool
 
 import (
+	"slices"
+
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/amount"
@@ -66,9 +68,14 @@ func (m *MockTxPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	return nil
 }
 
-func (*MockTxPool) RemoveTx(_ hash.Hash) {
-	// This test pools is shared between different test objects
-	// delete(m.Txs, id)
+func (m *MockTxPool) RemoveTx(id hash.Hash) {
+	for i, trx := range m.Txs {
+		if trx.ID() == id {
+			m.Txs = slices.Delete(m.Txs, i, i+1)
+
+			return
+		}
+	}
 }
 
 func (m *MockTxPool) PrepareBlockTransactions() block.Txs {

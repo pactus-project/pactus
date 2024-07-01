@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,7 +24,7 @@ func TestSetProposalInvalidProposer(t *testing.T) {
 	assert.Nil(t, td.consY.Proposal())
 
 	addr := td.consB.valKey.Address()
-	blk, _ := td.GenerateTestBlockWithProposer(1, addr)
+	blk, _ := td.GenerateTestBlock(1, testsuite.BlockWithProposer(addr))
 	invalidProp := proposal.NewProposal(1, 0, blk)
 
 	td.consY.SetProposal(invalidProp)
@@ -38,7 +39,7 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 	td := setup(t)
 
 	addr := td.consB.valKey.Address()
-	blk, _ := td.GenerateTestBlockWithProposer(1, addr)
+	blk, _ := td.GenerateTestBlock(1, testsuite.BlockWithProposer(addr))
 	invProp := proposal.NewProposal(1, 2, blk)
 	td.HelperSignProposal(td.consB.valKey, invProp)
 
@@ -54,7 +55,7 @@ func TestSetProposalInvalidHeight(t *testing.T) {
 	td := setup(t)
 
 	addr := td.consB.valKey.Address()
-	blk, _ := td.GenerateTestBlockWithProposer(2, addr)
+	blk, _ := td.GenerateTestBlock(2, testsuite.BlockWithProposer(addr))
 	invProp := proposal.NewProposal(2, 0, blk)
 	td.HelperSignProposal(td.consB.valKey, invProp)
 

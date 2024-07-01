@@ -16,9 +16,8 @@ type VoteCertificate struct {
 func NewVoteCertificate(height uint32, round int16) *VoteCertificate {
 	return &VoteCertificate{
 		baseCertificate: baseCertificate{
-			height:   height,
-			round:    round,
-			fastPath: false,
+			height: height,
+			round:  round,
 		},
 	}
 }
@@ -68,12 +67,5 @@ func (cert *VoteCertificate) ValidateCPMainVote(validators []*validator.Validato
 }
 
 func (cert *VoteCertificate) validate(validators []*validator.Validator, signBytes []byte) error {
-	calcRequiredPowerFn := func(committeePower int64) int64 {
-		f := (committeePower - 1) / 3
-		p := (2 * f) + 1
-
-		return p
-	}
-
-	return cert.baseCertificate.validate(validators, signBytes, calcRequiredPowerFn)
+	return cert.baseCertificate.validate(validators, signBytes, require2Fp1Power)
 }
