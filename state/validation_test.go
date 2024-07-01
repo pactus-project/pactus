@@ -77,7 +77,6 @@ func TestBlockValidation(t *testing.T) {
 		invPrevCert := certificate.NewBlockCertificate(
 			blk0.PrevCertificate().Height(),
 			blk0.PrevCertificate().Round(),
-			blk0.PrevCertificate().FastPath(),
 		)
 		invPrevCert.SetSignature(
 			blk0.PrevCertificate().Committers(),

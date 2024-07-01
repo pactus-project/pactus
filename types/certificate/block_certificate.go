@@ -14,12 +14,11 @@ type BlockCertificate struct {
 }
 
 // NewBlockCertificate creates a new BlockCertificate.
-func NewBlockCertificate(height uint32, round int16, fastPath bool) *BlockCertificate {
+func NewBlockCertificate(height uint32, round int16) *BlockCertificate {
 	return &BlockCertificate{
 		baseCertificate: baseCertificate{
-			height:   height,
-			round:    round,
-			fastPath: fastPath,
+			height: height,
+			round:  round,
 		},
 	}
 }
@@ -29,20 +28,13 @@ func (cert *BlockCertificate) SignBytes(blockHash hash.Hash) []byte {
 	sb = append(sb, util.Uint32ToSlice(cert.height)...)
 	sb = append(sb, util.Int16ToSlice(cert.round)...)
 
-	if cert.fastPath {
-		sb = append(sb, util.StringToBytes("PREPARE")...)
-	}
-
 	return sb
 }
 
 func (cert *BlockCertificate) Validate(validators []*validator.Validator, blockHash hash.Hash) error {
 	calcRequiredPowerFn := func(committeePower int64) int64 {
-		t := (committeePower - 1) / 5
-		p := (3 * t) + 1
-		if cert.fastPath {
-			p = (4 * t) + 1
-		}
+		f := (committeePower - 1) / 3
+		p := (2 * f) + 1
 
 		return p
 	}

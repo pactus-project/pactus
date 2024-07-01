@@ -12,7 +12,7 @@ func TestParsingTransactionsMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	t.Run("Parsing transactions message", func(t *testing.T) {
-		trx1, _ := td.GenerateTestBondTx()
+		trx1 := td.GenerateTestBondTx()
 		msg := message.NewTransactionsMessage([]*tx.Tx{trx1})
 		pid := td.RandPeerID()
 

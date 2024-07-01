@@ -24,7 +24,7 @@ func TestTransactionsMessage(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		trx, _ := ts.GenerateTestTransferTx()
+		trx := ts.GenerateTestTransferTx()
 		m := NewTransactionsMessage([]*tx.Tx{trx})
 
 		assert.NoError(t, m.BasicCheck())

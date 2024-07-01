@@ -115,7 +115,7 @@ func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash,
 
 	sigs := make([]*bls.Signature, 0, len(td.genValKeys))
 	height := td.state.LastBlockHeight()
-	cert := certificate.NewBlockCertificate(height+1, round, true)
+	cert := certificate.NewBlockCertificate(height+1, round)
 	signBytes := cert.SignBytes(blockHash)
 	committers := []int32{0, 1, 2, 3}
 	absentees := []int32{3}

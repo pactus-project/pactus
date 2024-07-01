@@ -19,7 +19,6 @@ import (
 type baseCertificate struct {
 	height     uint32
 	round      int16
-	fastPath   bool
 	committers []int32
 	absentees  []int32
 	signature  *bls.Signature
@@ -31,10 +30,6 @@ func (cert *baseCertificate) Height() uint32 {
 
 func (cert *baseCertificate) Round() int16 {
 	return cert.round
-}
-
-func (cert *baseCertificate) FastPath() bool {
-	return cert.fastPath
 }
 
 func (cert *baseCertificate) Committers() []int32 {
@@ -139,12 +134,7 @@ func (cert *baseCertificate) UnmarshalCBOR(bs []byte) error {
 }
 
 func (cert *baseCertificate) Encode(w io.Writer) error {
-	roundAndPath := uint16(cert.round)
-	if cert.FastPath() {
-		roundAndPath |= 0x8000
-	}
-
-	if err := encoding.WriteElements(w, cert.height, roundAndPath); err != nil {
+	if err := encoding.WriteElements(w, cert.height, cert.round); err != nil {
 		return err
 	}
 	if err := encoding.WriteVarInt(w, uint64(len(cert.committers))); err != nil {
@@ -168,15 +158,9 @@ func (cert *baseCertificate) Encode(w io.Writer) error {
 }
 
 func (cert *baseCertificate) Decode(r io.Reader) error {
-	roundAndPath := uint16(0)
-	err := encoding.ReadElements(r, &cert.height, &roundAndPath)
+	err := encoding.ReadElements(r, &cert.height, &cert.round)
 	if err != nil {
 		return err
-	}
-
-	cert.round = int16(roundAndPath & 0x7FFF)
-	if roundAndPath&0x8000 == 0x8000 {
-		cert.fastPath = true
 	}
 
 	lenCommitters, err := encoding.ReadVarInt(r)
@@ -217,8 +201,24 @@ func (cert *baseCertificate) Decode(r io.Reader) error {
 	return nil
 }
 
+type requiredPowerFn func(int64) int64
+
+var require2Fp1Power = func(committeePower int64) int64 {
+	f := (committeePower - 1) / 3
+	p := (2 * f) + 1
+
+	return p
+}
+
+var requireFp1Power = func(committeePower int64) int64 {
+	f := (committeePower - 1) / 3
+	p := (1 * f) + 1
+
+	return p
+}
+
 func (cert *baseCertificate) validate(validators []*validator.Validator,
-	signBytes []byte, calcRequiredPowerFn func(int64) int64,
+	signBytes []byte, requiredPowerFn requiredPowerFn,
 ) error {
 	if len(validators) != len(cert.committers) {
 		return UnexpectedCommittersError{
@@ -245,7 +245,7 @@ func (cert *baseCertificate) validate(validators []*validator.Validator,
 		committeePower += val.Power()
 	}
 
-	requiredPower := calcRequiredPowerFn(committeePower)
+	requiredPower := requiredPowerFn(committeePower)
 
 	// Check if signers have enough power
 	if signedPower < requiredPower {

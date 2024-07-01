@@ -20,7 +20,7 @@ import (
 func TestCBORMarshaling(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	tx1, _ := ts.GenerateTestTransferTx()
+	tx1 := ts.GenerateTestTransferTx()
 	bz, err := cbor.Marshal(tx1)
 	assert.NoError(t, err)
 	tx2 := new(tx.Tx)
@@ -33,11 +33,11 @@ func TestCBORMarshaling(t *testing.T) {
 func TestEncodingTx(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	trx1, _ := ts.GenerateTestTransferTx()
-	trx2, _ := ts.GenerateTestBondTx()
-	trx3, _ := ts.GenerateTestUnbondTx()
-	trx4, _ := ts.GenerateTestWithdrawTx()
-	trx5, _ := ts.GenerateTestSortitionTx()
+	trx1 := ts.GenerateTestTransferTx()
+	trx2 := ts.GenerateTestBondTx()
+	trx3 := ts.GenerateTestUnbondTx()
+	trx4 := ts.GenerateTestWithdrawTx()
+	trx5 := ts.GenerateTestSortitionTx()
 	assert.True(t, trx1.IsTransferTx())
 	assert.True(t, trx2.IsBondTx())
 	assert.True(t, trx3.IsUnbondTx())
@@ -77,7 +77,7 @@ func TestEncodingTx(t *testing.T) {
 func TestTxIDNoSignatory(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	tx1, _ := ts.GenerateTestTransferTx()
+	tx1 := ts.GenerateTestTransferTx()
 	tx2 := new(tx.Tx)
 	*tx2 = *tx1
 	tx2.SetPublicKey(nil)
@@ -260,12 +260,12 @@ func TestInvalidSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Good", func(t *testing.T) {
-		trx, _ := ts.GenerateTestTransferTx()
+		trx := ts.GenerateTestTransferTx()
 		assert.NoError(t, trx.BasicCheck())
 	})
 
 	t.Run("No signature", func(t *testing.T) {
-		trx, _ := ts.GenerateTestTransferTx()
+		trx := ts.GenerateTestTransferTx()
 		trx.SetSignature(nil)
 
 		err := trx.BasicCheck()
@@ -275,7 +275,7 @@ func TestInvalidSignature(t *testing.T) {
 	})
 
 	t.Run("No public key", func(t *testing.T) {
-		trx, _ := ts.GenerateTestTransferTx()
+		trx := ts.GenerateTestTransferTx()
 		trx.SetPublicKey(nil)
 
 		err := trx.BasicCheck()
@@ -286,7 +286,7 @@ func TestInvalidSignature(t *testing.T) {
 
 	pbInv, pvInv := ts.RandBLSKeyPair()
 	t.Run("Invalid signature", func(t *testing.T) {
-		trx, _ := ts.GenerateTestTransferTx()
+		trx := ts.GenerateTestTransferTx()
 		sig := pvInv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
 
@@ -297,7 +297,7 @@ func TestInvalidSignature(t *testing.T) {
 	})
 
 	t.Run("Invalid public key", func(t *testing.T) {
-		trx, _ := ts.GenerateTestTransferTx()
+		trx := ts.GenerateTestTransferTx()
 		trx.SetPublicKey(pbInv)
 
 		err := trx.BasicCheck()
@@ -307,8 +307,9 @@ func TestInvalidSignature(t *testing.T) {
 	})
 
 	t.Run("Invalid sign Bytes", func(t *testing.T) {
-		trx0, pValKey := ts.GenerateTestUnbondTx()
-		valKey := bls.NewValidatorKey(pValKey)
+		valKey := ts.RandValKey()
+		trx0 := ts.GenerateTestUnbondTx(testsuite.TransactionWithSigner(valKey.PrivateKey()))
+
 		trx := tx.NewUnbondTx(trx0.LockTime(), valKey.Address(),
 			"invalidate signature")
 		trx.SetPublicKey(trx0.PublicKey())
@@ -321,7 +322,7 @@ func TestInvalidSignature(t *testing.T) {
 	})
 
 	t.Run("Zero signature", func(t *testing.T) {
-		trx, _ := ts.GenerateTestTransferTx()
+		trx := ts.GenerateTestTransferTx()
 		trx.SetSignature(&bls.Signature{})
 
 		err := trx.BasicCheck()
@@ -331,7 +332,7 @@ func TestInvalidSignature(t *testing.T) {
 	})
 
 	t.Run("Zero public key", func(t *testing.T) {
-		trx, _ := ts.GenerateTestTransferTx()
+		trx := ts.GenerateTestTransferTx()
 		zeroPubKey := &bls.PublicKey{}
 		trx.SetPublicKey(zeroPubKey)
 
@@ -373,7 +374,7 @@ func TestSignBytes(t *testing.T) {
 func TestStripPublicKey(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	trx1, _ := ts.GenerateTestTransferTx()
+	trx1 := ts.GenerateTestTransferTx()
 	id1 := trx1.ID()
 	assert.NoError(t, trx1.BasicCheck())
 

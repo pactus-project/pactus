@@ -16,9 +16,8 @@ type VoteCertificate struct {
 func NewVoteCertificate(height uint32, round int16) *VoteCertificate {
 	return &VoteCertificate{
 		baseCertificate: baseCertificate{
-			height:   height,
-			round:    round,
-			fastPath: false,
+			height: height,
+			round:  round,
 		},
 	}
 }

@@ -42,8 +42,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Without the previous certificate", func(t *testing.T) {
-		b0, _ := ts.GenerateTestBlock(ts.RandHeight())
-		b := block.NewBlock(b0.Header(), nil, b0.Transactions())
+		b, _ := ts.GenerateTestBlock(ts.RandHeight(), testsuite.BlockWithPrevCert(nil))
 
 		err := b.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
@@ -269,6 +268,7 @@ func TestTxFromBytes(t *testing.T) {
 	_, err = blk.Bytes()
 	assert.NoError(t, err)
 
+	// Invalid data
 	_, err = block.FromBytes([]byte{1})
 	assert.Error(t, err)
 }

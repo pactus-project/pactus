@@ -116,7 +116,7 @@ func (m *MockState) CommitBlock(b *block.Block, cert *certificate.BlockCertifica
 func (*MockState) Close() {}
 
 func (m *MockState) ProposeBlock(valKey *bls.ValidatorKey, _ crypto.Address) (*block.Block, error) {
-	blk, _ := m.ts.GenerateTestBlockWithProposer(m.TestStore.LastHeight, valKey.Address())
+	blk, _ := m.ts.GenerateTestBlock(m.TestStore.LastHeight, testsuite.BlockWithProposer(valKey.Address()))
 
 	return blk, nil
 }
