@@ -6,7 +6,9 @@ import (
 	"flag"
 	"log"
 	"os"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 
 	"github.com/gofrs/flock"
 	"github.com/gotk3/gotk3/gdk"
@@ -14,6 +16,7 @@ import (
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
@@ -83,6 +86,9 @@ func main() {
 		log.Println("application startup")
 	})
 
+	n, wlt, err := newNode(workingDir)
+	fatalErrorCheck(err)
+
 	// Connect function to application activate event
 	app.Connect("activate", func() {
 		log.Println("application activate")
@@ -105,9 +111,9 @@ func main() {
 			gtk.MainIteration()
 		}
 
-		// Running the start-up logic in a separate goroutine
+		// Running the run-up logic in a separate goroutine
 		glib.TimeoutAdd(uint(100), func() bool {
-			start(workingDir, app)
+			run(n, wlt, app)
 			splashDlg.Destroy()
 
 			// Ensures the function is not called again
@@ -117,20 +123,32 @@ func main() {
 
 	// Connect function to application shutdown event, this is not required.
 	app.Connect("shutdown", func() {
+		n.Stop()
 		_ = fileLock.Unlock()
 		log.Println("application shutdown")
 	})
+
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		s := <-interrupt
+		log.Printf("signal %s received", s.String())
+		n.Stop()
+		_ = fileLock.Unlock()
+		os.Exit(0)
+	}()
 
 	// Launch the application
 	os.Exit(app.Run(nil))
 }
 
-func start(workingDir string, app *gtk.Application) {
+func newNode(workingDir string) (*node.Node, *wallet.Wallet, error) {
 	// change working directory
 	if err := os.Chdir(workingDir); err != nil {
 		log.Println("Aborted! Unable to changes working directory. " + err.Error())
 
-		return
+		return nil, nil, err
 	}
 
 	passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
@@ -140,16 +158,22 @@ func start(workingDir string, app *gtk.Application) {
 
 		return getWalletPassword(wlt)
 	}
-	node, wlt, err := cmd.StartNode(workingDir, passwordFetcher)
-	fatalErrorCheck(err)
+	n, wlt, err := cmd.StartNode(workingDir, passwordFetcher)
+	if err != nil {
+		return nil, nil, err
+	}
 
-	grpcAddr := node.GRPC().Address()
+	return n, wlt, nil
+}
+
+func run(n *node.Node, wlt *wallet.Wallet, app *gtk.Application) {
+	grpcAddr := n.GRPC().Address()
 	cmd.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
 
 	wlt.SetServerAddr(grpcAddr)
 
-	nodeModel := newNodeModel(node)
-	walletModel := newWalletModel(wlt, node)
+	nodeModel := newNodeModel(n)
+	walletModel := newWalletModel(wlt, n)
 
 	// building main window
 	win := buildMainWindow(nodeModel, walletModel)
