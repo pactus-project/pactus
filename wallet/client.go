@@ -19,6 +19,7 @@ import (
 // It is used to get information such as account balance or transaction data from the server.
 type grpcClient struct {
 	ctx               context.Context
+	cancel            context.CancelFunc
 	servers           []string
 	conn              *grpc.ClientConn
 	blockchainClient  pactus.BlockchainClient
@@ -26,10 +27,11 @@ type grpcClient struct {
 }
 
 func newGrpcClient() *grpcClient {
-	ctx := context.WithoutCancel(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 
 	return &grpcClient{
 		ctx:               ctx,
+		cancel:            cancel,
 		conn:              nil,
 		blockchainClient:  nil,
 		transactionClient: nil,
@@ -78,10 +80,7 @@ func (c *grpcClient) getBlockchainInfo() (*pactus.GetBlockchainInfoResponse, err
 		return nil, err
 	}
 
-	ctx, cancel := context.WithTimeout(c.ctx, time.Second*5)
-	defer cancel()
-
-	info, err := c.blockchainClient.GetBlockchainInfo(ctx,
+	info, err := c.blockchainClient.GetBlockchainInfo(c.ctx,
 		&pactus.GetBlockchainInfoRequest{})
 	if err != nil {
 		return nil, err
@@ -95,10 +94,7 @@ func (c *grpcClient) getAccount(addrStr string) (*pactus.AccountInfo, error) {
 		return nil, err
 	}
 
-	ctx, cancel := context.WithTimeout(c.ctx, time.Second*5)
-	defer cancel()
-
-	res, err := c.blockchainClient.GetAccount(ctx,
+	res, err := c.blockchainClient.GetAccount(c.ctx,
 		&pactus.GetAccountRequest{Address: addrStr})
 	if err != nil {
 		return nil, err
@@ -112,10 +108,7 @@ func (c *grpcClient) getValidator(addrStr string) (*pactus.ValidatorInfo, error)
 		return nil, err
 	}
 
-	ctx, cancel := context.WithTimeout(c.ctx, time.Second*5)
-	defer cancel()
-
-	res, err := c.blockchainClient.GetValidator(ctx,
+	res, err := c.blockchainClient.GetValidator(c.ctx,
 		&pactus.GetValidatorRequest{Address: addrStr})
 	if err != nil {
 		return nil, err
@@ -129,14 +122,11 @@ func (c *grpcClient) sendTx(trx *tx.Tx) (tx.ID, error) {
 		return hash.UndefHash, err
 	}
 
-	ctx, cancel := context.WithTimeout(c.ctx, time.Second*5)
-	defer cancel()
-
 	data, err := trx.Bytes()
 	if err != nil {
 		return hash.UndefHash, err
 	}
-	res, err := c.transactionClient.BroadcastTransaction(ctx,
+	res, err := c.transactionClient.BroadcastTransaction(c.ctx,
 		&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 	if err != nil {
 		return hash.UndefHash, err
@@ -151,10 +141,7 @@ func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, e
 		return nil, err
 	}
 
-	ctx, cancel := context.WithTimeout(c.ctx, time.Second*5)
-	defer cancel()
-
-	res, err := c.transactionClient.GetTransaction(ctx,
+	res, err := c.transactionClient.GetTransaction(c.ctx,
 		&pactus.GetTransactionRequest{
 			Id:        id.String(),
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
@@ -171,10 +158,7 @@ func (c *grpcClient) getFee(amt amount.Amount, payloadType payload.Type) (amount
 		return 0, err
 	}
 
-	ctx, cancel := context.WithTimeout(c.ctx, time.Second*5)
-	defer cancel()
-
-	res, err := c.transactionClient.CalculateFee(ctx,
+	res, err := c.transactionClient.CalculateFee(c.ctx,
 		&pactus.CalculateFeeRequest{
 			Amount:      amt.ToNanoPAC(),
 			PayloadType: pactus.PayloadType(payloadType),
