@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"errors"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/amount"
@@ -18,6 +19,7 @@ import (
 // It is used to get information such as account balance or transaction data from the server.
 type grpcClient struct {
 	ctx               context.Context
+	cancel            context.CancelFunc
 	servers           []string
 	conn              *grpc.ClientConn
 	blockchainClient  pactus.BlockchainClient
@@ -25,10 +27,11 @@ type grpcClient struct {
 }
 
 func newGrpcClient() *grpcClient {
-	ctx := context.WithoutCancel(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 
 	return &grpcClient{
 		ctx:               ctx,
+		cancel:            cancel,
 		conn:              nil,
 		blockchainClient:  nil,
 		transactionClient: nil,
@@ -46,7 +49,8 @@ func (c *grpcClient) connect() error {
 
 	for _, server := range c.servers {
 		conn, err := grpc.NewClient(server,
-			grpc.WithTransportCredentials(insecure.NewCredentials()))
+			grpc.WithTransportCredentials(insecure.NewCredentials()),
+		)
 		if err != nil {
 			continue
 		}
