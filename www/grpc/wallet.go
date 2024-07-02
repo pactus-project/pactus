@@ -120,7 +120,7 @@ func (s *walletServer) UnloadWallet(_ context.Context,
 func (s *walletServer) GetTotalBalance(_ context.Context,
 	req *pactus.GetTotalBalanceRequest,
 ) (*pactus.GetTotalBalanceResponse, error) {
-	balance, err := s.walletManager.TotalBalance(req.WalletName)
+	balance, err := s.walletManager.TotalBalance(req.WalletName) //nolint
 	if err != nil {
 		return nil, err
 	}

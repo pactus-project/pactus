@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/hex"
 	"errors"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/amount"
@@ -44,26 +45,35 @@ func (c *grpcClient) connect() error {
 		return nil
 	}
 
+	s := 1
 	for _, server := range c.servers {
 		conn, err := grpc.NewClient(server,
-			grpc.WithTransportCredentials(insecure.NewCredentials()))
+			grpc.WithTransportCredentials(insecure.NewCredentials()),
+		)
 		if err != nil {
 			continue
 		}
+
+		ctx, cancel := context.WithTimeout(c.ctx, time.Second*time.Duration(s))
 
 		blockchainClient := pactus.NewBlockchainClient(conn)
 		transactionClient := pactus.NewTransactionClient(conn)
 
 		// Check if client is responding
-		_, err = blockchainClient.GetBlockchainInfo(c.ctx,
+		_, err = blockchainClient.GetBlockchainInfo(ctx,
 			&pactus.GetBlockchainInfoRequest{})
 		if err != nil {
+			cancel()
+			s++
+
 			continue
 		}
 
 		c.conn = conn
 		c.blockchainClient = blockchainClient
 		c.transactionClient = transactionClient
+
+		cancel()
 
 		return nil
 	}
