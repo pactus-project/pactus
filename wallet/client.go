@@ -58,7 +58,7 @@ func (c *grpcClient) connect() error {
 		opts := make([]grpc.DialOption, 0)
 		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
-		if len(c.servers) > 0 {
+		if len(c.servers) > 1 {
 			opts = append(opts, grpc.WithContextDialer(func(_ context.Context, s string) (net.Conn, error) {
 				return net.DialTimeout("tcp", s, c.timeout)
 			}))
