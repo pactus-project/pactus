@@ -66,7 +66,7 @@ func (c *grpcClient) connect() error {
 
 		conn, err := grpc.NewClient(server, opts...)
 		if err != nil {
-			return err
+			continue
 		}
 
 		blockchainClient := pactus.NewBlockchainClient(conn)
