@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/hex"
 	"errors"
+	"net"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/amount"
@@ -20,15 +22,17 @@ type grpcClient struct {
 	ctx               context.Context
 	servers           []string
 	conn              *grpc.ClientConn
+	timeout           time.Duration
 	blockchainClient  pactus.BlockchainClient
 	transactionClient pactus.TransactionClient
 }
 
 func newGrpcClient() *grpcClient {
-	ctx := context.WithoutCancel(context.Background())
+	ctx := context.Background()
 
 	return &grpcClient{
 		ctx:               ctx,
+		timeout:           time.Second * 1,
 		conn:              nil,
 		blockchainClient:  nil,
 		transactionClient: nil,
@@ -39,16 +43,30 @@ func (c *grpcClient) SetServerAddrs(servers []string) {
 	c.servers = servers
 }
 
+func (c *grpcClient) SetTimeoutConnection(timeout time.Duration) {
+	if timeout > 0 {
+		c.timeout = timeout
+	}
+}
+
 func (c *grpcClient) connect() error {
 	if c.conn != nil {
 		return nil
 	}
 
 	for _, server := range c.servers {
-		conn, err := grpc.NewClient(server,
-			grpc.WithTransportCredentials(insecure.NewCredentials()))
+		opts := make([]grpc.DialOption, 0)
+		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+		if len(c.servers) > 0 {
+			opts = append(opts, grpc.WithContextDialer(func(_ context.Context, s string) (net.Conn, error) {
+				return net.DialTimeout("tcp", s, c.timeout)
+			}))
+		}
+
+		conn, err := grpc.NewClient(server, opts...)
 		if err != nil {
-			continue
+			return err
 		}
 
 		blockchainClient := pactus.NewBlockchainClient(conn)
@@ -58,6 +76,10 @@ func (c *grpcClient) connect() error {
 		_, err = blockchainClient.GetBlockchainInfo(c.ctx,
 			&pactus.GetBlockchainInfoRequest{})
 		if err != nil {
+			if err := conn.Close(); err != nil {
+				return err
+			}
+
 			continue
 		}
 

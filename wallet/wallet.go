@@ -156,6 +156,10 @@ func (w *Wallet) SetServerAddr(addr string) {
 	w.grpcClient.SetServerAddrs([]string{addr})
 }
 
+func (w *Wallet) SetClientTimeout(timeout time.Duration) {
+	w.grpcClient.SetTimeoutConnection(timeout)
+}
+
 func (w *Wallet) Name() string {
 	return path.Base(w.path)
 }
