@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/account"
@@ -575,11 +576,16 @@ func TestSignMessage(t *testing.T) {
 	defer td.Close()
 
 	msg := "pactus"
+	prvStr := "SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67"
 	sigStr := "923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
 
-	senderInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
+	prv, err := bls.PrivateKeyFromString(prvStr)
+	assert.NoError(t, err)
 
-	sig, err := td.wallet.SignMessage(msg, td.password, senderInfo.Address)
+	err = td.wallet.ImportPrivateKey("", prv)
+	assert.NoError(t, err)
+
+	sig, err := td.wallet.SignMessage(msg, td.password, td.wallet.AllAccountAddresses()[0].Address)
 	assert.NoError(t, err)
 	assert.Equal(t, sig, sigStr)
 }
