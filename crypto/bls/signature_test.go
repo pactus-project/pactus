@@ -70,7 +70,7 @@ func TestSignatureEncoding(t *testing.T) {
 func TestVerifyingSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	msg := []byte("pactus")
+	msg := []byte("zarb")
 
 	pb1, pv1 := ts.RandBLSKeyPair()
 	pb2, pv2 := ts.RandBLSKeyPair()
