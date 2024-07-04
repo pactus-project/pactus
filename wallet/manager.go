@@ -199,5 +199,5 @@ func (wm *Manager) SignMessage(msg, password, addr, walletName string) (string, 
 		return "", status.Errorf(codes.NotFound, "wallet is not loaded")
 	}
 
-	return wlt.SignMessage(msg,password,addr)
+	return wlt.SignMessage(msg, password, addr)
 }

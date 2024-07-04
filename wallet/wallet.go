@@ -467,7 +467,7 @@ func (w *Wallet) GetHistory(addr string) []HistoryInfo {
 }
 
 func (w *Wallet) SignMessage(msg, password, addr string) (string, error) {
-	prv, err := w.PrivateKey(password,addr)
+	prv, err := w.PrivateKey(password, addr)
 	if err != nil {
 		return "", err
 	}

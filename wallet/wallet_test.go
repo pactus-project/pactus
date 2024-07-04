@@ -575,13 +575,11 @@ func TestSignMessage(t *testing.T) {
 	defer td.Close()
 
 	msg := "pactus"
-	sigStr := 
-		"923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
-
+	sigStr := "923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
 
 	senderInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
 
-	sig, err := td.wallet.SignMessage(msg,td.password,senderInfo.Address)
+	sig, err := td.wallet.SignMessage(msg, td.password, senderInfo.Address)
 	assert.NoError(t, err)
-	assert.Equal(t, sig,sigStr)
+	assert.Equal(t, sig, sigStr)
 }
