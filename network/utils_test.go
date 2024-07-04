@@ -156,7 +156,7 @@ func TestSubnetsToFilters(t *testing.T) {
 }
 
 func TestMessageIdFunc(t *testing.T) {
-	m := &lp2pspb.Message{Data: []byte("pactus")}
+	m := &lp2pspb.Message{Data: []byte("zarb")}
 	id := MessageIDFunc(m)
 
 	assert.Equal(t, "\x12\xb3\x89\x77\xf2\xd6\x7f\x06\xf0\xc0\xcd\x54\xaa\xf7\x32\x4c\xf4\xfe\xe1\x84", id)
