@@ -12,14 +12,14 @@ import (
 )
 
 func TestSigning(t *testing.T) {
-	msg := []byte("zarb")
+	msg := []byte("pactus")
 	prv, _ := bls.PrivateKeyFromString(
 		"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
 	pub, _ := bls.PublicKeyFromString(
 		"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
 			"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47a")
 	sig, _ := bls.SignatureFromString(
-		"ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792")
+		"923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7")
 	addr, _ := crypto.AddressFromString("pc1p5x2a0lkt5nrrdqe0rkcv6r4pfkmdhrr3xk73tq")
 
 	sig1 := prv.Sign(msg)
@@ -30,7 +30,7 @@ func TestSigning(t *testing.T) {
 }
 
 func TestSignatureAggregate(t *testing.T) {
-	msg := []byte("zarb")
+	msg := []byte("pactus")
 	prv1, _ := bls.PrivateKeyFromString(
 		"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
 	prv2, _ := bls.PrivateKeyFromString(
@@ -51,8 +51,8 @@ func TestAggregateFailed(t *testing.T) {
 	pub2, prv2 := ts.RandBLSKeyPair()
 	pub3, prv3 := ts.RandBLSKeyPair()
 	pub4, prv4 := ts.RandBLSKeyPair()
-	msg1 := []byte("zarb")
-	msg2 := []byte("zarb0")
+	msg1 := []byte("pactus")
+	msg2 := []byte("pactus0")
 
 	sig1 := prv1.Sign(msg1).(*bls.Signature)
 	sig11 := prv1.Sign(msg2).(*bls.Signature)
@@ -103,7 +103,7 @@ func TestAggregateOnlyOneSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	_, prv1 := ts.RandBLSKeyPair()
-	msg1 := []byte("zarb")
+	msg1 := []byte("pactus")
 	sig1 := prv1.Sign(msg1).(*bls.Signature)
 	agg1 := bls.SignatureAggregate(sig1)
 
@@ -126,7 +126,7 @@ func TestDuplicatedAggregate(t *testing.T) {
 	pub1, prv1 := ts.RandBLSKeyPair()
 	pub2, prv2 := ts.RandBLSKeyPair()
 
-	msg1 := []byte("zarb")
+	msg1 := []byte("pactus")
 
 	sig1 := prv1.Sign(msg1).(*bls.Signature)
 	sig2 := prv2.Sign(msg1).(*bls.Signature)

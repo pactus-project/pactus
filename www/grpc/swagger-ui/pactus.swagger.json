@@ -1976,6 +1976,16 @@
       },
       "description": "Response message containing the name of the restored wallet."
     },
+    "pactusSignMessageResponse": {
+      "type": "object",
+      "properties": {
+        "signature": {
+          "type": "string",
+          "description": "Signature of the message."
+        }
+      },
+      "description": "Response message containing the available balance of the wallet."
+    },
     "pactusSignRawTransactionResponse": {
       "type": "object",
       "properties": {

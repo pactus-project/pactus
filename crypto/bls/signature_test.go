@@ -70,7 +70,7 @@ func TestSignatureEncoding(t *testing.T) {
 func TestVerifyingSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	msg := []byte("zarb")
+	msg := []byte("pactus")
 
 	pb1, pv1 := ts.RandBLSKeyPair()
 	pb2, pv2 := ts.RandBLSKeyPair()
@@ -114,7 +114,7 @@ func TestSignatureBytes(t *testing.T) {
 		},
 		{
 			"",
-			"ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792",
+			"923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7",
 			true,
 			[]byte{
 				0xad, 0x0f, 0x88, 0xce, 0xc8, 0x15, 0xe9, 0xb8, 0xaf, 0x3f, 0x01, 0x36, 0x29, 0x7c, 0xb2, 0x42,
@@ -159,7 +159,7 @@ func TestPointG1(t *testing.T) {
 		},
 		{
 			"",
-			"ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792",
+			"923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7",
 			true,
 		},
 	}

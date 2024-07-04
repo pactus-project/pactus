@@ -192,3 +192,12 @@ func (wm *Manager) AddressHistory(
 
 	return wlt.GetHistory(address), nil
 }
+
+func (wm *Manager) SignMessage(msg, password, addr, walletName string) (string, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return "", status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	return wlt.SignMessage(msg,password,addr)
+}

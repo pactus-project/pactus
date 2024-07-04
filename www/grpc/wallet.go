@@ -187,3 +187,17 @@ func (s *walletServer) GetAddressHistory(_ context.Context,
 		HistoryInfo: s.mapHistoryInfo(data),
 	}, nil
 }
+
+func (s *walletServer) SignMessage(_ context.Context,
+	req *pactus.SignMessageRequest,
+) (*pactus.SignMessageResponse, error) {
+
+	sig, err := s.walletManager.SignMessage(req.Message, req.Password, req.Address, req.WalletName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.SignMessageResponse{
+		Signature: sig,
+	}, nil
+}
