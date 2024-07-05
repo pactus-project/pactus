@@ -11,11 +11,10 @@ func TestSignMessageWithPrivateKey(t *testing.T) {
 	prvStr := "SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67"
 	invalidPrvStr := "INVSECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67"
 	sigStr := "923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
-	
+
 	sig, err := SignMessageWithPrivateKey(prvStr, msg)
 	assert.Nil(t, err)
 	assert.Equal(t, sig, sigStr)
-	
 
 	sig, err = SignMessageWithPrivateKey(invalidPrvStr, msg)
 	assert.NotNil(t, err)

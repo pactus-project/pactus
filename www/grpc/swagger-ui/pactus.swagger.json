@@ -1049,6 +1049,59 @@
         ]
       }
     },
+    "/pactus/wallet/sign_message": {
+      "get": {
+        "summary": "SignMessage signs an arbitrary message.",
+        "operationId": "Wallet_SignMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSignMessageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "The password for unlocking the wallet for signing.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "description": "The account address associated with the private key.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "message",
+            "description": "The arbitrary message to be signed.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
     "/pactus/wallet/sign_raw_transaction": {
       "get": {
         "summary": "SignRawTransaction signs a raw transaction for a specified wallet.",
