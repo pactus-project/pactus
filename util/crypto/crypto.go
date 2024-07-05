@@ -11,20 +11,20 @@ func SignMessageWithPrivateKey(prv, msg string) (string, error) {
 	return prvKey.Sign([]byte(msg)).String(), nil
 }
 
-func VerifyMessage(sigStr, pubStr, msg string) (bool, error) {
+func VerifyMessage(sigStr, pubStr, msg string) bool {
 	sig, err := bls.SignatureFromString(sigStr)
 	if err != nil {
-		return false, err
+		return false
 	}
 
 	pub, err := bls.PublicKeyFromString(pubStr)
 	if err != nil {
-		return false, err
+		return false
 	}
 
 	if err := pub.Verify([]byte(msg), sig); err != nil {
-		return false, err
+		return false
 	}
 
-	return true, nil
+	return true
 }
