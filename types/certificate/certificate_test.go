@@ -34,7 +34,7 @@ func TestInvalidCertificate(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid height", func(t *testing.T) {
-		cert := certificate.NewBlockCertificate(0, 0, false)
+		cert := certificate.NewBlockCertificate(0, 0)
 
 		err := cert.BasicCheck()
 		assert.ErrorIs(t, err, certificate.BasicCheckError{
@@ -43,7 +43,7 @@ func TestInvalidCertificate(t *testing.T) {
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
-		cert := certificate.NewBlockCertificate(1, -1, false)
+		cert := certificate.NewBlockCertificate(1, -1)
 
 		err := cert.BasicCheck()
 		assert.ErrorIs(t, err, certificate.BasicCheckError{
@@ -52,7 +52,7 @@ func TestInvalidCertificate(t *testing.T) {
 	})
 
 	t.Run("Committers is nil", func(t *testing.T) {
-		cert := certificate.NewBlockCertificate(ts.RandHeight(), ts.RandRound(), false)
+		cert := certificate.NewBlockCertificate(ts.RandHeight(), ts.RandRound())
 		cert.SetSignature(nil, []int32{1}, ts.RandBLSSignature())
 
 		err := cert.BasicCheck()
@@ -62,7 +62,7 @@ func TestInvalidCertificate(t *testing.T) {
 	})
 
 	t.Run("Absentees is nil", func(t *testing.T) {
-		cert := certificate.NewBlockCertificate(ts.RandHeight(), ts.RandRound(), false)
+		cert := certificate.NewBlockCertificate(ts.RandHeight(), ts.RandRound())
 		cert.SetSignature([]int32{1, 2, 3, 4}, nil, ts.RandBLSSignature())
 
 		err := cert.BasicCheck()
@@ -72,7 +72,7 @@ func TestInvalidCertificate(t *testing.T) {
 	})
 
 	t.Run("Signature is nil", func(t *testing.T) {
-		cert := certificate.NewBlockCertificate(ts.RandHeight(), ts.RandRound(), false)
+		cert := certificate.NewBlockCertificate(ts.RandHeight(), ts.RandRound())
 		cert.SetSignature([]int32{1, 2, 3, 4, 5, 6}, []int32{1}, nil)
 
 		err := cert.BasicCheck()
@@ -82,7 +82,7 @@ func TestInvalidCertificate(t *testing.T) {
 	})
 
 	t.Run("Invalid Absentees ", func(t *testing.T) {
-		cert := certificate.NewBlockCertificate(ts.RandHeight(), ts.RandRound(), false)
+		cert := certificate.NewBlockCertificate(ts.RandHeight(), ts.RandRound())
 		cert.SetSignature([]int32{11, 2, 3, 4, 5, 6}, []int32{66}, ts.RandBLSSignature())
 
 		err := cert.BasicCheck()
@@ -93,7 +93,7 @@ func TestInvalidCertificate(t *testing.T) {
 	})
 
 	t.Run("Invalid Absentees ", func(t *testing.T) {
-		cert := certificate.NewBlockCertificate(ts.RandHeight(), ts.RandRound(), false)
+		cert := certificate.NewBlockCertificate(ts.RandHeight(), ts.RandRound())
 		cert.SetSignature([]int32{1, 2, 3, 4, 5, 6}, []int32{2, 1}, ts.RandBLSSignature())
 
 		err := cert.BasicCheck()
@@ -135,7 +135,7 @@ func TestAddSignature(t *testing.T) {
 	blockHash := ts.RandHash()
 	height := ts.RandHeight()
 	round := ts.RandRound()
-	cert := certificate.NewBlockCertificate(height, round, false)
+	cert := certificate.NewBlockCertificate(height, round)
 	signBytes := cert.SignBytes(blockHash)
 	committers := ts.RandSlice(6)
 	sigs := []*bls.Signature{}

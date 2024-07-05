@@ -314,31 +314,25 @@ func (ts *TestSuite) GenerateTestValidator(number int32) (*validator.Validator, 
 	return val, bls.NewValidatorKey(prv)
 }
 
-// GenerateTestBlockWithProposer generates a block with the give proposer address for testing purposes.
-func (ts *TestSuite) GenerateTestBlockWithProposer(height uint32, proposer crypto.Address,
-) (*block.Block, *certificate.BlockCertificate) {
-	return ts.makeTestBlock(height, proposer, util.Now())
+type BlockMaker struct {
+	Version   uint8
+	Txs       block.Txs
+	Proposer  crypto.Address
+	Time      time.Time
+	StateHash hash.Hash
+	PrevHash  hash.Hash
+	Seed      sortition.VerifiableSeed
+	PrevCert  *certificate.BlockCertificate
 }
 
-// GenerateTestBlockWithTime generates a block with the given time for testing purposes.
-func (ts *TestSuite) GenerateTestBlockWithTime(height uint32, tme time.Time,
-) (*block.Block, *certificate.BlockCertificate) {
-	return ts.makeTestBlock(height, ts.RandValAddress(), tme)
-}
-
-// GenerateTestBlock generates a block for testing purposes.
-func (ts *TestSuite) GenerateTestBlock(height uint32) (*block.Block, *certificate.BlockCertificate) {
-	return ts.makeTestBlock(height, ts.RandValAddress(), util.Now())
-}
-
-func (ts *TestSuite) makeTestBlock(height uint32, proposer crypto.Address, tme time.Time,
-) (*block.Block, *certificate.BlockCertificate) {
+// NewBlockMaker creates a new BlockMaker instance with default values.
+func (ts *TestSuite) NewBlockMaker() *BlockMaker {
 	txs := block.NewTxs()
-	tx1, _ := ts.GenerateTestTransferTx()
-	tx2, _ := ts.GenerateTestSortitionTx()
-	tx3, _ := ts.GenerateTestBondTx()
-	tx4, _ := ts.GenerateTestUnbondTx()
-	tx5, _ := ts.GenerateTestWithdrawTx()
+	tx1 := ts.GenerateTestTransferTx()
+	tx2 := ts.GenerateTestSortitionTx()
+	tx3 := ts.GenerateTestBondTx()
+	tx4 := ts.GenerateTestUnbondTx()
+	tx5 := ts.GenerateTestWithdrawTx()
 
 	txs.Append(tx1)
 	txs.Append(tx2)
@@ -346,27 +340,93 @@ func (ts *TestSuite) makeTestBlock(height uint32, proposer crypto.Address, tme t
 	txs.Append(tx4)
 	txs.Append(tx5)
 
-	var prevCert *certificate.BlockCertificate
-	prevBlockHash := ts.RandHash()
+	return &BlockMaker{
+		Version:  1,
+		Txs:      txs,
+		Proposer: ts.RandValAddress(),
+		Time:     util.Now(),
+		PrevHash: ts.RandHash(),
+		Seed:     ts.RandSeed(),
+		PrevCert: nil,
+	}
+}
+
+// BlockWithVersion sets version to the block.
+func BlockWithVersion(ver uint8) func(bm *BlockMaker) {
+	return func(bm *BlockMaker) {
+		bm.Version = ver
+	}
+}
+
+// BlockWithProposer sets proposer address to the block.
+func BlockWithProposer(addr crypto.Address) func(bm *BlockMaker) {
+	return func(bm *BlockMaker) {
+		bm.Proposer = addr
+	}
+}
+
+// BlockWithTime sets block creation time to the block.
+func BlockWithTime(t time.Time) func(bm *BlockMaker) {
+	return func(bm *BlockMaker) {
+		bm.Time = t
+	}
+}
+
+// BlockWithStateHash sets state hash to the block.
+func BlockWithStateHash(h hash.Hash) func(bm *BlockMaker) {
+	return func(bm *BlockMaker) {
+		bm.StateHash = h
+	}
+}
+
+// BlockWithPrevHash sets previous block hash to the block.
+func BlockWithPrevHash(h hash.Hash) func(bm *BlockMaker) {
+	return func(bm *BlockMaker) {
+		bm.PrevHash = h
+	}
+}
+
+// BlockWithSeed sets verifiable seed to the block.
+func BlockWithSeed(seed sortition.VerifiableSeed) func(bm *BlockMaker) {
+	return func(bm *BlockMaker) {
+		bm.Seed = seed
+	}
+}
+
+// BlockWithPrevCert sets previous block certificate to the block.
+func BlockWithPrevCert(cert *certificate.BlockCertificate) func(bm *BlockMaker) {
+	return func(bm *BlockMaker) {
+		bm.PrevCert = cert
+	}
+}
+
+// BlockWithTransactions adds transactions to the block.
+func BlockWithTransactions(txs block.Txs) func(bm *BlockMaker) {
+	return func(bm *BlockMaker) {
+		bm.Txs = txs
+	}
+}
+
+// GenerateTestBlock generates a block for testing purposes with optional configuration.
+func (ts *TestSuite) GenerateTestBlock(height uint32, options ...func(bm *BlockMaker)) (
+	*block.Block, *certificate.BlockCertificate,
+) {
+	bm := ts.NewBlockMaker()
+	bm.PrevCert = ts.GenerateTestBlockCertificate(height - 1)
+
 	if height == 1 {
-		prevCert = nil
-		prevBlockHash = hash.UndefHash
-	} else {
-		prevCert = ts.GenerateTestBlockCertificate(height - 1)
+		bm.PrevCert = nil
+		bm.PrevHash = hash.UndefHash
 	}
+
+	for _, opt := range options {
+		opt(bm)
+	}
+
+	header := block.NewHeader(bm.Version, bm.Time, bm.PrevHash, bm.PrevHash, bm.Seed, bm.Proposer)
+	blk := block.NewBlock(header, bm.PrevCert, bm.Txs)
+
 	blockCert := ts.GenerateTestBlockCertificate(height)
-	header := block.NewHeader(1, tme,
-		ts.RandHash(),
-		prevBlockHash,
-		ts.RandSeed(),
-		proposer)
-
-	blk := block.NewBlock(header, prevCert, txs)
-
-	err := blk.BasicCheck()
-	if err != nil {
-		panic(err)
-	}
 
 	return blk, blockCert
 }
@@ -375,16 +435,11 @@ func (ts *TestSuite) makeTestBlock(height uint32, proposer crypto.Address, tme t
 func (ts *TestSuite) GenerateTestBlockCertificate(height uint32) *certificate.BlockCertificate {
 	sig := ts.RandBLSSignature()
 
-	cert := certificate.NewBlockCertificate(height, ts.RandRound(), false)
+	cert := certificate.NewBlockCertificate(height, ts.RandRound())
 
 	committers := ts.RandSlice(6)
 	absentees := []int32{committers[5]}
 	cert.SetSignature(committers, absentees, sig)
-
-	err := cert.BasicCheck()
-	if err != nil {
-		panic(err)
-	}
 
 	return cert
 }
@@ -410,60 +465,121 @@ func (ts *TestSuite) GenerateTestPrepareCertificate(height uint32) *certificate.
 // GenerateTestProposal generates a proposal for testing purposes.
 func (ts *TestSuite) GenerateTestProposal(height uint32, round int16) (*proposal.Proposal, *bls.ValidatorKey) {
 	valKey := ts.RandValKey()
-	blk, _ := ts.GenerateTestBlockWithProposer(height, valKey.Address())
+	blk, _ := ts.GenerateTestBlock(height, BlockWithProposer(valKey.Address()))
 	prop := proposal.NewProposal(height, round, blk)
 	ts.HelperSignProposal(valKey, prop)
 
 	return prop, valKey
 }
 
-// GenerateTestTransferTx generates a transfer transaction for testing purposes.
-func (ts *TestSuite) GenerateTestTransferTx() (*tx.Tx, *bls.PrivateKey) {
-	pub, prv := ts.RandBLSKeyPair()
-	trx := tx.NewTransferTx(ts.RandHeight(), pub.AccountAddress(), ts.RandAccAddress(),
-		ts.RandAmount(), ts.RandAmount(), "test send-tx")
-	ts.HelperSignTransaction(prv, trx)
+type TransactionMaker struct {
+	Amount amount.Amount
+	Fee    amount.Amount
+	PrvKey *bls.PrivateKey
+	PubKey *bls.PublicKey
+}
 
-	return trx, prv
+// NewTransactionMaker creates a new TransactionMaker instance with default values.
+func (ts *TestSuite) NewTransactionMaker() *TransactionMaker {
+	pub, prv := ts.RandBLSKeyPair()
+
+	return &TransactionMaker{
+		Amount: ts.RandAmount(),
+		Fee:    ts.RandFee(),
+		PrvKey: prv,
+		PubKey: pub,
+	}
+}
+
+// TransactionWithAmount sets amount to the transaction.
+func TransactionWithAmount(amt amount.Amount) func(tm *TransactionMaker) {
+	return func(tm *TransactionMaker) {
+		tm.Amount = amt
+	}
+}
+
+// TransactionWithFee sets fee to the transaction.
+func TransactionWithFee(fee amount.Amount) func(tm *TransactionMaker) {
+	return func(tm *TransactionMaker) {
+		tm.Fee = fee
+	}
+}
+
+// TransactionWithSigner sets signer to the transaction.
+func TransactionWithSigner(signer *bls.PrivateKey) func(tm *TransactionMaker) {
+	return func(tm *TransactionMaker) {
+		tm.PrvKey = signer
+		tm.PubKey = signer.PublicKeyNative()
+	}
+}
+
+// GenerateTestTransferTx generates a transfer transaction for testing purposes.
+func (ts *TestSuite) GenerateTestTransferTx(options ...func(tm *TransactionMaker)) *tx.Tx {
+	tm := ts.NewTransactionMaker()
+
+	for _, opt := range options {
+		opt(tm)
+	}
+	trx := tx.NewTransferTx(ts.RandHeight(), tm.PubKey.AccountAddress(), ts.RandAccAddress(),
+		tm.Amount, tm.Fee, "test send-tx")
+	ts.HelperSignTransaction(tm.PrvKey, trx)
+
+	return trx
 }
 
 // GenerateTestBondTx generates a bond transaction for testing purposes.
-func (ts *TestSuite) GenerateTestBondTx() (*tx.Tx, *bls.PrivateKey) {
-	pub, prv := ts.RandBLSKeyPair()
-	trx := tx.NewBondTx(ts.RandHeight(), pub.AccountAddress(), ts.RandValAddress(),
-		nil, ts.RandAmount(), ts.RandAmount(), "test bond-tx")
-	ts.HelperSignTransaction(prv, trx)
+func (ts *TestSuite) GenerateTestBondTx(options ...func(tm *TransactionMaker)) *tx.Tx {
+	tm := ts.NewTransactionMaker()
 
-	return trx, prv
+	for _, opt := range options {
+		opt(tm)
+	}
+	trx := tx.NewBondTx(ts.RandHeight(), tm.PubKey.AccountAddress(), ts.RandValAddress(),
+		nil, tm.Amount, tm.Fee, "test bond-tx")
+	ts.HelperSignTransaction(tm.PrvKey, trx)
+
+	return trx
 }
 
 // GenerateTestSortitionTx generates a sortition transaction for testing purposes.
-func (ts *TestSuite) GenerateTestSortitionTx() (*tx.Tx, *bls.PrivateKey) {
-	pub, prv := ts.RandBLSKeyPair()
-	proof := ts.RandProof()
-	trx := tx.NewSortitionTx(ts.RandHeight(), pub.ValidatorAddress(), proof)
-	ts.HelperSignTransaction(prv, trx)
+func (ts *TestSuite) GenerateTestSortitionTx(options ...func(tm *TransactionMaker)) *tx.Tx {
+	tm := ts.NewTransactionMaker()
 
-	return trx, prv
+	for _, opt := range options {
+		opt(tm)
+	}
+	proof := ts.RandProof()
+	trx := tx.NewSortitionTx(ts.RandHeight(), tm.PubKey.ValidatorAddress(), proof)
+	ts.HelperSignTransaction(tm.PrvKey, trx)
+
+	return trx
 }
 
 // GenerateTestUnbondTx generates an unbond transaction for testing purposes.
-func (ts *TestSuite) GenerateTestUnbondTx() (*tx.Tx, *bls.PrivateKey) {
-	pub, prv := ts.RandBLSKeyPair()
-	trx := tx.NewUnbondTx(ts.RandHeight(), pub.ValidatorAddress(), "test unbond-tx")
-	ts.HelperSignTransaction(prv, trx)
+func (ts *TestSuite) GenerateTestUnbondTx(options ...func(tm *TransactionMaker)) *tx.Tx {
+	tm := ts.NewTransactionMaker()
 
-	return trx, prv
+	for _, opt := range options {
+		opt(tm)
+	}
+	trx := tx.NewUnbondTx(ts.RandHeight(), tm.PubKey.ValidatorAddress(), "test unbond-tx")
+	ts.HelperSignTransaction(tm.PrvKey, trx)
+
+	return trx
 }
 
 // GenerateTestWithdrawTx generates a withdraw transaction for testing purposes.
-func (ts *TestSuite) GenerateTestWithdrawTx() (*tx.Tx, *bls.PrivateKey) {
-	pub, prv := ts.RandBLSKeyPair()
-	trx := tx.NewWithdrawTx(ts.RandHeight(), pub.ValidatorAddress(), ts.RandAccAddress(),
-		ts.RandAmount(), ts.RandAmount(), "test withdraw-tx")
-	ts.HelperSignTransaction(prv, trx)
+func (ts *TestSuite) GenerateTestWithdrawTx(options ...func(tm *TransactionMaker)) *tx.Tx {
+	tm := ts.NewTransactionMaker()
 
-	return trx, prv
+	for _, opt := range options {
+		opt(tm)
+	}
+	trx := tx.NewWithdrawTx(ts.RandHeight(), tm.PubKey.ValidatorAddress(), ts.RandAccAddress(),
+		tm.Amount, tm.Fee, "test withdraw-tx")
+	ts.HelperSignTransaction(tm.PrvKey, trx)
+
+	return trx
 }
 
 // GenerateTestPrecommitVote generates a precommit vote for testing purposes.

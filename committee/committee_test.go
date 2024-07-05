@@ -23,11 +23,11 @@ func TestContains(t *testing.T) {
 func TestProposer(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	cmt, _ := ts.GenerateTestCommittee(6)
+	cmt, _ := ts.GenerateTestCommittee(4)
 
 	assert.Equal(t, cmt.Proposer(0).Number(), int32(0))
 	assert.Equal(t, cmt.Proposer(3).Number(), int32(3))
-	assert.Equal(t, cmt.Proposer(6).Number(), int32(0))
+	assert.Equal(t, cmt.Proposer(4).Number(), int32(0))
 
 	cmt.Update(0, nil)
 	assert.Equal(t, cmt.Proposer(0).Number(), int32(1))

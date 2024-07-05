@@ -36,6 +36,7 @@ func TestRunningNode(t *testing.T) {
 	conf.Store.Path = util.TempDirPath()
 	conf.Network.EnableRelay = false
 	conf.Network.NetworkKey = util.TempFilePath()
+	conf.Network.PeerStorePath = util.TempFilePath()
 
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}

@@ -11,6 +11,8 @@ import (
 func TestParsingBlockAnnounceMessages(t *testing.T) {
 	td := setup(t, nil)
 
+	td.state.CommitTestBlocks(10)
+
 	pid := td.RandPeerID()
 	lastHeight := td.state.LastBlockHeight()
 	blk1, cert1 := td.GenerateTestBlock(lastHeight + 1)
@@ -38,7 +40,7 @@ func TestInvalidBlockAnnounce(t *testing.T) {
 	pid := td.RandPeerID()
 	height := td.state.LastBlockHeight() + 1
 	blk, _ := td.GenerateTestBlock(height)
-	invCert := certificate.NewBlockCertificate(height, 0, false)
+	invCert := certificate.NewBlockCertificate(height, 0)
 	msg := message.NewBlockAnnounceMessage(blk, invCert)
 
 	err := td.receivingNewMessage(td.sync, msg, pid)

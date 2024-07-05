@@ -138,8 +138,8 @@ func TestAccountChange(t *testing.T) {
 func TestAnyRecentTransaction(t *testing.T) {
 	td := setup(t)
 
-	randTx1, _ := td.GenerateTestTransferTx()
-	randTx2, _ := td.GenerateTestTransferTx()
+	randTx1 := td.GenerateTestTransferTx()
+	randTx2 := td.GenerateTestTransferTx()
 	td.sandbox.CommitTransaction(randTx1)
 	td.sandbox.CommitTransaction(randTx2)
 

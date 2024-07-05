@@ -346,7 +346,7 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	var err error
 	prop := td.makeProposal(t, height+1, 0)
 
-	cert := certificate.NewBlockCertificate(height+1, 0, false)
+	cert := certificate.NewBlockCertificate(height+1, 0)
 	sb := cert.SignBytes(prop.Block().Hash())
 	sig1 := td.consX.valKey.Sign(sb)
 	sig2 := td.consY.valKey.Sign(sb)

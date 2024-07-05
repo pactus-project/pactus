@@ -64,6 +64,8 @@ func TestInvalidBlockData(t *testing.T) {
 func TestOneBlockShorter(t *testing.T) {
 	td := setup(t, nil)
 
+	td.state.CommitTestBlocks(10)
+
 	lastHeight := td.state.LastBlockHeight()
 	blk1, cert1 := td.GenerateTestBlock(lastHeight + 1)
 	d1, _ := blk1.Bytes()
@@ -282,7 +284,7 @@ func TestSyncing(t *testing.T) {
 	blockInterval := td.syncBob.state.Genesis().Params().BlockInterval()
 	blockTime := td.syncBob.state.Genesis().GenesisTime()
 	for i := uint32(0); i < 100; i++ {
-		blk, cert := td.GenerateTestBlockWithTime(i+1, blockTime)
+		blk, cert := td.GenerateTestBlock(i+1, testsuite.BlockWithTime(blockTime))
 		assert.NoError(t, td.syncBob.state.CommitBlock(blk, cert))
 
 		blockTime = blockTime.Add(blockInterval)
@@ -343,7 +345,7 @@ func TestSyncingHasBlockInCache(t *testing.T) {
 	blockInterval := td.syncBob.state.Genesis().Params().BlockInterval()
 	blockTime := td.syncBob.state.Genesis().GenesisTime()
 	for i := uint32(0); i < 23; i++ {
-		blk, cert := td.GenerateTestBlockWithTime(i+1, blockTime)
+		blk, cert := td.GenerateTestBlock(i+1, testsuite.BlockWithTime(blockTime))
 		assert.NoError(t, td.syncBob.state.CommitBlock(blk, cert))
 
 		blockTime = blockTime.Add(blockInterval)

@@ -100,8 +100,8 @@ func TestAppendAndRemove(t *testing.T) {
 func TestAppendInvalidTransaction(t *testing.T) {
 	td := setup(t)
 
-	invalidTx, _ := td.GenerateTestTransferTx()
-	assert.Error(t, td.pool.AppendTx(invalidTx))
+	invTrx := td.GenerateTestTransferTx()
+	assert.Error(t, td.pool.AppendTx(invTrx))
 }
 
 // TestFullPool tests if the pool prunes the old transactions when it is full.
@@ -207,7 +207,7 @@ func TestAppendAndBroadcast(t *testing.T) {
 	assert.NoError(t, td.pool.AppendTxAndBroadcast(testTrx))
 	td.shouldPublishTransaction(t, testTrx.ID())
 
-	invTrx, _ := td.GenerateTestBondTx()
+	invTrx := td.GenerateTestBondTx()
 	assert.Error(t, td.pool.AppendTxAndBroadcast(invTrx))
 }
 

@@ -17,9 +17,9 @@ func TestProposeBlock(t *testing.T) {
 	lockTime := td.state.LastBlockHeight()
 	dupSubsidyTx := tx.NewSubsidyTx(lockTime, proposer.Address(),
 		td.state.params.BlockReward, "duplicated subsidy transaction")
-	invTransferTx, _ := td.GenerateTestTransferTx()
-	invBondTx, _ := td.GenerateTestBondTx()
-	invSortitionTx, _ := td.GenerateTestSortitionTx()
+	invTransferTx := td.GenerateTestTransferTx()
+	invBondTx := td.GenerateTestBondTx()
+	invSortitionTx := td.GenerateTestSortitionTx()
 
 	pub, _ := td.RandBLSKeyPair()
 	validTrx1 := tx.NewTransferTx(lockTime, td.genAccKey.PublicKeyNative().AccountAddress(),
@@ -43,8 +43,8 @@ func TestProposeBlock(t *testing.T) {
 	assert.True(t, blk.Transactions()[0].IsSubsidyTx())
 	assert.NoError(t, td.state.CommitBlock(blk, cert))
 
-	assert.Equal(t, td.state.TotalPower(), int64(1000000006))
-	assert.Equal(t, td.state.committee.TotalPower(), int64(6))
+	assert.Equal(t, td.state.TotalPower(), int64(1000000004))
+	assert.Equal(t, td.state.committee.TotalPower(), int64(4))
 }
 
 func TestExecuteBlock(t *testing.T) {
@@ -57,7 +57,7 @@ func TestExecuteBlock(t *testing.T) {
 	rewardAddr := td.RandAccAddress()
 	invSubsidyTx := td.state.createSubsidyTx(rewardAddr, 1001)
 	validSubsidyTx := td.state.createSubsidyTx(rewardAddr, 1000)
-	invTransferTx, _ := td.GenerateTestTransferTx()
+	invTransferTx := td.GenerateTestTransferTx()
 
 	validTx1 := tx.NewTransferTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
 		td.RandAccAddress(), 1, 1000, "")
@@ -139,6 +139,6 @@ func TestExecuteBlock(t *testing.T) {
 		// Check if fee is claimed
 		treasury := sb.Account(crypto.TreasuryAddress)
 		subsidy := td.state.params.BlockReward
-		assert.Equal(t, treasury.Balance(), 21*1e15-(12*subsidy)) // Two blocks has committed yet
+		assert.Equal(t, treasury.Balance(), 21*1e15-(10*subsidy)) // Two extra blocks has committed yet
 	})
 }

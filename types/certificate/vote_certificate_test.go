@@ -32,7 +32,6 @@ func TestVoteCertificate(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, cert.Height(), uint32(0x01020304))
 	assert.Equal(t, cert.Round(), int16(0x0001))
-	assert.Equal(t, cert.FastPath(), false)
 	assert.Equal(t, cert.Committers(), []int32{1, 2, 3, 4, 5, 6})
 	assert.Equal(t, cert.Absentees(), []int32{2})
 	assert.Equal(t, cert.Hash(), certHash)

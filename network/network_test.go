@@ -50,6 +50,7 @@ func testConfig() *Config {
 		ForcePrivateNetwork:  true,
 		NetworkName:          "test",
 		DefaultPort:          12345,
+		PeerStorePath:        util.TempFilePath(),
 	}
 }
 
@@ -121,10 +122,12 @@ func TestStoppingNetwork(t *testing.T) {
 //   - M, N, and X are Private Nodes behind a Network Address Translation (NAT)
 //   - M and N have relay enabled, while X does not.
 //
-// The test will evaluate the following scenarios:
+// The test evaluates the following scenarios:
+//   - Get supporting protocols
 //   - Connection establishment to the bootstrap node
-//   - bLOCK and consensus topics and gossip message
-//   - Direct and relayed stream communication between nodes
+//   - Receiving gossip message
+//   - Receiving direct message
+//   - Receiving relayed message (Not covered yet!)
 func TestNetwork(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
@@ -207,10 +210,10 @@ func TestNetwork(t *testing.T) {
 	assert.NoError(t, networkN.JoinTopic(TopicIDConsensus, alwaysPropagate))
 	// Network X doesn't join the consensus topic
 
-	time.Sleep(2 * time.Second)
+	time.Sleep(4 * time.Second)
 
 	t.Run("Supported Protocols", func(t *testing.T) {
-		t.Log(t.Name())
+		fmt.Printf("Running %s\n", t.Name())
 
 		require.EventuallyWithT(t, func(_ *assert.CollectT) {
 			protos := networkM.Protocols()
@@ -232,7 +235,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("all nodes have at least one connection to the bootstrap node B", func(t *testing.T) {
-		t.Log(t.Name())
+		fmt.Printf("Running %s\n", t.Name())
 
 		assert.EventuallyWithT(t, func(c *assert.CollectT) {
 			assert.GreaterOrEqual(c, networkP.NumConnectedPeers(), 1) // Connected to B, M, N, X
@@ -256,7 +259,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("Gossip: all nodes receive gossip messages", func(t *testing.T) {
-		t.Log(t.Name())
+		fmt.Printf("Running %s\n", t.Name())
 
 		msg := ts.RandBytes(64)
 
@@ -274,7 +277,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("only nodes subscribed to the consensus topic receive consensus gossip messages", func(t *testing.T) {
-		t.Log(t.Name())
+		fmt.Printf("Running %s\n", t.Name())
 
 		msg := ts.RandBytes(64)
 
@@ -291,7 +294,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node P (public) is directly accessible by nodes M and N (private behind NAT)", func(t *testing.T) {
-		t.Log(t.Name())
+		fmt.Printf("Running %s\n", t.Name())
 
 		require.NoError(t, networkM.host.Connect(networkM.ctx, *publicAddrInfo))
 
@@ -303,7 +306,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node P (public) is directly accessible by node X (private behind NAT, without relay)", func(t *testing.T) {
-		t.Log(t.Name())
+		fmt.Printf("Running %s\n", t.Name())
 
 		require.NoError(t, networkX.host.Connect(networkX.ctx, *publicAddrInfo))
 
@@ -315,7 +318,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node P (public) is directly accessible by node B (bootstrap)", func(t *testing.T) {
-		t.Log(t.Name())
+		fmt.Printf("Running %s\n", t.Name())
 
 		msgB := ts.RandBytes(64)
 
@@ -326,7 +329,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("Ignore broadcasting identical messages", func(t *testing.T) {
-		t.Log(t.Name())
+		fmt.Printf("Running %s\n", t.Name())
 
 		msg := ts.RandBytes(64)
 
@@ -343,7 +346,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("node X (private, not connected via relay) is not accessible by node M", func(t *testing.T) {
-		t.Log(t.Name())
+		fmt.Printf("Running %s\n", t.Name())
 
 		msgM := ts.RandBytes(64)
 		networkM.SendTo(msgM, networkX.SelfID())
@@ -358,7 +361,7 @@ func TestNetwork(t *testing.T) {
 	// })
 
 	t.Run("closing connection", func(t *testing.T) {
-		t.Log(t.Name())
+		fmt.Printf("Running %s\n", t.Name())
 
 		msgB := ts.RandBytes(64)
 
@@ -370,7 +373,7 @@ func TestNetwork(t *testing.T) {
 	})
 
 	t.Run("Reachability Status", func(t *testing.T) {
-		t.Log(t.Name())
+		fmt.Printf("Running %s\n", t.Name())
 
 		assert.Equal(t, networkP.ReachabilityStatus(), "Public")
 		assert.Equal(t, networkB.ReachabilityStatus(), "Public")

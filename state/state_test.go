@@ -39,7 +39,7 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
-	genValNum := 6
+	genValNum := 4
 	genValKeys := make([]*bls.ValidatorKey, 0, genValNum)
 	genVals := make([]*validator.Validator, 0, genValNum)
 	for i := 0; i < genValNum; i++ {
@@ -72,7 +72,8 @@ func setup(t *testing.T) *testData {
 
 	gnDoc := genesis.MakeGenesis(genTime, genAccs, genVals, params)
 
-	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
+	// First validator is in the committee
+	valKeys := []*bls.ValidatorKey{genValKeys[0], ts.RandValKey()}
 	st1, err := LoadOrNewState(gnDoc, valKeys, mockStore, mockTxPool, nil)
 	require.NoError(t, err)
 
@@ -86,7 +87,7 @@ func setup(t *testing.T) *testData {
 		commonTxPool: mockTxPool,
 	}
 
-	td.commitBlocks(t, 10)
+	td.commitBlocks(t, 8)
 
 	return td
 }
@@ -114,10 +115,10 @@ func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash,
 
 	sigs := make([]*bls.Signature, 0, len(td.genValKeys))
 	height := td.state.LastBlockHeight()
-	cert := certificate.NewBlockCertificate(height+1, round, true)
+	cert := certificate.NewBlockCertificate(height+1, round)
 	signBytes := cert.SignBytes(blockHash)
-	committers := []int32{0, 1, 2, 3, 4, 5}
-	absentees := []int32{5}
+	committers := []int32{0, 1, 2, 3}
+	absentees := []int32{3}
 
 	for _, key := range td.genValKeys[:len(td.genValKeys)-1] {
 		sig := key.Sign(signBytes)
@@ -191,7 +192,7 @@ func TestTryCommitValidBlocks(t *testing.T) {
 	assert.Equal(t, td.state.LastBlockHash(), blk.Hash())
 	assert.Equal(t, td.state.LastBlockTime(), blk.Header().Time())
 	assert.Equal(t, td.state.LastCertificate().Hash(), crt.Hash())
-	assert.Equal(t, td.state.LastBlockHeight(), uint32(11))
+	assert.Equal(t, td.state.LastBlockHeight(), uint32(9))
 }
 
 func TestCommitSandbox(t *testing.T) {
@@ -333,34 +334,25 @@ func TestUpdateLastCertificate(t *testing.T) {
 	}
 }
 
-// func TestBlockProposal(t *testing.T) {
-// 	td := setup(t)
+func TestBlockProposal(t *testing.T) {
+	td := setup(t)
 
-// 	t.Run("validity of proposed block", func(t *testing.T) {
-// 		b, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
-// 		assert.NoError(t, err)
-// 		assert.NoError(t, td.state.ValidateBlock(b, 0))
-// 	})
+	t.Run("validity of the proposed block", func(t *testing.T) {
+		b, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
+		assert.NoError(t, err)
+		assert.NoError(t, td.state.ValidateBlock(b, 0))
+	})
 
-// 	t.Run("Tx pool has two subsidy transactions", func(t *testing.T) {
-// 		trx := td.state.createSubsidyTx(td.RandAccAddress(), 0)
-// 		assert.NoError(t, td.state.AddPendingTx(trx))
+	t.Run("Tx pool has two subsidy transactions", func(t *testing.T) {
+		trx := td.state.createSubsidyTx(td.RandAccAddress(), 0)
+		assert.NoError(t, td.state.AddPendingTx(trx))
 
-// 		// Moving to the next round
-// 		b, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
-// 		assert.NoError(t, err)
-// 		assert.NoError(t, td.state.ValidateBlock(b, 0))
-// 		assert.Equal(t, b.Transactions().Len(), 1)
-// 	})
-// }
-
-// func TestInvalidBlock(t *testing.T) {
-// 	td := setup(t)
-
-// 	panic("test coverage")
-// 	invBlk, _ := td.GenerateTestBlock(td.RandHeight())
-// 	assert.Error(t, td.state.ValidateBlock(invBlk))
-// }
+		b, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
+		assert.NoError(t, err)
+		assert.NoError(t, td.state.ValidateBlock(b, 0))
+		assert.Equal(t, b.Transactions().Len(), 1)
+	})
+}
 
 func TestForkDetection(t *testing.T) {
 	td := setup(t)
@@ -399,34 +391,34 @@ func TestForkDetection(t *testing.T) {
 func TestSortition(t *testing.T) {
 	td := setup(t)
 
-	myValKey := td.state.valKeys[0]
+	secValKey := td.state.valKeys[1]
 	assert.False(t, td.state.evaluateSortition()) //  not a validator
-	assert.False(t, td.state.IsValidator(myValKey.Address()))
-	assert.Equal(t, td.state.CommitteePower(), int64(6))
+	assert.False(t, td.state.IsValidator(secValKey.Address()))
+	assert.Equal(t, td.state.CommitteePower(), int64(4))
 
 	trx := tx.NewBondTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
-		myValKey.Address(), myValKey.PublicKey(), 1000000000, 100000, "")
+		secValKey.Address(), secValKey.PublicKey(), 1000000000, 100000, "")
 	td.HelperSignTransaction(td.genAccKey, trx)
 	assert.NoError(t, td.state.AddPendingTx(trx))
 
 	td.commitBlocks(t, 1)
 
 	assert.False(t, td.state.evaluateSortition()) // bonding period
-	assert.True(t, td.state.IsValidator(myValKey.Address()))
-	assert.Equal(t, td.state.CommitteePower(), int64(6))
-	assert.False(t, td.state.committee.Contains(myValKey.Address())) // Not in the committee
+	assert.True(t, td.state.IsValidator(secValKey.Address()))
+	assert.Equal(t, td.state.CommitteePower(), int64(4))
+	assert.False(t, td.state.committee.Contains(secValKey.Address())) // Not in the committee
 
 	// Committing another 10 blocks
 	td.commitBlocks(t, 10)
 
-	assert.True(t, td.state.evaluateSortition())                     // OK
-	assert.False(t, td.state.committee.Contains(myValKey.Address())) // Still not in the committee
+	assert.True(t, td.state.evaluateSortition())                      // OK
+	assert.False(t, td.state.committee.Contains(secValKey.Address())) // Still not in the committee
 
 	td.commitBlocks(t, 1)
 
-	assert.True(t, td.state.IsValidator(myValKey.Address()))
-	assert.Equal(t, td.state.CommitteePower(), int64(1000000006))
-	assert.True(t, td.state.committee.Contains(myValKey.Address())) // In the committee
+	assert.True(t, td.state.IsValidator(secValKey.Address()))
+	assert.Equal(t, td.state.CommitteePower(), int64(1000000004))
+	assert.True(t, td.state.committee.Contains(secValKey.Address())) // In the committee
 }
 
 func TestValidateBlockTime(t *testing.T) {
@@ -475,9 +467,9 @@ func TestValidateBlockTime(t *testing.T) {
 		assert.NoError(t, td.state.validateBlockTime(roundedNow.Add(10*time.Second)))
 
 		// More than the threshold
-		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(20*time.Second)))
+		assert.Error(t, td.state.validateBlockTime(roundedNow.Add(30*time.Second)))
 
-		expectedProposeTime := roundedNow
+		expectedProposeTime := util.RoundNow(10)
 		assert.Equal(t, expectedProposeTime, td.state.proposeNextBlockTime())
 	})
 
@@ -562,8 +554,8 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, td.state.Params(), newState.Params())
 	assert.ElementsMatch(t, td.state.ValidatorAddresses(), newState.ValidatorAddresses())
 
-	assert.Equal(t, int32(13), td.state.TotalAccounts()) // 11 subsidy addrs + 2 genesis addrs
-	assert.Equal(t, int32(7), td.state.TotalValidators())
+	assert.Equal(t, int32(11), td.state.TotalAccounts()) // 9 subsidy addrs + 2 genesis addrs
+	assert.Equal(t, int32(5), td.state.TotalValidators())
 
 	// Try committing the next block
 	require.NoError(t, newState.CommitBlock(blk6, cert6))
@@ -577,7 +569,7 @@ func TestLoadStateAfterChangingGenesis(t *testing.T) {
 	require.NoError(t, err)
 
 	pub, _ := td.RandBLSKeyPair()
-	val := validator.NewValidator(pub, 6)
+	val := validator.NewValidator(pub, 4)
 	newVals := append(td.state.genDoc.Validators(), val)
 
 	genDoc := genesis.MakeGenesis(
@@ -596,8 +588,8 @@ func TestIsValidator(t *testing.T) {
 	td := setup(t)
 
 	assert.True(t, td.state.IsInCommittee(td.genValKeys[0].Address()))
-	assert.True(t, td.state.IsProposer(td.genValKeys[4].Address(), 0))
-	assert.True(t, td.state.IsProposer(td.genValKeys[5].Address(), 1))
+	assert.True(t, td.state.IsProposer(td.genValKeys[0].Address(), 0))
+	assert.True(t, td.state.IsProposer(td.genValKeys[1].Address(), 1))
 	assert.True(t, td.state.IsInCommittee(td.genValKeys[1].Address()))
 	assert.True(t, td.state.IsValidator(td.genValKeys[1].Address()))
 

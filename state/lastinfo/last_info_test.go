@@ -81,7 +81,7 @@ func setup(t *testing.T) *testData {
 		prevCert, lastSeed, val2.Address())
 
 	sig := valKey.Sign([]byte("fatdog"))
-	lastCert := certificate.NewBlockCertificate(lastHeight, 0, true)
+	lastCert := certificate.NewBlockCertificate(lastHeight, 0)
 	lastCert.SetSignature(committers, []int32{}, sig)
 	mockStore.SaveBlock(lastBlock, lastCert)
 	assert.Equal(t, mockStore.LastHeight, lastHeight)
