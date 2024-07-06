@@ -5,8 +5,8 @@
         "bootstrap2.pactus.org:50051",
         "bootstrap3.pactus.org:50051",
         "bootstrap4.pactus.org:50051",
-        "65.109.234.125:50051",
-        "157.90.111.140:50051"
+        "rpc.javad.dev:50051",
+        "65.109.234.125:50051"
     ],
     "testnet": [
         "localhost:50052",
