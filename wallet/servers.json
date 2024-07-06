@@ -13,6 +13,7 @@
         "testnet1.pactus.org:50052",
         "testnet2.pactus.org:50052",
         "testnet3.pactus.org:50052",
-        "testnet4.pactus.org:50052"
+        "testnet4.pactus.org:50052",
+        "testnet-rpc.javad.dev:50052"
     ]
 }
