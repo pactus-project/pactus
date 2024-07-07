@@ -67,9 +67,7 @@ func (c *grpcClient) connect() error {
 		_, err = blockchainClient.GetBlockchainInfo(c.ctx,
 			&pactus.GetBlockchainInfoRequest{})
 		if err != nil {
-			if err := conn.Close(); err != nil {
-				return err
-			}
+			_ = conn.Close()
 
 			continue
 		}
