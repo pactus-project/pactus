@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	pathOpt       *string
-	offlineOpt    *bool
-	serverAddrOpt *string
-	timeoutOpt    *int
+	pathOpt        *string
+	offlineOpt     *bool
+	serverAddrsOpt *[]string
+	timeoutOpt     *int
 )
 
 func addPasswordOption(c *cobra.Command) *string {
@@ -21,16 +21,20 @@ func addPasswordOption(c *cobra.Command) *string {
 }
 
 func openWallet() (*wallet.Wallet, error) {
-	wlt, err := wallet.Open(*pathOpt, *offlineOpt)
+	opts := make([]wallet.Option, 0)
+
+	if *serverAddrsOpt != nil {
+		opts = append(opts, wallet.WithCustomServers(*serverAddrsOpt))
+	}
+
+	if *timeoutOpt > 0 {
+		opts = append(opts, wallet.WithTimeout(time.Duration(*timeoutOpt)*time.Second))
+	}
+
+	wlt, err := wallet.Open(*pathOpt, *offlineOpt, opts...)
 	if err != nil {
 		return nil, err
 	}
-
-	if *serverAddrOpt != "" {
-		wlt.SetServerAddr(*serverAddrOpt)
-	}
-
-	wlt.SetClientTimeout(time.Duration(*timeoutOpt) * time.Second)
 
 	return wlt, err
 }
@@ -48,12 +52,9 @@ func main() {
 	pathOpt = rootCmd.PersistentFlags().String("path",
 		cmd.PactusDefaultWalletPath(cmd.PactusDefaultHomeDir()), "the path to the wallet file")
 	offlineOpt = rootCmd.PersistentFlags().Bool("offline", false, "offline mode")
-	serverAddrOpt = rootCmd.PersistentFlags().String("server", "", "server gRPC address")
+	serverAddrsOpt = rootCmd.PersistentFlags().StringSlice("servers", []string{}, "servers gRPC address")
 	timeoutOpt = rootCmd.PersistentFlags().Int("timeout", 1,
-		"specifies the timeout duration for the client connection in seconds. "+
-			"this timeout determines how long the client will attempt to establish a connection with the server "+
-			"before failing with an error. Adjust this value based on network conditions and server response times "+
-			"to ensure a balance between responsiveness and reliability.")
+		"specifies the timeout duration for the client connection in seconds")
 
 	buildCreateCmd(rootCmd)
 	buildRecoverCmd(rootCmd)
