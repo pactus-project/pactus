@@ -28,6 +28,7 @@ var (
 
 const (
 	lastStoreVersion = int32(1)
+	totalBlockInDay  = 8640
 )
 
 var (
@@ -165,6 +166,10 @@ func (s *store) Block(height uint32) (*CommittedBlock, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
+	return s.block(height)
+}
+
+func (s *store) block(height uint32) (*CommittedBlock, error) {
 	data, err := s.blockStore.block(height)
 	if err != nil {
 		return nil, err
@@ -341,6 +346,10 @@ func (s *store) LastCertificate() *certificate.BlockCertificate {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
+	return s.lastCertificate()
+}
+
+func (s *store) lastCertificate() *certificate.BlockCertificate {
 	data, _ := tryGet(s.db, lastInfoKey)
 	if data == nil {
 		// Genesis block
@@ -379,24 +388,65 @@ func (s *store) IsBanned(addr crypto.Address) bool {
 	return s.config.BannedAddrs[addr]
 }
 
-func (s *store) pruneBlock(blockHeight uint32) (bool, error) { //nolint
-	s.lk.Lock()
-	defer s.lk.Unlock()
+func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) error {
+	cert := s.lastCertificate()
 
-	blkData, err := s.blockStore.block(blockHeight)
+	// at genesis block
+	if cert == nil {
+		return nil
+	}
+
+	retentionBlocks := uint32(s.config.RetentionDays * totalBlockInDay)
+
+	if cert.Height() < retentionBlocks {
+		return nil
+	}
+
+	pruningHeight := cert.Height() - retentionBlocks
+
+	// start pruning blocks and transactions
+	for i := pruningHeight; i >= 1; i-- {
+		deleted, err := s.pruneBlock(i)
+		if err != nil {
+			return err
+		}
+
+		if deleted {
+			resultFunc(1, 0, i)
+
+			continue
+		}
+
+		resultFunc(0, 1, i)
+	}
+
+	return nil
+}
+
+func (s *store) pruneBlock(blockHeight uint32) (bool, error) { //nolint
+	if !s.blockStore.hasBlock(blockHeight) {
+		return false, nil
+	}
+
+	cBlock, err := s.block(blockHeight)
 	if err != nil {
 		return false, err
 	}
 
-	blk, err := block.FromBytes(blkData)
+	blk, err := cBlock.ToBlock()
 	if err != nil {
 		return false, err
 	}
 
 	s.batch.Delete(blockHashKey(blk.Hash()))
+	s.batch.Delete(blockKey(blockHeight))
 
 	for _, t := range blk.Transactions() {
 		s.batch.Delete(t.ID().Bytes())
+	}
+
+	if err := s.WriteBatch(); err != nil {
+		return false, err
 	}
 
 	return true, nil

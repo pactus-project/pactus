@@ -23,6 +23,7 @@ func main() {
 	buildVersionCmd(rootCmd)
 	buildInitCmd(rootCmd)
 	buildStartCmd(rootCmd)
+	buildPruneCmd(rootCmd)
 
 	err := rootCmd.Execute()
 	if err != nil {

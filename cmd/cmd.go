@@ -361,28 +361,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool)) (
 	*node.Node, *wallet.Wallet, error,
 ) {
-	gen, err := genesis.LoadFromFile(PactusGenesisPath(workingDir))
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if !gen.ChainType().IsMainnet() {
-		crypto.AddressHRP = "tpc"
-		crypto.PublicKeyHRP = "tpublic"
-		crypto.PrivateKeyHRP = "tsecret"
-		crypto.XPublicKeyHRP = "txpublic"
-		crypto.XPrivateKeyHRP = "txsecret"
-	}
-
-	walletsDir := PactusWalletDir(workingDir)
-	confPath := PactusConfigPath(workingDir)
-
-	conf, err := MakeConfig(gen, confPath, walletsDir)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	err = conf.BasicCheck()
+	conf, gen, err := MakeConfig(workingDir)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -456,9 +435,25 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 // The chain type is determined from the genesis document.
 // It also updates some private configurations, like "wallets directory".
 // TODO: write test for me.
-func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.Config, error) {
+func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
+	gen, err := genesis.LoadFromFile(PactusGenesisPath(workingDir))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if !gen.ChainType().IsMainnet() {
+		crypto.AddressHRP = "tpc"
+		crypto.PublicKeyHRP = "tpublic"
+		crypto.PrivateKeyHRP = "tsecret"
+		crypto.XPublicKeyHRP = "txpublic"
+		crypto.XPrivateKeyHRP = "txsecret"
+	}
+
+	walletsDir := PactusWalletDir(workingDir)
+	confPath := PactusConfigPath(workingDir)
+
 	var defConf *config.Config
-	chainType := genDoc.ChainType()
+	chainType := gen.ChainType()
 
 	switch chainType {
 	case genesis.Mainnet:
@@ -476,12 +471,12 @@ func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.C
 
 		conf, err = RecoverConfig(confPath, defConf, chainType)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
 	// Now we can update the private filed, if any
-	genParams := genDoc.Params()
+	genParams := gen.Params()
 
 	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
 	conf.Store.SortitionCacheSize = genParams.SortitionInterval
@@ -494,7 +489,11 @@ func MakeConfig(genDoc *genesis.Genesis, confPath, walletsDir string) (*config.C
 	conf.WalletManager.ChainType = chainType
 	conf.WalletManager.WalletsDir = walletsDir
 
-	return conf, nil
+	if err := conf.BasicCheck(); err != nil {
+		return nil, nil, err
+	}
+
+	return conf, gen, nil
 }
 
 func RecoverConfig(confPath string, defConf *config.Config, chainType genesis.ChainType) (*config.Config, error) {
