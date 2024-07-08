@@ -170,8 +170,6 @@ func run(n *node.Node, wlt *wallet.Wallet, app *gtk.Application) {
 	grpcAddr := n.GRPC().Address()
 	cmd.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
 
-	wlt.SetServerAddr(grpcAddr)
-
 	nodeModel := newNodeModel(n)
 	walletModel := newWalletModel(wlt, n)
 

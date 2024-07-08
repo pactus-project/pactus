@@ -388,7 +388,8 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	defaultWalletPath := PactusDefaultWalletPath(workingDir)
-	walletInstance, err := wallet.Open(defaultWalletPath, true)
+	walletInstance, err := wallet.Open(defaultWalletPath, true,
+		wallet.WithCustomServers([]string{conf.GRPC.Listen}))
 	if err != nil {
 		return nil, nil, err
 	}

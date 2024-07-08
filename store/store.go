@@ -378,3 +378,26 @@ func (s *store) WriteBatch() error {
 func (s *store) IsBanned(addr crypto.Address) bool {
 	return s.config.BannedAddrs[addr]
 }
+
+func (s *store) pruneBlock(blockHeight uint32) (bool, error) { //nolint
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
+	blkData, err := s.blockStore.block(blockHeight)
+	if err != nil {
+		return false, err
+	}
+
+	blk, err := block.FromBytes(blkData)
+	if err != nil {
+		return false, err
+	}
+
+	s.batch.Delete(blockHashKey(blk.Hash()))
+
+	for _, t := range blk.Transactions() {
+		s.batch.Delete(t.ID().Bytes())
+	}
+
+	return true, nil
+}
