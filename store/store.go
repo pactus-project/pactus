@@ -393,9 +393,7 @@ func (s *store) pruneBlock(blockHeight uint32) (bool, error) { //nolint
 		return false, err
 	}
 
-	if err := s.blockStore.db.Delete(blk.Hash().Bytes(), nil); err != nil {
-		return false, err
-	}
+	s.batch.Delete(blockHashKey(blk.Hash()))
 
 	for _, t := range blk.Transactions() {
 		s.batch.Delete(t.ID().Bytes())
