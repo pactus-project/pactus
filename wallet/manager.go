@@ -84,11 +84,10 @@ func (wm *Manager) LoadWallet(walletName, serverAddr string) error {
 	}
 
 	walletPath := util.MakeAbs(filepath.Join(wm.walletDirectory, walletName))
-	wlt, err := Open(walletPath, true)
+	wlt, err := Open(walletPath, true, WithCustomServers([]string{serverAddr}))
 	if err != nil {
 		return err
 	}
-	wlt.SetServerAddr(serverAddr)
 
 	wm.wallets[walletName] = wlt
 
