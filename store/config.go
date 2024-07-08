@@ -8,7 +8,8 @@ import (
 )
 
 type Config struct {
-	Path string `toml:"path"`
+	Path          string `toml:"path"`
+	RetentionDays uint   `toml:"retention_days"`
 
 	// Private configs
 	TxCacheSize        uint32                  `toml:"-"`
@@ -21,6 +22,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Path:               "data",
+		RetentionDays:      10,
 		TxCacheSize:        1024,
 		SortitionCacheSize: 1024,
 		AccountCacheSize:   1024,
@@ -51,6 +53,12 @@ func (conf *Config) BasicCheck() error {
 		conf.PublicKeyCacheSize == 0 {
 		return ConfigError{
 			Reason: "cache size set to zero",
+		}
+	}
+
+	if conf.RetentionDays < 10 {
+		return ConfigError{
+			Reason: "retention days too small than 10 days",
 		}
 	}
 
