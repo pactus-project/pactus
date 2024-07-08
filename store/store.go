@@ -379,7 +379,7 @@ func (s *store) IsBanned(addr crypto.Address) bool {
 	return s.config.BannedAddrs[addr]
 }
 
-func (s *store) pruneBlock(batch *leveldb.Batch, blockHeight uint32) (bool, error) { //nolint
+func (s *store) pruneBlock(blockHeight uint32) (bool, error) { //nolint
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -398,7 +398,7 @@ func (s *store) pruneBlock(batch *leveldb.Batch, blockHeight uint32) (bool, erro
 	}
 
 	for _, t := range blk.Transactions() {
-		batch.Delete(t.ID().Bytes())
+		s.batch.Delete(t.ID().Bytes())
 	}
 
 	return true, nil
