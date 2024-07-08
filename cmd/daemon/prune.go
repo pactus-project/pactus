@@ -86,7 +86,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 	}
 }
 
-func pruningProgressBar(prunedCount, skippedCount, leftBlock, totalCount uint32) {
+func pruningProgressBar(prunedCount, skippedCount, leftBlocks, totalCount uint32) {
 	percentage := float64(prunedCount+skippedCount) / float64(totalCount) * 100
 	if percentage > 100 {
 		percentage = 100
@@ -96,6 +96,6 @@ func pruningProgressBar(prunedCount, skippedCount, leftBlock, totalCount uint32)
 	filledLength := int(float64(barLength) * percentage / 100)
 
 	bar := strings.Repeat("=", filledLength) + strings.Repeat(" ", barLength-filledLength)
-	fmt.Printf("\r [%s] %.0f%% Pruned: %d | Skipped: %d | Left Block: %d", //nolint
-		bar, percentage, prunedCount, skippedCount, leftBlock)
+	fmt.Printf("\r [%s] %.0f%% Pruned: %d | Skipped: %d | Left Blocks: %d", //nolint
+		bar, percentage, prunedCount, skippedCount, leftBlocks)
 }
