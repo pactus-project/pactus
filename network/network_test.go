@@ -167,7 +167,7 @@ func TestNetwork(t *testing.T) {
 	confM.EnableRelay = true
 	confM.BootstrapAddrStrings = bootstrapAddresses
 	confM.ListenAddrStrings = []string{
-		"/ip4/127.0.0.1/tcp/9987",
+		"/ip4/127.0.0.1/tcp/0",
 	}
 	fmt.Println("Starting Private node M")
 	networkM := makeTestNetwork(t, confM, []lp2p.Option{
@@ -179,7 +179,7 @@ func TestNetwork(t *testing.T) {
 	confN.EnableRelay = true
 	confN.BootstrapAddrStrings = bootstrapAddresses
 	confN.ListenAddrStrings = []string{
-		"/ip4/127.0.0.1/tcp/5678",
+		"/ip4/127.0.0.1/tcp/0",
 	}
 	fmt.Println("Starting Private node N")
 	networkN := makeTestNetwork(t, confN, []lp2p.Option{
