@@ -431,10 +431,11 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	return gen
 }
 
-// MakeConfig opens the given config file and creates the appropriate configuration per chain type.
-// The chain type is determined from the genesis document.
-// It also updates some private configurations, like "wallets directory".
-// TODO: write test for me.
+// MakeConfig attempts to load the configuration file and
+// returns an instance of the configuration along with the genesis document.
+// The genesis document is required to determine the chain type, which influences the configuration settings.
+// The function sets various private configurations, such as the "wallets directory" and chain-specific HRP values.
+// If the configuration file cannot be loaded, it tries to recover or restore the configuration.
 func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 	gen, err := genesis.LoadFromFile(PactusGenesisPath(workingDir))
 	if err != nil {
