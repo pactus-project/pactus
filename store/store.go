@@ -409,6 +409,10 @@ func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) er
 			return err
 		}
 
+		if err := s.WriteBatch(); err != nil {
+			return err
+		}
+
 		if deleted {
 			resultFunc(1, 0, i)
 
@@ -441,10 +445,6 @@ func (s *store) pruneBlock(blockHeight uint32) (bool, error) { //nolint
 
 	for _, t := range blk.Transactions() {
 		s.batch.Delete(t.ID().Bytes())
-	}
-
-	if err := s.WriteBatch(); err != nil {
-		return false, err
 	}
 
 	return true, nil
