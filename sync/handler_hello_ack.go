@@ -18,7 +18,7 @@ func newHelloAckHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) error {
+func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) {
 	msg := m.(*message.HelloAckMessage)
 	handler.logger.Trace("parsing HelloAck message", "msg", msg)
 
@@ -28,7 +28,7 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) err
 
 		handler.network.CloseConnection(pid)
 
-		return nil
+		return
 	}
 
 	handler.peerSet.UpdateStatus(pid, status.StatusKnown)
@@ -37,8 +37,6 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) err
 	if msg.Height > handler.state.LastBlockHeight() {
 		handler.updateBlockchain()
 	}
-
-	return nil
 }
 
 func (*helloAckHandler) PrepareBundle(m message.Message) *bundle.Bundle {

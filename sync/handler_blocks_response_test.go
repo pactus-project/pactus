@@ -2,7 +2,6 @@ package sync
 
 import (
 	"fmt"
-	"io"
 	"testing"
 	"time"
 
@@ -10,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
-	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
@@ -26,27 +24,14 @@ func TestInvalidBlockData(t *testing.T) {
 	td := setup(t, nil)
 
 	td.state.CommitTestBlocks(10)
-
 	lastHeight := td.state.LastBlockHeight()
-	prevCert := td.GenerateTestBlockCertificate(lastHeight)
-	cert := td.GenerateTestBlockCertificate(lastHeight + 1)
-	blk := block.MakeBlock(1, time.Now(), nil, td.RandHash(), td.RandHash(),
-		prevCert, td.RandSeed(), td.RandValAddress())
+	blk, cert := td.GenerateTestBlock(lastHeight+1, testsuite.BlockWithPrevCert(nil))
 	data, _ := blk.Bytes()
 	tests := []struct {
 		data []byte
-		err  error
 	}{
-		{
-			td.RandBytes(16),
-			io.ErrUnexpectedEOF,
-		},
-		{
-			data,
-			block.BasicCheckError{
-				Reason: "no subsidy transaction",
-			},
-		},
+		{data: td.RandBytes(16)},
+		{data: data},
 	}
 
 	for _, test := range tests {
@@ -56,8 +41,8 @@ func TestInvalidBlockData(t *testing.T) {
 			message.ResponseCodeMoreBlocks.String(),
 			sid, lastHeight+1, [][]byte{test.data}, cert)
 
-		err := td.receivingNewMessage(td.sync, msg, pid)
-		assert.ErrorIs(t, err, test.err)
+		td.receivingNewMessage(td.sync, msg, pid)
+		assert.Nil(t, td.sync.cache.GetBlock(msg.From))
 	}
 }
 
@@ -74,7 +59,7 @@ func TestOneBlockShorter(t *testing.T) {
 	sid := td.RandInt(1000)
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeSynced, t.Name(), sid,
 		lastHeight+1, [][]byte{d1}, cert1)
-	assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+	td.receivingNewMessage(td.sync, msg, pid)
 
 	assert.Equal(t, td.state.LastBlockHeight(), lastHeight+1)
 }
@@ -91,9 +76,7 @@ func TestStrippedPublicKey(t *testing.T) {
 	trx0 := tx.NewTransferTx(lastHeight, indexedPub.AccountAddress(), td.RandAccAddress(), 1, 1, "")
 	td.HelperSignTransaction(indexedPrv, trx0)
 	trxs0 := []*tx.Tx{trx0}
-	blk0 := block.MakeBlock(1, time.Now(), trxs0, td.RandHash(), td.RandHash(),
-		td.state.LastCertificate(), td.RandSeed(), td.RandValAddress())
-	cert0 := td.GenerateTestBlockCertificate(lastHeight + 1)
+	blk0, cert0 := td.GenerateTestBlock(lastHeight+1, testsuite.BlockWithTransactions(trxs0))
 	err := td.state.CommitBlock(blk0, cert0)
 	require.NoError(t, err)
 	lastHeight++
@@ -104,42 +87,44 @@ func TestStrippedPublicKey(t *testing.T) {
 	td.HelperSignTransaction(rndPrv, trx1)
 	trx1.StripPublicKey()
 	trxs1 := []*tx.Tx{trx1}
-	blk1 := block.MakeBlock(1, time.Now(), trxs1, td.RandHash(), td.RandHash(),
-		cert0, td.RandSeed(), td.RandValAddress())
+	blk1, _ := td.GenerateTestBlock(lastHeight+1, testsuite.BlockWithTransactions(trxs1))
 
 	trx2 := tx.NewTransferTx(lastHeight, indexedPub.AccountAddress(), td.RandAccAddress(), 1, 1, "")
 	td.HelperSignTransaction(indexedPrv, trx2)
 	trx2.StripPublicKey()
 	trxs2 := []*tx.Tx{trx2}
-	blk2 := block.MakeBlock(1, time.Now(), trxs2, td.RandHash(), td.RandHash(),
-		cert0, td.RandSeed(), td.RandValAddress())
+	blk2, _ := td.GenerateTestBlock(lastHeight+1, testsuite.BlockWithTransactions(trxs2))
 
 	tests := []struct {
-		blk *block.Block
-		err error
+		receivedBlock *block.Block
+		shouldFail    bool
 	}{
 		{
-			blk1,
-			store.ErrNotFound,
+			receivedBlock: blk1,
+			shouldFail:    true,
 		},
 		{
-			blk2,
-			nil,
+			receivedBlock: blk2,
+			shouldFail:    false,
 		},
 	}
 
 	// Add a peer
 	pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 
-	for _, test := range tests {
-		blkData, _ := test.blk.Bytes()
+	for _, tc := range tests {
+		blkData, _ := tc.receivedBlock.Bytes()
 		sid := td.RandInt(1000)
 		cert := td.GenerateTestBlockCertificate(lastHeight + 1)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
 			lastHeight+1, [][]byte{blkData}, cert)
-		err := td.receivingNewMessage(td.sync, msg, pid)
+		td.receivingNewMessage(td.sync, msg, pid)
 
-		assert.ErrorIs(t, err, test.err)
+		if tc.shouldFail {
+			assert.Nil(t, td.sync.cache.GetBlock(msg.From))
+		} else {
+			assert.NotNil(t, td.sync.cache.GetBlock(msg.From))
+		}
 	}
 }
 

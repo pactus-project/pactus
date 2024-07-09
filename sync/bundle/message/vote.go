@@ -1,6 +1,7 @@
 package message
 
 import (
+	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/types/vote"
 )
 
@@ -20,6 +21,14 @@ func (m *VoteMessage) BasicCheck() error {
 
 func (*VoteMessage) Type() Type {
 	return TypeVote
+}
+
+func (*VoteMessage) TopicID() network.TopicID {
+	return network.TopicIDConsensus
+}
+
+func (*VoteMessage) ShouldBroadcast() bool {
+	return true
 }
 
 func (m *VoteMessage) String() string {

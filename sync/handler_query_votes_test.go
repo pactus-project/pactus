@@ -17,7 +17,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 
 	t.Run("doesn't have active validator", func(t *testing.T) {
 		msg := message.NewQueryVotesMessage(consensusHeight, 1, td.RandValAddress())
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+		td.receivingNewMessage(td.sync, msg, pid)
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeVote)
 	})
@@ -26,7 +26,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 
 	t.Run("should respond to the query votes message", func(t *testing.T) {
 		msg := message.NewQueryVotesMessage(consensusHeight, 1, td.RandValAddress())
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+		td.receivingNewMessage(td.sync, msg, pid)
 
 		bdl := td.shouldPublishMessageWithThisType(t, message.TypeVote)
 		assert.Equal(t, bdl.Message.(*message.VoteMessage).Vote.Hash(), v1.Hash())
@@ -34,7 +34,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 
 	t.Run("doesn't have any votes", func(t *testing.T) {
 		msg := message.NewQueryVotesMessage(consensusHeight+1, 1, td.RandValAddress())
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+		td.receivingNewMessage(td.sync, msg, pid)
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeVote)
 	})

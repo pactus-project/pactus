@@ -16,13 +16,11 @@ func newVoteHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *voteHandler) ParseMessage(m message.Message, _ peer.ID) error {
+func (handler *voteHandler) ParseMessage(m message.Message, _ peer.ID) {
 	msg := m.(*message.VoteMessage)
 	handler.logger.Trace("parsing Vote message", "msg", msg)
 
 	handler.consMgr.AddVote(msg.Vote)
-
-	return nil
 }
 
 func (*voteHandler) PrepareBundle(m message.Message) *bundle.Bundle {

@@ -16,7 +16,7 @@ func newTransactionsHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *transactionsHandler) ParseMessage(m message.Message, _ peer.ID) error {
+func (handler *transactionsHandler) ParseMessage(m message.Message, _ peer.ID) {
 	msg := m.(*message.TransactionsMessage)
 	handler.logger.Trace("parsing Transactions message", "msg", msg)
 
@@ -25,8 +25,6 @@ func (handler *transactionsHandler) ParseMessage(m message.Message, _ peer.ID) e
 			handler.logger.Debug("cannot append transaction", "tx", trx, "error", err)
 		}
 	}
-
-	return nil
 }
 
 func (*transactionsHandler) PrepareBundle(m message.Message) *bundle.Bundle {
