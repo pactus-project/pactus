@@ -404,7 +404,6 @@ func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) er
 
 	pruningHeight := cert.Height() - retentionBlocks
 
-	// start pruning blocks and transactions
 	for i := pruningHeight; i >= 1; i-- {
 		deleted, err := s.pruneBlock(i)
 		if err != nil {
