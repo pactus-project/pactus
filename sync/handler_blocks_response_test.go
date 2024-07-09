@@ -72,9 +72,8 @@ func TestStrippedPublicKey(t *testing.T) {
 	lastHeight := td.state.LastBlockHeight()
 
 	// Add a new block and keep the signer key
-	indexedPub, indexedPrv := td.RandBLSKeyPair()
-	trx0 := tx.NewTransferTx(lastHeight, indexedPub.AccountAddress(), td.RandAccAddress(), 1, 1, "")
-	td.HelperSignTransaction(indexedPrv, trx0)
+	_, indexedPrv := td.RandBLSKeyPair()
+	trx0 := td.GenerateTestTransferTx(testsuite.TransactionWithSigner(indexedPrv))
 	trxs0 := []*tx.Tx{trx0}
 	blk0, cert0 := td.GenerateTestBlock(lastHeight+1, testsuite.BlockWithTransactions(trxs0))
 	err := td.state.CommitBlock(blk0, cert0)
@@ -82,15 +81,13 @@ func TestStrippedPublicKey(t *testing.T) {
 	lastHeight++
 	// -----
 
-	rndPub, rndPrv := td.RandBLSKeyPair()
-	trx1 := tx.NewTransferTx(lastHeight, rndPub.AccountAddress(), td.RandAccAddress(), 1, 1, "")
-	td.HelperSignTransaction(rndPrv, trx1)
+	_, rndPrv := td.RandBLSKeyPair()
+	trx1 := td.GenerateTestTransferTx(testsuite.TransactionWithSigner(rndPrv))
 	trx1.StripPublicKey()
 	trxs1 := []*tx.Tx{trx1}
 	blk1, _ := td.GenerateTestBlock(lastHeight+1, testsuite.BlockWithTransactions(trxs1))
 
-	trx2 := tx.NewTransferTx(lastHeight, indexedPub.AccountAddress(), td.RandAccAddress(), 1, 1, "")
-	td.HelperSignTransaction(indexedPrv, trx2)
+	trx2 := td.GenerateTestTransferTx(testsuite.TransactionWithSigner(indexedPrv))
 	trx2.StripPublicKey()
 	trxs2 := []*tx.Tx{trx2}
 	blk2, _ := td.GenerateTestBlock(lastHeight+1, testsuite.BlockWithTransactions(trxs2))
