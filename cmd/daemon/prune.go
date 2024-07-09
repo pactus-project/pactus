@@ -42,7 +42,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		cmd.PrintWarnMsgf("Warning: This command removes all your blocks and transactions and changes " +
 			"your node to a prune node.")
 		cmd.PrintLine()
-		confirmed := cmd.PromptConfirm("Do you want to continue?")
+		confirmed := cmd.PromptConfirm("Do you want to continue")
 		if !confirmed {
 			return
 		}
