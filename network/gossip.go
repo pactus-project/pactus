@@ -253,7 +253,7 @@ func (g *gossipService) onReceiveMessage(m *lp2pps.Message) {
 		return
 	}
 
-	g.logger.Debug("receiving new gossip message", "source", m.GetFrom())
+	g.logger.Debug("receiving new gossip message", "from", m.ReceivedFrom)
 	event := &GossipMessage{
 		From: m.ReceivedFrom,
 		Data: m.Data,
