@@ -58,7 +58,7 @@ func (conf *Config) BasicCheck() error {
 
 	if conf.RetentionDays < 10 {
 		return ConfigError{
-			Reason: "retention days too small than 10 days",
+			Reason: "Retention days can't be less than 10 days",
 		}
 	}
 
