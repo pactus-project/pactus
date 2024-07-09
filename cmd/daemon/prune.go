@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/gofrs/flock"
 	"os"
 	"os/signal"
 	"path/filepath"
 	"strings"
 	"syscall"
 
+	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/store"
 	"github.com/spf13/cobra"
@@ -75,6 +75,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		go func() {
 			<-interrupt
 			str.Close()
+			_ = fileLock.Unlock()
 		}()
 
 		err = str.Prune(func(pruned, skipped, pruningHeight uint32) {
@@ -91,6 +92,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		str.Close()
+		_ = fileLock.Unlock()
 
 		cmd.PrintLine()
 		cmd.PrintInfoMsgf("✅ Your node successfully pruned and changed to prune client.")
