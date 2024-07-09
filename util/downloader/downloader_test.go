@@ -2,13 +2,14 @@ package downloader
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
 	"log"
 	"os"
 	"path/filepath"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func setup() *Downloader {
@@ -16,7 +17,8 @@ func setup() *Downloader {
 	filePath := "./testdata/example.pdf"
 	expectedSHA256 := "ea956128717b49669f29eeed116bc11b9bbdcd50f1df130e124ffd36afe71652"
 
-	dl := NewDownloader(fileURL, filePath, expectedSHA256)
+	dl := New(fileURL, filePath, expectedSHA256)
+
 	return dl
 }
 
@@ -30,6 +32,7 @@ func cleanup(path string) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -48,11 +51,9 @@ func TestDownloader(t *testing.T) {
 	}()
 
 	go func() {
-		select {
-		case <-ctx.Done():
-			dl.Stop()
-			assrt.Fail("Download test timed out")
-		}
+		<-ctx.Done()
+		dl.Stop()
+		assrt.Fail("Download test timed out")
 	}()
 
 	done := make(chan bool)
@@ -67,6 +68,7 @@ func TestDownloader(t *testing.T) {
 				log.Println("Download completed successfully")
 				assrt.Equal(float64(100), stat.Percent, "Download should be 100% complete")
 				done <- true
+
 				return
 			}
 		}
@@ -76,6 +78,7 @@ func TestDownloader(t *testing.T) {
 		for err := range dl.Errors() {
 			assrt.Fail("Download encountered an error", err)
 			done <- true
+
 			return
 		}
 	}()
@@ -86,6 +89,9 @@ func TestDownloader(t *testing.T) {
 		dl.Stop()
 		assrt.Fail("Download test timed out")
 	}
+
+	t.Log(dl.FileName())
+	t.Log(dl.FileType())
 
 	assert.NoError(t, cleanup(dl.filePath))
 
@@ -107,6 +113,7 @@ func TestDownloaderOperations(t *testing.T) {
 			if stat.Completed {
 				log.Println("Download completed successfully")
 				assrt.Equal(float64(100), stat.Percent, "Download should be 100% complete")
+
 				return
 			}
 		}

@@ -1,10 +1,12 @@
 package downloader
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"hash"
 	"io"
 	"net/http"
 	"os"
@@ -16,14 +18,13 @@ var (
 	ErrHeaderRequest      = errors.New("request header error")
 	ErrSHA256Mismatch     = errors.New("sha256 mismatch")
 	ErrCreateDir          = errors.New("create dir error")
-	ErrOpenFile           = errors.New("open file error")
 	ErrInvalidFilePath    = errors.New("file path is a directory, not a file")
 	ErrGetFileInfo        = errors.New("get file info error")
 	ErrCopyExistsFileData = errors.New("error copying existing file data")
 	ErrDoRequest          = errors.New("error doing request")
 	ErrFileWriting        = errors.New("error writing file")
 	ErrNewRequest         = errors.New("error creating request")
-	ErrOpenFileExists     = errors.New("error opening file exists")
+	ErrOpenFileExists     = errors.New("error opening existing file")
 )
 
 type Downloader struct {
@@ -32,9 +33,9 @@ type Downloader struct {
 	sha256Sum string
 	fileType  string
 	fileName  string
-	pause     chan bool
-	resume    chan bool
-	stop      chan bool
+	pause     chan struct{}
+	resume    chan struct{}
+	stop      chan struct{}
 	statsCh   chan Stats
 	errCh     chan error
 	wg        sync.WaitGroup
@@ -47,14 +48,14 @@ type Stats struct {
 	Completed  bool
 }
 
-func NewDownloader(url, filePath, sha256Sum string) *Downloader {
+func New(url, filePath, sha256Sum string) *Downloader {
 	return &Downloader{
 		url:       url,
 		filePath:  filePath,
 		sha256Sum: sha256Sum,
-		pause:     make(chan bool),
-		resume:    make(chan bool),
-		stop:      make(chan bool),
+		pause:     make(chan struct{}),
+		resume:    make(chan struct{}),
+		stop:      make(chan struct{}),
 		statsCh:   make(chan Stats),
 		errCh:     make(chan error, 1),
 	}
@@ -62,19 +63,19 @@ func NewDownloader(url, filePath, sha256Sum string) *Downloader {
 
 func (d *Downloader) Start() {
 	d.wg.Add(1)
-	go d.download()
+	go d.download(context.Background())
 }
 
 func (d *Downloader) Pause() {
-	d.pause <- true
+	d.pause <- struct{}{}
 }
 
 func (d *Downloader) Resume() {
-	d.resume <- true
+	d.resume <- struct{}{}
 }
 
 func (d *Downloader) Stop() {
-	d.stop <- true
+	d.stop <- struct{}{}
 	d.wg.Wait()
 	close(d.statsCh)
 	close(d.errCh)
@@ -96,116 +97,194 @@ func (d *Downloader) Errors() <-chan error {
 	return d.errCh
 }
 
-func (d *Downloader) download() {
+func (d *Downloader) download(ctx context.Context) {
 	defer d.wg.Done()
 
-	resp, err := http.Head(d.url)
+	stats, err := d.getHeader(ctx)
 	if err != nil {
-		d.handleError(ErrHeaderRequest)
+		d.handleError(err)
+
 		return
 	}
 
-	stats := Stats{
-		TotalSize: resp.ContentLength,
+	d.fileName = filepath.Base(d.filePath)
+	if err := d.createDir(); err != nil {
+		d.handleError(err)
+
+		return
 	}
+
+	out, err := d.openFile()
+	if err != nil {
+		d.handleError(err)
+
+		return
+	}
+	defer func() {
+		_ = out.Close()
+	}()
+
+	if err := d.validateExistingFile(out, &stats); err != nil {
+		d.handleError(err)
+
+		return
+	}
+
+	if err := d.downloadFile(ctx, out, &stats); err != nil {
+		d.handleError(err)
+	}
+}
+
+func (d *Downloader) getHeader(ctx context.Context) (Stats, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodHead, d.url, http.NoBody)
+	if err != nil {
+		return Stats{}, ErrHeaderRequest
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return Stats{}, ErrHeaderRequest
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	d.fileType = resp.Header.Get("Content-Type")
-	d.fileName = filepath.Base(d.filePath)
 
+	return Stats{
+		TotalSize: resp.ContentLength,
+	}, nil
+}
+
+func (d *Downloader) createDir() error {
 	dir := filepath.Dir(d.filePath)
-	if err := os.MkdirAll(dir, 0755); err != nil {
-		d.handleError(ErrCreateDir)
-		return
+	if err := os.MkdirAll(dir, 0o750); err != nil {
+		return ErrCreateDir
 	}
 
+	return nil
+}
+
+func (d *Downloader) openFile() (*os.File, error) {
 	fileInfo, err := os.Stat(d.filePath)
 	if err == nil && fileInfo.IsDir() {
-		d.handleError(ErrInvalidFilePath)
-		return
+		return nil, ErrInvalidFilePath
 	}
 
-	out, err := os.OpenFile(d.filePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-	if err != nil {
-		d.handleError(ErrOpenFile)
-		return
-	}
-	defer out.Close()
+	return os.OpenFile(d.filePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o600)
+}
 
-	fileInfo, err = out.Stat()
+func (*Downloader) validateExistingFile(out *os.File, stats *Stats) error {
+	fileInfo, err := out.Stat()
 	if err != nil {
-		d.handleError(ErrGetFileInfo)
-		return
+		return ErrGetFileInfo
 	}
 	stats.Downloaded = fileInfo.Size()
 
-	req, err := http.NewRequest("GET", d.url, nil)
+	return nil
+}
+
+func (d *Downloader) downloadFile(ctx context.Context, out *os.File, stats *Stats) error {
+	client := &http.Client{}
+	req, err := d.createRequest(ctx, stats.Downloaded)
 	if err != nil {
-		d.handleError(ErrNewRequest)
-		return
-	}
-	if stats.Downloaded > 0 {
-		req.Header.Set("Range", fmt.Sprintf("bytes=%d-", stats.Downloaded))
+		return err
 	}
 
-	client := &http.Client{}
-	resp, err = client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
-		d.handleError(ErrDoRequest)
-		return
+		return ErrDoRequest
 	}
-	defer resp.Body.Close()
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	buffer := make([]byte, 32*1024)
 	hasher := sha256.New()
 
-	// Update the hasher with the already downloaded part
-	if stats.Downloaded > 0 {
+	if err := d.updateHasherWithExistingData(stats.Downloaded, hasher); err != nil {
+		return err
+	}
+
+	return d.writeToFile(resp, out, buffer, hasher, stats)
+}
+
+func (d *Downloader) createRequest(ctx context.Context, downloaded int64) (*http.Request, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, d.url, http.NoBody)
+	if err != nil {
+		return nil, ErrNewRequest
+	}
+	if downloaded > 0 {
+		req.Header.Set("Range", fmt.Sprintf("bytes=%d-", downloaded))
+	}
+
+	return req, nil
+}
+
+func (d *Downloader) updateHasherWithExistingData(downloaded int64, hasher io.Writer) error {
+	if downloaded > 0 {
 		existingFile, err := os.Open(d.filePath)
 		if err != nil {
-			d.handleError(ErrOpenFileExists)
-			return
+			return ErrOpenFileExists
 		}
-		defer existingFile.Close()
-		if _, err := io.CopyN(hasher, existingFile, stats.Downloaded); err != nil {
-			d.handleError(ErrCopyExistsFileData)
-			return
+		defer func() {
+			_ = existingFile.Close()
+		}()
+
+		if _, err := io.CopyN(hasher, existingFile, downloaded); err != nil {
+			return ErrCopyExistsFileData
 		}
 	}
 
+	return nil
+}
+
+func (d *Downloader) writeToFile(resp *http.Response, out *os.File, buffer []byte,
+	hasher hash.Hash, stats *Stats,
+) error {
 	for {
 		select {
 		case <-d.pause:
 			<-d.resume
 		case <-d.stop:
-			return
+			return nil
 		default:
 			n, err := resp.Body.Read(buffer)
 			if n > 0 {
 				if _, err := out.Write(buffer[:n]); err != nil {
-					d.handleError(ErrFileWriting)
-					return
+					return ErrFileWriting
 				}
-				hasher.Write(buffer[:n])
+
+				if _, err := hasher.Write(buffer[:n]); err != nil {
+					return ErrFileWriting
+				}
+
 				stats.Downloaded += int64(n)
 				stats.Percent = float64(stats.Downloaded) / float64(stats.TotalSize) * 100
-				d.statsCh <- stats
+				d.statsCh <- *stats
 			}
 			if err != nil {
 				if err == io.EOF {
-					stats.Completed = true
-					sum := hex.EncodeToString(hasher.Sum(nil))
-					if sum != d.sha256Sum {
-						d.handleError(ErrSHA256Mismatch)
-					} else {
-						d.statsCh <- stats
-					}
-					return
+					return d.finalizeDownload(hasher, stats)
 				}
-				d.handleError(fmt.Errorf("error reading response body: %v", err))
-				return
+
+				return fmt.Errorf("error reading response body: %w", err)
 			}
 		}
 	}
+}
+
+func (d *Downloader) finalizeDownload(hasher hash.Hash, stats *Stats) error {
+	stats.Completed = true
+	sum := hex.EncodeToString(hasher.Sum(nil))
+	if sum != d.sha256Sum {
+		return ErrSHA256Mismatch
+	}
+	d.statsCh <- *stats
+
+	return nil
 }
 
 func (d *Downloader) handleError(err error) {
