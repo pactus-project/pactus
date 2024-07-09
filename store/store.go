@@ -28,7 +28,6 @@ var (
 
 const (
 	lastStoreVersion = int32(1)
-	totalBlockInDay  = 8640
 )
 
 var (
@@ -396,7 +395,7 @@ func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) er
 		return nil
 	}
 
-	retentionBlocks := uint32(s.config.RetentionDays * totalBlockInDay)
+	retentionBlocks := s.config.RetentionBlocks()
 
 	if cert.Height() < retentionBlocks {
 		return nil

@@ -64,3 +64,7 @@ func (conf *Config) BasicCheck() error {
 
 	return nil
 }
+
+func (conf *Config) RetentionBlocks() uint32 {
+	return uint32(conf.RetentionDays * 8640)
+}
