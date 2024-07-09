@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/gofrs/flock"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/store"
-	"github.com/pactus-project/pactus/util"
 	"github.com/spf13/cobra"
 )
 
@@ -29,8 +29,22 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 
 	pruneCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
-		if util.IsDirNotExistsOrEmpty(workingDir) {
-			cmd.PrintErrorMsgf("The working directory is not exists: %s", workingDir)
+		// change working directory
+		err := os.Chdir(workingDir)
+		cmd.FatalErrorCheck(err)
+
+		// Define the lock file path
+		lockFilePath := filepath.Join(workingDir, ".pactus.lock")
+		fileLock := flock.New(lockFilePath)
+
+		locked, err := fileLock.TryLock()
+		if err != nil {
+			// handle unable to attempt to acquire lock
+			cmd.FatalErrorCheck(err)
+		}
+
+		if !locked {
+			cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
 
 			return
 		}
@@ -71,7 +85,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 				totalCount = pruningHeight
 			}
 
-			pruningProgressBar(prunedCount, skippedCount, pruningHeight, totalCount)
+			pruningProgressBar(prunedCount, skippedCount, totalCount)
 		})
 		cmd.PrintLine()
 		cmd.FatalErrorCheck(err)
@@ -86,7 +100,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 	}
 }
 
-func pruningProgressBar(prunedCount, skippedCount, leftBlocks, totalCount uint32) {
+func pruningProgressBar(prunedCount, skippedCount, totalCount uint32) {
 	percentage := float64(prunedCount+skippedCount) / float64(totalCount) * 100
 	if percentage > 100 {
 		percentage = 100
@@ -96,6 +110,6 @@ func pruningProgressBar(prunedCount, skippedCount, leftBlocks, totalCount uint32
 	filledLength := int(float64(barLength) * percentage / 100)
 
 	bar := strings.Repeat("=", filledLength) + strings.Repeat(" ", barLength-filledLength)
-	fmt.Printf("\r [%s] %.0f%% Pruned: %d | Skipped: %d | Left Blocks: %d", //nolint
-		bar, percentage, prunedCount, skippedCount, leftBlocks)
+	fmt.Printf("\r [%s] %.0f%% Pruned: %d | Skipped: %d", //nolint
+		bar, percentage, prunedCount, skippedCount)
 }
