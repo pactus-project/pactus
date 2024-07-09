@@ -23,9 +23,15 @@ func main() {
 	buildVersionCmd(rootCmd)
 	buildInitCmd(rootCmd)
 	buildStartCmd(rootCmd)
+	buildPruneCmd(rootCmd)
 
 	err := rootCmd.Execute()
 	if err != nil {
 		cmd.PrintErrorMsgf("%s", err)
 	}
+}
+
+func addWorkingDirOption(c *cobra.Command) *string {
+	return c.Flags().StringP("working-dir", "w", cmd.PactusDefaultHomeDir(),
+		"the path to the working directory that keeps the wallets and node files")
 }
