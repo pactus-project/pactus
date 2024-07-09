@@ -19,13 +19,11 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		Use:   "prune",
 		Short: "prune old blocks and transactions from client",
 		Long: "The prune command optimizes blockchain storage by removing outdated blocks and transactions, " +
-			"freeing up disk space and enhancing client performance. customize pruning criteria via flags to " +
-			"manage storage effectively.",
+			"freeing up disk space and enhancing client performance.",
 	}
 	parentCmd.AddCommand(pruneCmd)
 
-	workingDirOpt := pruneCmd.Flags().StringP("working-dir", "w", cmd.PactusDefaultHomeDir(),
-		"a path to the working directory of node files")
+	workingDirOpt := addWorkingDirOption(pruneCmd)
 
 	pruneCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
@@ -53,8 +51,8 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintWarnMsgf("Warning: This command removes all your blocks and transactions and changes " +
-			"your node to a prune node.")
+		cmd.PrintWarnMsgf("This command removes all the blocks and transactions up to %d days ago "+
+			"and converts the node to prune mode.", conf.Store.RetentionDays)
 		cmd.PrintLine()
 		confirmed := cmd.PromptConfirm("Do you want to continue")
 		if !confirmed {
@@ -95,7 +93,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		_ = fileLock.Unlock()
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgf("✅ Your node successfully pruned and changed to prune client.")
+		cmd.PrintInfoMsgf("✅ Your node successfully pruned and changed to prune mode.")
 		cmd.PrintLine()
 		cmd.PrintInfoMsgf("You can start the node by running this command:")
 		cmd.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)

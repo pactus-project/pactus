@@ -17,8 +17,8 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		Short: "initialize the Pactus Blockchain node",
 	}
 	parentCmd.AddCommand(initCmd)
-	workingDirOpt := initCmd.Flags().StringP("working-dir", "w", cmd.PactusDefaultHomeDir(),
-		"a path to the working directory to save the wallet and node files")
+
+	workingDirOpt := addWorkingDirOption(initCmd)
 
 	testnetOpt := initCmd.Flags().Bool("testnet", false,
 		"initialize working directory for joining the testnet")
