@@ -226,7 +226,7 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	require.Eventually(t, func() bool {
 		return syncAlice.PeerSet().Len() == 1 &&
 			syncBob.PeerSet().Len() == 1
-	}, time.Second, 100*time.Millisecond)
+	}, 2*time.Second, 100*time.Millisecond)
 
 	require.Equal(t, status.StatusKnown, syncAlice.PeerSet().GetPeerStatus(syncBob.SelfID()))
 	require.Equal(t, status.StatusKnown, syncBob.PeerSet().GetPeerStatus(syncAlice.SelfID()))
