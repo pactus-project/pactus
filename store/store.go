@@ -74,6 +74,7 @@ type store struct {
 	txStore        *txStore
 	accountStore   *accountStore
 	validatorStore *validatorStore
+	isPruned       bool
 }
 
 func NewStore(conf *Config) (Store, error) {
@@ -94,11 +95,18 @@ func NewStore(conf *Config) (Store, error) {
 		txStore:        newTxStore(db, conf.TxCacheSize),
 		accountStore:   newAccountStore(db, conf.AccountCacheSize),
 		validatorStore: newValidatorStore(db),
+		isPruned:       false,
 	}
 
 	lc := s.LastCertificate()
 	if lc == nil {
 		return s, nil
+	}
+
+	// Check if the node is pruned by checking genesis block.
+	_, err = s.Block(1)
+	if err != nil {
+		s.isPruned = true
 	}
 
 	currentHeight := lc.Height()
@@ -427,6 +435,10 @@ func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) er
 }
 
 func (s *store) PruneOnCommit() error {
+	if !s.isPruned {
+		return nil
+	}
+
 	lc := s.lastCertificate()
 	if lc == nil {
 		return nil

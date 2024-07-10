@@ -53,7 +53,6 @@ type state struct {
 	scoreMgr        *score.Manager
 	logger          *logger.SubLogger
 	eventCh         chan event.Event
-	isPruned        bool
 }
 
 func LoadOrNewState(
@@ -75,13 +74,6 @@ func LoadOrNewState(
 	}
 	st.logger = logger.NewSubLogger("_state", st)
 	st.store = str
-
-	// Check if the store contains genesis block.
-	st.isPruned = false
-	_, err := str.Block(1)
-	if err != nil {
-		st.isPruned = true
-	}
 
 	// Check if the number of accounts is greater than the genesis time;
 	// this indicates we are not at the genesis height anymore.
@@ -489,10 +481,8 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 	st.store.SaveBlock(blk, cert)
 
 	// Removing old block from pruned node store.
-	if st.isPruned {
-		if err := st.store.PruneOnCommit(); err != nil {
-			return err
-		}
+	if err := st.store.PruneOnCommit(); err != nil {
+		return err
 	}
 
 	// Remove transactions from pool
