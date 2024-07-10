@@ -429,10 +429,13 @@ func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) er
 func (s *store) PruneOnCommit() error {
 	lc := s.lastCertificate()
 	if lc == nil {
-		return fmt.Errorf("can't retrieve last certificate")
+		return nil
 	}
 
 	pruneH := lc.Height() - s.config.RetentionBlocks()
+	if pruneH <= 0 {
+		return nil
+	}
 
 	deleted, err := s.pruneBlock(pruneH)
 	if !deleted || err != nil {
