@@ -155,19 +155,7 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.BlockCertificate) 
 	s.txStore.saveTxs(s.batch, blk.Transactions(), regs)
 	s.txStore.pruneCache(height)
 
-	// Save last certificate: [version: 4 bytes]+[certificate: variant]
-	w := bytes.NewBuffer(make([]byte, 0, 4+cert.SerializeSize()))
-	err := encoding.WriteElements(w, lastStoreVersion)
-	if err != nil {
-		panic(err)
-	}
-	err = cert.Encode(w)
-	if err != nil {
-		panic(err)
-	}
-
-	s.batch.Put(lastInfoKey, w.Bytes())
-
+	// Removing old block from prune node store.
 	if s.isPruned {
 		lc := s.lastCertificate()
 		if lc == nil {
@@ -184,6 +172,19 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.BlockCertificate) 
 			return
 		}
 	}
+
+	// Save last certificate: [version: 4 bytes]+[certificate: variant]
+	w := bytes.NewBuffer(make([]byte, 0, 4+cert.SerializeSize()))
+	err := encoding.WriteElements(w, lastStoreVersion)
+	if err != nil {
+		panic(err)
+	}
+	err = cert.Encode(w)
+	if err != nil {
+		panic(err)
+	}
+
+	s.batch.Put(lastInfoKey, w.Bytes())
 }
 
 func (s *store) Block(height uint32) (*CommittedBlock, error) {
