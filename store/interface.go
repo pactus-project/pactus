@@ -98,6 +98,7 @@ type Reader interface {
 	TotalValidators() int32
 	LastCertificate() *certificate.BlockCertificate
 	IsBanned(addr crypto.Address) bool
+	IsPruned() bool
 }
 
 type Store interface {

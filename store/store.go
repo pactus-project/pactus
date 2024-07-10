@@ -413,6 +413,10 @@ func (s *store) IsBanned(addr crypto.Address) bool {
 	return s.config.BannedAddrs[addr]
 }
 
+func (s *store) IsPruned() bool {
+	return s.isPruned
+}
+
 func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) error {
 	cert := s.lastCertificate()
 
