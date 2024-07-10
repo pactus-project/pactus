@@ -3,6 +3,7 @@ package store
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"sync"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -425,7 +426,23 @@ func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) er
 	return nil
 }
 
-func (s *store) pruneBlock(blockHeight uint32) (bool, error) { //nolint
+func (s *store) PruneOnCommit() error {
+	lc := s.lastCertificate()
+	if lc == nil {
+		return fmt.Errorf("can't retrieve last certificate")
+	}
+
+	pruneH := lc.Height() - s.config.RetentionBlocks()
+
+	deleted, err := s.pruneBlock(pruneH)
+	if !deleted || err != nil {
+		return fmt.Errorf("can't prune block at height: %d, error: %w", pruneH, err)
+	}
+
+	return nil
+}
+
+func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
 	if !s.blockStore.hasBlock(blockHeight) {
 		return false, nil
 	}

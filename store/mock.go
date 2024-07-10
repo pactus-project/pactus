@@ -293,3 +293,7 @@ func (*MockStore) IsBanned(_ crypto.Address) bool {
 func (*MockStore) Prune(_ func(pruned, skipped, pruningHeight uint32)) error {
 	return nil
 }
+
+func (*MockStore) PruneOnCommit() error {
+	return nil
+}
