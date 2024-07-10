@@ -99,7 +99,6 @@ type Reader interface {
 	LastCertificate() *certificate.BlockCertificate
 	IsBanned(addr crypto.Address) bool
 	Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) error
-	PruneOnCommit() error
 }
 
 type Store interface {

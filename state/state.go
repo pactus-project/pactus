@@ -480,11 +480,6 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 
 	st.store.SaveBlock(blk, cert)
 
-	// Removing old block from pruned node store.
-	if err := st.store.PruneOnCommit(); err != nil {
-		return err
-	}
-
 	// Remove transactions from pool
 	for _, trx := range blk.Transactions() {
 		st.txPool.RemoveTx(trx.ID())

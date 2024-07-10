@@ -3,7 +3,6 @@ package store
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"sync"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -168,6 +167,23 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.BlockCertificate) 
 	}
 
 	s.batch.Put(lastInfoKey, w.Bytes())
+
+	if s.isPruned {
+		lc := s.lastCertificate()
+		if lc == nil {
+			return
+		}
+
+		pruneH := lc.Height() - s.config.RetentionBlocks()
+		if pruneH <= 0 {
+			return
+		}
+
+		deleted, err := s.pruneBlock(pruneH)
+		if !deleted || err != nil {
+			return
+		}
+	}
 }
 
 func (s *store) Block(height uint32) (*CommittedBlock, error) {
@@ -429,29 +445,6 @@ func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) er
 		}
 
 		resultFunc(0, 1, i)
-	}
-
-	return nil
-}
-
-func (s *store) PruneOnCommit() error {
-	if !s.isPruned {
-		return nil
-	}
-
-	lc := s.lastCertificate()
-	if lc == nil {
-		return nil
-	}
-
-	pruneH := lc.Height() - s.config.RetentionBlocks()
-	if pruneH <= 0 {
-		return nil
-	}
-
-	deleted, err := s.pruneBlock(pruneH)
-	if !deleted || err != nil {
-		return fmt.Errorf("can't prune block at height: %d, error: %w", pruneH, err)
 	}
 
 	return nil
