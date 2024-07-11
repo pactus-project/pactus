@@ -98,7 +98,6 @@ func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, to peer.I
 
 		handler.sendTo(msg, to)
 		handler.peerSet.UpdateStatus(to, status.StatusBanned)
-		handler.network.CloseConnection(to)
 	} else {
 		handler.logger.Info("acknowledging hello message", "msg", msg,
 			"to", to)
