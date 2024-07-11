@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDefaultConfigCheck(t *testing.T) {
+func TestDefaultConfig(t *testing.T) {
 	c := DefaultConfig()
 	assert.NoError(t, c.BasicCheck())
 
@@ -26,42 +26,55 @@ func TestDefaultConfigCheck(t *testing.T) {
 			c.sortitionPoolSize(), c.MaxSize)
 }
 
-func TestInvalidConfig(t *testing.T) {
-	tests := []struct {
-		conf   Config
-		ErrStr string
+func TestConfigBasicCheck(t *testing.T) {
+	testCases := []struct {
+		name        string
+		expectedErr error
+		updateFn    func(c *Config)
 	}{
 		{
-			conf: Config{
-				MaxSize:   0,
-				MinFeePAC: 0.1,
+			name: "Invalid MaxSize",
+			expectedErr: ConfigError{
+				Reason: "maxSize can't be less than 10",
 			},
-			ErrStr: "maxSize can't be less than 10",
+			updateFn: func(c *Config) {
+				c.MaxSize = 0
+			},
 		},
-
 		{
-			conf: Config{
-				MaxSize:   9,
-				MinFeePAC: 0.1,
+			name: "Invalid MaxSize",
+			expectedErr: ConfigError{
+				Reason: "maxSize can't be less than 10",
 			},
-			ErrStr: "maxSize can't be less than 10",
+			updateFn: func(c *Config) {
+				c.MaxSize = 9
+			},
 		},
-
 		{
-			conf: Config{
-				MaxSize:   100,
-				MinFeePAC: 1.0,
+			name: "Valid Config",
+			updateFn: func(c *Config) {
+				c.MaxSize = 100
+				c.MinFeePAC = 1.0
 			},
-			ErrStr: "",
+		},
+		{
+			name:     "DefaultConfig",
+			updateFn: func(*Config) {},
 		},
 	}
 
-	for _, test := range tests {
-		err := test.conf.BasicCheck()
-		if test.ErrStr != "" {
-			assert.ErrorContains(t, err, test.ErrStr)
-		} else {
-			assert.NoError(t, err)
-		}
+	for i, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			conf := DefaultConfig()
+			tc.updateFn(conf)
+			if tc.expectedErr != nil {
+				err := conf.BasicCheck()
+				assert.ErrorIs(t, tc.expectedErr, err,
+					"Expected error not matched for test %d-%s, expected: %s, got: %s", i, tc.name, tc.expectedErr, err)
+			} else {
+				err := conf.BasicCheck()
+				assert.NoError(t, err, "Expected no error for test %d-%s, get: %s", i, tc.name, err)
+			}
+		})
 	}
 }

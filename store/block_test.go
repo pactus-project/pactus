@@ -25,12 +25,12 @@ func TestBlockStore(t *testing.T) {
 		td.store.SaveBlock(nextBlk, nextCert)
 		assert.NoError(t, td.store.WriteBatch())
 
-		committedBlock, err := td.store.Block(lastHeight + 1)
+		cBlk, err := td.store.Block(lastHeight + 1)
 		assert.NoError(t, err)
-		assert.Equal(t, committedBlock.Height, lastHeight+1)
+		assert.Equal(t, cBlk.Height, lastHeight+1)
 
 		d, _ := nextBlk.Bytes()
-		assert.True(t, bytes.Equal(committedBlock.Data, d))
+		assert.True(t, bytes.Equal(cBlk.Data, d))
 
 		cert := td.store.LastCertificate()
 		assert.NoError(t, err)

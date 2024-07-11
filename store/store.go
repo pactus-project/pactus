@@ -103,8 +103,8 @@ func NewStore(conf *Config) (Store, error) {
 	}
 
 	// Check if the node is pruned by checking genesis block.
-	blockOne, _ := s.block(1)
-	if blockOne == nil {
+	cBlkOne, _ := s.block(1)
+	if cBlkOne == nil {
 		s.isPruned = true
 	}
 
@@ -115,11 +115,11 @@ func NewStore(conf *Config) (Store, error) {
 	}
 
 	for i := startHeight; i < currentHeight+1; i++ {
-		committedBlock, err := s.block(i)
+		cBlk, err := s.block(i)
 		if err != nil {
 			return nil, err
 		}
-		blk, err := committedBlock.ToBlock()
+		blk, err := cBlk.ToBlock()
 		if err != nil {
 			return nil, err
 		}
@@ -415,22 +415,20 @@ func (s *store) IsPruned() bool {
 	return s.isPruned
 }
 
-func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) error {
+func (s *store) Prune(resultFunc func(pruned bool, pruningHeight uint32)) error {
 	cert := s.lastCertificate()
 
-	// at genesis block
+	// Store is at the genesis height
 	if cert == nil {
 		return nil
 	}
 
 	retentionBlocks := s.config.RetentionBlocks()
-
 	if cert.Height() < retentionBlocks {
 		return nil
 	}
 
 	pruningHeight := cert.Height() - retentionBlocks
-
 	for i := pruningHeight; i >= 1; i-- {
 		deleted, err := s.pruneBlock(i)
 		if err != nil {
@@ -441,14 +439,10 @@ func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) er
 			return err
 		}
 
-		if deleted {
-			resultFunc(1, 0, i)
-
-			continue
-		}
-
-		resultFunc(0, 1, i)
+		resultFunc(deleted, i)
 	}
+
+	s.isPruned = true
 
 	return nil
 }
@@ -458,8 +452,8 @@ func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
 		return false, nil
 	}
 
-	cBlock, _ := s.block(blockHeight)
-	blk, err := block.FromBytes(cBlock.Data)
+	cBlk, _ := s.block(blockHeight)
+	blk, err := block.FromBytes(cBlk.Data)
 	if err != nil {
 		return false, err
 	}

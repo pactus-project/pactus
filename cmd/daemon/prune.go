@@ -76,9 +76,12 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 			_ = fileLock.Unlock()
 		}()
 
-		err = str.Prune(func(pruned, skipped, pruningHeight uint32) {
-			prunedCount += pruned
-			skippedCount += skipped
+		err = str.Prune(func(pruned bool, pruningHeight uint32) {
+			if pruned {
+				prunedCount++
+			} else {
+				skippedCount++
+			}
 
 			if totalCount == 0 {
 				totalCount = pruningHeight

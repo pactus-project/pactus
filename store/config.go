@@ -7,6 +7,8 @@ import (
 	"github.com/pactus-project/pactus/util"
 )
 
+const blockPerDay = 8640
+
 type Config struct {
 	Path          string `toml:"path"`
 	RetentionDays uint32 `toml:"retention_days"`
@@ -58,7 +60,7 @@ func (conf *Config) BasicCheck() error {
 
 	if conf.RetentionDays < 10 {
 		return ConfigError{
-			Reason: "Retention days can't be less than 10 days",
+			Reason: "retention days can't be less than 10 days",
 		}
 	}
 
@@ -66,5 +68,5 @@ func (conf *Config) BasicCheck() error {
 }
 
 func (conf *Config) RetentionBlocks() uint32 {
-	return conf.RetentionDays * 8640
+	return conf.RetentionDays * blockPerDay
 }

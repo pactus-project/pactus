@@ -10,12 +10,12 @@ import (
 func TestConfigBasicCheck(t *testing.T) {
 	testCases := []struct {
 		name        string
-		expectError error
+		expectedErr error
 		updateFn    func(c *Config)
 	}{
 		{
-			name: "Empty ListenAddrStrings - Expect Error",
-			expectError: ConfigError{
+			name: "Empty ListenAddrStrings",
+			expectedErr: ConfigError{
 				Reason: "address is not valid: failed to parse multiaddr \"\": empty multiaddr",
 			},
 			updateFn: func(c *Config) {
@@ -23,8 +23,8 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
-			name: "Both Relay and Relay Service be true - Expect Error",
-			expectError: ConfigError{
+			name: "Both Relay and Relay Service be true",
+			expectedErr: ConfigError{
 				Reason: "both the relay and relay service cannot be active at the same time",
 			},
 			updateFn: func(c *Config) {
@@ -33,8 +33,8 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
-			name: "Invalid ListenAddrStrings - Expect Error",
-			expectError: ConfigError{
+			name: "Invalid ListenAddrStrings",
+			expectedErr: ConfigError{
 				Reason: "address is not valid: failed to parse multiaddr \"127.0.0.1\": must begin with /",
 			},
 			updateFn: func(c *Config) {
@@ -42,8 +42,8 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
-			name: "Invalid ListenAddrStrings (No port) - Expect Error",
-			expectError: ConfigError{
+			name: "Invalid ListenAddrStrings (No port)",
+			expectedErr: ConfigError{
 				Reason: "address is not valid: failed to parse multiaddr \"/ip4\": unexpected end of multiaddr",
 			},
 			updateFn: func(c *Config) {
@@ -51,8 +51,8 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
-			name: "Invalid Public Address - Expect Error",
-			expectError: ConfigError{
+			name: "Invalid Public Address",
+			expectedErr: ConfigError{
 				Reason: "address is not valid: failed to parse multiaddr \"/ip4\": unexpected end of multiaddr",
 			},
 			updateFn: func(c *Config) {
@@ -60,8 +60,8 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
-			name: "Invalid DefaultBootstrapAddrStrings - Expect Error",
-			expectError: ConfigError{
+			name: "Invalid DefaultBootstrapAddrStrings",
+			expectedErr: ConfigError{
 				Reason: "address is not valid: invalid p2p multiaddr",
 			},
 			updateFn: func(c *Config) {
@@ -69,8 +69,8 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
-			name: "Invalid BootstrapAddrStrings - Expect Error",
-			expectError: ConfigError{
+			name: "Invalid BootstrapAddrStrings",
+			expectedErr: ConfigError{
 				Reason: "address is not valid: invalid p2p multiaddr",
 			},
 			updateFn: func(c *Config) {
@@ -78,8 +78,8 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
-			name: "Low MaxConns - Expect Error",
-			expectError: ConfigError{
+			name: "Low MaxConns",
+			expectedErr: ConfigError{
 				Reason: "maximum connection should be greater than 16",
 			},
 			updateFn: func(c *Config) {
@@ -87,25 +87,26 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
-			name:        "Valid Public Address - No Error",
-			expectError: nil,
+			name: "Valid Public Address",
 			updateFn: func(c *Config) {
 				c.PublicAddrString = "/ip4/127.0.0.1/"
 			},
 		},
 		{
-			name:        "Valid ListenAddrStrings - No Error",
-			expectError: nil,
+			name: "Valid ListenAddrStrings",
 			updateFn: func(c *Config) {
 				c.ListenAddrStrings = []string{"/ip4/127.0.0.1"}
 			},
 		},
 		{
-			name:        "Valid BootstrapAddrStrings - No Error",
-			expectError: nil,
+			name: "Valid BootstrapAddrStrings",
 			updateFn: func(c *Config) {
 				c.BootstrapAddrStrings = []string{"/ip4/127.0.0.1/p2p/12D3KooWQBpPV6NtZy1dvN2oF7dJdLoooRZfEmwtHiDUf42ArDjT"}
 			},
+		},
+		{
+			name:     "DefaultConfig",
+			updateFn: func(*Config) {},
 		},
 	}
 
@@ -113,12 +114,13 @@ func TestConfigBasicCheck(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			conf := DefaultConfig()
 			tc.updateFn(conf)
-			if tc.expectError != nil {
+			if tc.expectedErr != nil {
 				err := conf.BasicCheck()
-				assert.ErrorIs(t, tc.expectError, err,
-					"Expected error not matched for test %d-%s: expected %s, got: %s", i, tc.name, tc.expectError, err)
+				assert.ErrorIs(t, tc.expectedErr, err,
+					"Expected error not matched for test %d-%s, expected: %s, got: %s", i, tc.name, tc.expectedErr, err)
 			} else {
-				assert.NoError(t, conf.BasicCheck(), "Expected no error for Test %d: %s", i, tc.name)
+				err := conf.BasicCheck()
+				assert.NoError(t, err, "Expected no error for test %d-%s, get: %s", i, tc.name, err)
 			}
 		})
 	}
