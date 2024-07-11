@@ -1,6 +1,7 @@
 package message
 
 import (
+	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/types/proposal"
 )
 
@@ -22,6 +23,14 @@ func (*ProposalMessage) BasicCheck() error {
 
 func (*ProposalMessage) Type() Type {
 	return TypeProposal
+}
+
+func (*ProposalMessage) TopicID() network.TopicID {
+	return network.TopicIDConsensus
+}
+
+func (*ProposalMessage) ShouldBroadcast() bool {
+	return true
 }
 
 func (m *ProposalMessage) String() string {

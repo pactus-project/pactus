@@ -42,7 +42,7 @@ type MockState struct {
 
 func MockingState(ts *testsuite.TestSuite) *MockState {
 	cmt, valKeys := ts.GenerateTestCommittee(21)
-	genDoc := genesis.TestnetGenesis()
+	genDoc := genesis.MainnetGenesis()
 
 	return &MockState{
 		ts:            ts,

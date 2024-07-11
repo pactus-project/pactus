@@ -43,12 +43,11 @@ func setup(t *testing.T) *testData {
 	//
 	http.DefaultServeMux = new(http.ServeMux)
 
+	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	mockState := state.MockingState(ts)
 	mockSync := sync.MockingSync(ts)
 	mockNet := network.MockingNetwork(ts, ts.RandPeerID())
-	mockConsMgr, _ := consensus.MockingManager(ts, []*bls.ValidatorKey{
-		ts.RandValKey(), ts.RandValKey(),
-	})
+	mockConsMgr, _ := consensus.MockingManager(ts, mockState, valKeys)
 
 	mockConsMgr.MoveToNewHeight()
 

@@ -3,6 +3,7 @@ package message
 import (
 	"fmt"
 
+	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/util/errors"
 )
 
@@ -37,6 +38,14 @@ func (m *BlocksRequestMessage) BasicCheck() error {
 
 func (*BlocksRequestMessage) Type() Type {
 	return TypeBlocksRequest
+}
+
+func (*BlocksRequestMessage) TopicID() network.TopicID {
+	return network.TopicIDUnspecified
+}
+
+func (*BlocksRequestMessage) ShouldBroadcast() bool {
+	return false
 }
 
 func (m *BlocksRequestMessage) String() string {

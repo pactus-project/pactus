@@ -16,13 +16,11 @@ func newProposalHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *proposalHandler) ParseMessage(m message.Message, _ peer.ID) error {
+func (handler *proposalHandler) ParseMessage(m message.Message, _ peer.ID) {
 	msg := m.(*message.ProposalMessage)
 	handler.logger.Trace("parsing Proposal message", "msg", msg)
 
 	handler.consMgr.SetProposal(msg.Proposal)
-
-	return nil
 }
 
 func (*proposalHandler) PrepareBundle(m message.Message) *bundle.Bundle {

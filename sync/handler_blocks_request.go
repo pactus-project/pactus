@@ -19,7 +19,7 @@ func newBlocksRequestHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID) error {
+func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID) {
 	msg := m.(*message.BlocksRequestMessage)
 	handler.logger.Trace("parsing BlocksRequest message", "msg", msg)
 
@@ -30,7 +30,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 
 		handler.respond(response, pid)
 
-		return nil
+		return
 	}
 
 	if !status.IsKnown() {
@@ -39,7 +39,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 
 		handler.respond(response, pid)
 
-		return nil
+		return
 	}
 
 	ourHeight := handler.state.LastBlockHeight()
@@ -50,7 +50,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 
 			handler.respond(response, pid)
 
-			return nil
+			return
 		}
 	}
 
@@ -60,7 +60,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 
 		handler.respond(response, pid)
 
-		return nil
+		return
 	}
 
 	if msg.Count > handler.config.LatestBlockInterval {
@@ -69,7 +69,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 
 		handler.respond(response, pid)
 
-		return nil
+		return
 	}
 
 	// Help this peer to sync up
@@ -100,15 +100,13 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 
 		handler.respond(response, pid)
 
-		return nil
+		return
 	}
 
 	response := message.NewBlocksResponseMessage(message.ResponseCodeNoMoreBlocks,
 		message.ResponseCodeNoMoreBlocks.String(), msg.SessionID, 0, nil, nil)
 
 	handler.respond(response, pid)
-
-	return nil
 }
 
 func (*blocksRequestHandler) PrepareBundle(m message.Message) *bundle.Bundle {

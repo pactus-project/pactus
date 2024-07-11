@@ -16,20 +16,20 @@ func newQueryProposalHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *queryProposalHandler) ParseMessage(m message.Message, _ peer.ID) error {
+func (handler *queryProposalHandler) ParseMessage(m message.Message, _ peer.ID) {
 	msg := m.(*message.QueryProposalMessage)
 	handler.logger.Trace("parsing QueryProposal message", "msg", msg)
 
 	if !handler.consMgr.HasActiveInstance() {
 		handler.logger.Debug("ignoring QueryProposal, not active", "msg", msg)
 
-		return nil
+		return
 	}
 
 	if !handler.consMgr.HasProposer() {
 		handler.logger.Debug("ignoring QueryProposal, not proposer", "msg", msg)
 
-		return nil
+		return
 	}
 
 	height, round := handler.consMgr.HeightRound()
@@ -37,7 +37,7 @@ func (handler *queryProposalHandler) ParseMessage(m message.Message, _ peer.ID) 
 		handler.logger.Debug("ignoring QueryProposal, not same height/round", "msg", msg,
 			"height", height, "round", round)
 
-		return nil
+		return
 	}
 
 	prop := handler.consMgr.Proposal()
@@ -45,8 +45,6 @@ func (handler *queryProposalHandler) ParseMessage(m message.Message, _ peer.ID) 
 		response := message.NewProposalMessage(prop)
 		handler.broadcast(response)
 	}
-
-	return nil
 }
 
 func (*queryProposalHandler) PrepareBundle(m message.Message) *bundle.Bundle {

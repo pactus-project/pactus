@@ -7,6 +7,6 @@ import (
 )
 
 type messageHandler interface {
-	ParseMessage(message.Message, peer.ID) error
+	ParseMessage(message.Message, peer.ID)
 	PrepareBundle(message.Message) *bundle.Bundle
 }

@@ -16,29 +16,23 @@ func newBlockAnnounceHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *blockAnnounceHandler) ParseMessage(m message.Message, pid peer.ID) error {
+func (handler *blockAnnounceHandler) ParseMessage(m message.Message, pid peer.ID) {
 	msg := m.(*message.BlockAnnounceMessage)
 	handler.logger.Trace("parsing BlockAnnounce message", "msg", msg)
 
 	if handler.cache.HasBlockInCache(msg.Height()) {
 		// We have processed this block before.
 
-		return nil
+		return
 	}
 
+	handler.peerSet.UpdateHeight(pid, msg.Height(), msg.Block.Hash())
 	handler.cache.AddCertificate(msg.Certificate)
 	handler.cache.AddBlock(msg.Block)
 
-	err := handler.tryCommitBlocks()
-	if err != nil {
-		return err
-	}
+	handler.tryCommitBlocks()
 	handler.moveConsensusToNewHeight()
-
-	handler.peerSet.UpdateHeight(pid, msg.Height(), msg.Block.Hash())
 	handler.updateBlockchain()
-
-	return nil
 }
 
 func (*blockAnnounceHandler) PrepareBundle(m message.Message) *bundle.Bundle {

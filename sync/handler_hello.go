@@ -23,7 +23,7 @@ func newHelloHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error {
+func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 	msg := m.(*message.HelloMessage)
 	handler.logger.Trace("parsing Hello message", "msg", msg)
 
@@ -45,7 +45,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 
 		handler.acknowledge(response, pid)
 
-		return nil
+		return
 	}
 
 	if msg.GenesisHash != handler.state.Genesis().Hash() {
@@ -55,7 +55,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 
 		handler.acknowledge(response, pid)
 
-		return nil
+		return
 	}
 
 	if math.Abs(time.Since(msg.MyTime()).Seconds()) > 10 {
@@ -64,7 +64,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 
 		handler.acknowledge(response, pid)
 
-		return nil
+		return
 	}
 
 	agent, _ := version.ParseAgent(msg.Agent)
@@ -74,7 +74,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 
 		handler.acknowledge(response, pid)
 
-		return nil
+		return
 	}
 
 	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
@@ -82,8 +82,6 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) error 
 
 	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok", handler.state.LastBlockHeight())
 	handler.acknowledge(response, pid)
-
-	return nil
 }
 
 func (*helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {
@@ -100,7 +98,6 @@ func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, to peer.I
 
 		handler.sendTo(msg, to)
 		handler.peerSet.UpdateStatus(to, status.StatusBanned)
-		handler.network.CloseConnection(to)
 	} else {
 		handler.logger.Info("acknowledging hello message", "msg", msg,
 			"to", to)

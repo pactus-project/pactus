@@ -60,14 +60,12 @@ func setup(t *testing.T, conf *Config) *testData {
 
 	const bufSize = 1024 * 1024
 
-	mockConsMgr, consMocks := consensus.MockingManager(ts, []*bls.ValidatorKey{
-		ts.RandValKey(), ts.RandValKey(),
-	})
-
 	listener := bufconn.Listen(bufSize)
+	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	mockState := state.MockingState(ts)
 	mockNet := network.MockingNetwork(ts, ts.RandPeerID())
 	mockSync := sync.MockingSync(ts)
+	mockConsMgr, consMocks := consensus.MockingManager(ts, mockState, valKeys)
 
 	mockState.CommitTestBlocks(10)
 

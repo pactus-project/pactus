@@ -24,7 +24,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 		t.Run("Reject request from unknown peers", func(t *testing.T) {
 			pid := td.RandPeerID()
 			msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
@@ -37,7 +37,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 		t.Run("Reject request from peers without handshaking", func(t *testing.T) {
 			pid := td.addPeer(t, status.StatusConnected, service.New(service.None))
 			msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
@@ -49,7 +49,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Peer requested blocks that we don't have", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight+1, 1)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
@@ -59,7 +59,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Reject requests not within `LatestBlockInterval`", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight-config.LatestBlockInterval-1, 1)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
@@ -69,7 +69,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Request blocks more than `LatestBlockInterval`", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 10, config.LatestBlockInterval+1)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
@@ -80,7 +80,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 		t.Run("Accept request within `LatestBlockInterval`", func(t *testing.T) {
 			t.Run("Peer needs more block", func(t *testing.T) {
 				msg := message.NewBlocksRequestMessage(sid, curHeight-config.BlockPerMessage, config.BlockPerMessage)
-				assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+				td.receivingNewMessage(td.sync, msg, pid)
 
 				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				res1 := bdl1.Message.(*message.BlocksResponseMessage)
@@ -99,7 +99,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 
 			t.Run("Peer synced", func(t *testing.T) {
 				msg := message.NewBlocksRequestMessage(sid, curHeight-config.BlockPerMessage+1, config.BlockPerMessage)
-				assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+				td.receivingNewMessage(td.sync, msg, pid)
 
 				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				res1 := bdl1.Message.(*message.BlocksResponseMessage)
@@ -124,7 +124,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Requesting one block", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			msg1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			assert.Equal(t, msg1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)

@@ -57,7 +57,7 @@ func testConfig() *Config {
 func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 	t.Helper()
 
-	timeout := time.NewTimer(8 * time.Second)
+	timeout := time.NewTimer(10 * time.Second)
 
 	for {
 		select {
@@ -167,7 +167,7 @@ func TestNetwork(t *testing.T) {
 	confM.EnableRelay = true
 	confM.BootstrapAddrStrings = bootstrapAddresses
 	confM.ListenAddrStrings = []string{
-		"/ip4/127.0.0.1/tcp/9987",
+		"/ip4/127.0.0.1/tcp/0",
 	}
 	fmt.Println("Starting Private node M")
 	networkM := makeTestNetwork(t, confM, []lp2p.Option{
@@ -179,7 +179,7 @@ func TestNetwork(t *testing.T) {
 	confN.EnableRelay = true
 	confN.BootstrapAddrStrings = bootstrapAddresses
 	confN.ListenAddrStrings = []string{
-		"/ip4/127.0.0.1/tcp/5678",
+		"/ip4/127.0.0.1/tcp/0",
 	}
 	fmt.Println("Starting Private node N")
 	networkN := makeTestNetwork(t, confN, []lp2p.Option{
@@ -231,6 +231,41 @@ func TestNetwork(t *testing.T) {
 			protos := networkP.Protocols()
 			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Stop)
 			assert.Contains(t, protos, lp2pproto.ProtoIDv2Hop)
+		}, time.Second, 100*time.Millisecond)
+
+		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+			protos := networkX.Protocols()
+			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Stop)
+			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Hop)
+		}, time.Second, 100*time.Millisecond)
+	})
+
+	t.Run("Reachability", func(t *testing.T) {
+		fmt.Printf("Running %s\n", t.Name())
+
+		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+			reachability := networkB.ReachabilityStatus()
+			assert.Equal(t, "Public", reachability)
+		}, time.Second, 100*time.Millisecond)
+
+		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+			reachability := networkM.ReachabilityStatus()
+			assert.Equal(t, "Private", reachability)
+		}, time.Second, 100*time.Millisecond)
+
+		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+			reachability := networkN.ReachabilityStatus()
+			assert.Equal(t, "Private", reachability)
+		}, time.Second, 100*time.Millisecond)
+
+		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+			reachability := networkP.ReachabilityStatus()
+			assert.Equal(t, "Public", reachability)
+		}, time.Second, 100*time.Millisecond)
+
+		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+			reachability := networkP.ReachabilityStatus()
+			assert.Equal(t, "Public", reachability)
 		}, time.Second, 100*time.Millisecond)
 	})
 
@@ -355,7 +390,7 @@ func TestNetwork(t *testing.T) {
 	// TODO: How to test this?
 	// t.Run("nodes M and N (private, connected via relay) can communicate using the relay node R", func(t *testing.T) {
 	// 	msgM := ts.RandBytes(64)
-	// 	require.NoError(t, networkM.SendTo(msgM, networkN.SelfID()))
+	// 	networkM.SendTo(msgM, networkN.SelfID())
 	// 	eM := shouldReceiveEvent(t, networkN, EventTypeStream).(*StreamMessage)
 	// 	assert.Equal(t, readData(t, eM.Reader, len(msgM)), msgM)
 	// })

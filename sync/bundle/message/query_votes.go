@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/util/errors"
 )
 
@@ -31,6 +32,14 @@ func (m *QueryVotesMessage) BasicCheck() error {
 
 func (*QueryVotesMessage) Type() Type {
 	return TypeQueryVote
+}
+
+func (*QueryVotesMessage) TopicID() network.TopicID {
+	return network.TopicIDConsensus
+}
+
+func (*QueryVotesMessage) ShouldBroadcast() bool {
+	return true
 }
 
 func (m *QueryVotesMessage) String() string {

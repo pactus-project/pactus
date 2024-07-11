@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/ipblocker"
 	"github.com/pactus-project/pactus/util/logger"
@@ -56,26 +57,29 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 	}, nil
 }
 
-func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) *bundle.Bundle {
+func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) (*bundle.Bundle, error) {
 	bdl, err := f.openBundle(bytes.NewReader(data), from)
 	if err != nil {
-		f.logger.Debug("firewall: unable to open a gossip bundle",
-			"error", err, "bundle", bdl, "from", from)
-
-		return nil
+		return nil, err
 	}
 
-	// TODO: check if gossip flag is set
-	// TODO: check if bundle is a gossip bundle
+	if !bdl.Message.ShouldBroadcast() {
+		f.logger.Warn("firewall: receive stream message as gossip message",
+			"error", err, "bundle", bdl, "from", from)
 
-	return bdl
+		f.closeConnection(from)
+
+		return nil, ErrGossipMessage
+	}
+
+	return bdl, nil
 }
 
 // IsBannedAddress checks if the remote IP address is banned.
 func (f *Firewall) IsBannedAddress(remoteAddr string) bool {
 	ip, err := f.getIPFromMultiAddress(remoteAddr)
 	if err != nil {
-		f.logger.Warn("firewall: unable to parse remote address", "err", err, "addr", remoteAddr)
+		f.logger.Warn("firewall: unable to parse remote address", "error", err, "addr", remoteAddr)
 
 		return false
 	}
@@ -83,29 +87,49 @@ func (f *Firewall) IsBannedAddress(remoteAddr string) bool {
 	return f.ipBlocker.IsBanned(ip)
 }
 
-func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) *bundle.Bundle {
+func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error) {
 	bdl, err := f.openBundle(r, from)
 	if err != nil {
 		f.logger.Debug("firewall: unable to open a stream bundle",
 			"error", err, "bundle", bdl, "from", from)
 
-		return nil
+		return nil, err
 	}
 
-	// TODO: check if gossip flag is NOT set
-	// TODO: check if bundle is a stream bundle
+	if bdl.Message.ShouldBroadcast() {
+		f.logger.Warn("firewall: receive gossip message as stream message",
+			"error", err, "bundle", bdl, "from", from)
 
-	return bdl
+		f.closeConnection(from)
+
+		return nil, ErrStreamMessage
+	}
+
+	return bdl, nil
 }
 
 func (f *Firewall) openBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error) {
 	f.peerSet.UpdateLastReceived(from)
 	f.peerSet.IncreaseReceivedBundlesCounter(from)
 
-	if f.isPeerBanned(from) {
+	p := f.peerSet.GetPeer(from)
+	if p.Status.IsBanned() {
 		f.closeConnection(from)
 
-		return nil, errors.Errorf(errors.ErrInvalidMessage, "peer is banned: %s", from)
+		return nil, PeerBannedError{
+			PeerID:  p.PeerID,
+			Address: p.Address,
+		}
+	}
+
+	if f.IsBannedAddress(p.Address) {
+		f.closeConnection(from)
+		f.peerSet.UpdateStatus(from, status.StatusBanned)
+
+		return nil, PeerBannedError{
+			PeerID:  p.PeerID,
+			Address: p.Address,
+		}
 	}
 
 	bdl, err := f.decodeBundle(r, from)
@@ -161,12 +185,6 @@ func (f *Firewall) checkBundle(bdl *bundle.Bundle) error {
 	}
 
 	return nil
-}
-
-func (f *Firewall) isPeerBanned(pid peer.ID) bool {
-	p := f.peerSet.GetPeer(pid)
-
-	return p.Status.IsBanned()
 }
 
 func (f *Firewall) closeConnection(pid peer.ID) {

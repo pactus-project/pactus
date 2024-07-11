@@ -75,6 +75,9 @@ func (g *gossipService) Broadcast(msg []byte, topicID TopicID) error {
 	g.logger.Debug("publishing new message", "topic", topicID)
 
 	switch topicID {
+	case TopicIDUnspecified:
+		return InvalidTopicError{TopicID: topicID}
+
 	case TopicIDBlock:
 		if g.topicBlock == nil {
 			return NotSubscribedError{TopicID: topicID}
@@ -114,6 +117,9 @@ func (g *gossipService) publish(msg []byte, topic *lp2pps.Topic) error {
 // JoinTopic joins to the topic with the given name and subscribes to receive topic messages.
 func (g *gossipService) JoinTopic(topicID TopicID, sp ShouldPropagate) error {
 	switch topicID {
+	case TopicIDUnspecified:
+		return InvalidTopicError{TopicID: topicID}
+
 	case TopicIDBlock:
 		if g.topicBlock != nil {
 			g.logger.Warn("already subscribed to block topic")
@@ -247,7 +253,7 @@ func (g *gossipService) onReceiveMessage(m *lp2pps.Message) {
 		return
 	}
 
-	g.logger.Debug("receiving new gossip message", "source", m.GetFrom())
+	g.logger.Debug("receiving new gossip message", "from", m.ReceivedFrom)
 	event := &GossipMessage{
 		From: m.ReceivedFrom,
 		Data: m.Data,
