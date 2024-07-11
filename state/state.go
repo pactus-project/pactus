@@ -138,25 +138,6 @@ func (st *state) concreteSandbox() sandbox.Sandbox {
 }
 
 func (st *state) tryLoadLastInfo() error {
-	// Make sure the genesis doc is the same as before.
-	//
-	// This check is not strictly necessary, since the genesis state is already committed.
-	// However, it is good to perform this check to ensure that the genesis document has not been modified.
-	genStateRoot := st.calculateGenesisStateRootFromGenesisDoc()
-	committedBlockOne, err := st.store.Block(1)
-	if err != nil {
-		return err
-	}
-
-	blockOne, err := committedBlockOne.ToBlock()
-	if err != nil {
-		return err
-	}
-
-	if genStateRoot != blockOne.Header().StateRoot() {
-		return fmt.Errorf("invalid genesis doc")
-	}
-
 	logger.Debug("try to restore the last state")
 	committeeInstance, err := st.lastInfo.RestoreLastInfo(st.store, st.params.CommitteeSize)
 	if err != nil {
@@ -242,27 +223,6 @@ func (st *state) stateRoot() hash.Hash {
 	stateRoot := simplemerkle.HashMerkleBranches(&accRoot, &valRoot)
 
 	return *stateRoot
-}
-
-func (st *state) calculateGenesisStateRootFromGenesisDoc() hash.Hash {
-	accs := st.genDoc.Accounts()
-	vals := st.genDoc.Validators()
-
-	accHashes := make([]hash.Hash, len(accs))
-	valHashes := make([]hash.Hash, len(vals))
-	for _, acc := range accs {
-		accHashes[acc.Number()] = acc.Hash()
-	}
-	for _, val := range vals {
-		valHashes[val.Number()] = val.Hash()
-	}
-
-	accTree := simplemerkle.NewTreeFromHashes(accHashes)
-	valTree := simplemerkle.NewTreeFromHashes(valHashes)
-	accRootHash := accTree.Root()
-	valRootHash := valTree.Root()
-
-	return *simplemerkle.HashMerkleBranches(&accRootHash, &valRootHash)
 }
 
 func (st *state) Close() {

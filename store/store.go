@@ -97,14 +97,14 @@ func NewStore(conf *Config) (Store, error) {
 		isPruned:       false,
 	}
 
-	lc := s.LastCertificate()
+	lc := s.lastCertificate()
 	if lc == nil {
 		return s, nil
 	}
 
 	// Check if the node is pruned by checking genesis block.
-	_, err = s.Block(1)
-	if err != nil {
+	blockOne, _ := s.block(1)
+	if blockOne == nil {
 		s.isPruned = true
 	}
 
@@ -115,7 +115,7 @@ func NewStore(conf *Config) (Store, error) {
 	}
 
 	for i := startHeight; i < currentHeight+1; i++ {
-		committedBlock, err := s.Block(i)
+		committedBlock, err := s.block(i)
 		if err != nil {
 			return nil, err
 		}
@@ -156,20 +156,18 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.BlockCertificate) 
 	s.txStore.pruneCache(height)
 
 	// Removing old block from prune node store.
-	if s.isPruned {
-		lc := s.lastCertificate()
-		if lc == nil {
-			return
+	if s.isPruned && height > s.config.RetentionBlocks() {
+		pruneHeight := height - s.config.RetentionBlocks()
+		deleted, err := s.pruneBlock(pruneHeight)
+		if err != nil {
+			panic(err)
 		}
 
-		pruneH := lc.Height() - s.config.RetentionBlocks()
-		if pruneH <= 0 {
-			return
-		}
-
-		deleted, err := s.pruneBlock(pruneH)
-		if !deleted || err != nil {
-			return
+		if deleted {
+			// TODO: Let's use state logger in store[?].
+			logger.Debug("old block is pruned", "height", pruneHeight)
+		} else {
+			logger.Warn("unable to prune the old block", "height", pruneHeight, "error", err)
 		}
 	}
 
@@ -460,12 +458,8 @@ func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
 		return false, nil
 	}
 
-	cBlock, err := s.block(blockHeight)
-	if err != nil {
-		return false, err
-	}
-
-	blk, err := cBlock.ToBlock()
+	cBlock, _ := s.block(blockHeight)
+	blk, err := block.FromBytes(cBlock.Data)
 	if err != nil {
 		return false, err
 	}
