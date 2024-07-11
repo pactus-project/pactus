@@ -576,7 +576,7 @@ func TestSignMessage(t *testing.T) {
 	defer td.Close()
 
 	msg := "pactus"
-	sigStr := "923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
+	expectedSig := "923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
 
 	prv, _ := bls.PrivateKeyFromString(
 		"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
@@ -586,5 +586,5 @@ func TestSignMessage(t *testing.T) {
 
 	sig, err := td.wallet.SignMessage(msg, td.password, td.wallet.AllAccountAddresses()[0].Address)
 	assert.NoError(t, err)
-	assert.Equal(t, sig, sigStr)
+	assert.Equal(t, sig, expectedSig)
 }

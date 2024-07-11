@@ -90,3 +90,10 @@ http:
 
     - selector: pactus.Wallet.SignMessage
       get: "/pactus/wallet/sign_message"
+
+    # Util APIs
+    - selector: pactus.Util.SignMessageWithPrivateKey
+      get: "/pactus/Util/Sign_Message_With_PrivateKey"
+
+    - selector: pactus.Util.VerifyMessage
+      get: "/pactus/Util/VerifyMessage"

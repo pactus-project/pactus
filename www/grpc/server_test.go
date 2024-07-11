@@ -161,3 +161,16 @@ func (td *testData) walletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletC
 
 	return conn, pactus.NewWalletClient(conn)
 }
+
+func (td *testData) utilClient(t *testing.T) (*grpc.ClientConn, pactus.UtilClient) {
+	t.Helper()
+
+	conn, err := grpc.NewClient("passthrough://bufnet",
+		grpc.WithContextDialer(td.bufDialer),
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		t.Fatalf("Failed to dial wallet server: %v", err)
+	}
+
+	return conn, pactus.NewUtilClient(conn)
+}

@@ -24,6 +24,9 @@
       "name": "Network"
     },
     {
+      "name": "Util"
+    },
+    {
       "name": "Wallet"
     }
   ],
@@ -38,6 +41,91 @@
     "application/json"
   ],
   "paths": {
+    "/pactus/Util/Sign_Message_With_PrivateKey": {
+      "get": {
+        "summary": "SignMessageWithPrivateKey",
+        "operationId": "Util_SignMessageWithPrivateKey",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSignMessageWithPrivateKeyResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "message",
+            "description": "The unique ID of the transaction to retrieve.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "privateKey",
+            "description": "The verbosity level for transaction details.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Util"
+        ]
+      }
+    },
+    "/pactus/Util/VerifyMessage": {
+      "get": {
+        "summary": "VerifyMessage",
+        "operationId": "Util_VerifyMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusVerifyMessageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "message",
+            "description": "The unique ID of the transaction to retrieve.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "signature",
+            "description": "The verbosity level for transaction details.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "publicKey",
+            "description": "The verbosity level for transaction details.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Util"
+        ]
+      }
+    },
     "/pactus/blockchain/get_account": {
       "get": {
         "summary": "GetAccount retrieves information about an account based on the provided\naddress.",
@@ -2039,6 +2127,15 @@
       },
       "description": "Response message containing the available balance of the wallet."
     },
+    "pactusSignMessageWithPrivateKeyResponse": {
+      "type": "object",
+      "properties": {
+        "signature": {
+          "type": "string"
+        }
+      },
+      "description": "Response message containing details of a transaction."
+    },
     "pactusSignRawTransactionResponse": {
       "type": "object",
       "properties": {
@@ -2193,6 +2290,15 @@
         }
       },
       "description": "Message containing information about a validator."
+    },
+    "pactusVerifyMessageResponse": {
+      "type": "object",
+      "properties": {
+        "isValid": {
+          "type": "boolean"
+        }
+      },
+      "description": "Response message containing the calculated transaction fee."
     },
     "pactusVoteInfo": {
       "type": "object",

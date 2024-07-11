@@ -105,6 +105,18 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
         </li>
         </ul>
     </li>
+    <li> Util Service
+      <ul> 
+        <li>
+          <a href="#pactus.Util.SignMessageWithPrivateKey">
+          <span class="rpc-badge"></span> SignMessageWithPrivateKey</a>
+        </li>
+        <li>
+          <a href="#pactus.Util.VerifyMessage">
+          <span class="rpc-badge"></span> VerifyMessage</a>
+        </li>
+        </ul>
+    </li>
     <li> Wallet Service
       <ul> 
         <li>
@@ -2413,6 +2425,106 @@ Message has no fields.
         </td>
       </tr>
          </tbody>
+</table>
+
+## Util Service
+
+<p>Util service defines various RPC methods for interacting with
+Utils.</p>
+
+### SignMessageWithPrivateKey <span id="pactus.Util.SignMessageWithPrivateKey" class="rpc-badge"></span>
+
+<p>SignMessageWithPrivateKey</p>
+
+<h4>SignMessageWithPrivateKeyRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">message</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction to retrieve.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">private_key</td>
+    <td> string</td>
+    <td>
+    The verbosity level for transaction details.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>SignMessageWithPrivateKeyResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">signature</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### VerifyMessage <span id="pactus.Util.VerifyMessage" class="rpc-badge"></span>
+
+<p>VerifyMessage</p>
+
+<h4>VerifyMessageRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">message</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction to retrieve.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">signature</td>
+    <td> string</td>
+    <td>
+    The verbosity level for transaction details.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">public_key</td>
+    <td> string</td>
+    <td>
+    The verbosity level for transaction details.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>VerifyMessageResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">is_valid</td>
+    <td> bool</td>
+    <td>
+    
+    </td>
+  </tr>
+     </tbody>
 </table>
 
 ## Wallet Service
