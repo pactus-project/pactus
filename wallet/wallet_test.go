@@ -577,7 +577,6 @@ func TestSignMessage(t *testing.T) {
 
 	msg := "pactus"
 	expectedSig := "923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
-
 	prv, err := bls.PrivateKeyFromString("SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
 
 	assert.NoError(t, err)
