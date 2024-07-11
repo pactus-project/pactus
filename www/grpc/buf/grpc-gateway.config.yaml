@@ -93,7 +93,7 @@ http:
 
     # Util APIs
     - selector: pactus.Utils.SignMessageWithPrivateKey
-      get: "/pactus/Utils/Sign_Message_With_PrivateKey"
+      get: "/pactus/Utils/sign_message_with_private_key"
 
     - selector: pactus.Utils.Verify_Message
-      get: "/pactus/Utils/Verify_Message"
+      get: "/pactus/Utils/verify_message"
