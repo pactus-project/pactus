@@ -2,10 +2,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import util_pb2 as util__pb2
+import utils_pb2 as utils__pb2
 
 
-class UtilStub(object):
+class UtilsStub(object):
     """Util service defines various RPC methods for interacting with
     Utils.
     """
@@ -17,57 +17,57 @@ class UtilStub(object):
             channel: A grpc.Channel.
         """
         self.SignMessageWithPrivateKey = channel.unary_unary(
-                '/pactus.Util/SignMessageWithPrivateKey',
-                request_serializer=util__pb2.SignMessageWithPrivateKeyRequest.SerializeToString,
-                response_deserializer=util__pb2.SignMessageWithPrivateKeyResponse.FromString,
+                '/pactus.Utils/SignMessageWithPrivateKey',
+                request_serializer=utils__pb2.SignMessageWithPrivateKeyRequest.SerializeToString,
+                response_deserializer=utils__pb2.SignMessageWithPrivateKeyResponse.FromString,
                 )
         self.VerifyMessage = channel.unary_unary(
-                '/pactus.Util/VerifyMessage',
-                request_serializer=util__pb2.VerifyMessageRequest.SerializeToString,
-                response_deserializer=util__pb2.VerifyMessageResponse.FromString,
+                '/pactus.Utils/VerifyMessage',
+                request_serializer=utils__pb2.VerifyMessageRequest.SerializeToString,
+                response_deserializer=utils__pb2.VerifyMessageResponse.FromString,
                 )
 
 
-class UtilServicer(object):
+class UtilsServicer(object):
     """Util service defines various RPC methods for interacting with
     Utils.
     """
 
     def SignMessageWithPrivateKey(self, request, context):
-        """SignMessageWithPrivateKey
+        """SignMessageWithPrivateKey sign message with provided private key
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def VerifyMessage(self, request, context):
-        """VerifyMessage
+        """VerifyMessage verify signature with public key and message
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_UtilServicer_to_server(servicer, server):
+def add_UtilsServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'SignMessageWithPrivateKey': grpc.unary_unary_rpc_method_handler(
                     servicer.SignMessageWithPrivateKey,
-                    request_deserializer=util__pb2.SignMessageWithPrivateKeyRequest.FromString,
-                    response_serializer=util__pb2.SignMessageWithPrivateKeyResponse.SerializeToString,
+                    request_deserializer=utils__pb2.SignMessageWithPrivateKeyRequest.FromString,
+                    response_serializer=utils__pb2.SignMessageWithPrivateKeyResponse.SerializeToString,
             ),
             'VerifyMessage': grpc.unary_unary_rpc_method_handler(
                     servicer.VerifyMessage,
-                    request_deserializer=util__pb2.VerifyMessageRequest.FromString,
-                    response_serializer=util__pb2.VerifyMessageResponse.SerializeToString,
+                    request_deserializer=utils__pb2.VerifyMessageRequest.FromString,
+                    response_serializer=utils__pb2.VerifyMessageResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'pactus.Util', rpc_method_handlers)
+            'pactus.Utils', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class Util(object):
+class Utils(object):
     """Util service defines various RPC methods for interacting with
     Utils.
     """
@@ -83,9 +83,9 @@ class Util(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Util/SignMessageWithPrivateKey',
-            util__pb2.SignMessageWithPrivateKeyRequest.SerializeToString,
-            util__pb2.SignMessageWithPrivateKeyResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/pactus.Utils/SignMessageWithPrivateKey',
+            utils__pb2.SignMessageWithPrivateKeyRequest.SerializeToString,
+            utils__pb2.SignMessageWithPrivateKeyResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -100,8 +100,8 @@ class Util(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Util/VerifyMessage',
-            util__pb2.VerifyMessageRequest.SerializeToString,
-            util__pb2.VerifyMessageResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/pactus.Utils/VerifyMessage',
+            utils__pb2.VerifyMessageRequest.SerializeToString,
+            utils__pb2.VerifyMessageResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

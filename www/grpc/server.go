@@ -79,12 +79,12 @@ func (s *Server) startListening(listener net.Listener) error {
 	blockchainServer := newBlockchainServer(s)
 	transactionServer := newTransactionServer(s)
 	networkServer := newNetworkServer(s)
-	utilServer := newUtilServer(s)
+	utilServer := newUtilsServer(s)
 
 	pactus.RegisterBlockchainServer(grpcServer, blockchainServer)
 	pactus.RegisterTransactionServer(grpcServer, transactionServer)
 	pactus.RegisterNetworkServer(grpcServer, networkServer)
-	pactus.RegisterUtilServer(grpcServer, utilServer)
+	pactus.RegisterUtilsServer(grpcServer, utilServer)
 
 	if s.config.EnableWallet {
 		walletServer := newWalletServer(s, s.walletMgr)

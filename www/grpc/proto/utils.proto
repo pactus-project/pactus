@@ -2,42 +2,43 @@ syntax = "proto3";
 package pactus;
 
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
-option java_package = "pactus.util";
+option java_package = "pactus.utils";
 
 // Util service defines various RPC methods for interacting with
 // Utils.
-service Util {
-  // SignMessageWithPrivateKey
+service Utils {
+  // SignMessageWithPrivateKey sign message with provided private key
   rpc SignMessageWithPrivateKey(SignMessageWithPrivateKeyRequest) returns (SignMessageWithPrivateKeyResponse);
 
-  // VerifyMessage
+  // VerifyMessage verify signature with public key and message
   rpc VerifyMessage(VerifyMessageRequest) returns (VerifyMessageResponse);
 }
 
-// Request message for retrieving transaction details.
+// Request message for sign message with private key.
 message SignMessageWithPrivateKeyRequest {
-  // The unique ID of the transaction to retrieve.
+  // The message to sign.
   string message = 1;
-  // The verbosity level for transaction details.
+  // The private key to sign message.
   string private_key = 2;
 }
 
-// Response message containing details of a transaction.
+// Response message containing signature.
 message SignMessageWithPrivateKeyResponse {
+  // The signature of message.
   string signature = 1;
 }
 
-// Request message for calculating transaction fee.
+// Request message verify message.
 message VerifyMessageRequest {
-  // The unique ID of the transaction to retrieve.
+  // The signed message.
   string message = 1;
-  // The verbosity level for transaction details.
+  // The signature of message.
   string signature = 2;
-    // The verbosity level for transaction details.
+    // The message signer public key.
   string public_key = 3;
 }
 
-// Response message containing the calculated transaction fee.
+// Response message containing the resualt of validation of signature and message.
 message VerifyMessageResponse {
   bool is_valid = 1;
 }

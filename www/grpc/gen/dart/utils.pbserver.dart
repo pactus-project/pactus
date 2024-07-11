@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: util.proto
+//  source: utils.proto
 //
 // @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,constant_identifier_names,deprecated_member_use_from_same_package,directives_ordering,library_prefixes,non_constant_identifier_names,prefer_final_fields,return_of_invalid_type,unnecessary_const,unnecessary_import,unnecessary_this,unused_import,unused_shown_name
@@ -10,12 +10,12 @@ import 'dart:async' as $async;
 import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'dart:core' as $core;
-import 'util.pb.dart' as $3;
-import 'util.pbjson.dart';
+import 'utils.pb.dart' as $3;
+import 'utils.pbjson.dart';
 
-export 'util.pb.dart';
+export 'utils.pb.dart';
 
-abstract class UtilServiceBase extends $pb.GeneratedService {
+abstract class UtilsServiceBase extends $pb.GeneratedService {
   $async.Future<$3.SignMessageWithPrivateKeyResponse> signMessageWithPrivateKey($pb.ServerContext ctx, $3.SignMessageWithPrivateKeyRequest request);
   $async.Future<$3.VerifyMessageResponse> verifyMessage($pb.ServerContext ctx, $3.VerifyMessageRequest request);
 
@@ -35,7 +35,7 @@ abstract class UtilServiceBase extends $pb.GeneratedService {
     }
   }
 
-  $core.Map<$core.String, $core.dynamic> get $json => UtilServiceBase$json;
-  $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> get $messageJson => UtilServiceBase$messageJson;
+  $core.Map<$core.String, $core.dynamic> get $json => UtilsServiceBase$json;
+  $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> get $messageJson => UtilsServiceBase$messageJson;
 }
 

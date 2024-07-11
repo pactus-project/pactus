@@ -2215,15 +2215,15 @@ pub mod network_server {
     }
 }
 /// Generated client implementations.
-pub mod util_client {
+pub mod utils_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct UtilClient<T> {
+    pub struct UtilsClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl UtilClient<tonic::transport::Channel> {
+    impl UtilsClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -2234,7 +2234,7 @@ pub mod util_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> UtilClient<T>
+    impl<T> UtilsClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -2252,7 +2252,7 @@ pub mod util_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> UtilClient<InterceptedService<T, F>>
+        ) -> UtilsClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -2266,7 +2266,7 @@ pub mod util_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            UtilClient::new(InterceptedService::new(inner, interceptor))
+            UtilsClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -2317,11 +2317,11 @@ pub mod util_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Util/SignMessageWithPrivateKey",
+                "/pactus.Utils/SignMessageWithPrivateKey",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Util", "SignMessageWithPrivateKey"));
+                .insert(GrpcMethod::new("pactus.Utils", "SignMessageWithPrivateKey"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn verify_message(
@@ -2342,21 +2342,22 @@ pub mod util_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Util/VerifyMessage",
+                "/pactus.Utils/VerifyMessage",
             );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new("pactus.Util", "VerifyMessage"));
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Utils", "VerifyMessage"));
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod util_server {
+pub mod utils_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with UtilServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with UtilsServer.
     #[async_trait]
-    pub trait Util: Send + Sync + 'static {
+    pub trait Utils: Send + Sync + 'static {
         async fn sign_message_with_private_key(
             &self,
             request: tonic::Request<super::SignMessageWithPrivateKeyRequest>,
@@ -2373,7 +2374,7 @@ pub mod util_server {
         >;
     }
     #[derive(Debug)]
-    pub struct UtilServer<T: Util> {
+    pub struct UtilsServer<T: Utils> {
         inner: _Inner<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
@@ -2381,7 +2382,7 @@ pub mod util_server {
         max_encoding_message_size: Option<usize>,
     }
     struct _Inner<T>(Arc<T>);
-    impl<T: Util> UtilServer<T> {
+    impl<T: Utils> UtilsServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -2433,9 +2434,9 @@ pub mod util_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for UtilServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for UtilsServer<T>
     where
-        T: Util,
+        T: Utils,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -2451,11 +2452,11 @@ pub mod util_server {
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
-                "/pactus.Util/SignMessageWithPrivateKey" => {
+                "/pactus.Utils/SignMessageWithPrivateKey" => {
                     #[allow(non_camel_case_types)]
-                    struct SignMessageWithPrivateKeySvc<T: Util>(pub Arc<T>);
+                    struct SignMessageWithPrivateKeySvc<T: Utils>(pub Arc<T>);
                     impl<
-                        T: Util,
+                        T: Utils,
                     > tonic::server::UnaryService<
                         super::SignMessageWithPrivateKeyRequest,
                     > for SignMessageWithPrivateKeySvc<T> {
@@ -2500,11 +2501,11 @@ pub mod util_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Util/VerifyMessage" => {
+                "/pactus.Utils/VerifyMessage" => {
                     #[allow(non_camel_case_types)]
-                    struct VerifyMessageSvc<T: Util>(pub Arc<T>);
+                    struct VerifyMessageSvc<T: Utils>(pub Arc<T>);
                     impl<
-                        T: Util,
+                        T: Utils,
                     > tonic::server::UnaryService<super::VerifyMessageRequest>
                     for VerifyMessageSvc<T> {
                         type Response = super::VerifyMessageResponse;
@@ -2561,7 +2562,7 @@ pub mod util_server {
             }
         }
     }
-    impl<T: Util> Clone for UtilServer<T> {
+    impl<T: Utils> Clone for UtilsServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -2573,7 +2574,7 @@ pub mod util_server {
             }
         }
     }
-    impl<T: Util> Clone for _Inner<T> {
+    impl<T: Utils> Clone for _Inner<T> {
         fn clone(&self) -> Self {
             Self(Arc::clone(&self.0))
         }
@@ -2583,8 +2584,8 @@ pub mod util_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: Util> tonic::server::NamedService for UtilServer<T> {
-        const NAME: &'static str = "pactus.Util";
+    impl<T: Utils> tonic::server::NamedService for UtilsServer<T> {
+        const NAME: &'static str = "pactus.Utils";
     }
 }
 /// Generated client implementations.

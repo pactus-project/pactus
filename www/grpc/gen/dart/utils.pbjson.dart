@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: util.proto
+//  source: utils.proto
 //
 // @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,constant_identifier_names,deprecated_member_use_from_same_package,directives_ordering,library_prefixes,non_constant_identifier_names,prefer_final_fields,return_of_invalid_type,unnecessary_const,unnecessary_import,unnecessary_this,unused_import,unused_shown_name
@@ -51,21 +51,21 @@ const VerifyMessageResponse$json = const {
 
 /// Descriptor for `VerifyMessageResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List verifyMessageResponseDescriptor = $convert.base64Decode('ChVWZXJpZnlNZXNzYWdlUmVzcG9uc2USGQoIaXNfdmFsaWQYASABKAhSB2lzVmFsaWQ=');
-const $core.Map<$core.String, $core.dynamic> UtilServiceBase$json = const {
-  '1': 'Util',
+const $core.Map<$core.String, $core.dynamic> UtilsServiceBase$json = const {
+  '1': 'Utils',
   '2': const [
     const {'1': 'SignMessageWithPrivateKey', '2': '.pactus.SignMessageWithPrivateKeyRequest', '3': '.pactus.SignMessageWithPrivateKeyResponse'},
     const {'1': 'VerifyMessage', '2': '.pactus.VerifyMessageRequest', '3': '.pactus.VerifyMessageResponse'},
   ],
 };
 
-@$core.Deprecated('Use utilServiceDescriptor instead')
-const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> UtilServiceBase$messageJson = const {
+@$core.Deprecated('Use utilsServiceDescriptor instead')
+const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> UtilsServiceBase$messageJson = const {
   '.pactus.SignMessageWithPrivateKeyRequest': SignMessageWithPrivateKeyRequest$json,
   '.pactus.SignMessageWithPrivateKeyResponse': SignMessageWithPrivateKeyResponse$json,
   '.pactus.VerifyMessageRequest': VerifyMessageRequest$json,
   '.pactus.VerifyMessageResponse': VerifyMessageResponse$json,
 };
 
-/// Descriptor for `Util`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List utilServiceDescriptor = $convert.base64Decode('CgRVdGlsEnAKGVNpZ25NZXNzYWdlV2l0aFByaXZhdGVLZXkSKC5wYWN0dXMuU2lnbk1lc3NhZ2VXaXRoUHJpdmF0ZUtleVJlcXVlc3QaKS5wYWN0dXMuU2lnbk1lc3NhZ2VXaXRoUHJpdmF0ZUtleVJlc3BvbnNlEkwKDVZlcmlmeU1lc3NhZ2USHC5wYWN0dXMuVmVyaWZ5TWVzc2FnZVJlcXVlc3QaHS5wYWN0dXMuVmVyaWZ5TWVzc2FnZVJlc3BvbnNl');
+/// Descriptor for `Utils`. Decode as a `google.protobuf.ServiceDescriptorProto`.
+final $typed_data.Uint8List utilsServiceDescriptor = $convert.base64Decode('CgVVdGlscxJwChlTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5EigucGFjdHVzLlNpZ25NZXNzYWdlV2l0aFByaXZhdGVLZXlSZXF1ZXN0GikucGFjdHVzLlNpZ25NZXNzYWdlV2l0aFByaXZhdGVLZXlSZXNwb25zZRJMCg1WZXJpZnlNZXNzYWdlEhwucGFjdHVzLlZlcmlmeU1lc3NhZ2VSZXF1ZXN0Gh0ucGFjdHVzLlZlcmlmeU1lc3NhZ2VSZXNwb25zZQ==');

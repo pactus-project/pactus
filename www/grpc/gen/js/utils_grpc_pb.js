@@ -2,75 +2,75 @@
 
 'use strict';
 var grpc = require('grpc');
-var util_pb = require('./util_pb.js');
+var utils_pb = require('./utils_pb.js');
 
 function serialize_pactus_SignMessageWithPrivateKeyRequest(arg) {
-  if (!(arg instanceof util_pb.SignMessageWithPrivateKeyRequest)) {
+  if (!(arg instanceof utils_pb.SignMessageWithPrivateKeyRequest)) {
     throw new Error('Expected argument of type pactus.SignMessageWithPrivateKeyRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_pactus_SignMessageWithPrivateKeyRequest(buffer_arg) {
-  return util_pb.SignMessageWithPrivateKeyRequest.deserializeBinary(new Uint8Array(buffer_arg));
+  return utils_pb.SignMessageWithPrivateKeyRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_pactus_SignMessageWithPrivateKeyResponse(arg) {
-  if (!(arg instanceof util_pb.SignMessageWithPrivateKeyResponse)) {
+  if (!(arg instanceof utils_pb.SignMessageWithPrivateKeyResponse)) {
     throw new Error('Expected argument of type pactus.SignMessageWithPrivateKeyResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_pactus_SignMessageWithPrivateKeyResponse(buffer_arg) {
-  return util_pb.SignMessageWithPrivateKeyResponse.deserializeBinary(new Uint8Array(buffer_arg));
+  return utils_pb.SignMessageWithPrivateKeyResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_pactus_VerifyMessageRequest(arg) {
-  if (!(arg instanceof util_pb.VerifyMessageRequest)) {
+  if (!(arg instanceof utils_pb.VerifyMessageRequest)) {
     throw new Error('Expected argument of type pactus.VerifyMessageRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_pactus_VerifyMessageRequest(buffer_arg) {
-  return util_pb.VerifyMessageRequest.deserializeBinary(new Uint8Array(buffer_arg));
+  return utils_pb.VerifyMessageRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_pactus_VerifyMessageResponse(arg) {
-  if (!(arg instanceof util_pb.VerifyMessageResponse)) {
+  if (!(arg instanceof utils_pb.VerifyMessageResponse)) {
     throw new Error('Expected argument of type pactus.VerifyMessageResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
 function deserialize_pactus_VerifyMessageResponse(buffer_arg) {
-  return util_pb.VerifyMessageResponse.deserializeBinary(new Uint8Array(buffer_arg));
+  return utils_pb.VerifyMessageResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
 // Util service defines various RPC methods for interacting with
 // Utils.
-var UtilService = exports.UtilService = {
-  // SignMessageWithPrivateKey
+var UtilsService = exports.UtilsService = {
+  // SignMessageWithPrivateKey sign message with provided private key
 signMessageWithPrivateKey: {
-    path: '/pactus.Util/SignMessageWithPrivateKey',
+    path: '/pactus.Utils/SignMessageWithPrivateKey',
     requestStream: false,
     responseStream: false,
-    requestType: util_pb.SignMessageWithPrivateKeyRequest,
-    responseType: util_pb.SignMessageWithPrivateKeyResponse,
+    requestType: utils_pb.SignMessageWithPrivateKeyRequest,
+    responseType: utils_pb.SignMessageWithPrivateKeyResponse,
     requestSerialize: serialize_pactus_SignMessageWithPrivateKeyRequest,
     requestDeserialize: deserialize_pactus_SignMessageWithPrivateKeyRequest,
     responseSerialize: serialize_pactus_SignMessageWithPrivateKeyResponse,
     responseDeserialize: deserialize_pactus_SignMessageWithPrivateKeyResponse,
   },
-  // VerifyMessage
+  // VerifyMessage verify signature with public key and message
 verifyMessage: {
-    path: '/pactus.Util/VerifyMessage',
+    path: '/pactus.Utils/VerifyMessage',
     requestStream: false,
     responseStream: false,
-    requestType: util_pb.VerifyMessageRequest,
-    responseType: util_pb.VerifyMessageResponse,
+    requestType: utils_pb.VerifyMessageRequest,
+    responseType: utils_pb.VerifyMessageResponse,
     requestSerialize: serialize_pactus_VerifyMessageRequest,
     requestDeserialize: deserialize_pactus_VerifyMessageRequest,
     responseSerialize: serialize_pactus_VerifyMessageResponse,
@@ -78,4 +78,4 @@ verifyMessage: {
   },
 };
 
-exports.UtilClient = grpc.makeGenericClientConstructor(UtilService);
+exports.UtilsClient = grpc.makeGenericClientConstructor(UtilsService);

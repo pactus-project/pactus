@@ -923,39 +923,40 @@ pub struct PeerInfo {
     #[prost(int32, tag="20")]
     pub completed_sessions: i32,
 }
-/// Request message for retrieving transaction details.
+/// Request message for sign message with private key.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignMessageWithPrivateKeyRequest {
-    /// The unique ID of the transaction to retrieve.
+    /// The message to sign.
     #[prost(string, tag="1")]
     pub message: ::prost::alloc::string::String,
-    /// The verbosity level for transaction details.
+    /// The private key to sign message.
     #[prost(string, tag="2")]
     pub private_key: ::prost::alloc::string::String,
 }
-/// Response message containing details of a transaction.
+/// Response message containing signature.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignMessageWithPrivateKeyResponse {
+    /// The signature of message.
     #[prost(string, tag="1")]
     pub signature: ::prost::alloc::string::String,
 }
-/// Request message for calculating transaction fee.
+/// Request message verify message.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyMessageRequest {
-    /// The unique ID of the transaction to retrieve.
+    /// The signed message.
     #[prost(string, tag="1")]
     pub message: ::prost::alloc::string::String,
-    /// The verbosity level for transaction details.
+    /// The signature of message.
     #[prost(string, tag="2")]
     pub signature: ::prost::alloc::string::String,
-    /// The verbosity level for transaction details.
+    /// The message signer public key.
     #[prost(string, tag="3")]
     pub public_key: ::prost::alloc::string::String,
 }
-/// Response message containing the calculated transaction fee.
+/// Response message containing the resualt of validation of signature and message.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyMessageResponse {

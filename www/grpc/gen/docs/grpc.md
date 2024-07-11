@@ -105,14 +105,14 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
         </li>
         </ul>
     </li>
-    <li> Util Service
+    <li> Utils Service
       <ul> 
         <li>
-          <a href="#pactus.Util.SignMessageWithPrivateKey">
+          <a href="#pactus.Utils.SignMessageWithPrivateKey">
           <span class="rpc-badge"></span> SignMessageWithPrivateKey</a>
         </li>
         <li>
-          <a href="#pactus.Util.VerifyMessage">
+          <a href="#pactus.Utils.VerifyMessage">
           <span class="rpc-badge"></span> VerifyMessage</a>
         </li>
         </ul>
@@ -2427,14 +2427,14 @@ Message has no fields.
          </tbody>
 </table>
 
-## Util Service
+## Utils Service
 
 <p>Util service defines various RPC methods for interacting with
 Utils.</p>
 
-### SignMessageWithPrivateKey <span id="pactus.Util.SignMessageWithPrivateKey" class="rpc-badge"></span>
+### SignMessageWithPrivateKey <span id="pactus.Utils.SignMessageWithPrivateKey" class="rpc-badge"></span>
 
-<p>SignMessageWithPrivateKey</p>
+<p>SignMessageWithPrivateKey sign message with provided private key</p>
 
 <h4>SignMessageWithPrivateKeyRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2447,14 +2447,14 @@ Utils.</p>
     <td class="fw-bold">message</td>
     <td> string</td>
     <td>
-    The unique ID of the transaction to retrieve.
+    The message to sign.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">private_key</td>
     <td> string</td>
     <td>
-    The verbosity level for transaction details.
+    The private key to sign message.
     </td>
   </tr>
   </tbody>
@@ -2470,15 +2470,15 @@ Utils.</p>
     <td class="fw-bold">signature</td>
     <td> string</td>
     <td>
-    
+    The signature of message.
     </td>
   </tr>
      </tbody>
 </table>
 
-### VerifyMessage <span id="pactus.Util.VerifyMessage" class="rpc-badge"></span>
+### VerifyMessage <span id="pactus.Utils.VerifyMessage" class="rpc-badge"></span>
 
-<p>VerifyMessage</p>
+<p>VerifyMessage verify signature with public key and message</p>
 
 <h4>VerifyMessageRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2491,21 +2491,21 @@ Utils.</p>
     <td class="fw-bold">message</td>
     <td> string</td>
     <td>
-    The unique ID of the transaction to retrieve.
+    The signed message.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">signature</td>
     <td> string</td>
     <td>
-    The verbosity level for transaction details.
+    The signature of message.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">public_key</td>
     <td> string</td>
     <td>
-    The verbosity level for transaction details.
+    The message signer public key.
     </td>
   </tr>
   </tbody>

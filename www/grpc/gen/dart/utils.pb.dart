@@ -1,6 +1,6 @@
 ///
 //  Generated code. Do not modify.
-//  source: util.proto
+//  source: utils.proto
 //
 // @dart = 2.12
 // ignore_for_file: annotate_overrides,camel_case_types,constant_identifier_names,directives_ordering,library_prefixes,non_constant_identifier_names,prefer_final_fields,return_of_invalid_type,unnecessary_const,unnecessary_import,unnecessary_this,unused_import,unused_shown_name
@@ -240,17 +240,17 @@ class VerifyMessageResponse extends $pb.GeneratedMessage {
   void clearIsValid() => clearField(1);
 }
 
-class UtilApi {
+class UtilsApi {
   $pb.RpcClient _client;
-  UtilApi(this._client);
+  UtilsApi(this._client);
 
   $async.Future<SignMessageWithPrivateKeyResponse> signMessageWithPrivateKey($pb.ClientContext? ctx, SignMessageWithPrivateKeyRequest request) {
     var emptyResponse = SignMessageWithPrivateKeyResponse();
-    return _client.invoke<SignMessageWithPrivateKeyResponse>(ctx, 'Util', 'SignMessageWithPrivateKey', request, emptyResponse);
+    return _client.invoke<SignMessageWithPrivateKeyResponse>(ctx, 'Utils', 'SignMessageWithPrivateKey', request, emptyResponse);
   }
   $async.Future<VerifyMessageResponse> verifyMessage($pb.ClientContext? ctx, VerifyMessageRequest request) {
     var emptyResponse = VerifyMessageResponse();
-    return _client.invoke<VerifyMessageResponse>(ctx, 'Util', 'VerifyMessage', request, emptyResponse);
+    return _client.invoke<VerifyMessageResponse>(ctx, 'Utils', 'VerifyMessage', request, emptyResponse);
   }
 }
 

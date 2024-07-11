@@ -92,8 +92,8 @@ http:
       get: "/pactus/wallet/sign_message"
 
     # Util APIs
-    - selector: pactus.Util.SignMessageWithPrivateKey
-      get: "/pactus/Util/Sign_Message_With_PrivateKey"
+    - selector: pactus.Utils.SignMessageWithPrivateKey
+      get: "/pactus/Utils/Sign_Message_With_PrivateKey"
 
-    - selector: pactus.Util.VerifyMessage
-      get: "/pactus/Util/VerifyMessage"
+    - selector: pactus.Utils.VerifyMessage
+      get: "/pactus/Utils/VerifyMessage"

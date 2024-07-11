@@ -24,7 +24,7 @@
       "name": "Network"
     },
     {
-      "name": "Util"
+      "name": "Utils"
     },
     {
       "name": "Wallet"
@@ -41,10 +41,10 @@
     "application/json"
   ],
   "paths": {
-    "/pactus/Util/Sign_Message_With_PrivateKey": {
+    "/pactus/Utils/Sign_Message_With_PrivateKey": {
       "get": {
-        "summary": "SignMessageWithPrivateKey",
-        "operationId": "Util_SignMessageWithPrivateKey",
+        "summary": "SignMessageWithPrivateKey sign message with provided private key",
+        "operationId": "Utils_SignMessageWithPrivateKey",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -62,28 +62,28 @@
         "parameters": [
           {
             "name": "message",
-            "description": "The unique ID of the transaction to retrieve.",
+            "description": "The message to sign.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "privateKey",
-            "description": "The verbosity level for transaction details.",
+            "description": "The private key to sign message.",
             "in": "query",
             "required": false,
             "type": "string"
           }
         ],
         "tags": [
-          "Util"
+          "Utils"
         ]
       }
     },
-    "/pactus/Util/VerifyMessage": {
+    "/pactus/Utils/VerifyMessage": {
       "get": {
-        "summary": "VerifyMessage",
-        "operationId": "Util_VerifyMessage",
+        "summary": "VerifyMessage verify signature with public key and message",
+        "operationId": "Utils_VerifyMessage",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -101,28 +101,28 @@
         "parameters": [
           {
             "name": "message",
-            "description": "The unique ID of the transaction to retrieve.",
+            "description": "The signed message.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "signature",
-            "description": "The verbosity level for transaction details.",
+            "description": "The signature of message.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "publicKey",
-            "description": "The verbosity level for transaction details.",
+            "description": "The message signer public key.",
             "in": "query",
             "required": false,
             "type": "string"
           }
         ],
         "tags": [
-          "Util"
+          "Utils"
         ]
       }
     },
@@ -2131,10 +2131,11 @@
       "type": "object",
       "properties": {
         "signature": {
-          "type": "string"
+          "type": "string",
+          "description": "The signature of message."
         }
       },
-      "description": "Response message containing details of a transaction."
+      "description": "Response message containing signature."
     },
     "pactusSignRawTransactionResponse": {
       "type": "object",
@@ -2298,7 +2299,7 @@
           "type": "boolean"
         }
       },
-      "description": "Response message containing the calculated transaction fee."
+      "description": "Response message containing the resualt of validation of signature and message."
     },
     "pactusVoteInfo": {
       "type": "object",

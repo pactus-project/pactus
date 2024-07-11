@@ -11,39 +11,39 @@ import (
 	proto "google.golang.org/protobuf/proto"
 )
 
-func UtilClientCommand(options ...client.Option) *cobra.Command {
+func UtilsClientCommand(options ...client.Option) *cobra.Command {
 	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("Util"),
-		Short: "Util service client",
+		Use:   cfg.CommandNamer("Utils"),
+		Short: "Utils service client",
 		Long:  "Util service defines various RPC methods for interacting with\n Utils.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
-		_UtilSignMessageWithPrivateKeyCommand(cfg),
-		_UtilVerifyMessageCommand(cfg),
+		_UtilsSignMessageWithPrivateKeyCommand(cfg),
+		_UtilsVerifyMessageCommand(cfg),
 	)
 	return cmd
 }
 
-func _UtilSignMessageWithPrivateKeyCommand(cfg *client.Config) *cobra.Command {
+func _UtilsSignMessageWithPrivateKeyCommand(cfg *client.Config) *cobra.Command {
 	req := &SignMessageWithPrivateKeyRequest{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("SignMessageWithPrivateKey"),
 		Short: "SignMessageWithPrivateKey RPC client",
-		Long:  "SignMessageWithPrivateKey",
+		Long:  "SignMessageWithPrivateKey sign message with provided private key",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Util"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Util", "SignMessageWithPrivateKey"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils", "SignMessageWithPrivateKey"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewUtilClient(cc)
+				cli := NewUtilsClient(cc)
 				v := &SignMessageWithPrivateKeyRequest{}
 
 				if err := in(v); err != nil {
@@ -63,30 +63,30 @@ func _UtilSignMessageWithPrivateKeyCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Message, cfg.FlagNamer("Message"), "", "The unique ID of the transaction to retrieve.")
-	cmd.PersistentFlags().StringVar(&req.PrivateKey, cfg.FlagNamer("PrivateKey"), "", "The verbosity level for transaction details.")
+	cmd.PersistentFlags().StringVar(&req.Message, cfg.FlagNamer("Message"), "", "The message to sign.")
+	cmd.PersistentFlags().StringVar(&req.PrivateKey, cfg.FlagNamer("PrivateKey"), "", "The private key to sign message.")
 
 	return cmd
 }
 
-func _UtilVerifyMessageCommand(cfg *client.Config) *cobra.Command {
+func _UtilsVerifyMessageCommand(cfg *client.Config) *cobra.Command {
 	req := &VerifyMessageRequest{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("VerifyMessage"),
 		Short: "VerifyMessage RPC client",
-		Long:  "VerifyMessage",
+		Long:  "VerifyMessage verify signature with public key and message",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Util"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Util", "VerifyMessage"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils", "VerifyMessage"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewUtilClient(cc)
+				cli := NewUtilsClient(cc)
 				v := &VerifyMessageRequest{}
 
 				if err := in(v); err != nil {
@@ -106,9 +106,9 @@ func _UtilVerifyMessageCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Message, cfg.FlagNamer("Message"), "", "The unique ID of the transaction to retrieve.")
-	cmd.PersistentFlags().StringVar(&req.Signature, cfg.FlagNamer("Signature"), "", "The verbosity level for transaction details.")
-	cmd.PersistentFlags().StringVar(&req.PublicKey, cfg.FlagNamer("PublicKey"), "", "The verbosity level for transaction details.")
+	cmd.PersistentFlags().StringVar(&req.Message, cfg.FlagNamer("Message"), "", "The signed message.")
+	cmd.PersistentFlags().StringVar(&req.Signature, cfg.FlagNamer("Signature"), "", "The signature of message.")
+	cmd.PersistentFlags().StringVar(&req.PublicKey, cfg.FlagNamer("PublicKey"), "", "The message signer public key.")
 
 	return cmd
 }

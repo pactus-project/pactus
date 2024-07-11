@@ -11,7 +11,7 @@ type utilServer struct {
 	*Server
 }
 
-func newUtilServer(server *Server) *utilServer {
+func newUtilsServer(server *Server) *utilServer {
 	return &utilServer{
 		Server: server,
 	}
