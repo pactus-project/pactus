@@ -72,6 +72,7 @@ func TestMain(m *testing.M) {
 
 		tConfigs[i].TxPool.MinFeePAC = 0.000001
 		tConfigs[i].Store.Path = util.TempDirPath()
+		tConfigs[i].Store.RetentionDays = 10
 		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
 		tConfigs[i].Consensus.ChangeProposerDelta = 4 * time.Second
 		tConfigs[i].Consensus.QueryVoteTimeout = 4 * time.Second

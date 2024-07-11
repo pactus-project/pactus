@@ -9,7 +9,7 @@ import (
 
 type Config struct {
 	Path          string `toml:"path"`
-	RetentionDays uint   `toml:"retention_days"`
+	RetentionDays uint32 `toml:"retention_days"`
 
 	// Private configs
 	TxCacheSize        uint32                  `toml:"-"`
@@ -66,5 +66,5 @@ func (conf *Config) BasicCheck() error {
 }
 
 func (conf *Config) RetentionBlocks() uint32 {
-	return uint32(conf.RetentionDays * 8640)
+	return conf.RetentionDays * 8640
 }

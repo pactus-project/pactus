@@ -11,7 +11,6 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/pairslice"
 	"github.com/syndtr/goleveldb/leveldb"
 )
@@ -47,15 +46,6 @@ func newBlockStore(db *leveldb.DB, sortitionCacheSize uint32, publicKeyCacheSize
 }
 
 func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.Block) []blockRegion {
-	if height > 1 {
-		if !bs.hasBlock(height - 1) {
-			logger.Panic("previous block not found", "height", height)
-		}
-	}
-	if bs.hasBlock(height) {
-		logger.Panic("duplicated block", "height", height)
-	}
-
 	blockHash := blk.Hash()
 	regs := make([]blockRegion, blk.Transactions().Len())
 	w := bytes.NewBuffer(make([]byte, 0, blk.SerializeSize()+hash.HashSize))

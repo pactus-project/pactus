@@ -13,16 +13,6 @@ func TestBlockStore(t *testing.T) {
 	lastCert := td.store.LastCertificate()
 	lastHeight := lastCert.Height()
 	nextBlk, nextCert := td.GenerateTestBlock(lastHeight + 1)
-	nextNextBlk, nextNextCert := td.GenerateTestBlock(lastHeight + 2)
-
-	t.Run("Missed block, Should panic ", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
-			}
-		}()
-		td.store.SaveBlock(nextNextBlk, nextNextCert)
-	})
 
 	t.Run("Add block, don't batch write", func(t *testing.T) {
 		td.store.SaveBlock(nextBlk, nextCert)
@@ -45,15 +35,6 @@ func TestBlockStore(t *testing.T) {
 		cert := td.store.LastCertificate()
 		assert.NoError(t, err)
 		assert.Equal(t, cert.Hash(), nextCert.Hash())
-	})
-
-	t.Run("Duplicated block, Should panic ", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
-			}
-		}()
-		td.store.SaveBlock(nextBlk, nextCert)
 	})
 }
 
