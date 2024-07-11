@@ -64,7 +64,7 @@ func setup(t *testing.T, config *Config) *testData {
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	mockState := state.MockingState(ts)
 
-	consMgr, consMocks := consensus.MockingManager(ts, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
+	consMgr, consMocks := consensus.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
 	consMgr.MoveToNewHeight()
 
 	broadcastCh := make(chan message.Message, 1000)

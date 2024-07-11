@@ -168,8 +168,8 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	valKeyBob := []*bls.ValidatorKey{ts.RandValKey()}
 	stateAlice := state.MockingState(ts)
 	stateBob := state.MockingState(ts)
-	consMgrAlice, _ := consensus.MockingManager(ts, valKeyAlice)
-	consMgrBob, _ := consensus.MockingManager(ts, valKeyBob)
+	consMgrAlice, _ := consensus.MockingManager(ts, stateAlice, valKeyAlice)
+	consMgrBob, _ := consensus.MockingManager(ts, stateBob, valKeyBob)
 	internalMessageCh := make(chan message.Message, 1000)
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())

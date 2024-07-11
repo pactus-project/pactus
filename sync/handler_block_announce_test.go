@@ -23,7 +23,10 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	t.Run("Receiving new block announce message, without committing previous block", func(t *testing.T) {
 		td.receivingNewMessage(td.sync, msg2, pid)
 
-		assert.Equal(t, td.sync.state.LastBlockHeight(), lastHeight)
+		stateHeight := td.sync.state.LastBlockHeight()
+		consHeight, _ := td.consMgr.HeightRound()
+		assert.Equal(t, lastHeight, stateHeight)
+		assert.Equal(t, lastHeight+1, consHeight)
 	})
 
 	t.Run("Receiving missed block, should commit both blocks", func(t *testing.T) {
