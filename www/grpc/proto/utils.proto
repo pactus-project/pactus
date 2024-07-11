@@ -29,7 +29,7 @@ message SignMessageWithPrivateKeyResponse {
   string signature = 1;
 }
 
-// Request message verify message.
+// Request message for verifying a message signature.
 message VerifyMessageRequest {
   // The signed message.
   string message = 1;
