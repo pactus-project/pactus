@@ -180,6 +180,24 @@ func TestImportPrivateKey(t *testing.T) {
 	assert.Equal(t, pub.String(), valAddrInfo.PublicKey)
 }
 
+func TestSignMessage(t *testing.T) {
+	td := setup(t)
+	defer td.Close()
+
+	msg := "pactus"
+	expectedSig := "923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
+	prv, err := bls.PrivateKeyFromString("SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
+
+	require.NoError(t, err)
+
+	err = td.wallet.ImportPrivateKey(td.password, prv)
+	assert.NoError(t, err)
+
+	sig, err := td.wallet.SignMessage(td.password, td.wallet.AllAccountAddresses()[0].Address, msg)
+	assert.NoError(t, err)
+	assert.Equal(t, sig, expectedSig)
+}
+
 func TestKeyInfo(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
@@ -570,22 +588,4 @@ func TestTotalBalance(t *testing.T) {
 	totalBalance, err := td.wallet.TotalBalance()
 	assert.NoError(t, err)
 	assert.Equal(t, totalBalance, acc1.Balance()+acc3.Balance())
-}
-
-func TestSignMessage(t *testing.T) {
-	td := setup(t)
-	defer td.Close()
-
-	msg := "pactus"
-	expectedSig := "923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
-	prv, err := bls.PrivateKeyFromString("SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
-
-	require.NoError(t, err)
-
-	err = td.wallet.ImportPrivateKey(td.password, prv)
-	assert.NoError(t, err)
-
-	sig, err := td.wallet.SignMessage(td.password, td.wallet.AllAccountAddresses()[0].Address, msg)
-	assert.NoError(t, err)
-	assert.Equal(t, sig, expectedSig)
 }
