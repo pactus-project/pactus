@@ -78,15 +78,12 @@ func TestAccountByAddress(t *testing.T) {
 		assert.Equal(t, td.store.TotalAccounts(), total)
 	})
 
-	t.Run("Get random account", func(t *testing.T) {
-		acc, err := td.store.Account(lastAddr)
-		assert.NoError(t, err)
-		require.NotNil(t, acc)
-		assert.Equal(t, acc.Number(), total-1)
-	})
+	t.Run("Non existing account", func(t *testing.T) {
+		addr := td.RandAccAddress()
+		acc, err := td.store.Account(addr)
+		has := td.store.HasAccount(addr)
 
-	t.Run("Unknown address", func(t *testing.T) {
-		acc, err := td.store.Account(td.RandAccAddress())
+		assert.False(t, has)
 		assert.Error(t, err)
 		assert.Nil(t, acc)
 	})

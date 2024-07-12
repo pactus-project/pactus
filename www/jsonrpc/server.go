@@ -58,9 +58,10 @@ func (s *Server) StartServer(grpcServer string) error {
 	networkService := pactus.RegisterNetworkJsonRPC(grpcConn)
 	transactionService := pactus.RegisterTransactionJsonRPC(grpcConn)
 	walletService := pactus.RegisterWalletJsonRPC(grpcConn)
+	utilsService := pactus.RegisterUtilsJsonRPC(grpcConn)
 
 	server := jrpc.NewServer()
-	server.RegisterServices(blockchainService, networkService, transactionService, walletService)
+	server.RegisterServices(blockchainService, networkService, transactionService, walletService, utilsService)
 
 	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {

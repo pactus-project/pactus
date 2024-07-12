@@ -104,22 +104,22 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 	req *pactus.GetBlockRequest,
 ) (*pactus.GetBlockResponse, error) {
 	height := req.GetHeight()
-	committedBlock := s.state.CommittedBlock(height)
-	if committedBlock == nil {
+	cBlk := s.state.CommittedBlock(height)
+	if cBlk == nil {
 		return nil, status.Errorf(codes.NotFound, "block not found")
 	}
 	res := &pactus.GetBlockResponse{
-		Height: committedBlock.Height,
-		Hash:   committedBlock.BlockHash.String(),
+		Height: cBlk.Height,
+		Hash:   cBlk.BlockHash.String(),
 	}
 
 	switch req.Verbosity {
 	case pactus.BlockVerbosity_BLOCK_DATA:
-		res.Data = hex.EncodeToString(committedBlock.Data)
+		res.Data = hex.EncodeToString(cBlk.Data)
 
 	case pactus.BlockVerbosity_BLOCK_INFO,
 		pactus.BlockVerbosity_BLOCK_TRANSACTIONS:
-		block, err := committedBlock.ToBlock()
+		block, err := cBlk.ToBlock()
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}

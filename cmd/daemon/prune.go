@@ -3,10 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/signal"
 	"path/filepath"
 	"strings"
-	"syscall"
 
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
@@ -66,37 +64,48 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		prunedCount := uint32(0)
 		skippedCount := uint32(0)
 		totalCount := uint32(0)
+		canceled := false
+		closed := make(chan bool, 1)
 
-		interrupt := make(chan os.Signal, 1)
-		signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+		cmd.TrapSignal(func() {
+			canceled = true
+			<-closed
+		})
 
-		go func() {
-			<-interrupt
-			str.Close()
-			_ = fileLock.Unlock()
-		}()
-
-		err = str.Prune(func(pruned, skipped, pruningHeight uint32) {
-			prunedCount += pruned
-			skippedCount += skipped
+		err = str.Prune(func(pruned bool, pruningHeight uint32) bool {
+			if pruned {
+				prunedCount++
+			} else {
+				skippedCount++
+			}
 
 			if totalCount == 0 {
 				totalCount = pruningHeight
 			}
 
 			pruningProgressBar(prunedCount, skippedCount, totalCount)
+
+			return canceled
 		})
 		cmd.PrintLine()
 		cmd.FatalErrorCheck(err)
 
+		if canceled {
+			cmd.PrintLine()
+			cmd.PrintInfoMsgf("❌ The operation canceled.")
+			cmd.PrintLine()
+		} else {
+			cmd.PrintLine()
+			cmd.PrintInfoMsgf("✅ Your node successfully pruned and changed to prune mode.")
+			cmd.PrintLine()
+			cmd.PrintInfoMsgf("You can start the node by running this command:")
+			cmd.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
+		}
+
 		str.Close()
 		_ = fileLock.Unlock()
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("✅ Your node successfully pruned and changed to prune mode.")
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("You can start the node by running this command:")
-		cmd.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
+		closed <- true
 	}
 }
 

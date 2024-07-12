@@ -87,3 +87,13 @@ http:
 
     - selector: pactus.Wallet.GetTotalBalance
       get: "/pactus/wallet/get_total_balance"
+
+    - selector: pactus.Wallet.SignMessage
+      get: "/pactus/wallet/sign_message"
+
+    # Util APIs
+    - selector: pactus.Utils.SignMessageWithPrivateKey
+      get: "/pactus/Utils/sign_message_with_private_key"
+
+    - selector: pactus.Utils.VerifyMessage
+      get: "/pactus/Utils/verify_message"

@@ -109,7 +109,11 @@ func TestValidatorByNumber(t *testing.T) {
 	})
 
 	t.Run("Non existing validator", func(t *testing.T) {
-		val, err := td.store.ValidatorByNumber(total + 1)
+		addr := td.RandValAddress()
+		val, err := td.store.Validator(addr)
+		has := td.store.HasValidator(addr)
+
+		assert.False(t, has)
 		assert.Error(t, err)
 		assert.Nil(t, val)
 	})

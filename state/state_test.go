@@ -615,17 +615,17 @@ func TestCommittedBlock(t *testing.T) {
 	})
 
 	t.Run("First block", func(t *testing.T) {
-		committedBlockOne := td.state.CommittedBlock(1)
-		blockOne, err := committedBlockOne.ToBlock()
+		cBlkOne := td.state.CommittedBlock(1)
+		blkOne, err := cBlkOne.ToBlock()
 		assert.NoError(t, err)
-		assert.Nil(t, blockOne.PrevCertificate())
-		assert.Equal(t, hash.UndefHash, blockOne.Header().PrevBlockHash())
+		assert.Nil(t, blkOne.PrevCertificate())
+		assert.Equal(t, hash.UndefHash, blkOne.Header().PrevBlockHash())
 	})
 
 	t.Run("Last block", func(t *testing.T) {
-		lastCommittedBlock := td.state.CommittedBlock(td.state.LastBlockHeight())
-		lastBlk, err := lastCommittedBlock.ToBlock()
+		cBlkLast := td.state.CommittedBlock(td.state.LastBlockHeight())
+		blkLast, err := cBlkLast.ToBlock()
 		assert.NoError(t, err)
-		assert.Equal(t, td.state.LastBlockHash(), lastBlk.Hash())
+		assert.Equal(t, td.state.LastBlockHash(), blkLast.Hash())
 	})
 }

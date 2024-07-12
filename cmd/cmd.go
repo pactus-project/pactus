@@ -479,8 +479,8 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 	// Now we can update the private filed, if any
 	genParams := gen.Params()
 
-	conf.Store.TxCacheSize = genParams.TransactionToLiveInterval
-	conf.Store.SortitionCacheSize = genParams.SortitionInterval
+	conf.Store.TxCacheWindow = genParams.TransactionToLiveInterval
+	conf.Store.SeedCacheWindow = genParams.SortitionInterval
 	conf.Store.AccountCacheSize = 1024
 	conf.Store.PublicKeyCacheSize = 1024
 

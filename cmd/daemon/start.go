@@ -83,9 +83,10 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.TrapSignal(func() {
+			cmd.PrintInfoMsgf("Exiting...")
+
 			_ = fileLock.Unlock()
 			node.Stop()
-			cmd.PrintInfoMsgf("Exiting ...")
 		})
 
 		// run forever (the node will not be returned)
