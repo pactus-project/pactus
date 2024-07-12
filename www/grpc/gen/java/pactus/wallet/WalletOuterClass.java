@@ -15377,6 +15377,1747 @@ public final class WalletOuterClass {
 
   }
 
+  public interface SignMessageRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.SignMessageRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The name of the wallet.
+     * </pre>
+     *
+     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+     * @return The walletName.
+     */
+    java.lang.String getWalletName();
+    /**
+     * <pre>
+     * The name of the wallet.
+     * </pre>
+     *
+     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+     * @return The bytes for walletName.
+     */
+    com.google.protobuf.ByteString
+        getWalletNameBytes();
+
+    /**
+     * <pre>
+     * The password for unlocking the wallet for signing.
+     * </pre>
+     *
+     * <code>string password = 2 [json_name = "password"];</code>
+     * @return The password.
+     */
+    java.lang.String getPassword();
+    /**
+     * <pre>
+     * The password for unlocking the wallet for signing.
+     * </pre>
+     *
+     * <code>string password = 2 [json_name = "password"];</code>
+     * @return The bytes for password.
+     */
+    com.google.protobuf.ByteString
+        getPasswordBytes();
+
+    /**
+     * <pre>
+     * The account address associated with the private key.
+     * </pre>
+     *
+     * <code>string address = 3 [json_name = "address"];</code>
+     * @return The address.
+     */
+    java.lang.String getAddress();
+    /**
+     * <pre>
+     * The account address associated with the private key.
+     * </pre>
+     *
+     * <code>string address = 3 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    com.google.protobuf.ByteString
+        getAddressBytes();
+
+    /**
+     * <pre>
+     * The arbitrary message to be signed.
+     * </pre>
+     *
+     * <code>string message = 4 [json_name = "message"];</code>
+     * @return The message.
+     */
+    java.lang.String getMessage();
+    /**
+     * <pre>
+     * The arbitrary message to be signed.
+     * </pre>
+     *
+     * <code>string message = 4 [json_name = "message"];</code>
+     * @return The bytes for message.
+     */
+    com.google.protobuf.ByteString
+        getMessageBytes();
+  }
+  /**
+   * <pre>
+   * Request message to sign an arbitrary message.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.SignMessageRequest}
+   */
+  public static final class SignMessageRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.SignMessageRequest)
+      SignMessageRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use SignMessageRequest.newBuilder() to construct.
+    private SignMessageRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private SignMessageRequest() {
+      walletName_ = "";
+      password_ = "";
+      address_ = "";
+      message_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new SignMessageRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.wallet.WalletOuterClass.internal_static_pactus_SignMessageRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.wallet.WalletOuterClass.internal_static_pactus_SignMessageRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.wallet.WalletOuterClass.SignMessageRequest.class, pactus.wallet.WalletOuterClass.SignMessageRequest.Builder.class);
+    }
+
+    public static final int WALLET_NAME_FIELD_NUMBER = 1;
+    private volatile java.lang.Object walletName_;
+    /**
+     * <pre>
+     * The name of the wallet.
+     * </pre>
+     *
+     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+     * @return The walletName.
+     */
+    @java.lang.Override
+    public java.lang.String getWalletName() {
+      java.lang.Object ref = walletName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        walletName_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The name of the wallet.
+     * </pre>
+     *
+     * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+     * @return The bytes for walletName.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getWalletNameBytes() {
+      java.lang.Object ref = walletName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        walletName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PASSWORD_FIELD_NUMBER = 2;
+    private volatile java.lang.Object password_;
+    /**
+     * <pre>
+     * The password for unlocking the wallet for signing.
+     * </pre>
+     *
+     * <code>string password = 2 [json_name = "password"];</code>
+     * @return The password.
+     */
+    @java.lang.Override
+    public java.lang.String getPassword() {
+      java.lang.Object ref = password_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        password_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The password for unlocking the wallet for signing.
+     * </pre>
+     *
+     * <code>string password = 2 [json_name = "password"];</code>
+     * @return The bytes for password.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPasswordBytes() {
+      java.lang.Object ref = password_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        password_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ADDRESS_FIELD_NUMBER = 3;
+    private volatile java.lang.Object address_;
+    /**
+     * <pre>
+     * The account address associated with the private key.
+     * </pre>
+     *
+     * <code>string address = 3 [json_name = "address"];</code>
+     * @return The address.
+     */
+    @java.lang.Override
+    public java.lang.String getAddress() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        address_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The account address associated with the private key.
+     * </pre>
+     *
+     * <code>string address = 3 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getAddressBytes() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        address_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MESSAGE_FIELD_NUMBER = 4;
+    private volatile java.lang.Object message_;
+    /**
+     * <pre>
+     * The arbitrary message to be signed.
+     * </pre>
+     *
+     * <code>string message = 4 [json_name = "message"];</code>
+     * @return The message.
+     */
+    @java.lang.Override
+    public java.lang.String getMessage() {
+      java.lang.Object ref = message_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        message_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The arbitrary message to be signed.
+     * </pre>
+     *
+     * <code>string message = 4 [json_name = "message"];</code>
+     * @return The bytes for message.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getMessageBytes() {
+      java.lang.Object ref = message_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        message_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(walletName_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, walletName_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(password_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, password_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, address_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(message_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, message_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(walletName_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, walletName_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(password_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, password_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, address_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(message_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, message_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.wallet.WalletOuterClass.SignMessageRequest)) {
+        return super.equals(obj);
+      }
+      pactus.wallet.WalletOuterClass.SignMessageRequest other = (pactus.wallet.WalletOuterClass.SignMessageRequest) obj;
+
+      if (!getWalletName()
+          .equals(other.getWalletName())) return false;
+      if (!getPassword()
+          .equals(other.getPassword())) return false;
+      if (!getAddress()
+          .equals(other.getAddress())) return false;
+      if (!getMessage()
+          .equals(other.getMessage())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + WALLET_NAME_FIELD_NUMBER;
+      hash = (53 * hash) + getWalletName().hashCode();
+      hash = (37 * hash) + PASSWORD_FIELD_NUMBER;
+      hash = (53 * hash) + getPassword().hashCode();
+      hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getAddress().hashCode();
+      hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
+      hash = (53 * hash) + getMessage().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.wallet.WalletOuterClass.SignMessageRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Request message to sign an arbitrary message.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.SignMessageRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.SignMessageRequest)
+        pactus.wallet.WalletOuterClass.SignMessageRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.wallet.WalletOuterClass.internal_static_pactus_SignMessageRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.wallet.WalletOuterClass.internal_static_pactus_SignMessageRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.wallet.WalletOuterClass.SignMessageRequest.class, pactus.wallet.WalletOuterClass.SignMessageRequest.Builder.class);
+      }
+
+      // Construct using pactus.wallet.WalletOuterClass.SignMessageRequest.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        walletName_ = "";
+
+        password_ = "";
+
+        address_ = "";
+
+        message_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.wallet.WalletOuterClass.internal_static_pactus_SignMessageRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.wallet.WalletOuterClass.SignMessageRequest getDefaultInstanceForType() {
+        return pactus.wallet.WalletOuterClass.SignMessageRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.wallet.WalletOuterClass.SignMessageRequest build() {
+        pactus.wallet.WalletOuterClass.SignMessageRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.wallet.WalletOuterClass.SignMessageRequest buildPartial() {
+        pactus.wallet.WalletOuterClass.SignMessageRequest result = new pactus.wallet.WalletOuterClass.SignMessageRequest(this);
+        result.walletName_ = walletName_;
+        result.password_ = password_;
+        result.address_ = address_;
+        result.message_ = message_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.wallet.WalletOuterClass.SignMessageRequest) {
+          return mergeFrom((pactus.wallet.WalletOuterClass.SignMessageRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.wallet.WalletOuterClass.SignMessageRequest other) {
+        if (other == pactus.wallet.WalletOuterClass.SignMessageRequest.getDefaultInstance()) return this;
+        if (!other.getWalletName().isEmpty()) {
+          walletName_ = other.walletName_;
+          onChanged();
+        }
+        if (!other.getPassword().isEmpty()) {
+          password_ = other.password_;
+          onChanged();
+        }
+        if (!other.getAddress().isEmpty()) {
+          address_ = other.address_;
+          onChanged();
+        }
+        if (!other.getMessage().isEmpty()) {
+          message_ = other.message_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                walletName_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 10
+              case 18: {
+                password_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 18
+              case 26: {
+                address_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 26
+              case 34: {
+                message_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 34
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private java.lang.Object walletName_ = "";
+      /**
+       * <pre>
+       * The name of the wallet.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @return The walletName.
+       */
+      public java.lang.String getWalletName() {
+        java.lang.Object ref = walletName_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          walletName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The name of the wallet.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @return The bytes for walletName.
+       */
+      public com.google.protobuf.ByteString
+          getWalletNameBytes() {
+        java.lang.Object ref = walletName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          walletName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The name of the wallet.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @param value The walletName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWalletName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        walletName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The name of the wallet.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearWalletName() {
+        
+        walletName_ = getDefaultInstance().getWalletName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The name of the wallet.
+       * </pre>
+       *
+       * <code>string wallet_name = 1 [json_name = "walletName"];</code>
+       * @param value The bytes for walletName to set.
+       * @return This builder for chaining.
+       */
+      public Builder setWalletNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        walletName_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object password_ = "";
+      /**
+       * <pre>
+       * The password for unlocking the wallet for signing.
+       * </pre>
+       *
+       * <code>string password = 2 [json_name = "password"];</code>
+       * @return The password.
+       */
+      public java.lang.String getPassword() {
+        java.lang.Object ref = password_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          password_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The password for unlocking the wallet for signing.
+       * </pre>
+       *
+       * <code>string password = 2 [json_name = "password"];</code>
+       * @return The bytes for password.
+       */
+      public com.google.protobuf.ByteString
+          getPasswordBytes() {
+        java.lang.Object ref = password_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          password_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The password for unlocking the wallet for signing.
+       * </pre>
+       *
+       * <code>string password = 2 [json_name = "password"];</code>
+       * @param value The password to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPassword(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        password_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The password for unlocking the wallet for signing.
+       * </pre>
+       *
+       * <code>string password = 2 [json_name = "password"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPassword() {
+        
+        password_ = getDefaultInstance().getPassword();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The password for unlocking the wallet for signing.
+       * </pre>
+       *
+       * <code>string password = 2 [json_name = "password"];</code>
+       * @param value The bytes for password to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPasswordBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        password_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object address_ = "";
+      /**
+       * <pre>
+       * The account address associated with the private key.
+       * </pre>
+       *
+       * <code>string address = 3 [json_name = "address"];</code>
+       * @return The address.
+       */
+      public java.lang.String getAddress() {
+        java.lang.Object ref = address_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          address_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The account address associated with the private key.
+       * </pre>
+       *
+       * <code>string address = 3 [json_name = "address"];</code>
+       * @return The bytes for address.
+       */
+      public com.google.protobuf.ByteString
+          getAddressBytes() {
+        java.lang.Object ref = address_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          address_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The account address associated with the private key.
+       * </pre>
+       *
+       * <code>string address = 3 [json_name = "address"];</code>
+       * @param value The address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddress(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        address_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The account address associated with the private key.
+       * </pre>
+       *
+       * <code>string address = 3 [json_name = "address"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAddress() {
+        
+        address_ = getDefaultInstance().getAddress();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The account address associated with the private key.
+       * </pre>
+       *
+       * <code>string address = 3 [json_name = "address"];</code>
+       * @param value The bytes for address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        address_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object message_ = "";
+      /**
+       * <pre>
+       * The arbitrary message to be signed.
+       * </pre>
+       *
+       * <code>string message = 4 [json_name = "message"];</code>
+       * @return The message.
+       */
+      public java.lang.String getMessage() {
+        java.lang.Object ref = message_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          message_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The arbitrary message to be signed.
+       * </pre>
+       *
+       * <code>string message = 4 [json_name = "message"];</code>
+       * @return The bytes for message.
+       */
+      public com.google.protobuf.ByteString
+          getMessageBytes() {
+        java.lang.Object ref = message_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          message_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The arbitrary message to be signed.
+       * </pre>
+       *
+       * <code>string message = 4 [json_name = "message"];</code>
+       * @param value The message to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMessage(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        message_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The arbitrary message to be signed.
+       * </pre>
+       *
+       * <code>string message = 4 [json_name = "message"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMessage() {
+        
+        message_ = getDefaultInstance().getMessage();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The arbitrary message to be signed.
+       * </pre>
+       *
+       * <code>string message = 4 [json_name = "message"];</code>
+       * @param value The bytes for message to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMessageBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        message_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.SignMessageRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.SignMessageRequest)
+    private static final pactus.wallet.WalletOuterClass.SignMessageRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.wallet.WalletOuterClass.SignMessageRequest();
+    }
+
+    public static pactus.wallet.WalletOuterClass.SignMessageRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SignMessageRequest>
+        PARSER = new com.google.protobuf.AbstractParser<SignMessageRequest>() {
+      @java.lang.Override
+      public SignMessageRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<SignMessageRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SignMessageRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.wallet.WalletOuterClass.SignMessageRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface SignMessageResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.SignMessageResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * Signature of the message.
+     * </pre>
+     *
+     * <code>string signature = 1 [json_name = "signature"];</code>
+     * @return The signature.
+     */
+    java.lang.String getSignature();
+    /**
+     * <pre>
+     * Signature of the message.
+     * </pre>
+     *
+     * <code>string signature = 1 [json_name = "signature"];</code>
+     * @return The bytes for signature.
+     */
+    com.google.protobuf.ByteString
+        getSignatureBytes();
+  }
+  /**
+   * <pre>
+   * Response message containing the available balance of the wallet.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.SignMessageResponse}
+   */
+  public static final class SignMessageResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.SignMessageResponse)
+      SignMessageResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use SignMessageResponse.newBuilder() to construct.
+    private SignMessageResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private SignMessageResponse() {
+      signature_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new SignMessageResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.wallet.WalletOuterClass.internal_static_pactus_SignMessageResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.wallet.WalletOuterClass.internal_static_pactus_SignMessageResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.wallet.WalletOuterClass.SignMessageResponse.class, pactus.wallet.WalletOuterClass.SignMessageResponse.Builder.class);
+    }
+
+    public static final int SIGNATURE_FIELD_NUMBER = 1;
+    private volatile java.lang.Object signature_;
+    /**
+     * <pre>
+     * Signature of the message.
+     * </pre>
+     *
+     * <code>string signature = 1 [json_name = "signature"];</code>
+     * @return The signature.
+     */
+    @java.lang.Override
+    public java.lang.String getSignature() {
+      java.lang.Object ref = signature_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        signature_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Signature of the message.
+     * </pre>
+     *
+     * <code>string signature = 1 [json_name = "signature"];</code>
+     * @return The bytes for signature.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSignatureBytes() {
+      java.lang.Object ref = signature_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        signature_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(signature_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, signature_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(signature_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, signature_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.wallet.WalletOuterClass.SignMessageResponse)) {
+        return super.equals(obj);
+      }
+      pactus.wallet.WalletOuterClass.SignMessageResponse other = (pactus.wallet.WalletOuterClass.SignMessageResponse) obj;
+
+      if (!getSignature()
+          .equals(other.getSignature())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + SIGNATURE_FIELD_NUMBER;
+      hash = (53 * hash) + getSignature().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.wallet.WalletOuterClass.SignMessageResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Response message containing the available balance of the wallet.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.SignMessageResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.SignMessageResponse)
+        pactus.wallet.WalletOuterClass.SignMessageResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.wallet.WalletOuterClass.internal_static_pactus_SignMessageResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.wallet.WalletOuterClass.internal_static_pactus_SignMessageResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.wallet.WalletOuterClass.SignMessageResponse.class, pactus.wallet.WalletOuterClass.SignMessageResponse.Builder.class);
+      }
+
+      // Construct using pactus.wallet.WalletOuterClass.SignMessageResponse.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        signature_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.wallet.WalletOuterClass.internal_static_pactus_SignMessageResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.wallet.WalletOuterClass.SignMessageResponse getDefaultInstanceForType() {
+        return pactus.wallet.WalletOuterClass.SignMessageResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.wallet.WalletOuterClass.SignMessageResponse build() {
+        pactus.wallet.WalletOuterClass.SignMessageResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.wallet.WalletOuterClass.SignMessageResponse buildPartial() {
+        pactus.wallet.WalletOuterClass.SignMessageResponse result = new pactus.wallet.WalletOuterClass.SignMessageResponse(this);
+        result.signature_ = signature_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.wallet.WalletOuterClass.SignMessageResponse) {
+          return mergeFrom((pactus.wallet.WalletOuterClass.SignMessageResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.wallet.WalletOuterClass.SignMessageResponse other) {
+        if (other == pactus.wallet.WalletOuterClass.SignMessageResponse.getDefaultInstance()) return this;
+        if (!other.getSignature().isEmpty()) {
+          signature_ = other.signature_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                signature_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private java.lang.Object signature_ = "";
+      /**
+       * <pre>
+       * Signature of the message.
+       * </pre>
+       *
+       * <code>string signature = 1 [json_name = "signature"];</code>
+       * @return The signature.
+       */
+      public java.lang.String getSignature() {
+        java.lang.Object ref = signature_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          signature_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Signature of the message.
+       * </pre>
+       *
+       * <code>string signature = 1 [json_name = "signature"];</code>
+       * @return The bytes for signature.
+       */
+      public com.google.protobuf.ByteString
+          getSignatureBytes() {
+        java.lang.Object ref = signature_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          signature_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Signature of the message.
+       * </pre>
+       *
+       * <code>string signature = 1 [json_name = "signature"];</code>
+       * @param value The signature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSignature(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        signature_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Signature of the message.
+       * </pre>
+       *
+       * <code>string signature = 1 [json_name = "signature"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSignature() {
+        
+        signature_ = getDefaultInstance().getSignature();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Signature of the message.
+       * </pre>
+       *
+       * <code>string signature = 1 [json_name = "signature"];</code>
+       * @param value The bytes for signature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSignatureBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        signature_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.SignMessageResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.SignMessageResponse)
+    private static final pactus.wallet.WalletOuterClass.SignMessageResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.wallet.WalletOuterClass.SignMessageResponse();
+    }
+
+    public static pactus.wallet.WalletOuterClass.SignMessageResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SignMessageResponse>
+        PARSER = new com.google.protobuf.AbstractParser<SignMessageResponse>() {
+      @java.lang.Override
+      public SignMessageResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<SignMessageResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SignMessageResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.wallet.WalletOuterClass.SignMessageResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_AddressInfo_descriptor;
   private static final 
@@ -15477,6 +17218,16 @@ public final class WalletOuterClass {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_GetTotalBalanceResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_SignMessageRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_SignMessageRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_SignMessageResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_SignMessageResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -15531,30 +17282,36 @@ public final class WalletOuterClass {
       "let_name\030\001 \001(\tR\nwalletName\"_\n\027GetTotalBa" +
       "lanceResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwall" +
       "etName\022#\n\rtotal_balance\030\002 \001(\003R\014totalBala" +
-      "nce*b\n\013AddressType\022\031\n\025ADDRESS_TYPE_TREAS" +
-      "URY\020\000\022\032\n\026ADDRESS_TYPE_VALIDATOR\020\001\022\034\n\030ADD" +
-      "RESS_TYPE_BLS_ACCOUNT\020\0022\352\005\n\006Wallet\022I\n\014Cr" +
-      "eateWallet\022\033.pactus.CreateWalletRequest\032" +
-      "\034.pactus.CreateWalletResponse\022L\n\rRestore" +
-      "Wallet\022\034.pactus.RestoreWalletRequest\032\035.p" +
-      "actus.RestoreWalletResponse\022C\n\nLoadWalle" +
-      "t\022\031.pactus.LoadWalletRequest\032\032.pactus.Lo" +
-      "adWalletResponse\022I\n\014UnloadWallet\022\033.pactu" +
-      "s.UnloadWalletRequest\032\034.pactus.UnloadWal" +
-      "letResponse\022R\n\017GetTotalBalance\022\036.pactus." +
-      "GetTotalBalanceRequest\032\037.pactus.GetTotal" +
-      "BalanceResponse\022[\n\022SignRawTransaction\022!." +
-      "pactus.SignRawTransactionRequest\032\".pactu" +
-      "s.SignRawTransactionResponse\022^\n\023GetValid" +
-      "atorAddress\022\".pactus.GetValidatorAddress" +
-      "Request\032#.pactus.GetValidatorAddressResp" +
-      "onse\022L\n\rGetNewAddress\022\034.pactus.GetNewAdd" +
-      "ressRequest\032\035.pactus.GetNewAddressRespon" +
-      "se\022X\n\021GetAddressHistory\022 .pactus.GetAddr" +
-      "essHistoryRequest\032!.pactus.GetAddressHis" +
-      "toryResponseBA\n\rpactus.walletZ0github.co" +
-      "m/pactus-project/pactus/www/grpc/pactusb" +
-      "\006proto3"
+      "nce\"\205\001\n\022SignMessageRequest\022\037\n\013wallet_nam" +
+      "e\030\001 \001(\tR\nwalletName\022\032\n\010password\030\002 \001(\tR\010p" +
+      "assword\022\030\n\007address\030\003 \001(\tR\007address\022\030\n\007mes" +
+      "sage\030\004 \001(\tR\007message\"3\n\023SignMessageRespon" +
+      "se\022\034\n\tsignature\030\001 \001(\tR\tsignature*b\n\013Addr" +
+      "essType\022\031\n\025ADDRESS_TYPE_TREASURY\020\000\022\032\n\026AD" +
+      "DRESS_TYPE_VALIDATOR\020\001\022\034\n\030ADDRESS_TYPE_B" +
+      "LS_ACCOUNT\020\0022\262\006\n\006Wallet\022I\n\014CreateWallet\022" +
+      "\033.pactus.CreateWalletRequest\032\034.pactus.Cr" +
+      "eateWalletResponse\022L\n\rRestoreWallet\022\034.pa" +
+      "ctus.RestoreWalletRequest\032\035.pactus.Resto" +
+      "reWalletResponse\022C\n\nLoadWallet\022\031.pactus." +
+      "LoadWalletRequest\032\032.pactus.LoadWalletRes" +
+      "ponse\022I\n\014UnloadWallet\022\033.pactus.UnloadWal" +
+      "letRequest\032\034.pactus.UnloadWalletResponse" +
+      "\022R\n\017GetTotalBalance\022\036.pactus.GetTotalBal" +
+      "anceRequest\032\037.pactus.GetTotalBalanceResp" +
+      "onse\022[\n\022SignRawTransaction\022!.pactus.Sign" +
+      "RawTransactionRequest\032\".pactus.SignRawTr" +
+      "ansactionResponse\022^\n\023GetValidatorAddress" +
+      "\022\".pactus.GetValidatorAddressRequest\032#.p" +
+      "actus.GetValidatorAddressResponse\022L\n\rGet" +
+      "NewAddress\022\034.pactus.GetNewAddressRequest" +
+      "\032\035.pactus.GetNewAddressResponse\022X\n\021GetAd" +
+      "dressHistory\022 .pactus.GetAddressHistoryR" +
+      "equest\032!.pactus.GetAddressHistoryRespons" +
+      "e\022F\n\013SignMessage\022\032.pactus.SignMessageReq" +
+      "uest\032\033.pactus.SignMessageResponseBA\n\rpac" +
+      "tus.walletZ0github.com/pactus-project/pa" +
+      "ctus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -15681,6 +17438,18 @@ public final class WalletOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetTotalBalanceResponse_descriptor,
         new java.lang.String[] { "WalletName", "TotalBalance", });
+    internal_static_pactus_SignMessageRequest_descriptor =
+      getDescriptor().getMessageTypes().get(20);
+    internal_static_pactus_SignMessageRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_SignMessageRequest_descriptor,
+        new java.lang.String[] { "WalletName", "Password", "Address", "Message", });
+    internal_static_pactus_SignMessageResponse_descriptor =
+      getDescriptor().getMessageTypes().get(21);
+    internal_static_pactus_SignMessageResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_SignMessageResponse_descriptor,
+        new java.lang.String[] { "Signature", });
     pactus.transaction.TransactionOuterClass.getDescriptor();
   }
 

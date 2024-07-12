@@ -30,6 +30,7 @@ const (
 	Wallet_GetValidatorAddress_FullMethodName = "/pactus.Wallet/GetValidatorAddress"
 	Wallet_GetNewAddress_FullMethodName       = "/pactus.Wallet/GetNewAddress"
 	Wallet_GetAddressHistory_FullMethodName   = "/pactus.Wallet/GetAddressHistory"
+	Wallet_SignMessage_FullMethodName         = "/pactus.Wallet/SignMessage"
 )
 
 // WalletClient is the client API for Wallet service.
@@ -57,6 +58,8 @@ type WalletClient interface {
 	GetNewAddress(ctx context.Context, in *GetNewAddressRequest, opts ...grpc.CallOption) (*GetNewAddressResponse, error)
 	// GetAddressHistory retrieves the transaction history of an address.
 	GetAddressHistory(ctx context.Context, in *GetAddressHistoryRequest, opts ...grpc.CallOption) (*GetAddressHistoryResponse, error)
+	// SignMessage signs an arbitrary message.
+	SignMessage(ctx context.Context, in *SignMessageRequest, opts ...grpc.CallOption) (*SignMessageResponse, error)
 }
 
 type walletClient struct {
@@ -157,6 +160,16 @@ func (c *walletClient) GetAddressHistory(ctx context.Context, in *GetAddressHist
 	return out, nil
 }
 
+func (c *walletClient) SignMessage(ctx context.Context, in *SignMessageRequest, opts ...grpc.CallOption) (*SignMessageResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SignMessageResponse)
+	err := c.cc.Invoke(ctx, Wallet_SignMessage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletServer is the server API for Wallet service.
 // All implementations should embed UnimplementedWalletServer
 // for forward compatibility
@@ -182,6 +195,8 @@ type WalletServer interface {
 	GetNewAddress(context.Context, *GetNewAddressRequest) (*GetNewAddressResponse, error)
 	// GetAddressHistory retrieves the transaction history of an address.
 	GetAddressHistory(context.Context, *GetAddressHistoryRequest) (*GetAddressHistoryResponse, error)
+	// SignMessage signs an arbitrary message.
+	SignMessage(context.Context, *SignMessageRequest) (*SignMessageResponse, error)
 }
 
 // UnimplementedWalletServer should be embedded to have forward compatible implementations.
@@ -214,6 +229,9 @@ func (UnimplementedWalletServer) GetNewAddress(context.Context, *GetNewAddressRe
 }
 func (UnimplementedWalletServer) GetAddressHistory(context.Context, *GetAddressHistoryRequest) (*GetAddressHistoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAddressHistory not implemented")
+}
+func (UnimplementedWalletServer) SignMessage(context.Context, *SignMessageRequest) (*SignMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignMessage not implemented")
 }
 
 // UnsafeWalletServer may be embedded to opt out of forward compatibility for this service.
@@ -389,6 +407,24 @@ func _Wallet_GetAddressHistory_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Wallet_SignMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignMessageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).SignMessage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_SignMessage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).SignMessage(ctx, req.(*SignMessageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Wallet_ServiceDesc is the grpc.ServiceDesc for Wallet service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -431,6 +467,10 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAddressHistory",
 			Handler:    _Wallet_GetAddressHistory_Handler,
+		},
+		{
+			MethodName: "SignMessage",
+			Handler:    _Wallet_SignMessage_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

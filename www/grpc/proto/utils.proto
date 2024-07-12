@@ -1,0 +1,46 @@
+syntax = "proto3";
+package pactus;
+
+option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
+option java_package = "pactus.utils";
+
+// Utils service defines RPC methods for utility functions such as message
+// signing and verification.
+service Utils {
+  // SignMessageWithPrivateKey sign message with provided private key.
+  rpc SignMessageWithPrivateKey(SignMessageWithPrivateKeyRequest) returns (SignMessageWithPrivateKeyResponse);
+
+  // VerifyMessage verify signature with public key and message
+  rpc VerifyMessage(VerifyMessageRequest) returns (VerifyMessageResponse);
+}
+
+// Request message for sign message with private key.
+message SignMessageWithPrivateKeyRequest {
+  // The private key to sign the message.
+  string private_key = 1;
+
+  // The message to sign.
+  string message = 2;
+}
+
+// Response message containing the generated signature.
+message SignMessageWithPrivateKeyResponse {
+  // The signature of the message.
+  string signature = 1;
+}
+
+// Request message for verifying a message signature.
+message VerifyMessageRequest {
+  // The signed message.
+  string message = 1;
+  // The signature of the message.
+  string signature = 2;
+    // The public key of the signer.
+  string public_key = 3;
+}
+
+// Response message containing the resualt of validation of signature and message.
+message VerifyMessageResponse {
+  // Indicates if the signature is valid (true) or not (false).
+  bool is_valid = 1;
+}
