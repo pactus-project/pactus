@@ -95,5 +95,5 @@ http:
     - selector: pactus.Utils.SignMessageWithPrivateKey
       get: "/pactus/Utils/sign_message_with_private_key"
 
-    - selector: pactus.Utils.Verify_Message
+    - selector: pactus.Utils.VerifyMessage
       get: "/pactus/Utils/verify_message"

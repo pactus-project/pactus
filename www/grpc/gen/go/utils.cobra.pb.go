@@ -16,7 +16,7 @@ func UtilsClientCommand(options ...client.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("Utils"),
 		Short: "Utils service client",
-		Long:  "Util service defines various RPC methods for interacting with\n Utils.",
+		Long:  "Utils service defines RPC methods for utility functions such as message\n signing and verification.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
@@ -32,7 +32,7 @@ func _UtilsSignMessageWithPrivateKeyCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("SignMessageWithPrivateKey"),
 		Short: "SignMessageWithPrivateKey RPC client",
-		Long:  "SignMessageWithPrivateKey sign message with provided private key",
+		Long:  "SignMessageWithPrivateKey sign message with provided private key.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils"); err != nil {
@@ -63,8 +63,8 @@ func _UtilsSignMessageWithPrivateKeyCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
+	cmd.PersistentFlags().StringVar(&req.PrivateKey, cfg.FlagNamer("PrivateKey"), "", "The private key to sign the message.")
 	cmd.PersistentFlags().StringVar(&req.Message, cfg.FlagNamer("Message"), "", "The message to sign.")
-	cmd.PersistentFlags().StringVar(&req.PrivateKey, cfg.FlagNamer("PrivateKey"), "", "The private key to sign message.")
 
 	return cmd
 }
@@ -107,8 +107,8 @@ func _UtilsVerifyMessageCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&req.Message, cfg.FlagNamer("Message"), "", "The signed message.")
-	cmd.PersistentFlags().StringVar(&req.Signature, cfg.FlagNamer("Signature"), "", "The signature of message.")
-	cmd.PersistentFlags().StringVar(&req.PublicKey, cfg.FlagNamer("PublicKey"), "", "The message signer public key.")
+	cmd.PersistentFlags().StringVar(&req.Signature, cfg.FlagNamer("Signature"), "", "The signature of the message.")
+	cmd.PersistentFlags().StringVar(&req.PublicKey, cfg.FlagNamer("PublicKey"), "", "The public key of the signer.")
 
 	return cmd
 }

@@ -27,10 +27,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Util service defines various RPC methods for interacting with
-// Utils.
+// Utils service defines RPC methods for utility functions such as message
+// signing and verification.
 type UtilsClient interface {
-	// SignMessageWithPrivateKey sign message with provided private key
+	// SignMessageWithPrivateKey sign message with provided private key.
 	SignMessageWithPrivateKey(ctx context.Context, in *SignMessageWithPrivateKeyRequest, opts ...grpc.CallOption) (*SignMessageWithPrivateKeyResponse, error)
 	// VerifyMessage verify signature with public key and message
 	VerifyMessage(ctx context.Context, in *VerifyMessageRequest, opts ...grpc.CallOption) (*VerifyMessageResponse, error)
@@ -68,10 +68,10 @@ func (c *utilsClient) VerifyMessage(ctx context.Context, in *VerifyMessageReques
 // All implementations should embed UnimplementedUtilsServer
 // for forward compatibility
 //
-// Util service defines various RPC methods for interacting with
-// Utils.
+// Utils service defines RPC methods for utility functions such as message
+// signing and verification.
 type UtilsServer interface {
-	// SignMessageWithPrivateKey sign message with provided private key
+	// SignMessageWithPrivateKey sign message with provided private key.
 	SignMessageWithPrivateKey(context.Context, *SignMessageWithPrivateKeyRequest) (*SignMessageWithPrivateKeyResponse, error)
 	// VerifyMessage verify signature with public key and message
 	VerifyMessage(context.Context, *VerifyMessageRequest) (*VerifyMessageResponse, error)

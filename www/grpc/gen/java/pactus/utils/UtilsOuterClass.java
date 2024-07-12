@@ -20,10 +20,30 @@ public final class UtilsOuterClass {
 
     /**
      * <pre>
+     * The private key to sign the message.
+     * </pre>
+     *
+     * <code>string private_key = 1 [json_name = "privateKey"];</code>
+     * @return The privateKey.
+     */
+    java.lang.String getPrivateKey();
+    /**
+     * <pre>
+     * The private key to sign the message.
+     * </pre>
+     *
+     * <code>string private_key = 1 [json_name = "privateKey"];</code>
+     * @return The bytes for privateKey.
+     */
+    com.google.protobuf.ByteString
+        getPrivateKeyBytes();
+
+    /**
+     * <pre>
      * The message to sign.
      * </pre>
      *
-     * <code>string message = 1 [json_name = "message"];</code>
+     * <code>string message = 2 [json_name = "message"];</code>
      * @return The message.
      */
     java.lang.String getMessage();
@@ -32,31 +52,11 @@ public final class UtilsOuterClass {
      * The message to sign.
      * </pre>
      *
-     * <code>string message = 1 [json_name = "message"];</code>
+     * <code>string message = 2 [json_name = "message"];</code>
      * @return The bytes for message.
      */
     com.google.protobuf.ByteString
         getMessageBytes();
-
-    /**
-     * <pre>
-     * The private key to sign message.
-     * </pre>
-     *
-     * <code>string private_key = 2 [json_name = "privateKey"];</code>
-     * @return The privateKey.
-     */
-    java.lang.String getPrivateKey();
-    /**
-     * <pre>
-     * The private key to sign message.
-     * </pre>
-     *
-     * <code>string private_key = 2 [json_name = "privateKey"];</code>
-     * @return The bytes for privateKey.
-     */
-    com.google.protobuf.ByteString
-        getPrivateKeyBytes();
   }
   /**
    * <pre>
@@ -75,8 +75,8 @@ public final class UtilsOuterClass {
       super(builder);
     }
     private SignMessageWithPrivateKeyRequest() {
-      message_ = "";
       privateKey_ = "";
+      message_ = "";
     }
 
     @java.lang.Override
@@ -104,14 +104,60 @@ public final class UtilsOuterClass {
               pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyRequest.class, pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyRequest.Builder.class);
     }
 
-    public static final int MESSAGE_FIELD_NUMBER = 1;
+    public static final int PRIVATE_KEY_FIELD_NUMBER = 1;
+    private volatile java.lang.Object privateKey_;
+    /**
+     * <pre>
+     * The private key to sign the message.
+     * </pre>
+     *
+     * <code>string private_key = 1 [json_name = "privateKey"];</code>
+     * @return The privateKey.
+     */
+    @java.lang.Override
+    public java.lang.String getPrivateKey() {
+      java.lang.Object ref = privateKey_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        privateKey_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The private key to sign the message.
+     * </pre>
+     *
+     * <code>string private_key = 1 [json_name = "privateKey"];</code>
+     * @return The bytes for privateKey.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPrivateKeyBytes() {
+      java.lang.Object ref = privateKey_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        privateKey_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int MESSAGE_FIELD_NUMBER = 2;
     private volatile java.lang.Object message_;
     /**
      * <pre>
      * The message to sign.
      * </pre>
      *
-     * <code>string message = 1 [json_name = "message"];</code>
+     * <code>string message = 2 [json_name = "message"];</code>
      * @return The message.
      */
     @java.lang.Override
@@ -132,7 +178,7 @@ public final class UtilsOuterClass {
      * The message to sign.
      * </pre>
      *
-     * <code>string message = 1 [json_name = "message"];</code>
+     * <code>string message = 2 [json_name = "message"];</code>
      * @return The bytes for message.
      */
     @java.lang.Override
@@ -144,52 +190,6 @@ public final class UtilsOuterClass {
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
         message_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int PRIVATE_KEY_FIELD_NUMBER = 2;
-    private volatile java.lang.Object privateKey_;
-    /**
-     * <pre>
-     * The private key to sign message.
-     * </pre>
-     *
-     * <code>string private_key = 2 [json_name = "privateKey"];</code>
-     * @return The privateKey.
-     */
-    @java.lang.Override
-    public java.lang.String getPrivateKey() {
-      java.lang.Object ref = privateKey_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        privateKey_ = s;
-        return s;
-      }
-    }
-    /**
-     * <pre>
-     * The private key to sign message.
-     * </pre>
-     *
-     * <code>string private_key = 2 [json_name = "privateKey"];</code>
-     * @return The bytes for privateKey.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getPrivateKeyBytes() {
-      java.lang.Object ref = privateKey_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        privateKey_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -210,11 +210,11 @@ public final class UtilsOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(message_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, message_);
-      }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(privateKey_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, privateKey_);
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, privateKey_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(message_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, message_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -225,11 +225,11 @@ public final class UtilsOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(message_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, message_);
-      }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(privateKey_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, privateKey_);
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, privateKey_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(message_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, message_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -246,10 +246,10 @@ public final class UtilsOuterClass {
       }
       pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyRequest other = (pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyRequest) obj;
 
-      if (!getMessage()
-          .equals(other.getMessage())) return false;
       if (!getPrivateKey()
           .equals(other.getPrivateKey())) return false;
+      if (!getMessage()
+          .equals(other.getMessage())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -261,10 +261,10 @@ public final class UtilsOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
-      hash = (53 * hash) + getMessage().hashCode();
       hash = (37 * hash) + PRIVATE_KEY_FIELD_NUMBER;
       hash = (53 * hash) + getPrivateKey().hashCode();
+      hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
+      hash = (53 * hash) + getMessage().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -397,9 +397,9 @@ public final class UtilsOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        message_ = "";
-
         privateKey_ = "";
+
+        message_ = "";
 
         return this;
       }
@@ -427,8 +427,8 @@ public final class UtilsOuterClass {
       @java.lang.Override
       public pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyRequest buildPartial() {
         pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyRequest result = new pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyRequest(this);
-        result.message_ = message_;
         result.privateKey_ = privateKey_;
+        result.message_ = message_;
         onBuilt();
         return result;
       }
@@ -477,12 +477,12 @@ public final class UtilsOuterClass {
 
       public Builder mergeFrom(pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyRequest other) {
         if (other == pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyRequest.getDefaultInstance()) return this;
-        if (!other.getMessage().isEmpty()) {
-          message_ = other.message_;
-          onChanged();
-        }
         if (!other.getPrivateKey().isEmpty()) {
           privateKey_ = other.privateKey_;
+          onChanged();
+        }
+        if (!other.getMessage().isEmpty()) {
+          message_ = other.message_;
           onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
@@ -512,12 +512,12 @@ public final class UtilsOuterClass {
                 done = true;
                 break;
               case 10: {
-                message_ = input.readStringRequireUtf8();
+                privateKey_ = input.readStringRequireUtf8();
 
                 break;
               } // case 10
               case 18: {
-                privateKey_ = input.readStringRequireUtf8();
+                message_ = input.readStringRequireUtf8();
 
                 break;
               } // case 18
@@ -537,13 +537,109 @@ public final class UtilsOuterClass {
         return this;
       }
 
+      private java.lang.Object privateKey_ = "";
+      /**
+       * <pre>
+       * The private key to sign the message.
+       * </pre>
+       *
+       * <code>string private_key = 1 [json_name = "privateKey"];</code>
+       * @return The privateKey.
+       */
+      public java.lang.String getPrivateKey() {
+        java.lang.Object ref = privateKey_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          privateKey_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The private key to sign the message.
+       * </pre>
+       *
+       * <code>string private_key = 1 [json_name = "privateKey"];</code>
+       * @return The bytes for privateKey.
+       */
+      public com.google.protobuf.ByteString
+          getPrivateKeyBytes() {
+        java.lang.Object ref = privateKey_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          privateKey_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The private key to sign the message.
+       * </pre>
+       *
+       * <code>string private_key = 1 [json_name = "privateKey"];</code>
+       * @param value The privateKey to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPrivateKey(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        privateKey_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The private key to sign the message.
+       * </pre>
+       *
+       * <code>string private_key = 1 [json_name = "privateKey"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPrivateKey() {
+        
+        privateKey_ = getDefaultInstance().getPrivateKey();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The private key to sign the message.
+       * </pre>
+       *
+       * <code>string private_key = 1 [json_name = "privateKey"];</code>
+       * @param value The bytes for privateKey to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPrivateKeyBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        privateKey_ = value;
+        onChanged();
+        return this;
+      }
+
       private java.lang.Object message_ = "";
       /**
        * <pre>
        * The message to sign.
        * </pre>
        *
-       * <code>string message = 1 [json_name = "message"];</code>
+       * <code>string message = 2 [json_name = "message"];</code>
        * @return The message.
        */
       public java.lang.String getMessage() {
@@ -563,7 +659,7 @@ public final class UtilsOuterClass {
        * The message to sign.
        * </pre>
        *
-       * <code>string message = 1 [json_name = "message"];</code>
+       * <code>string message = 2 [json_name = "message"];</code>
        * @return The bytes for message.
        */
       public com.google.protobuf.ByteString
@@ -584,7 +680,7 @@ public final class UtilsOuterClass {
        * The message to sign.
        * </pre>
        *
-       * <code>string message = 1 [json_name = "message"];</code>
+       * <code>string message = 2 [json_name = "message"];</code>
        * @param value The message to set.
        * @return This builder for chaining.
        */
@@ -603,7 +699,7 @@ public final class UtilsOuterClass {
        * The message to sign.
        * </pre>
        *
-       * <code>string message = 1 [json_name = "message"];</code>
+       * <code>string message = 2 [json_name = "message"];</code>
        * @return This builder for chaining.
        */
       public Builder clearMessage() {
@@ -617,7 +713,7 @@ public final class UtilsOuterClass {
        * The message to sign.
        * </pre>
        *
-       * <code>string message = 1 [json_name = "message"];</code>
+       * <code>string message = 2 [json_name = "message"];</code>
        * @param value The bytes for message to set.
        * @return This builder for chaining.
        */
@@ -629,102 +725,6 @@ public final class UtilsOuterClass {
   checkByteStringIsUtf8(value);
         
         message_ = value;
-        onChanged();
-        return this;
-      }
-
-      private java.lang.Object privateKey_ = "";
-      /**
-       * <pre>
-       * The private key to sign message.
-       * </pre>
-       *
-       * <code>string private_key = 2 [json_name = "privateKey"];</code>
-       * @return The privateKey.
-       */
-      public java.lang.String getPrivateKey() {
-        java.lang.Object ref = privateKey_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          privateKey_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       * <pre>
-       * The private key to sign message.
-       * </pre>
-       *
-       * <code>string private_key = 2 [json_name = "privateKey"];</code>
-       * @return The bytes for privateKey.
-       */
-      public com.google.protobuf.ByteString
-          getPrivateKeyBytes() {
-        java.lang.Object ref = privateKey_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          privateKey_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * The private key to sign message.
-       * </pre>
-       *
-       * <code>string private_key = 2 [json_name = "privateKey"];</code>
-       * @param value The privateKey to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPrivateKey(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        privateKey_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The private key to sign message.
-       * </pre>
-       *
-       * <code>string private_key = 2 [json_name = "privateKey"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearPrivateKey() {
-        
-        privateKey_ = getDefaultInstance().getPrivateKey();
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The private key to sign message.
-       * </pre>
-       *
-       * <code>string private_key = 2 [json_name = "privateKey"];</code>
-       * @param value The bytes for privateKey to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPrivateKeyBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        privateKey_ = value;
         onChanged();
         return this;
       }
@@ -798,7 +798,7 @@ public final class UtilsOuterClass {
 
     /**
      * <pre>
-     * The signature of message.
+     * The signature of the message.
      * </pre>
      *
      * <code>string signature = 1 [json_name = "signature"];</code>
@@ -807,7 +807,7 @@ public final class UtilsOuterClass {
     java.lang.String getSignature();
     /**
      * <pre>
-     * The signature of message.
+     * The signature of the message.
      * </pre>
      *
      * <code>string signature = 1 [json_name = "signature"];</code>
@@ -818,7 +818,7 @@ public final class UtilsOuterClass {
   }
   /**
    * <pre>
-   * Response message containing signature.
+   * Response message containing the generated signature.
    * </pre>
    *
    * Protobuf type {@code pactus.SignMessageWithPrivateKeyResponse}
@@ -865,7 +865,7 @@ public final class UtilsOuterClass {
     private volatile java.lang.Object signature_;
     /**
      * <pre>
-     * The signature of message.
+     * The signature of the message.
      * </pre>
      *
      * <code>string signature = 1 [json_name = "signature"];</code>
@@ -886,7 +886,7 @@ public final class UtilsOuterClass {
     }
     /**
      * <pre>
-     * The signature of message.
+     * The signature of the message.
      * </pre>
      *
      * <code>string signature = 1 [json_name = "signature"];</code>
@@ -1063,7 +1063,7 @@ public final class UtilsOuterClass {
     }
     /**
      * <pre>
-     * Response message containing signature.
+     * Response message containing the generated signature.
      * </pre>
      *
      * Protobuf type {@code pactus.SignMessageWithPrivateKeyResponse}
@@ -1229,7 +1229,7 @@ public final class UtilsOuterClass {
       private java.lang.Object signature_ = "";
       /**
        * <pre>
-       * The signature of message.
+       * The signature of the message.
        * </pre>
        *
        * <code>string signature = 1 [json_name = "signature"];</code>
@@ -1249,7 +1249,7 @@ public final class UtilsOuterClass {
       }
       /**
        * <pre>
-       * The signature of message.
+       * The signature of the message.
        * </pre>
        *
        * <code>string signature = 1 [json_name = "signature"];</code>
@@ -1270,7 +1270,7 @@ public final class UtilsOuterClass {
       }
       /**
        * <pre>
-       * The signature of message.
+       * The signature of the message.
        * </pre>
        *
        * <code>string signature = 1 [json_name = "signature"];</code>
@@ -1289,7 +1289,7 @@ public final class UtilsOuterClass {
       }
       /**
        * <pre>
-       * The signature of message.
+       * The signature of the message.
        * </pre>
        *
        * <code>string signature = 1 [json_name = "signature"];</code>
@@ -1303,7 +1303,7 @@ public final class UtilsOuterClass {
       }
       /**
        * <pre>
-       * The signature of message.
+       * The signature of the message.
        * </pre>
        *
        * <code>string signature = 1 [json_name = "signature"];</code>
@@ -1411,7 +1411,7 @@ public final class UtilsOuterClass {
 
     /**
      * <pre>
-     * The signature of message.
+     * The signature of the message.
      * </pre>
      *
      * <code>string signature = 2 [json_name = "signature"];</code>
@@ -1420,7 +1420,7 @@ public final class UtilsOuterClass {
     java.lang.String getSignature();
     /**
      * <pre>
-     * The signature of message.
+     * The signature of the message.
      * </pre>
      *
      * <code>string signature = 2 [json_name = "signature"];</code>
@@ -1431,7 +1431,7 @@ public final class UtilsOuterClass {
 
     /**
      * <pre>
-     * The message signer public key.
+     * The public key of the signer.
      * </pre>
      *
      * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -1440,7 +1440,7 @@ public final class UtilsOuterClass {
     java.lang.String getPublicKey();
     /**
      * <pre>
-     * The message signer public key.
+     * The public key of the signer.
      * </pre>
      *
      * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -1451,7 +1451,7 @@ public final class UtilsOuterClass {
   }
   /**
    * <pre>
-   * Request message verify message.
+   * Request message for verifying a message signature.
    * </pre>
    *
    * Protobuf type {@code pactus.VerifyMessageRequest}
@@ -1546,7 +1546,7 @@ public final class UtilsOuterClass {
     private volatile java.lang.Object signature_;
     /**
      * <pre>
-     * The signature of message.
+     * The signature of the message.
      * </pre>
      *
      * <code>string signature = 2 [json_name = "signature"];</code>
@@ -1567,7 +1567,7 @@ public final class UtilsOuterClass {
     }
     /**
      * <pre>
-     * The signature of message.
+     * The signature of the message.
      * </pre>
      *
      * <code>string signature = 2 [json_name = "signature"];</code>
@@ -1592,7 +1592,7 @@ public final class UtilsOuterClass {
     private volatile java.lang.Object publicKey_;
     /**
      * <pre>
-     * The message signer public key.
+     * The public key of the signer.
      * </pre>
      *
      * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -1613,7 +1613,7 @@ public final class UtilsOuterClass {
     }
     /**
      * <pre>
-     * The message signer public key.
+     * The public key of the signer.
      * </pre>
      *
      * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -1810,7 +1810,7 @@ public final class UtilsOuterClass {
     }
     /**
      * <pre>
-     * Request message verify message.
+     * Request message for verifying a message signature.
      * </pre>
      *
      * Protobuf type {@code pactus.VerifyMessageRequest}
@@ -2096,7 +2096,7 @@ public final class UtilsOuterClass {
       private java.lang.Object signature_ = "";
       /**
        * <pre>
-       * The signature of message.
+       * The signature of the message.
        * </pre>
        *
        * <code>string signature = 2 [json_name = "signature"];</code>
@@ -2116,7 +2116,7 @@ public final class UtilsOuterClass {
       }
       /**
        * <pre>
-       * The signature of message.
+       * The signature of the message.
        * </pre>
        *
        * <code>string signature = 2 [json_name = "signature"];</code>
@@ -2137,7 +2137,7 @@ public final class UtilsOuterClass {
       }
       /**
        * <pre>
-       * The signature of message.
+       * The signature of the message.
        * </pre>
        *
        * <code>string signature = 2 [json_name = "signature"];</code>
@@ -2156,7 +2156,7 @@ public final class UtilsOuterClass {
       }
       /**
        * <pre>
-       * The signature of message.
+       * The signature of the message.
        * </pre>
        *
        * <code>string signature = 2 [json_name = "signature"];</code>
@@ -2170,7 +2170,7 @@ public final class UtilsOuterClass {
       }
       /**
        * <pre>
-       * The signature of message.
+       * The signature of the message.
        * </pre>
        *
        * <code>string signature = 2 [json_name = "signature"];</code>
@@ -2192,7 +2192,7 @@ public final class UtilsOuterClass {
       private java.lang.Object publicKey_ = "";
       /**
        * <pre>
-       * The message signer public key.
+       * The public key of the signer.
        * </pre>
        *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -2212,7 +2212,7 @@ public final class UtilsOuterClass {
       }
       /**
        * <pre>
-       * The message signer public key.
+       * The public key of the signer.
        * </pre>
        *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -2233,7 +2233,7 @@ public final class UtilsOuterClass {
       }
       /**
        * <pre>
-       * The message signer public key.
+       * The public key of the signer.
        * </pre>
        *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -2252,7 +2252,7 @@ public final class UtilsOuterClass {
       }
       /**
        * <pre>
-       * The message signer public key.
+       * The public key of the signer.
        * </pre>
        *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -2266,7 +2266,7 @@ public final class UtilsOuterClass {
       }
       /**
        * <pre>
-       * The message signer public key.
+       * The public key of the signer.
        * </pre>
        *
        * <code>string public_key = 3 [json_name = "publicKey"];</code>
@@ -2353,6 +2353,10 @@ public final class UtilsOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * Indicates if the signature is valid (true) or not (false).
+     * </pre>
+     *
      * <code>bool is_valid = 1 [json_name = "isValid"];</code>
      * @return The isValid.
      */
@@ -2405,6 +2409,10 @@ public final class UtilsOuterClass {
     public static final int IS_VALID_FIELD_NUMBER = 1;
     private boolean isValid_;
     /**
+     * <pre>
+     * Indicates if the signature is valid (true) or not (false).
+     * </pre>
+     *
      * <code>bool is_valid = 1 [json_name = "isValid"];</code>
      * @return The isValid.
      */
@@ -2735,6 +2743,10 @@ public final class UtilsOuterClass {
 
       private boolean isValid_ ;
       /**
+       * <pre>
+       * Indicates if the signature is valid (true) or not (false).
+       * </pre>
+       *
        * <code>bool is_valid = 1 [json_name = "isValid"];</code>
        * @return The isValid.
        */
@@ -2743,6 +2755,10 @@ public final class UtilsOuterClass {
         return isValid_;
       }
       /**
+       * <pre>
+       * Indicates if the signature is valid (true) or not (false).
+       * </pre>
+       *
        * <code>bool is_valid = 1 [json_name = "isValid"];</code>
        * @param value The isValid to set.
        * @return This builder for chaining.
@@ -2754,6 +2770,10 @@ public final class UtilsOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * Indicates if the signature is valid (true) or not (false).
+       * </pre>
+       *
        * <code>bool is_valid = 1 [json_name = "isValid"];</code>
        * @return This builder for chaining.
        */
@@ -2857,8 +2877,8 @@ public final class UtilsOuterClass {
   static {
     java.lang.String[] descriptorData = {
       "\n\013utils.proto\022\006pactus\"]\n SignMessageWith" +
-      "PrivateKeyRequest\022\030\n\007message\030\001 \001(\tR\007mess" +
-      "age\022\037\n\013private_key\030\002 \001(\tR\nprivateKey\"A\n!" +
+      "PrivateKeyRequest\022\037\n\013private_key\030\001 \001(\tR\n" +
+      "privateKey\022\030\n\007message\030\002 \001(\tR\007message\"A\n!" +
       "SignMessageWithPrivateKeyResponse\022\034\n\tsig" +
       "nature\030\001 \001(\tR\tsignature\"m\n\024VerifyMessage" +
       "Request\022\030\n\007message\030\001 \001(\tR\007message\022\034\n\tsig" +
@@ -2882,7 +2902,7 @@ public final class UtilsOuterClass {
     internal_static_pactus_SignMessageWithPrivateKeyRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_SignMessageWithPrivateKeyRequest_descriptor,
-        new java.lang.String[] { "Message", "PrivateKey", });
+        new java.lang.String[] { "PrivateKey", "Message", });
     internal_static_pactus_SignMessageWithPrivateKeyResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_pactus_SignMessageWithPrivateKeyResponse_fieldAccessorTable = new

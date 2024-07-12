@@ -8259,18 +8259,18 @@ impl serde::Serialize for SignMessageWithPrivateKeyRequest {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
-        if !self.message.is_empty() {
+        if !self.private_key.is_empty() {
             len += 1;
         }
-        if !self.private_key.is_empty() {
+        if !self.message.is_empty() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.SignMessageWithPrivateKeyRequest", len)?;
-        if !self.message.is_empty() {
-            struct_ser.serialize_field("message", &self.message)?;
-        }
         if !self.private_key.is_empty() {
             struct_ser.serialize_field("privateKey", &self.private_key)?;
+        }
+        if !self.message.is_empty() {
+            struct_ser.serialize_field("message", &self.message)?;
         }
         struct_ser.end()
     }
@@ -8282,15 +8282,15 @@ impl<'de> serde::Deserialize<'de> for SignMessageWithPrivateKeyRequest {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "message",
             "private_key",
             "privateKey",
+            "message",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            Message,
             PrivateKey,
+            Message,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -8312,8 +8312,8 @@ impl<'de> serde::Deserialize<'de> for SignMessageWithPrivateKeyRequest {
                         E: serde::de::Error,
                     {
                         match value {
-                            "message" => Ok(GeneratedField::Message),
                             "privateKey" | "private_key" => Ok(GeneratedField::PrivateKey),
+                            "message" => Ok(GeneratedField::Message),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -8333,27 +8333,27 @@ impl<'de> serde::Deserialize<'de> for SignMessageWithPrivateKeyRequest {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                let mut message__ = None;
                 let mut private_key__ = None;
+                let mut message__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
-                        GeneratedField::Message => {
-                            if message__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("message"));
-                            }
-                            message__ = Some(map.next_value()?);
-                        }
                         GeneratedField::PrivateKey => {
                             if private_key__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("privateKey"));
                             }
                             private_key__ = Some(map.next_value()?);
                         }
+                        GeneratedField::Message => {
+                            if message__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("message"));
+                            }
+                            message__ = Some(map.next_value()?);
+                        }
                     }
                 }
                 Ok(SignMessageWithPrivateKeyRequest {
-                    message: message__.unwrap_or_default(),
                     private_key: private_key__.unwrap_or_default(),
+                    message: message__.unwrap_or_default(),
                 })
             }
         }

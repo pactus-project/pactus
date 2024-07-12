@@ -41,9 +41,9 @@
     "application/json"
   ],
   "paths": {
-    "/pactus/Utils/Sign_Message_With_PrivateKey": {
+    "/pactus/Utils/sign_message_with_private_key": {
       "get": {
-        "summary": "SignMessageWithPrivateKey sign message with provided private key",
+        "summary": "SignMessageWithPrivateKey sign message with provided private key.",
         "operationId": "Utils_SignMessageWithPrivateKey",
         "responses": {
           "200": {
@@ -61,15 +61,15 @@
         },
         "parameters": [
           {
-            "name": "message",
-            "description": "The message to sign.",
+            "name": "privateKey",
+            "description": "The private key to sign the message.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
-            "name": "privateKey",
-            "description": "The private key to sign message.",
+            "name": "message",
+            "description": "The message to sign.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -80,7 +80,7 @@
         ]
       }
     },
-    "/pactus/Utils/VerifyMessage": {
+    "/pactus/Utils/verify_message": {
       "get": {
         "summary": "VerifyMessage verify signature with public key and message",
         "operationId": "Utils_VerifyMessage",
@@ -108,14 +108,14 @@
           },
           {
             "name": "signature",
-            "description": "The signature of message.",
+            "description": "The signature of the message.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "publicKey",
-            "description": "The message signer public key.",
+            "description": "The public key of the signer.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -2132,10 +2132,10 @@
       "properties": {
         "signature": {
           "type": "string",
-          "description": "The signature of message."
+          "description": "The signature of the message."
         }
       },
-      "description": "Response message containing signature."
+      "description": "Response message containing the generated signature."
     },
     "pactusSignRawTransactionResponse": {
       "type": "object",
@@ -2296,7 +2296,8 @@
       "type": "object",
       "properties": {
         "isValid": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Indicates if the signature is valid (true) or not (false)."
         }
       },
       "description": "Response message containing the resualt of validation of signature and message."

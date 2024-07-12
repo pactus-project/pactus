@@ -12,13 +12,13 @@ import 'dart:typed_data' as $typed_data;
 const SignMessageWithPrivateKeyRequest$json = const {
   '1': 'SignMessageWithPrivateKeyRequest',
   '2': const [
-    const {'1': 'message', '3': 1, '4': 1, '5': 9, '10': 'message'},
-    const {'1': 'private_key', '3': 2, '4': 1, '5': 9, '10': 'privateKey'},
+    const {'1': 'private_key', '3': 1, '4': 1, '5': 9, '10': 'privateKey'},
+    const {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
   ],
 };
 
 /// Descriptor for `SignMessageWithPrivateKeyRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signMessageWithPrivateKeyRequestDescriptor = $convert.base64Decode('CiBTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5UmVxdWVzdBIYCgdtZXNzYWdlGAEgASgJUgdtZXNzYWdlEh8KC3ByaXZhdGVfa2V5GAIgASgJUgpwcml2YXRlS2V5');
+final $typed_data.Uint8List signMessageWithPrivateKeyRequestDescriptor = $convert.base64Decode('CiBTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5UmVxdWVzdBIfCgtwcml2YXRlX2tleRgBIAEoCVIKcHJpdmF0ZUtleRIYCgdtZXNzYWdlGAIgASgJUgdtZXNzYWdl');
 @$core.Deprecated('Use signMessageWithPrivateKeyResponseDescriptor instead')
 const SignMessageWithPrivateKeyResponse$json = const {
   '1': 'SignMessageWithPrivateKeyResponse',

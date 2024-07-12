@@ -2429,12 +2429,12 @@ Message has no fields.
 
 ## Utils Service
 
-<p>Util service defines various RPC methods for interacting with
-Utils.</p>
+<p>Utils service defines RPC methods for utility functions such as message
+signing and verification.</p>
 
 ### SignMessageWithPrivateKey <span id="pactus.Utils.SignMessageWithPrivateKey" class="rpc-badge"></span>
 
-<p>SignMessageWithPrivateKey sign message with provided private key</p>
+<p>SignMessageWithPrivateKey sign message with provided private key.</p>
 
 <h4>SignMessageWithPrivateKeyRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2444,17 +2444,17 @@ Utils.</p>
   </thead>
   <tbody class="table-group-divider">
   <tr>
+    <td class="fw-bold">private_key</td>
+    <td> string</td>
+    <td>
+    The private key to sign the message.
+    </td>
+  </tr>
+  <tr>
     <td class="fw-bold">message</td>
     <td> string</td>
     <td>
     The message to sign.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">private_key</td>
-    <td> string</td>
-    <td>
-    The private key to sign message.
     </td>
   </tr>
   </tbody>
@@ -2470,7 +2470,7 @@ Utils.</p>
     <td class="fw-bold">signature</td>
     <td> string</td>
     <td>
-    The signature of message.
+    The signature of the message.
     </td>
   </tr>
      </tbody>
@@ -2498,14 +2498,14 @@ Utils.</p>
     <td class="fw-bold">signature</td>
     <td> string</td>
     <td>
-    The signature of message.
+    The signature of the message.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">public_key</td>
     <td> string</td>
     <td>
-    The message signer public key.
+    The public key of the signer.
     </td>
   </tr>
   </tbody>
@@ -2521,7 +2521,7 @@ Utils.</p>
     <td class="fw-bold">is_valid</td>
     <td> bool</td>
     <td>
-    
+    Indicates if the signature is valid (true) or not (false).
     </td>
   </tr>
      </tbody>

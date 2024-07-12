@@ -117,7 +117,7 @@ func RegisterUtilsHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Utils/SignMessageWithPrivateKey", runtime.WithHTTPPathPattern("/pactus/Utils/Sign_Message_With_PrivateKey"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Utils/SignMessageWithPrivateKey", runtime.WithHTTPPathPattern("/pactus/Utils/sign_message_with_private_key"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -142,7 +142,7 @@ func RegisterUtilsHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Utils/VerifyMessage", runtime.WithHTTPPathPattern("/pactus/Utils/VerifyMessage"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Utils/VerifyMessage", runtime.WithHTTPPathPattern("/pactus/Utils/verify_message"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -206,7 +206,7 @@ func RegisterUtilsHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Utils/SignMessageWithPrivateKey", runtime.WithHTTPPathPattern("/pactus/Utils/Sign_Message_With_PrivateKey"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Utils/SignMessageWithPrivateKey", runtime.WithHTTPPathPattern("/pactus/Utils/sign_message_with_private_key"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -228,7 +228,7 @@ func RegisterUtilsHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Utils/VerifyMessage", runtime.WithHTTPPathPattern("/pactus/Utils/VerifyMessage"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Utils/VerifyMessage", runtime.WithHTTPPathPattern("/pactus/Utils/verify_message"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -248,9 +248,9 @@ func RegisterUtilsHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Utils_SignMessageWithPrivateKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "Sign_Message_With_PrivateKey"}, ""))
+	pattern_Utils_SignMessageWithPrivateKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "sign_message_with_private_key"}, ""))
 
-	pattern_Utils_VerifyMessage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "VerifyMessage"}, ""))
+	pattern_Utils_VerifyMessage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "verify_message"}, ""))
 )
 
 var (

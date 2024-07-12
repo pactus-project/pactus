@@ -4,8 +4,8 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  * <pre>
- * Util service defines various RPC methods for interacting with
- * Utils.
+ * Utils service defines RPC methods for utility functions such as message
+ * signing and verification.
  * </pre>
  */
 @javax.annotation.Generated(
@@ -127,15 +127,15 @@ public final class UtilsGrpc {
 
   /**
    * <pre>
-   * Util service defines various RPC methods for interacting with
-   * Utils.
+   * Utils service defines RPC methods for utility functions such as message
+   * signing and verification.
    * </pre>
    */
   public static abstract class UtilsImplBase implements io.grpc.BindableService {
 
     /**
      * <pre>
-     * SignMessageWithPrivateKey sign message with provided private key
+     * SignMessageWithPrivateKey sign message with provided private key.
      * </pre>
      */
     public void signMessageWithPrivateKey(pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyRequest request,
@@ -175,8 +175,8 @@ public final class UtilsGrpc {
 
   /**
    * <pre>
-   * Util service defines various RPC methods for interacting with
-   * Utils.
+   * Utils service defines RPC methods for utility functions such as message
+   * signing and verification.
    * </pre>
    */
   public static final class UtilsStub extends io.grpc.stub.AbstractAsyncStub<UtilsStub> {
@@ -193,7 +193,7 @@ public final class UtilsGrpc {
 
     /**
      * <pre>
-     * SignMessageWithPrivateKey sign message with provided private key
+     * SignMessageWithPrivateKey sign message with provided private key.
      * </pre>
      */
     public void signMessageWithPrivateKey(pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyRequest request,
@@ -216,8 +216,8 @@ public final class UtilsGrpc {
 
   /**
    * <pre>
-   * Util service defines various RPC methods for interacting with
-   * Utils.
+   * Utils service defines RPC methods for utility functions such as message
+   * signing and verification.
    * </pre>
    */
   public static final class UtilsBlockingStub extends io.grpc.stub.AbstractBlockingStub<UtilsBlockingStub> {
@@ -234,7 +234,7 @@ public final class UtilsGrpc {
 
     /**
      * <pre>
-     * SignMessageWithPrivateKey sign message with provided private key
+     * SignMessageWithPrivateKey sign message with provided private key.
      * </pre>
      */
     public pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyResponse signMessageWithPrivateKey(pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyRequest request) {
@@ -255,8 +255,8 @@ public final class UtilsGrpc {
 
   /**
    * <pre>
-   * Util service defines various RPC methods for interacting with
-   * Utils.
+   * Utils service defines RPC methods for utility functions such as message
+   * signing and verification.
    * </pre>
    */
   public static final class UtilsFutureStub extends io.grpc.stub.AbstractFutureStub<UtilsFutureStub> {
@@ -273,7 +273,7 @@ public final class UtilsGrpc {
 
     /**
      * <pre>
-     * SignMessageWithPrivateKey sign message with provided private key
+     * SignMessageWithPrivateKey sign message with provided private key.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.utils.UtilsOuterClass.SignMessageWithPrivateKeyResponse> signMessageWithPrivateKey(

@@ -927,32 +927,32 @@ pub struct PeerInfo {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignMessageWithPrivateKeyRequest {
-    /// The message to sign.
+    /// The private key to sign the message.
     #[prost(string, tag="1")]
-    pub message: ::prost::alloc::string::String,
-    /// The private key to sign message.
-    #[prost(string, tag="2")]
     pub private_key: ::prost::alloc::string::String,
+    /// The message to sign.
+    #[prost(string, tag="2")]
+    pub message: ::prost::alloc::string::String,
 }
-/// Response message containing signature.
+/// Response message containing the generated signature.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SignMessageWithPrivateKeyResponse {
-    /// The signature of message.
+    /// The signature of the message.
     #[prost(string, tag="1")]
     pub signature: ::prost::alloc::string::String,
 }
-/// Request message verify message.
+/// Request message for verifying a message signature.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyMessageRequest {
     /// The signed message.
     #[prost(string, tag="1")]
     pub message: ::prost::alloc::string::String,
-    /// The signature of message.
+    /// The signature of the message.
     #[prost(string, tag="2")]
     pub signature: ::prost::alloc::string::String,
-    /// The message signer public key.
+    /// The public key of the signer.
     #[prost(string, tag="3")]
     pub public_key: ::prost::alloc::string::String,
 }
@@ -960,6 +960,7 @@ pub struct VerifyMessageRequest {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VerifyMessageResponse {
+    /// Indicates if the signature is valid (true) or not (false).
     #[prost(bool, tag="1")]
     pub is_valid: bool,
 }

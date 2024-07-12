@@ -141,8 +141,8 @@ proto.pactus.SignMessageWithPrivateKeyRequest.prototype.toObject = function(opt_
  */
 proto.pactus.SignMessageWithPrivateKeyRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    message: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    privateKey: jspb.Message.getFieldWithDefault(msg, 2, "")
+    privateKey: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    message: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -181,11 +181,11 @@ proto.pactus.SignMessageWithPrivateKeyRequest.deserializeBinaryFromReader = func
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setMessage(value);
+      msg.setPrivateKey(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setPrivateKey(value);
+      msg.setMessage(value);
       break;
     default:
       reader.skipField();
@@ -216,14 +216,14 @@ proto.pactus.SignMessageWithPrivateKeyRequest.prototype.serializeBinary = functi
  */
 proto.pactus.SignMessageWithPrivateKeyRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getMessage();
+  f = message.getPrivateKey();
   if (f.length > 0) {
     writer.writeString(
       1,
       f
     );
   }
-  f = message.getPrivateKey();
+  f = message.getMessage();
   if (f.length > 0) {
     writer.writeString(
       2,
@@ -234,10 +234,10 @@ proto.pactus.SignMessageWithPrivateKeyRequest.serializeBinaryToWriter = function
 
 
 /**
- * optional string message = 1;
+ * optional string private_key = 1;
  * @return {string}
  */
-proto.pactus.SignMessageWithPrivateKeyRequest.prototype.getMessage = function() {
+proto.pactus.SignMessageWithPrivateKeyRequest.prototype.getPrivateKey = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -246,16 +246,16 @@ proto.pactus.SignMessageWithPrivateKeyRequest.prototype.getMessage = function() 
  * @param {string} value
  * @return {!proto.pactus.SignMessageWithPrivateKeyRequest} returns this
  */
-proto.pactus.SignMessageWithPrivateKeyRequest.prototype.setMessage = function(value) {
+proto.pactus.SignMessageWithPrivateKeyRequest.prototype.setPrivateKey = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
 /**
- * optional string private_key = 2;
+ * optional string message = 2;
  * @return {string}
  */
-proto.pactus.SignMessageWithPrivateKeyRequest.prototype.getPrivateKey = function() {
+proto.pactus.SignMessageWithPrivateKeyRequest.prototype.getMessage = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -264,7 +264,7 @@ proto.pactus.SignMessageWithPrivateKeyRequest.prototype.getPrivateKey = function
  * @param {string} value
  * @return {!proto.pactus.SignMessageWithPrivateKeyRequest} returns this
  */
-proto.pactus.SignMessageWithPrivateKeyRequest.prototype.setPrivateKey = function(value) {
+proto.pactus.SignMessageWithPrivateKeyRequest.prototype.setMessage = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 

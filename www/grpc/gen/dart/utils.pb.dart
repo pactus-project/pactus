@@ -12,22 +12,22 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 class SignMessageWithPrivateKeyRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SignMessageWithPrivateKeyRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
-    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'privateKey')
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'privateKey')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'message')
     ..hasRequiredFields = false
   ;
 
   SignMessageWithPrivateKeyRequest._() : super();
   factory SignMessageWithPrivateKeyRequest({
-    $core.String? message,
     $core.String? privateKey,
+    $core.String? message,
   }) {
     final _result = create();
-    if (message != null) {
-      _result.message = message;
-    }
     if (privateKey != null) {
       _result.privateKey = privateKey;
+    }
+    if (message != null) {
+      _result.message = message;
     }
     return _result;
   }
@@ -53,22 +53,22 @@ class SignMessageWithPrivateKeyRequest extends $pb.GeneratedMessage {
   static SignMessageWithPrivateKeyRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get message => $_getSZ(0);
+  $core.String get privateKey => $_getSZ(0);
   @$pb.TagNumber(1)
-  set message($core.String v) { $_setString(0, v); }
+  set privateKey($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasMessage() => $_has(0);
+  $core.bool hasPrivateKey() => $_has(0);
   @$pb.TagNumber(1)
-  void clearMessage() => clearField(1);
+  void clearPrivateKey() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.String get privateKey => $_getSZ(1);
+  $core.String get message => $_getSZ(1);
   @$pb.TagNumber(2)
-  set privateKey($core.String v) { $_setString(1, v); }
+  set message($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasPrivateKey() => $_has(1);
+  $core.bool hasMessage() => $_has(1);
   @$pb.TagNumber(2)
-  void clearPrivateKey() => clearField(2);
+  void clearMessage() => clearField(2);
 }
 
 class SignMessageWithPrivateKeyResponse extends $pb.GeneratedMessage {
