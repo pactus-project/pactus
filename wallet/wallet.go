@@ -47,7 +47,7 @@ func CheckMnemonic(mnemonic string) error {
 // A wallet can be opened in offline or online modes.
 // Offline wallet doesn’t have any connection to any node.
 // Online wallet has a connection to one of the pre-defined servers.
-func Open(walletPath string, offline bool) (*Wallet, error) {
+func Open(walletPath string, offline bool, options ...Option) (*Wallet, error) {
 	data, err := util.ReadFile(walletPath)
 	if err != nil {
 		return nil, err
@@ -59,12 +59,24 @@ func Open(walletPath string, offline bool) (*Wallet, error) {
 		return nil, err
 	}
 
-	return newWallet(walletPath, store, offline)
+	opts := defaultWalletOpt
+
+	for _, opt := range options {
+		opt(opts)
+	}
+
+	return newWallet(walletPath, store, offline, opts)
 }
 
 // Create creates a wallet from mnemonic (seed phrase) and save it at the
 // given path.
-func Create(walletPath, mnemonic, password string, chain genesis.ChainType) (*Wallet, error) {
+func Create(walletPath, mnemonic, password string, chain genesis.ChainType, options ...Option) (*Wallet, error) {
+	opts := defaultWalletOpt
+
+	for _, opt := range options {
+		opt(opts)
+	}
+
 	walletPath = util.MakeAbs(walletPath)
 	if util.PathExists(walletPath) {
 		return nil, ExitsError{
@@ -89,7 +101,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType) (*Wa
 		Network:   chain,
 		Vault:     nil,
 	}
-	wallet, err := newWallet(walletPath, store, true)
+	wallet, err := newWallet(walletPath, store, true, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +118,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType) (*Wa
 	return wallet, nil
 }
 
-func newWallet(walletPath string, store *store, offline bool) (*Wallet, error) {
+func newWallet(walletPath string, store *store, offline bool, option *walletOpt) (*Wallet, error) {
 	if !store.Network.IsMainnet() {
 		crypto.AddressHRP = "tpc"
 		crypto.PublicKeyHRP = "tpublic"
@@ -115,7 +127,7 @@ func newWallet(walletPath string, store *store, offline bool) (*Wallet, error) {
 		crypto.XPrivateKeyHRP = "txsecret"
 	}
 
-	client := newGrpcClient()
+	client := newGrpcClient(option.timeout, option.servers)
 
 	w := &Wallet{
 		store:      store,
@@ -146,14 +158,13 @@ func newWallet(walletPath string, store *store, offline bool) (*Wallet, error) {
 		}
 
 		util.Shuffle(netServers)
-		w.grpcClient.SetServerAddrs(netServers)
+
+		if client.servers == nil {
+			client.servers = netServers
+		}
 	}
 
 	return w, nil
-}
-
-func (w *Wallet) SetServerAddr(addr string) {
-	w.grpcClient.SetServerAddrs([]string{addr})
 }
 
 func (w *Wallet) Name() string {

@@ -52,36 +52,6 @@ const (
 	TypeBlocksResponse = Type(10)
 )
 
-func (t Type) TopicID() network.TopicID {
-	switch t {
-	case TypeBlockAnnounce:
-
-		return network.TopicIDBlock
-
-	case TypeTransaction:
-
-		return network.TopicIDTransaction
-
-	case TypeQueryProposal,
-		TypeProposal,
-		TypeQueryVote,
-		TypeVote:
-
-		return network.TopicIDConsensus
-
-	case TypeHello,
-		TypeHelloAck,
-		TypeBlocksRequest,
-		TypeBlocksResponse:
-
-		return -1 // topic id for direct message
-
-	default:
-
-		return -2 // topic id for unknown message
-	}
-}
-
 func (t Type) String() string {
 	switch t {
 	case TypeHello:
@@ -91,7 +61,7 @@ func (t Type) String() string {
 		return "hello-ack"
 
 	case TypeTransaction:
-		return "txs"
+		return "transaction"
 
 	case TypeQueryProposal:
 		return "query-proposal"
@@ -100,7 +70,7 @@ func (t Type) String() string {
 		return "proposal"
 
 	case TypeQueryVote:
-		return "query-votes"
+		return "query-vote"
 
 	case TypeVote:
 		return "vote"
@@ -109,10 +79,10 @@ func (t Type) String() string {
 		return "block-announce"
 
 	case TypeBlocksRequest:
-		return "blocks-req"
+		return "blocks-request"
 
 	case TypeBlocksResponse:
-		return "blocks-res"
+		return "blocks-response"
 
 	default:
 		return fmt.Sprintf("%d", t)
@@ -159,5 +129,7 @@ func MakeMessage(t Type) Message {
 type Message interface {
 	BasicCheck() error
 	Type() Type
+	TopicID() network.TopicID
+	ShouldBroadcast() bool
 	String() string
 }

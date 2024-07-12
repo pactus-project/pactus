@@ -17,15 +17,16 @@ func newBlocksResponseHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *blocksResponseHandler) ParseMessage(m message.Message, pid peer.ID) error {
+func (handler *blocksResponseHandler) ParseMessage(m message.Message, pid peer.ID) {
 	msg := m.(*message.BlocksResponseMessage)
 	handler.logger.Trace("parsing BlocksResponse message", "msg", msg)
 
 	if msg.IsRequestRejected() {
-		handler.logger.Warn("blocks request is rejected", "pid", pid, "reason", msg.Reason, "sid", msg.SessionID)
+		handler.logger.Warn("blocks request is rejected", "pid", pid,
+			"reason", msg.Reason, "sid", msg.SessionID)
 	} else {
 		handler.logger.Info("blocks received", "from", msg.From, "count", msg.Count(),
-			"pid", pid, "reason", msg.Reason, "sid", msg.SessionID)
+			"pid", pid, "sid", msg.SessionID)
 
 		// TODO:
 		// It is good to check the latest height before adding blocks to the cache.
@@ -34,20 +35,17 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, pid peer.I
 		for _, data := range msg.CommittedBlocksData {
 			blk, err := block.FromBytes(data)
 			if err != nil {
-				return err
+				handler.logger.Warn("unable to decode block data",
+					"from", msg.From, "pid", pid, "error", err)
+			} else {
+				handler.cache.AddBlock(blk)
 			}
-			handler.cache.AddBlock(blk)
 		}
 		handler.cache.AddCertificate(msg.LastCertificate)
-		err := handler.tryCommitBlocks()
-		if err != nil {
-			return err
-		}
+		handler.tryCommitBlocks()
 	}
 
 	handler.updateSession(msg.SessionID, msg.ResponseCode)
-
-	return nil
 }
 
 func (*blocksResponseHandler) PrepareBundle(m message.Message) *bundle.Bundle {

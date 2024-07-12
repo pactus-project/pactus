@@ -8,7 +8,8 @@ import (
 )
 
 type Config struct {
-	Path string `toml:"path"`
+	Path          string `toml:"path"`
+	RetentionDays uint32 `toml:"retention_days"`
 
 	// Private configs
 	TxCacheSize        uint32                  `toml:"-"`
@@ -21,6 +22,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Path:               "data",
+		RetentionDays:      10,
 		TxCacheSize:        1024,
 		SortitionCacheSize: 1024,
 		AccountCacheSize:   1024,
@@ -54,5 +56,15 @@ func (conf *Config) BasicCheck() error {
 		}
 	}
 
+	if conf.RetentionDays < 10 {
+		return ConfigError{
+			Reason: "Retention days can't be less than 10 days",
+		}
+	}
+
 	return nil
+}
+
+func (conf *Config) RetentionBlocks() uint32 {
+	return conf.RetentionDays * 8640
 }

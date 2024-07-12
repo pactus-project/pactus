@@ -16,6 +16,11 @@
   # Default is `"data"`.
   path = "data"
 
+  # `retention_days` this parameter indicates the number of days for which the node should keep or retain the blocks
+  # before pruning them. It is only applicable if the node is in Prune Mode.
+  # Default is `10`.
+  retention_days = 10
+
 # `network` contains configuration options for the network module, which manages communication between nodes.
 [network]
 

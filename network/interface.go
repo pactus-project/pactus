@@ -9,6 +9,7 @@ import (
 type TopicID int
 
 const (
+	TopicIDUnspecified TopicID = 0
 	TopicIDBlock       TopicID = 1
 	TopicIDTransaction TopicID = 2
 	TopicIDConsensus   TopicID = 3
@@ -16,6 +17,9 @@ const (
 
 func (t TopicID) String() string {
 	switch t {
+	case TopicIDUnspecified:
+		return "unspecified"
+
 	case TopicIDBlock:
 		return "block"
 

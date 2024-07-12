@@ -214,7 +214,7 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
 
 		data, _ := bdl.Encode()
-		sync.network.Broadcast(data, msg.Type().TopicID())
+		sync.network.Broadcast(data, msg.TopicID())
 		sync.peerSet.IncreaseSentCounters(msg.Type(), int64(len(data)), nil)
 
 		sync.logger.Debug("bundle broadcasted", "bundle", bdl)
@@ -304,43 +304,39 @@ func (sync *synchronizer) receiveLoop() {
 func (sync *synchronizer) processGossipMessage(msg *network.GossipMessage) {
 	sync.logger.Debug("processing gossip message", "pid", msg.From)
 
-	bdl := sync.firewall.OpenGossipBundle(msg.Data, msg.From)
-	err := sync.processIncomingBundle(bdl, msg.From)
+	bdl, err := sync.firewall.OpenGossipBundle(msg.Data, msg.From)
 	if err != nil {
 		sync.logger.Debug("error on parsing a Gossip bundle",
 			"from", msg.From, "bundle", bdl, "error", err)
+
+		return
 	}
+	sync.processIncomingBundle(bdl, msg.From)
 }
 
 func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 	sync.logger.Debug("processing stream message", "pid", msg.From)
 
-	bdl := sync.firewall.OpenStreamBundle(msg.Reader, msg.From)
+	bdl, err := sync.firewall.OpenStreamBundle(msg.Reader, msg.From)
+	if err != nil {
+		sync.logger.Debug("error on parsing a Stream bundle",
+			"from", msg.From, "bundle", bdl, "error", err)
+
+		return
+	}
 	if err := msg.Reader.Close(); err != nil {
 		// TODO: write test for me
 		sync.logger.Debug("error on closing stream", "error", err, "source", msg.From)
 
 		return
 	}
-	err := sync.processIncomingBundle(bdl, msg.From)
-	if err != nil {
-		sync.logger.Debug("error on parsing a Stream bundle",
-			"source", msg.From, "bundle", bdl, "error", err)
-	}
+	sync.processIncomingBundle(bdl, msg.From)
 }
 
 func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
 	sync.logger.Debug("processing connect event", "pid", ce.PeerID)
 
 	sync.peerSet.UpdateAddress(ce.PeerID, ce.RemoteAddress, ce.Direction)
-
-	if sync.firewall.IsBannedAddress(ce.RemoteAddress) {
-		sync.logger.Debug("Peer is blacklisted", "peer_id", ce.PeerID, "remote_address", ce.RemoteAddress)
-		sync.peerSet.UpdateStatus(ce.PeerID, status.StatusBanned)
-
-		return
-	}
-
 	sync.peerSet.UpdateStatus(ce.PeerID, status.StatusConnected)
 }
 
@@ -358,18 +354,16 @@ func (sync *synchronizer) processDisconnectEvent(de *network.DisconnectEvent) {
 	sync.peerSet.UpdateStatus(de.PeerID, status.StatusDisconnected)
 }
 
-func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle, from peer.ID) error {
-	if bdl == nil {
-		return nil
-	}
-
+func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle, from peer.ID) {
 	sync.logger.Debug("received a bundle", "from", from, "bundle", bdl)
 	h := sync.handlers[bdl.Message.Type()]
 	if h == nil {
-		return fmt.Errorf("invalid message type: %v", bdl.Message.Type())
+		sync.logger.Error("invalid message type", "type", bdl.Message.Type())
+
+		return
 	}
 
-	return h.ParseMessage(bdl.Message, from)
+	h.ParseMessage(bdl.Message, from)
 }
 
 func (sync *synchronizer) String() string {
@@ -384,7 +378,7 @@ func (sync *synchronizer) String() string {
 // Otherwise, the node can request the latest blocks from any nodes.
 func (sync *synchronizer) updateBlockchain() {
 	// Maybe we have some blocks inside the cache?
-	_ = sync.tryCommitBlocks()
+	sync.tryCommitBlocks()
 
 	// Check if we have any expired sessions
 	sync.peerSet.SetExpiredSessionsAsUncompleted()
@@ -520,7 +514,7 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 	return false
 }
 
-func (sync *synchronizer) tryCommitBlocks() error {
+func (sync *synchronizer) tryCommitBlocks() {
 	onError := func(height uint32, err error) {
 		sync.logger.Warn("committing block failed, removing block from the cache",
 			"height", height, "error", err)
@@ -546,7 +540,7 @@ func (sync *synchronizer) tryCommitBlocks() error {
 				if err != nil {
 					onError(height, err)
 
-					return err
+					return
 				}
 				trx.SetPublicKey(pub)
 			}
@@ -555,24 +549,22 @@ func (sync *synchronizer) tryCommitBlocks() error {
 		if err := blk.BasicCheck(); err != nil {
 			onError(height, err)
 
-			return err
+			return
 		}
 		if err := cert.BasicCheck(); err != nil {
 			onError(height, err)
 
-			return err
+			return
 		}
 
 		sync.logger.Trace("committing block", "height", height, "block", blk)
 		if err := sync.state.CommitBlock(blk, cert); err != nil {
 			onError(height, err)
 
-			return err
+			return
 		}
 		height++
 	}
-
-	return nil
 }
 
 func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {

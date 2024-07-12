@@ -36,11 +36,6 @@ func setup(t *testing.T) *testData {
 	password := ""
 	walletPath := util.TempFilePath()
 	mnemonic, _ := wallet.GenerateMnemonic(128)
-	wlt, err := wallet.Create(walletPath, mnemonic, password, genesis.Mainnet)
-	assert.NoError(t, err)
-	assert.False(t, wlt.IsEncrypted())
-	assert.Equal(t, wlt.Path(), walletPath)
-	assert.Equal(t, wlt.Name(), path.Base(walletPath))
 
 	grpcConf := &grpc.Config{
 		Enable: true,
@@ -59,7 +54,12 @@ func setup(t *testing.T) *testData {
 
 	assert.NoError(t, gRPCServer.StartServer())
 
-	wlt.SetServerAddr(gRPCServer.Address())
+	wlt, err := wallet.Create(walletPath, mnemonic, password, genesis.Mainnet,
+		wallet.WithCustomServers([]string{gRPCServer.Address()}))
+	assert.NoError(t, err)
+	assert.False(t, wlt.IsEncrypted())
+	assert.Equal(t, wlt.Path(), walletPath)
+	assert.Equal(t, wlt.Name(), path.Base(walletPath))
 
 	return &testData{
 		TestSuite: ts,

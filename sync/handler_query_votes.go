@@ -16,14 +16,14 @@ func newQueryVotesHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *queryVotesHandler) ParseMessage(m message.Message, _ peer.ID) error {
+func (handler *queryVotesHandler) ParseMessage(m message.Message, _ peer.ID) {
 	msg := m.(*message.QueryVotesMessage)
 	handler.logger.Trace("parsing QueryVotes message", "msg", msg)
 
 	if !handler.consMgr.HasActiveInstance() {
 		handler.logger.Debug("ignoring QueryVotes, not active", "msg", msg)
 
-		return nil
+		return
 	}
 
 	height, _ := handler.consMgr.HeightRound()
@@ -31,7 +31,7 @@ func (handler *queryVotesHandler) ParseMessage(m message.Message, _ peer.ID) err
 		handler.logger.Debug("ignoring QueryVotes, not same height", "msg", msg,
 			"height", height)
 
-		return nil
+		return
 	}
 
 	v := handler.consMgr.PickRandomVote(msg.Round)
@@ -39,8 +39,6 @@ func (handler *queryVotesHandler) ParseMessage(m message.Message, _ peer.ID) err
 		response := message.NewVoteMessage(v)
 		handler.broadcast(response)
 	}
-
-	return nil
 }
 
 func (*queryVotesHandler) PrepareBundle(m message.Message) *bundle.Bundle {

@@ -2,6 +2,8 @@ package message
 
 import (
 	"fmt"
+
+	"github.com/pactus-project/pactus/network"
 )
 
 type HelloAckMessage struct {
@@ -24,6 +26,14 @@ func (*HelloAckMessage) BasicCheck() error {
 
 func (*HelloAckMessage) Type() Type {
 	return TypeHelloAck
+}
+
+func (*HelloAckMessage) TopicID() network.TopicID {
+	return network.TopicIDUnspecified
+}
+
+func (*HelloAckMessage) ShouldBroadcast() bool {
+	return false
 }
 
 func (m *HelloAckMessage) String() string {

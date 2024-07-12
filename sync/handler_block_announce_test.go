@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,29 +21,19 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	msg2 := message.NewBlockAnnounceMessage(blk2, cert2)
 
 	t.Run("Receiving new block announce message, without committing previous block", func(t *testing.T) {
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg2, pid))
+		td.receivingNewMessage(td.sync, msg2, pid)
 
-		assert.Equal(t, td.sync.state.LastBlockHeight(), lastHeight)
+		stateHeight := td.sync.state.LastBlockHeight()
+		consHeight, _ := td.consMgr.HeightRound()
+		assert.Equal(t, lastHeight, stateHeight)
+		assert.Equal(t, lastHeight+1, consHeight)
 	})
 
 	t.Run("Receiving missed block, should commit both blocks", func(t *testing.T) {
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg1, pid))
+		td.receivingNewMessage(td.sync, msg1, pid)
 
 		assert.Equal(t, td.sync.state.LastBlockHeight(), lastHeight+2)
 	})
-}
-
-func TestInvalidBlockAnnounce(t *testing.T) {
-	td := setup(t, nil)
-
-	pid := td.RandPeerID()
-	height := td.state.LastBlockHeight() + 1
-	blk, _ := td.GenerateTestBlock(height)
-	invCert := certificate.NewBlockCertificate(height, 0)
-	msg := message.NewBlockAnnounceMessage(blk, invCert)
-
-	err := td.receivingNewMessage(td.sync, msg, pid)
-	assert.Error(t, err)
 }
 
 func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
@@ -56,4 +45,22 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 
 	msg1 := td.shouldPublishMessageWithThisType(t, message.TypeBlockAnnounce)
 	assert.Equal(t, msg1.Message.(*message.BlockAnnounceMessage).Certificate.Height(), msg.Certificate.Height())
+}
+
+func TestCacheAnnouncedBlock(t *testing.T) {
+	td := setup(t, nil)
+
+	height := td.RandHeight()
+	blk1, cert1 := td.GenerateTestBlock(height)
+	blk2, cert2 := td.GenerateTestBlock(height)
+	msg1 := message.NewBlockAnnounceMessage(blk1, cert1)
+	msg2 := message.NewBlockAnnounceMessage(blk2, cert2)
+
+	td.receivingNewMessage(td.sync, msg1, td.RandPeerID())
+	td.receivingNewMessage(td.sync, msg2, td.RandPeerID())
+
+	cachedBlock := td.sync.cache.GetBlock(height)
+	cachedCert := td.sync.cache.GetCertificate(height)
+	assert.Equal(t, cachedBlock, blk1)
+	assert.Equal(t, cachedCert, cert1)
 }

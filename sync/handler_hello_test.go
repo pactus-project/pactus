@@ -28,7 +28,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			from := td.RandPeerID()
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, from))
+			td.receivingNewMessage(td.sync, msg, from)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
@@ -42,7 +42,7 @@ func TestParsingHelloMessages(t *testing.T) {
 				td.state.LastBlockHash(), invGenHash)
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
@@ -58,7 +58,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			msg.MyTimeUnixMilli = msg.MyTime().Add(-10 * time.Second).UnixMilli()
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
@@ -74,7 +74,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			msg.MyTimeUnixMilli = msg.MyTime().Add(20 * time.Second).UnixMilli()
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
@@ -96,7 +96,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			msg.Agent = nodeAgent.String()
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
@@ -112,7 +112,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			msg.Agent = "invalid-agent"
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
@@ -127,7 +127,7 @@ func TestParsingHelloMessages(t *testing.T) {
 				td.state.LastBlockHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeOK)

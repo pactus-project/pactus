@@ -3,6 +3,7 @@ package message
 import (
 	"fmt"
 
+	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/types/certificate"
 )
 
@@ -40,6 +41,14 @@ func (m *BlocksResponseMessage) BasicCheck() error {
 
 func (*BlocksResponseMessage) Type() Type {
 	return TypeBlocksResponse
+}
+
+func (*BlocksResponseMessage) TopicID() network.TopicID {
+	return network.TopicIDUnspecified
+}
+
+func (*BlocksResponseMessage) ShouldBroadcast() bool {
+	return false
 }
 
 func (m *BlocksResponseMessage) Count() uint32 {

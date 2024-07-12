@@ -73,6 +73,7 @@ type store struct {
 	txStore        *txStore
 	accountStore   *accountStore
 	validatorStore *validatorStore
+	isPruned       bool
 }
 
 func NewStore(conf *Config) (Store, error) {
@@ -93,11 +94,18 @@ func NewStore(conf *Config) (Store, error) {
 		txStore:        newTxStore(db, conf.TxCacheSize),
 		accountStore:   newAccountStore(db, conf.AccountCacheSize),
 		validatorStore: newValidatorStore(db),
+		isPruned:       false,
 	}
 
-	lc := s.LastCertificate()
+	lc := s.lastCertificate()
 	if lc == nil {
 		return s, nil
+	}
+
+	// Check if the node is pruned by checking genesis block.
+	blockOne, _ := s.block(1)
+	if blockOne == nil {
+		s.isPruned = true
 	}
 
 	currentHeight := lc.Height()
@@ -107,7 +115,7 @@ func NewStore(conf *Config) (Store, error) {
 	}
 
 	for i := startHeight; i < currentHeight+1; i++ {
-		committedBlock, err := s.Block(i)
+		committedBlock, err := s.block(i)
 		if err != nil {
 			return nil, err
 		}
@@ -147,6 +155,22 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.BlockCertificate) 
 	s.txStore.saveTxs(s.batch, blk.Transactions(), regs)
 	s.txStore.pruneCache(height)
 
+	// Removing old block from prune node store.
+	if s.isPruned && height > s.config.RetentionBlocks() {
+		pruneHeight := height - s.config.RetentionBlocks()
+		deleted, err := s.pruneBlock(pruneHeight)
+		if err != nil {
+			panic(err)
+		}
+
+		if deleted {
+			// TODO: Let's use state logger in store[?].
+			logger.Debug("old block is pruned", "height", pruneHeight)
+		} else {
+			logger.Warn("unable to prune the old block", "height", pruneHeight, "error", err)
+		}
+	}
+
 	// Save last certificate: [version: 4 bytes]+[certificate: variant]
 	w := bytes.NewBuffer(make([]byte, 0, 4+cert.SerializeSize()))
 	err := encoding.WriteElements(w, lastStoreVersion)
@@ -165,6 +189,10 @@ func (s *store) Block(height uint32) (*CommittedBlock, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
+	return s.block(height)
+}
+
+func (s *store) block(height uint32) (*CommittedBlock, error) {
 	data, err := s.blockStore.block(height)
 	if err != nil {
 		return nil, err
@@ -341,6 +369,10 @@ func (s *store) LastCertificate() *certificate.BlockCertificate {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
+	return s.lastCertificate()
+}
+
+func (s *store) lastCertificate() *certificate.BlockCertificate {
 	data, _ := tryGet(s.db, lastInfoKey)
 	if data == nil {
 		// Genesis block
@@ -377,4 +409,67 @@ func (s *store) WriteBatch() error {
 
 func (s *store) IsBanned(addr crypto.Address) bool {
 	return s.config.BannedAddrs[addr]
+}
+
+func (s *store) IsPruned() bool {
+	return s.isPruned
+}
+
+func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) error {
+	cert := s.lastCertificate()
+
+	// at genesis block
+	if cert == nil {
+		return nil
+	}
+
+	retentionBlocks := s.config.RetentionBlocks()
+
+	if cert.Height() < retentionBlocks {
+		return nil
+	}
+
+	pruningHeight := cert.Height() - retentionBlocks
+
+	for i := pruningHeight; i >= 1; i-- {
+		deleted, err := s.pruneBlock(i)
+		if err != nil {
+			return err
+		}
+
+		if err := s.WriteBatch(); err != nil {
+			return err
+		}
+
+		if deleted {
+			resultFunc(1, 0, i)
+
+			continue
+		}
+
+		resultFunc(0, 1, i)
+	}
+
+	return nil
+}
+
+func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
+	if !s.blockStore.hasBlock(blockHeight) {
+		return false, nil
+	}
+
+	cBlock, _ := s.block(blockHeight)
+	blk, err := block.FromBytes(cBlock.Data)
+	if err != nil {
+		return false, err
+	}
+
+	s.batch.Delete(blockHashKey(blk.Hash()))
+	s.batch.Delete(blockKey(blockHeight))
+
+	for _, t := range blk.Transactions() {
+		s.batch.Delete(t.ID().Bytes())
+	}
+
+	return true, nil
 }
