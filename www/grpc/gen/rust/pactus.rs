@@ -923,6 +923,47 @@ pub struct PeerInfo {
     #[prost(int32, tag="20")]
     pub completed_sessions: i32,
 }
+/// Request message for sign message with private key.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SignMessageWithPrivateKeyRequest {
+    /// The private key to sign the message.
+    #[prost(string, tag="1")]
+    pub private_key: ::prost::alloc::string::String,
+    /// The message to sign.
+    #[prost(string, tag="2")]
+    pub message: ::prost::alloc::string::String,
+}
+/// Response message containing the generated signature.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SignMessageWithPrivateKeyResponse {
+    /// The signature of the message.
+    #[prost(string, tag="1")]
+    pub signature: ::prost::alloc::string::String,
+}
+/// Request message for verifying a message signature.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct VerifyMessageRequest {
+    /// The signed message.
+    #[prost(string, tag="1")]
+    pub message: ::prost::alloc::string::String,
+    /// The signature of the message.
+    #[prost(string, tag="2")]
+    pub signature: ::prost::alloc::string::String,
+    /// The public key of the signer.
+    #[prost(string, tag="3")]
+    pub public_key: ::prost::alloc::string::String,
+}
+/// Response message containing the resualt of validation of signature and message.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct VerifyMessageResponse {
+    /// Indicates if the signature is valid (true) or not (false).
+    #[prost(bool, tag="1")]
+    pub is_valid: bool,
+}
 /// Message containing address information.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -1138,6 +1179,31 @@ pub struct GetTotalBalanceResponse {
     /// The total balance of the wallet in NanoPAC.
     #[prost(int64, tag="2")]
     pub total_balance: i64,
+}
+/// Request message to sign an arbitrary message.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SignMessageRequest {
+    /// The name of the wallet.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// The password for unlocking the wallet for signing.
+    #[prost(string, tag="2")]
+    pub password: ::prost::alloc::string::String,
+    /// The account address associated with the private key.
+    #[prost(string, tag="3")]
+    pub address: ::prost::alloc::string::String,
+    /// The arbitrary message to be signed.
+    #[prost(string, tag="4")]
+    pub message: ::prost::alloc::string::String,
+}
+/// Response message containing the available balance of the wallet.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SignMessageResponse {
+    /// Signature of the message.
+    #[prost(string, tag="1")]
+    pub signature: ::prost::alloc::string::String,
 }
 /// Enum for the address type.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]

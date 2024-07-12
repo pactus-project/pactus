@@ -68,6 +68,10 @@ func (s *Server) startGateway(grpcAddr string) error {
 	if err != nil {
 		return err
 	}
+	err = pactus.RegisterUtilsHandler(s.ctx, gwMux, conn)
+	if err != nil {
+		return err
+	}
 
 	oa, err := s.getOpenAPIHandler()
 	if err != nil {

@@ -60,6 +60,11 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.GetAddressHistoryRequest.SerializeToString,
                 response_deserializer=wallet__pb2.GetAddressHistoryResponse.FromString,
                 )
+        self.SignMessage = channel.unary_unary(
+                '/pactus.Wallet/SignMessage',
+                request_serializer=wallet__pb2.SignMessageRequest.SerializeToString,
+                response_deserializer=wallet__pb2.SignMessageResponse.FromString,
+                )
 
 
 class WalletServicer(object):
@@ -130,6 +135,13 @@ class WalletServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SignMessage(self, request, context):
+        """SignMessage signs an arbitrary message.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_WalletServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -177,6 +189,11 @@ def add_WalletServicer_to_server(servicer, server):
                     servicer.GetAddressHistory,
                     request_deserializer=wallet__pb2.GetAddressHistoryRequest.FromString,
                     response_serializer=wallet__pb2.GetAddressHistoryResponse.SerializeToString,
+            ),
+            'SignMessage': grpc.unary_unary_rpc_method_handler(
+                    servicer.SignMessage,
+                    request_deserializer=wallet__pb2.SignMessageRequest.FromString,
+                    response_serializer=wallet__pb2.SignMessageResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -339,5 +356,22 @@ class Wallet(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/GetAddressHistory',
             wallet__pb2.GetAddressHistoryRequest.SerializeToString,
             wallet__pb2.GetAddressHistoryResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SignMessage(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/SignMessage',
+            wallet__pb2.SignMessageRequest.SerializeToString,
+            wallet__pb2.SignMessageResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -105,6 +105,18 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
         </li>
         </ul>
     </li>
+    <li> Utils Service
+      <ul> 
+        <li>
+          <a href="#pactus.Utils.SignMessageWithPrivateKey">
+          <span class="rpc-badge"></span> SignMessageWithPrivateKey</a>
+        </li>
+        <li>
+          <a href="#pactus.Utils.VerifyMessage">
+          <span class="rpc-badge"></span> VerifyMessage</a>
+        </li>
+        </ul>
+    </li>
     <li> Wallet Service
       <ul> 
         <li>
@@ -142,6 +154,10 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
         <li>
           <a href="#pactus.Wallet.GetAddressHistory">
           <span class="rpc-badge"></span> GetAddressHistory</a>
+        </li>
+        <li>
+          <a href="#pactus.Wallet.SignMessage">
+          <span class="rpc-badge"></span> SignMessage</a>
         </li>
         </ul>
     </li>
@@ -2411,6 +2427,106 @@ Message has no fields.
          </tbody>
 </table>
 
+## Utils Service
+
+<p>Utils service defines RPC methods for utility functions such as message
+signing and verification.</p>
+
+### SignMessageWithPrivateKey <span id="pactus.Utils.SignMessageWithPrivateKey" class="rpc-badge"></span>
+
+<p>SignMessageWithPrivateKey sign message with provided private key.</p>
+
+<h4>SignMessageWithPrivateKeyRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">private_key</td>
+    <td> string</td>
+    <td>
+    The private key to sign the message.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">message</td>
+    <td> string</td>
+    <td>
+    The message to sign.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>SignMessageWithPrivateKeyResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">signature</td>
+    <td> string</td>
+    <td>
+    The signature of the message.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### VerifyMessage <span id="pactus.Utils.VerifyMessage" class="rpc-badge"></span>
+
+<p>VerifyMessage verify signature with public key and message</p>
+
+<h4>VerifyMessageRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">message</td>
+    <td> string</td>
+    <td>
+    The signed message.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">signature</td>
+    <td> string</td>
+    <td>
+    The signature of the message.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">public_key</td>
+    <td> string</td>
+    <td>
+    The public key of the signer.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>VerifyMessageResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">is_valid</td>
+    <td> bool</td>
+    <td>
+    Indicates if the signature is valid (true) or not (false).
+    </td>
+  </tr>
+     </tbody>
+</table>
+
 ## Wallet Service
 
 <p>Define the Wallet service with various RPC methods for wallet management.</p>
@@ -2892,6 +3008,64 @@ public key.</p>
         </td>
       </tr>
          </tbody>
+</table>
+
+### SignMessage <span id="pactus.Wallet.SignMessage" class="rpc-badge"></span>
+
+<p>SignMessage signs an arbitrary message.</p>
+
+<h4>SignMessageRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+    The password for unlocking the wallet for signing.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    The account address associated with the private key.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">message</td>
+    <td> string</td>
+    <td>
+    The arbitrary message to be signed.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>SignMessageResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">signature</td>
+    <td> string</td>
+    <td>
+    Signature of the message.
+    </td>
+  </tr>
+     </tbody>
 </table>
 
 ## Scalar Value Types

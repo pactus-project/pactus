@@ -159,6 +159,28 @@ function deserialize_pactus_RestoreWalletResponse(buffer_arg) {
   return wallet_pb.RestoreWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_SignMessageRequest(arg) {
+  if (!(arg instanceof wallet_pb.SignMessageRequest)) {
+    throw new Error('Expected argument of type pactus.SignMessageRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_SignMessageRequest(buffer_arg) {
+  return wallet_pb.SignMessageRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_SignMessageResponse(arg) {
+  if (!(arg instanceof wallet_pb.SignMessageResponse)) {
+    throw new Error('Expected argument of type pactus.SignMessageResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_SignMessageResponse(buffer_arg) {
+  return wallet_pb.SignMessageResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_SignRawTransactionRequest(arg) {
   if (!(arg instanceof wallet_pb.SignRawTransactionRequest)) {
     throw new Error('Expected argument of type pactus.SignRawTransactionRequest');
@@ -314,6 +336,18 @@ getAddressHistory: {
     requestDeserialize: deserialize_pactus_GetAddressHistoryRequest,
     responseSerialize: serialize_pactus_GetAddressHistoryResponse,
     responseDeserialize: deserialize_pactus_GetAddressHistoryResponse,
+  },
+  // SignMessage signs an arbitrary message.
+signMessage: {
+    path: '/pactus.Wallet/SignMessage',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.SignMessageRequest,
+    responseType: wallet_pb.SignMessageResponse,
+    requestSerialize: serialize_pactus_SignMessageRequest,
+    requestDeserialize: deserialize_pactus_SignMessageRequest,
+    responseSerialize: serialize_pactus_SignMessageResponse,
+    responseDeserialize: deserialize_pactus_SignMessageResponse,
   },
 };
 

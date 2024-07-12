@@ -24,6 +24,9 @@
       "name": "Network"
     },
     {
+      "name": "Utils"
+    },
+    {
       "name": "Wallet"
     }
   ],
@@ -38,6 +41,91 @@
     "application/json"
   ],
   "paths": {
+    "/pactus/Utils/sign_message_with_private_key": {
+      "get": {
+        "summary": "SignMessageWithPrivateKey sign message with provided private key.",
+        "operationId": "Utils_SignMessageWithPrivateKey",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSignMessageWithPrivateKeyResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "privateKey",
+            "description": "The private key to sign the message.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "message",
+            "description": "The message to sign.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Utils"
+        ]
+      }
+    },
+    "/pactus/Utils/verify_message": {
+      "get": {
+        "summary": "VerifyMessage verify signature with public key and message",
+        "operationId": "Utils_VerifyMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusVerifyMessageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "message",
+            "description": "The signed message.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "signature",
+            "description": "The signature of the message.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "publicKey",
+            "description": "The public key of the signer.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Utils"
+        ]
+      }
+    },
     "/pactus/blockchain/get_account": {
       "get": {
         "summary": "GetAccount retrieves information about an account based on the provided\naddress.",
@@ -1049,6 +1137,59 @@
         ]
       }
     },
+    "/pactus/wallet/sign_message": {
+      "get": {
+        "summary": "SignMessage signs an arbitrary message.",
+        "operationId": "Wallet_SignMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSignMessageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "The password for unlocking the wallet for signing.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "description": "The account address associated with the private key.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "message",
+            "description": "The arbitrary message to be signed.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
     "/pactus/wallet/sign_raw_transaction": {
       "get": {
         "summary": "SignRawTransaction signs a raw transaction for a specified wallet.",
@@ -1976,6 +2117,26 @@
       },
       "description": "Response message containing the name of the restored wallet."
     },
+    "pactusSignMessageResponse": {
+      "type": "object",
+      "properties": {
+        "signature": {
+          "type": "string",
+          "description": "Signature of the message."
+        }
+      },
+      "description": "Response message containing the available balance of the wallet."
+    },
+    "pactusSignMessageWithPrivateKeyResponse": {
+      "type": "object",
+      "properties": {
+        "signature": {
+          "type": "string",
+          "description": "The signature of the message."
+        }
+      },
+      "description": "Response message containing the generated signature."
+    },
     "pactusSignRawTransactionResponse": {
       "type": "object",
       "properties": {
@@ -2130,6 +2291,16 @@
         }
       },
       "description": "Message containing information about a validator."
+    },
+    "pactusVerifyMessageResponse": {
+      "type": "object",
+      "properties": {
+        "isValid": {
+          "type": "boolean",
+          "description": "Indicates if the signature is valid (true) or not (false)."
+        }
+      },
+      "description": "Response message containing the resualt of validation of signature and message."
     },
     "pactusVoteInfo": {
       "type": "object",
