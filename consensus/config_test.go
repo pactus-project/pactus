@@ -7,28 +7,68 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDefaultConfigCheck(t *testing.T) {
-	c1 := DefaultConfig()
-	c2 := DefaultConfig()
-	c3 := DefaultConfig()
-	c4 := DefaultConfig()
-	c5 := DefaultConfig()
-	assert.NoError(t, c1.BasicCheck())
+func TestConfigBasicCheck(t *testing.T) {
+	testCases := []struct {
+		name        string
+		expectedErr error
+		updateFn    func(c *Config)
+	}{
+		{
+			name: "Invalid ChangeProposerDelta",
+			expectedErr: ConfigError{
+				Reason: "change proposer delta must be greater than zero",
+			},
+			updateFn: func(c *Config) {
+				c.ChangeProposerDelta = 0
+			},
+		},
+		{
+			name: "Invalid ChangeProposerTimeout",
+			expectedErr: ConfigError{
+				Reason: "change proposer timeout must be greater than zero",
+			},
+			updateFn: func(c *Config) {
+				c.ChangeProposerTimeout = -1 * time.Second
+			},
+		},
+		{
+			name: "Invalid MinimumAvailabilityScore",
+			expectedErr: ConfigError{
+				Reason: "minimum availability score can't be negative or more than 1",
+			},
+			updateFn: func(c *Config) {
+				c.MinimumAvailabilityScore = 1.5
+			},
+		},
+		{
+			name: "Invalid MinimumAvailabilityScore - Negative",
+			expectedErr: ConfigError{
+				Reason: "minimum availability score can't be negative or more than 1",
+			},
+			updateFn: func(c *Config) {
+				c.MinimumAvailabilityScore = -0.8
+			},
+		},
+		{
+			name:     "DefaultConfig",
+			updateFn: func(*Config) {},
+		},
+	}
 
-	c2.ChangeProposerDelta = 0 * time.Second
-	assert.ErrorIs(t, c2.BasicCheck(), ConfigError{Reason: "change proposer delta must be greater than zero"})
-
-	c3.ChangeProposerTimeout = 0 * time.Second
-	assert.ErrorIs(t, c3.BasicCheck(), ConfigError{Reason: "change proposer timeout must be greater than zero"})
-
-	c4.ChangeProposerTimeout = -1 * time.Second
-	assert.ErrorIs(t, c4.BasicCheck(), ConfigError{Reason: "change proposer timeout must be greater than zero"})
-
-	c5.MinimumAvailabilityScore = 1.5
-	assert.ErrorIs(t, c5.BasicCheck(), ConfigError{Reason: "minimum availability score can't be negative or more than 1"})
-
-	c5.MinimumAvailabilityScore = -0.8
-	assert.ErrorIs(t, c5.BasicCheck(), ConfigError{Reason: "minimum availability score can't be negative or more than 1"})
+	for i, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			conf := DefaultConfig()
+			tc.updateFn(conf)
+			if tc.expectedErr != nil {
+				err := conf.BasicCheck()
+				assert.ErrorIs(t, tc.expectedErr, err,
+					"Expected error not matched for test %d-%s, expected: %s, got: %s", i, tc.name, tc.expectedErr, err)
+			} else {
+				err := conf.BasicCheck()
+				assert.NoError(t, err, "Expected no error for test %d-%s, get: %s", i, tc.name, err)
+			}
+		})
+	}
 }
 
 func TestCalculateChangeProposerTimeout(t *testing.T) {

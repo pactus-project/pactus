@@ -90,8 +90,8 @@ func NewStore(conf *Config) (Store, error) {
 		config:         conf,
 		db:             db,
 		batch:          new(leveldb.Batch),
-		blockStore:     newBlockStore(db, conf.SortitionCacheSize, conf.PublicKeyCacheSize),
-		txStore:        newTxStore(db, conf.TxCacheSize),
+		blockStore:     newBlockStore(db, conf.SeedCacheWindow, conf.PublicKeyCacheSize),
+		txStore:        newTxStore(db, conf.TxCacheWindow),
 		accountStore:   newAccountStore(db, conf.AccountCacheSize),
 		validatorStore: newValidatorStore(db),
 		isPruned:       false,
@@ -103,34 +103,34 @@ func NewStore(conf *Config) (Store, error) {
 	}
 
 	// Check if the node is pruned by checking genesis block.
-	blockOne, _ := s.block(1)
-	if blockOne == nil {
+	cBlkOne, _ := s.block(1)
+	if cBlkOne == nil {
 		s.isPruned = true
 	}
 
 	currentHeight := lc.Height()
 	startHeight := uint32(1)
-	if currentHeight > conf.TxCacheSize {
-		startHeight = currentHeight - conf.TxCacheSize
+	if currentHeight > conf.TxCacheWindow {
+		startHeight = currentHeight - conf.TxCacheWindow
 	}
 
 	for i := startHeight; i < currentHeight+1; i++ {
-		committedBlock, err := s.block(i)
+		cBlk, err := s.block(i)
 		if err != nil {
 			return nil, err
 		}
-		blk, err := committedBlock.ToBlock()
+		blk, err := cBlk.ToBlock()
 		if err != nil {
 			return nil, err
 		}
 
 		txs := blk.Transactions()
 		for _, transaction := range txs {
-			s.txStore.saveToCache(transaction.ID(), i)
+			s.txStore.addToCache(transaction.ID(), i)
 		}
 
 		sortitionSeed := blk.Header().SortitionSeed()
-		s.blockStore.saveToCache(i, sortitionSeed)
+		s.blockStore.addToCache(i, sortitionSeed)
 	}
 
 	return s, nil
@@ -278,7 +278,7 @@ func (s *store) AnyRecentTransaction(id tx.ID) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.txStore.hasTX(id)
+	return s.txStore.anyRecentTransaction(id)
 }
 
 func (s *store) HasAccount(addr crypto.Address) bool {
@@ -397,6 +397,10 @@ func (s *store) WriteBatch() error {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
+	return s.writeBatch()
+}
+
+func (s *store) writeBatch() error {
 	if err := s.db.Write(s.batch, nil); err != nil {
 		// TODO: Should we panic here?
 		// The store is unreliable if the stored data does not match the cached data.
@@ -411,54 +415,64 @@ func (s *store) IsBanned(addr crypto.Address) bool {
 	return s.config.BannedAddrs[addr]
 }
 
+// IsPruned indicates that store is in prune mode.
 func (s *store) IsPruned() bool {
 	return s.isPruned
 }
 
-func (s *store) Prune(resultFunc func(pruned, skipped, pruningHeight uint32)) error {
+// Prune iterates over all blocks from the pruning height to the genesis block and prunes them.
+// The pruning height is `LastBlockHeight - RetentionBlocks`.
+// The callback function is called after each block is pruned and can cancel the process.
+func (s *store) Prune(callback func(pruned bool, pruningHeight uint32) bool) error {
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
 	cert := s.lastCertificate()
 
-	// at genesis block
+	// Store is at the genesis height
 	if cert == nil {
 		return nil
 	}
 
 	retentionBlocks := s.config.RetentionBlocks()
-
 	if cert.Height() < retentionBlocks {
 		return nil
 	}
 
 	pruningHeight := cert.Height() - retentionBlocks
-
 	for i := pruningHeight; i >= 1; i-- {
 		deleted, err := s.pruneBlock(i)
 		if err != nil {
 			return err
 		}
 
-		if err := s.WriteBatch(); err != nil {
+		if err := s.writeBatch(); err != nil {
 			return err
 		}
 
-		if deleted {
-			resultFunc(1, 0, i)
-
-			continue
+		if callback(deleted, i) {
+			// canceled
+			break
 		}
-
-		resultFunc(0, 1, i)
 	}
 
 	return nil
 }
 
+// pruneBlock removes a block and all transactions inside the block from the store.
+// It accepts a block height to prune, and returns a boolean that
+// indicate whether the block at the specified height existed and pruned,
+// or did not exist, along with any encountered errors.
 func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
 	if !s.blockStore.hasBlock(blockHeight) {
 		return false, nil
 	}
 
-	cBlock, _ := s.block(blockHeight)
+	cBlock, err := s.block(blockHeight)
+	if err != nil {
+		return false, err
+	}
+
 	blk, err := block.FromBytes(cBlock.Data)
 	if err != nil {
 		return false, err

@@ -32,7 +32,7 @@ func (handler *blocksResponseHandler) ParseMessage(m message.Message, pid peer.I
 		// It is good to check the latest height before adding blocks to the cache.
 		// If they have already been committed, this message can be ignored.
 		// Need to test!
-		for _, data := range msg.CommittedBlocksData {
+		for _, data := range msg.BlocksData {
 			blk, err := block.FromBytes(data)
 			if err != nil {
 				handler.logger.Warn("unable to decode block data",

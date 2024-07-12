@@ -155,40 +155,68 @@ func TestExampleConfig(t *testing.T) {
 
 func TestNodeConfigBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
+	randValAddr := ts.RandValAddress()
 
-	t.Run("invalid reward addresses", func(t *testing.T) {
-		conf := DefaultNodeConfig()
-		conf.RewardAddresses = []string{
-			ts.RandAccAddress().String(),
-			"abcd",
-		}
+	testCases := []struct {
+		name        string
+		expectedErr error
+		updateFn    func(c *NodeConfig)
+	}{
+		{
+			name: "Invalid reward addresses",
+			expectedErr: NodeConfigError{
+				Reason: "invalid reward address: invalid bech32 string length 4",
+			},
+			updateFn: func(c *NodeConfig) {
+				c.RewardAddresses = []string{
+					"abcd",
+				}
+			},
+		},
+		{
+			name: "Validator address as reward address",
+			expectedErr: NodeConfigError{
+				Reason: "reward address is not an account address: " + randValAddr.String(),
+			},
+			updateFn: func(c *NodeConfig) {
+				c.RewardAddresses = []string{
+					randValAddr.String(),
+				}
+			},
+		},
+		{
+			name: "Two rewards addresses",
+			updateFn: func(c *NodeConfig) {
+				c.RewardAddresses = []string{
+					ts.RandAccAddress().String(),
+					ts.RandAccAddress().String(),
+				}
+			},
+		},
+		{
+			name: "No reward address",
+			updateFn: func(c *NodeConfig) {
+				c.RewardAddresses = []string{}
+			},
+		},
+		{
+			name:     "DefaultConfig",
+			updateFn: func(*NodeConfig) {},
+		},
+	}
 
-		assert.Error(t, conf.BasicCheck())
-	})
-
-	t.Run("validator address as reward address", func(t *testing.T) {
-		conf := DefaultNodeConfig()
-		conf.RewardAddresses = []string{
-			ts.RandValAddress().String(),
-		}
-
-		assert.Error(t, conf.BasicCheck())
-	})
-
-	t.Run("ok", func(t *testing.T) {
-		conf := DefaultNodeConfig()
-		conf.RewardAddresses = []string{
-			ts.RandAccAddress().String(),
-			ts.RandAccAddress().String(),
-		}
-
-		assert.NoError(t, conf.BasicCheck())
-	})
-
-	t.Run("no reward addresses inside config, Ok", func(t *testing.T) {
-		conf := DefaultNodeConfig()
-		conf.RewardAddresses = []string{}
-
-		assert.NoError(t, conf.BasicCheck())
-	})
+	for i, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			conf := DefaultNodeConfig()
+			tc.updateFn(conf)
+			if tc.expectedErr != nil {
+				err := conf.BasicCheck()
+				assert.ErrorIs(t, tc.expectedErr, err,
+					"Expected error not matched for test %d-%s, expected: %s, got: %s", i, tc.name, tc.expectedErr, err)
+			} else {
+				err := conf.BasicCheck()
+				assert.NoError(t, err, "Expected no error for test %d-%s, get: %s", i, tc.name, err)
+			}
+		})
+	}
 }
