@@ -5,6 +5,8 @@ import (
 
 	"github.com/pactus-project/pactus/crypto/bls"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type utilServer struct {
@@ -37,16 +39,12 @@ func (*utilServer) VerifyMessage(_ context.Context,
 ) (*pactus.VerifyMessageResponse, error) {
 	sig, err := bls.SignatureFromString(req.Signature)
 	if err != nil {
-		return &pactus.VerifyMessageResponse{
-			IsValid: false,
-		}, err
+		return nil, status.Error(codes.InvalidArgument, "signature is invalid")
 	}
 
 	pub, err := bls.PublicKeyFromString(req.PublicKey)
 	if err != nil {
-		return &pactus.VerifyMessageResponse{
-			IsValid: false,
-		}, err
+		return nil, status.Error(codes.InvalidArgument, "public key is invalid")
 	}
 
 	if err := pub.Verify([]byte(req.Message), sig); err == nil {
