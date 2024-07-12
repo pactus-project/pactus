@@ -49,13 +49,13 @@ func (*utilServer) VerifyMessage(_ context.Context,
 		}, err
 	}
 
-	if err := pub.Verify([]byte(req.Message), sig); err != nil {
+	if err := pub.Verify([]byte(req.Message), sig); err == nil {
 		return &pactus.VerifyMessageResponse{
-			IsValid: false,
-		}, err
+			IsValid: true,
+		}, nil
 	}
 
 	return &pactus.VerifyMessageResponse{
-		IsValid: true,
+		IsValid: false,
 	}, nil
 }
