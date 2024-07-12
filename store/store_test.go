@@ -23,8 +23,8 @@ type testData struct {
 func testConfig() *Config {
 	return &Config{
 		Path:               util.TempDirPath(),
-		TxCacheSize:        1024,
-		SortitionCacheSize: 1024,
+		TxCacheWindow:      1024,
+		SeedCacheWindow:    1024,
 		AccountCacheSize:   1024,
 		PublicKeyCacheSize: 1024,
 		BannedAddrs:        make(map[crypto.Address]bool),
@@ -294,6 +294,7 @@ func TestPrune(t *testing.T) {
 		totalPruned = uint32(0)
 		lastPruningHeight = uint32(0)
 
+		// Store doesn't have blocks for one day
 		err := td.store.Prune(cb)
 		assert.NoError(t, err)
 		assert.False(t, td.store.isPruned)
@@ -306,26 +307,41 @@ func TestPrune(t *testing.T) {
 		totalPruned = uint32(0)
 		lastPruningHeight = uint32(0)
 
+		blk, cert := td.GenerateTestBlock(blockPerDay + 7)
+		td.store.SaveBlock(blk, cert)
+		err := td.store.WriteBatch()
+		require.NoError(t, err)
+
+		blk, cert = td.GenerateTestBlock(blockPerDay + 8)
+		td.store.SaveBlock(blk, cert)
+		err = td.store.WriteBatch()
+		require.NoError(t, err)
+
+		// It should remove blocks [1..8]
+		err = td.store.Prune(cb)
+		assert.NoError(t, err)
+
+		assert.Equal(t, uint32(8), totalPruned)
+		assert.Equal(t, uint32(1), lastPruningHeight)
+	})
+
+	t.Run("Reopen the store", func(t *testing.T) {
+		td.store.Close()
+		td.store.config.TxCacheWindow = 1
+		s, err := NewStore(td.store.config)
+		require.NoError(t, err)
+		assert.True(t, s.IsPruned(), "store should be in prune mode")
+
+		td.store = s.(*store)
+	})
+
+	t.Run("Commit new block", func(t *testing.T) {
 		blk, cert := td.GenerateTestBlock(blockPerDay + 9)
 		td.store.SaveBlock(blk, cert)
 		err := td.store.WriteBatch()
 		require.NoError(t, err)
 
-		err = td.store.Prune(cb)
-		assert.NoError(t, err)
-		assert.True(t, td.store.isPruned)
-
-		assert.Equal(t, uint32(9), totalPruned)
-		assert.Equal(t, uint32(1), lastPruningHeight)
-	})
-
-	t.Run("Commit new block", func(t *testing.T) {
-		blk, cert := td.GenerateTestBlock(blockPerDay + 10)
-		td.store.SaveBlock(blk, cert)
-		err := td.store.WriteBatch()
-		require.NoError(t, err)
-
-		cBlk, err := td.store.Block(10)
+		cBlk, err := td.store.Block(9)
 		assert.Error(t, err)
 		assert.Nil(t, cBlk)
 	})

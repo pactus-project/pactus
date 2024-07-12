@@ -40,7 +40,7 @@ func TestBlockStore(t *testing.T) {
 
 func TestSortitionSeed(t *testing.T) {
 	conf := testConfig()
-	conf.SortitionCacheSize = 7
+	conf.SeedCacheWindow = 7
 
 	td := setup(t, conf)
 	lastHeight := td.store.LastCertificate().Height()
@@ -58,8 +58,8 @@ func TestSortitionSeed(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		rndInt := td.RandUint32(conf.SortitionCacheSize)
-		rndInt += lastHeight - conf.SortitionCacheSize + 1
+		rndInt := td.RandUint32(conf.SeedCacheWindow)
+		rndInt += lastHeight - conf.SeedCacheWindow + 1
 
 		committedBlk, _ := td.store.Block(rndInt)
 		blk, _ := committedBlk.ToBlock()

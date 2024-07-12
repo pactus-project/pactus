@@ -25,23 +25,23 @@ func blockHashKey(h hash.Hash) []byte {
 }
 
 type blockStore struct {
-	db                 *leveldb.DB
-	pubKeyCache        *lru.Cache[crypto.Address, *bls.PublicKey]
-	sortitionSeedCache *pairslice.PairSlice[uint32, *sortition.VerifiableSeed]
-	sortitionCacheSize uint32
+	db              *leveldb.DB
+	pubKeyCache     *lru.Cache[crypto.Address, *bls.PublicKey]
+	seedCache       *pairslice.PairSlice[uint32, *sortition.VerifiableSeed]
+	seedCacheWindow uint32
 }
 
-func newBlockStore(db *leveldb.DB, sortitionCacheSize uint32, publicKeyCacheSize int) *blockStore {
+func newBlockStore(db *leveldb.DB, seedCacheWindow uint32, publicKeyCacheSize int) *blockStore {
 	pubKeyCache, err := lru.New[crypto.Address, *bls.PublicKey](publicKeyCacheSize)
 	if err != nil {
 		return nil
 	}
 
 	return &blockStore{
-		db:                 db,
-		sortitionSeedCache: pairslice.New[uint32, *sortition.VerifiableSeed](int(sortitionCacheSize)),
-		pubKeyCache:        pubKeyCache,
-		sortitionCacheSize: sortitionCacheSize,
+		db:              db,
+		seedCache:       pairslice.New[uint32, *sortition.VerifiableSeed](int(seedCacheWindow)),
+		pubKeyCache:     pubKeyCache,
+		seedCacheWindow: seedCacheWindow,
 	}
 }
 
@@ -98,7 +98,7 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.
 	batch.Put(blockHashKey, util.Uint32ToSlice(height))
 
 	sortitionSeed := blk.Header().SortitionSeed()
-	bs.saveToCache(height, sortitionSeed)
+	bs.addToCache(height, sortitionSeed)
 
 	return regs
 }
@@ -122,14 +122,14 @@ func (bs *blockStore) blockHeight(h hash.Hash) uint32 {
 }
 
 func (bs *blockStore) sortitionSeed(blockHeight uint32) *sortition.VerifiableSeed {
-	startHeight, _, _ := bs.sortitionSeedCache.First()
+	startHeight, _, _ := bs.seedCache.First()
 
 	if blockHeight < startHeight {
 		return nil
 	}
 
 	index := blockHeight - startHeight
-	_, sortitionSeed, ok := bs.sortitionSeedCache.Get(int(index))
+	_, sortitionSeed, ok := bs.seedCache.Get(int(index))
 	if !ok {
 		return nil
 	}
@@ -169,9 +169,9 @@ func (bs *blockStore) hasPublicKey(addr crypto.Address) bool {
 	return ok
 }
 
-func (bs *blockStore) saveToCache(blockHeight uint32, sortitionSeed sortition.VerifiableSeed) {
-	bs.sortitionSeedCache.Append(blockHeight, &sortitionSeed)
-	if bs.sortitionSeedCache.Len() > int(bs.sortitionCacheSize) {
-		bs.sortitionSeedCache.RemoveFirst()
+func (bs *blockStore) addToCache(blockHeight uint32, sortitionSeed sortition.VerifiableSeed) {
+	bs.seedCache.Append(blockHeight, &sortitionSeed)
+	if bs.seedCache.Len() > int(bs.seedCacheWindow) {
+		bs.seedCache.RemoveFirst()
 	}
 }

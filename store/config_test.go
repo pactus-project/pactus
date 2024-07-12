@@ -24,18 +24,21 @@ func TestConfigBasicCheck(t *testing.T) {
 			},
 		},
 		{
-			name: "Invalid TxCacheSize",
+			name: "Invalid TxCacheWindow",
+			expectedErr: ConfigError{
+				Reason: "cache window set to zero",
+			},
+			updateFn: func(c *Config) {
+				c.TxCacheWindow = 0
+			},
+		},
+		{
+			name: "Invalid AccountCacheSize",
 			expectedErr: ConfigError{
 				Reason: "cache size set to zero",
 			},
 			updateFn: func(c *Config) {
-				c.TxCacheSize = 0
-			},
-		},
-		{
-			name: "Valid TxCacheSize",
-			updateFn: func(c *Config) {
-				c.TxCacheSize = 1
+				c.AccountCacheSize = 0
 			},
 		},
 		{

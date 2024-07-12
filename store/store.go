@@ -90,8 +90,8 @@ func NewStore(conf *Config) (Store, error) {
 		config:         conf,
 		db:             db,
 		batch:          new(leveldb.Batch),
-		blockStore:     newBlockStore(db, conf.SortitionCacheSize, conf.PublicKeyCacheSize),
-		txStore:        newTxStore(db, conf.TxCacheSize),
+		blockStore:     newBlockStore(db, conf.SeedCacheWindow, conf.PublicKeyCacheSize),
+		txStore:        newTxStore(db, conf.TxCacheWindow),
 		accountStore:   newAccountStore(db, conf.AccountCacheSize),
 		validatorStore: newValidatorStore(db),
 		isPruned:       false,
@@ -110,8 +110,8 @@ func NewStore(conf *Config) (Store, error) {
 
 	currentHeight := lc.Height()
 	startHeight := uint32(1)
-	if currentHeight > conf.TxCacheSize {
-		startHeight = currentHeight - conf.TxCacheSize
+	if currentHeight > conf.TxCacheWindow {
+		startHeight = currentHeight - conf.TxCacheWindow
 	}
 
 	for i := startHeight; i < currentHeight+1; i++ {
@@ -126,11 +126,11 @@ func NewStore(conf *Config) (Store, error) {
 
 		txs := blk.Transactions()
 		for _, transaction := range txs {
-			s.txStore.saveToCache(transaction.ID(), i)
+			s.txStore.addToCache(transaction.ID(), i)
 		}
 
 		sortitionSeed := blk.Header().SortitionSeed()
-		s.blockStore.saveToCache(i, sortitionSeed)
+		s.blockStore.addToCache(i, sortitionSeed)
 	}
 
 	return s, nil
@@ -278,7 +278,7 @@ func (s *store) AnyRecentTransaction(id tx.ID) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.txStore.hasTX(id)
+	return s.txStore.anyRecentTransaction(id)
 }
 
 func (s *store) HasAccount(addr crypto.Address) bool {

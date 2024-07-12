@@ -19,16 +19,16 @@ type blockRegion struct {
 func txKey(id tx.ID) []byte { return append(txPrefix, id.Bytes()...) }
 
 type txStore struct {
-	db          *leveldb.DB
-	txIDCache   *linkedmap.LinkedMap[tx.ID, uint32]
-	txCacheSize uint32
+	db            *leveldb.DB
+	txCache       *linkedmap.LinkedMap[tx.ID, uint32]
+	txCacheWindow uint32
 }
 
-func newTxStore(db *leveldb.DB, txCacheSize uint32) *txStore {
+func newTxStore(db *leveldb.DB, txCacheWindow uint32) *txStore {
 	return &txStore{
-		db:          db,
-		txIDCache:   linkedmap.New[tx.ID, uint32](0),
-		txCacheSize: txCacheSize,
+		db:            db,
+		txCache:       linkedmap.New[tx.ID, uint32](0),
+		txCacheWindow: txCacheWindow,
 	}
 }
 
@@ -45,24 +45,24 @@ func (ts *txStore) saveTxs(batch *leveldb.Batch, txs block.Txs, regs []blockRegi
 		id := trx.ID()
 		key := txKey(id)
 		batch.Put(key, w.Bytes())
-		ts.saveToCache(id, reg.height)
+		ts.addToCache(id, reg.height)
 	}
 }
 
 func (ts *txStore) pruneCache(currentHeight uint32) {
 	for {
-		head := ts.txIDCache.HeadNode()
+		head := ts.txCache.HeadNode()
 		txHeight := head.Data.Value
 
-		if currentHeight-txHeight <= ts.txCacheSize {
+		if currentHeight-txHeight <= ts.txCacheWindow {
 			break
 		}
-		ts.txIDCache.RemoveHead()
+		ts.txCache.RemoveHead()
 	}
 }
 
-func (ts *txStore) hasTX(id tx.ID) bool {
-	return ts.txIDCache.Has(id)
+func (ts *txStore) anyRecentTransaction(id tx.ID) bool {
+	return ts.txCache.Has(id)
 }
 
 func (ts *txStore) tx(id tx.ID) (*blockRegion, error) {
@@ -79,6 +79,6 @@ func (ts *txStore) tx(id tx.ID) (*blockRegion, error) {
 	return reg, nil
 }
 
-func (ts *txStore) saveToCache(id tx.ID, height uint32) {
-	ts.txIDCache.PushBack(id, height)
+func (ts *txStore) addToCache(id tx.ID, height uint32) {
+	ts.txCache.PushBack(id, height)
 }
