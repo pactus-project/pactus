@@ -279,15 +279,21 @@ func TestPrune(t *testing.T) {
 	conf.RetentionDays = 1
 	td := setup(t, conf)
 
-	t.Run("Not enough block to prune", func(t *testing.T) {
-		totalPruned := uint32(0)
-		lastPruningHeight := uint32(0)
-		cb := func(pruned bool, pruningHeight uint32) {
-			if pruned {
-				totalPruned++
-			}
-			lastPruningHeight = pruningHeight
+	totalPruned := uint32(0)
+	lastPruningHeight := uint32(0)
+	cb := func(pruned bool, pruningHeight uint32) bool {
+		if pruned {
+			totalPruned++
 		}
+		lastPruningHeight = pruningHeight
+
+		return false
+	}
+
+	t.Run("Not enough block to prune", func(t *testing.T) {
+		totalPruned = uint32(0)
+		lastPruningHeight = uint32(0)
+
 		err := td.store.Prune(cb)
 		assert.NoError(t, err)
 		assert.False(t, td.store.isPruned)
@@ -297,19 +303,14 @@ func TestPrune(t *testing.T) {
 	})
 
 	t.Run("Prune database", func(t *testing.T) {
+		totalPruned = uint32(0)
+		lastPruningHeight = uint32(0)
+
 		blk, cert := td.GenerateTestBlock(blockPerDay + 9)
 		td.store.SaveBlock(blk, cert)
 		err := td.store.WriteBatch()
 		require.NoError(t, err)
 
-		totalPruned := uint32(0)
-		lastPruningHeight := uint32(0)
-		cb := func(pruned bool, pruningHeight uint32) {
-			if pruned {
-				totalPruned++
-			}
-			lastPruningHeight = pruningHeight
-		}
 		err = td.store.Prune(cb)
 		assert.NoError(t, err)
 		assert.True(t, td.store.isPruned)

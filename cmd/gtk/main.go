@@ -6,9 +6,7 @@ import (
 	"flag"
 	"log"
 	"os"
-	"os/signal"
 	"path/filepath"
-	"syscall"
 
 	"github.com/gofrs/flock"
 	"github.com/gotk3/gotk3/gdk"
@@ -123,21 +121,17 @@ func main() {
 
 	// Connect function to application shutdown event, this is not required.
 	app.Connect("shutdown", func() {
+		log.Println("Application shutdown")
 		n.Stop()
 		_ = fileLock.Unlock()
-		log.Println("application shutdown")
 	})
 
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+	cmd.TrapSignal(func() {
+		cmd.PrintInfoMsgf("Exiting...")
 
-	go func() {
-		s := <-interrupt
-		log.Printf("signal %s received", s.String())
 		n.Stop()
 		_ = fileLock.Unlock()
-		os.Exit(0)
-	}()
+	})
 
 	// Launch the application
 	os.Exit(app.Run(nil))

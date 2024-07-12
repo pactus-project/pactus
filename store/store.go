@@ -397,6 +397,10 @@ func (s *store) WriteBatch() error {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
+	return s.writeBatch()
+}
+
+func (s *store) writeBatch() error {
 	if err := s.db.Write(s.batch, nil); err != nil {
 		// TODO: Should we panic here?
 		// The store is unreliable if the stored data does not match the cached data.
@@ -415,7 +419,10 @@ func (s *store) IsPruned() bool {
 	return s.isPruned
 }
 
-func (s *store) Prune(resultFunc func(pruned bool, pruningHeight uint32)) error {
+func (s *store) Prune(resultFunc func(pruned bool, pruningHeight uint32) bool) error {
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
 	cert := s.lastCertificate()
 
 	// Store is at the genesis height
@@ -435,14 +442,15 @@ func (s *store) Prune(resultFunc func(pruned bool, pruningHeight uint32)) error 
 			return err
 		}
 
-		if err := s.WriteBatch(); err != nil {
+		if err := s.writeBatch(); err != nil {
 			return err
 		}
 
-		resultFunc(deleted, i)
+		if resultFunc(deleted, i) {
+			// canceled
+			break
+		}
 	}
-
-	s.isPruned = true
 
 	return nil
 }
@@ -452,8 +460,12 @@ func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
 		return false, nil
 	}
 
-	cBlk, _ := s.block(blockHeight)
-	blk, err := block.FromBytes(cBlk.Data)
+	cBlock, err := s.block(blockHeight)
+	if err != nil {
+		return false, err
+	}
+
+	blk, err := block.FromBytes(cBlock.Data)
 	if err != nil {
 		return false, err
 	}
