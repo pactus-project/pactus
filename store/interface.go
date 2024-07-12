@@ -107,7 +107,7 @@ type Store interface {
 	UpdateAccount(addr crypto.Address, acc *account.Account)
 	UpdateValidator(val *validator.Validator)
 	SaveBlock(blk *block.Block, cert *certificate.BlockCertificate)
-	Prune(resultFunc func(pruned bool, pruningHeight uint32) bool) error
+	Prune(callback func(pruned bool, pruningHeight uint32) bool) error
 	WriteBatch() error
 	Close()
 }

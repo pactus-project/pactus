@@ -415,11 +415,15 @@ func (s *store) IsBanned(addr crypto.Address) bool {
 	return s.config.BannedAddrs[addr]
 }
 
+// IsPruned indicates that store is in prune mode.
 func (s *store) IsPruned() bool {
 	return s.isPruned
 }
 
-func (s *store) Prune(resultFunc func(pruned bool, pruningHeight uint32) bool) error {
+// Prune iterates over all blocks from the pruning height to the genesis block and prunes them.
+// The pruning height is `LastBlockHeight - RetentionBlocks`.
+// The callback function is called after each block is pruned and can cancel the process.
+func (s *store) Prune(callback func(pruned bool, pruningHeight uint32) bool) error {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -446,7 +450,7 @@ func (s *store) Prune(resultFunc func(pruned bool, pruningHeight uint32) bool) e
 			return err
 		}
 
-		if resultFunc(deleted, i) {
+		if callback(deleted, i) {
 			// canceled
 			break
 		}
@@ -455,6 +459,10 @@ func (s *store) Prune(resultFunc func(pruned bool, pruningHeight uint32) bool) e
 	return nil
 }
 
+// pruneBlock removes a block and all transactions inside the block from the store.
+// It accepts a block height to prune, and returns a boolean that
+// indicate whether the block at the specified height existed and pruned,
+// or did not exist, along with any encountered errors.
 func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
 	if !s.blockStore.hasBlock(blockHeight) {
 		return false, nil
