@@ -24,7 +24,7 @@ func (*utilServer) SignMessageWithPrivateKey(_ context.Context,
 ) (*pactus.SignMessageWithPrivateKeyResponse, error) {
 	prvKey, err := bls.PrivateKeyFromString(req.PrivateKey)
 	if err != nil {
-		return nil, err
+		return nil, status.Error(codes.InvalidArgument, "invalid private key")
 	}
 
 	sig := prvKey.Sign([]byte(req.Message)).String()
