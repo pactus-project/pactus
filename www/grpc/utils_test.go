@@ -55,7 +55,7 @@ func TestVerifyMessage(t *testing.T) {
 	sigStr := "923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
 	invalidSigStr := "113d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3c9"
 
-	t.Run("", func(t *testing.T) {
+	t.Run("valid message", func(t *testing.T) {
 		res, err := client.VerifyMessage(context.Background(),
 			&pactus.VerifyMessageRequest{
 				Message:   msg,
@@ -66,15 +66,16 @@ func TestVerifyMessage(t *testing.T) {
 		assert.True(t, res.IsValid)
 	})
 
-	t.Run("", func(t *testing.T) {
-		_, err := client.VerifyMessage(context.Background(),
+	t.Run("invalid message", func(t *testing.T) {
+		res, err := client.VerifyMessage(context.Background(),
 			&pactus.VerifyMessageRequest{
 				Message:   msg,
 				Signature: invalidSigStr,
 				PublicKey: pubStr,
 			})
 
-		assert.NotNil(t, err)
+		assert.Nil(t, err)
+		assert.False(t, res.IsValid)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
