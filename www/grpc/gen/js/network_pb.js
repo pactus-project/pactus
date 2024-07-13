@@ -928,7 +928,7 @@ proto.pactus.ConnectionInfo.prototype.setOutboundConnections = function(value) {
  * @private {!Array<number>}
  * @const
  */
-proto.pactus.GetNodeInfoResponse.repeatedFields_ = [6,7,8,9];
+proto.pactus.GetNodeInfoResponse.repeatedFields_ = [8,9];
 
 
 
@@ -966,8 +966,8 @@ proto.pactus.GetNodeInfoResponse.toObject = function(includeInstance, msg) {
     peerId: jspb.Message.getFieldWithDefault(msg, 3, ""),
     startedAt: jspb.Message.getFieldWithDefault(msg, 4, 0),
     reachability: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    servicesList: (f = jspb.Message.getRepeatedField(msg, 6)) == null ? undefined : f,
-    servicesNamesList: (f = jspb.Message.getRepeatedField(msg, 7)) == null ? undefined : f,
+    services: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    servicesNames: jspb.Message.getFieldWithDefault(msg, 7, ""),
     localAddrsList: (f = jspb.Message.getRepeatedField(msg, 8)) == null ? undefined : f,
     protocolsList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f,
     clockOffset: jspb.Message.getFloatingPointFieldWithDefault(msg, 13, 0.0),
@@ -1029,14 +1029,12 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
       msg.setReachability(value);
       break;
     case 6:
-      var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedInt32() : [reader.readInt32()]);
-      for (var i = 0; i < values.length; i++) {
-        msg.addServices(values[i]);
-      }
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setServices(value);
       break;
     case 7:
       var value = /** @type {string} */ (reader.readString());
-      msg.addServicesNames(value);
+      msg.setServicesNames(value);
       break;
     case 8:
       var value = /** @type {string} */ (reader.readString());
@@ -1119,16 +1117,16 @@ proto.pactus.GetNodeInfoResponse.serializeBinaryToWriter = function(message, wri
       f
     );
   }
-  f = message.getServicesList();
-  if (f.length > 0) {
-    writer.writePackedInt32(
+  f = message.getServices();
+  if (f !== 0) {
+    writer.writeInt32(
       6,
       f
     );
   }
-  f = message.getServicesNamesList();
+  f = message.getServicesNames();
   if (f.length > 0) {
-    writer.writeRepeatedString(
+    writer.writeString(
       7,
       f
     );
@@ -1256,76 +1254,38 @@ proto.pactus.GetNodeInfoResponse.prototype.setReachability = function(value) {
 
 
 /**
- * repeated int32 services = 6;
- * @return {!Array<number>}
+ * optional int32 services = 6;
+ * @return {number}
  */
-proto.pactus.GetNodeInfoResponse.prototype.getServicesList = function() {
-  return /** @type {!Array<number>} */ (jspb.Message.getRepeatedField(this, 6));
-};
-
-
-/**
- * @param {!Array<number>} value
- * @return {!proto.pactus.GetNodeInfoResponse} returns this
- */
-proto.pactus.GetNodeInfoResponse.prototype.setServicesList = function(value) {
-  return jspb.Message.setField(this, 6, value || []);
+proto.pactus.GetNodeInfoResponse.prototype.getServices = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
 
 /**
  * @param {number} value
- * @param {number=} opt_index
  * @return {!proto.pactus.GetNodeInfoResponse} returns this
  */
-proto.pactus.GetNodeInfoResponse.prototype.addServices = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 6, value, opt_index);
+proto.pactus.GetNodeInfoResponse.prototype.setServices = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
 /**
- * Clears the list making it empty but non-null.
- * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ * optional string services_names = 7;
+ * @return {string}
  */
-proto.pactus.GetNodeInfoResponse.prototype.clearServicesList = function() {
-  return this.setServicesList([]);
-};
-
-
-/**
- * repeated string services_names = 7;
- * @return {!Array<string>}
- */
-proto.pactus.GetNodeInfoResponse.prototype.getServicesNamesList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 7));
-};
-
-
-/**
- * @param {!Array<string>} value
- * @return {!proto.pactus.GetNodeInfoResponse} returns this
- */
-proto.pactus.GetNodeInfoResponse.prototype.setServicesNamesList = function(value) {
-  return jspb.Message.setField(this, 7, value || []);
+proto.pactus.GetNodeInfoResponse.prototype.getServicesNames = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
 
 /**
  * @param {string} value
- * @param {number=} opt_index
  * @return {!proto.pactus.GetNodeInfoResponse} returns this
  */
-proto.pactus.GetNodeInfoResponse.prototype.addServicesNames = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 7, value, opt_index);
-};
-
-
-/**
- * Clears the list making it empty but non-null.
- * @return {!proto.pactus.GetNodeInfoResponse} returns this
- */
-proto.pactus.GetNodeInfoResponse.prototype.clearServicesNamesList = function() {
-  return this.setServicesNamesList([]);
+proto.pactus.GetNodeInfoResponse.prototype.setServicesNames = function(value) {
+  return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 

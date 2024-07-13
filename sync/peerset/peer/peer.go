@@ -46,8 +46,8 @@ func NewPeer(peerID ID) *Peer {
 	}
 }
 
-func (p *Peer) HasNetworkService() bool {
-	return p.Services.IsNetwork()
+func (p *Peer) IsFullNode() bool {
+	return p.Services.IsFullNode()
 }
 
 func (p *Peer) DownloadScore() int {

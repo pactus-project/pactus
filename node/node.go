@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -79,6 +80,9 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	consMgr := consensus.NewManager(conf.Consensus, st, valKeys, rewardAddrs, messageCh)
 	walletMgr := wallet.NewWalletManager(conf.WalletManager)
 
+	if !str.IsPruned() {
+		conf.Sync.Services.Append(service.FullNode)
+	}
 	syn, err := sync.NewSynchronizer(conf.Sync, valKeys, st, consMgr, net, messageCh)
 	if err != nil {
 		return nil, err

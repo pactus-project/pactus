@@ -6,7 +6,6 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
-	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
@@ -26,14 +25,6 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 ) (*pactus.GetNodeInfoResponse, error) {
 	ps := s.sync.PeerSet()
 
-	services := []int32{}
-	servicesNames := []string{}
-
-	if s.sync.Services().IsNetwork() {
-		services = append(services, int32(service.Network))
-		servicesNames = append(servicesNames, "NETWORK")
-	}
-
 	clockOffset, err := s.sync.ClockOffset()
 	if err != nil {
 		s.logger.Warn("failed to get clock offset", "err", err)
@@ -47,8 +38,8 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		LocalAddrs:    s.net.HostAddrs(),
 		StartedAt:     uint64(ps.StartedAt().Unix()),
 		Protocols:     s.net.Protocols(),
-		Services:      services,
-		ServicesNames: servicesNames,
+		Services:      int32(s.sync.Services()),
+		ServicesNames: s.sync.Services().String(),
 		ClockOffset:   clockOffset.Seconds(),
 		ConnectionInfo: &pactus.ConnectionInfo{
 			Connections:         uint64(s.net.NumConnectedPeers()),

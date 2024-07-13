@@ -234,7 +234,7 @@ func (sync *synchronizer) PeerSet() *peerset.PeerSet {
 }
 
 func (sync *synchronizer) Services() service.Services {
-	return sync.config.Services()
+	return sync.config.Services
 }
 
 func (sync *synchronizer) sayHello(to peer.ID) {
@@ -246,8 +246,8 @@ func (sync *synchronizer) sayHello(to peer.ID) {
 	msg := message.NewHelloMessage(
 		sync.SelfID(),
 		sync.config.Moniker,
+		sync.config.Services,
 		sync.stateHeight(),
-		sync.config.Services(),
 		sync.state.LastBlockHash(),
 		sync.state.Genesis().Hash(),
 	)
@@ -441,12 +441,12 @@ func (sync *synchronizer) updateBlockchain() {
 }
 
 // downloadBlocks starts downloading blocks from the network.
-func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
+func (sync *synchronizer) downloadBlocks(from uint32, onlyFullNodes bool) {
 	sync.logger.Debug("downloading blocks", "from", from)
 
 	for i := sync.peerSet.NumberOfSessions(); i < sync.config.MaxSessions; i++ {
 		count := sync.config.LatestBlockInterval
-		sent := sync.sendBlockRequestToRandomPeer(from, count, onlyNodeNetwork)
+		sent := sync.sendBlockRequestToRandomPeer(from, count, onlyFullNodes)
 		if !sent {
 			return
 		}
@@ -455,7 +455,7 @@ func (sync *synchronizer) downloadBlocks(from uint32, onlyNodeNetwork bool) {
 	}
 }
 
-func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyNodeNetwork bool) bool {
+func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyFullNodes bool) bool {
 	// Prevent downloading blocks that might be cached before
 	for sync.cache.HasBlockInCache(from) {
 		from++
@@ -483,15 +483,15 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyN
 
 		// We haven't completed the handshake with this peer.
 		if !p.Status.IsKnown() {
-			if onlyNodeNetwork {
+			if onlyFullNodes {
 				sync.network.CloseConnection(p.PeerID)
 			}
 
 			continue
 		}
 
-		if onlyNodeNetwork && !p.HasNetworkService() {
-			if onlyNodeNetwork {
+		if onlyFullNodes && !p.IsFullNode() {
+			if onlyFullNodes {
 				sync.network.CloseConnection(p.PeerID)
 			}
 

@@ -40,11 +40,11 @@ func TestPeerSet(t *testing.T) {
 	pid2 := ts.RandPeerID()
 	pid3 := ts.RandPeerID()
 	peerSet.UpdateInfo(pid1, "Moniker1", "Agent1",
-		[]*bls.PublicKey{pk1, pk2}, service.New(service.Network))
+		[]*bls.PublicKey{pk1, pk2}, service.New(service.FullNode))
 	peerSet.UpdateInfo(pid2, "Moniker2", "Agent2",
 		[]*bls.PublicKey{pk3}, service.New(service.None))
 	peerSet.UpdateInfo(pid3, "Moniker3", "Agent3",
-		[]*bls.PublicKey{pk4, pk5}, service.New(service.Network))
+		[]*bls.PublicKey{pk4, pk5}, service.New(service.FullNode))
 
 	t.Run("Testing Len", func(t *testing.T) {
 		assert.Equal(t, 3, peerSet.Len())

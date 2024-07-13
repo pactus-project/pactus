@@ -84,7 +84,7 @@ func main() {
 		log.Println("application startup")
 	})
 
-	n, wlt, err := newNode(workingDir)
+	nd, wlt, err := newNode(workingDir)
 	fatalErrorCheck(err)
 
 	// Connect function to application activate event
@@ -111,7 +111,7 @@ func main() {
 
 		// Running the run-up logic in a separate goroutine
 		glib.TimeoutAdd(uint(100), func() bool {
-			run(n, wlt, app)
+			run(nd, wlt, app)
 			splashDlg.Destroy()
 
 			// Ensures the function is not called again
@@ -122,14 +122,14 @@ func main() {
 	// Connect function to application shutdown event, this is not required.
 	app.Connect("shutdown", func() {
 		log.Println("Application shutdown")
-		n.Stop()
+		nd.Stop()
 		_ = fileLock.Unlock()
 	})
 
 	cmd.TrapSignal(func() {
 		cmd.PrintInfoMsgf("Exiting...")
 
-		n.Stop()
+		nd.Stop()
 		_ = fileLock.Unlock()
 	})
 

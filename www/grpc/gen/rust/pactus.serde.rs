@@ -3857,7 +3857,7 @@ impl serde::Serialize for GetNodeInfoResponse {
         if !self.reachability.is_empty() {
             len += 1;
         }
-        if !self.services.is_empty() {
+        if self.services != 0 {
             len += 1;
         }
         if !self.services_names.is_empty() {
@@ -3891,7 +3891,7 @@ impl serde::Serialize for GetNodeInfoResponse {
         if !self.reachability.is_empty() {
             struct_ser.serialize_field("reachability", &self.reachability)?;
         }
-        if !self.services.is_empty() {
+        if self.services != 0 {
             struct_ser.serialize_field("services", &self.services)?;
         }
         if !self.services_names.is_empty() {
@@ -4052,8 +4052,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                                 return Err(serde::de::Error::duplicate_field("services"));
                             }
                             services__ = 
-                                Some(map.next_value::<Vec<::pbjson::private::NumberDeserialize<_>>>()?
-                                    .into_iter().map(|x| x.0).collect())
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::ServicesNames => {

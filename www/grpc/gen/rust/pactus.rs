@@ -839,12 +839,12 @@ pub struct GetNodeInfoResponse {
     /// Reachability status of the node.
     #[prost(string, tag="5")]
     pub reachability: ::prost::alloc::string::String,
-    /// List of services provided by the node.
-    #[prost(int32, repeated, tag="6")]
-    pub services: ::prost::alloc::vec::Vec<i32>,
+    /// A bitfield indicating the services provided by the node.
+    #[prost(int32, tag="6")]
+    pub services: i32,
     /// Names of services provided by the node.
-    #[prost(string, repeated, tag="7")]
-    pub services_names: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    #[prost(string, tag="7")]
+    pub services_names: ::prost::alloc::string::String,
     /// List of addresses associated with the node.
     #[prost(string, repeated, tag="8")]
     pub local_addrs: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,

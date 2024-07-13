@@ -92,10 +92,6 @@
   # Default is `10s`.
   session_timeout = "10s"
 
-  # `node_network` indicates whether the node is capable of serving the complete blockchain.
-  # Default is `true`.
-  node_network = true
-
   # `sync.firewall` contains configuration options for the sync firewall.
   [sync.firewall]
     # `banned_nets` contains the list of IPs and subnets that should be banned.

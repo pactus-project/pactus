@@ -393,17 +393,17 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		return nil, nil, err
 	}
 
-	nodeInstance, err := node.NewNode(gen, conf, valKeys, rewardAddrs)
+	nd, err := node.NewNode(gen, conf, valKeys, rewardAddrs)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	err = nodeInstance.Start()
+	err = nd.Start()
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return nodeInstance, walletInstance, nil
+	return nd, walletInstance, nil
 }
 
 // makeLocalGenesis makes genesis file for the local network.
