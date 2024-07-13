@@ -174,7 +174,6 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 
-	configBob.NodeNetwork = true
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
 

@@ -123,13 +123,13 @@ func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 	tm.addRowTime("Started at", int64(res.StartedAt))
 	tm.addRowString("Reachability", res.Reachability)
 	tm.addRowFloat64("Clock Offset", res.ClockOffset)
-	tm.addRowInts("Services", res.Services)
-	tm.addRowStrings("Services Names", res.ServicesNames)
+	tm.addRowInt("Services", int(res.Services))
+	tm.addRowString("Services Names", res.ServicesNames)
 
 	tm.addRowString("Connection Info", "---")
-	tm.addRowInt("  Total connections", int(res.ConnectionInfo.Connections))
-	tm.addRowInt("  Inbound connections", int(res.ConnectionInfo.InboundConnections))
-	tm.addRowInt("  Outbound connections", int(res.ConnectionInfo.OutboundConnections))
+	tm.addRowInt("-- Total connections", int(res.ConnectionInfo.Connections))
+	tm.addRowInt("-- Inbound connections", int(res.ConnectionInfo.InboundConnections))
+	tm.addRowInt("-- Outbound connections", int(res.ConnectionInfo.OutboundConnections))
 
 	tm.addRowString("Protocols", "---")
 	for i, p := range res.Protocols {

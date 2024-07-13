@@ -43,12 +43,12 @@ func testConfig() *Config {
 	return &Config{
 		Moniker:             "test",
 		SessionTimeout:      time.Second * 1,
-		NodeNetwork:         true,
 		BlockPerMessage:     11,
 		MaxSessions:         8,
 		LatestBlockInterval: 23,
 		Firewall:            firewall.DefaultConfig(),
 		LatestSupportingVer: DefaultConfig().LatestSupportingVer,
+		Services:            service.New(service.FullNode, service.PrunedNode),
 	}
 }
 
@@ -330,7 +330,7 @@ func TestDownload(t *testing.T) {
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {
 		td := setup(t, conf)
 
-		pid := td.addPeer(t, status.StatusKnown, service.New(service.Network))
+		pid := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
 		td.receivingNewMessage(td.sync, baMsg, pid)

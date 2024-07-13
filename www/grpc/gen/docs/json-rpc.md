@@ -2364,14 +2364,14 @@ Parameters has no fields.
   </tr>
      <tr>
     <td class="fw-bold">services</td>
-    <td>repeated numeric</td>
+    <td> numeric</td>
     <td>
-    List of services provided by the node.
+    A bitfield indicating the services provided by the node.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">services_names</td>
-    <td>repeated string</td>
+    <td> string</td>
     <td>
     Names of services provided by the node.
     </td>

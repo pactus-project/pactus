@@ -30,7 +30,7 @@ func MockingSync(ts *testsuite.TestSuite) *MockSync {
 		"test-peer-1",
 		version.NodeAgent.String(),
 		[]*bls.PublicKey{pub1},
-		service.New(service.Network))
+		service.New(service.FullNode))
 	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
 	ps.UpdateInfo(

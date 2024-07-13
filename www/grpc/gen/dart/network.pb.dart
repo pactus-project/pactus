@@ -282,8 +282,8 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'peerId')
     ..a<$fixnum.Int64>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'startedAt', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
     ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'reachability')
-    ..p<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'services', $pb.PbFieldType.K3)
-    ..pPS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'servicesNames')
+    ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'services', $pb.PbFieldType.O3)
+    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'servicesNames')
     ..pPS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'localAddrs')
     ..pPS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'protocols')
     ..a<$core.double>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'clockOffset', $pb.PbFieldType.OD)
@@ -298,8 +298,8 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     $core.String? peerId,
     $fixnum.Int64? startedAt,
     $core.String? reachability,
-    $core.Iterable<$core.int>? services,
-    $core.Iterable<$core.String>? servicesNames,
+    $core.int? services,
+    $core.String? servicesNames,
     $core.Iterable<$core.String>? localAddrs,
     $core.Iterable<$core.String>? protocols,
     $core.double? clockOffset,
@@ -322,10 +322,10 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
       _result.reachability = reachability;
     }
     if (services != null) {
-      _result.services.addAll(services);
+      _result.services = services;
     }
     if (servicesNames != null) {
-      _result.servicesNames.addAll(servicesNames);
+      _result.servicesNames = servicesNames;
     }
     if (localAddrs != null) {
       _result.localAddrs.addAll(localAddrs);
@@ -408,10 +408,22 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   void clearReachability() => clearField(5);
 
   @$pb.TagNumber(6)
-  $core.List<$core.int> get services => $_getList(5);
+  $core.int get services => $_getIZ(5);
+  @$pb.TagNumber(6)
+  set services($core.int v) { $_setSignedInt32(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasServices() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearServices() => clearField(6);
 
   @$pb.TagNumber(7)
-  $core.List<$core.String> get servicesNames => $_getList(6);
+  $core.String get servicesNames => $_getSZ(6);
+  @$pb.TagNumber(7)
+  set servicesNames($core.String v) { $_setString(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasServicesNames() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearServicesNames() => clearField(7);
 
   @$pb.TagNumber(8)
   $core.List<$core.String> get localAddrs => $_getList(7);
