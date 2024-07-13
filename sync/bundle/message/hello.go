@@ -27,7 +27,7 @@ type HelloMessage struct {
 }
 
 func NewHelloMessage(pid peer.ID, moniker string,
-	height uint32, services service.Services, blockHash, genesisHash hash.Hash,
+	services service.Services, height uint32, blockHash, genesisHash hash.Hash,
 ) *HelloMessage {
 	return &HelloMessage{
 		PeerID:          pid,

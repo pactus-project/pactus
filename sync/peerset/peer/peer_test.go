@@ -35,13 +35,14 @@ func TestPeerStatus(t *testing.T) {
 	}
 }
 
-func TestHasNetworkService(t *testing.T) {
+func TestIsFullNode(t *testing.T) {
 	p1 := NewPeer("peer-1")
 	p2 := NewPeer("peer-1")
-	p2.Services = service.New(service.Network)
+	p1.Services = service.New(service.PrunedNode)
+	p2.Services = service.New(service.FullNode)
 
-	assert.False(t, p1.HasNetworkService())
-	assert.True(t, p2.HasNetworkService())
+	assert.False(t, p1.IsFullNode())
+	assert.True(t, p2.IsFullNode())
 }
 
 func TestDownloadScore(t *testing.T) {

@@ -43,7 +43,7 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 	}
 
 	ourHeight := handler.state.LastBlockHeight()
-	if !handler.config.NodeNetwork {
+	if !handler.config.Services.IsFullNode() {
 		if ourHeight > handler.config.LatestBlockInterval && msg.From < ourHeight-handler.config.LatestBlockInterval {
 			response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 				fmt.Sprintf("the request height is not acceptable: %v", msg.From), msg.SessionID, 0, nil, nil)

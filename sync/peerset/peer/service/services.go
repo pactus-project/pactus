@@ -12,9 +12,13 @@ type (
 )
 
 const (
-	None    Service = 0x00
-	Network Service = 0x01
-	Foo     Service = 0x02 // For future use
+	None Service = 0x00
+
+	// FullNode indicates that the node has a full blockchain history.
+	FullNode Service = 0x01
+
+	// PrunedNode indicates that the node has a pruned blockchain history.
+	PrunedNode Service = 0x02
 )
 
 func New(flags ...Service) Services {
@@ -33,14 +37,14 @@ func (s *Services) Append(flag Service) {
 func (s Services) String() string {
 	services := ""
 	flags := s
-	if util.IsFlagSet(flags, Services(Network)) {
-		services += "NETWORK | "
-		flags = util.UnsetFlag(flags, Services(Network))
+	if util.IsFlagSet(flags, Services(FullNode)) {
+		services += "FULL | "
+		flags = util.UnsetFlag(flags, Services(FullNode))
 	}
 
-	if util.IsFlagSet(flags, Services(Foo)) {
-		services += "FOO | "
-		flags = util.UnsetFlag(flags, Services(Foo))
+	if util.IsFlagSet(flags, Services(PrunedNode)) {
+		services += "PRUNED | "
+		flags = util.UnsetFlag(flags, Services(PrunedNode))
 	}
 
 	if flags != 0 {
@@ -52,10 +56,10 @@ func (s Services) String() string {
 	return services
 }
 
-func (s Services) IsNetwork() bool {
-	return util.IsFlagSet(s, Services(Network))
+func (s Services) IsFullNode() bool {
+	return util.IsFlagSet(s, Services(FullNode))
 }
 
-func (s Services) IsFoo() bool {
-	return util.IsFlagSet(s, Services(Foo))
+func (s Services) IsPrunedNode() bool {
+	return util.IsFlagSet(s, Services(PrunedNode))
 }

@@ -81,7 +81,6 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_consensus"] = "info"
 		tConfigs[i].Logger.Levels["_network"] = "info"
 		tConfigs[i].Logger.Levels["_pool"] = "info"
-		tConfigs[i].Sync.NodeNetwork = false
 		tConfigs[i].Sync.Firewall.BannedNets = make([]string, 0)
 		tConfigs[i].Sync.LatestBlockInterval = 10
 		tConfigs[i].Network.EnableMdns = true
@@ -98,7 +97,6 @@ func TestMain(m *testing.M) {
 		tConfigs[i].GRPC.Enable = false
 
 		if i == 0 {
-			tConfigs[i].Sync.NodeNetwork = true
 			tConfigs[i].GRPC.Enable = true
 			tConfigs[i].GRPC.Listen = tGRPCAddress
 		}

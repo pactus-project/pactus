@@ -12,23 +12,23 @@ import (
 type Config struct {
 	Moniker        string           `toml:"moniker"`
 	SessionTimeout time.Duration    `toml:"session_timeout"`
-	NodeNetwork    bool             `toml:"node_network"`
 	Firewall       *firewall.Config `toml:"firewall"`
 
 	// Private configs
-	MaxSessions         int             `toml:"-"`
-	LatestBlockInterval uint32          `toml:"-"`
-	BlockPerMessage     uint32          `toml:"-"`
-	LatestSupportingVer version.Version `toml:"-"`
+	MaxSessions         int              `toml:"-"`
+	LatestBlockInterval uint32           `toml:"-"`
+	BlockPerMessage     uint32           `toml:"-"`
+	LatestSupportingVer version.Version  `toml:"-"`
+	Services            service.Services `toml:"-"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
 		SessionTimeout:      time.Second * 10,
-		NodeNetwork:         true,
+		Services:            service.New(service.PrunedNode),
 		BlockPerMessage:     60,
 		MaxSessions:         8,
-		LatestBlockInterval: 720,
+		LatestBlockInterval: 10 * 8640, // 10 days, same as default retention block in prune node
 		Firewall:            firewall.DefaultConfig(),
 		LatestSupportingVer: version.Version{
 			Major: 1,
@@ -46,13 +46,4 @@ func (conf *Config) BasicCheck() error {
 func (conf *Config) CacheSize() int {
 	return util.LogScale(
 		int(conf.BlockPerMessage * conf.LatestBlockInterval))
-}
-
-func (conf *Config) Services() service.Services {
-	s := service.New()
-	if conf.NodeNetwork {
-		s.Append(service.Network)
-	}
-
-	return s
 }

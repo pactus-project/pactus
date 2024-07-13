@@ -10,15 +10,14 @@ import (
 )
 
 func TestBlocksRequestMessages(t *testing.T) {
-	config := testConfig()
-	config.NodeNetwork = false
+	t.Run("NetworkLimited service is enabled", func(t *testing.T) {
+		config := testConfig()
+		config.Services = service.Services(service.PrunedNode)
 
-	td := setup(t, config)
-	sid := td.RandInt(100)
+		td := setup(t, config)
+		sid := td.RandInt(100)
 
-	td.state.CommitTestBlocks(31)
-
-	t.Run("NodeNetwork flag is not set", func(t *testing.T) {
+		td.state.CommitTestBlocks(31)
 		curHeight := td.state.LastBlockHeight()
 
 		t.Run("Reject request from unknown peers", func(t *testing.T) {
@@ -118,8 +117,14 @@ func TestBlocksRequestMessages(t *testing.T) {
 		})
 	})
 
-	t.Run("NodeNetwork flag set", func(t *testing.T) {
-		td.sync.config.NodeNetwork = true
+	t.Run("Network service is enabled", func(t *testing.T) {
+		config := testConfig()
+		config.Services = service.New(service.FullNode)
+
+		td := setup(t, config)
+		sid := td.RandInt(100)
+
+		td.state.CommitTestBlocks(31)
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 
 		t.Run("Requesting one block", func(t *testing.T) {

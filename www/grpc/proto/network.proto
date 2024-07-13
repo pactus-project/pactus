@@ -63,10 +63,10 @@ message GetNodeInfoResponse {
   uint64 started_at = 4;
   // Reachability status of the node.
   string reachability = 5;
-  // List of services provided by the node.
-  repeated int32 services = 6;
+  // A bitfield indicating the services provided by the node.
+  int32 services = 6;
   // Names of services provided by the node.
-  repeated string services_names = 7;
+  string services_names = 7;
   // List of addresses associated with the node.
   repeated string local_addrs = 8;
   // List of protocols supported by the node.

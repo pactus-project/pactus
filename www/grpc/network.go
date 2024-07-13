@@ -29,8 +29,8 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 	services := []int32{}
 	servicesNames := []string{}
 
-	if s.sync.Services().IsNetwork() {
-		services = append(services, int32(service.Network))
+	if s.sync.Services().IsFullNode() {
+		services = append(services, int32(service.FullNode))
 		servicesNames = append(servicesNames, "NETWORK")
 	}
 
@@ -47,8 +47,8 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		LocalAddrs:    s.net.HostAddrs(),
 		StartedAt:     uint64(ps.StartedAt().Unix()),
 		Protocols:     s.net.Protocols(),
-		Services:      services,
-		ServicesNames: servicesNames,
+		Services:      int32(s.sync.Services()),
+		ServicesNames: s.sync.Services().String(),
 		ClockOffset:   clockOffset.Seconds(),
 		ConnectionInfo: &pactus.ConnectionInfo{
 			Connections:         uint64(s.net.NumConnectedPeers()),

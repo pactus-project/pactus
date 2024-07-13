@@ -1721,18 +1721,12 @@
           "description": "Reachability status of the node."
         },
         "services": {
-          "type": "array",
-          "items": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "description": "List of services provided by the node."
+          "type": "integer",
+          "format": "int32",
+          "description": "A bitfield indicating the services provided by the node."
         },
         "servicesNames": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "type": "string",
           "description": "Names of services provided by the node."
         },
         "localAddrs": {

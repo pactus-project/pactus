@@ -8,33 +8,19 @@ import (
 
 func TestServicesString(t *testing.T) {
 	assert.Equal(t, New(None).String(), "")
-	assert.Equal(t, New(Network).String(), "NETWORK")
-	assert.Equal(t, New(Foo).String(), "FOO")
-	assert.Equal(t, New(Network, Foo).String(), "NETWORK | FOO")
-	assert.Equal(t, New(5).String(), "NETWORK | 4")
-	assert.Equal(t, New(6).String(), "FOO | 4")
+	assert.Equal(t, New(FullNode).String(), "FULL")
+	assert.Equal(t, New(PrunedNode).String(), "PRUNED")
+	assert.Equal(t, New(FullNode, PrunedNode).String(), "FULL | PRUNED")
+	assert.Equal(t, New(5).String(), "FULL | 4")
+	assert.Equal(t, New(6).String(), "PRUNED | 4")
 }
 
 func TestAppend(t *testing.T) {
-	s := New(Network)
-	assert.True(t, s.IsNetwork())
-	assert.False(t, s.IsFoo())
+	s := New(FullNode)
+	assert.True(t, s.IsFullNode())
+	assert.False(t, s.IsPrunedNode())
 
-	s.Append(Foo)
-	assert.True(t, s.IsNetwork())
-	assert.True(t, s.IsFoo())
-}
-
-func TestIsNetwork(t *testing.T) {
-	assert.False(t, New(None).IsNetwork())
-	assert.True(t, New(Network).IsNetwork())
-	assert.False(t, New(Foo).IsNetwork())
-	assert.True(t, New(Foo, Network).IsNetwork())
-}
-
-func TestIsFoo(t *testing.T) {
-	assert.False(t, New(None).IsFoo())
-	assert.False(t, New(Network).IsFoo())
-	assert.True(t, New(Foo).IsFoo())
-	assert.True(t, New(Foo, Network).IsNetwork())
+	s.Append(PrunedNode)
+	assert.True(t, s.IsFullNode())
+	assert.True(t, s.IsPrunedNode())
 }
