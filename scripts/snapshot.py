@@ -12,8 +12,8 @@
 # - `--data_path`: This argument specifies the path to the Pactus data folder to create snapshots.
 #    - Windows: `C:\Users\{user}\pactus\data`
 #    - Linux or Mac: `/home/{user}/pactus/data`
-# - `--compress`: This argument specifies the compression method based on your choice ['none', 'zip', 'tar'],
-# with 'none' being without compression.
+# - `--compress`: This argument specifies the compression method based on your choice ['zip', 'tar'],
+# default is zip.
 # - `--retention`: This argument sets the number of snapshots to keep.
 # - `--snapshot_path`: This argument sets a custom path for snapshots, with the default being the current
 # working directory of the script.
