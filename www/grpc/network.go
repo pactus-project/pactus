@@ -6,7 +6,6 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
-	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
@@ -25,14 +24,6 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 	_ *pactus.GetNodeInfoRequest,
 ) (*pactus.GetNodeInfoResponse, error) {
 	ps := s.sync.PeerSet()
-
-	services := []int32{}
-	servicesNames := []string{}
-
-	if s.sync.Services().IsFullNode() {
-		services = append(services, int32(service.FullNode))
-		servicesNames = append(servicesNames, "NETWORK")
-	}
 
 	clockOffset, err := s.sync.ClockOffset()
 	if err != nil {

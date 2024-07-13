@@ -28,7 +28,7 @@ func DefaultConfig() *Config {
 		Services:            service.New(service.PrunedNode),
 		BlockPerMessage:     60,
 		MaxSessions:         8,
-		LatestBlockInterval: 10 * 8640, // 10 days, same as default retention block in prune node
+		LatestBlockInterval: 10 * 8640, // 10 days, same as default retention blocks in prune node
 		Firewall:            firewall.DefaultConfig(),
 		LatestSupportingVer: version.Version{
 			Major: 1,
