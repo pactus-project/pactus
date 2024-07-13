@@ -63,10 +63,7 @@ type genesisData struct {
 }
 
 func (gen *Genesis) Hash() hash.Hash {
-	bs, err := cbor.Marshal(gen.data)
-	if err != nil {
-		return hash.UndefHash
-	}
+	bs, _ := cbor.Marshal(gen.data)
 
 	return hash.CalcHash(bs)
 }
