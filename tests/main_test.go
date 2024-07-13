@@ -82,7 +82,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_network"] = "info"
 		tConfigs[i].Logger.Levels["_pool"] = "info"
 		tConfigs[i].Sync.Firewall.BannedNets = make([]string, 0)
-		tConfigs[i].Sync.LatestBlockInterval = 10
+		tConfigs[i].Sync.BlockPerSession = 10
 		tConfigs[i].Network.EnableMdns = true
 		tConfigs[i].Network.EnableRelay = false
 		tConfigs[i].Network.DefaultBootstrapAddrStrings = []string{}

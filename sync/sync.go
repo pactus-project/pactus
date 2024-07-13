@@ -433,7 +433,9 @@ func (sync *synchronizer) updateBlockchain() {
 
 	sync.logger.Info("start syncing with the network",
 		"numOfBlocks", numOfBlocks, "height", downloadHeight)
-	if numOfBlocks > sync.config.LatestBlockInterval {
+
+	if numOfBlocks > sync.config.PruneWindow {
+		// Don't have blocks for mre than 10 days
 		sync.downloadBlocks(downloadHeight, true)
 	} else {
 		sync.downloadBlocks(downloadHeight, false)
@@ -445,7 +447,7 @@ func (sync *synchronizer) downloadBlocks(from uint32, onlyFullNodes bool) {
 	sync.logger.Debug("downloading blocks", "from", from)
 
 	for i := sync.peerSet.NumberOfSessions(); i < sync.config.MaxSessions; i++ {
-		count := sync.config.LatestBlockInterval
+		count := sync.config.BlockPerSession
 		sent := sync.sendBlockRequestToRandomPeer(from, count, onlyFullNodes)
 		if !sent {
 			return

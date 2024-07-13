@@ -16,20 +16,22 @@ type Config struct {
 
 	// Private configs
 	MaxSessions         int              `toml:"-"`
-	LatestBlockInterval uint32           `toml:"-"`
+	BlockPerSession     uint32           `toml:"-"`
 	BlockPerMessage     uint32           `toml:"-"`
+	PruneWindow         uint32           `toml:"-"`
 	LatestSupportingVer version.Version  `toml:"-"`
 	Services            service.Services `toml:"-"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		SessionTimeout:      time.Second * 10,
-		Services:            service.New(service.PrunedNode),
-		BlockPerMessage:     60,
-		MaxSessions:         8,
-		LatestBlockInterval: 10 * 8640, // 10 days, same as default retention blocks in prune node
-		Firewall:            firewall.DefaultConfig(),
+		SessionTimeout:  time.Second * 10,
+		Services:        service.New(service.PrunedNode),
+		MaxSessions:     8,
+		BlockPerSession: 720,
+		BlockPerMessage: 60,
+		PruneWindow:     86_400, // Default retention blocks in prune mode
+		Firewall:        firewall.DefaultConfig(),
 		LatestSupportingVer: version.Version{
 			Major: 1,
 			Minor: 1,
@@ -45,5 +47,5 @@ func (conf *Config) BasicCheck() error {
 
 func (conf *Config) CacheSize() int {
 	return util.LogScale(
-		int(conf.BlockPerMessage * conf.LatestBlockInterval))
+		int(conf.BlockPerMessage * conf.BlockPerSession))
 }
