@@ -1,8 +1,12 @@
 package network
 
 import (
+	"context"
 	"testing"
 
+	lp2pps "github.com/libp2p/go-libp2p-pubsub"
+	pubsubpb "github.com/libp2p/go-libp2p-pubsub/pb"
+	lp2pcore "github.com/libp2p/go-libp2p/core"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -47,4 +51,52 @@ func TestInvalidTopic(t *testing.T) {
 		InvalidTopicError{
 			TopicID: TopicID(-1),
 		})
+}
+
+func TestTopicValidator(t *testing.T) {
+	net := makeTestNetwork(t, testConfig(), nil)
+
+	selfID := net.host.ID()
+	propagate := false
+	validator := net.gossip.createValidator(TopicIDConsensus,
+		func(_ *GossipMessage) bool { return propagate })
+
+	tests := []struct {
+		name           string
+		peerID         lp2pcore.PeerID
+		propagate      bool
+		expectedResult lp2pps.ValidationResult
+	}{
+		{
+			name:           "Message from self",
+			propagate:      false,
+			peerID:         selfID,
+			expectedResult: lp2pps.ValidationAccept,
+		},
+		{
+			name:           "Message from other peer, should not propagate",
+			propagate:      false,
+			peerID:         "other-peerID",
+			expectedResult: lp2pps.ValidationIgnore,
+		},
+		{
+			name:           "Message from other peer, should propagate",
+			propagate:      true,
+			peerID:         "other-peerID",
+			expectedResult: lp2pps.ValidationAccept,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			msg := &lp2pps.Message{
+				Message: &pubsubpb.Message{
+					Data: []byte("some-data"),
+				},
+			}
+			propagate = tt.propagate
+			result := validator(context.Background(), tt.peerID, msg)
+			assert.Equal(t, tt.expectedResult, result)
+		})
+	}
 }
