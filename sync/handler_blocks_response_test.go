@@ -282,7 +282,7 @@ func TestSyncing(t *testing.T) {
 
 	// Perform block syncing
 	assert.Equal(t, uint32(11), td.syncAlice.config.BlockPerMessage)
-	assert.Equal(t, uint32(23), td.syncAlice.config.LatestBlockInterval)
+	assert.Equal(t, uint32(23), td.syncAlice.config.BlockPerSession)
 
 	shouldNotPublishMessageWithThisType(t, td.networkBob, message.TypeBlocksRequest)
 	shouldPublishBlockRequest(t, td.networkAlice, 1)

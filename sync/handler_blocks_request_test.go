@@ -53,30 +53,20 @@ func TestBlocksRequestMessages(t *testing.T) {
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
 			assert.Equal(t, message.ResponseCodeRejected, res.ResponseCode)
-			assert.Contains(t, res.Reason, "don't have requested block")
+			assert.Contains(t, res.Reason, "requested blocks from 32 exceed current height 31")
 		})
 
-		t.Run("Reject requests not within `LatestBlockInterval`", func(t *testing.T) {
-			msg := message.NewBlocksRequestMessage(sid, curHeight-config.LatestBlockInterval-1, 1)
+		t.Run("Request blocks more than `BlockPerSession`", func(t *testing.T) {
+			msg := message.NewBlocksRequestMessage(sid, 10, config.BlockPerSession+1)
 			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
 			assert.Equal(t, message.ResponseCodeRejected, res.ResponseCode)
-			assert.Contains(t, res.Reason, "the request height is not acceptable")
+			assert.Contains(t, res.Reason, "requested block range 10-33 exceeds the allowed 23 blocks per session")
 		})
 
-		t.Run("Request blocks more than `LatestBlockInterval`", func(t *testing.T) {
-			msg := message.NewBlocksRequestMessage(sid, 10, config.LatestBlockInterval+1)
-			td.receivingNewMessage(td.sync, msg, pid)
-
-			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
-			res := bdl.Message.(*message.BlocksResponseMessage)
-			assert.Equal(t, message.ResponseCodeRejected, res.ResponseCode)
-			assert.Contains(t, res.Reason, "too many blocks requested")
-		})
-
-		t.Run("Accept request within `LatestBlockInterval`", func(t *testing.T) {
+		t.Run("Accept request within `BlockPerSession`", func(t *testing.T) {
 			t.Run("Peer needs more block", func(t *testing.T) {
 				msg := message.NewBlocksRequestMessage(sid, curHeight-config.BlockPerMessage, config.BlockPerMessage)
 				td.receivingNewMessage(td.sync, msg, pid)
