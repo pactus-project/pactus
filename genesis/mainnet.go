@@ -9,10 +9,8 @@ import (
 var mainnetJSON []byte
 
 func MainnetGenesis() *Genesis {
-	var gen Genesis
-	if err := json.Unmarshal(mainnetJSON, &gen); err != nil {
-		panic(err)
-	}
+	gen := new(Genesis)
+	_ = json.Unmarshal(mainnetJSON, &gen)
 
-	return &gen
+	return gen
 }

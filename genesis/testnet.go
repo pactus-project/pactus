@@ -9,10 +9,8 @@ import (
 var testnetJSON []byte
 
 func TestnetGenesis() *Genesis {
-	var gen Genesis
-	if err := json.Unmarshal(testnetJSON, &gen); err != nil {
-		panic(err)
-	}
+	gen := new(Genesis)
+	_ = json.Unmarshal(testnetJSON, &gen)
 
-	return &gen
+	return gen
 }
