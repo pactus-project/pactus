@@ -806,20 +806,6 @@ pub struct GetNetworkInfoResponse {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetNodeInfoRequest {
 }
-/// Response message containing information about the node's connections.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ConnectionInfo {
-    /// Total number of connections.
-    #[prost(uint64, tag="1")]
-    pub connections: u64,
-    /// Number of inbound connections.
-    #[prost(uint64, tag="2")]
-    pub inbound_connections: u64,
-    /// Number of outbound connections.
-    #[prost(uint64, tag="3")]
-    pub outbound_connections: u64,
-}
 /// Response message containing information about a specific node in the network.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -851,11 +837,17 @@ pub struct GetNodeInfoResponse {
     /// List of protocols supported by the node.
     #[prost(string, repeated, tag="9")]
     pub protocols: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    /// Type of node pruned or full.
+    #[prost(bool, tag="10")]
+    pub is_pruned: bool,
+    /// The height of pruning.
+    #[prost(int32, tag="11")]
+    pub pruning_height: i32,
     /// Clock offset of the node.
-    #[prost(double, tag="13")]
+    #[prost(double, tag="12")]
     pub clock_offset: f64,
     /// Information about the node's connections.
-    #[prost(message, optional, tag="14")]
+    #[prost(message, optional, tag="13")]
     pub connection_info: ::core::option::Option<ConnectionInfo>,
 }
 /// Information about a peer in the network.
@@ -922,6 +914,20 @@ pub struct PeerInfo {
     /// Completed download sessions with the peer.
     #[prost(int32, tag="20")]
     pub completed_sessions: i32,
+}
+/// Response message containing information about the node's connections.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ConnectionInfo {
+    /// Total number of connections.
+    #[prost(uint64, tag="1")]
+    pub connections: u64,
+    /// Number of inbound connections.
+    #[prost(uint64, tag="2")]
+    pub inbound_connections: u64,
+    /// Number of outbound connections.
+    #[prost(uint64, tag="3")]
+    pub outbound_connections: u64,
 }
 /// Request message for sign message with private key.
 #[allow(clippy::derive_partial_eq_without_eq)]

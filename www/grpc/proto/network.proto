@@ -41,16 +41,6 @@ message GetNetworkInfoResponse {
 // network.
 message GetNodeInfoRequest {}
 
-// Response message containing information about the node's connections.
-message ConnectionInfo {
-  // Total number of connections.
-  uint64 connections = 1;
-  // Number of inbound connections.
-  uint64 inbound_connections = 2;
-  // Number of outbound connections.
-  uint64 outbound_connections = 3;
-}
-
 // Response message containing information about a specific node in the network.
 message GetNodeInfoResponse {
   // Moniker of the node.
@@ -71,10 +61,14 @@ message GetNodeInfoResponse {
   repeated string local_addrs = 8;
   // List of protocols supported by the node.
   repeated string protocols = 9;
+  // Type of node pruned or full.
+  bool is_pruned = 10;
+  // The height of pruning.
+  int32 pruning_height = 11;
   // Clock offset of the node.
-  double clock_offset = 13;
+  double clock_offset = 12;
   // Information about the node's connections.
-  ConnectionInfo connection_info = 14;
+  ConnectionInfo connection_info = 13;
 }
 
 // Information about a peer in the network.
@@ -119,4 +113,14 @@ message PeerInfo {
   int32 total_sessions = 19;
   // Completed download sessions with the peer.
   int32 completed_sessions = 20;
+}
+
+// Response message containing information about the node's connections.
+message ConnectionInfo {
+  // Total number of connections.
+  uint64 connections = 1;
+  // Number of inbound connections.
+  uint64 inbound_connections = 2;
+  // Number of outbound connections.
+  uint64 outbound_connections = 3;
 }

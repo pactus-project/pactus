@@ -2390,6 +2390,20 @@ Message has no fields.
     </td>
   </tr>
      <tr>
+    <td class="fw-bold">is_pruned</td>
+    <td> bool</td>
+    <td>
+    Type of node pruned or full.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">pruning_height</td>
+    <td> int32</td>
+    <td>
+    The height of pruning.
+    </td>
+  </tr>
+     <tr>
     <td class="fw-bold">clock_offset</td>
     <td> double</td>
     <td>

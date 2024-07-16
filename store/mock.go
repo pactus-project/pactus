@@ -297,3 +297,7 @@ func (*MockStore) Prune(_ func(_ bool, _ uint32) bool) error {
 func (*MockStore) IsPruned() bool {
 	return false
 }
+
+func (*MockStore) RetentionBlocks() uint32 {
+	return 1
+}

@@ -3003,687 +3003,6 @@ public final class NetworkOuterClass {
 
   }
 
-  public interface ConnectionInfoOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:pactus.ConnectionInfo)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <pre>
-     * Total number of connections.
-     * </pre>
-     *
-     * <code>uint64 connections = 1 [json_name = "connections"];</code>
-     * @return The connections.
-     */
-    long getConnections();
-
-    /**
-     * <pre>
-     * Number of inbound connections.
-     * </pre>
-     *
-     * <code>uint64 inbound_connections = 2 [json_name = "inboundConnections"];</code>
-     * @return The inboundConnections.
-     */
-    long getInboundConnections();
-
-    /**
-     * <pre>
-     * Number of outbound connections.
-     * </pre>
-     *
-     * <code>uint64 outbound_connections = 3 [json_name = "outboundConnections"];</code>
-     * @return The outboundConnections.
-     */
-    long getOutboundConnections();
-  }
-  /**
-   * <pre>
-   * Response message containing information about the node's connections.
-   * </pre>
-   *
-   * Protobuf type {@code pactus.ConnectionInfo}
-   */
-  public static final class ConnectionInfo extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:pactus.ConnectionInfo)
-      ConnectionInfoOrBuilder {
-  private static final long serialVersionUID = 0L;
-    // Use ConnectionInfo.newBuilder() to construct.
-    private ConnectionInfo(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private ConnectionInfo() {
-    }
-
-    @java.lang.Override
-    @SuppressWarnings({"unused"})
-    protected java.lang.Object newInstance(
-        UnusedPrivateParameter unused) {
-      return new ConnectionInfo();
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return this.unknownFields;
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return pactus.network.NetworkOuterClass.internal_static_pactus_ConnectionInfo_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return pactus.network.NetworkOuterClass.internal_static_pactus_ConnectionInfo_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              pactus.network.NetworkOuterClass.ConnectionInfo.class, pactus.network.NetworkOuterClass.ConnectionInfo.Builder.class);
-    }
-
-    public static final int CONNECTIONS_FIELD_NUMBER = 1;
-    private long connections_;
-    /**
-     * <pre>
-     * Total number of connections.
-     * </pre>
-     *
-     * <code>uint64 connections = 1 [json_name = "connections"];</code>
-     * @return The connections.
-     */
-    @java.lang.Override
-    public long getConnections() {
-      return connections_;
-    }
-
-    public static final int INBOUND_CONNECTIONS_FIELD_NUMBER = 2;
-    private long inboundConnections_;
-    /**
-     * <pre>
-     * Number of inbound connections.
-     * </pre>
-     *
-     * <code>uint64 inbound_connections = 2 [json_name = "inboundConnections"];</code>
-     * @return The inboundConnections.
-     */
-    @java.lang.Override
-    public long getInboundConnections() {
-      return inboundConnections_;
-    }
-
-    public static final int OUTBOUND_CONNECTIONS_FIELD_NUMBER = 3;
-    private long outboundConnections_;
-    /**
-     * <pre>
-     * Number of outbound connections.
-     * </pre>
-     *
-     * <code>uint64 outbound_connections = 3 [json_name = "outboundConnections"];</code>
-     * @return The outboundConnections.
-     */
-    @java.lang.Override
-    public long getOutboundConnections() {
-      return outboundConnections_;
-    }
-
-    private byte memoizedIsInitialized = -1;
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (connections_ != 0L) {
-        output.writeUInt64(1, connections_);
-      }
-      if (inboundConnections_ != 0L) {
-        output.writeUInt64(2, inboundConnections_);
-      }
-      if (outboundConnections_ != 0L) {
-        output.writeUInt64(3, outboundConnections_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (connections_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeUInt64Size(1, connections_);
-      }
-      if (inboundConnections_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeUInt64Size(2, inboundConnections_);
-      }
-      if (outboundConnections_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeUInt64Size(3, outboundConnections_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof pactus.network.NetworkOuterClass.ConnectionInfo)) {
-        return super.equals(obj);
-      }
-      pactus.network.NetworkOuterClass.ConnectionInfo other = (pactus.network.NetworkOuterClass.ConnectionInfo) obj;
-
-      if (getConnections()
-          != other.getConnections()) return false;
-      if (getInboundConnections()
-          != other.getInboundConnections()) return false;
-      if (getOutboundConnections()
-          != other.getOutboundConnections()) return false;
-      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + CONNECTIONS_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getConnections());
-      hash = (37 * hash) + INBOUND_CONNECTIONS_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getInboundConnections());
-      hash = (37 * hash) + OUTBOUND_CONNECTIONS_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getOutboundConnections());
-      hash = (29 * hash) + getUnknownFields().hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static pactus.network.NetworkOuterClass.ConnectionInfo parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static pactus.network.NetworkOuterClass.ConnectionInfo parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(pactus.network.NetworkOuterClass.ConnectionInfo prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * <pre>
-     * Response message containing information about the node's connections.
-     * </pre>
-     *
-     * Protobuf type {@code pactus.ConnectionInfo}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:pactus.ConnectionInfo)
-        pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return pactus.network.NetworkOuterClass.internal_static_pactus_ConnectionInfo_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return pactus.network.NetworkOuterClass.internal_static_pactus_ConnectionInfo_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                pactus.network.NetworkOuterClass.ConnectionInfo.class, pactus.network.NetworkOuterClass.ConnectionInfo.Builder.class);
-      }
-
-      // Construct using pactus.network.NetworkOuterClass.ConnectionInfo.newBuilder()
-      private Builder() {
-
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-
-      }
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        connections_ = 0L;
-
-        inboundConnections_ = 0L;
-
-        outboundConnections_ = 0L;
-
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return pactus.network.NetworkOuterClass.internal_static_pactus_ConnectionInfo_descriptor;
-      }
-
-      @java.lang.Override
-      public pactus.network.NetworkOuterClass.ConnectionInfo getDefaultInstanceForType() {
-        return pactus.network.NetworkOuterClass.ConnectionInfo.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public pactus.network.NetworkOuterClass.ConnectionInfo build() {
-        pactus.network.NetworkOuterClass.ConnectionInfo result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public pactus.network.NetworkOuterClass.ConnectionInfo buildPartial() {
-        pactus.network.NetworkOuterClass.ConnectionInfo result = new pactus.network.NetworkOuterClass.ConnectionInfo(this);
-        result.connections_ = connections_;
-        result.inboundConnections_ = inboundConnections_;
-        result.outboundConnections_ = outboundConnections_;
-        onBuilt();
-        return result;
-      }
-
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
-      }
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.setField(field, value);
-      }
-      @java.lang.Override
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-      @java.lang.Override
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.network.NetworkOuterClass.ConnectionInfo) {
-          return mergeFrom((pactus.network.NetworkOuterClass.ConnectionInfo)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(pactus.network.NetworkOuterClass.ConnectionInfo other) {
-        if (other == pactus.network.NetworkOuterClass.ConnectionInfo.getDefaultInstance()) return this;
-        if (other.getConnections() != 0L) {
-          setConnections(other.getConnections());
-        }
-        if (other.getInboundConnections() != 0L) {
-          setInboundConnections(other.getInboundConnections());
-        }
-        if (other.getOutboundConnections() != 0L) {
-          setOutboundConnections(other.getOutboundConnections());
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8: {
-                connections_ = input.readUInt64();
-
-                break;
-              } // case 8
-              case 16: {
-                inboundConnections_ = input.readUInt64();
-
-                break;
-              } // case 16
-              case 24: {
-                outboundConnections_ = input.readUInt64();
-
-                break;
-              } // case 24
-              default: {
-                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
-                  done = true; // was an endgroup tag
-                }
-                break;
-              } // default:
-            } // switch (tag)
-          } // while (!done)
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.unwrapIOException();
-        } finally {
-          onChanged();
-        } // finally
-        return this;
-      }
-
-      private long connections_ ;
-      /**
-       * <pre>
-       * Total number of connections.
-       * </pre>
-       *
-       * <code>uint64 connections = 1 [json_name = "connections"];</code>
-       * @return The connections.
-       */
-      @java.lang.Override
-      public long getConnections() {
-        return connections_;
-      }
-      /**
-       * <pre>
-       * Total number of connections.
-       * </pre>
-       *
-       * <code>uint64 connections = 1 [json_name = "connections"];</code>
-       * @param value The connections to set.
-       * @return This builder for chaining.
-       */
-      public Builder setConnections(long value) {
-        
-        connections_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Total number of connections.
-       * </pre>
-       *
-       * <code>uint64 connections = 1 [json_name = "connections"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearConnections() {
-        
-        connections_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private long inboundConnections_ ;
-      /**
-       * <pre>
-       * Number of inbound connections.
-       * </pre>
-       *
-       * <code>uint64 inbound_connections = 2 [json_name = "inboundConnections"];</code>
-       * @return The inboundConnections.
-       */
-      @java.lang.Override
-      public long getInboundConnections() {
-        return inboundConnections_;
-      }
-      /**
-       * <pre>
-       * Number of inbound connections.
-       * </pre>
-       *
-       * <code>uint64 inbound_connections = 2 [json_name = "inboundConnections"];</code>
-       * @param value The inboundConnections to set.
-       * @return This builder for chaining.
-       */
-      public Builder setInboundConnections(long value) {
-        
-        inboundConnections_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Number of inbound connections.
-       * </pre>
-       *
-       * <code>uint64 inbound_connections = 2 [json_name = "inboundConnections"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearInboundConnections() {
-        
-        inboundConnections_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private long outboundConnections_ ;
-      /**
-       * <pre>
-       * Number of outbound connections.
-       * </pre>
-       *
-       * <code>uint64 outbound_connections = 3 [json_name = "outboundConnections"];</code>
-       * @return The outboundConnections.
-       */
-      @java.lang.Override
-      public long getOutboundConnections() {
-        return outboundConnections_;
-      }
-      /**
-       * <pre>
-       * Number of outbound connections.
-       * </pre>
-       *
-       * <code>uint64 outbound_connections = 3 [json_name = "outboundConnections"];</code>
-       * @param value The outboundConnections to set.
-       * @return This builder for chaining.
-       */
-      public Builder setOutboundConnections(long value) {
-        
-        outboundConnections_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Number of outbound connections.
-       * </pre>
-       *
-       * <code>uint64 outbound_connections = 3 [json_name = "outboundConnections"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearOutboundConnections() {
-        
-        outboundConnections_ = 0L;
-        onChanged();
-        return this;
-      }
-      @java.lang.Override
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
-      }
-
-      @java.lang.Override
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:pactus.ConnectionInfo)
-    }
-
-    // @@protoc_insertion_point(class_scope:pactus.ConnectionInfo)
-    private static final pactus.network.NetworkOuterClass.ConnectionInfo DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new pactus.network.NetworkOuterClass.ConnectionInfo();
-    }
-
-    public static pactus.network.NetworkOuterClass.ConnectionInfo getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<ConnectionInfo>
-        PARSER = new com.google.protobuf.AbstractParser<ConnectionInfo>() {
-      @java.lang.Override
-      public ConnectionInfo parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        Builder builder = newBuilder();
-        try {
-          builder.mergeFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(builder.buildPartial());
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(builder.buildPartial());
-        }
-        return builder.buildPartial();
-      }
-    };
-
-    public static com.google.protobuf.Parser<ConnectionInfo> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<ConnectionInfo> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public pactus.network.NetworkOuterClass.ConnectionInfo getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
   public interface GetNodeInfoResponseOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.GetNodeInfoResponse)
       com.google.protobuf.MessageOrBuilder {
@@ -3892,10 +3211,30 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
+     * Type of node pruned or full.
+     * </pre>
+     *
+     * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
+     * @return The isPruned.
+     */
+    boolean getIsPruned();
+
+    /**
+     * <pre>
+     * The height of pruning.
+     * </pre>
+     *
+     * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
+     * @return The pruningHeight.
+     */
+    int getPruningHeight();
+
+    /**
+     * <pre>
      * Clock offset of the node.
      * </pre>
      *
-     * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
+     * <code>double clock_offset = 12 [json_name = "clockOffset"];</code>
      * @return The clockOffset.
      */
     double getClockOffset();
@@ -3905,7 +3244,7 @@ public final class NetworkOuterClass {
      * Information about the node's connections.
      * </pre>
      *
-     * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+     * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
      * @return Whether the connectionInfo field is set.
      */
     boolean hasConnectionInfo();
@@ -3914,7 +3253,7 @@ public final class NetworkOuterClass {
      * Information about the node's connections.
      * </pre>
      *
-     * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+     * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
      * @return The connectionInfo.
      */
     pactus.network.NetworkOuterClass.ConnectionInfo getConnectionInfo();
@@ -3923,7 +3262,7 @@ public final class NetworkOuterClass {
      * Information about the node's connections.
      * </pre>
      *
-     * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+     * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
      */
     pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder getConnectionInfoOrBuilder();
   }
@@ -4340,14 +3679,44 @@ public final class NetworkOuterClass {
       return protocols_.getByteString(index);
     }
 
-    public static final int CLOCK_OFFSET_FIELD_NUMBER = 13;
+    public static final int IS_PRUNED_FIELD_NUMBER = 10;
+    private boolean isPruned_;
+    /**
+     * <pre>
+     * Type of node pruned or full.
+     * </pre>
+     *
+     * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
+     * @return The isPruned.
+     */
+    @java.lang.Override
+    public boolean getIsPruned() {
+      return isPruned_;
+    }
+
+    public static final int PRUNING_HEIGHT_FIELD_NUMBER = 11;
+    private int pruningHeight_;
+    /**
+     * <pre>
+     * The height of pruning.
+     * </pre>
+     *
+     * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
+     * @return The pruningHeight.
+     */
+    @java.lang.Override
+    public int getPruningHeight() {
+      return pruningHeight_;
+    }
+
+    public static final int CLOCK_OFFSET_FIELD_NUMBER = 12;
     private double clockOffset_;
     /**
      * <pre>
      * Clock offset of the node.
      * </pre>
      *
-     * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
+     * <code>double clock_offset = 12 [json_name = "clockOffset"];</code>
      * @return The clockOffset.
      */
     @java.lang.Override
@@ -4355,14 +3724,14 @@ public final class NetworkOuterClass {
       return clockOffset_;
     }
 
-    public static final int CONNECTION_INFO_FIELD_NUMBER = 14;
+    public static final int CONNECTION_INFO_FIELD_NUMBER = 13;
     private pactus.network.NetworkOuterClass.ConnectionInfo connectionInfo_;
     /**
      * <pre>
      * Information about the node's connections.
      * </pre>
      *
-     * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+     * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
      * @return Whether the connectionInfo field is set.
      */
     @java.lang.Override
@@ -4374,7 +3743,7 @@ public final class NetworkOuterClass {
      * Information about the node's connections.
      * </pre>
      *
-     * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+     * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
      * @return The connectionInfo.
      */
     @java.lang.Override
@@ -4386,7 +3755,7 @@ public final class NetworkOuterClass {
      * Information about the node's connections.
      * </pre>
      *
-     * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+     * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
      */
     @java.lang.Override
     public pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder getConnectionInfoOrBuilder() {
@@ -4434,11 +3803,17 @@ public final class NetworkOuterClass {
       for (int i = 0; i < protocols_.size(); i++) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 9, protocols_.getRaw(i));
       }
+      if (isPruned_ != false) {
+        output.writeBool(10, isPruned_);
+      }
+      if (pruningHeight_ != 0) {
+        output.writeInt32(11, pruningHeight_);
+      }
       if (java.lang.Double.doubleToRawLongBits(clockOffset_) != 0) {
-        output.writeDouble(13, clockOffset_);
+        output.writeDouble(12, clockOffset_);
       }
       if (connectionInfo_ != null) {
-        output.writeMessage(14, getConnectionInfo());
+        output.writeMessage(13, getConnectionInfo());
       }
       getUnknownFields().writeTo(output);
     }
@@ -4488,13 +3863,21 @@ public final class NetworkOuterClass {
         size += dataSize;
         size += 1 * getProtocolsList().size();
       }
+      if (isPruned_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(10, isPruned_);
+      }
+      if (pruningHeight_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(11, pruningHeight_);
+      }
       if (java.lang.Double.doubleToRawLongBits(clockOffset_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(13, clockOffset_);
+          .computeDoubleSize(12, clockOffset_);
       }
       if (connectionInfo_ != null) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(14, getConnectionInfo());
+          .computeMessageSize(13, getConnectionInfo());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -4529,6 +3912,10 @@ public final class NetworkOuterClass {
           .equals(other.getLocalAddrsList())) return false;
       if (!getProtocolsList()
           .equals(other.getProtocolsList())) return false;
+      if (getIsPruned()
+          != other.getIsPruned()) return false;
+      if (getPruningHeight()
+          != other.getPruningHeight()) return false;
       if (java.lang.Double.doubleToLongBits(getClockOffset())
           != java.lang.Double.doubleToLongBits(
               other.getClockOffset())) return false;
@@ -4571,6 +3958,11 @@ public final class NetworkOuterClass {
         hash = (37 * hash) + PROTOCOLS_FIELD_NUMBER;
         hash = (53 * hash) + getProtocolsList().hashCode();
       }
+      hash = (37 * hash) + IS_PRUNED_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getIsPruned());
+      hash = (37 * hash) + PRUNING_HEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getPruningHeight();
       hash = (37 * hash) + CLOCK_OFFSET_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           java.lang.Double.doubleToLongBits(getClockOffset()));
@@ -4728,6 +4120,10 @@ public final class NetworkOuterClass {
         bitField0_ = (bitField0_ & ~0x00000001);
         protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
+        isPruned_ = false;
+
+        pruningHeight_ = 0;
+
         clockOffset_ = 0D;
 
         if (connectionInfoBuilder_ == null) {
@@ -4780,6 +4176,8 @@ public final class NetworkOuterClass {
           bitField0_ = (bitField0_ & ~0x00000002);
         }
         result.protocols_ = protocols_;
+        result.isPruned_ = isPruned_;
+        result.pruningHeight_ = pruningHeight_;
         result.clockOffset_ = clockOffset_;
         if (connectionInfoBuilder_ == null) {
           result.connectionInfo_ = connectionInfo_;
@@ -4880,6 +4278,12 @@ public final class NetworkOuterClass {
           }
           onChanged();
         }
+        if (other.getIsPruned() != false) {
+          setIsPruned(other.getIsPruned());
+        }
+        if (other.getPruningHeight() != 0) {
+          setPruningHeight(other.getPruningHeight());
+        }
         if (other.getClockOffset() != 0D) {
           setClockOffset(other.getClockOffset());
         }
@@ -4959,18 +4363,28 @@ public final class NetworkOuterClass {
                 protocols_.add(s);
                 break;
               } // case 74
-              case 105: {
+              case 80: {
+                isPruned_ = input.readBool();
+
+                break;
+              } // case 80
+              case 88: {
+                pruningHeight_ = input.readInt32();
+
+                break;
+              } // case 88
+              case 97: {
                 clockOffset_ = input.readDouble();
 
                 break;
-              } // case 105
-              case 114: {
+              } // case 97
+              case 106: {
                 input.readMessage(
                     getConnectionInfoFieldBuilder().getBuilder(),
                     extensionRegistry);
 
                 break;
-              } // case 114
+              } // case 106
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -5846,13 +5260,99 @@ public final class NetworkOuterClass {
         return this;
       }
 
+      private boolean isPruned_ ;
+      /**
+       * <pre>
+       * Type of node pruned or full.
+       * </pre>
+       *
+       * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
+       * @return The isPruned.
+       */
+      @java.lang.Override
+      public boolean getIsPruned() {
+        return isPruned_;
+      }
+      /**
+       * <pre>
+       * Type of node pruned or full.
+       * </pre>
+       *
+       * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
+       * @param value The isPruned to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsPruned(boolean value) {
+        
+        isPruned_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Type of node pruned or full.
+       * </pre>
+       *
+       * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsPruned() {
+        
+        isPruned_ = false;
+        onChanged();
+        return this;
+      }
+
+      private int pruningHeight_ ;
+      /**
+       * <pre>
+       * The height of pruning.
+       * </pre>
+       *
+       * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
+       * @return The pruningHeight.
+       */
+      @java.lang.Override
+      public int getPruningHeight() {
+        return pruningHeight_;
+      }
+      /**
+       * <pre>
+       * The height of pruning.
+       * </pre>
+       *
+       * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
+       * @param value The pruningHeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPruningHeight(int value) {
+        
+        pruningHeight_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The height of pruning.
+       * </pre>
+       *
+       * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPruningHeight() {
+        
+        pruningHeight_ = 0;
+        onChanged();
+        return this;
+      }
+
       private double clockOffset_ ;
       /**
        * <pre>
        * Clock offset of the node.
        * </pre>
        *
-       * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
+       * <code>double clock_offset = 12 [json_name = "clockOffset"];</code>
        * @return The clockOffset.
        */
       @java.lang.Override
@@ -5864,7 +5364,7 @@ public final class NetworkOuterClass {
        * Clock offset of the node.
        * </pre>
        *
-       * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
+       * <code>double clock_offset = 12 [json_name = "clockOffset"];</code>
        * @param value The clockOffset to set.
        * @return This builder for chaining.
        */
@@ -5879,7 +5379,7 @@ public final class NetworkOuterClass {
        * Clock offset of the node.
        * </pre>
        *
-       * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
+       * <code>double clock_offset = 12 [json_name = "clockOffset"];</code>
        * @return This builder for chaining.
        */
       public Builder clearClockOffset() {
@@ -5897,7 +5397,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
        * @return Whether the connectionInfo field is set.
        */
       public boolean hasConnectionInfo() {
@@ -5908,7 +5408,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
        * @return The connectionInfo.
        */
       public pactus.network.NetworkOuterClass.ConnectionInfo getConnectionInfo() {
@@ -5923,7 +5423,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
        */
       public Builder setConnectionInfo(pactus.network.NetworkOuterClass.ConnectionInfo value) {
         if (connectionInfoBuilder_ == null) {
@@ -5943,7 +5443,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
        */
       public Builder setConnectionInfo(
           pactus.network.NetworkOuterClass.ConnectionInfo.Builder builderForValue) {
@@ -5961,7 +5461,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
        */
       public Builder mergeConnectionInfo(pactus.network.NetworkOuterClass.ConnectionInfo value) {
         if (connectionInfoBuilder_ == null) {
@@ -5983,7 +5483,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
        */
       public Builder clearConnectionInfo() {
         if (connectionInfoBuilder_ == null) {
@@ -6001,7 +5501,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
        */
       public pactus.network.NetworkOuterClass.ConnectionInfo.Builder getConnectionInfoBuilder() {
         
@@ -6013,7 +5513,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
        */
       public pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder getConnectionInfoOrBuilder() {
         if (connectionInfoBuilder_ != null) {
@@ -6028,7 +5528,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.network.NetworkOuterClass.ConnectionInfo, pactus.network.NetworkOuterClass.ConnectionInfo.Builder, pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder> 
@@ -10000,6 +9500,687 @@ public final class NetworkOuterClass {
 
   }
 
+  public interface ConnectionInfoOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.ConnectionInfo)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * Total number of connections.
+     * </pre>
+     *
+     * <code>uint64 connections = 1 [json_name = "connections"];</code>
+     * @return The connections.
+     */
+    long getConnections();
+
+    /**
+     * <pre>
+     * Number of inbound connections.
+     * </pre>
+     *
+     * <code>uint64 inbound_connections = 2 [json_name = "inboundConnections"];</code>
+     * @return The inboundConnections.
+     */
+    long getInboundConnections();
+
+    /**
+     * <pre>
+     * Number of outbound connections.
+     * </pre>
+     *
+     * <code>uint64 outbound_connections = 3 [json_name = "outboundConnections"];</code>
+     * @return The outboundConnections.
+     */
+    long getOutboundConnections();
+  }
+  /**
+   * <pre>
+   * Response message containing information about the node's connections.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.ConnectionInfo}
+   */
+  public static final class ConnectionInfo extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.ConnectionInfo)
+      ConnectionInfoOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ConnectionInfo.newBuilder() to construct.
+    private ConnectionInfo(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ConnectionInfo() {
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ConnectionInfo();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.network.NetworkOuterClass.internal_static_pactus_ConnectionInfo_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.network.NetworkOuterClass.internal_static_pactus_ConnectionInfo_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.network.NetworkOuterClass.ConnectionInfo.class, pactus.network.NetworkOuterClass.ConnectionInfo.Builder.class);
+    }
+
+    public static final int CONNECTIONS_FIELD_NUMBER = 1;
+    private long connections_;
+    /**
+     * <pre>
+     * Total number of connections.
+     * </pre>
+     *
+     * <code>uint64 connections = 1 [json_name = "connections"];</code>
+     * @return The connections.
+     */
+    @java.lang.Override
+    public long getConnections() {
+      return connections_;
+    }
+
+    public static final int INBOUND_CONNECTIONS_FIELD_NUMBER = 2;
+    private long inboundConnections_;
+    /**
+     * <pre>
+     * Number of inbound connections.
+     * </pre>
+     *
+     * <code>uint64 inbound_connections = 2 [json_name = "inboundConnections"];</code>
+     * @return The inboundConnections.
+     */
+    @java.lang.Override
+    public long getInboundConnections() {
+      return inboundConnections_;
+    }
+
+    public static final int OUTBOUND_CONNECTIONS_FIELD_NUMBER = 3;
+    private long outboundConnections_;
+    /**
+     * <pre>
+     * Number of outbound connections.
+     * </pre>
+     *
+     * <code>uint64 outbound_connections = 3 [json_name = "outboundConnections"];</code>
+     * @return The outboundConnections.
+     */
+    @java.lang.Override
+    public long getOutboundConnections() {
+      return outboundConnections_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (connections_ != 0L) {
+        output.writeUInt64(1, connections_);
+      }
+      if (inboundConnections_ != 0L) {
+        output.writeUInt64(2, inboundConnections_);
+      }
+      if (outboundConnections_ != 0L) {
+        output.writeUInt64(3, outboundConnections_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (connections_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(1, connections_);
+      }
+      if (inboundConnections_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(2, inboundConnections_);
+      }
+      if (outboundConnections_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(3, outboundConnections_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.network.NetworkOuterClass.ConnectionInfo)) {
+        return super.equals(obj);
+      }
+      pactus.network.NetworkOuterClass.ConnectionInfo other = (pactus.network.NetworkOuterClass.ConnectionInfo) obj;
+
+      if (getConnections()
+          != other.getConnections()) return false;
+      if (getInboundConnections()
+          != other.getInboundConnections()) return false;
+      if (getOutboundConnections()
+          != other.getOutboundConnections()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + CONNECTIONS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getConnections());
+      hash = (37 * hash) + INBOUND_CONNECTIONS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getInboundConnections());
+      hash = (37 * hash) + OUTBOUND_CONNECTIONS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getOutboundConnections());
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.ConnectionInfo parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.network.NetworkOuterClass.ConnectionInfo parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.network.NetworkOuterClass.ConnectionInfo parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.network.NetworkOuterClass.ConnectionInfo prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Response message containing information about the node's connections.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.ConnectionInfo}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.ConnectionInfo)
+        pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.network.NetworkOuterClass.internal_static_pactus_ConnectionInfo_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.network.NetworkOuterClass.internal_static_pactus_ConnectionInfo_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.network.NetworkOuterClass.ConnectionInfo.class, pactus.network.NetworkOuterClass.ConnectionInfo.Builder.class);
+      }
+
+      // Construct using pactus.network.NetworkOuterClass.ConnectionInfo.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        connections_ = 0L;
+
+        inboundConnections_ = 0L;
+
+        outboundConnections_ = 0L;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.network.NetworkOuterClass.internal_static_pactus_ConnectionInfo_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.network.NetworkOuterClass.ConnectionInfo getDefaultInstanceForType() {
+        return pactus.network.NetworkOuterClass.ConnectionInfo.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.network.NetworkOuterClass.ConnectionInfo build() {
+        pactus.network.NetworkOuterClass.ConnectionInfo result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.network.NetworkOuterClass.ConnectionInfo buildPartial() {
+        pactus.network.NetworkOuterClass.ConnectionInfo result = new pactus.network.NetworkOuterClass.ConnectionInfo(this);
+        result.connections_ = connections_;
+        result.inboundConnections_ = inboundConnections_;
+        result.outboundConnections_ = outboundConnections_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.network.NetworkOuterClass.ConnectionInfo) {
+          return mergeFrom((pactus.network.NetworkOuterClass.ConnectionInfo)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.network.NetworkOuterClass.ConnectionInfo other) {
+        if (other == pactus.network.NetworkOuterClass.ConnectionInfo.getDefaultInstance()) return this;
+        if (other.getConnections() != 0L) {
+          setConnections(other.getConnections());
+        }
+        if (other.getInboundConnections() != 0L) {
+          setInboundConnections(other.getInboundConnections());
+        }
+        if (other.getOutboundConnections() != 0L) {
+          setOutboundConnections(other.getOutboundConnections());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                connections_ = input.readUInt64();
+
+                break;
+              } // case 8
+              case 16: {
+                inboundConnections_ = input.readUInt64();
+
+                break;
+              } // case 16
+              case 24: {
+                outboundConnections_ = input.readUInt64();
+
+                break;
+              } // case 24
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private long connections_ ;
+      /**
+       * <pre>
+       * Total number of connections.
+       * </pre>
+       *
+       * <code>uint64 connections = 1 [json_name = "connections"];</code>
+       * @return The connections.
+       */
+      @java.lang.Override
+      public long getConnections() {
+        return connections_;
+      }
+      /**
+       * <pre>
+       * Total number of connections.
+       * </pre>
+       *
+       * <code>uint64 connections = 1 [json_name = "connections"];</code>
+       * @param value The connections to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConnections(long value) {
+        
+        connections_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Total number of connections.
+       * </pre>
+       *
+       * <code>uint64 connections = 1 [json_name = "connections"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearConnections() {
+        
+        connections_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long inboundConnections_ ;
+      /**
+       * <pre>
+       * Number of inbound connections.
+       * </pre>
+       *
+       * <code>uint64 inbound_connections = 2 [json_name = "inboundConnections"];</code>
+       * @return The inboundConnections.
+       */
+      @java.lang.Override
+      public long getInboundConnections() {
+        return inboundConnections_;
+      }
+      /**
+       * <pre>
+       * Number of inbound connections.
+       * </pre>
+       *
+       * <code>uint64 inbound_connections = 2 [json_name = "inboundConnections"];</code>
+       * @param value The inboundConnections to set.
+       * @return This builder for chaining.
+       */
+      public Builder setInboundConnections(long value) {
+        
+        inboundConnections_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Number of inbound connections.
+       * </pre>
+       *
+       * <code>uint64 inbound_connections = 2 [json_name = "inboundConnections"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearInboundConnections() {
+        
+        inboundConnections_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long outboundConnections_ ;
+      /**
+       * <pre>
+       * Number of outbound connections.
+       * </pre>
+       *
+       * <code>uint64 outbound_connections = 3 [json_name = "outboundConnections"];</code>
+       * @return The outboundConnections.
+       */
+      @java.lang.Override
+      public long getOutboundConnections() {
+        return outboundConnections_;
+      }
+      /**
+       * <pre>
+       * Number of outbound connections.
+       * </pre>
+       *
+       * <code>uint64 outbound_connections = 3 [json_name = "outboundConnections"];</code>
+       * @param value The outboundConnections to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOutboundConnections(long value) {
+        
+        outboundConnections_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Number of outbound connections.
+       * </pre>
+       *
+       * <code>uint64 outbound_connections = 3 [json_name = "outboundConnections"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearOutboundConnections() {
+        
+        outboundConnections_ = 0L;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.ConnectionInfo)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.ConnectionInfo)
+    private static final pactus.network.NetworkOuterClass.ConnectionInfo DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.network.NetworkOuterClass.ConnectionInfo();
+    }
+
+    public static pactus.network.NetworkOuterClass.ConnectionInfo getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ConnectionInfo>
+        PARSER = new com.google.protobuf.AbstractParser<ConnectionInfo>() {
+      @java.lang.Override
+      public ConnectionInfo parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<ConnectionInfo> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ConnectionInfo> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.network.NetworkOuterClass.ConnectionInfo getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_GetNetworkInfoRequest_descriptor;
   private static final 
@@ -10026,11 +10207,6 @@ public final class NetworkOuterClass {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_GetNodeInfoRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_pactus_ConnectionInfo_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_pactus_ConnectionInfo_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_GetNodeInfoResponse_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -10050,6 +10226,11 @@ public final class NetworkOuterClass {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_PeerInfo_ReceivedBytesEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_ConnectionInfo_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_ConnectionInfo_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -10075,49 +10256,51 @@ public final class NetworkOuterClass {
       "\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005" +
       "value\030\002 \001(\003R\005value:\0028\001\032@\n\022ReceivedBytesE" +
       "ntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005v" +
-      "alue:\0028\001\"\024\n\022GetNodeInfoRequest\"\226\001\n\016Conne" +
-      "ctionInfo\022 \n\013connections\030\001 \001(\004R\013connecti" +
-      "ons\022/\n\023inbound_connections\030\002 \001(\004R\022inboun" +
-      "dConnections\0221\n\024outbound_connections\030\003 \001" +
-      "(\004R\023outboundConnections\"\207\003\n\023GetNodeInfoR" +
-      "esponse\022\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005age" +
-      "nt\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\tR\006peerId" +
-      "\022\035\n\nstarted_at\030\004 \001(\004R\tstartedAt\022\"\n\014reach" +
-      "ability\030\005 \001(\tR\014reachability\022\032\n\010services\030" +
-      "\006 \001(\005R\010services\022%\n\016services_names\030\007 \001(\tR" +
-      "\rservicesNames\022\037\n\013local_addrs\030\010 \003(\tR\nloc" +
-      "alAddrs\022\034\n\tprotocols\030\t \003(\tR\tprotocols\022!\n" +
-      "\014clock_offset\030\r \001(\001R\013clockOffset\022?\n\017conn" +
-      "ection_info\030\016 \001(\0132\026.pactus.ConnectionInf" +
-      "oR\016connectionInfo\"\355\006\n\010PeerInfo\022\026\n\006status" +
-      "\030\001 \001(\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007moniker" +
-      "\022\024\n\005agent\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\tR" +
-      "\006peerId\022%\n\016consensus_keys\030\005 \003(\tR\rconsens" +
-      "usKeys\022/\n\023consensus_addresses\030\006 \003(\tR\022con" +
-      "sensusAddresses\022\032\n\010services\030\007 \001(\rR\010servi" +
-      "ces\022&\n\017last_block_hash\030\010 \001(\tR\rlastBlockH" +
-      "ash\022\026\n\006height\030\t \001(\rR\006height\022)\n\020received_" +
-      "bundles\030\n \001(\005R\017receivedBundles\022\'\n\017invali" +
-      "d_bundles\030\013 \001(\005R\016invalidBundles\022\033\n\tlast_" +
-      "sent\030\014 \001(\003R\010lastSent\022#\n\rlast_received\030\r " +
-      "\001(\003R\014lastReceived\022>\n\nsent_bytes\030\016 \003(\0132\037." +
-      "pactus.PeerInfo.SentBytesEntryR\tsentByte" +
-      "s\022J\n\016received_bytes\030\017 \003(\0132#.pactus.PeerI" +
-      "nfo.ReceivedBytesEntryR\rreceivedBytes\022\030\n" +
-      "\007address\030\020 \001(\tR\007address\022\034\n\tdirection\030\021 \001" +
-      "(\tR\tdirection\022\034\n\tprotocols\030\022 \003(\tR\tprotoc" +
-      "ols\022%\n\016total_sessions\030\023 \001(\005R\rtotalSessio" +
-      "ns\022-\n\022completed_sessions\030\024 \001(\005R\021complete" +
-      "dSessions\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005" +
-      "R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n\022Recei" +
-      "vedBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value" +
-      "\030\002 \001(\003R\005value:\0028\0012\242\001\n\007Network\022O\n\016GetNetw" +
-      "orkInfo\022\035.pactus.GetNetworkInfoRequest\032\036" +
-      ".pactus.GetNetworkInfoResponse\022F\n\013GetNod" +
-      "eInfo\022\032.pactus.GetNodeInfoRequest\032\033.pact" +
-      "us.GetNodeInfoResponseBB\n\016pactus.network" +
-      "Z0github.com/pactus-project/pactus/www/g" +
-      "rpc/pactusb\006proto3"
+      "alue:\0028\001\"\024\n\022GetNodeInfoRequest\"\313\003\n\023GetNo" +
+      "deInfoResponse\022\030\n\007moniker\030\001 \001(\tR\007moniker" +
+      "\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\tR" +
+      "\006peerId\022\035\n\nstarted_at\030\004 \001(\004R\tstartedAt\022\"" +
+      "\n\014reachability\030\005 \001(\tR\014reachability\022\032\n\010se" +
+      "rvices\030\006 \001(\005R\010services\022%\n\016services_names" +
+      "\030\007 \001(\tR\rservicesNames\022\037\n\013local_addrs\030\010 \003" +
+      "(\tR\nlocalAddrs\022\034\n\tprotocols\030\t \003(\tR\tproto" +
+      "cols\022\033\n\tis_pruned\030\n \001(\010R\010isPruned\022%\n\016pru" +
+      "ning_height\030\013 \001(\005R\rpruningHeight\022!\n\014cloc" +
+      "k_offset\030\014 \001(\001R\013clockOffset\022?\n\017connectio" +
+      "n_info\030\r \001(\0132\026.pactus.ConnectionInfoR\016co" +
+      "nnectionInfo\"\355\006\n\010PeerInfo\022\026\n\006status\030\001 \001(" +
+      "\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007moniker\022\024\n\005a" +
+      "gent\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\tR\006peer" +
+      "Id\022%\n\016consensus_keys\030\005 \003(\tR\rconsensusKey" +
+      "s\022/\n\023consensus_addresses\030\006 \003(\tR\022consensu" +
+      "sAddresses\022\032\n\010services\030\007 \001(\rR\010services\022&" +
+      "\n\017last_block_hash\030\010 \001(\tR\rlastBlockHash\022\026" +
+      "\n\006height\030\t \001(\rR\006height\022)\n\020received_bundl" +
+      "es\030\n \001(\005R\017receivedBundles\022\'\n\017invalid_bun" +
+      "dles\030\013 \001(\005R\016invalidBundles\022\033\n\tlast_sent\030" +
+      "\014 \001(\003R\010lastSent\022#\n\rlast_received\030\r \001(\003R\014" +
+      "lastReceived\022>\n\nsent_bytes\030\016 \003(\0132\037.pactu" +
+      "s.PeerInfo.SentBytesEntryR\tsentBytes\022J\n\016" +
+      "received_bytes\030\017 \003(\0132#.pactus.PeerInfo.R" +
+      "eceivedBytesEntryR\rreceivedBytes\022\030\n\007addr" +
+      "ess\030\020 \001(\tR\007address\022\034\n\tdirection\030\021 \001(\tR\td" +
+      "irection\022\034\n\tprotocols\030\022 \003(\tR\tprotocols\022%" +
+      "\n\016total_sessions\030\023 \001(\005R\rtotalSessions\022-\n" +
+      "\022completed_sessions\030\024 \001(\005R\021completedSess" +
+      "ions\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R\003key" +
+      "\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n\022ReceivedBy" +
+      "tesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(" +
+      "\003R\005value:\0028\001\"\226\001\n\016ConnectionInfo\022 \n\013conne" +
+      "ctions\030\001 \001(\004R\013connections\022/\n\023inbound_con" +
+      "nections\030\002 \001(\004R\022inboundConnections\0221\n\024ou" +
+      "tbound_connections\030\003 \001(\004R\023outboundConnec" +
+      "tions2\242\001\n\007Network\022O\n\016GetNetworkInfo\022\035.pa" +
+      "ctus.GetNetworkInfoRequest\032\036.pactus.GetN" +
+      "etworkInfoResponse\022F\n\013GetNodeInfo\022\032.pact" +
+      "us.GetNodeInfoRequest\032\033.pactus.GetNodeIn" +
+      "foResponseBB\n\016pactus.networkZ0github.com" +
+      "/pactus-project/pactus/www/grpc/pactusb\006" +
+      "proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -10153,20 +10336,14 @@ public final class NetworkOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNodeInfoRequest_descriptor,
         new java.lang.String[] { });
-    internal_static_pactus_ConnectionInfo_descriptor =
-      getDescriptor().getMessageTypes().get(3);
-    internal_static_pactus_ConnectionInfo_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_pactus_ConnectionInfo_descriptor,
-        new java.lang.String[] { "Connections", "InboundConnections", "OutboundConnections", });
     internal_static_pactus_GetNodeInfoResponse_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(3);
     internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNodeInfoResponse_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "LocalAddrs", "Protocols", "ClockOffset", "ConnectionInfo", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "LocalAddrs", "Protocols", "IsPruned", "PruningHeight", "ClockOffset", "ConnectionInfo", });
     internal_static_pactus_PeerInfo_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(4);
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
@@ -10183,6 +10360,12 @@ public final class NetworkOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_ReceivedBytesEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
+    internal_static_pactus_ConnectionInfo_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_pactus_ConnectionInfo_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_ConnectionInfo_descriptor,
+        new java.lang.String[] { "Connections", "InboundConnections", "OutboundConnections", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

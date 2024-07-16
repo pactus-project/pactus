@@ -762,3 +762,21 @@ func (st *state) AllPendingTxs() []*tx.Tx {
 
 	return st.txPool.AllPendingTxs()
 }
+
+func (st *state) IsPruned() bool {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return st.store.IsPruned()
+}
+
+func (st *state) PruningHeight() uint32 {
+	if !st.store.IsPruned() {
+		return 0
+	}
+
+	lh := st.store.LastCertificate().Height()
+	rb := st.store.RetentionBlocks()
+
+	return lh - rb
+}

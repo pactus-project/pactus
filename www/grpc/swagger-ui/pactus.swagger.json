@@ -1743,6 +1743,15 @@
           },
           "description": "List of protocols supported by the node."
         },
+        "isPruned": {
+          "type": "boolean",
+          "description": "Type of node pruned or full."
+        },
+        "pruningHeight": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The height of pruning."
+        },
         "clockOffset": {
           "type": "number",
           "format": "double",

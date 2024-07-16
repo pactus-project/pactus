@@ -267,3 +267,11 @@ func (*MockState) AvailabilityScore(_ int32) float64 {
 func (*MockState) AllPendingTxs() []*tx.Tx {
 	return make([]*tx.Tx, 0)
 }
+
+func (m *MockState) IsPruned() bool {
+	return m.TestStore.IsPruned()
+}
+
+func (m *MockState) PruningHeight() uint32 {
+	return m.TestStore.LastCert.Height() - m.TestStore.RetentionBlocks()
+}
