@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,7 +31,7 @@ func TestDownloader(t *testing.T) {
 	}))
 	defer server.Close()
 
-	filePath := "./testdata/example_testfile.txt"
+	filePath := util.TempFilePath()
 
 	defer func() {
 		assert.NoError(t, os.RemoveAll("./testdata"))
