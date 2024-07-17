@@ -189,7 +189,7 @@ func (d *Downloader) downloadFile(ctx context.Context, out *os.File, stats *Stat
 		return err
 	}
 
-	return d.writeToFile(resp, out, buffer, hasher, stats)
+	return d.writeToFile(ctx, resp, out, buffer, hasher, stats)
 }
 
 func (d *Downloader) createRequest(ctx context.Context, downloaded int64) (*http.Request, error) {
@@ -222,30 +222,37 @@ func (d *Downloader) updateHasherWithExistingData(downloaded int64, hasher io.Wr
 	return nil
 }
 
-func (d *Downloader) writeToFile(resp *http.Response, out *os.File, buffer []byte,
+func (d *Downloader) writeToFile(ctx context.Context, resp *http.Response, out *os.File, buffer []byte,
 	hasher hash.Hash, stats *Stats,
 ) error {
 	for {
-		n, err := resp.Body.Read(buffer)
-		if n > 0 {
-			if _, err := out.Write(buffer[:n]); err != nil {
-				return ErrFileWriting
-			}
+		select {
+		case <-ctx.Done():
+			d.stop()
 
-			if _, err := hasher.Write(buffer[:n]); err != nil {
-				return ErrFileWriting
-			}
+			return ctx.Err()
+		default:
+			n, err := resp.Body.Read(buffer)
+			if n > 0 {
+				if _, err := out.Write(buffer[:n]); err != nil {
+					return ErrFileWriting
+				}
 
-			stats.Downloaded += int64(n)
-			stats.Percent = float64(stats.Downloaded) / float64(stats.TotalSize) * 100
-			d.statsCh <- *stats
-		}
-		if err != nil {
-			if err == io.EOF {
-				return d.finalizeDownload(hasher, stats)
-			}
+				if _, err := hasher.Write(buffer[:n]); err != nil {
+					return ErrFileWriting
+				}
 
-			return fmt.Errorf("error reading response body: %w", err)
+				stats.Downloaded += int64(n)
+				stats.Percent = float64(stats.Downloaded) / float64(stats.TotalSize) * 100
+				d.statsCh <- *stats
+			}
+			if err != nil {
+				if err == io.EOF {
+					return d.finalizeDownload(hasher, stats)
+				}
+
+				return fmt.Errorf("error reading response body: %w", err)
+			}
 		}
 	}
 }
