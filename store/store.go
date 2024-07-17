@@ -489,5 +489,5 @@ func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
 }
 
 func (s *store) RetentionBlocks() uint32 {
-	return s.config.RetentionDays
+	return s.config.RetentionBlocks()
 }

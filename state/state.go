@@ -764,9 +764,6 @@ func (st *state) AllPendingTxs() []*tx.Tx {
 }
 
 func (st *state) IsPruned() bool {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
-
 	return st.store.IsPruned()
 }
 
