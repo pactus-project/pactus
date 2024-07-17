@@ -61,9 +61,9 @@ message GetNodeInfoResponse {
   repeated string local_addrs = 8;
   // List of protocols supported by the node.
   repeated string protocols = 9;
-  // Type of node pruned or full.
+  // If the blocks are subject to pruning.
   bool is_pruned = 10;
-  // The height of pruning.
+  // Lowest-height block stored (only present if pruning is enabled)
   int32 pruning_height = 11;
   // Clock offset of the node.
   double clock_offset = 12;
@@ -115,7 +115,7 @@ message PeerInfo {
   int32 completed_sessions = 20;
 }
 
-// Response message containing information about the node's connections.
+// ConnectionInfo contains information about the node's connections.
 message ConnectionInfo {
   // Total number of connections.
   uint64 connections = 1;
