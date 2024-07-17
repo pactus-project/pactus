@@ -35,7 +35,7 @@ import (
 	"github.com/pactus-project/pactus/www/nanomsg/event"
 )
 
-var maxTransactionsPerBlock = 100
+var maxTransactionsPerBlock = 1000
 
 type state struct {
 	lk sync.RWMutex
