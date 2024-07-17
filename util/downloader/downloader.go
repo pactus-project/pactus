@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"sync"
 )
 
 var (
@@ -28,17 +27,14 @@ var (
 )
 
 type Downloader struct {
+	client    *http.Client
 	url       string
 	filePath  string
 	sha256Sum string
 	fileType  string
 	fileName  string
-	pause     chan struct{}
-	resume    chan struct{}
-	stop      chan struct{}
 	statsCh   chan Stats
 	errCh     chan error
-	wg        sync.WaitGroup
 }
 
 type Stats struct {
@@ -48,37 +44,25 @@ type Stats struct {
 	Completed  bool
 }
 
-func New(url, filePath, sha256Sum string) *Downloader {
+func New(url, filePath, sha256Sum string, opts ...Option) *Downloader {
+	opt := defaultOptions()
+
+	for _, o := range opts {
+		o(opt)
+	}
+
 	return &Downloader{
+		client:    opt.client,
 		url:       url,
 		filePath:  filePath,
 		sha256Sum: sha256Sum,
-		pause:     make(chan struct{}),
-		resume:    make(chan struct{}),
-		stop:      make(chan struct{}),
 		statsCh:   make(chan Stats),
 		errCh:     make(chan error, 1),
 	}
 }
 
-func (d *Downloader) Start() {
-	d.wg.Add(1)
-	go d.download(context.Background())
-}
-
-func (d *Downloader) Pause() {
-	d.pause <- struct{}{}
-}
-
-func (d *Downloader) Resume() {
-	d.resume <- struct{}{}
-}
-
-func (d *Downloader) Stop() {
-	d.stop <- struct{}{}
-	d.wg.Wait()
-	close(d.statsCh)
-	close(d.errCh)
+func (d *Downloader) Start(ctx context.Context) {
+	go d.download(ctx)
 }
 
 func (d *Downloader) Stats() <-chan Stats {
@@ -98,8 +82,6 @@ func (d *Downloader) Errors() <-chan error {
 }
 
 func (d *Downloader) download(ctx context.Context) {
-	defer d.wg.Done()
-
 	stats, err := d.getHeader(ctx)
 	if err != nil {
 		d.handleError(err)
@@ -141,7 +123,7 @@ func (d *Downloader) getHeader(ctx context.Context) (Stats, error) {
 		return Stats{}, ErrHeaderRequest
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := d.client.Do(req)
 	if err != nil {
 		return Stats{}, ErrHeaderRequest
 	}
@@ -186,13 +168,12 @@ func (*Downloader) validateExistingFile(out *os.File, stats *Stats) error {
 }
 
 func (d *Downloader) downloadFile(ctx context.Context, out *os.File, stats *Stats) error {
-	client := &http.Client{}
 	req, err := d.createRequest(ctx, stats.Downloaded)
 	if err != nil {
 		return err
 	}
 
-	resp, err := client.Do(req)
+	resp, err := d.client.Do(req)
 	if err != nil {
 		return ErrDoRequest
 	}
@@ -245,33 +226,26 @@ func (d *Downloader) writeToFile(resp *http.Response, out *os.File, buffer []byt
 	hasher hash.Hash, stats *Stats,
 ) error {
 	for {
-		select {
-		case <-d.pause:
-			<-d.resume
-		case <-d.stop:
-			return nil
-		default:
-			n, err := resp.Body.Read(buffer)
-			if n > 0 {
-				if _, err := out.Write(buffer[:n]); err != nil {
-					return ErrFileWriting
-				}
-
-				if _, err := hasher.Write(buffer[:n]); err != nil {
-					return ErrFileWriting
-				}
-
-				stats.Downloaded += int64(n)
-				stats.Percent = float64(stats.Downloaded) / float64(stats.TotalSize) * 100
-				d.statsCh <- *stats
+		n, err := resp.Body.Read(buffer)
+		if n > 0 {
+			if _, err := out.Write(buffer[:n]); err != nil {
+				return ErrFileWriting
 			}
-			if err != nil {
-				if err == io.EOF {
-					return d.finalizeDownload(hasher, stats)
-				}
 
-				return fmt.Errorf("error reading response body: %w", err)
+			if _, err := hasher.Write(buffer[:n]); err != nil {
+				return ErrFileWriting
 			}
+
+			stats.Downloaded += int64(n)
+			stats.Percent = float64(stats.Downloaded) / float64(stats.TotalSize) * 100
+			d.statsCh <- *stats
+		}
+		if err != nil {
+			if err == io.EOF {
+				return d.finalizeDownload(hasher, stats)
+			}
+
+			return fmt.Errorf("error reading response body: %w", err)
 		}
 	}
 }
@@ -284,13 +258,20 @@ func (d *Downloader) finalizeDownload(hasher hash.Hash, stats *Stats) error {
 	}
 	d.statsCh <- *stats
 
+	d.stop()
+
 	return nil
+}
+
+func (d *Downloader) stop() {
+	close(d.statsCh)
+	close(d.errCh)
 }
 
 func (d *Downloader) handleError(err error) {
 	select {
 	case d.errCh <- err:
 	default:
+		d.stop()
 	}
-	d.Stop()
 }
