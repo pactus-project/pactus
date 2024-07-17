@@ -8,26 +8,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 )
-
-func cleanup(path string) error {
-	err := os.Remove(path)
-	if err != nil {
-		return err
-	}
-	dir := filepath.Dir(path)
-	err = os.RemoveAll(dir)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
 
 func TestDownloader(t *testing.T) {
 	fileContent := []byte("This is a test file content")
@@ -101,6 +86,4 @@ func TestDownloader(t *testing.T) {
 	downloadedContent, err := os.ReadFile(filePath)
 	assrt.NoError(err, "Failed to read the downloaded file")
 	assrt.Equal(fileContent, downloadedContent, "Downloaded file content does not match expected content")
-
-	assert.NoError(t, cleanup(dl.filePath))
 }
