@@ -7,12 +7,66 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
+
+func TestMakeConfig(t *testing.T) {
+	t.Run("No genesis file, Should return error", func(t *testing.T) {
+		workingDir := util.TempDirPath()
+
+		_, _, err := MakeConfig(workingDir)
+		assert.Error(t, err)
+	})
+
+	t.Run("No Config file, Should recover it", func(t *testing.T) {
+		workingDir := util.TempDirPath()
+		genPath := PactusGenesisPath(workingDir)
+		gen := genesis.MainnetGenesis()
+		err := gen.SaveToFile(genPath)
+		require.NoError(t, err)
+
+		_, _, err = MakeConfig(workingDir)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Invalid Config file, Should recover it", func(t *testing.T) {
+		workingDir := util.TempDirPath()
+		genPath := PactusGenesisPath(workingDir)
+		confPath := PactusConfigPath(workingDir)
+
+		gen := genesis.MainnetGenesis()
+		err := gen.SaveToFile(genPath)
+		require.NoError(t, err)
+
+		err = util.WriteFile(confPath, []byte("invalid-config"))
+		require.NoError(t, err)
+
+		_, _, err = MakeConfig(workingDir)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Everything is good", func(t *testing.T) {
+		workingDir := util.TempDirPath()
+		genPath := PactusGenesisPath(workingDir)
+		confPath := PactusConfigPath(workingDir)
+
+		gen := genesis.MainnetGenesis()
+		err := gen.SaveToFile(genPath)
+		require.NoError(t, err)
+
+		err = config.SaveMainnetConfig(confPath)
+		require.NoError(t, err)
+
+		_, _, err = MakeConfig(workingDir)
+		assert.NoError(t, err)
+	})
+}
 
 // captureOutput is a helper function to capture the printed output of a function.
 func captureOutput(f func()) string {

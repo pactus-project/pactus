@@ -134,6 +134,14 @@ func (b *Block) Hash() hash.Hash {
 	return h
 }
 
+func (b *Block) Height() uint32 {
+	if b.data.PrevCert == nil {
+		return 1
+	}
+
+	return b.PrevCertificate().Height() + 1
+}
+
 func (b *Block) String() string {
 	return fmt.Sprintf("{⌘ %v 👤 %v 💻 %v 📨 %d}",
 		b.Hash().ShortString(),

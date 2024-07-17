@@ -19,57 +19,48 @@ func newBlocksRequestHandler(sync *synchronizer) messageHandler {
 	}
 }
 
-func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID) error {
+func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID) {
 	msg := m.(*message.BlocksRequestMessage)
 	handler.logger.Trace("parsing BlocksRequest message", "msg", msg)
 
-	status := handler.peerSet.GetPeerStatus(pid)
-	if status.IsUnknown() {
+	p := handler.peerSet.GetPeer(pid)
+	if p == nil {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("unknown peer (%s)", pid.String()), msg.SessionID, 0, nil, nil)
 
 		handler.respond(response, pid)
 
-		return nil
+		return
 	}
 
-	if !status.IsKnown() {
+	if !p.Status.IsKnown() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
-			fmt.Sprintf("not handshaked (%s)", status.String()), msg.SessionID, 0, nil, nil)
+			fmt.Sprintf("not handshaked (%s)", p.Status.String()), msg.SessionID, 0, nil, nil)
 
 		handler.respond(response, pid)
 
-		return nil
+		return
 	}
 
 	ourHeight := handler.state.LastBlockHeight()
-	if !handler.config.NodeNetwork {
-		if ourHeight > handler.config.LatestBlockInterval && msg.From < ourHeight-handler.config.LatestBlockInterval {
-			response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
-				fmt.Sprintf("the request height is not acceptable: %v", msg.From), msg.SessionID, 0, nil, nil)
-
-			handler.respond(response, pid)
-
-			return nil
-		}
-	}
-
 	if msg.From > ourHeight {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
-			fmt.Sprintf("don't have requested blocks: %v", msg.From), msg.SessionID, 0, nil, nil)
+			fmt.Sprintf("requested blocks from %v exceed current height %v",
+				msg.From, ourHeight), msg.SessionID, 0, nil, nil)
 
 		handler.respond(response, pid)
 
-		return nil
+		return
 	}
 
-	if msg.Count > handler.config.LatestBlockInterval {
+	if msg.Count > handler.config.BlockPerSession {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
-			fmt.Sprintf("too many blocks requested: %v-%v", msg.From, msg.Count), msg.SessionID, 0, nil, nil)
+			fmt.Sprintf("requested block range %v-%v exceeds the allowed %v blocks per session",
+				msg.From, msg.To(), handler.config.BlockPerSession), msg.SessionID, 0, nil, nil)
 
 		handler.respond(response, pid)
 
-		return nil
+		return
 	}
 
 	// Help this peer to sync up
@@ -100,15 +91,13 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 
 		handler.respond(response, pid)
 
-		return nil
+		return
 	}
 
 	response := message.NewBlocksResponseMessage(message.ResponseCodeNoMoreBlocks,
 		message.ResponseCodeNoMoreBlocks.String(), msg.SessionID, 0, nil, nil)
 
 	handler.respond(response, pid)
-
-	return nil
 }
 
 func (*blocksRequestHandler) PrepareBundle(m message.Message) *bundle.Bundle {

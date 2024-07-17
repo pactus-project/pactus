@@ -5,7 +5,6 @@ import (
 
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestParsingHelloAckMessages(t *testing.T) {
@@ -16,7 +15,8 @@ func TestParsingHelloAckMessages(t *testing.T) {
 			pid := td.RandPeerID()
 			msg := message.NewHelloAckMessage(message.ResponseCodeRejected, "rejected", td.RandHeight())
 
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
+			td.checkPeerStatus(t, pid, status.StatusUnknown)
 		})
 
 	t.Run("Receiving HelloAck message: OK hello",
@@ -24,7 +24,7 @@ func TestParsingHelloAckMessages(t *testing.T) {
 			pid := td.RandPeerID()
 			msg := message.NewHelloAckMessage(message.ResponseCodeOK, "ok", td.RandHeight())
 
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusKnown)
 		})
 }

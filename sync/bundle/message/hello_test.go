@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -21,7 +22,8 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("Invalid signature", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash())
+		m := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
+			ts.RandHeight(), ts.RandHash(), ts.RandHash())
 		m.Sign([]*bls.ValidatorKey{valKey})
 		m.Signature = ts.RandBLSSignature()
 
@@ -30,7 +32,8 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("Signature is nil", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash())
+		m := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
+			ts.RandHeight(), ts.RandHash(), ts.RandHash())
 		m.Sign([]*bls.ValidatorKey{valKey})
 		m.Signature = nil
 
@@ -39,7 +42,8 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("PublicKeys are empty", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		m := NewHelloMessage(ts.RandPeerID(), "Oscar", 100, 0, ts.RandHash(), ts.RandHash())
+		m := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
+			ts.RandHeight(), ts.RandHash(), ts.RandHash())
 		m.Sign([]*bls.ValidatorKey{valKey})
 		m.PublicKeys = make([]*bls.PublicKey, 0)
 
@@ -50,7 +54,8 @@ func TestHelloMessage(t *testing.T) {
 		time1 := time.Now()
 		myTimeUnixMilli := time1.UnixMilli()
 
-		m := NewHelloMessage(ts.RandPeerID(), "Alice", 100, 0, ts.RandHash(), ts.RandHash())
+		m := NewHelloMessage(ts.RandPeerID(), "Alice", service.New(service.FullNode),
+			ts.RandHeight(), ts.RandHash(), ts.RandHash())
 
 		assert.LessOrEqual(t, m.MyTimeUnixMilli, time.Now().UnixMilli())
 		assert.GreaterOrEqual(t, m.MyTimeUnixMilli, myTimeUnixMilli)
@@ -58,10 +63,12 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		m := NewHelloMessage(ts.RandPeerID(), "Alice", 100, 0, ts.RandHash(), ts.RandHash())
+		m := NewHelloMessage(ts.RandPeerID(), "Alice", service.New(service.FullNode),
+			ts.RandHeight(), ts.RandHash(), ts.RandHash())
 		m.Sign([]*bls.ValidatorKey{valKey})
 
 		assert.NoError(t, m.BasicCheck())
 		assert.Contains(t, m.String(), "Alice")
+		assert.Contains(t, m.String(), "FULL")
 	})
 }

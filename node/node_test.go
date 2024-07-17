@@ -40,12 +40,14 @@ func TestRunningNode(t *testing.T) {
 
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}
-	n, err := NewNode(gen, conf, valKeys, rewardAddrs)
+	nd, err := NewNode(gen, conf, valKeys, rewardAddrs)
+	assert.True(t, conf.Sync.Services.IsFullNode())
+	assert.True(t, conf.Sync.Services.IsPrunedNode())
 
 	require.NoError(t, err)
-	assert.Equal(t, n.state.LastBlockHash(), hash.UndefHash)
+	assert.Equal(t, nd.state.LastBlockHash(), hash.UndefHash)
 
-	err = n.Start()
+	err = nd.Start()
 	require.NoError(t, err)
-	n.Stop()
+	nd.Stop()
 }

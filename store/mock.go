@@ -289,3 +289,11 @@ func (m *MockStore) RandomTestVal() *validator.Validator {
 func (*MockStore) IsBanned(_ crypto.Address) bool {
 	return false
 }
+
+func (*MockStore) Prune(_ func(_ bool, _ uint32) bool) error {
+	return nil
+}
+
+func (*MockStore) IsPruned() bool {
+	return false
+}

@@ -23,12 +23,12 @@ func TestParsingHelloMessages(t *testing.T) {
 		func(t *testing.T) {
 			valKey := td.RandValKey()
 			pid := td.RandPeerID()
-			msg := message.NewHelloMessage(pid, "unknown-peer", 0, 0,
-				td.state.LastBlockHash(), td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "unknown-peer", service.New(service.FullNode),
+				td.RandHeight(), td.RandHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			from := td.RandPeerID()
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, from))
+			td.receivingNewMessage(td.sync, msg, from)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
 		})
@@ -38,11 +38,11 @@ func TestParsingHelloMessages(t *testing.T) {
 			invGenHash := td.RandHash()
 			valKey := td.RandValKey()
 			pid := td.RandPeerID()
-			msg := message.NewHelloMessage(pid, "bad-genesis", 0, 0,
-				td.state.LastBlockHash(), invGenHash)
+			msg := message.NewHelloMessage(pid, "bad-genesis", service.New(service.FullNode),
+				td.RandHeight(), td.RandHash(), invGenHash)
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
@@ -51,14 +51,13 @@ func TestParsingHelloMessages(t *testing.T) {
 	t.Run("Receiving a Hello message from a peer. The time difference is greater than or equal to -10",
 		func(t *testing.T) {
 			valKey := td.RandValKey()
-			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
-				td.state.LastBlockHash(), td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "kitty", service.New(service.FullNode),
+				td.RandHeight(), td.RandHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			msg.MyTimeUnixMilli = msg.MyTime().Add(-10 * time.Second).UnixMilli()
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
@@ -67,14 +66,13 @@ func TestParsingHelloMessages(t *testing.T) {
 	t.Run("Receiving Hello message from a peer. Difference is less or equal than 20 seconds.",
 		func(t *testing.T) {
 			valKey := td.RandValKey()
-			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
-				td.state.LastBlockHash(), td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "kitty", service.New(service.FullNode),
+				td.RandHeight(), td.RandHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
 			msg.MyTimeUnixMilli = msg.MyTime().Add(20 * time.Second).UnixMilli()
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
@@ -83,10 +81,9 @@ func TestParsingHelloMessages(t *testing.T) {
 	t.Run("Non supporting version.",
 		func(t *testing.T) {
 			valKey := td.RandValKey()
-			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
-				td.state.LastBlockHash(), td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "kitty", service.New(service.FullNode),
+				td.RandHeight(), td.RandHash(), td.state.Genesis().Hash())
 			nodeAgent := version.NodeAgent
 			nodeAgent.Version = version.Version{
 				Major: 1,
@@ -96,7 +93,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			msg.Agent = nodeAgent.String()
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
@@ -105,14 +102,13 @@ func TestParsingHelloMessages(t *testing.T) {
 	t.Run("Invalid agent.",
 		func(t *testing.T) {
 			valKey := td.RandValKey()
-			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
-				td.state.LastBlockHash(), td.state.Genesis().Hash())
+			msg := message.NewHelloMessage(pid, "kitty", service.New(service.FullNode),
+				td.RandHeight(), td.RandHash(), td.state.Genesis().Hash())
 			msg.Agent = "invalid-agent"
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
@@ -121,13 +117,13 @@ func TestParsingHelloMessages(t *testing.T) {
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info",
 		func(t *testing.T) {
 			valKey := td.RandValKey()
-			height := td.RandUint32NonZero(td.state.LastBlockHeight())
 			pid := td.RandPeerID()
-			msg := message.NewHelloMessage(pid, "kitty", height, service.New(service.Network),
-				td.state.LastBlockHash(), td.state.Genesis().Hash())
+			peerHeight := td.RandHeight()
+			msg := message.NewHelloMessage(pid, "kitty", service.New(service.FullNode),
+				peerHeight, td.RandHash(), td.state.Genesis().Hash())
 			msg.Sign([]*bls.ValidatorKey{valKey})
 
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeOK)
@@ -141,8 +137,8 @@ func TestParsingHelloMessages(t *testing.T) {
 			assert.Equal(t, p.Moniker, "kitty")
 			assert.Contains(t, p.ConsensusKeys, pub)
 			assert.Equal(t, p.PeerID, pid)
-			assert.Equal(t, p.Height, height)
-			assert.True(t, p.HasNetworkService())
+			assert.Equal(t, p.Height, peerHeight)
+			assert.True(t, p.IsFullNode())
 		})
 }
 
@@ -154,5 +150,5 @@ func TestSendingHelloMessage(t *testing.T) {
 
 	bdl := td.shouldPublishMessageWithThisType(t, message.TypeHello)
 	assert.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHandshaking))
-	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Services, service.New(service.Network)))
+	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Services, service.New(service.FullNode)))
 }

@@ -3780,73 +3780,33 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * List of services provided by the node.
+     * A bitfield indicating the services provided by the node.
      * </pre>
      *
-     * <code>repeated int32 services = 6 [json_name = "services"];</code>
-     * @return A list containing the services.
+     * <code>int32 services = 6 [json_name = "services"];</code>
+     * @return The services.
      */
-    java.util.List<java.lang.Integer> getServicesList();
-    /**
-     * <pre>
-     * List of services provided by the node.
-     * </pre>
-     *
-     * <code>repeated int32 services = 6 [json_name = "services"];</code>
-     * @return The count of services.
-     */
-    int getServicesCount();
-    /**
-     * <pre>
-     * List of services provided by the node.
-     * </pre>
-     *
-     * <code>repeated int32 services = 6 [json_name = "services"];</code>
-     * @param index The index of the element to return.
-     * @return The services at the given index.
-     */
-    int getServices(int index);
+    int getServices();
 
     /**
      * <pre>
      * Names of services provided by the node.
      * </pre>
      *
-     * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-     * @return A list containing the servicesNames.
+     * <code>string services_names = 7 [json_name = "servicesNames"];</code>
+     * @return The servicesNames.
      */
-    java.util.List<java.lang.String>
-        getServicesNamesList();
+    java.lang.String getServicesNames();
     /**
      * <pre>
      * Names of services provided by the node.
      * </pre>
      *
-     * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-     * @return The count of servicesNames.
-     */
-    int getServicesNamesCount();
-    /**
-     * <pre>
-     * Names of services provided by the node.
-     * </pre>
-     *
-     * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-     * @param index The index of the element to return.
-     * @return The servicesNames at the given index.
-     */
-    java.lang.String getServicesNames(int index);
-    /**
-     * <pre>
-     * Names of services provided by the node.
-     * </pre>
-     *
-     * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-     * @param index The index of the value to return.
-     * @return The bytes of the servicesNames at the given index.
+     * <code>string services_names = 7 [json_name = "servicesNames"];</code>
+     * @return The bytes for servicesNames.
      */
     com.google.protobuf.ByteString
-        getServicesNamesBytes(int index);
+        getServicesNamesBytes();
 
     /**
      * <pre>
@@ -3988,8 +3948,7 @@ public final class NetworkOuterClass {
       agent_ = "";
       peerId_ = "";
       reachability_ = "";
-      services_ = emptyIntList();
-      servicesNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      servicesNames_ = "";
       localAddrs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
@@ -4219,94 +4178,64 @@ public final class NetworkOuterClass {
     }
 
     public static final int SERVICES_FIELD_NUMBER = 6;
-    private com.google.protobuf.Internal.IntList services_;
+    private int services_;
     /**
      * <pre>
-     * List of services provided by the node.
+     * A bitfield indicating the services provided by the node.
      * </pre>
      *
-     * <code>repeated int32 services = 6 [json_name = "services"];</code>
-     * @return A list containing the services.
+     * <code>int32 services = 6 [json_name = "services"];</code>
+     * @return The services.
      */
     @java.lang.Override
-    public java.util.List<java.lang.Integer>
-        getServicesList() {
+    public int getServices() {
       return services_;
     }
-    /**
-     * <pre>
-     * List of services provided by the node.
-     * </pre>
-     *
-     * <code>repeated int32 services = 6 [json_name = "services"];</code>
-     * @return The count of services.
-     */
-    public int getServicesCount() {
-      return services_.size();
-    }
-    /**
-     * <pre>
-     * List of services provided by the node.
-     * </pre>
-     *
-     * <code>repeated int32 services = 6 [json_name = "services"];</code>
-     * @param index The index of the element to return.
-     * @return The services at the given index.
-     */
-    public int getServices(int index) {
-      return services_.getInt(index);
-    }
-    private int servicesMemoizedSerializedSize = -1;
 
     public static final int SERVICES_NAMES_FIELD_NUMBER = 7;
-    private com.google.protobuf.LazyStringList servicesNames_;
+    private volatile java.lang.Object servicesNames_;
     /**
      * <pre>
      * Names of services provided by the node.
      * </pre>
      *
-     * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-     * @return A list containing the servicesNames.
+     * <code>string services_names = 7 [json_name = "servicesNames"];</code>
+     * @return The servicesNames.
      */
-    public com.google.protobuf.ProtocolStringList
-        getServicesNamesList() {
-      return servicesNames_;
+    @java.lang.Override
+    public java.lang.String getServicesNames() {
+      java.lang.Object ref = servicesNames_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        servicesNames_ = s;
+        return s;
+      }
     }
     /**
      * <pre>
      * Names of services provided by the node.
      * </pre>
      *
-     * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-     * @return The count of servicesNames.
+     * <code>string services_names = 7 [json_name = "servicesNames"];</code>
+     * @return The bytes for servicesNames.
      */
-    public int getServicesNamesCount() {
-      return servicesNames_.size();
-    }
-    /**
-     * <pre>
-     * Names of services provided by the node.
-     * </pre>
-     *
-     * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-     * @param index The index of the element to return.
-     * @return The servicesNames at the given index.
-     */
-    public java.lang.String getServicesNames(int index) {
-      return servicesNames_.get(index);
-    }
-    /**
-     * <pre>
-     * Names of services provided by the node.
-     * </pre>
-     *
-     * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-     * @param index The index of the value to return.
-     * @return The bytes of the servicesNames at the given index.
-     */
+    @java.lang.Override
     public com.google.protobuf.ByteString
-        getServicesNamesBytes(int index) {
-      return servicesNames_.getByteString(index);
+        getServicesNamesBytes() {
+      java.lang.Object ref = servicesNames_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        servicesNames_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     public static final int LOCAL_ADDRS_FIELD_NUMBER = 8;
@@ -4478,7 +4407,6 @@ public final class NetworkOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      getSerializedSize();
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(moniker_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, moniker_);
       }
@@ -4494,15 +4422,11 @@ public final class NetworkOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(reachability_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, reachability_);
       }
-      if (getServicesList().size() > 0) {
-        output.writeUInt32NoTag(50);
-        output.writeUInt32NoTag(servicesMemoizedSerializedSize);
+      if (services_ != 0) {
+        output.writeInt32(6, services_);
       }
-      for (int i = 0; i < services_.size(); i++) {
-        output.writeInt32NoTag(services_.getInt(i));
-      }
-      for (int i = 0; i < servicesNames_.size(); i++) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, servicesNames_.getRaw(i));
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(servicesNames_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 7, servicesNames_);
       }
       for (int i = 0; i < localAddrs_.size(); i++) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 8, localAddrs_.getRaw(i));
@@ -4541,27 +4465,12 @@ public final class NetworkOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(reachability_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, reachability_);
       }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < services_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(services_.getInt(i));
-        }
-        size += dataSize;
-        if (!getServicesList().isEmpty()) {
-          size += 1;
-          size += com.google.protobuf.CodedOutputStream
-              .computeInt32SizeNoTag(dataSize);
-        }
-        servicesMemoizedSerializedSize = dataSize;
+      if (services_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, services_);
       }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < servicesNames_.size(); i++) {
-          dataSize += computeStringSizeNoTag(servicesNames_.getRaw(i));
-        }
-        size += dataSize;
-        size += 1 * getServicesNamesList().size();
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(servicesNames_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, servicesNames_);
       }
       {
         int dataSize = 0;
@@ -4612,10 +4521,10 @@ public final class NetworkOuterClass {
           != other.getStartedAt()) return false;
       if (!getReachability()
           .equals(other.getReachability())) return false;
-      if (!getServicesList()
-          .equals(other.getServicesList())) return false;
-      if (!getServicesNamesList()
-          .equals(other.getServicesNamesList())) return false;
+      if (getServices()
+          != other.getServices()) return false;
+      if (!getServicesNames()
+          .equals(other.getServicesNames())) return false;
       if (!getLocalAddrsList()
           .equals(other.getLocalAddrsList())) return false;
       if (!getProtocolsList()
@@ -4650,14 +4559,10 @@ public final class NetworkOuterClass {
           getStartedAt());
       hash = (37 * hash) + REACHABILITY_FIELD_NUMBER;
       hash = (53 * hash) + getReachability().hashCode();
-      if (getServicesCount() > 0) {
-        hash = (37 * hash) + SERVICES_FIELD_NUMBER;
-        hash = (53 * hash) + getServicesList().hashCode();
-      }
-      if (getServicesNamesCount() > 0) {
-        hash = (37 * hash) + SERVICES_NAMES_FIELD_NUMBER;
-        hash = (53 * hash) + getServicesNamesList().hashCode();
-      }
+      hash = (37 * hash) + SERVICES_FIELD_NUMBER;
+      hash = (53 * hash) + getServices();
+      hash = (37 * hash) + SERVICES_NAMES_FIELD_NUMBER;
+      hash = (53 * hash) + getServicesNames().hashCode();
       if (getLocalAddrsCount() > 0) {
         hash = (37 * hash) + LOCAL_ADDRS_FIELD_NUMBER;
         hash = (53 * hash) + getLocalAddrsList().hashCode();
@@ -4815,14 +4720,14 @@ public final class NetworkOuterClass {
 
         reachability_ = "";
 
-        services_ = emptyIntList();
-        bitField0_ = (bitField0_ & ~0x00000001);
-        servicesNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000002);
+        services_ = 0;
+
+        servicesNames_ = "";
+
         localAddrs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000001);
         protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000002);
         clockOffset_ = 0D;
 
         if (connectionInfoBuilder_ == null) {
@@ -4863,24 +4768,16 @@ public final class NetworkOuterClass {
         result.peerId_ = peerId_;
         result.startedAt_ = startedAt_;
         result.reachability_ = reachability_;
+        result.services_ = services_;
+        result.servicesNames_ = servicesNames_;
         if (((bitField0_ & 0x00000001) != 0)) {
-          services_.makeImmutable();
+          localAddrs_ = localAddrs_.getUnmodifiableView();
           bitField0_ = (bitField0_ & ~0x00000001);
         }
-        result.services_ = services_;
-        if (((bitField0_ & 0x00000002) != 0)) {
-          servicesNames_ = servicesNames_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000002);
-        }
-        result.servicesNames_ = servicesNames_;
-        if (((bitField0_ & 0x00000004) != 0)) {
-          localAddrs_ = localAddrs_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000004);
-        }
         result.localAddrs_ = localAddrs_;
-        if (((bitField0_ & 0x00000008) != 0)) {
+        if (((bitField0_ & 0x00000002) != 0)) {
           protocols_ = protocols_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000002);
         }
         result.protocols_ = protocols_;
         result.clockOffset_ = clockOffset_;
@@ -4956,30 +4853,17 @@ public final class NetworkOuterClass {
           reachability_ = other.reachability_;
           onChanged();
         }
-        if (!other.services_.isEmpty()) {
-          if (services_.isEmpty()) {
-            services_ = other.services_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-          } else {
-            ensureServicesIsMutable();
-            services_.addAll(other.services_);
-          }
-          onChanged();
+        if (other.getServices() != 0) {
+          setServices(other.getServices());
         }
-        if (!other.servicesNames_.isEmpty()) {
-          if (servicesNames_.isEmpty()) {
-            servicesNames_ = other.servicesNames_;
-            bitField0_ = (bitField0_ & ~0x00000002);
-          } else {
-            ensureServicesNamesIsMutable();
-            servicesNames_.addAll(other.servicesNames_);
-          }
+        if (!other.getServicesNames().isEmpty()) {
+          servicesNames_ = other.servicesNames_;
           onChanged();
         }
         if (!other.localAddrs_.isEmpty()) {
           if (localAddrs_.isEmpty()) {
             localAddrs_ = other.localAddrs_;
-            bitField0_ = (bitField0_ & ~0x00000004);
+            bitField0_ = (bitField0_ & ~0x00000001);
           } else {
             ensureLocalAddrsIsMutable();
             localAddrs_.addAll(other.localAddrs_);
@@ -4989,7 +4873,7 @@ public final class NetworkOuterClass {
         if (!other.protocols_.isEmpty()) {
           if (protocols_.isEmpty()) {
             protocols_ = other.protocols_;
-            bitField0_ = (bitField0_ & ~0x00000008);
+            bitField0_ = (bitField0_ & ~0x00000002);
           } else {
             ensureProtocolsIsMutable();
             protocols_.addAll(other.protocols_);
@@ -5054,25 +4938,13 @@ public final class NetworkOuterClass {
                 break;
               } // case 42
               case 48: {
-                int v = input.readInt32();
-                ensureServicesIsMutable();
-                services_.addInt(v);
+                services_ = input.readInt32();
+
                 break;
               } // case 48
-              case 50: {
-                int length = input.readRawVarint32();
-                int limit = input.pushLimit(length);
-                ensureServicesIsMutable();
-                while (input.getBytesUntilLimit() > 0) {
-                  services_.addInt(input.readInt32());
-                }
-                input.popLimit(limit);
-                break;
-              } // case 50
               case 58: {
-                java.lang.String s = input.readStringRequireUtf8();
-                ensureServicesNamesIsMutable();
-                servicesNames_.add(s);
+                servicesNames_ = input.readStringRequireUtf8();
+
                 break;
               } // case 58
               case 66: {
@@ -5543,204 +5415,107 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private com.google.protobuf.Internal.IntList services_ = emptyIntList();
-      private void ensureServicesIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
-          services_ = mutableCopy(services_);
-          bitField0_ |= 0x00000001;
-         }
-      }
+      private int services_ ;
       /**
        * <pre>
-       * List of services provided by the node.
+       * A bitfield indicating the services provided by the node.
        * </pre>
        *
-       * <code>repeated int32 services = 6 [json_name = "services"];</code>
-       * @return A list containing the services.
+       * <code>int32 services = 6 [json_name = "services"];</code>
+       * @return The services.
        */
-      public java.util.List<java.lang.Integer>
-          getServicesList() {
-        return ((bitField0_ & 0x00000001) != 0) ?
-                 java.util.Collections.unmodifiableList(services_) : services_;
+      @java.lang.Override
+      public int getServices() {
+        return services_;
       }
       /**
        * <pre>
-       * List of services provided by the node.
+       * A bitfield indicating the services provided by the node.
        * </pre>
        *
-       * <code>repeated int32 services = 6 [json_name = "services"];</code>
-       * @return The count of services.
-       */
-      public int getServicesCount() {
-        return services_.size();
-      }
-      /**
-       * <pre>
-       * List of services provided by the node.
-       * </pre>
-       *
-       * <code>repeated int32 services = 6 [json_name = "services"];</code>
-       * @param index The index of the element to return.
-       * @return The services at the given index.
-       */
-      public int getServices(int index) {
-        return services_.getInt(index);
-      }
-      /**
-       * <pre>
-       * List of services provided by the node.
-       * </pre>
-       *
-       * <code>repeated int32 services = 6 [json_name = "services"];</code>
-       * @param index The index to set the value at.
+       * <code>int32 services = 6 [json_name = "services"];</code>
        * @param value The services to set.
        * @return This builder for chaining.
        */
-      public Builder setServices(
-          int index, int value) {
-        ensureServicesIsMutable();
-        services_.setInt(index, value);
+      public Builder setServices(int value) {
+        
+        services_ = value;
         onChanged();
         return this;
       }
       /**
        * <pre>
-       * List of services provided by the node.
+       * A bitfield indicating the services provided by the node.
        * </pre>
        *
-       * <code>repeated int32 services = 6 [json_name = "services"];</code>
-       * @param value The services to add.
-       * @return This builder for chaining.
-       */
-      public Builder addServices(int value) {
-        ensureServicesIsMutable();
-        services_.addInt(value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * List of services provided by the node.
-       * </pre>
-       *
-       * <code>repeated int32 services = 6 [json_name = "services"];</code>
-       * @param values The services to add.
-       * @return This builder for chaining.
-       */
-      public Builder addAllServices(
-          java.lang.Iterable<? extends java.lang.Integer> values) {
-        ensureServicesIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, services_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * List of services provided by the node.
-       * </pre>
-       *
-       * <code>repeated int32 services = 6 [json_name = "services"];</code>
+       * <code>int32 services = 6 [json_name = "services"];</code>
        * @return This builder for chaining.
        */
       public Builder clearServices() {
-        services_ = emptyIntList();
-        bitField0_ = (bitField0_ & ~0x00000001);
+        
+        services_ = 0;
         onChanged();
         return this;
       }
 
-      private com.google.protobuf.LazyStringList servicesNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      private void ensureServicesNamesIsMutable() {
-        if (!((bitField0_ & 0x00000002) != 0)) {
-          servicesNames_ = new com.google.protobuf.LazyStringArrayList(servicesNames_);
-          bitField0_ |= 0x00000002;
-         }
-      }
+      private java.lang.Object servicesNames_ = "";
       /**
        * <pre>
        * Names of services provided by the node.
        * </pre>
        *
-       * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-       * @return A list containing the servicesNames.
+       * <code>string services_names = 7 [json_name = "servicesNames"];</code>
+       * @return The servicesNames.
        */
-      public com.google.protobuf.ProtocolStringList
-          getServicesNamesList() {
-        return servicesNames_.getUnmodifiableView();
+      public java.lang.String getServicesNames() {
+        java.lang.Object ref = servicesNames_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          servicesNames_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        * <pre>
        * Names of services provided by the node.
        * </pre>
        *
-       * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-       * @return The count of servicesNames.
-       */
-      public int getServicesNamesCount() {
-        return servicesNames_.size();
-      }
-      /**
-       * <pre>
-       * Names of services provided by the node.
-       * </pre>
-       *
-       * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-       * @param index The index of the element to return.
-       * @return The servicesNames at the given index.
-       */
-      public java.lang.String getServicesNames(int index) {
-        return servicesNames_.get(index);
-      }
-      /**
-       * <pre>
-       * Names of services provided by the node.
-       * </pre>
-       *
-       * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-       * @param index The index of the value to return.
-       * @return The bytes of the servicesNames at the given index.
+       * <code>string services_names = 7 [json_name = "servicesNames"];</code>
+       * @return The bytes for servicesNames.
        */
       public com.google.protobuf.ByteString
-          getServicesNamesBytes(int index) {
-        return servicesNames_.getByteString(index);
+          getServicesNamesBytes() {
+        java.lang.Object ref = servicesNames_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          servicesNames_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
       }
       /**
        * <pre>
        * Names of services provided by the node.
        * </pre>
        *
-       * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-       * @param index The index to set the value at.
+       * <code>string services_names = 7 [json_name = "servicesNames"];</code>
        * @param value The servicesNames to set.
        * @return This builder for chaining.
        */
       public Builder setServicesNames(
-          int index, java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureServicesNamesIsMutable();
-        servicesNames_.set(index, value);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Names of services provided by the node.
-       * </pre>
-       *
-       * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-       * @param value The servicesNames to add.
-       * @return This builder for chaining.
-       */
-      public Builder addServicesNames(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  ensureServicesNamesIsMutable();
-        servicesNames_.add(value);
+  
+        servicesNames_ = value;
         onChanged();
         return this;
       }
@@ -5749,29 +5524,12 @@ public final class NetworkOuterClass {
        * Names of services provided by the node.
        * </pre>
        *
-       * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-       * @param values The servicesNames to add.
-       * @return This builder for chaining.
-       */
-      public Builder addAllServicesNames(
-          java.lang.Iterable<java.lang.String> values) {
-        ensureServicesNamesIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, servicesNames_);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Names of services provided by the node.
-       * </pre>
-       *
-       * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
+       * <code>string services_names = 7 [json_name = "servicesNames"];</code>
        * @return This builder for chaining.
        */
       public Builder clearServicesNames() {
-        servicesNames_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000002);
+        
+        servicesNames_ = getDefaultInstance().getServicesNames();
         onChanged();
         return this;
       }
@@ -5780,27 +5538,27 @@ public final class NetworkOuterClass {
        * Names of services provided by the node.
        * </pre>
        *
-       * <code>repeated string services_names = 7 [json_name = "servicesNames"];</code>
-       * @param value The bytes of the servicesNames to add.
+       * <code>string services_names = 7 [json_name = "servicesNames"];</code>
+       * @param value The bytes for servicesNames to set.
        * @return This builder for chaining.
        */
-      public Builder addServicesNamesBytes(
+      public Builder setServicesNamesBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
-        ensureServicesNamesIsMutable();
-        servicesNames_.add(value);
+        
+        servicesNames_ = value;
         onChanged();
         return this;
       }
 
       private com.google.protobuf.LazyStringList localAddrs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       private void ensureLocalAddrsIsMutable() {
-        if (!((bitField0_ & 0x00000004) != 0)) {
+        if (!((bitField0_ & 0x00000001) != 0)) {
           localAddrs_ = new com.google.protobuf.LazyStringArrayList(localAddrs_);
-          bitField0_ |= 0x00000004;
+          bitField0_ |= 0x00000001;
          }
       }
       /**
@@ -5917,7 +5675,7 @@ public final class NetworkOuterClass {
        */
       public Builder clearLocalAddrs() {
         localAddrs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000001);
         onChanged();
         return this;
       }
@@ -5944,9 +5702,9 @@ public final class NetworkOuterClass {
 
       private com.google.protobuf.LazyStringList protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       private void ensureProtocolsIsMutable() {
-        if (!((bitField0_ & 0x00000008) != 0)) {
+        if (!((bitField0_ & 0x00000002) != 0)) {
           protocols_ = new com.google.protobuf.LazyStringArrayList(protocols_);
-          bitField0_ |= 0x00000008;
+          bitField0_ |= 0x00000002;
          }
       }
       /**
@@ -6063,7 +5821,7 @@ public final class NetworkOuterClass {
        */
       public Builder clearProtocols() {
         protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000002);
         onChanged();
         return this;
       }
@@ -10326,7 +10084,7 @@ public final class NetworkOuterClass {
       "nt\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\tR\006peerId" +
       "\022\035\n\nstarted_at\030\004 \001(\004R\tstartedAt\022\"\n\014reach" +
       "ability\030\005 \001(\tR\014reachability\022\032\n\010services\030" +
-      "\006 \003(\005R\010services\022%\n\016services_names\030\007 \003(\tR" +
+      "\006 \001(\005R\010services\022%\n\016services_names\030\007 \001(\tR" +
       "\rservicesNames\022\037\n\013local_addrs\030\010 \003(\tR\nloc" +
       "alAddrs\022\034\n\tprotocols\030\t \003(\tR\tprotocols\022!\n" +
       "\014clock_offset\030\r \001(\001R\013clockOffset\022?\n\017conn" +

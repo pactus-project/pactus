@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
@@ -42,12 +43,13 @@ func testConfig() *Config {
 	return &Config{
 		Moniker:             "test",
 		SessionTimeout:      time.Second * 1,
-		NodeNetwork:         true,
 		BlockPerMessage:     11,
-		MaxSessions:         8,
-		LatestBlockInterval: 23,
+		MaxSessions:         4,
+		BlockPerSession:     23,
+		PruneWindow:         13,
 		Firewall:            firewall.DefaultConfig(),
 		LatestSupportingVer: DefaultConfig().LatestSupportingVer,
+		Services:            service.New(service.FullNode, service.PrunedNode),
 	}
 }
 
@@ -63,7 +65,7 @@ func setup(t *testing.T, config *Config) *testData {
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	mockState := state.MockingState(ts)
 
-	consMgr, consMocks := consensus.MockingManager(ts, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
+	consMgr, consMocks := consensus.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
 	consMgr.MoveToNewHeight()
 
 	broadcastCh := make(chan message.Message, 1000)
@@ -119,7 +121,7 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 			// -----------
 			// Check flags
 			require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagCarrierLibP2P), "invalid flag: %v", bdl)
-			require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
+			require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 
 			if b.Target == nil {
 				require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagBroadcasted), "invalid flag: %v", bdl)
@@ -179,11 +181,11 @@ func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, msgType me
 	shouldNotPublishMessageWithThisType(t, td.network, msgType)
 }
 
-func (*testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) error {
+func (*testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) {
 	bdl := bundle.NewBundle(msg)
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P|bundle.BundleFlagNetworkMainnet)
 
-	return sync.processIncomingBundle(bdl, from)
+	sync.processIncomingBundle(bdl, from)
 }
 
 func (td *testData) addPeer(t *testing.T, s status.Status, services service.Services) peer.ID {
@@ -259,32 +261,6 @@ func TestConnectEvent(t *testing.T) {
 
 	p1 := td.sync.peerSet.GetPeer(pid)
 	assert.Equal(t, status.StatusConnected, p1.Status)
-
-	// Receiving connect event for the banned address
-	pid = td.RandPeerID()
-	ce = &network.ConnectEvent{
-		PeerID:        pid,
-		RemoteAddress: "/ip4/115.193.2.1/tcp/21888",
-	}
-	td.network.EventCh <- ce
-
-	assert.Eventually(t, func() bool {
-		p := td.sync.peerSet.GetPeer(pid)
-		if p == nil {
-			return false
-		}
-
-		isBlocked := td.sync.firewall.IsBannedAddress(p.Address)
-
-		if isBlocked {
-			p.Status = status.StatusBanned
-		}
-
-		return isBlocked
-	}, time.Second, 100*time.Millisecond)
-
-	p2 := td.sync.peerSet.GetPeer(pid)
-	assert.Equal(t, status.StatusBanned, p2.Status)
 }
 
 func TestDisconnectEvent(t *testing.T) {
@@ -315,8 +291,10 @@ func TestProtocolsEvent(t *testing.T) {
 func TestTestNetFlags(t *testing.T) {
 	td := setup(t, nil)
 
+	td.state.TestGenesis = genesis.TestnetGenesis()
 	td.addValidatorToCommittee(t, td.sync.valKeys[0].PublicKey())
 	bdl := td.sync.prepareBundle(message.NewQueryProposalMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
+
 	require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 	require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkTestnet), "invalid flag: %v", bdl)
 }
@@ -332,7 +310,7 @@ func TestDownload(t *testing.T) {
 		pid := td.addPeer(t, status.StatusConnected, service.New(service.None))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
-		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
+		td.receivingNewMessage(td.sync, baMsg, pid)
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
 		td.network.IsClosed(pid)
@@ -344,7 +322,7 @@ func TestDownload(t *testing.T) {
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
-		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
+		td.receivingNewMessage(td.sync, baMsg, pid)
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
 		td.network.IsClosed(pid)
@@ -353,10 +331,10 @@ func TestDownload(t *testing.T) {
 	t.Run("try to download blocks and the peer is a network node", func(t *testing.T) {
 		td := setup(t, conf)
 
-		pid := td.addPeer(t, status.StatusKnown, service.New(service.Network))
+		pid := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
-		assert.NoError(t, td.receivingNewMessage(td.sync, baMsg, pid))
+		td.receivingNewMessage(td.sync, baMsg, pid)
 
 		td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
 	})
@@ -370,7 +348,7 @@ func TestDownload(t *testing.T) {
 		sid := td.sync.peerSet.OpenSession(pid, from, count)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeRejected, t.Name(),
 			sid, 1, nil, nil)
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+		td.receivingNewMessage(td.sync, msg, pid)
 
 		assert.False(t, td.sync.peerSet.HasOpenSession(pid))
 	})

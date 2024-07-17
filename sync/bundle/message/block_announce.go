@@ -3,6 +3,7 @@ package message
 import (
 	"fmt"
 
+	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 )
@@ -33,6 +34,14 @@ func (m *BlockAnnounceMessage) Height() uint32 {
 
 func (*BlockAnnounceMessage) Type() Type {
 	return TypeBlockAnnounce
+}
+
+func (*BlockAnnounceMessage) TopicID() network.TopicID {
+	return network.TopicIDBlock
+}
+
+func (*BlockAnnounceMessage) ShouldBroadcast() bool {
+	return true
 }
 
 func (m *BlockAnnounceMessage) String() string {

@@ -341,3 +341,16 @@ func TestMakeBlock(t *testing.T) {
 
 	assert.Equal(t, blk0.Hash(), blk1.Hash())
 }
+
+func TestBlockHeight(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	blk1, _ := ts.GenerateTestBlock(1, testsuite.BlockWithPrevCert(nil), testsuite.BlockWithPrevHash(hash.UndefHash))
+	blk2, _ := ts.GenerateTestBlock(2)
+
+	assert.NoError(t, blk1.BasicCheck())
+	assert.NoError(t, blk2.BasicCheck())
+
+	assert.Equal(t, uint32(1), blk1.Height())
+	assert.Equal(t, uint32(2), blk2.Height())
+}

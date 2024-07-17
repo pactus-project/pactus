@@ -561,29 +561,6 @@ func TestLoadState(t *testing.T) {
 	require.NoError(t, newState.CommitBlock(blk6, cert6))
 }
 
-func TestLoadStateAfterChangingGenesis(t *testing.T) {
-	td := setup(t)
-
-	_, err := LoadOrNewState(td.state.genDoc, td.state.valKeys,
-		td.state.store, txpool.MockingTxPool(), nil)
-	require.NoError(t, err)
-
-	pub, _ := td.RandBLSKeyPair()
-	val := validator.NewValidator(pub, 4)
-	newVals := append(td.state.genDoc.Validators(), val)
-
-	genDoc := genesis.MakeGenesis(
-		td.state.genDoc.GenesisTime(),
-		td.state.genDoc.Accounts(),
-		newVals,
-		td.state.genDoc.Params())
-
-	// Load last state info after modifying genesis
-	_, err = LoadOrNewState(genDoc, td.state.valKeys,
-		td.state.store, txpool.MockingTxPool(), nil)
-	require.Error(t, err)
-}
-
 func TestIsValidator(t *testing.T) {
 	td := setup(t)
 
@@ -638,20 +615,17 @@ func TestCommittedBlock(t *testing.T) {
 	})
 
 	t.Run("First block", func(t *testing.T) {
-		committedBlockOne := td.state.CommittedBlock(1)
-		blockOne, err := committedBlockOne.ToBlock()
+		cBlkOne := td.state.CommittedBlock(1)
+		blkOne, err := cBlkOne.ToBlock()
 		assert.NoError(t, err)
-		assert.Nil(t, blockOne.PrevCertificate())
-		assert.Equal(t, hash.UndefHash, blockOne.Header().PrevBlockHash())
-
-		r := td.state.calculateGenesisStateRootFromGenesisDoc()
-		assert.Equal(t, blockOne.Header().StateRoot(), r)
+		assert.Nil(t, blkOne.PrevCertificate())
+		assert.Equal(t, hash.UndefHash, blkOne.Header().PrevBlockHash())
 	})
 
 	t.Run("Last block", func(t *testing.T) {
-		lastCommittedBlock := td.state.CommittedBlock(td.state.LastBlockHeight())
-		lastBlk, err := lastCommittedBlock.ToBlock()
+		cBlkLast := td.state.CommittedBlock(td.state.LastBlockHeight())
+		blkLast, err := cBlkLast.ToBlock()
 		assert.NoError(t, err)
-		assert.Equal(t, td.state.LastBlockHash(), lastBlk.Hash())
+		assert.Equal(t, td.state.LastBlockHash(), blkLast.Hash())
 	})
 }

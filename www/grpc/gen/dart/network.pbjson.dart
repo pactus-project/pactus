@@ -83,8 +83,8 @@ const GetNodeInfoResponse$json = const {
     const {'1': 'peer_id', '3': 3, '4': 1, '5': 9, '10': 'peerId'},
     const {'1': 'started_at', '3': 4, '4': 1, '5': 4, '10': 'startedAt'},
     const {'1': 'reachability', '3': 5, '4': 1, '5': 9, '10': 'reachability'},
-    const {'1': 'services', '3': 6, '4': 3, '5': 5, '10': 'services'},
-    const {'1': 'services_names', '3': 7, '4': 3, '5': 9, '10': 'servicesNames'},
+    const {'1': 'services', '3': 6, '4': 1, '5': 5, '10': 'services'},
+    const {'1': 'services_names', '3': 7, '4': 1, '5': 9, '10': 'servicesNames'},
     const {'1': 'local_addrs', '3': 8, '4': 3, '5': 9, '10': 'localAddrs'},
     const {'1': 'protocols', '3': 9, '4': 3, '5': 9, '10': 'protocols'},
     const {'1': 'clock_offset', '3': 13, '4': 1, '5': 1, '10': 'clockOffset'},
@@ -93,7 +93,7 @@ const GetNodeInfoResponse$json = const {
 };
 
 /// Descriptor for `GetNodeInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAlSBnBlZXJJZBIdCgpzdGFydGVkX2F0GAQgASgEUglzdGFydGVkQXQSIgoMcmVhY2hhYmlsaXR5GAUgASgJUgxyZWFjaGFiaWxpdHkSGgoIc2VydmljZXMYBiADKAVSCHNlcnZpY2VzEiUKDnNlcnZpY2VzX25hbWVzGAcgAygJUg1zZXJ2aWNlc05hbWVzEh8KC2xvY2FsX2FkZHJzGAggAygJUgpsb2NhbEFkZHJzEhwKCXByb3RvY29scxgJIAMoCVIJcHJvdG9jb2xzEiEKDGNsb2NrX29mZnNldBgNIAEoAVILY2xvY2tPZmZzZXQSPwoPY29ubmVjdGlvbl9pbmZvGA4gASgLMhYucGFjdHVzLkNvbm5lY3Rpb25JbmZvUg5jb25uZWN0aW9uSW5mbw==');
+final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAlSBnBlZXJJZBIdCgpzdGFydGVkX2F0GAQgASgEUglzdGFydGVkQXQSIgoMcmVhY2hhYmlsaXR5GAUgASgJUgxyZWFjaGFiaWxpdHkSGgoIc2VydmljZXMYBiABKAVSCHNlcnZpY2VzEiUKDnNlcnZpY2VzX25hbWVzGAcgASgJUg1zZXJ2aWNlc05hbWVzEh8KC2xvY2FsX2FkZHJzGAggAygJUgpsb2NhbEFkZHJzEhwKCXByb3RvY29scxgJIAMoCVIJcHJvdG9jb2xzEiEKDGNsb2NrX29mZnNldBgNIAEoAVILY2xvY2tPZmZzZXQSPwoPY29ubmVjdGlvbl9pbmZvGA4gASgLMhYucGFjdHVzLkNvbm5lY3Rpb25JbmZvUg5jb25uZWN0aW9uSW5mbw==');
 @$core.Deprecated('Use peerInfoDescriptor instead')
 const PeerInfo$json = const {
   '1': 'PeerInfo',

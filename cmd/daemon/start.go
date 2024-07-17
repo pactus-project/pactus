@@ -22,8 +22,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 
 	parentCmd.AddCommand(startCmd)
 
-	workingDirOpt := startCmd.Flags().StringP("working-dir", "w", cmd.PactusDefaultHomeDir(),
-		"the path to the working directory to load the wallet and node files")
+	workingDirOpt := addWorkingDirOption(startCmd)
 
 	passwordOpt := startCmd.Flags().StringP("password", "p", "",
 		"the wallet password")
@@ -84,9 +83,10 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.TrapSignal(func() {
+			cmd.PrintInfoMsgf("Exiting...")
+
 			_ = fileLock.Unlock()
 			node.Stop()
-			cmd.PrintInfoMsgf("Exiting ...")
 		})
 
 		// run forever (the node will not be returned)

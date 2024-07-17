@@ -16,8 +16,18 @@ func TestParsingTransactionsMessages(t *testing.T) {
 		msg := message.NewTransactionsMessage([]*tx.Tx{trx1})
 		pid := td.RandPeerID()
 
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+		td.receivingNewMessage(td.sync, msg, pid)
 
 		assert.NotNil(t, td.sync.state.PendingTx(trx1.ID()))
 	})
+}
+
+func TestBroadcastingTransactionVotesMessages(t *testing.T) {
+	td := setup(t, nil)
+
+	trx1 := td.GenerateTestBondTx()
+	msg := message.NewTransactionsMessage([]*tx.Tx{trx1})
+	td.sync.broadcast(msg)
+
+	td.shouldPublishMessageWithThisType(t, message.TypeTransaction)
 }

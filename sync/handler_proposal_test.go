@@ -16,7 +16,7 @@ func TestParsingProposalMessages(t *testing.T) {
 		msg := message.NewProposalMessage(prop)
 		pid := td.RandPeerID()
 
-		assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+		td.receivingNewMessage(td.sync, msg, pid)
 		assert.NotNil(t, td.consMgr.Proposal())
 	})
 }

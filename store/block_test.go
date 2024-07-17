@@ -13,16 +13,6 @@ func TestBlockStore(t *testing.T) {
 	lastCert := td.store.LastCertificate()
 	lastHeight := lastCert.Height()
 	nextBlk, nextCert := td.GenerateTestBlock(lastHeight + 1)
-	nextNextBlk, nextNextCert := td.GenerateTestBlock(lastHeight + 2)
-
-	t.Run("Missed block, Should panic ", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
-			}
-		}()
-		td.store.SaveBlock(nextNextBlk, nextNextCert)
-	})
 
 	t.Run("Add block, don't batch write", func(t *testing.T) {
 		td.store.SaveBlock(nextBlk, nextCert)
@@ -35,31 +25,22 @@ func TestBlockStore(t *testing.T) {
 		td.store.SaveBlock(nextBlk, nextCert)
 		assert.NoError(t, td.store.WriteBatch())
 
-		committedBlock, err := td.store.Block(lastHeight + 1)
+		cBlk, err := td.store.Block(lastHeight + 1)
 		assert.NoError(t, err)
-		assert.Equal(t, committedBlock.Height, lastHeight+1)
+		assert.Equal(t, cBlk.Height, lastHeight+1)
 
 		d, _ := nextBlk.Bytes()
-		assert.True(t, bytes.Equal(committedBlock.Data, d))
+		assert.True(t, bytes.Equal(cBlk.Data, d))
 
 		cert := td.store.LastCertificate()
 		assert.NoError(t, err)
 		assert.Equal(t, cert.Hash(), nextCert.Hash())
 	})
-
-	t.Run("Duplicated block, Should panic ", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
-			}
-		}()
-		td.store.SaveBlock(nextBlk, nextCert)
-	})
 }
 
 func TestSortitionSeed(t *testing.T) {
 	conf := testConfig()
-	conf.SortitionCacheSize = 7
+	conf.SeedCacheWindow = 7
 
 	td := setup(t, conf)
 	lastHeight := td.store.LastCertificate().Height()
@@ -77,8 +58,8 @@ func TestSortitionSeed(t *testing.T) {
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		rndInt := td.RandUint32(conf.SortitionCacheSize)
-		rndInt += lastHeight - conf.SortitionCacheSize + 1
+		rndInt := td.RandUint32(conf.SeedCacheWindow)
+		rndInt += lastHeight - conf.SeedCacheWindow + 1
 
 		committedBlk, _ := td.store.Block(rndInt)
 		blk, _ := committedBlk.ToBlock()

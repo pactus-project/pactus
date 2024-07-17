@@ -7,6 +7,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/version"
@@ -26,7 +27,7 @@ type HelloMessage struct {
 }
 
 func NewHelloMessage(pid peer.ID, moniker string,
-	height uint32, services service.Services, blockHash, genesisHash hash.Hash,
+	services service.Services, height uint32, blockHash, genesisHash hash.Hash,
 ) *HelloMessage {
 	return &HelloMessage{
 		PeerID:          pid,
@@ -62,6 +63,14 @@ func (m *HelloMessage) SignBytes() []byte {
 
 func (*HelloMessage) Type() Type {
 	return TypeHello
+}
+
+func (*HelloMessage) TopicID() network.TopicID {
+	return network.TopicIDUnspecified
+}
+
+func (*HelloMessage) ShouldBroadcast() bool {
+	return false
 }
 
 func (m *HelloMessage) String() string {

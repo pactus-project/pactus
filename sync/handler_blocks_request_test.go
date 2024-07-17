@@ -10,21 +10,20 @@ import (
 )
 
 func TestBlocksRequestMessages(t *testing.T) {
-	config := testConfig()
-	config.NodeNetwork = false
+	t.Run("NetworkLimited service is enabled", func(t *testing.T) {
+		config := testConfig()
+		config.Services = service.Services(service.PrunedNode)
 
-	td := setup(t, config)
-	sid := td.RandInt(100)
+		td := setup(t, config)
+		sid := td.RandInt(100)
 
-	td.state.CommitTestBlocks(31)
-
-	t.Run("NodeNetwork flag is not set", func(t *testing.T) {
+		td.state.CommitTestBlocks(31)
 		curHeight := td.state.LastBlockHeight()
 
 		t.Run("Reject request from unknown peers", func(t *testing.T) {
 			pid := td.RandPeerID()
 			msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
@@ -37,7 +36,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 		t.Run("Reject request from peers without handshaking", func(t *testing.T) {
 			pid := td.addPeer(t, status.StatusConnected, service.New(service.None))
 			msg := message.NewBlocksRequestMessage(sid, curHeight-1, 1)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
@@ -49,38 +48,28 @@ func TestBlocksRequestMessages(t *testing.T) {
 
 		t.Run("Peer requested blocks that we don't have", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, curHeight+1, 1)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
 			assert.Equal(t, message.ResponseCodeRejected, res.ResponseCode)
-			assert.Contains(t, res.Reason, "don't have requested block")
+			assert.Contains(t, res.Reason, "requested blocks from 32 exceed current height 31")
 		})
 
-		t.Run("Reject requests not within `LatestBlockInterval`", func(t *testing.T) {
-			msg := message.NewBlocksRequestMessage(sid, curHeight-config.LatestBlockInterval-1, 1)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+		t.Run("Request blocks more than `BlockPerSession`", func(t *testing.T) {
+			msg := message.NewBlocksRequestMessage(sid, 10, config.BlockPerSession+1)
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
 			assert.Equal(t, message.ResponseCodeRejected, res.ResponseCode)
-			assert.Contains(t, res.Reason, "the request height is not acceptable")
+			assert.Contains(t, res.Reason, "requested block range 10-33 exceeds the allowed 23 blocks per session")
 		})
 
-		t.Run("Request blocks more than `LatestBlockInterval`", func(t *testing.T) {
-			msg := message.NewBlocksRequestMessage(sid, 10, config.LatestBlockInterval+1)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
-
-			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
-			res := bdl.Message.(*message.BlocksResponseMessage)
-			assert.Equal(t, message.ResponseCodeRejected, res.ResponseCode)
-			assert.Contains(t, res.Reason, "too many blocks requested")
-		})
-
-		t.Run("Accept request within `LatestBlockInterval`", func(t *testing.T) {
+		t.Run("Accept request within `BlockPerSession`", func(t *testing.T) {
 			t.Run("Peer needs more block", func(t *testing.T) {
 				msg := message.NewBlocksRequestMessage(sid, curHeight-config.BlockPerMessage, config.BlockPerMessage)
-				assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+				td.receivingNewMessage(td.sync, msg, pid)
 
 				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				res1 := bdl1.Message.(*message.BlocksResponseMessage)
@@ -99,7 +88,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 
 			t.Run("Peer synced", func(t *testing.T) {
 				msg := message.NewBlocksRequestMessage(sid, curHeight-config.BlockPerMessage+1, config.BlockPerMessage)
-				assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+				td.receivingNewMessage(td.sync, msg, pid)
 
 				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				res1 := bdl1.Message.(*message.BlocksResponseMessage)
@@ -118,13 +107,19 @@ func TestBlocksRequestMessages(t *testing.T) {
 		})
 	})
 
-	t.Run("NodeNetwork flag set", func(t *testing.T) {
-		td.sync.config.NodeNetwork = true
+	t.Run("Network service is enabled", func(t *testing.T) {
+		config := testConfig()
+		config.Services = service.New(service.FullNode)
+
+		td := setup(t, config)
+		sid := td.RandInt(100)
+
+		td.state.CommitTestBlocks(31)
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 
 		t.Run("Requesting one block", func(t *testing.T) {
 			msg := message.NewBlocksRequestMessage(sid, 1, 2)
-			assert.NoError(t, td.receivingNewMessage(td.sync, msg, pid))
+			td.receivingNewMessage(td.sync, msg, pid)
 
 			msg1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			assert.Equal(t, msg1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)

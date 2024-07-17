@@ -6,9 +6,7 @@ import (
 	"flag"
 	"log"
 	"os"
-	"os/signal"
 	"path/filepath"
-	"syscall"
 
 	"github.com/gofrs/flock"
 	"github.com/gotk3/gotk3/gdk"
@@ -86,7 +84,7 @@ func main() {
 		log.Println("application startup")
 	})
 
-	n, wlt, err := newNode(workingDir)
+	nd, wlt, err := newNode(workingDir)
 	fatalErrorCheck(err)
 
 	// Connect function to application activate event
@@ -113,7 +111,7 @@ func main() {
 
 		// Running the run-up logic in a separate goroutine
 		glib.TimeoutAdd(uint(100), func() bool {
-			run(n, wlt, app)
+			run(nd, wlt, app)
 			splashDlg.Destroy()
 
 			// Ensures the function is not called again
@@ -123,21 +121,17 @@ func main() {
 
 	// Connect function to application shutdown event, this is not required.
 	app.Connect("shutdown", func() {
-		n.Stop()
+		log.Println("Application shutdown")
+		nd.Stop()
 		_ = fileLock.Unlock()
-		log.Println("application shutdown")
 	})
 
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+	cmd.TrapSignal(func() {
+		cmd.PrintInfoMsgf("Exiting...")
 
-	go func() {
-		s := <-interrupt
-		log.Printf("signal %s received", s.String())
-		n.Stop()
+		nd.Stop()
 		_ = fileLock.Unlock()
-		os.Exit(0)
-	}()
+	})
 
 	// Launch the application
 	os.Exit(app.Run(nil))

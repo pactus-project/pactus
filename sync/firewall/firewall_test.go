@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
@@ -23,7 +24,7 @@ type testData struct {
 	*testsuite.TestSuite
 
 	firewall      *Firewall
-	badPeerID     peer.ID
+	bannedPeerID  peer.ID
 	goodPeerID    peer.ID
 	unknownPeerID peer.ID
 	network       *network.MockNetwork
@@ -50,117 +51,211 @@ func setup(t *testing.T, conf *Config) *testData {
 	}
 
 	assert.NotNil(t, firewall)
-	badPeerID := ts.RandPeerID()
+	bannedPeerID := ts.RandPeerID()
 	goodPeerID := ts.RandPeerID()
 	unknownPeerID := ts.RandPeerID()
 
 	net.AddAnotherNetwork(network.MockingNetwork(ts, goodPeerID))
 	net.AddAnotherNetwork(network.MockingNetwork(ts, unknownPeerID))
-	net.AddAnotherNetwork(network.MockingNetwork(ts, badPeerID))
+	net.AddAnotherNetwork(network.MockingNetwork(ts, bannedPeerID))
 
 	firewall.peerSet.UpdateStatus(goodPeerID, status.StatusKnown)
-	firewall.peerSet.UpdateStatus(badPeerID, status.StatusBanned)
+	firewall.peerSet.UpdateStatus(bannedPeerID, status.StatusBanned)
 
 	return &testData{
 		TestSuite:     ts,
 		firewall:      firewall,
 		network:       net,
 		state:         st,
-		badPeerID:     badPeerID,
+		bannedPeerID:  bannedPeerID,
 		goodPeerID:    goodPeerID,
 		unknownPeerID: unknownPeerID,
 	}
 }
 
-func TestInvalidBundlesCounter(t *testing.T) {
+func (td *testData) testGossipBundle() []byte {
+	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
+	d, _ := bdl.Encode()
+
+	return d
+}
+
+func (td *testData) testStreamBundle() []byte {
+	bdl := bundle.NewBundle(message.NewBlocksRequestMessage(td.RandInt(100), 1, 100))
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
+	d, _ := bdl.Encode()
+
+	return d
+}
+
+func TestDecodeBundles(t *testing.T) {
 	td := setup(t, nil)
 
-	assert.Nil(t, td.firewall.OpenGossipBundle([]byte("bad"), td.unknownPeerID))
-	assert.Nil(t, td.firewall.OpenGossipBundle(nil, td.unknownPeerID))
+	testCases := []struct {
+		name    string
+		data    string
+		peerID  string
+		wantErr bool
+	}{
+		{
+			name:    "invalid data",
+			data:    "bad0",
+			wantErr: true,
+		},
+		{
+			name:    "nil data",
+			data:    "",
+			wantErr: true,
+		},
+		{
+			name: "invalid bundle (round is -1)",
+			data: "a4" + // Map with 4 key-value pairs
+				"01" + "01" + // Key 1 (Flags), Value: 1 (Mainnet)
+				"02" + "06" + // Key 2 (Message Type), Value: 6 (QueryVote)
+				"03" + "581d" + // Key 2 (Message), Value: 30 Bytes
+				"" + "a3" + // Map with 3 key-value pairs
+				"" + "01" + "1864" + // Key 1 (Height), Value: 100
+				"" + "02" + "20" + // Key 2 (Round), Value: -1
+				"" + "03" + "5501aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + // Key 3 (Querier), Value: 21 Bytes
+				"04" + "05", // Key 4 (Sequence number), Value: 5
+			wantErr: true,
+		},
 
-	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), -1, td.RandValAddress()))
-	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-	d, _ := bdl.Encode()
-	assert.Nil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID))
+		{
+			name: "valid bundle (invalid network, Testnet)",
+			data: "a4" + // Map with 4 key-value pairs
+				"01" + "02" + // Key 1 (Flags), Value: 1 (Testnet)
+				"02" + "06" + // Key 2 (Message Type), Value: 6 (QueryVote)
+				"03" + "581d" + // Key 2 (Message), Value: 30 Bytes
+				"" + "a3" + // Map with 3 key-value pairs
+				"" + "01" + "1864" + // Key 1 (Height), Value: 100
+				"" + "02" + "00" + // Key 2 (Round), Value: 0
+				"" + "03" + "5501aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + // Key 3 (Querier), Value: 21 Bytes
+				"04" + "05", // Key 4 (Sequence number), Value: 5
+			wantErr: true,
+		},
+		{
+			name: "valid bundle",
+			data: "a4" + // Map with 4 key-value pairs
+				"01" + "01" + // Key 1 (Flags), Value: 1 (Mainnet)
+				"02" + "06" + // Key 2 (Message Type), Value: 6 (QueryVote)
+				"03" + "581d" + // Key 2 (Message), Value: 30 Bytes
+				"" + "a3" + // Map with 3 key-value pairs
+				"" + "01" + "1864" + // Key 1 (Height), Value: 100
+				"" + "02" + "00" + // Key 2 (Round), Value: 0
+				"" + "03" + "5501aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + // Key 3 (Querier), Value: 21 Bytes
+				"04" + "05", // Key 4 (Sequence number), Value: 5
+			wantErr: false,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			bs := td.DecodingHex(tc.data)
+			_, err := td.firewall.OpenGossipBundle(bs, td.unknownPeerID)
+			if tc.wantErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
 
 	p := td.firewall.peerSet.GetPeer(td.unknownPeerID)
-	assert.Equal(t, p.InvalidBundles, 3)
+	assert.Equal(t, 5, p.ReceivedBundles)
+	assert.Equal(t, 4, p.InvalidBundles)
 }
 
 func TestGossipMessage(t *testing.T) {
-	t.Run("Message from: unknown => should NOT close the connection", func(t *testing.T) {
+	t.Run("Message is nil", func(t *testing.T) {
 		td := setup(t, nil)
 
-		bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-		d, _ := bdl.Encode()
-
-		assert.False(t, td.network.IsClosed(td.unknownPeerID))
-		assert.NotNil(t, td.firewall.OpenGossipBundle(d, td.unknownPeerID))
+		_, err := td.firewall.OpenGossipBundle(nil, td.unknownPeerID)
+		require.Error(t, err)
 		assert.False(t, td.network.IsClosed(td.unknownPeerID))
 	})
 
-	t.Run("Message  from: bad => should close the connection", func(t *testing.T) {
+	t.Run("Message from banned peer", func(t *testing.T) {
 		td := setup(t, nil)
 
-		bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-		d, _ := bdl.Encode()
+		data := td.testGossipBundle()
 
-		assert.False(t, td.network.IsClosed(td.badPeerID))
-		assert.Nil(t, td.firewall.OpenGossipBundle(d, td.badPeerID))
-		assert.True(t, td.network.IsClosed(td.badPeerID))
+		assert.False(t, td.network.IsClosed(td.bannedPeerID))
+		_, err := td.firewall.OpenGossipBundle(data, td.bannedPeerID)
+		require.ErrorIs(t, err, PeerBannedError{
+			PeerID:  td.bannedPeerID,
+			Address: "",
+		})
+		assert.True(t, td.network.IsClosed(td.bannedPeerID))
 	})
 
-	t.Run("Message is nil => should close the connection", func(t *testing.T) {
+	t.Run("Stream message as gossip message", func(t *testing.T) {
 		td := setup(t, nil)
 
-		assert.Nil(t, td.firewall.OpenGossipBundle(nil, td.unknownPeerID))
+		data := td.testStreamBundle()
+
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
+		_, err := td.firewall.OpenGossipBundle(data, td.unknownPeerID)
+		require.ErrorIs(t, err, ErrGossipMessage)
+		assert.True(t, td.network.IsClosed(td.unknownPeerID))
 	})
 
-	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
 		td := setup(t, nil)
 
-		bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-		d, _ := bdl.Encode()
+		data := td.testGossipBundle()
 
 		assert.False(t, td.network.IsClosed(td.goodPeerID))
-		assert.NotNil(t, td.firewall.OpenGossipBundle(d, td.goodPeerID))
+		_, err := td.firewall.OpenGossipBundle(data, td.goodPeerID)
+		require.NoError(t, err)
 		assert.False(t, td.network.IsClosed(td.goodPeerID))
 	})
 }
 
 func TestStreamMessage(t *testing.T) {
-	t.Run("Message is nil => should close the connection", func(t *testing.T) {
+	t.Run("Message is nil", func(t *testing.T) {
 		td := setup(t, nil)
 
-		assert.False(t, td.network.IsClosed(td.badPeerID))
-		assert.Nil(t, td.firewall.OpenStreamBundle(bytes.NewReader(nil), td.badPeerID))
-		assert.True(t, td.network.IsClosed(td.badPeerID))
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
+		_, err := td.firewall.OpenStreamBundle(bytes.NewReader(nil), td.unknownPeerID)
+		assert.Error(t, err)
 	})
 
-	t.Run("Message from: bad => should close the connection", func(t *testing.T) {
+	t.Run("Message from banned peer", func(t *testing.T) {
 		td := setup(t, nil)
 
-		bdl := bundle.NewBundle(message.NewBlocksRequestMessage(td.RandInt(100), 1, 100))
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-		d, _ := bdl.Encode()
+		data := td.testStreamBundle()
 
-		assert.False(t, td.network.IsClosed(td.badPeerID))
-		assert.Nil(t, td.firewall.OpenStreamBundle(bytes.NewReader(d), td.badPeerID))
-		assert.True(t, td.network.IsClosed(td.badPeerID))
+		assert.False(t, td.network.IsClosed(td.bannedPeerID))
+		_, err := td.firewall.OpenStreamBundle(bytes.NewReader(data), td.bannedPeerID)
+		assert.ErrorIs(t, err, PeerBannedError{
+			PeerID:  td.bannedPeerID,
+			Address: "",
+		})
+
+		assert.True(t, td.network.IsClosed(td.bannedPeerID))
 	})
 
-	t.Run("Ok => should NOT close the connection", func(t *testing.T) {
+	t.Run("Gossip message as direct message", func(t *testing.T) {
 		td := setup(t, nil)
 
-		bdl := bundle.NewBundle(message.NewBlocksRequestMessage(td.RandInt(100), 1, 100))
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-		d, _ := bdl.Encode()
+		data := td.testGossipBundle()
+
+		assert.False(t, td.network.IsClosed(td.unknownPeerID))
+		_, err := td.firewall.OpenStreamBundle(bytes.NewReader(data), td.unknownPeerID)
+		require.ErrorIs(t, err, ErrStreamMessage)
+		assert.True(t, td.network.IsClosed(td.unknownPeerID))
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		td := setup(t, nil)
+
+		data := td.testStreamBundle()
 
 		assert.False(t, td.network.IsClosed(td.goodPeerID))
-		assert.NotNil(t, td.firewall.OpenStreamBundle(bytes.NewReader(d), td.goodPeerID))
+		_, err := td.firewall.OpenStreamBundle(bytes.NewReader(data), td.goodPeerID)
+		require.NoError(t, err)
 		assert.False(t, td.network.IsClosed(td.goodPeerID))
 	})
 }
@@ -168,11 +263,10 @@ func TestStreamMessage(t *testing.T) {
 func TestUpdateLastReceived(t *testing.T) {
 	td := setup(t, nil)
 
-	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
-	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-	d, _ := bdl.Encode()
+	data := td.testGossipBundle()
 	now := time.Now().UnixNano()
-	assert.NotNil(t, td.firewall.OpenGossipBundle(d, td.goodPeerID))
+	_, err := td.firewall.OpenGossipBundle(data, td.goodPeerID)
+	require.NoError(t, err)
 
 	peerGood := td.firewall.peerSet.GetPeer(td.goodPeerID)
 	assert.GreaterOrEqual(t, peerGood.LastReceived.UnixNano(), now)
@@ -210,22 +304,43 @@ func TestBannedAddress(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		banned := td.firewall.IsBannedAddress(tc.addr)
+		peerID := td.RandPeerID()
+		td.firewall.peerSet.UpdateAddress(peerID, tc.addr, "inbound")
+		data := td.testGossipBundle()
+		_, err := td.firewall.OpenGossipBundle(data, peerID)
 
 		if tc.banned {
-			assert.True(t, banned,
+			expectedErr := PeerBannedError{
+				PeerID:  peerID,
+				Address: tc.addr,
+			}
+			assert.ErrorIs(t, err, expectedErr,
 				"test %v failed, addr %v should be banned", i, tc.addr)
 		} else {
-			assert.False(t, banned,
+			assert.NoError(t, err,
 				"test %v failed, addr %v should not be banned", i, tc.addr)
 		}
 	}
 }
 
-func TestNetworkFlags(t *testing.T) {
+func TestNetworkFlagsMainnet(t *testing.T) {
 	td := setup(t, nil)
 
-	// TODO: add tests for Mainnet and Testnet flags
+	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
+	assert.NoError(t, td.firewall.checkBundle(bdl))
+
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
+	assert.Error(t, td.firewall.checkBundle(bdl))
+
+	bdl.Flags = 0
+	assert.Error(t, td.firewall.checkBundle(bdl))
+}
+
+func TestNetworkFlagsTestnet(t *testing.T) {
+	td := setup(t, nil)
+	td.state.TestGenesis = genesis.TestnetGenesis()
+
 	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	assert.NoError(t, td.firewall.checkBundle(bdl))
@@ -235,10 +350,21 @@ func TestNetworkFlags(t *testing.T) {
 
 	bdl.Flags = 0
 	assert.Error(t, td.firewall.checkBundle(bdl))
+}
 
+func TestNetworkFlagsLocalnet(t *testing.T) {
+	td := setup(t, nil)
 	td.state.TestParams.BlockVersion = 0x3f // changing genesis hash
-	bdl.Flags = 1
+
+	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	assert.Error(t, td.firewall.checkBundle(bdl))
+
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
+	assert.Error(t, td.firewall.checkBundle(bdl))
+
+	bdl.Flags = 0
+	assert.NoError(t, td.firewall.checkBundle(bdl))
 }
 
 func TestParseP2PAddr(t *testing.T) {

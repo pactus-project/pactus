@@ -98,6 +98,7 @@ type Reader interface {
 	TotalValidators() int32
 	LastCertificate() *certificate.BlockCertificate
 	IsBanned(addr crypto.Address) bool
+	IsPruned() bool
 }
 
 type Store interface {
@@ -106,6 +107,7 @@ type Store interface {
 	UpdateAccount(addr crypto.Address, acc *account.Account)
 	UpdateValidator(val *validator.Validator)
 	SaveBlock(blk *block.Block, cert *certificate.BlockCertificate)
+	Prune(callback func(pruned bool, pruningHeight uint32) bool) error
 	WriteBatch() error
 	Close()
 }

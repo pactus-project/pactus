@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/errors"
 )
@@ -33,6 +34,14 @@ func (m *TransactionsMessage) BasicCheck() error {
 
 func (*TransactionsMessage) Type() Type {
 	return TypeTransaction
+}
+
+func (*TransactionsMessage) TopicID() network.TopicID {
+	return network.TopicIDTransaction
+}
+
+func (*TransactionsMessage) ShouldBroadcast() bool {
+	return true
 }
 
 func (m *TransactionsMessage) String() string {

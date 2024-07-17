@@ -75,6 +75,9 @@ func (g *gossipService) Broadcast(msg []byte, topicID TopicID) error {
 	g.logger.Debug("publishing new message", "topic", topicID)
 
 	switch topicID {
+	case TopicIDUnspecified:
+		return InvalidTopicError{TopicID: topicID}
+
 	case TopicIDBlock:
 		if g.topicBlock == nil {
 			return NotSubscribedError{TopicID: topicID}
@@ -114,6 +117,9 @@ func (g *gossipService) publish(msg []byte, topic *lp2pps.Topic) error {
 // JoinTopic joins to the topic with the given name and subscribes to receive topic messages.
 func (g *gossipService) JoinTopic(topicID TopicID, sp ShouldPropagate) error {
 	switch topicID {
+	case TopicIDUnspecified:
+		return InvalidTopicError{TopicID: topicID}
+
 	case TopicIDBlock:
 		if g.topicBlock != nil {
 			g.logger.Warn("already subscribed to block topic")
@@ -168,6 +174,8 @@ func (g *gossipService) TopicName(topicID TopicID) string {
 	return fmt.Sprintf("/%s/topic/%s/v1", g.networkName, topicID.String())
 }
 
+// joinTopic joins a given topic and registers a validator for it.
+// If successful, it returns the topic and subscribes to it.
 func (g *gossipService) joinTopic(topicID TopicID, sp ShouldPropagate) (*lp2pps.Topic, error) {
 	topicName := g.TopicName(topicID)
 	topic, err := g.pubsub.Join(topicName)
@@ -180,24 +188,8 @@ func (g *gossipService) joinTopic(topicID TopicID, sp ShouldPropagate) (*lp2pps.
 		return nil, LibP2PError{Err: err}
 	}
 
-	err = g.pubsub.RegisterTopicValidator(topicName,
-		func(_ context.Context, peerId lp2pcore.PeerID, m *lp2pps.Message) lp2pps.ValidationResult {
-			msg := &GossipMessage{
-				From:    peerId,
-				Data:    m.Data,
-				TopicID: topicID,
-			}
-			if !sp(msg) {
-				g.logger.Debug("message ignored", "from", peerId, "topic", topicID)
-
-				// Consume the message first
-				g.onReceiveMessage(m)
-
-				return lp2pps.ValidationIgnore
-			}
-
-			return lp2pps.ValidationAccept
-		})
+	err = g.pubsub.RegisterTopicValidator(
+		topicName, g.createValidator(topicID, sp))
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
@@ -224,6 +216,33 @@ func (g *gossipService) joinTopic(topicID TopicID, sp ShouldPropagate) (*lp2pps.
 	return topic, nil
 }
 
+func (g *gossipService) createValidator(topicID TopicID, sp ShouldPropagate,
+) func(context.Context, lp2pcore.PeerID, *lp2pps.Message) lp2pps.ValidationResult {
+	return func(_ context.Context, peerId lp2pcore.PeerID, m *lp2pps.Message) lp2pps.ValidationResult {
+		msg := &GossipMessage{
+			From:    peerId,
+			Data:    m.Data,
+			TopicID: topicID,
+		}
+
+		// Automatically accept and broadcast messages originating from this node
+		if msg.From == g.host.ID() {
+			return lp2pps.ValidationAccept
+		}
+
+		if !sp(msg) {
+			g.logger.Debug("message ignored", "from", peerId, "topic", topicID)
+
+			// Consume the message first
+			g.onReceiveMessage(m)
+
+			return lp2pps.ValidationIgnore
+		}
+
+		return lp2pps.ValidationAccept
+	}
+}
+
 // Start starts the gossip service.
 func (*gossipService) Start() {
 }
@@ -247,7 +266,7 @@ func (g *gossipService) onReceiveMessage(m *lp2pps.Message) {
 		return
 	}
 
-	g.logger.Debug("receiving new gossip message", "source", m.GetFrom())
+	g.logger.Debug("receiving new gossip message", "from", m.ReceivedFrom)
 	event := &GossipMessage{
 		From: m.ReceivedFrom,
 		Data: m.Data,

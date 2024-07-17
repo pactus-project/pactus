@@ -72,18 +72,17 @@ func TestMain(m *testing.M) {
 
 		tConfigs[i].TxPool.MinFeePAC = 0.000001
 		tConfigs[i].Store.Path = util.TempDirPath()
-		tConfigs[i].Consensus.ChangeProposerTimeout = 4 * time.Second
-		tConfigs[i].Consensus.ChangeProposerDelta = 4 * time.Second
-		tConfigs[i].Consensus.QueryVoteTimeout = 4 * time.Second
+		tConfigs[i].Consensus.ChangeProposerTimeout = 2 * time.Second
+		tConfigs[i].Consensus.ChangeProposerDelta = 2 * time.Second
+		tConfigs[i].Consensus.QueryVoteTimeout = 2 * time.Second
 		tConfigs[i].Logger.Levels["default"] = "info"
 		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "info"
 		tConfigs[i].Logger.Levels["_consensus"] = "info"
 		tConfigs[i].Logger.Levels["_network"] = "info"
 		tConfigs[i].Logger.Levels["_pool"] = "info"
-		tConfigs[i].Sync.NodeNetwork = false
 		tConfigs[i].Sync.Firewall.BannedNets = make([]string, 0)
-		tConfigs[i].Sync.LatestBlockInterval = 10
+		tConfigs[i].Sync.BlockPerSession = 10
 		tConfigs[i].Network.EnableMdns = true
 		tConfigs[i].Network.EnableRelay = false
 		tConfigs[i].Network.DefaultBootstrapAddrStrings = []string{}
@@ -98,7 +97,6 @@ func TestMain(m *testing.M) {
 		tConfigs[i].GRPC.Enable = false
 
 		if i == 0 {
-			tConfigs[i].Sync.NodeNetwork = true
 			tConfigs[i].GRPC.Enable = true
 			tConfigs[i].GRPC.Listen = tGRPCAddress
 		}
