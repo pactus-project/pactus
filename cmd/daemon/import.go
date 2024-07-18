@@ -81,13 +81,14 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		}
 
 		sort.Slice(metadata, func(i, j int) bool {
-			return i > j
+			return i > j //nolint
 		})
 
 		cmd.PrintLine()
 
 		for i, m := range metadata {
-			fmt.Printf("%d. snapshot %s (%s)\n", i+1,
+			fmt.Printf("%d. snapshot %s (%s)\n", //nolint
+				i+1,
 				parseDate(m.CreatedAt),
 				util.FormatBytesToHumanReadable(uint64(m.TotalSize)))
 		}
@@ -95,7 +96,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		cmd.PrintLine()
 
 		var choice int
-		fmt.Printf("Please select a snapshot [1-%d]: ", len(metadata))
+		fmt.Printf("Please select a snapshot [1-%d]: ", len(metadata)) //nolint
 		_, err = fmt.Scanf("%d", &choice)
 		cmd.FatalErrorCheck(err)
 
@@ -161,7 +162,7 @@ func downloadProgressBar(fileName string, totalSize, downloaded int64, percentag
 		util.FormatBytesToHumanReadable(uint64(totalSize)),
 	)
 
-	fmt.Print(progressBar)
+	fmt.Print(progressBar) //nolint
 }
 
 func parseDate(dateString string) string {

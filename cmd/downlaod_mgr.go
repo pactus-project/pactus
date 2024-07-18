@@ -136,7 +136,7 @@ func ExtractAndStoreFile(zipFilePath, extractPath string) error {
 			return fmt.Errorf("failed to open file in zip archive: %w", err)
 		}
 
-		fpath := filepath.Join(extractPath, f.Name)
+		fpath := fmt.Sprintf("%s/%s", extractPath, f.Name)
 
 		outFile, err := os.Create(fpath)
 		if err != nil {
