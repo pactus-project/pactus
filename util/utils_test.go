@@ -118,3 +118,22 @@ func TestLogScale(t *testing.T) {
 		assert.Equal(t, testCase.expected, result, "LogScale(%d) failed", testCase.input)
 	}
 }
+
+func TestFormatBytesToHumanReadable(t *testing.T) {
+	tests := []struct {
+		bytes    uint64
+		expected string
+	}{
+		{1048576, "1.00 MB"},
+		{3145728, "3.00 MB"},
+		{1024, "1.00 KB"},
+		{512, "512.00 Bytes"},
+	}
+
+	for _, test := range tests {
+		result := FormatBytesToHumanReadable(test.bytes)
+		if result != test.expected {
+			t.Errorf("FormatBytesToHumanReadable(%d) returned %s, expected %s", test.bytes, result, test.expected)
+		}
+	}
+}
