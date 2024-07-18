@@ -33,25 +33,25 @@ func (e UnknownPayloadTypeError) Error() string {
 		e.PayloadType.String())
 }
 
-// PastLockTimeError is returned when the lock time of a transaction
+// LockTimeExpiredError is returned when the lock time of a transaction
 // is in the past and has expired,
 // indicating the transaction can no longer be executed.
-type PastLockTimeError struct {
+type LockTimeExpiredError struct {
 	LockTime uint32
 }
 
-func (e PastLockTimeError) Error() string {
-	return fmt.Sprintf("lock time is in the past: %v", e.LockTime)
+func (e LockTimeExpiredError) Error() string {
+	return fmt.Sprintf("lock time expired: %v", e.LockTime)
 }
 
-// FutureLockTimeError is returned when the lock time of a transaction
+// LockTimeInFutureError is returned when the lock time of a transaction
 // is in the future,
 // indicating the transaction is not yet eligible for processing.
-type FutureLockTimeError struct {
+type LockTimeInFutureError struct {
 	LockTime uint32
 }
 
-func (e FutureLockTimeError) Error() string {
+func (e LockTimeInFutureError) Error() string {
 	return fmt.Sprintf("lock time is in the future: %v", e.LockTime)
 }
 

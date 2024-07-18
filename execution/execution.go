@@ -85,7 +85,7 @@ func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	if sb.CurrentHeight() > interval {
 		if trx.LockTime() < sb.CurrentHeight()-interval {
-			return PastLockTimeError{
+			return LockTimeExpiredError{
 				LockTime: trx.LockTime(),
 			}
 		}
@@ -96,7 +96,7 @@ func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
 		if trx.LockTime() > sb.CurrentHeight() {
-			return FutureLockTimeError{
+			return LockTimeInFutureError{
 				LockTime: trx.LockTime(),
 			}
 		}
