@@ -2,15 +2,17 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+	"time"
+
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/spf13/cobra"
-	"os"
-	"path/filepath"
-	"sort"
-	"strings"
 )
 
 func buildImportCmd(parentCmd *cobra.Command) {
@@ -21,8 +23,9 @@ func buildImportCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(importCmd)
 
 	workingDirOpt := addWorkingDirOption(importCmd)
+	serverAddrOpt := importCmd.Flags().String("server-addr", "", "custom import server")
 
-	importCmd.Run = func(c *cobra.Command, args []string) {
+	importCmd.Run = func(c *cobra.Command, _ []string) {
 		workingDir, err := filepath.Abs(*workingDirOpt)
 		cmd.FatalErrorCheck(err)
 
@@ -36,10 +39,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		fileLock := flock.New(lockFilePath)
 
 		locked, err := fileLock.TryLock()
-		if err != nil {
-			// handle unable to attempt to acquire lock
-			cmd.FatalErrorCheck(err)
-		}
+		cmd.FatalErrorCheck(err)
 
 		if !locked {
 			cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
@@ -47,7 +47,6 @@ func buildImportCmd(parentCmd *cobra.Command) {
 			return
 		}
 
-		cmd.PrintInfoMsgf("Checking data in %s exists...", workingDir)
 		storeDir, _ := filepath.Abs(conf.Store.StorePath())
 		if !util.IsDirNotExistsOrEmpty(storeDir) {
 			cmd.PrintErrorMsgf("The data directory is not empty: %s", conf.Store.StorePath())
@@ -55,21 +54,26 @@ func buildImportCmd(parentCmd *cobra.Command) {
 			return
 		}
 
-		snapshotUrl := ""
+		serverAddr := cmd.SnapshotServer()
+
+		if *serverAddrOpt != "" {
+			serverAddr = *serverAddrOpt
+		}
+
+		snapshotURL := "mainnet/"
 
 		switch gen.ChainType() {
 		case genesis.Mainnet:
-			snapshotUrl = cmd.SnapshotBaseUrl + "mainnet/"
+			snapshotURL = serverAddr + "mainnet/"
 		case genesis.Testnet:
-			snapshotUrl = cmd.SnapshotBaseUrl + "testnet/"
-		default:
+			snapshotURL = serverAddr + "testnet/"
+		case genesis.Localnet:
 			cmd.PrintErrorMsgf("Unsupported chain type: %s", gen.ChainType())
 
 			return
 		}
 
-		cmd.PrintInfoMsgf("Getting snapshots metadata...")
-		metadata, err := cmd.SnapshotMetadata(c.Context(), snapshotUrl)
+		metadata, err := cmd.GetSnapshotMetadata(c.Context(), snapshotURL)
 		if err != nil {
 			cmd.PrintErrorMsgf("Failed to get snapshot metadata: %s", err)
 
@@ -83,9 +87,9 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		cmd.PrintLine()
 
 		for i, m := range metadata {
-			fmt.Printf("%d. snapshot %s (%.2f MB)\n", i+1,
-				m.CreatedAt,
-				float64(m.TotalSize)/1024/1024)
+			fmt.Printf("%d. snapshot %s (%s)\n", i+1,
+				parseDate(m.CreatedAt),
+				util.FormatBytesToHumanReadable(uint64(m.TotalSize)))
 		}
 
 		cmd.PrintLine()
@@ -93,11 +97,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		var choice int
 		fmt.Printf("Please select a snapshot [1-%d]: ", len(metadata))
 		_, err = fmt.Scanf("%d", &choice)
-		if err != nil {
-			cmd.PrintErrorMsgf("invalid input: %s", err)
-
-			return
-		}
+		cmd.FatalErrorCheck(err)
 
 		if choice < 1 || choice > len(metadata) {
 			cmd.PrintErrorMsgf("Invalid choice.")
@@ -107,21 +107,18 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		selected := metadata[choice-1]
 		tmpDir := util.TempDirPath()
-		extractPath := fmt.Sprintf("%s/extracted", tmpDir)
+		extractPath := fmt.Sprintf("%s/data", tmpDir)
 
-		err = os.MkdirAll(extractPath, os.ModePerm)
+		err = os.MkdirAll(extractPath, 0o750)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
 
-		zipFileList := make([]string, 0)
-
-		cmd.DownloadManager(
+		zipFileList := cmd.DownloadManager(
 			c.Context(),
-			selected,
-			snapshotUrl,
+			&selected,
+			snapshotURL,
 			tmpDir,
-			zipFileList,
 			downloadProgressBar,
 		)
 
@@ -130,7 +127,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 			cmd.FatalErrorCheck(err)
 		}
 
-		err = os.MkdirAll(filepath.Dir(conf.Store.StorePath()), os.ModePerm)
+		err = os.MkdirAll(filepath.Dir(conf.Store.StorePath()), 0o750)
 		cmd.FatalErrorCheck(err)
 
 		err = cmd.CopyAllFiles(extractPath, conf.Store.StorePath())
@@ -141,6 +138,12 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		_ = fileLock.Unlock()
 
+		cmd.PrintLine()
+		cmd.PrintLine()
+		cmd.PrintInfoMsgf("✅ Your node successfully imported prune data.")
+		cmd.PrintLine()
+		cmd.PrintInfoMsgf("You can start the node by running this command:")
+		cmd.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
 	}
 }
 
@@ -149,14 +152,25 @@ func downloadProgressBar(fileName string, totalSize, downloaded int64, percentag
 	completedWidth := int(float64(barWidth) * (percentage / 100))
 
 	progressBar := fmt.Sprintf(
-		"\r[%-*s] %3.0f%% %s (%.2f MB/ %.2f MB)",
+		"\r[%-*s] %3.0f%% %s (%s/ %s)",
 		barWidth,
 		strings.Repeat("=", completedWidth),
 		percentage,
 		fileName,
-		float64(downloaded)/1024/1024,
-		float64(totalSize)/1024/1024,
+		util.FormatBytesToHumanReadable(uint64(downloaded)),
+		util.FormatBytesToHumanReadable(uint64(totalSize)),
 	)
 
 	fmt.Print(progressBar)
+}
+
+func parseDate(dateString string) string {
+	const layout = "2006-01-02T15:04:05.000000"
+
+	parsedTime, err := time.Parse(layout, dateString)
+	if err != nil {
+		return ""
+	}
+
+	return parsedTime.Format("2006-01-02")
 }
