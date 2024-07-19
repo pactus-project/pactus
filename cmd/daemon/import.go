@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
-	"strings"
 	"time"
 
 	"github.com/gofrs/flock"
@@ -23,7 +21,8 @@ func buildImportCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(importCmd)
 
 	workingDirOpt := addWorkingDirOption(importCmd)
-	serverAddrOpt := importCmd.Flags().String("server-addr", "", "custom import server")
+	serverAddrOpt := importCmd.Flags().String("server-addr", "https://download.pactus.org",
+		"import server address")
 
 	importCmd.Run = func(c *cobra.Command, _ []string) {
 		workingDir, err := filepath.Abs(*workingDirOpt)
@@ -54,19 +53,13 @@ func buildImportCmd(parentCmd *cobra.Command) {
 			return
 		}
 
-		serverAddr := cmd.SnapshotServer()
-
-		if *serverAddrOpt != "" {
-			serverAddr = *serverAddrOpt
-		}
-
-		snapshotURL := "mainnet/"
+		snapshotURL := *serverAddrOpt
 
 		switch gen.ChainType() {
 		case genesis.Mainnet:
-			snapshotURL = serverAddr + "mainnet/"
+			snapshotURL += "/mainnet/"
 		case genesis.Testnet:
-			snapshotURL = serverAddr + "testnet/"
+			snapshotURL += "/testnet/"
 		case genesis.Localnet:
 			cmd.PrintErrorMsgf("Unsupported chain type: %s", gen.ChainType())
 
@@ -80,33 +73,22 @@ func buildImportCmd(parentCmd *cobra.Command) {
 			return
 		}
 
-		sort.Slice(metadata, func(i, j int) bool {
-			return i > j //nolint
-		})
+		snapshots := make([]string, 0, len(metadata))
 
-		cmd.PrintLine()
+		for _, m := range metadata {
+			item := fmt.Sprintf("snapshot %s (%s)",
+				parseTime(m.CreatedAt).Format("2006-01-02"),
+				util.FormatBytesToHumanReadable(m.TotalSize),
+			)
 
-		for i, m := range metadata {
-			fmt.Printf("%d. snapshot %s (%s)\n", //nolint
-				i+1,
-				parseDate(m.CreatedAt),
-				util.FormatBytesToHumanReadable(uint64(m.TotalSize)))
+			snapshots = append(snapshots, item)
 		}
 
 		cmd.PrintLine()
 
-		var choice int
-		fmt.Printf("Please select a snapshot [1-%d]: ", len(metadata)) //nolint
-		_, err = fmt.Scanf("%d", &choice)
-		cmd.FatalErrorCheck(err)
+		choice := cmd.PromptSelect("Please select a snapshot", snapshots)
 
-		if choice < 1 || choice > len(metadata) {
-			cmd.PrintErrorMsgf("Invalid choice.")
-
-			return
-		}
-
-		selected := metadata[choice-1]
+		selected := metadata[choice]
 		tmpDir := util.TempDirPath()
 		extractPath := fmt.Sprintf("%s/data", tmpDir)
 
@@ -148,30 +130,20 @@ func buildImportCmd(parentCmd *cobra.Command) {
 	}
 }
 
-func downloadProgressBar(fileName string, totalSize, downloaded int64, percentage float64) {
-	barWidth := 30
-	completedWidth := int(float64(barWidth) * (percentage / 100))
-
-	progressBar := fmt.Sprintf(
-		"\r[%-*s] %3.0f%% %s (%s/ %s)",
-		barWidth,
-		strings.Repeat("=", completedWidth),
-		percentage,
-		fileName,
-		util.FormatBytesToHumanReadable(uint64(downloaded)),
-		util.FormatBytesToHumanReadable(uint64(totalSize)),
-	)
-
-	fmt.Print(progressBar) //nolint
+func downloadProgressBar(fileName string, totalSize, downloaded int64, _ float64) {
+	bar := cmd.TerminalProgressBar(int(totalSize), 30, true)
+	bar.Describe(fileName)
+	err := bar.Add(int(downloaded))
+	cmd.FatalErrorCheck(err)
 }
 
-func parseDate(dateString string) string {
+func parseTime(dateString string) time.Time {
 	const layout = "2006-01-02T15:04:05.000000"
 
 	parsedTime, err := time.Parse(layout, dateString)
 	if err != nil {
-		return ""
+		return time.Time{}
 	}
 
-	return parsedTime.Format("2006-01-02")
+	return parsedTime
 }
