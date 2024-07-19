@@ -128,6 +128,8 @@ func TestFormatBytesToHumanReadable(t *testing.T) {
 		{3145728, "3.00 MB"},
 		{1024, "1.00 KB"},
 		{512, "512.00 Bytes"},
+		{1_073_741_824, "1.00 GB"},
+		{1_099_511_627_776, "1.00 TB"},
 	}
 
 	for _, test := range tests {
