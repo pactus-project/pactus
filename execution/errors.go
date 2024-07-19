@@ -6,7 +6,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
 // TransactionCommittedError is returned when an attempt is made
@@ -20,17 +19,6 @@ type TransactionCommittedError struct {
 func (e TransactionCommittedError) Error() string {
 	return fmt.Sprintf("the transaction committed before: %s",
 		e.ID.String())
-}
-
-// UnknownPayloadTypeError is returned when transaction payload type
-// is not valid.
-type UnknownPayloadTypeError struct {
-	PayloadType payload.Type
-}
-
-func (e UnknownPayloadTypeError) Error() string {
-	return fmt.Sprintf("unknown payload type: %s",
-		e.PayloadType.String())
 }
 
 // LockTimeExpiredError is returned when the lock time of a transaction

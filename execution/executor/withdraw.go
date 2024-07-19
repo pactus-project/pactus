@@ -2,51 +2,65 @@ package executor
 
 import (
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/errors"
 )
 
 type WithdrawExecutor struct {
-	strict bool
+	sb       sandbox.Sandbox
+	pld      *payload.WithdrawPayload
+	fee      amount.Amount
+	sender   *validator.Validator
+	receiver *account.Account
 }
 
-func NewWithdrawExecutor(strict bool) *WithdrawExecutor {
-	return &WithdrawExecutor{strict: strict}
-}
-
-func (*WithdrawExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
+func NewWithdrawExecutor(trx *tx.Tx, sb sandbox.Sandbox) (*WithdrawExecutor, error) {
 	pld := trx.Payload().(*payload.WithdrawPayload)
 
-	val := sb.Validator(pld.From)
-	if val == nil {
-		return errors.Errorf(errors.ErrInvalidAddress,
-			"unable to retrieve validator account")
+	sender := sb.Validator(pld.From)
+	if sender == nil {
+		return nil, ValidatorNotFoundError{Address: pld.From}
 	}
 
-	if val.Stake() < pld.Amount+trx.Fee() {
+	receiver := sb.Account(pld.To)
+	if receiver == nil {
+		receiver = sb.MakeNewAccount(pld.To)
+	}
+
+	return &WithdrawExecutor{
+		sb:       sb,
+		pld:      pld,
+		fee:      trx.Fee(),
+		sender:   sender,
+		receiver: receiver,
+	}, nil
+}
+
+func (e *WithdrawExecutor) Check(strict bool) error {
+	if e.sender.Stake() < e.pld.Amount+e.fee {
 		return ErrInsufficientFunds
 	}
-	if val.UnbondingHeight() == 0 {
+	if e.sender.UnbondingHeight() == 0 {
 		return errors.Errorf(errors.ErrInvalidHeight,
 			"need to unbond first")
 	}
-	if sb.CurrentHeight() < val.UnbondingHeight()+sb.Params().UnbondInterval {
+	if e.sb.CurrentHeight() < e.sender.UnbondingHeight()+e.sb.Params().UnbondInterval {
 		return errors.Errorf(errors.ErrInvalidHeight,
 			"hasn't passed unbonding period, expected: %v, got: %v",
-			val.UnbondingHeight()+sb.Params().UnbondInterval, sb.CurrentHeight())
+			e.sender.UnbondingHeight()+e.sb.Params().UnbondInterval, e.sb.CurrentHeight())
 	}
-
-	acc := sb.Account(pld.To)
-	if acc == nil {
-		acc = sb.MakeNewAccount(pld.To)
-	}
-
-	val.SubtractFromStake(pld.Amount + trx.Fee())
-	acc.AddToBalance(pld.Amount)
-
-	sb.UpdateValidator(val)
-	sb.UpdateAccount(pld.To, acc)
 
 	return nil
+}
+
+func (e *WithdrawExecutor) Execute() {
+	e.sender.SubtractFromStake(e.pld.Amount + e.fee)
+	e.receiver.AddToBalance(e.pld.Amount)
+
+	e.sb.UpdateValidator(e.sender)
+	e.sb.UpdateAccount(e.pld.To, e.receiver)
 }

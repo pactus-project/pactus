@@ -9,9 +9,7 @@ import (
 	"github.com/pactus-project/pactus/util/errors"
 )
 
-func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox) error {
-	exe := execution.NewExecutor()
-
+func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox, check bool) error {
 	var subsidyTrx *tx.Tx
 	for i, trx := range b.Transactions() {
 		// The first transaction should be subsidy transaction
@@ -27,9 +25,16 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox) error {
 				"duplicated subsidy transaction")
 		}
 
-		err := exe.Execute(trx, sb)
-		if err != nil {
-			return err
+		if check {
+			err := execution.CheckAndExecute(trx, sb, true)
+			if err != nil {
+				return err
+			}
+		} else {
+			err := execution.Execute(trx, sb, true)
+			if err != nil {
+				return err
+			}
 		}
 	}
 

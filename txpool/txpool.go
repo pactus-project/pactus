@@ -20,7 +20,6 @@ type txPool struct {
 	lk sync.RWMutex
 
 	config      *Config
-	checker     *execution.Execution
 	sandbox     sandbox.Sandbox
 	pools       map[payload.Type]pool
 	broadcastCh chan message.Message
@@ -37,7 +36,6 @@ func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 
 	pool := &txPool{
 		config:      conf,
-		checker:     execution.NewChecker(),
 		pools:       pools,
 		broadcastCh: broadcastCh,
 	}
@@ -126,7 +124,7 @@ func (p *txPool) appendTx(trx *tx.Tx) error {
 }
 
 func (p *txPool) checkTx(trx *tx.Tx) error {
-	if err := p.checker.Execute(trx, p.sandbox); err != nil {
+	if err := execution.CheckAndExecute(trx, p.sandbox, false); err != nil {
 		p.logger.Debug("invalid transaction", "tx", trx, "error", err)
 
 		return err

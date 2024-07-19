@@ -320,7 +320,6 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 
 	// Create new sandbox and execute transactions
 	sb := st.concreteSandbox()
-	exe := execution.NewExecutor()
 
 	// Re-check all transactions strictly and remove invalid ones
 	txs := st.txPool.PrepareBlockTransactions()
@@ -336,7 +335,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 			continue
 		}
 
-		if err := exe.Execute(txs[i], sb); err != nil {
+		if err := execution.Execute(txs[i], sb, true); err != nil {
 			st.logger.Debug("found invalid transaction", "tx", txs[i], "error", err)
 			txs.Remove(i)
 			i--
@@ -381,7 +380,7 @@ func (st *state) ValidateBlock(blk *block.Block, round int16) error {
 
 	sb := st.concreteSandbox()
 
-	return st.executeBlock(blk, sb)
+	return st.executeBlock(blk, sb, true)
 }
 
 func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificate) error {
@@ -423,7 +422,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 	// -----------------------------------
 	// Execute block
 	sb := st.concreteSandbox()
-	if err := st.executeBlock(blk, sb); err != nil {
+	if err := st.executeBlock(blk, sb, false); err != nil {
 		return err
 	}
 

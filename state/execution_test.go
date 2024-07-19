@@ -76,7 +76,7 @@ func TestExecuteBlock(t *testing.T) {
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
 
-		assert.Error(t, td.state.executeBlock(invBlock, sb))
+		assert.Error(t, td.state.executeBlock(invBlock, sb, true))
 	})
 
 	t.Run("Has invalid tx", func(t *testing.T) {
@@ -88,7 +88,7 @@ func TestExecuteBlock(t *testing.T) {
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
 
-		assert.Error(t, td.state.executeBlock(invBlock, sb))
+		assert.Error(t, td.state.executeBlock(invBlock, sb, true))
 	})
 
 	t.Run("Subsidy is not first tx", func(t *testing.T) {
@@ -100,7 +100,7 @@ func TestExecuteBlock(t *testing.T) {
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
 
-		assert.Error(t, td.state.executeBlock(invBlock, sb))
+		assert.Error(t, td.state.executeBlock(invBlock, sb, true))
 	})
 
 	t.Run("Has no subsidy", func(t *testing.T) {
@@ -111,7 +111,7 @@ func TestExecuteBlock(t *testing.T) {
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
 
-		assert.Error(t, td.state.executeBlock(invBlock, sb))
+		assert.Error(t, td.state.executeBlock(invBlock, sb, true))
 	})
 
 	t.Run("Two subsidy transactions", func(t *testing.T) {
@@ -123,7 +123,7 @@ func TestExecuteBlock(t *testing.T) {
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
 
-		assert.Error(t, td.state.executeBlock(invBlock, sb))
+		assert.Error(t, td.state.executeBlock(invBlock, sb, true))
 	})
 
 	t.Run("OK", func(t *testing.T) {
@@ -134,7 +134,7 @@ func TestExecuteBlock(t *testing.T) {
 			td.state.stateRoot(), td.state.lastInfo.Certificate(),
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
-		assert.NoError(t, td.state.executeBlock(invBlock, sb))
+		assert.NoError(t, td.state.executeBlock(invBlock, sb, true))
 
 		// Check if fee is claimed
 		treasury := sb.Account(crypto.TreasuryAddress)

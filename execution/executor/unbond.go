@@ -4,58 +4,62 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/types/validator"
 )
 
 type UnbondExecutor struct {
-	strict bool
+	sb        sandbox.Sandbox
+	pld       *payload.UnbondPayload
+	validator *validator.Validator
 }
 
-func NewUnbondExecutor(strict bool) *UnbondExecutor {
-	return &UnbondExecutor{strict: strict}
-}
-
-func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
+func NewUnbondExecutor(trx *tx.Tx, sb sandbox.Sandbox) (*UnbondExecutor, error) {
 	pld := trx.Payload().(*payload.UnbondPayload)
 
 	val := sb.Validator(pld.Signer())
 	if val == nil {
-		return errors.Errorf(errors.ErrInvalidAddress,
-			"unable to retrieve validator")
+		return nil, ValidatorNotFoundError{Address: pld.Validator}
 	}
 
-	if val.UnbondingHeight() > 0 {
-		return errors.Errorf(errors.ErrInvalidHeight,
-			"validator has unbonded at height %v", val.UnbondingHeight())
+	return &UnbondExecutor{
+		sb:        sb,
+		pld:       pld,
+		validator: val,
+	}, nil
+}
+
+func (e *UnbondExecutor) Check(strict bool) error {
+	if e.validator.UnbondingHeight() > 0 {
+		return ErrValidatorUnbonded
 	}
-	if e.strict {
+
+	if strict {
 		// In strict mode, the unbond transaction will be rejected if the
 		// validator is in the committee.
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
-		if sb.Committee().Contains(pld.Validator) {
-			return errors.Errorf(errors.ErrInvalidTx,
-				"validator %v is in committee", pld.Validator)
+		if e.sb.Committee().Contains(e.pld.Validator) {
+			return ErrValidatorInCommittee
 		}
 
 		// In strict mode, unbond transactions will be rejected if a validator is
 		// going to be in the committee for the next height.
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
-		if sb.IsJoinedCommittee(pld.Validator) {
-			return errors.Errorf(errors.ErrInvalidHeight,
-				"validator %v joins committee in the next height", pld.Validator)
+		if e.sb.IsJoinedCommittee(e.pld.Validator) {
+			return ErrValidatorInCommittee
 		}
 	}
 
-	unbondedPower := val.Power()
-	val.UpdateUnbondingHeight(sb.CurrentHeight())
-
-	// At this point, the validator's power is zero.
-	// However, we know the validator's stake.
-	// So, we can update the power delta with the negative of the validator's stake.
-	sb.UpdatePowerDelta(-1 * unbondedPower)
-	sb.UpdateValidator(val)
-
 	return nil
+}
+
+func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) {
+	unbondedPower := e.validator.Power()
+	e.validator.UpdateUnbondingHeight(sb.CurrentHeight())
+
+	// The validator's power is reduced to zero,
+	// so we update the power delta with the negative value of the validator's power.
+	sb.UpdatePowerDelta(-1 * unbondedPower)
+	sb.UpdateValidator(e.validator)
 }

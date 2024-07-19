@@ -11,71 +11,70 @@ import (
 )
 
 type SortitionExecutor struct {
-	strict bool
+	sb              sandbox.Sandbox
+	pld             *payload.SortitionPayload
+	validator       *validator.Validator
+	sortitionHeight uint32
 }
 
-func NewSortitionExecutor(strict bool) *SortitionExecutor {
-	return &SortitionExecutor{strict: strict}
-}
-
-func (e *SortitionExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
+func newSortitionExecutor(trx *tx.Tx, sb sandbox.Sandbox) (*SortitionExecutor, error) {
 	pld := trx.Payload().(*payload.SortitionPayload)
 
 	val := sb.Validator(pld.Validator)
 	if val == nil {
-		return errors.Errorf(errors.ErrInvalidAddress,
-			"unable to retrieve validator")
+		return nil, ValidatorNotFoundError{
+			Address: pld.Validator,
+		}
 	}
 
-	if sb.CurrentHeight()-val.LastBondingHeight() < sb.Params().BondInterval {
-		return errors.Errorf(errors.ErrInvalidHeight,
-			"validator has bonded at height %v", val.LastBondingHeight())
+	return &SortitionExecutor{
+		pld:             pld,
+		sb:              sb,
+		validator:       val,
+		sortitionHeight: trx.LockTime(),
+	}, nil
+}
+
+func (e *SortitionExecutor) Check(strict bool) error {
+	if e.sb.CurrentHeight()-e.validator.LastBondingHeight() < e.sb.Params().BondInterval {
+		return ErrBondingPeriod
 	}
 
-	sortitionHeight := trx.LockTime()
-	ok := sb.VerifyProof(sortitionHeight, pld.Proof, val)
+	ok := e.sb.VerifyProof(e.sortitionHeight, e.pld.Proof, e.validator)
 	if !ok {
-		return errors.Error(errors.ErrInvalidProof)
+		return ErrInvalidSortitionProof
 	}
 
 	// Check for the duplicated or expired sortition transactions
-	if sortitionHeight <= val.LastSortitionHeight() {
+	if e.sortitionHeight <= e.validator.LastSortitionHeight() {
 		return errors.Errorf(errors.ErrInvalidTx,
 			"duplicated sortition transaction")
 	}
 
-	if e.strict {
-		if err := e.joinCommittee(sb, val); err != nil {
+	if strict {
+		if err := e.canJoinCommittee(); err != nil {
 			return err
 		}
 	}
 
-	val.UpdateLastSortitionHeight(sortitionHeight)
-
-	sb.JoinedToCommittee(pld.Validator)
-	sb.UpdateValidator(val)
-
 	return nil
 }
 
-func (*SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
-	val *validator.Validator,
-) error {
-	if sb.Committee().Size() < sb.Params().CommitteeSize {
+func (e *SortitionExecutor) canJoinCommittee() error {
+	if e.sb.Committee().Size() < e.sb.Params().CommitteeSize {
 		// There are available seats in the committee.
-		if sb.Committee().Contains(val.Address()) {
-			return errors.Errorf(errors.ErrInvalidTx,
-				"validator is in committee")
+		if e.sb.Committee().Contains(e.pld.Validator) {
+			return ErrValidatorInCommittee
 		}
 
 		return nil
 	}
 
-	// The committee is full, check if the validator can enter the committee.
+	// The committee is full, check if the validator can join the committee.
 	joiningNum := 0
 	joiningPower := int64(0)
-	committee := sb.Committee()
-	sb.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
+	committee := e.sb.Committee()
+	e.sb.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
 		if joined {
 			if !committee.Contains(val.Address()) {
 				joiningPower += val.Power()
@@ -83,8 +82,8 @@ func (*SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 			}
 		}
 	})
-	if !committee.Contains(val.Address()) {
-		joiningPower += val.Power()
+	if !committee.Contains(e.pld.Validator) {
+		joiningPower += e.validator.Power()
 		joiningNum++
 	}
 	if joiningPower >= (committee.TotalPower() / 3) {
@@ -105,7 +104,7 @@ func (*SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 			"in each height only 1/3 of stake can leave")
 	}
 
-	oldestSortitionHeight := sb.CurrentHeight()
+	oldestSortitionHeight := e.sb.CurrentHeight()
 	for _, v := range committee.Validators() {
 		if v.LastSortitionHeight() < oldestSortitionHeight {
 			oldestSortitionHeight = v.LastSortitionHeight()
@@ -114,11 +113,18 @@ func (*SortitionExecutor) joinCommittee(sb sandbox.Sandbox,
 
 	// If the oldest validator in the committee still hasn't propose a block yet,
 	// she stays in the committee.
-	proposerHeight := sb.Committee().Proposer(0).LastSortitionHeight()
+	proposerHeight := e.sb.Committee().Proposer(0).LastSortitionHeight()
 	if oldestSortitionHeight >= proposerHeight {
 		return errors.Errorf(errors.ErrInvalidTx,
 			"oldest validator still didn't propose any block")
 	}
 
 	return nil
+}
+
+func (e *SortitionExecutor) Execute() {
+	e.validator.UpdateLastSortitionHeight(e.sortitionHeight)
+
+	e.sb.JoinedToCommittee(e.pld.Validator)
+	e.sb.UpdateValidator(e.validator)
 }
