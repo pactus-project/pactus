@@ -6,6 +6,10 @@ on:
       - opened
       - edited
       - synchronize
+      - reopened
+
+permissions:
+  pull-requests: read
 
 jobs:
   main:
@@ -15,3 +19,47 @@ jobs:
       - uses: amannn/action-semantic-pull-request@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Configure which scopes are allowed (newline-delimited).
+          scopes: |
+            github
+            daemon
+            cmd
+            gtk
+            shell
+            wallet
+            committee
+            config
+            consensus
+            crypto
+            docs
+            execution
+            genesis
+            network
+            node
+            sandbox
+            scripts
+            sortition
+            state
+            store
+            sync
+            main
+            txpool
+            types
+            util
+            version
+            grpc
+            http
+            jsonrpc
+            nanomsg
+          # Configure that a scope must always be provided.
+          requireScope: true
+          # Configure that can't be include uppercase letters.
+          disallowScopes: |
+            [A-Z]+
+          # If `subjectPattern` is configured, you can use this property to override
+          # the default error message that is shown when the pattern doesn't match.
+          # The variables `subject` and `title` can be used within the message.
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            didn't match the configured pattern.
