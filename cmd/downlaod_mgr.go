@@ -17,16 +17,11 @@ import (
 
 const maxDecompressedSize = 10 << 20 // 10 MB
 
-var snapshotBaseUrls = []string{
-	"https://download.pactus.org/files/",
-	"https://data.pacviewer.com/files/",
-}
-
 type Metadata struct {
 	Name      string          `json:"name"`
 	CreatedAt string          `json:"created_at"`
 	Compress  string          `json:"compress"`
-	TotalSize int             `json:"total_size"`
+	TotalSize uint64          `json:"total_size"`
 	Data      []*SnapshotData `json:"data"`
 }
 
@@ -34,7 +29,7 @@ type SnapshotData struct {
 	Name string `json:"name"`
 	Path string `json:"path"`
 	Sha  string `json:"sha"`
-	Size int    `json:"size"`
+	Size uint64 `json:"size"`
 }
 
 func GetSnapshotMetadata(ctx context.Context, snapshotURL string) ([]Metadata, error) {
@@ -160,10 +155,6 @@ func ExtractAndStoreFile(zipFilePath, extractPath string) error {
 	}
 
 	return nil
-}
-
-func SnapshotServer() string {
-	return snapshotBaseUrls[0]
 }
 
 // CopyAllFiles copies all files from srcDir to dstDir.
