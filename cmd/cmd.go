@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/k0kubun/go-ansi"
 	"github.com/manifoldco/promptui"
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
@@ -29,6 +30,7 @@ import (
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/vault"
+	"github.com/schollz/progressbar/v3"
 )
 
 const (
@@ -119,6 +121,20 @@ func PromptInput(label string) string {
 	FatalErrorCheck(err)
 
 	return result
+}
+
+// PromptSelect prompts create choice menu for select by user.
+func PromptSelect(label string, items []string) int {
+	prompt := promptui.Select{
+		Label:   label,
+		Items:   items,
+		Pointer: promptui.PipeCursor,
+	}
+
+	choice, _, err := prompt.Run()
+	FatalErrorCheck(err)
+
+	return choice
 }
 
 // PromptInputWithSuggestion prompts the user for an input string with a suggestion.
@@ -616,4 +632,28 @@ func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []vault.Addres
 	}
 
 	return valKeys, nil
+}
+
+func TerminalProgressBar(totalSize, barWidth int, showBytes bool) *progressbar.ProgressBar {
+	if barWidth < 15 {
+		barWidth = 15
+	}
+
+	opts := []progressbar.Option{
+		progressbar.OptionSetWriter(ansi.NewAnsiStdout()),
+		progressbar.OptionEnableColorCodes(true),
+		progressbar.OptionShowBytes(showBytes),
+		progressbar.OptionSetWidth(barWidth),
+		progressbar.OptionSetElapsedTime(false),
+		progressbar.OptionSetPredictTime(false),
+		progressbar.OptionSetTheme(progressbar.Theme{
+			Saucer:        "[green]=[reset]",
+			SaucerHead:    "[green]>[reset]",
+			SaucerPadding: " ",
+			BarStart:      "[",
+			BarEnd:        "]",
+		}),
+	}
+
+	return progressbar.NewOptions(totalSize, opts...)
 }
