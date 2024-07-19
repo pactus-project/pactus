@@ -782,7 +782,7 @@ proto.pactus.GetNodeInfoResponse.toObject = function(includeInstance, msg) {
     protocolsList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f,
     isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 10, false),
     pruningHeight: jspb.Message.getFieldWithDefault(msg, 11, 0),
-    clockOffset: jspb.Message.getFloatingPointFieldWithDefault(msg, 12, 0.0),
+    clockOffset: jspb.Message.getFloatingPointFieldWithDefault(msg, 13, 0.0),
     connectionInfo: (f = msg.getConnectionInfo()) && proto.pactus.ConnectionInfo.toObject(includeInstance, f)
   };
 
@@ -864,11 +864,11 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
       var value = /** @type {number} */ (reader.readInt32());
       msg.setPruningHeight(value);
       break;
-    case 12:
+    case 13:
       var value = /** @type {number} */ (reader.readDouble());
       msg.setClockOffset(value);
       break;
-    case 13:
+    case 14:
       var value = new proto.pactus.ConnectionInfo;
       reader.readMessage(value,proto.pactus.ConnectionInfo.deserializeBinaryFromReader);
       msg.setConnectionInfo(value);
@@ -982,14 +982,14 @@ proto.pactus.GetNodeInfoResponse.serializeBinaryToWriter = function(message, wri
   f = message.getClockOffset();
   if (f !== 0.0) {
     writer.writeDouble(
-      12,
+      13,
       f
     );
   }
   f = message.getConnectionInfo();
   if (f != null) {
     writer.writeMessage(
-      13,
+      14,
       f,
       proto.pactus.ConnectionInfo.serializeBinaryToWriter
     );
@@ -1234,11 +1234,11 @@ proto.pactus.GetNodeInfoResponse.prototype.setPruningHeight = function(value) {
 
 
 /**
- * optional double clock_offset = 12;
+ * optional double clock_offset = 13;
  * @return {number}
  */
 proto.pactus.GetNodeInfoResponse.prototype.getClockOffset = function() {
-  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 12, 0.0));
+  return /** @type {number} */ (jspb.Message.getFloatingPointFieldWithDefault(this, 13, 0.0));
 };
 
 
@@ -1247,17 +1247,17 @@ proto.pactus.GetNodeInfoResponse.prototype.getClockOffset = function() {
  * @return {!proto.pactus.GetNodeInfoResponse} returns this
  */
 proto.pactus.GetNodeInfoResponse.prototype.setClockOffset = function(value) {
-  return jspb.Message.setProto3FloatField(this, 12, value);
+  return jspb.Message.setProto3FloatField(this, 13, value);
 };
 
 
 /**
- * optional ConnectionInfo connection_info = 13;
+ * optional ConnectionInfo connection_info = 14;
  * @return {?proto.pactus.ConnectionInfo}
  */
 proto.pactus.GetNodeInfoResponse.prototype.getConnectionInfo = function() {
   return /** @type{?proto.pactus.ConnectionInfo} */ (
-    jspb.Message.getWrapperField(this, proto.pactus.ConnectionInfo, 13));
+    jspb.Message.getWrapperField(this, proto.pactus.ConnectionInfo, 14));
 };
 
 
@@ -1266,7 +1266,7 @@ proto.pactus.GetNodeInfoResponse.prototype.getConnectionInfo = function() {
  * @return {!proto.pactus.GetNodeInfoResponse} returns this
 */
 proto.pactus.GetNodeInfoResponse.prototype.setConnectionInfo = function(value) {
-  return jspb.Message.setWrapperField(this, 13, value);
+  return jspb.Message.setWrapperField(this, 14, value);
 };
 
 
@@ -1284,7 +1284,7 @@ proto.pactus.GetNodeInfoResponse.prototype.clearConnectionInfo = function() {
  * @return {boolean}
  */
 proto.pactus.GetNodeInfoResponse.prototype.hasConnectionInfo = function() {
-  return jspb.Message.getField(this, 13) != null;
+  return jspb.Message.getField(this, 14) != null;
 };
 
 

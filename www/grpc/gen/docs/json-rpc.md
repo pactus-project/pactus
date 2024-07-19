@@ -2394,14 +2394,14 @@ Parameters has no fields.
     <td class="fw-bold">is_pruned</td>
     <td> boolean</td>
     <td>
-    Type of node pruned or full.
+    If the blocks are subject to pruning.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">pruning_height</td>
     <td> numeric</td>
     <td>
-    The height of pruning.
+    Lowest-height block stored (only present if pruning is enabled)
     </td>
   </tr>
      <tr>

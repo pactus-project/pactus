@@ -213,8 +213,8 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ..pPS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'protocols')
     ..aOB(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isPruned')
     ..a<$core.int>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'pruningHeight', $pb.PbFieldType.O3)
-    ..a<$core.double>(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'clockOffset', $pb.PbFieldType.OD)
-    ..aOM<ConnectionInfo>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectionInfo', subBuilder: ConnectionInfo.create)
+    ..a<$core.double>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'clockOffset', $pb.PbFieldType.OD)
+    ..aOM<ConnectionInfo>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectionInfo', subBuilder: ConnectionInfo.create)
     ..hasRequiredFields = false
   ;
 
@@ -384,24 +384,24 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(11)
   void clearPruningHeight() => clearField(11);
 
-  @$pb.TagNumber(12)
+  @$pb.TagNumber(13)
   $core.double get clockOffset => $_getN(11);
-  @$pb.TagNumber(12)
+  @$pb.TagNumber(13)
   set clockOffset($core.double v) { $_setDouble(11, v); }
-  @$pb.TagNumber(12)
+  @$pb.TagNumber(13)
   $core.bool hasClockOffset() => $_has(11);
-  @$pb.TagNumber(12)
-  void clearClockOffset() => clearField(12);
+  @$pb.TagNumber(13)
+  void clearClockOffset() => clearField(13);
 
-  @$pb.TagNumber(13)
+  @$pb.TagNumber(14)
   ConnectionInfo get connectionInfo => $_getN(12);
-  @$pb.TagNumber(13)
-  set connectionInfo(ConnectionInfo v) { setField(13, v); }
-  @$pb.TagNumber(13)
+  @$pb.TagNumber(14)
+  set connectionInfo(ConnectionInfo v) { setField(14, v); }
+  @$pb.TagNumber(14)
   $core.bool hasConnectionInfo() => $_has(12);
-  @$pb.TagNumber(13)
-  void clearConnectionInfo() => clearField(13);
-  @$pb.TagNumber(13)
+  @$pb.TagNumber(14)
+  void clearConnectionInfo() => clearField(14);
+  @$pb.TagNumber(14)
   ConnectionInfo ensureConnectionInfo() => $_ensure(12);
 }
 

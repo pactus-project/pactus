@@ -3211,7 +3211,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Type of node pruned or full.
+     * If the blocks are subject to pruning.
      * </pre>
      *
      * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
@@ -3221,7 +3221,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * The height of pruning.
+     * Lowest-height block stored (only present if pruning is enabled)
      * </pre>
      *
      * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
@@ -3234,7 +3234,7 @@ public final class NetworkOuterClass {
      * Clock offset of the node.
      * </pre>
      *
-     * <code>double clock_offset = 12 [json_name = "clockOffset"];</code>
+     * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
      * @return The clockOffset.
      */
     double getClockOffset();
@@ -3244,7 +3244,7 @@ public final class NetworkOuterClass {
      * Information about the node's connections.
      * </pre>
      *
-     * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+     * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
      * @return Whether the connectionInfo field is set.
      */
     boolean hasConnectionInfo();
@@ -3253,7 +3253,7 @@ public final class NetworkOuterClass {
      * Information about the node's connections.
      * </pre>
      *
-     * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+     * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
      * @return The connectionInfo.
      */
     pactus.network.NetworkOuterClass.ConnectionInfo getConnectionInfo();
@@ -3262,7 +3262,7 @@ public final class NetworkOuterClass {
      * Information about the node's connections.
      * </pre>
      *
-     * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+     * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
      */
     pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder getConnectionInfoOrBuilder();
   }
@@ -3683,7 +3683,7 @@ public final class NetworkOuterClass {
     private boolean isPruned_;
     /**
      * <pre>
-     * Type of node pruned or full.
+     * If the blocks are subject to pruning.
      * </pre>
      *
      * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
@@ -3698,7 +3698,7 @@ public final class NetworkOuterClass {
     private int pruningHeight_;
     /**
      * <pre>
-     * The height of pruning.
+     * Lowest-height block stored (only present if pruning is enabled)
      * </pre>
      *
      * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
@@ -3709,14 +3709,14 @@ public final class NetworkOuterClass {
       return pruningHeight_;
     }
 
-    public static final int CLOCK_OFFSET_FIELD_NUMBER = 12;
+    public static final int CLOCK_OFFSET_FIELD_NUMBER = 13;
     private double clockOffset_;
     /**
      * <pre>
      * Clock offset of the node.
      * </pre>
      *
-     * <code>double clock_offset = 12 [json_name = "clockOffset"];</code>
+     * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
      * @return The clockOffset.
      */
     @java.lang.Override
@@ -3724,14 +3724,14 @@ public final class NetworkOuterClass {
       return clockOffset_;
     }
 
-    public static final int CONNECTION_INFO_FIELD_NUMBER = 13;
+    public static final int CONNECTION_INFO_FIELD_NUMBER = 14;
     private pactus.network.NetworkOuterClass.ConnectionInfo connectionInfo_;
     /**
      * <pre>
      * Information about the node's connections.
      * </pre>
      *
-     * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+     * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
      * @return Whether the connectionInfo field is set.
      */
     @java.lang.Override
@@ -3743,7 +3743,7 @@ public final class NetworkOuterClass {
      * Information about the node's connections.
      * </pre>
      *
-     * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+     * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
      * @return The connectionInfo.
      */
     @java.lang.Override
@@ -3755,7 +3755,7 @@ public final class NetworkOuterClass {
      * Information about the node's connections.
      * </pre>
      *
-     * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+     * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
      */
     @java.lang.Override
     public pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder getConnectionInfoOrBuilder() {
@@ -3810,10 +3810,10 @@ public final class NetworkOuterClass {
         output.writeInt32(11, pruningHeight_);
       }
       if (java.lang.Double.doubleToRawLongBits(clockOffset_) != 0) {
-        output.writeDouble(12, clockOffset_);
+        output.writeDouble(13, clockOffset_);
       }
       if (connectionInfo_ != null) {
-        output.writeMessage(13, getConnectionInfo());
+        output.writeMessage(14, getConnectionInfo());
       }
       getUnknownFields().writeTo(output);
     }
@@ -3873,11 +3873,11 @@ public final class NetworkOuterClass {
       }
       if (java.lang.Double.doubleToRawLongBits(clockOffset_) != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeDoubleSize(12, clockOffset_);
+          .computeDoubleSize(13, clockOffset_);
       }
       if (connectionInfo_ != null) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(13, getConnectionInfo());
+          .computeMessageSize(14, getConnectionInfo());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -4373,18 +4373,18 @@ public final class NetworkOuterClass {
 
                 break;
               } // case 88
-              case 97: {
+              case 105: {
                 clockOffset_ = input.readDouble();
 
                 break;
-              } // case 97
-              case 106: {
+              } // case 105
+              case 114: {
                 input.readMessage(
                     getConnectionInfoFieldBuilder().getBuilder(),
                     extensionRegistry);
 
                 break;
-              } // case 106
+              } // case 114
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -5263,7 +5263,7 @@ public final class NetworkOuterClass {
       private boolean isPruned_ ;
       /**
        * <pre>
-       * Type of node pruned or full.
+       * If the blocks are subject to pruning.
        * </pre>
        *
        * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
@@ -5275,7 +5275,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Type of node pruned or full.
+       * If the blocks are subject to pruning.
        * </pre>
        *
        * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
@@ -5290,7 +5290,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Type of node pruned or full.
+       * If the blocks are subject to pruning.
        * </pre>
        *
        * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
@@ -5306,7 +5306,7 @@ public final class NetworkOuterClass {
       private int pruningHeight_ ;
       /**
        * <pre>
-       * The height of pruning.
+       * Lowest-height block stored (only present if pruning is enabled)
        * </pre>
        *
        * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
@@ -5318,7 +5318,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * The height of pruning.
+       * Lowest-height block stored (only present if pruning is enabled)
        * </pre>
        *
        * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
@@ -5333,7 +5333,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * The height of pruning.
+       * Lowest-height block stored (only present if pruning is enabled)
        * </pre>
        *
        * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
@@ -5352,7 +5352,7 @@ public final class NetworkOuterClass {
        * Clock offset of the node.
        * </pre>
        *
-       * <code>double clock_offset = 12 [json_name = "clockOffset"];</code>
+       * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
        * @return The clockOffset.
        */
       @java.lang.Override
@@ -5364,7 +5364,7 @@ public final class NetworkOuterClass {
        * Clock offset of the node.
        * </pre>
        *
-       * <code>double clock_offset = 12 [json_name = "clockOffset"];</code>
+       * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
        * @param value The clockOffset to set.
        * @return This builder for chaining.
        */
@@ -5379,7 +5379,7 @@ public final class NetworkOuterClass {
        * Clock offset of the node.
        * </pre>
        *
-       * <code>double clock_offset = 12 [json_name = "clockOffset"];</code>
+       * <code>double clock_offset = 13 [json_name = "clockOffset"];</code>
        * @return This builder for chaining.
        */
       public Builder clearClockOffset() {
@@ -5397,7 +5397,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        * @return Whether the connectionInfo field is set.
        */
       public boolean hasConnectionInfo() {
@@ -5408,7 +5408,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        * @return The connectionInfo.
        */
       public pactus.network.NetworkOuterClass.ConnectionInfo getConnectionInfo() {
@@ -5423,7 +5423,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
       public Builder setConnectionInfo(pactus.network.NetworkOuterClass.ConnectionInfo value) {
         if (connectionInfoBuilder_ == null) {
@@ -5443,7 +5443,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
       public Builder setConnectionInfo(
           pactus.network.NetworkOuterClass.ConnectionInfo.Builder builderForValue) {
@@ -5461,7 +5461,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
       public Builder mergeConnectionInfo(pactus.network.NetworkOuterClass.ConnectionInfo value) {
         if (connectionInfoBuilder_ == null) {
@@ -5483,7 +5483,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
       public Builder clearConnectionInfo() {
         if (connectionInfoBuilder_ == null) {
@@ -5501,7 +5501,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
       public pactus.network.NetworkOuterClass.ConnectionInfo.Builder getConnectionInfoBuilder() {
         
@@ -5513,7 +5513,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
       public pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder getConnectionInfoOrBuilder() {
         if (connectionInfoBuilder_ != null) {
@@ -5528,7 +5528,7 @@ public final class NetworkOuterClass {
        * Information about the node's connections.
        * </pre>
        *
-       * <code>.pactus.ConnectionInfo connection_info = 13 [json_name = "connectionInfo"];</code>
+       * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.network.NetworkOuterClass.ConnectionInfo, pactus.network.NetworkOuterClass.ConnectionInfo.Builder, pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder> 
@@ -9536,7 +9536,7 @@ public final class NetworkOuterClass {
   }
   /**
    * <pre>
-   * Response message containing information about the node's connections.
+   * ConnectionInfo contains information about the node's connections.
    * </pre>
    *
    * Protobuf type {@code pactus.ConnectionInfo}
@@ -9805,7 +9805,7 @@ public final class NetworkOuterClass {
     }
     /**
      * <pre>
-     * Response message containing information about the node's connections.
+     * ConnectionInfo contains information about the node's connections.
      * </pre>
      *
      * Protobuf type {@code pactus.ConnectionInfo}
@@ -10266,8 +10266,8 @@ public final class NetworkOuterClass {
       "(\tR\nlocalAddrs\022\034\n\tprotocols\030\t \003(\tR\tproto" +
       "cols\022\033\n\tis_pruned\030\n \001(\010R\010isPruned\022%\n\016pru" +
       "ning_height\030\013 \001(\005R\rpruningHeight\022!\n\014cloc" +
-      "k_offset\030\014 \001(\001R\013clockOffset\022?\n\017connectio" +
-      "n_info\030\r \001(\0132\026.pactus.ConnectionInfoR\016co" +
+      "k_offset\030\r \001(\001R\013clockOffset\022?\n\017connectio" +
+      "n_info\030\016 \001(\0132\026.pactus.ConnectionInfoR\016co" +
       "nnectionInfo\"\355\006\n\010PeerInfo\022\026\n\006status\030\001 \001(" +
       "\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007moniker\022\024\n\005a" +
       "gent\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\tR\006peer" +

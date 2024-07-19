@@ -66,9 +66,9 @@ message GetNodeInfoResponse {
   // Lowest-height block stored (only present if pruning is enabled)
   int32 pruning_height = 11;
   // Clock offset of the node.
-  double clock_offset = 12;
+  double clock_offset = 13;
   // Information about the node's connections.
-  ConnectionInfo connection_info = 13;
+  ConnectionInfo connection_info = 14;
 }
 
 // Information about a peer in the network.

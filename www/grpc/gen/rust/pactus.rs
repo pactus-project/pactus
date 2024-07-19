@@ -837,17 +837,17 @@ pub struct GetNodeInfoResponse {
     /// List of protocols supported by the node.
     #[prost(string, repeated, tag="9")]
     pub protocols: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    /// Type of node pruned or full.
+    /// If the blocks are subject to pruning.
     #[prost(bool, tag="10")]
     pub is_pruned: bool,
-    /// The height of pruning.
+    /// Lowest-height block stored (only present if pruning is enabled)
     #[prost(int32, tag="11")]
     pub pruning_height: i32,
     /// Clock offset of the node.
-    #[prost(double, tag="12")]
+    #[prost(double, tag="13")]
     pub clock_offset: f64,
     /// Information about the node's connections.
-    #[prost(message, optional, tag="13")]
+    #[prost(message, optional, tag="14")]
     pub connection_info: ::core::option::Option<ConnectionInfo>,
 }
 /// Information about a peer in the network.
@@ -915,7 +915,7 @@ pub struct PeerInfo {
     #[prost(int32, tag="20")]
     pub completed_sessions: i32,
 }
-/// Response message containing information about the node's connections.
+/// ConnectionInfo contains information about the node's connections.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ConnectionInfo {
