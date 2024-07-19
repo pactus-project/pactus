@@ -276,9 +276,6 @@ func (d *Downloader) stop() {
 }
 
 func (d *Downloader) handleError(err error) {
-	select {
-	case d.errCh <- err:
-	default:
-		d.stop()
-	}
+	d.errCh <- err
+	d.stop()
 }
