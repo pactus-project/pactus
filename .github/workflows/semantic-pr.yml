@@ -57,8 +57,8 @@ jobs:
           # Configure that can't be include uppercase letters.
           disallowScopes: |
             [A-Z]+
-          # The subject should not start with an uppercase character.
-          subjectPattern: ^(?![A-Z]).+$
+          # The subject should not start with an uppercase character and should not end with a '.'.
+          subjectPattern: ^(?![A-Z]).+[^.]$
           subjectPatternError: |
             The subject "{subject}" found in the pull request title "{title}"
             didn't match the configured pattern.
