@@ -40,8 +40,8 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 
 	assistFunc := pageAssistant()
 
-	// -- page_node_mode
-	snapshotWidget, snapshotGrid, snapshotRadio, snapshotPageName := pageSnapshot(assistant, assistFunc)
+	// -- page_import
+	importWidget, importGrid, importRadio, importPageName := pageImport(assistant, assistFunc)
 
 	// --- page_mode
 	mode, restoreRadio, pageModeName := pageMode(assistant, assistFunc)
@@ -75,7 +75,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 		gtk.MainQuit()
 	})
 
-	assistant.SetPageType(snapshotWidget, gtk.ASSISTANT_PAGE_CONTENT)
+	assistant.SetPageType(importWidget, gtk.ASSISTANT_PAGE_CONTENT)
 	assistant.SetPageType(mode, gtk.ASSISTANT_PAGE_INTRO)            // page 0
 	assistant.SetPageType(seedGenerate, gtk.ASSISTANT_PAGE_CONTENT)  // page 1
 	assistant.SetPageType(seedConfirm, gtk.ASSISTANT_PAGE_CONTENT)   // page 2
@@ -101,8 +101,8 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 		log.Printf("%v (restore: %v, prev: %v, cur: %v)\n",
 			curPageName, isRestoreMode, prevPageIndex, curPageIndex)
 		switch curPageName {
-		case snapshotPageName:
-			assistantPageComplete(assistant, snapshotWidget, true)
+		case importPageName:
+			assistantPageComplete(assistant, importWidget, true)
 			ssLabel, err := gtk.LabelNew("")
 			cmd.FatalErrorCheck(err)
 			setMargin(ssLabel, 5, 5, 1, 1)
@@ -125,10 +125,10 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 			setMargin(ssPBLabel, 5, 10, 1, 1)
 			ssPBLabel.SetHAlign(gtk.ALIGN_START)
 
-			snapshotGrid.Attach(ssLabel, 0, 1, 1, 1)
-			snapshotGrid.Attach(listBox, 0, 2, 1, 1)
-			snapshotGrid.Attach(ssDLBtn, 0, 3, 1, 1)
-			snapshotGrid.Attach(ssPBLabel, 0, 5, 1, 1)
+			importGrid.Attach(ssLabel, 0, 1, 1, 1)
+			importGrid.Attach(listBox, 0, 2, 1, 1)
+			importGrid.Attach(ssDLBtn, 0, 3, 1, 1)
+			importGrid.Attach(ssPBLabel, 0, 5, 1, 1)
 			ssLabel.SetVisible(false)
 			listBox.SetVisible(false)
 			ssDLBtn.SetVisible(false)
@@ -136,14 +136,21 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 
 			snapshotIndex := 0
 
-			snapshotRadio.Connect("toggled", func() {
-				if snapshotRadio.GetActive() {
-					assistantPageComplete(assistant, snapshotWidget, false)
+			importRadio.Connect("toggled", func() {
+				if importRadio.GetActive() {
+					assistantPageComplete(assistant, importWidget, false)
 
 					snapshotURL := "https://download.pactus.org/mainnet/"
 
 					tmpDir := util.TempDirPath()
 					extractPath := fmt.Sprintf("%s/data", tmpDir)
+
+					dm := cmd.NewDownloadManager(
+						snapshotURL,
+						extractPath,
+						tmpDir,
+						"/home/javad/pactus/data/store.db",
+					)
 
 					err = os.MkdirAll(extractPath, 0o750)
 					cmd.FatalErrorCheck(err)
@@ -153,7 +160,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 						ssLabel.SetVisible(true)
 					})
 
-					mdCh := getMetadata(context.Background(), snapshotURL, listBox)
+					mdCh := getMetadata(context.Background(), dm, listBox)
 
 					go func() {
 						if md := <-mdCh; md == nil {
@@ -175,16 +182,17 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 								ssPBLabel.SetVisible(true)
 
 								go func() {
-									zipFileList := cmd.DownloadManager(
+									dm.Download(
 										context.Background(),
 										&md[snapshotIndex],
-										snapshotURL,
-										tmpDir,
-										func(fileName string, totalSize, downloaded int64, percentage float64) {
+										func(fileName string, totalSize, downloaded int64,
+											totalItem, downloadedItem int, percentage float64) {
 											percent := int(percentage)
 											glib.IdleAdd(func() {
-												dlMessage := fmt.Sprintf("🌐 Downloading file %s... %d%% (%s / %s)",
+												dlMessage := fmt.Sprintf("🌐 Downloading %s (%d/%d)... %d%% (%s / %s)",
 													fileName,
+													downloadedItem,
+													totalItem,
 													percent,
 													util.FormatBytesToHumanReadable(uint64(downloaded)),
 													util.FormatBytesToHumanReadable(uint64(totalSize)),
@@ -195,22 +203,20 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 									)
 
 									ssPBLabel.SetText("   " + "📂 Extracting downloaded files...")
-									for _, zFile := range zipFileList {
-										err := cmd.ExtractAndStoreFile(zFile, extractPath)
-										cmd.FatalErrorCheck(err)
-									}
+									err := dm.ExtractAndStoreFiles()
+									cmd.FatalErrorCheck(err)
 
 									err = os.MkdirAll(filepath.Dir("/home/javad/pactus/data/store.db"), 0o750)
 									cmd.FatalErrorCheck(err)
 
-									err = cmd.CopyAllFiles(extractPath, "/home/javad/pactus/data/store.db")
+									err = dm.CopyAllFiles()
 									cmd.FatalErrorCheck(err)
 
 									err = os.RemoveAll(tmpDir)
 									cmd.FatalErrorCheck(err)
 
 									ssPBLabel.SetText("   " + "✅ Import completed.")
-									assistantPageComplete(assistant, snapshotWidget, true)
+									assistantPageComplete(assistant, importWidget, true)
 								}()
 							})
 
@@ -218,7 +224,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 					}()
 
 				} else {
-					assistantPageComplete(assistant, snapshotWidget, true)
+					assistantPageComplete(assistant, importWidget, true)
 					ssLabel.SetVisible(false)
 					listBox.SetVisible(false)
 					ssDLBtn.SetVisible(false)
@@ -517,7 +523,7 @@ To make sure that you have properly saved your seed, please retype it here.`
 	return pageWidget, pageSeedConfirmName
 }
 
-func pageSnapshot(assistant *gtk.Assistant, assistFunc assistantFunc) (
+func pageImport(assistant *gtk.Assistant, assistFunc assistantFunc) (
 	*gtk.Widget,
 	*gtk.Grid,
 	*gtk.RadioButton,
@@ -732,7 +738,7 @@ func assistantPageComplete(assistant *gtk.Assistant, page gtk.IWidget, completed
 
 func getMetadata(
 	ctx context.Context,
-	snapshotURL string,
+	dm *cmd.DownloadManager,
 	listBox *gtk.ListBox,
 ) <-chan []cmd.Metadata {
 	mdCh := make(chan []cmd.Metadata, 1)
@@ -747,7 +753,7 @@ func getMetadata(
 			children = children.Next()
 		}
 
-		metadata, err := cmd.GetSnapshotMetadata(ctx, snapshotURL)
+		metadata, err := dm.GetMetadata(ctx)
 		if err != nil {
 			mdCh <- nil
 			return
@@ -758,7 +764,7 @@ func getMetadata(
 			cmd.FatalErrorCheck(err)
 
 			label, err := gtk.LabelNew(fmt.Sprintf("snapshot %s (%s)",
-				cmd.ParseTime(md.CreatedAt).Format("2006-01-02"),
+				dm.ParseTime(md.CreatedAt).Format("2006-01-02"),
 				util.FormatBytesToHumanReadable(md.TotalSize),
 			))
 			cmd.FatalErrorCheck(err)
