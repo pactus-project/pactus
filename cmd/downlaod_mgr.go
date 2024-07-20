@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/pactus-project/pactus/util/downloader"
 )
@@ -222,4 +223,15 @@ func copyFile(src, dst string) error {
 	}
 
 	return nil
+}
+
+func ParseTime(dateString string) time.Time {
+	const layout = "2006-01-02T15:04:05.000000"
+
+	parsedTime, err := time.Parse(layout, dateString)
+	if err != nil {
+		return time.Time{}
+	}
+
+	return parsedTime
 }

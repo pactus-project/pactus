@@ -2,15 +2,13 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
-	"time"
-
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/spf13/cobra"
+	"os"
+	"path/filepath"
 )
 
 func buildImportCmd(parentCmd *cobra.Command) {
@@ -77,7 +75,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		for _, m := range metadata {
 			item := fmt.Sprintf("snapshot %s (%s)",
-				parseTime(m.CreatedAt).Format("2006-01-02"),
+				cmd.ParseTime(m.CreatedAt).Format("2006-01-02"),
 				util.FormatBytesToHumanReadable(m.TotalSize),
 			)
 
@@ -135,15 +133,4 @@ func downloadProgressBar(fileName string, totalSize, downloaded int64, _ float64
 	bar.Describe(fileName)
 	err := bar.Add(int(downloaded))
 	cmd.FatalErrorCheck(err)
-}
-
-func parseTime(dateString string) time.Time {
-	const layout = "2006-01-02T15:04:05.000000"
-
-	parsedTime, err := time.Parse(layout, dateString)
-	if err != nil {
-		return time.Time{}
-	}
-
-	return parsedTime
 }

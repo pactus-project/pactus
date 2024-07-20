@@ -3,16 +3,19 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"log"
-	"regexp"
-	"strings"
-
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
+	"log"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
 )
 
 type assistantFunc func(assistant *gtk.Assistant, content gtk.IWidget, name,
@@ -35,6 +38,9 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 	assistant.SetTitle("Pactus - Init Wizard")
 
 	assistFunc := pageAssistant()
+
+	// -- page_node_mode
+	snapshotWidget, snapshotGrid, snapshotRadio, snapshotPageName := pageSnapshot(assistant, assistFunc)
 
 	// --- page_mode
 	mode, restoreRadio, pageModeName := pageMode(assistant, assistFunc)
@@ -68,6 +74,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 		gtk.MainQuit()
 	})
 
+	assistant.SetPageType(snapshotWidget, gtk.ASSISTANT_PAGE_CONTENT)
 	assistant.SetPageType(mode, gtk.ASSISTANT_PAGE_INTRO)            // page 0
 	assistant.SetPageType(seedGenerate, gtk.ASSISTANT_PAGE_CONTENT)  // page 1
 	assistant.SetPageType(seedConfirm, gtk.ASSISTANT_PAGE_CONTENT)   // page 2
@@ -93,6 +100,130 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 		log.Printf("%v (restore: %v, prev: %v, cur: %v)\n",
 			curPageName, isRestoreMode, prevPageIndex, curPageIndex)
 		switch curPageName {
+		case snapshotPageName:
+			assistantPageComplete(assistant, snapshotWidget, true)
+			ssLabel, err := gtk.LabelNew("")
+			cmd.FatalErrorCheck(err)
+			setMargin(ssLabel, 5, 5, 1, 1)
+			ssLabel.SetHAlign(gtk.ALIGN_START)
+
+			listBox, err := gtk.ListBoxNew()
+			cmd.FatalErrorCheck(err)
+			setMargin(listBox, 5, 5, 1, 1)
+			listBox.SetHAlign(gtk.ALIGN_CENTER)
+			listBox.SetSizeRequest(600, -1)
+
+			ssDLBtn, err := gtk.ButtonNewWithLabel("⏬ Download")
+			cmd.FatalErrorCheck(err)
+			setMargin(ssDLBtn, 10, 5, 1, 1)
+			ssDLBtn.SetHAlign(gtk.ALIGN_CENTER)
+			ssDLBtn.SetSizeRequest(600, -1)
+
+			ssPBLabel, err := gtk.LabelNew("")
+			cmd.FatalErrorCheck(err)
+			setMargin(ssPBLabel, 5, 10, 1, 1)
+			ssPBLabel.SetHAlign(gtk.ALIGN_START)
+
+			snapshotGrid.Attach(ssLabel, 0, 1, 1, 1)
+			snapshotGrid.Attach(listBox, 0, 2, 1, 1)
+			snapshotGrid.Attach(ssDLBtn, 0, 3, 1, 1)
+			snapshotGrid.Attach(ssPBLabel, 0, 5, 1, 1)
+			ssLabel.SetVisible(false)
+			listBox.SetVisible(false)
+			ssDLBtn.SetVisible(false)
+			ssPBLabel.SetVisible(false)
+
+			snapshotIndex := 0
+
+			snapshotRadio.Connect("toggled", func() {
+				if snapshotRadio.GetActive() {
+					assistantPageComplete(assistant, snapshotWidget, false)
+
+					snapshotURL := "https://download.pactus.org/mainnet/"
+
+					tmpDir := util.TempDirPath()
+					extractPath := fmt.Sprintf("%s/data", tmpDir)
+
+					err = os.MkdirAll(extractPath, 0o750)
+					cmd.FatalErrorCheck(err)
+
+					glib.IdleAdd(func() {
+						ssLabel.SetText("   ♻️ Please wait, loading snapshots...")
+						ssLabel.SetVisible(true)
+					})
+
+					mdCh := getMetadata(context.Background(), snapshotURL, listBox)
+
+					go func() {
+						if md := <-mdCh; md == nil {
+							ssLabel.SetText("   ❌ Failed to get snapshot list, please try again later.")
+						} else {
+							ssLabel.SetText("   🔽 Please select a snapshot to download:")
+							listBox.SetVisible(true)
+
+							listBox.Connect("row-selected", func(box *gtk.ListBox, row *gtk.ListBoxRow) {
+								if row != nil {
+									snapshotIndex = row.GetIndex()
+									ssDLBtn.SetVisible(true)
+								}
+							})
+
+							ssDLBtn.Connect("clicked", func() {
+								ssDLBtn.SetVisible(false)
+								listBox.SetSelectionMode(gtk.SELECTION_NONE)
+								ssPBLabel.SetVisible(true)
+
+								go func() {
+									zipFileList := cmd.DownloadManager(
+										context.Background(),
+										md[snapshotIndex],
+										snapshotURL,
+										tmpDir,
+										func(fileName string, totalSize, downloaded int64, percentage float64) {
+											percent := int(percentage)
+											glib.IdleAdd(func() {
+												dlMessage := fmt.Sprintf("🌐 Downloading file %s... %d%% (%s / %s)",
+													fileName,
+													percent,
+													util.FormatBytesToHumanReadable(uint64(downloaded)),
+													util.FormatBytesToHumanReadable(uint64(totalSize)),
+												)
+												ssPBLabel.SetText("   " + dlMessage)
+											})
+										},
+									)
+
+									ssPBLabel.SetText("   " + "📂 Extracting downloaded files...")
+									for _, zFile := range zipFileList {
+										err := cmd.ExtractAndStoreFile(zFile, extractPath)
+										cmd.FatalErrorCheck(err)
+									}
+
+									err = os.MkdirAll(filepath.Dir("/home/javad/pactus/data/store.db"), 0o750)
+									cmd.FatalErrorCheck(err)
+
+									err = cmd.CopyAllFiles(extractPath, "/home/javad/pactus/data/store.db")
+									cmd.FatalErrorCheck(err)
+
+									err = os.RemoveAll(tmpDir)
+									cmd.FatalErrorCheck(err)
+
+									ssPBLabel.SetText("   " + "✅ Import completed.")
+									assistantPageComplete(assistant, snapshotWidget, true)
+								}()
+							})
+
+						}
+					}()
+
+				} else {
+					assistantPageComplete(assistant, snapshotWidget, true)
+					ssLabel.SetVisible(false)
+					listBox.SetVisible(false)
+					ssDLBtn.SetVisible(false)
+					ssPBLabel.SetVisible(false)
+				}
+			})
 		case pageModeName:
 			assistantPageComplete(assistant, mode, true)
 
@@ -385,6 +516,57 @@ To make sure that you have properly saved your seed, please retype it here.`
 	return pageWidget, pageSeedConfirmName
 }
 
+func pageSnapshot(assistant *gtk.Assistant, assistFunc assistantFunc) (
+	*gtk.Widget,
+	*gtk.Grid,
+	*gtk.RadioButton,
+	string,
+) {
+	pageWidget := new(gtk.Widget)
+
+	vbox, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
+	cmd.FatalErrorCheck(err)
+
+	grid, err := gtk.GridNew()
+	cmd.FatalErrorCheck(err)
+
+	fullNode, err := gtk.RadioButtonNewWithLabel(nil, "Full node")
+	cmd.FatalErrorCheck(err)
+	fullNode.SetActive(true)
+
+	pruneNode, err := gtk.RadioButtonNewWithLabelFromWidget(fullNode, "Prune node")
+	cmd.FatalErrorCheck(err)
+
+	radioBox, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
+	cmd.FatalErrorCheck(err)
+
+	radioBox.Add(fullNode)
+	setMargin(fullNode, 6, 6, 6, 6)
+	radioBox.Add(pruneNode)
+	setMargin(pruneNode, 6, 10, 6, 6)
+
+	grid.Attach(radioBox, 0, 0, 1, 1)
+
+	vbox.PackStart(grid, true, true, 0)
+
+	pageName := "page_snapshot"
+	pageTitle := "Import"
+	pageSubject := ""
+	pageDesc := ""
+
+	// Create and return the page widget using assistFunc
+	pageWidget = assistFunc(
+		assistant,
+		vbox,
+		pageName,
+		pageTitle,
+		pageSubject,
+		pageDesc,
+	)
+
+	return pageWidget, grid, pruneNode, pageName
+}
+
 func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.Entry, string) {
 	pageWidget := new(gtk.Widget)
 	entryPassword, err := gtk.EntryNew()
@@ -545,4 +727,46 @@ Now you are ready to start the node!`
 func assistantPageComplete(assistant *gtk.Assistant, page gtk.IWidget, completed bool) {
 	assistant.SetPageComplete(page, completed)
 	assistant.UpdateButtonsState()
+}
+
+func getMetadata(
+	ctx context.Context,
+	snapshotURL string,
+	listBox *gtk.ListBox,
+) <-chan []cmd.Metadata {
+	mdCh := make(chan []cmd.Metadata, 1)
+
+	go func() {
+		defer close(mdCh)
+
+		children := listBox.GetChildren()
+		for children.Length() > 0 {
+			child := children.Data().(*gtk.Widget)
+			listBox.Remove(child)
+			children = children.Next()
+		}
+
+		metadata, err := cmd.GetSnapshotMetadata(ctx, snapshotURL)
+		if err != nil {
+			mdCh <- nil
+			return
+		}
+
+		for _, md := range metadata {
+			listBoxRow, err := gtk.ListBoxRowNew()
+			cmd.FatalErrorCheck(err)
+
+			label, err := gtk.LabelNew(fmt.Sprintf("snapshot %s (%s)",
+				cmd.ParseTime(md.CreatedAt).Format("2006-01-02"),
+				util.FormatBytesToHumanReadable(md.TotalSize),
+			))
+			cmd.FatalErrorCheck(err)
+
+			listBoxRow.Add(label)
+			listBox.Add(listBoxRow)
+		}
+		listBox.ShowAll()
+		mdCh <- metadata
+	}()
+	return mdCh
 }
