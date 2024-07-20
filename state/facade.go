@@ -55,4 +55,6 @@ type Facade interface {
 	PublicKey(addr crypto.Address) (crypto.PublicKey, error)
 	AvailabilityScore(valNum int32) float64
 	AllPendingTxs() []*tx.Tx
+	IsPruned() bool
+	PruningHeight() uint32
 }

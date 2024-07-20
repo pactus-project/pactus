@@ -99,6 +99,7 @@ type Reader interface {
 	LastCertificate() *certificate.BlockCertificate
 	IsBanned(addr crypto.Address) bool
 	IsPruned() bool
+	PruningHeight() uint32
 }
 
 type Store interface {

@@ -3037,7 +3037,9 @@ proto.pactus.GetBlockchainInfoResponse.toObject = function(includeInstance, msg)
     totalPower: jspb.Message.getFieldWithDefault(msg, 5, 0),
     committeePower: jspb.Message.getFieldWithDefault(msg, 6, 0),
     committeeValidatorsList: jspb.Message.toObjectList(msg.getCommitteeValidatorsList(),
-    proto.pactus.ValidatorInfo.toObject, includeInstance)
+    proto.pactus.ValidatorInfo.toObject, includeInstance),
+    isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
+    pruningHeight: jspb.Message.getFieldWithDefault(msg, 9, 0)
   };
 
   if (includeInstance) {
@@ -3102,6 +3104,14 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
       var value = new proto.pactus.ValidatorInfo;
       reader.readMessage(value,proto.pactus.ValidatorInfo.deserializeBinaryFromReader);
       msg.addCommitteeValidators(value);
+      break;
+    case 8:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsPruned(value);
+      break;
+    case 9:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setPruningHeight(value);
       break;
     default:
       reader.skipField();
@@ -3180,6 +3190,20 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
       7,
       f,
       proto.pactus.ValidatorInfo.serializeBinaryToWriter
+    );
+  }
+  f = message.getIsPruned();
+  if (f) {
+    writer.writeBool(
+      8,
+      f
+    );
+  }
+  f = message.getPruningHeight();
+  if (f !== 0) {
+    writer.writeInt32(
+      9,
+      f
     );
   }
 };
@@ -3328,6 +3352,42 @@ proto.pactus.GetBlockchainInfoResponse.prototype.addCommitteeValidators = functi
  */
 proto.pactus.GetBlockchainInfoResponse.prototype.clearCommitteeValidatorsList = function() {
   return this.setCommitteeValidatorsList([]);
+};
+
+
+/**
+ * optional bool is_pruned = 8;
+ * @return {boolean}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getIsPruned = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 8, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setIsPruned = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 8, value);
+};
+
+
+/**
+ * optional int32 pruning_height = 9;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getPruningHeight = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 9, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setPruningHeight = function(value) {
+  return jspb.Message.setProto3IntField(this, 9, value);
 };
 
 

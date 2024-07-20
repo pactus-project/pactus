@@ -526,6 +526,12 @@ pub struct GetBlockchainInfoResponse {
     /// List of committee validators.
     #[prost(message, repeated, tag="7")]
     pub committee_validators: ::prost::alloc::vec::Vec<ValidatorInfo>,
+    /// If the blocks are subject to pruning.
+    #[prost(bool, tag="8")]
+    pub is_pruned: bool,
+    /// Lowest-height block stored (only present if pruning is enabled)
+    #[prost(int32, tag="9")]
+    pub pruning_height: i32,
 }
 /// Message to request consensus information.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -806,20 +812,6 @@ pub struct GetNetworkInfoResponse {
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetNodeInfoRequest {
 }
-/// Response message containing information about the node's connections.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ConnectionInfo {
-    /// Total number of connections.
-    #[prost(uint64, tag="1")]
-    pub connections: u64,
-    /// Number of inbound connections.
-    #[prost(uint64, tag="2")]
-    pub inbound_connections: u64,
-    /// Number of outbound connections.
-    #[prost(uint64, tag="3")]
-    pub outbound_connections: u64,
-}
 /// Response message containing information about a specific node in the network.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -922,6 +914,20 @@ pub struct PeerInfo {
     /// Completed download sessions with the peer.
     #[prost(int32, tag="20")]
     pub completed_sessions: i32,
+}
+/// ConnectionInfo contains information about the node's connections.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ConnectionInfo {
+    /// Total number of connections.
+    #[prost(uint64, tag="1")]
+    pub connections: u64,
+    /// Number of inbound connections.
+    #[prost(uint64, tag="2")]
+    pub inbound_connections: u64,
+    /// Number of outbound connections.
+    #[prost(uint64, tag="3")]
+    pub outbound_connections: u64,
 }
 /// Request message for sign message with private key.
 #[allow(clippy::derive_partial_eq_without_eq)]

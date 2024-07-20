@@ -1447,7 +1447,7 @@
           "description": "Number of outbound connections."
         }
       },
-      "description": "Response message containing information about the node's connections."
+      "description": "ConnectionInfo contains information about the node's connections."
     },
     "pactusConsensusInfo": {
       "type": "object",
@@ -1615,6 +1615,15 @@
             "$ref": "#/definitions/pactusValidatorInfo"
           },
           "description": "List of committee validators."
+        },
+        "isPruned": {
+          "type": "boolean",
+          "description": "If the blocks are subject to pruning."
+        },
+        "pruningHeight": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Lowest-height block stored (only present if pruning is enabled)"
         }
       },
       "description": "Message containing the response with general blockchain information."

@@ -837,6 +837,8 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalPower')
     ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'committeePower')
     ..pc<ValidatorInfo>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'committeeValidators', $pb.PbFieldType.PM, subBuilder: ValidatorInfo.create)
+    ..aOB(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isPruned')
+    ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'pruningHeight', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -849,6 +851,8 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     $fixnum.Int64? totalPower,
     $fixnum.Int64? committeePower,
     $core.Iterable<ValidatorInfo>? committeeValidators,
+    $core.bool? isPruned,
+    $core.int? pruningHeight,
   }) {
     final _result = create();
     if (lastBlockHeight != null) {
@@ -871,6 +875,12 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     }
     if (committeeValidators != null) {
       _result.committeeValidators.addAll(committeeValidators);
+    }
+    if (isPruned != null) {
+      _result.isPruned = isPruned;
+    }
+    if (pruningHeight != null) {
+      _result.pruningHeight = pruningHeight;
     }
     return _result;
   }
@@ -951,6 +961,24 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(7)
   $core.List<ValidatorInfo> get committeeValidators => $_getList(6);
+
+  @$pb.TagNumber(8)
+  $core.bool get isPruned => $_getBF(7);
+  @$pb.TagNumber(8)
+  set isPruned($core.bool v) { $_setBool(7, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasIsPruned() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearIsPruned() => clearField(8);
+
+  @$pb.TagNumber(9)
+  $core.int get pruningHeight => $_getIZ(8);
+  @$pb.TagNumber(9)
+  set pruningHeight($core.int v) { $_setSignedInt32(8, v); }
+  @$pb.TagNumber(9)
+  $core.bool hasPruningHeight() => $_has(8);
+  @$pb.TagNumber(9)
+  void clearPruningHeight() => clearField(9);
 }
 
 class GetConsensusInfoRequest extends $pb.GeneratedMessage {

@@ -487,3 +487,15 @@ func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
 
 	return true, nil
 }
+
+func (s *store) PruningHeight() uint32 {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
+	cert := s.lastCertificate()
+	if cert == nil {
+		return 0
+	}
+
+	return cert.Height() - s.config.RetentionBlocks()
+}
