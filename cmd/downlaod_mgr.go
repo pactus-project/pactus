@@ -18,6 +18,13 @@ import (
 
 const maxDecompressedSize = 10 << 20 // 10 MB
 
+type DMStateFunc func(
+	fileName string,
+	totalSize, downloaded int64,
+	totalItem, downloadedItem int,
+	percentage float64,
+)
+
 type Metadata struct {
 	Name      string          `json:"name"`
 	CreatedAt string          `json:"created_at"`
@@ -33,9 +40,27 @@ type SnapshotData struct {
 	Size uint64 `json:"size"`
 }
 
-func GetSnapshotMetadata(ctx context.Context, snapshotURL string) ([]Metadata, error) {
+type DownloadManager struct {
+	snapshotURL string
+	extractDir  string
+	tempDir     string
+	storeDir    string
+	zipFileList []string
+}
+
+func NewDownloadManager(snapshotURL, extractDir, tempDir, storeDir string) *DownloadManager {
+	return &DownloadManager{
+		snapshotURL: snapshotURL,
+		extractDir:  extractDir,
+		tempDir:     tempDir,
+		storeDir:    storeDir,
+		zipFileList: make([]string, 0),
+	}
+}
+
+func (dl *DownloadManager) GetMetadata(ctx context.Context) ([]Metadata, error) {
 	cli := http.DefaultClient
-	metaURL, err := url.JoinPath(snapshotURL, "metadata.json")
+	metaURL, err := url.JoinPath(dl.snapshotURL, "metadata.json")
 	if err != nil {
 		return nil, err
 	}
@@ -68,39 +93,37 @@ func GetSnapshotMetadata(ctx context.Context, snapshotURL string) ([]Metadata, e
 	return metadata, nil
 }
 
-func DownloadManager(
+func (dl *DownloadManager) Download(
 	ctx context.Context,
 	metadata *Metadata,
-	baseURL, tempPath string,
-	stateFunc func(fileName string, totalSize, downloaded int64, percentage float64),
-) []string {
-	zipFileListPath := make([]string, 0)
-
+	stateFunc DMStateFunc,
+) {
+	downloadedItem := 0
 	for _, data := range metadata.Data {
 		done := make(chan struct{})
-		dlLink, err := url.JoinPath(baseURL, data.Path)
+		dlLink, err := url.JoinPath(dl.snapshotURL, data.Path)
 		FatalErrorCheck(err)
 
 		fileName := filepath.Base(dlLink)
 
-		filePath := fmt.Sprintf("%s/%s", tempPath, fileName)
+		filePath := fmt.Sprintf("%s/%s", dl.tempDir, fileName)
 
-		dl := downloader.New(
+		d := downloader.New(
 			dlLink,
 			filePath,
 			data.Sha,
 		)
 
-		dl.Start(ctx)
+		d.Start(ctx)
 
 		go func() {
-			err := <-dl.Errors()
+			err := <-d.Errors()
 			FatalErrorCheck(err)
 		}()
 
 		go func() {
-			for state := range dl.Stats() {
-				stateFunc(fileName, state.TotalSize, state.Downloaded, state.Percent)
+			for state := range d.Stats() {
+				stateFunc(fileName, state.TotalSize, state.Downloaded, len(metadata.Data), downloadedItem, state.Percent)
 				if state.Completed {
 					done <- struct{}{}
 					close(done)
@@ -111,61 +134,68 @@ func DownloadManager(
 		}()
 
 		<-done
-		zipFileListPath = append(zipFileListPath, filePath)
+		dl.zipFileList = append(dl.zipFileList, filePath)
+		downloadedItem++
 	}
-
-	return zipFileListPath
 }
 
-func ExtractAndStoreFile(zipFilePath, extractPath string) error {
-	r, err := zip.OpenReader(zipFilePath)
-	if err != nil {
-		return fmt.Errorf("failed to open zip file: %w", err)
-	}
-	defer func() {
+func (dl *DownloadManager) ExtractAndStoreFiles() error {
+	for _, path := range dl.zipFileList {
+		r, err := zip.OpenReader(path)
+		if err != nil {
+			return fmt.Errorf("failed to open zip file: %w", err)
+		}
+
+		for _, f := range r.File {
+			rc, err := f.Open()
+			if err != nil {
+				return fmt.Errorf("failed to open file in zip archive: %w", err)
+			}
+
+			fpath := fmt.Sprintf("%s/%s", dl.extractDir, f.Name)
+
+			outFile, err := os.Create(fpath)
+			if err != nil {
+				return fmt.Errorf("failed to create file: %w", err)
+			}
+
+			// fixed potential DoS vulnerability via decompression bomb
+			lr := io.LimitedReader{R: rc, N: maxDecompressedSize}
+			_, err = io.Copy(outFile, &lr)
+			if err != nil {
+				return fmt.Errorf("failed to copy file contents: %w", err)
+			}
+
+			// check if the file size exceeds the limit
+			if lr.N <= 0 {
+				return fmt.Errorf("file exceeds maximum decompressed size limit: %s", fpath)
+			}
+
+			_ = rc.Close()
+			_ = outFile.Close()
+
+		}
+
 		_ = r.Close()
-	}()
-
-	for _, f := range r.File {
-		rc, err := f.Open()
-		if err != nil {
-			return fmt.Errorf("failed to open file in zip archive: %w", err)
-		}
-
-		fpath := fmt.Sprintf("%s/%s", extractPath, f.Name)
-
-		outFile, err := os.Create(fpath)
-		if err != nil {
-			return fmt.Errorf("failed to create file: %w", err)
-		}
-
-		// fixed potential DoS vulnerability via decompression bomb
-		lr := io.LimitedReader{R: rc, N: maxDecompressedSize}
-		_, err = io.Copy(outFile, &lr)
-		if err != nil {
-			return fmt.Errorf("failed to copy file contents: %w", err)
-		}
-
-		// check if the file size exceeds the limit
-		if lr.N <= 0 {
-			return fmt.Errorf("file exceeds maximum decompressed size limit: %s", fpath)
-		}
-
-		_ = rc.Close()
-		_ = outFile.Close()
 	}
 
 	return nil
 }
 
-// CopyAllFiles copies all files from srcDir to dstDir.
-func CopyAllFiles(srcDir, dstDir string) error {
-	err := os.MkdirAll(dstDir, 0o750)
+func (dl *DownloadManager) ParseTime(dateString string) time.Time {
+	const layout = "2006-01-02T15:04:05.000000"
+
+	parsedTime, err := time.Parse(layout, dateString)
 	if err != nil {
-		return fmt.Errorf("failed to create destination directory: %w", err)
+		return time.Time{}
 	}
 
-	return filepath.Walk(srcDir, func(path string, info os.FileInfo, err error) error {
+	return parsedTime
+}
+
+// CopyAllFiles copies all files from srcDir to dstDir.
+func (dl *DownloadManager) CopyAllFiles() error {
+	return filepath.Walk(dl.extractDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -174,12 +204,12 @@ func CopyAllFiles(srcDir, dstDir string) error {
 			return nil // Skip directories
 		}
 
-		relativePath, err := filepath.Rel(srcDir, path)
+		relativePath, err := filepath.Rel(dl.extractDir, path)
 		if err != nil {
 			return err
 		}
 
-		dstPath := filepath.Join(dstDir, relativePath)
+		dstPath := filepath.Join(dl.storeDir, relativePath)
 
 		err = os.MkdirAll(filepath.Dir(dstPath), 0o750)
 		if err != nil {
@@ -223,15 +253,4 @@ func copyFile(src, dst string) error {
 	}
 
 	return nil
-}
-
-func ParseTime(dateString string) time.Time {
-	const layout = "2006-01-02T15:04:05.000000"
-
-	parsedTime, err := time.Parse(layout, dateString)
-	if err != nil {
-		return time.Time{}
-	}
-
-	return parsedTime
 }
