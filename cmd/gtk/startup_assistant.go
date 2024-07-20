@@ -176,7 +176,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 								go func() {
 									zipFileList := cmd.DownloadManager(
 										context.Background(),
-										md[snapshotIndex],
+										&md[snapshotIndex],
 										snapshotURL,
 										tmpDir,
 										func(fileName string, totalSize, downloaded int64, percentage float64) {
