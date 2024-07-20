@@ -5,17 +5,18 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
-	"log"
-	"os"
-	"path/filepath"
-	"regexp"
-	"strings"
 )
 
 type assistantFunc func(assistant *gtk.Assistant, content gtk.IWidget, name,
