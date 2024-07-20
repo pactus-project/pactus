@@ -12,7 +12,6 @@ Please follow these guidelines when contributing to the project:
 - Follow the [Go Doc Comments](https://go.dev/doc/comment) guidelines.
 - Follow the principles of clean code as outlined in
   Robert C. Martin's "[Clean Code](https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882)" book.
-  Here you can find a [summary](https://gist.github.com/wojteklu/73c6914cc446146b8b533c0988cf8d29) of the book.
 - Write tests for new code or changes to existing code, and make sure all tests pass before submitting a pull request.
 
 ### Makefile Targets
