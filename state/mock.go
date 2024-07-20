@@ -273,5 +273,5 @@ func (m *MockState) IsPruned() bool {
 }
 
 func (m *MockState) PruningHeight() uint32 {
-	return m.TestStore.LastCert.Height() - m.TestStore.RetentionBlocks()
+	return m.TestStore.PruningHeight()
 }

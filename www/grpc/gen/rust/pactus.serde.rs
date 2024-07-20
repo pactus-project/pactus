@@ -2873,6 +2873,12 @@ impl serde::Serialize for GetBlockchainInfoResponse {
         if !self.committee_validators.is_empty() {
             len += 1;
         }
+        if self.is_pruned {
+            len += 1;
+        }
+        if self.pruning_height != 0 {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetBlockchainInfoResponse", len)?;
         if self.last_block_height != 0 {
             struct_ser.serialize_field("lastBlockHeight", &self.last_block_height)?;
@@ -2894,6 +2900,12 @@ impl serde::Serialize for GetBlockchainInfoResponse {
         }
         if !self.committee_validators.is_empty() {
             struct_ser.serialize_field("committeeValidators", &self.committee_validators)?;
+        }
+        if self.is_pruned {
+            struct_ser.serialize_field("isPruned", &self.is_pruned)?;
+        }
+        if self.pruning_height != 0 {
+            struct_ser.serialize_field("pruningHeight", &self.pruning_height)?;
         }
         struct_ser.end()
     }
@@ -2919,6 +2931,10 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             "committeePower",
             "committee_validators",
             "committeeValidators",
+            "is_pruned",
+            "isPruned",
+            "pruning_height",
+            "pruningHeight",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -2930,6 +2946,8 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             TotalPower,
             CommitteePower,
             CommitteeValidators,
+            IsPruned,
+            PruningHeight,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -2958,6 +2976,8 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                             "totalPower" | "total_power" => Ok(GeneratedField::TotalPower),
                             "committeePower" | "committee_power" => Ok(GeneratedField::CommitteePower),
                             "committeeValidators" | "committee_validators" => Ok(GeneratedField::CommitteeValidators),
+                            "isPruned" | "is_pruned" => Ok(GeneratedField::IsPruned),
+                            "pruningHeight" | "pruning_height" => Ok(GeneratedField::PruningHeight),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -2984,6 +3004,8 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                 let mut total_power__ = None;
                 let mut committee_power__ = None;
                 let mut committee_validators__ = None;
+                let mut is_pruned__ = None;
+                let mut pruning_height__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::LastBlockHeight => {
@@ -3038,6 +3060,20 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                             }
                             committee_validators__ = Some(map.next_value()?);
                         }
+                        GeneratedField::IsPruned => {
+                            if is_pruned__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("isPruned"));
+                            }
+                            is_pruned__ = Some(map.next_value()?);
+                        }
+                        GeneratedField::PruningHeight => {
+                            if pruning_height__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("pruningHeight"));
+                            }
+                            pruning_height__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                     }
                 }
                 Ok(GetBlockchainInfoResponse {
@@ -3048,6 +3084,8 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                     total_power: total_power__.unwrap_or_default(),
                     committee_power: committee_power__.unwrap_or_default(),
                     committee_validators: committee_validators__.unwrap_or_default(),
+                    is_pruned: is_pruned__.unwrap_or_default(),
+                    pruning_height: pruning_height__.unwrap_or_default(),
                 })
             }
         }
@@ -3869,12 +3907,6 @@ impl serde::Serialize for GetNodeInfoResponse {
         if !self.protocols.is_empty() {
             len += 1;
         }
-        if self.is_pruned {
-            len += 1;
-        }
-        if self.pruning_height != 0 {
-            len += 1;
-        }
         if self.clock_offset != 0. {
             len += 1;
         }
@@ -3909,12 +3941,6 @@ impl serde::Serialize for GetNodeInfoResponse {
         if !self.protocols.is_empty() {
             struct_ser.serialize_field("protocols", &self.protocols)?;
         }
-        if self.is_pruned {
-            struct_ser.serialize_field("isPruned", &self.is_pruned)?;
-        }
-        if self.pruning_height != 0 {
-            struct_ser.serialize_field("pruningHeight", &self.pruning_height)?;
-        }
         if self.clock_offset != 0. {
             struct_ser.serialize_field("clockOffset", &self.clock_offset)?;
         }
@@ -3944,10 +3970,6 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
             "local_addrs",
             "localAddrs",
             "protocols",
-            "is_pruned",
-            "isPruned",
-            "pruning_height",
-            "pruningHeight",
             "clock_offset",
             "clockOffset",
             "connection_info",
@@ -3965,8 +3987,6 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
             ServicesNames,
             LocalAddrs,
             Protocols,
-            IsPruned,
-            PruningHeight,
             ClockOffset,
             ConnectionInfo,
         }
@@ -3999,8 +4019,6 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                             "servicesNames" | "services_names" => Ok(GeneratedField::ServicesNames),
                             "localAddrs" | "local_addrs" => Ok(GeneratedField::LocalAddrs),
                             "protocols" => Ok(GeneratedField::Protocols),
-                            "isPruned" | "is_pruned" => Ok(GeneratedField::IsPruned),
-                            "pruningHeight" | "pruning_height" => Ok(GeneratedField::PruningHeight),
                             "clockOffset" | "clock_offset" => Ok(GeneratedField::ClockOffset),
                             "connectionInfo" | "connection_info" => Ok(GeneratedField::ConnectionInfo),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
@@ -4031,8 +4049,6 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                 let mut services_names__ = None;
                 let mut local_addrs__ = None;
                 let mut protocols__ = None;
-                let mut is_pruned__ = None;
-                let mut pruning_height__ = None;
                 let mut clock_offset__ = None;
                 let mut connection_info__ = None;
                 while let Some(k) = map.next_key()? {
@@ -4095,20 +4111,6 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                             }
                             protocols__ = Some(map.next_value()?);
                         }
-                        GeneratedField::IsPruned => {
-                            if is_pruned__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("isPruned"));
-                            }
-                            is_pruned__ = Some(map.next_value()?);
-                        }
-                        GeneratedField::PruningHeight => {
-                            if pruning_height__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("pruningHeight"));
-                            }
-                            pruning_height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
-                        }
                         GeneratedField::ClockOffset => {
                             if clock_offset__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("clockOffset"));
@@ -4135,8 +4137,6 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                     services_names: services_names__.unwrap_or_default(),
                     local_addrs: local_addrs__.unwrap_or_default(),
                     protocols: protocols__.unwrap_or_default(),
-                    is_pruned: is_pruned__.unwrap_or_default(),
-                    pruning_height: pruning_height__.unwrap_or_default(),
                     clock_offset: clock_offset__.unwrap_or_default(),
                     connection_info: connection_info__,
                 })

@@ -211,8 +211,6 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'servicesNames')
     ..pPS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'localAddrs')
     ..pPS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'protocols')
-    ..aOB(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isPruned')
-    ..a<$core.int>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'pruningHeight', $pb.PbFieldType.O3)
     ..a<$core.double>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'clockOffset', $pb.PbFieldType.OD)
     ..aOM<ConnectionInfo>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectionInfo', subBuilder: ConnectionInfo.create)
     ..hasRequiredFields = false
@@ -229,8 +227,6 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     $core.String? servicesNames,
     $core.Iterable<$core.String>? localAddrs,
     $core.Iterable<$core.String>? protocols,
-    $core.bool? isPruned,
-    $core.int? pruningHeight,
     $core.double? clockOffset,
     ConnectionInfo? connectionInfo,
   }) {
@@ -261,12 +257,6 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     }
     if (protocols != null) {
       _result.protocols.addAll(protocols);
-    }
-    if (isPruned != null) {
-      _result.isPruned = isPruned;
-    }
-    if (pruningHeight != null) {
-      _result.pruningHeight = pruningHeight;
     }
     if (clockOffset != null) {
       _result.clockOffset = clockOffset;
@@ -366,43 +356,25 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(9)
   $core.List<$core.String> get protocols => $_getList(8);
 
-  @$pb.TagNumber(10)
-  $core.bool get isPruned => $_getBF(9);
-  @$pb.TagNumber(10)
-  set isPruned($core.bool v) { $_setBool(9, v); }
-  @$pb.TagNumber(10)
-  $core.bool hasIsPruned() => $_has(9);
-  @$pb.TagNumber(10)
-  void clearIsPruned() => clearField(10);
-
-  @$pb.TagNumber(11)
-  $core.int get pruningHeight => $_getIZ(10);
-  @$pb.TagNumber(11)
-  set pruningHeight($core.int v) { $_setSignedInt32(10, v); }
-  @$pb.TagNumber(11)
-  $core.bool hasPruningHeight() => $_has(10);
-  @$pb.TagNumber(11)
-  void clearPruningHeight() => clearField(11);
-
   @$pb.TagNumber(13)
-  $core.double get clockOffset => $_getN(11);
+  $core.double get clockOffset => $_getN(9);
   @$pb.TagNumber(13)
-  set clockOffset($core.double v) { $_setDouble(11, v); }
+  set clockOffset($core.double v) { $_setDouble(9, v); }
   @$pb.TagNumber(13)
-  $core.bool hasClockOffset() => $_has(11);
+  $core.bool hasClockOffset() => $_has(9);
   @$pb.TagNumber(13)
   void clearClockOffset() => clearField(13);
 
   @$pb.TagNumber(14)
-  ConnectionInfo get connectionInfo => $_getN(12);
+  ConnectionInfo get connectionInfo => $_getN(10);
   @$pb.TagNumber(14)
   set connectionInfo(ConnectionInfo v) { setField(14, v); }
   @$pb.TagNumber(14)
-  $core.bool hasConnectionInfo() => $_has(12);
+  $core.bool hasConnectionInfo() => $_has(10);
   @$pb.TagNumber(14)
   void clearConnectionInfo() => clearField(14);
   @$pb.TagNumber(14)
-  ConnectionInfo ensureConnectionInfo() => $_ensure(12);
+  ConnectionInfo ensureConnectionInfo() => $_ensure(10);
 }
 
 class PeerInfo extends $pb.GeneratedMessage {

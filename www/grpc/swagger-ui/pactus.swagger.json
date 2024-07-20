@@ -1615,6 +1615,15 @@
             "$ref": "#/definitions/pactusValidatorInfo"
           },
           "description": "List of committee validators."
+        },
+        "isPruned": {
+          "type": "boolean",
+          "description": "If the blocks are subject to pruning."
+        },
+        "pruningHeight": {
+          "type": "integer",
+          "format": "int32",
+          "title": "Lowest-height block stored (only present if pruning is enabled)"
         }
       },
       "description": "Message containing the response with general blockchain information."
@@ -1742,15 +1751,6 @@
             "type": "string"
           },
           "description": "List of protocols supported by the node."
-        },
-        "isPruned": {
-          "type": "boolean",
-          "description": "If the blocks are subject to pruning."
-        },
-        "pruningHeight": {
-          "type": "integer",
-          "format": "int32",
-          "title": "Lowest-height block stored (only present if pruning is enabled)"
         },
         "clockOffset": {
           "type": "number",

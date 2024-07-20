@@ -526,6 +526,12 @@ pub struct GetBlockchainInfoResponse {
     /// List of committee validators.
     #[prost(message, repeated, tag="7")]
     pub committee_validators: ::prost::alloc::vec::Vec<ValidatorInfo>,
+    /// If the blocks are subject to pruning.
+    #[prost(bool, tag="8")]
+    pub is_pruned: bool,
+    /// Lowest-height block stored (only present if pruning is enabled)
+    #[prost(int32, tag="9")]
+    pub pruning_height: i32,
 }
 /// Message to request consensus information.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -837,12 +843,6 @@ pub struct GetNodeInfoResponse {
     /// List of protocols supported by the node.
     #[prost(string, repeated, tag="9")]
     pub protocols: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    /// If the blocks are subject to pruning.
-    #[prost(bool, tag="10")]
-    pub is_pruned: bool,
-    /// Lowest-height block stored (only present if pruning is enabled)
-    #[prost(int32, tag="11")]
-    pub pruning_height: i32,
     /// Clock offset of the node.
     #[prost(double, tag="13")]
     pub clock_offset: f64,

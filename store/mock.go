@@ -298,6 +298,6 @@ func (*MockStore) IsPruned() bool {
 	return false
 }
 
-func (*MockStore) RetentionBlocks() uint32 {
+func (*MockStore) PruningHeight() uint32 {
 	return 1
 }

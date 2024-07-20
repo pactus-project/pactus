@@ -3211,26 +3211,6 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * If the blocks are subject to pruning.
-     * </pre>
-     *
-     * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
-     * @return The isPruned.
-     */
-    boolean getIsPruned();
-
-    /**
-     * <pre>
-     * Lowest-height block stored (only present if pruning is enabled)
-     * </pre>
-     *
-     * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
-     * @return The pruningHeight.
-     */
-    int getPruningHeight();
-
-    /**
-     * <pre>
      * Clock offset of the node.
      * </pre>
      *
@@ -3679,36 +3659,6 @@ public final class NetworkOuterClass {
       return protocols_.getByteString(index);
     }
 
-    public static final int IS_PRUNED_FIELD_NUMBER = 10;
-    private boolean isPruned_;
-    /**
-     * <pre>
-     * If the blocks are subject to pruning.
-     * </pre>
-     *
-     * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
-     * @return The isPruned.
-     */
-    @java.lang.Override
-    public boolean getIsPruned() {
-      return isPruned_;
-    }
-
-    public static final int PRUNING_HEIGHT_FIELD_NUMBER = 11;
-    private int pruningHeight_;
-    /**
-     * <pre>
-     * Lowest-height block stored (only present if pruning is enabled)
-     * </pre>
-     *
-     * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
-     * @return The pruningHeight.
-     */
-    @java.lang.Override
-    public int getPruningHeight() {
-      return pruningHeight_;
-    }
-
     public static final int CLOCK_OFFSET_FIELD_NUMBER = 13;
     private double clockOffset_;
     /**
@@ -3803,12 +3753,6 @@ public final class NetworkOuterClass {
       for (int i = 0; i < protocols_.size(); i++) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 9, protocols_.getRaw(i));
       }
-      if (isPruned_ != false) {
-        output.writeBool(10, isPruned_);
-      }
-      if (pruningHeight_ != 0) {
-        output.writeInt32(11, pruningHeight_);
-      }
       if (java.lang.Double.doubleToRawLongBits(clockOffset_) != 0) {
         output.writeDouble(13, clockOffset_);
       }
@@ -3863,14 +3807,6 @@ public final class NetworkOuterClass {
         size += dataSize;
         size += 1 * getProtocolsList().size();
       }
-      if (isPruned_ != false) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBoolSize(10, isPruned_);
-      }
-      if (pruningHeight_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(11, pruningHeight_);
-      }
       if (java.lang.Double.doubleToRawLongBits(clockOffset_) != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeDoubleSize(13, clockOffset_);
@@ -3912,10 +3848,6 @@ public final class NetworkOuterClass {
           .equals(other.getLocalAddrsList())) return false;
       if (!getProtocolsList()
           .equals(other.getProtocolsList())) return false;
-      if (getIsPruned()
-          != other.getIsPruned()) return false;
-      if (getPruningHeight()
-          != other.getPruningHeight()) return false;
       if (java.lang.Double.doubleToLongBits(getClockOffset())
           != java.lang.Double.doubleToLongBits(
               other.getClockOffset())) return false;
@@ -3958,11 +3890,6 @@ public final class NetworkOuterClass {
         hash = (37 * hash) + PROTOCOLS_FIELD_NUMBER;
         hash = (53 * hash) + getProtocolsList().hashCode();
       }
-      hash = (37 * hash) + IS_PRUNED_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
-          getIsPruned());
-      hash = (37 * hash) + PRUNING_HEIGHT_FIELD_NUMBER;
-      hash = (53 * hash) + getPruningHeight();
       hash = (37 * hash) + CLOCK_OFFSET_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           java.lang.Double.doubleToLongBits(getClockOffset()));
@@ -4120,10 +4047,6 @@ public final class NetworkOuterClass {
         bitField0_ = (bitField0_ & ~0x00000001);
         protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000002);
-        isPruned_ = false;
-
-        pruningHeight_ = 0;
-
         clockOffset_ = 0D;
 
         if (connectionInfoBuilder_ == null) {
@@ -4176,8 +4099,6 @@ public final class NetworkOuterClass {
           bitField0_ = (bitField0_ & ~0x00000002);
         }
         result.protocols_ = protocols_;
-        result.isPruned_ = isPruned_;
-        result.pruningHeight_ = pruningHeight_;
         result.clockOffset_ = clockOffset_;
         if (connectionInfoBuilder_ == null) {
           result.connectionInfo_ = connectionInfo_;
@@ -4278,12 +4199,6 @@ public final class NetworkOuterClass {
           }
           onChanged();
         }
-        if (other.getIsPruned() != false) {
-          setIsPruned(other.getIsPruned());
-        }
-        if (other.getPruningHeight() != 0) {
-          setPruningHeight(other.getPruningHeight());
-        }
         if (other.getClockOffset() != 0D) {
           setClockOffset(other.getClockOffset());
         }
@@ -4363,16 +4278,6 @@ public final class NetworkOuterClass {
                 protocols_.add(s);
                 break;
               } // case 74
-              case 80: {
-                isPruned_ = input.readBool();
-
-                break;
-              } // case 80
-              case 88: {
-                pruningHeight_ = input.readInt32();
-
-                break;
-              } // case 88
               case 105: {
                 clockOffset_ = input.readDouble();
 
@@ -5256,92 +5161,6 @@ public final class NetworkOuterClass {
   checkByteStringIsUtf8(value);
         ensureProtocolsIsMutable();
         protocols_.add(value);
-        onChanged();
-        return this;
-      }
-
-      private boolean isPruned_ ;
-      /**
-       * <pre>
-       * If the blocks are subject to pruning.
-       * </pre>
-       *
-       * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
-       * @return The isPruned.
-       */
-      @java.lang.Override
-      public boolean getIsPruned() {
-        return isPruned_;
-      }
-      /**
-       * <pre>
-       * If the blocks are subject to pruning.
-       * </pre>
-       *
-       * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
-       * @param value The isPruned to set.
-       * @return This builder for chaining.
-       */
-      public Builder setIsPruned(boolean value) {
-        
-        isPruned_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * If the blocks are subject to pruning.
-       * </pre>
-       *
-       * <code>bool is_pruned = 10 [json_name = "isPruned"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearIsPruned() {
-        
-        isPruned_ = false;
-        onChanged();
-        return this;
-      }
-
-      private int pruningHeight_ ;
-      /**
-       * <pre>
-       * Lowest-height block stored (only present if pruning is enabled)
-       * </pre>
-       *
-       * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
-       * @return The pruningHeight.
-       */
-      @java.lang.Override
-      public int getPruningHeight() {
-        return pruningHeight_;
-      }
-      /**
-       * <pre>
-       * Lowest-height block stored (only present if pruning is enabled)
-       * </pre>
-       *
-       * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
-       * @param value The pruningHeight to set.
-       * @return This builder for chaining.
-       */
-      public Builder setPruningHeight(int value) {
-        
-        pruningHeight_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Lowest-height block stored (only present if pruning is enabled)
-       * </pre>
-       *
-       * <code>int32 pruning_height = 11 [json_name = "pruningHeight"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearPruningHeight() {
-        
-        pruningHeight_ = 0;
         onChanged();
         return this;
       }
@@ -10256,7 +10075,7 @@ public final class NetworkOuterClass {
       "\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005" +
       "value\030\002 \001(\003R\005value:\0028\001\032@\n\022ReceivedBytesE" +
       "ntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005v" +
-      "alue:\0028\001\"\024\n\022GetNodeInfoRequest\"\313\003\n\023GetNo" +
+      "alue:\0028\001\"\024\n\022GetNodeInfoRequest\"\207\003\n\023GetNo" +
       "deInfoResponse\022\030\n\007moniker\030\001 \001(\tR\007moniker" +
       "\022\024\n\005agent\030\002 \001(\tR\005agent\022\027\n\007peer_id\030\003 \001(\tR" +
       "\006peerId\022\035\n\nstarted_at\030\004 \001(\004R\tstartedAt\022\"" +
@@ -10264,43 +10083,41 @@ public final class NetworkOuterClass {
       "rvices\030\006 \001(\005R\010services\022%\n\016services_names" +
       "\030\007 \001(\tR\rservicesNames\022\037\n\013local_addrs\030\010 \003" +
       "(\tR\nlocalAddrs\022\034\n\tprotocols\030\t \003(\tR\tproto" +
-      "cols\022\033\n\tis_pruned\030\n \001(\010R\010isPruned\022%\n\016pru" +
-      "ning_height\030\013 \001(\005R\rpruningHeight\022!\n\014cloc" +
-      "k_offset\030\r \001(\001R\013clockOffset\022?\n\017connectio" +
-      "n_info\030\016 \001(\0132\026.pactus.ConnectionInfoR\016co" +
-      "nnectionInfo\"\355\006\n\010PeerInfo\022\026\n\006status\030\001 \001(" +
-      "\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007moniker\022\024\n\005a" +
-      "gent\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\tR\006peer" +
-      "Id\022%\n\016consensus_keys\030\005 \003(\tR\rconsensusKey" +
-      "s\022/\n\023consensus_addresses\030\006 \003(\tR\022consensu" +
-      "sAddresses\022\032\n\010services\030\007 \001(\rR\010services\022&" +
-      "\n\017last_block_hash\030\010 \001(\tR\rlastBlockHash\022\026" +
-      "\n\006height\030\t \001(\rR\006height\022)\n\020received_bundl" +
-      "es\030\n \001(\005R\017receivedBundles\022\'\n\017invalid_bun" +
-      "dles\030\013 \001(\005R\016invalidBundles\022\033\n\tlast_sent\030" +
-      "\014 \001(\003R\010lastSent\022#\n\rlast_received\030\r \001(\003R\014" +
-      "lastReceived\022>\n\nsent_bytes\030\016 \003(\0132\037.pactu" +
-      "s.PeerInfo.SentBytesEntryR\tsentBytes\022J\n\016" +
-      "received_bytes\030\017 \003(\0132#.pactus.PeerInfo.R" +
-      "eceivedBytesEntryR\rreceivedBytes\022\030\n\007addr" +
-      "ess\030\020 \001(\tR\007address\022\034\n\tdirection\030\021 \001(\tR\td" +
-      "irection\022\034\n\tprotocols\030\022 \003(\tR\tprotocols\022%" +
-      "\n\016total_sessions\030\023 \001(\005R\rtotalSessions\022-\n" +
-      "\022completed_sessions\030\024 \001(\005R\021completedSess" +
-      "ions\032<\n\016SentBytesEntry\022\020\n\003key\030\001 \001(\005R\003key" +
-      "\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@\n\022ReceivedBy" +
-      "tesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(" +
-      "\003R\005value:\0028\001\"\226\001\n\016ConnectionInfo\022 \n\013conne" +
-      "ctions\030\001 \001(\004R\013connections\022/\n\023inbound_con" +
-      "nections\030\002 \001(\004R\022inboundConnections\0221\n\024ou" +
-      "tbound_connections\030\003 \001(\004R\023outboundConnec" +
-      "tions2\242\001\n\007Network\022O\n\016GetNetworkInfo\022\035.pa" +
-      "ctus.GetNetworkInfoRequest\032\036.pactus.GetN" +
-      "etworkInfoResponse\022F\n\013GetNodeInfo\022\032.pact" +
-      "us.GetNodeInfoRequest\032\033.pactus.GetNodeIn" +
-      "foResponseBB\n\016pactus.networkZ0github.com" +
-      "/pactus-project/pactus/www/grpc/pactusb\006" +
-      "proto3"
+      "cols\022!\n\014clock_offset\030\r \001(\001R\013clockOffset\022" +
+      "?\n\017connection_info\030\016 \001(\0132\026.pactus.Connec" +
+      "tionInfoR\016connectionInfo\"\355\006\n\010PeerInfo\022\026\n" +
+      "\006status\030\001 \001(\005R\006status\022\030\n\007moniker\030\002 \001(\tR\007" +
+      "moniker\022\024\n\005agent\030\003 \001(\tR\005agent\022\027\n\007peer_id" +
+      "\030\004 \001(\tR\006peerId\022%\n\016consensus_keys\030\005 \003(\tR\r" +
+      "consensusKeys\022/\n\023consensus_addresses\030\006 \003" +
+      "(\tR\022consensusAddresses\022\032\n\010services\030\007 \001(\r" +
+      "R\010services\022&\n\017last_block_hash\030\010 \001(\tR\rlas" +
+      "tBlockHash\022\026\n\006height\030\t \001(\rR\006height\022)\n\020re" +
+      "ceived_bundles\030\n \001(\005R\017receivedBundles\022\'\n" +
+      "\017invalid_bundles\030\013 \001(\005R\016invalidBundles\022\033" +
+      "\n\tlast_sent\030\014 \001(\003R\010lastSent\022#\n\rlast_rece" +
+      "ived\030\r \001(\003R\014lastReceived\022>\n\nsent_bytes\030\016" +
+      " \003(\0132\037.pactus.PeerInfo.SentBytesEntryR\ts" +
+      "entBytes\022J\n\016received_bytes\030\017 \003(\0132#.pactu" +
+      "s.PeerInfo.ReceivedBytesEntryR\rreceivedB" +
+      "ytes\022\030\n\007address\030\020 \001(\tR\007address\022\034\n\tdirect" +
+      "ion\030\021 \001(\tR\tdirection\022\034\n\tprotocols\030\022 \003(\tR" +
+      "\tprotocols\022%\n\016total_sessions\030\023 \001(\005R\rtota" +
+      "lSessions\022-\n\022completed_sessions\030\024 \001(\005R\021c" +
+      "ompletedSessions\032<\n\016SentBytesEntry\022\020\n\003ke" +
+      "y\030\001 \001(\005R\003key\022\024\n\005value\030\002 \001(\003R\005value:\0028\001\032@" +
+      "\n\022ReceivedBytesEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024" +
+      "\n\005value\030\002 \001(\003R\005value:\0028\001\"\226\001\n\016ConnectionI" +
+      "nfo\022 \n\013connections\030\001 \001(\004R\013connections\022/\n" +
+      "\023inbound_connections\030\002 \001(\004R\022inboundConne" +
+      "ctions\0221\n\024outbound_connections\030\003 \001(\004R\023ou" +
+      "tboundConnections2\242\001\n\007Network\022O\n\016GetNetw" +
+      "orkInfo\022\035.pactus.GetNetworkInfoRequest\032\036" +
+      ".pactus.GetNetworkInfoResponse\022F\n\013GetNod" +
+      "eInfo\022\032.pactus.GetNodeInfoRequest\032\033.pact" +
+      "us.GetNodeInfoResponseBB\n\016pactus.network" +
+      "Z0github.com/pactus-project/pactus/www/g" +
+      "rpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -10341,7 +10158,7 @@ public final class NetworkOuterClass {
     internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNodeInfoResponse_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "LocalAddrs", "Protocols", "IsPruned", "PruningHeight", "ClockOffset", "ConnectionInfo", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "LocalAddrs", "Protocols", "ClockOffset", "ConnectionInfo", });
     internal_static_pactus_PeerInfo_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_pactus_PeerInfo_fieldAccessorTable = new

@@ -780,8 +780,6 @@ proto.pactus.GetNodeInfoResponse.toObject = function(includeInstance, msg) {
     servicesNames: jspb.Message.getFieldWithDefault(msg, 7, ""),
     localAddrsList: (f = jspb.Message.getRepeatedField(msg, 8)) == null ? undefined : f,
     protocolsList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f,
-    isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 10, false),
-    pruningHeight: jspb.Message.getFieldWithDefault(msg, 11, 0),
     clockOffset: jspb.Message.getFloatingPointFieldWithDefault(msg, 13, 0.0),
     connectionInfo: (f = msg.getConnectionInfo()) && proto.pactus.ConnectionInfo.toObject(includeInstance, f)
   };
@@ -855,14 +853,6 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
     case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.addProtocols(value);
-      break;
-    case 10:
-      var value = /** @type {boolean} */ (reader.readBool());
-      msg.setIsPruned(value);
-      break;
-    case 11:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setPruningHeight(value);
       break;
     case 13:
       var value = /** @type {number} */ (reader.readDouble());
@@ -962,20 +952,6 @@ proto.pactus.GetNodeInfoResponse.serializeBinaryToWriter = function(message, wri
   if (f.length > 0) {
     writer.writeRepeatedString(
       9,
-      f
-    );
-  }
-  f = message.getIsPruned();
-  if (f) {
-    writer.writeBool(
-      10,
-      f
-    );
-  }
-  f = message.getPruningHeight();
-  if (f !== 0) {
-    writer.writeInt32(
-      11,
       f
     );
   }
@@ -1194,42 +1170,6 @@ proto.pactus.GetNodeInfoResponse.prototype.addProtocols = function(value, opt_in
  */
 proto.pactus.GetNodeInfoResponse.prototype.clearProtocolsList = function() {
   return this.setProtocolsList([]);
-};
-
-
-/**
- * optional bool is_pruned = 10;
- * @return {boolean}
- */
-proto.pactus.GetNodeInfoResponse.prototype.getIsPruned = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 10, false));
-};
-
-
-/**
- * @param {boolean} value
- * @return {!proto.pactus.GetNodeInfoResponse} returns this
- */
-proto.pactus.GetNodeInfoResponse.prototype.setIsPruned = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 10, value);
-};
-
-
-/**
- * optional int32 pruning_height = 11;
- * @return {number}
- */
-proto.pactus.GetNodeInfoResponse.prototype.getPruningHeight = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetNodeInfoResponse} returns this
- */
-proto.pactus.GetNodeInfoResponse.prototype.setPruningHeight = function(value) {
-  return jspb.Message.setProto3IntField(this, 11, value);
 };
 
 

@@ -122,8 +122,6 @@ func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 	tm.addRowString("Moniker", res.Moniker)
 	tm.addRowTime("Started at", int64(res.StartedAt))
 	tm.addRowString("Reachability", res.Reachability)
-	tm.addRowBool("Is Pruned", res.IsPruned)
-	tm.addRowInt("Pruning Height", int(res.PruningHeight))
 	tm.addRowFloat64("Clock Offset", res.ClockOffset)
 	tm.addRowInt("Services", int(res.Services))
 	tm.addRowString("Services Names", res.ServicesNames)

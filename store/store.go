@@ -488,6 +488,11 @@ func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
 	return true, nil
 }
 
-func (s *store) RetentionBlocks() uint32 {
-	return s.config.RetentionBlocks()
+func (s *store) PruningHeight() uint32 {
+	cert := s.lastCertificate()
+	if cert == nil {
+		return 0
+	}
+
+	return cert.Height() - s.config.RetentionBlocks()
 }

@@ -40,6 +40,8 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 		TotalValidators:     s.state.TotalValidators(),
 		TotalPower:          s.state.TotalPower(),
 		CommitteePower:      s.state.CommitteePower(),
+		IsPruned:            s.state.IsPruned(),
+		PruningHeight:       int32(s.state.PruningHeight()),
 		CommitteeValidators: cv,
 	}, nil
 }

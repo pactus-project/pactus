@@ -41,8 +41,6 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		Services:      int32(s.sync.Services()),
 		ServicesNames: s.sync.Services().String(),
 		ClockOffset:   clockOffset.Seconds(),
-		IsPruned:      s.state.IsPruned(),
-		PruningHeight: int32(s.state.PruningHeight()),
 		ConnectionInfo: &pactus.ConnectionInfo{
 			Connections:         uint64(s.net.NumConnectedPeers()),
 			InboundConnections:  uint64(s.net.NumInbound()),

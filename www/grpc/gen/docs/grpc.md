@@ -1384,7 +1384,21 @@ Message has no fields.
         The availability score of the validator.
         </td>
       </tr>
-         </tbody>
+         <tr>
+    <td class="fw-bold">is_pruned</td>
+    <td> bool</td>
+    <td>
+    If the blocks are subject to pruning.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">pruning_height</td>
+    <td> int32</td>
+    <td>
+    Lowest-height block stored (only present if pruning is enabled)
+    </td>
+  </tr>
+     </tbody>
 </table>
 
 ### GetConsensusInfo <span id="pactus.Blockchain.GetConsensusInfo" class="rpc-badge"></span>
@@ -2387,20 +2401,6 @@ Message has no fields.
     <td>repeated string</td>
     <td>
     List of protocols supported by the node.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">is_pruned</td>
-    <td> bool</td>
-    <td>
-    If the blocks are subject to pruning.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">pruning_height</td>
-    <td> int32</td>
-    <td>
-    Lowest-height block stored (only present if pruning is enabled)
     </td>
   </tr>
      <tr>

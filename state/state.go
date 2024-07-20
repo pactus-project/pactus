@@ -768,12 +768,5 @@ func (st *state) IsPruned() bool {
 }
 
 func (st *state) PruningHeight() uint32 {
-	if !st.store.IsPruned() {
-		return 0
-	}
-
-	lh := st.store.LastCertificate().Height()
-	rb := st.store.RetentionBlocks()
-
-	return lh - rb
+	return st.store.PruningHeight()
 }

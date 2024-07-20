@@ -1385,7 +1385,21 @@ Parameters has no fields.
         The availability score of the validator.
         </td>
       </tr>
-         </tbody>
+         <tr>
+    <td class="fw-bold">is_pruned</td>
+    <td> boolean</td>
+    <td>
+    If the blocks are subject to pruning.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">pruning_height</td>
+    <td> numeric</td>
+    <td>
+    Lowest-height block stored (only present if pruning is enabled)
+    </td>
+  </tr>
+     </tbody>
 </table>
 
 ### pactus.blockchain.get_consensus_info <span id="pactus.blockchain.get_consensus_info" class="rpc-badge"></span>
@@ -2388,20 +2402,6 @@ Parameters has no fields.
     <td>repeated string</td>
     <td>
     List of protocols supported by the node.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">is_pruned</td>
-    <td> boolean</td>
-    <td>
-    If the blocks are subject to pruning.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">pruning_height</td>
-    <td> numeric</td>
-    <td>
-    Lowest-height block stored (only present if pruning is enabled)
     </td>
   </tr>
      <tr>
