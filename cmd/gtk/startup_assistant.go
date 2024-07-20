@@ -186,7 +186,8 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 										context.Background(),
 										&md[snapshotIndex],
 										func(fileName string, totalSize, downloaded int64,
-											totalItem, downloadedItem int, percentage float64) {
+											totalItem, downloadedItem int, percentage float64,
+										) {
 											percent := int(percentage)
 											glib.IdleAdd(func() {
 												dlMessage := fmt.Sprintf("🌐 Downloading %s (%d/%d)... %d%% (%s / %s)",

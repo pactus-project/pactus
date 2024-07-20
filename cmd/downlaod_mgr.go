@@ -173,16 +173,14 @@ func (dl *DownloadManager) ExtractAndStoreFiles() error {
 
 			_ = rc.Close()
 			_ = outFile.Close()
-
 		}
-
 		_ = r.Close()
 	}
 
 	return nil
 }
 
-func (dl *DownloadManager) ParseTime(dateString string) time.Time {
+func (*DownloadManager) ParseTime(dateString string) time.Time {
 	const layout = "2006-01-02T15:04:05.000000"
 
 	parsedTime, err := time.Parse(layout, dateString)
