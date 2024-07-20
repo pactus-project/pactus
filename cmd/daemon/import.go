@@ -65,18 +65,29 @@ func buildImportCmd(parentCmd *cobra.Command) {
 			return
 		}
 
-		metadata, err := cmd.GetSnapshotMetadata(c.Context(), snapshotURL)
-		if err != nil {
-			cmd.PrintErrorMsgf("Failed to get snapshot metadata: %s", err)
+		tmpDir := util.TempDirPath()
+		extractPath := fmt.Sprintf("%s/data", tmpDir)
 
-			return
-		}
+		err = os.MkdirAll(extractPath, 0o750)
+		cmd.FatalErrorCheck(err)
+
+		cmd.PrintLine()
+
+		dl := cmd.NewDownloadManager(
+			snapshotURL,
+			extractPath,
+			tmpDir,
+			conf.Store.StorePath(),
+		)
+
+		metadata, err := dl.GetMetadata(c.Context())
+		cmd.FatalErrorCheck(err)
 
 		snapshots := make([]string, 0, len(metadata))
 
 		for _, m := range metadata {
 			item := fmt.Sprintf("snapshot %s (%s)",
-				cmd.ParseTime(m.CreatedAt).Format("2006-01-02"),
+				dl.ParseTime(m.CreatedAt).Format("2006-01-02"),
 				util.FormatBytesToHumanReadable(m.TotalSize),
 			)
 
@@ -88,31 +99,20 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		choice := cmd.PromptSelect("Please select a snapshot", snapshots)
 
 		selected := metadata[choice]
-		tmpDir := util.TempDirPath()
-		extractPath := fmt.Sprintf("%s/data", tmpDir)
 
-		err = os.MkdirAll(extractPath, 0o750)
-		cmd.FatalErrorCheck(err)
-
-		cmd.PrintLine()
-
-		zipFileList := cmd.DownloadManager(
+		dl.Download(
 			c.Context(),
 			&selected,
-			snapshotURL,
-			tmpDir,
 			downloadProgressBar,
 		)
 
-		for _, zFile := range zipFileList {
-			err := cmd.ExtractAndStoreFile(zFile, extractPath)
-			cmd.FatalErrorCheck(err)
-		}
+		err = dl.ExtractAndStoreFiles()
+		cmd.FatalErrorCheck(err)
 
 		err = os.MkdirAll(filepath.Dir(conf.Store.StorePath()), 0o750)
 		cmd.FatalErrorCheck(err)
 
-		err = cmd.CopyAllFiles(extractPath, conf.Store.StorePath())
+		err = dl.CopyAllFiles()
 		cmd.FatalErrorCheck(err)
 
 		err = os.RemoveAll(tmpDir)
@@ -129,9 +129,9 @@ func buildImportCmd(parentCmd *cobra.Command) {
 	}
 }
 
-func downloadProgressBar(fileName string, totalSize, downloaded int64, _ float64) {
+func downloadProgressBar(fileName string, totalSize, downloaded int64, totalItem, downloadedItem int, _ float64) {
 	bar := cmd.TerminalProgressBar(int(totalSize), 30, true)
-	bar.Describe(fileName)
+	bar.Describe(fmt.Sprintf("%s (%d/%d)", fileName, downloadedItem, totalItem))
 	err := bar.Add(int(downloaded))
 	cmd.FatalErrorCheck(err)
 }
