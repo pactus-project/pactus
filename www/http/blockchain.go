@@ -28,6 +28,8 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	tm := newTableMaker()
 	tm.addRowBlockHash("Last Block Hash", res.LastBlockHash)
 	tm.addRowInt("Last Block Height", int(res.LastBlockHeight))
+	tm.addRowBool("Is Pruned", res.IsPruned)
+	tm.addRowInt("Pruning Height", int(res.PruningHeight))
 	tm.addRowString("--- Committee", "---")
 	tm.addRowPower("Total Power", res.TotalPower)
 	tm.addRowPower("Committee Power", res.CommitteePower)

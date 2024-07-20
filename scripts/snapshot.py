@@ -168,7 +168,7 @@ class SnapshotManager:
             for file in files:
                 file_path = os.path.join(root, file)
                 file_name, file_ext = os.path.splitext(file)
-                compressed_file_name = f"{file_name}.{self.args.compress}"
+                compressed_file_name = f"{file_name}{file_ext}.{self.args.compress}"
                 compressed_file_path = os.path.join(snapshot_dir, compressed_file_name)
                 rel_path = os.path.relpath(compressed_file_path, self.args.snapshot_path)
 
