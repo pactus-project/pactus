@@ -23,11 +23,16 @@ jobs:
           # Configure which scopes are allowed (newline-delimited).
           scopes: |
             github
+            linter
+            deps
+            makefile
+            release
+            other
             daemon
             cmd
             gtk
             shell
-            wallet
+            wallet-cmd
             committee
             config
             consensus
@@ -48,17 +53,16 @@ jobs:
             types
             util
             version
+            wallet
             grpc
             http
             jsonrpc
             nanomsg
           # Configure that a scope must always be provided.
           requireScope: true
-          # Configure that can't be include uppercase letters.
-          disallowScopes: |
-            [A-Z]+
-          # The subject should not start with an uppercase character and should not end with a '.'.
+          # The subject should not start with an uppercase character and should not end with a period.
           subjectPattern: ^(?![A-Z]).+[^.]$
           subjectPatternError: |
-            The subject "{subject}" found in the pull request title "{title}"
-            didn't match the configured pattern.
+            The subject "{subject}" cannot start with an uppercase character or end with a period.
+
+
