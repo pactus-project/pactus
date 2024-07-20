@@ -762,3 +762,11 @@ func (st *state) AllPendingTxs() []*tx.Tx {
 
 	return st.txPool.AllPendingTxs()
 }
+
+func (st *state) IsPruned() bool {
+	return st.store.IsPruned()
+}
+
+func (st *state) PruningHeight() uint32 {
+	return st.store.PruningHeight()
+}

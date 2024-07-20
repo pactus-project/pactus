@@ -200,81 +200,6 @@ class GetNodeInfoRequest extends $pb.GeneratedMessage {
   static GetNodeInfoRequest? _defaultInstance;
 }
 
-class ConnectionInfo extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ConnectionInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$fixnum.Int64>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..a<$fixnum.Int64>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'inboundConnections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..a<$fixnum.Int64>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'outboundConnections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..hasRequiredFields = false
-  ;
-
-  ConnectionInfo._() : super();
-  factory ConnectionInfo({
-    $fixnum.Int64? connections,
-    $fixnum.Int64? inboundConnections,
-    $fixnum.Int64? outboundConnections,
-  }) {
-    final _result = create();
-    if (connections != null) {
-      _result.connections = connections;
-    }
-    if (inboundConnections != null) {
-      _result.inboundConnections = inboundConnections;
-    }
-    if (outboundConnections != null) {
-      _result.outboundConnections = outboundConnections;
-    }
-    return _result;
-  }
-  factory ConnectionInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory ConnectionInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  ConnectionInfo clone() => ConnectionInfo()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  ConnectionInfo copyWith(void Function(ConnectionInfo) updates) => super.copyWith((message) => updates(message as ConnectionInfo)) as ConnectionInfo; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static ConnectionInfo create() => ConnectionInfo._();
-  ConnectionInfo createEmptyInstance() => create();
-  static $pb.PbList<ConnectionInfo> createRepeated() => $pb.PbList<ConnectionInfo>();
-  @$core.pragma('dart2js:noInline')
-  static ConnectionInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ConnectionInfo>(create);
-  static ConnectionInfo? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $fixnum.Int64 get connections => $_getI64(0);
-  @$pb.TagNumber(1)
-  set connections($fixnum.Int64 v) { $_setInt64(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasConnections() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearConnections() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $fixnum.Int64 get inboundConnections => $_getI64(1);
-  @$pb.TagNumber(2)
-  set inboundConnections($fixnum.Int64 v) { $_setInt64(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasInboundConnections() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearInboundConnections() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $fixnum.Int64 get outboundConnections => $_getI64(2);
-  @$pb.TagNumber(3)
-  set outboundConnections($fixnum.Int64 v) { $_setInt64(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasOutboundConnections() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearOutboundConnections() => clearField(3);
-}
-
 class GetNodeInfoResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetNodeInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'moniker')
@@ -733,6 +658,81 @@ class PeerInfo extends $pb.GeneratedMessage {
   $core.bool hasCompletedSessions() => $_has(19);
   @$pb.TagNumber(20)
   void clearCompletedSessions() => clearField(20);
+}
+
+class ConnectionInfo extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ConnectionInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..a<$fixnum.Int64>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$fixnum.Int64>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'inboundConnections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$fixnum.Int64>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'outboundConnections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..hasRequiredFields = false
+  ;
+
+  ConnectionInfo._() : super();
+  factory ConnectionInfo({
+    $fixnum.Int64? connections,
+    $fixnum.Int64? inboundConnections,
+    $fixnum.Int64? outboundConnections,
+  }) {
+    final _result = create();
+    if (connections != null) {
+      _result.connections = connections;
+    }
+    if (inboundConnections != null) {
+      _result.inboundConnections = inboundConnections;
+    }
+    if (outboundConnections != null) {
+      _result.outboundConnections = outboundConnections;
+    }
+    return _result;
+  }
+  factory ConnectionInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ConnectionInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ConnectionInfo clone() => ConnectionInfo()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ConnectionInfo copyWith(void Function(ConnectionInfo) updates) => super.copyWith((message) => updates(message as ConnectionInfo)) as ConnectionInfo; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ConnectionInfo create() => ConnectionInfo._();
+  ConnectionInfo createEmptyInstance() => create();
+  static $pb.PbList<ConnectionInfo> createRepeated() => $pb.PbList<ConnectionInfo>();
+  @$core.pragma('dart2js:noInline')
+  static ConnectionInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ConnectionInfo>(create);
+  static ConnectionInfo? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get connections => $_getI64(0);
+  @$pb.TagNumber(1)
+  set connections($fixnum.Int64 v) { $_setInt64(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasConnections() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearConnections() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get inboundConnections => $_getI64(1);
+  @$pb.TagNumber(2)
+  set inboundConnections($fixnum.Int64 v) { $_setInt64(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasInboundConnections() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearInboundConnections() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $fixnum.Int64 get outboundConnections => $_getI64(2);
+  @$pb.TagNumber(3)
+  set outboundConnections($fixnum.Int64 v) { $_setInt64(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasOutboundConnections() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearOutboundConnections() => clearField(3);
 }
 
 class NetworkApi {
