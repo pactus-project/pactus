@@ -24,6 +24,7 @@ func main() {
 	buildInitCmd(rootCmd)
 	buildStartCmd(rootCmd)
 	buildPruneCmd(rootCmd)
+	buildImportCmd(rootCmd)
 
 	err := rootCmd.Execute()
 	if err != nil {

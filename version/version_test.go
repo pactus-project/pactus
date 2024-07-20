@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestVersionString(t *testing.T) {
@@ -165,4 +166,12 @@ func TestVersionComparison(t *testing.T) {
 				fmt.Sprintf("Comparison result mismatch for %s vs %s", tt.v1Input, tt.v2Input))
 		})
 	}
+}
+
+// TestCheckVersionString checks if the current version string is valid and parsable.
+func TestCheckVersionString(t *testing.T) {
+	curVer := version.NodeVersion
+	parsedVer, err := version.ParseVersion(curVer.StringWithAlias())
+	require.NoError(t, err)
+	assert.Equal(t, curVer, parsedVer)
 }

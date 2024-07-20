@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
@@ -115,15 +114,8 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 }
 
 func pruningProgressBar(prunedCount, skippedCount, totalCount uint32) {
-	percentage := float64(prunedCount+skippedCount) / float64(totalCount) * 100
-	if percentage > 100 {
-		percentage = 100
-	}
-
-	barLength := 40
-	filledLength := int(float64(barLength) * percentage / 100)
-
-	bar := strings.Repeat("=", filledLength) + strings.Repeat(" ", barLength-filledLength)
-	fmt.Printf("\r [%s] %.0f%% Pruned: %d | Skipped: %d", //nolint
-		bar, percentage, prunedCount, skippedCount)
+	bar := cmd.TerminalProgressBar(int(totalCount), 30, false)
+	bar.Describe(fmt.Sprintf("Pruned: %d | Skipped: %d", prunedCount, skippedCount))
+	err := bar.Add(int(prunedCount + skippedCount))
+	cmd.FatalErrorCheck(err)
 }
