@@ -1398,6 +1398,13 @@ Message has no fields.
     Lowest-height block stored (only present if pruning is enabled)
     </td>
   </tr>
+     <tr>
+    <td class="fw-bold">last_block_time</td>
+    <td> int64</td>
+    <td>
+    The last block time as timestamp
+    </td>
+  </tr>
      </tbody>
 </table>
 

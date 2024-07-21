@@ -177,6 +177,8 @@ message GetBlockchainInfoResponse {
   bool is_pruned = 8;
   // Lowest-height block stored (only present if pruning is enabled)
   uint32 pruning_height = 9;
+  // Timestamp of the last block in Unix format
+  int64 last_block_time = 10;
 }
 
 // Message to request consensus information.

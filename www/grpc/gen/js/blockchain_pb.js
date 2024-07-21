@@ -3039,7 +3039,8 @@ proto.pactus.GetBlockchainInfoResponse.toObject = function(includeInstance, msg)
     committeeValidatorsList: jspb.Message.toObjectList(msg.getCommitteeValidatorsList(),
     proto.pactus.ValidatorInfo.toObject, includeInstance),
     isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
-    pruningHeight: jspb.Message.getFieldWithDefault(msg, 9, 0)
+    pruningHeight: jspb.Message.getFieldWithDefault(msg, 9, 0),
+    lastBlockTime: jspb.Message.getFieldWithDefault(msg, 10, 0)
   };
 
   if (includeInstance) {
@@ -3112,6 +3113,10 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
     case 9:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setPruningHeight(value);
+      break;
+    case 10:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setLastBlockTime(value);
       break;
     default:
       reader.skipField();
@@ -3203,6 +3208,13 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
   if (f !== 0) {
     writer.writeUint32(
       9,
+      f
+    );
+  }
+  f = message.getLastBlockTime();
+  if (f !== 0) {
+    writer.writeInt64(
+      10,
       f
     );
   }
@@ -3388,6 +3400,24 @@ proto.pactus.GetBlockchainInfoResponse.prototype.getPruningHeight = function() {
  */
 proto.pactus.GetBlockchainInfoResponse.prototype.setPruningHeight = function(value) {
   return jspb.Message.setProto3IntField(this, 9, value);
+};
+
+
+/**
+ * optional int64 last_block_time = 10;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getLastBlockTime = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 10, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setLastBlockTime = function(value) {
+  return jspb.Message.setProto3IntField(this, 10, value);
 };
 
 

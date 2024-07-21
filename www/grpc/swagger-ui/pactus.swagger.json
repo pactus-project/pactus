@@ -1624,6 +1624,11 @@
           "type": "integer",
           "format": "int64",
           "title": "Lowest-height block stored (only present if pruning is enabled)"
+        },
+        "lastBlockTime": {
+          "type": "string",
+          "format": "int64",
+          "title": "The last block time as timestamp"
         }
       },
       "description": "Message containing the response with general blockchain information."
