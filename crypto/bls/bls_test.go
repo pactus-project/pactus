@@ -23,10 +23,10 @@ func TestSigning(t *testing.T) {
 	addr, _ := crypto.AddressFromString("pc1p5x2a0lkt5nrrdqe0rkcv6r4pfkmdhrr3xk73tq")
 
 	sig1 := prv.Sign(msg)
-	assert.Equal(t, sig1.Bytes(), sig.Bytes())
+	assert.Equal(t, sig.Bytes(), sig1.Bytes())
 	assert.NoError(t, pub.Verify(msg, sig))
-	assert.Equal(t, prv.PublicKey(), pub)
-	assert.Equal(t, pub.ValidatorAddress(), addr)
+	assert.Equal(t, pub, prv.PublicKey())
+	assert.Equal(t, addr, pub.ValidatorAddress())
 }
 
 func TestSignatureAggregate(t *testing.T) {
@@ -180,7 +180,7 @@ func TestHashToCurve(t *testing.T) {
 		mappedPoint, _ := g1.HashToCurve([]byte(test.msg), domain)
 		d, _ := hex.DecodeString(test.expected)
 		expectedPoint, _ := g1.FromBytes(d)
-		assert.Equal(t, mappedPoint, expectedPoint,
+		assert.Equal(t, expectedPoint, mappedPoint,
 			"test %v: not match", no)
 	}
 }

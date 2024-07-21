@@ -76,15 +76,16 @@ func TestPublicKeyVerifyAddress(t *testing.T) {
 	assert.NoError(t, err)
 
 	err = pub1.VerifyAddress(pub2.AccountAddress())
-	assert.Equal(t, err, crypto.AddressMismatchError{
+	assert.Equal(t, crypto.AddressMismatchError{
 		Expected: pub1.AccountAddress(),
 		Got:      pub2.AccountAddress(),
-	})
+	}, err)
+
 	err = pub1.VerifyAddress(pub2.ValidatorAddress())
-	assert.Equal(t, err, crypto.AddressMismatchError{
+	assert.Equal(t, crypto.AddressMismatchError{
 		Expected: pub1.ValidatorAddress(),
 		Got:      pub2.ValidatorAddress(),
-	})
+	}, err)
 }
 
 func TestNilPublicKey(t *testing.T) {
@@ -178,8 +179,8 @@ func TestPublicKeyBytes(t *testing.T) {
 		pub, err := bls.PublicKeyFromString(test.encoded)
 		if test.valid {
 			assert.NoError(t, err, "test %v: unexpected error", no)
-			assert.Equal(t, pub.Bytes(), test.result, "test %v: invalid bytes", no)
-			assert.Equal(t, pub.String(), test.encoded, "test %v: invalid encoded", no)
+			assert.Equal(t, test.result, pub.Bytes(), "test %v: invalid bytes", no)
+			assert.Equal(t, test.encoded, pub.String(), "test %v: invalid encoded", no)
 		} else {
 			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
 		}

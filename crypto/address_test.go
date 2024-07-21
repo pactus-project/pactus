@@ -116,8 +116,8 @@ func TestToString(t *testing.T) {
 		addr, err := crypto.AddressFromString(test.encoded)
 		if test.err == nil {
 			assert.NoError(t, err, "test %v: unexpected error", no)
-			assert.Equal(t, addr, *test.result, "test %v: invalid result", no)
-			assert.Equal(t, addr.String(), strings.ToLower(test.encoded), "test %v: invalid encode", no)
+			assert.Equal(t, *test.result, addr, "test %v: invalid result", no)
+			assert.Equal(t, strings.ToLower(test.encoded), addr.String(), "test %v: invalid encode", no)
 		} else {
 			assert.ErrorIs(t, err, test.err, "test %v: invalid error", no)
 		}
@@ -173,11 +173,11 @@ func TestAddressEncoding(t *testing.T) {
 
 		err := addr.Decode(r)
 		if test.err != nil {
-			assert.ErrorIs(t, test.err, err, "test %v: error not matched", no)
-			assert.Equal(t, addr.SerializeSize(), test.size, "test %v invalid size", no)
+			assert.ErrorIs(t, err, test.err, "test %v: error not matched", no)
+			assert.Equal(t, test.size, addr.SerializeSize(), "test %v invalid size", no)
 		} else {
 			assert.NoError(t, err, "test %v expected no error", no)
-			assert.Equal(t, addr.SerializeSize(), test.size, "test %v invalid size", no)
+			assert.Equal(t, test.size, addr.SerializeSize(), "test %v invalid size", no)
 
 			length := addr.SerializeSize()
 			for i := 0; i < length; i++ {
