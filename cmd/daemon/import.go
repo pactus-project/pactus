@@ -100,6 +100,8 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		selected := metadata[choice]
 
+		cmd.PrintLine()
+
 		dl.Download(
 			c.Context(),
 			&selected,
