@@ -10972,6 +10972,16 @@ public final class BlockchainOuterClass {
      * @return The pruningHeight.
      */
     int getPruningHeight();
+
+    /**
+     * <pre>
+     * The last block time as timestamp
+     * </pre>
+     *
+     * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
+     * @return The lastBlockTime.
+     */
+    long getLastBlockTime();
   }
   /**
    * <pre>
@@ -11230,6 +11240,21 @@ public final class BlockchainOuterClass {
       return pruningHeight_;
     }
 
+    public static final int LAST_BLOCK_TIME_FIELD_NUMBER = 10;
+    private long lastBlockTime_;
+    /**
+     * <pre>
+     * The last block time as timestamp
+     * </pre>
+     *
+     * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
+     * @return The lastBlockTime.
+     */
+    @java.lang.Override
+    public long getLastBlockTime() {
+      return lastBlockTime_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -11270,6 +11295,9 @@ public final class BlockchainOuterClass {
       }
       if (pruningHeight_ != 0) {
         output.writeInt32(9, pruningHeight_);
+      }
+      if (lastBlockTime_ != 0L) {
+        output.writeInt64(10, lastBlockTime_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -11315,6 +11343,10 @@ public final class BlockchainOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(9, pruningHeight_);
       }
+      if (lastBlockTime_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(10, lastBlockTime_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -11348,6 +11380,8 @@ public final class BlockchainOuterClass {
           != other.getIsPruned()) return false;
       if (getPruningHeight()
           != other.getPruningHeight()) return false;
+      if (getLastBlockTime()
+          != other.getLastBlockTime()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -11382,6 +11416,9 @@ public final class BlockchainOuterClass {
           getIsPruned());
       hash = (37 * hash) + PRUNING_HEIGHT_FIELD_NUMBER;
       hash = (53 * hash) + getPruningHeight();
+      hash = (37 * hash) + LAST_BLOCK_TIME_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getLastBlockTime());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -11537,6 +11574,8 @@ public final class BlockchainOuterClass {
 
         pruningHeight_ = 0;
 
+        lastBlockTime_ = 0L;
+
         return this;
       }
 
@@ -11581,6 +11620,7 @@ public final class BlockchainOuterClass {
         }
         result.isPruned_ = isPruned_;
         result.pruningHeight_ = pruningHeight_;
+        result.lastBlockTime_ = lastBlockTime_;
         onBuilt();
         return result;
       }
@@ -11680,6 +11720,9 @@ public final class BlockchainOuterClass {
         if (other.getPruningHeight() != 0) {
           setPruningHeight(other.getPruningHeight());
         }
+        if (other.getLastBlockTime() != 0L) {
+          setLastBlockTime(other.getLastBlockTime());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -11759,6 +11802,11 @@ public final class BlockchainOuterClass {
 
                 break;
               } // case 72
+              case 80: {
+                lastBlockTime_ = input.readInt64();
+
+                break;
+              } // case 80
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -12481,6 +12529,49 @@ public final class BlockchainOuterClass {
       public Builder clearPruningHeight() {
         
         pruningHeight_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long lastBlockTime_ ;
+      /**
+       * <pre>
+       * The last block time as timestamp
+       * </pre>
+       *
+       * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
+       * @return The lastBlockTime.
+       */
+      @java.lang.Override
+      public long getLastBlockTime() {
+        return lastBlockTime_;
+      }
+      /**
+       * <pre>
+       * The last block time as timestamp
+       * </pre>
+       *
+       * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
+       * @param value The lastBlockTime to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLastBlockTime(long value) {
+        
+        lastBlockTime_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The last block time as timestamp
+       * </pre>
+       *
+       * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLastBlockTime() {
+        
+        lastBlockTime_ = 0L;
         onChanged();
         return this;
       }
@@ -23440,7 +23531,7 @@ public final class BlockchainOuterClass {
       "ashResponse\022\022\n\004hash\030\001 \001(\tR\004hash\"+\n\025GetBl" +
       "ockHeightRequest\022\022\n\004hash\030\001 \001(\tR\004hash\"0\n\026" +
       "GetBlockHeightResponse\022\026\n\006height\030\001 \001(\rR\006" +
-      "height\"\032\n\030GetBlockchainInfoRequest\"\231\003\n\031G" +
+      "height\"\032\n\030GetBlockchainInfoRequest\"\301\003\n\031G" +
       "etBlockchainInfoResponse\022*\n\021last_block_h" +
       "eight\030\001 \001(\rR\017lastBlockHeight\022&\n\017last_blo" +
       "ck_hash\030\002 \001(\tR\rlastBlockHash\022%\n\016total_ac" +
@@ -23451,7 +23542,8 @@ public final class BlockchainOuterClass {
       "lidators\030\007 \003(\0132\025.pactus.ValidatorInfoR\023c" +
       "ommitteeValidators\022\033\n\tis_pruned\030\010 \001(\010R\010i" +
       "sPruned\022%\n\016pruning_height\030\t \001(\005R\rpruning" +
-      "Height\"\031\n\027GetConsensusInfoRequest\"O\n\030Get" +
+      "Height\022&\n\017last_block_time\030\n \001(\003R\rlastBlo" +
+      "ckTime\"\031\n\027GetConsensusInfoRequest\"O\n\030Get" +
       "ConsensusInfoResponse\0223\n\tinstances\030\001 \003(\013" +
       "2\025.pactus.ConsensusInfoR\tinstances\"Q\n\027Ge" +
       "tTxPoolContentRequest\0226\n\014payload_type\030\001 " +
@@ -23623,7 +23715,7 @@ public final class BlockchainOuterClass {
     internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetBlockchainInfoResponse_descriptor,
-        new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "TotalAccounts", "TotalValidators", "TotalPower", "CommitteePower", "CommitteeValidators", "IsPruned", "PruningHeight", });
+        new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "TotalAccounts", "TotalValidators", "TotalPower", "CommitteePower", "CommitteeValidators", "IsPruned", "PruningHeight", "LastBlockTime", });
     internal_static_pactus_GetConsensusInfoRequest_descriptor =
       getDescriptor().getMessageTypes().get(17);
     internal_static_pactus_GetConsensusInfoRequest_fieldAccessorTable = new
