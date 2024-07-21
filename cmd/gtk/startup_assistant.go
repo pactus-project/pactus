@@ -213,7 +213,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 									err = dm.CopyAllFiles()
 									cmd.FatalErrorCheck(err)
 
-									err = os.RemoveAll(tmpDir)
+									err = dm.Cleanup()
 									cmd.FatalErrorCheck(err)
 
 									ssPBLabel.SetText("   " + "✅ Import completed.")

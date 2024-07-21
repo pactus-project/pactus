@@ -191,6 +191,10 @@ func (*DownloadManager) ParseTime(dateString string) time.Time {
 	return parsedTime
 }
 
+func (dl *DownloadManager) Cleanup() error {
+	return os.RemoveAll(dl.tempDir)
+}
+
 // CopyAllFiles copies all files from srcDir to dstDir.
 func (dl *DownloadManager) CopyAllFiles() error {
 	return filepath.Walk(dl.extractDir, func(path string, info os.FileInfo, err error) error {
