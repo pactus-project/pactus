@@ -79,8 +79,8 @@ func TestExecuteSortitionTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, committee has free seats and validator is in the committee", func(t *testing.T) {
-		existingVal := td.sandbox.TestStore.RandomTestVal()
-		trx := tx.NewSortitionTx(lockTime, existingVal.Address(), proof)
+		val0 := td.sandbox.Committee().Proposer(0)
+		trx := tx.NewSortitionTx(lockTime, val0.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
@@ -142,7 +142,7 @@ func TestChangePower1(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 	proof2 := td.RandProof()
 
-	val3 := td.sandbox.Committee().Validators()[0]
+	val3 := td.sandbox.Committee().Proposer(0)
 	proof3 := td.RandProof()
 
 	td.sandbox.TestParams.CommitteeSize = 4
@@ -191,7 +191,7 @@ func TestChangePower2(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 	proof3 := td.RandProof()
 
-	val4 := td.sandbox.Committee().Validators()[0]
+	val4 := td.sandbox.Committee().Proposer(0)
 	proof4 := td.RandProof()
 
 	td.sandbox.TestParams.CommitteeSize = 7
