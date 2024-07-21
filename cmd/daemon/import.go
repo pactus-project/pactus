@@ -73,21 +73,21 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		cmd.PrintLine()
 
-		dl := cmd.NewDownloadManager(
+		dm := cmd.NewDownloadManager(
 			snapshotURL,
 			extractPath,
 			tmpDir,
 			conf.Store.StorePath(),
 		)
 
-		metadata, err := dl.GetMetadata(c.Context())
+		metadata, err := dm.GetMetadata(c.Context())
 		cmd.FatalErrorCheck(err)
 
 		snapshots := make([]string, 0, len(metadata))
 
 		for _, m := range metadata {
 			item := fmt.Sprintf("snapshot %s (%s)",
-				dl.ParseTime(m.CreatedAt).Format("2006-01-02"),
+				dm.ParseTime(m.CreatedAt).Format("2006-01-02"),
 				util.FormatBytesToHumanReadable(m.TotalSize),
 			)
 
@@ -100,24 +100,29 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		selected := metadata[choice]
 
+		cmd.TrapSignal(func() {
+			_ = fileLock.Unlock()
+			_ = dm.Cleanup()
+		})
+
 		cmd.PrintLine()
 
-		dl.Download(
+		dm.Download(
 			c.Context(),
 			&selected,
 			downloadProgressBar,
 		)
 
-		err = dl.ExtractAndStoreFiles()
+		err = dm.ExtractAndStoreFiles()
 		cmd.FatalErrorCheck(err)
 
 		err = os.MkdirAll(filepath.Dir(conf.Store.StorePath()), 0o750)
 		cmd.FatalErrorCheck(err)
 
-		err = dl.CopyAllFiles()
+		err = dm.CopyAllFiles()
 		cmd.FatalErrorCheck(err)
 
-		err = os.RemoveAll(tmpDir)
+		err = dm.Cleanup()
 		cmd.FatalErrorCheck(err)
 
 		_ = fileLock.Unlock()
@@ -132,8 +137,14 @@ func buildImportCmd(parentCmd *cobra.Command) {
 }
 
 func downloadProgressBar(fileName string, totalSize, downloaded int64, totalItem, downloadedItem int, _ float64) {
-	bar := cmd.TerminalProgressBar(int(totalSize), 30, true)
-	bar.Describe(fmt.Sprintf("%s (%d/%d)", fileName, downloadedItem, totalItem))
-	err := bar.Add(int(downloaded))
+	bar := cmd.TerminalProgressBar(totalSize, 30)
+	bar.Describe(fmt.Sprintf("%s (%d/%d) - %s/%s",
+		fileName,
+		downloadedItem,
+		totalItem,
+		util.FormatBytesToHumanReadable(uint64(downloaded)),
+		util.FormatBytesToHumanReadable(uint64(totalSize)),
+	))
+	err := bar.Add64(downloaded)
 	cmd.FatalErrorCheck(err)
 }
