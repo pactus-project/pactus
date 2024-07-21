@@ -10968,7 +10968,7 @@ public final class BlockchainOuterClass {
      * Lowest-height block stored (only present if pruning is enabled)
      * </pre>
      *
-     * <code>int32 pruning_height = 9 [json_name = "pruningHeight"];</code>
+     * <code>uint32 pruning_height = 9 [json_name = "pruningHeight"];</code>
      * @return The pruningHeight.
      */
     int getPruningHeight();
@@ -11222,7 +11222,7 @@ public final class BlockchainOuterClass {
      * Lowest-height block stored (only present if pruning is enabled)
      * </pre>
      *
-     * <code>int32 pruning_height = 9 [json_name = "pruningHeight"];</code>
+     * <code>uint32 pruning_height = 9 [json_name = "pruningHeight"];</code>
      * @return The pruningHeight.
      */
     @java.lang.Override
@@ -11269,7 +11269,7 @@ public final class BlockchainOuterClass {
         output.writeBool(8, isPruned_);
       }
       if (pruningHeight_ != 0) {
-        output.writeInt32(9, pruningHeight_);
+        output.writeUInt32(9, pruningHeight_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -11313,7 +11313,7 @@ public final class BlockchainOuterClass {
       }
       if (pruningHeight_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(9, pruningHeight_);
+          .computeUInt32Size(9, pruningHeight_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -11755,7 +11755,7 @@ public final class BlockchainOuterClass {
                 break;
               } // case 64
               case 72: {
-                pruningHeight_ = input.readInt32();
+                pruningHeight_ = input.readUInt32();
 
                 break;
               } // case 72
@@ -12448,7 +12448,7 @@ public final class BlockchainOuterClass {
        * Lowest-height block stored (only present if pruning is enabled)
        * </pre>
        *
-       * <code>int32 pruning_height = 9 [json_name = "pruningHeight"];</code>
+       * <code>uint32 pruning_height = 9 [json_name = "pruningHeight"];</code>
        * @return The pruningHeight.
        */
       @java.lang.Override
@@ -12460,7 +12460,7 @@ public final class BlockchainOuterClass {
        * Lowest-height block stored (only present if pruning is enabled)
        * </pre>
        *
-       * <code>int32 pruning_height = 9 [json_name = "pruningHeight"];</code>
+       * <code>uint32 pruning_height = 9 [json_name = "pruningHeight"];</code>
        * @param value The pruningHeight to set.
        * @return This builder for chaining.
        */
@@ -12475,7 +12475,7 @@ public final class BlockchainOuterClass {
        * Lowest-height block stored (only present if pruning is enabled)
        * </pre>
        *
-       * <code>int32 pruning_height = 9 [json_name = "pruningHeight"];</code>
+       * <code>uint32 pruning_height = 9 [json_name = "pruningHeight"];</code>
        * @return This builder for chaining.
        */
       public Builder clearPruningHeight() {
@@ -23450,7 +23450,7 @@ public final class BlockchainOuterClass {
       "er\030\006 \001(\003R\016committeePower\022H\n\024committee_va" +
       "lidators\030\007 \003(\0132\025.pactus.ValidatorInfoR\023c" +
       "ommitteeValidators\022\033\n\tis_pruned\030\010 \001(\010R\010i" +
-      "sPruned\022%\n\016pruning_height\030\t \001(\005R\rpruning" +
+      "sPruned\022%\n\016pruning_height\030\t \001(\rR\rpruning" +
       "Height\"\031\n\027GetConsensusInfoRequest\"O\n\030Get" +
       "ConsensusInfoResponse\0223\n\tinstances\030\001 \003(\013" +
       "2\025.pactus.ConsensusInfoR\tinstances\"Q\n\027Ge" +

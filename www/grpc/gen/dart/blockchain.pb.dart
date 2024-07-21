@@ -838,7 +838,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'committeePower')
     ..pc<ValidatorInfo>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'committeeValidators', $pb.PbFieldType.PM, subBuilder: ValidatorInfo.create)
     ..aOB(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isPruned')
-    ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'pruningHeight', $pb.PbFieldType.O3)
+    ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'pruningHeight', $pb.PbFieldType.OU3)
     ..hasRequiredFields = false
   ;
 
@@ -974,7 +974,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(9)
   $core.int get pruningHeight => $_getIZ(8);
   @$pb.TagNumber(9)
-  set pruningHeight($core.int v) { $_setSignedInt32(8, v); }
+  set pruningHeight($core.int v) { $_setUnsignedInt32(8, v); }
   @$pb.TagNumber(9)
   $core.bool hasPruningHeight() => $_has(8);
   @$pb.TagNumber(9)

@@ -3110,7 +3110,7 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
       msg.setIsPruned(value);
       break;
     case 9:
-      var value = /** @type {number} */ (reader.readInt32());
+      var value = /** @type {number} */ (reader.readUint32());
       msg.setPruningHeight(value);
       break;
     default:
@@ -3201,7 +3201,7 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
   }
   f = message.getPruningHeight();
   if (f !== 0) {
-    writer.writeInt32(
+    writer.writeUint32(
       9,
       f
     );
@@ -3374,7 +3374,7 @@ proto.pactus.GetBlockchainInfoResponse.prototype.setIsPruned = function(value) {
 
 
 /**
- * optional int32 pruning_height = 9;
+ * optional uint32 pruning_height = 9;
  * @return {number}
  */
 proto.pactus.GetBlockchainInfoResponse.prototype.getPruningHeight = function() {
