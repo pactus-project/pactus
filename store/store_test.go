@@ -357,7 +357,7 @@ func TestCancelPrune(t *testing.T) {
 	td := setup(t, conf)
 
 	hits := uint32(0)
-	cb := func(pruned bool, pruningHeight uint32) bool {
+	cb := func(_ bool, _ uint32) bool {
 		hits++
 
 		return true // Cancel pruning
