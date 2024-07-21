@@ -43,9 +43,9 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 	t.Run("Should fail, joining committee", func(t *testing.T) {
 		randPub, _ := td.RandBLSKeyPair()
-		val := td.sandbox.MakeNewValidator(randPub)
-		td.sandbox.UpdateValidator(val)
-		td.sandbox.JoinedToCommittee(val.Address())
+		randVal := td.sandbox.MakeNewValidator(randPub)
+		td.sandbox.UpdateValidator(randVal)
+		td.sandbox.JoinedToCommittee(randVal.Address())
 		trx := tx.NewUnbondTx(lockTime, randPub.ValidatorAddress(), "joining committee")
 
 		td.check(t, trx, true, ErrValidatorInCommittee)

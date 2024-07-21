@@ -47,6 +47,8 @@ func (td *testData) checkTotalCoin(t *testing.T, fee amount.Amount) {
 }
 
 func (td *testData) check(t *testing.T, trx *tx.Tx, strict bool, expectedErr error) {
+	t.Helper()
+
 	exe, err := MakeExecutor(trx, td.sandbox)
 	if err != nil {
 		assert.ErrorIs(t, err, expectedErr)
@@ -59,6 +61,8 @@ func (td *testData) check(t *testing.T, trx *tx.Tx, strict bool, expectedErr err
 }
 
 func (td *testData) execute(t *testing.T, trx *tx.Tx) {
+	t.Helper()
+
 	exe, err := MakeExecutor(trx, td.sandbox)
 	require.NoError(t, err)
 
