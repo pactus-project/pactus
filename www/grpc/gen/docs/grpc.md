@@ -1393,7 +1393,7 @@ Message has no fields.
   </tr>
      <tr>
     <td class="fw-bold">pruning_height</td>
-    <td> int32</td>
+    <td> uint32</td>
     <td>
     Lowest-height block stored (only present if pruning is enabled)
     </td>
