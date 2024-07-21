@@ -114,7 +114,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 }
 
 func pruningProgressBar(prunedCount, skippedCount, totalCount uint32) {
-	bar := cmd.TerminalProgressBar(int(totalCount), 30, false)
+	bar := cmd.TerminalProgressBar(int64(totalCount), 30)
 	bar.Describe(fmt.Sprintf("Pruned: %d | Skipped: %d", prunedCount, skippedCount))
 	err := bar.Add(int(prunedCount + skippedCount))
 	cmd.FatalErrorCheck(err)
