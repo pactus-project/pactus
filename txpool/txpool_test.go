@@ -224,7 +224,7 @@ func TestAddSubsidyTransactions(t *testing.T) {
 
 	err := td.pool.AppendTx(trx1)
 	assert.ErrorIs(t, err, AppendError{
-		Err: execution.PastLockTimeError{
+		Err: execution.LockTimeExpiredError{
 			LockTime: randHeight,
 		},
 	})

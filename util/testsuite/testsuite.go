@@ -156,7 +156,7 @@ func (ts *TestSuite) RandRound() int16 {
 	return ts.RandInt16(10)
 }
 
-// RandAmount returns a random amount between [0, 100^e9).
+// RandAmount returns a random amount between [0, 1000).
 func (ts *TestSuite) RandAmount() amount.Amount {
 	return ts.RandAmountRange(0, 1000e9)
 }
@@ -168,9 +168,9 @@ func (ts *TestSuite) RandAmountRange(min, max amount.Amount) amount.Amount {
 	return amt + min
 }
 
-// RandFee returns a random fee between [0.1, 1).
+// RandFee returns a random fee between [0, 1).
 func (ts *TestSuite) RandFee() amount.Amount {
-	fee := amount.Amount(ts.RandInt64(0.9e9) + 0.1e9)
+	fee := amount.Amount(ts.RandInt64(1e9))
 
 	return fee
 }
@@ -473,10 +473,11 @@ func (ts *TestSuite) GenerateTestProposal(height uint32, round int16) (*proposal
 }
 
 type TransactionMaker struct {
-	Amount amount.Amount
-	Fee    amount.Amount
-	PrvKey *bls.PrivateKey
-	PubKey *bls.PublicKey
+	LockTime uint32
+	Amount   amount.Amount
+	Fee      amount.Amount
+	PrvKey   *bls.PrivateKey
+	PubKey   *bls.PublicKey
 }
 
 // NewTransactionMaker creates a new TransactionMaker instance with default values.
@@ -484,10 +485,18 @@ func (ts *TestSuite) NewTransactionMaker() *TransactionMaker {
 	pub, prv := ts.RandBLSKeyPair()
 
 	return &TransactionMaker{
-		Amount: ts.RandAmount(),
-		Fee:    ts.RandFee(),
-		PrvKey: prv,
-		PubKey: pub,
+		LockTime: ts.RandHeight(),
+		Amount:   ts.RandAmount(),
+		Fee:      ts.RandFee(),
+		PrvKey:   prv,
+		PubKey:   pub,
+	}
+}
+
+// TransactionWithLockTime sets lock-time to the transaction.
+func TransactionWithLockTime(lockTime uint32) func(tm *TransactionMaker) {
+	return func(tm *TransactionMaker) {
+		tm.LockTime = lockTime
 	}
 }
 
@@ -520,7 +529,7 @@ func (ts *TestSuite) GenerateTestTransferTx(options ...func(tm *TransactionMaker
 	for _, opt := range options {
 		opt(tm)
 	}
-	trx := tx.NewTransferTx(ts.RandHeight(), tm.PubKey.AccountAddress(), ts.RandAccAddress(),
+	trx := tx.NewTransferTx(tm.LockTime, tm.PubKey.AccountAddress(), ts.RandAccAddress(),
 		tm.Amount, tm.Fee, "test send-tx")
 	ts.HelperSignTransaction(tm.PrvKey, trx)
 
@@ -534,7 +543,7 @@ func (ts *TestSuite) GenerateTestBondTx(options ...func(tm *TransactionMaker)) *
 	for _, opt := range options {
 		opt(tm)
 	}
-	trx := tx.NewBondTx(ts.RandHeight(), tm.PubKey.AccountAddress(), ts.RandValAddress(),
+	trx := tx.NewBondTx(tm.LockTime, tm.PubKey.AccountAddress(), ts.RandValAddress(),
 		nil, tm.Amount, tm.Fee, "test bond-tx")
 	ts.HelperSignTransaction(tm.PrvKey, trx)
 
@@ -549,7 +558,7 @@ func (ts *TestSuite) GenerateTestSortitionTx(options ...func(tm *TransactionMake
 		opt(tm)
 	}
 	proof := ts.RandProof()
-	trx := tx.NewSortitionTx(ts.RandHeight(), tm.PubKey.ValidatorAddress(), proof)
+	trx := tx.NewSortitionTx(tm.LockTime, tm.PubKey.ValidatorAddress(), proof)
 	ts.HelperSignTransaction(tm.PrvKey, trx)
 
 	return trx
@@ -562,7 +571,7 @@ func (ts *TestSuite) GenerateTestUnbondTx(options ...func(tm *TransactionMaker))
 	for _, opt := range options {
 		opt(tm)
 	}
-	trx := tx.NewUnbondTx(ts.RandHeight(), tm.PubKey.ValidatorAddress(), "test unbond-tx")
+	trx := tx.NewUnbondTx(tm.LockTime, tm.PubKey.ValidatorAddress(), "test unbond-tx")
 	ts.HelperSignTransaction(tm.PrvKey, trx)
 
 	return trx
@@ -575,7 +584,7 @@ func (ts *TestSuite) GenerateTestWithdrawTx(options ...func(tm *TransactionMaker
 	for _, opt := range options {
 		opt(tm)
 	}
-	trx := tx.NewWithdrawTx(ts.RandHeight(), tm.PubKey.ValidatorAddress(), ts.RandAccAddress(),
+	trx := tx.NewWithdrawTx(tm.LockTime, tm.PubKey.ValidatorAddress(), ts.RandAccAddress(),
 		tm.Amount, tm.Fee, "test withdraw-tx")
 	ts.HelperSignTransaction(tm.PrvKey, trx)
 
