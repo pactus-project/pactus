@@ -28,7 +28,7 @@ func TestExecuteBondTx(t *testing.T) {
 			receiverAddr, pub, amt, fee, "invalid sender")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Equal(t, errors.ErrInvalidAddress, errors.Code(err))
 	})
 
 	t.Run("Should fail, treasury address as receiver", func(t *testing.T) {
@@ -36,7 +36,7 @@ func TestExecuteBondTx(t *testing.T) {
 			crypto.TreasuryAddress, nil, amt, fee, "invalid ")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
+		assert.Equal(t, errors.ErrInvalidPublicKey, errors.Code(err))
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
@@ -53,7 +53,7 @@ func TestExecuteBondTx(t *testing.T) {
 			pub0.ValidatorAddress(), nil, amt, fee, "inside committee")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
+		assert.Equal(t, errors.ErrInvalidTx, errors.Code(err))
 	})
 
 	t.Run("Should fail, unbonded before", func(t *testing.T) {
@@ -66,7 +66,7 @@ func TestExecuteBondTx(t *testing.T) {
 			unbondedPub.ValidatorAddress(), nil, amt, fee, "unbonded before")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
+		assert.Equal(t, errors.ErrInvalidHeight, errors.Code(err))
 	})
 
 	t.Run("Should fail, public key is not set", func(t *testing.T) {
@@ -74,7 +74,7 @@ func TestExecuteBondTx(t *testing.T) {
 			receiverAddr, nil, amt, fee, "no public key")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
+		assert.Equal(t, errors.ErrInvalidPublicKey, errors.Code(err))
 	})
 
 	t.Run("Should fail, amount less than MinimumStake", func(t *testing.T) {
@@ -98,13 +98,13 @@ func TestExecuteBondTx(t *testing.T) {
 			receiverAddr, pub, amt, fee, "with public key")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidPublicKey)
+		assert.Equal(t, errors.ErrInvalidPublicKey, errors.Code(err))
 	})
 
-	assert.Equal(t, td.sandbox.Account(senderAddr).Balance(), senderBalance-(amt+fee))
-	assert.Equal(t, td.sandbox.Validator(receiverAddr).Stake(), amt)
-	assert.Equal(t, td.sandbox.Validator(receiverAddr).LastBondingHeight(), td.sandbox.CurrentHeight())
-	assert.Equal(t, td.sandbox.PowerDelta(), int64(amt))
+	assert.Equal(t, senderBalance-(amt+fee), td.sandbox.Account(senderAddr).Balance())
+	assert.Equal(t, amt, td.sandbox.Validator(receiverAddr).Stake())
+	assert.Equal(t, td.sandbox.CurrentHeight(), td.sandbox.Validator(receiverAddr).LastBondingHeight())
+	assert.Equal(t, int64(amt), td.sandbox.PowerDelta())
 	td.checkTotalCoin(t, fee)
 }
 
@@ -177,7 +177,7 @@ func TestStakeExceeded(t *testing.T) {
 		pub.ValidatorAddress(), pub, amt, fee, "stake exceeded")
 
 	err := exe.Execute(trx, td.sandbox)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidAmount)
+	assert.Equal(t, errors.ErrInvalidAmount, errors.Code(err))
 }
 
 func TestPowerDeltaBond(t *testing.T) {
@@ -253,5 +253,5 @@ func TestSmallBond(t *testing.T) {
 	})
 
 	val, _ := td.sandbox.TestStore.Validator(receiverVal.Address())
-	assert.Equal(t, td.sandbox.Params().MaximumStake, val.Stake())
+	assert.Equal(t, val.Stake(), td.sandbox.Params().MaximumStake)
 }

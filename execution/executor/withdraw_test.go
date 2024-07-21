@@ -29,7 +29,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 			amt, fee, "invalid validator")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Equal(t, errors.ErrInvalidAddress, errors.Code(err))
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
@@ -46,7 +46,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 			amt, fee, "need to unbond first")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
+		assert.Equal(t, errors.ErrInvalidHeight, errors.Code(err))
 	})
 
 	val.UpdateUnbondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().UnbondInterval + 1)
@@ -57,7 +57,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 			amt, fee, "not passed unbonding interval")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
+		assert.Equal(t, errors.ErrInvalidHeight, errors.Code(err))
 	})
 
 	curHeight := td.sandbox.CurrentHeight()
@@ -80,10 +80,10 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	})
 
 	assert.Zero(t, td.sandbox.Validator(val.Address()).Stake())
-	assert.Equal(t, td.sandbox.Account(addr).Balance(), amt)
+	assert.Equal(t, amt, td.sandbox.Account(addr).Balance())
 	assert.Zero(t, td.sandbox.Validator(val.Address()).Stake())
 	assert.Zero(t, td.sandbox.Validator(val.Address()).Power())
-	assert.Equal(t, td.sandbox.Account(addr).Balance(), amt)
+	assert.Equal(t, amt, td.sandbox.Account(addr).Balance())
 
 	td.checkTotalCoin(t, fee)
 }

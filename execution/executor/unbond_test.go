@@ -30,14 +30,14 @@ func TestExecuteUnbondTx(t *testing.T) {
 	t.Run("Should fail, Invalid validator", func(t *testing.T) {
 		trx := tx.NewUnbondTx(lockTime, td.RandAccAddress(), "invalid validator")
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Equal(t, errors.ErrInvalidAddress, errors.Code(err))
 	})
 
 	t.Run("Should fail, Inside committee", func(t *testing.T) {
 		val0 := td.sandbox.Committee().Proposer(0)
 		trx := tx.NewUnbondTx(lockTime, val0.Address(), "inside committee")
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
+		assert.Equal(t, errors.ErrInvalidTx, errors.Code(err))
 	})
 
 	t.Run("Should fail, Cannot unbond if unbonded already", func(t *testing.T) {
@@ -48,7 +48,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 		trx := tx.NewUnbondTx(lockTime, pub.ValidatorAddress(), "Ok")
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
+		assert.Equal(t, errors.ErrInvalidHeight, errors.Code(err))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -64,7 +64,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 	assert.Equal(t, stake, td.sandbox.Validator(valAddr).Stake())
 	assert.Zero(t, td.sandbox.Validator(valAddr).Power())
-	assert.Equal(t, td.sandbox.Validator(valAddr).UnbondingHeight(), td.sandbox.CurrentHeight())
+	assert.Equal(t, td.sandbox.CurrentHeight(), td.sandbox.Validator(valAddr).UnbondingHeight())
 	assert.Equal(t, int64(-val.Stake()), td.sandbox.PowerDelta())
 
 	td.checkTotalCoin(t, 0)

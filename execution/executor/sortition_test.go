@@ -50,7 +50,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, td.RandAccAddress(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Equal(t, errors.ErrInvalidAddress, errors.Code(err))
 	})
 
 	newVal.UpdateLastBondingHeight(curHeight - td.sandbox.Params().BondInterval + 1)
@@ -60,7 +60,7 @@ func TestExecuteSortitionTx(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
+		assert.Equal(t, errors.ErrInvalidHeight, errors.Code(err))
 	})
 
 	// Let's add one more block
@@ -70,14 +70,14 @@ func TestExecuteSortitionTx(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = false
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidProof)
+		assert.Equal(t, errors.ErrInvalidProof, errors.Code(err))
 	})
 
 	t.Run("Should fail, Committee has free seats and validator is in the committee", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, existingVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
+		assert.Equal(t, errors.ErrInvalidTx, errors.Code(err))
 	})
 
 	t.Run("Should be ok", func(t *testing.T) {
@@ -91,10 +91,10 @@ func TestExecuteSortitionTx(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
+		assert.Equal(t, errors.ErrInvalidTx, errors.Code(err))
 	})
 
-	assert.Equal(t, td.sandbox.Validator(newVal.Address()).LastSortitionHeight(), lockTime)
+	assert.Equal(t, lockTime, td.sandbox.Validator(newVal.Address()).LastSortitionHeight())
 	assert.True(t, td.sandbox.IsJoinedCommittee(newVal.Address()))
 
 	td.checkTotalCoin(t, 0)
@@ -152,7 +152,7 @@ func TestChangePower1(t *testing.T) {
 
 	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof2)
 	err = exe.Execute(trx2, td.sandbox)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx, "More than 1/3 of power is joining at the same height")
+	assert.Equal(t, errors.ErrInvalidTx, errors.Code(err), "More than 1/3 of power is joining at the same height")
 
 	// Val3 is a Committee member
 	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof3)
@@ -205,7 +205,7 @@ func TestChangePower2(t *testing.T) {
 
 	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof3)
 	err = exe.Execute(trx3, td.sandbox)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx, "More than 1/3 of power is leaving at the same height")
+	assert.Equal(t, errors.ErrInvalidTx, errors.Code(err), "More than 1/3 of power is leaving at the same height")
 
 	// Committee member
 	trx4 := tx.NewSortitionTx(lockTime, val4.Address(), proof4)
@@ -271,5 +271,5 @@ func TestOldestDidNotPropose(t *testing.T) {
 	// Entering validator 16
 	trx3 := tx.NewSortitionTx(lockTime, vals[8].Address(), td.RandProof())
 	err = exe.Execute(trx3, td.sandbox)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
+	assert.Equal(t, errors.ErrInvalidTx, errors.Code(err))
 }

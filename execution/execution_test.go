@@ -130,7 +130,7 @@ func TestExecution(t *testing.T) {
 	t.Run("Invalid transaction, Should returns error", func(t *testing.T) {
 		trx := tx.NewTransferTx(lockTime, ts.RandAccAddress(), ts.RandAccAddress(), 1000, 0.1e9, "invalid-tx")
 		err := exe.Execute(trx, sb)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Equal(t, errors.ErrInvalidAddress, errors.Code(err))
 	})
 
 	t.Run("Invalid fee (subsidy tx), Should returns error", func(t *testing.T) {
@@ -146,7 +146,7 @@ func TestExecution(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, rndValAddr, proof)
 		ts.HelperSignTransaction(rndPrvKey, trx)
 		err := exe.Execute(trx, sb)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Equal(t, errors.ErrInvalidAddress, errors.Code(err))
 	})
 }
 

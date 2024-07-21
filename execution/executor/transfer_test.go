@@ -43,7 +43,7 @@ func (td *testData) checkTotalCoin(t *testing.T, fee amount.Amount) {
 	for _, val := range td.sandbox.TestStore.Validators {
 		total += val.Stake()
 	}
-	assert.Equal(t, total+fee, amount.Amount(21_000_000*1e9))
+	assert.Equal(t, amount.Amount(21_000_000*1e9), total+fee)
 }
 
 func TestExecuteTransferTx(t *testing.T) {
@@ -62,7 +62,7 @@ func TestExecuteTransferTx(t *testing.T) {
 			receiverAddr, amt, fee, "non-existing account")
 
 		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
+		assert.Equal(t, errors.ErrInvalidAddress, errors.Code(err))
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
@@ -81,8 +81,8 @@ func TestExecuteTransferTx(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	assert.Equal(t, td.sandbox.Account(senderAddr).Balance(), senderBalance-(amt+fee))
-	assert.Equal(t, td.sandbox.Account(receiverAddr).Balance(), amt)
+	assert.Equal(t, senderBalance-(amt+fee), td.sandbox.Account(senderAddr).Balance())
+	assert.Equal(t, amt, td.sandbox.Account(receiverAddr).Balance())
 
 	td.checkTotalCoin(t, fee)
 }
