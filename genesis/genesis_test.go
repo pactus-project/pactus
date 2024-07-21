@@ -63,7 +63,7 @@ func TestGenesisTestnet(t *testing.T) {
 	assert.Equal(t, genesis.Testnet, gen.ChainType())
 	assert.Equal(t, amount.Amount(42e15), gen.TotalSupply())
 
-	//* reset address HRP global variable to miannet to prevent next tests failing.
+	// reset address HRP global variable to miannet to prevent next tests failing.
 	crypto.AddressHRP = "pc"
 }
 
