@@ -530,11 +530,8 @@ pub struct GetBlockchainInfoResponse {
     #[prost(bool, tag="8")]
     pub is_pruned: bool,
     /// Lowest-height block stored (only present if pruning is enabled)
-    #[prost(int32, tag="9")]
-    pub pruning_height: i32,
-    /// The last block time as timestamp
-    #[prost(int64, tag="10")]
-    pub last_block_time: i64,
+    #[prost(uint32, tag="9")]
+    pub pruning_height: u32,
 }
 /// Message to request consensus information.
 #[allow(clippy::derive_partial_eq_without_eq)]

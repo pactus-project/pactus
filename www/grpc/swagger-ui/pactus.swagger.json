@@ -1622,7 +1622,7 @@
         },
         "pruningHeight": {
           "type": "integer",
-          "format": "int32",
+          "format": "int64",
           "title": "Lowest-height block stored (only present if pruning is enabled)"
         },
         "lastBlockTime": {
