@@ -43,6 +43,7 @@ func setup(t *testing.T, config *Config) *testData {
 	s, err := NewStore(config)
 	require.NoError(t, err)
 	assert.False(t, s.IsPruned(), "empty store should not be in prune mode")
+	assert.Zero(t, s.PruningHeight(), "pruning height should be zero for an empty store")
 
 	td := &testData{
 		TestSuite: ts,
@@ -65,6 +66,7 @@ func TestReopenStore(t *testing.T) {
 	store, _ := NewStore(td.store.config)
 
 	assert.False(t, store.IsPruned())
+	assert.Zero(t, store.PruningHeight())
 	assert.Equal(t, uint32(10), store.LastCertificate().Height())
 }
 
@@ -297,7 +299,6 @@ func TestPrune(t *testing.T) {
 		// Store doesn't have blocks for one day
 		err := td.store.Prune(cb)
 		assert.NoError(t, err)
-		assert.False(t, td.store.isPruned)
 
 		assert.Zero(t, totalPruned)
 		assert.Zero(t, lastPruningHeight)
@@ -330,9 +331,10 @@ func TestPrune(t *testing.T) {
 		td.store.config.TxCacheWindow = 1
 		s, err := NewStore(td.store.config)
 		require.NoError(t, err)
-		assert.True(t, s.IsPruned(), "store should be in prune mode")
-
 		td.store = s.(*store)
+
+		assert.True(t, td.store.IsPruned(), "store should be in prune mode")
+		assert.Equal(t, uint32(8), td.store.PruningHeight())
 	})
 
 	t.Run("Commit new block", func(t *testing.T) {
@@ -344,5 +346,32 @@ func TestPrune(t *testing.T) {
 		cBlk, err := td.store.Block(9)
 		assert.Error(t, err)
 		assert.Nil(t, cBlk)
+
+		assert.Equal(t, uint32(9), td.store.PruningHeight())
+	})
+}
+
+func TestCancelPrune(t *testing.T) {
+	conf := testConfig()
+	conf.RetentionDays = 1
+	td := setup(t, conf)
+
+	hits := uint32(0)
+	cb := func(pruned bool, pruningHeight uint32) bool {
+		hits++
+
+		return true // Cancel pruning
+	}
+
+	t.Run("Cancel Pruning database", func(t *testing.T) {
+		blk, cert := td.GenerateTestBlock(blockPerDay + 7)
+		td.store.SaveBlock(blk, cert)
+		err := td.store.WriteBatch()
+		require.NoError(t, err)
+
+		err = td.store.Prune(cb)
+		assert.NoError(t, err)
+
+		assert.Equal(t, uint32(1), hits)
 	})
 }

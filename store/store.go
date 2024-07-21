@@ -415,9 +415,24 @@ func (s *store) IsBanned(addr crypto.Address) bool {
 	return s.config.BannedAddrs[addr]
 }
 
-// IsPruned indicates that store is in prune mode.
+// IsPruned returns true if the store is in prune mode, otherwise false.
 func (s *store) IsPruned() bool {
 	return s.isPruned
+}
+
+// PruningHeight returns the height at which blocks will be pruned if the store is in prune mode.
+// If the store is not in prune mode, it returns 0.
+func (s *store) PruningHeight() uint32 {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
+	if !s.isPruned {
+		return 0
+	}
+
+	// TODO: it can be optimized (and safer?) by keeping the last block height in memory.
+	cert := s.lastCertificate()
+	return cert.Height() - s.config.RetentionBlocks()
 }
 
 // Prune iterates over all blocks from the pruning height to the genesis block and prunes them.
@@ -486,16 +501,4 @@ func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
 	}
 
 	return true, nil
-}
-
-func (s *store) PruningHeight() uint32 {
-	s.lk.RLock()
-	defer s.lk.RUnlock()
-
-	cert := s.lastCertificate()
-	if cert == nil {
-		return 0
-	}
-
-	return cert.Height() - s.config.RetentionBlocks()
 }

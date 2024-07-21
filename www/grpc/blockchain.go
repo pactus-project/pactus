@@ -33,11 +33,6 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 		cv = append(cv, s.validatorToProto(v))
 	}
 
-	pruningHeight := uint32(0)
-	if s.state.IsPruned() {
-		pruningHeight = s.state.PruningHeight()
-	}
-
 	return &pactus.GetBlockchainInfoResponse{
 		LastBlockHeight:     s.state.LastBlockHeight(),
 		LastBlockHash:       s.state.LastBlockHash().String(),
@@ -46,7 +41,7 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 		TotalPower:          s.state.TotalPower(),
 		CommitteePower:      s.state.CommitteePower(),
 		IsPruned:            s.state.IsPruned(),
-		PruningHeight:       pruningHeight,
+		PruningHeight:       s.state.PruningHeight(),
 		LastBlockTime:       s.state.LastBlockTime().Unix(),
 		CommitteeValidators: cv,
 	}, nil
