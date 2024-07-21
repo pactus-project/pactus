@@ -31,7 +31,7 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox, check bool) er
 				return err
 			}
 		} else {
-			err := execution.Execute(trx, sb, true)
+			err := execution.Execute(trx, sb)
 			if err != nil {
 				return err
 			}

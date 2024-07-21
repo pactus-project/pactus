@@ -7,7 +7,6 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type WithdrawExecutor struct {
@@ -18,7 +17,7 @@ type WithdrawExecutor struct {
 	receiver *account.Account
 }
 
-func NewWithdrawExecutor(trx *tx.Tx, sb sandbox.Sandbox) (*WithdrawExecutor, error) {
+func newWithdrawExecutor(trx *tx.Tx, sb sandbox.Sandbox) (*WithdrawExecutor, error) {
 	pld := trx.Payload().(*payload.WithdrawPayload)
 
 	sender := sb.Validator(pld.From)
@@ -44,14 +43,13 @@ func (e *WithdrawExecutor) Check(strict bool) error {
 	if e.sender.Stake() < e.pld.Amount+e.fee {
 		return ErrInsufficientFunds
 	}
+
 	if e.sender.UnbondingHeight() == 0 {
-		return errors.Errorf(errors.ErrInvalidHeight,
-			"need to unbond first")
+		return ErrValidatorBonded
 	}
+
 	if e.sb.CurrentHeight() < e.sender.UnbondingHeight()+e.sb.Params().UnbondInterval {
-		return errors.Errorf(errors.ErrInvalidHeight,
-			"hasn't passed unbonding period, expected: %v, got: %v",
-			e.sender.UnbondingHeight()+e.sb.Params().UnbondInterval, e.sb.CurrentHeight())
+		return ErrUnbondingPeriod
 	}
 
 	return nil

@@ -13,14 +13,15 @@ func TestExecuteTransferTx(t *testing.T) {
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
 	receiverAddr := td.RandAccAddress()
+
 	amt := td.RandAmountRange(0, senderBalance)
 	fee := td.RandFee()
 	lockTime := td.sandbox.CurrentHeight()
 
-	t.Run("Should fail, Sender has no account", func(t *testing.T) {
+	t.Run("Should fail, unknown address", func(t *testing.T) {
 		randomAddr := td.RandAccAddress()
 		trx := tx.NewTransferTx(lockTime, randomAddr,
-			receiverAddr, amt, fee, "non-existing account")
+			receiverAddr, amt, fee, "unknown address")
 
 		td.check(t, trx, true, AccountNotFoundError{Address: randomAddr})
 		td.check(t, trx, false, AccountNotFoundError{Address: randomAddr})
@@ -43,8 +44,11 @@ func TestExecuteTransferTx(t *testing.T) {
 		td.execute(t, trx)
 	})
 
-	assert.Equal(t, td.sandbox.Account(senderAddr).Balance(), senderBalance-(amt+fee))
-	assert.Equal(t, td.sandbox.Account(receiverAddr).Balance(), amt)
+	updatedSenderAcc := td.sandbox.Account(senderAddr)
+	updatedReceiverAcc := td.sandbox.Account(receiverAddr)
+
+	assert.Equal(t, senderBalance-(amt+fee), updatedSenderAcc.Balance())
+	assert.Equal(t, amt, updatedReceiverAcc.Balance())
 
 	td.checkTotalCoin(t, fee)
 }
@@ -63,5 +67,8 @@ func TestTransferToSelf(t *testing.T) {
 	td.execute(t, trx)
 
 	expectedBalance := senderAcc.Balance() - fee // Fee should be deducted
-	assert.Equal(t, expectedBalance, td.sandbox.Account(senderAddr).Balance())
+	updatedAcc := td.sandbox.Account(senderAddr)
+	assert.Equal(t, expectedBalance, updatedAcc.Balance())
+
+	td.checkTotalCoin(t, fee)
 }

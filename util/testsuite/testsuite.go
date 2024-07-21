@@ -156,7 +156,7 @@ func (ts *TestSuite) RandRound() int16 {
 	return ts.RandInt16(10)
 }
 
-// RandAmount returns a random amount between [0, 100^e9).
+// RandAmount returns a random amount between [0, 1000).
 func (ts *TestSuite) RandAmount() amount.Amount {
 	return ts.RandAmountRange(0, 1000e9)
 }
@@ -168,9 +168,9 @@ func (ts *TestSuite) RandAmountRange(min, max amount.Amount) amount.Amount {
 	return amt + min
 }
 
-// RandFee returns a random fee between [0.1, 1).
+// RandFee returns a random fee between [0, 1).
 func (ts *TestSuite) RandFee() amount.Amount {
-	fee := amount.Amount(ts.RandInt64(0.9e9) + 0.1e9)
+	fee := amount.Amount(ts.RandInt64(1e9))
 
 	return fee
 }

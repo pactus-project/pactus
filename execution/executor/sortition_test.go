@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/stretchr/testify/assert"
@@ -24,26 +25,31 @@ func updateCommittee(td *testData) {
 func TestExecuteSortitionTx(t *testing.T) {
 	td := setup(t)
 
-	existingVal := td.sandbox.TestStore.RandomTestVal()
-	pub, _ := td.RandBLSKeyPair()
-	newVal := td.sandbox.MakeNewValidator(pub)
-	accAddr, acc := td.sandbox.TestStore.RandomTestAcc()
-	amt := td.RandAmountRange(0, acc.Balance())
-	fee := td.RandFee()
-	newVal.AddToStake(amt + fee)
-	acc.SubtractFromBalance(amt + fee)
-	td.sandbox.UpdateAccount(accAddr, acc)
-	td.sandbox.UpdateValidator(newVal)
+	bonderAddr, bonderAcc := td.sandbox.TestStore.RandomTestAcc()
+	bonderBalance := bonderAcc.Balance()
+	stake := td.RandAmountRange(
+		td.sandbox.TestParams.MinimumStake,
+		bonderBalance)
+	bonderAcc.SubtractFromBalance(stake)
+	td.sandbox.UpdateAccount(bonderAddr, bonderAcc)
+
+	valPub, _ := td.RandBLSKeyPair()
+	valAddr := valPub.ValidatorAddress()
+	val := td.sandbox.MakeNewValidator(valPub)
+	val.AddToStake(stake)
+	td.sandbox.UpdateValidator(val)
+
 	curHeight := td.sandbox.CurrentHeight()
-	lockTime := curHeight
+	lockTime := td.sandbox.CurrentHeight()
 	proof := td.RandProof()
 
-	newVal.UpdateLastBondingHeight(curHeight - td.sandbox.Params().BondInterval)
-	td.sandbox.UpdateValidator(newVal)
-	assert.Zero(t, td.sandbox.Validator(newVal.Address()).LastSortitionHeight())
-	assert.False(t, td.sandbox.IsJoinedCommittee(newVal.Address()))
+	val.UpdateLastBondingHeight(curHeight - td.sandbox.Params().BondInterval)
+	td.sandbox.UpdateValidator(val)
 
-	t.Run("Should fail, Invalid address", func(t *testing.T) {
+	assert.Zero(t, val.LastSortitionHeight())
+	assert.False(t, td.sandbox.IsJoinedCommittee(val.Address()))
+
+	t.Run("Should fail, unknown address", func(t *testing.T) {
 		randomAddr := td.RandAccAddress()
 		trx := tx.NewSortitionTx(lockTime, randomAddr, proof)
 
@@ -51,11 +57,11 @@ func TestExecuteSortitionTx(t *testing.T) {
 		td.check(t, trx, false, ValidatorNotFoundError{Address: randomAddr})
 	})
 
-	newVal.UpdateLastBondingHeight(curHeight - td.sandbox.Params().BondInterval + 1)
-	td.sandbox.UpdateValidator(newVal)
+	val.UpdateLastBondingHeight(curHeight - td.sandbox.Params().BondInterval + 1)
+	td.sandbox.UpdateValidator(val)
 
 	t.Run("Should fail, Bonding period", func(t *testing.T) {
-		trx := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 
 		td.check(t, trx, true, ErrBondingPeriod)
 		td.check(t, trx, false, ErrBondingPeriod)
@@ -64,15 +70,16 @@ func TestExecuteSortitionTx(t *testing.T) {
 	// Let's add one more block
 	td.sandbox.TestStore.AddTestBlock(curHeight + 1)
 
-	t.Run("Should fail, Invalid proof", func(t *testing.T) {
-		trx := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
+	t.Run("Should fail, invalid proof", func(t *testing.T) {
+		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 		td.sandbox.TestAcceptSortition = false
 
 		td.check(t, trx, true, ErrInvalidSortitionProof)
 		td.check(t, trx, false, ErrInvalidSortitionProof)
 	})
 
-	t.Run("Should fail, Committee has free seats and validator is in the committee", func(t *testing.T) {
+	t.Run("Should fail, committee has free seats and validator is in the committee", func(t *testing.T) {
+		existingVal := td.sandbox.TestStore.RandomTestVal()
 		trx := tx.NewSortitionTx(lockTime, existingVal.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 
@@ -81,48 +88,39 @@ func TestExecuteSortitionTx(t *testing.T) {
 	})
 
 	t.Run("Should be ok", func(t *testing.T) {
-		trx := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
+		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
+		td.execute(t, trx)
 	})
 
-	// t.Run("Should fail, duplicated sortition", func(t *testing.T) {
-	// 	trx := tx.NewSortitionTx(lockTime, newVal.Address(), proof)
-	// 	td.sandbox.TestAcceptSortition = true
-	// 	err := exe.Execute(trx, td.sandbox)
-	// 	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
-	// })
+	t.Run("Should fail, expired sortition", func(t *testing.T) {
+		trx := tx.NewSortitionTx(lockTime-1, val.Address(), proof)
+		td.sandbox.TestAcceptSortition = true
 
-	// assert.Equal(t, td.sandbox.Validator(newVal.Address()).LastSortitionHeight(), lockTime)
-	// assert.True(t, td.sandbox.IsJoinedCommittee(newVal.Address()))
+		td.check(t, trx, true, ErrExpiredSortition)
+		td.check(t, trx, false, ErrExpiredSortition)
+	})
 
-	// td.checkTotalCoin(t, 0)
-}
+	t.Run("Should fail, duplicated sortition", func(t *testing.T) {
+		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 
-/*
-func TestSortitionNonStrictMode(t *testing.T) {
-	td := setup(t)
-	exe1 := NewSortitionExecutor(true)
-	exe2 := NewSortitionExecutor(false)
+		td.check(t, trx, true, ErrExpiredSortition)
+		td.check(t, trx, false, ErrExpiredSortition)
+	})
 
-	val := td.sandbox.TestStore.RandomTestVal()
-	lockTime := td.sandbox.CurrentHeight()
-	proof := td.RandProof()
+	updatedVal := td.sandbox.Validator(valAddr)
 
-	td.sandbox.TestAcceptSortition = true
-	trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
-	err := exe1.Execute(trx, td.sandbox)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
-	err = exe2.Execute(trx, td.sandbox)
-	assert.NoError(t, err)
+	assert.Equal(t, lockTime, updatedVal.LastSortitionHeight())
+	assert.True(t, td.sandbox.IsJoinedCommittee(val.Address()))
+
+	td.checkTotalCoin(t, 0)
 }
 
 func TestChangePower1(t *testing.T) {
 	td := setup(t)
-
-	exe := NewSortitionExecutor(true)
 
 	// This moves proposer to next validator
 	updateCommittee(td)
@@ -143,29 +141,29 @@ func TestChangePower1(t *testing.T) {
 	td.sandbox.UpdateValidator(val2)
 	lockTime := td.sandbox.CurrentHeight()
 	proof2 := td.RandProof()
+
 	val3 := td.sandbox.Committee().Validators()[0]
 	proof3 := td.RandProof()
 
 	td.sandbox.TestParams.CommitteeSize = 4
 	td.sandbox.TestAcceptSortition = true
 	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof1)
-	err := exe.Execute(trx1, td.sandbox)
-	assert.NoError(t, err)
+	td.check(t, trx1, true, nil)
+	td.check(t, trx1, false, nil)
+	td.execute(t, trx1)
 
 	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof2)
-	err = exe.Execute(trx2, td.sandbox)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx, "More than 1/3 of power is joining at the same height")
+	td.check(t, trx2, true, ErrCommitteeJoinLimitExceeded)
+	td.check(t, trx2, false, nil)
 
 	// Val3 is a Committee member
 	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof3)
-	err = exe.Execute(trx3, td.sandbox)
-	assert.NoError(t, err)
+	td.check(t, trx3, true, nil)
+	td.check(t, trx3, false, nil)
 }
 
 func TestChangePower2(t *testing.T) {
 	td := setup(t)
-
-	exe := NewSortitionExecutor(true)
 
 	// This moves proposer to next validator
 	updateCommittee(td)
@@ -192,35 +190,37 @@ func TestChangePower2(t *testing.T) {
 	td.sandbox.UpdateValidator(val3)
 	lockTime := td.sandbox.CurrentHeight()
 	proof3 := td.RandProof()
+
 	val4 := td.sandbox.Committee().Validators()[0]
 	proof4 := td.RandProof()
 
 	td.sandbox.TestParams.CommitteeSize = 7
 	td.sandbox.TestAcceptSortition = true
 	trx1 := tx.NewSortitionTx(lockTime, val1.Address(), proof1)
-	err := exe.Execute(trx1, td.sandbox)
-	assert.NoError(t, err)
+	td.check(t, trx1, true, nil)
+	td.check(t, trx1, false, nil)
+	td.execute(t, trx1)
 
 	trx2 := tx.NewSortitionTx(lockTime, val2.Address(), proof2)
-	err = exe.Execute(trx2, td.sandbox)
-	assert.NoError(t, err)
+	td.check(t, trx2, true, nil)
+	td.check(t, trx2, false, nil)
+	td.execute(t, trx2)
 
 	trx3 := tx.NewSortitionTx(lockTime, val3.Address(), proof3)
-	err = exe.Execute(trx3, td.sandbox)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx, "More than 1/3 of power is leaving at the same height")
+	td.check(t, trx3, true, ErrCommitteeLeaveLimitExceeded)
+	td.check(t, trx3, false, nil)
 
 	// Committee member
 	trx4 := tx.NewSortitionTx(lockTime, val4.Address(), proof4)
-	err = exe.Execute(trx4, td.sandbox)
-	assert.NoError(t, err)
+	td.check(t, trx4, true, nil)
+	td.check(t, trx4, false, nil)
+	td.execute(t, trx4)
 }
 
 // TestOldestDidNotPropose tests if the oldest validator in the committee had
 // chance to propose a block or not.
 func TestOldestDidNotPropose(t *testing.T) {
 	td := setup(t)
-
-	exe := NewSortitionExecutor(true)
 
 	// Let's create validators first
 	vals := make([]*validator.Validator, 9)
@@ -247,10 +247,11 @@ func TestOldestDidNotPropose(t *testing.T) {
 		_ = td.sandbox.TestStore.AddTestBlock(height)
 
 		lockTime := height
-		trx1 := tx.NewSortitionTx(lockTime,
-			vals[i].Address(), td.RandProof())
-		err := exe.Execute(trx1, td.sandbox)
-		assert.NoError(t, err)
+		trx := tx.NewSortitionTx(lockTime, vals[i].Address(), td.RandProof())
+
+		td.check(t, trx, true, nil)
+		td.check(t, trx, false, nil)
+		td.execute(t, trx)
 
 		updateCommittee(td)
 	}
@@ -260,19 +261,22 @@ func TestOldestDidNotPropose(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 
 	trx1 := tx.NewSortitionTx(lockTime, vals[7].Address(), td.RandProof())
-	err := exe.Execute(trx1, td.sandbox)
-	assert.NoError(t, err)
+	td.check(t, trx1, true, nil)
+	td.check(t, trx1, false, nil)
+	td.execute(t, trx1)
 
 	trx2 := tx.NewSortitionTx(lockTime, vals[8].Address(), td.RandProof())
-	err = exe.Execute(trx2, td.sandbox)
-	assert.NoError(t, err)
+	td.check(t, trx2, true, nil)
+	td.check(t, trx2, false, nil)
+	td.execute(t, trx2)
+
 	updateCommittee(td)
 
 	height++
 	_ = td.sandbox.TestStore.AddTestBlock(height)
 	// Entering validator 16
-	trx3 := tx.NewSortitionTx(lockTime, vals[8].Address(), td.RandProof())
-	err = exe.Execute(trx3, td.sandbox)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidTx)
+	trx3 := tx.NewSortitionTx(lockTime+1, vals[8].Address(), td.RandProof())
+	td.check(t, trx3, true, ErrOldestValidatorNotProposed)
+	td.check(t, trx3, false, nil)
+	td.execute(t, trx3)
 }
-*/

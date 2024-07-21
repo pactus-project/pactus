@@ -7,7 +7,6 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type SortitionExecutor struct {
@@ -47,8 +46,7 @@ func (e *SortitionExecutor) Check(strict bool) error {
 
 	// Check for the duplicated or expired sortition transactions
 	if e.sortitionHeight <= e.validator.LastSortitionHeight() {
-		return errors.Errorf(errors.ErrInvalidTx,
-			"duplicated sortition transaction")
+		return ErrExpiredSortition
 	}
 
 	if strict {
@@ -87,8 +85,7 @@ func (e *SortitionExecutor) canJoinCommittee() error {
 		joiningNum++
 	}
 	if joiningPower >= (committee.TotalPower() / 3) {
-		return errors.Errorf(errors.ErrInvalidTx,
-			"in each height only 1/3 of stake can join")
+		return ErrCommitteeJoinLimitExceeded
 	}
 
 	vals := committee.Validators()
@@ -100,8 +97,7 @@ func (e *SortitionExecutor) canJoinCommittee() error {
 		leavingPower += vals[i].Power()
 	}
 	if leavingPower >= (committee.TotalPower() / 3) {
-		return errors.Errorf(errors.ErrInvalidTx,
-			"in each height only 1/3 of stake can leave")
+		return ErrCommitteeLeaveLimitExceeded
 	}
 
 	oldestSortitionHeight := e.sb.CurrentHeight()
@@ -112,11 +108,10 @@ func (e *SortitionExecutor) canJoinCommittee() error {
 	}
 
 	// If the oldest validator in the committee still hasn't propose a block yet,
-	// she stays in the committee.
+	// it stays in the committee.
 	proposerHeight := e.sb.Committee().Proposer(0).LastSortitionHeight()
 	if oldestSortitionHeight >= proposerHeight {
-		return errors.Errorf(errors.ErrInvalidTx,
-			"oldest validator still didn't propose any block")
+		return ErrOldestValidatorNotProposed
 	}
 
 	return nil

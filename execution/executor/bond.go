@@ -54,6 +54,9 @@ func (e *BondExecutor) Check(strict bool) error {
 	}
 
 	if e.pld.Stake < e.sb.Params().MinimumStake {
+		// This check prevents a potential attack where an attacker could send zero
+		// or a small amount of stake to a full validator, effectively parking the
+		// validator for the bonding period.
 		if e.pld.Stake == 0 || e.pld.Stake+e.receiver.Stake() != e.sb.Params().MaximumStake {
 			return SmallStakeError{
 				Minimum: e.sb.Params().MinimumStake,

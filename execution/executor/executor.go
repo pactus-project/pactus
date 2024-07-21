@@ -20,13 +20,12 @@ func MakeExecutor(trx *tx.Tx, sb sandbox.Sandbox) (Executor, error) {
 	case payload.TypeBond:
 		exe, err = newBondExecutor(trx, sb)
 	case payload.TypeUnbond:
-
+		exe, err = newUnbondExecutor(trx, sb)
 	case payload.TypeWithdraw:
-
+		exe, err = newWithdrawExecutor(trx, sb)
 	case payload.TypeSortition:
 		exe, err = newSortitionExecutor(trx, sb)
 	default:
-
 		return nil, InvalidPayloadTypeError{
 			PayloadType: t,
 		}

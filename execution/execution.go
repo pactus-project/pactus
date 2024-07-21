@@ -6,7 +6,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 )
 
-func Execute(trx *tx.Tx, sb sandbox.Sandbox, strict bool) error {
+func Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	exe, err := executor.MakeExecutor(trx, sb)
 	if err != nil {
 		return err
@@ -86,6 +86,7 @@ func CheckLockTime(trx *tx.Tx, sb sandbox.Sandbox, strict bool) error {
 }
 
 func CheckFee(trx *tx.Tx) error {
+	// TODO: This check maybe can be done in BasicCheck?
 	if trx.IsFreeTx() {
 		if trx.Fee() != 0 {
 			return InvalidFeeError{

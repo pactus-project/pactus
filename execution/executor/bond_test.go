@@ -12,18 +12,19 @@ func TestExecuteBondTx(t *testing.T) {
 
 	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
-	pub, _ := td.RandBLSKeyPair()
-	receiverAddr := pub.ValidatorAddress()
+	valPub, _ := td.RandBLSKeyPair()
+	receiverAddr := valPub.ValidatorAddress()
+
 	amt := td.RandAmountRange(
 		td.sandbox.TestParams.MinimumStake,
 		td.sandbox.TestParams.MaximumStake)
 	fee := td.RandFee()
 	lockTime := td.sandbox.CurrentHeight()
 
-	t.Run("Should fail, invalid sender", func(t *testing.T) {
+	t.Run("Should fail, unknown address", func(t *testing.T) {
 		randomAddr := td.RandAccAddress()
 		trx := tx.NewBondTx(lockTime, randomAddr,
-			receiverAddr, pub, amt, fee, "invalid sender")
+			receiverAddr, valPub, amt, fee, "unknown address")
 
 		td.check(t, trx, true, AccountNotFoundError{Address: randomAddr})
 		td.check(t, trx, false, AccountNotFoundError{Address: randomAddr})
@@ -51,7 +52,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
 		trx := tx.NewBondTx(lockTime, senderAddr,
-			receiverAddr, pub, senderBalance+1, 0, "insufficient balance")
+			receiverAddr, valPub, senderBalance+1, 0, "insufficient balance")
 
 		td.check(t, trx, true, ErrInsufficientFunds)
 		td.check(t, trx, false, ErrInsufficientFunds)
@@ -71,7 +72,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Should fail, amount less than MinimumStake", func(t *testing.T) {
 		trx := tx.NewBondTx(lockTime, senderAddr,
-			receiverAddr, pub, td.sandbox.TestParams.MinimumStake-1, fee, "less than MinimumStake")
+			receiverAddr, valPub, td.sandbox.TestParams.MinimumStake-1, fee, "less than MinimumStake")
 
 		td.check(t, trx, true, SmallStakeError{td.sandbox.TestParams.MinimumStake})
 		td.check(t, trx, false, SmallStakeError{td.sandbox.TestParams.MinimumStake})
@@ -79,7 +80,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Should fail, validator's stake exceeds the MaximumStake", func(t *testing.T) {
 		trx := tx.NewBondTx(lockTime, senderAddr,
-			receiverAddr, pub, td.sandbox.TestParams.MaximumStake+1, fee, "more than MaximumStake")
+			receiverAddr, valPub, td.sandbox.TestParams.MaximumStake+1, fee, "more than MaximumStake")
 
 		td.check(t, trx, true, MaximumStakeError{td.sandbox.TestParams.MaximumStake})
 		td.check(t, trx, false, MaximumStakeError{td.sandbox.TestParams.MaximumStake})
@@ -107,18 +108,19 @@ func TestExecuteBondTx(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, pub, amt, fee, "ok")
+		trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, valPub, amt, fee, "ok")
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
 		td.execute(t, trx)
 	})
 
-	senderAccAfterExecution := td.sandbox.Account(senderAddr)
-	receiverValAfterExecution := td.sandbox.Validator(receiverAddr)
-	assert.Equal(t, senderBalance-(amt+fee), senderAccAfterExecution.Balance())
-	assert.Equal(t, amt, receiverValAfterExecution.Stake())
-	assert.Equal(t, lockTime, receiverValAfterExecution.LastBondingHeight())
+	updatedSenderAcc := td.sandbox.Account(senderAddr)
+	updatedReceiverVal := td.sandbox.Validator(receiverAddr)
+	assert.Equal(t, senderBalance-(amt+fee), updatedSenderAcc.Balance())
+	assert.Equal(t, amt, updatedReceiverVal.Stake())
+	assert.Equal(t, lockTime, updatedReceiverVal.LastBondingHeight())
+
 	td.checkTotalCoin(t, fee)
 }
 
@@ -135,8 +137,6 @@ func TestPowerDeltaBond(t *testing.T) {
 	lockTime := td.sandbox.CurrentHeight()
 	trx := tx.NewBondTx(lockTime, senderAddr, receiverAddr, pub, amt, fee, "ok")
 
-	td.check(t, trx, true, nil)
-	td.check(t, trx, false, nil)
 	td.execute(t, trx)
 
 	assert.Equal(t, int64(amt), td.sandbox.PowerDelta())

@@ -335,7 +335,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 			continue
 		}
 
-		if err := execution.Execute(txs[i], sb, true); err != nil {
+		if err := execution.CheckAndExecute(txs[i], sb, true); err != nil {
 			st.logger.Debug("found invalid transaction", "tx", txs[i], "error", err)
 			txs.Remove(i)
 			i--

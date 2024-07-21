@@ -13,7 +13,7 @@ type UnbondExecutor struct {
 	validator *validator.Validator
 }
 
-func NewUnbondExecutor(trx *tx.Tx, sb sandbox.Sandbox) (*UnbondExecutor, error) {
+func newUnbondExecutor(trx *tx.Tx, sb sandbox.Sandbox) (*UnbondExecutor, error) {
 	pld := trx.Payload().(*payload.UnbondPayload)
 
 	val := sb.Validator(pld.Signer())
@@ -54,12 +54,12 @@ func (e *UnbondExecutor) Check(strict bool) error {
 	return nil
 }
 
-func (e *UnbondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) {
+func (e *UnbondExecutor) Execute() {
 	unbondedPower := e.validator.Power()
-	e.validator.UpdateUnbondingHeight(sb.CurrentHeight())
+	e.validator.UpdateUnbondingHeight(e.sb.CurrentHeight())
 
 	// The validator's power is reduced to zero,
 	// so we update the power delta with the negative value of the validator's power.
-	sb.UpdatePowerDelta(-1 * unbondedPower)
-	sb.UpdateValidator(e.validator)
+	e.sb.UpdatePowerDelta(-1 * unbondedPower)
+	e.sb.UpdateValidator(e.validator)
 }
