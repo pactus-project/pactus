@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/downloader"
 )
 
@@ -21,16 +22,14 @@ const maxDecompressedSize = 10 << 20 // 10 MB
 type DMStateFunc func(
 	fileName string,
 	totalSize, downloaded int64,
-	totalItem, downloadedItem int,
 	percentage float64,
 )
 
 type Metadata struct {
-	Name      string          `json:"name"`
-	CreatedAt string          `json:"created_at"`
-	Compress  string          `json:"compress"`
-	TotalSize uint64          `json:"total_size"`
-	Data      []*SnapshotData `json:"data"`
+	Name      string        `json:"name"`
+	CreatedAt string        `json:"created_at"`
+	Compress  string        `json:"compress"`
+	Data      *SnapshotData `json:"data"`
 }
 
 type SnapshotData struct {
@@ -41,20 +40,17 @@ type SnapshotData struct {
 }
 
 type DownloadManager struct {
-	snapshotURL string
-	extractDir  string
-	tempDir     string
-	storeDir    string
-	zipFileList []string
+	snapshotURL  string
+	tempDir      string
+	storeDir     string
+	dataFileName string
 }
 
-func NewDownloadManager(snapshotURL, extractDir, tempDir, storeDir string) *DownloadManager {
+func NewDownloadManager(snapshotURL, tempDir, storeDir string) *DownloadManager {
 	return &DownloadManager{
 		snapshotURL: snapshotURL,
-		extractDir:  extractDir,
 		tempDir:     tempDir,
 		storeDir:    storeDir,
-		zipFileList: make([]string, 0),
 	}
 }
 
@@ -98,86 +94,42 @@ func (dl *DownloadManager) Download(
 	metadata *Metadata,
 	stateFunc DMStateFunc,
 ) {
-	downloadedItem := 0
-	for _, data := range metadata.Data {
-		done := make(chan struct{})
-		dlLink, err := url.JoinPath(dl.snapshotURL, data.Path)
+	done := make(chan struct{})
+	dlLink, err := url.JoinPath(dl.snapshotURL, metadata.Data.Path)
+	FatalErrorCheck(err)
+
+	fileName := filepath.Base(dlLink)
+
+	dl.dataFileName = fileName
+
+	filePath := fmt.Sprintf("%s/%s", dl.tempDir, fileName)
+
+	d := downloader.New(
+		dlLink,
+		filePath,
+		metadata.Data.Sha,
+	)
+
+	d.Start(ctx)
+
+	go func() {
+		err := <-d.Errors()
 		FatalErrorCheck(err)
+	}()
 
-		fileName := filepath.Base(dlLink)
+	go func() {
+		for state := range d.Stats() {
+			stateFunc(fileName, state.TotalSize, state.Downloaded, state.Percent)
+			if state.Completed {
+				done <- struct{}{}
+				close(done)
 
-		filePath := fmt.Sprintf("%s/%s", dl.tempDir, fileName)
-
-		d := downloader.New(
-			dlLink,
-			filePath,
-			data.Sha,
-		)
-
-		d.Start(ctx)
-
-		go func() {
-			err := <-d.Errors()
-			FatalErrorCheck(err)
-		}()
-
-		go func() {
-			for state := range d.Stats() {
-				stateFunc(fileName, state.TotalSize, state.Downloaded, len(metadata.Data), downloadedItem, state.Percent)
-				if state.Completed {
-					done <- struct{}{}
-					close(done)
-
-					return
-				}
+				return
 			}
-		}()
-
-		<-done
-		dl.zipFileList = append(dl.zipFileList, filePath)
-		downloadedItem++
-	}
-}
-
-func (dl *DownloadManager) ExtractAndStoreFiles() error {
-	for _, path := range dl.zipFileList {
-		r, err := zip.OpenReader(path)
-		if err != nil {
-			return fmt.Errorf("failed to open zip file: %w", err)
 		}
+	}()
 
-		for _, f := range r.File {
-			rc, err := f.Open()
-			if err != nil {
-				return fmt.Errorf("failed to open file in zip archive: %w", err)
-			}
-
-			fpath := fmt.Sprintf("%s/%s", dl.extractDir, f.Name)
-
-			outFile, err := os.Create(fpath)
-			if err != nil {
-				return fmt.Errorf("failed to create file: %w", err)
-			}
-
-			// fixed potential DoS vulnerability via decompression bomb
-			lr := io.LimitedReader{R: rc, N: maxDecompressedSize}
-			_, err = io.Copy(outFile, &lr)
-			if err != nil {
-				return fmt.Errorf("failed to copy file contents: %w", err)
-			}
-
-			// check if the file size exceeds the limit
-			if lr.N <= 0 {
-				return fmt.Errorf("file exceeds maximum decompressed size limit: %s", fpath)
-			}
-
-			_ = rc.Close()
-			_ = outFile.Close()
-		}
-		_ = r.Close()
-	}
-
-	return nil
+	<-done
 }
 
 func (*DownloadManager) ParseTime(dateString string) time.Time {
@@ -195,63 +147,60 @@ func (dl *DownloadManager) Cleanup() error {
 	return os.RemoveAll(dl.tempDir)
 }
 
-// CopyAllFiles copies all files from srcDir to dstDir.
-func (dl *DownloadManager) CopyAllFiles() error {
-	return filepath.Walk(dl.extractDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
+func (dl *DownloadManager) ExtractAndStoreFiles() error {
+	zipPath := filepath.Join(dl.tempDir, dl.dataFileName)
+	r, err := zip.OpenReader(zipPath)
+	if err != nil {
+		return fmt.Errorf("failed to open zip file: %w", err)
+	}
+	defer func() {
+		_ = r.Close()
+	}()
+
+	for _, f := range r.File {
+		if err := extractAndWriteFile(f, dl.tempDir); err != nil {
 			return err
 		}
+	}
 
-		if info.IsDir() {
-			return nil // Skip directories
-		}
-
-		relativePath, err := filepath.Rel(dl.extractDir, path)
-		if err != nil {
-			return err
-		}
-
-		dstPath := filepath.Join(dl.storeDir, relativePath)
-
-		err = os.MkdirAll(filepath.Dir(dstPath), 0o750)
-		if err != nil {
-			return fmt.Errorf("failed to create directory: %w", err)
-		}
-
-		err = copyFile(path, dstPath)
-		if err != nil {
-			return fmt.Errorf("failed to copy file from %s to %s: %w", path, dstPath, err)
-		}
-
-		return nil
-	})
+	return nil
 }
 
-func copyFile(src, dst string) error {
-	sourceFile, err := os.Open(src)
+func extractAndWriteFile(f *zip.File, destination string) error {
+	rc, err := f.Open()
 	if err != nil {
-		return fmt.Errorf("failed to open source file: %w", err)
+		return fmt.Errorf("failed to open file in zip archive: %w", err)
 	}
 	defer func() {
-		_ = sourceFile.Close()
+		_ = rc.Close()
 	}()
 
-	destinationFile, err := os.Create(dst)
+	fpath := fmt.Sprintf("%s/%s", destination, f.Name)
+	if f.FileInfo().IsDir() {
+		return util.Mkdir(fpath)
+	}
+
+	if err := util.Mkdir(filepath.Dir(fpath)); err != nil {
+		return fmt.Errorf("failed to create directory: %w", err)
+	}
+
+	outFile, err := os.Create(fpath)
 	if err != nil {
-		return fmt.Errorf("failed to create destination file: %w", err)
+		return fmt.Errorf("failed to create file: %w", err)
 	}
 	defer func() {
-		_ = destinationFile.Close()
+		_ = outFile.Close()
 	}()
 
-	_, err = io.Copy(destinationFile, sourceFile)
+	// Use a limited reader to prevent DoS attacks via decompression bomb
+	lr := &io.LimitedReader{R: rc, N: maxDecompressedSize}
+	written, err := io.Copy(outFile, lr)
 	if err != nil {
 		return fmt.Errorf("failed to copy file contents: %w", err)
 	}
 
-	err = destinationFile.Sync()
-	if err != nil {
-		return fmt.Errorf("failed to sync destination file: %w", err)
+	if written >= maxDecompressedSize {
+		return fmt.Errorf("file exceeds maximum decompressed size limit: %s", fpath)
 	}
 
 	return nil

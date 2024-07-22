@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -66,16 +67,11 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		}
 
 		tmpDir := util.TempDirPath()
-		extractPath := fmt.Sprintf("%s/data", tmpDir)
-
-		err = os.MkdirAll(extractPath, 0o750)
-		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
 
 		dm := cmd.NewDownloadManager(
 			snapshotURL,
-			extractPath,
 			tmpDir,
 			conf.Store.StorePath(),
 		)
@@ -86,9 +82,13 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		snapshots := make([]string, 0, len(metadata))
 
 		for _, m := range metadata {
+			if m.Data == nil {
+				cmd.FatalErrorCheck(errors.New("metadata is nil"))
+			}
+
 			item := fmt.Sprintf("snapshot %s (%s)",
 				dm.ParseTime(m.CreatedAt).Format("2006-01-02"),
-				util.FormatBytesToHumanReadable(m.TotalSize),
+				util.FormatBytesToHumanReadable(m.Data.Size),
 			)
 
 			snapshots = append(snapshots, item)
@@ -113,13 +113,15 @@ func buildImportCmd(parentCmd *cobra.Command) {
 			downloadProgressBar,
 		)
 
+		cmd.PrintLine()
+		cmd.PrintLine()
+		cmd.PrintInfoMsgf("Extracting files...")
+
 		err = dm.ExtractAndStoreFiles()
 		cmd.FatalErrorCheck(err)
 
-		err = os.MkdirAll(filepath.Dir(conf.Store.StorePath()), 0o750)
-		cmd.FatalErrorCheck(err)
-
-		err = dm.CopyAllFiles()
+		cmd.PrintInfoMsgf("Moving data...")
+		err = util.MoveDirectory(filepath.Join(tmpDir, "data"), filepath.Join(workingDir, "data"))
 		cmd.FatalErrorCheck(err)
 
 		err = dm.Cleanup()
@@ -136,12 +138,10 @@ func buildImportCmd(parentCmd *cobra.Command) {
 	}
 }
 
-func downloadProgressBar(fileName string, totalSize, downloaded int64, totalItem, downloadedItem int, _ float64) {
+func downloadProgressBar(fileName string, totalSize, downloaded int64, _ float64) {
 	bar := cmd.TerminalProgressBar(totalSize, 30)
-	bar.Describe(fmt.Sprintf("%s (%d/%d) - %s/%s",
+	bar.Describe(fmt.Sprintf("%s (%s/%s)",
 		fileName,
-		downloadedItem,
-		totalItem,
 		util.FormatBytesToHumanReadable(uint64(downloaded)),
 		util.FormatBytesToHumanReadable(uint64(totalSize)),
 	))

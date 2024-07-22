@@ -63,10 +63,7 @@ func main() {
 	fileLock := flock.New(lockFilePath)
 
 	locked, err := fileLock.TryLock()
-	if err != nil {
-		// handle unable to attempt to acquire lock
-		fatalErrorCheck(err)
-	}
+	fatalErrorCheck(err)
 
 	if !locked {
 		cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)

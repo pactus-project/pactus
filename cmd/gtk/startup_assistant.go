@@ -4,9 +4,9 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -143,17 +143,12 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 					snapshotURL := "https://download.pactus.org/mainnet/"
 
 					tmpDir := util.TempDirPath()
-					extractPath := fmt.Sprintf("%s/data", tmpDir)
 
 					dm := cmd.NewDownloadManager(
 						snapshotURL,
-						extractPath,
 						tmpDir,
 						"/home/javad/pactus/data/store.db",
 					)
-
-					err = os.MkdirAll(extractPath, 0o750)
-					cmd.FatalErrorCheck(err)
 
 					glib.IdleAdd(func() {
 						ssLabel.SetText("   ♻️ Please wait, loading snapshots...")
@@ -186,14 +181,12 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 										context.Background(),
 										&md[snapshotIndex],
 										func(fileName string, totalSize, downloaded int64,
-											totalItem, downloadedItem int, percentage float64,
+											percentage float64,
 										) {
 											percent := int(percentage)
 											glib.IdleAdd(func() {
-												dlMessage := fmt.Sprintf("🌐 Downloading %s (%d/%d)... %d%% (%s / %s)",
+												dlMessage := fmt.Sprintf("🌐 Downloading %s | %d%% (%s / %s)",
 													fileName,
-													downloadedItem,
-													totalItem,
 													percent,
 													util.FormatBytesToHumanReadable(uint64(downloaded)),
 													util.FormatBytesToHumanReadable(uint64(totalSize)),
@@ -207,10 +200,9 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 									err := dm.ExtractAndStoreFiles()
 									cmd.FatalErrorCheck(err)
 
-									err = os.MkdirAll(filepath.Dir("/home/javad/pactus/data/store.db"), 0o750)
-									cmd.FatalErrorCheck(err)
-
-									err = dm.CopyAllFiles()
+									ssPBLabel.SetText("   " + "📑 Moving data...")
+									err = util.MoveDirectory(filepath.Join(tmpDir, "data"),
+										filepath.Join(workingDir, "data"))
 									cmd.FatalErrorCheck(err)
 
 									err = dm.Cleanup()
@@ -761,12 +753,16 @@ func getMetadata(
 		}
 
 		for _, md := range metadata {
+			if md.Data == nil {
+				cmd.FatalErrorCheck(errors.New("metadata is nil"))
+			}
+
 			listBoxRow, err := gtk.ListBoxRowNew()
 			cmd.FatalErrorCheck(err)
 
 			label, err := gtk.LabelNew(fmt.Sprintf("snapshot %s (%s)",
 				dm.ParseTime(md.CreatedAt).Format("2006-01-02"),
-				util.FormatBytesToHumanReadable(md.TotalSize),
+				util.FormatBytesToHumanReadable(md.Data.Size),
 			))
 			cmd.FatalErrorCheck(err)
 
