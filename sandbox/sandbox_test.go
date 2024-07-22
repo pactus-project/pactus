@@ -55,8 +55,8 @@ func setup(t *testing.T) *testData {
 	}
 	sandbox := NewSandbox(mockStore.LastHeight,
 		mockStore, params, cmt, totalPower).(*sandbox)
-	assert.Equal(t, sandbox.CurrentHeight(), lastHeight)
-	assert.Equal(t, sandbox.Params(), params)
+	assert.Equal(t, lastHeight, sandbox.CurrentHeight())
+	assert.Equal(t, params, sandbox.Params())
 
 	return &testData{
 		TestSuite: ts,
@@ -89,27 +89,27 @@ func TestAccountChange(t *testing.T) {
 		sbAcc1.AddToBalance(1)
 
 		assert.False(t, td.sandbox.accounts[addr].updated)
-		assert.Equal(t, td.sandbox.Account(addr).Balance(), bal)
+		assert.Equal(t, bal, td.sandbox.Account(addr).Balance())
 		td.sandbox.UpdateAccount(addr, sbAcc1)
 		assert.True(t, td.sandbox.accounts[addr].updated)
-		assert.Equal(t, td.sandbox.Account(addr).Balance(), bal+1)
+		assert.Equal(t, bal+1, td.sandbox.Account(addr).Balance())
 
 		t.Run("Update the same account again", func(t *testing.T) {
 			sbAcc2 := td.sandbox.Account(addr)
 			sbAcc2.AddToBalance(1)
 
 			assert.True(t, td.sandbox.accounts[addr].updated, "it is updated before")
-			assert.Equal(t, td.sandbox.Account(addr).Balance(), bal+1)
+			assert.Equal(t, bal+1, td.sandbox.Account(addr).Balance())
 			td.sandbox.UpdateAccount(addr, sbAcc2)
 			assert.True(t, td.sandbox.accounts[addr].updated)
-			assert.Equal(t, td.sandbox.Account(addr).Balance(), bal+2)
+			assert.Equal(t, bal+2, td.sandbox.Account(addr).Balance())
 		})
 
 		t.Run("Should be iterated", func(t *testing.T) {
 			td.sandbox.IterateAccounts(func(a crypto.Address, acc *account.Account, updated bool) {
 				assert.Equal(t, addr, a)
 				assert.True(t, updated)
-				assert.Equal(t, acc.Balance(), bal+2)
+				assert.Equal(t, bal+2, acc.Balance())
 			})
 		})
 	})
@@ -147,7 +147,7 @@ func TestAnyRecentTransaction(t *testing.T) {
 	assert.True(t, td.sandbox.AnyRecentTransaction(randTx2.ID()))
 
 	totalTxFees := randTx1.Fee() + randTx2.Fee()
-	assert.Equal(t, td.sandbox.AccumulatedFee(), totalTxFees)
+	assert.Equal(t, totalTxFees, td.sandbox.AccumulatedFee())
 }
 
 func TestValidatorChange(t *testing.T) {
@@ -174,27 +174,27 @@ func TestValidatorChange(t *testing.T) {
 		sbVal1.AddToStake(1)
 
 		assert.False(t, td.sandbox.validators[addr].updated)
-		assert.Equal(t, td.sandbox.Validator(addr).Stake(), stk)
+		assert.Equal(t, stk, td.sandbox.Validator(addr).Stake())
 		td.sandbox.UpdateValidator(sbVal1)
 		assert.True(t, td.sandbox.validators[sbVal1.Address()].updated)
-		assert.Equal(t, td.sandbox.Validator(addr).Stake(), stk+1)
+		assert.Equal(t, stk+1, td.sandbox.Validator(addr).Stake())
 
 		t.Run("Update the same validator again", func(t *testing.T) {
 			sbVal2 := td.sandbox.Validator(addr)
 			sbVal2.AddToStake(1)
 
 			assert.True(t, td.sandbox.validators[addr].updated, "it is updated before")
-			assert.Equal(t, td.sandbox.Validator(addr).Stake(), stk+1)
+			assert.Equal(t, stk+1, td.sandbox.Validator(addr).Stake())
 			td.sandbox.UpdateValidator(sbVal2)
 			assert.True(t, td.sandbox.validators[sbVal1.Address()].updated)
-			assert.Equal(t, td.sandbox.Validator(addr).Stake(), stk+2)
+			assert.Equal(t, stk+2, td.sandbox.Validator(addr).Stake())
 		})
 
 		t.Run("Should be iterated", func(t *testing.T) {
 			td.sandbox.IterateValidators(func(val *validator.Validator, updated bool, joined bool) {
 				assert.True(t, updated)
 				assert.False(t, joined)
-				assert.Equal(t, val.Stake(), stk+2)
+				assert.Equal(t, stk+2, val.Stake())
 			})
 		})
 	})
@@ -225,14 +225,14 @@ func TestTotalAccountCounter(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Should update total account counter", func(t *testing.T) {
-		assert.Equal(t, td.store.TotalAccounts(), int32(len(td.valKeys)+1))
+		assert.Equal(t, int32(len(td.valKeys)+1), td.store.TotalAccounts())
 
 		addr1 := td.RandAccAddress()
 		addr2 := td.RandAccAddress()
 		acc := td.sandbox.MakeNewAccount(addr1)
-		assert.Equal(t, acc.Number(), int32(td.sandbox.Committee().Size()+1))
+		assert.Equal(t, int32(td.sandbox.Committee().Size()+1), acc.Number())
 		acc2 := td.sandbox.MakeNewAccount(addr2)
-		assert.Equal(t, acc2.Number(), int32(td.sandbox.Committee().Size()+2))
+		assert.Equal(t, int32(td.sandbox.Committee().Size()+2), acc2.Number())
 		assert.Zero(t, acc2.Balance())
 	})
 }
@@ -241,19 +241,19 @@ func TestTotalValidatorCounter(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Should update total validator counter", func(t *testing.T) {
-		assert.Equal(t, td.store.TotalValidators(), int32(td.sandbox.Committee().Size()))
+		assert.Equal(t, int32(td.sandbox.Committee().Size()), td.store.TotalValidators())
 
 		pub, _ := td.RandBLSKeyPair()
 		pub2, _ := td.RandBLSKeyPair()
 		val1 := td.sandbox.MakeNewValidator(pub)
 		val1.UpdateLastBondingHeight(td.sandbox.CurrentHeight())
-		assert.Equal(t, val1.Number(), int32(td.sandbox.Committee().Size()))
-		assert.Equal(t, val1.LastBondingHeight(), td.sandbox.CurrentHeight())
+		assert.Equal(t, int32(td.sandbox.Committee().Size()), val1.Number())
+		assert.Equal(t, td.sandbox.CurrentHeight(), val1.LastBondingHeight())
 
 		val2 := td.sandbox.MakeNewValidator(pub2)
 		val2.UpdateLastBondingHeight(td.sandbox.CurrentHeight() + 1)
-		assert.Equal(t, val2.Number(), int32(td.sandbox.Committee().Size()+1))
-		assert.Equal(t, val2.LastBondingHeight(), td.sandbox.CurrentHeight()+1)
+		assert.Equal(t, int32(td.sandbox.Committee().Size()+1), val2.Number())
+		assert.Equal(t, td.sandbox.CurrentHeight()+1, val2.LastBondingHeight())
 		assert.Zero(t, val2.Stake())
 	})
 }
@@ -272,13 +272,10 @@ func TestCreateDuplicated(t *testing.T) {
 	})
 
 	t.Run("Try creating duplicated validator, Should panic", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
-			}
-		}()
-		pub := td.valKeys[3].PublicKey()
-		td.sandbox.MakeNewValidator(pub)
+		assert.Panics(t, func() {
+			pub := td.valKeys[3].PublicKey()
+			td.sandbox.MakeNewValidator(pub)
+		})
 	})
 }
 
@@ -286,23 +283,17 @@ func TestUpdateFromOutsideTheSandbox(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Try update an account from outside the sandbox, Should panic", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
-			}
-		}()
-		acc, addr := td.GenerateTestAccount(td.RandInt32(0))
-		td.sandbox.UpdateAccount(addr, acc)
+		assert.Panics(t, func() {
+			acc, addr := td.GenerateTestAccount(td.RandInt32(0))
+			td.sandbox.UpdateAccount(addr, acc)
+		})
 	})
 
 	t.Run("Try update a validator from outside the sandbox, Should panic", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
-			}
-		}()
-		val, _ := td.GenerateTestValidator(td.RandInt32(0))
-		td.sandbox.UpdateValidator(val)
+		assert.Panics(t, func() {
+			val, _ := td.GenerateTestValidator(td.RandInt32(0))
+			td.sandbox.UpdateValidator(val)
+		})
 	})
 }
 
@@ -314,7 +305,7 @@ func TestAccountDeepCopy(t *testing.T) {
 		acc := td.sandbox.MakeNewAccount(addr)
 		acc.AddToBalance(1)
 
-		assert.NotEqual(t, td.sandbox.Account(addr), acc)
+		assert.NotEqual(t, acc, td.sandbox.Account(addr))
 	})
 
 	t.Run("existing account", func(t *testing.T) {
@@ -322,7 +313,7 @@ func TestAccountDeepCopy(t *testing.T) {
 		acc := td.sandbox.Account(addr)
 		acc.AddToBalance(1)
 
-		assert.NotEqual(t, td.sandbox.Account(addr), acc)
+		assert.NotEqual(t, acc, td.sandbox.Account(addr))
 	})
 
 	t.Run("sandbox account", func(t *testing.T) {
@@ -330,7 +321,7 @@ func TestAccountDeepCopy(t *testing.T) {
 		acc := td.sandbox.Account(addr)
 		acc.AddToBalance(1)
 
-		assert.NotEqual(t, td.sandbox.Account(addr), acc)
+		assert.NotEqual(t, acc, td.sandbox.Account(addr))
 	})
 }
 
@@ -342,7 +333,7 @@ func TestValidatorDeepCopy(t *testing.T) {
 		val := td.sandbox.MakeNewValidator(pub)
 		val.AddToStake(1)
 
-		assert.NotEqual(t, td.sandbox.Validator(pub.ValidatorAddress()), val)
+		assert.NotEqual(t, val, td.sandbox.Validator(pub.ValidatorAddress()))
 	})
 
 	val0, _ := td.store.ValidatorByNumber(0)
@@ -351,14 +342,14 @@ func TestValidatorDeepCopy(t *testing.T) {
 		val := td.sandbox.Validator(addr)
 		val.AddToStake(1)
 
-		assert.NotEqual(t, td.sandbox.Validator(addr), val)
+		assert.NotEqual(t, val, td.sandbox.Validator(addr))
 	})
 
 	t.Run("sandbox validator", func(t *testing.T) {
 		val := td.sandbox.Validator(addr)
 		val.AddToStake(1)
 
-		assert.NotEqual(t, td.sandbox.Validator(addr), val)
+		assert.NotEqual(t, val, td.sandbox.Validator(addr))
 	})
 }
 
@@ -367,7 +358,7 @@ func TestPowerDelta(t *testing.T) {
 
 	assert.Zero(t, td.sandbox.PowerDelta())
 	td.sandbox.UpdatePowerDelta(1)
-	assert.Equal(t, td.sandbox.PowerDelta(), int64(1))
+	assert.Equal(t, int64(1), td.sandbox.PowerDelta())
 	td.sandbox.UpdatePowerDelta(-1)
 	assert.Zero(t, td.sandbox.PowerDelta())
 }
