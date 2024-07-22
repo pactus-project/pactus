@@ -140,7 +140,7 @@ func startupAssistant(workingDir string, chain genesis.ChainType) bool {
 				if importRadio.GetActive() {
 					assistantPageComplete(assistant, importWidget, false)
 
-					snapshotURL := "https://download.pactus.org/mainnet/"
+					snapshotURL := "https://snapshot.pactus.org/mainnet/"
 
 					tmpDir := util.TempDirPath()
 

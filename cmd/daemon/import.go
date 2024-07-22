@@ -21,7 +21,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(importCmd)
 
 	workingDirOpt := addWorkingDirOption(importCmd)
-	serverAddrOpt := importCmd.Flags().String("server-addr", "https://download.pactus.org",
+	serverAddrOpt := importCmd.Flags().String("server-addr", "https://snapshot.pactus.org",
 		"import server address")
 
 	importCmd.Run = func(c *cobra.Command, _ []string) {
