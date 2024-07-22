@@ -4,86 +4,85 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExecuteWithdrawTx(t *testing.T) {
 	td := setup(t)
-	exe := NewWithdrawExecutor(true)
 
-	addr := td.RandAccAddress()
-	pub, _ := td.RandBLSKeyPair()
-	val := td.sandbox.MakeNewValidator(pub)
-	accAddr, acc := td.sandbox.TestStore.RandomTestAcc()
-	amt := td.RandAmountRange(0, acc.Balance())
-	fee := td.RandFee()
-	val.AddToStake(amt + fee)
-	acc.SubtractFromBalance(amt + fee)
-	td.sandbox.UpdateAccount(accAddr, acc)
+	bonderAddr, bonderAcc := td.sandbox.TestStore.RandomTestAcc()
+	bonderBalance := bonderAcc.Balance()
+	stake := td.RandAmountRange(
+		td.sandbox.TestParams.MinimumStake,
+		bonderBalance)
+	bonderAcc.SubtractFromBalance(stake)
+	td.sandbox.UpdateAccount(bonderAddr, bonderAcc)
+
+	valPub, _ := td.RandBLSKeyPair()
+	val := td.sandbox.MakeNewValidator(valPub)
+	val.AddToStake(stake)
 	td.sandbox.UpdateValidator(val)
+
+	totalStake := val.Stake()
+	fee := td.RandFee()
+	amt := td.RandAmountRange(0, totalStake-fee)
+	senderAddr := val.Address()
+	receiverAddr := td.RandAccAddress()
 	lockTime := td.sandbox.CurrentHeight()
 
-	t.Run("Should fail, Invalid validator", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, td.RandAccAddress(), addr,
-			amt, fee, "invalid validator")
+	t.Run("Should fail, unknown address", func(t *testing.T) {
+		randomAddr := td.RandValAddress()
+		trx := tx.NewWithdrawTx(lockTime, randomAddr, receiverAddr,
+			amt, fee, "unknown address")
 
-		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress)
-	})
-
-	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, val.Address(), addr,
-			amt+1, fee, "insufficient balance")
-
-		err := exe.Execute(trx, td.sandbox)
-		assert.ErrorIs(t, err, ErrInsufficientFunds)
+		td.check(t, trx, true, ValidatorNotFoundError{Address: randomAddr})
+		td.check(t, trx, false, ValidatorNotFoundError{Address: randomAddr})
 	})
 
 	t.Run("Should fail, hasn't unbonded yet", func(t *testing.T) {
-		assert.Zero(t, val.UnbondingHeight())
-		trx := tx.NewWithdrawTx(lockTime, val.Address(), addr,
+		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr,
 			amt, fee, "need to unbond first")
 
-		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
+		td.check(t, trx, true, ErrValidatorBonded)
+		td.check(t, trx, false, ErrValidatorBonded)
 	})
 
 	val.UpdateUnbondingHeight(td.sandbox.CurrentHeight() - td.sandbox.Params().UnbondInterval + 1)
 	td.sandbox.UpdateValidator(val)
-	t.Run("Should fail, hasn't passed unbonding interval", func(t *testing.T) {
-		assert.NotZero(t, val.UnbondingHeight())
-		trx := tx.NewWithdrawTx(lockTime, val.Address(), addr,
-			amt, fee, "not passed unbonding interval")
 
-		err := exe.Execute(trx, td.sandbox)
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidHeight)
+	t.Run("Should fail, insufficient balance", func(t *testing.T) {
+		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr,
+			totalStake, 1, "insufficient balance")
+
+		td.check(t, trx, true, ErrInsufficientFunds)
+		td.check(t, trx, false, ErrInsufficientFunds)
+	})
+
+	t.Run("Should fail, hasn't passed unbonding period", func(t *testing.T) {
+		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr,
+			amt, fee, "unbonding period")
+
+		td.check(t, trx, true, ErrUnbondingPeriod)
+		td.check(t, trx, false, ErrUnbondingPeriod)
 	})
 
 	curHeight := td.sandbox.CurrentHeight()
 	td.sandbox.TestStore.AddTestBlock(curHeight + 1)
 
 	t.Run("Should pass, Everything is Ok!", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, val.Address(), addr,
-			amt, fee, "should be able to empty stake")
+		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr,
+			amt, fee, "should be able to withdraw the stake")
 
-		err := exe.Execute(trx, td.sandbox)
-		assert.NoError(t, err)
+		td.check(t, trx, true, nil)
+		td.check(t, trx, false, nil)
+		td.execute(t, trx)
 	})
 
-	t.Run("Should fail, can't withdraw empty stake", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, val.Address(), addr,
-			1, fee, "can't withdraw empty stake")
+	updatedSenderVal := td.sandbox.Validator(senderAddr)
+	updatedReceiverAcc := td.sandbox.Account(receiverAddr)
 
-		err := exe.Execute(trx, td.sandbox)
-		assert.ErrorIs(t, err, ErrInsufficientFunds)
-	})
-
-	assert.Zero(t, td.sandbox.Validator(val.Address()).Stake())
-	assert.Equal(t, td.sandbox.Account(addr).Balance(), amt)
-	assert.Zero(t, td.sandbox.Validator(val.Address()).Stake())
-	assert.Zero(t, td.sandbox.Validator(val.Address()).Power())
-	assert.Equal(t, td.sandbox.Account(addr).Balance(), amt)
+	assert.Equal(t, totalStake-amt-fee, updatedSenderVal.Stake())
+	assert.Equal(t, amt, updatedReceiverAcc.Balance())
 
 	td.checkTotalCoin(t, fee)
 }

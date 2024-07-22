@@ -4,40 +4,26 @@ import (
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
-type Executor interface {
-	Execute(trx *tx.Tx, sb sandbox.Sandbox) error
-}
-type Execution struct {
-	executors map[payload.Type]Executor
-	strict    bool
-}
-
-func newExecution(strict bool) *Execution {
-	execs := make(map[payload.Type]Executor)
-	execs[payload.TypeTransfer] = executor.NewTransferExecutor(strict)
-	execs[payload.TypeBond] = executor.NewBondExecutor(strict)
-	execs[payload.TypeSortition] = executor.NewSortitionExecutor(strict)
-	execs[payload.TypeUnbond] = executor.NewUnbondExecutor(strict)
-	execs[payload.TypeWithdraw] = executor.NewWithdrawExecutor(strict)
-
-	return &Execution{
-		executors: execs,
-		strict:    strict,
+func Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
+	exe, err := executor.MakeExecutor(trx, sb)
+	if err != nil {
+		return err
 	}
+
+	exe.Execute()
+	sb.CommitTransaction(trx)
+
+	return nil
 }
 
-func NewExecutor() *Execution {
-	return newExecution(true)
-}
+func CheckAndExecute(trx *tx.Tx, sb sandbox.Sandbox, strict bool) error {
+	exe, err := executor.MakeExecutor(trx, sb)
+	if err != nil {
+		return err
+	}
 
-func NewChecker() *Execution {
-	return newExecution(false)
-}
-
-func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 	if sb.IsBanned(trx.Payload().Signer()) {
 		return SignerBannedError{
 			addr: trx.Payload().Signer(),
@@ -50,31 +36,25 @@ func (exe *Execution) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
 		}
 	}
 
-	if err := exe.checkLockTime(trx, sb); err != nil {
+	if err := CheckLockTime(trx, sb, strict); err != nil {
 		return err
 	}
 
-	if err := exe.checkFee(trx); err != nil {
+	if err := CheckFee(trx); err != nil {
 		return err
 	}
 
-	e, ok := exe.executors[trx.Payload().Type()]
-	if !ok {
-		return UnknownPayloadTypeError{
-			PayloadType: trx.Payload().Type(),
-		}
-	}
-
-	if err := e.Execute(trx, sb); err != nil {
+	if err := exe.Check(strict); err != nil {
 		return err
 	}
 
+	exe.Execute()
 	sb.CommitTransaction(trx)
 
 	return nil
 }
 
-func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
+func CheckLockTime(trx *tx.Tx, sb sandbox.Sandbox, strict bool) error {
 	interval := sb.Params().TransactionToLiveInterval
 
 	if trx.IsSubsidyTx() {
@@ -85,18 +65,18 @@ func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
 
 	if sb.CurrentHeight() > interval {
 		if trx.LockTime() < sb.CurrentHeight()-interval {
-			return PastLockTimeError{
+			return LockTimeExpiredError{
 				LockTime: trx.LockTime(),
 			}
 		}
 	}
 
-	if exe.strict {
+	if strict {
 		// In strict mode, transactions with future lock times are rejected.
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
 		if trx.LockTime() > sb.CurrentHeight() {
-			return FutureLockTimeError{
+			return LockTimeInFutureError{
 				LockTime: trx.LockTime(),
 			}
 		}
@@ -105,7 +85,8 @@ func (exe *Execution) checkLockTime(trx *tx.Tx, sb sandbox.Sandbox) error {
 	return nil
 }
 
-func (*Execution) checkFee(trx *tx.Tx) error {
+func CheckFee(trx *tx.Tx) error {
+	// TODO: This check maybe can be done in BasicCheck?
 	if trx.IsFreeTx() {
 		if trx.Fee() != 0 {
 			return InvalidFeeError{

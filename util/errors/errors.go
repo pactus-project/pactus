@@ -14,7 +14,6 @@ const (
 	ErrInvalidPrivateKey
 	ErrInvalidSignature
 	ErrInvalidTx
-	ErrInvalidProof
 	ErrInvalidHeight
 	ErrInvalidRound
 	ErrInvalidProposal
@@ -35,7 +34,6 @@ var messages = map[int]string{
 	ErrInvalidPrivateKey: "invalid private key",
 	ErrInvalidSignature:  "invalid signature",
 	ErrInvalidTx:         "invalid transaction",
-	ErrInvalidProof:      "invalid proof",
 	ErrInvalidHeight:     "invalid height",
 	ErrInvalidRound:      "invalid round",
 	ErrInvalidProposal:   "invalid proposal",

@@ -299,5 +299,5 @@ func (*MockStore) IsPruned() bool {
 }
 
 func (*MockStore) PruningHeight() uint32 {
-	return 1
+	return 0
 }
