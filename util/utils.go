@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 	"math/bits"
+	"os"
 
 	"golang.org/x/exp/constraints"
 )
@@ -109,8 +110,8 @@ func IsFlagSet[T constraints.Integer](flags, mask T) bool {
 
 // OS2IP converts an octet string to a nonnegative integer.
 // OS2IP: https://datatracker.ietf.org/doc/html/rfc8017#section-4.2
-func OS2IP(os []byte) *big.Int {
-	return new(big.Int).SetBytes(os)
+func OS2IP(x []byte) *big.Int {
+	return new(big.Int).SetBytes(x)
 }
 
 // I2OSP converts a nonnegative integer to an octet string of a specified length.
@@ -159,4 +160,19 @@ func FormatBytesToHumanReadable(bytes uint64) string {
 	}
 
 	return fmt.Sprintf("%.2f %s", value, unit)
+}
+
+// MoveDirectory moves a directory from srcDir to dstDir, including all its contents.
+func MoveDirectory(srcDir, dstDir string) error {
+	// Ensure the destination directory does not already exist
+	if _, err := os.Stat(dstDir); !os.IsNotExist(err) {
+		return fmt.Errorf("destination directory %s already exists", dstDir)
+	}
+
+	// Move the entire directory to the new location
+	if err := os.Rename(srcDir, dstDir); err != nil {
+		return fmt.Errorf("failed to move directory from %s to %s: %w", srcDir, dstDir, err)
+	}
+
+	return nil
 }
