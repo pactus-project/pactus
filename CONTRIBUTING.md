@@ -28,6 +28,16 @@ The following commands are available in the Makefile:
 - `make uint_test` performs only unit tests.
 - `make proto` generates [protobuf](https://protobuf.dev/) files, if you have made any changes to the proto buffer files.
 
+All changes on core must contain proper and well-defined unit-tests, also previous tests must be passed as well. 
+This codebase used `testify` for unit tests, make sure you follow these guide for tests:
+
+- For panic cases make sure you use `assert.Panics`
+- For checking err using `assert.ErrorIs` make sure you pass expected error as second argument.
+- For checking equality using `assert.Equal` make sure you pass expected value as the first argument.
+
+
+> This code guideline must be followed for both contributors and maintainers to review the PRs.
+
 ## CLI Guidelines
 
 The help messages for CLI flags should follow this pattern:
