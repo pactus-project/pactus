@@ -2,7 +2,9 @@ package util
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"testing"
@@ -91,4 +93,84 @@ func TestIsValidPath(t *testing.T) {
 	assert.False(t, IsValidDirPath("./io_test.go"))
 	assert.True(t, IsValidDirPath("/tmp"))
 	assert.True(t, IsValidDirPath("/tmp/pactus"))
+}
+
+func TestMoveDirectory(t *testing.T) {
+	// Create temporary directories
+	srcDir := TempDirPath()
+	dstDir := TempDirPath()
+	defer func() { _ = os.RemoveAll(srcDir) }()
+	defer func() { _ = os.RemoveAll(dstDir) }()
+
+	// Create a subdirectory in the source directory
+	subDir := filepath.Join(srcDir, "subdir")
+	err := Mkdir(subDir)
+	assert.NoError(t, err)
+
+	// Create multiple files in the subdirectory
+	files := []struct {
+		name    string
+		content string
+	}{
+		{"file1.txt", "content 1"},
+		{"file2.txt", "content 2"},
+	}
+
+	for _, file := range files {
+		filePath := filepath.Join(subDir, file.name)
+		err = WriteFile(filePath, []byte(file.content))
+		assert.NoError(t, err)
+	}
+
+	// Move the directory
+	dstDirPath := filepath.Join(dstDir, "movedir")
+	err = MoveDirectory(srcDir, dstDirPath)
+	assert.NoError(t, err)
+
+	// Assert the source directory no longer exists
+	assert.False(t, PathExists(srcDir))
+
+	// Assert the destination directory exists
+	assert.True(t, PathExists(dstDirPath))
+
+	// Verify that all files have been moved and their contents are correct
+	for _, file := range files {
+		movedFilePath := filepath.Join(dstDirPath, "subdir", file.name)
+		data, err := ReadFile(movedFilePath)
+		assert.NoError(t, err)
+		assert.Equal(t, file.content, string(data))
+	}
+}
+
+func TestSanitizeArchivePath(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		return
+	}
+
+	baseDir := "/safe/directory"
+
+	tests := []struct {
+		name      string
+		inputPath string
+		expected  string
+		expectErr bool
+	}{
+		{"Valid path", "file.txt", "/safe/directory/file.txt", false},
+		{"Valid path in subdirectory", "subdir/file.txt", "/safe/directory/subdir/file.txt", false},
+		{"Path with parent directory traversal", "../outside/file.txt", "", true},
+		{"Absolute path outside base directory", "/etc/passwd", "/safe/directory/etc/passwd", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := SanitizeArchivePath(baseDir, tt.inputPath)
+			if tt.expectErr {
+				assert.Error(t, err, "Expected error but got none")
+				assert.Empty(t, result, "Expected empty result due to error")
+			} else {
+				assert.NoError(t, err, "Unexpected error occurred")
+				assert.Equal(t, tt.expected, result, "Sanitized path did not match expected")
+			}
+		})
+	}
 }

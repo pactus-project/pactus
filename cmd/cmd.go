@@ -634,7 +634,7 @@ func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []vault.Addres
 	return valKeys, nil
 }
 
-func TerminalProgressBar(totalSize, barWidth int, showBytes bool) *progressbar.ProgressBar {
+func TerminalProgressBar(totalSize int64, barWidth int) *progressbar.ProgressBar {
 	if barWidth < 15 {
 		barWidth = 15
 	}
@@ -642,10 +642,10 @@ func TerminalProgressBar(totalSize, barWidth int, showBytes bool) *progressbar.P
 	opts := []progressbar.Option{
 		progressbar.OptionSetWriter(ansi.NewAnsiStdout()),
 		progressbar.OptionEnableColorCodes(true),
-		progressbar.OptionShowBytes(showBytes),
 		progressbar.OptionSetWidth(barWidth),
 		progressbar.OptionSetElapsedTime(false),
 		progressbar.OptionSetPredictTime(false),
+		progressbar.OptionShowDescriptionAtLineEnd(),
 		progressbar.OptionSetTheme(progressbar.Theme{
 			Saucer:        "[green]=[reset]",
 			SaucerHead:    "[green]>[reset]",
@@ -655,5 +655,5 @@ func TerminalProgressBar(totalSize, barWidth int, showBytes bool) *progressbar.P
 		}),
 	}
 
-	return progressbar.NewOptions(totalSize, opts...)
+	return progressbar.NewOptions64(totalSize, opts...)
 }

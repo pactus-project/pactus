@@ -109,8 +109,8 @@ func IsFlagSet[T constraints.Integer](flags, mask T) bool {
 
 // OS2IP converts an octet string to a nonnegative integer.
 // OS2IP: https://datatracker.ietf.org/doc/html/rfc8017#section-4.2
-func OS2IP(os []byte) *big.Int {
-	return new(big.Int).SetBytes(os)
+func OS2IP(x []byte) *big.Int {
+	return new(big.Int).SetBytes(x)
 }
 
 // I2OSP converts a nonnegative integer to an octet string of a specified length.
