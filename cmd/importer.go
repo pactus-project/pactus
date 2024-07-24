@@ -118,7 +118,7 @@ func (i *Importer) GetMetadata(ctx context.Context) ([]Metadata, error) {
 	}
 
 	sort.SliceStable(metadata, func(i, j int) bool {
-		return metadata[i].CreatedAtTime().Before(metadata[j].CreatedAtTime())
+		return metadata[i].CreatedAtTime().After(metadata[j].CreatedAtTime())
 	})
 
 	return metadata, nil
