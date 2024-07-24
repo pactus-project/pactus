@@ -10,7 +10,7 @@ import (
 
 func TestVoteType(t *testing.T) {
 	m := &VoteMessage{}
-	assert.Equal(t, m.Type(), TypeVote)
+	assert.Equal(t, TypeVote, m.Type())
 }
 
 func TestVoteMessage(t *testing.T) {

@@ -10,7 +10,7 @@ import (
 
 func TestQueryProposalType(t *testing.T) {
 	m := &QueryProposalMessage{}
-	assert.Equal(t, m.Type(), TypeQueryProposal)
+	assert.Equal(t, TypeQueryProposal, m.Type())
 }
 
 func TestQueryProposalMessage(t *testing.T) {
@@ -19,7 +19,7 @@ func TestQueryProposalMessage(t *testing.T) {
 	t.Run("Invalid round", func(t *testing.T) {
 		m := NewQueryProposalMessage(0, -1, ts.RandValAddress())
 
-		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidRound)
+		assert.Equal(t, errors.ErrInvalidRound, errors.Code(m.BasicCheck()))
 	})
 
 	t.Run("OK", func(t *testing.T) {

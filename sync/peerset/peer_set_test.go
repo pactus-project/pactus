@@ -99,20 +99,20 @@ func TestPeerSet(t *testing.T) {
 		sentBytes := make(map[message.Type]int64)
 		sentBytes[message.TypeBlocksRequest] = 450
 
-		assert.Equal(t, peer1.InvalidBundles, 1)
-		assert.Equal(t, peer1.ReceivedBundles, 1)
-		assert.Equal(t, peer1.ReceivedBytes[message.TypeBlocksResponse], int64(100))
-		assert.Equal(t, peer1.ReceivedBytes[message.TypeTransaction], int64(150))
-		assert.Equal(t, peer1.SentBytes[message.TypeBlocksRequest], int64(250))
+		assert.Equal(t, 1, peer1.InvalidBundles)
+		assert.Equal(t, 1, peer1.ReceivedBundles)
+		assert.Equal(t, int64(100), peer1.ReceivedBytes[message.TypeBlocksResponse])
+		assert.Equal(t, int64(150), peer1.ReceivedBytes[message.TypeTransaction])
+		assert.Equal(t, int64(250), peer1.SentBytes[message.TypeBlocksRequest])
 
-		assert.Equal(t, peerSet.TotalReceivedBytes(), int64(250))
-		assert.Equal(t, peerSet.ReceivedBytesMessageType(message.TypeBlocksResponse), int64(100))
-		assert.Equal(t, peerSet.ReceivedBytesMessageType(message.TypeTransaction), int64(150))
-		assert.Equal(t, peerSet.ReceivedBytes(), receivedBytes)
-		assert.Equal(t, peerSet.TotalSentBytes(), int64(450))
-		assert.Equal(t, peerSet.SentBytesMessageType(message.TypeBlocksRequest), int64(450))
-		assert.Equal(t, peerSet.SentBytes(), sentBytes)
-		assert.Equal(t, peerSet.TotalSentBundles(), 2)
+		assert.Equal(t, int64(250), peerSet.TotalReceivedBytes())
+		assert.Equal(t, int64(100), peerSet.ReceivedBytesMessageType(message.TypeBlocksResponse))
+		assert.Equal(t, int64(150), peerSet.ReceivedBytesMessageType(message.TypeTransaction))
+		assert.Equal(t, receivedBytes, peerSet.ReceivedBytes())
+		assert.Equal(t, int64(450), peerSet.TotalSentBytes())
+		assert.Equal(t, int64(450), peerSet.SentBytesMessageType(message.TypeBlocksRequest))
+		assert.Equal(t, sentBytes, peerSet.SentBytes())
+		assert.Equal(t, 2, peerSet.TotalSentBundles())
 	})
 
 	t.Run("Testing UpdateHeight", func(t *testing.T) {
@@ -129,7 +129,7 @@ func TestPeerSet(t *testing.T) {
 		peerSet.UpdateStatus(pid1, status.StatusBanned)
 
 		peer1 := peerSet.findPeer(pid1)
-		assert.Equal(t, peer1.Status, status.StatusBanned)
+		assert.Equal(t, status.StatusBanned, peer1.Status)
 	})
 
 	t.Run("Testing UpdateLastSent", func(t *testing.T) {
@@ -154,10 +154,10 @@ func TestPeerSet(t *testing.T) {
 
 	t.Run("Testing RemovePeer", func(t *testing.T) {
 		peerSet.RemovePeer(ts.RandPeerID())
-		assert.Equal(t, peerSet.Len(), 3)
+		assert.Equal(t, 3, peerSet.Len())
 
 		peerSet.RemovePeer(pid2)
-		assert.Equal(t, peerSet.Len(), 2)
+		assert.Equal(t, 2, peerSet.Len())
 	})
 }
 
@@ -181,8 +181,8 @@ func TestOpenSession(t *testing.T) {
 	assert.Equal(t, pid1, ssn1.PeerID)
 	assert.Equal(t, session.Open, ssn1.Status)
 	assert.LessOrEqual(t, ssn1.LastActivity, time.Now())
-	assert.Equal(t, sid1, 0)
-	assert.Equal(t, sid2, 1)
+	assert.Equal(t, 0, sid1)
+	assert.Equal(t, 1, sid2)
 	assert.True(t, ps.HasOpenSession(pid1))
 	assert.True(t, ps.HasOpenSession(pid2))
 	assert.False(t, ps.HasOpenSession(ts.RandPeerID()))
@@ -376,5 +376,5 @@ func TestUpdateProtocols(t *testing.T) {
 	ps.UpdateProtocols(pid, protocols)
 
 	p := ps.GetPeer(pid)
-	assert.Equal(t, p.Protocols, protocols)
+	assert.Equal(t, protocols, p.Protocols)
 }
