@@ -143,7 +143,7 @@ func (wn *widgetNode) timeout10() bool {
 			fatalErrorCheck(err)
 
 			wn.labelClockOffset.SetTooltipText("Difference between time of your machine and " +
-				"network time( (NTP)  for synchronization.")
+				"network time (NTP)  for synchronization.")
 
 			if offsetErr != nil {
 				styleContext.AddClass("warning")
