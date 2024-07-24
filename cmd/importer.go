@@ -156,8 +156,8 @@ func (i *Importer) Download(ctx context.Context, metadata *Metadata,
 			stateFunc(fileName, state.TotalSize, state.Downloaded, state.Percent)
 			if state.Completed {
 				log.Println("download completed")
-
 				done <- nil
+
 				return
 			}
 		}

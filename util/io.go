@@ -210,7 +210,7 @@ func MoveDirectory(srcDir, dstDir string) error {
 
 	// Get the parent directory of the destination directory
 	parentDir := filepath.Dir(dstDir)
-	if err := os.MkdirAll(parentDir, os.ModePerm); err != nil {
+	if err := Mkdir(parentDir); err != nil {
 		return fmt.Errorf("failed to create parent directories for %s: %w", dstDir, err)
 	}
 
