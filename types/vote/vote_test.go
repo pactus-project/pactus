@@ -208,16 +208,16 @@ func TestVoteMarshaling(t *testing.T) {
 		assert.Equal(t, bz1, bz2)
 
 		expectedHash := hash.CalcHash(bz1)
-		assert.Equal(t, v.Hash(), expectedHash)
+		assert.Equal(t, expectedHash, v.Hash())
 
 		v.SetSignature(ts.RandBLSSignature())
 		assert.NoError(t, v.BasicCheck())
 
 		expectedSignBytes, _ := hex.DecodeString(test.signBytes)
-		assert.Equal(t, v.SignBytes(), expectedSignBytes)
+		assert.Equal(t, expectedSignBytes, v.SignBytes())
 
 		if test.justType != "" {
-			assert.Equal(t, v.CPJust().Type().String(), test.justType)
+			assert.Equal(t, test.justType, v.CPJust().Type().String())
 		}
 	}
 }
@@ -259,7 +259,7 @@ func TestCPPreVote(t *testing.T) {
 			-1, vote.CPValueYes, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
+		assert.Equal(t, errors.ErrInvalidRound, errors.Code(err))
 	})
 
 	t.Run("Invalid value", func(t *testing.T) {
@@ -267,7 +267,7 @@ func TestCPPreVote(t *testing.T) {
 			1, 3, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
+		assert.Equal(t, errors.ErrInvalidVote, errors.Code(err))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -277,8 +277,8 @@ func TestCPPreVote(t *testing.T) {
 
 		err := v.BasicCheck()
 		assert.NoError(t, err)
-		assert.Equal(t, v.CPRound(), int16(1))
-		assert.Equal(t, v.CPValue(), vote.CPValueNo)
+		assert.Equal(t, int16(1), v.CPRound())
+		assert.Equal(t, vote.CPValueNo, v.CPValue())
 		assert.NotNil(t, v.CPJust())
 	})
 }
@@ -295,7 +295,7 @@ func TestCPMainVote(t *testing.T) {
 			-1, vote.CPValueNo, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
+		assert.Equal(t, errors.ErrInvalidRound, errors.Code(err))
 	})
 
 	t.Run("No CP data", func(t *testing.T) {
@@ -314,7 +314,7 @@ func TestCPMainVote(t *testing.T) {
 			1, 3, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
+		assert.Equal(t, errors.ErrInvalidVote, errors.Code(err))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -324,8 +324,8 @@ func TestCPMainVote(t *testing.T) {
 
 		err := v.BasicCheck()
 		assert.NoError(t, err)
-		assert.Equal(t, v.CPRound(), int16(1))
-		assert.Equal(t, v.CPValue(), vote.CPValueAbstain)
+		assert.Equal(t, int16(1), v.CPRound())
+		assert.Equal(t, vote.CPValueAbstain, v.CPValue())
 		assert.NotNil(t, v.CPJust())
 	})
 }
@@ -342,7 +342,7 @@ func TestCPDecided(t *testing.T) {
 			-1, vote.CPValueNo, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidRound)
+		assert.Equal(t, errors.ErrInvalidRound, errors.Code(err))
 	})
 
 	t.Run("No CP data", func(t *testing.T) {
@@ -361,7 +361,7 @@ func TestCPDecided(t *testing.T) {
 			1, 3, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
+		assert.Equal(t, errors.ErrInvalidVote, errors.Code(err))
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -371,8 +371,8 @@ func TestCPDecided(t *testing.T) {
 
 		err := v.BasicCheck()
 		assert.NoError(t, err)
-		assert.Equal(t, v.CPRound(), int16(1))
-		assert.Equal(t, v.CPValue(), vote.CPValueAbstain)
+		assert.Equal(t, int16(1), v.CPRound())
+		assert.Equal(t, vote.CPValueAbstain, v.CPValue())
 		assert.NotNil(t, v.CPJust())
 	})
 }
@@ -388,7 +388,7 @@ func TestBasicCheck(t *testing.T) {
 		assert.NoError(t, err)
 
 		err = v.BasicCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidVote)
+		assert.Equal(t, errors.ErrInvalidVote, errors.Code(err))
 	})
 
 	t.Run("Invalid height", func(t *testing.T) {
@@ -409,7 +409,7 @@ func TestBasicCheck(t *testing.T) {
 		v := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature)
+		assert.Equal(t, errors.ErrInvalidSignature, errors.Code(err))
 	})
 
 	t.Run("Has CP data", func(t *testing.T) {
@@ -453,11 +453,11 @@ func TestSignBytes(t *testing.T) {
 	sb4 := v4.SignBytes()
 	sb5 := v5.SignBytes()
 
-	assert.Equal(t, len(sb1), 45)
-	assert.Equal(t, len(sb2), 38)
-	assert.Equal(t, len(sb3), 49)
-	assert.Equal(t, len(sb4), 50)
-	assert.Equal(t, len(sb5), 48)
+	assert.Equal(t, 45, len(sb1))
+	assert.Equal(t, 38, len(sb2))
+	assert.Equal(t, 49, len(sb3))
+	assert.Equal(t, 50, len(sb4))
+	assert.Equal(t, 48, len(sb5))
 
 	assert.Contains(t, string(sb1), "PREPARE")
 	assert.Contains(t, string(sb3), "PRE-VOTE")
@@ -486,10 +486,10 @@ func TestLog(t *testing.T) {
 }
 
 func TestCPValueToString(t *testing.T) {
-	assert.Equal(t, vote.CPValueNo.String(), "no")
-	assert.Equal(t, vote.CPValueYes.String(), "yes")
-	assert.Equal(t, vote.CPValueAbstain.String(), "abstain")
-	assert.Equal(t, vote.CPValue(-1).String(), "unknown: -1")
+	assert.Equal(t, "no", vote.CPValueNo.String())
+	assert.Equal(t, "yes", vote.CPValueYes.String())
+	assert.Equal(t, "abstain", vote.CPValueAbstain.String())
+	assert.Equal(t, "unknown: -1", vote.CPValue(-1).String())
 }
 
 func TestCPInvalidJustType(t *testing.T) {
