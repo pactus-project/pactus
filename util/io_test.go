@@ -154,7 +154,7 @@ func TestSanitizeArchivePath(t *testing.T) {
 		{"Valid path", "file.txt", "/safe/directory/file.txt", false},
 		{"Valid path in subdirectory", "subdir/file.txt", "/safe/directory/subdir/file.txt", false},
 		{"Path with parent directory traversal", "../outside/file.txt", "", true},
-		{"Absolute path outside base directory", "/etc/passwd", "", true},
+		{"Absolute path outside base directory", "/etc/passwd", "/safe/directory/etc/passwd", false},
 	}
 
 	for _, tt := range tests {

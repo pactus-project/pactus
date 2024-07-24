@@ -220,10 +220,6 @@ func MoveDirectory(srcDir, dstDir string) error {
 // traversal attacks. For more details on the vulnerability, see https://snyk.io/research/zip-slip-vulnerability.
 func SanitizeArchivePath(baseDir, archivePath string) (fullPath string, err error) {
 	fullPath = filepath.Join(baseDir, archivePath)
-	if filepath.IsAbs(fullPath) {
-		return "", fmt.Errorf("absolute path detected: %s", fullPath)
-	}
-
 	if strings.HasPrefix(fullPath, filepath.Clean(baseDir)) {
 		return fullPath, nil
 	}
