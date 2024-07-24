@@ -24,5 +24,5 @@ func getAccount(t *testing.T, addr crypto.Address) *pactus.AccountInfo {
 func TestGetAccount(t *testing.T) {
 	acc := getAccount(t, crypto.TreasuryAddress)
 	require.NotNil(t, acc)
-	assert.Equal(t, acc.Number, int32(0))
+	assert.Equal(t, int32(0), acc.Number)
 }
