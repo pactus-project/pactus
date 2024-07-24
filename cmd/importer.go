@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -23,7 +24,7 @@ const DefaultSnapshotURL = "https://snapshot.pactus.org"
 
 const maxDecompressedSize = 10 << 20 // 10 MB
 
-type DMStateFunc func(
+type ImporterStateFunc func(
 	fileName string,
 	totalSize, downloaded int64,
 	percentage float64,
@@ -124,47 +125,45 @@ func (i *Importer) GetMetadata(ctx context.Context) ([]Metadata, error) {
 	return metadata, nil
 }
 
-func (i *Importer) Download(
-	ctx context.Context,
-	metadata *Metadata,
-	stateFunc DMStateFunc,
-) {
-	done := make(chan struct{})
+func (i *Importer) Download(ctx context.Context, metadata *Metadata,
+	stateFunc ImporterStateFunc,
+) error {
+	done := make(chan error)
+	defer close((done))
+
 	dlLink, err := url.JoinPath(i.snapshotURL, metadata.Data.Path)
-	FatalErrorCheck(err)
+	if err != nil {
+		return err
+	}
 
 	fileName := filepath.Base(dlLink)
-
 	i.dataFileName = fileName
-
 	filePath := fmt.Sprintf("%s/%s", i.tempDir, fileName)
 
-	d := downloader.New(
-		dlLink,
-		filePath,
-		metadata.Data.Sha,
-	)
-
+	d := downloader.New(dlLink, filePath, metadata.Data.Sha)
 	d.Start(ctx)
 
 	go func() {
 		err := <-d.Errors()
-		FatalErrorCheck(err)
+		if err != nil {
+			log.Printf("download encountered an error: %s\n", err)
+			done <- err
+		}
 	}()
 
 	go func() {
 		for state := range d.Stats() {
 			stateFunc(fileName, state.TotalSize, state.Downloaded, state.Percent)
 			if state.Completed {
-				done <- struct{}{}
-				close(done)
+				log.Println("download completed")
 
+				done <- nil
 				return
 			}
 		}
 	}()
 
-	<-done
+	return <-done
 }
 
 func (i *Importer) Cleanup() error {

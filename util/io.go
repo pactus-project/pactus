@@ -90,8 +90,7 @@ func IsDirEmpty(name string) bool {
 	return errors.Is(err, io.EOF)
 }
 
-// IsDirNotExistsOrEmpty returns true if a directory does not exist or is empty.
-// It checks if the path exists and, if so, whether the directory is empty.
+// IsDirNotExistsOrEmpty checks if the path exists and, if so, whether the directory is empty.
 func IsDirNotExistsOrEmpty(name string) bool {
 	if !PathExists(name) {
 		return true
@@ -203,9 +202,16 @@ func NewFixedReader(max int, buf []byte) *FixedReader {
 
 // MoveDirectory moves a directory from srcDir to dstDir, including all its contents.
 // If dstDir already exists and is not empty, it returns an error.
+// If the parent directory of dstDir does not exist, it will be created.
 func MoveDirectory(srcDir, dstDir string) error {
-	if !IsDirNotExistsOrEmpty(dstDir) {
+	if PathExists(dstDir) {
 		return fmt.Errorf("destination directory %s already exists", dstDir)
+	}
+
+	// Get the parent directory of the destination directory
+	parentDir := filepath.Dir(dstDir)
+	if err := os.MkdirAll(parentDir, os.ModePerm); err != nil {
+		return fmt.Errorf("failed to create parent directories for %s: %w", dstDir, err)
 	}
 
 	if err := os.Rename(srcDir, dstDir); err != nil {

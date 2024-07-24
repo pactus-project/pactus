@@ -81,11 +81,8 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		cmd.PrintLine()
 
-		importer.Download(
-			c.Context(),
-			&selected,
-			downloadProgressBar,
-		)
+		err = importer.Download(c.Context(), &selected, downloadProgressBar)
+		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
 		cmd.PrintLine()
