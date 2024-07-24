@@ -48,7 +48,7 @@ func main() {
 	}
 
 	// If node is not initialized yet
-	if !util.PathExists(workingDir) {
+	if util.IsDirNotExistsOrEmpty(workingDir) {
 		network := genesis.Mainnet
 		if *testnetOpt {
 			network = genesis.Testnet

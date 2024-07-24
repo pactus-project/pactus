@@ -1,14 +1,12 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
-	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/spf13/cobra"
 )
@@ -21,7 +19,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(importCmd)
 
 	workingDirOpt := addWorkingDirOption(importCmd)
-	serverAddrOpt := importCmd.Flags().String("server-addr", "https://snapshot.pactus.org",
+	serverAddrOpt := importCmd.Flags().String("server-addr", cmd.DefaultSnapshotURL,
 		"import server address")
 
 	importCmd.Run = func(c *cobra.Command, _ []string) {
@@ -46,48 +44,24 @@ func buildImportCmd(parentCmd *cobra.Command) {
 			return
 		}
 
-		storeDir, _ := filepath.Abs(conf.Store.StorePath())
-		if !util.IsDirNotExistsOrEmpty(storeDir) {
-			cmd.PrintErrorMsgf("The data directory is not empty: %s", conf.Store.StorePath())
-
-			return
-		}
-
-		snapshotURL := *serverAddrOpt
-
-		switch gen.ChainType() {
-		case genesis.Mainnet:
-			snapshotURL += "/mainnet/"
-		case genesis.Testnet:
-			snapshotURL += "/testnet/"
-		case genesis.Localnet:
-			cmd.PrintErrorMsgf("Unsupported chain type: %s", gen.ChainType())
-
-			return
-		}
-
-		tmpDir := util.TempDirPath()
-
 		cmd.PrintLine()
 
-		dm := cmd.NewDownloadManager(
+		snapshotURL := *serverAddrOpt
+		importer, err := cmd.NewImporter(
+			gen.ChainType(),
 			snapshotURL,
-			tmpDir,
-			conf.Store.StorePath(),
+			conf.Store.DataPath(),
 		)
+		cmd.FatalErrorCheck(err)
 
-		metadata, err := dm.GetMetadata(c.Context())
+		metadata, err := importer.GetMetadata(c.Context())
 		cmd.FatalErrorCheck(err)
 
 		snapshots := make([]string, 0, len(metadata))
 
 		for _, m := range metadata {
-			if m.Data == nil {
-				cmd.FatalErrorCheck(errors.New("metadata is nil"))
-			}
-
 			item := fmt.Sprintf("snapshot %s (%s)",
-				dm.ParseTime(m.CreatedAt).Format("2006-01-02"),
+				m.CreatedAtTime().Format("2006-01-02"),
 				util.FormatBytesToHumanReadable(m.Data.Size),
 			)
 
@@ -102,12 +76,12 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		cmd.TrapSignal(func() {
 			_ = fileLock.Unlock()
-			_ = dm.Cleanup()
+			_ = importer.Cleanup()
 		})
 
 		cmd.PrintLine()
 
-		dm.Download(
+		importer.Download(
 			c.Context(),
 			&selected,
 			downloadProgressBar,
@@ -117,14 +91,14 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		cmd.PrintLine()
 		cmd.PrintInfoMsgf("Extracting files...")
 
-		err = dm.ExtractAndStoreFiles()
+		err = importer.ExtractAndStoreFiles()
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintInfoMsgf("Moving data...")
-		err = util.MoveDirectory(filepath.Join(tmpDir, "data"), filepath.Join(workingDir, "data"))
+		err = importer.MoveStore()
 		cmd.FatalErrorCheck(err)
 
-		err = dm.Cleanup()
+		err = importer.Cleanup()
 		cmd.FatalErrorCheck(err)
 
 		_ = fileLock.Unlock()

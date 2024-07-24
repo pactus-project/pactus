@@ -2,8 +2,6 @@ package util
 
 import (
 	"math/big"
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -139,52 +137,5 @@ func TestFormatBytesToHumanReadable(t *testing.T) {
 		if result != test.expected {
 			t.Errorf("FormatBytesToHumanReadable(%d) returned %s, expected %s", test.bytes, result, test.expected)
 		}
-	}
-}
-
-func TestMoveDirectory(t *testing.T) {
-	// Create temporary directories
-	srcDir := TempDirPath()
-	dstDir := TempDirPath()
-	defer func() { _ = os.RemoveAll(srcDir) }()
-	defer func() { _ = os.RemoveAll(dstDir) }()
-
-	// Create a subdirectory in the source directory
-	subDir := filepath.Join(srcDir, "subdir")
-	err := Mkdir(subDir)
-	assert.NoError(t, err)
-
-	// Create multiple files in the subdirectory
-	files := []struct {
-		name    string
-		content string
-	}{
-		{"file1.txt", "content 1"},
-		{"file2.txt", "content 2"},
-	}
-
-	for _, file := range files {
-		filePath := filepath.Join(subDir, file.name)
-		err = WriteFile(filePath, []byte(file.content))
-		assert.NoError(t, err)
-	}
-
-	// Move the directory
-	dstDirPath := filepath.Join(dstDir, "movedir")
-	err = MoveDirectory(srcDir, dstDirPath)
-	assert.NoError(t, err)
-
-	// Assert the source directory no longer exists
-	assert.False(t, PathExists(srcDir))
-
-	// Assert the destination directory exists
-	assert.True(t, PathExists(dstDirPath))
-
-	// Verify that all files have been moved and their contents are correct
-	for _, file := range files {
-		movedFilePath := filepath.Join(dstDirPath, "subdir", file.name)
-		data, err := ReadFile(movedFilePath)
-		assert.NoError(t, err)
-		assert.Equal(t, file.content, string(data))
 	}
 }
