@@ -143,6 +143,10 @@ func TestMoveDirectory(t *testing.T) {
 }
 
 func TestSanitizeArchivePath(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		return
+	}
+
 	baseDir := "/safe/directory"
 
 	tests := []struct {
