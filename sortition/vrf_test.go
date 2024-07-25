@@ -27,7 +27,7 @@ func TestVRF(t *testing.T) {
 
 		index2, result := sortition.Verify(seed, pk, proof, max)
 
-		assert.Equal(t, true, result)
+		assert.True(t, result)
 		assert.Equal(t, index, index2)
 	}
 }

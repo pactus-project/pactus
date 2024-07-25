@@ -42,18 +42,18 @@ func TestDefaultConfig(t *testing.T) {
 
 	assert.NoError(t, conf.BasicCheck())
 	assert.Empty(t, conf.Network.ListenAddrStrings)
-	assert.Equal(t, "", conf.Network.NetworkName)
-	assert.Equal(t, 0, conf.Network.DefaultPort)
+	assert.Zero(t, conf.Network.NetworkName)
+	assert.Zero(t, conf.Network.DefaultPort)
 
 	assert.False(t, conf.GRPC.Enable)
 	assert.False(t, conf.GRPC.Gateway.Enable)
 	assert.False(t, conf.HTTP.Enable)
 	assert.False(t, conf.Nanomsg.Enable)
 
-	assert.Equal(t, "", conf.GRPC.Listen)
-	assert.Equal(t, "", conf.GRPC.Gateway.Listen)
-	assert.Equal(t, "", conf.HTTP.Listen)
-	assert.Equal(t, "", conf.Nanomsg.Listen)
+	assert.Zero(t, conf.GRPC.Listen)
+	assert.Zero(t, conf.GRPC.Gateway.Listen)
+	assert.Zero(t, conf.HTTP.Listen)
+	assert.Zero(t, conf.Nanomsg.Listen)
 }
 
 func TestMainnetConfig(t *testing.T) {
