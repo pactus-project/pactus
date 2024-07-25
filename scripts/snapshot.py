@@ -75,7 +75,7 @@ class Metadata:
             "name": snapshot_metadata["name"],
             "created_at": snapshot_metadata["created_at"],
             "compress": snapshot_metadata["compress"],
-            "data": snapshot_metadata["data"],
+            "data": snapshot_metadata["data"]
         }
 
         metadata.append(formatted_metadata)
@@ -107,13 +107,11 @@ class Metadata:
             for filename in filenames:
                 file_path = os.path.join(root, filename)
                 rel_path = os.path.relpath(file_path, data_dir)
-                snapshot_rel_path = os.path.join(snapshot_subdir, rel_path).replace(
-                    "\\", "/"
-                )
+                snapshot_rel_path = os.path.join(snapshot_subdir, rel_path).replace('\\', '/')
                 file_info = {
                     "name": filename,
                     "path": snapshot_rel_path,
-                    "sha": Metadata.sha256(file_path),
+                    "sha": Metadata.sha256(file_path)
                 }
                 files.append(file_info)
 
@@ -209,34 +207,30 @@ class SnapshotManager:
         logging.info(f"Creating snapshot directory '{snapshot_dir}'")
         os.makedirs(snapshot_dir, exist_ok=True)
 
-        data_dir = os.path.join(snapshot_dir, "data")
-        if self.args.compress == "none":
+        data_dir = os.path.join(snapshot_dir, 'data')
+        if self.args.compress == 'none':
             logging.info(f"Copying data from '{self.args.data_path}' to '{data_dir}'")
             shutil.copytree(self.args.data_path, data_dir)
             snapshot_metadata = Metadata.create_snapshot_json(data_dir, timestamp_str)
-        elif self.args.compress == "zip":
-            zip_file = os.path.join(snapshot_dir, "data.zip")
+        elif self.args.compress == 'zip':
+            zip_file = os.path.join(snapshot_dir, 'data.zip')
             rel = os.path.relpath(zip_file, snapshot_dir)
             meta_path = os.path.join(timestamp_str, rel)
             logging.info(f"Creating ZIP archive '{zip_file}'")
-            with zipfile.ZipFile(zip_file, "w", zipfile.ZIP_DEFLATED) as zipf:
+            with zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED) as zipf:
                 for root, _, files in os.walk(self.args.data_path):
                     for file in files:
                         full_path = os.path.join(root, file)
                         rel_path = os.path.relpath(full_path, self.args.data_path)
-                        zipf.write(full_path, os.path.join("data", rel_path))
-            snapshot_metadata = Metadata.create_compressed_snapshot_json(
-                zip_file, meta_path
-            )
-        elif self.args.compress == "tar":
-            tar_file = os.path.join(snapshot_dir, "data.tar.gz")
+                        zipf.write(full_path, os.path.join('data', rel_path))
+            snapshot_metadata = Metadata.create_compressed_snapshot_json(zip_file, meta_path)
+        elif self.args.compress == 'tar':
+            tar_file = os.path.join(snapshot_dir, 'data.tar.gz')
             rel = os.path.relpath(tar_file, snapshot_dir)
             meta_path = os.path.join(timestamp_str, rel)
             logging.info(f"Creating TAR.GZ archive '{tar_file}'")
-            subprocess.run(["tar", "-czvf", tar_file, "-C", self.args.data_path, "."])
-            snapshot_metadata = Metadata.create_compressed_snapshot_json(
-                tar_file, meta_path
-            )
+            subprocess.run(['tar', '-czvf', tar_file, '-C', self.args.data_path, '.'])
+            snapshot_metadata = Metadata.create_compressed_snapshot_json(tar_file, meta_path)
 
         snapshot_metadata["name"] = timestamp_str
         snapshot_metadata["created_at"] = get_current_time_iso()
@@ -319,27 +313,14 @@ class ProcessBackup:
 
 def parse_args():
     user_home = os.path.expanduser("~")
-    default_data_path = os.path.join(user_home, "pactus")
+    default_data_path = os.path.join(user_home, 'pactus')
 
-    parser = argparse.ArgumentParser(description="Pactus Blockchain Snapshot Tool")
-    parser.add_argument(
-        "--service_path", required=True, help="Path to pactus systemctl service"
-    )
-    parser.add_argument(
-        "--data_path", default=default_data_path, help="Path to data directory"
-    )
-    parser.add_argument(
-        "--compress",
-        choices=["none", "zip", "tar"],
-        default="none",
-        help="Compression type",
-    )
-    parser.add_argument(
-        "--retention", type=int, default=3, help="Number of snapshots to retain"
-    )
-    parser.add_argument(
-        "--snapshot_path", default=os.getcwd(), help="Path to store snapshots"
-    )
+    parser = argparse.ArgumentParser(description='Pactus Blockchain Snapshot Tool')
+    parser.add_argument('--service_path', required=True, help='Path to pactus systemctl service')
+    parser.add_argument('--data_path', default=default_data_path, help='Path to data directory')
+    parser.add_argument('--compress', choices=['none', 'zip', 'tar'], default='none', help='Compression type')
+    parser.add_argument('--retention', type=int, default=3, help='Number of snapshots to retain')
+    parser.add_argument('--snapshot_path', default=os.getcwd(), help='Path to store snapshots')
 
     return parser.parse_args()
 

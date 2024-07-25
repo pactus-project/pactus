@@ -208,12 +208,13 @@ const GetBlockchainInfoResponse$json = const {
     const {'1': 'committee_power', '3': 6, '4': 1, '5': 3, '10': 'committeePower'},
     const {'1': 'committee_validators', '3': 7, '4': 3, '5': 11, '6': '.pactus.ValidatorInfo', '10': 'committeeValidators'},
     const {'1': 'is_pruned', '3': 8, '4': 1, '5': 8, '10': 'isPruned'},
-    const {'1': 'pruning_height', '3': 9, '4': 1, '5': 5, '10': 'pruningHeight'},
+    const {'1': 'pruning_height', '3': 9, '4': 1, '5': 13, '10': 'pruningHeight'},
+    const {'1': 'last_block_time', '3': 10, '4': 1, '5': 3, '10': 'lastBlockTime'},
   ],
 };
 
 /// Descriptor for `GetBlockchainInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getBlockchainInfoResponseDescriptor = $convert.base64Decode('ChlHZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlEioKEWxhc3RfYmxvY2tfaGVpZ2h0GAEgASgNUg9sYXN0QmxvY2tIZWlnaHQSJgoPbGFzdF9ibG9ja19oYXNoGAIgASgJUg1sYXN0QmxvY2tIYXNoEiUKDnRvdGFsX2FjY291bnRzGAMgASgFUg10b3RhbEFjY291bnRzEikKEHRvdGFsX3ZhbGlkYXRvcnMYBCABKAVSD3RvdGFsVmFsaWRhdG9ycxIfCgt0b3RhbF9wb3dlchgFIAEoA1IKdG90YWxQb3dlchInCg9jb21taXR0ZWVfcG93ZXIYBiABKANSDmNvbW1pdHRlZVBvd2VyEkgKFGNvbW1pdHRlZV92YWxpZGF0b3JzGAcgAygLMhUucGFjdHVzLlZhbGlkYXRvckluZm9SE2NvbW1pdHRlZVZhbGlkYXRvcnMSGwoJaXNfcHJ1bmVkGAggASgIUghpc1BydW5lZBIlCg5wcnVuaW5nX2hlaWdodBgJIAEoBVINcHJ1bmluZ0hlaWdodA==');
+final $typed_data.Uint8List getBlockchainInfoResponseDescriptor = $convert.base64Decode('ChlHZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlEioKEWxhc3RfYmxvY2tfaGVpZ2h0GAEgASgNUg9sYXN0QmxvY2tIZWlnaHQSJgoPbGFzdF9ibG9ja19oYXNoGAIgASgJUg1sYXN0QmxvY2tIYXNoEiUKDnRvdGFsX2FjY291bnRzGAMgASgFUg10b3RhbEFjY291bnRzEikKEHRvdGFsX3ZhbGlkYXRvcnMYBCABKAVSD3RvdGFsVmFsaWRhdG9ycxIfCgt0b3RhbF9wb3dlchgFIAEoA1IKdG90YWxQb3dlchInCg9jb21taXR0ZWVfcG93ZXIYBiABKANSDmNvbW1pdHRlZVBvd2VyEkgKFGNvbW1pdHRlZV92YWxpZGF0b3JzGAcgAygLMhUucGFjdHVzLlZhbGlkYXRvckluZm9SE2NvbW1pdHRlZVZhbGlkYXRvcnMSGwoJaXNfcHJ1bmVkGAggASgIUghpc1BydW5lZBIlCg5wcnVuaW5nX2hlaWdodBgJIAEoDVINcHJ1bmluZ0hlaWdodBImCg9sYXN0X2Jsb2NrX3RpbWUYCiABKANSDWxhc3RCbG9ja1RpbWU=');
 @$core.Deprecated('Use getConsensusInfoRequestDescriptor instead')
 const GetConsensusInfoRequest$json = const {
   '1': 'GetConsensusInfoRequest',

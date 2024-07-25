@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
-	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/spf13/cobra"
 )
@@ -21,7 +19,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(importCmd)
 
 	workingDirOpt := addWorkingDirOption(importCmd)
-	serverAddrOpt := importCmd.Flags().String("server-addr", "https://download.pactus.org",
+	serverAddrOpt := importCmd.Flags().String("server-addr", cmd.DefaultSnapshotURL,
 		"import server address")
 
 	importCmd.Run = func(c *cobra.Command, _ []string) {
@@ -46,39 +44,25 @@ func buildImportCmd(parentCmd *cobra.Command) {
 			return
 		}
 
-		storeDir, _ := filepath.Abs(conf.Store.StorePath())
-		if !util.IsDirNotExistsOrEmpty(storeDir) {
-			cmd.PrintErrorMsgf("The data directory is not empty: %s", conf.Store.StorePath())
-
-			return
-		}
+		cmd.PrintLine()
 
 		snapshotURL := *serverAddrOpt
+		importer, err := cmd.NewImporter(
+			gen.ChainType(),
+			snapshotURL,
+			conf.Store.DataPath(),
+		)
+		cmd.FatalErrorCheck(err)
 
-		switch gen.ChainType() {
-		case genesis.Mainnet:
-			snapshotURL += "/mainnet/"
-		case genesis.Testnet:
-			snapshotURL += "/testnet/"
-		case genesis.Localnet:
-			cmd.PrintErrorMsgf("Unsupported chain type: %s", gen.ChainType())
-
-			return
-		}
-
-		metadata, err := cmd.GetSnapshotMetadata(c.Context(), snapshotURL)
-		if err != nil {
-			cmd.PrintErrorMsgf("Failed to get snapshot metadata: %s", err)
-
-			return
-		}
+		metadata, err := importer.GetMetadata(c.Context())
+		cmd.FatalErrorCheck(err)
 
 		snapshots := make([]string, 0, len(metadata))
 
 		for _, m := range metadata {
 			item := fmt.Sprintf("snapshot %s (%s)",
-				parseTime(m.CreatedAt).Format("2006-01-02"),
-				util.FormatBytesToHumanReadable(m.TotalSize),
+				m.CreatedAtTime().Format("2006-01-02"),
+				util.FormatBytesToHumanReadable(m.Data.Size),
 			)
 
 			snapshots = append(snapshots, item)
@@ -89,34 +73,29 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		choice := cmd.PromptSelect("Please select a snapshot", snapshots)
 
 		selected := metadata[choice]
-		tmpDir := util.TempDirPath()
-		extractPath := fmt.Sprintf("%s/data", tmpDir)
 
-		err = os.MkdirAll(extractPath, 0o750)
-		cmd.FatalErrorCheck(err)
+		cmd.TrapSignal(func() {
+			_ = fileLock.Unlock()
+			_ = importer.Cleanup()
+		})
 
 		cmd.PrintLine()
 
-		zipFileList := cmd.DownloadManager(
-			c.Context(),
-			&selected,
-			snapshotURL,
-			tmpDir,
-			downloadProgressBar,
-		)
-
-		for _, zFile := range zipFileList {
-			err := cmd.ExtractAndStoreFile(zFile, extractPath)
-			cmd.FatalErrorCheck(err)
-		}
-
-		err = os.MkdirAll(filepath.Dir(conf.Store.StorePath()), 0o750)
+		err = importer.Download(c.Context(), &selected, downloadProgressBar)
 		cmd.FatalErrorCheck(err)
 
-		err = cmd.CopyAllFiles(extractPath, conf.Store.StorePath())
+		cmd.PrintLine()
+		cmd.PrintLine()
+		cmd.PrintInfoMsgf("Extracting files...")
+
+		err = importer.ExtractAndStoreFiles()
 		cmd.FatalErrorCheck(err)
 
-		err = os.RemoveAll(tmpDir)
+		cmd.PrintInfoMsgf("Moving data...")
+		err = importer.MoveStore()
+		cmd.FatalErrorCheck(err)
+
+		err = importer.Cleanup()
 		cmd.FatalErrorCheck(err)
 
 		_ = fileLock.Unlock()
@@ -131,19 +110,12 @@ func buildImportCmd(parentCmd *cobra.Command) {
 }
 
 func downloadProgressBar(fileName string, totalSize, downloaded int64, _ float64) {
-	bar := cmd.TerminalProgressBar(int(totalSize), 30, true)
-	bar.Describe(fileName)
-	err := bar.Add(int(downloaded))
+	bar := cmd.TerminalProgressBar(totalSize, 30)
+	bar.Describe(fmt.Sprintf("%s (%s/%s)",
+		fileName,
+		util.FormatBytesToHumanReadable(uint64(downloaded)),
+		util.FormatBytesToHumanReadable(uint64(totalSize)),
+	))
+	err := bar.Add64(downloaded)
 	cmd.FatalErrorCheck(err)
-}
-
-func parseTime(dateString string) time.Time {
-	const layout = "2006-01-02T15:04:05.000000"
-
-	parsedTime, err := time.Parse(layout, dateString)
-	if err != nil {
-		return time.Time{}
-	}
-
-	return parsedTime
 }

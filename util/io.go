@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func IsAbsPath(p string) bool {
@@ -72,6 +73,7 @@ func TempFilePath() string {
 	return filepath.Join(TempDirPath(), "file")
 }
 
+// IsDirEmpty checks if a directory is empty.
 func IsDirEmpty(name string) bool {
 	f, err := os.Open(name)
 	if err != nil {
@@ -88,6 +90,7 @@ func IsDirEmpty(name string) bool {
 	return errors.Is(err, io.EOF)
 }
 
+// IsDirNotExistsOrEmpty checks if the path exists and, if so, whether the directory is empty.
 func IsDirNotExistsOrEmpty(name string) bool {
 	if !PathExists(name) {
 		return true
@@ -195,4 +198,37 @@ func NewFixedReader(max int, buf []byte) *FixedReader {
 	fr := FixedReader{b, 0, iobuf}
 
 	return &fr
+}
+
+// MoveDirectory moves a directory from srcDir to dstDir, including all its contents.
+// If dstDir already exists and is not empty, it returns an error.
+// If the parent directory of dstDir does not exist, it will be created.
+func MoveDirectory(srcDir, dstDir string) error {
+	if PathExists(dstDir) {
+		return fmt.Errorf("destination directory %s already exists", dstDir)
+	}
+
+	// Get the parent directory of the destination directory
+	parentDir := filepath.Dir(dstDir)
+	if err := Mkdir(parentDir); err != nil {
+		return fmt.Errorf("failed to create parent directories for %s: %w", dstDir, err)
+	}
+
+	if err := os.Rename(srcDir, dstDir); err != nil {
+		return fmt.Errorf("failed to move directory from %s to %s: %w", srcDir, dstDir, err)
+	}
+
+	return nil
+}
+
+// SanitizeArchivePath mitigates the "Zip Slip" vulnerability by sanitizing archive file paths.
+// It ensures that the file path is contained within the specified base directory to prevent directory
+// traversal attacks. For more details on the vulnerability, see https://snyk.io/research/zip-slip-vulnerability.
+func SanitizeArchivePath(baseDir, archivePath string) (fullPath string, err error) {
+	fullPath = filepath.Join(baseDir, archivePath)
+	if strings.HasPrefix(fullPath, filepath.Clean(baseDir)) {
+		return fullPath, nil
+	}
+
+	return "", fmt.Errorf("%s: %s", "content filepath is tainted", archivePath)
 }

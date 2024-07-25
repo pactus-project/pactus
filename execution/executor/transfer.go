@@ -3,46 +3,58 @@ package executor
 import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type TransferExecutor struct {
-	strict bool
+	sb       sandbox.Sandbox
+	pld      *payload.TransferPayload
+	fee      amount.Amount
+	sender   *account.Account
+	receiver *account.Account
 }
 
-func NewTransferExecutor(strict bool) *TransferExecutor {
-	return &TransferExecutor{strict: strict}
-}
-
-func (*TransferExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
+func newTransferExecutor(trx *tx.Tx, sb sandbox.Sandbox) (*TransferExecutor, error) {
 	pld := trx.Payload().(*payload.TransferPayload)
 
-	senderAcc := sb.Account(pld.From)
-	if senderAcc == nil {
-		return errors.Errorf(errors.ErrInvalidAddress,
-			"unable to retrieve sender account")
+	sender := sb.Account(pld.From)
+	if sender == nil {
+		return nil, AccountNotFoundError{Address: pld.From}
 	}
-	var receiverAcc *account.Account
+
+	var receiver *account.Account
 	if pld.To == pld.From {
-		receiverAcc = senderAcc
+		receiver = sender
 	} else {
-		receiverAcc = sb.Account(pld.To)
-		if receiverAcc == nil {
-			receiverAcc = sb.MakeNewAccount(pld.To)
+		receiver = sb.Account(pld.To)
+		if receiver == nil {
+			receiver = sb.MakeNewAccount(pld.To)
 		}
 	}
 
-	if senderAcc.Balance() < pld.Amount+trx.Fee() {
+	return &TransferExecutor{
+		sb:       sb,
+		pld:      pld,
+		fee:      trx.Fee(),
+		sender:   sender,
+		receiver: receiver,
+	}, nil
+}
+
+func (e *TransferExecutor) Check(_ bool) error {
+	if e.sender.Balance() < e.pld.Amount+e.fee {
 		return ErrInsufficientFunds
 	}
 
-	senderAcc.SubtractFromBalance(pld.Amount + trx.Fee())
-	receiverAcc.AddToBalance(pld.Amount)
-
-	sb.UpdateAccount(pld.From, senderAcc)
-	sb.UpdateAccount(pld.To, receiverAcc)
-
 	return nil
+}
+
+func (e *TransferExecutor) Execute() {
+	e.sender.SubtractFromBalance(e.pld.Amount + e.fee)
+	e.receiver.AddToBalance(e.pld.Amount)
+
+	e.sb.UpdateAccount(e.pld.From, e.sender)
+	e.sb.UpdateAccount(e.pld.To, e.receiver)
 }

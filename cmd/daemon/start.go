@@ -41,10 +41,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		fileLock := flock.New(lockFilePath)
 
 		locked, err := fileLock.TryLock()
-		if err != nil {
-			// handle unable to attempt to acquire lock
-			cmd.FatalErrorCheck(err)
-		}
+		cmd.FatalErrorCheck(err)
 
 		if !locked {
 			cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)

@@ -2,94 +2,101 @@ package executor
 
 import (
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/util/errors"
+	"github.com/pactus-project/pactus/types/validator"
 )
 
 type BondExecutor struct {
-	strict bool
+	sb       sandbox.Sandbox
+	pld      *payload.BondPayload
+	fee      amount.Amount
+	sender   *account.Account
+	receiver *validator.Validator
 }
 
-func NewBondExecutor(strict bool) *BondExecutor {
-	return &BondExecutor{strict: strict}
-}
-
-func (e *BondExecutor) Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
+func newBondExecutor(trx *tx.Tx, sb sandbox.Sandbox) (*BondExecutor, error) {
 	pld := trx.Payload().(*payload.BondPayload)
 
-	senderAcc := sb.Account(pld.From)
-	if senderAcc == nil {
-		return errors.Errorf(errors.ErrInvalidAddress,
-			"unable to retrieve sender account")
+	sender := sb.Account(pld.From)
+	if sender == nil {
+		return nil, AccountNotFoundError{Address: pld.From}
 	}
 
-	receiverVal := sb.Validator(pld.To)
-	if receiverVal == nil {
+	receiver := sb.Validator(pld.To)
+	if receiver == nil {
 		if pld.PublicKey == nil {
-			return errors.Errorf(errors.ErrInvalidPublicKey,
-				"public key is not set")
+			return nil, ErrPublicKeyNotSet
 		}
-		// TODO: remove me in future
-		if pld.Stake < sb.Params().MinimumStake {
-			return errors.Errorf(errors.ErrInvalidTx,
-				"validator's stake can't be less than %v", sb.Params().MinimumStake)
-		}
-		receiverVal = sb.MakeNewValidator(pld.PublicKey)
+		receiver = sb.MakeNewValidator(pld.PublicKey)
 	} else if pld.PublicKey != nil {
-		return errors.Errorf(errors.ErrInvalidPublicKey,
-			"public key is set")
+		return nil, ErrPublicKeyAlreadySet
 	}
-	if receiverVal.UnbondingHeight() > 0 {
-		return errors.Errorf(errors.ErrInvalidHeight,
-			"validator has unbonded at height %v", receiverVal.UnbondingHeight())
+
+	return &BondExecutor{
+		sb:       sb,
+		pld:      pld,
+		fee:      trx.Fee(),
+		sender:   sender,
+		receiver: receiver,
+	}, nil
+}
+
+func (e *BondExecutor) Check(strict bool) error {
+	if e.receiver.UnbondingHeight() > 0 {
+		return ErrValidatorUnbonded
 	}
-	if e.strict {
+
+	if e.sender.Balance() < e.pld.Stake+e.fee {
+		return ErrInsufficientFunds
+	}
+
+	if e.pld.Stake < e.sb.Params().MinimumStake {
+		// This check prevents a potential attack where an attacker could send zero
+		// or a small amount of stake to a full validator, effectively parking the
+		// validator for the bonding period.
+		if e.pld.Stake == 0 || e.pld.Stake+e.receiver.Stake() != e.sb.Params().MaximumStake {
+			return SmallStakeError{
+				Minimum: e.sb.Params().MinimumStake,
+			}
+		}
+	}
+
+	if e.receiver.Stake()+e.pld.Stake > e.sb.Params().MaximumStake {
+		return MaximumStakeError{
+			Maximum: e.sb.Params().MaximumStake,
+		}
+	}
+
+	if strict {
 		// In strict mode, bond transactions will be rejected if a validator is
 		// already in the committee.
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
-		if sb.Committee().Contains(pld.To) {
-			return errors.Errorf(errors.ErrInvalidTx,
-				"validator %v is in committee", pld.To)
+		if e.sb.Committee().Contains(e.pld.To) {
+			return ErrValidatorInCommittee
 		}
 
 		// In strict mode, bond transactions will be rejected if a validator is
 		// going to join the committee in the next height.
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
-		if sb.IsJoinedCommittee(pld.To) {
-			return errors.Errorf(errors.ErrInvalidTx,
-				"validator %v joins committee in the next height", pld.To)
+		if e.sb.IsJoinedCommittee(e.pld.To) {
+			return ErrValidatorInCommittee
 		}
 	}
-	if senderAcc.Balance() < pld.Stake+trx.Fee() {
-		return ErrInsufficientFunds
-	}
-	if receiverVal.Stake()+pld.Stake > sb.Params().MaximumStake {
-		return errors.Errorf(errors.ErrInvalidAmount,
-			"validator's stake can't be more than %v", sb.Params().MaximumStake)
-	}
-
-	// TODO: remove me in future
-	// We can have a level for committing blocks even if they are not fully compatible with the current rules.
-	// However, since they were committed in the past, they should be accepted by new nodes.
-	if sb.CurrentHeight() > 740_000 {
-		if pld.Stake < sb.Params().MinimumStake {
-			if pld.Stake == 0 || receiverVal.Stake()+pld.Stake != sb.Params().MaximumStake {
-				return errors.Errorf(errors.ErrInvalidTx,
-					"stake amount should not be less than %v", sb.Params().MinimumStake)
-			}
-		}
-	}
-
-	senderAcc.SubtractFromBalance(pld.Stake + trx.Fee())
-	receiverVal.AddToStake(pld.Stake)
-	receiverVal.UpdateLastBondingHeight(sb.CurrentHeight())
-
-	sb.UpdatePowerDelta(int64(pld.Stake))
-	sb.UpdateAccount(pld.From, senderAcc)
-	sb.UpdateValidator(receiverVal)
 
 	return nil
+}
+
+func (e *BondExecutor) Execute() {
+	e.sender.SubtractFromBalance(e.pld.Stake + e.fee)
+	e.receiver.AddToStake(e.pld.Stake)
+	e.receiver.UpdateLastBondingHeight(e.sb.CurrentHeight())
+
+	e.sb.UpdatePowerDelta(int64(e.pld.Stake))
+	e.sb.UpdateAccount(e.pld.From, e.sender)
+	e.sb.UpdateValidator(e.receiver)
 }

@@ -161,6 +161,8 @@ func TestGetBlockchainInfo(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, td.mockState.TestStore.LastHeight, res.LastBlockHeight)
 		assert.NotEmpty(t, res.LastBlockHash)
+		assert.Zero(t, res.PruningHeight)
+		assert.False(t, res.IsPruned)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

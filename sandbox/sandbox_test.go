@@ -225,15 +225,13 @@ func TestTotalAccountCounter(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Should update total account counter", func(t *testing.T) {
-		assert.Equal(t, int32(len(td.valKeys)+1), td.store.TotalAccounts())
+		totalAccs := td.store.TotalAccounts()
 
-		addr1 := td.RandAccAddress()
-		addr2 := td.RandAccAddress()
-		acc := td.sandbox.MakeNewAccount(addr1)
-		assert.Equal(t, int32(td.sandbox.Committee().Size()+1), acc.Number())
-		acc2 := td.sandbox.MakeNewAccount(addr2)
-		assert.Equal(t, int32(td.sandbox.Committee().Size()+2), acc2.Number())
-		assert.Zero(t, acc2.Balance())
+		acc1 := td.sandbox.MakeNewAccount(td.RandAccAddress())
+		assert.Equal(t, totalAccs, acc1.Number())
+
+		acc2 := td.sandbox.MakeNewAccount(td.RandAccAddress())
+		assert.Equal(t, totalAccs+1, acc2.Number())
 	})
 }
 
@@ -241,20 +239,15 @@ func TestTotalValidatorCounter(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Should update total validator counter", func(t *testing.T) {
-		assert.Equal(t, int32(td.sandbox.Committee().Size()), td.store.TotalValidators())
+		totalVals := td.store.TotalValidators()
 
 		pub, _ := td.RandBLSKeyPair()
 		pub2, _ := td.RandBLSKeyPair()
 		val1 := td.sandbox.MakeNewValidator(pub)
-		val1.UpdateLastBondingHeight(td.sandbox.CurrentHeight())
-		assert.Equal(t, int32(td.sandbox.Committee().Size()), val1.Number())
-		assert.Equal(t, td.sandbox.CurrentHeight(), val1.LastBondingHeight())
+		assert.Equal(t, totalVals, val1.Number())
 
 		val2 := td.sandbox.MakeNewValidator(pub2)
-		val2.UpdateLastBondingHeight(td.sandbox.CurrentHeight() + 1)
-		assert.Equal(t, int32(td.sandbox.Committee().Size()+1), val2.Number())
-		assert.Equal(t, td.sandbox.CurrentHeight()+1, val2.LastBondingHeight())
-		assert.Zero(t, val2.Stake())
+		assert.Equal(t, totalVals+1, val2.Number())
 	})
 }
 

@@ -1393,9 +1393,16 @@ Message has no fields.
   </tr>
      <tr>
     <td class="fw-bold">pruning_height</td>
-    <td> int32</td>
+    <td> uint32</td>
     <td>
     Lowest-height block stored (only present if pruning is enabled)
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">last_block_time</td>
+    <td> int64</td>
+    <td>
+    The last block time as timestamp
     </td>
   </tr>
      </tbody>

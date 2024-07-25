@@ -34,10 +34,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		fileLock := flock.New(lockFilePath)
 
 		locked, err := fileLock.TryLock()
-		if err != nil {
-			// handle unable to attempt to acquire lock
-			cmd.FatalErrorCheck(err)
-		}
+		cmd.FatalErrorCheck(err)
 
 		if !locked {
 			cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
@@ -114,7 +111,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 }
 
 func pruningProgressBar(prunedCount, skippedCount, totalCount uint32) {
-	bar := cmd.TerminalProgressBar(int(totalCount), 30, false)
+	bar := cmd.TerminalProgressBar(int64(totalCount), 30)
 	bar.Describe(fmt.Sprintf("Pruned: %d | Skipped: %d", prunedCount, skippedCount))
 	err := bar.Add(int(prunedCount + skippedCount))
 	cmd.FatalErrorCheck(err)

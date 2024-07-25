@@ -6,6 +6,10 @@ on:
       - opened
       - edited
       - synchronize
+      - reopened
+
+permissions:
+  pull-requests: read
 
 jobs:
   main:
@@ -15,3 +19,50 @@ jobs:
       - uses: amannn/action-semantic-pull-request@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Configure which scopes are allowed (newline-delimited).
+          scopes: |
+            github
+            linter
+            deps
+            makefile
+            release
+            other
+            daemon
+            cmd
+            gtk
+            shell
+            wallet-cmd
+            committee
+            config
+            consensus
+            crypto
+            docs
+            execution
+            genesis
+            network
+            node
+            sandbox
+            scripts
+            sortition
+            state
+            store
+            sync
+            main
+            txpool
+            types
+            util
+            version
+            wallet
+            grpc
+            http
+            jsonrpc
+            nanomsg
+          # Configure that a scope must always be provided.
+          requireScope: true
+          # The subject should not start with an uppercase character and should not end with a period.
+          subjectPattern: ^(?![A-Z]).+[^.]$
+          subjectPatternError: |
+            The subject "{subject}" cannot start with an uppercase character or end with a period.
+
+
