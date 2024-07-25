@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"github.com/gofrs/flock"
 	"github.com/gotk3/gotk3/gdk"
@@ -33,6 +34,10 @@ func init() {
 	passwordOpt = flag.String("password", "", "wallet password")
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
 	version.NodeAgent.AppType = "gui"
+	if runtime.GOOS == "darwin" {
+		runtime.UnlockOSThread()
+		runtime.LockOSThread()
+	}
 	gtk.Init(nil)
 }
 

@@ -8,9 +8,60 @@
   </meta>
   <plist>${prefix:bundle}/Info.plist</plist>
   <main-binary>${prefix:bundle}/pactus-gui</main-binary>
+  <resources>
+    <resource>Resources/*</resource>
+  </resources>
 
-  <binary>
-    ${prefix}/lib/gdk-pixbuf-2.0/${pkg:gdk-pixbuf-2.0:gdk_pixbuf_binary_version}/loaders/*.so
-  </binary>
+  <!-- GTK+3 Core Libraries -->
+  <binary>${prefix:default}/lib/libgtk-3.0.dylib</binary>
+  <binary>${prefix:default}/lib/libgdk-3.0.dylib</binary>
+  <binary>${prefix:default}/lib/libgdk_pixbuf-2.0.dylib</binary>
+  <binary>${prefix:default}/lib/libgdk_pixbuf-2.0.0.dylib</binary>
+  <binary>${prefix:default}/lib/libcairo.2.dylib</binary>
+  <binary>${prefix:default}/lib/libcairo.dylib</binary>
+  <binary>${prefix:default}/lib/libpango-1.0.dylib</binary>
+  <binary>${prefix:default}/lib/libpango-1.0.0.dylib</binary>
+  <binary>${prefix:default}/lib/libpangocairo-1.0.dylib</binary>
+  <binary>${prefix:default}/lib/libpangocairo-1.0.0.dylib</binary>
+  <binary>${prefix:default}/lib/libcairo-gobject.dylib</binary>
+  <binary>${prefix:default}/lib/libcairo-gobject.2.dylib</binary>
+  <binary>${prefix:default}/lib/libpangoft2-1.0.dylib</binary>
+  <binary>${prefix:default}/lib/libatk-1.0.dylib</binary>
+  <binary>${prefix:default}/lib/libatk-1.0.0.dylib</binary>
+  <binary>${prefix:default}/lib/libepoxy.0.dylib</binary>
+  <binary>${prefix:default}/lib/libepoxy.dylib</binary>
 
-  </app-bundle>
+  <!-- Glib Libraries -->
+  <binary>${prefix:default}/lib/libgmodule-2.0.0.dylib</binary>
+  <binary>${prefix:default}/lib/libgmodule-2.0.dylib</binary>
+  <binary>${prefix:default}/lib/libgobject-2.0.dylib</binary>
+  <binary>${prefix:default}/lib/libgobject-2.0.0.dylib</binary>
+  <binary>${prefix:default}/lib/libglib-2.0.dylib</binary>
+  <binary>${prefix:default}/lib/libglib-2.0.0.dylib</binary>
+  <binary>${prefix:default}/lib/libgio-2.0.dylib</binary>
+  <binary>${prefix:default}/lib/libgio-2.0.0.dylib</binary>
+  <binary>${prefix:default}/lib/libintl.8.dylib</binary>
+
+  <!-- Other Dependencies -->
+  <binary>${prefix:default}/lib/libfontconfig.1.dylib</binary>
+  <binary>${prefix:default}/lib/libfreetype.6.dylib</binary>
+  <binary>${prefix:default}/lib/libharfbuzz.0.dylib</binary>
+  <binary>${prefix:default}/lib/libfribidi.0.dylib</binary>
+
+  <!-- Additional Dependencies -->
+  <binary>${prefix:default}/lib/libpixman-1.dylib</binary>
+  <binary>${prefix:default}/lib/libpixman-1.0.dylib</binary>
+  <binary>${prefix:default}/lib/libpng16.16.dylib</binary>
+  <binary>${prefix:default}/lib/libpng16.dylib</binary>
+  <binary>${prefix:default}/lib/libxcb-shm.0.dylib</binary>
+  <binary>${prefix:default}/lib/libxcb-shm.dylib</binary>
+  <binary>${prefix:default}/lib/libxcb-shm.0.0.0.dylib</binary>
+  <binary>${prefix:default}/lib/libxcb.1.dylib</binary>
+  <binary>${prefix:default}/lib/libXrender.1.dylib</binary>
+  <binary>${prefix:default}/lib/libXrender.dylib</binary>
+  <binary>${prefix:default}/lib/libX11.6.dylib</binary>
+  <binary>${prefix:default}/lib/libxcb-render.0.dylib</binary>
+  <binary>${prefix:default}/lib/libXext.6.dylib</binary>
+  <binary>${prefix:default}/lib/libXfixes.3.dylib</binary>
+  <binary>${prefix:default}/lib/libXi.6.dylib</binary>
+</app-bundle>
