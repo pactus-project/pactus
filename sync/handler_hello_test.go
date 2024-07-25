@@ -30,7 +30,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			from := td.RandPeerID()
 			td.receivingNewMessage(td.sync, msg, from)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
 		})
 
 	t.Run("Receiving Hello message from a peer. Genesis hash is wrong.",
@@ -45,7 +45,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
 		})
 
 	t.Run("Receiving a Hello message from a peer. The time difference is greater than or equal to -10",
@@ -60,7 +60,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
 		})
 
 	t.Run("Receiving Hello message from a peer. Difference is less or equal than 20 seconds.",
@@ -75,7 +75,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
 		})
 
 	t.Run("Non supporting version.",
@@ -96,7 +96,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
 		})
 
 	t.Run("Invalid agent.",
@@ -111,7 +111,7 @@ func TestParsingHelloMessages(t *testing.T) {
 			td.receivingNewMessage(td.sync, msg, pid)
 			td.checkPeerStatus(t, pid, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeRejected)
+			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
 		})
 
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info",
@@ -126,18 +126,18 @@ func TestParsingHelloMessages(t *testing.T) {
 			td.receivingNewMessage(td.sync, msg, pid)
 
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, bdl.Message.(*message.HelloAckMessage).ResponseCode, message.ResponseCodeOK)
+			assert.Equal(t, message.ResponseCodeOK, bdl.Message.(*message.HelloAckMessage).ResponseCode)
 
 			// Check if the peer info is updated
 			p := td.sync.peerSet.GetPeer(pid)
 
 			pub := valKey.PublicKey()
-			assert.Equal(t, p.Status, status.StatusConnected)
-			assert.Equal(t, p.Agent, version.NodeAgent.String())
-			assert.Equal(t, p.Moniker, "kitty")
+			assert.Equal(t, status.StatusConnected, p.Status)
+			assert.Equal(t, version.NodeAgent.String(), p.Agent)
+			assert.Equal(t, "kitty", p.Moniker)
 			assert.Contains(t, p.ConsensusKeys, pub)
-			assert.Equal(t, p.PeerID, pid)
-			assert.Equal(t, p.Height, peerHeight)
+			assert.Equal(t, pid, p.PeerID)
+			assert.Equal(t, peerHeight, p.Height)
 			assert.True(t, p.IsFullNode())
 		})
 }

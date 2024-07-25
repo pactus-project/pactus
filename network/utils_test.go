@@ -43,7 +43,7 @@ func TestMakeMultiAddrs(t *testing.T) {
 			actualPis, actualError := MakeMultiAddrs(tc.inputAddrs)
 
 			if tc.expected != nil {
-				assert.Equal(t, actualPis, tc.expected)
+				assert.Equal(t, tc.expected, actualPis)
 				assert.NoError(t, actualError)
 			} else {
 				assert.Error(t, actualError)
@@ -100,7 +100,7 @@ func TestMakeAddrInfos(t *testing.T) {
 			actualPis, actualError := MakeAddrInfos(tc.inputAddrs)
 
 			if tc.expectedPis != nil {
-				assert.Equal(t, actualPis, tc.expectedPis)
+				assert.Equal(t, tc.expectedPis, actualPis)
 				assert.NoError(t, actualError)
 			} else {
 				assert.Error(t, actualError)
@@ -159,5 +159,5 @@ func TestMessageIdFunc(t *testing.T) {
 	m := &lp2pspb.Message{Data: []byte("zarb")}
 	id := MessageIDFunc(m)
 
-	assert.Equal(t, "\x12\xb3\x89\x77\xf2\xd6\x7f\x06\xf0\xc0\xcd\x54\xaa\xf7\x32\x4c\xf4\xfe\xe1\x84", id)
+	assert.Equal(t, id, "\x12\xb3\x89\x77\xf2\xd6\x7f\x06\xf0\xc0\xcd\x54\xaa\xf7\x32\x4c\xf4\xfe\xe1\x84")
 }

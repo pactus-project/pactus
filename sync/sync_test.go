@@ -93,7 +93,7 @@ func setup(t *testing.T, config *Config) *testData {
 	}
 
 	assert.NoError(t, td.sync.Start())
-	assert.Equal(t, td.sync.Moniker(), config.Moniker)
+	assert.Equal(t, config.Moniker, td.sync.Moniker())
 
 	logger.Info("setup finished, running the tests", "name", t.Name())
 
@@ -222,7 +222,7 @@ func (td *testData) addValidatorToCommittee(t *testing.T, pub crypto.PublicKey) 
 func (td *testData) checkPeerStatus(t *testing.T, pid peer.ID, code status.Status) {
 	t.Helper()
 
-	require.Equal(t, td.sync.peerSet.GetPeerStatus(pid), code)
+	require.Equal(t, code, td.sync.peerSet.GetPeerStatus(pid))
 }
 
 func TestStop(t *testing.T) {
@@ -254,7 +254,7 @@ func TestConnectEvent(t *testing.T) {
 		if p == nil {
 			return false
 		}
-		assert.Equal(t, p.Address, "/ip4/2.2.2.2/tcp/21888")
+		assert.Equal(t, "/ip4/2.2.2.2/tcp/21888", p.Address)
 
 		return p.Status == status.StatusConnected
 	}, time.Second, 100*time.Millisecond)

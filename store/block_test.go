@@ -27,14 +27,14 @@ func TestBlockStore(t *testing.T) {
 
 		cBlk, err := td.store.Block(lastHeight + 1)
 		assert.NoError(t, err)
-		assert.Equal(t, cBlk.Height, lastHeight+1)
+		assert.Equal(t, lastHeight+1, cBlk.Height)
 
 		d, _ := nextBlk.Bytes()
 		assert.True(t, bytes.Equal(cBlk.Data, d))
 
 		cert := td.store.LastCertificate()
 		assert.NoError(t, err)
-		assert.Equal(t, cert.Hash(), nextCert.Hash())
+		assert.Equal(t, nextCert.Hash(), cert.Hash())
 	})
 }
 

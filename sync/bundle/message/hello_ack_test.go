@@ -8,7 +8,7 @@ import (
 
 func TestHelloAckType(t *testing.T) {
 	m := &HelloAckMessage{}
-	assert.Equal(t, m.Type(), TypeHelloAck)
+	assert.Equal(t, TypeHelloAck, m.Type())
 }
 
 func TestHelloAckMessage(t *testing.T) {

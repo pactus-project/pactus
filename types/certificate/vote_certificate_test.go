@@ -30,11 +30,11 @@ func TestVoteCertificate(t *testing.T) {
 	cert := new(certificate.VoteCertificate)
 	err := cert.Decode(r)
 	assert.NoError(t, err)
-	assert.Equal(t, cert.Height(), uint32(0x01020304))
-	assert.Equal(t, cert.Round(), int16(0x0001))
-	assert.Equal(t, cert.Committers(), []int32{1, 2, 3, 4, 5, 6})
-	assert.Equal(t, cert.Absentees(), []int32{2})
-	assert.Equal(t, cert.Hash(), certHash)
+	assert.Equal(t, uint32(0x01020304), cert.Height())
+	assert.Equal(t, int16(0x0001), cert.Round())
+	assert.Equal(t, []int32{1, 2, 3, 4, 5, 6}, cert.Committers())
+	assert.Equal(t, []int32{2}, cert.Absentees())
+	assert.Equal(t, certHash, cert.Hash())
 }
 
 func TestVoteCertificateValidatePrepare(t *testing.T) {

@@ -51,12 +51,12 @@ func TestAddBlockVote(t *testing.T) {
 
 	ts.HelperSignVote(invKey, v1)
 	added, err := vs.AddVote(v1)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress) // unknown validator
+	assert.Equal(t, errors.ErrInvalidAddress, errors.Code(err)) // unknown validator
 	assert.False(t, added)
 
 	ts.HelperSignVote(invKey, v2)
 	added, err = vs.AddVote(v2)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature) // invalid signature
+	assert.Equal(t, errors.ErrInvalidSignature, errors.Code(err)) // invalid signature
 	assert.False(t, added)
 
 	ts.HelperSignVote(valKey, v2)
@@ -70,7 +70,7 @@ func TestAddBlockVote(t *testing.T) {
 
 	ts.HelperSignVote(valKey, v3)
 	added, err = vs.AddVote(v3)
-	assert.Equal(t, errors.Code(err), errors.ErrDuplicateVote)
+	assert.Equal(t, errors.ErrDuplicateVote, errors.Code(err))
 	assert.True(t, added)
 }
 
@@ -96,12 +96,12 @@ func TestAddBinaryVote(t *testing.T) {
 
 	ts.HelperSignVote(invKey, v1)
 	added, err := vs.AddVote(v1)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidAddress) // unknown validator
+	assert.Equal(t, errors.ErrInvalidAddress, errors.Code(err)) // unknown validator
 	assert.False(t, added)
 
 	ts.HelperSignVote(invKey, v2)
 	added, err = vs.AddVote(v2)
-	assert.Equal(t, errors.Code(err), errors.ErrInvalidSignature) // invalid signature
+	assert.Equal(t, errors.ErrInvalidSignature, errors.Code(err)) // invalid signature
 	assert.False(t, added)
 
 	ts.HelperSignVote(valKey, v2)
@@ -115,7 +115,7 @@ func TestAddBinaryVote(t *testing.T) {
 
 	ts.HelperSignVote(valKey, v3)
 	added, err = vs.AddVote(v3)
-	assert.Equal(t, errors.Code(err), errors.ErrDuplicateVote)
+	assert.Equal(t, errors.ErrDuplicateVote, errors.Code(err))
 	assert.True(t, added)
 }
 
@@ -144,19 +144,19 @@ func TestDuplicateBlockVote(t *testing.T) {
 	assert.True(t, added)
 
 	added, err = vs.AddVote(duplicatedVote1)
-	assert.Equal(t, errors.Code(err), errors.ErrDuplicateVote)
+	assert.Equal(t, errors.ErrDuplicateVote, errors.Code(err))
 	assert.True(t, added)
 
 	added, err = vs.AddVote(duplicatedVote2)
-	assert.Equal(t, errors.Code(err), errors.ErrDuplicateVote)
+	assert.Equal(t, errors.ErrDuplicateVote, errors.Code(err))
 	assert.True(t, added)
 
 	bv1 := vs.BlockVotes(h1)
 	bv2 := vs.BlockVotes(h2)
 	bv3 := vs.BlockVotes(h3)
-	assert.Equal(t, bv1[addr], correctVote)
-	assert.Equal(t, bv2[addr], duplicatedVote1)
-	assert.Equal(t, bv3[addr], duplicatedVote2)
+	assert.Equal(t, correctVote, bv1[addr])
+	assert.Equal(t, duplicatedVote1, bv2[addr])
+	assert.Equal(t, duplicatedVote2, bv3[addr])
 	assert.False(t, vs.HasQuorumHash())
 }
 
@@ -185,11 +185,11 @@ func TestDuplicateBinaryVote(t *testing.T) {
 	assert.True(t, added)
 
 	added, err = vs.AddVote(duplicatedVote1)
-	assert.Equal(t, errors.Code(err), errors.ErrDuplicateVote)
+	assert.Equal(t, errors.ErrDuplicateVote, errors.Code(err))
 	assert.True(t, added)
 
 	added, err = vs.AddVote(duplicatedVote2)
-	assert.Equal(t, errors.Code(err), errors.ErrDuplicateVote)
+	assert.Equal(t, errors.ErrDuplicateVote, errors.Code(err))
 	assert.True(t, added)
 
 	assert.False(t, vs.HasOneThirdOfTotalPower(0))
@@ -235,7 +235,7 @@ func TestQuorum(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.NotNil(t, vs.QuorumHash())
-	assert.Equal(t, vs.QuorumHash(), &blockHash)
+	assert.Equal(t, &blockHash, vs.QuorumHash())
 	assert.True(t, vs.HasQuorumHash())
 	assert.Contains(t, vs.BlockVotes(blockHash), v4.Signer())
 }
@@ -268,13 +268,13 @@ func TestAllBlockVotes(t *testing.T) {
 	_, err = vs.AddVote(v3)
 	assert.NoError(t, err)
 
-	assert.Equal(t, vs.QuorumHash(), &h1)
+	assert.Equal(t, &h1, vs.QuorumHash())
 
 	_, err = vs.AddVote(v4)
 	assert.Error(t, err) // duplicated
 
 	// Check accumulated power
-	assert.Equal(t, vs.QuorumHash(), &h1)
+	assert.Equal(t, &h1, vs.QuorumHash())
 
 	// Check previous votes
 	assert.Contains(t, vs.AllVotes(), v1)
@@ -317,7 +317,7 @@ func TestAllBinaryVotes(t *testing.T) {
 	assert.Nil(t, ranVote1)
 
 	ranVote2 := vs.GetRandomVote(1, vote.CPValueYes)
-	assert.Equal(t, ranVote2, v2)
+	assert.Equal(t, v2, ranVote2)
 }
 
 func TestOneThirdPower(t *testing.T) {

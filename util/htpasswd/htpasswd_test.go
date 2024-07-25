@@ -44,7 +44,7 @@ func TestExtractBasicAuth(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			require.Equal(t, user+":"+encodedPass, tt.input)
+			require.Equal(t, tt.input, user+":"+encodedPass)
 		})
 	}
 }

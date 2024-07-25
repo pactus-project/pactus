@@ -8,38 +8,38 @@ import (
 )
 
 func TestNodeID(t *testing.T) {
-	assert.Equal(t, nodeID(0, 0), 0x00000000)
-	assert.Equal(t, nodeID(0, 1), 0x01000000)
-	assert.Equal(t, nodeID(1, 0), 0x00000001)
-	assert.Equal(t, nodeID(1, 1), 0x01000001)
-	assert.Equal(t, nodeID(0xffffff, 0xff), 0xffffffff)
-	assert.Equal(t, nodeID(0xffffff, 0x00), 0x00ffffff)
-	assert.Equal(t, nodeID(0xff00ff, 0x77), 0x77ff00ff)
+	assert.Equal(t, 0x00000000, nodeID(0, 0))
+	assert.Equal(t, 0x01000000, nodeID(0, 1))
+	assert.Equal(t, 0x00000001, nodeID(1, 0))
+	assert.Equal(t, 0x01000001, nodeID(1, 1))
+	assert.Equal(t, 0xffffffff, nodeID(0xffffff, 0xff))
+	assert.Equal(t, 0x00ffffff, nodeID(0xffffff, 0x00))
+	assert.Equal(t, 0x77ff00ff, nodeID(0xff00ff, 0x77))
 }
 
 func TestCalculateHeight(t *testing.T) {
 	tree := New()
 
 	tree.recalculateHeight(0)
-	assert.Equal(t, tree.maxHeight, 0)
+	assert.Equal(t, 0, tree.maxHeight)
 
 	tree.recalculateHeight(1)
-	assert.Equal(t, tree.maxHeight, 1)
+	assert.Equal(t, 1, tree.maxHeight)
 
 	tree.recalculateHeight(2)
-	assert.Equal(t, tree.maxHeight, 2)
+	assert.Equal(t, 2, tree.maxHeight)
 
 	tree.recalculateHeight(4)
-	assert.Equal(t, tree.maxHeight, 3)
+	assert.Equal(t, 3, tree.maxHeight)
 
 	tree.recalculateHeight(5)
-	assert.Equal(t, tree.maxHeight, 4)
+	assert.Equal(t, 4, tree.maxHeight)
 
 	tree.recalculateHeight(8)
-	assert.Equal(t, tree.maxHeight, 4)
+	assert.Equal(t, 4, tree.maxHeight)
 
 	tree.recalculateHeight(9)
-	assert.Equal(t, tree.maxHeight, 5)
+	assert.Equal(t, 5, tree.maxHeight)
 }
 
 func TestMerkleTree(t *testing.T) {
@@ -81,12 +81,12 @@ func TestMerkleTree(t *testing.T) {
 	for i, d := range data {
 		tree.SetData(i, []byte(d))
 		expected, _ := hex.DecodeString(roots[i])
-		assert.Equal(t, tree.Root().Bytes(), expected, "Root %d not matched", i)
+		assert.Equal(t, expected, tree.Root().Bytes(), "Root %d not matched", i)
 	}
 
 	// Modifying some data blocks
 	tree.SetData(0, []byte("a"))
 	tree.SetData(21, []byte("v"))
 	expected, _ := hex.DecodeString("ec4446ea16b8f82083cc2d727b8f9e7b9c318e35bb37295a2e87064393572800")
-	assert.Equal(t, tree.Root().Bytes(), expected)
+	assert.Equal(t, expected, tree.Root().Bytes())
 }

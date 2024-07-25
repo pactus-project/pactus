@@ -11,7 +11,7 @@ import (
 
 func TestTransactionsType(t *testing.T) {
 	m := &TransactionsMessage{}
-	assert.Equal(t, m.Type(), TypeTransaction)
+	assert.Equal(t, TypeTransaction, m.Type())
 }
 
 func TestTransactionsMessage(t *testing.T) {
@@ -20,7 +20,7 @@ func TestTransactionsMessage(t *testing.T) {
 	t.Run("No transactions", func(t *testing.T) {
 		m := NewTransactionsMessage(nil)
 
-		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidMessage)
+		assert.Equal(t, errors.ErrInvalidMessage, errors.Code(m.BasicCheck()))
 	})
 
 	t.Run("OK", func(t *testing.T) {

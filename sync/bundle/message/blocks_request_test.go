@@ -9,26 +9,26 @@ import (
 
 func TestLatestBlocksRequestType(t *testing.T) {
 	m := &BlocksRequestMessage{}
-	assert.Equal(t, m.Type(), TypeBlocksRequest)
+	assert.Equal(t, TypeBlocksRequest, m.Type())
 }
 
 func TestBlocksRequestMessage(t *testing.T) {
 	t.Run("Invalid height", func(t *testing.T) {
 		m := NewBlocksRequestMessage(1, 0, 0)
 
-		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidHeight)
+		assert.Equal(t, errors.ErrInvalidHeight, errors.Code(m.BasicCheck()))
 	})
 	t.Run("Invalid count", func(t *testing.T) {
 		m := NewBlocksRequestMessage(1, 200, 0)
 
-		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidMessage)
+		assert.Equal(t, errors.ErrInvalidMessage, errors.Code(m.BasicCheck()))
 	})
 
 	t.Run("OK", func(t *testing.T) {
 		m := NewBlocksRequestMessage(1, 100, 7)
 
 		assert.NoError(t, m.BasicCheck())
-		assert.Equal(t, m.To(), uint32(106))
+		assert.Equal(t, uint32(106), m.To())
 		assert.Contains(t, m.String(), "100")
 	})
 }

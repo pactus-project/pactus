@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -64,9 +65,8 @@ func TestBasicAuth(t *testing.T) {
 
 			_, err := interceptor(ctx, nil, &grpc.UnaryServerInfo{}, mockUnaryHandler)
 
-			if got, want := status.Code(err), tt.expectedError; got != want {
-				t.Errorf("expected error code %v, got %v", want, got)
-			}
+			got, want := status.Code(err), tt.expectedError
+			assert.Equal(t, want, got)
 		})
 	}
 }
@@ -77,7 +77,5 @@ func TestGrpcRecovery(t *testing.T) {
 	interceptor := s.server.Recovery()
 
 	_, err := interceptor(context.Background(), nil, &grpc.UnaryServerInfo{}, mockUnaryPanicHandler)
-	if status.Code(err) != codes.Unknown {
-		t.Errorf("expected error code %v, got %v", codes.Unknown, err)
-	}
+	assert.Equal(t, codes.Unknown, status.Code(err))
 }

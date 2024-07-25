@@ -11,7 +11,7 @@ import (
 
 func TestBlockAnnounceType(t *testing.T) {
 	m := &BlockAnnounceMessage{}
-	assert.Equal(t, m.Type(), TypeBlockAnnounce)
+	assert.Equal(t, TypeBlockAnnounce, m.Type())
 }
 
 func TestBlockAnnounceMessage(t *testing.T) {

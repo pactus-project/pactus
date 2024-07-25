@@ -277,7 +277,7 @@ func TestGetTotalBalance(t *testing.T) {
 				WalletName: walletName,
 			})
 		assert.NoError(t, err)
-		assert.Equal(t, res.WalletName, walletName)
+		assert.Equal(t, walletName, res.WalletName)
 		assert.Zero(t, res.TotalBalance)
 	})
 

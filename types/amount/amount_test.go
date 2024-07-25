@@ -106,7 +106,7 @@ func TestAmountCreation(t *testing.T) {
 				"%v: Negative test Amount creation succeeded (value %v) when should fail", test.name, amt)
 		}
 
-		assert.Equal(t, amt, test.expected,
+		assert.Equal(t, test.expected, amt,
 			"%v: Created amount %v does not match expected %v", test.name, amt, test.expected)
 	}
 }
@@ -193,11 +193,11 @@ func TestAmountUnitConversions(t *testing.T) {
 
 	for _, test := range tests {
 		f := test.amount.ToUnit(test.unit)
-		assert.Equal(t, f, test.converted,
+		assert.Equal(t, test.converted, f,
 			"%v: converted value %v does not match expected %v", test.name, f, test.converted)
 
 		str := test.amount.Format(test.unit)
-		assert.Equal(t, str, test.str,
+		assert.Equal(t, test.str, str,
 			"%v: format '%v' does not match expected '%v'", test.name, str, test.str)
 
 		// Verify that Amount.ToPAC works as advertised.
@@ -346,9 +346,9 @@ func TestCoinToChangeConversion(t *testing.T) {
 		amt, err := amount.FromString(test.amount)
 		if test.parsErr == nil {
 			assert.NoError(t, err)
-			assert.Equal(t, amt.ToNanoPAC(), test.NanoPac)
-			assert.Equal(t, amt.ToPAC(), test.PAC)
-			assert.Equal(t, amt.String(), test.str)
+			assert.Equal(t, test.NanoPac, amt.ToNanoPAC())
+			assert.Equal(t, test.PAC, amt.ToPAC())
+			assert.Equal(t, test.str, amt.String())
 		} else {
 			assert.ErrorIs(t, err, test.parsErr)
 		}

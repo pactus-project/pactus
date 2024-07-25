@@ -30,7 +30,7 @@ func TestBlocksRequestMessages(t *testing.T) {
 			assert.Equal(t, message.ResponseCodeRejected, res.ResponseCode)
 			assert.Contains(t, res.Reason, "unknown peer")
 			assert.Zero(t, res.From)
-			assert.Equal(t, res.SessionID, sid)
+			assert.Equal(t, sid, res.SessionID)
 		})
 
 		t.Run("Reject request from peers without handshaking", func(t *testing.T) {
@@ -73,14 +73,14 @@ func TestBlocksRequestMessages(t *testing.T) {
 
 				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				res1 := bdl1.Message.(*message.BlocksResponseMessage)
-				assert.Equal(t, res1.ResponseCode, message.ResponseCodeMoreBlocks)
-				assert.Equal(t, res1.From, curHeight-config.BlockPerMessage)
-				assert.Equal(t, res1.To(), curHeight-1)
-				assert.Equal(t, res1.Count(), config.BlockPerMessage)
+				assert.Equal(t, message.ResponseCodeMoreBlocks, res1.ResponseCode)
+				assert.Equal(t, curHeight-config.BlockPerMessage, res1.From)
+				assert.Equal(t, curHeight-1, res1.To())
+				assert.Equal(t, config.BlockPerMessage, res1.Count())
 
 				bdl2 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				res2 := bdl2.Message.(*message.BlocksResponseMessage)
-				assert.Equal(t, res2.ResponseCode, message.ResponseCodeNoMoreBlocks)
+				assert.Equal(t, message.ResponseCodeNoMoreBlocks, res2.ResponseCode)
 				assert.Zero(t, res2.From)
 				assert.Zero(t, res2.To())
 				assert.Zero(t, res2.Count())
@@ -92,15 +92,15 @@ func TestBlocksRequestMessages(t *testing.T) {
 
 				bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				res1 := bdl1.Message.(*message.BlocksResponseMessage)
-				assert.Equal(t, res1.ResponseCode, message.ResponseCodeMoreBlocks)
-				assert.Equal(t, res1.From, curHeight-config.BlockPerMessage+1)
-				assert.Equal(t, res1.To(), curHeight)
-				assert.Equal(t, res1.Count(), config.BlockPerMessage)
+				assert.Equal(t, message.ResponseCodeMoreBlocks, res1.ResponseCode)
+				assert.Equal(t, curHeight-config.BlockPerMessage+1, res1.From)
+				assert.Equal(t, curHeight, res1.To())
+				assert.Equal(t, config.BlockPerMessage, res1.Count())
 
 				bdl2 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 				res2 := bdl2.Message.(*message.BlocksResponseMessage)
-				assert.Equal(t, res2.ResponseCode, message.ResponseCodeSynced)
-				assert.Equal(t, res2.From, curHeight)
+				assert.Equal(t, message.ResponseCodeSynced, res2.ResponseCode)
+				assert.Equal(t, curHeight, res2.From)
 				assert.Zero(t, res2.To())
 				assert.Zero(t, res2.Count())
 			})
@@ -122,10 +122,10 @@ func TestBlocksRequestMessages(t *testing.T) {
 			td.receivingNewMessage(td.sync, msg, pid)
 
 			msg1 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
-			assert.Equal(t, msg1.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeMoreBlocks)
+			assert.Equal(t, message.ResponseCodeMoreBlocks, msg1.Message.(*message.BlocksResponseMessage).ResponseCode)
 
 			msg2 := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
-			assert.Equal(t, msg2.Message.(*message.BlocksResponseMessage).ResponseCode, message.ResponseCodeNoMoreBlocks)
+			assert.Equal(t, message.ResponseCodeNoMoreBlocks, msg2.Message.(*message.BlocksResponseMessage).ResponseCode)
 		})
 	})
 }

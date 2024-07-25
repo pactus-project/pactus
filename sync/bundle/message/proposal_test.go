@@ -9,7 +9,7 @@ import (
 
 func TestProposalType(t *testing.T) {
 	m := &ProposalMessage{}
-	assert.Equal(t, m.Type(), TypeProposal)
+	assert.Equal(t, TypeProposal, m.Type())
 }
 
 func TestProposalMessage(t *testing.T) {

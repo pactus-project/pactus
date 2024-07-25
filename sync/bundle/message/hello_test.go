@@ -14,7 +14,7 @@ import (
 
 func TestHelloType(t *testing.T) {
 	m := &HelloMessage{}
-	assert.Equal(t, m.Type(), TypeHello)
+	assert.Equal(t, TypeHello, m.Type())
 }
 
 func TestHelloMessage(t *testing.T) {
@@ -37,7 +37,7 @@ func TestHelloMessage(t *testing.T) {
 		m.Sign([]*bls.ValidatorKey{valKey})
 		m.Signature = nil
 
-		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidSignature)
+		assert.Equal(t, errors.ErrInvalidSignature, errors.Code(m.BasicCheck()))
 	})
 
 	t.Run("PublicKeys are empty", func(t *testing.T) {
@@ -47,7 +47,7 @@ func TestHelloMessage(t *testing.T) {
 		m.Sign([]*bls.ValidatorKey{valKey})
 		m.PublicKeys = make([]*bls.PublicKey, 0)
 
-		assert.Equal(t, errors.Code(m.BasicCheck()), errors.ErrInvalidPublicKey)
+		assert.Equal(t, errors.ErrInvalidPublicKey, errors.Code(m.BasicCheck()))
 	})
 
 	t.Run("MyTimeUnixMilli of time1 is less or equal than hello message time", func(t *testing.T) {

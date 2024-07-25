@@ -105,6 +105,6 @@ func TestProposalNextRound(t *testing.T) {
 	// consX accepts his proposal, but doesn't move to the next round
 	assert.NotNil(t, td.consX.log.RoundProposal(1))
 	assert.Nil(t, td.consX.Proposal())
-	assert.Equal(t, td.consX.height, uint32(2))
-	assert.Equal(t, td.consX.round, int16(0))
+	assert.Equal(t, uint32(2), td.consX.height)
+	assert.Equal(t, int16(0), td.consX.round)
 }

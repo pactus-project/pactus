@@ -89,7 +89,7 @@ func TestSetRoundProposal(t *testing.T) {
 	assert.True(t, log.HasRoundProposal(4))
 	assert.Nil(t, log.RoundProposal(0))
 	assert.Nil(t, log.RoundProposal(5))
-	assert.Equal(t, log.RoundProposal(4).Hash(), prop.Hash())
+	assert.Equal(t, prop.Hash(), log.RoundProposal(4).Hash())
 }
 
 func TestCanVote(t *testing.T) {

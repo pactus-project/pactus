@@ -84,7 +84,7 @@ func setup(t *testing.T) *testData {
 	lastCert := certificate.NewBlockCertificate(lastHeight, 0)
 	lastCert.SetSignature(committers, []int32{}, sig)
 	mockStore.SaveBlock(lastBlock, lastCert)
-	assert.Equal(t, mockStore.LastHeight, lastHeight)
+	assert.Equal(t, lastHeight, mockStore.LastHeight)
 
 	lastInfo.UpdateSortitionSeed(lastSeed)
 	lastInfo.UpdateBlockHash(lastBlock.Hash())
@@ -118,7 +118,7 @@ func TestRestoreCommittee(t *testing.T) {
 	assert.Equal(t, td.lastInfo.Certificate().Hash(), li.Certificate().Hash())
 	assert.Equal(t, td.lastInfo.BlockTime(), li.BlockTime())
 	assert.Equal(t, td.lastInfo.Validators(), []*validator.Validator{val0, val1, val2, val3})
-	assert.Equal(t, cmt.Committers(), []int32{1, 4, 2, 3})
+	assert.Equal(t, []int32{1, 4, 2, 3}, cmt.Committers())
 }
 
 func TestRestoreFailed(t *testing.T) {

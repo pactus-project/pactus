@@ -29,7 +29,7 @@ func TestMarshaling(t *testing.T) {
 		[]*validator.Validator{val}, param.DefaultParams())
 	gen2 := new(genesis.Genesis)
 
-	assert.Equal(t, gen1.Params().BlockIntervalInSecond, 10)
+	assert.Equal(t, 10, gen1.Params().BlockIntervalInSecond)
 
 	bz, err := json.MarshalIndent(gen1, " ", " ")
 	require.NoError(t, err)
@@ -52,17 +52,18 @@ func TestGenesisTestnet(t *testing.T) {
 	crypto.AddressHRP = "tpc"
 
 	gen := genesis.TestnetGenesis()
-	assert.Equal(t, len(gen.Validators()), 4)
-	assert.Equal(t, len(gen.Accounts()), 5)
+	assert.Equal(t, 4, len(gen.Validators()))
+	assert.Equal(t, 5, len(gen.Accounts()))
 
 	genTime, _ := time.Parse("2006-01-02", "2024-03-16")
 	expected, _ := hash.FromString("13f96e6fbc9e0de0d53537ac5e894fc8e66be1600436db2df1511dc30696e822")
-	assert.Equal(t, gen.Hash(), expected)
-	assert.Equal(t, gen.GenesisTime(), genTime)
-	assert.Equal(t, gen.Params().BondInterval, uint32(360))
-	assert.Equal(t, gen.ChainType(), genesis.Testnet)
-	assert.Equal(t, gen.TotalSupply(), amount.Amount(42e15))
+	assert.Equal(t, expected, gen.Hash())
+	assert.Equal(t, genTime, gen.GenesisTime())
+	assert.Equal(t, uint32(360), gen.Params().BondInterval)
+	assert.Equal(t, genesis.Testnet, gen.ChainType())
+	assert.Equal(t, amount.Amount(42e15), gen.TotalSupply())
 
+	// reset address HRP global variable to miannet to prevent next tests failing.
 	crypto.AddressHRP = "pc"
 }
 
@@ -73,12 +74,12 @@ func TestGenesisMainnet(t *testing.T) {
 
 	genTime, _ := time.Parse("02 Jan 2006, 15:04 MST", "24 Jan 2024, 20:24 UTC")
 	expected, _ := hash.FromString("e4d59e3145c9d718caf178edb33bc2ca7fe43e5b30990c9d57d53a60c4741432")
-	assert.Equal(t, gen.Hash(), expected)
-	assert.Equal(t, gen.GenesisTime(), genTime)
-	assert.Equal(t, gen.Params().BondInterval, uint32(8640/24))
-	assert.Equal(t, gen.Params().UnbondInterval, uint32(8640*21))
-	assert.Equal(t, gen.ChainType(), genesis.Mainnet)
-	assert.Equal(t, gen.TotalSupply(), amount.Amount(42e15))
+	assert.Equal(t, expected, gen.Hash())
+	assert.Equal(t, genTime, gen.GenesisTime())
+	assert.Equal(t, uint32(8640/24), gen.Params().BondInterval)
+	assert.Equal(t, uint32(8640*21), gen.Params().UnbondInterval)
+	assert.Equal(t, genesis.Mainnet, gen.ChainType())
+	assert.Equal(t, amount.Amount(42e15), gen.TotalSupply())
 }
 
 func TestCheckGenesisAccountAndValidator(t *testing.T) {
@@ -97,10 +98,10 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 	gen := genesis.MakeGenesis(util.Now(), accs, vals, param.DefaultParams())
 
 	for addr, acc := range gen.Accounts() {
-		assert.Equal(t, acc, accs[addr])
+		assert.Equal(t, accs[addr], acc)
 	}
 
 	for i, val := range gen.Validators() {
-		assert.Equal(t, val.Hash(), vals[i].Hash())
+		assert.Equal(t, vals[i].Hash(), val.Hash())
 	}
 }

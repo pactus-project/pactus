@@ -12,7 +12,7 @@ import (
 
 func TestSortitionType(t *testing.T) {
 	pld := SortitionPayload{}
-	assert.Equal(t, pld.Type(), TypeSortition)
+	assert.Equal(t, TypeSortition, pld.Type())
 }
 
 func TestSortitionDecoding(t *testing.T) {
@@ -105,8 +105,8 @@ func TestSortitionDecoding(t *testing.T) {
 			}
 			w := util.NewFixedWriter(pld.SerializeSize())
 			assert.NoError(t, pld.Encode(w))
-			assert.Equal(t, len(w.Bytes()), pld.SerializeSize())
-			assert.Equal(t, w.Bytes(), test.raw)
+			assert.Equal(t, pld.SerializeSize(), len(w.Bytes()))
+			assert.Equal(t, test.raw, w.Bytes())
 
 			// Basic check
 			if test.basicErr != nil {
@@ -116,12 +116,12 @@ func TestSortitionDecoding(t *testing.T) {
 
 				// Check signer
 				if test.raw[0] != 0 {
-					assert.Equal(t, pld.Signer(), crypto.Address(test.raw[:21]))
+					assert.Equal(t, crypto.Address(test.raw[:21]), pld.Signer())
 				} else {
-					assert.Equal(t, pld.Signer(), crypto.TreasuryAddress)
+					assert.Equal(t, crypto.TreasuryAddress, pld.Signer())
 				}
 
-				assert.Equal(t, pld.Value(), test.value)
+				assert.Equal(t, test.value, pld.Value())
 				assert.Nil(t, pld.Receiver())
 			}
 		}

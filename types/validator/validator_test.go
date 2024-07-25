@@ -52,19 +52,19 @@ func TestDecoding(t *testing.T) {
 
 	val, err := validator.FromBytes(d)
 	require.NoError(t, err)
-	assert.Equal(t, val.Number(), int32(1))
-	assert.Equal(t, val.Stake(), amount.Amount(2))
-	assert.Equal(t, val.LastBondingHeight(), uint32(3))
-	assert.Equal(t, val.UnbondingHeight(), uint32(4))
-	assert.Equal(t, val.LastSortitionHeight(), uint32(5))
+	assert.Equal(t, int32(1), val.Number())
+	assert.Equal(t, amount.Amount(2), val.Stake())
+	assert.Equal(t, uint32(3), val.LastBondingHeight())
+	assert.Equal(t, uint32(4), val.UnbondingHeight())
+	assert.Equal(t, uint32(5), val.LastSortitionHeight())
 	d2, _ := val.Bytes()
 	assert.Equal(t, d, d2)
-	assert.Equal(t, val.Hash(), hash.CalcHash(d))
+	assert.Equal(t, hash.CalcHash(d), val.Hash())
 	expected, _ := hash.FromString("243e65ae04727f21d5f7618cea9ff8d4bc82fded1179cf8bd9e11a6b99ac42b2")
-	assert.Equal(t, val.Hash(), expected)
+	assert.Equal(t, expected, val.Hash())
 	pub, _ := bls.PublicKeyFromBytes(d[:96])
 	assert.True(t, val.PublicKey().EqualsTo(pub))
-	assert.Equal(t, val.SerializeSize(), len(d))
+	assert.Equal(t, len(d), val.SerializeSize())
 }
 
 func TestPower(t *testing.T) {
@@ -72,14 +72,14 @@ func TestPower(t *testing.T) {
 
 	val, _ := ts.GenerateTestValidator(ts.RandInt32(1000))
 	val.SubtractFromStake(val.Stake())
-	assert.Equal(t, val.Stake(), amount.Amount(0))
-	assert.Equal(t, val.Power(), int64(1))
+	assert.Equal(t, amount.Amount(0), val.Stake())
+	assert.Equal(t, int64(1), val.Power())
 	val.AddToStake(1)
-	assert.Equal(t, val.Stake(), amount.Amount(1))
-	assert.Equal(t, val.Power(), int64(1))
+	assert.Equal(t, amount.Amount(1), val.Stake())
+	assert.Equal(t, int64(1), val.Power())
 	val.UpdateUnbondingHeight(1)
-	assert.Equal(t, val.Stake(), amount.Amount(1))
-	assert.Equal(t, val.Power(), int64(0))
+	assert.Equal(t, amount.Amount(1), val.Stake())
+	assert.Equal(t, int64(0), val.Power())
 }
 
 func TestAddToStake(t *testing.T) {
@@ -88,7 +88,7 @@ func TestAddToStake(t *testing.T) {
 	val, _ := ts.GenerateTestValidator(100)
 	stake := val.Stake()
 	val.AddToStake(1)
-	assert.Equal(t, val.Stake(), stake+1)
+	assert.Equal(t, stake+1, val.Stake())
 }
 
 func TestSubtractFromStake(t *testing.T) {
@@ -97,7 +97,7 @@ func TestSubtractFromStake(t *testing.T) {
 	val, _ := ts.GenerateTestValidator(100)
 	stake := val.Stake()
 	val.SubtractFromStake(1)
-	assert.Equal(t, val.Stake(), stake-1)
+	assert.Equal(t, stake-1, val.Stake())
 }
 
 func TestClone(t *testing.T) {

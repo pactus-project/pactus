@@ -38,7 +38,7 @@ func TestNewHeightDoubleEntry(t *testing.T) {
 
 	td.checkHeightRound(t, td.consX, 2, 0)
 	assert.True(t, td.consX.active)
-	assert.NotEqual(t, td.consX.currentState.name(), "new-height")
+	assert.NotEqual(t, "new-height", td.consX.currentState.name())
 }
 
 func TestNewHeightTimeBehindNetwork(t *testing.T) {

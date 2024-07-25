@@ -97,8 +97,8 @@ func TestPrivateKeyToString(t *testing.T) {
 		prv, err := bls.PrivateKeyFromString(test.encoded)
 		if test.valid {
 			assert.NoError(t, err, "test %v: unexpected error", no)
-			assert.Equal(t, prv.Bytes(), test.result, "test %v: invalid bytes", no)
-			assert.Equal(t, prv.String(), strings.ToUpper(test.encoded), "test %v: invalid encoded", no)
+			assert.Equal(t, test.result, prv.Bytes(), "test %v: invalid bytes", no)
+			assert.Equal(t, strings.ToUpper(test.encoded), prv.String(), "test %v: invalid encoded", no)
 		} else {
 			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
 		}
@@ -157,7 +157,7 @@ func TestKeyGen(t *testing.T) {
 		} else {
 			assert.NoError(t, err,
 				"test'%v' failed. has error", i)
-			assert.Equal(t, hex.EncodeToString(prv.Bytes()), test.sk,
+			assert.Equal(t, test.sk, hex.EncodeToString(prv.Bytes()),
 				"test '%v' failed. not equal", i)
 		}
 	}

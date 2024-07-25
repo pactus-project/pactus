@@ -116,7 +116,7 @@ func TestConfigBasicCheck(t *testing.T) {
 			tc.updateFn(conf)
 			if tc.expectedErr != nil {
 				err := conf.BasicCheck()
-				assert.ErrorIs(t, tc.expectedErr, err,
+				assert.ErrorIs(t, err, tc.expectedErr,
 					"Expected error not matched for test %d-%s, expected: %s, got: %s", i, tc.name, tc.expectedErr, err)
 			} else {
 				err := conf.BasicCheck()

@@ -33,9 +33,9 @@ func TestGetBlock(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, res.Height, height)
-		assert.Equal(t, res.Hash, b.Hash().String())
-		assert.Equal(t, res.Data, hex.EncodeToString(data))
+		assert.Equal(t, height, res.Height)
+		assert.Equal(t, b.Hash().String(), res.Hash)
+		assert.Equal(t, hex.EncodeToString(data), res.Data)
 		assert.Empty(t, res.Header)
 		assert.Empty(t, res.Txs)
 	})
@@ -46,18 +46,18 @@ func TestGetBlock(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, res.Height, height)
-		assert.Equal(t, res.Hash, b.Hash().String())
+		assert.Equal(t, height, res.Height)
+		assert.Equal(t, b.Hash().String(), res.Hash)
 		assert.Empty(t, res.Data)
 		assert.NotEmpty(t, res.Header)
-		assert.Equal(t, res.PrevCert.Committers, b.PrevCertificate().Committers())
-		assert.Equal(t, res.PrevCert.Absentees, b.PrevCertificate().Absentees())
+		assert.Equal(t, b.PrevCertificate().Committers(), res.PrevCert.Committers)
+		assert.Equal(t, b.PrevCertificate().Absentees(), res.PrevCert.Absentees)
 		for i, trx := range res.Txs {
 			blockTrx := b.Transactions()[i]
 			b, err := blockTrx.Bytes()
 			assert.NoError(t, err)
-			assert.Equal(t, blockTrx.ID().String(), trx.Id)
-			assert.Equal(t, hex.EncodeToString(b), trx.Data)
+			assert.Equal(t, trx.Id, blockTrx.ID().String())
+			assert.Equal(t, trx.Data, hex.EncodeToString(b))
 			assert.Zero(t, trx.LockTime)
 			assert.Empty(t, trx.Signature)
 			assert.Empty(t, trx.PublicKey)
@@ -70,19 +70,19 @@ func TestGetBlock(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, res.Height, height)
-		assert.Equal(t, res.Hash, b.Hash().String())
+		assert.Equal(t, height, res.Height)
+		assert.Equal(t, b.Hash().String(), res.Hash)
 		assert.Empty(t, res.Data)
 		assert.NotEmpty(t, res.Header)
 		assert.NotEmpty(t, res.Txs)
 		for i, trx := range res.Txs {
 			blockTrx := b.Transactions()[i]
 
-			assert.Equal(t, blockTrx.ID().String(), trx.Id)
+			assert.Equal(t, trx.Id, blockTrx.ID().String())
 			assert.Empty(t, trx.Data)
-			assert.Equal(t, blockTrx.LockTime(), trx.LockTime)
-			assert.Equal(t, blockTrx.Signature().String(), trx.Signature)
-			assert.Equal(t, blockTrx.PublicKey().String(), trx.PublicKey)
+			assert.Equal(t, trx.LockTime, blockTrx.LockTime())
+			assert.Equal(t, trx.Signature, blockTrx.Signature().String())
+			assert.Equal(t, trx.PublicKey, blockTrx.PublicKey().String())
 		}
 	})
 
@@ -197,8 +197,8 @@ func TestGetAccount(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, res.Account.Balance, acc.Balance().ToNanoPAC())
-		assert.Equal(t, res.Account.Number, acc.Number())
+		assert.Equal(t, acc.Balance().ToNanoPAC(), res.Account.Balance)
+		assert.Equal(t, acc.Number(), res.Account.Number)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
@@ -324,7 +324,7 @@ func TestGetPublicKey(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, res.PublicKey, val.PublicKey().String())
+		assert.Equal(t, val.PublicKey().String(), res.PublicKey)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
@@ -349,8 +349,8 @@ func TestConsensusInfo(t *testing.T) {
 		assert.NotNil(t, res)
 		assert.False(t, res.Instances[0].Active, true)
 		assert.True(t, res.Instances[1].Active, true)
-		assert.Equal(t, res.Instances[1].Height, uint32(100))
-		assert.Equal(t, res.Instances[0].Votes[0].Type, pactus.VoteType_VOTE_PREPARE)
+		assert.Equal(t, uint32(100), res.Instances[1].Height)
+		assert.Equal(t, pactus.VoteType_VOTE_PREPARE, res.Instances[0].Votes[0].Type)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

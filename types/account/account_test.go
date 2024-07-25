@@ -18,7 +18,7 @@ func TestFromBytes(t *testing.T) {
 	acc, _ := ts.GenerateTestAccount(ts.RandInt32(10000))
 	bs, err := acc.Bytes()
 	require.NoError(t, err)
-	require.Equal(t, acc.SerializeSize(), len(bs))
+	require.Equal(t, len(bs), acc.SerializeSize())
 	acc2, err := account.FromBytes(bs)
 	require.NoError(t, err)
 	assert.Equal(t, acc, acc2)
@@ -34,14 +34,14 @@ func TestDecoding(t *testing.T) {
 
 	acc, err := account.FromBytes(d)
 	require.NoError(t, err)
-	assert.Equal(t, acc.Number(), int32(1))
-	assert.Equal(t, acc.Balance(), amount.Amount(2))
+	assert.Equal(t, int32(1), acc.Number())
+	assert.Equal(t, amount.Amount(2), acc.Balance())
 	d2, _ := acc.Bytes()
 	assert.Equal(t, d, d2)
-	assert.Equal(t, acc.Hash(), hash.CalcHash(d))
+	assert.Equal(t, hash.CalcHash(d), acc.Hash())
 	expected, _ := hash.FromString("c3b75f08e64a66cb980fdc03c3a0b78635a7b1db049096e8bbbd9a2873f3071a")
-	assert.Equal(t, acc.Hash(), expected)
-	assert.Equal(t, acc.SerializeSize(), len(d))
+	assert.Equal(t, expected, acc.Hash())
+	assert.Equal(t, len(d), acc.SerializeSize())
 }
 
 func TestAddToBalance(t *testing.T) {
@@ -50,7 +50,7 @@ func TestAddToBalance(t *testing.T) {
 	acc, _ := ts.GenerateTestAccount(100)
 	bal := acc.Balance()
 	acc.AddToBalance(1)
-	assert.Equal(t, acc.Balance(), bal+1)
+	assert.Equal(t, bal+1, acc.Balance())
 }
 
 func TestSubtractFromBalance(t *testing.T) {
@@ -59,7 +59,7 @@ func TestSubtractFromBalance(t *testing.T) {
 	acc, _ := ts.GenerateTestAccount(100)
 	bal := acc.Balance()
 	acc.SubtractFromBalance(1)
-	assert.Equal(t, acc.Balance(), bal-1)
+	assert.Equal(t, bal-1, acc.Balance())
 }
 
 func TestClone(t *testing.T) {

@@ -84,8 +84,8 @@ func TestMerkleTree_Bitcoin_Block100000(t *testing.T) {
 	}
 
 	tree := NewTreeFromHashes(hashes)
-	assert.Equal(t, tree.Root(), root)
-	assert.Equal(t, tree.Depth(), 2)
+	assert.Equal(t, root, tree.Root())
+	assert.Equal(t, 2, tree.Depth())
 }
 
 func TestMerkleTree_Bitcoin_Block153342(t *testing.T) {
@@ -120,8 +120,8 @@ func TestMerkleTree_Bitcoin_Block153342(t *testing.T) {
 	}
 
 	tree := NewTreeFromHashes(hashes)
-	assert.Equal(t, tree.Root(), root)
-	assert.Equal(t, tree.Depth(), 4)
+	assert.Equal(t, root, tree.Root())
+	assert.Equal(t, 4, tree.Depth())
 	fmt.Println(tree.ToString())
 	assert.Contains(t, tree.ToString(), root.String())
 

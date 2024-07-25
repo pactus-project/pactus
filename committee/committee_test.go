@@ -25,12 +25,12 @@ func TestProposer(t *testing.T) {
 
 	cmt, _ := ts.GenerateTestCommittee(4)
 
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(0))
-	assert.Equal(t, cmt.Proposer(3).Number(), int32(3))
-	assert.Equal(t, cmt.Proposer(4).Number(), int32(0))
+	assert.Equal(t, int32(0), cmt.Proposer(0).Number())
+	assert.Equal(t, int32(3), cmt.Proposer(3).Number())
+	assert.Equal(t, int32(0), cmt.Proposer(4).Number())
 
 	cmt.Update(0, nil)
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(1))
+	assert.Equal(t, int32(1), cmt.Proposer(0).Number())
 }
 
 func TestInvalidProposerJoinAndLeave(t *testing.T) {
@@ -68,29 +68,29 @@ func TestProposerMove(t *testing.T) {
 	// +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+    +-+-+-+-+-+-+-+
 	//
 
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(1))
-	assert.Equal(t, cmt.Proposer(7).Number(), int32(1))
-	assert.Equal(t, cmt.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+	assert.Equal(t, int32(1), cmt.Proposer(0).Number())
+	assert.Equal(t, int32(1), cmt.Proposer(7).Number())
+	assert.Equal(t, []*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, cmt.Validators())
 	fmt.Println(cmt.String())
 
 	// Height 1001
 	cmt.Update(0, nil)
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(2))
-	assert.Equal(t, cmt.Proposer(1).Number(), int32(3))
-	assert.Equal(t, cmt.Proposer(7).Number(), int32(2))
-	assert.Equal(t, cmt.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+	assert.Equal(t, int32(2), cmt.Proposer(0).Number())
+	assert.Equal(t, int32(3), cmt.Proposer(1).Number())
+	assert.Equal(t, int32(2), cmt.Proposer(7).Number())
+	assert.Equal(t, []*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, cmt.Validators())
 	fmt.Println(cmt.String())
 
 	// Height 1002
 	cmt.Update(3, nil)
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(6))
-	assert.Equal(t, cmt.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+	assert.Equal(t, int32(6), cmt.Proposer(0).Number())
+	assert.Equal(t, []*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, cmt.Validators())
 	fmt.Println(cmt.String())
 
 	// Height 1003
 	cmt.Update(1, nil)
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(1))
-	assert.Equal(t, cmt.Validators(), []*validator.Validator{val1, val2, val3, val4, val5, val6, val7})
+	assert.Equal(t, int32(1), cmt.Proposer(0).Number())
+	assert.Equal(t, []*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, cmt.Validators())
 	fmt.Println(cmt.String())
 }
 
@@ -105,14 +105,10 @@ func TestValidatorConsistency(t *testing.T) {
 	cmt, _ := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
 
 	t.Run("Updating validators' stake, Should panic", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
-			}
-		}()
-
-		val1.AddToStake(1)
-		cmt.Update(0, []*validator.Validator{val1})
+		assert.Panics(t, func() {
+			val1.AddToStake(1)
+			cmt.Update(0, []*validator.Validator{val1})
+		}, "The code did not panic")
 	})
 }
 
@@ -129,7 +125,7 @@ func TestProposerJoin(t *testing.T) {
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 7, val1.Address())
 	assert.NoError(t, err)
-	assert.Equal(t, cmt.Size(), 4)
+	assert.Equal(t, 4, cmt.Size())
 
 	//
 	// h=1000, r=0  h=1001, r=0    h=1002, r=1    h=1003, r=1        h=1004, r=0
@@ -142,24 +138,24 @@ func TestProposerJoin(t *testing.T) {
 	// Val2 is in the committee
 	val2.UpdateLastSortitionHeight(1000)
 	cmt.Update(0, []*validator.Validator{val2})
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(2))
-	assert.Equal(t, cmt.Committers(), []int32{1, 2, 3, 4})
-	assert.Equal(t, cmt.Size(), 4)
+	assert.Equal(t, int32(2), cmt.Proposer(0).Number())
+	assert.Equal(t, []int32{1, 2, 3, 4}, cmt.Committers())
+	assert.Equal(t, 4, cmt.Size())
 	fmt.Println(cmt.String())
 
 	// Height 1001
 	val5.UpdateLastSortitionHeight(1001)
 	cmt.Update(0, []*validator.Validator{val5})
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(3))
-	assert.Equal(t, cmt.Proposer(1).Number(), int32(4))
-	assert.Equal(t, cmt.Committers(), []int32{1, 5, 2, 3, 4})
-	assert.Equal(t, cmt.Size(), 5)
+	assert.Equal(t, int32(3), cmt.Proposer(0).Number())
+	assert.Equal(t, int32(4), cmt.Proposer(1).Number())
+	assert.Equal(t, []int32{1, 5, 2, 3, 4}, cmt.Committers())
+	assert.Equal(t, 5, cmt.Size())
 	fmt.Println(cmt.String())
 
 	// Height 1002
 	cmt.Update(1, nil)
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(1))
-	assert.Equal(t, cmt.Proposer(1).Number(), int32(5))
+	assert.Equal(t, int32(1), cmt.Proposer(0).Number())
+	assert.Equal(t, int32(5), cmt.Proposer(1).Number())
 	fmt.Println(cmt.String())
 
 	// Height 1003
@@ -167,14 +163,14 @@ func TestProposerJoin(t *testing.T) {
 	val6.UpdateLastSortitionHeight(1003)
 	val7.UpdateLastSortitionHeight(1003)
 	cmt.Update(1, []*validator.Validator{val7, val3, val6})
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(2))
-	assert.Equal(t, cmt.Committers(), []int32{6, 7, 1, 5, 2, 3, 4})
-	assert.Equal(t, cmt.Size(), 7)
+	assert.Equal(t, int32(2), cmt.Proposer(0).Number())
+	assert.Equal(t, []int32{6, 7, 1, 5, 2, 3, 4}, cmt.Committers())
+	assert.Equal(t, 7, cmt.Size())
 	fmt.Println(cmt.String())
 
 	// Height 1004
 	cmt.Update(0, nil)
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(3))
+	assert.Equal(t, int32(3), cmt.Proposer(0).Number())
 	fmt.Println(cmt.String())
 }
 
@@ -260,49 +256,49 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	// Height 1001
 	val8.UpdateLastSortitionHeight(1001)
 	cmt.Update(0, []*validator.Validator{val8})
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(2))
-	assert.Equal(t, cmt.Proposer(1).Number(), int32(3))
-	assert.Equal(t, cmt.Proposer(2).Number(), int32(4))
-	assert.Equal(t, cmt.Committers(), []int32{8, 2, 3, 4, 5, 6, 7})
+	assert.Equal(t, int32(2), cmt.Proposer(0).Number())
+	assert.Equal(t, int32(3), cmt.Proposer(1).Number())
+	assert.Equal(t, int32(4), cmt.Proposer(2).Number())
+	assert.Equal(t, []int32{8, 2, 3, 4, 5, 6, 7}, cmt.Committers())
 	fmt.Println(cmt.String())
 
 	// Height 1002
 	val3.UpdateLastSortitionHeight(1002)
 	cmt.Update(3, []*validator.Validator{val3})
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(6))
+	assert.Equal(t, int32(6), cmt.Proposer(0).Number())
 	fmt.Println(cmt.String())
 
 	// Height 1003
 	val2.UpdateLastSortitionHeight(1003)
 	val9.UpdateLastSortitionHeight(1003)
 	cmt.Update(0, []*validator.Validator{val9, val2})
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(7))
-	assert.Equal(t, cmt.Proposer(1).Number(), int32(8))
-	assert.Equal(t, cmt.Committers(), []int32{8, 2, 3, 5, 9, 6, 7})
+	assert.Equal(t, int32(7), cmt.Proposer(0).Number())
+	assert.Equal(t, int32(8), cmt.Proposer(1).Number())
+	assert.Equal(t, []int32{8, 2, 3, 5, 9, 6, 7}, cmt.Committers())
 	fmt.Println(cmt.String())
 
 	// Height 1004
 	valA.UpdateLastSortitionHeight(1004)
 	cmt.Update(1, []*validator.Validator{valA})
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(2))
-	assert.Equal(t, cmt.Committers(), []int32{8, 2, 3, 9, 6, 10, 7})
+	assert.Equal(t, int32(2), cmt.Proposer(0).Number())
+	assert.Equal(t, []int32{8, 2, 3, 9, 6, 10, 7}, cmt.Committers())
 	fmt.Println(cmt.String())
 
 	// Height 1005
 	valB.UpdateLastSortitionHeight(1005)
 	valC.UpdateLastSortitionHeight(1005)
 	cmt.Update(0, []*validator.Validator{valC, valB})
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(3))
-	assert.Equal(t, cmt.Proposer(1).Number(), int32(9))
-	assert.Equal(t, cmt.Proposer(2).Number(), int32(10))
-	assert.Equal(t, cmt.Committers(), []int32{8, 11, 12, 2, 3, 9, 10})
+	assert.Equal(t, int32(3), cmt.Proposer(0).Number())
+	assert.Equal(t, int32(9), cmt.Proposer(1).Number())
+	assert.Equal(t, int32(10), cmt.Proposer(2).Number())
+	assert.Equal(t, []int32{8, 11, 12, 2, 3, 9, 10}, cmt.Committers())
 	fmt.Println(cmt.String())
 
 	// Height 1006
 	val1.UpdateLastSortitionHeight(1006)
 	cmt.Update(2, []*validator.Validator{val1})
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(11))
-	assert.Equal(t, cmt.Committers(), []int32{11, 12, 2, 1, 3, 9, 10})
+	assert.Equal(t, int32(11), cmt.Proposer(0).Number())
+	assert.Equal(t, []int32{11, 12, 2, 1, 3, 9, 10}, cmt.Committers())
 	fmt.Println(cmt.String())
 
 	// Height 1007
@@ -311,8 +307,8 @@ func TestProposerJoinAndLeave(t *testing.T) {
 	val5.UpdateLastSortitionHeight(1007)
 	val6.UpdateLastSortitionHeight(1007)
 	cmt.Update(4, []*validator.Validator{val2, val3, val5, val6})
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(5))
-	assert.Equal(t, cmt.Committers(), []int32{5, 6, 11, 12, 2, 1, 3})
+	assert.Equal(t, int32(5), cmt.Proposer(0).Number())
+	assert.Equal(t, []int32{5, 6, 11, 12, 2, 1, 3}, cmt.Committers())
 	fmt.Println(cmt.String())
 }
 
@@ -327,12 +323,12 @@ func TestIsProposer(t *testing.T) {
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
 
-	assert.Equal(t, cmt.Proposer(0).Number(), int32(0))
-	assert.Equal(t, cmt.Proposer(1).Number(), int32(1))
+	assert.Equal(t, int32(0), cmt.Proposer(0).Number())
+	assert.Equal(t, int32(1), cmt.Proposer(1).Number())
 	assert.True(t, cmt.IsProposer(val3.Address(), 2))
 	assert.False(t, cmt.IsProposer(val4.Address(), 2))
 	assert.False(t, cmt.IsProposer(ts.RandAccAddress(), 2))
-	assert.Equal(t, cmt.Validators(), []*validator.Validator{val1, val2, val3, val4})
+	assert.Equal(t, []*validator.Validator{val1, val2, val3, val4}, cmt.Validators())
 }
 
 func TestCommitters(t *testing.T) {
@@ -345,7 +341,7 @@ func TestCommitters(t *testing.T) {
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
-	assert.Equal(t, cmt.Committers(), []int32{0, 1, 2, 3})
+	assert.Equal(t, []int32{0, 1, 2, 3}, cmt.Committers())
 }
 
 func TestSortJoined(t *testing.T) {
@@ -383,6 +379,6 @@ func TestTotalPower(t *testing.T) {
 
 	totalPower := val0.Power() + val1.Power() + val2.Power() + val3.Power() + val4.Power()
 	totalStake := val0.Stake() + val1.Stake() + val2.Stake() + val3.Stake() + val4.Stake()
-	assert.Equal(t, cmt.TotalPower(), totalPower)
-	assert.Equal(t, cmt.TotalPower(), int64(totalStake+1))
+	assert.Equal(t, totalPower, cmt.TotalPower())
+	assert.Equal(t, int64(totalStake+1), cmt.TotalPower())
 }
