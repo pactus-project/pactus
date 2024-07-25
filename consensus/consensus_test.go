@@ -156,7 +156,7 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, h 
 		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == message.TypeBlockAnnounce {
 			m := consMsg.message.(*message.BlockAnnounceMessage)
-			assert.Equal(t, m.Block.Hash(), h)
+			assert.Equal(t, h, m.Block.Hash())
 
 			return
 		}
@@ -173,8 +173,8 @@ func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
 		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == message.TypeProposal {
 			m := consMsg.message.(*message.ProposalMessage)
-			require.Equal(t, m.Proposal.Height(), height)
-			require.Equal(t, m.Proposal.Round(), round)
+			require.Equal(t, height, m.Proposal.Height())
+			require.Equal(t, round, m.Proposal.Round())
 
 			return m.Proposal
 		}
@@ -419,7 +419,7 @@ func TestNotInCommittee(t *testing.T) {
 
 	td.enterNewHeight(cons)
 	td.newHeightTimeout(cons)
-	assert.Equal(t, cons.currentState.name(), "new-height")
+	assert.Equal(t, "new-height", cons.currentState.name())
 }
 
 func TestVoteWithInvalidHeight(t *testing.T) {
@@ -482,7 +482,7 @@ func TestConsensusAddVote(t *testing.T) {
 	assert.False(t, td.consP.HasVote(v5.Hash())) // valid votes for the next height
 	assert.False(t, td.consP.HasVote(v6.Hash())) // invalid votes
 
-	assert.Equal(t, td.consP.AllVotes(), []*vote.Vote{v3, v4})
+	assert.Equal(t, []*vote.Vote{v3, v4}, td.consP.AllVotes())
 	assert.NotContains(t, td.consP.AllVotes(), v2)
 }
 
@@ -601,10 +601,10 @@ func TestPickRandomVote(t *testing.T) {
 	td.addPrepareVote(td.consP, td.RandHash(), 1, 1, tIndexY)
 
 	rndVote0 := td.consP.PickRandomVote(0)
-	assert.NotEqual(t, rndVote0.Type(), vote.VoteTypePrepare, "Should not pick prepare votes")
+	assert.NotEqual(t, vote.VoteTypePrepare, rndVote0.Type(), "Should not pick prepare votes")
 
 	rndVote1 := td.consP.PickRandomVote(1)
-	assert.Equal(t, rndVote1.Type(), vote.VoteTypePrepare)
+	assert.Equal(t, vote.VoteTypePrepare, rndVote1.Type())
 
 	rndVote2 := td.consP.PickRandomVote(2)
 	assert.Nil(t, rndVote2)
@@ -660,7 +660,7 @@ func TestDuplicateProposal(t *testing.T) {
 	td.consX.SetProposal(p1)
 	td.consX.SetProposal(p2)
 
-	assert.Equal(t, td.consX.Proposal().Hash(), p1.Hash())
+	assert.Equal(t, p1.Hash(), td.consX.Proposal().Hash())
 }
 
 func TestNonActiveValidator(t *testing.T) {
@@ -682,7 +682,7 @@ func TestNonActiveValidator(t *testing.T) {
 		td.checkHeightRound(t, nonActiveCons, 1, 0)
 
 		assert.False(t, nonActiveCons.IsActive())
-		assert.Equal(t, nonActiveCons.currentState.name(), "new-height")
+		assert.Equal(t, "new-height", nonActiveCons.currentState.name())
 	})
 
 	t.Run("non-active instances should ignore proposals", func(t *testing.T) {
@@ -767,7 +767,7 @@ func TestCases(t *testing.T) {
 		cert, err := checkConsensus(td, 2, nil)
 		require.NoError(t, err,
 			"test %v failed: %s", i+1, err)
-		require.Equal(t, cert.Round(), test.round,
+		require.Equal(t, test.round, cert.Round(),
 			"test %v failed. round not matched (expected %d, got %d)",
 			i+1, test.round, cert.Round())
 	}
@@ -858,8 +858,8 @@ func TestByzantine(t *testing.T) {
 	p2 := td.makeProposal(t, h, r)
 
 	require.NotEqual(t, p1.Block().Hash(), p2.Block().Hash())
-	require.Equal(t, p1.Block().Header().ProposerAddress(), td.consB.valKey.Address())
-	require.Equal(t, p2.Block().Header().ProposerAddress(), td.consB.valKey.Address())
+	require.Equal(t, td.consB.valKey.Address(), p1.Block().Header().ProposerAddress())
+	require.Equal(t, td.consB.valKey.Address(), p2.Block().Header().ProposerAddress())
 
 	td.enterNewHeight(td.consP)
 
@@ -895,7 +895,7 @@ func TestByzantine(t *testing.T) {
 	cert, err := checkConsensus(td, h, []*vote.Vote{byzVote1, byzVote2})
 
 	require.NoError(t, err)
-	require.Equal(t, cert.Height(), h)
+	require.Equal(t, h, cert.Height())
 	require.Contains(t, cert.Absentees(), int32(tIndexB))
 }
 

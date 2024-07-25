@@ -45,7 +45,7 @@ func TestRunningNode(t *testing.T) {
 	assert.True(t, conf.Sync.Services.IsPrunedNode())
 
 	require.NoError(t, err)
-	assert.Equal(t, nd.state.LastBlockHash(), hash.UndefHash)
+	assert.Equal(t, hash.UndefHash, nd.state.LastBlockHash())
 
 	err = nd.Start()
 	require.NoError(t, err)

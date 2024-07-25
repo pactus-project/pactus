@@ -27,7 +27,7 @@ func TestVRF(t *testing.T) {
 
 		index2, result := sortition.Verify(seed, pk, proof, max)
 
-		assert.Equal(t, result, true)
+		assert.True(t, result)
 		assert.Equal(t, index, index2)
 	}
 }
@@ -79,7 +79,7 @@ func TestGetIndex(t *testing.T) {
 	// proofH * 1000000 / denominator = 655152.7021258341
 	proof1, _ := sortition.ProofFromString(
 		"1719b896ec1cc66a0f44c4bf90890d988e341cb2c1a808907780af844c854291536c12fdaef9a526bb7ef80da17c0b03")
-	assert.Equal(t, sortition.GetIndex(proof1, 1*1e6), uint64(655152))
+	assert.Equal(t, uint64(655152), sortition.GetIndex(proof1, 1*1e6))
 
 	// proof: 45180defab2daae377977bf09dcdd7d76ff4fc96d1b50cc8ac5a1601c0522fb11641c3ed0fefd4b1e1808c498d699396
 	// proofH: 80212979d1de1ca4ce1258fc0be66a4453b3804e64a5ca8d95f7def2c291c7fe
@@ -87,5 +87,5 @@ func TestGetIndex(t *testing.T) {
 	// proofH * 1000000 / denominator = 500506.0121928797
 	proof2, _ := sortition.ProofFromString(
 		"45180defab2daae377977bf09dcdd7d76ff4fc96d1b50cc8ac5a1601c0522fb11641c3ed0fefd4b1e1808c498d699396")
-	assert.Equal(t, sortition.GetIndex(proof2, 1*1e6), uint64(500506))
+	assert.Equal(t, uint64(500506), sortition.GetIndex(proof2, 1*1e6))
 }

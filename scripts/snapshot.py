@@ -39,9 +39,7 @@ from datetime import datetime
 
 def setup_logging():
     logging.basicConfig(
-        format='[%(asctime)s] %(message)s',
-        datefmt='%Y-%m-%d-%H:%M',
-        level=logging.INFO
+        format="[%(asctime)s] %(message)s", datefmt="%Y-%m-%d-%H:%M", level=logging.INFO
     )
 
 
@@ -64,10 +62,10 @@ class Metadata:
 
     @staticmethod
     def update_metadata_file(snapshot_path, snapshot_metadata):
-        metadata_file = os.path.join(snapshot_path, 'snapshots', 'metadata.json')
+        metadata_file = os.path.join(snapshot_path, "snapshots", "metadata.json")
         if os.path.isfile(metadata_file):
             logging.info(f"Updating existing metadata file '{metadata_file}'")
-            with open(metadata_file, 'r') as f:
+            with open(metadata_file, "r") as f:
                 metadata = json.load(f)
         else:
             logging.info(f"Creating new metadata file '{metadata_file}'")
@@ -82,22 +80,24 @@ class Metadata:
 
         metadata.append(formatted_metadata)
 
-        with open(metadata_file, 'w') as f:
+        with open(metadata_file, "w") as f:
             json.dump(metadata, f, indent=4)
 
     @staticmethod
     def update_metadata_after_removal(snapshots_dir, removed_snapshots):
-        metadata_file = os.path.join(snapshots_dir, 'metadata.json')
+        metadata_file = os.path.join(snapshots_dir, "metadata.json")
         if not os.path.isfile(metadata_file):
             return
 
         logging.info(f"Updating metadata file '{metadata_file}' after snapshot removal")
-        with open(metadata_file, 'r') as f:
+        with open(metadata_file, "r") as f:
             metadata = json.load(f)
 
-        updated_metadata = [entry for entry in metadata if entry["name"] not in removed_snapshots]
+        updated_metadata = [
+            entry for entry in metadata if entry["name"] not in removed_snapshots
+        ]
 
-        with open(metadata_file, 'w') as f:
+        with open(metadata_file, "w") as f:
             json.dump(updated_metadata, f, indent=4)
 
     @staticmethod
@@ -133,7 +133,13 @@ class Metadata:
 def run_command(command):
     logging.info(f"Running command: {' '.join(command)}")
     try:
-        result = subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        result = subprocess.run(
+            command,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
         logging.info(f"Command output: {result.stdout.strip()}")
         if result.stderr.strip():
             logging.error(f"Command error: {result.stderr.strip()}")
@@ -154,13 +160,13 @@ class DaemonManager:
     def start_service(service_path):
         sv = get_service_name(service_path)
         logging.info(f"Starting '{sv}' service")
-        return run_command(['sudo', 'systemctl', 'start', sv])
+        return run_command(["sudo", "systemctl", "start", sv])
 
     @staticmethod
     def stop_service(service_path):
         sv = get_service_name(service_path)
         logging.info(f"Stopping '{sv}' service")
-        return run_command(['sudo', 'systemctl', 'stop', sv])
+        return run_command(["sudo", "systemctl", "stop", sv])
 
 
 class SnapshotManager:
@@ -168,14 +174,18 @@ class SnapshotManager:
         self.args = args
 
     def manage_snapshots(self):
-        snapshots_dir = os.path.join(self.args.snapshot_path, 'snapshots')
+        snapshots_dir = os.path.join(self.args.snapshot_path, "snapshots")
         logging.info(f"Managing snapshots in '{snapshots_dir}'")
 
         if not os.path.exists(snapshots_dir):
-            logging.info(f"Snapshots directory '{snapshots_dir}' does not exist. Creating it.")
+            logging.info(
+                f"Snapshots directory '{snapshots_dir}' does not exist. Creating it."
+            )
             os.makedirs(snapshots_dir)
 
-        snapshots = sorted([s for s in os.listdir(snapshots_dir) if s != 'metadata.json'])
+        snapshots = sorted(
+            [s for s in os.listdir(snapshots_dir) if s != "metadata.json"]
+        )
 
         logging.info(f"Found snapshots: {snapshots}")
         logging.info(f"Retention policy is to keep {self.args.retention} snapshots")
@@ -193,7 +203,7 @@ class SnapshotManager:
 
     def create_snapshot(self):
         timestamp_str = get_timestamp_str()
-        snapshot_dir = os.path.join(self.args.snapshot_path, 'snapshots', timestamp_str)
+        snapshot_dir = os.path.join(self.args.snapshot_path, "snapshots", timestamp_str)
         logging.info(f"Creating snapshot directory '{snapshot_dir}'")
         os.makedirs(snapshot_dir, exist_ok=True)
 
@@ -232,7 +242,7 @@ class SnapshotManager:
 class Validation:
     @staticmethod
     def validate_args(args):
-        logging.info('Validating arguments')
+        logging.info("Validating arguments")
 
         if not os.path.isfile(args.service_path):
             raise ValueError(f"Service file '{args.service_path}' does not exist.")
@@ -243,17 +253,19 @@ class Validation:
         logging.info(f"Data path '{args.data_path}' exists")
 
         if not os.access(args.data_path, os.W_OK):
-            raise PermissionError(f"No permission to access data path '{args.data_path}'.")
+            raise PermissionError(
+                f"No permission to access data path '{args.data_path}'."
+            )
         logging.info(f"Permission to access data path '{args.data_path}' confirmed")
 
-        if args.compress == 'zip' and not shutil.which('zip'):
+        if args.compress == "zip" and not shutil.which("zip"):
             raise EnvironmentError("The 'zip' command is not available.")
-        elif args.compress == 'zip':
+        elif args.compress == "zip":
             logging.info("The 'zip' command is available")
 
-        if args.compress == 'tar' and not shutil.which('tar'):
+        if args.compress == "tar" and not shutil.which("tar"):
             raise EnvironmentError("The 'tar' command is not available.")
-        elif args.compress == 'tar':
+        elif args.compress == "tar":
             logging.info("The 'tar' command is available")
 
         if args.retention <= 0:
@@ -261,10 +273,14 @@ class Validation:
         logging.info(f"Retention value is set to {args.retention}")
 
         if not os.access(args.snapshot_path, os.W_OK):
-            raise PermissionError(f"No permission to access snapshot path '{args.snapshot_path}'.")
-        logging.info(f"Permission to access snapshot path '{args.snapshot_path}' confirmed")
+            raise PermissionError(
+                f"No permission to access snapshot path '{args.snapshot_path}'."
+            )
+        logging.info(
+            f"Permission to access snapshot path '{args.snapshot_path}' confirmed"
+        )
 
-        snapshots_dir = os.path.join(args.snapshot_path, 'snapshots')
+        snapshots_dir = os.path.join(args.snapshot_path, "snapshots")
         if not os.path.isdir(snapshots_dir):
             logging.info("Snapshots directory does not exist, creating it")
             os.makedirs(snapshots_dir)
@@ -276,7 +292,9 @@ class Validation:
         if os.name == "nt":
             raise EnvironmentError("Windows not supported.")
         if os.geteuid() != 0:
-            raise PermissionError("This script requires sudo/root access. Please run with sudo.")
+            raise PermissionError(
+                "This script requires sudo/root access. Please run with sudo."
+            )
 
 
 class ProcessBackup:

@@ -34,7 +34,7 @@ func TestNetworkInfo(t *testing.T) {
 
 	td.httpServer.NetworkHandler(w, r)
 
-	assert.Equal(t, w.Code, 200)
+	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Body.String(), "Network Name")
 	assert.Contains(t, w.Body.String(), "Connected Peers Count")
 

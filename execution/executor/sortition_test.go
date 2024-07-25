@@ -73,7 +73,6 @@ func TestExecuteSortitionTx(t *testing.T) {
 	t.Run("Should fail, invalid proof", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime, val.Address(), proof)
 		td.sandbox.TestAcceptSortition = false
-
 		td.check(t, trx, true, ErrInvalidSortitionProof)
 		td.check(t, trx, false, ErrInvalidSortitionProof)
 	})
@@ -99,7 +98,6 @@ func TestExecuteSortitionTx(t *testing.T) {
 	t.Run("Should fail, expired sortition", func(t *testing.T) {
 		trx := tx.NewSortitionTx(lockTime-1, val.Address(), proof)
 		td.sandbox.TestAcceptSortition = true
-
 		td.check(t, trx, true, ErrExpiredSortition)
 		td.check(t, trx, false, ErrExpiredSortition)
 	})

@@ -96,7 +96,7 @@ func TestTopicValidator(t *testing.T) {
 			}
 			propagate = tt.propagate
 			result := validator(context.Background(), tt.peerID, msg)
-			assert.Equal(t, tt.expectedResult, result)
+			assert.Equal(t, result, tt.expectedResult)
 		})
 	}
 }

@@ -21,7 +21,7 @@ func TestAccountCounter(t *testing.T) {
 
 		td.store.UpdateAccount(addr, acc)
 		assert.NoError(t, td.store.WriteBatch())
-		assert.Equal(t, td.store.TotalAccounts(), int32(1))
+		assert.Equal(t, int32(1), td.store.TotalAccounts())
 	})
 
 	t.Run("Update account, should not increase the total accounts number", func(t *testing.T) {
@@ -29,7 +29,7 @@ func TestAccountCounter(t *testing.T) {
 		td.store.UpdateAccount(addr, acc)
 
 		assert.NoError(t, td.store.WriteBatch())
-		assert.Equal(t, td.store.TotalAccounts(), int32(1))
+		assert.Equal(t, int32(1), td.store.TotalAccounts())
 	})
 
 	t.Run("Get account", func(t *testing.T) {
@@ -37,7 +37,7 @@ func TestAccountCounter(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Equal(t, acc1.Hash(), acc.Hash())
-		assert.Equal(t, td.store.TotalAccounts(), int32(1))
+		assert.Equal(t, int32(1), td.store.TotalAccounts())
 		assert.True(t, td.store.HasAccount(addr))
 	})
 }
@@ -52,13 +52,13 @@ func TestAccountBatchSaving(t *testing.T) {
 			td.store.UpdateAccount(addr, acc)
 		}
 		assert.NoError(t, td.store.WriteBatch())
-		assert.Equal(t, td.store.TotalAccounts(), total)
+		assert.Equal(t, total, td.store.TotalAccounts())
 	})
 
 	t.Run("Close and load db", func(t *testing.T) {
 		td.store.Close()
 		store, _ := NewStore(td.store.config)
-		assert.Equal(t, store.TotalAccounts(), total)
+		assert.Equal(t, total, store.TotalAccounts())
 	})
 }
 
@@ -75,7 +75,7 @@ func TestAccountByAddress(t *testing.T) {
 			lastAddr = addr
 		}
 		assert.NoError(t, td.store.WriteBatch())
-		assert.Equal(t, td.store.TotalAccounts(), total)
+		assert.Equal(t, total, td.store.TotalAccounts())
 	})
 
 	t.Run("Non existing account", func(t *testing.T) {
@@ -95,7 +95,7 @@ func TestAccountByAddress(t *testing.T) {
 		acc, err := store.Account(lastAddr)
 		assert.NoError(t, err)
 		require.NotNil(t, acc)
-		assert.Equal(t, acc.Number(), total-1)
+		assert.Equal(t, total-1, acc.Number())
 	})
 }
 
@@ -140,5 +140,5 @@ func TestAccountDeepCopy(t *testing.T) {
 	acc2, _ := td.store.Account(addr)
 	acc2.AddToBalance(1)
 	accCache, _ := td.store.accountStore.accCache.Get(addr)
-	assert.NotEqual(t, accCache.Hash(), acc2.Hash())
+	assert.NotEqual(t, acc2.Hash(), accCache.Hash())
 }

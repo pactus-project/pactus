@@ -91,7 +91,7 @@ func TestRootHandler(t *testing.T) {
 	w := httptest.NewRecorder()
 	r := new(http.Request)
 	td.httpServer.RootHandler(w, r)
-	assert.Equal(t, w.Code, 200)
+	assert.Equal(t, 200, w.Code)
 	fmt.Println(w.Body)
 
 	td.StopServers()

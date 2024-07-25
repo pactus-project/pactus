@@ -8,7 +8,7 @@ import (
 
 func TestNopeEncrypter(t *testing.T) {
 	e := NopeEncrypter()
-	assert.Equal(t, e.Method, "")
+	assert.Equal(t, "", e.Method)
 	assert.Nil(t, e.Params)
 	assert.False(t, e.IsEncrypted())
 
@@ -17,13 +17,13 @@ func TestNopeEncrypter(t *testing.T) {
 	assert.ErrorIs(t, err, ErrInvalidPassword)
 	enc, err := e.Encrypt(msg, "")
 	assert.NoError(t, err)
-	assert.Equal(t, enc, msg)
+	assert.Equal(t, msg, enc)
 
 	_, err = e.Decrypt(enc, "password")
 	assert.ErrorIs(t, err, ErrInvalidPassword)
 	dec, err := e.Decrypt(enc, "")
 	assert.NoError(t, err)
-	assert.Equal(t, dec, msg)
+	assert.Equal(t, msg, dec)
 }
 
 func TestDefaultEncrypter(t *testing.T) {
@@ -33,10 +33,10 @@ func TestDefaultEncrypter(t *testing.T) {
 		OptionParallelism(5),
 	}
 	e := DefaultEncrypter(opts...)
-	assert.Equal(t, e.Method, "ARGON2ID-AES_256_CTR-MACV1")
-	assert.Equal(t, e.Params["iterations"], "3")
-	assert.Equal(t, e.Params["memory"], "4")
-	assert.Equal(t, e.Params["parallelism"], "5")
+	assert.Equal(t, "ARGON2ID-AES_256_CTR-MACV1", e.Method)
+	assert.Equal(t, "3", e.Params["iterations"])
+	assert.Equal(t, "4", e.Params["memory"])
+	assert.Equal(t, "5", e.Params["parallelism"])
 	assert.True(t, e.IsEncrypted())
 }
 

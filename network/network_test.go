@@ -305,10 +305,10 @@ func TestNetwork(t *testing.T) {
 		eN := shouldReceiveEvent(t, networkN, EventTypeGossip).(*GossipMessage)
 		eX := shouldReceiveEvent(t, networkX, EventTypeGossip).(*GossipMessage)
 
-		assert.Equal(t, eB.Data, msg)
-		assert.Equal(t, eM.Data, msg)
-		assert.Equal(t, eN.Data, msg)
-		assert.Equal(t, eX.Data, msg)
+		assert.Equal(t, msg, eB.Data)
+		assert.Equal(t, msg, eM.Data)
+		assert.Equal(t, msg, eN.Data)
+		assert.Equal(t, msg, eX.Data)
 	})
 
 	t.Run("only nodes subscribed to the consensus topic receive consensus gossip messages", func(t *testing.T) {
@@ -323,9 +323,9 @@ func TestNetwork(t *testing.T) {
 		eN := shouldReceiveEvent(t, networkN, EventTypeGossip).(*GossipMessage)
 		shouldNotReceiveEvent(t, networkX) // Not joined the consensus topic
 
-		assert.Equal(t, eB.Data, msg)
-		assert.Equal(t, eM.Data, msg)
-		assert.Equal(t, eN.Data, msg)
+		assert.Equal(t, msg, eB.Data)
+		assert.Equal(t, msg, eM.Data)
+		assert.Equal(t, msg, eN.Data)
 	})
 
 	t.Run("node P (public) is directly accessible by nodes M and N (private behind NAT)", func(t *testing.T) {
@@ -336,8 +336,8 @@ func TestNetwork(t *testing.T) {
 		msgM := ts.RandBytes(64)
 		networkM.SendTo(msgM, networkP.SelfID())
 		eP := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
-		assert.Equal(t, eP.From, networkM.SelfID())
-		assert.Equal(t, readData(t, eP.Reader, len(msgM)), msgM)
+		assert.Equal(t, networkM.SelfID(), eP.From)
+		assert.Equal(t, msgM, readData(t, eP.Reader, len(msgM)))
 	})
 
 	t.Run("node P (public) is directly accessible by node X (private behind NAT, without relay)", func(t *testing.T) {
@@ -348,8 +348,8 @@ func TestNetwork(t *testing.T) {
 		msgX := ts.RandBytes(64)
 		networkX.SendTo(msgX, networkP.SelfID())
 		eP := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
-		assert.Equal(t, eP.From, networkX.SelfID())
-		assert.Equal(t, readData(t, eP.Reader, len(msgX)), msgX)
+		assert.Equal(t, networkX.SelfID(), eP.From)
+		assert.Equal(t, msgX, readData(t, eP.Reader, len(msgX)))
 	})
 
 	t.Run("node P (public) is directly accessible by node B (bootstrap)", func(t *testing.T) {
@@ -359,8 +359,8 @@ func TestNetwork(t *testing.T) {
 
 		networkB.SendTo(msgB, networkP.SelfID())
 		eB := shouldReceiveEvent(t, networkP, EventTypeStream).(*StreamMessage)
-		assert.Equal(t, eB.From, networkB.SelfID())
-		assert.Equal(t, readData(t, eB.Reader, len(msgB)), msgB)
+		assert.Equal(t, networkB.SelfID(), eB.From)
+		assert.Equal(t, msgB, readData(t, eB.Reader, len(msgB)))
 	})
 
 	t.Run("Ignore broadcasting identical messages", func(t *testing.T) {
@@ -373,7 +373,7 @@ func TestNetwork(t *testing.T) {
 
 		eX := shouldReceiveEvent(t, networkX, EventTypeGossip).(*GossipMessage)
 
-		assert.Equal(t, eX.Data, msg)
+		assert.Equal(t, msg, eX.Data)
 		assert.NotEqual(t, eX.From, networkM.SelfID(), "network X has no direct connection with M")
 		assert.NotEqual(t, eX.From, networkN.SelfID(), "network X has no direct connection with N")
 
@@ -392,7 +392,7 @@ func TestNetwork(t *testing.T) {
 	// 	msgM := ts.RandBytes(64)
 	// 	networkM.SendTo(msgM, networkN.SelfID())
 	// 	eM := shouldReceiveEvent(t, networkN, EventTypeStream).(*StreamMessage)
-	// 	assert.Equal(t, readData(t, eM.Reader, len(msgM)), msgM)
+	// 	assert.Equal(t, msgM, readData(t, eM.Reader, len(msgM)))
 	// })
 
 	t.Run("closing connection", func(t *testing.T) {
@@ -403,18 +403,18 @@ func TestNetwork(t *testing.T) {
 		networkP.Stop()
 		networkB.CloseConnection(networkP.SelfID())
 		e := shouldReceiveEvent(t, networkB, EventTypeDisconnect).(*DisconnectEvent)
-		assert.Equal(t, e.PeerID, networkP.SelfID())
+		assert.Equal(t, networkP.SelfID(), e.PeerID)
 		networkB.SendTo(msgB, networkP.SelfID())
 	})
 
 	t.Run("Reachability Status", func(t *testing.T) {
 		fmt.Printf("Running %s\n", t.Name())
 
-		assert.Equal(t, networkP.ReachabilityStatus(), "Public")
-		assert.Equal(t, networkB.ReachabilityStatus(), "Public")
-		assert.Equal(t, networkM.ReachabilityStatus(), "Private")
-		assert.Equal(t, networkN.ReachabilityStatus(), "Private")
-		assert.Equal(t, networkX.ReachabilityStatus(), "Private")
+		assert.Equal(t, "Public", networkP.ReachabilityStatus())
+		assert.Equal(t, "Public", networkB.ReachabilityStatus())
+		assert.Equal(t, "Private", networkM.ReachabilityStatus())
+		assert.Equal(t, "Private", networkN.ReachabilityStatus())
+		assert.Equal(t, "Private", networkX.ReachabilityStatus())
 	})
 }
 
@@ -476,15 +476,15 @@ func testConnection(t *testing.T, networkP, networkB *network) {
 		time.Sleep(100 * time.Millisecond)
 	}
 
-	assert.Equal(t, networkB.NumConnectedPeers(), 1)
-	assert.Equal(t, networkP.NumConnectedPeers(), 1)
+	assert.Equal(t, 1, networkB.NumConnectedPeers())
+	assert.Equal(t, 1, networkP.NumConnectedPeers())
 
 	msg := []byte("test-msg")
 
 	networkP.SendTo(msg, networkB.SelfID())
 	e := shouldReceiveEvent(t, networkB, EventTypeStream).(*StreamMessage)
-	assert.Equal(t, e.From, networkP.SelfID())
-	assert.Equal(t, readData(t, e.Reader, len(msg)), msg)
+	assert.Equal(t, networkP.SelfID(), e.From)
+	assert.Equal(t, msg, readData(t, e.Reader, len(msg)))
 
 	networkB.Stop()
 	networkP.Stop()

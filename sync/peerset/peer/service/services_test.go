@@ -7,12 +7,12 @@ import (
 )
 
 func TestServicesString(t *testing.T) {
-	assert.Equal(t, New(None).String(), "")
-	assert.Equal(t, New(FullNode).String(), "FULL")
-	assert.Equal(t, New(PrunedNode).String(), "PRUNED")
-	assert.Equal(t, New(FullNode, PrunedNode).String(), "FULL | PRUNED")
-	assert.Equal(t, New(5).String(), "FULL | 4")
-	assert.Equal(t, New(6).String(), "PRUNED | 4")
+	assert.Equal(t, "", New(None).String())
+	assert.Equal(t, "FULL", New(FullNode).String())
+	assert.Equal(t, "PRUNED", New(PrunedNode).String())
+	assert.Equal(t, "FULL | PRUNED", New(FullNode, PrunedNode).String())
+	assert.Equal(t, "FULL | 4", New(5).String())
+	assert.Equal(t, "PRUNED | 4", New(6).String())
 }
 
 func TestAppend(t *testing.T) {

@@ -70,7 +70,7 @@ func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
 
 			if msg.Type() == message.TypeTransaction {
 				m := msg.(*message.TransactionsMessage)
-				assert.Equal(t, m.Transactions[0].ID(), id)
+				assert.Equal(t, id, m.Transactions[0].ID())
 
 				return
 			}
@@ -118,7 +118,7 @@ func TestFullPool(t *testing.T) {
 	td.sandbox.UpdateAccount(senderAddr, senderAcc)
 
 	// Make sure the pool is empty
-	assert.Equal(t, td.pool.Size(), 0)
+	assert.Equal(t, 0, td.pool.Size())
 
 	for i := 0; i < len(trxs); i++ {
 		trx := tx.NewTransferTx(randHeight+1, senderAddr,
@@ -130,7 +130,7 @@ func TestFullPool(t *testing.T) {
 
 	assert.False(t, td.pool.HasTx(trxs[0].ID()))
 	assert.True(t, td.pool.HasTx(trxs[1].ID()))
-	assert.Equal(t, td.pool.Size(), td.pool.config.transferPoolSize())
+	assert.Equal(t, td.pool.config.transferPoolSize(), td.pool.Size())
 }
 
 func TestEmptyPool(t *testing.T) {
@@ -190,11 +190,11 @@ func TestPrepareBlockTransactions(t *testing.T) {
 
 	trxs := td.pool.PrepareBlockTransactions()
 	assert.Len(t, trxs, 5)
-	assert.Equal(t, trxs[0].ID(), sortitionTx.ID())
-	assert.Equal(t, trxs[1].ID(), bondTx.ID())
-	assert.Equal(t, trxs[2].ID(), unbondTx.ID())
-	assert.Equal(t, trxs[3].ID(), withdrawTx.ID())
-	assert.Equal(t, trxs[4].ID(), transferTx.ID())
+	assert.Equal(t, sortitionTx.ID(), trxs[0].ID())
+	assert.Equal(t, bondTx.ID(), trxs[1].ID())
+	assert.Equal(t, unbondTx.ID(), trxs[2].ID())
+	assert.Equal(t, withdrawTx.ID(), trxs[3].ID())
+	assert.Equal(t, transferTx.ID(), trxs[4].ID())
 }
 
 func TestAppendAndBroadcast(t *testing.T) {

@@ -210,7 +210,7 @@ func TestBasicCheck(t *testing.T) {
 		b, _ := block.FromBytes(d)
 		assert.NoError(t, b.BasicCheck())
 		assert.Zero(t, b.Header().UnixTime())
-		assert.Equal(t, b.Header().Version(), uint8(1))
+		assert.Equal(t, uint8(1), b.Header().Version())
 	})
 }
 
@@ -301,7 +301,7 @@ func TestBlockHash(t *testing.T) {
 
 	b, err := block.FromBytes(d)
 	assert.NoError(t, err)
-	assert.Equal(t, b.SerializeSize(), len(d))
+	assert.Equal(t, len(d), b.SerializeSize())
 	d2, _ := b.Bytes()
 	assert.Equal(t, d, d2)
 
@@ -324,8 +324,8 @@ func TestBlockHash(t *testing.T) {
 
 	expected1 := hash.CalcHash(hashData)
 	expected2, _ := hash.FromString("43399fa59adcfb7d8c515460ec9ca27b6a1cb865f5b7d9bde8fe56c18eaec9ab")
-	assert.Equal(t, b.Hash(), expected1)
-	assert.Equal(t, b.Hash(), expected2)
+	assert.Equal(t, expected1, b.Hash())
+	assert.Equal(t, expected2, b.Hash())
 }
 
 func TestMakeBlock(t *testing.T) {

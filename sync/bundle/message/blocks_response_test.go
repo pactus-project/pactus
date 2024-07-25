@@ -10,7 +10,7 @@ import (
 
 func TestLatestBlocksResponseType(t *testing.T) {
 	m := &BlocksResponseMessage{}
-	assert.Equal(t, m.Type(), TypeBlocksResponse)
+	assert.Equal(t, TypeBlocksResponse, m.Type())
 }
 
 func TestBlocksResponseMessage(t *testing.T) {
@@ -41,7 +41,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 
 		assert.NoError(t, m.BasicCheck())
 		assert.Contains(t, m.String(), "100")
-		assert.Equal(t, m.Reason, ResponseCodeMoreBlocks.String())
+		assert.Equal(t, ResponseCodeMoreBlocks.String(), m.Reason)
 	})
 }
 
@@ -57,7 +57,7 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		assert.Zero(t, m.To())
 		assert.Zero(t, m.Count())
 		assert.True(t, m.IsRequestRejected())
-		assert.Equal(t, m.Reason, reason)
+		assert.Equal(t, reason, m.Reason)
 	})
 
 	t.Run("OK - MoreBlocks", func(t *testing.T) {
@@ -70,11 +70,11 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeMoreBlocks, reason, 1, 100, [][]byte{d1, d2}, nil)
 
 		assert.NoError(t, m.BasicCheck())
-		assert.Equal(t, m.From, uint32(100))
-		assert.Equal(t, m.To(), uint32(101))
-		assert.Equal(t, m.Count(), uint32(2))
+		assert.Equal(t, uint32(100), m.From)
+		assert.Equal(t, uint32(101), m.To())
+		assert.Equal(t, uint32(2), m.Count())
 		assert.False(t, m.IsRequestRejected())
-		assert.Equal(t, m.Reason, reason)
+		assert.Equal(t, reason, m.Reason)
 	})
 
 	t.Run("OK - Synced", func(t *testing.T) {
@@ -85,10 +85,10 @@ func TestLatestBlocksResponseCode(t *testing.T) {
 		m := NewBlocksResponseMessage(ResponseCodeSynced, reason, 1, 100, nil, cert)
 
 		assert.NoError(t, m.BasicCheck())
-		assert.Equal(t, m.From, uint32(100))
+		assert.Equal(t, uint32(100), m.From)
 		assert.Zero(t, m.To())
 		assert.Zero(t, m.Count())
 		assert.False(t, m.IsRequestRejected())
-		assert.Equal(t, m.Reason, reason)
+		assert.Equal(t, reason, m.Reason)
 	})
 }

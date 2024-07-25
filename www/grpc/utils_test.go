@@ -26,7 +26,7 @@ func TestSignMessageWithPrivateKey(t *testing.T) {
 			})
 
 		assert.Nil(t, err)
-		assert.Equal(t, res.Signature, expectedSig)
+		assert.Equal(t, expectedSig, res.Signature)
 	})
 
 	t.Run("", func(t *testing.T) {

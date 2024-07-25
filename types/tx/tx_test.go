@@ -196,7 +196,7 @@ func TestBasicCheck(t *testing.T) {
 		assert.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "invalid version: 2",
 		})
-		assert.Equal(t, trx.SerializeSize(), len(d))
+		assert.Equal(t, len(d), trx.SerializeSize())
 	})
 }
 
@@ -362,13 +362,13 @@ func TestSignBytes(t *testing.T) {
 	h, _ := hash.FromString("1a8cedbb2ffce29df63210f112afb1c0295b27e2162323bfc774068f0573388e")
 	trx, err := tx.FromBytes(d)
 	assert.NoError(t, err)
-	assert.Equal(t, trx.SerializeSize(), len(d))
+	assert.Equal(t, len(d), trx.SerializeSize())
 
 	sb := d[1 : len(d)-bls.PublicKeySize-bls.SignatureSize]
 	assert.Equal(t, sb, trx.SignBytes())
-	assert.Equal(t, trx.ID(), h)
-	assert.Equal(t, trx.ID(), hash.CalcHash(sb))
-	assert.Equal(t, trx.LockTime(), uint32(0x04030201))
+	assert.Equal(t, h, trx.ID())
+	assert.Equal(t, hash.CalcHash(sb), trx.ID())
+	assert.Equal(t, uint32(0x04030201), trx.LockTime())
 }
 
 func TestStripPublicKey(t *testing.T) {

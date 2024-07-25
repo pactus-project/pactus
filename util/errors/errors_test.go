@@ -9,12 +9,12 @@ import (
 
 func TestCode(t *testing.T) {
 	err1 := Error(ErrInvalidAmount)
-	assert.Equal(t, Code(err1), ErrInvalidAmount)
+	assert.Equal(t, ErrInvalidAmount, Code(err1))
 
 	err2 := fmt.Errorf("Nope")
-	assert.Equal(t, Code(err2), ErrGeneric)
+	assert.Equal(t, ErrGeneric, Code(err2))
 
-	assert.Equal(t, Code(nil), ErrNone)
+	assert.Equal(t, ErrNone, Code(nil))
 }
 
 func TestMessages(t *testing.T) {
@@ -28,8 +28,8 @@ func TestErrorCode(t *testing.T) {
 	err2 := Errorf(ErrInvalidTx, err1.Error())
 	err3 := Errorf(ErrInvalidBlock, err1.Error())
 
-	assert.Equal(t, Code(err2), ErrInvalidTx)
-	assert.Equal(t, Code(err3), ErrInvalidBlock)
+	assert.Equal(t, ErrInvalidTx, Code(err2))
+	assert.Equal(t, ErrInvalidBlock, Code(err3))
 	assert.Equal(t, "invalid amount", err1.Error())
 	assert.Equal(t, "invalid transaction: invalid amount", err2.Error())
 	assert.Equal(t, "invalid block: invalid amount", err3.Error())

@@ -74,7 +74,7 @@ func TestConfigBasicCheck(t *testing.T) {
 func TestCalculateChangeProposerTimeout(t *testing.T) {
 	c := DefaultConfig()
 
-	assert.Equal(t, c.CalculateChangeProposerTimeout(0), c.ChangeProposerTimeout)
-	assert.Equal(t, c.CalculateChangeProposerTimeout(1), c.ChangeProposerTimeout+c.ChangeProposerDelta)
-	assert.Equal(t, c.CalculateChangeProposerTimeout(4), c.ChangeProposerTimeout+(4*c.ChangeProposerDelta))
+	assert.Equal(t, c.ChangeProposerTimeout, c.CalculateChangeProposerTimeout(0))
+	assert.Equal(t, c.ChangeProposerTimeout+c.ChangeProposerDelta, c.CalculateChangeProposerTimeout(1))
+	assert.Equal(t, c.ChangeProposerTimeout+(4*c.ChangeProposerDelta), c.CalculateChangeProposerTimeout(4))
 }

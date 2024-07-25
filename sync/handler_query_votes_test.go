@@ -29,7 +29,7 @@ func TestParsingQueryVotesMessages(t *testing.T) {
 		td.receivingNewMessage(td.sync, msg, pid)
 
 		bdl := td.shouldPublishMessageWithThisType(t, message.TypeVote)
-		assert.Equal(t, bdl.Message.(*message.VoteMessage).Vote.Hash(), v1.Hash())
+		assert.Equal(t, v1.Hash(), bdl.Message.(*message.VoteMessage).Vote.Hash())
 	})
 
 	t.Run("doesn't have any votes", func(t *testing.T) {

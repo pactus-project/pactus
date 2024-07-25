@@ -21,7 +21,7 @@ func TestValidatorCounter(t *testing.T) {
 
 		td.store.UpdateValidator(val)
 		assert.NoError(t, td.store.WriteBatch())
-		assert.Equal(t, td.store.TotalValidators(), int32(1))
+		assert.Equal(t, int32(1), td.store.TotalValidators())
 	})
 
 	t.Run("Update validator, should not increase the total validators number", func(t *testing.T) {
@@ -29,7 +29,7 @@ func TestValidatorCounter(t *testing.T) {
 		td.store.UpdateValidator(val)
 
 		assert.NoError(t, td.store.WriteBatch())
-		assert.Equal(t, td.store.TotalValidators(), int32(1))
+		assert.Equal(t, int32(1), td.store.TotalValidators())
 	})
 
 	t.Run("Get validator", func(t *testing.T) {
@@ -40,7 +40,7 @@ func TestValidatorCounter(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.Equal(t, val1.Hash(), val2.Hash())
-		assert.Equal(t, td.store.TotalValidators(), int32(1))
+		assert.Equal(t, int32(1), td.store.TotalValidators())
 		assert.True(t, td.store.HasValidator(val.Address()))
 	})
 }
@@ -55,13 +55,13 @@ func TestValidatorBatchSaving(t *testing.T) {
 			td.store.UpdateValidator(val)
 		}
 		assert.NoError(t, td.store.WriteBatch())
-		assert.Equal(t, td.store.TotalValidators(), total)
+		assert.Equal(t, total, td.store.TotalValidators())
 	})
 
 	t.Run("Close and load db", func(t *testing.T) {
 		td.store.Close()
 		store, _ := NewStore(td.store.config)
-		assert.Equal(t, store.TotalValidators(), total)
+		assert.Equal(t, total, store.TotalValidators())
 	})
 }
 
@@ -91,7 +91,7 @@ func TestValidatorByNumber(t *testing.T) {
 			td.store.UpdateValidator(val)
 		}
 		assert.NoError(t, td.store.WriteBatch())
-		assert.Equal(t, td.store.TotalValidators(), total)
+		assert.Equal(t, total, td.store.TotalValidators())
 	})
 
 	t.Run("Get a random Validator", func(t *testing.T) {
@@ -99,7 +99,7 @@ func TestValidatorByNumber(t *testing.T) {
 		val, err := td.store.ValidatorByNumber(num)
 		assert.NoError(t, err)
 		require.NotNil(t, val)
-		assert.Equal(t, val.Number(), num)
+		assert.Equal(t, num, val.Number())
 	})
 
 	t.Run("Negative number", func(t *testing.T) {
@@ -126,7 +126,7 @@ func TestValidatorByNumber(t *testing.T) {
 		val, err := store.ValidatorByNumber(num)
 		assert.NoError(t, err)
 		require.NotNil(t, val)
-		assert.Equal(t, val.Number(), num)
+		assert.Equal(t, num, val.Number())
 
 		val, err = td.store.ValidatorByNumber(total + 1)
 		assert.Error(t, err)
@@ -144,7 +144,7 @@ func TestValidatorByAddress(t *testing.T) {
 			td.store.UpdateValidator(val)
 		}
 		assert.NoError(t, td.store.WriteBatch())
-		assert.Equal(t, td.store.TotalValidators(), total)
+		assert.Equal(t, total, td.store.TotalValidators())
 	})
 
 	t.Run("Get random validator", func(t *testing.T) {
@@ -153,7 +153,7 @@ func TestValidatorByAddress(t *testing.T) {
 		val, err := td.store.Validator(val0.Address())
 		assert.NoError(t, err)
 		require.NotNil(t, val)
-		assert.Equal(t, val.Number(), num)
+		assert.Equal(t, num, val.Number())
 	})
 
 	t.Run("Unknown address", func(t *testing.T) {
@@ -171,7 +171,7 @@ func TestValidatorByAddress(t *testing.T) {
 		val, err := store.Validator(val0.Address())
 		assert.NoError(t, err)
 		require.NotNil(t, val)
-		assert.Equal(t, val.Number(), num)
+		assert.Equal(t, num, val.Number())
 	})
 }
 

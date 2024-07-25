@@ -52,7 +52,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 		td.receivingNewMessage(td.sync, msg, pid)
 
 		bdl := td.shouldPublishMessageWithThisType(t, message.TypeProposal)
-		assert.Equal(t, bdl.Message.(*message.ProposalMessage).Proposal.Hash(), prop.Hash())
+		assert.Equal(t, prop.Hash(), bdl.Message.(*message.ProposalMessage).Proposal.Hash())
 	})
 
 	t.Run("doesn't have the proposal", func(t *testing.T) {

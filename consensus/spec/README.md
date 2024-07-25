@@ -4,7 +4,7 @@ This folder contains the consensus specification for the Pactus blockchain,
 which is based on the TLA+ formal language.
 The specification defines the consensus algorithm used by the blockchain.
 
-More info can be found [here](https://pactus.org/learn/consensus/specification/)
+More info can be found [here](https://docs.pactus.org/protocol/consensus/specification/)
 
 ## Model checking
 

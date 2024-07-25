@@ -61,7 +61,7 @@ func TestOneBlockShorter(t *testing.T) {
 		lastHeight+1, [][]byte{d1}, cert1)
 	td.receivingNewMessage(td.sync, msg, pid)
 
-	assert.Equal(t, td.state.LastBlockHeight(), lastHeight+1)
+	assert.Equal(t, lastHeight+1, td.state.LastBlockHeight())
 }
 
 func TestStrippedPublicKey(t *testing.T) {
@@ -140,9 +140,9 @@ func shouldPublishBlockResponse(t *testing.T, net *network.MockNetwork,
 
 	bdl := shouldPublishMessageWithThisType(t, net, message.TypeBlocksResponse)
 	msg := bdl.Message.(*message.BlocksResponseMessage)
-	require.Equal(t, from, msg.From)
-	require.Equal(t, count, msg.Count())
-	require.Equal(t, code, msg.ResponseCode)
+	require.Equal(t, msg.From, from)
+	require.Equal(t, msg.Count(), count)
+	require.Equal(t, msg.ResponseCode, code)
 }
 
 type networkAliceBob struct {

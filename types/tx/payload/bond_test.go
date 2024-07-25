@@ -13,7 +13,7 @@ import (
 
 func TestBondType(t *testing.T) {
 	pld := BondPayload{}
-	assert.Equal(t, pld.Type(), TypeBond)
+	assert.Equal(t, TypeBond, pld.Type())
 }
 
 func TestBondDecoding(t *testing.T) {
@@ -251,8 +251,8 @@ func TestBondDecoding(t *testing.T) {
 			}
 			w := util.NewFixedWriter(pld.SerializeSize())
 			require.NoError(t, pld.Encode(w))
-			assert.Equal(t, len(w.Bytes()), pld.SerializeSize())
-			assert.Equal(t, w.Bytes(), test.raw)
+			assert.Equal(t, pld.SerializeSize(), len(w.Bytes()))
+			assert.Equal(t, test.raw, w.Bytes())
 
 			// Basic check
 			if test.basicErr != nil {
@@ -262,9 +262,9 @@ func TestBondDecoding(t *testing.T) {
 				assert.NoError(t, pld.BasicCheck())
 
 				// Check signer
-				assert.Equal(t, pld.Signer(), crypto.Address(test.raw[:21]))
-				assert.Equal(t, *pld.Receiver(), crypto.Address(test.raw[21:42]))
-				assert.Equal(t, pld.Value(), test.value)
+				assert.Equal(t, crypto.Address(test.raw[:21]), pld.Signer())
+				assert.Equal(t, crypto.Address(test.raw[21:42]), *pld.Receiver())
+				assert.Equal(t, test.value, pld.Value())
 			}
 		}
 	}

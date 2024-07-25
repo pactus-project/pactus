@@ -25,12 +25,12 @@ func TestSliceToInt16(t *testing.T) {
 		s1 := Uint16ToSlice(uint16(test.in))
 		s2 := Int16ToSlice(test.in)
 		assert.Equal(t, s1, s2)
-		assert.Equal(t, s1, test.slice)
+		assert.Equal(t, test.slice, s1)
 
 		v1 := SliceToInt16(test.slice)
 		v2 := SliceToUint16(test.slice)
-		assert.Equal(t, v1, int16(v2))
-		assert.Equal(t, v1, test.in)
+		assert.Equal(t, int16(v2), v1)
+		assert.Equal(t, test.in, v1)
 	}
 }
 
@@ -52,12 +52,12 @@ func TestSliceToInt32(t *testing.T) {
 		s1 := Uint32ToSlice(uint32(test.in))
 		s2 := Int32ToSlice(test.in)
 		assert.Equal(t, s1, s2)
-		assert.Equal(t, s1, test.slice)
+		assert.Equal(t, test.slice, s1)
 
 		v1 := SliceToInt32(test.slice)
 		v2 := SliceToUint32(test.slice)
-		assert.Equal(t, v1, int32(v2))
-		assert.Equal(t, v1, test.in)
+		assert.Equal(t, int32(v2), v1)
+		assert.Equal(t, test.in, v1)
 	}
 }
 
@@ -79,12 +79,12 @@ func TestSliceToInt64(t *testing.T) {
 		s1 := Uint64ToSlice(uint64(test.in))
 		s2 := Int64ToSlice(test.in)
 		assert.Equal(t, s1, s2)
-		assert.Equal(t, s1, test.slice)
+		assert.Equal(t, test.slice, s1)
 
 		v1 := SliceToInt64(test.slice)
 		v2 := SliceToUint64(test.slice)
-		assert.Equal(t, v1, int64(v2))
-		assert.Equal(t, v1, test.in)
+		assert.Equal(t, int64(v2), v1)
+		assert.Equal(t, test.in, v1)
 	}
 }
 
@@ -114,42 +114,42 @@ func TestSubtractAndSubset(t *testing.T) {
 		s1 := []int32{1, 2, 3, 4}
 		s2 := []int32{1, 2, 3}
 		s3 := Subtracts(s1, s2)
-		assert.Equal(t, s3, []int32{4})
+		assert.Equal(t, []int32{4}, s3)
 	})
 
 	t.Run("Case 2", func(t *testing.T) {
 		s1 := []int32{1, 2, 3, 4}
 		s2 := []int32{2, 3, 5}
 		s3 := Subtracts(s1, s2)
-		assert.Equal(t, s3, []int32{1, 4})
+		assert.Equal(t, []int32{1, 4}, s3)
 	})
 
 	t.Run("Case 3", func(t *testing.T) {
 		s1 := []int32{1, 2, 3, 4}
 		s2 := []int32{}
 		s3 := Subtracts(s1, s2)
-		assert.Equal(t, s3, []int32{1, 2, 3, 4})
+		assert.Equal(t, []int32{1, 2, 3, 4}, s3)
 	})
 
 	t.Run("Case 4", func(t *testing.T) {
 		s1 := []int32{}
 		s2 := []int32{1, 2, 3, 4}
 		s3 := Subtracts(s1, s2)
-		assert.Equal(t, s3, []int32{})
+		assert.Equal(t, []int32{}, s3)
 	})
 
 	t.Run("Case 5", func(t *testing.T) {
 		s1 := []int32{1, 2, 3, 4}
 		s2 := []int32{1, 2, 3, 4}
 		s3 := Subtracts(s1, s2)
-		assert.Equal(t, s3, []int32{})
+		assert.Equal(t, []int32{}, s3)
 	})
 
 	t.Run("Case 6", func(t *testing.T) {
 		s1 := []int32{1, 3, 5}
 		s2 := []int32{1, 2, 3, 4, 5}
 		s3 := Subtracts(s1, s2)
-		assert.Equal(t, s3, []int32{})
+		assert.Equal(t, []int32{}, s3)
 	})
 
 	t.Run("Case 7", func(t *testing.T) {
@@ -161,7 +161,7 @@ func TestSubtractAndSubset(t *testing.T) {
 	t.Run("Case 8", func(t *testing.T) {
 		s2 := []int32{1, 2, 3, 4}
 		s3 := Subtracts(nil, s2)
-		assert.Equal(t, s3, []int32{})
+		assert.Equal(t, []int32{}, s3)
 	})
 }
 
@@ -201,7 +201,7 @@ func TestMerge(t *testing.T) {
 
 	for _, test := range tests {
 		merged := Merge(test.slices...)
-		assert.Equal(t, merged, test.merged)
+		assert.Equal(t, test.merged, merged)
 	}
 }
 
@@ -237,7 +237,7 @@ func TestExtendSlice(t *testing.T) {
 	for _, c := range cases {
 		inCopy := c.in
 		Extend(&inCopy, c.size)
-		assert.Equal(t, inCopy, c.want, "ExtendSlice(%v, %v) == %v, want %v", c.in, c.size, c.in, c.want)
+		assert.Equal(t, c.want, inCopy, "ExtendSlice(%v, %v) == %v, want %v", c.in, c.size, c.in, c.want)
 	}
 }
 
@@ -258,7 +258,7 @@ func TestIsSubset(t *testing.T) {
 
 	for _, tt := range tests {
 		got := IsSubset(tt.arr1, tt.arr2)
-		assert.Equal(t, got, tt.want,
+		assert.Equal(t, tt.want, got,
 			"isSubset(%v, %v) = %v; want %v", tt.arr1, tt.arr2, got, tt.want)
 	}
 }
@@ -275,7 +275,7 @@ func TestStringToBytes(t *testing.T) {
 
 	for _, test := range tests {
 		got := StringToBytes(test.input)
-		assert.Equal(t, got, test.output, "StringToBytes('%s') =  %v, want %v", test.input, got, test.output)
+		assert.Equal(t, test.output, got, "StringToBytes('%s') =  %v, want %v", test.input, got, test.output)
 	}
 }
 
@@ -344,7 +344,7 @@ func TestTrimSlice(t *testing.T) {
 
 	for _, tt := range tests {
 		got := Trim(tt.input, tt.newLength)
-		assert.Equal(t, got, tt.want, "Trim() = %v, want %v", got, tt.want)
+		assert.Equal(t, tt.want, got, "Trim() = %v, want %v", got, tt.want)
 	}
 }
 
