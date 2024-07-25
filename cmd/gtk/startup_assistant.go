@@ -258,12 +258,8 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 									go func() {
 										log.Printf("start downloading...\n")
 
-										importer.Download(
-											ctx,
-											&md[snapshotIndex],
-											func(fileName string, totalSize, downloaded int64,
-												percentage float64,
-											) {
+										err := importer.Download(ctx, &md[snapshotIndex],
+											func(fileName string, totalSize, downloaded int64, percentage float64) {
 												percent := int(percentage)
 												glib.IdleAdd(func() {
 													dlMessage := fmt.Sprintf("🌐 Downloading %s | %d%% (%s / %s)",
@@ -278,6 +274,8 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 										)
 
 										glib.IdleAdd(func() {
+											fatalErrorCheck(err)
+
 											log.Printf("extracting data...\n")
 											ssPBLabel.SetText("   " + "📂 Extracting downloaded files...")
 											err := importer.ExtractAndStoreFiles()

@@ -12,6 +12,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const invalidDirName = "/invalid:path/\x00*folder?\\CON"
+
 func TestWriteFile(t *testing.T) {
 	p := TempDirPath()
 	d := []byte("some-data")
@@ -90,56 +92,92 @@ func TestIsValidPath(t *testing.T) {
 		assert.False(t, IsValidDirPath("/root"))
 		assert.False(t, IsValidDirPath("/test"))
 	}
+	assert.False(t, IsValidDirPath(invalidDirName))
 	assert.False(t, IsValidDirPath("./io_test.go"))
 	assert.True(t, IsValidDirPath("/tmp"))
 	assert.True(t, IsValidDirPath("/tmp/pactus"))
 }
 
 func TestMoveDirectory(t *testing.T) {
-	// Create temporary directories
-	srcDir := TempDirPath()
-	dstDir := TempDirPath()
-	defer func() { _ = os.RemoveAll(srcDir) }()
-	defer func() { _ = os.RemoveAll(dstDir) }()
+	t.Run("DestinationDirectoryExistsAndNotEmpty", func(t *testing.T) {
+		srcDir := TempDirPath()
+		dstDir := TempDirPath()
 
-	// Create a subdirectory in the source directory
-	subDir := filepath.Join(srcDir, "subdir")
-	err := Mkdir(subDir)
-	assert.NoError(t, err)
+		err := MoveDirectory(srcDir, dstDir)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "destination directory")
+	})
 
-	// Create multiple files in the subdirectory
-	files := []struct {
-		name    string
-		content string
-	}{
-		{"file1.txt", "content 1"},
-		{"file2.txt", "content 2"},
-	}
+	t.Run("ParentDirectoryCreationFailure", func(t *testing.T) {
+		srcDir := TempDirPath()
 
-	for _, file := range files {
-		filePath := filepath.Join(subDir, file.name)
-		err = WriteFile(filePath, []byte(file.content))
+		err := MoveDirectory(srcDir, invalidDirName)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "failed to create parent directories")
+	})
+
+	t.Run("SourceDirectoryRenameFailure", func(t *testing.T) {
+		srcDir := TempDirPath()
+		dstDir := TempDirPath()
+
+		err := os.RemoveAll(dstDir)
 		assert.NoError(t, err)
-	}
 
-	// Move the directory
-	dstDirPath := filepath.Join(dstDir, "movedir")
-	err = MoveDirectory(srcDir, dstDirPath)
-	assert.NoError(t, err)
-
-	// Assert the source directory no longer exists
-	assert.False(t, PathExists(srcDir))
-
-	// Assert the destination directory exists
-	assert.True(t, PathExists(dstDirPath))
-
-	// Verify that all files have been moved and their contents are correct
-	for _, file := range files {
-		movedFilePath := filepath.Join(dstDirPath, "subdir", file.name)
-		data, err := ReadFile(movedFilePath)
+		// Remove the source directory to simulate the rename failure
+		err = os.RemoveAll(srcDir)
 		assert.NoError(t, err)
-		assert.Equal(t, file.content, string(data))
-	}
+
+		err = MoveDirectory(srcDir, dstDir)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "failed to move directory")
+	})
+
+	t.Run("MoveDirectorySuccess", func(t *testing.T) {
+		// Create temporary directories
+		srcDir := TempDirPath()
+		dstDir := TempDirPath()
+		defer func() { _ = os.RemoveAll(srcDir) }()
+		defer func() { _ = os.RemoveAll(dstDir) }()
+
+		// Create a subdirectory in the source directory
+		subDir := filepath.Join(srcDir, "subdir")
+		err := Mkdir(subDir)
+		assert.NoError(t, err)
+
+		// Create multiple files in the subdirectory
+		files := []struct {
+			name    string
+			content string
+		}{
+			{"file1.txt", "content 1"},
+			{"file2.txt", "content 2"},
+		}
+
+		for _, file := range files {
+			filePath := filepath.Join(subDir, file.name)
+			err = WriteFile(filePath, []byte(file.content))
+			assert.NoError(t, err)
+		}
+
+		// Move the directory
+		dstDirPath := filepath.Join(dstDir, "movedir")
+		err = MoveDirectory(srcDir, dstDirPath)
+		assert.NoError(t, err)
+
+		// Assert the source directory no longer exists
+		assert.False(t, PathExists(srcDir))
+
+		// Assert the destination directory exists
+		assert.True(t, PathExists(dstDirPath))
+
+		// Verify that all files have been moved and their contents are correct
+		for _, file := range files {
+			movedFilePath := filepath.Join(dstDirPath, "subdir", file.name)
+			data, err := ReadFile(movedFilePath)
+			assert.NoError(t, err)
+			assert.Equal(t, file.content, string(data))
+		}
+	})
 }
 
 func TestSanitizeArchivePath(t *testing.T) {
