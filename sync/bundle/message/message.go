@@ -107,7 +107,7 @@ func MakeMessage(t Type) Message {
 		return &ProposalMessage{}
 
 	case TypeQueryVote:
-		return &QueryVotesMessage{}
+		return &QueryVoteMessage{}
 
 	case TypeVote:
 		return &VoteMessage{}

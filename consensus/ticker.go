@@ -11,7 +11,7 @@ const (
 	tickerTargetNewHeight      = tickerTarget(1)
 	tickerTargetChangeProposer = tickerTarget(2)
 	tickerTargetQueryProposal  = tickerTarget(3)
-	tickerTargetQueryVotes     = tickerTarget(4)
+	tickerTargetQueryVote      = tickerTarget(4)
 )
 
 func (rs tickerTarget) String() string {
@@ -22,7 +22,7 @@ func (rs tickerTarget) String() string {
 		return "change-proposer"
 	case tickerTargetQueryProposal:
 		return "query-proposal"
-	case tickerTargetQueryVotes:
+	case tickerTargetQueryVote:
 		return "query-votes"
 	default:
 		return "Unknown"

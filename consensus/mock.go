@@ -86,6 +86,10 @@ func (m *MockConsensus) Proposal() *proposal.Proposal {
 	return m.CurProposal
 }
 
+func (m *MockConsensus) HandleQueryProposal(_ uint32, _ int16) *proposal.Proposal {
+	return m.CurProposal
+}
+
 func (m *MockConsensus) HeightRound() (uint32, int16) {
 	return m.Height, m.Round
 }
@@ -94,7 +98,7 @@ func (*MockConsensus) String() string {
 	return ""
 }
 
-func (m *MockConsensus) PickRandomVote(_ int16) *vote.Vote {
+func (m *MockConsensus) HandleQueryVote(_ uint32, _ int16) *vote.Vote {
 	if len(m.Votes) == 0 {
 		return nil
 	}

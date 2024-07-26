@@ -17,9 +17,9 @@ func (*changeProposer) onSetProposal(_ *proposal.Proposal) {
 }
 
 func (cp *changeProposer) onTimeout(t *ticker) {
-	if t.Target == tickerTargetQueryVotes {
-		cp.queryVotes()
-		cp.scheduleTimeout(t.Duration*2, cp.height, cp.round, tickerTargetQueryVotes)
+	if t.Target == tickerTargetQueryVote {
+		cp.queryVote()
+		cp.scheduleTimeout(t.Duration*2, cp.height, cp.round, tickerTargetQueryVote)
 	}
 }
 
@@ -327,6 +327,12 @@ func (cp *changeProposer) cpDecide(round int16, cpValue vote.CPValue) {
 	} else if cpValue == vote.CPValueNo {
 		cp.round = round
 		cp.cpDecided = 0
+
+		roundProposal := cp.log.RoundProposal(cp.round)
+		if roundProposal == nil {
+			cp.queryProposal()
+		}
+
 		cp.enterNewState(cp.prepareState)
 	}
 }
