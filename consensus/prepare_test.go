@@ -31,7 +31,7 @@ func TestQueryProposal(t *testing.T) {
 	td.shouldNotPublish(t, td.consP, message.TypeQueryVote)
 }
 
-func TestQueryVotes(t *testing.T) {
+func TestQueryVote(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)

@@ -74,7 +74,7 @@ func setup(t *testing.T, conf *Config) *testData {
 }
 
 func (td *testData) testGossipBundle() []byte {
-	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
+	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	d, _ := bdl.Encode()
 
@@ -326,7 +326,7 @@ func TestBannedAddress(t *testing.T) {
 func TestNetworkFlagsMainnet(t *testing.T) {
 	td := setup(t, nil)
 
-	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
+	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
 	assert.NoError(t, td.firewall.checkBundle(bdl))
 
@@ -341,7 +341,7 @@ func TestNetworkFlagsTestnet(t *testing.T) {
 	td := setup(t, nil)
 	td.state.TestGenesis = genesis.TestnetGenesis()
 
-	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
+	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	assert.NoError(t, td.firewall.checkBundle(bdl))
 
@@ -356,7 +356,7 @@ func TestNetworkFlagsLocalnet(t *testing.T) {
 	td := setup(t, nil)
 	td.state.TestParams.BlockVersion = 0x3f // changing genesis hash
 
-	bdl := bundle.NewBundle(message.NewQueryVotesMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
+	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
 	assert.Error(t, td.firewall.checkBundle(bdl))
 

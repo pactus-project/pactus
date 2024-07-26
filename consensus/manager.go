@@ -74,18 +74,25 @@ func (mgr *manager) Instances() []Reader {
 	return readers
 }
 
-// PickRandomVote returns a random vote from a random consensus instance.
-func (mgr *manager) PickRandomVote(round int16) *vote.Vote {
-	cons := mgr.getBestInstance()
-
-	return cons.PickRandomVote(round)
-}
-
-// Proposal returns the proposal for a specific round from a random consensus instance.
+// Proposal returns the current proposal for the active round from a random consensus instance.
 func (mgr *manager) Proposal() *proposal.Proposal {
 	cons := mgr.getBestInstance()
 
 	return cons.Proposal()
+}
+
+// HandleQueryProposal returns the proposal for a specific round from a random consensus instance.
+func (mgr *manager) HandleQueryProposal(height uint32, round int16) *proposal.Proposal {
+	cons := mgr.getBestInstance()
+
+	return cons.HandleQueryProposal(height, round)
+}
+
+// HandleQueryVote returns a random vote from a random consensus instance.
+func (mgr *manager) HandleQueryVote(height uint32, round int16) *vote.Vote {
+	cons := mgr.getBestInstance()
+
+	return cons.HandleQueryVote(height, round)
 }
 
 // HeightRound retrieves the current height and round from a random consensus instance.
@@ -99,18 +106,6 @@ func (mgr *manager) HeightRound() (uint32, int16) {
 func (mgr *manager) HasActiveInstance() bool {
 	for _, cons := range mgr.instances {
 		if cons.IsActive() {
-			return true
-		}
-	}
-
-	return false
-}
-
-// HasProposer checks if any of the consensus instances is the proposer
-// for the current round.
-func (mgr *manager) HasProposer() bool {
-	for _, cons := range mgr.instances {
-		if cons.IsProposer() {
 			return true
 		}
 	}

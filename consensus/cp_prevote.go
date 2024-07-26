@@ -29,7 +29,7 @@ func (s *cpPreVoteState) decide() {
 			just := &vote.JustInitYes{}
 			s.signAddCPPreVote(hash.UndefHash, s.cpRound, 1, just)
 		}
-		s.scheduleTimeout(s.config.QueryVoteTimeout, s.height, s.round, tickerTargetQueryVotes)
+		s.scheduleTimeout(s.config.QueryVoteTimeout, s.height, s.round, tickerTargetQueryVote)
 	} else {
 		cpMainVotes := s.log.CPMainVoteVoteSet(s.round)
 		switch {

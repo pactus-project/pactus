@@ -17,6 +17,6 @@ func TestParsingProposalMessages(t *testing.T) {
 		pid := td.RandPeerID()
 
 		td.receivingNewMessage(td.sync, msg, pid)
-		assert.NotNil(t, td.consMgr.Proposal())
+		assert.Equal(t, prop, td.consMgr.Proposal())
 	})
 }

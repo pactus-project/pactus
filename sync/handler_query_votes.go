@@ -6,42 +6,28 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 )
 
-type queryVotesHandler struct {
+type queryVoteHandler struct {
 	*synchronizer
 }
 
-func newQueryVotesHandler(sync *synchronizer) messageHandler {
-	return &queryVotesHandler{
+func newQueryVoteHandler(sync *synchronizer) messageHandler {
+	return &queryVoteHandler{
 		sync,
 	}
 }
 
-func (handler *queryVotesHandler) ParseMessage(m message.Message, _ peer.ID) {
-	msg := m.(*message.QueryVotesMessage)
-	handler.logger.Trace("parsing QueryVotes message", "msg", msg)
+func (handler *queryVoteHandler) ParseMessage(m message.Message, _ peer.ID) {
+	msg := m.(*message.QueryVoteMessage)
+	handler.logger.Trace("parsing QueryVote message", "msg", msg)
 
-	if !handler.consMgr.HasActiveInstance() {
-		handler.logger.Debug("ignoring QueryVotes, not active", "msg", msg)
-
-		return
-	}
-
-	height, _ := handler.consMgr.HeightRound()
-	if msg.Height != height {
-		handler.logger.Debug("ignoring QueryVotes, not same height", "msg", msg,
-			"height", height)
-
-		return
-	}
-
-	v := handler.consMgr.PickRandomVote(msg.Round)
+	v := handler.consMgr.HandleQueryVote(msg.Height, msg.Round)
 	if v != nil {
 		response := message.NewVoteMessage(v)
 		handler.broadcast(response)
 	}
 }
 
-func (*queryVotesHandler) PrepareBundle(m message.Message) *bundle.Bundle {
+func (*queryVoteHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	bdl := bundle.NewBundle(m)
 
 	return bdl

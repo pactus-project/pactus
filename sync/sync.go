@@ -96,7 +96,7 @@ func NewSynchronizer(
 	handlers[message.TypeTransaction] = newTransactionsHandler(sync)
 	handlers[message.TypeQueryProposal] = newQueryProposalHandler(sync)
 	handlers[message.TypeProposal] = newProposalHandler(sync)
-	handlers[message.TypeQueryVote] = newQueryVotesHandler(sync)
+	handlers[message.TypeQueryVote] = newQueryVoteHandler(sync)
 	handlers[message.TypeVote] = newVoteHandler(sync)
 	handlers[message.TypeBlockAnnounce] = newBlockAnnounceHandler(sync)
 	handlers[message.TypeBlocksRequest] = newBlocksRequestHandler(sync)

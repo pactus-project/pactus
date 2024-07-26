@@ -141,13 +141,6 @@ func (cs *consensus) HeightRound() (uint32, int16) {
 	return cs.height, cs.round
 }
 
-func (cs *consensus) Proposal() *proposal.Proposal {
-	cs.lk.RLock()
-	defer cs.lk.RUnlock()
-
-	return cs.log.RoundProposal(cs.round)
-}
-
 func (cs *consensus) HasVote(h hash.Hash) bool {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
@@ -223,19 +216,15 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 	defer cs.lk.Unlock()
 
 	if !cs.active {
-		cs.logger.Trace("we are not in the committee")
-
 		return
 	}
 
 	if p.Height() != cs.height {
-		cs.logger.Trace("invalid height", "proposal", p)
-
 		return
 	}
 
 	if p.Round() < cs.round {
-		cs.logger.Trace("proposal for expired round", "proposal", p)
+		cs.logger.Debug("proposal for expired round", "proposal", p)
 
 		return
 	}
@@ -258,7 +247,7 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		// In this case, we accept the proposal and allow nodes to continue.
 		// By doing so, we enable the validator to broadcast its votes and
 		// prevent it from being marked as absent in the block certificate.
-		cs.logger.Trace("block is committed for this height", "proposal", p)
+		cs.logger.Warn("block committed before receiving proposal", "proposal", p)
 		if p.Block().Hash() != cs.bcState.LastBlockHash() {
 			cs.logger.Warn("proposal is not for the committed block", "proposal", p)
 
@@ -290,19 +279,15 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 	defer cs.lk.Unlock()
 
 	if !cs.active {
-		cs.logger.Trace("we are not in the committee")
-
 		return
 	}
 
 	if v.Height() != cs.height {
-		cs.logger.Trace("vote has invalid height", "vote", v)
-
 		return
 	}
 
 	if v.Round() < cs.round {
-		cs.logger.Trace("vote for expired round", "vote", v)
+		cs.logger.Debug("vote for expired round", "vote", v)
 
 		return
 	}
@@ -396,17 +381,16 @@ func (cs *consensus) signAddVote(v *vote.Vote) {
 	cs.broadcastVote(v)
 }
 
+// queryProposal requests any missing proposal from other validators.
 func (cs *consensus) queryProposal() {
 	cs.broadcaster(cs.valKey.Address(),
 		message.NewQueryProposalMessage(cs.height, cs.round, cs.valKey.Address()))
 }
 
-// queryVotes is an anti-entropy mechanism to retrieve missed votes
-// when a validator falls behind the network.
-// However, invoking this method might result in unnecessary bandwidth usage.
-func (cs *consensus) queryVotes() {
+// queryVote requests any missing votes from other validators.
+func (cs *consensus) queryVote() {
 	cs.broadcaster(cs.valKey.Address(),
-		message.NewQueryVotesMessage(cs.height, cs.round, cs.valKey.Address()))
+		message.NewQueryVoteMessage(cs.height, cs.round, cs.valKey.Address()))
 }
 
 func (cs *consensus) broadcastProposal(p *proposal.Proposal) {
@@ -477,10 +461,55 @@ func (cs *consensus) IsActive() bool {
 	return cs.active
 }
 
-// TODO: Improve the performance?
-func (cs *consensus) PickRandomVote(round int16) *vote.Vote {
+func (cs *consensus) Proposal() *proposal.Proposal {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
+
+	return cs.log.RoundProposal(cs.round)
+}
+
+func (cs *consensus) HandleQueryProposal(height uint32, round int16) *proposal.Proposal {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	if !cs.active {
+		return nil
+	}
+
+	if height != cs.height {
+		return nil
+	}
+
+	if round != cs.round {
+		return nil
+	}
+
+	if cs.isProposer() {
+		return cs.log.RoundProposal(cs.round)
+	}
+
+	if cs.cpDecided == 0 {
+		// It is decided not to change the proposer and the proposal is locked.
+		// Locked proposals can be sent by all validators.
+		// This helps prevent a situation where the proposer goes offline after proposing the block.
+		return cs.log.RoundProposal(cs.round)
+	}
+
+	return nil
+}
+
+// TODO: Improve the performance?
+func (cs *consensus) HandleQueryVote(height uint32, round int16) *vote.Vote {
+	cs.lk.RLock()
+	defer cs.lk.RUnlock()
+
+	if !cs.active {
+		return nil
+	}
+
+	if height != cs.height {
+		return nil
+	}
 
 	votes := []*vote.Vote{}
 	switch {
