@@ -9,9 +9,9 @@
         "bond_interval": 360,
         "unbond_interval": 181440,
         "sortition_interval": 17,
-        "fee_fraction": 0.0001,
-        "minimum_fee": 1000,
-        "maximum_fee": 1000000,
+        "fee_fraction": 0.0,
+        "minimum_fee": 0,
+        "maximum_fee": 0,
         "minimum_stake": 1000000000,
         "maximum_stake": 1000000000000
     },
