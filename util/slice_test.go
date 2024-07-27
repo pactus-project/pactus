@@ -362,3 +362,10 @@ func TestShuffle(t *testing.T) {
 	assert.NotEqual(t, originalInts, ints, "ints slice was not shuffled")
 	assert.ElementsMatch(t, originalInts, ints, "ints slice does not contain the same elements")
 }
+
+func TestRandomElement(t *testing.T) {
+	slice := []int{1, 2, 3, 4, 5}
+
+	randItem := RandomElement(slice)
+	assert.Contains(t, slice, randItem)
+}

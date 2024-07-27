@@ -251,3 +251,8 @@ func Shuffle[T any](slice []T) {
 		slice[i], slice[j] = slice[j], slice[i]
 	})
 }
+
+// RandomElement returns a random element from a slice
+func RandomElement[T any](slice []T) T {
+	return slice[RandInt32(int32(len(slice)))]
+}
