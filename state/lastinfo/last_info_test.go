@@ -2,6 +2,7 @@ package lastinfo
 
 import (
 	"testing"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -11,7 +12,6 @@ import (
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -75,7 +75,7 @@ func setup(t *testing.T) *testData {
 	lastHeight := ts.RandHeight()
 	prevCert := ts.GenerateTestBlockCertificate(lastHeight - 1)
 	lastSeed := ts.RandSeed()
-	lastBlock := block.MakeBlock(1, util.Now(), block.Txs{trx},
+	lastBlock := block.MakeBlock(1, time.Now(), block.Txs{trx},
 		prevHash,
 		ts.RandHash(),
 		prevCert, lastSeed, val2.Address())

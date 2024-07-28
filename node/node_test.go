@@ -2,6 +2,7 @@ package node
 
 import (
 	"testing"
+	"time"
 
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
@@ -27,12 +28,20 @@ func TestRunningNode(t *testing.T) {
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	val := validator.NewValidator(pub, 0)
-	gen := genesis.MakeGenesis(util.Now(),
+	gen := genesis.MakeGenesis(time.Now(),
 		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
 		[]*validator.Validator{val}, param.DefaultParams())
 	conf := config.DefaultConfigMainnet()
-	conf.GRPC.Enable = false
-	conf.HTTP.Enable = false
+	conf.GRPC.Enable = true
+	conf.GRPC.Listen = "0:0"
+	conf.GRPC.Gateway.Enable = true
+	conf.GRPC.Gateway.Listen = "0:0"
+	conf.HTTP.Enable = true
+	conf.HTTP.Listen = "0:0"
+	conf.JSONRPC.Enable = true
+	conf.JSONRPC.Listen = "0:0"
+	conf.Nanomsg.Enable = true
+	conf.Nanomsg.Listen = "tcp://0:0"
 	conf.Store.Path = util.TempDirPath()
 	conf.Network.EnableRelay = false
 	conf.Network.NetworkKey = util.TempFilePath()
@@ -49,5 +58,18 @@ func TestRunningNode(t *testing.T) {
 
 	err = nd.Start()
 	require.NoError(t, err)
+
+	consHeight, _ := nd.ConsManager().HeightRound()
+	assert.Equal(t, uint32(1), consHeight)
+
+	lastBlockTime := nd.State().LastBlockTime()
+	assert.Equal(t, gen.GenesisTime(), lastBlockTime)
+
+	syncSelfID := nd.Sync().SelfID()
+	netSelfID := nd.Network().SelfID()
+	assert.Equal(t, syncSelfID, netSelfID)
+
+	assert.NotEmpty(t, nd.GRPC().Address())
+
 	nd.Stop()
 }
