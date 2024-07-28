@@ -33,15 +33,15 @@ func TestRunningNode(t *testing.T) {
 		[]*validator.Validator{val}, param.DefaultParams())
 	conf := config.DefaultConfigMainnet()
 	conf.GRPC.Enable = true
-	conf.GRPC.Listen = "0:0"
+	conf.GRPC.Listen = "0.0.0.0:0"
 	conf.GRPC.Gateway.Enable = true
-	conf.GRPC.Gateway.Listen = "0:0"
+	conf.GRPC.Gateway.Listen = "0.0.0.0:0"
 	conf.HTTP.Enable = true
-	conf.HTTP.Listen = "0:0"
+	conf.HTTP.Listen = "0.0.0.0:0"
 	conf.JSONRPC.Enable = true
-	conf.JSONRPC.Listen = "0:0"
+	conf.JSONRPC.Listen = "0.0.0.0:0"
 	conf.Nanomsg.Enable = true
-	conf.Nanomsg.Listen = "tcp://0:0"
+	conf.Nanomsg.Listen = "tcp://0.0.0.0:0"
 	conf.Store.Path = util.TempDirPath()
 	conf.Network.EnableRelay = false
 	conf.Network.NetworkKey = util.TempFilePath()
