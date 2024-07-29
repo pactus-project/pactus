@@ -27,7 +27,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 	t.Run("Should fail, unknown address", func(t *testing.T) {
 		randomAddr := td.RandValAddress()
-		trx := tx.NewUnbondTx(lockTime, randomAddr, "unknown address")
+		trx := tx.NewUnbondTx(lockTime, randomAddr)
 
 		td.check(t, trx, true, ValidatorNotFoundError{Address: randomAddr})
 		td.check(t, trx, false, ValidatorNotFoundError{Address: randomAddr})
@@ -35,7 +35,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 	t.Run("Should fail, inside committee", func(t *testing.T) {
 		val0 := td.sandbox.Committee().Proposer(0)
-		trx := tx.NewUnbondTx(lockTime, val0.Address(), "inside committee")
+		trx := tx.NewUnbondTx(lockTime, val0.Address())
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
 		td.check(t, trx, false, nil)
@@ -46,14 +46,14 @@ func TestExecuteUnbondTx(t *testing.T) {
 		randVal := td.sandbox.MakeNewValidator(randPub)
 		td.sandbox.UpdateValidator(randVal)
 		td.sandbox.JoinedToCommittee(randVal.Address())
-		trx := tx.NewUnbondTx(lockTime, randPub.ValidatorAddress(), "joining committee")
+		trx := tx.NewUnbondTx(lockTime, randPub.ValidatorAddress())
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
 		td.check(t, trx, false, nil)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewUnbondTx(lockTime, valAddr, "Ok")
+		trx := tx.NewUnbondTx(lockTime, valAddr)
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
@@ -61,7 +61,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, Cannot unbond if already unbonded", func(t *testing.T) {
-		trx := tx.NewUnbondTx(lockTime, valAddr, "Ok")
+		trx := tx.NewUnbondTx(lockTime, valAddr)
 
 		td.check(t, trx, true, ErrValidatorUnbonded)
 		td.check(t, trx, false, ErrValidatorUnbonded)
@@ -87,7 +87,7 @@ func TestPowerDeltaUnbond(t *testing.T) {
 	val.AddToStake(amt)
 	td.sandbox.UpdateValidator(val)
 	lockTime := td.sandbox.CurrentHeight()
-	trx := tx.NewUnbondTx(lockTime, valAddr, "Ok")
+	trx := tx.NewUnbondTx(lockTime, valAddr)
 
 	td.execute(t, trx)
 

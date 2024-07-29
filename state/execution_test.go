@@ -16,18 +16,18 @@ func TestProposeBlock(t *testing.T) {
 	proposer := td.state.Proposer(0)
 	lockTime := td.state.LastBlockHeight()
 	dupSubsidyTx := tx.NewSubsidyTx(lockTime, proposer.Address(),
-		td.state.params.BlockReward, "duplicated subsidy transaction")
+		td.state.params.BlockReward, tx.WithMemo("duplicated subsidy transaction"))
 	invTransferTx := td.GenerateTestTransferTx()
 	invBondTx := td.GenerateTestBondTx()
 	invSortitionTx := td.GenerateTestSortitionTx()
 
 	pub, _ := td.RandBLSKeyPair()
 	validTrx1 := tx.NewTransferTx(lockTime, td.genAccKey.PublicKeyNative().AccountAddress(),
-		td.RandAccAddress(), 1, 1000, "")
+		td.RandAccAddress(), 1, 1000)
 	td.HelperSignTransaction(td.genAccKey, validTrx1)
 
 	validTrx2 := tx.NewBondTx(lockTime, td.genAccKey.PublicKeyNative().AccountAddress(),
-		pub.ValidatorAddress(), pub, 1000000000, 100000, "")
+		pub.ValidatorAddress(), pub, 1000000000, 100000)
 	td.HelperSignTransaction(td.genAccKey, validTrx2)
 
 	assert.NoError(t, td.state.AddPendingTx(invTransferTx))
@@ -60,7 +60,7 @@ func TestExecuteBlock(t *testing.T) {
 	invTransferTx := td.GenerateTestTransferTx()
 
 	validTx1 := tx.NewTransferTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
-		td.RandAccAddress(), 1, 1000, "")
+		td.RandAccAddress(), 1, 1000)
 	td.HelperSignTransaction(td.genAccKey, validTx1)
 
 	assert.NoError(t, td.state.AddPendingTx(invTransferTx))

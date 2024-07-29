@@ -121,7 +121,7 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	fee := s.getFee(req.Fee, amt)
 	lockTime := s.getLockTime(req.LockTime)
 
-	transferTx := tx.NewTransferTx(lockTime, sender, receiver, amt, fee, req.Memo)
+	transferTx := tx.NewTransferTx(lockTime, sender, receiver, amt, fee, tx.WithMemo(req.Memo))
 	rawTx, err := transferTx.Bytes()
 	if err != nil {
 		return nil, err
@@ -159,7 +159,7 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	fee := s.getFee(req.Fee, amt)
 	lockTime := s.getLockTime(req.LockTime)
 
-	bondTx := tx.NewBondTx(lockTime, sender, receiver, publicKey, amt, fee, req.Memo)
+	bondTx := tx.NewBondTx(lockTime, sender, receiver, publicKey, amt, fee, tx.WithMemo(req.Memo))
 	rawTx, err := bondTx.Bytes()
 	if err != nil {
 		return nil, err
@@ -180,7 +180,7 @@ func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
 
 	lockTime := s.getLockTime(req.LockTime)
 
-	unbondTx := tx.NewUnbondTx(lockTime, validatorAddr, req.Memo)
+	unbondTx := tx.NewUnbondTx(lockTime, validatorAddr, tx.WithMemo(req.Memo))
 	rawTx, err := unbondTx.Bytes()
 	if err != nil {
 		return nil, err
@@ -208,7 +208,7 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	fee := s.getFee(req.Fee, amt)
 	lockTime := s.getLockTime(req.LockTime)
 
-	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, amt, fee, req.Memo)
+	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, amt, fee, tx.WithMemo(req.Memo))
 	rawTx, err := withdrawTx.Bytes()
 	if err != nil {
 		return nil, err
