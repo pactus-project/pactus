@@ -22,10 +22,5 @@
     <string>MIT License.</string>
     <key>LSMinimumSystemVersion</key>
     <string>10.15</string>
-    <key>LSEnvironment</key>
-    <dict>
-        <key>DYLD_LIBRARY_PATH</key>
-        <string>@executable_path/../Resources/lib</string>
-    </dict>
 </dict>
 </plist>
