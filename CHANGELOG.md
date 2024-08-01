@@ -1,5 +1,42 @@
 # Changelog
 
+## [1.4.0](https://github.com/pactus-project/pactus/compare/v1.3.0...v1.4.0) (2024-08-01)
+
+### Feat
+
+- **cmd**: add node type page to the startup assistant  ([#1431](https://github.com/pactus-project/pactus/pull/1431))
+- **grpc**: adding is-pruned and pruning-height to blockchain info API ([#1420](https://github.com/pactus-project/pactus/pull/1420))
+- **daemon**: add import command to download pruned snapshots ([#1424](https://github.com/pactus-project/pactus/pull/1424))
+- **util**: file downloader with verify sha256 hash ([#1422](https://github.com/pactus-project/pactus/pull/1422))
+- **sync**: define full and prune service ([#1412](https://github.com/pactus-project/pactus/pull/1412))
+- **pip**: implement PIP-23 ([#1397](https://github.com/pactus-project/pactus/pull/1397))
+- **firewall**: check valid gossip and stream messages ([#1402](https://github.com/pactus-project/pactus/pull/1402))
+- **state**: prune block on commit ([#1404](https://github.com/pactus-project/pactus/pull/1404))
+- **core**: pruning client by prune command ([#1400](https://github.com/pactus-project/pactus/pull/1400))
+- **store**: prune block function ([#1399](https://github.com/pactus-project/pactus/pull/1399))
+- **wallet**: add timeout client connection ([#1396](https://github.com/pactus-project/pactus/pull/1396))
+- add backup tool script ([#1373](https://github.com/pactus-project/pactus/pull/1373))
+
+### Fix
+
+- **consensus**: handle query for decided proposal ([#1438](https://github.com/pactus-project/pactus/pull/1438))
+- **gtk**: solve dynamic library dependencies and import path on macOS ([#1435](https://github.com/pactus-project/pactus/pull/1435))
+- **cmd**: prevent sudden crash on download error ([#1432](https://github.com/pactus-project/pactus/pull/1432))
+- **store**: pruning height returns zero when store is not in prune mode ([#1430](https://github.com/pactus-project/pactus/pull/1430))
+- **grpc**: add last-block-time to blockchain-info API ([#1428](https://github.com/pactus-project/pactus/pull/1428))
+- **grpc**: show negative pruning height when is pruned false ([#1429](https://github.com/pactus-project/pactus/pull/1429))
+- **sync**: fix syncing issue on prune mode ([#1415](https://github.com/pactus-project/pactus/pull/1415))
+- **grpc**: return error on invalid arguments for VerifyMessage ([#1411](https://github.com/pactus-project/pactus/pull/1411))
+- **network**: accept messages originating from self ([#1408](https://github.com/pactus-project/pactus/pull/1408))
+- change wallet rpc ip to dns address ([#1398](https://github.com/pactus-project/pactus/pull/1398))
+- **pactus-shell**: pactus shell support basic auth ([#1384](https://github.com/pactus-project/pactus/pull/1384))
+- **gui**: support ctrl+c for interrupt gui ([#1385](https://github.com/pactus-project/pactus/pull/1385))
+- **grpc**: add basic auth in swagger header ([#1383](https://github.com/pactus-project/pactus/pull/1383))
+
+### Refactor
+
+- **execution**: simplify executors and tests ([#1425](https://github.com/pactus-project/pactus/pull/1425))
+
 ## [1.3.0](https://github.com/pactus-project/pactus/compare/v1.2.0...v1.3.0) (2024-06-27)
 
 ### Feat
