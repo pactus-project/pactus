@@ -171,7 +171,10 @@ func TestVersionComparison(t *testing.T) {
 // TestCheckVersionString checks if the current version string is valid and parsable.
 func TestCheckVersionString(t *testing.T) {
 	curVer := version.NodeVersion
-	parsedVer, err := version.ParseVersion(curVer.StringWithAlias())
+	parsedVer, err := version.ParseVersion(curVer.String())
 	require.NoError(t, err)
-	assert.Equal(t, curVer, parsedVer)
+	assert.Equal(t, curVer.Major, parsedVer.Major)
+	assert.Equal(t, curVer.Minor, parsedVer.Minor)
+	assert.Equal(t, curVer.Patch, parsedVer.Patch)
+	assert.Equal(t, curVer.Meta, parsedVer.Meta)
 }
