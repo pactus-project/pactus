@@ -40,6 +40,7 @@ cd gtk-mac-bundler
 # A workaround to make bundle without builing GTK+ using jhbuild.
 rm bundler/run-install-name-tool-change.sh
 cp ${ROOT_DIR}/.github/releasers/macos/run-install-name-tool-change.sh bundler/run-install-name-tool-change.sh
+chmod +x bundler/run-install-name-tool-change.sh
 
 make install
 
