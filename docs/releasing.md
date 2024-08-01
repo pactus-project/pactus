@@ -71,9 +71,9 @@ It's better to use [GitHub CLI](https://github.com/cli/cli/) to create the PR, b
 
 ```bash
 git checkout -b releasing_${CUR_VER}
-git commit -a -m "chore: releasing version ${CUR_VER}"
+git commit -a -m "chore(release): releasing version ${CUR_VER}"
 git push origin HEAD
-gh pr create --title "chore: releasing version ${CUR_VER}" --body "Releasing version ${CUR_VER}" --base ${BASE_BRANCH}
+gh pr create --title "chore(release): releasing version ${CUR_VER}" --body "Releasing version ${CUR_VER}" --base ${BASE_BRANCH}
 ```
 
 Wait for the PR to be approved and merged into the main branch.
@@ -115,9 +115,9 @@ Create a new PR against the base branch:
 
 ```bash
 git checkout -b bumping_${NEXT_VER}
-git commit -a -m "chore: bumping version to ${NEXT_VER}"
+git commit -a -m "chore(version): bumping version to ${NEXT_VER}"
 git push origin HEAD
-gh pr create --title "chore: bumping version to ${NEXT_VER}" --body "Bumping version to ${NEXT_VER}" --base ${BASE_BRANCH}
+gh pr create --title "chore(version): bumping version to ${NEXT_VER}" --body "Bumping version to ${NEXT_VER}" --base ${BASE_BRANCH}
 ```
 
 Wait for the PR to be approved and merged into the main branch.
