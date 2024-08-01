@@ -16,7 +16,7 @@ if [ "x$ACTION" = "xchange" ]; then
     libs="`otool -L $LIBRARY 2>/dev/null | fgrep compatibility | cut -d\( -f1 | grep $WRONG_PREFIX | sort | uniq`"
     for lib in $libs; do
         if ! echo $lib | grep --silent "@executable_path" ; then
-            if echo $lib | grep --silent "/Cellar/"; then
+            if echo $lib | grep --silent "${LIB_HOME}/Cellar/"; then
                 fixed=`echo $lib | sed -e "s|${LIB_HOME}/Cellar/\([^/]*\)/[^/]*/|@executable_path/../Resources/opt/\1/|"`
             else
                 fixed=`echo $lib | sed -e s,\${WRONG_PREFIX},\${RIGHT_PREFIX},`
