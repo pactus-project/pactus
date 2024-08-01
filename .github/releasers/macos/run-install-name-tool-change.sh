@@ -17,7 +17,7 @@ if [ "x$ACTION" = "xchange" ]; then
     for lib in $libs; do
         if ! echo $lib | grep --silent "@executable_path" ; then
             if echo $lib | grep --silent "/Cellar/"; then
-                fixed=`echo $lib | sed -e "s|/opt/homebrew/Cellar/\([^/]*\)/[^/]*/|@executable_path/../Resources/opt/\1/|"`
+                fixed=`echo $lib | sed -e "s|${LIB_HOME}/Cellar/\([^/]*\)/[^/]*/|@executable_path/../Resources/opt/\1/|"`
             else
                 fixed=`echo $lib | sed -e s,\${WRONG_PREFIX},\${RIGHT_PREFIX},`
             fi

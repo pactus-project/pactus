@@ -12,7 +12,7 @@
          defined by jhbuild, so it you are not using jhbuild you can
          either define your own or just hardcode the path here.
     -->
-    <prefix name="default">${env:PREFIX}</prefix>
+    <prefix name="default">${env:LIB_HOME}</prefix>
 
     <prefix name="bundle">${env:GUI_BUNDLE}</prefix>
     <!-- The project directory is the default location of the created

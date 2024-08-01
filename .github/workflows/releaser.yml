@@ -97,7 +97,7 @@ jobs:
   build-gui-macos:
     runs-on: macos-12
     env:
-      PREFIX: /usr/local
+      LIB_HOME: /usr/local
 
     outputs:
       checksums: ${{ steps.calc_checksums.outputs.checksums }}
@@ -141,7 +141,7 @@ jobs:
       # In M1 `/usr/local` moved to `/opt/homebrew`.
       #  More info: https://earthly.dev/blog/homebrew-on-m1/
       #
-      PREFIX: /opt/homebrew
+      LIB_HOME: /opt/homebrew
 
     outputs:
       checksums: ${{ steps.calc_checksums.outputs.checksums }}
