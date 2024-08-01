@@ -122,10 +122,10 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="id_learn_menu">
+                      <object class="GtkMenuItem" id="id_documentation_menu">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">_Learn</property>
+                        <property name="label" translatable="yes">_Documentation</property>
                         <property name="use-underline">True</property>
                       </object>
                     </child>
