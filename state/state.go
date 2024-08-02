@@ -309,7 +309,7 @@ func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 
 func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee amount.Amount) *tx.Tx {
 	lockTime := st.lastInfo.BlockHeight() + 1
-	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+fee, "")
+	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+fee)
 
 	return transaction
 }

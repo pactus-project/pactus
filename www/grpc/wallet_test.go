@@ -161,7 +161,8 @@ func TestLoadWallet(t *testing.T) {
 
 	t.Run("Sign raw transaction, OK", func(t *testing.T) {
 		wltAddr, _ := crypto.AddressFromString(wltAddrInfo.Address)
-		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(), td.RandAmount(), "memo")
+		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(),
+			td.RandAmount())
 
 		b, err := bondTx.Bytes()
 		assert.NoError(t, err)
@@ -183,7 +184,8 @@ func TestLoadWallet(t *testing.T) {
 
 	t.Run("Sign raw transaction using not loaded wallet", func(t *testing.T) {
 		wltAddr, _ := crypto.AddressFromString(wltAddrInfo.Address)
-		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(), td.RandAmount(), "memo")
+		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(),
+			td.RandAmount())
 
 		b, err := bondTx.Bytes()
 		assert.NoError(t, err)

@@ -30,7 +30,7 @@ func broadcastSendTransaction(t *testing.T, sender *bls.ValidatorKey, receiver c
 	t.Helper()
 
 	lockTime := lastHeight() + 1
-	trx := tx.NewTransferTx(lockTime, sender.PublicKey().AccountAddress(), receiver, amt, fee, "")
+	trx := tx.NewTransferTx(lockTime, sender.PublicKey().AccountAddress(), receiver, amt, fee)
 	sig := sender.Sign(trx.SignBytes())
 
 	trx.SetPublicKey(sender.PublicKey())
@@ -47,7 +47,7 @@ func broadcastBondTransaction(t *testing.T, sender *bls.ValidatorKey, pub *bls.P
 	t.Helper()
 
 	lockTime := lastHeight() + 1
-	trx := tx.NewBondTx(lockTime, sender.PublicKey().AccountAddress(), pub.ValidatorAddress(), pub, stake, fee, "")
+	trx := tx.NewBondTx(lockTime, sender.PublicKey().AccountAddress(), pub.ValidatorAddress(), pub, stake, fee)
 	sig := sender.Sign(trx.SignBytes())
 
 	trx.SetPublicKey(sender.PublicKey())

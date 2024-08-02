@@ -169,9 +169,9 @@ func TestStrippedPublicKey(t *testing.T) {
 	lastHeight := lastCert.Height()
 	randPubKey, _ := td.RandBLSKeyPair()
 
-	trx0 := tx.NewTransferTx(lastHeight, knownPubKey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
-	trx1 := tx.NewTransferTx(lastHeight, randPubKey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
-	trx2 := tx.NewTransferTx(lastHeight, randPubKey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
+	trx0 := tx.NewTransferTx(lastHeight, knownPubKey.AccountAddress(), td.RandAccAddress(), 1, 1)
+	trx1 := tx.NewTransferTx(lastHeight, randPubKey.AccountAddress(), td.RandAccAddress(), 1, 1)
+	trx2 := tx.NewTransferTx(lastHeight, randPubKey.AccountAddress(), td.RandAccAddress(), 1, 1)
 
 	trx0.StripPublicKey()
 	trx1.SetPublicKey(randPubKey)

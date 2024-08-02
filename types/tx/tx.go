@@ -42,21 +42,28 @@ type txData struct {
 	PublicKey crypto.PublicKey
 }
 
-func newTx(lockTime uint32, pld payload.Payload, fee amount.Amount,
-	memo string,
-) *Tx {
-	trx := &Tx{
-		data: txData{
-			Flags:    flagNotSigned,
-			LockTime: lockTime,
-			Version:  versionLatest,
-			Payload:  pld,
-			Fee:      fee,
-			Memo:     memo,
-		},
+type TxOption func(*txData)
+
+func WithMemo(memo string) TxOption {
+	return func(td *txData) {
+		td.Memo = memo
+	}
+}
+
+func newTx(lockTime uint32, pld payload.Payload, fee amount.Amount, opts ...TxOption) *Tx {
+	data := txData{
+		Flags:    flagNotSigned,
+		LockTime: lockTime,
+		Version:  versionLatest,
+		Payload:  pld,
+		Fee:      fee,
 	}
 
-	return trx
+	for _, opt := range opts {
+		opt(&data)
+	}
+
+	return &Tx{data: data}
 }
 
 // FromBytes constructs a new transaction from byte array.

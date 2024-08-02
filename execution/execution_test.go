@@ -63,7 +63,7 @@ func TestTransferLockTime(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			trx := tx.NewTransferTx(tc.lockTime, rndAccAddr, ts.RandAccAddress(), 1000, 1000, "")
+			trx := tx.NewTransferTx(tc.lockTime, rndAccAddr, ts.RandAccAddress(), 1000, 1000)
 			ts.HelperSignTransaction(rndPrvKey, trx)
 
 			strictErr := CheckLockTime(trx, sb, true)
@@ -173,7 +173,7 @@ func TestSubsidyLockTime(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			trx := tx.NewSubsidyTx(tc.lockTime, ts.RandAccAddress(), 1000, "subsidy-test")
+			trx := tx.NewSubsidyTx(tc.lockTime, ts.RandAccAddress(), 1000)
 
 			strictErr := CheckLockTime(trx, sb, true)
 			assert.ErrorIs(t, strictErr, tc.strictErr)
@@ -195,25 +195,25 @@ func TestCheckFee(t *testing.T) {
 		{
 			name: "Subsidy transaction with fee",
 			trx: tx.NewTransferTx(ts.RandHeight(), crypto.TreasuryAddress, ts.RandAccAddress(),
-				ts.RandAmount(), 1, ""),
+				ts.RandAmount(), 1),
 			expectedErr: InvalidFeeError{Fee: 1, Expected: 0},
 		},
 		{
 			name: "Subsidy transaction without fee",
 			trx: tx.NewTransferTx(ts.RandHeight(), crypto.TreasuryAddress, ts.RandAccAddress(),
-				ts.RandAmount(), 0, ""),
+				ts.RandAmount(), 0),
 			expectedErr: nil,
 		},
 		{
 			name: "Transfer transaction with fee",
 			trx: tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(),
-				ts.RandAmount(), 0, ""),
+				ts.RandAmount(), 0),
 			expectedErr: nil,
 		},
 		{
 			name: "Transfer transaction without fee",
 			trx: tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(),
-				ts.RandAmount(), 0, ""),
+				ts.RandAmount(), 0),
 			expectedErr: nil,
 		},
 	}
@@ -236,14 +236,14 @@ func TestExecute(t *testing.T) {
 	t.Run("Invalid transaction, Should return error", func(t *testing.T) {
 		randAddr := ts.RandAccAddress()
 		trx := tx.NewTransferTx(lockTime, randAddr, ts.RandAccAddress(),
-			ts.RandAmount(), ts.RandFee(), "invalid-tx")
+			ts.RandAmount(), ts.RandFee())
 
 		err := Execute(trx, sb)
 		assert.ErrorIs(t, err, executor.AccountNotFoundError{Address: randAddr})
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(lockTime, ts.RandAccAddress(), 1000, "valid-tx")
+		trx := tx.NewSubsidyTx(lockTime, ts.RandAccAddress(), 1000)
 		err := Execute(trx, sb)
 		assert.NoError(t, err)
 
@@ -260,8 +260,7 @@ func TestCheck(t *testing.T) {
 
 	t.Run("Invalid lock-time, Should return error", func(t *testing.T) {
 		invalidLocoTme := lockTime + 1
-		trx := tx.NewTransferTx(invalidLocoTme, crypto.TreasuryAddress,
-			ts.RandAccAddress(), ts.RandAmount(), 0, "invalid lock-time")
+		trx := tx.NewTransferTx(invalidLocoTme, crypto.TreasuryAddress, ts.RandAccAddress(), ts.RandAmount(), 0)
 
 		err := CheckAndExecute(trx, sb, true)
 		assert.ErrorIs(t, err, LockTimeInFutureError{LockTime: invalidLocoTme})
@@ -269,8 +268,7 @@ func TestCheck(t *testing.T) {
 
 	t.Run("Invalid fee, Should return error", func(t *testing.T) {
 		invalidFee := amount.Amount(1)
-		trx := tx.NewTransferTx(lockTime, crypto.TreasuryAddress,
-			ts.RandAccAddress(), ts.RandAmount(), invalidFee, "invalid fee")
+		trx := tx.NewTransferTx(lockTime, crypto.TreasuryAddress, ts.RandAccAddress(), ts.RandAmount(), invalidFee)
 
 		err := CheckAndExecute(trx, sb, true)
 		assert.ErrorIs(t, err, InvalidFeeError{Fee: invalidFee, Expected: 0})
@@ -278,8 +276,7 @@ func TestCheck(t *testing.T) {
 
 	t.Run("Invalid transaction, Should return error", func(t *testing.T) {
 		randAddr := ts.RandAccAddress()
-		trx := tx.NewTransferTx(lockTime, randAddr, ts.RandAccAddress(),
-			ts.RandAmount(), ts.RandFee(), "invalid-tx")
+		trx := tx.NewTransferTx(lockTime, randAddr, ts.RandAccAddress(), ts.RandAmount(), ts.RandFee())
 
 		err := CheckAndExecute(trx, sb, true)
 		assert.ErrorIs(t, err, executor.AccountNotFoundError{Address: randAddr})
@@ -295,7 +292,7 @@ func TestCheck(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(lockTime, ts.RandAccAddress(), 1000, "valid-tx")
+		trx := tx.NewSubsidyTx(lockTime, ts.RandAccAddress(), 1000)
 		err := CheckAndExecute(trx, sb, true)
 		assert.NoError(t, err)
 
@@ -315,7 +312,7 @@ func TestReplay(t *testing.T) {
 	lockTime := sb.CurrentHeight()
 
 	trx := tx.NewTransferTx(lockTime,
-		rndAccAddr, ts.RandAccAddress(), 10000, 1000, "")
+		rndAccAddr, ts.RandAccAddress(), 10000, 1000)
 	ts.HelperSignTransaction(rndPrvKey, trx)
 
 	err := Execute(trx, sb)
