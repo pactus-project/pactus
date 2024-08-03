@@ -52,8 +52,8 @@ func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel) *mainWindow
 	websiteItemMenu := getMenuItem(builder, "id_website_menu")
 	websiteItemMenu.Connect("activate", mw.onMenuItemActivateWebsite)
 
-	learnItemMenu := getMenuItem(builder, "id_learn_menu")
-	learnItemMenu.Connect("activate", mw.onMenuItemActivateLearn)
+	documentationItemMenu := getMenuItem(builder, "id_documentation_menu")
+	documentationItemMenu.Connect("activate", mw.onMenuItemActivateDocumentation)
 
 	// Map the handlers to callback functions, and connect the signals
 	// to the Builder.
@@ -124,8 +124,8 @@ func (*mainWindow) onMenuItemActivateExplorer(_ *gtk.MenuItem) {
 	}
 }
 
-func (*mainWindow) onMenuItemActivateLearn(_ *gtk.MenuItem) {
-	if err := openURLInBrowser("https://pactus.org/learn/"); err != nil {
+func (*mainWindow) onMenuItemActivateDocumentation(_ *gtk.MenuItem) {
+	if err := openURLInBrowser("https://docs.pactus.org/"); err != nil {
 		fatalErrorCheck(err)
 	}
 }

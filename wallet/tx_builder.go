@@ -96,7 +96,7 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 	var trx *tx.Tx
 	switch m.typ {
 	case payload.TypeTransfer:
-		trx = tx.NewTransferTx(m.lockTime, *m.from, *m.to, m.amount, m.fee, m.memo)
+		trx = tx.NewTransferTx(m.lockTime, *m.from, *m.to, m.amount, m.fee, tx.WithMemo(m.memo))
 	case payload.TypeBond:
 		pub := m.pub
 		val, _ := m.client.getValidator(m.to.String())
@@ -104,13 +104,13 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 			// validator exists
 			pub = nil
 		}
-		trx = tx.NewBondTx(m.lockTime, *m.from, *m.to, pub, m.amount, m.fee, m.memo)
+		trx = tx.NewBondTx(m.lockTime, *m.from, *m.to, pub, m.amount, m.fee, tx.WithMemo(m.memo))
 
 	case payload.TypeUnbond:
-		trx = tx.NewUnbondTx(m.lockTime, *m.from, m.memo)
+		trx = tx.NewUnbondTx(m.lockTime, *m.from, tx.WithMemo(m.memo))
 
 	case payload.TypeWithdraw:
-		trx = tx.NewWithdrawTx(m.lockTime, *m.from, *m.to, m.amount, m.fee, m.memo)
+		trx = tx.NewWithdrawTx(m.lockTime, *m.from, *m.to, m.amount, m.fee, tx.WithMemo(m.memo))
 
 	case payload.TypeSortition:
 		return nil, fmt.Errorf("unable to build sortition transactions")

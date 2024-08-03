@@ -9,7 +9,7 @@ import (
 )
 
 func NewSubsidyTx(lockTime uint32,
-	receiver crypto.Address, amt amount.Amount, memo string,
+	receiver crypto.Address, amt amount.Amount, opts ...TxOption,
 ) *Tx {
 	return NewTransferTx(
 		lockTime,
@@ -17,12 +17,12 @@ func NewSubsidyTx(lockTime uint32,
 		receiver,
 		amt,
 		0,
-		memo)
+		opts...)
 }
 
 func NewTransferTx(lockTime uint32,
 	sender, receiver crypto.Address,
-	amt, fee amount.Amount, memo string,
+	amt, fee amount.Amount, opts ...TxOption,
 ) *Tx {
 	pld := &payload.TransferPayload{
 		From:   sender,
@@ -30,13 +30,13 @@ func NewTransferTx(lockTime uint32,
 		Amount: amt,
 	}
 
-	return newTx(lockTime, pld, fee, memo)
+	return newTx(lockTime, pld, fee, opts...)
 }
 
 func NewBondTx(lockTime uint32,
 	sender, receiver crypto.Address,
 	pubKey *bls.PublicKey,
-	stake, fee amount.Amount, memo string,
+	stake, fee amount.Amount, opts ...TxOption,
 ) *Tx {
 	pld := &payload.BondPayload{
 		From:      sender,
@@ -45,24 +45,24 @@ func NewBondTx(lockTime uint32,
 		Stake:     stake,
 	}
 
-	return newTx(lockTime, pld, fee, memo)
+	return newTx(lockTime, pld, fee, opts...)
 }
 
 func NewUnbondTx(lockTime uint32,
 	val crypto.Address,
-	memo string,
+	opts ...TxOption,
 ) *Tx {
 	pld := &payload.UnbondPayload{
 		Validator: val,
 	}
 
-	return newTx(lockTime, pld, 0, memo)
+	return newTx(lockTime, pld, 0, opts...)
 }
 
 func NewWithdrawTx(lockTime uint32,
 	val, acc crypto.Address,
 	amt, fee amount.Amount,
-	memo string,
+	opts ...TxOption,
 ) *Tx {
 	pld := &payload.WithdrawPayload{
 		From:   val,
@@ -70,7 +70,7 @@ func NewWithdrawTx(lockTime uint32,
 		Amount: amt,
 	}
 
-	return newTx(lockTime, pld, fee, memo)
+	return newTx(lockTime, pld, fee, opts...)
 }
 
 func NewSortitionTx(lockTime uint32,
@@ -82,5 +82,5 @@ func NewSortitionTx(lockTime uint32,
 		Proof:     proof,
 	}
 
-	return newTx(lockTime, pld, 0, "")
+	return newTx(lockTime, pld, 0)
 }

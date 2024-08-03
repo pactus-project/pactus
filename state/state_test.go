@@ -393,7 +393,7 @@ func TestSortition(t *testing.T) {
 	assert.Equal(t, int64(4), td.state.CommitteePower())
 
 	trx := tx.NewBondTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
-		secValKey.Address(), secValKey.PublicKey(), 1000000000, 100000, "")
+		secValKey.Address(), secValKey.PublicKey(), 1000000000, 100000)
 	td.HelperSignTransaction(td.genAccKey, trx)
 	assert.NoError(t, td.state.AddPendingTx(trx))
 
@@ -526,7 +526,7 @@ func TestLoadState(t *testing.T) {
 	pub, _ := td.RandBLSKeyPair()
 	lockTime := td.state.LastBlockHeight()
 	bondTrx := tx.NewBondTx(lockTime, td.genAccKey.PublicKeyNative().AccountAddress(),
-		pub.ValidatorAddress(), pub, 1000000000, 100000, "")
+		pub.ValidatorAddress(), pub, 1000000000, 100000)
 	td.HelperSignTransaction(td.genAccKey, bondTrx)
 
 	assert.NoError(t, td.state.AddPendingTx(bondTrx))
@@ -591,7 +591,7 @@ func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 	for i := 0; i < maxTransactionsPerBlock+2; i++ {
 		amt := td.RandAmount()
 		fee := td.state.CalculateFee(amt, payload.TypeTransfer)
-		trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddress(), amt, fee, "")
+		trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddress(), amt, fee)
 		err := td.state.AddPendingTx(trx)
 		assert.NoError(t, err)
 	}

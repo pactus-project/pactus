@@ -91,7 +91,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("LockTime is not defined", func(t *testing.T) {
 		trx := tx.NewTransferTx(0,
-			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandAmount(), "")
+			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandAmount())
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -103,7 +103,7 @@ func TestBasicCheck(t *testing.T) {
 		bigMemo := strings.Repeat("a", 65)
 
 		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandAmount(), bigMemo)
+			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandAmount(), tx.WithMemo(bigMemo))
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -114,8 +114,7 @@ func TestBasicCheck(t *testing.T) {
 	t.Run("Invalid payload, Should returns error", func(t *testing.T) {
 		invAddr := ts.RandAccAddress()
 		invAddr[0] = 3
-		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), invAddr, 1e9, ts.RandAmount(), "invalid address")
+		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), invAddr, 1e9, ts.RandAmount())
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -124,8 +123,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid amount", func(t *testing.T) {
-		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), -1, 1, "invalid amount")
+		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(), -1, 1)
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -134,8 +132,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid amount", func(t *testing.T) {
-		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), (42e15)+1, 1, "invalid amount")
+		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(), (42e15)+1, 1)
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -144,8 +141,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
-		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), 1, -1, "invalid fee")
+		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(), 1, -1)
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -154,8 +150,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid fee", func(t *testing.T) {
-		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), 1, (42e15)+1, "invalid fee")
+		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(), 1, (42e15)+1)
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -165,8 +160,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid signer address", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), 1, 1, "invalid valKey")
+		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(), 1, 1)
 		sig := valKey.PrivateKey().Sign(trx.SignBytes())
 		trx.SetSignature(sig)
 		trx.SetPublicKey(valKey.PublicKey())
@@ -226,7 +220,7 @@ func TestSubsidyTx(t *testing.T) {
 	pub, prv := ts.RandBLSKeyPair()
 
 	t.Run("Has signature", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500, "subsidy")
+		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500)
 		sig := prv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
 
@@ -237,7 +231,7 @@ func TestSubsidyTx(t *testing.T) {
 	})
 
 	t.Run("Has public key", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500, "subsidy")
+		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500)
 		trx.SetPublicKey(pub)
 
 		err := trx.BasicCheck()
@@ -247,7 +241,7 @@ func TestSubsidyTx(t *testing.T) {
 	})
 
 	t.Run("Strip public key", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500, "subsidy")
+		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500)
 		trx.StripPublicKey()
 
 		err := trx.BasicCheck()
@@ -310,8 +304,7 @@ func TestInvalidSignature(t *testing.T) {
 		valKey := ts.RandValKey()
 		trx0 := ts.GenerateTestUnbondTx(testsuite.TransactionWithSigner(valKey.PrivateKey()))
 
-		trx := tx.NewUnbondTx(trx0.LockTime(), valKey.Address(),
-			"invalidate signature")
+		trx := tx.NewUnbondTx(trx0.LockTime(), valKey.Address(), tx.WithMemo("invalidate signature"))
 		trx.SetPublicKey(trx0.PublicKey())
 		trx.SetSignature(trx0.Signature())
 
@@ -399,7 +392,7 @@ func TestFlagNotSigned(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(),
-		ts.RandAmount(), ts.RandAmount(), "")
+		ts.RandAmount(), ts.RandAmount())
 	assert.False(t, trx.IsSigned(), "FlagNotSigned should not be set for new transactions")
 
 	trx.SetSignature(ts.RandBLSSignature())
