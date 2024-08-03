@@ -376,7 +376,7 @@ func (cs *consensus) signAddVote(v *vote.Vote) {
 
 	_, err := cs.log.AddVote(v)
 	if err != nil {
-		cs.logger.Error("error on adding our vote", "error", err, "vote", v)
+		cs.logger.Warn("error on adding our vote", "error", err, "vote", v)
 	}
 	cs.broadcastVote(v)
 }

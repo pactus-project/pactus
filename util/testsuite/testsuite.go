@@ -344,7 +344,7 @@ func (ts *TestSuite) NewBlockMaker() *BlockMaker {
 		Version:  1,
 		Txs:      txs,
 		Proposer: ts.RandValAddress(),
-		Time:     util.Now(),
+		Time:     time.Now(),
 		PrevHash: ts.RandHash(),
 		Seed:     ts.RandSeed(),
 		PrevCert: nil,

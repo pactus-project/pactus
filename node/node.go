@@ -15,7 +15,6 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/txpool"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
@@ -116,7 +115,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 }
 
 func (n *Node) Start() error {
-	now := util.Now()
+	now := time.Now()
 	genTime := n.genesisDoc.GenesisTime()
 	if genTime.After(now) {
 		logger.Info("💤 Genesis time is in the future. Sleeping until then...",
@@ -125,17 +124,17 @@ func (n *Node) Start() error {
 	}
 
 	if err := n.network.Start(); err != nil {
-		return err
+		return errors.Wrap(err, "could not start Network")
 	}
 	// Wait for network to start
 	time.Sleep(1 * time.Second)
 
 	if err := n.sync.Start(); err != nil {
-		return err
+		return errors.Wrap(err, "could not start Sync")
 	}
 
 	if err := n.consMgr.Start(); err != nil {
-		return err
+		return errors.Wrap(err, "could not start Consensus manager")
 	}
 
 	err := n.grpc.StartServer()
@@ -155,7 +154,7 @@ func (n *Node) Start() error {
 
 	err = n.nanomsg.StartServer()
 	if err != nil {
-		return errors.Wrap(err, "could not start nanomsg server")
+		return errors.Wrap(err, "could not start Nanomsg server")
 	}
 
 	return nil

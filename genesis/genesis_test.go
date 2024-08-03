@@ -95,7 +95,7 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 		accs[pub.AccountAddress()] = acc
 		vals = append(vals, val)
 	}
-	gen := genesis.MakeGenesis(util.Now(), accs, vals, param.DefaultParams())
+	gen := genesis.MakeGenesis(time.Now(), accs, vals, param.DefaultParams())
 
 	for addr, acc := range gen.Accounts() {
 		assert.Equal(t, accs[addr], acc)

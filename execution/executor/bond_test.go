@@ -81,7 +81,7 @@ func TestExecuteBondTx(t *testing.T) {
 
 	t.Run("Should fail, inside committee", func(t *testing.T) {
 		pub0 := td.sandbox.Committee().Proposer(0).PublicKey()
-		trx := tx.NewBondTx(lockTime, senderAddr, pub0.ValidatorAddress(), nil, amt, fee)
+		trx := tx.NewBondTx(lockTime, senderAddr, pub0.ValidatorAddress(), nil, 1e9, fee)
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
 		td.check(t, trx, false, nil)
