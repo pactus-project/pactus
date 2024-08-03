@@ -37,6 +37,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		msg.Agent,
 		msg.PublicKeys,
 		msg.Services)
+	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
 
 	if msg.PeerID != pid {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
@@ -44,6 +45,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 				msg.PeerID, pid), 0)
 
 		handler.acknowledge(response, pid)
+		handler.peerSet.UpdateStatus(pid, status.StatusBanned)
 
 		return
 	}
@@ -54,6 +56,22 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 				handler.state.Genesis().Hash(), msg.GenesisHash), 0)
 
 		handler.acknowledge(response, pid)
+		handler.peerSet.UpdateStatus(pid, status.StatusBanned)
+
+		return
+	}
+
+	rndConsKey := util.RandomElement(msg.PublicKeys)
+	dupPeerID := handler.peerSet.FindPeerByConsensusKey(rndConsKey)
+	if dupPeerID != nil && *dupPeerID != pid {
+		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
+			"duplicated validators", 0)
+
+		handler.acknowledge(response, pid)
+
+		fmt.Printf("------------------------------------ banning %s %s\n", *dupPeerID, pid)
+		handler.peerSet.UpdateStatus(*dupPeerID, status.StatusBanned)
+		handler.peerSet.UpdateStatus(pid, status.StatusBanned)
 
 		return
 	}
@@ -77,7 +95,6 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		return
 	}
 
-	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
 	handler.peerSet.UpdateStatus(pid, status.StatusConnected)
 
 	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok", handler.state.LastBlockHeight())
@@ -97,7 +114,6 @@ func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, to peer.I
 			"to", to, "reason", msg.Reason)
 
 		handler.sendTo(msg, to)
-		handler.peerSet.UpdateStatus(to, status.StatusBanned)
 	} else {
 		handler.logger.Info("acknowledging hello message", "msg", msg,
 			"to", to)

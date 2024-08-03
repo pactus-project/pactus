@@ -531,7 +531,7 @@ func (cs *consensus) HandleQueryVote(height uint32, round int16) *vote.Vote {
 		return nil
 	}
 
-	return votes[util.RandInt32(int32(len(votes)))]
+	return util.RandomElement(votes)
 }
 
 func (cs *consensus) startChangingProposer() {

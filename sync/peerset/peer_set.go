@@ -218,11 +218,17 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, s status.Status) {
 
 	p := ps.findOrCreatePeer(pid)
 
-	if !p.Status.IsBanned() || // Don't update the status if peer is banned
-		// Don't change status to connected if peer is known already
-		!(p.Status.IsKnown() && s.IsConnected()) {
-		p.Status = s
+	// Don't change the status if peer is banned.
+	if p.Status.IsBanned() {
+		return
 	}
+
+	// Don't change the status to connected if peer is known already.
+	if p.Status.IsKnown() && s.IsConnected() {
+		return
+	}
+
+	p.Status = s
 
 	if s.IsDisconnected() {
 		for _, ssn := range ps.sessionManager.Sessions() {
@@ -417,4 +423,21 @@ func (ps *PeerSet) GetRandomPeer() *peer.Peer {
 		}
 	}
 	panic("unreachable code")
+}
+
+func (ps *PeerSet) FindPeerByConsensusKey(r *bls.PublicKey) *peer.ID {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	for pid, p := range ps.peers {
+		if p.Status.IsConnectedOrKnown() {
+			for _, key := range p.ConsensusKeys {
+				if key.EqualsTo(r) {
+					return &pid
+				}
+			}
+		}
+	}
+
+	return nil
 }
