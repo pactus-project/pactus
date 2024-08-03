@@ -15,8 +15,7 @@ func TestProposeBlock(t *testing.T) {
 
 	proposer := td.state.Proposer(0)
 	lockTime := td.state.LastBlockHeight()
-	dupSubsidyTx := tx.NewSubsidyTx(lockTime, proposer.Address(),
-		td.state.params.BlockReward, tx.WithMemo("duplicated subsidy transaction"))
+	dupSubsidyTx := tx.NewSubsidyTx(lockTime, proposer.Address(), td.state.params.BlockReward)
 	invTransferTx := td.GenerateTestTransferTx()
 	invBondTx := td.GenerateTestBondTx()
 	invSortitionTx := td.GenerateTestSortitionTx()
