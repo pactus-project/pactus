@@ -21,7 +21,6 @@ import (
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 )
 
@@ -233,18 +232,10 @@ func (m *MockState) PendingTx(id tx.ID) *tx.Tx {
 }
 
 func (m *MockState) AddPendingTx(trx *tx.Tx) error {
-	if m.TestPool.HasTx(trx.ID()) {
-		return errors.Error(errors.ErrGeneric)
-	}
-
 	return m.TestPool.AppendTx(trx)
 }
 
 func (m *MockState) AddPendingTxAndBroadcast(trx *tx.Tx) error {
-	if m.TestPool.HasTx(trx.ID()) {
-		return errors.Error(errors.ErrGeneric)
-	}
-
 	return m.TestPool.AppendTxAndBroadcast(trx)
 }
 

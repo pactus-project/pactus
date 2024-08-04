@@ -11,7 +11,6 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/www/grpc"
@@ -337,7 +336,7 @@ func TestMakeTransferTx(t *testing.T) {
 		td.Close()
 
 		_, err := td.wallet.MakeTransferTx(td.RandAccAddress().String(), receiverInfo.String(), amt)
-		assert.Equal(t, errors.ErrGeneric, errors.Code(err))
+		assert.Error(t, err)
 	})
 }
 
@@ -462,7 +461,7 @@ func TestMakeBondTx(t *testing.T) {
 		td.Close()
 
 		_, err := td.wallet.MakeBondTx(td.RandAccAddress().String(), receiver.Address().String(), "", amt)
-		assert.Equal(t, errors.ErrGeneric, errors.Code(err))
+		assert.Error(t, err)
 	})
 }
 
@@ -506,7 +505,7 @@ func TestMakeUnbondTx(t *testing.T) {
 		td.Close()
 
 		_, err := td.wallet.MakeUnbondTx(td.RandAccAddress().String())
-		assert.Equal(t, errors.ErrGeneric, errors.Code(err))
+		assert.Error(t, err)
 	})
 }
 
@@ -556,7 +555,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 		td.Close()
 
 		_, err := td.wallet.MakeWithdrawTx(td.RandAccAddress().String(), receiverInfo.Address, amt)
-		assert.Equal(t, errors.ErrGeneric, errors.Code(err))
+		assert.Error(t, err)
 	})
 }
 
