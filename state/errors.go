@@ -1,11 +1,30 @@
 package state
 
 import (
+	"errors"
 	"fmt"
 
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/vote"
 )
+
+// ErrInvalidSubsidyTransaction indicates that the subsidy transaction is not valid.
+var ErrInvalidSubsidyTransaction = errors.New("invalid subsidy transaction")
+
+// ErrDuplicatedSubsidyTransaction indicates that there is more than one subsidy transaction
+// inside the block.
+var ErrDuplicatedSubsidyTransaction = errors.New("duplicated subsidy transaction")
+
+// InvalidSubsidyAmountError is returned when the amount of the subsidy transaction is not as expected.
+type InvalidSubsidyAmountError struct {
+	Expected amount.Amount
+	Got      amount.Amount
+}
+
+func (e InvalidSubsidyAmountError) Error() string {
+	return fmt.Sprintf("invalid subsidy amount, expected %v, got %v", e.Expected, e.Got)
+}
 
 // InvalidVoteForCertificateError is returned when an attempt to update
 // the last certificate with an invalid vote is made.
