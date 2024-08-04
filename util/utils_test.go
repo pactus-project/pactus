@@ -8,28 +8,28 @@ import (
 )
 
 func TestUtils(t *testing.T) {
-	assert.Equal(t, Min(int32(1), 1), int32(1))
-	assert.Equal(t, Min(int32(1), 2), int32(1))
-	assert.Equal(t, Min(2, int32(1)), int32(1))
-	assert.Equal(t, Max(int32(2), 2), int32(2))
-	assert.Equal(t, Max(1, int32(2)), int32(2))
-	assert.Equal(t, Max(int32(2), 1), int32(2))
+	assert.Equal(t, int32(1), Min(int32(1), 1))
+	assert.Equal(t, int32(1), Min(int32(1), 2))
+	assert.Equal(t, int32(1), Min(2, int32(1)))
+	assert.Equal(t, int32(2), Max(int32(2), 2))
+	assert.Equal(t, int32(2), Max(1, int32(2)))
+	assert.Equal(t, int32(2), Max(int32(2), 1))
 
-	assert.Equal(t, Min(uint32(1), 1), uint32(1))
-	assert.Equal(t, Min(uint32(1), 2), uint32(1))
-	assert.Equal(t, Min(2, uint32(1)), uint32(1))
-	assert.Equal(t, Max(uint32(2), 2), uint32(2))
-	assert.Equal(t, Max(1, uint32(2)), uint32(2))
-	assert.Equal(t, Max(uint32(2), 1), uint32(2))
+	assert.Equal(t, uint32(1), Min(uint32(1), 1))
+	assert.Equal(t, uint32(1), Min(uint32(1), 2))
+	assert.Equal(t, uint32(1), Min(2, uint32(1)))
+	assert.Equal(t, uint32(2), Max(uint32(2), 2))
+	assert.Equal(t, uint32(2), Max(1, uint32(2)))
+	assert.Equal(t, uint32(2), Max(uint32(2), 1))
 
 	assert.Equal(t, MaxUint32, uint32(0xffffffff))
 	assert.Equal(t, MaxUint64, uint64(0xffffffffffffffff))
 	assert.Equal(t, MaxInt32, int32(0x7fffffff))
 	assert.Equal(t, MaxInt64, int64(0x7fffffffffffffff))
-	assert.Equal(t, Max(MaxInt64, 1), MaxInt64)
-	assert.Equal(t, Max(MinInt64, MaxInt64), MaxInt64)
-	assert.Equal(t, Min(MaxInt64, 1), int64(1))
-	assert.Equal(t, Min(MinInt64, MaxInt64), MinInt64)
+	assert.Equal(t, MaxInt64, Max(MaxInt64, 1))
+	assert.Equal(t, MaxInt64, Max(MinInt64, MaxInt64))
+	assert.Equal(t, int64(1), Min(MaxInt64, 1))
+	assert.Equal(t, MinInt64, Min(MinInt64, MaxInt64))
 }
 
 func TestSetFlags(t *testing.T) {
@@ -86,19 +86,19 @@ func TestRandUint64(t *testing.T) {
 func TestI2OSP(t *testing.T) {
 	assert.Nil(t, I2OSP(big.NewInt(int64(-1)), 2))
 
-	assert.Equal(t, I2OSP(big.NewInt(int64(0)), 2), []byte{0, 0})
-	assert.Equal(t, I2OSP(big.NewInt(int64(1)), 2), []byte{0, 1})
-	assert.Equal(t, I2OSP(big.NewInt(int64(255)), 2), []byte{0, 255})
-	assert.Equal(t, I2OSP(big.NewInt(int64(256)), 2), []byte{1, 0})
-	assert.Equal(t, I2OSP(big.NewInt(int64(65535)), 2), []byte{255, 255})
+	assert.Equal(t, []byte{0, 0}, I2OSP(big.NewInt(int64(0)), 2))
+	assert.Equal(t, []byte{0, 1}, I2OSP(big.NewInt(int64(1)), 2))
+	assert.Equal(t, []byte{0, 255}, I2OSP(big.NewInt(int64(255)), 2))
+	assert.Equal(t, []byte{1, 0}, I2OSP(big.NewInt(int64(256)), 2))
+	assert.Equal(t, []byte{255, 255}, I2OSP(big.NewInt(int64(65535)), 2))
 }
 
 func TestIS2OP(t *testing.T) {
-	assert.Equal(t, OS2IP([]byte{0, 0}).Int64(), int64(0))
-	assert.Equal(t, OS2IP([]byte{0, 1}).Int64(), int64(1))
-	assert.Equal(t, OS2IP([]byte{0, 255}).Int64(), int64(255))
-	assert.Equal(t, OS2IP([]byte{1, 0}).Int64(), int64(256))
-	assert.Equal(t, OS2IP([]byte{255, 255}).Int64(), int64(65535))
+	assert.Equal(t, int64(0), OS2IP([]byte{0, 0}).Int64())
+	assert.Equal(t, int64(1), OS2IP([]byte{0, 1}).Int64())
+	assert.Equal(t, int64(255), OS2IP([]byte{0, 255}).Int64())
+	assert.Equal(t, int64(256), OS2IP([]byte{1, 0}).Int64())
+	assert.Equal(t, int64(65535), OS2IP([]byte{255, 255}).Int64())
 }
 
 func TestLogScale(t *testing.T) {

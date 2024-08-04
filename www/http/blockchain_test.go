@@ -21,7 +21,7 @@ func TestBlockchainInfo(t *testing.T) {
 
 	td.httpServer.BlockchainHandler(w, r)
 
-	assert.Equal(t, w.Code, 200)
+	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Body.String(), "10")
 
 	td.StopServers()
@@ -38,7 +38,7 @@ func TestBlock(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"hash": b.Hash().String()})
 		td.httpServer.GetBlockByHashHandler(w, r)
 
-		assert.Equal(t, w.Code, 200)
+		assert.Equal(t, 200, w.Code)
 		assert.Contains(t, w.Body.String(), b.Hash().String())
 	})
 
@@ -48,7 +48,7 @@ func TestBlock(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"height": "100"})
 		td.httpServer.GetBlockByHeightHandler(w, r)
 
-		assert.Equal(t, w.Code, 200)
+		assert.Equal(t, 200, w.Code)
 	})
 
 	t.Run("Shall return an error, invalid height", func(t *testing.T) {
@@ -57,7 +57,7 @@ func TestBlock(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"height": "x"})
 		td.httpServer.GetBlockByHeightHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 	})
 
 	t.Run("Shall return an error, non exists", func(t *testing.T) {
@@ -66,7 +66,7 @@ func TestBlock(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"hash": td.RandHash().String()})
 		td.httpServer.GetBlockByHashHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 	})
 
 	t.Run("Shall return an error, invalid hash", func(t *testing.T) {
@@ -76,7 +76,7 @@ func TestBlock(t *testing.T) {
 		td.httpServer.GetBlockByHashHandler(w, r)
 		fmt.Println(w.Body)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 	})
 
 	t.Run("Shall return an error, empty hash", func(t *testing.T) {
@@ -86,7 +86,7 @@ func TestBlock(t *testing.T) {
 		td.httpServer.GetBlockByHashHandler(w, r)
 		fmt.Println(w.Body)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 	})
 
 	t.Run("Shall return an error, no hash", func(t *testing.T) {
@@ -95,7 +95,7 @@ func TestBlock(t *testing.T) {
 		td.httpServer.GetBlockByHashHandler(w, r)
 		fmt.Println(w.Body)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 	})
 
 	td.StopServers()
@@ -112,7 +112,7 @@ func TestAccount(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"address": addr.String()})
 		td.httpServer.GetAccountHandler(w, r)
 
-		assert.Equal(t, w.Code, 200)
+		assert.Equal(t, 200, w.Code)
 		assert.Contains(t, w.Body.String(), acc.Balance().String())
 		fmt.Println(w.Body)
 	})
@@ -123,7 +123,7 @@ func TestAccount(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"address": td.RandAccAddress().String()})
 		td.httpServer.GetAccountHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 	})
 
 	t.Run("Shall return an error, invalid address", func(t *testing.T) {
@@ -132,7 +132,7 @@ func TestAccount(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"address": "invalid-address"})
 		td.httpServer.GetAccountHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
 
@@ -142,7 +142,7 @@ func TestAccount(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"address": ""})
 		td.httpServer.GetAccountHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
 
@@ -151,7 +151,7 @@ func TestAccount(t *testing.T) {
 		r := new(http.Request)
 		td.httpServer.GetAccountHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
 
@@ -169,7 +169,7 @@ func TestValidator(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"address": td.RandAccAddress().String()})
 		td.httpServer.GetValidatorHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 	})
 
 	t.Run("Shall return an error, invalid address", func(t *testing.T) {
@@ -178,7 +178,7 @@ func TestValidator(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"address": "invalid-address"})
 		td.httpServer.GetValidatorHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
 
@@ -188,7 +188,7 @@ func TestValidator(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"address": ""})
 		td.httpServer.GetValidatorHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
 
@@ -197,7 +197,7 @@ func TestValidator(t *testing.T) {
 		r := new(http.Request)
 		td.httpServer.GetValidatorHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
 
@@ -208,7 +208,7 @@ func TestValidator(t *testing.T) {
 
 		td.httpServer.GetValidatorHandler(w, r)
 
-		assert.Equal(t, w.Code, 200)
+		assert.Equal(t, 200, w.Code)
 		assert.Contains(t, w.Body.String(), "0.987")
 		fmt.Println(w.Body)
 	})
@@ -229,7 +229,7 @@ func TestValidatorByNumber(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"number": strconv.Itoa(int(val.Number()))})
 		td.httpServer.GetValidatorByNumberHandler(w, r)
 
-		assert.Equal(t, w.Code, 200)
+		assert.Equal(t, 200, w.Code)
 		fmt.Println(w.Body)
 	})
 
@@ -241,7 +241,7 @@ func TestValidatorByNumber(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"number": strconv.Itoa(int(val.Number() + 1))})
 		td.httpServer.GetValidatorByNumberHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
 
@@ -251,7 +251,7 @@ func TestValidatorByNumber(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"number": ""})
 		td.httpServer.GetValidatorByNumberHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
 
@@ -261,7 +261,7 @@ func TestValidatorByNumber(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"number": "not-a-number"})
 		td.httpServer.GetValidatorByNumberHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
 
@@ -270,7 +270,7 @@ func TestValidatorByNumber(t *testing.T) {
 		r := new(http.Request)
 		td.httpServer.GetValidatorByNumberHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
 
@@ -291,7 +291,7 @@ func TestConsensusInfo(t *testing.T) {
 
 	td.httpServer.ConsensusHandler(w, r)
 
-	assert.Equal(t, w.Code, 200)
+	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Body.String(), "<td>2</td>")
 	assert.Contains(t, w.Body.String(), v2.Signer().String())
 

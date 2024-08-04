@@ -30,7 +30,7 @@ func broadcastSendTransaction(t *testing.T, sender *bls.ValidatorKey, receiver c
 	t.Helper()
 
 	lockTime := lastHeight() + 1
-	trx := tx.NewTransferTx(lockTime, sender.PublicKey().AccountAddress(), receiver, amt, fee, "")
+	trx := tx.NewTransferTx(lockTime, sender.PublicKey().AccountAddress(), receiver, amt, fee)
 	sig := sender.Sign(trx.SignBytes())
 
 	trx.SetPublicKey(sender.PublicKey())
@@ -47,7 +47,7 @@ func broadcastBondTransaction(t *testing.T, sender *bls.ValidatorKey, pub *bls.P
 	t.Helper()
 
 	lockTime := lastHeight() + 1
-	trx := tx.NewBondTx(lockTime, sender.PublicKey().AccountAddress(), pub.ValidatorAddress(), pub, stake, fee, "")
+	trx := tx.NewBondTx(lockTime, sender.PublicKey().AccountAddress(), pub.ValidatorAddress(), pub, stake, fee)
 	sig := sender.Sign(trx.SignBytes())
 
 	trx.SetPublicKey(sender.PublicKey())
@@ -117,8 +117,8 @@ func TestTransactions(t *testing.T) {
 	require.NotNil(t, accCarol)
 	require.NotNil(t, accDave)
 
-	assert.Equal(t, accAlice.Balance, int64(80000000-50005000))
-	assert.Equal(t, accBob.Balance, int64(50000000-2011))
-	assert.Equal(t, accCarol.Balance, int64(10))
-	assert.Equal(t, accDave.Balance, int64(1))
+	assert.Equal(t, int64(80000000-50005000), accAlice.Balance)
+	assert.Equal(t, int64(50000000-2011), accBob.Balance)
+	assert.Equal(t, int64(10), accCarol.Balance)
+	assert.Equal(t, int64(1), accDave.Balance)
 }

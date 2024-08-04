@@ -153,9 +153,9 @@ func TestBlockSubsidyTx(t *testing.T) {
 	randAccumulatedFee := td.RandFee()
 	trx := td.state.createSubsidyTx(rewardAddr, randAccumulatedFee)
 	assert.True(t, trx.IsSubsidyTx())
-	assert.Equal(t, trx.Payload().Value(), td.state.params.BlockReward+randAccumulatedFee)
-	assert.Equal(t, trx.Payload().(*payload.TransferPayload).From, crypto.TreasuryAddress)
-	assert.Equal(t, trx.Payload().(*payload.TransferPayload).To, rewardAddr)
+	assert.Equal(t, td.state.params.BlockReward+randAccumulatedFee, trx.Payload().Value())
+	assert.Equal(t, crypto.TreasuryAddress, trx.Payload().(*payload.TransferPayload).From)
+	assert.Equal(t, rewardAddr, trx.Payload().(*payload.TransferPayload).To)
 }
 
 func TestGenesisHash(t *testing.T) {
@@ -189,10 +189,10 @@ func TestTryCommitValidBlocks(t *testing.T) {
 	// No error here but block is ignored, because the height is invalid
 	assert.NoError(t, td.state.CommitBlock(blk, crt))
 
-	assert.Equal(t, td.state.LastBlockHash(), blk.Hash())
-	assert.Equal(t, td.state.LastBlockTime(), blk.Header().Time())
-	assert.Equal(t, td.state.LastCertificate().Hash(), crt.Hash())
-	assert.Equal(t, td.state.LastBlockHeight(), uint32(9))
+	assert.Equal(t, blk.Hash(), td.state.LastBlockHash())
+	assert.Equal(t, blk.Header().Time(), td.state.LastBlockTime())
+	assert.Equal(t, crt.Hash(), td.state.LastCertificate().Hash())
+	assert.Equal(t, uint32(9), td.state.LastBlockHeight())
 }
 
 func TestCommitSandbox(t *testing.T) {
@@ -207,7 +207,7 @@ func TestCommitSandbox(t *testing.T) {
 		td.state.commitSandbox(sb, 0)
 
 		stateAcc := td.state.AccountByAddress(addr)
-		assert.Equal(t, newAcc, stateAcc)
+		assert.Equal(t, stateAcc, newAcc)
 	})
 
 	t.Run("Add new validator", func(t *testing.T) {
@@ -222,8 +222,8 @@ func TestCommitSandbox(t *testing.T) {
 
 		stateValByNumber := td.state.ValidatorByAddress(pub.ValidatorAddress())
 		stateValByAddr := td.state.ValidatorByAddress(pub.ValidatorAddress())
-		assert.Equal(t, newVal, stateValByNumber)
-		assert.Equal(t, newVal, stateValByAddr)
+		assert.Equal(t, stateValByNumber, newVal)
+		assert.Equal(t, stateValByAddr, newVal)
 	})
 
 	t.Run("Modify account", func(t *testing.T) {
@@ -330,7 +330,7 @@ func TestUpdateLastCertificate(t *testing.T) {
 
 	for i, test := range tests {
 		err := td.state.UpdateLastCertificate(test.vote)
-		assert.ErrorIs(t, test.err, err, "error not matched for test %v", i)
+		assert.ErrorIs(t, err, test.err, "error not matched for test %v", i)
 	}
 }
 
@@ -350,7 +350,7 @@ func TestBlockProposal(t *testing.T) {
 		b, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
 		assert.NoError(t, err)
 		assert.NoError(t, td.state.ValidateBlock(b, 0))
-		assert.Equal(t, b.Transactions().Len(), 1)
+		assert.Equal(t, 1, b.Transactions().Len())
 	})
 }
 
@@ -366,25 +366,21 @@ func TestForkDetection(t *testing.T) {
 	})
 
 	t.Run("Two blocks with different previous block hashes", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
-			}
-		}()
+		assert.Panics(t, func() {
+			blk0, _ := td.makeBlockAndCertificate(t, 0)
+			blkFork := block.MakeBlock(
+				blk0.Header().Version(),
+				blk0.Header().Time(),
+				blk0.Transactions(),
+				td.RandHash(),
+				blk0.Header().StateRoot(),
+				blk0.PrevCertificate(),
+				blk0.Header().SortitionSeed(),
+				blk0.Header().ProposerAddress())
+			certFork := td.makeCertificateAndSign(t, blkFork.Hash(), 0)
 
-		blk0, _ := td.makeBlockAndCertificate(t, 0)
-		blkFork := block.MakeBlock(
-			blk0.Header().Version(),
-			blk0.Header().Time(),
-			blk0.Transactions(),
-			td.RandHash(),
-			blk0.Header().StateRoot(),
-			blk0.PrevCertificate(),
-			blk0.Header().SortitionSeed(),
-			blk0.Header().ProposerAddress())
-		certFork := td.makeCertificateAndSign(t, blkFork.Hash(), 0)
-
-		_ = td.state.CommitBlock(blkFork, certFork)
+			_ = td.state.CommitBlock(blkFork, certFork)
+		})
 	})
 }
 
@@ -394,10 +390,10 @@ func TestSortition(t *testing.T) {
 	secValKey := td.state.valKeys[1]
 	assert.False(t, td.state.evaluateSortition()) //  not a validator
 	assert.False(t, td.state.IsValidator(secValKey.Address()))
-	assert.Equal(t, td.state.CommitteePower(), int64(4))
+	assert.Equal(t, int64(4), td.state.CommitteePower())
 
 	trx := tx.NewBondTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
-		secValKey.Address(), secValKey.PublicKey(), 1000000000, 100000, "")
+		secValKey.Address(), secValKey.PublicKey(), 1000000000, 100000)
 	td.HelperSignTransaction(td.genAccKey, trx)
 	assert.NoError(t, td.state.AddPendingTx(trx))
 
@@ -405,7 +401,7 @@ func TestSortition(t *testing.T) {
 
 	assert.False(t, td.state.evaluateSortition()) // bonding period
 	assert.True(t, td.state.IsValidator(secValKey.Address()))
-	assert.Equal(t, td.state.CommitteePower(), int64(4))
+	assert.Equal(t, int64(4), td.state.CommitteePower())
 	assert.False(t, td.state.committee.Contains(secValKey.Address())) // Not in the committee
 
 	// Committing another 10 blocks
@@ -417,7 +413,7 @@ func TestSortition(t *testing.T) {
 	td.commitBlocks(t, 1)
 
 	assert.True(t, td.state.IsValidator(secValKey.Address()))
-	assert.Equal(t, td.state.CommitteePower(), int64(1000000004))
+	assert.Equal(t, int64(1000000004), td.state.CommitteePower())
 	assert.True(t, td.state.committee.Contains(secValKey.Address())) // In the committee
 }
 
@@ -530,7 +526,7 @@ func TestLoadState(t *testing.T) {
 	pub, _ := td.RandBLSKeyPair()
 	lockTime := td.state.LastBlockHeight()
 	bondTrx := tx.NewBondTx(lockTime, td.genAccKey.PublicKeyNative().AccountAddress(),
-		pub.ValidatorAddress(), pub, 1000000000, 100000, "")
+		pub.ValidatorAddress(), pub, 1000000000, 100000)
 	td.HelperSignTransaction(td.genAccKey, bondTrx)
 
 	assert.NoError(t, td.state.AddPendingTx(bondTrx))
@@ -595,7 +591,7 @@ func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 	for i := 0; i < maxTransactionsPerBlock+2; i++ {
 		amt := td.RandAmount()
 		fee := td.state.CalculateFee(amt, payload.TypeTransfer)
-		trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddress(), amt, fee, "")
+		trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddress(), amt, fee)
 		err := td.state.AddPendingTx(trx)
 		assert.NoError(t, err)
 	}
@@ -626,6 +622,6 @@ func TestCommittedBlock(t *testing.T) {
 		cBlkLast := td.state.CommittedBlock(td.state.LastBlockHeight())
 		blkLast, err := cBlkLast.ToBlock()
 		assert.NoError(t, err)
-		assert.Equal(t, td.state.LastBlockHash(), blkLast.Hash())
+		assert.Equal(t, blkLast.Hash(), td.state.LastBlockHash())
 	})
 }

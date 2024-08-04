@@ -58,8 +58,8 @@ func setup(t *testing.T) *testData {
 		wallet.WithCustomServers([]string{gRPCServer.Address()}))
 	assert.NoError(t, err)
 	assert.False(t, wlt.IsEncrypted())
-	assert.Equal(t, wlt.Path(), walletPath)
-	assert.Equal(t, wlt.Name(), path.Base(walletPath))
+	assert.Equal(t, walletPath, wlt.Path())
+	assert.Equal(t, path.Base(walletPath), wlt.Name())
 
 	return &testData{
 		TestSuite: ts,
@@ -195,7 +195,7 @@ func TestSignMessage(t *testing.T) {
 
 	sig, err := td.wallet.SignMessage(td.password, td.wallet.AllAccountAddresses()[0].Address, msg)
 	assert.NoError(t, err)
-	assert.Equal(t, sig, expectedSig)
+	assert.Equal(t, expectedSig, sig)
 }
 
 func TestKeyInfo(t *testing.T) {
@@ -337,7 +337,7 @@ func TestMakeTransferTx(t *testing.T) {
 		td.Close()
 
 		_, err := td.wallet.MakeTransferTx(td.RandAccAddress().String(), receiverInfo.String(), amt)
-		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
+		assert.Equal(t, errors.ErrGeneric, errors.Code(err))
 	})
 }
 
@@ -462,7 +462,7 @@ func TestMakeBondTx(t *testing.T) {
 		td.Close()
 
 		_, err := td.wallet.MakeBondTx(td.RandAccAddress().String(), receiver.Address().String(), "", amt)
-		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
+		assert.Equal(t, errors.ErrGeneric, errors.Code(err))
 	})
 }
 
@@ -506,7 +506,7 @@ func TestMakeUnbondTx(t *testing.T) {
 		td.Close()
 
 		_, err := td.wallet.MakeUnbondTx(td.RandAccAddress().String())
-		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
+		assert.Equal(t, errors.ErrGeneric, errors.Code(err))
 	})
 }
 
@@ -556,7 +556,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 		td.Close()
 
 		_, err := td.wallet.MakeWithdrawTx(td.RandAccAddress().String(), receiverInfo.Address, amt)
-		assert.Equal(t, errors.Code(err), errors.ErrGeneric)
+		assert.Equal(t, errors.ErrGeneric, errors.Code(err))
 	})
 }
 

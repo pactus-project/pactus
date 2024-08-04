@@ -36,8 +36,8 @@ func TestManager(t *testing.T) {
 	consB := mgr.instances[1].(*consensus) // inactive
 
 	t.Run("Check if keys are assigned properly", func(t *testing.T) {
-		assert.Equal(t, valKeys[0].PublicKey(), consA.ConsensusKey())
-		assert.Equal(t, valKeys[1].PublicKey(), consB.ConsensusKey())
+		assert.Equal(t, consA.ConsensusKey(), valKeys[0].PublicKey())
+		assert.Equal(t, consB.ConsensusKey(), valKeys[1].PublicKey())
 	})
 
 	t.Run("Check if all instances move to new height", func(t *testing.T) {
@@ -48,7 +48,7 @@ func TestManager(t *testing.T) {
 		consHeight, consRound := mgr.HeightRound()
 
 		assert.True(t, mgr.HasActiveInstance())
-		assert.Equal(t, consHeight, stateHeight+1)
+		assert.Equal(t, stateHeight+1, consHeight)
 		assert.Zero(t, consRound)
 	})
 
@@ -187,7 +187,7 @@ func TestMediator(t *testing.T) {
 
 		m, ok := msg.(*message.BlockAnnounceMessage)
 		if ok {
-			require.Equal(t, m.Height(), stateHeight+1)
+			require.Equal(t, stateHeight+1, m.Height())
 
 			return
 		}

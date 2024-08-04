@@ -309,7 +309,7 @@ func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 
 func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee amount.Amount) *tx.Tx {
 	lockTime := st.lastInfo.BlockHeight() + 1
-	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+fee, "")
+	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+fee)
 
 	return transaction
 }
@@ -588,7 +588,7 @@ func (st *state) CommitteePower() int64 {
 func (st *state) proposeNextBlockTime() time.Time {
 	timestamp := st.lastInfo.BlockTime().Add(st.params.BlockInterval())
 
-	now := util.Now()
+	now := time.Now()
 	if now.After(timestamp.Add(10 * time.Second)) {
 		st.logger.Debug("it looks the last block had delay", "delay", now.Sub(timestamp))
 		timestamp = util.RoundNow(st.params.BlockIntervalInSecond)

@@ -344,7 +344,7 @@ func (ts *TestSuite) NewBlockMaker() *BlockMaker {
 		Version:  1,
 		Txs:      txs,
 		Proposer: ts.RandValAddress(),
-		Time:     util.Now(),
+		Time:     time.Now(),
 		PrevHash: ts.RandHash(),
 		Seed:     ts.RandSeed(),
 		PrevCert: nil,
@@ -529,8 +529,7 @@ func (ts *TestSuite) GenerateTestTransferTx(options ...func(tm *TransactionMaker
 	for _, opt := range options {
 		opt(tm)
 	}
-	trx := tx.NewTransferTx(tm.LockTime, tm.PubKey.AccountAddress(), ts.RandAccAddress(),
-		tm.Amount, tm.Fee, "test send-tx")
+	trx := tx.NewTransferTx(tm.LockTime, tm.PubKey.AccountAddress(), ts.RandAccAddress(), tm.Amount, tm.Fee)
 	ts.HelperSignTransaction(tm.PrvKey, trx)
 
 	return trx
@@ -543,8 +542,7 @@ func (ts *TestSuite) GenerateTestBondTx(options ...func(tm *TransactionMaker)) *
 	for _, opt := range options {
 		opt(tm)
 	}
-	trx := tx.NewBondTx(tm.LockTime, tm.PubKey.AccountAddress(), ts.RandValAddress(),
-		nil, tm.Amount, tm.Fee, "test bond-tx")
+	trx := tx.NewBondTx(tm.LockTime, tm.PubKey.AccountAddress(), ts.RandValAddress(), nil, tm.Amount, tm.Fee)
 	ts.HelperSignTransaction(tm.PrvKey, trx)
 
 	return trx
@@ -571,7 +569,7 @@ func (ts *TestSuite) GenerateTestUnbondTx(options ...func(tm *TransactionMaker))
 	for _, opt := range options {
 		opt(tm)
 	}
-	trx := tx.NewUnbondTx(tm.LockTime, tm.PubKey.ValidatorAddress(), "test unbond-tx")
+	trx := tx.NewUnbondTx(tm.LockTime, tm.PubKey.ValidatorAddress())
 	ts.HelperSignTransaction(tm.PrvKey, trx)
 
 	return trx
@@ -584,8 +582,7 @@ func (ts *TestSuite) GenerateTestWithdrawTx(options ...func(tm *TransactionMaker
 	for _, opt := range options {
 		opt(tm)
 	}
-	trx := tx.NewWithdrawTx(tm.LockTime, tm.PubKey.ValidatorAddress(), ts.RandAccAddress(),
-		tm.Amount, tm.Fee, "test withdraw-tx")
+	trx := tx.NewWithdrawTx(tm.LockTime, tm.PubKey.ValidatorAddress(), ts.RandAccAddress(), tm.Amount, tm.Fee)
 	ts.HelperSignTransaction(tm.PrvKey, trx)
 
 	return trx

@@ -36,6 +36,15 @@ go build -ldflags "-s -w" -trimpath -tags gtk -o ${BUILD_DIR}/pactus-gui ./cmd/g
 echo "Installing gtk-mac-bundler"
 git clone https://gitlab.gnome.org/GNOME/gtk-mac-bundler.git
 cd gtk-mac-bundler
+
+# A workaround to make bundle without builing GTK+ using jhbuild.
+rm bundler/run-install-name-tool-change.sh
+cp ${ROOT_DIR}/.github/releasers/macos/run-install-name-tool-change.sh bundler/run-install-name-tool-change.sh
+chmod +x bundler/run-install-name-tool-change.sh
+
+# make sure launcher is executable
+chmod +x ${ROOT_DIR}/.github/releasers/macos/gtk3-launcher.sh
+
 make install
 
 export PATH=${PATH}:${HOME}/.bin:${HOME}/local/bin
@@ -64,6 +73,8 @@ export ROOT_DIR
 
 ${BUNDLER} ${GUI_BUNDLE}/gui.bundle
 
+# Removing Cellar as workaround
+rm -rf ${ROOT_DIR}/pactus-gui.app/Contents/Resources/Cellar
 
 echo "Creating dmg"
 # https://github.com/create-dmg/create-dmg

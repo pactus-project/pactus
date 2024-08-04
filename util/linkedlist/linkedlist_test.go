@@ -14,10 +14,10 @@ func TestDoublyLink_InsertAtHead(t *testing.T) {
 	link.InsertAtHead(3)
 	link.InsertAtHead(4)
 
-	assert.Equal(t, link.Values(), []int{4, 3, 2, 1})
-	assert.Equal(t, link.Length(), 4)
-	assert.Equal(t, link.Head.Data, 4)
-	assert.Equal(t, link.Tail.Data, 1)
+	assert.Equal(t, []int{4, 3, 2, 1}, link.Values())
+	assert.Equal(t, 4, link.Length())
+	assert.Equal(t, 4, link.Head.Data)
+	assert.Equal(t, 1, link.Tail.Data)
 }
 
 func TestSinglyLink_InsertAtTail(t *testing.T) {
@@ -27,10 +27,10 @@ func TestSinglyLink_InsertAtTail(t *testing.T) {
 	link.InsertAtTail(3)
 	link.InsertAtTail(4)
 
-	assert.Equal(t, link.Values(), []int{1, 2, 3, 4})
-	assert.Equal(t, link.Length(), 4)
-	assert.Equal(t, link.Head.Data, 1)
-	assert.Equal(t, link.Tail.Data, 4)
+	assert.Equal(t, []int{1, 2, 3, 4}, link.Values())
+	assert.Equal(t, 4, link.Length())
+	assert.Equal(t, 1, link.Head.Data)
+	assert.Equal(t, 4, link.Tail.Data)
 }
 
 func TestDeleteAtHead(t *testing.T) {
@@ -40,20 +40,20 @@ func TestDeleteAtHead(t *testing.T) {
 	link.InsertAtTail(3)
 
 	link.DeleteAtHead()
-	assert.Equal(t, link.Values(), []int{2, 3})
-	assert.Equal(t, link.Length(), 2)
+	assert.Equal(t, []int{2, 3}, link.Values())
+	assert.Equal(t, 2, link.Length())
 
 	link.DeleteAtHead()
-	assert.Equal(t, link.Values(), []int{3})
-	assert.Equal(t, link.Length(), 1)
+	assert.Equal(t, []int{3}, link.Values())
+	assert.Equal(t, 1, link.Length())
 
 	link.DeleteAtHead()
-	assert.Equal(t, link.Values(), []int{})
-	assert.Equal(t, link.Length(), 0)
+	assert.Equal(t, []int{}, link.Values())
+	assert.Equal(t, 0, link.Length())
 
 	link.DeleteAtHead()
-	assert.Equal(t, link.Values(), []int{})
-	assert.Equal(t, link.Length(), 0)
+	assert.Equal(t, []int{}, link.Values())
+	assert.Equal(t, 0, link.Length())
 }
 
 func TestDeleteAtTail(t *testing.T) {
@@ -63,20 +63,20 @@ func TestDeleteAtTail(t *testing.T) {
 	link.InsertAtTail(3)
 
 	link.DeleteAtTail()
-	assert.Equal(t, link.Values(), []int{1, 2})
-	assert.Equal(t, link.Length(), 2)
+	assert.Equal(t, []int{1, 2}, link.Values())
+	assert.Equal(t, 2, link.Length())
 
 	link.DeleteAtTail()
-	assert.Equal(t, link.Values(), []int{1})
-	assert.Equal(t, link.Length(), 1)
+	assert.Equal(t, []int{1}, link.Values())
+	assert.Equal(t, 1, link.Length())
 
 	link.DeleteAtTail()
-	assert.Equal(t, link.Values(), []int{})
-	assert.Equal(t, link.Length(), 0)
+	assert.Equal(t, []int{}, link.Values())
+	assert.Equal(t, 0, link.Length())
 
 	link.DeleteAtTail()
-	assert.Equal(t, link.Values(), []int{})
-	assert.Equal(t, link.Length(), 0)
+	assert.Equal(t, []int{}, link.Values())
+	assert.Equal(t, 0, link.Length())
 }
 
 func TestDelete(t *testing.T) {
@@ -87,20 +87,20 @@ func TestDelete(t *testing.T) {
 	n4 := link.InsertAtTail(4)
 
 	link.Delete(n1)
-	assert.Equal(t, link.Values(), []int{2, 3, 4})
-	assert.Equal(t, link.Length(), 3)
+	assert.Equal(t, []int{2, 3, 4}, link.Values())
+	assert.Equal(t, 3, link.Length())
 
 	link.Delete(n4)
-	assert.Equal(t, link.Values(), []int{2, 3})
-	assert.Equal(t, link.Length(), 2)
+	assert.Equal(t, []int{2, 3}, link.Values())
+	assert.Equal(t, 2, link.Length())
 
 	link.Delete(n2)
-	assert.Equal(t, link.Values(), []int{3})
-	assert.Equal(t, link.Length(), 1)
+	assert.Equal(t, []int{3}, link.Values())
+	assert.Equal(t, 1, link.Length())
 
 	link.Delete(n3)
-	assert.Equal(t, link.Values(), []int{})
-	assert.Equal(t, link.Length(), 0)
+	assert.Equal(t, []int{}, link.Values())
+	assert.Equal(t, 0, link.Length())
 }
 
 func TestClear(t *testing.T) {
@@ -110,8 +110,8 @@ func TestClear(t *testing.T) {
 	link.InsertAtTail(3)
 
 	link.Clear()
-	assert.Equal(t, link.Values(), []int{})
-	assert.Equal(t, link.Length(), 0)
+	assert.Equal(t, []int{}, link.Values())
+	assert.Equal(t, 0, link.Length())
 }
 
 func TestInsertAfter(t *testing.T) {

@@ -7,44 +7,35 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParsingQueryVotesMessages(t *testing.T) {
+func TestParsingQueryVoteMessages(t *testing.T) {
 	td := setup(t, nil)
 
-	consensusHeight, _ := td.consMgr.HeightRound()
-	v1, _ := td.GenerateTestPrecommitVote(consensusHeight, 0)
-	td.consMgr.AddVote(v1)
-	pid := td.RandPeerID()
-
-	t.Run("doesn't have active validator", func(t *testing.T) {
-		msg := message.NewQueryVotesMessage(consensusHeight, 1, td.RandValAddress())
+	consHeight, consRound := td.consMgr.HeightRound()
+	t.Run("doesn't have any votes", func(t *testing.T) {
+		pid := td.RandPeerID()
+		msg := message.NewQueryVoteMessage(consHeight, consRound, td.RandValAddress())
 		td.receivingNewMessage(td.sync, msg, pid)
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeVote)
 	})
 
-	td.consMocks[0].Active = true
-
 	t.Run("should respond to the query votes message", func(t *testing.T) {
-		msg := message.NewQueryVotesMessage(consensusHeight, 1, td.RandValAddress())
+		v1, _ := td.GenerateTestPrecommitVote(consHeight, consRound)
+		td.consMgr.AddVote(v1)
+		pid := td.RandPeerID()
+		msg := message.NewQueryVoteMessage(consHeight, consRound, td.RandValAddress())
 		td.receivingNewMessage(td.sync, msg, pid)
 
 		bdl := td.shouldPublishMessageWithThisType(t, message.TypeVote)
-		assert.Equal(t, bdl.Message.(*message.VoteMessage).Vote.Hash(), v1.Hash())
-	})
-
-	t.Run("doesn't have any votes", func(t *testing.T) {
-		msg := message.NewQueryVotesMessage(consensusHeight+1, 1, td.RandValAddress())
-		td.receivingNewMessage(td.sync, msg, pid)
-
-		td.shouldNotPublishMessageWithThisType(t, message.TypeVote)
+		assert.Equal(t, v1.Hash(), bdl.Message.(*message.VoteMessage).Vote.Hash())
 	})
 }
 
-func TestBroadcastingQueryVotesMessages(t *testing.T) {
+func TestBroadcastingQueryVoteMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	consensusHeight := td.state.LastBlockHeight() + 1
-	msg := message.NewQueryVotesMessage(consensusHeight, 1, td.RandValAddress())
+	msg := message.NewQueryVoteMessage(consensusHeight, 1, td.RandValAddress())
 	td.sync.broadcast(msg)
 
 	td.shouldPublishMessageWithThisType(t, message.TypeQueryVote)

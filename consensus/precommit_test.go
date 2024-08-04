@@ -40,7 +40,7 @@ func TestPrecommitDuplicatedProposal(t *testing.T) {
 
 	p1 := td.makeProposal(t, h, r)
 	trx := tx.NewTransferTx(h, td.consX.rewardAddr,
-		td.RandAccAddress(), 1000, 1000, "invalid proposal")
+		td.RandAccAddress(), 1000, 1000, tx.WithMemo("invalid proposal"))
 	td.HelperSignTransaction(td.consX.valKey.PrivateKey(), trx)
 
 	assert.NoError(t, td.txPool.AppendTx(trx))

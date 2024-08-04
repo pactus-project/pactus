@@ -24,5 +24,5 @@ func TestDuplicateVote(t *testing.T) {
 	vb.addVote(v, power)
 	vb.addVote(v, power)
 
-	assert.Equal(t, vb.votedPower, power)
+	assert.Equal(t, power, vb.votedPower)
 }

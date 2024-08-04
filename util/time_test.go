@@ -7,17 +7,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNow(t *testing.T) {
+func TestRoundNow(t *testing.T) {
 	c1 := time.Now()
-	c2 := Now()
+	c2 := RoundNow(1)
 	c3 := RoundNow(5)
 
 	assert.NotEqual(t, c1, c2)
 	assert.Equal(t, c1.Second(), c2.Second())
-	assert.Equal(t, c2.UnixMicro()%1000000, int64(0))
-	assert.Equal(t, c2.UnixMilli()%1000, int64(0))
-	assert.Equal(t, c3.Nanosecond(), 0)
-	assert.Equal(t, c3.Second()%5, 0)
+	assert.Equal(t, int64(0), c2.UnixMicro()%1000000)
+	assert.Equal(t, int64(0), c2.UnixMilli()%1000)
+	assert.Equal(t, 0, c3.Nanosecond())
+	assert.Equal(t, 0, c3.Second()%5)
 }
 
 func TestRoundingTime(t *testing.T) {
@@ -32,15 +32,15 @@ func TestRoundingTime(t *testing.T) {
 	c4 := roundDownTime(t4, 10)
 	c5 := roundDownTime(t5, 10)
 
-	assert.Equal(t, c1.Nanosecond(), 0)
-	assert.Equal(t, c2.Nanosecond(), 0)
-	assert.Equal(t, c3.Nanosecond(), 0)
-	assert.Equal(t, c4.Nanosecond(), 0)
-	assert.Equal(t, c5.Nanosecond(), 0)
+	assert.Equal(t, 0, c1.Nanosecond())
+	assert.Equal(t, 0, c2.Nanosecond())
+	assert.Equal(t, 0, c3.Nanosecond())
+	assert.Equal(t, 0, c4.Nanosecond())
+	assert.Equal(t, 0, c5.Nanosecond())
 
-	assert.Equal(t, c1.Second(), 10)
-	assert.Equal(t, c2.Second(), 20)
-	assert.Equal(t, c3.Second(), 30)
-	assert.Equal(t, c4.Second(), 40)
-	assert.Equal(t, c5.Second(), 50)
+	assert.Equal(t, 10, c1.Second())
+	assert.Equal(t, 20, c2.Second())
+	assert.Equal(t, 30, c3.Second())
+	assert.Equal(t, 40, c4.Second())
+	assert.Equal(t, 50, c5.Second())
 }

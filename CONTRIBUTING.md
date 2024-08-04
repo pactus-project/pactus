@@ -32,6 +32,16 @@ You can use these commands in the Makefile:
 Error and log messages should not start with a capital letter (unless it's a proper noun or acronym) and
 should not end with punctuation.
 
+All changes on core must contain proper and well-defined unit-tests, also previous tests must be passed as well. 
+This codebase used `testify` for unit tests, make sure you follow these guide for tests:
+
+- For panic cases make sure you use `assert.Panics`
+- For checking err using `assert.ErrorIs` make sure you pass expected error as second argument.
+- For checking equality using `assert.Equal` make sure you pass expected value as the first argument.
+
+
+> This code guideline must be followed for both contributors and maintainers to review the PRs.
+
 #### Examples
 
 - Correct ✅: "unable to connect to server"

@@ -49,7 +49,7 @@ func TestValidateMnemonic(t *testing.T) {
 	for i, test := range tests {
 		err := CheckMnemonic(test.mnenomic)
 		if err != nil {
-			assert.Equal(t, err.Error(), test.errStr, "test %v failed", i)
+			assert.Equal(t, test.errStr, err.Error(), "test %v failed", i)
 		}
 	}
 }

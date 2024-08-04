@@ -66,7 +66,7 @@ func (s *prepareState) onTimeout(t *ticker) {
 			s.queryProposal()
 		}
 		if s.isProposer() {
-			s.queryVotes()
+			s.queryVote()
 		}
 	} else if t.Target == tickerTargetChangeProposer {
 		s.startChangingProposer()

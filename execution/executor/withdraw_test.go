@@ -32,16 +32,14 @@ func TestExecuteWithdrawTx(t *testing.T) {
 
 	t.Run("Should fail, unknown address", func(t *testing.T) {
 		randomAddr := td.RandValAddress()
-		trx := tx.NewWithdrawTx(lockTime, randomAddr, receiverAddr,
-			amt, fee, "unknown address")
+		trx := tx.NewWithdrawTx(lockTime, randomAddr, receiverAddr, amt, fee)
 
 		td.check(t, trx, true, ValidatorNotFoundError{Address: randomAddr})
 		td.check(t, trx, false, ValidatorNotFoundError{Address: randomAddr})
 	})
 
 	t.Run("Should fail, hasn't unbonded yet", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr,
-			amt, fee, "need to unbond first")
+		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
 
 		td.check(t, trx, true, ErrValidatorBonded)
 		td.check(t, trx, false, ErrValidatorBonded)
@@ -51,16 +49,14 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	td.sandbox.UpdateValidator(val)
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr,
-			totalStake, 1, "insufficient balance")
+		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, totalStake, 1)
 
 		td.check(t, trx, true, ErrInsufficientFunds)
 		td.check(t, trx, false, ErrInsufficientFunds)
 	})
 
 	t.Run("Should fail, hasn't passed unbonding period", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr,
-			amt, fee, "unbonding period")
+		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
 
 		td.check(t, trx, true, ErrUnbondingPeriod)
 		td.check(t, trx, false, ErrUnbondingPeriod)
@@ -70,8 +66,7 @@ func TestExecuteWithdrawTx(t *testing.T) {
 	td.sandbox.TestStore.AddTestBlock(curHeight + 1)
 
 	t.Run("Should pass, Everything is Ok!", func(t *testing.T) {
-		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr,
-			amt, fee, "should be able to withdraw the stake")
+		trx := tx.NewWithdrawTx(lockTime, senderAddr, receiverAddr, amt, fee)
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)

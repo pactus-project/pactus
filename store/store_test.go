@@ -75,9 +75,9 @@ func TestBlockHash(t *testing.T) {
 
 	sb, _ := td.store.Block(1)
 
-	assert.Equal(t, td.store.BlockHash(0), hash.UndefHash)
-	assert.Equal(t, td.store.BlockHash(util.MaxUint32), hash.UndefHash)
-	assert.Equal(t, td.store.BlockHash(1), sb.BlockHash)
+	assert.Equal(t, hash.UndefHash, td.store.BlockHash(0))
+	assert.Equal(t, hash.UndefHash, td.store.BlockHash(util.MaxUint32))
+	assert.Equal(t, sb.BlockHash, td.store.BlockHash(1))
 }
 
 func TestBlockHeight(t *testing.T) {
@@ -85,9 +85,9 @@ func TestBlockHeight(t *testing.T) {
 
 	sb, _ := td.store.Block(1)
 
-	assert.Equal(t, td.store.BlockHeight(hash.UndefHash), uint32(0))
-	assert.Equal(t, td.store.BlockHeight(td.RandHash()), uint32(0))
-	assert.Equal(t, td.store.BlockHeight(sb.BlockHash), uint32(1))
+	assert.Equal(t, uint32(0), td.store.BlockHeight(hash.UndefHash))
+	assert.Equal(t, uint32(0), td.store.BlockHeight(td.RandHash()))
+	assert.Equal(t, uint32(1), td.store.BlockHeight(sb.BlockHash))
 }
 
 func TestUnknownTransactionID(t *testing.T) {
@@ -115,14 +115,14 @@ func TestRetrieveBlockAndTransactions(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, lastHeight, cBlk.Height)
 	blk, _ := cBlk.ToBlock()
-	assert.Equal(t, blk.PrevCertificate().Height(), lastHeight-1)
+	assert.Equal(t, lastHeight-1, blk.PrevCertificate().Height())
 
 	for _, trx := range blk.Transactions() {
 		committedTx, err := td.store.Transaction(trx.ID())
 		assert.NoError(t, err)
-		assert.Equal(t, blk.Header().UnixTime(), committedTx.BlockTime)
-		assert.Equal(t, trx.ID(), committedTx.TxID)
-		assert.Equal(t, lastHeight, committedTx.Height)
+		assert.Equal(t, committedTx.BlockTime, blk.Header().UnixTime())
+		assert.Equal(t, committedTx.TxID, trx.ID())
+		assert.Equal(t, committedTx.Height, lastHeight)
 		trx2, _ := committedTx.ToTx()
 		assert.Equal(t, trx.ID(), trx2.ID())
 	}
@@ -140,9 +140,9 @@ func TestIndexingPublicKeys(t *testing.T) {
 			assert.NoError(t, err)
 
 			if addr.IsAccountAddress() {
-				assert.Equal(t, pubKey.AccountAddress(), addr)
+				assert.Equal(t, addr, pubKey.AccountAddress())
 			} else if addr.IsValidatorAddress() {
-				assert.Equal(t, pubKey.ValidatorAddress(), addr)
+				assert.Equal(t, addr, pubKey.ValidatorAddress())
 			}
 		}
 	})
@@ -169,9 +169,9 @@ func TestStrippedPublicKey(t *testing.T) {
 	lastHeight := lastCert.Height()
 	randPubKey, _ := td.RandBLSKeyPair()
 
-	trx0 := tx.NewTransferTx(lastHeight, knownPubKey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
-	trx1 := tx.NewTransferTx(lastHeight, randPubKey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
-	trx2 := tx.NewTransferTx(lastHeight, randPubKey.AccountAddress(), td.RandAccAddress(), 1, 1, "")
+	trx0 := tx.NewTransferTx(lastHeight, knownPubKey.AccountAddress(), td.RandAccAddress(), 1, 1)
+	trx1 := tx.NewTransferTx(lastHeight, randPubKey.AccountAddress(), td.RandAccAddress(), 1, 1)
+	trx2 := tx.NewTransferTx(lastHeight, randPubKey.AccountAddress(), td.RandAccAddress(), 1, 1)
 
 	trx0.StripPublicKey()
 	trx1.SetPublicKey(randPubKey)

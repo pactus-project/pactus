@@ -51,9 +51,9 @@ func TestClearCache(t *testing.T) {
 	blk, _ := ts.GenerateTestBlock(ts.RandHeight())
 	cache.AddBlock(blk)
 
-	assert.Equal(t, cache.Len(), 1)
+	assert.Equal(t, 1, cache.Len())
 	cache.Clear()
-	assert.Equal(t, cache.Len(), 0)
+	assert.Equal(t, 0, cache.Len())
 	assert.Nil(t, cache.GetBlock(2))
 }
 

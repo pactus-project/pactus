@@ -22,7 +22,7 @@ func TestTransaction(t *testing.T) {
 		r = mux.SetURLVars(r, map[string]string{"id": testTx.ID().String()})
 		td.httpServer.GetTransactionHandler(w, r)
 
-		assert.Equal(t, w.Code, 200)
+		assert.Equal(t, 200, w.Code)
 		assert.Contains(t, w.Body.String(), testTx.Signature().String())
 		assert.Contains(t, w.Body.String(), testTx.Signature().String())
 		fmt.Println(w.Body)
@@ -33,7 +33,7 @@ func TestTransaction(t *testing.T) {
 		r := new(http.Request)
 		td.httpServer.GetTransactionHandler(w, r)
 
-		assert.Equal(t, w.Code, 400)
+		assert.Equal(t, 400, w.Code)
 		fmt.Println(w.Body)
 	})
 

@@ -33,7 +33,7 @@ func TestNonHardenedDerivation(t *testing.T) {
 		pubKey1 := extKey1.RawPublicKey()
 		pubKey2 := extKey2.RawPublicKey()
 
-		require.Equal(t, extKey1.Path(), path)
+		require.Equal(t, path, extKey1.Path())
 		require.Equal(t, pubKey1, pubKey2)
 	}
 
@@ -63,8 +63,8 @@ func TestHardenedDerivation(t *testing.T) {
 	blsPrivKey, _ := bls.PrivateKeyFromBytes(privKey)
 	pubKey := extKey.RawPublicKey()
 
-	assert.Equal(t, extKey.Path(), path)
-	assert.Equal(t, blsPrivKey.PublicKey().Bytes(), pubKey)
+	assert.Equal(t, path, extKey.Path())
+	assert.Equal(t, pubKey, blsPrivKey.PublicKey().Bytes())
 }
 
 // TestDerivation tests derive private keys in hardened and non hardened modes.
@@ -146,20 +146,20 @@ func TestDerivation(t *testing.T) {
 
 		privKeyG1, err := extKeyG1.RawPrivateKey()
 		require.NoError(t, err)
-		require.Equal(t, hex.EncodeToString(privKeyG1), test.wantPrivG1,
+		require.Equal(t, test.wantPrivG1, hex.EncodeToString(privKeyG1),
 			"mismatched serialized private key for test #%v", i+1)
 
 		privKeyG2, err := extKeyG2.RawPrivateKey()
 		require.NoError(t, err)
-		require.Equal(t, hex.EncodeToString(privKeyG2), test.wantPrivG2,
+		require.Equal(t, test.wantPrivG2, hex.EncodeToString(privKeyG2),
 			"mismatched serialized private key for test #%v", i+1)
 
 		pubKeyG1 := extKeyG1.RawPublicKey()
-		require.Equal(t, hex.EncodeToString(pubKeyG1), test.wantPubG1,
+		require.Equal(t, test.wantPubG1, hex.EncodeToString(pubKeyG1),
 			"mismatched serialized public key for test #%v", i+1)
 
 		pubKeyG2 := extKeyG2.RawPublicKey()
-		require.Equal(t, hex.EncodeToString(pubKeyG2), test.wantPubG2,
+		require.Equal(t, test.wantPubG2, hex.EncodeToString(pubKeyG2),
 			"mismatched serialized public key for test #%v", i+1)
 
 		neuterKeyG1 := extKeyG1.Neuter()
@@ -171,12 +171,12 @@ func TestDerivation(t *testing.T) {
 		require.True(t, extKeyG2.IsPrivate())
 		require.False(t, neuterKeyG1.IsPrivate())
 		require.False(t, neuterKeyG2.IsPrivate())
-		require.Equal(t, neuterPubKeyG1, pubKeyG1)
-		require.Equal(t, neuterPubKeyG2, pubKeyG2)
-		require.Equal(t, extKeyG1.Path(), test.path)
-		require.Equal(t, extKeyG2.Path(), test.path)
-		require.Equal(t, neuterKeyG1.Path(), test.path)
-		require.Equal(t, neuterKeyG2.Path(), test.path)
+		require.Equal(t, pubKeyG1, neuterPubKeyG1)
+		require.Equal(t, pubKeyG2, neuterPubKeyG2)
+		require.Equal(t, test.path, extKeyG1.Path())
+		require.Equal(t, test.path, extKeyG2.Path())
+		require.Equal(t, test.path, neuterKeyG1.Path())
+		require.Equal(t, test.path, neuterKeyG2.Path())
 
 		_, err = neuterKeyG1.RawPrivateKey()
 		assert.ErrorIs(t, err, ErrNotPrivExtKey)
@@ -185,7 +185,7 @@ func TestDerivation(t *testing.T) {
 		assert.ErrorIs(t, err, ErrNotPrivExtKey)
 
 		blsPrivKey, _ := bls.PrivateKeyFromBytes(privKeyG2)
-		require.Equal(t, blsPrivKey.PublicKey().Bytes(), pubKeyG2)
+		require.Equal(t, pubKeyG2, blsPrivKey.PublicKey().Bytes())
 	}
 }
 
@@ -338,10 +338,10 @@ func TestKeyToString(t *testing.T) {
 		extKeyG2, _ := masterKeyG2.DerivePath(test.path)
 		neuterKeyG2 := extKeyG2.Neuter()
 
-		require.Equal(t, extKeyG1.String(), test.wantXPrivG1, "test %d failed", i)
-		require.Equal(t, neuterKeyG1.String(), test.wantXPubG1, "test %d failed", i)
-		require.Equal(t, extKeyG2.String(), test.wantXPrivG2, "test %d failed", i)
-		require.Equal(t, neuterKeyG2.String(), test.wantXPubG2, "test %d failed", i)
+		require.Equal(t, test.wantXPrivG1, extKeyG1.String(), "test %d failed", i)
+		require.Equal(t, test.wantXPubG1, neuterKeyG1.String(), "test %d failed", i)
+		require.Equal(t, test.wantXPrivG2, extKeyG2.String(), "test %d failed", i)
+		require.Equal(t, test.wantXPubG2, neuterKeyG2.String(), "test %d failed", i)
 
 		recoveredExtKeyG1, err := NewKeyFromString(test.wantXPrivG1)
 		require.NoError(t, err)
@@ -432,6 +432,8 @@ func TestInvalidString(t *testing.T) {
 func TestNeuter(t *testing.T) {
 	extKey, _ := NewKeyFromString("XSECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJAT3F4D")
 	neuterKey := extKey.Neuter()
-	assert.Equal(t, neuterKey.String(), "xpublic1pq5qqqqyqqyqqqqqzqqqgqqsqqqqqpj568vs9lz67jkww0p6tqy9ny58lv0pcvrqqtaemkgv6uljns99y68jhcvgpxzvmgpqnpgdwddkajrwl9gjudyh5q4fklms3q3390mtt5ytznugp4kqxtrrpcqulq53aunrwnav2tjqzv47re")
+	assert.Equal(t,
+		"xpublic1pq5qqqqyqqyqqqqqzqqqgqqsqqqqqpj568vs9lz67jkww0p6tqy9ny58lv0pcvrqqtaemkgv6uljns99y68jhcvgpxzvmgpqnpgdwddkajrwl9gjudyh5q4fklms3q3390mtt5ytznugp4kqxtrrpcqulq53aunrwnav2tjqzv47re",
+		neuterKey.String())
 	assert.Equal(t, neuterKey, neuterKey.Neuter())
 }

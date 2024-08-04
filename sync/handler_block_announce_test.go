@@ -32,7 +32,7 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	t.Run("Receiving missed block, should commit both blocks", func(t *testing.T) {
 		td.receivingNewMessage(td.sync, msg1, pid)
 
-		assert.Equal(t, td.sync.state.LastBlockHeight(), lastHeight+2)
+		assert.Equal(t, lastHeight+2, td.sync.state.LastBlockHeight())
 	})
 }
 
@@ -44,7 +44,7 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 	td.sync.broadcast(msg)
 
 	msg1 := td.shouldPublishMessageWithThisType(t, message.TypeBlockAnnounce)
-	assert.Equal(t, msg1.Message.(*message.BlockAnnounceMessage).Certificate.Height(), msg.Certificate.Height())
+	assert.Equal(t, msg.Certificate.Height(), msg1.Message.(*message.BlockAnnounceMessage).Certificate.Height())
 }
 
 func TestCacheAnnouncedBlock(t *testing.T) {
@@ -61,6 +61,6 @@ func TestCacheAnnouncedBlock(t *testing.T) {
 
 	cachedBlock := td.sync.cache.GetBlock(height)
 	cachedCert := td.sync.cache.GetCertificate(height)
-	assert.Equal(t, cachedBlock, blk1)
-	assert.Equal(t, cachedCert, cert1)
+	assert.Equal(t, blk1, cachedBlock)
+	assert.Equal(t, cert1, cachedCert)
 }

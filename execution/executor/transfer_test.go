@@ -20,24 +20,21 @@ func TestExecuteTransferTx(t *testing.T) {
 
 	t.Run("Should fail, unknown address", func(t *testing.T) {
 		randomAddr := td.RandAccAddress()
-		trx := tx.NewTransferTx(lockTime, randomAddr,
-			receiverAddr, amt, fee, "unknown address")
+		trx := tx.NewTransferTx(lockTime, randomAddr, receiverAddr, amt, fee)
 
 		td.check(t, trx, true, AccountNotFoundError{Address: randomAddr})
 		td.check(t, trx, false, AccountNotFoundError{Address: randomAddr})
 	})
 
 	t.Run("Should fail, insufficient balance", func(t *testing.T) {
-		trx := tx.NewTransferTx(lockTime, senderAddr,
-			receiverAddr, senderBalance+1, 0, "insufficient balance")
+		trx := tx.NewTransferTx(lockTime, senderAddr, receiverAddr, senderBalance+1, 0)
 
 		td.check(t, trx, true, ErrInsufficientFunds)
 		td.check(t, trx, false, ErrInsufficientFunds)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewTransferTx(lockTime, senderAddr,
-			receiverAddr, amt, fee, "ok")
+		trx := tx.NewTransferTx(lockTime, senderAddr, receiverAddr, amt, fee)
 
 		td.check(t, trx, true, nil)
 		td.check(t, trx, false, nil)
@@ -61,7 +58,7 @@ func TestTransferToSelf(t *testing.T) {
 	fee := td.RandFee()
 	lockTime := td.sandbox.CurrentHeight()
 
-	trx := tx.NewTransferTx(lockTime, senderAddr, senderAddr, amt, fee, "ok")
+	trx := tx.NewTransferTx(lockTime, senderAddr, senderAddr, amt, fee)
 	td.check(t, trx, true, nil)
 	td.check(t, trx, false, nil)
 	td.execute(t, trx)

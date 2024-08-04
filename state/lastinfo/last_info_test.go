@@ -2,6 +2,7 @@ package lastinfo
 
 import (
 	"testing"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -11,7 +12,6 @@ import (
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -75,7 +75,7 @@ func setup(t *testing.T) *testData {
 	lastHeight := ts.RandHeight()
 	prevCert := ts.GenerateTestBlockCertificate(lastHeight - 1)
 	lastSeed := ts.RandSeed()
-	lastBlock := block.MakeBlock(1, util.Now(), block.Txs{trx},
+	lastBlock := block.MakeBlock(1, time.Now(), block.Txs{trx},
 		prevHash,
 		ts.RandHash(),
 		prevCert, lastSeed, val2.Address())
@@ -84,7 +84,7 @@ func setup(t *testing.T) *testData {
 	lastCert := certificate.NewBlockCertificate(lastHeight, 0)
 	lastCert.SetSignature(committers, []int32{}, sig)
 	mockStore.SaveBlock(lastBlock, lastCert)
-	assert.Equal(t, mockStore.LastHeight, lastHeight)
+	assert.Equal(t, lastHeight, mockStore.LastHeight)
 
 	lastInfo.UpdateSortitionSeed(lastSeed)
 	lastInfo.UpdateBlockHash(lastBlock.Hash())
@@ -118,7 +118,7 @@ func TestRestoreCommittee(t *testing.T) {
 	assert.Equal(t, td.lastInfo.Certificate().Hash(), li.Certificate().Hash())
 	assert.Equal(t, td.lastInfo.BlockTime(), li.BlockTime())
 	assert.Equal(t, td.lastInfo.Validators(), []*validator.Validator{val0, val1, val2, val3})
-	assert.Equal(t, cmt.Committers(), []int32{1, 4, 2, 3})
+	assert.Equal(t, []int32{1, 4, 2, 3}, cmt.Committers())
 }
 
 func TestRestoreFailed(t *testing.T) {

@@ -114,9 +114,7 @@ func (td *testData) blockchainClient(t *testing.T) (*grpc.ClientConn, pactus.Blo
 	conn, err := grpc.NewClient("passthrough://bufnet",
 		grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		t.Fatalf("Failed to dial blockchain server: %v", err)
-	}
+	assert.NoError(t, err)
 
 	return conn, pactus.NewBlockchainClient(conn)
 }
@@ -127,9 +125,7 @@ func (td *testData) networkClient(t *testing.T) (*grpc.ClientConn, pactus.Networ
 	conn, err := grpc.NewClient("passthrough://bufnet",
 		grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		t.Fatalf("Failed to dial network server: %v", err)
-	}
+	assert.NoError(t, err)
 
 	return conn, pactus.NewNetworkClient(conn)
 }
@@ -140,9 +136,7 @@ func (td *testData) transactionClient(t *testing.T) (*grpc.ClientConn, pactus.Tr
 	conn, err := grpc.NewClient("passthrough://bufnet",
 		grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		t.Fatalf("Failed to dial transaction server: %v", err)
-	}
+	assert.NoError(t, err)
 
 	return conn, pactus.NewTransactionClient(conn)
 }
@@ -153,9 +147,7 @@ func (td *testData) walletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletC
 	conn, err := grpc.NewClient("passthrough://bufnet",
 		grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		t.Fatalf("Failed to dial wallet server: %v", err)
-	}
+	assert.NoError(t, err)
 
 	return conn, pactus.NewWalletClient(conn)
 }
@@ -166,9 +158,7 @@ func (td *testData) utilClient(t *testing.T) (*grpc.ClientConn, pactus.UtilsClie
 	conn, err := grpc.NewClient("passthrough://bufnet",
 		grpc.WithContextDialer(td.bufDialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		t.Fatalf("Failed to dial wallet server: %v", err)
-	}
+	assert.NoError(t, err)
 
 	return conn, pactus.NewUtilsClient(conn)
 }

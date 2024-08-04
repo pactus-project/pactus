@@ -17,14 +17,14 @@ func TestTxsMerkle(t *testing.T) {
 	trx2 := ts.GenerateTestTransferTx()
 	txs.Append(trx1)
 	merkle := txs.Root()
-	assert.Equal(t, merkle, trx1.ID())
+	assert.Equal(t, trx1.ID(), merkle)
 
 	txs.Append(trx2)
 	merkle = txs.Root()
 	data := make([]byte, 64)
 	copy(data[:32], trx1.ID().Bytes())
 	copy(data[32:], trx2.ID().Bytes())
-	assert.Equal(t, merkle, hash.CalcHash(data))
+	assert.Equal(t, hash.CalcHash(data), merkle)
 }
 
 func TestAppendPrependRemove(t *testing.T) {
@@ -43,7 +43,7 @@ func TestAppendPrependRemove(t *testing.T) {
 	txs.Append(trx4)
 	txs.Remove(3)
 
-	assert.Equal(t, txs, block.Txs{trx1, trx2, trx3, trx4})
+	assert.Equal(t, block.Txs{trx1, trx2, trx3, trx4}, txs)
 }
 
 func TestIsEmpty(t *testing.T) {

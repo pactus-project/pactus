@@ -1,9 +1,10 @@
 package consensus
 
 import (
+	"time"
+
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util"
 )
 
 type newHeightState struct {
@@ -25,7 +26,7 @@ func (s *newHeightState) decide() {
 	s.active = s.bcState.IsInCommittee(s.valKey.Address())
 	s.logger.Info("entering new height", "height", s.height, "active", s.active)
 
-	sleep := s.bcState.LastBlockTime().Add(s.bcState.Params().BlockInterval()).Sub(util.Now())
+	sleep := time.Until(s.bcState.LastBlockTime().Add(s.bcState.Params().BlockInterval()))
 	s.scheduleTimeout(sleep, s.height, s.round, tickerTargetNewHeight)
 }
 

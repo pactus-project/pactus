@@ -232,8 +232,8 @@ func TestCalculateFee(t *testing.T) {
 				FixedAmount: false,
 			})
 		assert.NoError(t, err)
-		assert.Equal(t, res.Amount, amt.ToNanoPAC())
-		assert.Equal(t, res.Fee, expectedFee.ToNanoPAC())
+		assert.Equal(t, amt.ToNanoPAC(), res.Amount)
+		assert.Equal(t, expectedFee.ToNanoPAC(), res.Fee)
 	})
 
 	t.Run("Fixed amount", func(t *testing.T) {
@@ -246,8 +246,8 @@ func TestCalculateFee(t *testing.T) {
 				FixedAmount: true,
 			})
 		assert.NoError(t, err)
-		assert.Equal(t, res.Amount, (amt - expectedFee).ToNanoPAC())
-		assert.Equal(t, res.Fee, expectedFee.ToNanoPAC())
+		assert.Equal(t, (amt - expectedFee).ToNanoPAC(), res.Amount)
+		assert.Equal(t, expectedFee.ToNanoPAC(), res.Fee)
 	})
 
 	t.Run("Insufficient amount to pay fee", func(t *testing.T) {
@@ -261,7 +261,7 @@ func TestCalculateFee(t *testing.T) {
 			})
 		assert.NoError(t, err)
 		assert.Negative(t, res.Amount)
-		assert.Equal(t, res.Fee, expectedFee.ToNanoPAC())
+		assert.Equal(t, expectedFee.ToNanoPAC(), res.Fee)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

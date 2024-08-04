@@ -125,7 +125,7 @@ func TestMain(m *testing.M) {
 	params.BondInterval = 8
 	params.CommitteeSize = tCommitteeSize
 	params.TransactionToLiveInterval = 8
-	tGenDoc = genesis.MakeGenesis(util.Now(), accs, vals, params)
+	tGenDoc = genesis.MakeGenesis(time.Now(), accs, vals, params)
 
 	for i := 0; i < tTotalNodes; i++ {
 		tNodes[i], _ = node.NewNode(

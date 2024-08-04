@@ -3,6 +3,8 @@ package basicauth
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestMakeCredentials(t *testing.T) {
@@ -24,9 +26,7 @@ func TestMakeCredentials(t *testing.T) {
 			result := EncodeBasicAuth(tc.username, tc.password)
 
 			// Check if the result matches the expected output
-			if result != tc.expected {
-				t.Errorf("basicAuth(%s, %s) = %s; want %s", tc.username, tc.password, result, tc.expected)
-			}
+			assert.Equal(t, tc.expected, result)
 		})
 	}
 }
