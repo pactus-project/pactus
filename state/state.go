@@ -408,8 +408,6 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 		st.logger.Panic("a possible fork is detected",
 			"our hash", st.lastInfo.BlockHash(),
 			"block hash", blk.Header().PrevBlockHash())
-
-		return errors.Error(errors.ErrInvalidBlock)
 	}
 
 	err = st.validateBlock(blk, cert.Round())

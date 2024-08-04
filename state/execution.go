@@ -6,7 +6,6 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox, check bool) error {
@@ -16,13 +15,11 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox, check bool) er
 		isSubsidyTx := (i == 0)
 		if isSubsidyTx {
 			if !trx.IsSubsidyTx() {
-				return errors.Errorf(errors.ErrInvalidTx,
-					"first transaction should be a subsidy transaction")
+				return ErrInvalidSubsidyTransaction
 			}
 			subsidyTrx = trx
 		} else if trx.IsSubsidyTx() {
-			return errors.Errorf(errors.ErrInvalidTx,
-				"duplicated subsidy transaction")
+			return ErrDuplicatedSubsidyTransaction
 		}
 
 		if check {
@@ -45,8 +42,10 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox, check bool) er
 	accumulatedFee := sb.AccumulatedFee()
 	subsidyAmt := st.params.BlockReward + sb.AccumulatedFee()
 	if subsidyTrx.Payload().Value() != subsidyAmt {
-		return errors.Errorf(errors.ErrInvalidTx,
-			"invalid subsidy amount, expected %v, got %v", subsidyAmt, subsidyTrx.Payload().Value())
+		return InvalidSubsidyAmountError{
+			Expected: subsidyAmt,
+			Got:      subsidyTrx.Payload().Value(),
+		}
 	}
 
 	// Claim accumulated fees
