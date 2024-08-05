@@ -440,7 +440,7 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	}
 
 	// create genesis
-	params := param.DefaultParams()
+	params := param.DefaultGenParams()
 	params.BlockVersion = 0
 	gen := genesis.MakeGenesis(util.RoundNow(60), accs, vals, params)
 

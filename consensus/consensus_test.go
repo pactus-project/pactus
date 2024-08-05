@@ -86,7 +86,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	accs := map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc}
-	params := param.DefaultParams()
+	params := param.DefaultGenParams()
 	params.CommitteeSize = 4
 
 	// To prevent triggering timers before starting the tests and

@@ -119,7 +119,7 @@ func TestMain(m *testing.M) {
 	vals[1] = validator.NewValidator(tValKeys[tNodeIdx2][0].PublicKey(), 1)
 	vals[2] = validator.NewValidator(tValKeys[tNodeIdx3][0].PublicKey(), 2)
 	vals[3] = validator.NewValidator(tValKeys[tNodeIdx4][0].PublicKey(), 3)
-	params := param.DefaultParams()
+	params := param.DefaultGenParams()
 	params.MinimumStake = 1000
 	params.BlockIntervalInSecond = 2
 	params.BondInterval = 8

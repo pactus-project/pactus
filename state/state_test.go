@@ -55,7 +55,7 @@ func setup(t *testing.T) *testData {
 
 	genTime := util.RoundNow(10).Add(-8640 * time.Second)
 
-	params := param.DefaultParams()
+	params := param.DefaultGenParams()
 	params.CommitteeSize = 7
 	params.BondInterval = 10
 
@@ -585,10 +585,10 @@ func TestCalculateFee(t *testing.T) {
 func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 	td := setup(t)
 
-	maxTransactionsPerBlock = 10
+	td.state.params.MaxTransactionsPerBlock = 10
 	lockTime := td.state.LastBlockHeight()
 	senderAddr := td.genAccKey.PublicKeyNative().AccountAddress()
-	for i := 0; i < maxTransactionsPerBlock+2; i++ {
+	for i := 0; i < td.state.params.MaxTransactionsPerBlock+2; i++ {
 		amt := td.RandAmount()
 		fee := td.state.CalculateFee(amt, payload.TypeTransfer)
 		trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddress(), amt, fee)
@@ -598,7 +598,7 @@ func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 
 	blk, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
 	assert.NoError(t, err)
-	assert.Equal(t, maxTransactionsPerBlock, blk.Transactions().Len())
+	assert.Equal(t, td.state.params.MaxTransactionsPerBlock, blk.Transactions().Len())
 }
 
 func TestCommittedBlock(t *testing.T) {

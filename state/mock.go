@@ -51,7 +51,7 @@ func MockingState(ts *testsuite.TestSuite) *MockState {
 		TestPool:      txpool.MockingTxPool(),
 		TestCommittee: cmt,
 		TestValKeys:   valKeys,
-		TestParams:    genDoc.Params(),
+		TestParams:    param.DefaultParams(),
 	}
 }
 

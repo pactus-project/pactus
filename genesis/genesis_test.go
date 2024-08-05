@@ -26,7 +26,7 @@ func TestMarshaling(t *testing.T) {
 	val, _ := ts.GenerateTestValidator(0)
 	gen1 := genesis.MakeGenesis(util.RoundNow(10),
 		map[crypto.Address]*account.Account{prv: acc},
-		[]*validator.Validator{val}, param.DefaultParams())
+		[]*validator.Validator{val}, param.DefaultGenParams())
 	gen2 := new(genesis.Genesis)
 
 	assert.Equal(t, 10, gen1.Params().BlockIntervalInSecond)
@@ -95,7 +95,7 @@ func TestCheckGenesisAccountAndValidator(t *testing.T) {
 		accs[pub.AccountAddress()] = acc
 		vals = append(vals, val)
 	}
-	gen := genesis.MakeGenesis(time.Now(), accs, vals, param.DefaultParams())
+	gen := genesis.MakeGenesis(time.Now(), accs, vals, param.DefaultGenParams())
 
 	for addr, acc := range gen.Accounts() {
 		assert.Equal(t, accs[addr], acc)

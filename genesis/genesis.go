@@ -56,10 +56,10 @@ type Genesis struct {
 }
 
 type genesisData struct {
-	GenesisTime time.Time      `cbor:"1,keyasint" json:"genesis_time"`
-	Params      *param.Params  `cbor:"2,keyasint" json:"params"`
-	Accounts    []genAccount   `cbor:"3,keyasint" json:"accounts"`
-	Validators  []genValidator `cbor:"4,keyasint" json:"validators"`
+	GenesisTime time.Time        `cbor:"1,keyasint" json:"genesis_time"`
+	Params      *param.GenParams `cbor:"2,keyasint" json:"params"`
+	Accounts    []genAccount     `cbor:"3,keyasint" json:"accounts"`
+	Validators  []genValidator   `cbor:"4,keyasint" json:"validators"`
 }
 
 func (gen *Genesis) Hash() hash.Hash {
@@ -72,7 +72,7 @@ func (gen *Genesis) GenesisTime() time.Time {
 	return gen.data.GenesisTime
 }
 
-func (gen *Genesis) Params() *param.Params {
+func (gen *Genesis) Params() *param.GenParams {
 	return gen.data.Params
 }
 
@@ -124,7 +124,7 @@ func makeGenesisValidator(val *validator.Validator) genValidator {
 }
 
 func MakeGenesis(genesisTime time.Time, accounts map[crypto.Address]*account.Account,
-	validators []*validator.Validator, params *param.Params,
+	validators []*validator.Validator, params *param.GenParams,
 ) *Genesis {
 	genAccs := make([]genAccount, len(accounts))
 	for addr, acc := range accounts {

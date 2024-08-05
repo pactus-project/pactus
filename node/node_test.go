@@ -30,7 +30,7 @@ func TestRunningNode(t *testing.T) {
 	val := validator.NewValidator(pub, 0)
 	gen := genesis.MakeGenesis(time.Now(),
 		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
-		[]*validator.Validator{val}, param.DefaultParams())
+		[]*validator.Validator{val}, param.DefaultGenParams())
 	conf := config.DefaultConfigMainnet()
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "0.0.0.0:0"

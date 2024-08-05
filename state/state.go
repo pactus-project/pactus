@@ -35,8 +35,6 @@ import (
 	"github.com/pactus-project/pactus/www/nanomsg/event"
 )
 
-var maxTransactionsPerBlock = 1000
-
 type state struct {
 	lk sync.RWMutex
 
@@ -65,7 +63,7 @@ func LoadOrNewState(
 		valKeys:         valKeys,
 		genDoc:          genDoc,
 		txPool:          txPool,
-		params:          genDoc.Params(),
+		params:          param.DefaultParams(),
 		store:           str,
 		lastInfo:        lastinfo.NewLastInfo(),
 		accountMerkle:   persistentmerkle.New(),
@@ -323,7 +321,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 
 	// Re-check all transactions strictly and remove invalid ones
 	txs := st.txPool.PrepareBlockTransactions()
-	txs = util.Trim(txs, maxTransactionsPerBlock-1)
+	txs = util.Trim(txs, st.params.MaxTransactionsPerBlock-1)
 	for i := 0; i < txs.Len(); i++ {
 		// Only one subsidy transaction per blk
 		if txs[i].IsSubsidyTx() {
