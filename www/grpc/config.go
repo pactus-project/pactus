@@ -1,5 +1,7 @@
 package grpc
 
+import "github.com/pactus-project/pactus/util/htpasswd"
+
 type Config struct {
 	Enable       bool          `toml:"enable"`
 	EnableWallet bool          `toml:"enable_wallet"`
@@ -22,4 +24,14 @@ func DefaultConfig() *Config {
 			EnableCORS: false,
 		},
 	}
+}
+
+func (c *Config) BasicCheck() error {
+	if c.BasicAuth != "" {
+		if _, _, err := htpasswd.ExtractBasicAuth(c.BasicAuth); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
