@@ -235,7 +235,7 @@ func escapeSpecialCharacters(val string) string {
 	}
 
 	if strings.ContainsAny(val, " #&*;<>?[]|~") {
-		val = fmt.Sprintf(`"%q"`, val)
+		val = fmt.Sprintf("%q", val)
 	}
 
 	return val
