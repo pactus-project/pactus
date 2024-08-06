@@ -7,7 +7,7 @@ type chunk struct {
 }
 
 func createChunks(contentLength, totalChunks int64) []*chunk {
-	var chunks []*chunk
+	chunks := make([]*chunk, 0, totalChunks)
 	chunkSize := contentLength / totalChunks
 	for i := int64(0); i < totalChunks; i++ {
 		start := i * chunkSize

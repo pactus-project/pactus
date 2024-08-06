@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -169,7 +170,7 @@ func (d *Downloader) createDir() error {
 func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File, c *chunk, totalSize int64) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, d.url, http.NoBody)
 	if err != nil {
-		return ErrNewRequest
+		return fmt.Errorf("error creating request: %w", err)
 	}
 
 	req.Header.Set("Range", c.rangeHeader())
@@ -207,7 +208,7 @@ func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File,
 			d.mu.Unlock()
 		}
 		if err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break
 			}
 
