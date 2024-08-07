@@ -532,7 +532,7 @@ pub struct GetBlockchainInfoResponse {
     /// Lowest-height block stored (only present if pruning is enabled)
     #[prost(uint32, tag="9")]
     pub pruning_height: u32,
-    /// The last block time as timestamp
+    /// Timestamp of the last block in Unix format
     #[prost(int64, tag="10")]
     pub last_block_time: i64,
 }
