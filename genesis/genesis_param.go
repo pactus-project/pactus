@@ -6,7 +6,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 )
 
-type GenParams struct {
+type genParams struct {
 	BlockVersion              uint8         `cbor:"1,keyasint"  json:"block_version"`
 	BlockIntervalInSecond     int           `cbor:"2,keyasint"  json:"block_interval_in_second"`
 	CommitteeSize             int           `cbor:"3,keyasint"  json:"committee_size"`
@@ -22,8 +22,8 @@ type GenParams struct {
 	MaximumStake              amount.Amount `cbor:"13,keyasint" json:"maximum_stake"`
 }
 
-func DefaultGenParams() *GenParams {
-	return &GenParams{
+func DefaultGenParams() *genParams {
+	return &genParams{
 		BlockVersion:              1,
 		BlockIntervalInSecond:     10,
 		CommitteeSize:             51,
@@ -40,6 +40,6 @@ func DefaultGenParams() *GenParams {
 	}
 }
 
-func (p *GenParams) BlockInterval() time.Duration {
+func (p *genParams) BlockInterval() time.Duration {
 	return time.Duration(p.BlockIntervalInSecond) * time.Second
 }
