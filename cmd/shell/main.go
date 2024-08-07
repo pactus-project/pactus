@@ -4,12 +4,15 @@ import (
 	"encoding/base64"
 	"fmt"
 
+	"github.com/NathanBaulch/protoc-gen-cobra/client"
+	"github.com/NathanBaulch/protoc-gen-cobra/naming"
 	"github.com/c-bata/go-prompt"
 	"github.com/inancgumus/screen"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/util/shell"
 	pb "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -41,6 +44,11 @@ func main() {
 		prompt.OptionLivePrefix(livePrefix),
 	)
 
+	client.RegisterFlagBinder(func(fs *pflag.FlagSet, namer naming.Namer) {
+		fs.StringVar(&username, namer("auth-username"), "", "username for gRPC basic authentication")
+		fs.StringVar(&password, namer("auth-password"), "", "password for gRPC basic authentication")
+	})
+
 	sh.Flags().StringVar(&serverAddr, "server-addr", defaultServerAddr, "gRPC server address")
 	sh.Flags().StringVar(&username, "auth-username", "",
 		"username for gRPC basic authentication")
@@ -56,15 +64,12 @@ func main() {
 		_prefix = fmt.Sprintf("pactus@%s > ", serverAddr)
 	}
 
-	sh.PersistentPreRunE = func(cmd *cobra.Command, _ []string) error {
-		if username != "" && password != "" {
-			auth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", username, password)))
-			md := metadata.Pairs("authorization", "Basic "+auth)
-			ctx := metadata.NewOutgoingContext(cmd.Context(), md)
-			cmd.SetContext(ctx)
-		}
+	sh.PersistentPreRun = func(cmd *cobra.Command, _ []string) {
+		setAuthContext(cmd, username, password)
+	}
 
-		return nil
+	rootCmd.PersistentPreRun = func(cmd *cobra.Command, _ []string) {
+		setAuthContext(cmd, username, password)
 	}
 
 	changeDefaultParameters := func(c *cobra.Command) *cobra.Command {
@@ -82,8 +87,9 @@ func main() {
 	rootCmd.AddCommand(changeDefaultParameters(pb.TransactionClientCommand()))
 	rootCmd.AddCommand(changeDefaultParameters(pb.WalletClientCommand()))
 	rootCmd.AddCommand(clearScreen())
+	rootCmd.AddCommand(sh)
 
-	err := sh.Execute()
+	err := rootCmd.Execute()
 	if err != nil {
 		cmd.PrintErrorMsgf("%s", err)
 	}
@@ -106,4 +112,13 @@ func clearScreen() *cobra.Command {
 func cls() {
 	screen.MoveTopLeft()
 	screen.Clear()
+}
+
+func setAuthContext(c *cobra.Command, username, password string) {
+	if username != "" && password != "" {
+		auth := base64.StdEncoding.EncodeToString([]byte(fmt.Sprintf("%s:%s", username, password)))
+		md := metadata.Pairs("authorization", "Basic "+auth)
+		ctx := metadata.NewOutgoingContext(c.Context(), md)
+		c.SetContext(ctx)
+	}
 }
