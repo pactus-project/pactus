@@ -13,7 +13,6 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -55,7 +54,7 @@ func setup(t *testing.T) *testData {
 
 	genTime := util.RoundNow(10).Add(-8640 * time.Second)
 
-	params := param.DefaultGenParams()
+	params := genesis.DefaultGenParams()
 	params.CommitteeSize = 7
 	params.BondInterval = 10
 

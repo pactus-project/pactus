@@ -354,7 +354,7 @@ func TestNetworkFlagsTestnet(t *testing.T) {
 
 func TestNetworkFlagsLocalnet(t *testing.T) {
 	td := setup(t, nil)
-	td.state.TestParams.BlockVersion = 0x3f // changing genesis hash
+	td.state.Genesis().Params().BlockVersion = 0x3f // changing genesis hash
 
 	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)

@@ -1,4 +1,4 @@
-package param
+package genesis
 
 import (
 	"time"

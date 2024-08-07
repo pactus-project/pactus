@@ -10,7 +10,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/account"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -30,7 +29,7 @@ func TestRunningNode(t *testing.T) {
 	val := validator.NewValidator(pub, 0)
 	gen := genesis.MakeGenesis(time.Now(),
 		map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc},
-		[]*validator.Validator{val}, param.DefaultGenParams())
+		[]*validator.Validator{val}, genesis.DefaultGenParams())
 	conf := config.DefaultConfigMainnet()
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "0.0.0.0:0"

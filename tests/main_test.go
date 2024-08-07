@@ -16,7 +16,6 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -119,7 +118,7 @@ func TestMain(m *testing.M) {
 	vals[1] = validator.NewValidator(tValKeys[tNodeIdx2][0].PublicKey(), 1)
 	vals[2] = validator.NewValidator(tValKeys[tNodeIdx3][0].PublicKey(), 2)
 	vals[3] = validator.NewValidator(tValKeys[tNodeIdx4][0].PublicKey(), 3)
-	params := param.DefaultGenParams()
+	params := genesis.DefaultGenParams()
 	params.MinimumStake = 1000
 	params.BlockIntervalInSecond = 2
 	params.BondInterval = 8
