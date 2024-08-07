@@ -982,7 +982,7 @@ type GetBlockchainInfoResponse struct {
 	IsPruned bool `protobuf:"varint,8,opt,name=is_pruned,json=isPruned,proto3" json:"is_pruned,omitempty"`
 	// Lowest-height block stored (only present if pruning is enabled)
 	PruningHeight uint32 `protobuf:"varint,9,opt,name=pruning_height,json=pruningHeight,proto3" json:"pruning_height,omitempty"`
-	// The last block time as timestamp
+	// Timestamp of the last block in Unix format
 	LastBlockTime int64 `protobuf:"varint,10,opt,name=last_block_time,json=lastBlockTime,proto3" json:"last_block_time,omitempty"`
 }
 

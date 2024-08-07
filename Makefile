@@ -25,7 +25,6 @@ devtools:
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/rakyll/statik@v0.1.7
 	go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.3.2
-	go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-doc/cmd/protoc-gen-jrpc-doc@v0.1.7
 
 ########################################
 ### Building

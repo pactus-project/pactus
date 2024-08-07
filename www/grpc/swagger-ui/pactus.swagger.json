@@ -1628,7 +1628,7 @@
         "lastBlockTime": {
           "type": "string",
           "format": "int64",
-          "title": "The last block time as timestamp"
+          "title": "Timestamp of the last block in Unix format"
         }
       },
       "description": "Message containing the response with general blockchain information."
