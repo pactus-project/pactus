@@ -10975,7 +10975,7 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * The last block time as timestamp
+     * Timestamp of the last block in Unix format
      * </pre>
      *
      * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
@@ -11244,7 +11244,7 @@ public final class BlockchainOuterClass {
     private long lastBlockTime_;
     /**
      * <pre>
-     * The last block time as timestamp
+     * Timestamp of the last block in Unix format
      * </pre>
      *
      * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
@@ -12536,7 +12536,7 @@ public final class BlockchainOuterClass {
       private long lastBlockTime_ ;
       /**
        * <pre>
-       * The last block time as timestamp
+       * Timestamp of the last block in Unix format
        * </pre>
        *
        * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
@@ -12548,7 +12548,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * The last block time as timestamp
+       * Timestamp of the last block in Unix format
        * </pre>
        *
        * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>
@@ -12563,7 +12563,7 @@ public final class BlockchainOuterClass {
       }
       /**
        * <pre>
-       * The last block time as timestamp
+       * Timestamp of the last block in Unix format
        * </pre>
        *
        * <code>int64 last_block_time = 10 [json_name = "lastBlockTime"];</code>

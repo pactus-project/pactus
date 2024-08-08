@@ -1402,7 +1402,7 @@ Message has no fields.
     <td class="fw-bold">last_block_time</td>
     <td> int64</td>
     <td>
-    The last block time as timestamp
+    Timestamp of the last block in Unix format
     </td>
   </tr>
      </tbody>
