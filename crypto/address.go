@@ -93,13 +93,10 @@ func (addr Address) String() string {
 		return treasuryAddressString
 	}
 
-	str, err := bech32m.EncodeFromBase256WithType(
+	str, _ := bech32m.EncodeFromBase256WithType(
 		AddressHRP,
 		addr[0],
 		addr[1:])
-	if err != nil {
-		panic(err.Error())
-	}
 
 	return str
 }
