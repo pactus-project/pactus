@@ -24,6 +24,7 @@ import (
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
@@ -408,7 +409,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		return nil, nil, err
 	}
 
-	nd, err := node.NewNode(gen, conf, valKeys, rewardAddrs)
+	nd, err := node.NewNode(gen, param.DefaultParams(), conf, valKeys, rewardAddrs)
 	if err != nil {
 		return nil, nil, err
 	}

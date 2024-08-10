@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -54,10 +55,6 @@ func setup(t *testing.T) *testData {
 
 	genTime := util.RoundNow(10).Add(-8640 * time.Second)
 
-	params := genesis.DefaultGenParams()
-	params.CommitteeSize = 7
-	params.BondInterval = 10
-
 	genAcc1 := account.NewAccount(0)
 	genAcc1.AddToBalance(21 * 1e15) // 21,000,000.000,000,000
 	genAcc2 := account.NewAccount(1)
@@ -69,11 +66,17 @@ func setup(t *testing.T) *testData {
 		genAccPubKey.AccountAddress(): genAcc2,
 	}
 
+	params := genesis.DefaultGenParams()
 	gnDoc := genesis.MakeGenesis(genTime, genAccs, genVals, params)
 
 	// First validator is in the committee
 	valKeys := []*bls.ValidatorKey{genValKeys[0], ts.RandValKey()}
-	st1, err := LoadOrNewState(gnDoc, valKeys, mockStore, mockTxPool, nil)
+
+	chainParams := param.DefaultParams()
+	chainParams.CommitteeSize = 7
+	chainParams.BondInterval = 10
+
+	st1, err := LoadOrNewState(gnDoc, chainParams, valKeys, mockStore, mockTxPool, nil)
 	require.NoError(t, err)
 
 	state, _ := st1.(*state)
@@ -537,7 +540,7 @@ func TestLoadState(t *testing.T) {
 	blk6, cert6 := td.makeBlockAndCertificate(t, 0)
 
 	// Load last state info
-	newState, err := LoadOrNewState(td.state.genDoc, td.state.valKeys,
+	newState, err := LoadOrNewState(td.state.genDoc, td.state.params, td.state.valKeys,
 		td.state.store, td.commonTxPool, nil)
 	require.NoError(t, err)
 

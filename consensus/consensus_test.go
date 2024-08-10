@@ -16,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
@@ -93,16 +94,16 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	getTime := util.RoundNow(params.BlockIntervalInSecond).
 		Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
-	stX, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
+	stX, err := state.LoadOrNewState(genDoc, param.DefaultParams(), []*bls.ValidatorKey{valKeys[tIndexX]},
 		store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
-	stY, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexY]},
+	stY, err := state.LoadOrNewState(genDoc, param.DefaultParams(), []*bls.ValidatorKey{valKeys[tIndexY]},
 		store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
-	stB, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexB]},
+	stB, err := state.LoadOrNewState(genDoc, param.DefaultParams(), []*bls.ValidatorKey{valKeys[tIndexB]},
 		store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
-	stP, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexP]},
+	stP, err := state.LoadOrNewState(genDoc, param.DefaultParams(), []*bls.ValidatorKey{valKeys[tIndexP]},
 		store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
 
@@ -411,7 +412,7 @@ func TestNotInCommittee(t *testing.T) {
 	valKey := td.RandValKey()
 	str := store.MockingStore(td.TestSuite)
 
-	st, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, str, td.txPool, nil)
+	st, _ := state.LoadOrNewState(td.genDoc, param.DefaultParams(), []*bls.ValidatorKey{valKey}, str, td.txPool, nil)
 	consInst := NewConsensus(testConfig(), st, valKey, valKey.Address(), make(chan message.Message, 100),
 		newConcreteMediator())
 	cons := consInst.(*consensus)

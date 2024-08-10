@@ -55,6 +55,7 @@ type state struct {
 
 func LoadOrNewState(
 	genDoc *genesis.Genesis,
+	chainParam *param.Params,
 	valKeys []*bls.ValidatorKey,
 	str store.Store,
 	txPool txpool.TxPool, eventCh chan event.Event,
@@ -63,7 +64,7 @@ func LoadOrNewState(
 		valKeys:         valKeys,
 		genDoc:          genDoc,
 		txPool:          txPool,
-		params:          param.DefaultParams(),
+		params:          chainParam,
 		store:           str,
 		lastInfo:        lastinfo.NewLastInfo(),
 		accountMerkle:   persistentmerkle.New(),

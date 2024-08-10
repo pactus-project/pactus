@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/txpool"
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
@@ -41,7 +42,7 @@ type Node struct {
 	nanomsg    *nanomsg.Server
 }
 
-func NewNode(genDoc *genesis.Genesis, conf *config.Config,
+func NewNode(genDoc *genesis.Genesis, chainParam *param.Params, conf *config.Config,
 	valKeys []*bls.ValidatorKey, rewardAddrs []crypto.Address,
 ) (*Node, error) {
 	// Initialize the logger
@@ -66,7 +67,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	st, err := state.LoadOrNewState(genDoc, valKeys, str, txPool, eventCh)
+	st, err := state.LoadOrNewState(genDoc, chainParam, valKeys, str, txPool, eventCh)
 	if err != nil {
 		return nil, err
 	}

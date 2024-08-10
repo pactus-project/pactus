@@ -16,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -35,14 +36,16 @@ var (
 	tTransaction pactus.TransactionClient
 	tNetwork     pactus.NetworkClient
 	tCtx         context.Context
+	tParam       *param.Params
 )
 
 const (
-	tNodeIdx1      = 0
-	tNodeIdx2      = 1
-	tNodeIdx3      = 2
-	tNodeIdx4      = 3
-	tTotalNodes    = 4 // each node has 3 validators
+	tNodeIdx1 = iota
+	tNodeIdx2
+	tNodeIdx3
+	tNodeIdx4
+	tTotalNodes // each node has 3 validators
+
 	tCommitteeSize = 7
 )
 
@@ -119,16 +122,18 @@ func TestMain(m *testing.M) {
 	vals[2] = validator.NewValidator(tValKeys[tNodeIdx3][0].PublicKey(), 2)
 	vals[3] = validator.NewValidator(tValKeys[tNodeIdx4][0].PublicKey(), 3)
 	params := genesis.DefaultGenParams()
-	params.MinimumStake = 1000
 	params.BlockIntervalInSecond = 2
 	params.BondInterval = 8
 	params.CommitteeSize = tCommitteeSize
 	params.TransactionToLiveInterval = 8
 	tGenDoc = genesis.MakeGenesis(time.Now(), accs, vals, params)
 
+	tParam = param.DefaultParams()
+	tParam.MinimumStake = 1000
+
 	for i := 0; i < tTotalNodes; i++ {
 		tNodes[i], _ = node.NewNode(
-			tGenDoc, tConfigs[i],
+			tGenDoc, tParam, tConfigs[i],
 			tValKeys[i],
 			[]crypto.Address{
 				tValKeys[i][0].PublicKey().AccountAddress(),

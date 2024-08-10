@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
@@ -48,7 +49,7 @@ func TestRunningNode(t *testing.T) {
 
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}
-	nd, err := NewNode(gen, conf, valKeys, rewardAddrs)
+	nd, err := NewNode(gen, param.DefaultParams(), conf, valKeys, rewardAddrs)
 	assert.True(t, conf.Sync.Services.IsFullNode())
 	assert.True(t, conf.Sync.Services.IsPrunedNode())
 
