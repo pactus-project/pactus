@@ -7,17 +7,17 @@ import (
 )
 
 type Params struct {
-	BlockVersion              uint8         `cbor:"1,keyasint"  json:"block_version"`
-	BlockIntervalInSecond     int           `cbor:"2,keyasint"  json:"block_interval_in_second"`
-	CommitteeSize             int           `cbor:"3,keyasint"  json:"committee_size"`
-	BlockReward               amount.Amount `cbor:"4,keyasint"  json:"block_reward"`
-	TransactionToLiveInterval uint32        `cbor:"5,keyasint"  json:"transaction_to_live_interval"`
-	BondInterval              uint32        `cbor:"6,keyasint"  json:"bond_interval"`
-	UnbondInterval            uint32        `cbor:"7,keyasint"  json:"unbond_interval"`
-	SortitionInterval         uint32        `cbor:"8,keyasint"  json:"sortition_interval"`
-	MaxTransactionsPerBlock   int           `cbor:"9,keyasint"  json:"max_transaction_per_block"`
-	MinimumStake              amount.Amount `cobr:"10,keyasint" json:"minimum_stake"`
-	MaximumStake              amount.Amount `cbor:"11,keyasint" json:"maximum_stake"`
+	BlockVersion              uint8
+	BlockIntervalInSecond     int
+	CommitteeSize             int
+	BlockReward               amount.Amount
+	TransactionToLiveInterval uint32
+	BondInterval              uint32
+	UnbondInterval            uint32
+	SortitionInterval         uint32
+	MaxTransactionsPerBlock   int
+	MinimumStake              amount.Amount
+	MaximumStake              amount.Amount
 }
 
 func DefaultParams() *Params {
