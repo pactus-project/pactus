@@ -4,11 +4,12 @@ import (
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -34,7 +35,7 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 
 	sb := &MockSandbox{
 		ts:                   ts,
-		TestParams:           param.DefaultParams(),
+		TestParams:           param.FromGenesis(genesis.DefaultGenesisParams()),
 		TestStore:            store.MockingStore(ts),
 		TestCommittee:        cmt,
 		TestJoinedValidators: make(map[crypto.Address]bool),

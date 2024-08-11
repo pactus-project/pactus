@@ -1,4 +1,4 @@
-package param
+package genesis
 
 import (
 	"time"
@@ -6,7 +6,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 )
 
-type Params struct {
+type GenesisParams struct {
 	BlockVersion              uint8         `cbor:"1,keyasint"  json:"block_version"`
 	BlockIntervalInSecond     int           `cbor:"2,keyasint"  json:"block_interval_in_second"`
 	CommitteeSize             int           `cbor:"3,keyasint"  json:"committee_size"`
@@ -22,8 +22,8 @@ type Params struct {
 	MaximumStake              amount.Amount `cbor:"13,keyasint" json:"maximum_stake"`
 }
 
-func DefaultParams() *Params {
-	return &Params{
+func DefaultGenesisParams() *GenesisParams {
+	return &GenesisParams{
 		BlockVersion:              1,
 		BlockIntervalInSecond:     10,
 		CommitteeSize:             51,
@@ -32,14 +32,16 @@ func DefaultParams() *Params {
 		BondInterval:              360,    // one hour
 		UnbondInterval:            181440, // 21 days
 		SortitionInterval:         17,
-		FeeFraction:               0.0001,
-		MinimumFee:                1000,
-		MaximumFee:                1000000,
 		MinimumStake:              1000000000,
 		MaximumStake:              1000000000000,
+
+		// Deprecated: Replaced by fix fee
+		FeeFraction: 0.0,
+		MinimumFee:  0,
+		MaximumFee:  0,
 	}
 }
 
-func (p *Params) BlockInterval() time.Duration {
+func (p *GenesisParams) BlockInterval() time.Duration {
 	return time.Duration(p.BlockIntervalInSecond) * time.Second
 }
