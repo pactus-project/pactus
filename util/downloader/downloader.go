@@ -130,12 +130,12 @@ func (d *Downloader) download(ctx context.Context) {
 func (d *Downloader) getHeader(ctx context.Context) (Stats, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodHead, d.url, http.NoBody)
 	if err != nil {
-		return Stats{}, ErrHeaderRequest
+		return Stats{}, &Error{Message: "failed to create new request for get header", Reason: err}
 	}
 
 	resp, err := d.client.Do(req)
 	if err != nil {
-		return Stats{}, ErrHeaderRequest
+		return Stats{}, &Error{Message: "failed to do request get header", Reason: err}
 	}
 
 	defer func() {
@@ -161,7 +161,7 @@ func (d *Downloader) getHeader(ctx context.Context) (Stats, error) {
 func (d *Downloader) createDir() error {
 	dir := filepath.Dir(d.filePath)
 	if err := os.MkdirAll(dir, 0o750); err != nil {
-		return ErrCreateDir
+		return &Error{Message: "failed to create file path directory", Reason: err}
 	}
 
 	return nil
@@ -170,13 +170,13 @@ func (d *Downloader) createDir() error {
 func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File, c *chunk, totalSize int64) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, d.url, http.NoBody)
 	if err != nil {
-		return fmt.Errorf("error creating request: %w", err)
+		return &Error{Message: "failed to create new request for download chunk", Reason: err}
 	}
 
 	req.Header.Set("Range", c.rangeHeader())
 	resp, err := d.client.Do(req)
 	if err != nil {
-		return ErrDoRequest
+		return &Error{Message: "failed to do request download chunk", Reason: err}
 	}
 
 	defer func() {
@@ -184,7 +184,10 @@ func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File,
 	}()
 
 	if resp.StatusCode != http.StatusPartialContent && resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("got http response %s from %s: %w", resp.Status, d.url, err)
+		return &Error{
+			Message: "response has invalid status code",
+			Reason:  fmt.Errorf("got http response %s from %s: %w", resp.Status, d.url, err),
+		}
 	}
 
 	buf := make([]byte, 32*1024) // 32KB buffer for reading the response body
@@ -198,7 +201,7 @@ func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File,
 				if err != nil {
 					d.mu.Unlock()
 
-					return ErrFileWriting
+					return &Error{Message: "failed write data into file", Reason: err}
 				}
 				written += w
 			}
@@ -208,11 +211,12 @@ func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File,
 			d.mu.Unlock()
 		}
 		if err != nil {
+			// if error is io.EOF stop write for loop response body.
 			if errors.Is(err, io.EOF) {
 				break
 			}
 
-			return fmt.Errorf("error reading body from %s: %w", d.url, err)
+			return &Error{Message: "error read body download chunk", Reason: err}
 		}
 	}
 
@@ -232,7 +236,7 @@ func (d *Downloader) finalizeDownload(stats *Stats) error {
 	// Recalculate the hash by re-reading the entire file
 	out, err := os.Open(d.filePath)
 	if err != nil {
-		return ErrOpenFileExists
+		return &Error{Message: "failed to open file", Reason: err}
 	}
 	defer func() {
 		_ = out.Close()
@@ -240,14 +244,14 @@ func (d *Downloader) finalizeDownload(stats *Stats) error {
 
 	hasher := sha256.New()
 	if _, err := io.Copy(hasher, out); err != nil {
-		return ErrFileWriting
+		return &Error{Message: "failed copy file data to hasher for calculate hash", Reason: err}
 	}
 
 	stats.Completed = true
 	stats.Percent = 100
 	sum := hex.EncodeToString(hasher.Sum(nil))
 	if sum != d.sha256Sum {
-		return ErrSHA256Mismatch
+		return &Error{Message: "sha256 mismatch", Reason: err}
 	}
 	d.statsCh <- *stats
 

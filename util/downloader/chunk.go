@@ -22,6 +22,10 @@ func createChunks(contentLength, totalChunks int64) []*chunk {
 	return chunks
 }
 
-func (c *chunk) rangeHeader() string { return fmt.Sprintf("bytes=%d-%d", c.start, c.end) }
+func (c *chunk) rangeHeader() string {
+	return fmt.Sprintf("bytes=%d-%d", c.start, c.end)
+}
 
-func (c *chunk) size() int64 { return (c.end + 1) - c.start }
+func (c *chunk) size() int64 {
+	return (c.end + 1) - c.start
+}

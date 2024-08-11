@@ -60,10 +60,8 @@ func TestCreateChunks(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run("", func(t *testing.T) {
-			actual := createChunks(tt.contentLength, tt.totalChunks)
-			assert.Equal(t, tt.expected, actual)
-		})
+		actual := createChunks(tt.contentLength, tt.totalChunks)
+		assert.Equal(t, tt.expected, actual)
 	}
 }
 
@@ -83,10 +81,8 @@ func TestChunkRangeHeader(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run("", func(t *testing.T) {
-			actual := tt.chunk.rangeHeader()
-			assert.Equal(t, tt.expected, actual)
-		})
+		actual := tt.chunk.rangeHeader()
+		assert.Equal(t, tt.expected, actual)
 	}
 }
 
@@ -110,9 +106,7 @@ func TestChunkSize(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run("", func(t *testing.T) {
-			actual := tt.chunk.size()
-			assert.Equal(t, tt.expected, actual)
-		})
+		actual := tt.chunk.size()
+		assert.Equal(t, tt.expected, actual)
 	}
 }
