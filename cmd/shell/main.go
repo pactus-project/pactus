@@ -31,9 +31,10 @@ func main() {
 	)
 
 	rootCmd := &cobra.Command{
-		Use:   "shell",
-		Short: "Pactus Shell",
-		Long:  `pactus-shell is a command line tool for interacting with the Pactus blockchain using gRPC`,
+		Use:          "shell",
+		Short:        "Pactus Shell",
+		SilenceUsage: true,
+		Long:         `pactus-shell is a command line tool for interacting with the Pactus blockchain using gRPC`,
 	}
 
 	sh := shell.New(rootCmd, nil,
@@ -91,7 +92,7 @@ func main() {
 
 	err := rootCmd.Execute()
 	if err != nil {
-		cmd.PrintErrorMsgf("%s", err)
+		cmd.PrintErrorMsgf(err.Error())
 	}
 }
 
