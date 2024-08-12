@@ -1564,7 +1564,42 @@ committee.
             The change-proposer value of the vote.
             </td>
           </tr>
-          </tbody>
+          <tr>
+    <td class="fw-bold">proposal</td>
+    <td> object</td>
+    <td>
+    The proposal of the consensus info.
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">proposal.height</td>
+        <td> numeric</td>
+        <td>
+        The height of the proposal.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">proposal.round</td>
+        <td> numeric</td>
+        <td>
+        The round of the proposal.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">proposal.block_data</td>
+        <td> string</td>
+        <td>
+        The block data of the proposal.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">proposal.signature_data</td>
+        <td> string</td>
+        <td>
+        The signature data of the proposal.
+        </td>
+      </tr>
+         </tbody>
 </table>
 
 ### pactus.blockchain.get_account <span id="pactus.blockchain.get_account" class="rpc-badge"></span>

@@ -1643,6 +1643,10 @@
             "$ref": "#/definitions/pactusConsensusInfo"
           },
           "description": "List of consensus instances."
+        },
+        "proposal": {
+          "$ref": "#/definitions/pactusProposal",
+          "description": "The proposal of the consensus info."
         }
       },
       "description": "Message containing the response with consensus information."
@@ -2114,6 +2118,30 @@
         }
       },
       "description": "Information about a peer in the network."
+    },
+    "pactusProposal": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height of the proposal."
+        },
+        "round": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The round of the proposal."
+        },
+        "blockData": {
+          "type": "string",
+          "description": "The block data of the proposal."
+        },
+        "signatureData": {
+          "type": "string",
+          "description": "The signature data of the proposal."
+        }
+      },
+      "description": "Message containing information about a proposal."
     },
     "pactusRestoreWalletResponse": {
       "type": "object",

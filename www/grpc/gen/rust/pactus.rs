@@ -548,6 +548,9 @@ pub struct GetConsensusInfoResponse {
     /// List of consensus instances.
     #[prost(message, repeated, tag="1")]
     pub instances: ::prost::alloc::vec::Vec<ConsensusInfo>,
+    /// The proposal of the consensus info.
+    #[prost(message, optional, tag="6")]
+    pub proposal: ::core::option::Option<Proposal>,
 }
 /// Request message to retrieve transactions in the transaction pool.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -704,6 +707,23 @@ pub struct ConsensusInfo {
     /// List of votes in the consensus instance.
     #[prost(message, repeated, tag="5")]
     pub votes: ::prost::alloc::vec::Vec<VoteInfo>,
+}
+/// Message containing information about a proposal.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Proposal {
+    /// The height of the proposal.
+    #[prost(uint32, tag="1")]
+    pub height: u32,
+    /// The round of the proposal.
+    #[prost(int32, tag="2")]
+    pub round: i32,
+    /// The block data of the proposal.
+    #[prost(string, tag="3")]
+    pub block_data: ::prost::alloc::string::String,
+    /// The signature data of the proposal.
+    #[prost(string, tag="4")]
+    pub signature_data: ::prost::alloc::string::String,
 }
 /// Enumeration for verbosity levels when requesting block information.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
