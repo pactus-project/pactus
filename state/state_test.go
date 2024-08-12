@@ -54,9 +54,9 @@ func setup(t *testing.T) *testData {
 
 	genTime := util.RoundNow(10).Add(-8640 * time.Second)
 
-	params := genesis.DefaultGenesisParams()
-	params.CommitteeSize = 7
-	params.BondInterval = 10
+	genParams := genesis.DefaultGenesisParams()
+	genParams.CommitteeSize = 7
+	genParams.BondInterval = 10
 
 	genAcc1 := account.NewAccount(0)
 	genAcc1.AddToBalance(21 * 1e15) // 21,000,000.000,000,000
@@ -69,7 +69,7 @@ func setup(t *testing.T) *testData {
 		genAccPubKey.AccountAddress(): genAcc2,
 	}
 
-	gnDoc := genesis.MakeGenesis(genTime, genAccs, genVals, params)
+	gnDoc := genesis.MakeGenesis(genTime, genAccs, genVals, genParams)
 
 	// First validator is in the committee
 	valKeys := []*bls.ValidatorKey{genValKeys[0], ts.RandValKey()}
