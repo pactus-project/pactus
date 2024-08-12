@@ -5,11 +5,12 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -28,7 +29,7 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 	mockStore := store.MockingStore(ts)
-	params := param.DefaultParams()
+	params := genesis.DefaultGenesisParams()
 	params.TransactionToLiveInterval = 64
 
 	cmt, valKeys := ts.GenerateTestCommittee(21)
@@ -54,9 +55,9 @@ func setup(t *testing.T) *testData {
 		mockStore.SaveBlock(blk, cert)
 	}
 	sandbox := NewSandbox(mockStore.LastHeight,
-		mockStore, params, cmt, totalPower).(*sandbox)
+		mockStore, param.FromGenesis(params), cmt, totalPower).(*sandbox)
 	assert.Equal(t, lastHeight, sandbox.CurrentHeight())
-	assert.Equal(t, params, sandbox.Params())
+	assert.Equal(t, param.FromGenesis(params), sandbox.Params())
 
 	return &testData{
 		TestSuite: ts,
