@@ -38,11 +38,11 @@ var (
 )
 
 const (
-	tNodeIdx1 = iota
-	tNodeIdx2
-	tNodeIdx3
-	tNodeIdx4
-	tTotalNodes    // each node has 3 validators
+	tNodeIdx1      = 0
+	tNodeIdx2      = 1
+	tNodeIdx3      = 2
+	tNodeIdx4      = 3
+	tTotalNodes    = 4 // each node has 3 validators
 	tCommitteeSize = 7
 )
 
