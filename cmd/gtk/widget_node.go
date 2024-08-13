@@ -48,6 +48,7 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 	labelNetwork := getLabelObj(builder, "id_label_network")
 	labelNetworkID := getLabelObj(builder, "id_label_network_id")
 	labelMoniker := getLabelObj(builder, "id_label_moniker")
+	labelIsPrune := getLabelObj(builder, "id_label_is_prune")
 
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -57,6 +58,7 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 	labelNetwork.SetText(model.node.State().Genesis().ChainType().String())
 	labelNetworkID.SetText(model.node.Network().SelfID().String())
 	labelMoniker.SetText(model.node.Sync().Moniker())
+	labelIsPrune.SetText(strconv.FormatBool(model.node.State().IsPruned()))
 
 	w := &widgetNode{
 		Box:                  box,

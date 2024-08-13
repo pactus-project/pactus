@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.38.2 -->
+<!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
   <object class="GtkBox" id="id_box_node">
@@ -48,7 +48,7 @@
                 <property name="label-xalign">0.019999999552965164</property>
                 <property name="shadow-type">in</property>
                 <child>
-                  <!-- n-columns=2 n-rows=10 -->
+                  <!-- n-columns=2 n-rows=12 -->
                   <object class="GtkGrid">
                     <property name="width-request">400</property>
                     <property name="visible">True</property>
@@ -191,7 +191,7 @@
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">10</property>
+                        <property name="top-attach">11</property>
                       </packing>
                     </child>
                     <child>
@@ -204,7 +204,7 @@
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">10</property>
+                        <property name="top-attach">11</property>
                       </packing>
                     </child>
                     <child>
@@ -384,6 +384,33 @@
                       <packing>
                         <property name="left-attach">1</property>
                         <property name="top-attach">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="hexpand">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="label" translatable="yes">✂️ Is Prune:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">10</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="id_label_is_prune">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="hexpand">True</property>
+                        <property name="vexpand">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">10</property>
                       </packing>
                     </child>
                   </object>
