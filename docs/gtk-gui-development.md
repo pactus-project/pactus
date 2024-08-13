@@ -41,7 +41,7 @@ brew install gtk+3
 With these packages installed you can build GUI using `make build_gui` command. You can run the GUI like: `./pactus-gui`, `./pactus-gui.exe`.
 
 
-The [Assets](../cmd/gtk/assets/) file includes required images, icons, ui files and custom CSS files. All [`.ui`](../cmd/gtk/assets/ui/) files are used to defined the user interface of GUI, for a proper edit and change on them make sure you have [Glade](https://glade.gnome.org/) installed on your machine.
+The [Assets](../cmd/gtk/assets/) file includes required images, icons, ui files and custom CSS files. All [`.ui`](../cmd/gtk/assets/ui/) files are used to defined the user interface of GUI, for a proper edit and change on them make sure you have [Glade](https://gitlab.gnome.org/GNOME/glade) installed on your machine.
 
 ## Running linter
 
