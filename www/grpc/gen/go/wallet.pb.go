@@ -26,8 +26,12 @@ const (
 type AddressType int32
 
 const (
-	AddressType_ADDRESS_TYPE_TREASURY    AddressType = 0
-	AddressType_ADDRESS_TYPE_VALIDATOR   AddressType = 1
+	// Treasury address type.
+	// Should not be used to generate new addresses.
+	AddressType_ADDRESS_TYPE_TREASURY AddressType = 0
+	// Validator address type.
+	AddressType_ADDRESS_TYPE_VALIDATOR AddressType = 1
+	// Account address type with BLS signature scheme.
 	AddressType_ADDRESS_TYPE_BLS_ACCOUNT AddressType = 2
 )
 

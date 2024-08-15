@@ -1218,8 +1218,12 @@ pub struct SignMessageResponse {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum AddressType {
+    /// Treasury address type.
+    /// Should not be used to generate new addresses.
     Treasury = 0,
+    /// Validator address type.
     Validator = 1,
+    /// Account address type with BLS signature scheme.
     BlsAccount = 2,
 }
 impl AddressType {

@@ -24,14 +24,27 @@ public final class WalletOuterClass {
   public enum AddressType
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
+     * <pre>
+     * Treasury address type.
+     * Should not be used to generate new addresses.
+     * </pre>
+     *
      * <code>ADDRESS_TYPE_TREASURY = 0;</code>
      */
     ADDRESS_TYPE_TREASURY(0),
     /**
+     * <pre>
+     * Validator address type.
+     * </pre>
+     *
      * <code>ADDRESS_TYPE_VALIDATOR = 1;</code>
      */
     ADDRESS_TYPE_VALIDATOR(1),
     /**
+     * <pre>
+     * Account address type with BLS signature scheme.
+     * </pre>
+     *
      * <code>ADDRESS_TYPE_BLS_ACCOUNT = 2;</code>
      */
     ADDRESS_TYPE_BLS_ACCOUNT(2),
@@ -39,14 +52,27 @@ public final class WalletOuterClass {
     ;
 
     /**
+     * <pre>
+     * Treasury address type.
+     * Should not be used to generate new addresses.
+     * </pre>
+     *
      * <code>ADDRESS_TYPE_TREASURY = 0;</code>
      */
     public static final int ADDRESS_TYPE_TREASURY_VALUE = 0;
     /**
+     * <pre>
+     * Validator address type.
+     * </pre>
+     *
      * <code>ADDRESS_TYPE_VALIDATOR = 1;</code>
      */
     public static final int ADDRESS_TYPE_VALIDATOR_VALUE = 1;
     /**
+     * <pre>
+     * Account address type with BLS signature scheme.
+     * </pre>
+     *
      * <code>ADDRESS_TYPE_BLS_ACCOUNT = 2;</code>
      */
     public static final int ADDRESS_TYPE_BLS_ACCOUNT_VALUE = 2;
