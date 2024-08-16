@@ -971,7 +971,7 @@
           },
           {
             "name": "addressType",
-            "description": "The type of address to generate.",
+            "description": "The type of address to generate.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -1328,7 +1328,7 @@
         "ADDRESS_TYPE_BLS_ACCOUNT"
       ],
       "default": "ADDRESS_TYPE_TREASURY",
-      "description": "Enum for the address type."
+      "description": "Enum for the address type.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme."
     },
     "pactusBlockHeaderInfo": {
       "type": "object",

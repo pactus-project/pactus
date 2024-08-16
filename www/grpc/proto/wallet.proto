@@ -48,8 +48,12 @@ service Wallet {
 
 // Enum for the address type.
 enum AddressType {
+  // Treasury address type.
+  // Should not be used to generate new addresses.
   ADDRESS_TYPE_TREASURY = 0;
+  // Validator address type.
   ADDRESS_TYPE_VALIDATOR = 1;
+  // Account address type with BLS signature scheme.
   ADDRESS_TYPE_BLS_ACCOUNT = 2;
 }
 

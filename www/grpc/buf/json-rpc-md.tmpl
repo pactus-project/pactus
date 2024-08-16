@@ -115,7 +115,7 @@ curl --location 'http://localhost:8545/' \
     {{with getEnum .LongType  }}{{- print "" -}}
        <br>Available values:<ul>
       {{range .Values}}{{- print "" -}}
-        <li>{{ .Name}} = {{ .Description }}</li>
+        <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
       {{end}}{{- print "" -}}
       </ul>
     {{end}}{{- print "" -}}
@@ -150,7 +150,7 @@ Parameters has no fields.
     {{with getEnum .LongType  }}{{- print "" -}}
        <br>Available values:<ul>
       {{range .Values}}{{- print "" -}}
-        <li>{{ .Name}} = {{ .Description }}</li>
+        <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
       {{end}}{{- print "" -}}
       </ul>
     {{end}}{{- print "" -}}
@@ -170,7 +170,7 @@ Parameters has no fields.
         {{with getEnum .LongType  }}{{- print "" -}}
           <br>Available values:<ul>
           {{range .Values}}{{- print "" -}}
-            <li>{{ .Name}} = {{ .Description }}</li>
+            <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
           {{end}}{{- print "" -}}
           </ul>
         {{end}}{{- print "" -}}
@@ -190,7 +190,7 @@ Parameters has no fields.
             {{with getEnum .LongType  }}{{- print "" -}}
               <br>Available values:<ul>
               {{range .Values}}{{- print "" -}}
-                <li>{{ .Name}} = {{ .Description }}</li>
+                <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
               {{end}}{{- print "" -}}
               </ul>
             {{end}}{{- print "" -}}
