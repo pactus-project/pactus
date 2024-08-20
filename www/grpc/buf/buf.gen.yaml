@@ -48,6 +48,8 @@ plugins:
     out: ../gen/python
   - plugin: buf.build/grpc/python:v1.50.0
     out: ../gen/python
+  - plugin: buf.build/protocolbuffers/pyi:v27.2
+    out: ../gen/python
   # Rust code gen:
   # https://github.com/neoeinstein/protoc-gen-prost?tab=readme-ov-file#example-bufgenyaml
   - plugin: buf.build/community/neoeinstein-prost:v0.2.3
