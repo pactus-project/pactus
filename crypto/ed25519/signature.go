@@ -43,7 +43,7 @@ func SignatureFromBytes(data []byte) (*Signature, error) {
 
 // Bytes returns the raw byte representation of the signature.
 func (sig *Signature) Bytes() []byte {
-	return sig.data
+	return sig.data[:SignatureSize]
 }
 
 // String returns the hex-encoded string representation of the signature.

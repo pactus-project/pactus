@@ -54,7 +54,7 @@ func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 
 // Bytes returns the raw byte representation of the public key.
 func (pub *PublicKey) Bytes() []byte {
-	return pub.inner
+	return pub.inner[:PublicKeySize]
 }
 
 // String returns a human-readable string for the BLS public key.

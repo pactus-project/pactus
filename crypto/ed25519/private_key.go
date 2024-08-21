@@ -45,7 +45,7 @@ func KeyGen(seed []byte) (*PrivateKey, error) {
 	return PrivateKeyFromBytes(prv)
 }
 
-// PrivateKeyFromBytes constructs a BLS private key from the raw bytes.
+// PrivateKeyFromBytes constructs a ED25519 private key from the raw bytes.
 func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	if len(data) != PrivateKeySize {
 		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
@@ -56,7 +56,7 @@ func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	return &PrivateKey{inner}, nil
 }
 
-// String returns a human-readable string for the BLS private key.
+// String returns a human-readable string for the ED25519 private key.
 func (prv *PrivateKey) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
 		crypto.PrivateKeyHRP,
@@ -68,7 +68,7 @@ func (prv *PrivateKey) String() string {
 
 // Bytes return the raw bytes of the private key.
 func (prv *PrivateKey) Bytes() []byte {
-	return prv.inner[:32]
+	return prv.inner[:PrivateKeySize]
 }
 
 // Sign calculates the signature from the private key and given message.
