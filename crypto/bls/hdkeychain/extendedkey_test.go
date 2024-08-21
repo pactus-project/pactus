@@ -255,12 +255,77 @@ func TestGenerateSeed(t *testing.T) {
 		seed, err := GenerateSeed(test.length)
 		assert.ErrorIs(t, err, test.err)
 
-		if test.err == nil && len(seed) != int(test.length) {
-			t.Errorf("GenerateSeed #%d (%s): length mismatch -- "+
-				"got %d, want %d", i, test.name, len(seed),
-				test.length)
+		if test.err == nil {
+			assert.Len(t, seed, int(test.length),
+				"GenerateSeed #%d (%s): length mismatch -- got %d, want %d",
+				i, test.name, len(seed), test.length)
+		}
+	}
+}
 
-			continue
+// TestNewMaster ensures the NewMaster function works as intended.
+func TestNewMaster(t *testing.T) {
+	tests := []struct {
+		name    string
+		seed    string
+		privKey string
+		err     error
+	}{
+		// Test various valid seeds.
+		{
+			name:    "16 bytes",
+			seed:    "000102030405060708090a0b0c0d0e0f",
+			privKey: "4f55e31ee1c4f58af0840fd3f5e635fd6c07eacd14283c45d7d43729003abb84",
+		},
+		{
+			name:    "32 bytes",
+			seed:    "3ddd5602285899a946114506157c7997e5444528f3003f6134712147db19b678",
+			privKey: "4c101174339ffca5cc0afca5d2d8e2538834781318e5e1c8afdabf7e6fb77444",
+		},
+		{
+			name: "64 bytes",
+			seed: "fffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7" +
+				"b7875726f6c696663605d5a5754514e4b484542",
+			privKey: "47b660cc8dc2d4dc2cdf8893048bda9d5dc6318eb31f301b272b291b26cb20a1",
+		},
+
+		// Test invalid seeds.
+		{
+			name: "empty seed",
+			seed: "",
+			err:  ErrInvalidSeedLen,
+		},
+		{
+			name: "15 bytes",
+			seed: "000000000000000000000000000000",
+			err:  ErrInvalidSeedLen,
+		},
+		{
+			name: "65 bytes",
+			seed: "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+				"000000000000000000000000000000000000000000000",
+			err: ErrInvalidSeedLen,
+		},
+	}
+
+	for i, test := range tests {
+		seed, _ := hex.DecodeString(test.seed)
+		extKeyG1, err := NewMaster(seed, true)
+		assert.ErrorIs(t, err, test.err)
+
+		extKeyG2, err := NewMaster(seed, true)
+		assert.ErrorIs(t, err, test.err)
+
+		if test.err == nil {
+			privKeyG1, _ := extKeyG1.RawPrivateKey()
+			assert.Equal(t, test.privKey, hex.EncodeToString(privKeyG1),
+				"NewMaster #%d (%s): privKeyG1 mismatch -- got %x, want %s",
+				i+1, test.name, privKeyG1, test.privKey)
+
+			privKeyG2, _ := extKeyG2.RawPrivateKey()
+			assert.Equal(t, test.privKey, hex.EncodeToString(privKeyG2),
+				"NewMaster #%d (%s): privKeyG2 mismatch -- got %x, want %s",
+				i+1, test.name, privKeyG2, test.privKey)
 		}
 	}
 }
@@ -411,12 +476,19 @@ func TestInvalidString(t *testing.T) {
 			expectedError: ErrInvalidKeyData,
 		},
 		{
-			str:           "SECRET1ZQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJE7XP6L",
+			desc:          "invalid type",
+			str:           "XPUBLIC1ZQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJ3HALEC",
 			expectedError: ErrInvalidKeyData,
 		},
 		{
-			str:           "XPUBLIC1ZQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJ3HALEC",
-			expectedError: ErrInvalidKeyData,
+			desc:          "invalid hrp",
+			str:           "SECRET1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJ98PYV5",
+			expectedError: ErrInvalidHRP,
+		},
+		{
+			desc:          "invalid hrp",
+			str:           "PUBLIC1PQ5QQQQYQQYQQQQQZQQQGQQSQQQQQPJ568VS9LZ67JKWW0P6TQY9NY58LV0PCVRQQTAEMKGV6ULJNS99Y68JHCVGPYPZTWSAST8PWFJMJQDU0FU8D4YMF58CZ998PGRN29EZYHLWNDVDDJ4Z2HK2",
+			expectedError: ErrInvalidHRP,
 		},
 	}
 

@@ -1,7 +1,7 @@
 package hdkeychain
 
 // References:
-//  [PIP-11]: Deterministic key hierarchy for BLS12-381 curve
+//  PIP-11: Deterministic key hierarchy for BLS12-381 curve
 //  https://pips.pactus.org/PIPs/pip-11
 
 import (
@@ -448,9 +448,13 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 		return nil, err
 	}
 
-	isPrivate := true
-	if hrp == crypto.XPublicKeyHRP {
+	var isPrivate bool
+	if hrp == crypto.XPrivateKeyHRP {
+		isPrivate = true
+	} else if hrp == crypto.XPublicKeyHRP {
 		isPrivate = false
+	} else {
+		return nil, ErrInvalidHRP
 	}
 
 	return newExtendedKey(key, chainCode, path, isPrivate, pubOnG1), nil

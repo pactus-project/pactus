@@ -30,4 +30,7 @@ var (
 	// ErrInvalidKeyData describes an error in which the provided key is
 	// not valid.
 	ErrInvalidKeyData = errors.New("key data is invalid")
+
+	// ErrInvalidHRP describes an error in which the HRP is not valid.
+	ErrInvalidHRP = errors.New("HRP is invalid")
 )

@@ -1,14 +1,12 @@
-package bls
+package ed25519
 
 import (
 	"bytes"
 	"crypto/subtle"
 	"encoding/hex"
-	"fmt"
 	"io"
 
 	cbor "github.com/fxamacker/cbor/v2"
-	bls12381 "github.com/kilic/bls12-381"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util/encoding"
 	"github.com/pactus-project/pactus/util/errors"
@@ -16,11 +14,10 @@ import (
 
 var _ crypto.Signature = &Signature{}
 
-const SignatureSize = 48
+const SignatureSize = 64
 
 type Signature struct {
-	pointG1 *bls12381.PointG1 // Lazily initialized point on G1.
-	data    []byte            // Raw signature data.
+	data []byte
 }
 
 // SignatureFromString decodes the input string and returns the Signature
@@ -89,26 +86,6 @@ func (sig *Signature) Decode(r io.Reader) error {
 }
 
 // EqualsTo checks if the current signature is equal to another signature.
-func (sig *Signature) EqualsTo(x crypto.Signature) bool {
-	return subtle.ConstantTimeCompare(sig.data, x.(*Signature).data) == 1
-}
-
-// PointG1 returns the point on G1 for the signature.
-func (sig *Signature) PointG1() (bls12381.PointG1, error) {
-	if sig.pointG1 != nil {
-		return *sig.pointG1, nil
-	}
-
-	g1 := bls12381.NewG1()
-	pointG1, err := g1.FromCompressed(sig.data)
-	if err != nil {
-		return bls12381.PointG1{}, err
-	}
-	if g1.IsZero(pointG1) {
-		return bls12381.PointG1{}, fmt.Errorf("signature is zero")
-	}
-
-	sig.pointG1 = pointG1
-
-	return *pointG1, nil
+func (sig *Signature) EqualsTo(right crypto.Signature) bool {
+	return subtle.ConstantTimeCompare(sig.data, right.(*Signature).data) == 1
 }
