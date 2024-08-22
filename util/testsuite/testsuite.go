@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/committee"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/account"
@@ -231,6 +232,19 @@ func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 		panic(err)
 	}
 	prv, _ := bls.PrivateKeyFromBytes(buf)
+	pub := prv.PublicKeyNative()
+
+	return pub, prv
+}
+
+// RandED25519KeyPair generates a random ED25519 key pair for testing purposes.
+func (ts *TestSuite) RandED25519KeyPair() (*ed25519.PublicKey, *ed25519.PrivateKey) {
+	buf := make([]byte, ed25519.PrivateKeySize)
+	_, err := ts.Rand.Read(buf)
+	if err != nil {
+		panic(err)
+	}
+	prv, _ := ed25519.PrivateKeyFromBytes(buf)
 	pub := prv.PublicKeyNative()
 
 	return pub, prv

@@ -1,13 +1,11 @@
-package bls
+package ed25519
 
 import (
 	"bytes"
-	"crypto/subtle"
-	"fmt"
+	"crypto/ed25519"
 	"io"
 
 	cbor "github.com/fxamacker/cbor/v2"
-	bls12381 "github.com/kilic/bls12-381"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/bech32m"
@@ -17,11 +15,10 @@ import (
 
 var _ crypto.PublicKey = &PublicKey{}
 
-const PublicKeySize = 96
+const PublicKeySize = 32
 
 type PublicKey struct {
-	pointG2 *bls12381.PointG2 // Lazily initialized point on G2.
-	data    []byte            // Raw public key data.
+	inner ed25519.PublicKey
 }
 
 // PublicKeyFromString decodes the input string and returns the PublicKey
@@ -38,7 +35,7 @@ func PublicKeyFromString(text string) (*PublicKey, error) {
 		return nil, crypto.InvalidHRPError(hrp)
 	}
 
-	if typ != crypto.SignatureTypeBLS {
+	if typ != crypto.SignatureTypeEd25519 {
 		return nil, errors.Errorf(errors.ErrInvalidPublicKey, "invalid public key type: %v", typ)
 	}
 
@@ -52,12 +49,12 @@ func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 			"public key should be %d bytes, but it is %v bytes", PublicKeySize, len(data))
 	}
 
-	return &PublicKey{data: data}, nil
+	return &PublicKey{data}, nil
 }
 
 // Bytes returns the raw byte representation of the public key.
 func (pub *PublicKey) Bytes() []byte {
-	return pub.data
+	return pub.inner[:PublicKeySize]
 }
 
 // String returns a human-readable string for the BLS public key.
@@ -110,29 +107,8 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	if sig == nil {
 		return errors.Error(errors.ErrInvalidSignature)
 	}
-	g1 := bls12381.NewG1()
-	g2 := bls12381.NewG2()
 
-	r := sig.(*Signature)
-	pointG1, err := r.PointG1()
-	if err != nil {
-		return err
-	}
-	pointG2, err := pub.PointG2()
-	if err != nil {
-		return err
-	}
-	q, err := g1.HashToCurve(msg, dst)
-	if err != nil {
-		return err
-	}
-	g2one := g2.New().Set(&bls12381.G2One)
-
-	eng := bls12381.NewEngine()
-	eng.AddPair(q, &pointG2)
-	eng.AddPairInv(&pointG1, g2one)
-
-	if !eng.Check() {
+	if !ed25519.Verify(pub.inner, msg, sig.Bytes()) {
 		return crypto.ErrInvalidSignature
 	}
 
@@ -141,7 +117,12 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 
 // EqualsTo checks if the current public key is equal to another public key.
 func (pub *PublicKey) EqualsTo(x crypto.PublicKey) bool {
-	return subtle.ConstantTimeCompare(pub.data, x.(*PublicKey).data) == 1
+	xEd25519, ok := x.(*PublicKey)
+	if !ok {
+		return false
+	}
+
+	return pub.inner.Equal(xEd25519.inner)
 }
 
 // AccountAddress returns the account address derived from the public key.
@@ -152,51 +133,14 @@ func (pub *PublicKey) AccountAddress() crypto.Address {
 	return addr
 }
 
-// ValidatorAddress returns the validator address derived from the public key.
-func (pub *PublicKey) ValidatorAddress() crypto.Address {
-	data := hash.Hash160(hash.Hash256(pub.Bytes()))
-	addr := crypto.NewAddress(crypto.AddressTypeValidator, data)
-
-	return addr
-}
-
 // VerifyAddress checks if the provided address matches the derived address from the public key.
 func (pub *PublicKey) VerifyAddress(addr crypto.Address) error {
-	if addr.IsValidatorAddress() {
-		if addr != pub.ValidatorAddress() {
-			return crypto.AddressMismatchError{
-				Expected: pub.ValidatorAddress(),
-				Got:      addr,
-			}
-		}
-	} else {
-		if addr != pub.AccountAddress() {
-			return crypto.AddressMismatchError{
-				Expected: pub.AccountAddress(),
-				Got:      addr,
-			}
+	if addr != pub.AccountAddress() {
+		return crypto.AddressMismatchError{
+			Expected: pub.AccountAddress(),
+			Got:      addr,
 		}
 	}
 
 	return nil
-}
-
-// PointG2 returns the point on G2 for the public key.
-func (pub *PublicKey) PointG2() (bls12381.PointG2, error) {
-	if pub.pointG2 != nil {
-		return *pub.pointG2, nil
-	}
-
-	g2 := bls12381.NewG2()
-	pointG2, err := g2.FromCompressed(pub.data)
-	if err != nil {
-		return bls12381.PointG2{}, err
-	}
-	if g2.IsZero(pointG2) {
-		return bls12381.PointG2{}, fmt.Errorf("public key is zero")
-	}
-
-	pub.pointG2 = pointG2
-
-	return *pointG2, nil
 }

@@ -20,7 +20,8 @@ const (
 )
 
 const (
-	SignatureTypeBLS byte = 1
+	SignatureTypeBLS     byte = 1
+	SignatureTypeEd25519 byte = 3
 )
 
 const (
