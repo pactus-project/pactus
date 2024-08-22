@@ -153,6 +153,13 @@ func (wm *Manager) GetNewAddress(
 
 	var addressInfo *vault.AddressInfo
 	switch addressType {
+	case crypto.AddressTypeValidator:
+		info, err := wlt.NewValidatorAddress(label)
+		if err != nil {
+			return nil, err
+		}
+		addressInfo = info
+
 	case crypto.AddressTypeBLSAccount:
 		info, err := wlt.NewBLSAccountAddress(label)
 		if err != nil {
@@ -160,12 +167,8 @@ func (wm *Manager) GetNewAddress(
 		}
 		addressInfo = info
 
-	case crypto.AddressTypeValidator:
-		info, err := wlt.NewValidatorAddress(label)
-		if err != nil {
-			return nil, err
-		}
-		addressInfo = info
+	case crypto.AddressTypeEd25519Account:
+		return nil, status.Errorf(codes.InvalidArgument, "not supported yet")
 
 	case crypto.AddressTypeTreasury:
 		return nil, status.Errorf(codes.InvalidArgument, "invalid address type")

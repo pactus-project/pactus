@@ -7,18 +7,17 @@ import (
 
 	cbor "github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestPublicKeyCBORMarshaling(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub1, _ := ts.RandBLSKeyPair()
-	pub2 := new(bls.PublicKey)
+	pub1, _ := ts.RandEd25519KeyPair()
+	pub2 := new(ed25519.PublicKey)
 
 	bs, err := pub1.MarshalCBOR()
 	assert.NoError(t, err)
@@ -27,52 +26,47 @@ func TestPublicKeyCBORMarshaling(t *testing.T) {
 
 	assert.Error(t, pub2.UnmarshalCBOR([]byte("abcd")))
 
-	inv, _ := hex.DecodeString(strings.Repeat("ff", bls.PublicKeySize))
+	inv, _ := hex.DecodeString(strings.Repeat("ff", ed25519.PublicKeySize))
 	data, _ := cbor.Marshal(inv)
 	assert.NoError(t, pub2.UnmarshalCBOR(data))
-
-	_, err = pub2.PointG2()
-	assert.Error(t, err)
 }
 
 func TestPublicKeyEqualsTo(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub1, _ := ts.RandBLSKeyPair()
-	pub2, _ := ts.RandBLSKeyPair()
+	pub1, _ := ts.RandEd25519KeyPair()
+	pub2, _ := ts.RandEd25519KeyPair()
+	pub3, _ := ts.RandBLSKeyPair()
 
 	assert.True(t, pub1.EqualsTo(pub1))
 	assert.False(t, pub1.EqualsTo(pub2))
-	assert.Equal(t, pub1, pub1)
-	assert.NotEqual(t, pub1, pub2)
+	assert.False(t, pub1.EqualsTo(pub3))
 }
 
 func TestPublicKeyEncoding(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub, _ := ts.RandBLSKeyPair()
+	pub, _ := ts.RandEd25519KeyPair()
 	w1 := util.NewFixedWriter(20)
 	assert.Error(t, pub.Encode(w1))
 
-	w2 := util.NewFixedWriter(bls.PublicKeySize)
+	w2 := util.NewFixedWriter(ed25519.PublicKeySize)
 	assert.NoError(t, pub.Encode(w2))
 
 	r1 := util.NewFixedReader(20, w2.Bytes())
 	assert.Error(t, pub.Decode(r1))
 
-	r2 := util.NewFixedReader(bls.PublicKeySize, w2.Bytes())
+	r2 := util.NewFixedReader(ed25519.PublicKeySize, w2.Bytes())
 	assert.NoError(t, pub.Decode(r2))
 }
 
 func TestPublicKeyVerifyAddress(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub1, _ := ts.RandBLSKeyPair()
-	pub2, _ := ts.RandBLSKeyPair()
+	pub1, _ := ts.RandEd25519KeyPair()
+	pub2, _ := ts.RandEd25519KeyPair()
 
 	err := pub1.VerifyAddress(pub1.AccountAddress())
-	assert.NoError(t, err)
-	err = pub1.VerifyAddress(pub1.ValidatorAddress())
 	assert.NoError(t, err)
 
 	err = pub1.VerifyAddress(pub2.AccountAddress())
@@ -80,35 +74,29 @@ func TestPublicKeyVerifyAddress(t *testing.T) {
 		Expected: pub1.AccountAddress(),
 		Got:      pub2.AccountAddress(),
 	}, err)
-
-	err = pub1.VerifyAddress(pub2.ValidatorAddress())
-	assert.Equal(t, crypto.AddressMismatchError{
-		Expected: pub1.ValidatorAddress(),
-		Got:      pub2.ValidatorAddress(),
-	}, err)
 }
 
 func TestNilPublicKey(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub := &bls.PublicKey{}
-	randSig := ts.RandBLSSignature()
+	pub, _ := ts.RandEd25519KeyPair()
+	randSig := ts.RandEd25519Signature()
 	assert.Error(t, pub.VerifyAddress(ts.RandAccAddress()))
 	assert.Error(t, pub.VerifyAddress(ts.RandValAddress()))
 	assert.Error(t, pub.Verify(nil, nil))
-	assert.Error(t, pub.Verify(nil, &bls.Signature{}))
 	assert.Error(t, pub.Verify(nil, randSig))
 }
 
 func TestNilSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub, _ := ts.RandBLSKeyPair()
+	pub, _ := ts.RandEd25519KeyPair()
+	randSig := ts.RandEd25519Signature()
 	assert.Error(t, pub.Verify(nil, nil))
-	assert.Error(t, pub.Verify(nil, &bls.Signature{}))
+	assert.Error(t, pub.Verify(nil, randSig))
 }
 
-func TestPublicKeyBytes(t *testing.T) {
+func TestPublicKeyFromString(t *testing.T) {
 	tests := []struct {
 		errMsg  string
 		encoded string
@@ -121,111 +109,42 @@ func TestPublicKeyBytes(t *testing.T) {
 			false, nil,
 		},
 		{
-			"invalid bech32 string length 0",
-			"",
-			false, nil,
-		},
-		{
-			"invalid character not part of charset: 105",
-			"public1ioiooi",
-			false, nil,
-		},
-		{
-			"invalid bech32 string length 0",
-			"public134jkgz",
+			"invalid checksum (expected ztd56p got ztd5p6)",
+			"public1rafnl324uwngqdq455ax4e52fedmfcvskkwas6wsau0u0nwj4g96qztd5p6",
 			false, nil,
 		},
 		{
 			"invalid HRP: xxx",
-			"xxx1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjrvqc" +
-				"vf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5evslaq",
+			"xxx1rafnl324uwngqdq455ax4e52fedmfcvskkwas6wsau0u0nwj4g96qvguamu",
 			false, nil,
 		},
 		{
-			"invalid checksum (expected jhx47a got jhx470)",
-			"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
-				"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx470",
+			"public key should be 32 bytes, but it is 31 bytes",
+			"public1ruwz86xyvhyehy8g7wg98jsmy07cfkjp6dy8zwxa8hqtdj99hquk7xyus",
 			false, nil,
 		},
 		{
-			"public key should be 96 bytes, but it is 95 bytes",
-			"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
-				"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg73y98kl",
-			false, nil,
-		},
-		{
-			"invalid public key type: 2",
-			"public1z372l5frmm5e7cn7ewfjdkx5t7y62kztqr82rtatat70cl8p8ng3rdzr02mzpwcfl6s2v26kry6mwg" +
-				"xpqy92ywx9wtff80mc9p3kr4cmhgekj048gavx2zdh78tsnh7eg5jzdw6s3et6c0dqyp22vslcgkukxh4l4",
+			"invalid public key type: 4",
+			"public1yafnl324uwngqdq455ax4e52fedmfcvskkwas6wsau0u0nwj4g96qdnx0mf",
 			false, nil,
 		},
 		{
 			"",
-			"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
-				"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47a",
+			"public1rafnl324uwngqdq455ax4e52fedmfcvskkwas6wsau0u0nwj4g96qztd56p",
 			true,
 			[]byte{
-				0xaf, 0x0f, 0x74, 0x91, 0x7f, 0x50, 0x65, 0xaf, 0x94, 0x72, 0x7a, 0xe9, 0x54, 0x1b, 0x0d, 0xdc,
-				0xfb, 0x5b, 0x82, 0x8a, 0x9e, 0x01, 0x6b, 0x02, 0x49, 0x8f, 0x47, 0x7e, 0xd3, 0x7f, 0xb4, 0x4d, 0x5d,
-				0x88, 0x24, 0x95, 0xaf, 0xb6, 0xfd, 0x4f, 0x97, 0x73, 0xe4, 0xea, 0x9d, 0xee, 0xe4, 0x36, 0x03, 0x0c,
-				0x4d, 0x61, 0xc6, 0xe3, 0xa1, 0x15, 0x15, 0x85, 0xe1, 0xd8, 0x38, 0xca, 0xe1, 0x44, 0x4a, 0x43, 0x8d,
-				0x08, 0x9c, 0xe7, 0x7e, 0x10, 0xc4, 0x92, 0xa5, 0x5f, 0x69, 0x08, 0x12, 0x5c, 0x5b, 0xe9, 0xb2, 0x36,
-				0xa2, 0x46, 0xe4, 0x08, 0x2d, 0x08, 0xde, 0x56, 0x4e, 0x11, 0x1e, 0x65,
+				0xea, 0x67, 0xf8, 0xaa, 0xbc, 0x74, 0xd0, 0x06, 0x82, 0xb4, 0xa7, 0x4d, 0x5c, 0xd1, 0x49, 0xcb,
+				0x76, 0x9c, 0x32, 0x16, 0xb3, 0xbb, 0x0d, 0x3a, 0x1d, 0xe3, 0xf8, 0xf9, 0xba, 0x55, 0x41, 0x74,
 			},
 		},
 	}
 
 	for no, test := range tests {
-		pub, err := bls.PublicKeyFromString(test.encoded)
+		pub, err := ed25519.PublicKeyFromString(test.encoded)
 		if test.valid {
 			assert.NoError(t, err, "test %v: unexpected error", no)
 			assert.Equal(t, test.result, pub.Bytes(), "test %v: invalid bytes", no)
 			assert.Equal(t, test.encoded, pub.String(), "test %v: invalid encoded", no)
-		} else {
-			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
-		}
-	}
-}
-
-func TestPointG2(t *testing.T) {
-	tests := []struct {
-		errMsg  string
-		encoded string
-		valid   bool
-	}{
-		{
-			"compression flag must be set",
-			"public1pqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
-				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqjzu9w8",
-			false,
-		},
-		{
-			"input string must be zero when infinity flag is set",
-			"public1pllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll" +
-				"llllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllluhpuzyf",
-			false,
-		},
-		{
-			"public key is zero",
-			"public1pcqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
-				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9",
-			false,
-		},
-		{
-			"",
-			"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
-				"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47a",
-			true,
-		},
-	}
-
-	for no, test := range tests {
-		pub, err := bls.PublicKeyFromString(test.encoded)
-		require.NoError(t, err)
-
-		_, err = pub.PointG2()
-		if test.valid {
-			assert.NoError(t, err, "test %v: unexpected error", no)
 		} else {
 			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
 		}

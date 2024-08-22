@@ -21,7 +21,7 @@ type Signature struct {
 }
 
 // SignatureFromString decodes the input string and returns the Signature
-// if the string is a valid hexadecimal encoding of a BLS signature.
+// if the string is a valid hexadecimal encoding of a Ed25519 signature.
 func SignatureFromString(text string) (*Signature, error) {
 	data, err := hex.DecodeString(text)
 	if err != nil {
@@ -31,7 +31,7 @@ func SignatureFromString(text string) (*Signature, error) {
 	return SignatureFromBytes(data)
 }
 
-// SignatureFromBytes constructs a BLS signature from the raw bytes.
+// SignatureFromBytes constructs a Ed25519 signature from the raw bytes.
 func SignatureFromBytes(data []byte) (*Signature, error) {
 	if len(data) != SignatureSize {
 		return nil, errors.Errorf(errors.ErrInvalidSignature,
@@ -86,6 +86,11 @@ func (sig *Signature) Decode(r io.Reader) error {
 }
 
 // EqualsTo checks if the current signature is equal to another signature.
-func (sig *Signature) EqualsTo(right crypto.Signature) bool {
-	return subtle.ConstantTimeCompare(sig.data, right.(*Signature).data) == 1
+func (sig *Signature) EqualsTo(x crypto.Signature) bool {
+	xEd25519, ok := x.(*Signature)
+	if !ok {
+		return false
+	}
+
+	return subtle.ConstantTimeCompare(sig.data, xEd25519.data) == 1
 }

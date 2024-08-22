@@ -15,14 +15,14 @@ func TestPrivateKeyEqualsTo(t *testing.T) {
 
 	_, prv1 := ts.RandBLSKeyPair()
 	_, prv2 := ts.RandBLSKeyPair()
+	_, prv3 := ts.RandEd25519KeyPair()
 
 	assert.True(t, prv1.EqualsTo(prv1))
 	assert.False(t, prv1.EqualsTo(prv2))
-	assert.Equal(t, prv1, prv1)
-	assert.NotEqual(t, prv1, prv2)
+	assert.False(t, prv1.EqualsTo(prv3))
 }
 
-func TestPrivateKeyToString(t *testing.T) {
+func TestPrivateKeyFromString(t *testing.T) {
 	tests := []struct {
 		errMsg  string
 		encoded string

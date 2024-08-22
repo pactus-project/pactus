@@ -237,8 +237,8 @@ func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 	return pub, prv
 }
 
-// RandED25519KeyPair generates a random ED25519 key pair for testing purposes.
-func (ts *TestSuite) RandED25519KeyPair() (*ed25519.PublicKey, *ed25519.PrivateKey) {
+// RandEd25519KeyPair generates a random Ed25519 key pair for testing purposes.
+func (ts *TestSuite) RandEd25519KeyPair() (*ed25519.PublicKey, *ed25519.PrivateKey) {
 	buf := make([]byte, ed25519.PrivateKeySize)
 	_, err := ts.Rand.Read(buf)
 	if err != nil {
@@ -263,6 +263,14 @@ func (ts *TestSuite) RandBLSSignature() *bls.Signature {
 	sig := prv.Sign(ts.RandBytes(8))
 
 	return sig.(*bls.Signature)
+}
+
+// RandEd25519Signature generates a random BLS signature for testing purposes.
+func (ts *TestSuite) RandEd25519Signature() *ed25519.Signature {
+	_, prv := ts.RandEd25519KeyPair()
+	sig := prv.Sign(ts.RandBytes(8))
+
+	return sig.(*ed25519.Signature)
 }
 
 // RandHash generates a random hash for testing purposes.

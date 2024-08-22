@@ -18,7 +18,7 @@ type PrivateKey struct {
 }
 
 // PrivateKeyFromString decodes the input string and returns the PrivateKey
-// if the string is a valid bech32m encoding of a BLS public key.
+// if the string is a valid bech32m encoding of a Ed25519 public key.
 func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	// Decode the bech32m encoded private key.
 	hrp, typ, data, err := bech32m.DecodeToBase256WithTypeNoLimit(text)
@@ -37,12 +37,6 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	}
 
 	return PrivateKeyFromBytes(data)
-}
-
-func KeyGen(seed []byte) (*PrivateKey, error) {
-	prv := ed25519.NewKeyFromSeed(seed)
-
-	return PrivateKeyFromBytes(prv)
 }
 
 // PrivateKeyFromBytes constructs a ED25519 private key from the raw bytes.

@@ -90,7 +90,12 @@ func (sig *Signature) Decode(r io.Reader) error {
 
 // EqualsTo checks if the current signature is equal to another signature.
 func (sig *Signature) EqualsTo(x crypto.Signature) bool {
-	return subtle.ConstantTimeCompare(sig.data, x.(*Signature).data) == 1
+	xBLS, ok := x.(*Signature)
+	if !ok {
+		return false
+	}
+
+	return subtle.ConstantTimeCompare(sig.data, xBLS.data) == 1
 }
 
 // PointG1 returns the point on G1 for the signature.
