@@ -19,8 +19,9 @@ import (
 )
 
 const (
-	AddressTypeBLSAccount string = "bls_account"
-	AddressTypeValidator  string = "validator"
+	AddressTypeBLSAccount     string = "bls_account"
+	AddressTypeEd25519Account string = "ed25519_account"
+	AddressTypeValidator      string = "validator"
 )
 
 type Wallet struct {
@@ -95,7 +96,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType, opti
 	}
 
 	store := &store{
-		Version:   1,
+		Version:   2, // Supporting Ed25519
 		UUID:      uuid.New(),
 		CreatedAt: time.Now().Round(time.Second).UTC(),
 		Network:   chain,
@@ -400,6 +401,12 @@ func (w *Wallet) PrivateKeys(password string, addrs []string) ([]crypto.PrivateK
 // associates it with the given label.
 func (w *Wallet) NewBLSAccountAddress(label string) (*vault.AddressInfo, error) {
 	return w.store.Vault.NewBLSAccountAddress(label)
+}
+
+// NewEd25519AccountAddress create a new Ed25519-based account address and
+// associates it with the given label.
+func (w *Wallet) NewEd25519AccountAddress(label, password string) (*vault.AddressInfo, error) {
+	return w.store.Vault.NewEd25519AccountAddress(label, password)
 }
 
 // NewValidatorAddress creates a new BLS validator address and

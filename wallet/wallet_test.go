@@ -257,11 +257,40 @@ func TestStake(t *testing.T) {
 	})
 }
 
-func TestSigningTx(t *testing.T) {
+func TestSigningTxWithBLS(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
 
 	senderInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
+	receiver := td.RandAccAddress()
+	amt := td.RandAmount()
+	fee := td.RandFee()
+	lockTime := td.RandHeight()
+
+	opts := []wallet.TxOption{
+		wallet.OptionFee(fee),
+		wallet.OptionLockTime(lockTime),
+		wallet.OptionMemo("test"),
+	}
+
+	trx, err := td.wallet.MakeTransferTx(senderInfo.Address, receiver.String(), amt, opts...)
+	assert.NoError(t, err)
+	err = td.wallet.SignTransaction(td.password, trx)
+	assert.NoError(t, err)
+	assert.NotNil(t, trx.Signature())
+	assert.NoError(t, trx.BasicCheck())
+
+	id, err := td.wallet.BroadcastTransaction(trx)
+	assert.NoError(t, err)
+	assert.Equal(t, trx.ID().String(), id)
+	assert.Equal(t, fee, trx.Fee())
+}
+
+func TestSigningTxWithEd25519(t *testing.T) {
+	td := setup(t)
+	defer td.Close()
+
+	senderInfo, _ := td.wallet.NewEd25519AccountAddress("testing addr", td.password)
 	receiver := td.RandAccAddress()
 	amt := td.RandAmount()
 	fee := td.RandFee()

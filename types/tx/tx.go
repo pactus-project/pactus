@@ -8,6 +8,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -360,22 +361,60 @@ func (tx *Tx) Decode(r io.Reader) error {
 		return err
 	}
 
-	if !util.IsFlagSet(tx.data.Flags, flagNotSigned) {
-		sig := new(bls.Signature)
-		err = sig.Decode(r)
-		if err != nil {
-			return err
-		}
-		tx.data.Signature = sig
+	if util.IsFlagSet(tx.data.Flags, flagNotSigned) {
+		return nil
+	}
 
-		if !tx.IsPublicKeyStriped() {
+	err = tx.setSignatureWithSignerType(r)
+	if err != nil {
+		return err
+	}
+
+	if !tx.IsPublicKeyStriped() {
+		switch tx.data.Payload.Signer().Type() {
+		case crypto.AddressTypeBLSAccount:
 			pub := new(bls.PublicKey)
 			err = pub.Decode(r)
 			if err != nil {
 				return err
 			}
 			tx.data.PublicKey = pub
+		case crypto.AddressTypeEd25519Account:
+			pub := new(ed25519.PublicKey)
+			err = pub.Decode(r)
+			if err != nil {
+				return err
+			}
+			tx.data.PublicKey = pub
+		case crypto.AddressTypeValidator:
+		case crypto.AddressTypeTreasury:
+			return fmt.Errorf("payload signer type %v not supported", tx.Payload().Signer().Type())
 		}
+	}
+
+	return nil
+}
+
+func (tx *Tx) setSignatureWithSignerType(r io.Reader) error {
+	switch tx.data.Payload.Signer().Type() {
+	case crypto.AddressTypeBLSAccount:
+		sig := new(bls.Signature)
+		err := sig.Decode(r)
+		if err != nil {
+			return err
+		}
+		tx.data.Signature = sig
+
+	case crypto.AddressTypeEd25519Account:
+		sig := new(ed25519.Signature)
+		err := sig.Decode(r)
+		if err != nil {
+			return err
+		}
+		tx.data.Signature = sig
+	case crypto.AddressTypeValidator:
+	case crypto.AddressTypeTreasury:
+		return fmt.Errorf("payload signer type %v not supported", tx.Payload().Signer().Type())
 	}
 
 	return nil
