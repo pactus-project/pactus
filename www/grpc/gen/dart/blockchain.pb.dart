@@ -1027,16 +1027,21 @@ class GetConsensusInfoRequest extends $pb.GeneratedMessage {
 class GetConsensusInfoResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetConsensusInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..pc<ConsensusInfo>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'instances', $pb.PbFieldType.PM, subBuilder: ConsensusInfo.create)
+    ..aOM<Proposal>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'proposal', subBuilder: Proposal.create)
     ..hasRequiredFields = false
   ;
 
   GetConsensusInfoResponse._() : super();
   factory GetConsensusInfoResponse({
     $core.Iterable<ConsensusInfo>? instances,
+    Proposal? proposal,
   }) {
     final _result = create();
     if (instances != null) {
       _result.instances.addAll(instances);
+    }
+    if (proposal != null) {
+      _result.proposal = proposal;
     }
     return _result;
   }
@@ -1063,6 +1068,17 @@ class GetConsensusInfoResponse extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.List<ConsensusInfo> get instances => $_getList(0);
+
+  @$pb.TagNumber(6)
+  Proposal get proposal => $_getN(1);
+  @$pb.TagNumber(6)
+  set proposal(Proposal v) { setField(6, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasProposal() => $_has(1);
+  @$pb.TagNumber(6)
+  void clearProposal() => clearField(6);
+  @$pb.TagNumber(6)
+  Proposal ensureProposal() => $_ensure(1);
 }
 
 class GetTxPoolContentRequest extends $pb.GeneratedMessage {
@@ -1835,6 +1851,95 @@ class ConsensusInfo extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(5)
   $core.List<VoteInfo> get votes => $_getList(4);
+}
+
+class Proposal extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Proposal', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'round', $pb.PbFieldType.O3)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'blockData')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signatureData')
+    ..hasRequiredFields = false
+  ;
+
+  Proposal._() : super();
+  factory Proposal({
+    $core.int? height,
+    $core.int? round,
+    $core.String? blockData,
+    $core.String? signatureData,
+  }) {
+    final _result = create();
+    if (height != null) {
+      _result.height = height;
+    }
+    if (round != null) {
+      _result.round = round;
+    }
+    if (blockData != null) {
+      _result.blockData = blockData;
+    }
+    if (signatureData != null) {
+      _result.signatureData = signatureData;
+    }
+    return _result;
+  }
+  factory Proposal.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Proposal.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Proposal clone() => Proposal()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Proposal copyWith(void Function(Proposal) updates) => super.copyWith((message) => updates(message as Proposal)) as Proposal; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static Proposal create() => Proposal._();
+  Proposal createEmptyInstance() => create();
+  static $pb.PbList<Proposal> createRepeated() => $pb.PbList<Proposal>();
+  @$core.pragma('dart2js:noInline')
+  static Proposal getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Proposal>(create);
+  static Proposal? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get height => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set height($core.int v) { $_setUnsignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasHeight() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearHeight() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get round => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set round($core.int v) { $_setSignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasRound() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearRound() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get blockData => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set blockData($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasBlockData() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearBlockData() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get signatureData => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set signatureData($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasSignatureData() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearSignatureData() => clearField(4);
 }
 
 class BlockchainApi {
