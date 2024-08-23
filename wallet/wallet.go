@@ -24,6 +24,11 @@ const (
 	AddressTypeValidator      string = "validator"
 )
 
+const (
+	VERSION_1 = 1 // initial version
+	VERSION_2 = 2 // supporting Ed25519 =
+)
+
 type Wallet struct {
 	store      *store
 	path       string
@@ -96,7 +101,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType, opti
 	}
 
 	store := &store{
-		Version:   2, // Supporting Ed25519
+		Version:   VERSION_2,
 		UUID:      uuid.New(),
 		CreatedAt: time.Now().Round(time.Second).UTC(),
 		Network:   chain,
@@ -405,6 +410,7 @@ func (w *Wallet) NewBLSAccountAddress(label string) (*vault.AddressInfo, error) 
 
 // NewEd25519AccountAddress create a new Ed25519-based account address and
 // associates it with the given label.
+// The password is required to access the master private key needed for address generation.
 func (w *Wallet) NewEd25519AccountAddress(label, password string) (*vault.AddressInfo, error) {
 	return w.store.Vault.NewEd25519AccountAddress(label, password)
 }

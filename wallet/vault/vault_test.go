@@ -234,22 +234,24 @@ func TestNewBLSAccountAddress(t *testing.T) {
 func TestNewED25519AccountAddress(t *testing.T) {
 	td := setup(t)
 
-	t.Run("Ok", func(t *testing.T) {
-		addressInfo, err := td.vault.NewEd25519AccountAddress("addr-1", tPassword)
-		assert.NoError(t, err)
-		assert.NotEmpty(t, addressInfo.Address)
-		assert.NotEmpty(t, addressInfo.PublicKey)
+	addressInfo, err := td.vault.NewEd25519AccountAddress("addr-1", tPassword)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, addressInfo.Address)
+	assert.NotEmpty(t, addressInfo.PublicKey)
+	assert.Equal(t, "m/44'/21888'/3'/0'", addressInfo.Path)
 
-		addressInfo, err = td.vault.NewEd25519AccountAddress("addr-2", tPassword)
-		assert.NoError(t, err)
-		assert.NotEmpty(t, addressInfo.Address)
-		assert.NotEmpty(t, addressInfo.PublicKey)
+	addressInfo, err = td.vault.NewEd25519AccountAddress("addr-2", tPassword)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, addressInfo.Address)
+	assert.NotEmpty(t, addressInfo.PublicKey)
+	assert.Equal(t, "m/44'/21888'/3'/1'", addressInfo.Path)
 
-		addressInfo, err = td.vault.NewEd25519AccountAddress("addr-3", tPassword)
-		assert.NoError(t, err)
-		assert.NotEmpty(t, addressInfo.Address)
-		assert.NotEmpty(t, addressInfo.PublicKey)
-	})
+	addressInfo, err = td.vault.NewEd25519AccountAddress("addr-3", tPassword)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, addressInfo.Address)
+	assert.NotEmpty(t, addressInfo.PublicKey)
+	assert.Equal(t, "m/44'/21888'/3'/2'", addressInfo.Path)
+
 }
 
 func TestNewValidatorAddress(t *testing.T) {
