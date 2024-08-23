@@ -1,6 +1,7 @@
 package ed25519_test
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -19,6 +20,9 @@ func TestPrivateKeyEqualsTo(t *testing.T) {
 	assert.True(t, prv1.EqualsTo(prv1))
 	assert.False(t, prv1.EqualsTo(prv2))
 	assert.False(t, prv1.EqualsTo(prv3))
+
+	fmt.Printf("%x\n", prv1.PublicKey().Bytes())
+	fmt.Println(prv1.Sign([]byte{1}).String())
 }
 
 func TestPrivateKeyFromString(t *testing.T) {

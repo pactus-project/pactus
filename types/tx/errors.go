@@ -1,6 +1,13 @@
 package tx
 
-import "github.com/pactus-project/pactus/types/tx/payload"
+import (
+	"errors"
+
+	"github.com/pactus-project/pactus/types/tx/payload"
+)
+
+// ErrInvalidSigner is returned when the signer address is not valid.
+var ErrInvalidSigner = errors.New("invalid signer address")
 
 // BasicCheckError is returned when the basic check on the transaction fails.
 type BasicCheckError struct {

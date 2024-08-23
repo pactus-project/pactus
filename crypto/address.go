@@ -164,7 +164,8 @@ func (addr Address) IsTreasuryAddress() bool {
 
 func (addr Address) IsAccountAddress() bool {
 	return addr.Type() == AddressTypeTreasury ||
-		addr.Type() == AddressTypeBLSAccount || addr.Type() == AddressTypeEd25519Account
+		addr.Type() == AddressTypeBLSAccount ||
+		addr.Type() == AddressTypeEd25519Account
 }
 
 func (addr Address) IsValidatorAddress() bool {
