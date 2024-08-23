@@ -161,5 +161,10 @@ func (prv *PrivateKey) PublicKey() crypto.PublicKey {
 }
 
 func (prv *PrivateKey) EqualsTo(x crypto.PrivateKey) bool {
-	return prv.fr.Equal(&x.(*PrivateKey).fr)
+	xBLS, ok := x.(*PrivateKey)
+	if !ok {
+		return false
+	}
+
+	return prv.fr.Equal(&xBLS.fr)
 }

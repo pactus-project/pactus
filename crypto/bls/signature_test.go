@@ -39,14 +39,17 @@ func TestSignatureCBORMarshaling(t *testing.T) {
 func TestSignatureEqualsTo(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	_, prv := ts.RandBLSKeyPair()
-	sig1 := prv.Sign([]byte("foo"))
-	sig2 := prv.Sign([]byte("bar"))
+	_, prv1 := ts.RandBLSKeyPair()
+	_, prv2 := ts.RandBLSKeyPair()
+	_, prv3 := ts.RandEd25519KeyPair()
+
+	sig1 := prv1.Sign([]byte("foo"))
+	sig2 := prv2.Sign([]byte("foo"))
+	sig3 := prv3.Sign([]byte("foo"))
 
 	assert.True(t, sig1.EqualsTo(sig1))
 	assert.False(t, sig1.EqualsTo(sig2))
-	assert.Equal(t, sig1, sig1)
-	assert.NotEqual(t, sig1, sig2)
+	assert.False(t, sig1.EqualsTo(sig3))
 }
 
 func TestSignatureEncoding(t *testing.T) {
@@ -70,7 +73,7 @@ func TestSignatureEncoding(t *testing.T) {
 func TestVerifyingSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	msg := []byte("zarb")
+	msg := []byte("pactus")
 
 	pb1, pv1 := ts.RandBLSKeyPair()
 	pb2, pv2 := ts.RandBLSKeyPair()
@@ -85,7 +88,7 @@ func TestVerifyingSignature(t *testing.T) {
 	assert.ErrorIs(t, pb1.Verify(msg[1:], sig1), crypto.ErrInvalidSignature)
 }
 
-func TestSignatureBytes(t *testing.T) {
+func TestSignatureFromString(t *testing.T) {
 	tests := []struct {
 		errMsg  string
 		encoded string

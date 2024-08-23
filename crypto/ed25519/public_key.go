@@ -22,7 +22,7 @@ type PublicKey struct {
 }
 
 // PublicKeyFromString decodes the input string and returns the PublicKey
-// if the string is a valid bech32m encoding of a BLS public key.
+// if the string is a valid bech32m encoding of a Ed25519 public key.
 func PublicKeyFromString(text string) (*PublicKey, error) {
 	// Decode the bech32m encoded public key.
 	hrp, typ, data, err := bech32m.DecodeToBase256WithTypeNoLimit(text)
@@ -42,7 +42,7 @@ func PublicKeyFromString(text string) (*PublicKey, error) {
 	return PublicKeyFromBytes(data)
 }
 
-// PublicKeyFromBytes constructs a BLS public key from the raw bytes.
+// PublicKeyFromBytes constructs a Ed25519 public key from the raw bytes.
 func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 	if len(data) != PublicKeySize {
 		return nil, errors.Errorf(errors.ErrInvalidPublicKey,
@@ -54,14 +54,14 @@ func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 
 // Bytes returns the raw byte representation of the public key.
 func (pub *PublicKey) Bytes() []byte {
-	return pub.inner[:PublicKeySize]
+	return pub.inner
 }
 
-// String returns a human-readable string for the BLS public key.
+// String returns a human-readable string for the Ed25519 public key.
 func (pub *PublicKey) String() string {
 	str, _ := bech32m.EncodeFromBase256WithType(
 		crypto.PublicKeyHRP,
-		crypto.SignatureTypeBLS,
+		crypto.SignatureTypeEd25519,
 		pub.Bytes())
 
 	return str
@@ -128,7 +128,7 @@ func (pub *PublicKey) EqualsTo(x crypto.PublicKey) bool {
 // AccountAddress returns the account address derived from the public key.
 func (pub *PublicKey) AccountAddress() crypto.Address {
 	data := hash.Hash160(hash.Hash256(pub.Bytes()))
-	addr := crypto.NewAddress(crypto.AddressTypeBLSAccount, data)
+	addr := crypto.NewAddress(crypto.AddressTypeEd25519Account, data)
 
 	return addr
 }

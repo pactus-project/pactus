@@ -91,8 +91,8 @@ func TestToString(t *testing.T) {
 			nil,
 		},
 		{
-			"pc1r0hrct7eflrpw4ccrttxzs4qud2axex4dwc9mn4",
-			crypto.InvalidAddressTypeError(3),
+			"pc1y0hrct7eflrpw4ccrttxzs4qud2axex4dksmred",
+			crypto.InvalidAddressTypeError(4),
 			nil,
 		},
 		{
@@ -137,13 +137,13 @@ func TestAddressEncoding(t *testing.T) {
 		},
 		{
 			0,
-			"030000000000000000000000000000000000000000",
-			crypto.InvalidAddressTypeError(3),
+			"040000000000000000000000000000000000000000",
+			crypto.InvalidAddressTypeError(4),
 		},
 		{
 			0,
-			"03000102030405060708090a0b0c0d0e0f0001020304",
-			crypto.InvalidAddressTypeError(3),
+			"04000102030405060708090a0b0c0d0e0f0001020304",
+			crypto.InvalidAddressTypeError(4),
 		},
 		{
 			21,
