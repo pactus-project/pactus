@@ -17,25 +17,41 @@ import (
 )
 
 //
-// Deterministic Hierarchy derivation path
+// Deterministic Hierarchical Derivation Path
 //
-// Specification
+// Overview:
 //
-// We define the following 4 levels in BIP32 path:
+// This specification defines a hierarchical derivation path for generating addresses, based on BIP32.
+// The path is structured into four distinct levels:
 //
 // m / purpose' / coin_type' / address_type' / address_index
 //
-// Where:
-//   `'` Apostrophe in the path indicates that BIP32 hardened derivation is used.
+// Explanation:
+//
 //   `m` Denotes the master node (or root) of the tree
+//   `'` Apostrophe in the path indicates that BIP32 hardened derivation is used.
 //   `/` Separates the tree into depths, thus i / j signifies that j is a child of i
-//   `purpose` is set to 12381 which is the name of the new curve (BLS12-381).
-//   `coin_type` is set 21888 for Mainnet, 21777 for Testnet
-//   `address_type` determine the type of address
-//   `address_index` is a sequential number and increase when a new address is derived.
+//
+// Path Components:
+//
+// * `purpose`: Indicates the specific use case for the derived addresses:
+//    - 12381: Used for the BLS12-381 curve, based on PIP-8.
+//    - 65535: Used for imported private keys, based on PIP-13.
+//    - 44: A comprehensive purpose for standard curves, based on BIP-44.
+//
+// * `coin_type`: Identifies the coin type:
+//    - 21888: Pactus Mainnet
+//    - 21777: Pactus Testnet
+//
+// * `address_type`: Specifies the type of address.
+//
+// * `address_index`: A sequential number and increase when a new address is derived.
 //
 // References:
-// PIP-8: https://pips.pactus.org/PIPs/pip-8
+//  - https://pips.pactus.org/PIPs/pip-8
+//  - https://pips.pactus.org/PIPs/pip-13
+//  - https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
+//
 
 const (
 	TypeFull     = int(1)
