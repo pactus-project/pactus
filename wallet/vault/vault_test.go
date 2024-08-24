@@ -251,7 +251,6 @@ func TestNewED25519AccountAddress(t *testing.T) {
 	assert.NotEmpty(t, addressInfo.Address)
 	assert.NotEmpty(t, addressInfo.PublicKey)
 	assert.Equal(t, "m/44'/21888'/3'/2'", addressInfo.Path)
-
 }
 
 func TestNewValidatorAddress(t *testing.T) {

@@ -25,8 +25,8 @@ const (
 )
 
 const (
-	VERSION_1 = 1 // initial version
-	VERSION_2 = 2 // supporting Ed25519 =
+	Version1 = 1 // initial version
+	Version2 = 2 // supporting Ed25519 =
 )
 
 type Wallet struct {
@@ -101,7 +101,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType, opti
 	}
 
 	store := &store{
-		Version:   VERSION_2,
+		Version:   Version2,
 		UUID:      uuid.New(),
 		CreatedAt: time.Now().Round(time.Second).UTC(),
 		Network:   chain,
