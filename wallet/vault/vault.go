@@ -7,7 +7,9 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
+	blshdkeychain "github.com/pactus-project/pactus/crypto/bls/hdkeychain"
+	"github.com/pactus-project/pactus/crypto/ed25519"
+	ed25519hdkeychain "github.com/pactus-project/pactus/crypto/ed25519/hdkeychain"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/tyler-smith/go-bip39"
@@ -15,25 +17,41 @@ import (
 )
 
 //
-// Deterministic Hierarchy derivation path
+// Deterministic Hierarchical Derivation Path
 //
-// Specification
+// Overview:
 //
-// We define the following 4 levels in BIP32 path:
+// This specification defines a hierarchical derivation path for generating addresses, based on BIP32.
+// The path is structured into four distinct levels:
 //
 // m / purpose' / coin_type' / address_type' / address_index
 //
-// Where:
-//   `'` Apostrophe in the path indicates that BIP32 hardened derivation is used.
+// Explanation:
+//
 //   `m` Denotes the master node (or root) of the tree
+//   `'` Apostrophe in the path indicates that BIP32 hardened derivation is used.
 //   `/` Separates the tree into depths, thus i / j signifies that j is a child of i
-//   `purpose` is set to 12381 which is the name of the new curve (BLS12-381).
-//   `coin_type` is set 21888 for Mainnet, 21777 for Testnet
-//   `address_type` determine the type of address
-//   `address_index` is a sequential number and increase when a new address is derived.
+//
+// Path Components:
+//
+// * `purpose`: Indicates the specific use case for the derived addresses:
+//    - 12381: Used for the BLS12-381 curve, based on PIP-8.
+//    - 65535: Used for imported private keys, based on PIP-13.
+//    - 44: A comprehensive purpose for standard curves, based on BIP-44.
+//
+// * `coin_type`: Identifies the coin type:
+//    - 21888: Pactus Mainnet
+//    - 21777: Pactus Testnet
+//
+// * `address_type`: Specifies the type of address.
+//
+// * `address_index`: A sequential number and increase when a new address is derived.
 //
 // References:
-// PIP-8: https://pips.pactus.org/PIPs/pip-8
+//  - https://pips.pactus.org/PIPs/pip-8
+//  - https://pips.pactus.org/PIPs/pip-13
+//  - https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
+//
 
 const (
 	TypeFull     = int(1)
@@ -49,6 +67,7 @@ type AddressInfo struct {
 
 const (
 	PurposeBLS12381         = uint32(12381)
+	PurposeBIP44            = uint32(44)
 	PurposeImportPrivateKey = uint32(65535)
 )
 
@@ -71,7 +90,8 @@ type masterNode struct {
 }
 
 type purposes struct {
-	PurposeBLS purposeBLS `json:"purpose_bls"` // BLS Purpose: m/12381'/21888/0'/0'
+	PurposeBLS     purposeBLS     `json:"purpose_bls"`     // BLS Purpose: m/12381'/21888'/1' or 2'/0
+	PurposeEd25519 purposeEd25519 `json:"purpose_ed25519"` // ED25519 Purpose: m/44'/21888'/3'/0
 }
 
 type purposeBLS struct {
@@ -81,12 +101,16 @@ type purposeBLS struct {
 	NextValidatorIndex uint32 `json:"next_validator_index"` // Index of next derived validator
 }
 
+type purposeEd25519 struct {
+	NextAccountIndex uint32 `json:"next_account_index"` // Index of next derived account
+}
+
 func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 	seed, err := bip39.NewSeedWithErrorChecking(mnemonic, "")
 	if err != nil {
 		return nil, err
 	}
-	masterKey, err := hdkeychain.NewMaster(seed, false)
+	masterKey, err := blshdkeychain.NewMaster(seed, false)
 	if err != nil {
 		return nil, err
 	}
@@ -396,31 +420,19 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 
 		switch path.Purpose() {
 		case H(PurposeBLS12381):
-			seed, err := bip39.NewSeedWithErrorChecking(keyStore.MasterNode.Mnemonic, "")
+			prvKey, err := bls12381PrivateKey(keyStore, path)
 			if err != nil {
 				return nil, err
 			}
-			masterKey, err := hdkeychain.NewMaster(seed, false)
+			keys[i] = prvKey
+		case H(PurposeBIP44):
+			prvKey, err := bip44PrivateKey(keyStore, path, password)
 			if err != nil {
 				return nil, err
 			}
-			ext, err := masterKey.DerivePath(path)
-			if err != nil {
-				return nil, err
-			}
-			prvBytes, err := ext.RawPrivateKey()
-			if err != nil {
-				return nil, err
-			}
-
-			prvKey, err := bls.PrivateKeyFromBytes(prvBytes)
-			if err != nil {
-				return nil, err
-			}
-
 			keys[i] = prvKey
 		case H(PurposeImportPrivateKey):
-			index := path.AddressIndex() - hdkeychain.HardenedKeyStart
+			index := path.AddressIndex() - blshdkeychain.HardenedKeyStart
 			// TODO: index out of range check
 			str := keyStore.ImportedKeys[index]
 			prv, err := bls.PrivateKeyFromString(str)
@@ -437,7 +449,7 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 }
 
 func (v *Vault) NewBLSAccountAddress(label string) (*AddressInfo, error) {
-	ext, err := hdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
+	ext, err := blshdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
 	if err != nil {
 		return nil, err
 	}
@@ -465,8 +477,53 @@ func (v *Vault) NewBLSAccountAddress(label string) (*AddressInfo, error) {
 	return &data, nil
 }
 
+func (v *Vault) NewEd25519AccountAddress(label, password string) (*AddressInfo, error) {
+	mnemonic, err := v.Mnemonic(password)
+	if err != nil {
+		return nil, err
+	}
+
+	seed, err := bip39.NewSeedWithErrorChecking(mnemonic, password)
+	if err != nil {
+		return nil, err
+	}
+
+	masterKey, err := ed25519hdkeychain.NewMaster(seed)
+	if err != nil {
+		return nil, err
+	}
+
+	index := v.Purposes.PurposeEd25519.NextAccountIndex
+	ext, err := masterKey.DerivePath([]uint32{
+		H(PurposeBIP44),
+		H(v.CoinType),
+		H(crypto.AddressTypeEd25519Account),
+		H(index),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	ed25519PubKey, err := ed25519.PublicKeyFromBytes(ext.RawPublicKey())
+	if err != nil {
+		return nil, err
+	}
+
+	addr := ed25519PubKey.AccountAddress().String()
+	data := AddressInfo{
+		Address:   addr,
+		Label:     label,
+		PublicKey: ed25519PubKey.String(),
+		Path:      addresspath.NewPath(ext.Path()...).String(),
+	}
+	v.Addresses[addr] = data
+	v.Purposes.PurposeEd25519.NextAccountIndex++
+
+	return &data, nil
+}
+
 func (v *Vault) NewValidatorAddress(label string) (*AddressInfo, error) {
-	ext, err := hdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubValidator)
+	ext, err := blshdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubValidator)
 	if err != nil {
 		return nil, err
 	}
@@ -527,7 +584,7 @@ func (v *Vault) AddressInfo(addr string) *AddressInfo {
 			xPub = v.Purposes.PurposeBLS.XPubValidator
 		}
 
-		ext, err := hdkeychain.NewKeyFromString(xPub)
+		ext, err := blshdkeychain.NewKeyFromString(xPub)
 		if err != nil {
 			return nil
 		}
@@ -548,6 +605,8 @@ func (v *Vault) AddressInfo(addr string) *AddressInfo {
 		}
 
 		info.PublicKey = blsPubKey.String()
+	case H(PurposeBIP44):
+		return &info
 	case H(PurposeImportPrivateKey):
 	default:
 		return nil
@@ -611,4 +670,43 @@ func (v *Vault) encryptKeyStore(keyStore *keyStore, password string) error {
 	v.KeyStore = keyStoreEnc
 
 	return nil
+}
+
+func bls12381PrivateKey(ks *keyStore, path []uint32) (*bls.PrivateKey, error) {
+	seed, err := bip39.NewSeedWithErrorChecking(ks.MasterNode.Mnemonic, "")
+	if err != nil {
+		return nil, err
+	}
+	masterKey, err := blshdkeychain.NewMaster(seed, false)
+	if err != nil {
+		return nil, err
+	}
+	ext, err := masterKey.DerivePath(path)
+	if err != nil {
+		return nil, err
+	}
+	prvBytes, err := ext.RawPrivateKey()
+	if err != nil {
+		return nil, err
+	}
+
+	return bls.PrivateKeyFromBytes(prvBytes)
+}
+
+func bip44PrivateKey(ks *keyStore, path []uint32, password string) (*ed25519.PrivateKey, error) {
+	seed, err := bip39.NewSeedWithErrorChecking(ks.MasterNode.Mnemonic, password)
+	if err != nil {
+		return nil, err
+	}
+	masterKey, err := ed25519hdkeychain.NewMaster(seed)
+	if err != nil {
+		return nil, err
+	}
+	ext, err := masterKey.DerivePath(path)
+	if err != nil {
+		return nil, err
+	}
+	prvBytes := ext.RawPrivateKey()
+
+	return ed25519.PrivateKeyFromBytes(prvBytes)
 }

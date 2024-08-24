@@ -280,9 +280,12 @@ func (ts *TestSuite) RandHash() hash.Hash {
 
 // RandAccAddress generates a random account address for testing purposes.
 func (ts *TestSuite) RandAccAddress() crypto.Address {
-	addr := crypto.NewAddress(crypto.AddressTypeBLSAccount, ts.RandBytes(20))
+	isBLSAddress := ts.RandBool()
+	if isBLSAddress {
+		return crypto.NewAddress(crypto.AddressTypeBLSAccount, ts.RandBytes(20))
+	}
 
-	return addr
+	return crypto.NewAddress(crypto.AddressTypeEd25519Account, ts.RandBytes(20))
 }
 
 // RandValAddress generates a random validator address for testing purposes.
@@ -320,11 +323,11 @@ func (ts *TestSuite) RandPeerID() peer.ID {
 
 // GenerateTestAccount generates an account for testing purposes.
 func (ts *TestSuite) GenerateTestAccount(number int32) (*account.Account, crypto.Address) {
-	_, prv := ts.RandBLSKeyPair()
+	addr := ts.RandAccAddress()
 	acc := account.NewAccount(number)
 	acc.AddToBalance(ts.RandAmount())
 
-	return acc, prv.PublicKeyNative().AccountAddress()
+	return acc, addr
 }
 
 // GenerateTestValidator generates a validator for testing purposes.

@@ -8,6 +8,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
@@ -250,18 +251,37 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 
 // SerializeSize returns the number of bytes it would take to serialize the transaction.
 func (tx *Tx) SerializeSize() int {
-	n := 3 + // one byte version, flag, payload type
-		4 + // for tx.LockTime
+	n := 7 + //  flag (1) + version (1) + payload type (1) + lock_time (4)
 		encoding.VarIntSerializeSize(uint64(tx.Fee())) +
 		encoding.VarStringSerializeSize(tx.Memo())
 	if tx.Payload() != nil {
 		n += tx.Payload().SerializeSize()
 	}
 	if tx.data.Signature != nil {
-		n += bls.SignatureSize
+		switch tx.data.Payload.Signer().Type() {
+		case crypto.AddressTypeValidator,
+			crypto.AddressTypeBLSAccount:
+			n += bls.SignatureSize
+
+		case crypto.AddressTypeEd25519Account:
+			n += ed25519.SignatureSize
+
+		case crypto.AddressTypeTreasury:
+			n += 0
+		}
 	}
 	if tx.data.PublicKey != nil {
-		n += bls.PublicKeySize
+		switch tx.data.Payload.Signer().Type() {
+		case crypto.AddressTypeValidator,
+			crypto.AddressTypeBLSAccount:
+			n += bls.PublicKeySize
+
+		case crypto.AddressTypeEd25519Account:
+			n += ed25519.PublicKeySize
+
+		case crypto.AddressTypeTreasury:
+			n += 0
+		}
 	}
 
 	return n
@@ -360,25 +380,72 @@ func (tx *Tx) Decode(r io.Reader) error {
 		return err
 	}
 
-	if !util.IsFlagSet(tx.data.Flags, flagNotSigned) {
-		sig := new(bls.Signature)
-		err = sig.Decode(r)
+	if util.IsFlagSet(tx.data.Flags, flagNotSigned) {
+		return nil
+	}
+
+	// It is a signed transaction, Decode signatory.
+	sig, err := tx.decodeSignature(r)
+	if err != nil {
+		return err
+	}
+	tx.data.Signature = sig
+
+	if !tx.IsPublicKeyStriped() {
+		pub, err := tx.decodePublicKey(r)
 		if err != nil {
 			return err
 		}
-		tx.data.Signature = sig
-
-		if !tx.IsPublicKeyStriped() {
-			pub := new(bls.PublicKey)
-			err = pub.Decode(r)
-			if err != nil {
-				return err
-			}
-			tx.data.PublicKey = pub
-		}
+		tx.data.PublicKey = pub
 	}
 
 	return nil
+}
+
+func (tx *Tx) decodeSignature(r io.Reader) (crypto.Signature, error) {
+	switch tx.data.Payload.Signer().Type() {
+	case crypto.AddressTypeValidator,
+		crypto.AddressTypeBLSAccount:
+		sig := new(bls.Signature)
+		err := sig.Decode(r)
+
+		return sig, err
+
+	case crypto.AddressTypeEd25519Account:
+		sig := new(ed25519.Signature)
+		err := sig.Decode(r)
+
+		return sig, err
+
+	case crypto.AddressTypeTreasury:
+		return nil, ErrInvalidSigner
+
+	default:
+		return nil, ErrInvalidSigner
+	}
+}
+
+func (tx *Tx) decodePublicKey(r io.Reader) (crypto.PublicKey, error) {
+	switch tx.data.Payload.Signer().Type() {
+	case crypto.AddressTypeValidator,
+		crypto.AddressTypeBLSAccount:
+		pub := new(bls.PublicKey)
+		err := pub.Decode(r)
+
+		return pub, err
+
+	case crypto.AddressTypeEd25519Account:
+		pub := new(ed25519.PublicKey)
+		err := pub.Decode(r)
+
+		return pub, err
+
+	case crypto.AddressTypeTreasury:
+		return nil, ErrInvalidSigner
+
+	default:
+		return nil, ErrInvalidSigner
+	}
 }
 
 func (tx *Tx) String() string {
