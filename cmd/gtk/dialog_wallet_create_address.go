@@ -21,10 +21,23 @@ func createAddress(ww *widgetWallet) {
 	addressLabel := getEntryObj(builder, "id_entry_account_label")
 
 	addressTypeCombo := getComboBoxTextObj(builder, "id_combo_address_type")
-	addressTypeCombo.Append(wallet.AddressTypeBLSAccount, "Account")
+	addressTypeCombo.Append(wallet.AddressTypeEd25519Account, "ED25519 Account")
+	addressTypeCombo.Append(wallet.AddressTypeBLSAccount, "BLS Account")
 	addressTypeCombo.Append(wallet.AddressTypeValidator, "Validator")
 
 	addressTypeCombo.SetActive(0)
+
+	getLabelObj(builder, "id_label_account_password")
+	passwordInput := getEntryObj(builder, "id_entry_account_password")
+
+	addressTypeCombo.Connect("changed", func() {
+		activeID := addressTypeCombo.GetActiveID()
+		if activeID == wallet.AddressTypeEd25519Account {
+			passwordInput.SetSensitive(true)
+		} else {
+			passwordInput.SetSensitive(false)
+		}
+	})
 
 	getButtonObj(builder, "id_button_ok").SetImage(OkIcon())
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
@@ -36,7 +49,23 @@ func createAddress(ww *widgetWallet) {
 		walletAddressType := addressTypeCombo.GetActiveID()
 		fatalErrorCheck(err)
 
-		if walletAddressType == wallet.AddressTypeBLSAccount {
+		password, err := passwordInput.GetText()
+		fatalErrorCheck(err)
+
+		if walletAddressType == wallet.AddressTypeEd25519Account && password == "" {
+			passwordInput.SetName("entry_error")
+
+			dialog := gtk.MessageDialogNew(dlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK,
+				"Password is required for ED25519 Account.")
+			dialog.Run()
+			dialog.Destroy()
+			passwordInput.SetSensitive(true)
+			return
+		}
+
+		if walletAddressType == wallet.AddressTypeEd25519Account {
+			_, err = ww.model.wallet.NewEd25519AccountAddress(walletAddressLabel, password)
+		} else if walletAddressType == wallet.AddressTypeBLSAccount {
 			_, err = ww.model.wallet.NewBLSAccountAddress(walletAddressLabel)
 		} else if walletAddressType == wallet.AddressTypeValidator {
 			_, err = ww.model.wallet.NewValidatorAddress(walletAddressLabel)
