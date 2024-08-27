@@ -60,6 +60,7 @@ func createAddress(ww *widgetWallet) {
 			dialog.Run()
 			dialog.Destroy()
 			passwordInput.SetSensitive(true)
+
 			return
 		}
 
