@@ -5,6 +5,8 @@ import (
 	"hash/crc32"
 	"time"
 
+	"github.com/pactus-project/pactus/crypto"
+
 	"github.com/google/uuid"
 	blshdkeychain "github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/genesis"
@@ -60,14 +62,26 @@ func (s *store) UpgradeWallet(walletPath string) error {
 }
 
 func (s *store) setPublicKeys() error {
-	for addrKey, addrInfo := range s.Vault.Addresses {
-		if addrInfo.PublicKey == "" {
-			pubKey, err := blshdkeychain.NewKeyFromString(s.Vault.Purposes.PurposeBLS.XPubAccount)
+	for addrKey, info := range s.Vault.Addresses {
+		if info.PublicKey == "" {
+			addr, err := crypto.AddressFromString(info.Address)
+			if err != nil {
+				return nil
+			}
+
+			var xPub string
+			if addr.IsAccountAddress() {
+				xPub = s.Vault.Purposes.PurposeBLS.XPubAccount
+			} else if addr.IsValidatorAddress() {
+				xPub = s.Vault.Purposes.PurposeBLS.XPubValidator
+			}
+
+			pubKey, err := blshdkeychain.NewKeyFromString(xPub)
 			if err != nil {
 				return err
 			}
-			addrInfo.PublicKey = pubKey.String()
-			s.Vault.Addresses[addrKey] = addrInfo
+			info.PublicKey = pubKey.String()
+			s.Vault.Addresses[addrKey] = info
 		}
 	}
 
