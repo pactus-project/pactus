@@ -59,19 +59,25 @@ func Open(walletPath string, offline bool, options ...Option) (*Wallet, error) {
 		return nil, err
 	}
 
-	store := new(store)
-	err = store.Save(data)
-	if err != nil {
+	walletStore := new(store)
+	if err := json.Unmarshal(data, walletStore); err != nil {
+		return nil, err
+	}
+
+	if err := walletStore.UpgradeWallet(walletPath); err != nil {
 		return nil, err
 	}
 
 	opts := defaultWalletOpt
-
 	for _, opt := range options {
 		opt(opts)
 	}
 
-	return newWallet(walletPath, store, offline, opts)
+	if err := walletStore.ValidateCRC(); err != nil {
+		return nil, err
+	}
+
+	return newWallet(walletPath, walletStore, offline, opts)
 }
 
 // Create creates a wallet from mnemonic (seed phrase) and save it at the

@@ -90,8 +90,8 @@ type masterNode struct {
 }
 
 type purposes struct {
-	PurposeBLS     purposeBLS     `json:"purpose_bls"`     // BLS Purpose: m/12381'/21888'/1' or 2'/0
-	PurposeEd25519 purposeEd25519 `json:"purpose_ed25519"` // ED25519 Purpose: m/44'/21888'/3'/0
+	PurposeBLS   purposeBLS   `json:"purpose_bls"`   // BLS Purpose: m/12381'/21888'/1' or 2'/0
+	PurposeBIP44 purposeBIP44 `json:"purpose_bip44"` // BIP44 Purpose: m/44'/21888'/3'/0
 }
 
 type purposeBLS struct {
@@ -101,8 +101,8 @@ type purposeBLS struct {
 	NextValidatorIndex uint32 `json:"next_validator_index"` // Index of next derived validator
 }
 
-type purposeEd25519 struct {
-	NextAccountIndex uint32 `json:"next_account_index"` // Index of next derived account
+type purposeBIP44 struct {
+	NextEd25519Index uint32 `json:"next_ed25519_index"` // Index of next Ed25519 derived account
 }
 
 func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
@@ -493,7 +493,7 @@ func (v *Vault) NewEd25519AccountAddress(label, password string) (*AddressInfo, 
 		return nil, err
 	}
 
-	index := v.Purposes.PurposeEd25519.NextAccountIndex
+	index := v.Purposes.PurposeBIP44.NextEd25519Index
 	ext, err := masterKey.DerivePath([]uint32{
 		H(PurposeBIP44),
 		H(v.CoinType),
@@ -517,7 +517,7 @@ func (v *Vault) NewEd25519AccountAddress(label, password string) (*AddressInfo, 
 		Path:      addresspath.NewPath(ext.Path()...).String(),
 	}
 	v.Addresses[addr] = data
-	v.Purposes.PurposeEd25519.NextAccountIndex++
+	v.Purposes.PurposeBIP44.NextEd25519Index++
 
 	return &data, nil
 }

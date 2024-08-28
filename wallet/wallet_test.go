@@ -79,7 +79,7 @@ func TestOpenWallet(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
 
-	t.Run("Save the wallet", func(t *testing.T) {
+	t.Run("ValidateCRC the wallet", func(t *testing.T) {
 		assert.NoError(t, td.wallet.Save())
 	})
 
@@ -118,7 +118,7 @@ func TestRecoverWallet(t *testing.T) {
 	mnemonic, _ := td.wallet.Mnemonic(td.password)
 	password := ""
 	t.Run("Wallet exists", func(t *testing.T) {
-		// Save the test wallet first then
+		// ValidateCRC the test wallet first then
 		// try to recover a wallet at the same place
 		assert.NoError(t, td.wallet.Save())
 

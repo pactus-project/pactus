@@ -50,7 +50,7 @@ func setup(t *testing.T, config *Config) *testData {
 		store:     s.(*store),
 	}
 
-	// Save 10 blocks
+	// ValidateCRC 10 blocks
 	for height := uint32(0); height < 10; height++ {
 		blk, cert := td.GenerateTestBlock(height + 1)
 		td.store.SaveBlock(blk, cert)
