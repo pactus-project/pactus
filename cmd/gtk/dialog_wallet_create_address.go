@@ -3,9 +3,10 @@
 package main
 
 import (
-	_ "embed"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/wallet"
+
+	_ "embed"
 )
 
 //go:embed assets/ui/dialog_wallet_create_address.ui
