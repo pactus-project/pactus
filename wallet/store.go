@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"encoding/json"
+	"fmt"
 	"hash/crc32"
 	"time"
 
@@ -55,7 +56,11 @@ func (s *store) UpgradeWallet(walletPath string) error {
 			return err
 		}
 
-		return util.WriteFile(walletPath, bs)
+		if err := util.WriteFile(walletPath, bs); err != nil {
+			return err
+		}
+
+		fmt.Printf("wallet upgraded to version: %d", Version2)
 	}
 
 	return nil
