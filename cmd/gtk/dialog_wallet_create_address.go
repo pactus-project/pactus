@@ -4,8 +4,7 @@ package main
 
 import (
 	_ "embed"
-	"fmt"
-
+	"errors"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/wallet"
 )
@@ -17,6 +16,19 @@ func createAddress(ww *widgetWallet) {
 	builder, err := gtk.BuilderNewFromString(string(uiWalletCreateAddressDialog))
 	fatalErrorCheck(err)
 
+	passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
+		if *passwordOpt != "" {
+			return *passwordOpt, true
+		}
+
+		return getWalletPassword(wlt)
+	}
+
+	password, ok := passwordFetcher(ww.model.wallet)
+	if !ok {
+		fatalErrorCheck(errors.New("aborted"))
+	}
+
 	dlg := getDialogObj(builder, "id_dialog_wallet_create_address")
 	addressLabel := getEntryObj(builder, "id_entry_account_label")
 
@@ -27,21 +39,6 @@ func createAddress(ww *widgetWallet) {
 
 	addressTypeCombo.SetActive(0)
 
-	getLabelObj(builder, "id_label_account_password")
-	passwordInput := getEntryObj(builder, "id_entry_account_password")
-
-	addressTypeCombo.Connect("changed", func() {
-		activeID := addressTypeCombo.GetActiveID()
-		if activeID == wallet.AddressTypeEd25519Account {
-			passwordInput.SetSensitive(true)
-		} else {
-			passwordInput.SetSensitive(false)
-		}
-	})
-
-	getButtonObj(builder, "id_button_ok").SetImage(OkIcon())
-	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
-
 	onOk := func() {
 		walletAddressLabel, err := addressLabel.GetText()
 		fatalErrorCheck(err)
@@ -49,29 +46,13 @@ func createAddress(ww *widgetWallet) {
 		walletAddressType := addressTypeCombo.GetActiveID()
 		fatalErrorCheck(err)
 
-		password, err := passwordInput.GetText()
-		fatalErrorCheck(err)
-
-		if walletAddressType == wallet.AddressTypeEd25519Account && password == "" {
-			passwordInput.SetName("entry_error")
-
-			dialog := gtk.MessageDialogNew(dlg, gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK,
-				"Password is required for ED25519 Account.")
-			dialog.Run()
-			dialog.Destroy()
-			passwordInput.SetSensitive(true)
-
-			return
-		}
-
-		if walletAddressType == wallet.AddressTypeEd25519Account {
+		switch walletAddressType {
+		case wallet.AddressTypeEd25519Account:
 			_, err = ww.model.wallet.NewEd25519AccountAddress(walletAddressLabel, password)
-		} else if walletAddressType == wallet.AddressTypeBLSAccount {
+		case wallet.AddressTypeBLSAccount:
 			_, err = ww.model.wallet.NewBLSAccountAddress(walletAddressLabel)
-		} else if walletAddressType == wallet.AddressTypeValidator {
+		case wallet.AddressTypeValidator:
 			_, err = ww.model.wallet.NewValidatorAddress(walletAddressLabel)
-		} else {
-			err = fmt.Errorf("invalid address type '%s'", walletAddressType)
 		}
 
 		errorCheck(err)
