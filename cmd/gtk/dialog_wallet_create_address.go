@@ -4,7 +4,6 @@ package main
 
 import (
 	_ "embed"
-	"errors"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/wallet"
 )
@@ -26,7 +25,7 @@ func createAddress(ww *widgetWallet) {
 
 	password, ok := passwordFetcher(ww.model.wallet)
 	if !ok {
-		fatalErrorCheck(errors.New("aborted"))
+		return
 	}
 
 	dlg := getDialogObj(builder, "id_dialog_wallet_create_address")
