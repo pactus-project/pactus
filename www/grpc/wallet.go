@@ -158,6 +158,7 @@ func (s *walletServer) GetNewAddress(_ context.Context,
 	data, err := s.walletManager.GetNewAddress(
 		req.WalletName,
 		req.Label,
+		req.Password,
 		crypto.AddressType(req.AddressType),
 	)
 	if err != nil {

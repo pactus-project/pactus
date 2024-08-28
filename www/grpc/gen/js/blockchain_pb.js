@@ -3550,7 +3550,7 @@ proto.pactus.GetConsensusInfoRequest.serializeBinaryToWriter = function(message,
  * @private {!Array<number>}
  * @const
  */
-proto.pactus.GetConsensusInfoResponse.repeatedFields_ = [1];
+proto.pactus.GetConsensusInfoResponse.repeatedFields_ = [2];
 
 
 
@@ -3583,9 +3583,9 @@ proto.pactus.GetConsensusInfoResponse.prototype.toObject = function(opt_includeI
  */
 proto.pactus.GetConsensusInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
+    proposal: (f = msg.getProposal()) && proto.pactus.Proposal.toObject(includeInstance, f),
     instancesList: jspb.Message.toObjectList(msg.getInstancesList(),
-    proto.pactus.ConsensusInfo.toObject, includeInstance),
-    proposal: (f = msg.getProposal()) && proto.pactus.Proposal.toObject(includeInstance, f)
+    proto.pactus.ConsensusInfo.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -3623,14 +3623,14 @@ proto.pactus.GetConsensusInfoResponse.deserializeBinaryFromReader = function(msg
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new proto.pactus.ConsensusInfo;
-      reader.readMessage(value,proto.pactus.ConsensusInfo.deserializeBinaryFromReader);
-      msg.addInstances(value);
-      break;
-    case 6:
       var value = new proto.pactus.Proposal;
       reader.readMessage(value,proto.pactus.Proposal.deserializeBinaryFromReader);
       msg.setProposal(value);
+      break;
+    case 2:
+      var value = new proto.pactus.ConsensusInfo;
+      reader.readMessage(value,proto.pactus.ConsensusInfo.deserializeBinaryFromReader);
+      msg.addInstances(value);
       break;
     default:
       reader.skipField();
@@ -3661,70 +3661,32 @@ proto.pactus.GetConsensusInfoResponse.prototype.serializeBinary = function() {
  */
 proto.pactus.GetConsensusInfoResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getInstancesList();
-  if (f.length > 0) {
-    writer.writeRepeatedMessage(
-      1,
-      f,
-      proto.pactus.ConsensusInfo.serializeBinaryToWriter
-    );
-  }
   f = message.getProposal();
   if (f != null) {
     writer.writeMessage(
-      6,
+      1,
       f,
       proto.pactus.Proposal.serializeBinaryToWriter
     );
   }
+  f = message.getInstancesList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      2,
+      f,
+      proto.pactus.ConsensusInfo.serializeBinaryToWriter
+    );
+  }
 };
 
 
 /**
- * repeated ConsensusInfo instances = 1;
- * @return {!Array<!proto.pactus.ConsensusInfo>}
- */
-proto.pactus.GetConsensusInfoResponse.prototype.getInstancesList = function() {
-  return /** @type{!Array<!proto.pactus.ConsensusInfo>} */ (
-    jspb.Message.getRepeatedWrapperField(this, proto.pactus.ConsensusInfo, 1));
-};
-
-
-/**
- * @param {!Array<!proto.pactus.ConsensusInfo>} value
- * @return {!proto.pactus.GetConsensusInfoResponse} returns this
-*/
-proto.pactus.GetConsensusInfoResponse.prototype.setInstancesList = function(value) {
-  return jspb.Message.setRepeatedWrapperField(this, 1, value);
-};
-
-
-/**
- * @param {!proto.pactus.ConsensusInfo=} opt_value
- * @param {number=} opt_index
- * @return {!proto.pactus.ConsensusInfo}
- */
-proto.pactus.GetConsensusInfoResponse.prototype.addInstances = function(opt_value, opt_index) {
-  return jspb.Message.addToRepeatedWrapperField(this, 1, opt_value, proto.pactus.ConsensusInfo, opt_index);
-};
-
-
-/**
- * Clears the list making it empty but non-null.
- * @return {!proto.pactus.GetConsensusInfoResponse} returns this
- */
-proto.pactus.GetConsensusInfoResponse.prototype.clearInstancesList = function() {
-  return this.setInstancesList([]);
-};
-
-
-/**
- * optional Proposal proposal = 6;
+ * optional Proposal proposal = 1;
  * @return {?proto.pactus.Proposal}
  */
 proto.pactus.GetConsensusInfoResponse.prototype.getProposal = function() {
   return /** @type{?proto.pactus.Proposal} */ (
-    jspb.Message.getWrapperField(this, proto.pactus.Proposal, 6));
+    jspb.Message.getWrapperField(this, proto.pactus.Proposal, 1));
 };
 
 
@@ -3733,7 +3695,7 @@ proto.pactus.GetConsensusInfoResponse.prototype.getProposal = function() {
  * @return {!proto.pactus.GetConsensusInfoResponse} returns this
 */
 proto.pactus.GetConsensusInfoResponse.prototype.setProposal = function(value) {
-  return jspb.Message.setWrapperField(this, 6, value);
+  return jspb.Message.setWrapperField(this, 1, value);
 };
 
 
@@ -3751,7 +3713,45 @@ proto.pactus.GetConsensusInfoResponse.prototype.clearProposal = function() {
  * @return {boolean}
  */
 proto.pactus.GetConsensusInfoResponse.prototype.hasProposal = function() {
-  return jspb.Message.getField(this, 6) != null;
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * repeated ConsensusInfo instances = 2;
+ * @return {!Array<!proto.pactus.ConsensusInfo>}
+ */
+proto.pactus.GetConsensusInfoResponse.prototype.getInstancesList = function() {
+  return /** @type{!Array<!proto.pactus.ConsensusInfo>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.pactus.ConsensusInfo, 2));
+};
+
+
+/**
+ * @param {!Array<!proto.pactus.ConsensusInfo>} value
+ * @return {!proto.pactus.GetConsensusInfoResponse} returns this
+*/
+proto.pactus.GetConsensusInfoResponse.prototype.setInstancesList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 2, value);
+};
+
+
+/**
+ * @param {!proto.pactus.ConsensusInfo=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.pactus.ConsensusInfo}
+ */
+proto.pactus.GetConsensusInfoResponse.prototype.addInstances = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 2, opt_value, proto.pactus.ConsensusInfo, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.pactus.GetConsensusInfoResponse} returns this
+ */
+proto.pactus.GetConsensusInfoResponse.prototype.clearInstancesList = function() {
+  return this.setInstancesList([]);
 };
 
 

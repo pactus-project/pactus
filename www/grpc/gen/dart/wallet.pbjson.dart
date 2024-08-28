@@ -15,11 +15,12 @@ const AddressType$json = const {
     const {'1': 'ADDRESS_TYPE_TREASURY', '2': 0},
     const {'1': 'ADDRESS_TYPE_VALIDATOR', '2': 1},
     const {'1': 'ADDRESS_TYPE_BLS_ACCOUNT', '2': 2},
+    const {'1': 'ADDRESS_TYPE_ED25519_ACCOUNT', '2': 3},
   ],
 };
 
 /// Descriptor for `AddressType`. Decode as a `google.protobuf.EnumDescriptorProto`.
-final $typed_data.Uint8List addressTypeDescriptor = $convert.base64Decode('CgtBZGRyZXNzVHlwZRIZChVBRERSRVNTX1RZUEVfVFJFQVNVUlkQABIaChZBRERSRVNTX1RZUEVfVkFMSURBVE9SEAESHAoYQUREUkVTU19UWVBFX0JMU19BQ0NPVU5UEAI=');
+final $typed_data.Uint8List addressTypeDescriptor = $convert.base64Decode('CgtBZGRyZXNzVHlwZRIZChVBRERSRVNTX1RZUEVfVFJFQVNVUlkQABIaChZBRERSRVNTX1RZUEVfVkFMSURBVE9SEAESHAoYQUREUkVTU19UWVBFX0JMU19BQ0NPVU5UEAISIAocQUREUkVTU19UWVBFX0VEMjU1MTlfQUNDT1VOVBAD');
 @$core.Deprecated('Use addressInfoDescriptor instead')
 const AddressInfo$json = const {
   '1': 'AddressInfo',
@@ -75,11 +76,12 @@ const GetNewAddressRequest$json = const {
     const {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
     const {'1': 'address_type', '3': 2, '4': 1, '5': 14, '6': '.pactus.AddressType', '10': 'addressType'},
     const {'1': 'label', '3': 3, '4': 1, '5': 9, '10': 'label'},
+    const {'1': 'password', '3': 4, '4': 1, '5': 9, '10': 'password'},
   ],
 };
 
 /// Descriptor for `GetNewAddressRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNewAddressRequestDescriptor = $convert.base64Decode('ChRHZXROZXdBZGRyZXNzUmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZRI2CgxhZGRyZXNzX3R5cGUYAiABKA4yEy5wYWN0dXMuQWRkcmVzc1R5cGVSC2FkZHJlc3NUeXBlEhQKBWxhYmVsGAMgASgJUgVsYWJlbA==');
+final $typed_data.Uint8List getNewAddressRequestDescriptor = $convert.base64Decode('ChRHZXROZXdBZGRyZXNzUmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZRI2CgxhZGRyZXNzX3R5cGUYAiABKA4yEy5wYWN0dXMuQWRkcmVzc1R5cGVSC2FkZHJlc3NUeXBlEhQKBWxhYmVsGAMgASgJUgVsYWJlbBIaCghwYXNzd29yZBgEIAEoCVIIcGFzc3dvcmQ=');
 @$core.Deprecated('Use getNewAddressResponseDescriptor instead')
 const GetNewAddressResponse$json = const {
   '1': 'GetNewAddressResponse',

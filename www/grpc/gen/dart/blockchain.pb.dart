@@ -1026,22 +1026,22 @@ class GetConsensusInfoRequest extends $pb.GeneratedMessage {
 
 class GetConsensusInfoResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetConsensusInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..pc<ConsensusInfo>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'instances', $pb.PbFieldType.PM, subBuilder: ConsensusInfo.create)
-    ..aOM<Proposal>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'proposal', subBuilder: Proposal.create)
+    ..aOM<Proposal>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'proposal', subBuilder: Proposal.create)
+    ..pc<ConsensusInfo>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'instances', $pb.PbFieldType.PM, subBuilder: ConsensusInfo.create)
     ..hasRequiredFields = false
   ;
 
   GetConsensusInfoResponse._() : super();
   factory GetConsensusInfoResponse({
-    $core.Iterable<ConsensusInfo>? instances,
     Proposal? proposal,
+    $core.Iterable<ConsensusInfo>? instances,
   }) {
     final _result = create();
-    if (instances != null) {
-      _result.instances.addAll(instances);
-    }
     if (proposal != null) {
       _result.proposal = proposal;
+    }
+    if (instances != null) {
+      _result.instances.addAll(instances);
     }
     return _result;
   }
@@ -1067,18 +1067,18 @@ class GetConsensusInfoResponse extends $pb.GeneratedMessage {
   static GetConsensusInfoResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.List<ConsensusInfo> get instances => $_getList(0);
+  Proposal get proposal => $_getN(0);
+  @$pb.TagNumber(1)
+  set proposal(Proposal v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasProposal() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearProposal() => clearField(1);
+  @$pb.TagNumber(1)
+  Proposal ensureProposal() => $_ensure(0);
 
-  @$pb.TagNumber(6)
-  Proposal get proposal => $_getN(1);
-  @$pb.TagNumber(6)
-  set proposal(Proposal v) { setField(6, v); }
-  @$pb.TagNumber(6)
-  $core.bool hasProposal() => $_has(1);
-  @$pb.TagNumber(6)
-  void clearProposal() => clearField(6);
-  @$pb.TagNumber(6)
-  Proposal ensureProposal() => $_ensure(1);
+  @$pb.TagNumber(2)
+  $core.List<ConsensusInfo> get instances => $_getList(1);
 }
 
 class GetTxPoolContentRequest extends $pb.GeneratedMessage {
