@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"encoding/json"
+	"fmt"
 	"hash/crc32"
 	"time"
 
@@ -61,7 +62,8 @@ func (s *Store) ValidateCRC() error {
 }
 
 func (s *Store) UpgradeWallet(walletPath string) error {
-	switch s.Version {
+	oldVersion := s.Version
+	switch oldVersion {
 	case Version1:
 		if err := s.setPublicKeys(); err != nil {
 			return err
@@ -90,7 +92,8 @@ func (s *Store) UpgradeWallet(walletPath string) error {
 	if err != nil {
 		return err
 	}
-	logger.Info("wallet upgraded to version %d", s.Version)
+	logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
+		oldVersion, VersionLatest))
 
 	return nil
 }

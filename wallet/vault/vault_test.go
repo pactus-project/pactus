@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
@@ -40,13 +41,11 @@ func setup(t *testing.T) *testData {
 	assert.False(t, key.IsPrivate())
 
 	// Create some test address
-	_, err = vault.NewBLSAccountAddress("addr-1")
+	_, err = vault.NewBLSAccountAddress("bls-account-address")
 	assert.NoError(t, err)
-	_, err = vault.NewBLSAccountAddress("addr-2")
+	_, err = vault.NewEd25519AccountAddress("ed25519-account-address", "")
 	assert.NoError(t, err)
-	_, err = vault.NewValidatorAddress("addr-3")
-	assert.NoError(t, err)
-	_, err = vault.NewValidatorAddress("addr-4")
+	_, err = vault.NewValidatorAddress("validator-address")
 	assert.NoError(t, err)
 
 	assert.NoError(t, vault.ImportBLSPrivateKey("", importedPrv))
@@ -73,13 +72,10 @@ func setup(t *testing.T) *testData {
 func TestAddressInfo(t *testing.T) {
 	td := setup(t)
 
-	assert.Equal(t, td.vault.AddressCount(), 6)
+	assert.Equal(t, td.vault.AddressCount(), 5)
 	infos := td.vault.AddressInfos()
 	for _, i := range infos {
 		info := td.vault.AddressInfo(i.Address)
-		assert.Equal(t, i.Address, info.Address)
-		// TODO test me later
-		// assert.Equal(t, i.Address, info.PublicKey)
 
 		addr, _ := crypto.AddressFromString(info.Address)
 		path, _ := addresspath.FromString(info.Path)
@@ -87,46 +83,53 @@ func TestAddressInfo(t *testing.T) {
 		switch path.Purpose() {
 		case H(PurposeBLS12381):
 			if addr.IsValidatorAddress() {
-				assert.Equal(t, fmt.Sprintf("m/%d'/%d'/1'/%d",
-					PurposeBLS12381, td.vault.CoinType, path.AddressIndex()), info.Path)
+				assert.Equal(t, fmt.Sprintf("m/12381'/%d'/1'/%d",
+					td.vault.CoinType, path.AddressIndex()), info.Path)
 			}
 
 			if addr.IsAccountAddress() {
-				assert.Equal(t, fmt.Sprintf("m/%d'/%d'/2'/%d",
-					PurposeBLS12381, td.vault.CoinType, path.AddressIndex()), info.Path)
+				assert.Equal(t, fmt.Sprintf("m/12381'/%d'/2'/%d",
+					td.vault.CoinType, path.AddressIndex()), info.Path)
 			}
+		case H(PurposeBIP44):
+			assert.Equal(t, fmt.Sprintf("m/44'/%d'/3'/%d'",
+				td.vault.CoinType, path.AddressIndex()-addresspath.HardenedKeyStart), info.Path)
+
 		case H(PurposeImportPrivateKey):
 			if addr.IsValidatorAddress() {
-				assert.Equal(t, fmt.Sprintf("m/%d'/%d'/1'/%d'",
-					PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart), info.Path)
+				assert.Equal(t, fmt.Sprintf("m/65535'/%d'/1'/%d'",
+					td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart), info.Path)
 			}
 
 			if addr.IsAccountAddress() {
-				assert.Equal(t, fmt.Sprintf("m/%d'/%d'/2'/%d'",
-					PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart), info.Path)
+				assert.Equal(t, fmt.Sprintf("m/65535'/%d'/2'/%d'",
+					td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart), info.Path)
 			}
+
+		default:
+			assert.Fail(t, "not supported")
 		}
 	}
 
 	// Neutered
 	neutered := td.vault.Neuter()
-	assert.Equal(t, 6, neutered.AddressCount())
+	assert.Equal(t, 5, neutered.AddressCount())
 }
 
 func TestSortAddressInfo(t *testing.T) {
 	td := setup(t)
 
-	assert.Equal(t, 6, td.vault.AddressCount())
 	infos := td.vault.AddressInfos()
 
-	assert.Equal(t, "m/12381'/21888'/1'/0", infos[0].Path)
-	assert.Equal(t, "m/65535'/21888'/2'/0'", infos[len(infos)-1].Path)
+	assert.Equal(t, "m/44'/21888'/3'/0'", infos[0].Path)
+	assert.Equal(t, "m/12381'/21888'/1'/0", infos[1].Path)
+	assert.Equal(t, "m/12381'/21888'/2'/0", infos[2].Path)
+	assert.Equal(t, "m/65535'/21888'/1'/0'", infos[3].Path)
+	assert.Equal(t, "m/65535'/21888'/2'/0'", infos[4].Path)
 }
 
 func TestAllAccountAddresses(t *testing.T) {
 	td := setup(t)
-
-	assert.Equal(t, td.vault.AddressCount(), 6)
 
 	accountAddrs := td.vault.AllAccountAddresses()
 	for _, i := range accountAddrs {
@@ -139,8 +142,6 @@ func TestAllAccountAddresses(t *testing.T) {
 
 func TestAllValidatorAddresses(t *testing.T) {
 	td := setup(t)
-
-	assert.Equal(t, 6, td.vault.AddressCount())
 
 	validatorAddrs := td.vault.AllValidatorAddresses()
 	for _, i := range validatorAddrs {
@@ -156,6 +157,8 @@ func TestAllValidatorAddresses(t *testing.T) {
 		case H(PurposeImportPrivateKey):
 			assert.Equal(t, fmt.Sprintf("m/%d'/%d'/1'/%d'",
 				PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart), info.Path)
+		default:
+			assert.Fail(t, "not supported")
 		}
 	}
 }
@@ -163,7 +166,6 @@ func TestAllValidatorAddresses(t *testing.T) {
 func TestSortAllValidatorAddresses(t *testing.T) {
 	td := setup(t)
 
-	assert.Equal(t, td.vault.AddressCount(), 6)
 	validatorAddrs := td.vault.AllValidatorAddresses()
 
 	assert.Equal(t, "m/12381'/21888'/1'/0", validatorAddrs[0].Path)
@@ -172,7 +174,6 @@ func TestSortAllValidatorAddresses(t *testing.T) {
 
 func TestAddressFromPath(t *testing.T) {
 	td := setup(t)
-	assert.Equal(t, td.vault.AddressCount(), 6)
 
 	t.Run("Could not find address from path", func(t *testing.T) {
 		path := "m/12381'/26888'/983'/0"
@@ -197,8 +198,6 @@ func TestAddressFromPath(t *testing.T) {
 func TestAllImportedPrivateKeysAddresses(t *testing.T) {
 	td := setup(t)
 
-	assert.Equal(t, td.vault.AddressCount(), 6)
-
 	importedPrvAddrs := td.vault.AllImportedPrivateKeysAddresses()
 	for _, i := range importedPrvAddrs {
 		info := td.vault.AddressInfo(i.Address)
@@ -219,40 +218,6 @@ func TestAllImportedPrivateKeysAddresses(t *testing.T) {
 	}
 }
 
-func TestNewBLSAccountAddress(t *testing.T) {
-	td := setup(t)
-
-	label := td.RandString(16)
-	addressInfo, err := td.vault.NewBLSAccountAddress(label)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, addressInfo.Address)
-	assert.NotEmpty(t, addressInfo.PublicKey)
-	assert.Contains(t, addressInfo.Path, "m/12381'/21888'/2'")
-	assert.Equal(t, label, addressInfo.Label)
-}
-
-func TestNewED25519AccountAddress(t *testing.T) {
-	td := setup(t)
-
-	addressInfo, err := td.vault.NewEd25519AccountAddress("addr-1", tPassword)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, addressInfo.Address)
-	assert.NotEmpty(t, addressInfo.PublicKey)
-	assert.Equal(t, "m/44'/21888'/3'/0'", addressInfo.Path)
-
-	addressInfo, err = td.vault.NewEd25519AccountAddress("addr-2", tPassword)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, addressInfo.Address)
-	assert.NotEmpty(t, addressInfo.PublicKey)
-	assert.Equal(t, "m/44'/21888'/3'/1'", addressInfo.Path)
-
-	addressInfo, err = td.vault.NewEd25519AccountAddress("addr-3", tPassword)
-	assert.NoError(t, err)
-	assert.NotEmpty(t, addressInfo.Address)
-	assert.NotEmpty(t, addressInfo.PublicKey)
-	assert.Equal(t, "m/44'/21888'/3'/2'", addressInfo.Path)
-}
-
 func TestNewValidatorAddress(t *testing.T) {
 	td := setup(t)
 
@@ -263,6 +228,37 @@ func TestNewValidatorAddress(t *testing.T) {
 	assert.NotEmpty(t, addressInfo.PublicKey)
 	assert.Contains(t, addressInfo.Path, "m/12381'/21888'/1'")
 	assert.Equal(t, label, addressInfo.Label)
+
+	pub, _ := bls.PublicKeyFromString(addressInfo.PublicKey)
+	assert.Equal(t, pub.ValidatorAddress().String(), addressInfo.Address)
+}
+
+func TestNewBLSAccountAddress(t *testing.T) {
+	td := setup(t)
+
+	label := td.RandString(16)
+	addressInfo, err := td.vault.NewBLSAccountAddress(label)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, addressInfo.Address)
+	assert.NotEmpty(t, addressInfo.PublicKey)
+	assert.Contains(t, addressInfo.Path, "m/12381'/21888'/2'")
+	assert.Equal(t, label, addressInfo.Label)
+
+	pub, _ := bls.PublicKeyFromString(addressInfo.PublicKey)
+	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
+}
+
+func TestNewE225519AccountAddress(t *testing.T) {
+	td := setup(t)
+
+	addressInfo, err := td.vault.NewEd25519AccountAddress("addr-2", tPassword)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, addressInfo.Address)
+	assert.NotEmpty(t, addressInfo.PublicKey)
+	assert.Equal(t, "m/44'/21888'/3'/1'", addressInfo.Path)
+
+	pub, _ := ed25519.PublicKeyFromString(addressInfo.PublicKey)
+	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
 }
 
 func TestRecover(t *testing.T) {
@@ -278,13 +274,11 @@ func TestRecover(t *testing.T) {
 		assert.NoError(t, err)
 
 		// Recover addresses
-		_, err = recovered.NewBLSAccountAddress("addr-1")
+		_, err = recovered.NewBLSAccountAddress("bls-account-address")
 		assert.NoError(t, err)
-		_, err = recovered.NewBLSAccountAddress("addr-2")
+		_, err = recovered.NewEd25519AccountAddress("ed25519-account-address", "")
 		assert.NoError(t, err)
-		_, err = recovered.NewValidatorAddress("addr-3")
-		assert.NoError(t, err)
-		_, err = recovered.NewValidatorAddress("addr-4")
+		_, err = recovered.NewValidatorAddress("validator-address")
 		assert.NoError(t, err)
 
 		assert.Equal(t, recovered.Purposes, td.vault.Purposes)
@@ -317,8 +311,19 @@ func TestGetPrivateKeys(t *testing.T) {
 			prv, err := td.vault.PrivateKeys(tPassword, []string{info.Address})
 			assert.NoError(t, err)
 			i := td.vault.AddressInfo(info.Address)
-			pub, _ := bls.PublicKeyFromString(i.PublicKey)
-			require.True(t, prv[0].PublicKey().EqualsTo(pub))
+			path, _ := addresspath.FromString(info.Path)
+
+			switch path.AddressType() - addresspath.HardenedKeyStart {
+			case uint32(crypto.AddressTypeBLSAccount),
+				uint32(crypto.AddressTypeValidator):
+				pub, _ := bls.PublicKeyFromString(i.PublicKey)
+				require.True(t, prv[0].PublicKey().EqualsTo(pub))
+			case uint32(crypto.AddressTypeEd25519Account):
+				pub, _ := ed25519.PublicKeyFromString(i.PublicKey)
+				require.True(t, prv[0].PublicKey().EqualsTo(pub))
+			default:
+				assert.Fail(t, "not supported")
+			}
 		}
 	})
 }

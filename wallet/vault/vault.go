@@ -467,16 +467,16 @@ func (v *Vault) NewValidatorAddress(label string) (*AddressInfo, error) {
 	}
 
 	addr := blsPubKey.ValidatorAddress().String()
-	data := AddressInfo{
+	info := AddressInfo{
 		Address:   addr,
 		Label:     label,
 		PublicKey: blsPubKey.String(),
 		Path:      addresspath.NewPath(ext.Path()...).String(),
 	}
-	v.Addresses[addr] = data
+	v.Addresses[addr] = info
 	v.Purposes.PurposeBLS.NextValidatorIndex++
 
-	return &data, nil
+	return &info, nil
 }
 
 func (v *Vault) NewBLSAccountAddress(label string) (*AddressInfo, error) {
@@ -496,16 +496,16 @@ func (v *Vault) NewBLSAccountAddress(label string) (*AddressInfo, error) {
 	}
 
 	addr := blsPubKey.AccountAddress().String()
-	data := AddressInfo{
+	info := AddressInfo{
 		Address:   addr,
 		Label:     label,
 		PublicKey: blsPubKey.String(),
 		Path:      addresspath.NewPath(ext.Path()...).String(),
 	}
-	v.Addresses[addr] = data
+	v.Addresses[addr] = info
 	v.Purposes.PurposeBLS.NextAccountIndex++
 
-	return &data, nil
+	return &info, nil
 }
 
 func (v *Vault) NewEd25519AccountAddress(label, password string) (*AddressInfo, error) {
@@ -536,74 +536,22 @@ func (v *Vault) NewEd25519AccountAddress(label, password string) (*AddressInfo, 
 	}
 
 	addr := ed25519PubKey.AccountAddress().String()
-	data := AddressInfo{
+	info := AddressInfo{
 		Address:   addr,
 		Label:     label,
 		PublicKey: ed25519PubKey.String(),
 		Path:      addresspath.NewPath(ext.Path()...).String(),
 	}
-	v.Addresses[addr] = data
+	v.Addresses[addr] = info
 	v.Purposes.PurposeBIP44.NextEd25519Index++
 
-	return &data, nil
+	return &info, nil
 }
 
 // AddressInfo like it can return bls.PublicKey instead of string.
 func (v *Vault) AddressInfo(addr string) *AddressInfo {
 	info, ok := v.Addresses[addr]
 	if !ok {
-		return nil
-	}
-
-	path, err := addresspath.FromString(info.Path)
-	if err != nil {
-		return nil
-	}
-
-	// TODO it would be better to return error in future
-	if path.CoinType() != H(v.CoinType) {
-		return nil
-	}
-
-	switch path.Purpose() {
-	case H(PurposeBLS12381):
-		addr, err := crypto.AddressFromString(info.Address)
-		if err != nil {
-			return nil
-		}
-
-		var xPub string
-		if addr.IsAccountAddress() {
-			xPub = v.Purposes.PurposeBLS.XPubAccount
-		} else if addr.IsValidatorAddress() {
-			xPub = v.Purposes.PurposeBLS.XPubValidator
-		}
-
-		ext, err := blshdkeychain.NewKeyFromString(xPub)
-		if err != nil {
-			return nil
-		}
-
-		p, err := addresspath.FromString(info.Path)
-		if err != nil {
-			return nil
-		}
-
-		extendedKey, err := ext.Derive(p.AddressIndex())
-		if err != nil {
-			return nil
-		}
-
-		blsPubKey, err := bls.PublicKeyFromBytes(extendedKey.RawPublicKey())
-		if err != nil {
-			return nil
-		}
-
-		info.PublicKey = blsPubKey.String()
-	case H(PurposeBIP44):
-		return &info
-	case H(PurposeImportPrivateKey):
-	default:
 		return nil
 	}
 
