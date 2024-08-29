@@ -24,13 +24,8 @@ const (
 	AddressTypeValidator      string = "validator"
 )
 
-const (
-	Version1 = 1 // initial version
-	Version2 = 2 // supporting Ed25519 =
-)
-
 type Wallet struct {
-	store      *store
+	store      *Store
 	path       string
 	grpcClient *grpcClient
 }
@@ -59,12 +54,13 @@ func Open(walletPath string, offline bool, options ...Option) (*Wallet, error) {
 		return nil, err
 	}
 
-	walletStore := new(store)
-	if err := json.Unmarshal(data, walletStore); err != nil {
+	walletStore, err := FromBytes(data)
+	if err != nil {
 		return nil, err
 	}
 
-	if err := walletStore.UpgradeWallet(walletPath); err != nil {
+	err = walletStore.UpgradeWallet(walletPath)
+	if err != nil {
 		return nil, err
 	}
 
@@ -82,7 +78,9 @@ func Open(walletPath string, offline bool, options ...Option) (*Wallet, error) {
 
 // Create creates a wallet from mnemonic (seed phrase) and save it at the
 // given path.
-func Create(walletPath, mnemonic, password string, chain genesis.ChainType, options ...Option) (*Wallet, error) {
+func Create(walletPath, mnemonic, password string, chain genesis.ChainType,
+	options ...Option,
+) (*Wallet, error) {
 	opts := defaultWalletOpt
 
 	for _, opt := range options {
@@ -106,7 +104,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType, opti
 		return nil, ErrInvalidNetwork
 	}
 
-	store := &store{
+	store := &Store{
 		Version:   Version2,
 		UUID:      uuid.New(),
 		CreatedAt: time.Now().Round(time.Second).UTC(),
@@ -130,7 +128,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType, opti
 	return wallet, nil
 }
 
-func newWallet(walletPath string, store *store, offline bool, option *walletOpt) (*Wallet, error) {
+func newWallet(walletPath string, store *Store, offline bool, option *walletOpt) (*Wallet, error) {
 	if !store.Network.IsMainnet() {
 		crypto.AddressHRP = "tpc"
 		crypto.PublicKeyHRP = "tpublic"
@@ -391,8 +389,8 @@ func (w *Wallet) AddressFromPath(p string) *vault.AddressInfo {
 	return w.store.Vault.AddressFromPath(p)
 }
 
-func (w *Wallet) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
-	return w.store.Vault.ImportPrivateKey(password, prv)
+func (w *Wallet) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) error {
+	return w.store.Vault.ImportBLSPrivateKey(password, prv)
 }
 
 func (w *Wallet) PrivateKey(password, addr string) (crypto.PrivateKey, error) {

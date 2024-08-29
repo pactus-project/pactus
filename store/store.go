@@ -171,7 +171,7 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.BlockCertificate) 
 		}
 	}
 
-	// ValidateCRC last certificate: [version: 4 bytes]+[certificate: variant]
+	// Save last certificate: [version: 4 bytes]+[certificate: variant]
 	w := bytes.NewBuffer(make([]byte, 0, 4+cert.SerializeSize()))
 	err := encoding.WriteElements(w, lastStoreVersion)
 	if err != nil {

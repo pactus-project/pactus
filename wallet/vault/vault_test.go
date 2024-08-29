@@ -49,7 +49,7 @@ func setup(t *testing.T) *testData {
 	_, err = vault.NewValidatorAddress("addr-4")
 	assert.NoError(t, err)
 
-	assert.NoError(t, vault.ImportPrivateKey("", importedPrv))
+	assert.NoError(t, vault.ImportBLSPrivateKey("", importedPrv))
 	assert.False(t, vault.IsEncrypted())
 
 	opts := []encrypter.Option{
@@ -327,19 +327,19 @@ func TestImportPrivateKey(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Reimporting private key", func(t *testing.T) {
-		err := td.vault.ImportPrivateKey(tPassword, td.importedPrv.(*bls.PrivateKey))
+		err := td.vault.ImportBLSPrivateKey(tPassword, td.importedPrv.(*bls.PrivateKey))
 		assert.ErrorIs(t, err, ErrAddressExists)
 	})
 
 	t.Run("Invalid password", func(t *testing.T) {
 		_, prv := td.RandBLSKeyPair()
-		err := td.vault.ImportPrivateKey("invalid-password", prv)
+		err := td.vault.ImportBLSPrivateKey("invalid-password", prv)
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		_, prv := td.RandBLSKeyPair()
-		assert.NoError(t, td.vault.ImportPrivateKey(tPassword, prv))
+		assert.NoError(t, td.vault.ImportBLSPrivateKey(tPassword, prv))
 		assert.True(t, td.vault.Contains(prv.PublicKeyNative().AccountAddress().String()))
 		assert.True(t, td.vault.Contains(prv.PublicKeyNative().ValidatorAddress().String()))
 	})
@@ -452,7 +452,7 @@ func TestNeuter(t *testing.T) {
 	})
 	assert.ErrorIs(t, err, ErrNeutered)
 
-	err = neutered.ImportPrivateKey("any", td.importedPrv.(*bls.PrivateKey))
+	err = neutered.ImportBLSPrivateKey("any", td.importedPrv.(*bls.PrivateKey))
 	assert.ErrorIs(t, err, ErrNeutered)
 
 	err = td.vault.Neuter().UpdatePassword("any", "any")

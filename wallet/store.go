@@ -2,20 +2,28 @@ package wallet
 
 import (
 	"encoding/json"
-	"fmt"
 	"hash/crc32"
 	"time"
 
-	"github.com/pactus-project/pactus/crypto"
-
 	"github.com/google/uuid"
+	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	blshdkeychain "github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/vault"
 )
 
-type store struct {
+const (
+	Version1 = 1 // initial version
+	Version2 = 2 // supporting Ed25519
+
+	VersionLatest = Version2
+)
+
+type Store struct {
 	Version   int               `json:"version"`
 	UUID      uuid.UUID         `json:"uuid"`
 	CreatedAt time.Time         `json:"created_at"`
@@ -25,13 +33,22 @@ type store struct {
 	History   history           `json:"history"`
 }
 
-func (s *store) ToBytes() ([]byte, error) {
+func FromBytes(data []byte) (*Store, error) {
+	s := new(Store)
+	if err := json.Unmarshal(data, s); err != nil {
+		return nil, err
+	}
+
+	return s, nil
+}
+
+func (s *Store) ToBytes() ([]byte, error) {
 	s.VaultCRC = s.calcVaultCRC()
 
 	return json.MarshalIndent(s, "  ", "  ")
 }
 
-func (s *store) ValidateCRC() error {
+func (s *Store) ValidateCRC() error {
 	crc := s.calcVaultCRC()
 	if s.VaultCRC != crc {
 		return CRCNotMatchError{
@@ -43,57 +60,88 @@ func (s *store) ValidateCRC() error {
 	return nil
 }
 
-func (s *store) UpgradeWallet(walletPath string) error {
-	if s.Version != Version2 {
+func (s *Store) UpgradeWallet(walletPath string) error {
+	switch s.Version {
+	case Version1:
 		if err := s.setPublicKeys(); err != nil {
 			return err
 		}
 
-		s.VaultCRC = s.calcVaultCRC()
-		s.Version = Version2
-		bs, err := s.ToBytes()
+	case Version2:
+		// Current version
+		return nil
+
+	default:
+		return UnsupportedVersionError{
+			WalletVersion:    s.Version,
+			SupportedVersion: VersionLatest,
+		}
+	}
+
+	s.VaultCRC = s.calcVaultCRC()
+	s.Version = Version2
+
+	bs, err := s.ToBytes()
+	if err != nil {
+		return err
+	}
+
+	err = util.WriteFile(walletPath, bs)
+	if err != nil {
+		return err
+	}
+	logger.Info("wallet upgraded to version %d", s.Version)
+
+	return nil
+}
+
+func (s *Store) setPublicKeys() error {
+	for addrKey, info := range s.Vault.Addresses {
+		if info.PublicKey != "" {
+			continue
+		}
+
+		// Some old wallet doesn't have public key for all addresses.
+		addr, err := crypto.AddressFromString(info.Address)
 		if err != nil {
 			return err
 		}
 
-		if err := util.WriteFile(walletPath, bs); err != nil {
+		var xPub string
+		if addr.IsAccountAddress() {
+			xPub = s.Vault.Purposes.PurposeBLS.XPubAccount
+		} else if addr.IsValidatorAddress() {
+			xPub = s.Vault.Purposes.PurposeBLS.XPubValidator
+		}
+
+		ext, err := blshdkeychain.NewKeyFromString(xPub)
+		if err != nil {
 			return err
 		}
 
-		fmt.Printf("wallet upgraded to version: %d", Version2)
-	}
-
-	return nil
-}
-
-func (s *store) setPublicKeys() error {
-	for addrKey, info := range s.Vault.Addresses {
-		if info.PublicKey == "" {
-			addr, err := crypto.AddressFromString(info.Address)
-			if err != nil {
-				return nil
-			}
-
-			var xPub string
-			if addr.IsAccountAddress() {
-				xPub = s.Vault.Purposes.PurposeBLS.XPubAccount
-			} else if addr.IsValidatorAddress() {
-				xPub = s.Vault.Purposes.PurposeBLS.XPubValidator
-			}
-
-			pubKey, err := blshdkeychain.NewKeyFromString(xPub)
-			if err != nil {
-				return err
-			}
-			info.PublicKey = pubKey.String()
-			s.Vault.Addresses[addrKey] = info
+		p, err := addresspath.FromString(info.Path)
+		if err != nil {
+			return err
 		}
+
+		extendedKey, err := ext.Derive(p.AddressIndex())
+		if err != nil {
+			return err
+		}
+
+		blsPubKey, err := bls.PublicKeyFromBytes(extendedKey.RawPublicKey())
+		if err != nil {
+			return err
+		}
+
+		info.PublicKey = blsPubKey.String()
+		s.Vault.Addresses[addrKey] = info
 	}
 
 	return nil
 }
 
-func (s *store) calcVaultCRC() uint32 {
+func (s *Store) calcVaultCRC() uint32 {
 	d, err := json.Marshal(s.Vault)
 	if err != nil {
 		return 0
