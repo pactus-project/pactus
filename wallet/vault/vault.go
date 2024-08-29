@@ -90,19 +90,19 @@ type masterNode struct {
 }
 
 type purposes struct {
-	PurposeBLS     purposeBLS     `json:"purpose_bls"`     // BLS Purpose: m/12381'/21888'/1' or 2'/0
-	PurposeEd25519 purposeEd25519 `json:"purpose_ed25519"` // ED25519 Purpose: m/44'/21888'/3'/0
+	PurposeBLS   purposeBLS   `json:"purpose_bls"`   // BLS Purpose: m/12381'/21888'/1' or 2'/0
+	PurposeBIP44 purposeBIP44 `json:"purpose_bip44"` // BIP44 Purpose: m/44'/21888'/3'/0'
 }
 
 type purposeBLS struct {
-	XPubValidator      string `json:"xpub_account"`         // Extended public key for account: m/12381'/21888/1'/0
-	XPubAccount        string `json:"xpub_validator"`       // Extended public key for validator: m/12381'/218
+	XPubValidator      string `json:"xpub_account"`         // Extended public key for account: m/12381'/21888'/1'/0
+	XPubAccount        string `json:"xpub_validator"`       // Extended public key for validator: m/12381'/21888'/2'/0
 	NextAccountIndex   uint32 `json:"next_account_index"`   // Index of next derived account
 	NextValidatorIndex uint32 `json:"next_validator_index"` // Index of next derived validator
 }
 
-type purposeEd25519 struct {
-	NextAccountIndex uint32 `json:"next_account_index"` // Index of next derived account
+type purposeBIP44 struct {
+	NextEd25519Index uint32 `json:"next_ed25519_index"` // Index of next Ed25519 derived account: m/44'/21888/3'/0'
 }
 
 func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
@@ -331,7 +331,7 @@ func (v *Vault) AddressFromPath(p string) *AddressInfo {
 	return nil
 }
 
-func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
+func (v *Vault) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) error {
 	if v.IsNeutered() {
 		return ErrNeutered
 	}
@@ -342,7 +342,6 @@ func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 	}
 
 	addressIndex := len(keyStore.ImportedKeys)
-
 	pub := prv.PublicKeyNative()
 
 	accAddr := pub.AccountAddress()
@@ -371,7 +370,7 @@ func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 	v.Addresses[accAddr.String()] = AddressInfo{
 		Address:   accAddr.String(),
 		PublicKey: pub.String(),
-		Label:     fmt.Sprintf("Imported Reward Address %d", importedPrvLabelCounter),
+		Label:     fmt.Sprintf("Imported BLS Account Address %d", importedPrvLabelCounter),
 		Path:      blsAccPathStr,
 	}
 
@@ -392,15 +391,18 @@ func (v *Vault) ImportPrivateKey(password string, prv *bls.PrivateKey) error {
 	return nil
 }
 
+// PrivateKeys retrieves the private keys for the given addresses using the provided password.
 func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKey, error) {
 	if v.IsNeutered() {
 		return nil, ErrNeutered
 	}
 
+	// Decrypt the key store once to avoid decrypting for each key.
 	keyStore, err := v.decryptKeyStore(password)
 	if err != nil {
 		return nil, err
 	}
+	mnemonicSeed := bip39.NewSeed(keyStore.MasterNode.Mnemonic, "")
 
 	keys := make([]crypto.PrivateKey, len(addrs))
 	for i, addr := range addrs {
@@ -409,31 +411,31 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 			return nil, NewErrAddressNotFound(addr)
 		}
 
-		path, err := addresspath.FromString(info.Path)
+		hdPath, err := addresspath.FromString(info.Path)
 		if err != nil {
 			return nil, err
 		}
 
-		if path.CoinType() != H(v.CoinType) {
+		if hdPath.CoinType() != H(v.CoinType) {
 			return nil, ErrInvalidCoinType
 		}
 
-		switch path.Purpose() {
+		switch hdPath.Purpose() {
 		case H(PurposeBLS12381):
-			prvKey, err := bls12381PrivateKey(keyStore, path)
+			prvKey, err := v.deriveBLSPrivateKey(mnemonicSeed, hdPath)
 			if err != nil {
 				return nil, err
 			}
 			keys[i] = prvKey
 		case H(PurposeBIP44):
-			prvKey, err := bip44PrivateKey(keyStore, path, password)
+			prvKey, err := v.deriveEd25519PrivateKey(mnemonicSeed, hdPath)
 			if err != nil {
 				return nil, err
 			}
 			keys[i] = prvKey
 		case H(PurposeImportPrivateKey):
-			index := path.AddressIndex() - blshdkeychain.HardenedKeyStart
-			// TODO: index out of range check
+			index := hdPath.AddressIndex() - blshdkeychain.HardenedKeyStart
+			// TODO: Check if index is within the valid range.
 			str := keyStore.ImportedKeys[index]
 			prv, err := bls.PrivateKeyFromString(str)
 			if err != nil {
@@ -446,80 +448,6 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 	}
 
 	return keys, nil
-}
-
-func (v *Vault) NewBLSAccountAddress(label string) (*AddressInfo, error) {
-	ext, err := blshdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
-	if err != nil {
-		return nil, err
-	}
-	index := v.Purposes.PurposeBLS.NextAccountIndex
-	ext, err = ext.DerivePath([]uint32{index})
-	if err != nil {
-		return nil, err
-	}
-
-	blsPubKey, err := bls.PublicKeyFromBytes(ext.RawPublicKey())
-	if err != nil {
-		return nil, err
-	}
-
-	addr := blsPubKey.AccountAddress().String()
-	data := AddressInfo{
-		Address:   addr,
-		Label:     label,
-		PublicKey: blsPubKey.String(),
-		Path:      addresspath.NewPath(ext.Path()...).String(),
-	}
-	v.Addresses[addr] = data
-	v.Purposes.PurposeBLS.NextAccountIndex++
-
-	return &data, nil
-}
-
-func (v *Vault) NewEd25519AccountAddress(label, password string) (*AddressInfo, error) {
-	mnemonic, err := v.Mnemonic(password)
-	if err != nil {
-		return nil, err
-	}
-
-	seed, err := bip39.NewSeedWithErrorChecking(mnemonic, password)
-	if err != nil {
-		return nil, err
-	}
-
-	masterKey, err := ed25519hdkeychain.NewMaster(seed)
-	if err != nil {
-		return nil, err
-	}
-
-	index := v.Purposes.PurposeEd25519.NextAccountIndex
-	ext, err := masterKey.DerivePath([]uint32{
-		H(PurposeBIP44),
-		H(v.CoinType),
-		H(crypto.AddressTypeEd25519Account),
-		H(index),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	ed25519PubKey, err := ed25519.PublicKeyFromBytes(ext.RawPublicKey())
-	if err != nil {
-		return nil, err
-	}
-
-	addr := ed25519PubKey.AccountAddress().String()
-	data := AddressInfo{
-		Address:   addr,
-		Label:     label,
-		PublicKey: ed25519PubKey.String(),
-		Path:      addresspath.NewPath(ext.Path()...).String(),
-	}
-	v.Addresses[addr] = data
-	v.Purposes.PurposeEd25519.NextAccountIndex++
-
-	return &data, nil
 }
 
 func (v *Vault) NewValidatorAddress(label string) (*AddressInfo, error) {
@@ -539,76 +467,91 @@ func (v *Vault) NewValidatorAddress(label string) (*AddressInfo, error) {
 	}
 
 	addr := blsPubKey.ValidatorAddress().String()
-	data := AddressInfo{
+	info := AddressInfo{
 		Address:   addr,
 		Label:     label,
 		PublicKey: blsPubKey.String(),
 		Path:      addresspath.NewPath(ext.Path()...).String(),
 	}
-	v.Addresses[addr] = data
+	v.Addresses[addr] = info
 	v.Purposes.PurposeBLS.NextValidatorIndex++
 
-	return &data, nil
+	return &info, nil
 }
 
-// TODO change structure of AddressInfo to more informatively object
+func (v *Vault) NewBLSAccountAddress(label string) (*AddressInfo, error) {
+	ext, err := blshdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
+	if err != nil {
+		return nil, err
+	}
+	index := v.Purposes.PurposeBLS.NextAccountIndex
+	ext, err = ext.DerivePath([]uint32{index})
+	if err != nil {
+		return nil, err
+	}
+
+	blsPubKey, err := bls.PublicKeyFromBytes(ext.RawPublicKey())
+	if err != nil {
+		return nil, err
+	}
+
+	addr := blsPubKey.AccountAddress().String()
+	info := AddressInfo{
+		Address:   addr,
+		Label:     label,
+		PublicKey: blsPubKey.String(),
+		Path:      addresspath.NewPath(ext.Path()...).String(),
+	}
+	v.Addresses[addr] = info
+	v.Purposes.PurposeBLS.NextAccountIndex++
+
+	return &info, nil
+}
+
+func (v *Vault) NewEd25519AccountAddress(label, password string) (*AddressInfo, error) {
+	seed, err := v.MnemonicSeed(password)
+	if err != nil {
+		return nil, err
+	}
+
+	masterKey, err := ed25519hdkeychain.NewMaster(seed)
+	if err != nil {
+		return nil, err
+	}
+
+	index := v.Purposes.PurposeBIP44.NextEd25519Index
+	ext, err := masterKey.DerivePath([]uint32{
+		H(PurposeBIP44),
+		H(v.CoinType),
+		H(crypto.AddressTypeEd25519Account),
+		H(index),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	ed25519PubKey, err := ed25519.PublicKeyFromBytes(ext.RawPublicKey())
+	if err != nil {
+		return nil, err
+	}
+
+	addr := ed25519PubKey.AccountAddress().String()
+	info := AddressInfo{
+		Address:   addr,
+		Label:     label,
+		PublicKey: ed25519PubKey.String(),
+		Path:      addresspath.NewPath(ext.Path()...).String(),
+	}
+	v.Addresses[addr] = info
+	v.Purposes.PurposeBIP44.NextEd25519Index++
+
+	return &info, nil
+}
 
 // AddressInfo like it can return bls.PublicKey instead of string.
 func (v *Vault) AddressInfo(addr string) *AddressInfo {
 	info, ok := v.Addresses[addr]
 	if !ok {
-		return nil
-	}
-
-	path, err := addresspath.FromString(info.Path)
-	if err != nil {
-		return nil
-	}
-
-	// TODO it would be better to return error in future
-	if path.CoinType() != H(v.CoinType) {
-		return nil
-	}
-
-	switch path.Purpose() {
-	case H(PurposeBLS12381):
-		addr, err := crypto.AddressFromString(info.Address)
-		if err != nil {
-			return nil
-		}
-
-		var xPub string
-		if addr.IsAccountAddress() {
-			xPub = v.Purposes.PurposeBLS.XPubAccount
-		} else if addr.IsValidatorAddress() {
-			xPub = v.Purposes.PurposeBLS.XPubValidator
-		}
-
-		ext, err := blshdkeychain.NewKeyFromString(xPub)
-		if err != nil {
-			return nil
-		}
-
-		p, err := addresspath.FromString(info.Path)
-		if err != nil {
-			return nil
-		}
-
-		extendedKey, err := ext.Derive(p.AddressIndex())
-		if err != nil {
-			return nil
-		}
-
-		blsPubKey, err := bls.PublicKeyFromBytes(extendedKey.RawPublicKey())
-		if err != nil {
-			return nil
-		}
-
-		info.PublicKey = blsPubKey.String()
-	case H(PurposeBIP44):
-		return &info
-	case H(PurposeImportPrivateKey):
-	default:
 		return nil
 	}
 
@@ -620,9 +563,6 @@ func (v *Vault) Contains(addr string) bool {
 }
 
 func (v *Vault) Mnemonic(password string) (string, error) {
-	if v.IsNeutered() {
-		return "", ErrNeutered
-	}
 	keyStore, err := v.decryptKeyStore(password)
 	if err != nil {
 		return "", err
@@ -631,7 +571,21 @@ func (v *Vault) Mnemonic(password string) (string, error) {
 	return keyStore.MasterNode.Mnemonic, nil
 }
 
+func (v *Vault) MnemonicSeed(password string) ([]byte, error) {
+	mnemonic, err := v.Mnemonic(password)
+	if err != nil {
+		return nil, err
+	}
+	seed := bip39.NewSeed(mnemonic, "")
+
+	return seed, nil
+}
+
 func (v *Vault) decryptKeyStore(password string) (*keyStore, error) {
+	if v.IsNeutered() {
+		return nil, ErrNeutered
+	}
+
 	keyStoreData, err := v.Encrypter.Decrypt(v.KeyStore, password)
 	if err != nil {
 		return nil, err
@@ -640,18 +594,7 @@ func (v *Vault) decryptKeyStore(password string) (*keyStore, error) {
 	keyStore := new(keyStore)
 	err = json.Unmarshal([]byte(keyStoreData), keyStore)
 	if err != nil {
-		// _oldKeyStore is temporary struct which supports wallet structure
-		// of old users that still didn't update their wallets. it automatically will update to new structure.
-		type _oldKeyStore struct {
-			MasterNode   masterNode        `json:"master_node"`   // HD Root Tree (Master node)
-			ImportedKeys map[string]string `json:"imported_keys"` // Imported private keys
-		}
-
-		oldKeyStore := new(_oldKeyStore)
-		if err := json.Unmarshal([]byte(keyStoreData), oldKeyStore); err != nil {
-			return nil, err
-		}
-		keyStore.MasterNode = oldKeyStore.MasterNode
+		return nil, err
 	}
 
 	return keyStore, nil
@@ -672,12 +615,8 @@ func (v *Vault) encryptKeyStore(keyStore *keyStore, password string) error {
 	return nil
 }
 
-func bls12381PrivateKey(ks *keyStore, path []uint32) (*bls.PrivateKey, error) {
-	seed, err := bip39.NewSeedWithErrorChecking(ks.MasterNode.Mnemonic, "")
-	if err != nil {
-		return nil, err
-	}
-	masterKey, err := blshdkeychain.NewMaster(seed, false)
+func (*Vault) deriveBLSPrivateKey(mnemonicSeed []byte, path []uint32) (*bls.PrivateKey, error) {
+	masterKey, err := blshdkeychain.NewMaster(mnemonicSeed, false)
 	if err != nil {
 		return nil, err
 	}
@@ -693,12 +632,8 @@ func bls12381PrivateKey(ks *keyStore, path []uint32) (*bls.PrivateKey, error) {
 	return bls.PrivateKeyFromBytes(prvBytes)
 }
 
-func bip44PrivateKey(ks *keyStore, path []uint32, password string) (*ed25519.PrivateKey, error) {
-	seed, err := bip39.NewSeedWithErrorChecking(ks.MasterNode.Mnemonic, password)
-	if err != nil {
-		return nil, err
-	}
-	masterKey, err := ed25519hdkeychain.NewMaster(seed)
+func (*Vault) deriveEd25519PrivateKey(mnemonicSeed []byte, path []uint32) (*ed25519.PrivateKey, error) {
+	masterKey, err := ed25519hdkeychain.NewMaster(mnemonicSeed)
 	if err != nil {
 		return nil, err
 	}
