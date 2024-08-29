@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
@@ -136,14 +135,10 @@ func TestIndexingPublicKeys(t *testing.T) {
 		blk, _ := cBlk.ToBlock()
 		for _, trx := range blk.Transactions() {
 			addr := trx.Payload().Signer()
-			_, err := td.store.PublicKey(addr)
+			pub, err := td.store.PublicKey(addr)
 			assert.NoError(t, err)
 
-			// if addr.IsAccountAddress() {
-			// 	assert.Equal(t, addr, pubKey.AccountAddress())
-			// } else if addr.IsValidatorAddress() {
-			// 	assert.Equal(t, addr, pubKey.ValidatorAddress())
-			// }
+			assert.True(t, trx.PublicKey().EqualsTo(pub))
 		}
 	})
 
@@ -158,71 +153,82 @@ func TestIndexingPublicKeys(t *testing.T) {
 func TestStrippedPublicKey(t *testing.T) {
 	td := setup(t, nil)
 
-	// Find a public key that we have already indexed in the database.
-	cBlkOne, _ := td.store.Block(1)
-	blkOne, _ := cBlkOne.ToBlock()
-	trx0PubKey := blkOne.Transactions()[0].PublicKey()
-	assert.NotNil(t, trx0PubKey)
-	knownPubKey := trx0PubKey.(*bls.PublicKey)
+	lastHeight := td.store.LastCertificate().Height()
+	_, blsPrv := td.RandBLSKeyPair()
+	committedTrx1 := td.GenerateTestTransferTx(
+		testsuite.TransactionWithBLSSigner(blsPrv),
+	)
+	_, ed25519Prv := td.RandEd25519KeyPair()
+	committedTrx2 := td.GenerateTestTransferTx(
+		testsuite.TransactionWithEd25519Signer(ed25519Prv),
+	)
+	blk0, cert0 := td.GenerateTestBlock(lastHeight+1,
+		testsuite.BlockWithTransactions([]*tx.Tx{committedTrx1, committedTrx2}))
+	td.store.SaveBlock(blk0, cert0)
+	err := td.store.writeBatch()
+	require.NoError(t, err)
 
-	lastCert := td.store.LastCertificate()
-	lastHeight := lastCert.Height()
-	randPubKey, _ := td.RandBLSKeyPair()
+	// We have some known and index public key, run tests...
+	trx1 := td.GenerateTestTransferTx(
+		testsuite.TransactionWithBLSSigner(blsPrv),
+	)
+	trx2 := td.GenerateTestTransferTx(
+		testsuite.TransactionWithEd25519Signer(ed25519Prv),
+	)
+	trx3 := td.GenerateTestTransferTx(
+		testsuite.TransactionWithBLSSigner(blsPrv),
+	)
+	trx4 := td.GenerateTestTransferTx(
+		testsuite.TransactionWithEd25519Signer(ed25519Prv),
+	)
+	trx5 := td.GenerateTestTransferTx()
 
-	trx0 := tx.NewTransferTx(lastHeight, knownPubKey.AccountAddress(), td.RandAccAddress(), 1, 1)
-	trx1 := tx.NewTransferTx(lastHeight, randPubKey.AccountAddress(), td.RandAccAddress(), 1, 1)
-	trx2 := tx.NewTransferTx(lastHeight, randPubKey.AccountAddress(), td.RandAccAddress(), 1, 1)
-
-	trx0.StripPublicKey()
-	trx1.SetPublicKey(randPubKey)
-	trx2.StripPublicKey()
+	trx3.StripPublicKey()
+	trx4.StripPublicKey()
+	trx5.StripPublicKey()
 
 	tests := []struct {
 		trx    *tx.Tx
 		failed bool
 	}{
-		{trx0, false}, // indexed public key and stripped
-		{trx1, false}, // not stripped
-		{trx2, true},  // unknown public key and stripped
+		{trx1, false}, // indexed public key and not stripped
+		{trx2, false}, // indexed public key and not stripped
+		{trx3, false}, // indexed public key and stripped
+		{trx4, false}, // indexed public key and stripped
+		{trx5, true},  // unknown public key and stripped
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		trxs := block.Txs{test.trx}
-		blk, _ := td.GenerateTestBlock(td.RandHeight(), testsuite.BlockWithTransactions(trxs))
+		blockHeight := td.store.LastCertificate().Height()
+		blk, cert := td.GenerateTestBlock(blockHeight+1, testsuite.BlockWithTransactions(trxs))
+		td.store.SaveBlock(blk, cert)
+		err := td.store.writeBatch()
+		require.NoError(t, err)
 
-		trxData, _ := test.trx.Bytes()
-		blkData, _ := blk.Bytes()
+		cBlk, err := td.store.Block(blockHeight + 1)
+		require.NoError(t, err)
 
-		cTrx := CommittedTx{
-			store:  td.store,
-			TxID:   test.trx.ID(),
-			Height: lastHeight + 1,
-			Data:   trxData,
-		}
-		cBlk := CommittedBlock{
-			store:     td.store,
-			BlockHash: blk.Hash(),
-			Height:    lastHeight + 1,
-			Data:      blkData,
-		}
+		cTrx, err := td.store.Transaction(test.trx.ID())
+		require.NoError(t, err)
 
 		//
 		if test.failed {
 			_, err := cBlk.ToBlock()
 			assert.ErrorIs(t, err, PublicKeyNotFoundError{
 				Address: test.trx.Payload().Signer(),
-			})
+			}, "test %d failed, expected error", i+1)
 
 			_, err = cTrx.ToTx()
 			assert.ErrorIs(t, err, PublicKeyNotFoundError{
 				Address: test.trx.Payload().Signer(),
-			})
+			}, "test %d failed, expected error", i+1)
 		} else {
 			_, err := cBlk.ToBlock()
-			assert.NoError(t, err)
+			assert.NoError(t, err, "test %d failed, not expected error", i+1)
 
 			_, err = cTrx.ToTx()
-			assert.NoError(t, err)
+			assert.NoError(t, err, "test %d failed, not expected error", i+1)
 		}
 	}
 }
@@ -379,5 +385,20 @@ func TestCancelPrune(t *testing.T) {
 func TestRecentTransaction(t *testing.T) {
 	td := setup(t, nil)
 
+	lastHeight := td.store.LastCertificate().Height()
+	oldTrx := td.GenerateTestTransferTx()
+	blkOld, certOld := td.GenerateTestBlock(lastHeight+1,
+		testsuite.BlockWithTransactions([]*tx.Tx{oldTrx}))
+	td.store.SaveBlock(blkOld, certOld)
+	err := td.store.writeBatch()
+	require.NoError(t, err)
+	assert.True(t, td.store.RecentTransaction(oldTrx.ID()))
+
+	blk, cert := td.GenerateTestBlock(lastHeight + td.store.txStore.txCacheWindow + 2)
+	td.store.SaveBlock(blk, cert)
+	err = td.store.writeBatch()
+	require.NoError(t, err)
+
+	assert.False(t, td.store.RecentTransaction(oldTrx.ID()))
 	assert.False(t, td.store.RecentTransaction(td.RandHash()))
 }

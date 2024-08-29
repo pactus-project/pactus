@@ -504,6 +504,22 @@ type TransactionMaker struct {
 	Signer   crypto.PrivateKey
 }
 
+func (tm *TransactionMaker) SignerAccountAddress() crypto.Address {
+	blsPub, ok := tm.Signer.PublicKey().(*bls.PublicKey)
+	if ok {
+		return blsPub.AccountAddress()
+	}
+	ed25519Pub := tm.Signer.PublicKey().(*ed25519.PublicKey)
+
+	return ed25519Pub.AccountAddress()
+}
+
+func (tm *TransactionMaker) SignerValidatorAddress() crypto.Address {
+	blsPub := tm.Signer.PublicKey().(*bls.PublicKey)
+
+	return blsPub.ValidatorAddress()
+}
+
 // NewTransactionMaker creates a new TransactionMaker instance with default values.
 func (ts *TestSuite) NewTransactionMaker() *TransactionMaker {
 	return &TransactionMaker{
@@ -568,8 +584,8 @@ func (ts *TestSuite) GenerateTestTransferTx(options ...func(tm *TransactionMaker
 		}
 	}
 
-	pub := tm.Signer.PublicKey()
-	trx := tx.NewTransferTx(tm.LockTime, pub.AccountAddress(), ts.RandAccAddress(), tm.Amount, tm.Fee)
+	sender := tm.SignerAccountAddress()
+	trx := tx.NewTransferTx(tm.LockTime, sender, ts.RandAccAddress(), tm.Amount, tm.Fee)
 	ts.HelperSignTransaction(tm.Signer, trx)
 
 	return trx
@@ -594,8 +610,8 @@ func (ts *TestSuite) GenerateTestBondTx(options ...func(tm *TransactionMaker)) *
 		}
 	}
 
-	pub := tm.Signer.PublicKey()
-	trx := tx.NewBondTx(tm.LockTime, pub.AccountAddress(), ts.RandValAddress(), nil, tm.Amount, tm.Fee)
+	sender := tm.SignerAccountAddress()
+	trx := tx.NewBondTx(tm.LockTime, sender, ts.RandValAddress(), nil, tm.Amount, tm.Fee)
 	ts.HelperSignTransaction(tm.Signer, trx)
 
 	return trx
@@ -615,8 +631,8 @@ func (ts *TestSuite) GenerateTestSortitionTx(options ...func(tm *TransactionMake
 	}
 
 	proof := ts.RandProof()
-	pub := tm.Signer.PublicKey().(*bls.PublicKey)
-	trx := tx.NewSortitionTx(tm.LockTime, pub.ValidatorAddress(), proof)
+	sender := tm.SignerValidatorAddress()
+	trx := tx.NewSortitionTx(tm.LockTime, sender, proof)
 	ts.HelperSignTransaction(tm.Signer, trx)
 
 	return trx
@@ -635,8 +651,8 @@ func (ts *TestSuite) GenerateTestUnbondTx(options ...func(tm *TransactionMaker))
 		tm.Signer = prv
 	}
 
-	pub := tm.Signer.PublicKey().(*bls.PublicKey)
-	trx := tx.NewUnbondTx(tm.LockTime, pub.ValidatorAddress())
+	sender := tm.SignerValidatorAddress()
+	trx := tx.NewUnbondTx(tm.LockTime, sender)
 	ts.HelperSignTransaction(tm.Signer, trx)
 
 	return trx
@@ -655,8 +671,8 @@ func (ts *TestSuite) GenerateTestWithdrawTx(options ...func(tm *TransactionMaker
 		tm.Signer = prv
 	}
 
-	pub := tm.Signer.PublicKey().(*bls.PublicKey)
-	trx := tx.NewWithdrawTx(tm.LockTime, pub.ValidatorAddress(), ts.RandAccAddress(), tm.Amount, tm.Fee)
+	sender := tm.SignerValidatorAddress()
+	trx := tx.NewWithdrawTx(tm.LockTime, sender, ts.RandAccAddress(), tm.Amount, tm.Fee)
 	ts.HelperSignTransaction(tm.Signer, trx)
 
 	return trx
