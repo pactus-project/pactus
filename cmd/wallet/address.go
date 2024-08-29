@@ -204,7 +204,7 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		password := getPassword(wlt, *passOpt)
-		err = wlt.ImportPrivateKey(password, prv)
+		err = wlt.ImportBLSPrivateKey(password, prv)
 		cmd.FatalErrorCheck(err)
 
 		err = wlt.Save()

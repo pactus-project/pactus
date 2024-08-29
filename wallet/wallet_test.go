@@ -79,7 +79,7 @@ func TestOpenWallet(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
 
-	t.Run("ValidateCRC the wallet", func(t *testing.T) {
+	t.Run("Save the wallet", func(t *testing.T) {
 		assert.NoError(t, td.wallet.Save())
 	})
 
@@ -97,9 +97,9 @@ func TestOpenWallet(t *testing.T) {
 		assert.NoError(t, util.WriteFile(td.wallet.Path(), []byte("{}")))
 
 		_, err := wallet.Open(td.wallet.Path(), true)
-		assert.ErrorIs(t, err, wallet.CRCNotMatchError{
-			Expected: 634125391,
-			Got:      0,
+		assert.ErrorIs(t, err, wallet.UnsupportedVersionError{
+			WalletVersion:    0,
+			SupportedVersion: 2,
 		})
 	})
 
@@ -118,7 +118,7 @@ func TestRecoverWallet(t *testing.T) {
 	mnemonic, _ := td.wallet.Mnemonic(td.password)
 	password := ""
 	t.Run("Wallet exists", func(t *testing.T) {
-		// ValidateCRC the test wallet first then
+		// Save the test wallet first then
 		// try to recover a wallet at the same place
 		assert.NoError(t, td.wallet.Save())
 
@@ -164,7 +164,7 @@ func TestImportPrivateKey(t *testing.T) {
 	defer td.Close()
 
 	_, prv := td.RandBLSKeyPair()
-	assert.NoError(t, td.wallet.ImportPrivateKey(td.password, prv))
+	assert.NoError(t, td.wallet.ImportBLSPrivateKey(td.password, prv))
 
 	pub := prv.PublicKeyNative()
 	accAddr := pub.AccountAddress().String()
@@ -190,7 +190,7 @@ func TestSignMessage(t *testing.T) {
 
 	require.NoError(t, err)
 
-	err = td.wallet.ImportPrivateKey(td.password, prv)
+	err = td.wallet.ImportBLSPrivateKey(td.password, prv)
 	assert.NoError(t, err)
 
 	sig, err := td.wallet.SignMessage(td.password, td.wallet.AllAccountAddresses()[0].Address, msg)
