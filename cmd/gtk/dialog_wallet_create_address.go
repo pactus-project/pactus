@@ -16,19 +16,6 @@ func createAddress(ww *widgetWallet) {
 	builder, err := gtk.BuilderNewFromString(string(uiWalletCreateAddressDialog))
 	fatalErrorCheck(err)
 
-	passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
-		if *passwordOpt != "" {
-			return *passwordOpt, true
-		}
-
-		return getWalletPassword(wlt)
-	}
-
-	password, ok := passwordFetcher(ww.model.wallet)
-	if !ok {
-		return
-	}
-
 	dlg := getDialogObj(builder, "id_dialog_wallet_create_address")
 	addressLabel := getEntryObj(builder, "id_entry_account_label")
 
@@ -48,6 +35,19 @@ func createAddress(ww *widgetWallet) {
 
 		switch walletAddressType {
 		case wallet.AddressTypeEd25519Account:
+			passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
+				if *passwordOpt != "" {
+					return *passwordOpt, true
+				}
+
+				return getWalletPassword(wlt)
+			}
+
+			password, ok := passwordFetcher(ww.model.wallet)
+			if !ok {
+				return
+			}
+
 			_, err = ww.model.wallet.NewEd25519AccountAddress(walletAddressLabel, password)
 		case wallet.AddressTypeBLSAccount:
 			_, err = ww.model.wallet.NewBLSAccountAddress(walletAddressLabel)
