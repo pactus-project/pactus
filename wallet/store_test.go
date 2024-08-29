@@ -28,3 +28,11 @@ func TestUpgradeWallet(t *testing.T) {
 		assert.NotEmpty(t, info.PublicKey)
 	}
 }
+
+func TestUnsupportedWallet(t *testing.T) {
+	_, err := Open("./testdata/unsupported_wallet", true)
+	require.ErrorIs(t, err, UnsupportedVersionError{
+		WalletVersion:    3,
+		SupportedVersion: VersionLatest,
+	})
+}
