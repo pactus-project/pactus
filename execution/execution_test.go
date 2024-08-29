@@ -16,7 +16,7 @@ func TestTransferLockTime(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	sb := sandbox.MockingSandbox(ts)
-	rndPubKey, rndPrvKey := ts.RandBLSKeyPair()
+	rndPubKey, rndPrvKey := ts.RandEd25519KeyPair()
 	rndAccAddr := rndPubKey.AccountAddress()
 	rndAcc := sb.MakeNewAccount(rndAccAddr)
 	rndAcc.AddToBalance(1000 * 1e9)
@@ -247,7 +247,7 @@ func TestExecute(t *testing.T) {
 		err := Execute(trx, sb)
 		assert.NoError(t, err)
 
-		assert.True(t, sb.AnyRecentTransaction(trx.ID()))
+		assert.True(t, sb.RecentTransaction(trx.ID()))
 	})
 }
 
@@ -296,7 +296,7 @@ func TestCheck(t *testing.T) {
 		err := CheckAndExecute(trx, sb, true)
 		assert.NoError(t, err)
 
-		assert.True(t, sb.AnyRecentTransaction(trx.ID()))
+		assert.True(t, sb.RecentTransaction(trx.ID()))
 	})
 }
 
@@ -304,7 +304,7 @@ func TestReplay(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	sb := sandbox.MockingSandbox(ts)
-	rndPubKey, rndPrvKey := ts.RandBLSKeyPair()
+	rndPubKey, rndPrvKey := ts.RandEd25519KeyPair()
 	rndAccAddr := rndPubKey.AccountAddress()
 	rndAcc := sb.MakeNewAccount(rndAccAddr)
 	rndAcc.AddToBalance(1e9)

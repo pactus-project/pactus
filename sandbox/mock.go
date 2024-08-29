@@ -76,12 +76,12 @@ func (m *MockSandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	m.TestStore.UpdateAccount(addr, acc)
 }
 
-func (m *MockSandbox) AnyRecentTransaction(txID tx.ID) bool {
+func (m *MockSandbox) RecentTransaction(txID tx.ID) bool {
 	if m.TestCommittedTrxs[txID] != nil {
 		return true
 	}
 
-	return m.TestStore.AnyRecentTransaction(txID)
+	return m.TestStore.RecentTransaction(txID)
 }
 
 func (m *MockSandbox) Validator(addr crypto.Address) *validator.Validator {

@@ -11,5 +11,6 @@ type PublicKey interface {
 	Decode(io.Reader) error
 	Verify(msg []byte, sig Signature) error
 	VerifyAddress(addr Address) error
+	AccountAddress() Address
 	EqualsTo(right PublicKey) bool
 }

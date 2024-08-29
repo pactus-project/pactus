@@ -18,7 +18,7 @@ type Sandbox interface {
 	UpdateAccount(crypto.Address, *account.Account)
 
 	CommitTransaction(trx *tx.Tx)
-	AnyRecentTransaction(txID tx.ID) bool
+	RecentTransaction(txID tx.ID) bool
 	IsBanned(crypto.Address) bool
 
 	Validator(crypto.Address) *validator.Validator

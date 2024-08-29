@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/store"
@@ -29,7 +30,7 @@ type testData struct {
 
 	state        *state
 	genValKeys   []*bls.ValidatorKey
-	genAccKey    *bls.PrivateKey
+	genAccKey    *ed25519.PrivateKey
 	commonTxPool *txpool.MockTxPool
 }
 
@@ -62,7 +63,7 @@ func setup(t *testing.T) *testData {
 	genAcc1.AddToBalance(21 * 1e15) // 21,000,000.000,000,000
 	genAcc2 := account.NewAccount(1)
 	genAcc2.AddToBalance(21 * 1e15) // 21,000,000.000,000,000
-	genAccPubKey, genAccPrvKey := ts.RandBLSKeyPair()
+	genAccPubKey, genAccPrvKey := ts.RandEd25519KeyPair()
 
 	genAccs := map[crypto.Address]*account.Account{
 		crypto.TreasuryAddress:        genAcc1,
