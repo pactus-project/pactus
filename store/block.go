@@ -153,9 +153,6 @@ func (bs *blockStore) publicKey(addr crypto.Address) (crypto.PublicKey, error) {
 	}
 	var pubKey crypto.PublicKey
 	switch addr.Type() {
-	case crypto.AddressTypeTreasury:
-		panic("unreachable")
-
 	case crypto.AddressTypeValidator,
 		crypto.AddressTypeBLSAccount:
 		pubKey, err = bls.PublicKeyFromBytes(data)
@@ -167,6 +164,9 @@ func (bs *blockStore) publicKey(addr crypto.Address) (crypto.PublicKey, error) {
 		if err != nil {
 			return nil, err
 		}
+
+	case crypto.AddressTypeTreasury:
+		panic("unreachable")
 
 	default:
 		return nil, PublicKeyNotFoundError{Address: addr}
