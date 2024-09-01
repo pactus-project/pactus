@@ -26,6 +26,8 @@ func createAddress(ww *widgetWallet) {
 
 	addressTypeCombo.SetActive(0)
 
+	getButtonObj(builder, "id_button_ok").SetImage(OkIcon())
+
 	onOk := func() {
 		walletAddressLabel, err := addressLabel.GetText()
 		fatalErrorCheck(err)
@@ -35,15 +37,7 @@ func createAddress(ww *widgetWallet) {
 
 		switch walletAddressType {
 		case wallet.AddressTypeEd25519Account:
-			passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
-				if *passwordOpt != "" {
-					return *passwordOpt, true
-				}
-
-				return getWalletPassword(wlt)
-			}
-
-			password, ok := passwordFetcher(ww.model.wallet)
+			password, ok := getWalletPassword(ww.model.wallet)
 			if !ok {
 				return
 			}
