@@ -545,12 +545,12 @@ pub struct GetConsensusInfoRequest {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetConsensusInfoResponse {
-    /// List of consensus instances.
-    #[prost(message, repeated, tag="1")]
-    pub instances: ::prost::alloc::vec::Vec<ConsensusInfo>,
     /// The proposal of the consensus info.
-    #[prost(message, optional, tag="6")]
+    #[prost(message, optional, tag="1")]
     pub proposal: ::core::option::Option<Proposal>,
+    /// List of consensus instances.
+    #[prost(message, repeated, tag="2")]
+    pub instances: ::prost::alloc::vec::Vec<ConsensusInfo>,
 }
 /// Request message to retrieve transactions in the transaction pool.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -1062,6 +1062,9 @@ pub struct GetNewAddressRequest {
     /// A label for the new address.
     #[prost(string, tag="3")]
     pub label: ::prost::alloc::string::String,
+    /// Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+    #[prost(string, tag="4")]
+    pub password: ::prost::alloc::string::String,
 }
 /// Response message containing the newly generated address.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -1245,6 +1248,9 @@ pub enum AddressType {
     Validator = 1,
     /// Account address type with BLS signature scheme.
     BlsAccount = 2,
+    /// Account address type with Ed25519 signature scheme.
+    /// Note: Generating a new Ed25519 address requires the wallet password.
+    Ed25519Account = 3,
 }
 impl AddressType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1256,6 +1262,7 @@ impl AddressType {
             AddressType::Treasury => "ADDRESS_TYPE_TREASURY",
             AddressType::Validator => "ADDRESS_TYPE_VALIDATOR",
             AddressType::BlsAccount => "ADDRESS_TYPE_BLS_ACCOUNT",
+            AddressType::Ed25519Account => "ADDRESS_TYPE_ED25519_ACCOUNT",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1264,6 +1271,7 @@ impl AddressType {
             "ADDRESS_TYPE_TREASURY" => Some(Self::Treasury),
             "ADDRESS_TYPE_VALIDATOR" => Some(Self::Validator),
             "ADDRESS_TYPE_BLS_ACCOUNT" => Some(Self::BlsAccount),
+            "ADDRESS_TYPE_ED25519_ACCOUNT" => Some(Self::Ed25519Account),
             _ => None,
         }
     }

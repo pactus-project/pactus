@@ -13,11 +13,13 @@ class AddressType extends $pb.ProtobufEnum {
   static const AddressType ADDRESS_TYPE_TREASURY = AddressType._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ADDRESS_TYPE_TREASURY');
   static const AddressType ADDRESS_TYPE_VALIDATOR = AddressType._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ADDRESS_TYPE_VALIDATOR');
   static const AddressType ADDRESS_TYPE_BLS_ACCOUNT = AddressType._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ADDRESS_TYPE_BLS_ACCOUNT');
+  static const AddressType ADDRESS_TYPE_ED25519_ACCOUNT = AddressType._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ADDRESS_TYPE_ED25519_ACCOUNT');
 
   static const $core.List<AddressType> values = <AddressType> [
     ADDRESS_TYPE_TREASURY,
     ADDRESS_TYPE_VALIDATOR,
     ADDRESS_TYPE_BLS_ACCOUNT,
+    ADDRESS_TYPE_ED25519_ACCOUNT,
   ];
 
   static final $core.Map<$core.int, AddressType> _byValue = $pb.ProtobufEnum.initByValue(values);

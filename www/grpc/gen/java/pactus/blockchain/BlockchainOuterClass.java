@@ -13053,54 +13053,10 @@ public final class BlockchainOuterClass {
 
     /**
      * <pre>
-     * List of consensus instances.
-     * </pre>
-     *
-     * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-     */
-    java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> 
-        getInstancesList();
-    /**
-     * <pre>
-     * List of consensus instances.
-     * </pre>
-     *
-     * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-     */
-    pactus.blockchain.BlockchainOuterClass.ConsensusInfo getInstances(int index);
-    /**
-     * <pre>
-     * List of consensus instances.
-     * </pre>
-     *
-     * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-     */
-    int getInstancesCount();
-    /**
-     * <pre>
-     * List of consensus instances.
-     * </pre>
-     *
-     * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-     */
-    java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> 
-        getInstancesOrBuilderList();
-    /**
-     * <pre>
-     * List of consensus instances.
-     * </pre>
-     *
-     * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-     */
-    pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder getInstancesOrBuilder(
-        int index);
-
-    /**
-     * <pre>
      * The proposal of the consensus info.
      * </pre>
      *
-     * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+     * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
      * @return Whether the proposal field is set.
      */
     boolean hasProposal();
@@ -13109,7 +13065,7 @@ public final class BlockchainOuterClass {
      * The proposal of the consensus info.
      * </pre>
      *
-     * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+     * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
      * @return The proposal.
      */
     pactus.blockchain.BlockchainOuterClass.Proposal getProposal();
@@ -13118,9 +13074,53 @@ public final class BlockchainOuterClass {
      * The proposal of the consensus info.
      * </pre>
      *
-     * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+     * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
      */
     pactus.blockchain.BlockchainOuterClass.ProposalOrBuilder getProposalOrBuilder();
+
+    /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
+     * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+     */
+    java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> 
+        getInstancesList();
+    /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
+     * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+     */
+    pactus.blockchain.BlockchainOuterClass.ConsensusInfo getInstances(int index);
+    /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
+     * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+     */
+    int getInstancesCount();
+    /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
+     * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+     */
+    java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> 
+        getInstancesOrBuilderList();
+    /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
+     * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+     */
+    pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder getInstancesOrBuilder(
+        int index);
   }
   /**
    * <pre>
@@ -13167,74 +13167,14 @@ public final class BlockchainOuterClass {
               pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse.class, pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse.Builder.class);
     }
 
-    public static final int INSTANCES_FIELD_NUMBER = 1;
-    private java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> instances_;
-    /**
-     * <pre>
-     * List of consensus instances.
-     * </pre>
-     *
-     * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-     */
-    @java.lang.Override
-    public java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> getInstancesList() {
-      return instances_;
-    }
-    /**
-     * <pre>
-     * List of consensus instances.
-     * </pre>
-     *
-     * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-     */
-    @java.lang.Override
-    public java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> 
-        getInstancesOrBuilderList() {
-      return instances_;
-    }
-    /**
-     * <pre>
-     * List of consensus instances.
-     * </pre>
-     *
-     * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-     */
-    @java.lang.Override
-    public int getInstancesCount() {
-      return instances_.size();
-    }
-    /**
-     * <pre>
-     * List of consensus instances.
-     * </pre>
-     *
-     * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-     */
-    @java.lang.Override
-    public pactus.blockchain.BlockchainOuterClass.ConsensusInfo getInstances(int index) {
-      return instances_.get(index);
-    }
-    /**
-     * <pre>
-     * List of consensus instances.
-     * </pre>
-     *
-     * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-     */
-    @java.lang.Override
-    public pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder getInstancesOrBuilder(
-        int index) {
-      return instances_.get(index);
-    }
-
-    public static final int PROPOSAL_FIELD_NUMBER = 6;
+    public static final int PROPOSAL_FIELD_NUMBER = 1;
     private pactus.blockchain.BlockchainOuterClass.Proposal proposal_;
     /**
      * <pre>
      * The proposal of the consensus info.
      * </pre>
      *
-     * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+     * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
      * @return Whether the proposal field is set.
      */
     @java.lang.Override
@@ -13246,7 +13186,7 @@ public final class BlockchainOuterClass {
      * The proposal of the consensus info.
      * </pre>
      *
-     * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+     * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
      * @return The proposal.
      */
     @java.lang.Override
@@ -13258,11 +13198,71 @@ public final class BlockchainOuterClass {
      * The proposal of the consensus info.
      * </pre>
      *
-     * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+     * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
      */
     @java.lang.Override
     public pactus.blockchain.BlockchainOuterClass.ProposalOrBuilder getProposalOrBuilder() {
       return getProposal();
+    }
+
+    public static final int INSTANCES_FIELD_NUMBER = 2;
+    private java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> instances_;
+    /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
+     * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+     */
+    @java.lang.Override
+    public java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> getInstancesList() {
+      return instances_;
+    }
+    /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
+     * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> 
+        getInstancesOrBuilderList() {
+      return instances_;
+    }
+    /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
+     * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+     */
+    @java.lang.Override
+    public int getInstancesCount() {
+      return instances_.size();
+    }
+    /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
+     * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+     */
+    @java.lang.Override
+    public pactus.blockchain.BlockchainOuterClass.ConsensusInfo getInstances(int index) {
+      return instances_.get(index);
+    }
+    /**
+     * <pre>
+     * List of consensus instances.
+     * </pre>
+     *
+     * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+     */
+    @java.lang.Override
+    public pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder getInstancesOrBuilder(
+        int index) {
+      return instances_.get(index);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -13279,11 +13279,11 @@ public final class BlockchainOuterClass {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      for (int i = 0; i < instances_.size(); i++) {
-        output.writeMessage(1, instances_.get(i));
-      }
       if (proposal_ != null) {
-        output.writeMessage(6, getProposal());
+        output.writeMessage(1, getProposal());
+      }
+      for (int i = 0; i < instances_.size(); i++) {
+        output.writeMessage(2, instances_.get(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -13294,13 +13294,13 @@ public final class BlockchainOuterClass {
       if (size != -1) return size;
 
       size = 0;
-      for (int i = 0; i < instances_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(1, instances_.get(i));
-      }
       if (proposal_ != null) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(6, getProposal());
+          .computeMessageSize(1, getProposal());
+      }
+      for (int i = 0; i < instances_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, instances_.get(i));
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -13317,13 +13317,13 @@ public final class BlockchainOuterClass {
       }
       pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse other = (pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse) obj;
 
-      if (!getInstancesList()
-          .equals(other.getInstancesList())) return false;
       if (hasProposal() != other.hasProposal()) return false;
       if (hasProposal()) {
         if (!getProposal()
             .equals(other.getProposal())) return false;
       }
+      if (!getInstancesList()
+          .equals(other.getInstancesList())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -13335,13 +13335,13 @@ public final class BlockchainOuterClass {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      if (getInstancesCount() > 0) {
-        hash = (37 * hash) + INSTANCES_FIELD_NUMBER;
-        hash = (53 * hash) + getInstancesList().hashCode();
-      }
       if (hasProposal()) {
         hash = (37 * hash) + PROPOSAL_FIELD_NUMBER;
         hash = (53 * hash) + getProposal().hashCode();
+      }
+      if (getInstancesCount() > 0) {
+        hash = (37 * hash) + INSTANCES_FIELD_NUMBER;
+        hash = (53 * hash) + getInstancesList().hashCode();
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
@@ -13475,6 +13475,12 @@ public final class BlockchainOuterClass {
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        if (proposalBuilder_ == null) {
+          proposal_ = null;
+        } else {
+          proposal_ = null;
+          proposalBuilder_ = null;
+        }
         if (instancesBuilder_ == null) {
           instances_ = java.util.Collections.emptyList();
         } else {
@@ -13482,12 +13488,6 @@ public final class BlockchainOuterClass {
           instancesBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000001);
-        if (proposalBuilder_ == null) {
-          proposal_ = null;
-        } else {
-          proposal_ = null;
-          proposalBuilder_ = null;
-        }
         return this;
       }
 
@@ -13515,6 +13515,11 @@ public final class BlockchainOuterClass {
       public pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse buildPartial() {
         pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse result = new pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse(this);
         int from_bitField0_ = bitField0_;
+        if (proposalBuilder_ == null) {
+          result.proposal_ = proposal_;
+        } else {
+          result.proposal_ = proposalBuilder_.build();
+        }
         if (instancesBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             instances_ = java.util.Collections.unmodifiableList(instances_);
@@ -13523,11 +13528,6 @@ public final class BlockchainOuterClass {
           result.instances_ = instances_;
         } else {
           result.instances_ = instancesBuilder_.build();
-        }
-        if (proposalBuilder_ == null) {
-          result.proposal_ = proposal_;
-        } else {
-          result.proposal_ = proposalBuilder_.build();
         }
         onBuilt();
         return result;
@@ -13577,6 +13577,9 @@ public final class BlockchainOuterClass {
 
       public Builder mergeFrom(pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse other) {
         if (other == pactus.blockchain.BlockchainOuterClass.GetConsensusInfoResponse.getDefaultInstance()) return this;
+        if (other.hasProposal()) {
+          mergeProposal(other.getProposal());
+        }
         if (instancesBuilder_ == null) {
           if (!other.instances_.isEmpty()) {
             if (instances_.isEmpty()) {
@@ -13602,9 +13605,6 @@ public final class BlockchainOuterClass {
               instancesBuilder_.addAllMessages(other.instances_);
             }
           }
-        }
-        if (other.hasProposal()) {
-          mergeProposal(other.getProposal());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -13633,6 +13633,13 @@ public final class BlockchainOuterClass {
                 done = true;
                 break;
               case 10: {
+                input.readMessage(
+                    getProposalFieldBuilder().getBuilder(),
+                    extensionRegistry);
+
+                break;
+              } // case 10
+              case 18: {
                 pactus.blockchain.BlockchainOuterClass.ConsensusInfo m =
                     input.readMessage(
                         pactus.blockchain.BlockchainOuterClass.ConsensusInfo.parser(),
@@ -13644,14 +13651,7 @@ public final class BlockchainOuterClass {
                   instancesBuilder_.addMessage(m);
                 }
                 break;
-              } // case 10
-              case 50: {
-                input.readMessage(
-                    getProposalFieldBuilder().getBuilder(),
-                    extensionRegistry);
-
-                break;
-              } // case 50
+              } // case 18
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -13669,318 +13669,6 @@ public final class BlockchainOuterClass {
       }
       private int bitField0_;
 
-      private java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> instances_ =
-        java.util.Collections.emptyList();
-      private void ensureInstancesIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
-          instances_ = new java.util.ArrayList<pactus.blockchain.BlockchainOuterClass.ConsensusInfo>(instances_);
-          bitField0_ |= 0x00000001;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          pactus.blockchain.BlockchainOuterClass.ConsensusInfo, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder, pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> instancesBuilder_;
-
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> getInstancesList() {
-        if (instancesBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(instances_);
-        } else {
-          return instancesBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public int getInstancesCount() {
-        if (instancesBuilder_ == null) {
-          return instances_.size();
-        } else {
-          return instancesBuilder_.getCount();
-        }
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public pactus.blockchain.BlockchainOuterClass.ConsensusInfo getInstances(int index) {
-        if (instancesBuilder_ == null) {
-          return instances_.get(index);
-        } else {
-          return instancesBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public Builder setInstances(
-          int index, pactus.blockchain.BlockchainOuterClass.ConsensusInfo value) {
-        if (instancesBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureInstancesIsMutable();
-          instances_.set(index, value);
-          onChanged();
-        } else {
-          instancesBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public Builder setInstances(
-          int index, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder builderForValue) {
-        if (instancesBuilder_ == null) {
-          ensureInstancesIsMutable();
-          instances_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          instancesBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public Builder addInstances(pactus.blockchain.BlockchainOuterClass.ConsensusInfo value) {
-        if (instancesBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureInstancesIsMutable();
-          instances_.add(value);
-          onChanged();
-        } else {
-          instancesBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public Builder addInstances(
-          int index, pactus.blockchain.BlockchainOuterClass.ConsensusInfo value) {
-        if (instancesBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureInstancesIsMutable();
-          instances_.add(index, value);
-          onChanged();
-        } else {
-          instancesBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public Builder addInstances(
-          pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder builderForValue) {
-        if (instancesBuilder_ == null) {
-          ensureInstancesIsMutable();
-          instances_.add(builderForValue.build());
-          onChanged();
-        } else {
-          instancesBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public Builder addInstances(
-          int index, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder builderForValue) {
-        if (instancesBuilder_ == null) {
-          ensureInstancesIsMutable();
-          instances_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          instancesBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public Builder addAllInstances(
-          java.lang.Iterable<? extends pactus.blockchain.BlockchainOuterClass.ConsensusInfo> values) {
-        if (instancesBuilder_ == null) {
-          ensureInstancesIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, instances_);
-          onChanged();
-        } else {
-          instancesBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public Builder clearInstances() {
-        if (instancesBuilder_ == null) {
-          instances_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000001);
-          onChanged();
-        } else {
-          instancesBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public Builder removeInstances(int index) {
-        if (instancesBuilder_ == null) {
-          ensureInstancesIsMutable();
-          instances_.remove(index);
-          onChanged();
-        } else {
-          instancesBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder getInstancesBuilder(
-          int index) {
-        return getInstancesFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder getInstancesOrBuilder(
-          int index) {
-        if (instancesBuilder_ == null) {
-          return instances_.get(index);  } else {
-          return instancesBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> 
-           getInstancesOrBuilderList() {
-        if (instancesBuilder_ != null) {
-          return instancesBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(instances_);
-        }
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder addInstancesBuilder() {
-        return getInstancesFieldBuilder().addBuilder(
-            pactus.blockchain.BlockchainOuterClass.ConsensusInfo.getDefaultInstance());
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder addInstancesBuilder(
-          int index) {
-        return getInstancesFieldBuilder().addBuilder(
-            index, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.getDefaultInstance());
-      }
-      /**
-       * <pre>
-       * List of consensus instances.
-       * </pre>
-       *
-       * <code>repeated .pactus.ConsensusInfo instances = 1 [json_name = "instances"];</code>
-       */
-      public java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder> 
-           getInstancesBuilderList() {
-        return getInstancesFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          pactus.blockchain.BlockchainOuterClass.ConsensusInfo, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder, pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> 
-          getInstancesFieldBuilder() {
-        if (instancesBuilder_ == null) {
-          instancesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              pactus.blockchain.BlockchainOuterClass.ConsensusInfo, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder, pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder>(
-                  instances_,
-                  ((bitField0_ & 0x00000001) != 0),
-                  getParentForChildren(),
-                  isClean());
-          instances_ = null;
-        }
-        return instancesBuilder_;
-      }
-
       private pactus.blockchain.BlockchainOuterClass.Proposal proposal_;
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.blockchain.BlockchainOuterClass.Proposal, pactus.blockchain.BlockchainOuterClass.Proposal.Builder, pactus.blockchain.BlockchainOuterClass.ProposalOrBuilder> proposalBuilder_;
@@ -13989,7 +13677,7 @@ public final class BlockchainOuterClass {
        * The proposal of the consensus info.
        * </pre>
        *
-       * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+       * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
        * @return Whether the proposal field is set.
        */
       public boolean hasProposal() {
@@ -14000,7 +13688,7 @@ public final class BlockchainOuterClass {
        * The proposal of the consensus info.
        * </pre>
        *
-       * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+       * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
        * @return The proposal.
        */
       public pactus.blockchain.BlockchainOuterClass.Proposal getProposal() {
@@ -14015,7 +13703,7 @@ public final class BlockchainOuterClass {
        * The proposal of the consensus info.
        * </pre>
        *
-       * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+       * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
        */
       public Builder setProposal(pactus.blockchain.BlockchainOuterClass.Proposal value) {
         if (proposalBuilder_ == null) {
@@ -14035,7 +13723,7 @@ public final class BlockchainOuterClass {
        * The proposal of the consensus info.
        * </pre>
        *
-       * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+       * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
        */
       public Builder setProposal(
           pactus.blockchain.BlockchainOuterClass.Proposal.Builder builderForValue) {
@@ -14053,7 +13741,7 @@ public final class BlockchainOuterClass {
        * The proposal of the consensus info.
        * </pre>
        *
-       * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+       * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
        */
       public Builder mergeProposal(pactus.blockchain.BlockchainOuterClass.Proposal value) {
         if (proposalBuilder_ == null) {
@@ -14075,7 +13763,7 @@ public final class BlockchainOuterClass {
        * The proposal of the consensus info.
        * </pre>
        *
-       * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+       * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
        */
       public Builder clearProposal() {
         if (proposalBuilder_ == null) {
@@ -14093,7 +13781,7 @@ public final class BlockchainOuterClass {
        * The proposal of the consensus info.
        * </pre>
        *
-       * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+       * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.Proposal.Builder getProposalBuilder() {
         
@@ -14105,7 +13793,7 @@ public final class BlockchainOuterClass {
        * The proposal of the consensus info.
        * </pre>
        *
-       * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+       * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
        */
       public pactus.blockchain.BlockchainOuterClass.ProposalOrBuilder getProposalOrBuilder() {
         if (proposalBuilder_ != null) {
@@ -14120,7 +13808,7 @@ public final class BlockchainOuterClass {
        * The proposal of the consensus info.
        * </pre>
        *
-       * <code>.pactus.Proposal proposal = 6 [json_name = "proposal"];</code>
+       * <code>.pactus.Proposal proposal = 1 [json_name = "proposal"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.blockchain.BlockchainOuterClass.Proposal, pactus.blockchain.BlockchainOuterClass.Proposal.Builder, pactus.blockchain.BlockchainOuterClass.ProposalOrBuilder> 
@@ -14134,6 +13822,318 @@ public final class BlockchainOuterClass {
           proposal_ = null;
         }
         return proposalBuilder_;
+      }
+
+      private java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> instances_ =
+        java.util.Collections.emptyList();
+      private void ensureInstancesIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          instances_ = new java.util.ArrayList<pactus.blockchain.BlockchainOuterClass.ConsensusInfo>(instances_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          pactus.blockchain.BlockchainOuterClass.ConsensusInfo, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder, pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> instancesBuilder_;
+
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo> getInstancesList() {
+        if (instancesBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(instances_);
+        } else {
+          return instancesBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public int getInstancesCount() {
+        if (instancesBuilder_ == null) {
+          return instances_.size();
+        } else {
+          return instancesBuilder_.getCount();
+        }
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public pactus.blockchain.BlockchainOuterClass.ConsensusInfo getInstances(int index) {
+        if (instancesBuilder_ == null) {
+          return instances_.get(index);
+        } else {
+          return instancesBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public Builder setInstances(
+          int index, pactus.blockchain.BlockchainOuterClass.ConsensusInfo value) {
+        if (instancesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureInstancesIsMutable();
+          instances_.set(index, value);
+          onChanged();
+        } else {
+          instancesBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public Builder setInstances(
+          int index, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder builderForValue) {
+        if (instancesBuilder_ == null) {
+          ensureInstancesIsMutable();
+          instances_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          instancesBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public Builder addInstances(pactus.blockchain.BlockchainOuterClass.ConsensusInfo value) {
+        if (instancesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureInstancesIsMutable();
+          instances_.add(value);
+          onChanged();
+        } else {
+          instancesBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public Builder addInstances(
+          int index, pactus.blockchain.BlockchainOuterClass.ConsensusInfo value) {
+        if (instancesBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureInstancesIsMutable();
+          instances_.add(index, value);
+          onChanged();
+        } else {
+          instancesBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public Builder addInstances(
+          pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder builderForValue) {
+        if (instancesBuilder_ == null) {
+          ensureInstancesIsMutable();
+          instances_.add(builderForValue.build());
+          onChanged();
+        } else {
+          instancesBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public Builder addInstances(
+          int index, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder builderForValue) {
+        if (instancesBuilder_ == null) {
+          ensureInstancesIsMutable();
+          instances_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          instancesBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public Builder addAllInstances(
+          java.lang.Iterable<? extends pactus.blockchain.BlockchainOuterClass.ConsensusInfo> values) {
+        if (instancesBuilder_ == null) {
+          ensureInstancesIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, instances_);
+          onChanged();
+        } else {
+          instancesBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public Builder clearInstances() {
+        if (instancesBuilder_ == null) {
+          instances_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          instancesBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public Builder removeInstances(int index) {
+        if (instancesBuilder_ == null) {
+          ensureInstancesIsMutable();
+          instances_.remove(index);
+          onChanged();
+        } else {
+          instancesBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder getInstancesBuilder(
+          int index) {
+        return getInstancesFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder getInstancesOrBuilder(
+          int index) {
+        if (instancesBuilder_ == null) {
+          return instances_.get(index);  } else {
+          return instancesBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public java.util.List<? extends pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> 
+           getInstancesOrBuilderList() {
+        if (instancesBuilder_ != null) {
+          return instancesBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(instances_);
+        }
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder addInstancesBuilder() {
+        return getInstancesFieldBuilder().addBuilder(
+            pactus.blockchain.BlockchainOuterClass.ConsensusInfo.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder addInstancesBuilder(
+          int index) {
+        return getInstancesFieldBuilder().addBuilder(
+            index, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * List of consensus instances.
+       * </pre>
+       *
+       * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
+       */
+      public java.util.List<pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder> 
+           getInstancesBuilderList() {
+        return getInstancesFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          pactus.blockchain.BlockchainOuterClass.ConsensusInfo, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder, pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder> 
+          getInstancesFieldBuilder() {
+        if (instancesBuilder_ == null) {
+          instancesBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              pactus.blockchain.BlockchainOuterClass.ConsensusInfo, pactus.blockchain.BlockchainOuterClass.ConsensusInfo.Builder, pactus.blockchain.BlockchainOuterClass.ConsensusInfoOrBuilder>(
+                  instances_,
+                  ((bitField0_ & 0x00000001) != 0),
+                  getParentForChildren(),
+                  isClean());
+          instances_ = null;
+        }
+        return instancesBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -24764,9 +24764,9 @@ public final class BlockchainOuterClass {
       "sPruned\022%\n\016pruning_height\030\t \001(\rR\rpruning" +
       "Height\022&\n\017last_block_time\030\n \001(\003R\rlastBlo" +
       "ckTime\"\031\n\027GetConsensusInfoRequest\"}\n\030Get" +
-      "ConsensusInfoResponse\0223\n\tinstances\030\001 \003(\013" +
-      "2\025.pactus.ConsensusInfoR\tinstances\022,\n\010pr" +
-      "oposal\030\006 \001(\0132\020.pactus.ProposalR\010proposal" +
+      "ConsensusInfoResponse\022,\n\010proposal\030\001 \001(\0132" +
+      "\020.pactus.ProposalR\010proposal\0223\n\tinstances" +
+      "\030\002 \003(\0132\025.pactus.ConsensusInfoR\tinstances" +
       "\"Q\n\027GetTxPoolContentRequest\0226\n\014payload_t" +
       "ype\030\001 \001(\0162\023.pactus.PayloadTypeR\013payloadT" +
       "ype\"E\n\030GetTxPoolContentResponse\022)\n\003txs\030\001" +
@@ -24952,7 +24952,7 @@ public final class BlockchainOuterClass {
     internal_static_pactus_GetConsensusInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetConsensusInfoResponse_descriptor,
-        new java.lang.String[] { "Instances", "Proposal", });
+        new java.lang.String[] { "Proposal", "Instances", });
     internal_static_pactus_GetTxPoolContentRequest_descriptor =
       getDescriptor().getMessageTypes().get(19);
     internal_static_pactus_GetTxPoolContentRequest_fieldAccessorTable = new

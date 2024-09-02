@@ -243,7 +243,7 @@ parameters.</p>
   </tr>
   <tr>
     <td class="fw-bold">verbosity</td>
-    <td> numeric</td>
+    <td> string</td>
     <td>
     (Enum) The verbosity level for transaction details.
     <br>Available values:<ul>
@@ -326,7 +326,7 @@ parameters.</p>
       </tr>
          <tr>
         <td class="fw-bold">transaction.payload_type</td>
-        <td> numeric</td>
+        <td> string</td>
         <td>
         (Enum) The type of transaction payload.
         <br>Available values:<ul>
@@ -503,7 +503,7 @@ and payload type.</p>
   </tr>
   <tr>
     <td class="fw-bold">payload_type</td>
-    <td> numeric</td>
+    <td> string</td>
     <td>
     (Enum) The type of transaction payload.
     <br>Available values:<ul>
@@ -889,7 +889,7 @@ parameters.</p>
   </tr>
   <tr>
     <td class="fw-bold">verbosity</td>
-    <td> numeric</td>
+    <td> string</td>
     <td>
     (Enum) The verbosity level for block information.
     <br>Available values:<ul>
@@ -1072,7 +1072,7 @@ BLOCK_TRANSACTIONS.
       </tr>
          <tr>
         <td class="fw-bold">txs[].payload_type</td>
-        <td> numeric</td>
+        <td> string</td>
         <td>
         (Enum) The type of transaction payload.
         <br>Available values:<ul>
@@ -1474,6 +1474,41 @@ Parameters has no fields.
   </thead>
   <tbody class="table-group-divider">
   <tr>
+    <td class="fw-bold">proposal</td>
+    <td> object</td>
+    <td>
+    The proposal of the consensus info.
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">proposal.height</td>
+        <td> numeric</td>
+        <td>
+        The height of the proposal.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">proposal.round</td>
+        <td> numeric</td>
+        <td>
+        The round of the proposal.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">proposal.block_data</td>
+        <td> string</td>
+        <td>
+        The block data of the proposal.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">proposal.signature_data</td>
+        <td> string</td>
+        <td>
+        The signature data of the proposal.
+        </td>
+      </tr>
+         <tr>
     <td class="fw-bold">instances</td>
     <td>repeated object</td>
     <td>
@@ -1518,7 +1553,7 @@ committee.
       </tr>
          <tr>
             <td class="fw-bold">instances[].votes[].type</td>
-            <td> numeric</td>
+            <td> string</td>
             <td>
             (Enum) The type of the vote.
             <br>Available values:<ul>
@@ -1564,42 +1599,7 @@ committee.
             The change-proposer value of the vote.
             </td>
           </tr>
-          <tr>
-    <td class="fw-bold">proposal</td>
-    <td> object</td>
-    <td>
-    The proposal of the consensus info.
-    </td>
-  </tr>
-     <tr>
-        <td class="fw-bold">proposal.height</td>
-        <td> numeric</td>
-        <td>
-        The height of the proposal.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">proposal.round</td>
-        <td> numeric</td>
-        <td>
-        The round of the proposal.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">proposal.block_data</td>
-        <td> string</td>
-        <td>
-        The block data of the proposal.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">proposal.signature_data</td>
-        <td> string</td>
-        <td>
-        The signature data of the proposal.
-        </td>
-      </tr>
-         </tbody>
+          </tbody>
 </table>
 
 ### pactus.blockchain.get_account <span id="pactus.blockchain.get_account" class="rpc-badge"></span>
@@ -1966,7 +1966,7 @@ address.</p>
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">payload_type</td>
-    <td> numeric</td>
+    <td> string</td>
     <td>
     (Enum) The type of transactions to retrieve from the transaction pool. 0 means all
 types.
@@ -2040,7 +2040,7 @@ types.
       </tr>
          <tr>
         <td class="fw-bold">txs[].payload_type</td>
-        <td> numeric</td>
+        <td> string</td>
         <td>
         (Enum) The type of transaction payload.
         <br>Available values:<ul>
@@ -2967,7 +2967,7 @@ public key.</p>
   </tr>
   <tr>
     <td class="fw-bold">address_type</td>
-    <td> numeric</td>
+    <td> string</td>
     <td>
     (Enum) The type of address to generate.
     <br>Available values:<ul>
@@ -2975,6 +2975,8 @@ public key.</p>
 Should not be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type.)</li>
       <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.
+Note: Generating a new Ed25519 address requires the wallet password.)</li>
       </ul>
     </td>
   </tr>
@@ -2983,6 +2985,13 @@ Should not be used to generate new addresses.)</li>
     <td> string</td>
     <td>
     A label for the new address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+    Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
     </td>
   </tr>
   </tbody>
