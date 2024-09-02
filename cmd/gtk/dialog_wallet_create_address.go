@@ -27,6 +27,7 @@ func createAddress(ww *widgetWallet) {
 	addressTypeCombo.SetActive(0)
 
 	getButtonObj(builder, "id_button_ok").SetImage(OkIcon())
+	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 
 	onOk := func() {
 		walletAddressLabel, err := addressLabel.GetText()
