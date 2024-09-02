@@ -200,7 +200,7 @@ func (wm *Manager) AddressHistory(
 		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
 	}
 
-	return wlt.GetHistory(address), nil
+	return wlt.History(address), nil
 }
 
 func (wm *Manager) SignMessage(walletName, password, addr, msg string) (string, error) {
