@@ -4,7 +4,6 @@ package main
 
 import (
 	_ "embed"
-	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/wallet"
@@ -21,7 +20,8 @@ func createAddress(ww *widgetWallet) {
 	addressLabel := getEntryObj(builder, "id_entry_account_label")
 
 	addressTypeCombo := getComboBoxTextObj(builder, "id_combo_address_type")
-	addressTypeCombo.Append(wallet.AddressTypeBLSAccount, "Account")
+	addressTypeCombo.Append(wallet.AddressTypeEd25519Account, "ED25519 Account")
+	addressTypeCombo.Append(wallet.AddressTypeBLSAccount, "BLS Account")
 	addressTypeCombo.Append(wallet.AddressTypeValidator, "Validator")
 
 	addressTypeCombo.SetActive(0)
@@ -36,12 +36,18 @@ func createAddress(ww *widgetWallet) {
 		walletAddressType := addressTypeCombo.GetActiveID()
 		fatalErrorCheck(err)
 
-		if walletAddressType == wallet.AddressTypeBLSAccount {
+		switch walletAddressType {
+		case wallet.AddressTypeEd25519Account:
+			password, ok := getWalletPassword(ww.model.wallet)
+			if !ok {
+				return
+			}
+
+			_, err = ww.model.wallet.NewEd25519AccountAddress(walletAddressLabel, password)
+		case wallet.AddressTypeBLSAccount:
 			_, err = ww.model.wallet.NewBLSAccountAddress(walletAddressLabel)
-		} else if walletAddressType == wallet.AddressTypeValidator {
+		case wallet.AddressTypeValidator:
 			_, err = ww.model.wallet.NewValidatorAddress(walletAddressLabel)
-		} else {
-			err = fmt.Errorf("invalid address type '%s'", walletAddressType)
 		}
 
 		errorCheck(err)
