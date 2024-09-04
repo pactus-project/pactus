@@ -1423,6 +1423,41 @@ Message has no fields.
   </thead>
   <tbody class="table-group-divider">
   <tr>
+    <td class="fw-bold">proposal</td>
+    <td> Proposal</td>
+    <td>
+    The proposal of the consensus info.
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">proposal.height</td>
+        <td> uint32</td>
+        <td>
+        The height of the proposal.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">proposal.round</td>
+        <td> int32</td>
+        <td>
+        The round of the proposal.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">proposal.block_data</td>
+        <td> string</td>
+        <td>
+        The block data of the proposal.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">proposal.signature_data</td>
+        <td> string</td>
+        <td>
+        The signature data of the proposal.
+        </td>
+      </tr>
+         <tr>
     <td class="fw-bold">instances</td>
     <td>repeated ConsensusInfo</td>
     <td>
@@ -1513,42 +1548,7 @@ committee.
             The change-proposer value of the vote.
             </td>
           </tr>
-          <tr>
-    <td class="fw-bold">proposal</td>
-    <td> Proposal</td>
-    <td>
-    The proposal of the consensus info.
-    </td>
-  </tr>
-     <tr>
-        <td class="fw-bold">proposal.height</td>
-        <td> uint32</td>
-        <td>
-        The height of the proposal.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">proposal.round</td>
-        <td> int32</td>
-        <td>
-        The round of the proposal.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">proposal.block_data</td>
-        <td> string</td>
-        <td>
-        The block data of the proposal.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">proposal.signature_data</td>
-        <td> string</td>
-        <td>
-        The signature data of the proposal.
-        </td>
-      </tr>
-         </tbody>
+          </tbody>
 </table>
 
 ### GetAccount <span id="pactus.Blockchain.GetAccount" class="rpc-badge"></span>
@@ -2924,6 +2924,8 @@ public key.</p>
 Should not be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type.)</li>
       <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.
+Note: Generating a new Ed25519 address requires the wallet password.)</li>
       </ul>
     </td>
   </tr>
@@ -2932,6 +2934,13 @@ Should not be used to generate new addresses.)</li>
     <td> string</td>
     <td>
     A label for the new address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+    Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
     </td>
   </tr>
   </tbody>

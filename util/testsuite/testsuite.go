@@ -280,8 +280,8 @@ func (ts *TestSuite) RandHash() hash.Hash {
 
 // RandAccAddress generates a random account address for testing purposes.
 func (ts *TestSuite) RandAccAddress() crypto.Address {
-	isBLSAddress := ts.RandBool()
-	if isBLSAddress {
+	useBLSAddress := ts.RandBool()
+	if useBLSAddress {
 		return crypto.NewAddress(crypto.AddressTypeBLSAccount, ts.RandBytes(20))
 	}
 
@@ -501,20 +501,32 @@ type TransactionMaker struct {
 	LockTime uint32
 	Amount   amount.Amount
 	Fee      amount.Amount
-	PrvKey   *bls.PrivateKey
-	PubKey   *bls.PublicKey
+	Signer   crypto.PrivateKey
+}
+
+func (tm *TransactionMaker) SignerAccountAddress() crypto.Address {
+	blsPub, ok := tm.Signer.PublicKey().(*bls.PublicKey)
+	if ok {
+		return blsPub.AccountAddress()
+	}
+	ed25519Pub := tm.Signer.PublicKey().(*ed25519.PublicKey)
+
+	return ed25519Pub.AccountAddress()
+}
+
+func (tm *TransactionMaker) SignerValidatorAddress() crypto.Address {
+	blsPub := tm.Signer.PublicKey().(*bls.PublicKey)
+
+	return blsPub.ValidatorAddress()
 }
 
 // NewTransactionMaker creates a new TransactionMaker instance with default values.
 func (ts *TestSuite) NewTransactionMaker() *TransactionMaker {
-	pub, prv := ts.RandBLSKeyPair()
-
 	return &TransactionMaker{
 		LockTime: ts.RandHeight(),
 		Amount:   ts.RandAmount(),
 		Fee:      ts.RandFee(),
-		PrvKey:   prv,
-		PubKey:   pub,
+		Signer:   nil,
 	}
 }
 
@@ -539,11 +551,17 @@ func TransactionWithFee(fee amount.Amount) func(tm *TransactionMaker) {
 	}
 }
 
-// TransactionWithSigner sets signer to the transaction.
-func TransactionWithSigner(signer *bls.PrivateKey) func(tm *TransactionMaker) {
+// TransactionWithBLSSigner sets the BLS signer to sign the test transaction.
+func TransactionWithBLSSigner(signer *bls.PrivateKey) func(tm *TransactionMaker) {
 	return func(tm *TransactionMaker) {
-		tm.PrvKey = signer
-		tm.PubKey = signer.PublicKeyNative()
+		tm.Signer = signer
+	}
+}
+
+// TransactionWithEd25519Signer sets the Ed25519 signer to sign the test transaction.
+func TransactionWithEd25519Signer(signer *ed25519.PrivateKey) func(tm *TransactionMaker) {
+	return func(tm *TransactionMaker) {
+		tm.Signer = signer
 	}
 }
 
@@ -554,8 +572,21 @@ func (ts *TestSuite) GenerateTestTransferTx(options ...func(tm *TransactionMaker
 	for _, opt := range options {
 		opt(tm)
 	}
-	trx := tx.NewTransferTx(tm.LockTime, tm.PubKey.AccountAddress(), ts.RandAccAddress(), tm.Amount, tm.Fee)
-	ts.HelperSignTransaction(tm.PrvKey, trx)
+
+	if tm.Signer == nil {
+		useBLSSigner := ts.RandBool()
+		if useBLSSigner {
+			_, prv := ts.RandBLSKeyPair()
+			tm.Signer = prv
+		} else {
+			_, prv := ts.RandEd25519KeyPair()
+			tm.Signer = prv
+		}
+	}
+
+	sender := tm.SignerAccountAddress()
+	trx := tx.NewTransferTx(tm.LockTime, sender, ts.RandAccAddress(), tm.Amount, tm.Fee)
+	ts.HelperSignTransaction(tm.Signer, trx)
 
 	return trx
 }
@@ -567,8 +598,21 @@ func (ts *TestSuite) GenerateTestBondTx(options ...func(tm *TransactionMaker)) *
 	for _, opt := range options {
 		opt(tm)
 	}
-	trx := tx.NewBondTx(tm.LockTime, tm.PubKey.AccountAddress(), ts.RandValAddress(), nil, tm.Amount, tm.Fee)
-	ts.HelperSignTransaction(tm.PrvKey, trx)
+
+	if tm.Signer == nil {
+		useBLSSigner := ts.RandBool()
+		if useBLSSigner {
+			_, prv := ts.RandBLSKeyPair()
+			tm.Signer = prv
+		} else {
+			_, prv := ts.RandEd25519KeyPair()
+			tm.Signer = prv
+		}
+	}
+
+	sender := tm.SignerAccountAddress()
+	trx := tx.NewBondTx(tm.LockTime, sender, ts.RandValAddress(), nil, tm.Amount, tm.Fee)
+	ts.HelperSignTransaction(tm.Signer, trx)
 
 	return trx
 }
@@ -580,9 +624,16 @@ func (ts *TestSuite) GenerateTestSortitionTx(options ...func(tm *TransactionMake
 	for _, opt := range options {
 		opt(tm)
 	}
+
+	if tm.Signer == nil {
+		_, prv := ts.RandBLSKeyPair()
+		tm.Signer = prv
+	}
+
 	proof := ts.RandProof()
-	trx := tx.NewSortitionTx(tm.LockTime, tm.PubKey.ValidatorAddress(), proof)
-	ts.HelperSignTransaction(tm.PrvKey, trx)
+	sender := tm.SignerValidatorAddress()
+	trx := tx.NewSortitionTx(tm.LockTime, sender, proof)
+	ts.HelperSignTransaction(tm.Signer, trx)
 
 	return trx
 }
@@ -594,8 +645,15 @@ func (ts *TestSuite) GenerateTestUnbondTx(options ...func(tm *TransactionMaker))
 	for _, opt := range options {
 		opt(tm)
 	}
-	trx := tx.NewUnbondTx(tm.LockTime, tm.PubKey.ValidatorAddress())
-	ts.HelperSignTransaction(tm.PrvKey, trx)
+
+	if tm.Signer == nil {
+		_, prv := ts.RandBLSKeyPair()
+		tm.Signer = prv
+	}
+
+	sender := tm.SignerValidatorAddress()
+	trx := tx.NewUnbondTx(tm.LockTime, sender)
+	ts.HelperSignTransaction(tm.Signer, trx)
 
 	return trx
 }
@@ -607,8 +665,15 @@ func (ts *TestSuite) GenerateTestWithdrawTx(options ...func(tm *TransactionMaker
 	for _, opt := range options {
 		opt(tm)
 	}
-	trx := tx.NewWithdrawTx(tm.LockTime, tm.PubKey.ValidatorAddress(), ts.RandAccAddress(), tm.Amount, tm.Fee)
-	ts.HelperSignTransaction(tm.PrvKey, trx)
+
+	if tm.Signer == nil {
+		_, prv := ts.RandBLSKeyPair()
+		tm.Signer = prv
+	}
+
+	sender := tm.SignerValidatorAddress()
+	trx := tx.NewWithdrawTx(tm.LockTime, sender, ts.RandAccAddress(), tm.Amount, tm.Fee)
+	ts.HelperSignTransaction(tm.Signer, trx)
 
 	return trx
 }

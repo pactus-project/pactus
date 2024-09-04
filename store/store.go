@@ -6,7 +6,6 @@ import (
 	"sync"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/account"
@@ -239,7 +238,7 @@ func (s *store) SortitionSeed(blockHeight uint32) *sortition.VerifiableSeed {
 	return s.blockStore.sortitionSeed(blockHeight)
 }
 
-func (s *store) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
+func (s *store) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
@@ -274,11 +273,15 @@ func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
 	}, nil
 }
 
-func (s *store) AnyRecentTransaction(id tx.ID) bool {
+// RecentTransaction checks if there is a transaction with the given ID
+// within the last 8640 blocks.
+// The time window for recent transactions is determined by the
+// TransactionToLive interval, which is part of the consensus parameters.
+func (s *store) RecentTransaction(id tx.ID) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.txStore.anyRecentTransaction(id)
+	return s.txStore.RecentTransaction(id)
 }
 
 func (s *store) HasAccount(addr crypto.Address) bool {
