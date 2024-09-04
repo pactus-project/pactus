@@ -106,13 +106,13 @@ func TestEd25519S(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		PrivateKey, _ := ed25519.PrivateKeyFromBytes(ts.DecodingHex(test.sk))
+		privateKey, _ := ed25519.PrivateKeyFromBytes(ts.DecodingHex(test.sk))
 		expectedPublicKey, _ := ed25519.PublicKeyFromBytes(ts.DecodingHex(test.pk))
 		msg := ts.DecodingHex(test.msg)
 		expectedSig, _ := ed25519.SignatureFromString(test.sig)
-		sig := PrivateKey.Sign(msg)
-		assert.Equal(t, expectedSig, sig)
-		assert.Equal(t, expectedPublicKey, PrivateKey.PublicKey())
+		sig := privateKey.Sign(msg)
 
+		assert.Equal(t, expectedSig, sig)
+		assert.Equal(t, expectedPublicKey, privateKey.PublicKey())
 	}
 }
