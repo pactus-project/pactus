@@ -87,7 +87,10 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		if *addressType == wallet.AddressTypeBLSAccount {
 			addressInfo, err = wlt.NewBLSAccountAddress(label)
 		} else if *addressType == wallet.AddressTypeEd25519Account {
-			password := cmd.PromptInput("Password")
+			password := ""
+			if wlt.IsEncrypted() {
+				password = cmd.PromptInput("Password")
+			}
 			addressInfo, err = wlt.NewEd25519AccountAddress(label, password)
 		} else if *addressType == wallet.AddressTypeValidator {
 			addressInfo, err = wlt.NewValidatorAddress(label)
@@ -204,7 +207,7 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		password := getPassword(wlt, *passOpt)
-		err = wlt.ImportPrivateKey(password, prv)
+		err = wlt.ImportBLSPrivateKey(password, prv)
 		cmd.FatalErrorCheck(err)
 
 		err = wlt.Save()

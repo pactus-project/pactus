@@ -27,6 +27,10 @@ func (n ChainType) IsMainnet() bool {
 	return n == Mainnet
 }
 
+func (n ChainType) IsTestnet() bool {
+	return n == Testnet
+}
+
 func (n ChainType) String() string {
 	switch n {
 	case Mainnet:

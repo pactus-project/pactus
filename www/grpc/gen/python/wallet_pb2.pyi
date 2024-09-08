@@ -12,9 +12,11 @@ class AddressType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     ADDRESS_TYPE_TREASURY: _ClassVar[AddressType]
     ADDRESS_TYPE_VALIDATOR: _ClassVar[AddressType]
     ADDRESS_TYPE_BLS_ACCOUNT: _ClassVar[AddressType]
+    ADDRESS_TYPE_ED25519_ACCOUNT: _ClassVar[AddressType]
 ADDRESS_TYPE_TREASURY: AddressType
 ADDRESS_TYPE_VALIDATOR: AddressType
 ADDRESS_TYPE_BLS_ACCOUNT: AddressType
+ADDRESS_TYPE_ED25519_ACCOUNT: AddressType
 
 class AddressInfo(_message.Message):
     __slots__ = ("address", "public_key", "label", "path")
@@ -57,14 +59,16 @@ class GetAddressHistoryResponse(_message.Message):
     def __init__(self, history_info: _Optional[_Iterable[_Union[HistoryInfo, _Mapping]]] = ...) -> None: ...
 
 class GetNewAddressRequest(_message.Message):
-    __slots__ = ("wallet_name", "address_type", "label")
+    __slots__ = ("wallet_name", "address_type", "label", "password")
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_TYPE_FIELD_NUMBER: _ClassVar[int]
     LABEL_FIELD_NUMBER: _ClassVar[int]
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     address_type: AddressType
     label: str
-    def __init__(self, wallet_name: _Optional[str] = ..., address_type: _Optional[_Union[AddressType, str]] = ..., label: _Optional[str] = ...) -> None: ...
+    password: str
+    def __init__(self, wallet_name: _Optional[str] = ..., address_type: _Optional[_Union[AddressType, str]] = ..., label: _Optional[str] = ..., password: _Optional[str] = ...) -> None: ...
 
 class GetNewAddressResponse(_message.Message):
     __slots__ = ("wallet_name", "address_info")

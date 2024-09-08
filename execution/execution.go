@@ -30,7 +30,7 @@ func CheckAndExecute(trx *tx.Tx, sb sandbox.Sandbox, strict bool) error {
 		}
 	}
 
-	if exists := sb.AnyRecentTransaction(trx.ID()); exists {
+	if exists := sb.RecentTransaction(trx.ID()); exists {
 		return TransactionCommittedError{
 			ID: trx.ID(),
 		}
