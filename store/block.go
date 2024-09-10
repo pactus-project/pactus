@@ -6,6 +6,7 @@ import (
 	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/block"
@@ -26,13 +27,13 @@ func blockHashKey(h hash.Hash) []byte {
 
 type blockStore struct {
 	db              *leveldb.DB
-	pubKeyCache     *lru.Cache[crypto.Address, *bls.PublicKey]
+	pubKeyCache     *lru.Cache[crypto.Address, crypto.PublicKey]
 	seedCache       *pairslice.PairSlice[uint32, *sortition.VerifiableSeed]
 	seedCacheWindow uint32
 }
 
 func newBlockStore(db *leveldb.DB, seedCacheWindow uint32, publicKeyCacheSize int) *blockStore {
-	pubKeyCache, err := lru.New[crypto.Address, *bls.PublicKey](publicKeyCacheSize)
+	pubKeyCache, err := lru.New[crypto.Address, crypto.PublicKey](publicKeyCacheSize)
 	if err != nil {
 		return nil
 	}
@@ -141,7 +142,7 @@ func (bs *blockStore) hasBlock(height uint32) bool {
 	return tryHas(bs.db, blockKey(height))
 }
 
-func (bs *blockStore) publicKey(addr crypto.Address) (*bls.PublicKey, error) {
+func (bs *blockStore) publicKey(addr crypto.Address) (crypto.PublicKey, error) {
 	if pubKey, ok := bs.pubKeyCache.Get(addr); ok {
 		return pubKey, nil
 	}
@@ -150,9 +151,25 @@ func (bs *blockStore) publicKey(addr crypto.Address) (*bls.PublicKey, error) {
 	if err != nil {
 		return nil, err
 	}
-	pubKey, err := bls.PublicKeyFromBytes(data)
-	if err != nil {
-		return nil, err
+	var pubKey crypto.PublicKey
+	switch addr.Type() {
+	case crypto.AddressTypeValidator,
+		crypto.AddressTypeBLSAccount:
+		pubKey, err = bls.PublicKeyFromBytes(data)
+		if err != nil {
+			return nil, err
+		}
+	case crypto.AddressTypeEd25519Account:
+		pubKey, err = ed25519.PublicKeyFromBytes(data)
+		if err != nil {
+			return nil, err
+		}
+
+	case crypto.AddressTypeTreasury:
+		panic("unreachable")
+
+	default:
+		return nil, PublicKeyNotFoundError{Address: addr}
 	}
 
 	bs.pubKeyCache.Add(addr, pubKey)

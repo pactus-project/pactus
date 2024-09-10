@@ -55,6 +55,9 @@ enum AddressType {
   ADDRESS_TYPE_VALIDATOR = 1;
   // Account address type with BLS signature scheme.
   ADDRESS_TYPE_BLS_ACCOUNT = 2;
+  // Account address type with Ed25519 signature scheme.
+  // Note: Generating a new Ed25519 address requires the wallet password.
+  ADDRESS_TYPE_ED25519_ACCOUNT = 3;
 }
 
 // Message containing address information.
@@ -105,6 +108,8 @@ message GetNewAddressRequest {
   AddressType address_type = 2;
   // A label for the new address.
   string label = 3;
+  // Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+  string password = 4;
 }
 
 // Response message containing the newly generated address.

@@ -215,7 +215,7 @@ func TestInvalidPayloadType(t *testing.T) {
 func TestSubsidyTx(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub, prv := ts.RandBLSKeyPair()
+	pub, prv := ts.RandEd25519KeyPair()
 
 	t.Run("Has signature", func(t *testing.T) {
 		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500)
@@ -300,7 +300,7 @@ func TestInvalidSignature(t *testing.T) {
 
 	t.Run("Invalid sign Bytes", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		trx0 := ts.GenerateTestUnbondTx(testsuite.TransactionWithSigner(valKey.PrivateKey()))
+		trx0 := ts.GenerateTestUnbondTx(testsuite.TransactionWithBLSSigner(valKey.PrivateKey()))
 
 		trx := tx.NewUnbondTx(trx0.LockTime(), valKey.Address(), tx.WithMemo("invalidate signature"))
 		trx.SetPublicKey(trx0.PublicKey())

@@ -971,20 +971,28 @@
           },
           {
             "name": "addressType",
-            "description": "The type of address to generate.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.",
+            "description": "The type of address to generate.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password.",
             "in": "query",
             "required": false,
             "type": "string",
             "enum": [
               "ADDRESS_TYPE_TREASURY",
               "ADDRESS_TYPE_VALIDATOR",
-              "ADDRESS_TYPE_BLS_ACCOUNT"
+              "ADDRESS_TYPE_BLS_ACCOUNT",
+              "ADDRESS_TYPE_ED25519_ACCOUNT"
             ],
             "default": "ADDRESS_TYPE_TREASURY"
           },
           {
             "name": "label",
             "description": "A label for the new address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -1325,10 +1333,11 @@
       "enum": [
         "ADDRESS_TYPE_TREASURY",
         "ADDRESS_TYPE_VALIDATOR",
-        "ADDRESS_TYPE_BLS_ACCOUNT"
+        "ADDRESS_TYPE_BLS_ACCOUNT",
+        "ADDRESS_TYPE_ED25519_ACCOUNT"
       ],
       "default": "ADDRESS_TYPE_TREASURY",
-      "description": "Enum for the address type.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme."
+      "description": "Enum for the address type.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password."
     },
     "pactusBlockHeaderInfo": {
       "type": "object",
@@ -1636,6 +1645,10 @@
     "pactusGetConsensusInfoResponse": {
       "type": "object",
       "properties": {
+        "proposal": {
+          "$ref": "#/definitions/pactusProposal",
+          "description": "The proposal of the consensus info."
+        },
         "instances": {
           "type": "array",
           "items": {
@@ -1643,10 +1656,6 @@
             "$ref": "#/definitions/pactusConsensusInfo"
           },
           "description": "List of consensus instances."
-        },
-        "proposal": {
-          "$ref": "#/definitions/pactusProposal",
-          "description": "The proposal of the consensus info."
         }
       },
       "description": "Message containing the response with consensus information."

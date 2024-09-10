@@ -139,12 +139,12 @@ func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	s.updated = true
 }
 
-func (sb *sandbox) AnyRecentTransaction(txID tx.ID) bool {
+func (sb *sandbox) RecentTransaction(txID tx.ID) bool {
 	if sb.committedTrxs[txID] != nil {
 		return true
 	}
 
-	return sb.store.AnyRecentTransaction(txID)
+	return sb.store.RecentTransaction(txID)
 }
 
 func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {

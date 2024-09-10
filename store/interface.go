@@ -2,7 +2,6 @@ package store
 
 import (
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/account"
@@ -84,8 +83,8 @@ type Reader interface {
 	BlockHash(height uint32) hash.Hash
 	SortitionSeed(blockHeight uint32) *sortition.VerifiableSeed
 	Transaction(id tx.ID) (*CommittedTx, error)
-	AnyRecentTransaction(id tx.ID) bool
-	PublicKey(addr crypto.Address) (*bls.PublicKey, error)
+	RecentTransaction(id tx.ID) bool
+	PublicKey(addr crypto.Address) (crypto.PublicKey, error)
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
 	TotalAccounts() int32
