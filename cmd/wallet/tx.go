@@ -61,6 +61,7 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 		cmd.PrintInfoMsgf("To    : %s", to)
 		cmd.PrintInfoMsgf("Amount: %s", amt)
 		cmd.PrintInfoMsgf("Fee   : %s", trx.Fee())
+		cmd.PrintInfoMsgf("Memo  : %s", trx.Memo())
 
 		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
@@ -106,6 +107,7 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 		cmd.PrintInfoMsgf("Validator: %s", to)
 		cmd.PrintInfoMsgf("Stake    : %s", amt)
 		cmd.PrintInfoMsgf("Fee      : %s", trx.Fee())
+		cmd.PrintInfoMsgf("Memo     : %s", trx.Memo())
 
 		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
@@ -145,6 +147,7 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 		cmd.PrintInfoMsgf("You are going to sign this \033[1mUnbond\033[0m transition:")
 		cmd.PrintInfoMsgf("Validator: %s", from)
 		cmd.PrintInfoMsgf("Fee      : %s", trx.Fee())
+		cmd.PrintInfoMsgf("Memo     : %s", trx.Memo())
 
 		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
@@ -189,6 +192,7 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		cmd.PrintInfoMsgf("Account  : %s", to)
 		cmd.PrintInfoMsgf("Amount   : %s", amt)
 		cmd.PrintInfoMsgf("Fee      : %s", trx.Fee())
+		cmd.PrintInfoMsgf("Memo     : %s", trx.Memo())
 
 		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
