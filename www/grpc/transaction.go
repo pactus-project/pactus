@@ -112,21 +112,25 @@ func (s *transactionServer) GetRawTransaction(_ context.Context,
 	switch r := req.Transaction.(type) {
 	case *pactus.GetRawTransactionRequest_Transfer:
 		raw, err := s.handleRawTransfer(r, lockTime, req.Memo)
+
 		return &pactus.GetRawTransactionResponse{
 			RawTransaction: hex.EncodeToString(raw),
 		}, err
 	case *pactus.GetRawTransactionRequest_Bond:
 		raw, err := s.handleRawBond(r, lockTime, req.Memo)
+
 		return &pactus.GetRawTransactionResponse{
 			RawTransaction: hex.EncodeToString(raw),
 		}, err
 	case *pactus.GetRawTransactionRequest_Unbond:
 		raw, err := s.handleRawUnBond(r, lockTime, req.Memo)
+
 		return &pactus.GetRawTransactionResponse{
 			RawTransaction: hex.EncodeToString(raw),
 		}, err
 	case *pactus.GetRawTransactionRequest_Withdraw:
 		raw, err := s.handleRawWithdraw(r, lockTime, req.Memo)
+
 		return &pactus.GetRawTransactionResponse{
 			RawTransaction: hex.EncodeToString(raw),
 		}, err
@@ -187,7 +191,7 @@ func (s *transactionServer) handleRawBond(r *pactus.GetRawTransactionRequest_Bon
 	return bondTx.Bytes()
 }
 
-func (s *transactionServer) handleRawUnBond(r *pactus.GetRawTransactionRequest_Unbond,
+func (*transactionServer) handleRawUnBond(r *pactus.GetRawTransactionRequest_Unbond,
 	lockTime uint32,
 	memo string,
 ) ([]byte, error) {
