@@ -139,7 +139,7 @@ func (s *transactionServer) GetRawTransaction(_ context.Context,
 	return nil, status.Errorf(codes.InvalidArgument, "invalid transaction type")
 }
 
-// Deprecated: GetRawTransferTransaction
+// Deprecated: GetRawTransferTransaction.
 func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	req *pactus.GetRawTransferTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
@@ -168,7 +168,7 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	}, nil
 }
 
-// Deprecated: GetRawBondTransaction
+// Deprecated: GetRawBondTransaction.
 func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	req *pactus.GetRawBondTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
@@ -207,7 +207,7 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	}, nil
 }
 
-// Deprecated: GetRawUnbondTransaction
+// Deprecated: GetRawUnbondTransaction.
 func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
 	req *pactus.GetRawUnbondTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
@@ -229,7 +229,7 @@ func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
 	}, nil
 }
 
-// Deprecated: GetRawWithdrawTransaction
+// Deprecated: GetRawWithdrawTransaction.
 func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	req *pactus.GetRawWithdrawTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
