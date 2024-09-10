@@ -596,10 +596,10 @@
         ]
       }
     },
-    "/pactus/transaction/get_raw_bond_transaction": {
+    "/pactus/transaction/get_raw_transaction": {
       "get": {
-        "summary": "GetRawBondTransaction retrieves raw details of a bond transaction.",
-        "operationId": "Transaction_GetRawBondTransaction",
+        "summary": "GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.",
+        "operationId": "Transaction_GetRawTransaction",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -621,43 +621,6 @@
             "in": "query",
             "required": false,
             "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "sender",
-            "description": "The sender's account address.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "receiver",
-            "description": "The receiver's validator address.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "stake",
-            "description": "The stake amount in NanoPAC. Must be greater than 0.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "publicKey",
-            "description": "The public key of the validator.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "fee",
-            "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
-            "in": "query",
-            "required": false,
-            "type": "string",
             "format": "int64"
           },
           {
@@ -666,56 +629,23 @@
             "in": "query",
             "required": false,
             "type": "string"
-          }
-        ],
-        "tags": [
-          "Transaction"
-        ]
-      }
-    },
-    "/pactus/transaction/get_raw_transfer_transaction": {
-      "get": {
-        "summary": "GetRawTransferTransaction retrieves raw details of a transfer transaction.",
-        "operationId": "Transaction_GetRawTransferTransaction",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetRawTransactionResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "lockTime",
-            "description": "The lock time for the transaction. If not set, defaults to the last block\nheight.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
           },
           {
-            "name": "sender",
+            "name": "transfer.sender",
             "description": "The sender's account address.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
-            "name": "receiver",
+            "name": "transfer.receiver",
             "description": "The receiver's account address.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
-            "name": "amount",
+            "name": "transfer.amount",
             "description": "The amount to be transferred, specified in NanoPAC. Must be greater than 0.",
             "in": "query",
             "required": false,
@@ -723,7 +653,7 @@
             "format": "int64"
           },
           {
-            "name": "fee",
+            "name": "transfer.fee",
             "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
             "in": "query",
             "required": false,
@@ -731,108 +661,65 @@
             "format": "int64"
           },
           {
-            "name": "memo",
-            "description": "A memo string for the transaction.",
+            "name": "bond.sender",
+            "description": "The sender's account address.",
             "in": "query",
             "required": false,
             "type": "string"
-          }
-        ],
-        "tags": [
-          "Transaction"
-        ]
-      }
-    },
-    "/pactus/transaction/get_raw_unbond_transaction": {
-      "get": {
-        "summary": "GetRawUnbondTransaction retrieves raw details of an unbond transaction.",
-        "operationId": "Transaction_GetRawUnbondTransaction",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetRawTransactionResponse"
-            }
           },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
           {
-            "name": "lockTime",
-            "description": "The lock time for the transaction. If not set, defaults to the last block\nheight.",
+            "name": "bond.receiver",
+            "description": "The receiver's validator address.",
             "in": "query",
             "required": false,
-            "type": "integer",
+            "type": "string"
+          },
+          {
+            "name": "bond.stake",
+            "description": "The stake amount in NanoPAC. Must be greater than 0.",
+            "in": "query",
+            "required": false,
+            "type": "string",
             "format": "int64"
           },
           {
-            "name": "validatorAddress",
+            "name": "bond.publicKey",
+            "description": "The public key of the validator.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "bond.fee",
+            "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "unbond.validatorAddress",
             "description": "The address of the validator to unbond from.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
-            "name": "memo",
-            "description": "A memo string for the transaction.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "Transaction"
-        ]
-      }
-    },
-    "/pactus/transaction/get_raw_withdraw_transaction": {
-      "get": {
-        "summary": "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.",
-        "operationId": "Transaction_GetRawWithdrawTransaction",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusGetRawTransactionResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "lockTime",
-            "description": "The lock time for the transaction. If not set, defaults to the last block\nheight.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "validatorAddress",
+            "name": "withdraw.validatorAddress",
             "description": "The address of the validator to withdraw from.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
-            "name": "accountAddress",
+            "name": "withdraw.accountAddress",
             "description": "The address of the account to withdraw to.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
-            "name": "amount",
+            "name": "withdraw.amount",
             "description": "The withdrawal amount in NanoPAC. Must be greater than 0.",
             "in": "query",
             "required": false,
@@ -840,19 +727,12 @@
             "format": "int64"
           },
           {
-            "name": "fee",
+            "name": "withdraw.fee",
             "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
             "in": "query",
             "required": false,
             "type": "string",
             "format": "int64"
-          },
-          {
-            "name": "memo",
-            "description": "A memo string for the transaction.",
-            "in": "query",
-            "required": false,
-            "type": "string"
           }
         ],
         "tags": [
@@ -1792,6 +1672,34 @@
       },
       "description": "Message containing the response with the public key."
     },
+    "pactusGetRawBondTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string",
+          "description": "The sender's account address."
+        },
+        "receiver": {
+          "type": "string",
+          "description": "The receiver's validator address."
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64",
+          "description": "The stake amount in NanoPAC. Must be greater than 0."
+        },
+        "publicKey": {
+          "type": "string",
+          "description": "The public key of the validator."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
+        }
+      },
+      "description": "Request message for retrieving raw details of a bond transaction."
+    },
     "pactusGetRawTransactionResponse": {
       "type": "object",
       "properties": {
@@ -1801,6 +1709,64 @@
         }
       },
       "description": "Response message containing raw transaction data."
+    },
+    "pactusGetRawTransferTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string",
+          "description": "The sender's account address."
+        },
+        "receiver": {
+          "type": "string",
+          "description": "The receiver's account address."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The amount to be transferred, specified in NanoPAC. Must be greater than 0."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
+        }
+      },
+      "description": "Request message for retrieving raw details of a transfer transaction."
+    },
+    "pactusGetRawUnbondTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "validatorAddress": {
+          "type": "string",
+          "description": "The address of the validator to unbond from."
+        }
+      },
+      "description": "Request message for retrieving raw details of an unbond transaction."
+    },
+    "pactusGetRawWithdrawTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "validatorAddress": {
+          "type": "string",
+          "description": "The address of the validator to withdraw from."
+        },
+        "accountAddress": {
+          "type": "string",
+          "description": "The address of the account to withdraw to."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The withdrawal amount in NanoPAC. Must be greater than 0."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
+        }
+      },
+      "description": "Request message for retrieving raw details of a withdraw transaction."
     },
     "pactusGetTotalBalanceResponse": {
       "type": "object",

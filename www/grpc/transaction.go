@@ -104,50 +104,75 @@ func (s *transactionServer) CalculateFee(_ context.Context,
 	}, nil
 }
 
-func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
-	req *pactus.GetRawTransferTransactionRequest,
+func (s *transactionServer) GetRawTransaction(_ context.Context,
+	req *pactus.GetRawTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
-	sender, err := crypto.AddressFromString(req.Sender)
-	if err != nil {
-		return nil, err
-	}
-
-	receiver, err := crypto.AddressFromString(req.Receiver)
-	if err != nil {
-		return nil, err
-	}
-
-	amt := amount.Amount(req.Amount)
-	fee := s.getFee(req.Fee, amt)
 	lockTime := s.getLockTime(req.LockTime)
 
-	transferTx := tx.NewTransferTx(lockTime, sender, receiver, amt, fee, tx.WithMemo(req.Memo))
-	rawTx, err := transferTx.Bytes()
-	if err != nil {
-		return nil, err
+	switch r := req.Transaction.(type) {
+	case *pactus.GetRawTransactionRequest_Transfer:
+		raw, err := s.handleRawTransfer(r, lockTime, req.Memo)
+		return &pactus.GetRawTransactionResponse{
+			RawTransaction: hex.EncodeToString(raw),
+		}, err
+	case *pactus.GetRawTransactionRequest_Bond:
+		raw, err := s.handleRawBond(r, lockTime, req.Memo)
+		return &pactus.GetRawTransactionResponse{
+			RawTransaction: hex.EncodeToString(raw),
+		}, err
+	case *pactus.GetRawTransactionRequest_Unbond:
+		raw, err := s.handleRawUnBond(r, lockTime, req.Memo)
+		return &pactus.GetRawTransactionResponse{
+			RawTransaction: hex.EncodeToString(raw),
+		}, err
+	case *pactus.GetRawTransactionRequest_Withdraw:
+		raw, err := s.handleRawWithdraw(r, lockTime, req.Memo)
+		return &pactus.GetRawTransactionResponse{
+			RawTransaction: hex.EncodeToString(raw),
+		}, err
 	}
 
-	return &pactus.GetRawTransactionResponse{
-		RawTransaction: hex.EncodeToString(rawTx),
-	}, nil
+	return nil, status.Errorf(codes.InvalidArgument, "invalid transaction type")
 }
 
-func (s *transactionServer) GetRawBondTransaction(_ context.Context,
-	req *pactus.GetRawBondTransactionRequest,
-) (*pactus.GetRawTransactionResponse, error) {
-	sender, err := crypto.AddressFromString(req.Sender)
+func (s *transactionServer) handleRawTransfer(r *pactus.GetRawTransactionRequest_Transfer,
+	lockTime uint32,
+	memo string,
+) ([]byte, error) {
+	sender, err := crypto.AddressFromString(r.Transfer.Sender)
 	if err != nil {
 		return nil, err
 	}
 
-	receiver, err := crypto.AddressFromString(req.Receiver)
+	receiver, err := crypto.AddressFromString(r.Transfer.Receiver)
+	if err != nil {
+		return nil, err
+	}
+
+	amt := amount.Amount(r.Transfer.Amount)
+	fee := s.getFee(r.Transfer.Fee, amt)
+
+	transferTx := tx.NewTransferTx(lockTime, sender, receiver, amt, fee, tx.WithMemo(memo))
+	return transferTx.Bytes()
+}
+
+func (s *transactionServer) handleRawBond(r *pactus.GetRawTransactionRequest_Bond,
+	lockTime uint32,
+	memo string,
+) ([]byte, error) {
+	sender, err := crypto.AddressFromString(r.Bond.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	receiver, err := crypto.AddressFromString(r.Bond.Receiver)
 	if err != nil {
 		return nil, err
 	}
 
 	var publicKey *bls.PublicKey
-	if req.PublicKey != "" {
-		publicKey, err = bls.PublicKeyFromString(req.PublicKey)
+	if r.Bond.PublicKey != "" {
+		publicKey, err = bls.PublicKeyFromString(r.Bond.PublicKey)
 		if err != nil {
 			return nil, err
 		}
@@ -155,68 +180,45 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 		publicKey = nil
 	}
 
-	amt := amount.Amount(req.Stake)
-	fee := s.getFee(req.Fee, amt)
-	lockTime := s.getLockTime(req.LockTime)
+	amt := amount.Amount(r.Bond.Stake)
+	fee := s.getFee(r.Bond.Fee, amt)
 
-	bondTx := tx.NewBondTx(lockTime, sender, receiver, publicKey, amt, fee, tx.WithMemo(req.Memo))
-	rawTx, err := bondTx.Bytes()
-	if err != nil {
-		return nil, err
-	}
-
-	return &pactus.GetRawTransactionResponse{
-		RawTransaction: hex.EncodeToString(rawTx),
-	}, nil
+	bondTx := tx.NewBondTx(lockTime, sender, receiver, publicKey, amt, fee, tx.WithMemo(memo))
+	return bondTx.Bytes()
 }
 
-func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
-	req *pactus.GetRawUnbondTransactionRequest,
-) (*pactus.GetRawTransactionResponse, error) {
-	validatorAddr, err := crypto.AddressFromString(req.ValidatorAddress)
+func (s *transactionServer) handleRawUnBond(r *pactus.GetRawTransactionRequest_Unbond,
+	lockTime uint32,
+	memo string,
+) ([]byte, error) {
+	validatorAddr, err := crypto.AddressFromString(r.Unbond.ValidatorAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	lockTime := s.getLockTime(req.LockTime)
-
-	unbondTx := tx.NewUnbondTx(lockTime, validatorAddr, tx.WithMemo(req.Memo))
-	rawTx, err := unbondTx.Bytes()
-	if err != nil {
-		return nil, err
-	}
-
-	return &pactus.GetRawTransactionResponse{
-		RawTransaction: hex.EncodeToString(rawTx),
-	}, nil
+	unbondTx := tx.NewUnbondTx(lockTime, validatorAddr, tx.WithMemo(memo))
+	return unbondTx.Bytes()
 }
 
-func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
-	req *pactus.GetRawWithdrawTransactionRequest,
-) (*pactus.GetRawTransactionResponse, error) {
-	validatorAddr, err := crypto.AddressFromString(req.ValidatorAddress)
+func (s *transactionServer) handleRawWithdraw(r *pactus.GetRawTransactionRequest_Withdraw,
+	lockTime uint32,
+	memo string,
+) ([]byte, error) {
+	validatorAddr, err := crypto.AddressFromString(r.Withdraw.ValidatorAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	accountAddr, err := crypto.AddressFromString(req.AccountAddress)
+	accountAddr, err := crypto.AddressFromString(r.Withdraw.AccountAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	amt := amount.Amount(req.Amount)
-	fee := s.getFee(req.Fee, amt)
-	lockTime := s.getLockTime(req.LockTime)
+	amt := amount.Amount(r.Withdraw.Amount)
+	fee := s.getFee(r.Withdraw.Fee, amt)
 
-	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, amt, fee, tx.WithMemo(req.Memo))
-	rawTx, err := withdrawTx.Bytes()
-	if err != nil {
-		return nil, err
-	}
-
-	return &pactus.GetRawTransactionResponse{
-		RawTransaction: hex.EncodeToString(rawTx),
-	}, nil
+	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, amt, fee, tx.WithMemo(memo))
+	return withdrawTx.Bytes()
 }
 
 func (s *transactionServer) getFee(f int64, amt amount.Amount) amount.Amount {
