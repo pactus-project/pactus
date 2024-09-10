@@ -184,6 +184,112 @@ pub mod transaction_client {
                 .insert(GrpcMethod::new("pactus.Transaction", "GetRawTransaction"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn get_raw_transfer_transaction(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetRawTransferTransactionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRawTransactionResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Transaction/GetRawTransferTransaction",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pactus.Transaction", "GetRawTransferTransaction"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn get_raw_bond_transaction(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetRawBondTransactionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRawTransactionResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Transaction/GetRawBondTransaction",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Transaction", "GetRawBondTransaction"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn get_raw_unbond_transaction(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetRawUnbondTransactionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRawTransactionResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Transaction/GetRawUnbondTransaction",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pactus.Transaction", "GetRawUnbondTransaction"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn get_raw_withdraw_transaction(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetRawWithdrawTransactionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRawTransactionResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Transaction/GetRawWithdrawTransaction",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(
+                    GrpcMethod::new("pactus.Transaction", "GetRawWithdrawTransaction"),
+                );
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -217,6 +323,34 @@ pub mod transaction_server {
         async fn get_raw_transaction(
             &self,
             request: tonic::Request<super::GetRawTransactionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRawTransactionResponse>,
+            tonic::Status,
+        >;
+        async fn get_raw_transfer_transaction(
+            &self,
+            request: tonic::Request<super::GetRawTransferTransactionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRawTransactionResponse>,
+            tonic::Status,
+        >;
+        async fn get_raw_bond_transaction(
+            &self,
+            request: tonic::Request<super::GetRawBondTransactionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRawTransactionResponse>,
+            tonic::Status,
+        >;
+        async fn get_raw_unbond_transaction(
+            &self,
+            request: tonic::Request<super::GetRawUnbondTransactionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRawTransactionResponse>,
+            tonic::Status,
+        >;
+        async fn get_raw_withdraw_transaction(
+            &self,
+            request: tonic::Request<super::GetRawWithdrawTransactionRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetRawTransactionResponse>,
             tonic::Status,
@@ -470,6 +604,198 @@ pub mod transaction_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetRawTransactionSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Transaction/GetRawTransferTransaction" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetRawTransferTransactionSvc<T: Transaction>(pub Arc<T>);
+                    impl<
+                        T: Transaction,
+                    > tonic::server::UnaryService<
+                        super::GetRawTransferTransactionRequest,
+                    > for GetRawTransferTransactionSvc<T> {
+                        type Response = super::GetRawTransactionResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::GetRawTransferTransactionRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).get_raw_transfer_transaction(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetRawTransferTransactionSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Transaction/GetRawBondTransaction" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetRawBondTransactionSvc<T: Transaction>(pub Arc<T>);
+                    impl<
+                        T: Transaction,
+                    > tonic::server::UnaryService<super::GetRawBondTransactionRequest>
+                    for GetRawBondTransactionSvc<T> {
+                        type Response = super::GetRawTransactionResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetRawBondTransactionRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).get_raw_bond_transaction(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetRawBondTransactionSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Transaction/GetRawUnbondTransaction" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetRawUnbondTransactionSvc<T: Transaction>(pub Arc<T>);
+                    impl<
+                        T: Transaction,
+                    > tonic::server::UnaryService<super::GetRawUnbondTransactionRequest>
+                    for GetRawUnbondTransactionSvc<T> {
+                        type Response = super::GetRawTransactionResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::GetRawUnbondTransactionRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).get_raw_unbond_transaction(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetRawUnbondTransactionSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Transaction/GetRawWithdrawTransaction" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetRawWithdrawTransactionSvc<T: Transaction>(pub Arc<T>);
+                    impl<
+                        T: Transaction,
+                    > tonic::server::UnaryService<
+                        super::GetRawWithdrawTransactionRequest,
+                    > for GetRawWithdrawTransactionSvc<T> {
+                        type Response = super::GetRawTransactionResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<
+                                super::GetRawWithdrawTransactionRequest,
+                            >,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).get_raw_withdraw_transaction(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetRawWithdrawTransactionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

@@ -36,6 +36,26 @@ class TransactionStub(object):
                 request_serializer=transaction__pb2.GetRawTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.GetRawTransactionResponse.FromString,
                 )
+        self.GetRawTransferTransaction = channel.unary_unary(
+                '/pactus.Transaction/GetRawTransferTransaction',
+                request_serializer=transaction__pb2.GetRawTransferTransactionRequest.SerializeToString,
+                response_deserializer=transaction__pb2.GetRawTransactionResponse.FromString,
+                )
+        self.GetRawBondTransaction = channel.unary_unary(
+                '/pactus.Transaction/GetRawBondTransaction',
+                request_serializer=transaction__pb2.GetRawBondTransactionRequest.SerializeToString,
+                response_deserializer=transaction__pb2.GetRawTransactionResponse.FromString,
+                )
+        self.GetRawUnbondTransaction = channel.unary_unary(
+                '/pactus.Transaction/GetRawUnbondTransaction',
+                request_serializer=transaction__pb2.GetRawUnbondTransactionRequest.SerializeToString,
+                response_deserializer=transaction__pb2.GetRawTransactionResponse.FromString,
+                )
+        self.GetRawWithdrawTransaction = channel.unary_unary(
+                '/pactus.Transaction/GetRawWithdrawTransaction',
+                request_serializer=transaction__pb2.GetRawWithdrawTransactionRequest.SerializeToString,
+                response_deserializer=transaction__pb2.GetRawTransactionResponse.FromString,
+                )
 
 
 class TransactionServicer(object):
@@ -73,6 +93,34 @@ class TransactionServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetRawTransferTransaction(self, request, context):
+        """Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetRawBondTransaction(self, request, context):
+        """Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetRawUnbondTransaction(self, request, context):
+        """Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetRawWithdrawTransaction(self, request, context):
+        """Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_TransactionServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -94,6 +142,26 @@ def add_TransactionServicer_to_server(servicer, server):
             'GetRawTransaction': grpc.unary_unary_rpc_method_handler(
                     servicer.GetRawTransaction,
                     request_deserializer=transaction__pb2.GetRawTransactionRequest.FromString,
+                    response_serializer=transaction__pb2.GetRawTransactionResponse.SerializeToString,
+            ),
+            'GetRawTransferTransaction': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetRawTransferTransaction,
+                    request_deserializer=transaction__pb2.GetRawTransferTransactionRequest.FromString,
+                    response_serializer=transaction__pb2.GetRawTransactionResponse.SerializeToString,
+            ),
+            'GetRawBondTransaction': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetRawBondTransaction,
+                    request_deserializer=transaction__pb2.GetRawBondTransactionRequest.FromString,
+                    response_serializer=transaction__pb2.GetRawTransactionResponse.SerializeToString,
+            ),
+            'GetRawUnbondTransaction': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetRawUnbondTransaction,
+                    request_deserializer=transaction__pb2.GetRawUnbondTransactionRequest.FromString,
+                    response_serializer=transaction__pb2.GetRawTransactionResponse.SerializeToString,
+            ),
+            'GetRawWithdrawTransaction': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetRawWithdrawTransaction,
+                    request_deserializer=transaction__pb2.GetRawWithdrawTransactionRequest.FromString,
                     response_serializer=transaction__pb2.GetRawTransactionResponse.SerializeToString,
             ),
     }
@@ -172,6 +240,74 @@ class Transaction(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/GetRawTransaction',
             transaction__pb2.GetRawTransactionRequest.SerializeToString,
+            transaction__pb2.GetRawTransactionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetRawTransferTransaction(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/GetRawTransferTransaction',
+            transaction__pb2.GetRawTransferTransactionRequest.SerializeToString,
+            transaction__pb2.GetRawTransactionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetRawBondTransaction(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/GetRawBondTransaction',
+            transaction__pb2.GetRawBondTransactionRequest.SerializeToString,
+            transaction__pb2.GetRawTransactionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetRawUnbondTransaction(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/GetRawUnbondTransaction',
+            transaction__pb2.GetRawUnbondTransactionRequest.SerializeToString,
+            transaction__pb2.GetRawTransactionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetRawWithdrawTransaction(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Transaction/GetRawWithdrawTransaction',
+            transaction__pb2.GetRawWithdrawTransactionRequest.SerializeToString,
             transaction__pb2.GetRawTransactionResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

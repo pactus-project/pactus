@@ -143,6 +143,130 @@ public final class TransactionGrpc {
     return getGetRawTransactionMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest,
+      pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getGetRawTransferTransactionMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetRawTransferTransaction",
+      requestType = pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest.class,
+      responseType = pactus.transaction.TransactionOuterClass.GetRawTransactionResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest,
+      pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getGetRawTransferTransactionMethod() {
+    io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest, pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getGetRawTransferTransactionMethod;
+    if ((getGetRawTransferTransactionMethod = TransactionGrpc.getGetRawTransferTransactionMethod) == null) {
+      synchronized (TransactionGrpc.class) {
+        if ((getGetRawTransferTransactionMethod = TransactionGrpc.getGetRawTransferTransactionMethod) == null) {
+          TransactionGrpc.getGetRawTransferTransactionMethod = getGetRawTransferTransactionMethod =
+              io.grpc.MethodDescriptor.<pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest, pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetRawTransferTransaction"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.transaction.TransactionOuterClass.GetRawTransactionResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("GetRawTransferTransaction"))
+              .build();
+        }
+      }
+    }
+    return getGetRawTransferTransactionMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest,
+      pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getGetRawBondTransactionMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetRawBondTransaction",
+      requestType = pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest.class,
+      responseType = pactus.transaction.TransactionOuterClass.GetRawTransactionResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest,
+      pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getGetRawBondTransactionMethod() {
+    io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest, pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getGetRawBondTransactionMethod;
+    if ((getGetRawBondTransactionMethod = TransactionGrpc.getGetRawBondTransactionMethod) == null) {
+      synchronized (TransactionGrpc.class) {
+        if ((getGetRawBondTransactionMethod = TransactionGrpc.getGetRawBondTransactionMethod) == null) {
+          TransactionGrpc.getGetRawBondTransactionMethod = getGetRawBondTransactionMethod =
+              io.grpc.MethodDescriptor.<pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest, pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetRawBondTransaction"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.transaction.TransactionOuterClass.GetRawTransactionResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("GetRawBondTransaction"))
+              .build();
+        }
+      }
+    }
+    return getGetRawBondTransactionMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest,
+      pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getGetRawUnbondTransactionMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetRawUnbondTransaction",
+      requestType = pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest.class,
+      responseType = pactus.transaction.TransactionOuterClass.GetRawTransactionResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest,
+      pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getGetRawUnbondTransactionMethod() {
+    io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest, pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getGetRawUnbondTransactionMethod;
+    if ((getGetRawUnbondTransactionMethod = TransactionGrpc.getGetRawUnbondTransactionMethod) == null) {
+      synchronized (TransactionGrpc.class) {
+        if ((getGetRawUnbondTransactionMethod = TransactionGrpc.getGetRawUnbondTransactionMethod) == null) {
+          TransactionGrpc.getGetRawUnbondTransactionMethod = getGetRawUnbondTransactionMethod =
+              io.grpc.MethodDescriptor.<pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest, pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetRawUnbondTransaction"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.transaction.TransactionOuterClass.GetRawTransactionResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("GetRawUnbondTransaction"))
+              .build();
+        }
+      }
+    }
+    return getGetRawUnbondTransactionMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest,
+      pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getGetRawWithdrawTransactionMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetRawWithdrawTransaction",
+      requestType = pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest.class,
+      responseType = pactus.transaction.TransactionOuterClass.GetRawTransactionResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest,
+      pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getGetRawWithdrawTransactionMethod() {
+    io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest, pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getGetRawWithdrawTransactionMethod;
+    if ((getGetRawWithdrawTransactionMethod = TransactionGrpc.getGetRawWithdrawTransactionMethod) == null) {
+      synchronized (TransactionGrpc.class) {
+        if ((getGetRawWithdrawTransactionMethod = TransactionGrpc.getGetRawWithdrawTransactionMethod) == null) {
+          TransactionGrpc.getGetRawWithdrawTransactionMethod = getGetRawWithdrawTransactionMethod =
+              io.grpc.MethodDescriptor.<pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest, pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetRawWithdrawTransaction"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.transaction.TransactionOuterClass.GetRawTransactionResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("GetRawWithdrawTransaction"))
+              .build();
+        }
+      }
+    }
+    return getGetRawWithdrawTransactionMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -237,6 +361,46 @@ public final class TransactionGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetRawTransactionMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+     * </pre>
+     */
+    public void getRawTransferTransaction(pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetRawTransferTransactionMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+     * </pre>
+     */
+    public void getRawBondTransaction(pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetRawBondTransactionMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+     * </pre>
+     */
+    public void getRawUnbondTransaction(pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetRawUnbondTransactionMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+     * </pre>
+     */
+    public void getRawWithdrawTransaction(pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetRawWithdrawTransactionMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -267,6 +431,34 @@ public final class TransactionGrpc {
                 pactus.transaction.TransactionOuterClass.GetRawTransactionRequest,
                 pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>(
                   this, METHODID_GET_RAW_TRANSACTION)))
+          .addMethod(
+            getGetRawTransferTransactionMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest,
+                pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>(
+                  this, METHODID_GET_RAW_TRANSFER_TRANSACTION)))
+          .addMethod(
+            getGetRawBondTransactionMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest,
+                pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>(
+                  this, METHODID_GET_RAW_BOND_TRANSACTION)))
+          .addMethod(
+            getGetRawUnbondTransactionMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest,
+                pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>(
+                  this, METHODID_GET_RAW_UNBOND_TRANSACTION)))
+          .addMethod(
+            getGetRawWithdrawTransactionMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest,
+                pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>(
+                  this, METHODID_GET_RAW_WITHDRAW_TRANSACTION)))
           .build();
     }
   }
@@ -334,6 +526,50 @@ public final class TransactionGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetRawTransactionMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+     * </pre>
+     */
+    public void getRawTransferTransaction(pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetRawTransferTransactionMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+     * </pre>
+     */
+    public void getRawBondTransaction(pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetRawBondTransactionMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+     * </pre>
+     */
+    public void getRawUnbondTransaction(pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetRawUnbondTransactionMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+     * </pre>
+     */
+    public void getRawWithdrawTransaction(pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetRawWithdrawTransactionMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -394,6 +630,46 @@ public final class TransactionGrpc {
     public pactus.transaction.TransactionOuterClass.GetRawTransactionResponse getRawTransaction(pactus.transaction.TransactionOuterClass.GetRawTransactionRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetRawTransactionMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+     * </pre>
+     */
+    public pactus.transaction.TransactionOuterClass.GetRawTransactionResponse getRawTransferTransaction(pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetRawTransferTransactionMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+     * </pre>
+     */
+    public pactus.transaction.TransactionOuterClass.GetRawTransactionResponse getRawBondTransaction(pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetRawBondTransactionMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+     * </pre>
+     */
+    public pactus.transaction.TransactionOuterClass.GetRawTransactionResponse getRawUnbondTransaction(pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetRawUnbondTransactionMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+     * </pre>
+     */
+    public pactus.transaction.TransactionOuterClass.GetRawTransactionResponse getRawWithdrawTransaction(pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetRawWithdrawTransactionMethod(), getCallOptions(), request);
     }
   }
 
@@ -460,12 +736,60 @@ public final class TransactionGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetRawTransactionMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getRawTransferTransaction(
+        pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetRawTransferTransactionMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getRawBondTransaction(
+        pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetRawBondTransactionMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getRawUnbondTransaction(
+        pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetRawUnbondTransactionMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getRawWithdrawTransaction(
+        pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetRawWithdrawTransactionMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_TRANSACTION = 0;
   private static final int METHODID_CALCULATE_FEE = 1;
   private static final int METHODID_BROADCAST_TRANSACTION = 2;
   private static final int METHODID_GET_RAW_TRANSACTION = 3;
+  private static final int METHODID_GET_RAW_TRANSFER_TRANSACTION = 4;
+  private static final int METHODID_GET_RAW_BOND_TRANSACTION = 5;
+  private static final int METHODID_GET_RAW_UNBOND_TRANSACTION = 6;
+  private static final int METHODID_GET_RAW_WITHDRAW_TRANSACTION = 7;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -498,6 +822,22 @@ public final class TransactionGrpc {
           break;
         case METHODID_GET_RAW_TRANSACTION:
           serviceImpl.getRawTransaction((pactus.transaction.TransactionOuterClass.GetRawTransactionRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>) responseObserver);
+          break;
+        case METHODID_GET_RAW_TRANSFER_TRANSACTION:
+          serviceImpl.getRawTransferTransaction((pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>) responseObserver);
+          break;
+        case METHODID_GET_RAW_BOND_TRANSACTION:
+          serviceImpl.getRawBondTransaction((pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>) responseObserver);
+          break;
+        case METHODID_GET_RAW_UNBOND_TRANSACTION:
+          serviceImpl.getRawUnbondTransaction((pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>) responseObserver);
+          break;
+        case METHODID_GET_RAW_WITHDRAW_TRANSACTION:
+          serviceImpl.getRawWithdrawTransaction((pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest) request,
               (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>) responseObserver);
           break;
         default:
@@ -565,6 +905,10 @@ public final class TransactionGrpc {
               .addMethod(getCalculateFeeMethod())
               .addMethod(getBroadcastTransactionMethod())
               .addMethod(getGetRawTransactionMethod())
+              .addMethod(getGetRawTransferTransactionMethod())
+              .addMethod(getGetRawBondTransactionMethod())
+              .addMethod(getGetRawUnbondTransactionMethod())
+              .addMethod(getGetRawWithdrawTransactionMethod())
               .build();
         }
       }

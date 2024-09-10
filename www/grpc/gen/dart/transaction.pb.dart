@@ -403,10 +403,10 @@ class GetRawTransactionRequest extends $pb.GeneratedMessage {
     ..oo(0, [3, 4, 5, 6])
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lockTime', $pb.PbFieldType.OU3)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'memo')
-    ..aOM<GetRawTransferTransactionRequest>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transfer', subBuilder: GetRawTransferTransactionRequest.create)
-    ..aOM<GetRawBondTransactionRequest>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bond', subBuilder: GetRawBondTransactionRequest.create)
-    ..aOM<GetRawUnbondTransactionRequest>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbond', subBuilder: GetRawUnbondTransactionRequest.create)
-    ..aOM<GetRawWithdrawTransactionRequest>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'withdraw', subBuilder: GetRawWithdrawTransactionRequest.create)
+    ..aOM<RawTransfer>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transfer', subBuilder: RawTransfer.create)
+    ..aOM<RawBond>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bond', subBuilder: RawBond.create)
+    ..aOM<RawUnbond>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbond', subBuilder: RawUnbond.create)
+    ..aOM<RawWithdraw>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'withdraw', subBuilder: RawWithdraw.create)
     ..hasRequiredFields = false
   ;
 
@@ -414,10 +414,10 @@ class GetRawTransactionRequest extends $pb.GeneratedMessage {
   factory GetRawTransactionRequest({
     $core.int? lockTime,
     $core.String? memo,
-    GetRawTransferTransactionRequest? transfer,
-    GetRawBondTransactionRequest? bond,
-    GetRawUnbondTransactionRequest? unbond,
-    GetRawWithdrawTransactionRequest? withdraw,
+    RawTransfer? transfer,
+    RawBond? bond,
+    RawUnbond? unbond,
+    RawWithdraw? withdraw,
   }) {
     final _result = create();
     if (lockTime != null) {
@@ -483,67 +483,74 @@ class GetRawTransactionRequest extends $pb.GeneratedMessage {
   void clearMemo() => clearField(2);
 
   @$pb.TagNumber(3)
-  GetRawTransferTransactionRequest get transfer => $_getN(2);
+  RawTransfer get transfer => $_getN(2);
   @$pb.TagNumber(3)
-  set transfer(GetRawTransferTransactionRequest v) { setField(3, v); }
+  set transfer(RawTransfer v) { setField(3, v); }
   @$pb.TagNumber(3)
   $core.bool hasTransfer() => $_has(2);
   @$pb.TagNumber(3)
   void clearTransfer() => clearField(3);
   @$pb.TagNumber(3)
-  GetRawTransferTransactionRequest ensureTransfer() => $_ensure(2);
+  RawTransfer ensureTransfer() => $_ensure(2);
 
   @$pb.TagNumber(4)
-  GetRawBondTransactionRequest get bond => $_getN(3);
+  RawBond get bond => $_getN(3);
   @$pb.TagNumber(4)
-  set bond(GetRawBondTransactionRequest v) { setField(4, v); }
+  set bond(RawBond v) { setField(4, v); }
   @$pb.TagNumber(4)
   $core.bool hasBond() => $_has(3);
   @$pb.TagNumber(4)
   void clearBond() => clearField(4);
   @$pb.TagNumber(4)
-  GetRawBondTransactionRequest ensureBond() => $_ensure(3);
+  RawBond ensureBond() => $_ensure(3);
 
   @$pb.TagNumber(5)
-  GetRawUnbondTransactionRequest get unbond => $_getN(4);
+  RawUnbond get unbond => $_getN(4);
   @$pb.TagNumber(5)
-  set unbond(GetRawUnbondTransactionRequest v) { setField(5, v); }
+  set unbond(RawUnbond v) { setField(5, v); }
   @$pb.TagNumber(5)
   $core.bool hasUnbond() => $_has(4);
   @$pb.TagNumber(5)
   void clearUnbond() => clearField(5);
   @$pb.TagNumber(5)
-  GetRawUnbondTransactionRequest ensureUnbond() => $_ensure(4);
+  RawUnbond ensureUnbond() => $_ensure(4);
 
   @$pb.TagNumber(6)
-  GetRawWithdrawTransactionRequest get withdraw => $_getN(5);
+  RawWithdraw get withdraw => $_getN(5);
   @$pb.TagNumber(6)
-  set withdraw(GetRawWithdrawTransactionRequest v) { setField(6, v); }
+  set withdraw(RawWithdraw v) { setField(6, v); }
   @$pb.TagNumber(6)
   $core.bool hasWithdraw() => $_has(5);
   @$pb.TagNumber(6)
   void clearWithdraw() => clearField(6);
   @$pb.TagNumber(6)
-  GetRawWithdrawTransactionRequest ensureWithdraw() => $_ensure(5);
+  RawWithdraw ensureWithdraw() => $_ensure(5);
 }
 
 class GetRawTransferTransactionRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetRawTransferTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sender')
-    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receiver')
-    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount')
-    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lockTime', $pb.PbFieldType.OU3)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sender')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receiver')
+    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount')
+    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
+    ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'memo')
     ..hasRequiredFields = false
   ;
 
   GetRawTransferTransactionRequest._() : super();
   factory GetRawTransferTransactionRequest({
+    $core.int? lockTime,
     $core.String? sender,
     $core.String? receiver,
     $fixnum.Int64? amount,
     $fixnum.Int64? fee,
+    $core.String? memo,
   }) {
     final _result = create();
+    if (lockTime != null) {
+      _result.lockTime = lockTime;
+    }
     if (sender != null) {
       _result.sender = sender;
     }
@@ -555,6 +562,9 @@ class GetRawTransferTransactionRequest extends $pb.GeneratedMessage {
     }
     if (fee != null) {
       _result.fee = fee;
+    }
+    if (memo != null) {
+      _result.memo = memo;
     }
     return _result;
   }
@@ -578,6 +588,436 @@ class GetRawTransferTransactionRequest extends $pb.GeneratedMessage {
   @$core.pragma('dart2js:noInline')
   static GetRawTransferTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetRawTransferTransactionRequest>(create);
   static GetRawTransferTransactionRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get lockTime => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set lockTime($core.int v) { $_setUnsignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasLockTime() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearLockTime() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get sender => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set sender($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasSender() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearSender() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get receiver => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set receiver($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasReceiver() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearReceiver() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $fixnum.Int64 get amount => $_getI64(3);
+  @$pb.TagNumber(4)
+  set amount($fixnum.Int64 v) { $_setInt64(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasAmount() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearAmount() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $fixnum.Int64 get fee => $_getI64(4);
+  @$pb.TagNumber(5)
+  set fee($fixnum.Int64 v) { $_setInt64(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasFee() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearFee() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.String get memo => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set memo($core.String v) { $_setString(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasMemo() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearMemo() => clearField(6);
+}
+
+class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetRawBondTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lockTime', $pb.PbFieldType.OU3)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sender')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receiver')
+    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stake')
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
+    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'memo')
+    ..hasRequiredFields = false
+  ;
+
+  GetRawBondTransactionRequest._() : super();
+  factory GetRawBondTransactionRequest({
+    $core.int? lockTime,
+    $core.String? sender,
+    $core.String? receiver,
+    $fixnum.Int64? stake,
+    $core.String? publicKey,
+    $fixnum.Int64? fee,
+    $core.String? memo,
+  }) {
+    final _result = create();
+    if (lockTime != null) {
+      _result.lockTime = lockTime;
+    }
+    if (sender != null) {
+      _result.sender = sender;
+    }
+    if (receiver != null) {
+      _result.receiver = receiver;
+    }
+    if (stake != null) {
+      _result.stake = stake;
+    }
+    if (publicKey != null) {
+      _result.publicKey = publicKey;
+    }
+    if (fee != null) {
+      _result.fee = fee;
+    }
+    if (memo != null) {
+      _result.memo = memo;
+    }
+    return _result;
+  }
+  factory GetRawBondTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetRawBondTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetRawBondTransactionRequest clone() => GetRawBondTransactionRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetRawBondTransactionRequest copyWith(void Function(GetRawBondTransactionRequest) updates) => super.copyWith((message) => updates(message as GetRawBondTransactionRequest)) as GetRawBondTransactionRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetRawBondTransactionRequest create() => GetRawBondTransactionRequest._();
+  GetRawBondTransactionRequest createEmptyInstance() => create();
+  static $pb.PbList<GetRawBondTransactionRequest> createRepeated() => $pb.PbList<GetRawBondTransactionRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetRawBondTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetRawBondTransactionRequest>(create);
+  static GetRawBondTransactionRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get lockTime => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set lockTime($core.int v) { $_setUnsignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasLockTime() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearLockTime() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get sender => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set sender($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasSender() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearSender() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get receiver => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set receiver($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasReceiver() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearReceiver() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $fixnum.Int64 get stake => $_getI64(3);
+  @$pb.TagNumber(4)
+  set stake($fixnum.Int64 v) { $_setInt64(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasStake() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearStake() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get publicKey => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set publicKey($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasPublicKey() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearPublicKey() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $fixnum.Int64 get fee => $_getI64(5);
+  @$pb.TagNumber(6)
+  set fee($fixnum.Int64 v) { $_setInt64(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasFee() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearFee() => clearField(6);
+
+  @$pb.TagNumber(7)
+  $core.String get memo => $_getSZ(6);
+  @$pb.TagNumber(7)
+  set memo($core.String v) { $_setString(6, v); }
+  @$pb.TagNumber(7)
+  $core.bool hasMemo() => $_has(6);
+  @$pb.TagNumber(7)
+  void clearMemo() => clearField(7);
+}
+
+class GetRawUnbondTransactionRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetRawUnbondTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lockTime', $pb.PbFieldType.OU3)
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'validatorAddress')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'memo')
+    ..hasRequiredFields = false
+  ;
+
+  GetRawUnbondTransactionRequest._() : super();
+  factory GetRawUnbondTransactionRequest({
+    $core.int? lockTime,
+    $core.String? validatorAddress,
+    $core.String? memo,
+  }) {
+    final _result = create();
+    if (lockTime != null) {
+      _result.lockTime = lockTime;
+    }
+    if (validatorAddress != null) {
+      _result.validatorAddress = validatorAddress;
+    }
+    if (memo != null) {
+      _result.memo = memo;
+    }
+    return _result;
+  }
+  factory GetRawUnbondTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetRawUnbondTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetRawUnbondTransactionRequest clone() => GetRawUnbondTransactionRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetRawUnbondTransactionRequest copyWith(void Function(GetRawUnbondTransactionRequest) updates) => super.copyWith((message) => updates(message as GetRawUnbondTransactionRequest)) as GetRawUnbondTransactionRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetRawUnbondTransactionRequest create() => GetRawUnbondTransactionRequest._();
+  GetRawUnbondTransactionRequest createEmptyInstance() => create();
+  static $pb.PbList<GetRawUnbondTransactionRequest> createRepeated() => $pb.PbList<GetRawUnbondTransactionRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetRawUnbondTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetRawUnbondTransactionRequest>(create);
+  static GetRawUnbondTransactionRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get lockTime => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set lockTime($core.int v) { $_setUnsignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasLockTime() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearLockTime() => clearField(1);
+
+  @$pb.TagNumber(3)
+  $core.String get validatorAddress => $_getSZ(1);
+  @$pb.TagNumber(3)
+  set validatorAddress($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasValidatorAddress() => $_has(1);
+  @$pb.TagNumber(3)
+  void clearValidatorAddress() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get memo => $_getSZ(2);
+  @$pb.TagNumber(4)
+  set memo($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasMemo() => $_has(2);
+  @$pb.TagNumber(4)
+  void clearMemo() => clearField(4);
+}
+
+class GetRawWithdrawTransactionRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetRawWithdrawTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lockTime', $pb.PbFieldType.OU3)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'validatorAddress')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'accountAddress')
+    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount')
+    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
+    ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'memo')
+    ..hasRequiredFields = false
+  ;
+
+  GetRawWithdrawTransactionRequest._() : super();
+  factory GetRawWithdrawTransactionRequest({
+    $core.int? lockTime,
+    $core.String? validatorAddress,
+    $core.String? accountAddress,
+    $fixnum.Int64? amount,
+    $fixnum.Int64? fee,
+    $core.String? memo,
+  }) {
+    final _result = create();
+    if (lockTime != null) {
+      _result.lockTime = lockTime;
+    }
+    if (validatorAddress != null) {
+      _result.validatorAddress = validatorAddress;
+    }
+    if (accountAddress != null) {
+      _result.accountAddress = accountAddress;
+    }
+    if (amount != null) {
+      _result.amount = amount;
+    }
+    if (fee != null) {
+      _result.fee = fee;
+    }
+    if (memo != null) {
+      _result.memo = memo;
+    }
+    return _result;
+  }
+  factory GetRawWithdrawTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetRawWithdrawTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetRawWithdrawTransactionRequest clone() => GetRawWithdrawTransactionRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetRawWithdrawTransactionRequest copyWith(void Function(GetRawWithdrawTransactionRequest) updates) => super.copyWith((message) => updates(message as GetRawWithdrawTransactionRequest)) as GetRawWithdrawTransactionRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetRawWithdrawTransactionRequest create() => GetRawWithdrawTransactionRequest._();
+  GetRawWithdrawTransactionRequest createEmptyInstance() => create();
+  static $pb.PbList<GetRawWithdrawTransactionRequest> createRepeated() => $pb.PbList<GetRawWithdrawTransactionRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetRawWithdrawTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetRawWithdrawTransactionRequest>(create);
+  static GetRawWithdrawTransactionRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get lockTime => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set lockTime($core.int v) { $_setUnsignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasLockTime() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearLockTime() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get validatorAddress => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set validatorAddress($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasValidatorAddress() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearValidatorAddress() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get accountAddress => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set accountAddress($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasAccountAddress() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearAccountAddress() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $fixnum.Int64 get amount => $_getI64(3);
+  @$pb.TagNumber(4)
+  set amount($fixnum.Int64 v) { $_setInt64(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasAmount() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearAmount() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $fixnum.Int64 get fee => $_getI64(4);
+  @$pb.TagNumber(5)
+  set fee($fixnum.Int64 v) { $_setInt64(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasFee() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearFee() => clearField(5);
+
+  @$pb.TagNumber(6)
+  $core.String get memo => $_getSZ(5);
+  @$pb.TagNumber(6)
+  set memo($core.String v) { $_setString(5, v); }
+  @$pb.TagNumber(6)
+  $core.bool hasMemo() => $_has(5);
+  @$pb.TagNumber(6)
+  void clearMemo() => clearField(6);
+}
+
+class RawTransfer extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RawTransfer', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sender')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receiver')
+    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount')
+    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
+    ..hasRequiredFields = false
+  ;
+
+  RawTransfer._() : super();
+  factory RawTransfer({
+    $core.String? sender,
+    $core.String? receiver,
+    $fixnum.Int64? amount,
+    $fixnum.Int64? fee,
+  }) {
+    final _result = create();
+    if (sender != null) {
+      _result.sender = sender;
+    }
+    if (receiver != null) {
+      _result.receiver = receiver;
+    }
+    if (amount != null) {
+      _result.amount = amount;
+    }
+    if (fee != null) {
+      _result.fee = fee;
+    }
+    return _result;
+  }
+  factory RawTransfer.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RawTransfer.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  RawTransfer clone() => RawTransfer()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  RawTransfer copyWith(void Function(RawTransfer) updates) => super.copyWith((message) => updates(message as RawTransfer)) as RawTransfer; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static RawTransfer create() => RawTransfer._();
+  RawTransfer createEmptyInstance() => create();
+  static $pb.PbList<RawTransfer> createRepeated() => $pb.PbList<RawTransfer>();
+  @$core.pragma('dart2js:noInline')
+  static RawTransfer getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RawTransfer>(create);
+  static RawTransfer? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get sender => $_getSZ(0);
@@ -616,8 +1056,8 @@ class GetRawTransferTransactionRequest extends $pb.GeneratedMessage {
   void clearFee() => clearField(4);
 }
 
-class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetRawBondTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+class RawBond extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RawBond', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sender')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receiver')
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stake')
@@ -626,8 +1066,8 @@ class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
     ..hasRequiredFields = false
   ;
 
-  GetRawBondTransactionRequest._() : super();
-  factory GetRawBondTransactionRequest({
+  RawBond._() : super();
+  factory RawBond({
     $core.String? sender,
     $core.String? receiver,
     $fixnum.Int64? stake,
@@ -652,26 +1092,26 @@ class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory GetRawBondTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GetRawBondTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory RawBond.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RawBond.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  GetRawBondTransactionRequest clone() => GetRawBondTransactionRequest()..mergeFromMessage(this);
+  RawBond clone() => RawBond()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  GetRawBondTransactionRequest copyWith(void Function(GetRawBondTransactionRequest) updates) => super.copyWith((message) => updates(message as GetRawBondTransactionRequest)) as GetRawBondTransactionRequest; // ignore: deprecated_member_use
+  RawBond copyWith(void Function(RawBond) updates) => super.copyWith((message) => updates(message as RawBond)) as RawBond; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static GetRawBondTransactionRequest create() => GetRawBondTransactionRequest._();
-  GetRawBondTransactionRequest createEmptyInstance() => create();
-  static $pb.PbList<GetRawBondTransactionRequest> createRepeated() => $pb.PbList<GetRawBondTransactionRequest>();
+  static RawBond create() => RawBond._();
+  RawBond createEmptyInstance() => create();
+  static $pb.PbList<RawBond> createRepeated() => $pb.PbList<RawBond>();
   @$core.pragma('dart2js:noInline')
-  static GetRawBondTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetRawBondTransactionRequest>(create);
-  static GetRawBondTransactionRequest? _defaultInstance;
+  static RawBond getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RawBond>(create);
+  static RawBond? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get sender => $_getSZ(0);
@@ -719,14 +1159,14 @@ class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
   void clearFee() => clearField(5);
 }
 
-class GetRawUnbondTransactionRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetRawUnbondTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+class RawUnbond extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RawUnbond', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'validatorAddress')
     ..hasRequiredFields = false
   ;
 
-  GetRawUnbondTransactionRequest._() : super();
-  factory GetRawUnbondTransactionRequest({
+  RawUnbond._() : super();
+  factory RawUnbond({
     $core.String? validatorAddress,
   }) {
     final _result = create();
@@ -735,26 +1175,26 @@ class GetRawUnbondTransactionRequest extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory GetRawUnbondTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GetRawUnbondTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory RawUnbond.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RawUnbond.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  GetRawUnbondTransactionRequest clone() => GetRawUnbondTransactionRequest()..mergeFromMessage(this);
+  RawUnbond clone() => RawUnbond()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  GetRawUnbondTransactionRequest copyWith(void Function(GetRawUnbondTransactionRequest) updates) => super.copyWith((message) => updates(message as GetRawUnbondTransactionRequest)) as GetRawUnbondTransactionRequest; // ignore: deprecated_member_use
+  RawUnbond copyWith(void Function(RawUnbond) updates) => super.copyWith((message) => updates(message as RawUnbond)) as RawUnbond; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static GetRawUnbondTransactionRequest create() => GetRawUnbondTransactionRequest._();
-  GetRawUnbondTransactionRequest createEmptyInstance() => create();
-  static $pb.PbList<GetRawUnbondTransactionRequest> createRepeated() => $pb.PbList<GetRawUnbondTransactionRequest>();
+  static RawUnbond create() => RawUnbond._();
+  RawUnbond createEmptyInstance() => create();
+  static $pb.PbList<RawUnbond> createRepeated() => $pb.PbList<RawUnbond>();
   @$core.pragma('dart2js:noInline')
-  static GetRawUnbondTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetRawUnbondTransactionRequest>(create);
-  static GetRawUnbondTransactionRequest? _defaultInstance;
+  static RawUnbond getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RawUnbond>(create);
+  static RawUnbond? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get validatorAddress => $_getSZ(0);
@@ -766,8 +1206,8 @@ class GetRawUnbondTransactionRequest extends $pb.GeneratedMessage {
   void clearValidatorAddress() => clearField(1);
 }
 
-class GetRawWithdrawTransactionRequest extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetRawWithdrawTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+class RawWithdraw extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RawWithdraw', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'validatorAddress')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'accountAddress')
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount')
@@ -775,8 +1215,8 @@ class GetRawWithdrawTransactionRequest extends $pb.GeneratedMessage {
     ..hasRequiredFields = false
   ;
 
-  GetRawWithdrawTransactionRequest._() : super();
-  factory GetRawWithdrawTransactionRequest({
+  RawWithdraw._() : super();
+  factory RawWithdraw({
     $core.String? validatorAddress,
     $core.String? accountAddress,
     $fixnum.Int64? amount,
@@ -797,26 +1237,26 @@ class GetRawWithdrawTransactionRequest extends $pb.GeneratedMessage {
     }
     return _result;
   }
-  factory GetRawWithdrawTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GetRawWithdrawTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory RawWithdraw.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory RawWithdraw.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
   'Will be removed in next major version')
-  GetRawWithdrawTransactionRequest clone() => GetRawWithdrawTransactionRequest()..mergeFromMessage(this);
+  RawWithdraw clone() => RawWithdraw()..mergeFromMessage(this);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  GetRawWithdrawTransactionRequest copyWith(void Function(GetRawWithdrawTransactionRequest) updates) => super.copyWith((message) => updates(message as GetRawWithdrawTransactionRequest)) as GetRawWithdrawTransactionRequest; // ignore: deprecated_member_use
+  RawWithdraw copyWith(void Function(RawWithdraw) updates) => super.copyWith((message) => updates(message as RawWithdraw)) as RawWithdraw; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
   @$core.pragma('dart2js:noInline')
-  static GetRawWithdrawTransactionRequest create() => GetRawWithdrawTransactionRequest._();
-  GetRawWithdrawTransactionRequest createEmptyInstance() => create();
-  static $pb.PbList<GetRawWithdrawTransactionRequest> createRepeated() => $pb.PbList<GetRawWithdrawTransactionRequest>();
+  static RawWithdraw create() => RawWithdraw._();
+  RawWithdraw createEmptyInstance() => create();
+  static $pb.PbList<RawWithdraw> createRepeated() => $pb.PbList<RawWithdraw>();
   @$core.pragma('dart2js:noInline')
-  static GetRawWithdrawTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetRawWithdrawTransactionRequest>(create);
-  static GetRawWithdrawTransactionRequest? _defaultInstance;
+  static RawWithdraw getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RawWithdraw>(create);
+  static RawWithdraw? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get validatorAddress => $_getSZ(0);
@@ -1528,6 +1968,22 @@ class TransactionApi {
   $async.Future<GetRawTransactionResponse> getRawTransaction($pb.ClientContext? ctx, GetRawTransactionRequest request) {
     var emptyResponse = GetRawTransactionResponse();
     return _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawTransaction', request, emptyResponse);
+  }
+  $async.Future<GetRawTransactionResponse> getRawTransferTransaction($pb.ClientContext? ctx, GetRawTransferTransactionRequest request) {
+    var emptyResponse = GetRawTransactionResponse();
+    return _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawTransferTransaction', request, emptyResponse);
+  }
+  $async.Future<GetRawTransactionResponse> getRawBondTransaction($pb.ClientContext? ctx, GetRawBondTransactionRequest request) {
+    var emptyResponse = GetRawTransactionResponse();
+    return _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawBondTransaction', request, emptyResponse);
+  }
+  $async.Future<GetRawTransactionResponse> getRawUnbondTransaction($pb.ClientContext? ctx, GetRawUnbondTransactionRequest request) {
+    var emptyResponse = GetRawTransactionResponse();
+    return _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawUnbondTransaction', request, emptyResponse);
+  }
+  $async.Future<GetRawTransactionResponse> getRawWithdrawTransaction($pb.ClientContext? ctx, GetRawWithdrawTransactionRequest request) {
+    var emptyResponse = GetRawTransactionResponse();
+    return _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawWithdrawTransaction', request, emptyResponse);
   }
 }
 

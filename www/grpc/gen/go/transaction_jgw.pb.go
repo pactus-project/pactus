@@ -104,5 +104,73 @@ func (s *TransactionJsonRPC) Methods() map[string]func(ctx context.Context, mess
 
 			return s.client.GetRawTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
+
+		"pactus.transaction.get_raw_transfer_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetRawTransferTransactionRequest)
+
+			var jrpcData paramsAndHeadersTransaction
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.GetRawTransferTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
+		"pactus.transaction.get_raw_bond_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetRawBondTransactionRequest)
+
+			var jrpcData paramsAndHeadersTransaction
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.GetRawBondTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
+		"pactus.transaction.get_raw_unbond_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetRawUnbondTransactionRequest)
+
+			var jrpcData paramsAndHeadersTransaction
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.GetRawUnbondTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
+		"pactus.transaction.get_raw_withdraw_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetRawWithdrawTransactionRequest)
+
+			var jrpcData paramsAndHeadersTransaction
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.GetRawWithdrawTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
 	}
 }

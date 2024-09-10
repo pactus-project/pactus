@@ -85,13 +85,73 @@ class GetRawTransactionRequest(_message.Message):
     WITHDRAW_FIELD_NUMBER: _ClassVar[int]
     lock_time: int
     memo: str
-    transfer: GetRawTransferTransactionRequest
-    bond: GetRawBondTransactionRequest
-    unbond: GetRawUnbondTransactionRequest
-    withdraw: GetRawWithdrawTransactionRequest
-    def __init__(self, lock_time: _Optional[int] = ..., memo: _Optional[str] = ..., transfer: _Optional[_Union[GetRawTransferTransactionRequest, _Mapping]] = ..., bond: _Optional[_Union[GetRawBondTransactionRequest, _Mapping]] = ..., unbond: _Optional[_Union[GetRawUnbondTransactionRequest, _Mapping]] = ..., withdraw: _Optional[_Union[GetRawWithdrawTransactionRequest, _Mapping]] = ...) -> None: ...
+    transfer: RawTransfer
+    bond: RawBond
+    unbond: RawUnbond
+    withdraw: RawWithdraw
+    def __init__(self, lock_time: _Optional[int] = ..., memo: _Optional[str] = ..., transfer: _Optional[_Union[RawTransfer, _Mapping]] = ..., bond: _Optional[_Union[RawBond, _Mapping]] = ..., unbond: _Optional[_Union[RawUnbond, _Mapping]] = ..., withdraw: _Optional[_Union[RawWithdraw, _Mapping]] = ...) -> None: ...
 
 class GetRawTransferTransactionRequest(_message.Message):
+    __slots__ = ("lock_time", "sender", "receiver", "amount", "fee", "memo")
+    LOCK_TIME_FIELD_NUMBER: _ClassVar[int]
+    SENDER_FIELD_NUMBER: _ClassVar[int]
+    RECEIVER_FIELD_NUMBER: _ClassVar[int]
+    AMOUNT_FIELD_NUMBER: _ClassVar[int]
+    FEE_FIELD_NUMBER: _ClassVar[int]
+    MEMO_FIELD_NUMBER: _ClassVar[int]
+    lock_time: int
+    sender: str
+    receiver: str
+    amount: int
+    fee: int
+    memo: str
+    def __init__(self, lock_time: _Optional[int] = ..., sender: _Optional[str] = ..., receiver: _Optional[str] = ..., amount: _Optional[int] = ..., fee: _Optional[int] = ..., memo: _Optional[str] = ...) -> None: ...
+
+class GetRawBondTransactionRequest(_message.Message):
+    __slots__ = ("lock_time", "sender", "receiver", "stake", "public_key", "fee", "memo")
+    LOCK_TIME_FIELD_NUMBER: _ClassVar[int]
+    SENDER_FIELD_NUMBER: _ClassVar[int]
+    RECEIVER_FIELD_NUMBER: _ClassVar[int]
+    STAKE_FIELD_NUMBER: _ClassVar[int]
+    PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
+    FEE_FIELD_NUMBER: _ClassVar[int]
+    MEMO_FIELD_NUMBER: _ClassVar[int]
+    lock_time: int
+    sender: str
+    receiver: str
+    stake: int
+    public_key: str
+    fee: int
+    memo: str
+    def __init__(self, lock_time: _Optional[int] = ..., sender: _Optional[str] = ..., receiver: _Optional[str] = ..., stake: _Optional[int] = ..., public_key: _Optional[str] = ..., fee: _Optional[int] = ..., memo: _Optional[str] = ...) -> None: ...
+
+class GetRawUnbondTransactionRequest(_message.Message):
+    __slots__ = ("lock_time", "validator_address", "memo")
+    LOCK_TIME_FIELD_NUMBER: _ClassVar[int]
+    VALIDATOR_ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    MEMO_FIELD_NUMBER: _ClassVar[int]
+    lock_time: int
+    validator_address: str
+    memo: str
+    def __init__(self, lock_time: _Optional[int] = ..., validator_address: _Optional[str] = ..., memo: _Optional[str] = ...) -> None: ...
+
+class GetRawWithdrawTransactionRequest(_message.Message):
+    __slots__ = ("lock_time", "validator_address", "account_address", "amount", "fee", "memo")
+    LOCK_TIME_FIELD_NUMBER: _ClassVar[int]
+    VALIDATOR_ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    ACCOUNT_ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    AMOUNT_FIELD_NUMBER: _ClassVar[int]
+    FEE_FIELD_NUMBER: _ClassVar[int]
+    MEMO_FIELD_NUMBER: _ClassVar[int]
+    lock_time: int
+    validator_address: str
+    account_address: str
+    amount: int
+    fee: int
+    memo: str
+    def __init__(self, lock_time: _Optional[int] = ..., validator_address: _Optional[str] = ..., account_address: _Optional[str] = ..., amount: _Optional[int] = ..., fee: _Optional[int] = ..., memo: _Optional[str] = ...) -> None: ...
+
+class RawTransfer(_message.Message):
     __slots__ = ("sender", "receiver", "amount", "fee")
     SENDER_FIELD_NUMBER: _ClassVar[int]
     RECEIVER_FIELD_NUMBER: _ClassVar[int]
@@ -103,7 +163,7 @@ class GetRawTransferTransactionRequest(_message.Message):
     fee: int
     def __init__(self, sender: _Optional[str] = ..., receiver: _Optional[str] = ..., amount: _Optional[int] = ..., fee: _Optional[int] = ...) -> None: ...
 
-class GetRawBondTransactionRequest(_message.Message):
+class RawBond(_message.Message):
     __slots__ = ("sender", "receiver", "stake", "public_key", "fee")
     SENDER_FIELD_NUMBER: _ClassVar[int]
     RECEIVER_FIELD_NUMBER: _ClassVar[int]
@@ -117,13 +177,13 @@ class GetRawBondTransactionRequest(_message.Message):
     fee: int
     def __init__(self, sender: _Optional[str] = ..., receiver: _Optional[str] = ..., stake: _Optional[int] = ..., public_key: _Optional[str] = ..., fee: _Optional[int] = ...) -> None: ...
 
-class GetRawUnbondTransactionRequest(_message.Message):
+class RawUnbond(_message.Message):
     __slots__ = ("validator_address",)
     VALIDATOR_ADDRESS_FIELD_NUMBER: _ClassVar[int]
     validator_address: str
     def __init__(self, validator_address: _Optional[str] = ...) -> None: ...
 
-class GetRawWithdrawTransactionRequest(_message.Message):
+class RawWithdraw(_message.Message):
     __slots__ = ("validator_address", "account_address", "amount", "fee")
     VALIDATOR_ADDRESS_FIELD_NUMBER: _ClassVar[int]
     ACCOUNT_ADDRESS_FIELD_NUMBER: _ClassVar[int]

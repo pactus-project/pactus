@@ -21,6 +21,22 @@ service Transaction {
 
   // GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.
   rpc GetRawTransaction(GetRawTransactionRequest) returns(GetRawTransactionResponse);
+
+  // Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+  rpc GetRawTransferTransaction(GetRawTransferTransactionRequest)
+      returns (GetRawTransactionResponse);
+
+  // Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+  rpc GetRawBondTransaction(GetRawBondTransactionRequest)
+      returns (GetRawTransactionResponse);
+
+  // Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+  rpc GetRawUnbondTransaction(GetRawUnbondTransactionRequest)
+      returns (GetRawTransactionResponse);
+
+  // Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+  rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest)
+      returns (GetRawTransactionResponse);
 }
 
 // Request message for retrieving transaction details.
@@ -80,15 +96,79 @@ message GetRawTransactionRequest {
   string memo = 2;
 
   oneof transaction {
-    GetRawTransferTransactionRequest transfer = 3;
-    GetRawBondTransactionRequest bond = 4;
-    GetRawUnbondTransactionRequest unbond = 5;
-    GetRawWithdrawTransactionRequest withdraw = 6;
+    RawTransfer transfer = 3;
+    RawBond bond = 4;
+    RawUnbond unbond = 5;
+    RawWithdraw withdraw = 6;
   }
 }
 
 // Request message for retrieving raw details of a transfer transaction.
 message GetRawTransferTransactionRequest {
+  // The lock time for the transaction. If not set, defaults to the last block
+  // height.
+  uint32 lock_time = 1;
+  // The sender's account address.
+  string sender = 2;
+  // The receiver's account address.
+  string receiver = 3;
+  // The amount to be transferred, specified in NanoPAC. Must be greater than 0.
+  int64 amount = 4;
+  // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+  int64 fee = 5;
+  // A memo string for the transaction.
+  string memo = 6;
+}
+
+// Request message for retrieving raw details of a bond transaction.
+message GetRawBondTransactionRequest {
+  // The lock time for the transaction. If not set, defaults to the last block
+  // height.
+  uint32 lock_time = 1;
+  // The sender's account address.
+  string sender = 2;
+  // The receiver's validator address.
+  string receiver = 3;
+  // The stake amount in NanoPAC. Must be greater than 0.
+  int64 stake = 4;
+  // The public key of the validator.
+  string public_key = 5;
+  // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+  int64 fee = 6;
+  // A memo string for the transaction.
+  string memo = 7;
+}
+
+// Request message for retrieving raw details of an unbond transaction.
+message GetRawUnbondTransactionRequest {
+  // The lock time for the transaction. If not set, defaults to the last block
+  // height.
+  uint32 lock_time = 1;
+  // The address of the validator to unbond from.
+  string validator_address = 3;
+  // A memo string for the transaction.
+  string memo = 4;
+}
+
+// Request message for retrieving raw details of a withdraw transaction.
+message GetRawWithdrawTransactionRequest {
+  // The lock time for the transaction. If not set, defaults to the last block
+  // height.
+  uint32 lock_time = 1;
+  // The address of the validator to withdraw from.
+  string validator_address = 2;
+  // The address of the account to withdraw to.
+  string account_address = 3;
+  // The withdrawal amount in NanoPAC. Must be greater than 0.
+  int64 amount = 4;
+  // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+  int64 fee = 5;
+  // A memo string for the transaction.
+  string memo = 6;
+}
+
+// Request message for retrieving raw details of a transfer transaction.
+message RawTransfer {
   // The sender's account address.
   string sender = 1;
   // The receiver's account address.
@@ -100,7 +180,7 @@ message GetRawTransferTransactionRequest {
 }
 
 // Request message for retrieving raw details of a bond transaction.
-message GetRawBondTransactionRequest {
+message RawBond {
   // The sender's account address.
   string sender = 1;
   // The receiver's validator address.
@@ -114,13 +194,13 @@ message GetRawBondTransactionRequest {
 }
 
 // Request message for retrieving raw details of an unbond transaction.
-message GetRawUnbondTransactionRequest {
+message RawUnbond {
   // The address of the validator to unbond from.
   string validator_address = 1;
 }
 
 // Request message for retrieving raw details of a withdraw transaction.
-message GetRawWithdrawTransactionRequest {
+message RawWithdraw {
   // The address of the validator to withdraw from.
   string validator_address = 1;
   // The address of the account to withdraw to.

@@ -31,6 +31,22 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <a href="#pactus.Transaction.GetRawTransaction">
           <span class="rpc-badge"></span> GetRawTransaction</a>
         </li>
+        <li>
+          <a href="#pactus.Transaction.GetRawTransferTransaction">
+          <span class="rpc-badge"></span> GetRawTransferTransaction</a>
+        </li>
+        <li>
+          <a href="#pactus.Transaction.GetRawBondTransaction">
+          <span class="rpc-badge"></span> GetRawBondTransaction</a>
+        </li>
+        <li>
+          <a href="#pactus.Transaction.GetRawUnbondTransaction">
+          <span class="rpc-badge"></span> GetRawUnbondTransaction</a>
+        </li>
+        <li>
+          <a href="#pactus.Transaction.GetRawWithdrawTransaction">
+          <span class="rpc-badge"></span> GetRawWithdrawTransaction</a>
+        </li>
         </ul>
     </li>
     <li> Blockchain Service
@@ -551,30 +567,308 @@ height.
   </tr>
   <tr>
     <td class="fw-bold">transfer</td>
-    <td> GetRawTransferTransactionRequest</td>
+    <td> RawTransfer</td>
     <td>
     (OneOf) 
     </td>
   </tr>
   <tr>
     <td class="fw-bold">bond</td>
-    <td> GetRawBondTransactionRequest</td>
+    <td> RawBond</td>
     <td>
     (OneOf) 
     </td>
   </tr>
   <tr>
     <td class="fw-bold">unbond</td>
-    <td> GetRawUnbondTransactionRequest</td>
+    <td> RawUnbond</td>
     <td>
     (OneOf) 
     </td>
   </tr>
   <tr>
     <td class="fw-bold">withdraw</td>
-    <td> GetRawWithdrawTransactionRequest</td>
+    <td> RawWithdraw</td>
     <td>
     (OneOf) 
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetRawTransactionResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">raw_transaction</td>
+    <td> string</td>
+    <td>
+    The raw transaction data.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### GetRawTransferTransaction <span id="pactus.Transaction.GetRawTransferTransaction" class="rpc-badge"></span>
+
+<p>Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.</p>
+
+<h4>GetRawTransferTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">lock_time</td>
+    <td> uint32</td>
+    <td>
+    The lock time for the transaction. If not set, defaults to the last block
+height.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">sender</td>
+    <td> string</td>
+    <td>
+    The sender's account address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">receiver</td>
+    <td> string</td>
+    <td>
+    The receiver's account address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">amount</td>
+    <td> int64</td>
+    <td>
+    The amount to be transferred, specified in NanoPAC. Must be greater than 0.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">fee</td>
+    <td> int64</td>
+    <td>
+    The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">memo</td>
+    <td> string</td>
+    <td>
+    A memo string for the transaction.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetRawTransactionResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">raw_transaction</td>
+    <td> string</td>
+    <td>
+    The raw transaction data.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### GetRawBondTransaction <span id="pactus.Transaction.GetRawBondTransaction" class="rpc-badge"></span>
+
+<p>Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.</p>
+
+<h4>GetRawBondTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">lock_time</td>
+    <td> uint32</td>
+    <td>
+    The lock time for the transaction. If not set, defaults to the last block
+height.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">sender</td>
+    <td> string</td>
+    <td>
+    The sender's account address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">receiver</td>
+    <td> string</td>
+    <td>
+    The receiver's validator address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">stake</td>
+    <td> int64</td>
+    <td>
+    The stake amount in NanoPAC. Must be greater than 0.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">public_key</td>
+    <td> string</td>
+    <td>
+    The public key of the validator.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">fee</td>
+    <td> int64</td>
+    <td>
+    The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">memo</td>
+    <td> string</td>
+    <td>
+    A memo string for the transaction.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetRawTransactionResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">raw_transaction</td>
+    <td> string</td>
+    <td>
+    The raw transaction data.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### GetRawUnbondTransaction <span id="pactus.Transaction.GetRawUnbondTransaction" class="rpc-badge"></span>
+
+<p>Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.</p>
+
+<h4>GetRawUnbondTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">lock_time</td>
+    <td> uint32</td>
+    <td>
+    The lock time for the transaction. If not set, defaults to the last block
+height.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">validator_address</td>
+    <td> string</td>
+    <td>
+    The address of the validator to unbond from.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">memo</td>
+    <td> string</td>
+    <td>
+    A memo string for the transaction.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetRawTransactionResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">raw_transaction</td>
+    <td> string</td>
+    <td>
+    The raw transaction data.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### GetRawWithdrawTransaction <span id="pactus.Transaction.GetRawWithdrawTransaction" class="rpc-badge"></span>
+
+<p>Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.</p>
+
+<h4>GetRawWithdrawTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">lock_time</td>
+    <td> uint32</td>
+    <td>
+    The lock time for the transaction. If not set, defaults to the last block
+height.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">validator_address</td>
+    <td> string</td>
+    <td>
+    The address of the validator to withdraw from.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">account_address</td>
+    <td> string</td>
+    <td>
+    The address of the account to withdraw to.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">amount</td>
+    <td> int64</td>
+    <td>
+    The withdrawal amount in NanoPAC. Must be greater than 0.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">fee</td>
+    <td> int64</td>
+    <td>
+    The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">memo</td>
+    <td> string</td>
+    <td>
+    A memo string for the transaction.
     </td>
   </tr>
   </tbody>

@@ -19,10 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	Transaction_GetTransaction_FullMethodName       = "/pactus.Transaction/GetTransaction"
-	Transaction_CalculateFee_FullMethodName         = "/pactus.Transaction/CalculateFee"
-	Transaction_BroadcastTransaction_FullMethodName = "/pactus.Transaction/BroadcastTransaction"
-	Transaction_GetRawTransaction_FullMethodName    = "/pactus.Transaction/GetRawTransaction"
+	Transaction_GetTransaction_FullMethodName            = "/pactus.Transaction/GetTransaction"
+	Transaction_CalculateFee_FullMethodName              = "/pactus.Transaction/CalculateFee"
+	Transaction_BroadcastTransaction_FullMethodName      = "/pactus.Transaction/BroadcastTransaction"
+	Transaction_GetRawTransaction_FullMethodName         = "/pactus.Transaction/GetRawTransaction"
+	Transaction_GetRawTransferTransaction_FullMethodName = "/pactus.Transaction/GetRawTransferTransaction"
+	Transaction_GetRawBondTransaction_FullMethodName     = "/pactus.Transaction/GetRawBondTransaction"
+	Transaction_GetRawUnbondTransaction_FullMethodName   = "/pactus.Transaction/GetRawUnbondTransaction"
+	Transaction_GetRawWithdrawTransaction_FullMethodName = "/pactus.Transaction/GetRawWithdrawTransaction"
 )
 
 // TransactionClient is the client API for Transaction service.
@@ -42,6 +46,14 @@ type TransactionClient interface {
 	BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error)
 	// GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.
 	GetRawTransaction(ctx context.Context, in *GetRawTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
+	// Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+	GetRawTransferTransaction(ctx context.Context, in *GetRawTransferTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
+	// Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+	GetRawBondTransaction(ctx context.Context, in *GetRawBondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
+	// Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+	GetRawUnbondTransaction(ctx context.Context, in *GetRawUnbondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
+	// Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+	GetRawWithdrawTransaction(ctx context.Context, in *GetRawWithdrawTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 }
 
 type transactionClient struct {
@@ -92,6 +104,46 @@ func (c *transactionClient) GetRawTransaction(ctx context.Context, in *GetRawTra
 	return out, nil
 }
 
+func (c *transactionClient) GetRawTransferTransaction(ctx context.Context, in *GetRawTransferTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRawTransactionResponse)
+	err := c.cc.Invoke(ctx, Transaction_GetRawTransferTransaction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *transactionClient) GetRawBondTransaction(ctx context.Context, in *GetRawBondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRawTransactionResponse)
+	err := c.cc.Invoke(ctx, Transaction_GetRawBondTransaction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *transactionClient) GetRawUnbondTransaction(ctx context.Context, in *GetRawUnbondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRawTransactionResponse)
+	err := c.cc.Invoke(ctx, Transaction_GetRawUnbondTransaction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *transactionClient) GetRawWithdrawTransaction(ctx context.Context, in *GetRawWithdrawTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRawTransactionResponse)
+	err := c.cc.Invoke(ctx, Transaction_GetRawWithdrawTransaction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TransactionServer is the server API for Transaction service.
 // All implementations should embed UnimplementedTransactionServer
 // for forward compatibility
@@ -109,6 +161,14 @@ type TransactionServer interface {
 	BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error)
 	// GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.
 	GetRawTransaction(context.Context, *GetRawTransactionRequest) (*GetRawTransactionResponse, error)
+	// Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+	GetRawTransferTransaction(context.Context, *GetRawTransferTransactionRequest) (*GetRawTransactionResponse, error)
+	// Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+	GetRawBondTransaction(context.Context, *GetRawBondTransactionRequest) (*GetRawTransactionResponse, error)
+	// Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+	GetRawUnbondTransaction(context.Context, *GetRawUnbondTransactionRequest) (*GetRawTransactionResponse, error)
+	// Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+	GetRawWithdrawTransaction(context.Context, *GetRawWithdrawTransactionRequest) (*GetRawTransactionResponse, error)
 }
 
 // UnimplementedTransactionServer should be embedded to have forward compatible implementations.
@@ -126,6 +186,18 @@ func (UnimplementedTransactionServer) BroadcastTransaction(context.Context, *Bro
 }
 func (UnimplementedTransactionServer) GetRawTransaction(context.Context, *GetRawTransactionRequest) (*GetRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRawTransaction not implemented")
+}
+func (UnimplementedTransactionServer) GetRawTransferTransaction(context.Context, *GetRawTransferTransactionRequest) (*GetRawTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRawTransferTransaction not implemented")
+}
+func (UnimplementedTransactionServer) GetRawBondTransaction(context.Context, *GetRawBondTransactionRequest) (*GetRawTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRawBondTransaction not implemented")
+}
+func (UnimplementedTransactionServer) GetRawUnbondTransaction(context.Context, *GetRawUnbondTransactionRequest) (*GetRawTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRawUnbondTransaction not implemented")
+}
+func (UnimplementedTransactionServer) GetRawWithdrawTransaction(context.Context, *GetRawWithdrawTransactionRequest) (*GetRawTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRawWithdrawTransaction not implemented")
 }
 
 // UnsafeTransactionServer may be embedded to opt out of forward compatibility for this service.
@@ -211,6 +283,78 @@ func _Transaction_GetRawTransaction_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Transaction_GetRawTransferTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRawTransferTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TransactionServer).GetRawTransferTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Transaction_GetRawTransferTransaction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TransactionServer).GetRawTransferTransaction(ctx, req.(*GetRawTransferTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Transaction_GetRawBondTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRawBondTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TransactionServer).GetRawBondTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Transaction_GetRawBondTransaction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TransactionServer).GetRawBondTransaction(ctx, req.(*GetRawBondTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Transaction_GetRawUnbondTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRawUnbondTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TransactionServer).GetRawUnbondTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Transaction_GetRawUnbondTransaction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TransactionServer).GetRawUnbondTransaction(ctx, req.(*GetRawUnbondTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Transaction_GetRawWithdrawTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRawWithdrawTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TransactionServer).GetRawWithdrawTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Transaction_GetRawWithdrawTransaction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TransactionServer).GetRawWithdrawTransaction(ctx, req.(*GetRawWithdrawTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Transaction_ServiceDesc is the grpc.ServiceDesc for Transaction service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -233,6 +377,22 @@ var Transaction_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRawTransaction",
 			Handler:    _Transaction_GetRawTransaction_Handler,
+		},
+		{
+			MethodName: "GetRawTransferTransaction",
+			Handler:    _Transaction_GetRawTransferTransaction_Handler,
+		},
+		{
+			MethodName: "GetRawBondTransaction",
+			Handler:    _Transaction_GetRawBondTransaction_Handler,
+		},
+		{
+			MethodName: "GetRawUnbondTransaction",
+			Handler:    _Transaction_GetRawUnbondTransaction_Handler,
+		},
+		{
+			MethodName: "GetRawWithdrawTransaction",
+			Handler:    _Transaction_GetRawWithdrawTransaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
