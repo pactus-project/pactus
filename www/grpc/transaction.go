@@ -157,6 +157,7 @@ func (s *transactionServer) handleRawTransfer(r *pactus.GetRawTransactionRequest
 	fee := s.getFee(r.Transfer.Fee, amt)
 
 	transferTx := tx.NewTransferTx(lockTime, sender, receiver, amt, fee, tx.WithMemo(memo))
+
 	return transferTx.Bytes()
 }
 
@@ -188,6 +189,7 @@ func (s *transactionServer) handleRawBond(r *pactus.GetRawTransactionRequest_Bon
 	fee := s.getFee(r.Bond.Fee, amt)
 
 	bondTx := tx.NewBondTx(lockTime, sender, receiver, publicKey, amt, fee, tx.WithMemo(memo))
+
 	return bondTx.Bytes()
 }
 
@@ -201,6 +203,7 @@ func (*transactionServer) handleRawUnBond(r *pactus.GetRawTransactionRequest_Unb
 	}
 
 	unbondTx := tx.NewUnbondTx(lockTime, validatorAddr, tx.WithMemo(memo))
+
 	return unbondTx.Bytes()
 }
 
@@ -222,6 +225,7 @@ func (s *transactionServer) handleRawWithdraw(r *pactus.GetRawTransactionRequest
 	fee := s.getFee(r.Withdraw.Fee, amt)
 
 	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, amt, fee, tx.WithMemo(memo))
+
 	return withdrawTx.Bytes()
 }
 
