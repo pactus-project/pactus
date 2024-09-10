@@ -47,22 +47,6 @@ http:
     - selector: pactus.Transaction.GetRawTransaction
       get: "/pactus/transaction/get_raw_transaction"
 
-    # deprecated
-    - selector: pactus.Transaction.GetRawTransferTransaction
-      get: "/pactus/transaction/get_raw_transfer_transaction"
-
-    # deprecated
-    - selector: pactus.Transaction.GetRawBondTransaction
-      get: "/pactus/transaction/get_raw_bond_transaction"
-
-    # deprecated
-    - selector: pactus.Transaction.GetRawUnbondTransaction
-      get: "/pactus/transaction/get_raw_unbond_transaction"
-
-    # deprecated
-    - selector: pactus.Transaction.GetRawWithdrawTransaction
-      get: "/pactus/transaction/get_raw_withdraw_transaction"
-
     # Network APIs
     - selector: pactus.Network.GetNetworkInfo
       get: "/pactus/network/get_network_info"
