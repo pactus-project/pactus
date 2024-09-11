@@ -63,6 +63,7 @@ func main() {
 	buildAllTransactionCmd(rootCmd)
 	buildAllAddrCmd(rootCmd)
 	buildAllHistoryCmd(rootCmd)
+	buildInfoCmd(rootCmd)
 
 	err := rootCmd.Execute()
 	if err != nil {
