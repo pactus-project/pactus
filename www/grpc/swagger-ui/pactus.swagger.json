@@ -971,20 +971,28 @@
           },
           {
             "name": "addressType",
-            "description": "The type of address to generate.",
+            "description": "The type of address to generate.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password.",
             "in": "query",
             "required": false,
             "type": "string",
             "enum": [
               "ADDRESS_TYPE_TREASURY",
               "ADDRESS_TYPE_VALIDATOR",
-              "ADDRESS_TYPE_BLS_ACCOUNT"
+              "ADDRESS_TYPE_BLS_ACCOUNT",
+              "ADDRESS_TYPE_ED25519_ACCOUNT"
             ],
             "default": "ADDRESS_TYPE_TREASURY"
           },
           {
             "name": "label",
             "description": "A label for the new address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -1325,10 +1333,11 @@
       "enum": [
         "ADDRESS_TYPE_TREASURY",
         "ADDRESS_TYPE_VALIDATOR",
-        "ADDRESS_TYPE_BLS_ACCOUNT"
+        "ADDRESS_TYPE_BLS_ACCOUNT",
+        "ADDRESS_TYPE_ED25519_ACCOUNT"
       ],
       "default": "ADDRESS_TYPE_TREASURY",
-      "description": "Enum for the address type."
+      "description": "Enum for the address type.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password."
     },
     "pactusBlockHeaderInfo": {
       "type": "object",
@@ -1628,7 +1637,7 @@
         "lastBlockTime": {
           "type": "string",
           "format": "int64",
-          "title": "The last block time as timestamp"
+          "title": "Timestamp of the last block in Unix format"
         }
       },
       "description": "Message containing the response with general blockchain information."
@@ -1636,6 +1645,10 @@
     "pactusGetConsensusInfoResponse": {
       "type": "object",
       "properties": {
+        "proposal": {
+          "$ref": "#/definitions/pactusProposal",
+          "description": "The proposal of the consensus info."
+        },
         "instances": {
           "type": "array",
           "items": {
@@ -2114,6 +2127,30 @@
         }
       },
       "description": "Information about a peer in the network."
+    },
+    "pactusProposal": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height of the proposal."
+        },
+        "round": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The round of the proposal."
+        },
+        "blockData": {
+          "type": "string",
+          "description": "The block data of the proposal."
+        },
+        "signatureData": {
+          "type": "string",
+          "description": "The signature data of the proposal."
+        }
+      },
+      "description": "Message containing information about a proposal."
     },
     "pactusRestoreWalletResponse": {
       "type": "object",

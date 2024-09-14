@@ -532,7 +532,7 @@ pub struct GetBlockchainInfoResponse {
     /// Lowest-height block stored (only present if pruning is enabled)
     #[prost(uint32, tag="9")]
     pub pruning_height: u32,
-    /// The last block time as timestamp
+    /// Timestamp of the last block in Unix format
     #[prost(int64, tag="10")]
     pub last_block_time: i64,
 }
@@ -545,8 +545,11 @@ pub struct GetConsensusInfoRequest {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetConsensusInfoResponse {
+    /// The proposal of the consensus info.
+    #[prost(message, optional, tag="1")]
+    pub proposal: ::core::option::Option<Proposal>,
     /// List of consensus instances.
-    #[prost(message, repeated, tag="1")]
+    #[prost(message, repeated, tag="2")]
     pub instances: ::prost::alloc::vec::Vec<ConsensusInfo>,
 }
 /// Request message to retrieve transactions in the transaction pool.
@@ -704,6 +707,23 @@ pub struct ConsensusInfo {
     /// List of votes in the consensus instance.
     #[prost(message, repeated, tag="5")]
     pub votes: ::prost::alloc::vec::Vec<VoteInfo>,
+}
+/// Message containing information about a proposal.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Proposal {
+    /// The height of the proposal.
+    #[prost(uint32, tag="1")]
+    pub height: u32,
+    /// The round of the proposal.
+    #[prost(int32, tag="2")]
+    pub round: i32,
+    /// The block data of the proposal.
+    #[prost(string, tag="3")]
+    pub block_data: ::prost::alloc::string::String,
+    /// The signature data of the proposal.
+    #[prost(string, tag="4")]
+    pub signature_data: ::prost::alloc::string::String,
 }
 /// Enumeration for verbosity levels when requesting block information.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
@@ -1042,6 +1062,9 @@ pub struct GetNewAddressRequest {
     /// A label for the new address.
     #[prost(string, tag="3")]
     pub label: ::prost::alloc::string::String,
+    /// Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+    #[prost(string, tag="4")]
+    pub password: ::prost::alloc::string::String,
 }
 /// Response message containing the newly generated address.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -1218,9 +1241,16 @@ pub struct SignMessageResponse {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
 pub enum AddressType {
+    /// Treasury address type.
+    /// Should not be used to generate new addresses.
     Treasury = 0,
+    /// Validator address type.
     Validator = 1,
+    /// Account address type with BLS signature scheme.
     BlsAccount = 2,
+    /// Account address type with Ed25519 signature scheme.
+    /// Note: Generating a new Ed25519 address requires the wallet password.
+    Ed25519Account = 3,
 }
 impl AddressType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -1232,6 +1262,7 @@ impl AddressType {
             AddressType::Treasury => "ADDRESS_TYPE_TREASURY",
             AddressType::Validator => "ADDRESS_TYPE_VALIDATOR",
             AddressType::BlsAccount => "ADDRESS_TYPE_BLS_ACCOUNT",
+            AddressType::Ed25519Account => "ADDRESS_TYPE_ED25519_ACCOUNT",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -1240,6 +1271,7 @@ impl AddressType {
             "ADDRESS_TYPE_TREASURY" => Some(Self::Treasury),
             "ADDRESS_TYPE_VALIDATOR" => Some(Self::Validator),
             "ADDRESS_TYPE_BLS_ACCOUNT" => Some(Self::BlsAccount),
+            "ADDRESS_TYPE_ED25519_ACCOUNT" => Some(Self::Ed25519Account),
             _ => None,
         }
     }

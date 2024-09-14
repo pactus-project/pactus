@@ -95,6 +95,11 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 			cmd.PrintLine()
 			cmd.PrintInfoMsgf("❌ The operation canceled.")
 			cmd.PrintLine()
+		} else if prunedCount == 0 {
+			cmd.PrintLine()
+			cmd.PrintInfoMsgf("⚠️ Your node is not passed the retention_days set in config or it's already a pruned node.")
+			cmd.PrintLine()
+			cmd.PrintInfoMsgf("Make sure you try to prune a node after retention_days specified in config.toml")
 		} else {
 			cmd.PrintLine()
 			cmd.PrintInfoMsgf("✅ Your node successfully pruned and changed to prune mode.")

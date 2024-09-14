@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/store"
@@ -13,7 +14,6 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -30,7 +30,7 @@ type testData struct {
 
 	state        *state
 	genValKeys   []*bls.ValidatorKey
-	genAccKey    *bls.PrivateKey
+	genAccKey    *ed25519.PrivateKey
 	commonTxPool *txpool.MockTxPool
 }
 
@@ -55,22 +55,22 @@ func setup(t *testing.T) *testData {
 
 	genTime := util.RoundNow(10).Add(-8640 * time.Second)
 
-	params := param.DefaultParams()
-	params.CommitteeSize = 7
-	params.BondInterval = 10
+	genParams := genesis.DefaultGenesisParams()
+	genParams.CommitteeSize = 7
+	genParams.BondInterval = 10
 
 	genAcc1 := account.NewAccount(0)
 	genAcc1.AddToBalance(21 * 1e15) // 21,000,000.000,000,000
 	genAcc2 := account.NewAccount(1)
 	genAcc2.AddToBalance(21 * 1e15) // 21,000,000.000,000,000
-	genAccPubKey, genAccPrvKey := ts.RandBLSKeyPair()
+	genAccPubKey, genAccPrvKey := ts.RandEd25519KeyPair()
 
 	genAccs := map[crypto.Address]*account.Account{
 		crypto.TreasuryAddress:        genAcc1,
 		genAccPubKey.AccountAddress(): genAcc2,
 	}
 
-	gnDoc := genesis.MakeGenesis(genTime, genAccs, genVals, params)
+	gnDoc := genesis.MakeGenesis(genTime, genAccs, genVals, genParams)
 
 	// First validator is in the committee
 	valKeys := []*bls.ValidatorKey{genValKeys[0], ts.RandValKey()}
@@ -585,10 +585,10 @@ func TestCalculateFee(t *testing.T) {
 func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 	td := setup(t)
 
-	maxTransactionsPerBlock = 10
+	td.state.params.MaxTransactionsPerBlock = 10
 	lockTime := td.state.LastBlockHeight()
 	senderAddr := td.genAccKey.PublicKeyNative().AccountAddress()
-	for i := 0; i < maxTransactionsPerBlock+2; i++ {
+	for i := 0; i < td.state.params.MaxTransactionsPerBlock+2; i++ {
 		amt := td.RandAmount()
 		fee := td.state.CalculateFee(amt, payload.TypeTransfer)
 		trx := tx.NewTransferTx(lockTime, senderAddr, td.RandAccAddress(), amt, fee)
@@ -598,7 +598,7 @@ func TestCheckMaximumTransactionPerBlock(t *testing.T) {
 
 	blk, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
 	assert.NoError(t, err)
-	assert.Equal(t, maxTransactionsPerBlock, blk.Transactions().Len())
+	assert.Equal(t, td.state.params.MaxTransactionsPerBlock, blk.Transactions().Len())
 }
 
 func TestCommittedBlock(t *testing.T) {

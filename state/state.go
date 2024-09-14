@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/state/lastinfo"
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/state/score"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
@@ -22,7 +23,6 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -34,8 +34,6 @@ import (
 	"github.com/pactus-project/pactus/util/simplemerkle"
 	"github.com/pactus-project/pactus/www/nanomsg/event"
 )
-
-var maxTransactionsPerBlock = 1000
 
 type state struct {
 	lk sync.RWMutex
@@ -65,7 +63,7 @@ func LoadOrNewState(
 		valKeys:         valKeys,
 		genDoc:          genDoc,
 		txPool:          txPool,
-		params:          genDoc.Params(),
+		params:          param.FromGenesis(genDoc.Params()),
 		store:           str,
 		lastInfo:        lastinfo.NewLastInfo(),
 		accountMerkle:   persistentmerkle.New(),
@@ -323,7 +321,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 
 	// Re-check all transactions strictly and remove invalid ones
 	txs := st.txPool.PrepareBlockTransactions()
-	txs = util.Trim(txs, maxTransactionsPerBlock-1)
+	txs = util.Trim(txs, st.params.MaxTransactionsPerBlock-1)
 	for i := 0; i < txs.Len(); i++ {
 		// Only one subsidy transaction per blk
 		if txs[i].IsSubsidyTx() {
@@ -588,7 +586,7 @@ func (st *state) CommitteePower() int64 {
 func (st *state) proposeNextBlockTime() time.Time {
 	timestamp := st.lastInfo.BlockTime().Add(st.params.BlockInterval())
 
-	now := util.Now()
+	now := time.Now()
 	if now.After(timestamp.Add(10 * time.Second)) {
 		st.logger.Debug("it looks the last block had delay", "delay", now.Sub(timestamp))
 		timestamp = util.RoundNow(st.params.BlockIntervalInSecond)

@@ -186,8 +186,10 @@ message GetConsensusInfoRequest {}
 
 // Message containing the response with consensus information.
 message GetConsensusInfoResponse {
+  // The proposal of the consensus info.
+  Proposal proposal = 1;
   // List of consensus instances.
-  repeated ConsensusInfo instances = 1;
+  repeated ConsensusInfo instances = 2;
 }
 
 // Request message to retrieve transactions in the transaction pool.
@@ -299,6 +301,20 @@ message ConsensusInfo {
   // List of votes in the consensus instance.
   repeated VoteInfo votes = 5;
 }
+
+// Message containing information about a proposal.
+message Proposal {
+  // The height of the proposal.
+  uint32 height = 1;
+  // The round of the proposal.
+  int32 round = 2;
+  // The block data of the proposal.
+  string block_data = 3;
+  // The signature data of the proposal.
+  string signature_data = 4;
+}
+
+
 
 // Enumeration for verbosity levels when requesting block information.
 enum BlockVerbosity {

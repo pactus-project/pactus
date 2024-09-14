@@ -233,6 +233,14 @@ func (s *Server) ConsensusHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tm := newTableMaker()
+
+	if res.Proposal != nil {
+		tm.addRowInt("Proposal == Height", int(res.Proposal.Height))
+		tm.addRowInt("Proposal == Round", int(res.Proposal.Round))
+		tm.addRowString("Proposal == BlockData", res.Proposal.BlockData)
+		tm.addRowString("Proposal == SignatureData", res.Proposal.SignatureData)
+	}
+
 	for i, cons := range res.Instances {
 		tm.addRowInt("== Validator", i+1)
 		tm.addRowValAddress("Address", cons.Address)
@@ -250,5 +258,6 @@ func (s *Server) ConsensusHandler(w http.ResponseWriter, r *http.Request) {
 			tm.addRowBlockHash("BlockHash", v.BlockHash)
 		}
 	}
+
 	s.writeHTML(w, tm.html())
 }

@@ -10,13 +10,13 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -50,7 +50,7 @@ func MockingState(ts *testsuite.TestSuite) *MockState {
 		TestPool:      txpool.MockingTxPool(),
 		TestCommittee: cmt,
 		TestValKeys:   valKeys,
-		TestParams:    genDoc.Params(),
+		TestParams:    param.FromGenesis(genDoc.Params()),
 	}
 }
 

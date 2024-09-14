@@ -64,7 +64,7 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
     {{with getEnum .LongType  }}{{- print "" -}}
        <br>Available values:<ul>
       {{range .Values}}{{- print "" -}}
-        <li>{{ .Name}} = {{ .Description }}</li>
+        <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
       {{end}}{{- print "" -}}
       </ul>
     {{end}}{{- print "" -}}
@@ -99,7 +99,7 @@ Message has no fields.
     {{with getEnum .LongType  }}{{- print "" -}}
        <br>Available values:<ul>
       {{range .Values}}{{- print "" -}}
-        <li>{{ .Name}} = {{ .Description }}</li>
+        <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
       {{end}}{{- print "" -}}
       </ul>
     {{end}}{{- print "" -}}
@@ -119,7 +119,7 @@ Message has no fields.
         {{with getEnum .LongType  }}{{- print "" -}}
           <br>Available values:<ul>
           {{range .Values}}{{- print "" -}}
-            <li>{{ .Name}} = {{ .Description }}</li>
+            <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
           {{end}}{{- print "" -}}
           </ul>
         {{end}}{{- print "" -}}
@@ -139,7 +139,7 @@ Message has no fields.
             {{with getEnum .LongType  }}{{- print "" -}}
               <br>Available values:<ul>
               {{range .Values}}{{- print "" -}}
-                <li>{{ .Name}} = {{ .Description }}</li>
+                <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
               {{end}}{{- print "" -}}
               </ul>
             {{end}}{{- print "" -}}

@@ -3,7 +3,6 @@ package crypto_test
 import (
 	"bytes"
 	"encoding/hex"
-	"fmt"
 	"io"
 	"strings"
 	"testing"
@@ -15,109 +14,145 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAddressKeyType(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	pub, _ := ts.RandBLSKeyPair()
-	accAddr := pub.AccountAddress()
-	valAddr := pub.ValidatorAddress()
+func TestTreasuryAddressType(t *testing.T) {
 	treasury := crypto.TreasuryAddress
 
-	assert.True(t, accAddr.IsAccountAddress())
-	assert.False(t, accAddr.IsValidatorAddress())
-	assert.False(t, accAddr.IsTreasuryAddress())
-	assert.False(t, valAddr.IsAccountAddress())
-	assert.True(t, valAddr.IsValidatorAddress())
 	assert.False(t, treasury.IsValidatorAddress())
 	assert.True(t, treasury.IsAccountAddress())
 	assert.True(t, treasury.IsTreasuryAddress())
-	assert.NotEqual(t, accAddr, valAddr)
 }
 
-func TestString(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
+func TestAddressType(t *testing.T) {
+	tests := []struct {
+		address   string
+		account   bool
+		validator bool
+	}{
+		{address: "pc1p0hrct7eflrpw4ccrttxzs4qud2axex4dcdzdfr", account: false, validator: true},
+		{address: "pc1zzqkzzu4vyddss052as6c37qrdcfptegquw826x", account: true, validator: false},
+		{address: "pc1rspm7ps49gar9ft5g0tkl6lhxs8ygeakq87quh3", account: true, validator: false},
+	}
 
-	a, _ := crypto.AddressFromString("pc1p0hrct7eflrpw4ccrttxzs4qud2axex4dcdzdfr")
-	fmt.Println(a.String())
+	for _, test := range tests {
+		addr, _ := crypto.AddressFromString(test.address)
+
+		assert.Equal(t, test.account, addr.IsAccountAddress())
+		assert.Equal(t, test.validator, addr.IsValidatorAddress())
+	}
+}
+
+func TestShortString(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
 
 	addr1 := ts.RandAccAddress()
 	assert.Contains(t, addr1.String(), addr1.ShortString())
 }
 
-func TestToString(t *testing.T) {
+func TestFromString(t *testing.T) {
 	tests := []struct {
-		encoded string
-		err     error
-		result  *crypto.Address
+		encoded  string
+		err      error
+		bytes    []byte
+		addrType crypto.AddressType
 	}{
 		{
 			"000000000000000000000000000000000000000000",
 			nil,
-			&crypto.Address{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			[]byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			crypto.AddressTypeTreasury,
 		},
 		{
 			"",
 			bech32m.InvalidLengthError(0),
 			nil,
+			0,
 		},
 		{
 			"not_proper_encoded",
 			bech32m.InvalidSeparatorIndexError(-1),
 			nil,
+			0,
 		},
 		{
 			"pc1ioiooi",
 			bech32m.NonCharsetCharError(105),
 			nil,
+			0,
 		},
 		{
 			"pc19p72rf",
 			bech32m.InvalidLengthError(0),
 			nil,
+			0,
 		},
 		{
 			"qc1z0hrct7eflrpw4ccrttxzs4qud2axex4dh8zz75",
 			crypto.InvalidHRPError("qc"),
 			nil,
+			0,
 		},
 		{
 			"pc1p0hrct7eflrpw4ccrttxzs4qud2axex4dg8xaf5",
 			bech32m.InvalidChecksumError{Expected: "cdzdfr", Actual: "g8xaf5"},
 			nil,
+			0,
 		},
 		{
 			"pc1p0hrct7eflrpw4ccrttxzs4qud2axexs2dhdk8",
 			crypto.InvalidLengthError(20),
 			nil,
+			0,
 		},
 		{
-			"pc1r0hrct7eflrpw4ccrttxzs4qud2axex4dwc9mn4",
-			crypto.InvalidAddressTypeError(3),
+			"pc1y0hrct7eflrpw4ccrttxzs4qud2axex4dksmred",
+			crypto.InvalidAddressTypeError(4),
 			nil,
+			0,
 		},
 		{
 			"PC1P0HRCT7EFLRPW4CCRTTXZS4QUD2AXEX4DCDZDFR", // UPPERCASE
 			nil,
-			&crypto.Address{
-				0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
-				0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad,
+			[]byte{
+				0x01, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
+				0x03, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad,
 			},
+			crypto.AddressTypeValidator,
 		},
 		{
 			"pc1p0hrct7eflrpw4ccrttxzs4qud2axex4dcdzdfr",
 			nil,
-			&crypto.Address{
-				0x1, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
-				0x3, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad,
+			[]byte{
+				0x01, 0x7d, 0xc7, 0x85, 0xfb, 0x29, 0xf8, 0xc2, 0xea, 0xe3,
+				0x03, 0x5a, 0xcc, 0x28, 0x54, 0x1c, 0x6a, 0xba, 0x6c, 0x9a, 0xad,
 			},
+			crypto.AddressTypeValidator,
+		},
+		{
+			"pc1zzqkzzu4vyddss052as6c37qrdcfptegquw826x",
+			nil,
+			[]byte{
+				0x02, 0x10, 0x2c, 0x21, 0x72, 0xac, 0x23, 0x5b, 0x08, 0x3e, 0x8a,
+				0xec, 0x35, 0x88, 0xf8, 0x03, 0x6e, 0x12, 0x15, 0xe5, 0x00,
+			},
+			crypto.AddressTypeBLSAccount,
+		},
+		{
+			"pc1rspm7ps49gar9ft5g0tkl6lhxs8ygeakq87quh3",
+			nil,
+			[]byte{
+				0x03, 0x80, 0x77, 0xe0, 0xc2, 0xa5, 0x47, 0x46, 0x54, 0xae,
+				0x88, 0x7a, 0xed, 0xfd, 0x7e, 0xe6, 0x81, 0xc8, 0x8c, 0xf6, 0xc0,
+			},
+			crypto.AddressTypeEd25519Account,
 		},
 	}
 	for no, test := range tests {
 		addr, err := crypto.AddressFromString(test.encoded)
 		if test.err == nil {
 			assert.NoError(t, err, "test %v: unexpected error", no)
-			assert.Equal(t, *test.result, addr, "test %v: invalid result", no)
+			assert.Equal(t, test.bytes, addr.Bytes(), "test %v: invalid result", no)
 			assert.Equal(t, strings.ToLower(test.encoded), addr.String(), "test %v: invalid encode", no)
+			assert.Equal(t, test.addrType, addr.Type(), "test %v: invalid type", no)
 		} else {
 			assert.ErrorIs(t, err, test.err, "test %v: invalid error", no)
 		}
@@ -137,13 +172,13 @@ func TestAddressEncoding(t *testing.T) {
 		},
 		{
 			0,
-			"030000000000000000000000000000000000000000",
-			crypto.InvalidAddressTypeError(3),
+			"040000000000000000000000000000000000000000",
+			crypto.InvalidAddressTypeError(4),
 		},
 		{
 			0,
-			"03000102030405060708090a0b0c0d0e0f0001020304",
-			crypto.InvalidAddressTypeError(3),
+			"04000102030405060708090a0b0c0d0e0f0001020304",
+			crypto.InvalidAddressTypeError(4),
 		},
 		{
 			21,
@@ -163,6 +198,11 @@ func TestAddressEncoding(t *testing.T) {
 		{
 			21,
 			"02000102030405060708090a0b0c0d0e0f00010203",
+			nil,
+		},
+		{
+			21,
+			"03000102030405060708090a0b0c0d0e0f00010203",
 			nil,
 		},
 	}

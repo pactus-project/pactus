@@ -10,7 +10,57 @@ All the amounts and values in gRPC endpoints are in NanoPAC units,
 which are atomic and the smallest unit in the Pactus blockchain.
 Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 
-<h2>JSON-RPC Services</h2>
+## Example
+
+To call JSON-RPC methods, you need to create the JSON-RPC request:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "pactus.network.get_node_info",
+  "params": {}
+}
+```
+
+> Make sure you always add the `params` field, even if no parameters are needed, and ensure you use curly braces.
+
+Then you use the `curl` command to send the request to the node:
+
+```bash
+curl --location 'http://localhost:8545/' \
+--header 'Content-Type: application/json' \
+--data '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "pactus.network.get_node_info",
+    "params": {}
+}'
+```
+
+> Before sending the request, you need to enable the JSON-RPC service inside the
+> [configuration](/get-started/configuration/).
+
+### Using Basic Auth
+
+If you have enabled the [gRPC Basic Authentication](/tutorials/grpc-sign-transactions/),
+then you need to set the `Authorization` header.
+
+```bash
+curl --location 'http://localhost:8545/' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic <BASIC-AUTH-TOKEN>' \
+--data '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "pactus.blockchain.get_account",
+    "params": {
+        "address": "pc1z2r0fmu8sg2ffa0tgrr08gnefcxl2kq7wvquf8z"
+    }
+}'
+```
+
+<h2>JSON-RPC Methods</h2>
 
 <div id="toc-container">
   <ul class="">
@@ -65,7 +115,7 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
     {{with getEnum .LongType  }}{{- print "" -}}
        <br>Available values:<ul>
       {{range .Values}}{{- print "" -}}
-        <li>{{ .Name}} = {{ .Description }}</li>
+        <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
       {{end}}{{- print "" -}}
       </ul>
     {{end}}{{- print "" -}}
@@ -100,7 +150,7 @@ Parameters has no fields.
     {{with getEnum .LongType  }}{{- print "" -}}
        <br>Available values:<ul>
       {{range .Values}}{{- print "" -}}
-        <li>{{ .Name}} = {{ .Description }}</li>
+        <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
       {{end}}{{- print "" -}}
       </ul>
     {{end}}{{- print "" -}}
@@ -120,7 +170,7 @@ Parameters has no fields.
         {{with getEnum .LongType  }}{{- print "" -}}
           <br>Available values:<ul>
           {{range .Values}}{{- print "" -}}
-            <li>{{ .Name}} = {{ .Description }}</li>
+            <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
           {{end}}{{- print "" -}}
           </ul>
         {{end}}{{- print "" -}}
@@ -140,7 +190,7 @@ Parameters has no fields.
             {{with getEnum .LongType  }}{{- print "" -}}
               <br>Available values:<ul>
               {{range .Values}}{{- print "" -}}
-                <li>{{ .Name}} = {{ .Description }}</li>
+                <li>{{.Name}} = {{.Number}} ({{ .Description }})</li>
               {{end}}{{- print "" -}}
               </ul>
             {{end}}{{- print "" -}}

@@ -7,9 +7,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNow(t *testing.T) {
+func TestRoundNow(t *testing.T) {
 	c1 := time.Now()
-	c2 := Now()
+	c2 := RoundNow(1)
 	c3 := RoundNow(5)
 
 	assert.NotEqual(t, c1, c2)

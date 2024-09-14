@@ -314,6 +314,7 @@ class GetNewAddressRequest extends $pb.GeneratedMessage {
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
     ..e<AddressType>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'addressType', $pb.PbFieldType.OE, defaultOrMaker: AddressType.ADDRESS_TYPE_TREASURY, valueOf: AddressType.valueOf, enumValues: AddressType.values)
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'label')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'password')
     ..hasRequiredFields = false
   ;
 
@@ -322,6 +323,7 @@ class GetNewAddressRequest extends $pb.GeneratedMessage {
     $core.String? walletName,
     AddressType? addressType,
     $core.String? label,
+    $core.String? password,
   }) {
     final _result = create();
     if (walletName != null) {
@@ -332,6 +334,9 @@ class GetNewAddressRequest extends $pb.GeneratedMessage {
     }
     if (label != null) {
       _result.label = label;
+    }
+    if (password != null) {
+      _result.password = password;
     }
     return _result;
   }
@@ -382,6 +387,15 @@ class GetNewAddressRequest extends $pb.GeneratedMessage {
   $core.bool hasLabel() => $_has(2);
   @$pb.TagNumber(3)
   void clearLabel() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get password => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set password($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasPassword() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearPassword() => clearField(4);
 }
 
 class GetNewAddressResponse extends $pb.GeneratedMessage {

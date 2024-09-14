@@ -196,8 +196,8 @@ parameters.</p>
     <td>
     (Enum) The verbosity level for transaction details.
     <br>Available values:<ul>
-      <li>TRANSACTION_DATA = Request transaction data only.</li>
-      <li>TRANSACTION_INFO = Request detailed transaction information.</li>
+      <li>TRANSACTION_DATA = 0 (Request transaction data only.)</li>
+      <li>TRANSACTION_INFO = 1 (Request detailed transaction information.)</li>
       </ul>
     </td>
   </tr>
@@ -279,12 +279,12 @@ parameters.</p>
         <td>
         (Enum) The type of transaction payload.
         <br>Available values:<ul>
-          <li>UNKNOWN = Unknown payload type.</li>
-          <li>TRANSFER_PAYLOAD = Transfer payload type.</li>
-          <li>BOND_PAYLOAD = Bond payload type.</li>
-          <li>SORTITION_PAYLOAD = Sortition payload type.</li>
-          <li>UNBOND_PAYLOAD = Unbond payload type.</li>
-          <li>WITHDRAW_PAYLOAD = Withdraw payload type.</li>
+          <li>UNKNOWN = 0 (Unknown payload type.)</li>
+          <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
+          <li>BOND_PAYLOAD = 2 (Bond payload type.)</li>
+          <li>SORTITION_PAYLOAD = 3 (Sortition payload type.)</li>
+          <li>UNBOND_PAYLOAD = 4 (Unbond payload type.)</li>
+          <li>WITHDRAW_PAYLOAD = 5 (Withdraw payload type.)</li>
           </ul>
         </td>
       </tr>
@@ -456,12 +456,12 @@ and payload type.</p>
     <td>
     (Enum) The type of transaction payload.
     <br>Available values:<ul>
-      <li>UNKNOWN = Unknown payload type.</li>
-      <li>TRANSFER_PAYLOAD = Transfer payload type.</li>
-      <li>BOND_PAYLOAD = Bond payload type.</li>
-      <li>SORTITION_PAYLOAD = Sortition payload type.</li>
-      <li>UNBOND_PAYLOAD = Unbond payload type.</li>
-      <li>WITHDRAW_PAYLOAD = Withdraw payload type.</li>
+      <li>UNKNOWN = 0 (Unknown payload type.)</li>
+      <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
+      <li>BOND_PAYLOAD = 2 (Bond payload type.)</li>
+      <li>SORTITION_PAYLOAD = 3 (Sortition payload type.)</li>
+      <li>UNBOND_PAYLOAD = 4 (Unbond payload type.)</li>
+      <li>WITHDRAW_PAYLOAD = 5 (Withdraw payload type.)</li>
       </ul>
     </td>
   </tr>
@@ -842,9 +842,9 @@ parameters.</p>
     <td>
     (Enum) The verbosity level for block information.
     <br>Available values:<ul>
-      <li>BLOCK_DATA = Request only block data.</li>
-      <li>BLOCK_INFO = Request block information and transaction IDs.</li>
-      <li>BLOCK_TRANSACTIONS = Request block information and detailed transaction data.</li>
+      <li>BLOCK_DATA = 0 (Request only block data.)</li>
+      <li>BLOCK_INFO = 1 (Request block information and transaction IDs.)</li>
+      <li>BLOCK_TRANSACTIONS = 2 (Request block information and detailed transaction data.)</li>
       </ul>
     </td>
   </tr>
@@ -1025,12 +1025,12 @@ BLOCK_TRANSACTIONS.
         <td>
         (Enum) The type of transaction payload.
         <br>Available values:<ul>
-          <li>UNKNOWN = Unknown payload type.</li>
-          <li>TRANSFER_PAYLOAD = Transfer payload type.</li>
-          <li>BOND_PAYLOAD = Bond payload type.</li>
-          <li>SORTITION_PAYLOAD = Sortition payload type.</li>
-          <li>UNBOND_PAYLOAD = Unbond payload type.</li>
-          <li>WITHDRAW_PAYLOAD = Withdraw payload type.</li>
+          <li>UNKNOWN = 0 (Unknown payload type.)</li>
+          <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
+          <li>BOND_PAYLOAD = 2 (Bond payload type.)</li>
+          <li>SORTITION_PAYLOAD = 3 (Sortition payload type.)</li>
+          <li>UNBOND_PAYLOAD = 4 (Unbond payload type.)</li>
+          <li>WITHDRAW_PAYLOAD = 5 (Withdraw payload type.)</li>
           </ul>
         </td>
       </tr>
@@ -1402,7 +1402,7 @@ Message has no fields.
     <td class="fw-bold">last_block_time</td>
     <td> int64</td>
     <td>
-    The last block time as timestamp
+    Timestamp of the last block in Unix format
     </td>
   </tr>
      </tbody>
@@ -1423,6 +1423,41 @@ Message has no fields.
   </thead>
   <tbody class="table-group-divider">
   <tr>
+    <td class="fw-bold">proposal</td>
+    <td> Proposal</td>
+    <td>
+    The proposal of the consensus info.
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">proposal.height</td>
+        <td> uint32</td>
+        <td>
+        The height of the proposal.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">proposal.round</td>
+        <td> int32</td>
+        <td>
+        The round of the proposal.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">proposal.block_data</td>
+        <td> string</td>
+        <td>
+        The block data of the proposal.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">proposal.signature_data</td>
+        <td> string</td>
+        <td>
+        The signature data of the proposal.
+        </td>
+      </tr>
+         <tr>
     <td class="fw-bold">instances</td>
     <td>repeated ConsensusInfo</td>
     <td>
@@ -1471,10 +1506,10 @@ committee.
             <td>
             (Enum) The type of the vote.
             <br>Available values:<ul>
-              <li>VOTE_UNKNOWN = Unknown vote type.</li>
-              <li>VOTE_PREPARE = Prepare vote type.</li>
-              <li>VOTE_PRECOMMIT = Precommit vote type.</li>
-              <li>VOTE_CHANGE_PROPOSER = Change proposer vote type.</li>
+              <li>VOTE_UNKNOWN = 0 (Unknown vote type.)</li>
+              <li>VOTE_PREPARE = 1 (Prepare vote type.)</li>
+              <li>VOTE_PRECOMMIT = 2 (Precommit vote type.)</li>
+              <li>VOTE_CHANGE_PROPOSER = 3 (Change proposer vote type.)</li>
               </ul>
             </td>
           </tr>
@@ -1885,12 +1920,12 @@ address.</p>
     (Enum) The type of transactions to retrieve from the transaction pool. 0 means all
 types.
     <br>Available values:<ul>
-      <li>UNKNOWN = Unknown payload type.</li>
-      <li>TRANSFER_PAYLOAD = Transfer payload type.</li>
-      <li>BOND_PAYLOAD = Bond payload type.</li>
-      <li>SORTITION_PAYLOAD = Sortition payload type.</li>
-      <li>UNBOND_PAYLOAD = Unbond payload type.</li>
-      <li>WITHDRAW_PAYLOAD = Withdraw payload type.</li>
+      <li>UNKNOWN = 0 (Unknown payload type.)</li>
+      <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
+      <li>BOND_PAYLOAD = 2 (Bond payload type.)</li>
+      <li>SORTITION_PAYLOAD = 3 (Sortition payload type.)</li>
+      <li>UNBOND_PAYLOAD = 4 (Unbond payload type.)</li>
+      <li>WITHDRAW_PAYLOAD = 5 (Withdraw payload type.)</li>
       </ul>
     </td>
   </tr>
@@ -1958,12 +1993,12 @@ types.
         <td>
         (Enum) The type of transaction payload.
         <br>Available values:<ul>
-          <li>UNKNOWN = Unknown payload type.</li>
-          <li>TRANSFER_PAYLOAD = Transfer payload type.</li>
-          <li>BOND_PAYLOAD = Bond payload type.</li>
-          <li>SORTITION_PAYLOAD = Sortition payload type.</li>
-          <li>UNBOND_PAYLOAD = Unbond payload type.</li>
-          <li>WITHDRAW_PAYLOAD = Withdraw payload type.</li>
+          <li>UNKNOWN = 0 (Unknown payload type.)</li>
+          <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
+          <li>BOND_PAYLOAD = 2 (Bond payload type.)</li>
+          <li>SORTITION_PAYLOAD = 3 (Sortition payload type.)</li>
+          <li>UNBOND_PAYLOAD = 4 (Unbond payload type.)</li>
+          <li>WITHDRAW_PAYLOAD = 5 (Withdraw payload type.)</li>
           </ul>
         </td>
       </tr>
@@ -2885,9 +2920,12 @@ public key.</p>
     <td>
     (Enum) The type of address to generate.
     <br>Available values:<ul>
-      <li>ADDRESS_TYPE_TREASURY = </li>
-      <li>ADDRESS_TYPE_VALIDATOR = </li>
-      <li>ADDRESS_TYPE_BLS_ACCOUNT = </li>
+      <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
+Should not be used to generate new addresses.)</li>
+      <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type.)</li>
+      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.
+Note: Generating a new Ed25519 address requires the wallet password.)</li>
       </ul>
     </td>
   </tr>
@@ -2896,6 +2934,13 @@ public key.</p>
     <td> string</td>
     <td>
     A label for the new address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+    Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
     </td>
   </tr>
   </tbody>

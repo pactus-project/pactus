@@ -143,7 +143,7 @@ func (wm *Manager) SignRawTransaction(
 }
 
 func (wm *Manager) GetNewAddress(
-	walletName, label string,
+	walletName, label, password string,
 	addressType crypto.AddressType,
 ) (*vault.AddressInfo, error) {
 	wlt, ok := wm.wallets[walletName]
@@ -153,13 +153,6 @@ func (wm *Manager) GetNewAddress(
 
 	var addressInfo *vault.AddressInfo
 	switch addressType {
-	case crypto.AddressTypeBLSAccount:
-		info, err := wlt.NewBLSAccountAddress(label)
-		if err != nil {
-			return nil, err
-		}
-		addressInfo = info
-
 	case crypto.AddressTypeValidator:
 		info, err := wlt.NewValidatorAddress(label)
 		if err != nil {
@@ -167,6 +160,24 @@ func (wm *Manager) GetNewAddress(
 		}
 		addressInfo = info
 
+	case crypto.AddressTypeBLSAccount:
+		info, err := wlt.NewBLSAccountAddress(label)
+		if err != nil {
+			return nil, err
+		}
+		addressInfo = info
+
+	case crypto.AddressTypeEd25519Account:
+		if password == "" {
+			return nil, status.Errorf(codes.InvalidArgument, "password cannot be empty when address type is Ed25519")
+		}
+
+		info, err := wlt.NewEd25519AccountAddress(label, password)
+		if err != nil {
+			return nil, err
+		}
+
+		addressInfo = info
 	case crypto.AddressTypeTreasury:
 		return nil, status.Errorf(codes.InvalidArgument, "invalid address type")
 
@@ -189,7 +200,7 @@ func (wm *Manager) AddressHistory(
 		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
 	}
 
-	return wlt.GetHistory(address), nil
+	return wlt.History(address), nil
 }
 
 func (wm *Manager) SignMessage(walletName, password, addr, msg string) (string, error) {

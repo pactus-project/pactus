@@ -7,8 +7,11 @@ import (
 	"testing"
 
 	"github.com/fxamacker/cbor/v2"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
@@ -38,11 +41,6 @@ func TestEncodingTx(t *testing.T) {
 	trx3 := ts.GenerateTestUnbondTx()
 	trx4 := ts.GenerateTestWithdrawTx()
 	trx5 := ts.GenerateTestSortitionTx()
-	assert.True(t, trx1.IsTransferTx())
-	assert.True(t, trx2.IsBondTx())
-	assert.True(t, trx3.IsUnbondTx())
-	assert.True(t, trx4.IsWithdrawTx())
-	assert.True(t, trx5.IsSortitionTx())
 
 	tests := []*tx.Tx{trx1, trx2, trx3, trx4, trx5}
 	for _, trx := range tests {
@@ -113,7 +111,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("Invalid payload, Should returns error", func(t *testing.T) {
 		invAddr := ts.RandAccAddress()
-		invAddr[0] = 3
+		invAddr[0] = 4
 		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), invAddr, 1e9, ts.RandAmount())
 
 		err := trx.BasicCheck()
@@ -217,7 +215,7 @@ func TestInvalidPayloadType(t *testing.T) {
 func TestSubsidyTx(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub, prv := ts.RandBLSKeyPair()
+	pub, prv := ts.RandEd25519KeyPair()
 
 	t.Run("Has signature", func(t *testing.T) {
 		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500)
@@ -302,7 +300,7 @@ func TestInvalidSignature(t *testing.T) {
 
 	t.Run("Invalid sign Bytes", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		trx0 := ts.GenerateTestUnbondTx(testsuite.TransactionWithSigner(valKey.PrivateKey()))
+		trx0 := ts.GenerateTestUnbondTx(testsuite.TransactionWithBLSSigner(valKey.PrivateKey()))
 
 		trx := tx.NewUnbondTx(trx0.LockTime(), valKey.Address(), tx.WithMemo("invalidate signature"))
 		trx.SetPublicKey(trx0.PublicKey())
@@ -337,22 +335,22 @@ func TestInvalidSignature(t *testing.T) {
 	})
 }
 
-func TestSignBytes(t *testing.T) {
+func TestSignBytesBLS(t *testing.T) {
 	d, _ := hex.DecodeString(
 		"00" + // Flags
 			"01" + // Version
 			"01020304" + // LockTime
 			"01" + // Fee
-			"00" + // Memo
+			"0474657374" + // Memo
 			"01" + // PayloadType
 			"013333333333333333333333333333333333333333" + // Sender
 			"012222222222222222222222222222222222222222" + // Receiver
-			"01" + // Amount
+			"02" + // Amount
 			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // Signature
 			"8d82fa4fcac04a3b565267685e90db1b01420285d2f8295683c138c092c209479983ba1591370778846681b7b558e061" + // PublicKey
 			"1776208c0718006311c84b4a113335c70d1f5c7c5dd93a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc1")
 
-	h, _ := hash.FromString("1a8cedbb2ffce29df63210f112afb1c0295b27e2162323bfc774068f0573388e")
+	h, _ := hash.FromString("084f69979757cecb58d0a37bdd10eebee912ed29f923adb93f09d6bde2b94d5f")
 	trx, err := tx.FromBytes(d)
 	assert.NoError(t, err)
 	assert.Equal(t, len(d), trx.SerializeSize())
@@ -362,6 +360,39 @@ func TestSignBytes(t *testing.T) {
 	assert.Equal(t, h, trx.ID())
 	assert.Equal(t, hash.CalcHash(sb), trx.ID())
 	assert.Equal(t, uint32(0x04030201), trx.LockTime())
+	assert.Equal(t, "test", trx.Memo())
+	assert.Equal(t, amount.Amount(1), trx.Fee())
+	assert.Equal(t, amount.Amount(2), trx.Payload().Value())
+}
+
+func TestSignBytesEd25519(t *testing.T) {
+	d, _ := hex.DecodeString(
+		"00" + // Flags
+			"01" + // Version
+			"01020304" + // LockTime
+			"01" + // Fee
+			"0474657374" + // Memo
+			"01" + // PayloadType
+			"033333333333333333333333333333333333333333" + // Sender
+			"032222222222222222222222222222222222222222" + // Receiver
+			"02" + // Amount
+			"4ed287f380291202f36a6a7516d602f1a6eaf789d092dd4050c0907ce79f49db" + // Signature
+			"6e70c21c82411803815db09713eab426297210a6793658d6bd9ed116ef2c0aac" + // PublicKey
+			"0aacf0da469a4a47dfb968a321ad7d6b919fdc37d2d2834c69cef90692730902")
+
+	h, _ := hash.FromString("e5a0e1fb4ee6f26a867dd3c091fc9fdfcbd25a5caff8cf13a4485a716501150d")
+	trx, err := tx.FromBytes(d)
+	assert.NoError(t, err)
+	assert.Equal(t, len(d), trx.SerializeSize())
+
+	sb := d[1 : len(d)-ed25519.PublicKeySize-ed25519.SignatureSize]
+	assert.Equal(t, sb, trx.SignBytes())
+	assert.Equal(t, h, trx.ID())
+	assert.Equal(t, hash.CalcHash(sb), trx.ID())
+	assert.Equal(t, uint32(0x04030201), trx.LockTime())
+	assert.Equal(t, "test", trx.Memo())
+	assert.Equal(t, amount.Amount(1), trx.Fee())
+	assert.Equal(t, amount.Amount(2), trx.Payload().Value())
 }
 
 func TestStripPublicKey(t *testing.T) {
@@ -400,4 +431,52 @@ func TestFlagNotSigned(t *testing.T) {
 
 	trx.SetSignature(nil)
 	assert.False(t, trx.IsSigned(), "FlagNotSigned should not be set when the signature is set to nil")
+}
+
+func TestInvalidSignerSignature(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	trx := tx.NewTransferTx(ts.RandHeight(), crypto.TreasuryAddress, ts.RandAccAddress(),
+		ts.RandAmount(), ts.RandAmount())
+	trx.SetSignature(ts.RandBLSSignature())
+
+	bytes, _ := trx.Bytes()
+	_, err := tx.FromBytes(bytes)
+	assert.ErrorIs(t, err, tx.ErrInvalidSigner)
+}
+
+func TestInvalidSignerPublicKey(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	trx := tx.NewTransferTx(ts.RandHeight(), crypto.TreasuryAddress, ts.RandAccAddress(),
+		ts.RandAmount(), ts.RandAmount())
+	pub, _ := ts.RandBLSKeyPair()
+	trx.SetSignature(ts.RandBLSSignature())
+	trx.SetPublicKey(pub)
+
+	bytes, _ := trx.Bytes()
+	_, err := tx.FromBytes(bytes)
+	assert.ErrorIs(t, err, tx.ErrInvalidSigner)
+}
+
+func TestIsFreeTx(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	trx1 := ts.GenerateTestTransferTx()
+	trx2 := ts.GenerateTestBondTx()
+	trx3 := ts.GenerateTestUnbondTx()
+	trx4 := ts.GenerateTestWithdrawTx()
+	trx5 := ts.GenerateTestSortitionTx()
+
+	assert.True(t, trx1.IsTransferTx())
+	assert.True(t, trx2.IsBondTx())
+	assert.True(t, trx3.IsUnbondTx())
+	assert.True(t, trx4.IsWithdrawTx())
+	assert.True(t, trx5.IsSortitionTx())
+
+	assert.False(t, trx1.IsFreeTx())
+	assert.False(t, trx2.IsFreeTx())
+	assert.True(t, trx3.IsFreeTx())
+	assert.False(t, trx4.IsFreeTx())
+	assert.True(t, trx5.IsFreeTx())
 }

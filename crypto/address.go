@@ -14,13 +14,15 @@ import (
 type AddressType byte
 
 const (
-	AddressTypeTreasury   AddressType = 0
-	AddressTypeValidator  AddressType = 1
-	AddressTypeBLSAccount AddressType = 2
+	AddressTypeTreasury       AddressType = 0
+	AddressTypeValidator      AddressType = 1
+	AddressTypeBLSAccount     AddressType = 2
+	AddressTypeEd25519Account AddressType = 3
 )
 
 const (
-	SignatureTypeBLS byte = 1
+	SignatureTypeBLS     byte = 1
+	SignatureTypeEd25519 byte = 3
 )
 
 const (
@@ -51,7 +53,11 @@ func AddressFromString(text string) (Address, error) {
 	}
 
 	// check type is valid
-	validTypes := []AddressType{AddressTypeValidator, AddressTypeBLSAccount}
+	validTypes := []AddressType{
+		AddressTypeValidator,
+		AddressTypeBLSAccount,
+		AddressTypeEd25519Account,
+	}
 	if !slices.Contains(validTypes, AddressType(typ)) {
 		return Address{}, InvalidAddressTypeError(typ)
 	}
@@ -110,7 +116,8 @@ func (addr Address) Encode(w io.Writer) error {
 	case AddressTypeTreasury:
 		return encoding.WriteElement(w, uint8(0))
 	case AddressTypeValidator,
-		AddressTypeBLSAccount:
+		AddressTypeBLSAccount,
+		AddressTypeEd25519Account:
 		return encoding.WriteElement(w, addr)
 	default:
 		return InvalidAddressTypeError(t)
@@ -126,7 +133,8 @@ func (addr *Address) Decode(r io.Reader) error {
 	case AddressTypeTreasury:
 		return nil
 	case AddressTypeValidator,
-		AddressTypeBLSAccount:
+		AddressTypeBLSAccount,
+		AddressTypeEd25519Account:
 		return encoding.ReadElement(r, addr[1:])
 	default:
 		return InvalidAddressTypeError(t)
@@ -139,7 +147,8 @@ func (addr Address) SerializeSize() int {
 	case AddressTypeTreasury:
 		return 1
 	case AddressTypeValidator,
-		AddressTypeBLSAccount:
+		AddressTypeBLSAccount,
+		AddressTypeEd25519Account:
 		return AddressSize
 	default:
 		return 0
@@ -152,7 +161,8 @@ func (addr Address) IsTreasuryAddress() bool {
 
 func (addr Address) IsAccountAddress() bool {
 	return addr.Type() == AddressTypeTreasury ||
-		addr.Type() == AddressTypeBLSAccount
+		addr.Type() == AddressTypeBLSAccount ||
+		addr.Type() == AddressTypeEd25519Account
 }
 
 func (addr Address) IsValidatorAddress() bool {

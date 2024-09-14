@@ -16,7 +16,6 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
@@ -86,7 +85,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
 	accs := map[crypto.Address]*account.Account{crypto.TreasuryAddress: acc}
-	params := param.DefaultParams()
+	params := genesis.DefaultGenesisParams()
 	params.CommitteeSize = 4
 
 	// To prevent triggering timers before starting the tests and

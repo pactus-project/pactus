@@ -2,6 +2,7 @@ package bls
 
 import (
 	"bytes"
+	"crypto/subtle"
 	"fmt"
 	"io"
 
@@ -139,8 +140,13 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 }
 
 // EqualsTo checks if the current public key is equal to another public key.
-func (pub *PublicKey) EqualsTo(right crypto.PublicKey) bool {
-	return bytes.Equal(pub.data, right.(*PublicKey).data)
+func (pub *PublicKey) EqualsTo(x crypto.PublicKey) bool {
+	xBLS, ok := x.(*PublicKey)
+	if !ok {
+		return false
+	}
+
+	return subtle.ConstantTimeCompare(pub.data, xBLS.data) == 1
 }
 
 // AccountAddress returns the account address derived from the public key.

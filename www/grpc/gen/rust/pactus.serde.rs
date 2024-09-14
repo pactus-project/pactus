@@ -315,6 +315,7 @@ impl serde::Serialize for AddressType {
             Self::Treasury => "ADDRESS_TYPE_TREASURY",
             Self::Validator => "ADDRESS_TYPE_VALIDATOR",
             Self::BlsAccount => "ADDRESS_TYPE_BLS_ACCOUNT",
+            Self::Ed25519Account => "ADDRESS_TYPE_ED25519_ACCOUNT",
         };
         serializer.serialize_str(variant)
     }
@@ -329,6 +330,7 @@ impl<'de> serde::Deserialize<'de> for AddressType {
             "ADDRESS_TYPE_TREASURY",
             "ADDRESS_TYPE_VALIDATOR",
             "ADDRESS_TYPE_BLS_ACCOUNT",
+            "ADDRESS_TYPE_ED25519_ACCOUNT",
         ];
 
         struct GeneratedVisitor;
@@ -374,6 +376,7 @@ impl<'de> serde::Deserialize<'de> for AddressType {
                     "ADDRESS_TYPE_TREASURY" => Ok(AddressType::Treasury),
                     "ADDRESS_TYPE_VALIDATOR" => Ok(AddressType::Validator),
                     "ADDRESS_TYPE_BLS_ACCOUNT" => Ok(AddressType::BlsAccount),
+                    "ADDRESS_TYPE_ED25519_ACCOUNT" => Ok(AddressType::Ed25519Account),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }
@@ -3191,10 +3194,16 @@ impl serde::Serialize for GetConsensusInfoResponse {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
+        if self.proposal.is_some() {
+            len += 1;
+        }
         if !self.instances.is_empty() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetConsensusInfoResponse", len)?;
+        if let Some(v) = self.proposal.as_ref() {
+            struct_ser.serialize_field("proposal", v)?;
+        }
         if !self.instances.is_empty() {
             struct_ser.serialize_field("instances", &self.instances)?;
         }
@@ -3208,11 +3217,13 @@ impl<'de> serde::Deserialize<'de> for GetConsensusInfoResponse {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "proposal",
             "instances",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            Proposal,
             Instances,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -3235,6 +3246,7 @@ impl<'de> serde::Deserialize<'de> for GetConsensusInfoResponse {
                         E: serde::de::Error,
                     {
                         match value {
+                            "proposal" => Ok(GeneratedField::Proposal),
                             "instances" => Ok(GeneratedField::Instances),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
@@ -3255,9 +3267,16 @@ impl<'de> serde::Deserialize<'de> for GetConsensusInfoResponse {
                 where
                     V: serde::de::MapAccess<'de>,
             {
+                let mut proposal__ = None;
                 let mut instances__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
+                        GeneratedField::Proposal => {
+                            if proposal__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("proposal"));
+                            }
+                            proposal__ = map.next_value()?;
+                        }
                         GeneratedField::Instances => {
                             if instances__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("instances"));
@@ -3267,6 +3286,7 @@ impl<'de> serde::Deserialize<'de> for GetConsensusInfoResponse {
                     }
                 }
                 Ok(GetConsensusInfoResponse {
+                    proposal: proposal__,
                     instances: instances__.unwrap_or_default(),
                 })
             }
@@ -3599,6 +3619,9 @@ impl serde::Serialize for GetNewAddressRequest {
         if !self.label.is_empty() {
             len += 1;
         }
+        if !self.password.is_empty() {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetNewAddressRequest", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
@@ -3610,6 +3633,9 @@ impl serde::Serialize for GetNewAddressRequest {
         }
         if !self.label.is_empty() {
             struct_ser.serialize_field("label", &self.label)?;
+        }
+        if !self.password.is_empty() {
+            struct_ser.serialize_field("password", &self.password)?;
         }
         struct_ser.end()
     }
@@ -3626,6 +3652,7 @@ impl<'de> serde::Deserialize<'de> for GetNewAddressRequest {
             "address_type",
             "addressType",
             "label",
+            "password",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -3633,6 +3660,7 @@ impl<'de> serde::Deserialize<'de> for GetNewAddressRequest {
             WalletName,
             AddressType,
             Label,
+            Password,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -3657,6 +3685,7 @@ impl<'de> serde::Deserialize<'de> for GetNewAddressRequest {
                             "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
                             "addressType" | "address_type" => Ok(GeneratedField::AddressType),
                             "label" => Ok(GeneratedField::Label),
+                            "password" => Ok(GeneratedField::Password),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -3679,6 +3708,7 @@ impl<'de> serde::Deserialize<'de> for GetNewAddressRequest {
                 let mut wallet_name__ = None;
                 let mut address_type__ = None;
                 let mut label__ = None;
+                let mut password__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
@@ -3699,12 +3729,19 @@ impl<'de> serde::Deserialize<'de> for GetNewAddressRequest {
                             }
                             label__ = Some(map.next_value()?);
                         }
+                        GeneratedField::Password => {
+                            if password__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("password"));
+                            }
+                            password__ = Some(map.next_value()?);
+                        }
                     }
                 }
                 Ok(GetNewAddressRequest {
                     wallet_name: wallet_name__.unwrap_or_default(),
                     address_type: address_type__.unwrap_or_default(),
                     label: label__.unwrap_or_default(),
+                    password: password__.unwrap_or_default(),
                 })
             }
         }
@@ -7854,6 +7891,154 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
             }
         }
         deserializer.deserialize_struct("pactus.PeerInfo", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for Proposal {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.height != 0 {
+            len += 1;
+        }
+        if self.round != 0 {
+            len += 1;
+        }
+        if !self.block_data.is_empty() {
+            len += 1;
+        }
+        if !self.signature_data.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.Proposal", len)?;
+        if self.height != 0 {
+            struct_ser.serialize_field("height", &self.height)?;
+        }
+        if self.round != 0 {
+            struct_ser.serialize_field("round", &self.round)?;
+        }
+        if !self.block_data.is_empty() {
+            struct_ser.serialize_field("blockData", &self.block_data)?;
+        }
+        if !self.signature_data.is_empty() {
+            struct_ser.serialize_field("signatureData", &self.signature_data)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for Proposal {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "height",
+            "round",
+            "block_data",
+            "blockData",
+            "signature_data",
+            "signatureData",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Height,
+            Round,
+            BlockData,
+            SignatureData,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "height" => Ok(GeneratedField::Height),
+                            "round" => Ok(GeneratedField::Round),
+                            "blockData" | "block_data" => Ok(GeneratedField::BlockData),
+                            "signatureData" | "signature_data" => Ok(GeneratedField::SignatureData),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = Proposal;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.Proposal")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<Proposal, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut height__ = None;
+                let mut round__ = None;
+                let mut block_data__ = None;
+                let mut signature_data__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::Height => {
+                            if height__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("height"));
+                            }
+                            height__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Round => {
+                            if round__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("round"));
+                            }
+                            round__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::BlockData => {
+                            if block_data__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("blockData"));
+                            }
+                            block_data__ = Some(map.next_value()?);
+                        }
+                        GeneratedField::SignatureData => {
+                            if signature_data__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("signatureData"));
+                            }
+                            signature_data__ = Some(map.next_value()?);
+                        }
+                    }
+                }
+                Ok(Proposal {
+                    height: height__.unwrap_or_default(),
+                    round: round__.unwrap_or_default(),
+                    block_data: block_data__.unwrap_or_default(),
+                    signature_data: signature_data__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.Proposal", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for RestoreWalletRequest {

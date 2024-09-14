@@ -24,32 +24,76 @@ public final class WalletOuterClass {
   public enum AddressType
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
+     * <pre>
+     * Treasury address type.
+     * Should not be used to generate new addresses.
+     * </pre>
+     *
      * <code>ADDRESS_TYPE_TREASURY = 0;</code>
      */
     ADDRESS_TYPE_TREASURY(0),
     /**
+     * <pre>
+     * Validator address type.
+     * </pre>
+     *
      * <code>ADDRESS_TYPE_VALIDATOR = 1;</code>
      */
     ADDRESS_TYPE_VALIDATOR(1),
     /**
+     * <pre>
+     * Account address type with BLS signature scheme.
+     * </pre>
+     *
      * <code>ADDRESS_TYPE_BLS_ACCOUNT = 2;</code>
      */
     ADDRESS_TYPE_BLS_ACCOUNT(2),
+    /**
+     * <pre>
+     * Account address type with Ed25519 signature scheme.
+     * Note: Generating a new Ed25519 address requires the wallet password.
+     * </pre>
+     *
+     * <code>ADDRESS_TYPE_ED25519_ACCOUNT = 3;</code>
+     */
+    ADDRESS_TYPE_ED25519_ACCOUNT(3),
     UNRECOGNIZED(-1),
     ;
 
     /**
+     * <pre>
+     * Treasury address type.
+     * Should not be used to generate new addresses.
+     * </pre>
+     *
      * <code>ADDRESS_TYPE_TREASURY = 0;</code>
      */
     public static final int ADDRESS_TYPE_TREASURY_VALUE = 0;
     /**
+     * <pre>
+     * Validator address type.
+     * </pre>
+     *
      * <code>ADDRESS_TYPE_VALIDATOR = 1;</code>
      */
     public static final int ADDRESS_TYPE_VALIDATOR_VALUE = 1;
     /**
+     * <pre>
+     * Account address type with BLS signature scheme.
+     * </pre>
+     *
      * <code>ADDRESS_TYPE_BLS_ACCOUNT = 2;</code>
      */
     public static final int ADDRESS_TYPE_BLS_ACCOUNT_VALUE = 2;
+    /**
+     * <pre>
+     * Account address type with Ed25519 signature scheme.
+     * Note: Generating a new Ed25519 address requires the wallet password.
+     * </pre>
+     *
+     * <code>ADDRESS_TYPE_ED25519_ACCOUNT = 3;</code>
+     */
+    public static final int ADDRESS_TYPE_ED25519_ACCOUNT_VALUE = 3;
 
 
     public final int getNumber() {
@@ -79,6 +123,7 @@ public final class WalletOuterClass {
         case 0: return ADDRESS_TYPE_TREASURY;
         case 1: return ADDRESS_TYPE_VALIDATOR;
         case 2: return ADDRESS_TYPE_BLS_ACCOUNT;
+        case 3: return ADDRESS_TYPE_ED25519_ACCOUNT;
         default: return null;
       }
     }
@@ -4162,6 +4207,26 @@ public final class WalletOuterClass {
      */
     com.google.protobuf.ByteString
         getLabelBytes();
+
+    /**
+     * <pre>
+     * Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+     * </pre>
+     *
+     * <code>string password = 4 [json_name = "password"];</code>
+     * @return The password.
+     */
+    java.lang.String getPassword();
+    /**
+     * <pre>
+     * Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+     * </pre>
+     *
+     * <code>string password = 4 [json_name = "password"];</code>
+     * @return The bytes for password.
+     */
+    com.google.protobuf.ByteString
+        getPasswordBytes();
   }
   /**
    * <pre>
@@ -4183,6 +4248,7 @@ public final class WalletOuterClass {
       walletName_ = "";
       addressType_ = 0;
       label_ = "";
+      password_ = "";
     }
 
     @java.lang.Override
@@ -4329,6 +4395,52 @@ public final class WalletOuterClass {
       }
     }
 
+    public static final int PASSWORD_FIELD_NUMBER = 4;
+    private volatile java.lang.Object password_;
+    /**
+     * <pre>
+     * Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+     * </pre>
+     *
+     * <code>string password = 4 [json_name = "password"];</code>
+     * @return The password.
+     */
+    @java.lang.Override
+    public java.lang.String getPassword() {
+      java.lang.Object ref = password_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        password_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+     * </pre>
+     *
+     * <code>string password = 4 [json_name = "password"];</code>
+     * @return The bytes for password.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPasswordBytes() {
+      java.lang.Object ref = password_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        password_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -4352,6 +4464,9 @@ public final class WalletOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(label_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, label_);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(password_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 4, password_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -4370,6 +4485,9 @@ public final class WalletOuterClass {
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(label_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, label_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(password_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, password_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -4391,6 +4509,8 @@ public final class WalletOuterClass {
       if (addressType_ != other.addressType_) return false;
       if (!getLabel()
           .equals(other.getLabel())) return false;
+      if (!getPassword()
+          .equals(other.getPassword())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -4408,6 +4528,8 @@ public final class WalletOuterClass {
       hash = (53 * hash) + addressType_;
       hash = (37 * hash) + LABEL_FIELD_NUMBER;
       hash = (53 * hash) + getLabel().hashCode();
+      hash = (37 * hash) + PASSWORD_FIELD_NUMBER;
+      hash = (53 * hash) + getPassword().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4546,6 +4668,8 @@ public final class WalletOuterClass {
 
         label_ = "";
 
+        password_ = "";
+
         return this;
       }
 
@@ -4575,6 +4699,7 @@ public final class WalletOuterClass {
         result.walletName_ = walletName_;
         result.addressType_ = addressType_;
         result.label_ = label_;
+        result.password_ = password_;
         onBuilt();
         return result;
       }
@@ -4634,6 +4759,10 @@ public final class WalletOuterClass {
           label_ = other.label_;
           onChanged();
         }
+        if (!other.getPassword().isEmpty()) {
+          password_ = other.password_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -4675,6 +4804,11 @@ public final class WalletOuterClass {
 
                 break;
               } // case 26
+              case 34: {
+                password_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 34
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -4953,6 +5087,102 @@ public final class WalletOuterClass {
   checkByteStringIsUtf8(value);
         
         label_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object password_ = "";
+      /**
+       * <pre>
+       * Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+       * </pre>
+       *
+       * <code>string password = 4 [json_name = "password"];</code>
+       * @return The password.
+       */
+      public java.lang.String getPassword() {
+        java.lang.Object ref = password_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          password_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+       * </pre>
+       *
+       * <code>string password = 4 [json_name = "password"];</code>
+       * @return The bytes for password.
+       */
+      public com.google.protobuf.ByteString
+          getPasswordBytes() {
+        java.lang.Object ref = password_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          password_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+       * </pre>
+       *
+       * <code>string password = 4 [json_name = "password"];</code>
+       * @param value The password to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPassword(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        password_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+       * </pre>
+       *
+       * <code>string password = 4 [json_name = "password"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPassword() {
+        
+        password_ = getDefaultInstance().getPassword();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+       * </pre>
+       *
+       * <code>string password = 4 [json_name = "password"];</code>
+       * @param value The bytes for password to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPasswordBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        password_ = value;
         onChanged();
         return this;
       }
@@ -17249,69 +17479,71 @@ public final class WalletOuterClass {
       "t_name\030\001 \001(\tR\nwalletName\022\030\n\007address\030\002 \001(" +
       "\tR\007address\"S\n\031GetAddressHistoryResponse\022" +
       "6\n\014history_info\030\001 \003(\0132\023.pactus.HistoryIn" +
-      "foR\013historyInfo\"\205\001\n\024GetNewAddressRequest" +
+      "foR\013historyInfo\"\241\001\n\024GetNewAddressRequest" +
       "\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\0226\n\014add" +
       "ress_type\030\002 \001(\0162\023.pactus.AddressTypeR\013ad" +
-      "dressType\022\024\n\005label\030\003 \001(\tR\005label\"p\n\025GetNe" +
-      "wAddressResponse\022\037\n\013wallet_name\030\001 \001(\tR\nw" +
-      "alletName\0226\n\014address_info\030\002 \001(\0132\023.pactus" +
-      ".AddressInfoR\013addressInfo\"o\n\024RestoreWall" +
-      "etRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletNa" +
-      "me\022\032\n\010mnemonic\030\002 \001(\tR\010mnemonic\022\032\n\010passwo" +
-      "rd\030\003 \001(\tR\010password\"8\n\025RestoreWalletRespo" +
-      "nse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\"R\n\023" +
-      "CreateWalletRequest\022\037\n\013wallet_name\030\001 \001(\t" +
-      "R\nwalletName\022\032\n\010password\030\004 \001(\tR\010password" +
-      "\"2\n\024CreateWalletResponse\022\032\n\010mnemonic\030\002 \001" +
-      "(\tR\010mnemonic\"4\n\021LoadWalletRequest\022\037\n\013wal" +
-      "let_name\030\001 \001(\tR\nwalletName\"5\n\022LoadWallet" +
-      "Response\022\037\n\013wallet_name\030\001 \001(\tR\nwalletNam" +
-      "e\"6\n\023UnloadWalletRequest\022\037\n\013wallet_name\030" +
-      "\001 \001(\tR\nwalletName\"7\n\024UnloadWalletRespons" +
-      "e\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\";\n\032Ge" +
-      "tValidatorAddressRequest\022\035\n\npublic_key\030\001" +
-      " \001(\tR\tpublicKey\"7\n\033GetValidatorAddressRe" +
-      "sponse\022\030\n\007address\030\001 \001(\tR\007address\"\201\001\n\031Sig" +
-      "nRawTransactionRequest\022\037\n\013wallet_name\030\001 " +
-      "\001(\tR\nwalletName\022\'\n\017raw_transaction\030\002 \001(\t" +
-      "R\016rawTransaction\022\032\n\010password\030\003 \001(\tR\010pass" +
-      "word\"y\n\032SignRawTransactionResponse\022%\n\016tr" +
-      "ansaction_id\030\001 \001(\tR\rtransactionId\0224\n\026sig" +
-      "ned_raw_transaction\030\002 \001(\tR\024signedRawTran" +
-      "saction\"9\n\026GetTotalBalanceRequest\022\037\n\013wal" +
-      "let_name\030\001 \001(\tR\nwalletName\"_\n\027GetTotalBa" +
-      "lanceResponse\022\037\n\013wallet_name\030\001 \001(\tR\nwall" +
-      "etName\022#\n\rtotal_balance\030\002 \001(\003R\014totalBala" +
-      "nce\"\205\001\n\022SignMessageRequest\022\037\n\013wallet_nam" +
-      "e\030\001 \001(\tR\nwalletName\022\032\n\010password\030\002 \001(\tR\010p" +
-      "assword\022\030\n\007address\030\003 \001(\tR\007address\022\030\n\007mes" +
-      "sage\030\004 \001(\tR\007message\"3\n\023SignMessageRespon" +
-      "se\022\034\n\tsignature\030\001 \001(\tR\tsignature*b\n\013Addr" +
-      "essType\022\031\n\025ADDRESS_TYPE_TREASURY\020\000\022\032\n\026AD" +
-      "DRESS_TYPE_VALIDATOR\020\001\022\034\n\030ADDRESS_TYPE_B" +
-      "LS_ACCOUNT\020\0022\262\006\n\006Wallet\022I\n\014CreateWallet\022" +
-      "\033.pactus.CreateWalletRequest\032\034.pactus.Cr" +
-      "eateWalletResponse\022L\n\rRestoreWallet\022\034.pa" +
-      "ctus.RestoreWalletRequest\032\035.pactus.Resto" +
-      "reWalletResponse\022C\n\nLoadWallet\022\031.pactus." +
-      "LoadWalletRequest\032\032.pactus.LoadWalletRes" +
-      "ponse\022I\n\014UnloadWallet\022\033.pactus.UnloadWal" +
-      "letRequest\032\034.pactus.UnloadWalletResponse" +
-      "\022R\n\017GetTotalBalance\022\036.pactus.GetTotalBal" +
-      "anceRequest\032\037.pactus.GetTotalBalanceResp" +
-      "onse\022[\n\022SignRawTransaction\022!.pactus.Sign" +
-      "RawTransactionRequest\032\".pactus.SignRawTr" +
-      "ansactionResponse\022^\n\023GetValidatorAddress" +
-      "\022\".pactus.GetValidatorAddressRequest\032#.p" +
-      "actus.GetValidatorAddressResponse\022L\n\rGet" +
-      "NewAddress\022\034.pactus.GetNewAddressRequest" +
-      "\032\035.pactus.GetNewAddressResponse\022X\n\021GetAd" +
-      "dressHistory\022 .pactus.GetAddressHistoryR" +
-      "equest\032!.pactus.GetAddressHistoryRespons" +
-      "e\022F\n\013SignMessage\022\032.pactus.SignMessageReq" +
-      "uest\032\033.pactus.SignMessageResponseBA\n\rpac" +
-      "tus.walletZ0github.com/pactus-project/pa" +
-      "ctus/www/grpc/pactusb\006proto3"
+      "dressType\022\024\n\005label\030\003 \001(\tR\005label\022\032\n\010passw" +
+      "ord\030\004 \001(\tR\010password\"p\n\025GetNewAddressResp" +
+      "onse\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\0226\n" +
+      "\014address_info\030\002 \001(\0132\023.pactus.AddressInfo" +
+      "R\013addressInfo\"o\n\024RestoreWalletRequest\022\037\n" +
+      "\013wallet_name\030\001 \001(\tR\nwalletName\022\032\n\010mnemon" +
+      "ic\030\002 \001(\tR\010mnemonic\022\032\n\010password\030\003 \001(\tR\010pa" +
+      "ssword\"8\n\025RestoreWalletResponse\022\037\n\013walle" +
+      "t_name\030\001 \001(\tR\nwalletName\"R\n\023CreateWallet" +
+      "Request\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName" +
+      "\022\032\n\010password\030\004 \001(\tR\010password\"2\n\024CreateWa" +
+      "lletResponse\022\032\n\010mnemonic\030\002 \001(\tR\010mnemonic" +
+      "\"4\n\021LoadWalletRequest\022\037\n\013wallet_name\030\001 \001" +
+      "(\tR\nwalletName\"5\n\022LoadWalletResponse\022\037\n\013" +
+      "wallet_name\030\001 \001(\tR\nwalletName\"6\n\023UnloadW" +
+      "alletRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwalle" +
+      "tName\"7\n\024UnloadWalletResponse\022\037\n\013wallet_" +
+      "name\030\001 \001(\tR\nwalletName\";\n\032GetValidatorAd" +
+      "dressRequest\022\035\n\npublic_key\030\001 \001(\tR\tpublic" +
+      "Key\"7\n\033GetValidatorAddressResponse\022\030\n\007ad" +
+      "dress\030\001 \001(\tR\007address\"\201\001\n\031SignRawTransact" +
+      "ionRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletN" +
+      "ame\022\'\n\017raw_transaction\030\002 \001(\tR\016rawTransac" +
+      "tion\022\032\n\010password\030\003 \001(\tR\010password\"y\n\032Sign" +
+      "RawTransactionResponse\022%\n\016transaction_id" +
+      "\030\001 \001(\tR\rtransactionId\0224\n\026signed_raw_tran" +
+      "saction\030\002 \001(\tR\024signedRawTransaction\"9\n\026G" +
+      "etTotalBalanceRequest\022\037\n\013wallet_name\030\001 \001" +
+      "(\tR\nwalletName\"_\n\027GetTotalBalanceRespons" +
+      "e\022\037\n\013wallet_name\030\001 \001(\tR\nwalletName\022#\n\rto" +
+      "tal_balance\030\002 \001(\003R\014totalBalance\"\205\001\n\022Sign" +
+      "MessageRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwal" +
+      "letName\022\032\n\010password\030\002 \001(\tR\010password\022\030\n\007a" +
+      "ddress\030\003 \001(\tR\007address\022\030\n\007message\030\004 \001(\tR\007" +
+      "message\"3\n\023SignMessageResponse\022\034\n\tsignat" +
+      "ure\030\001 \001(\tR\tsignature*\204\001\n\013AddressType\022\031\n\025" +
+      "ADDRESS_TYPE_TREASURY\020\000\022\032\n\026ADDRESS_TYPE_" +
+      "VALIDATOR\020\001\022\034\n\030ADDRESS_TYPE_BLS_ACCOUNT\020" +
+      "\002\022 \n\034ADDRESS_TYPE_ED25519_ACCOUNT\020\0032\262\006\n\006" +
+      "Wallet\022I\n\014CreateWallet\022\033.pactus.CreateWa" +
+      "lletRequest\032\034.pactus.CreateWalletRespons" +
+      "e\022L\n\rRestoreWallet\022\034.pactus.RestoreWalle" +
+      "tRequest\032\035.pactus.RestoreWalletResponse\022" +
+      "C\n\nLoadWallet\022\031.pactus.LoadWalletRequest" +
+      "\032\032.pactus.LoadWalletResponse\022I\n\014UnloadWa" +
+      "llet\022\033.pactus.UnloadWalletRequest\032\034.pact" +
+      "us.UnloadWalletResponse\022R\n\017GetTotalBalan" +
+      "ce\022\036.pactus.GetTotalBalanceRequest\032\037.pac" +
+      "tus.GetTotalBalanceResponse\022[\n\022SignRawTr" +
+      "ansaction\022!.pactus.SignRawTransactionReq" +
+      "uest\032\".pactus.SignRawTransactionResponse" +
+      "\022^\n\023GetValidatorAddress\022\".pactus.GetVali" +
+      "datorAddressRequest\032#.pactus.GetValidato" +
+      "rAddressResponse\022L\n\rGetNewAddress\022\034.pact" +
+      "us.GetNewAddressRequest\032\035.pactus.GetNewA" +
+      "ddressResponse\022X\n\021GetAddressHistory\022 .pa" +
+      "ctus.GetAddressHistoryRequest\032!.pactus.G" +
+      "etAddressHistoryResponse\022F\n\013SignMessage\022" +
+      "\032.pactus.SignMessageRequest\032\033.pactus.Sig" +
+      "nMessageResponseBA\n\rpactus.walletZ0githu" +
+      "b.com/pactus-project/pactus/www/grpc/pac" +
+      "tusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -17347,7 +17579,7 @@ public final class WalletOuterClass {
     internal_static_pactus_GetNewAddressRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNewAddressRequest_descriptor,
-        new java.lang.String[] { "WalletName", "AddressType", "Label", });
+        new java.lang.String[] { "WalletName", "AddressType", "Label", "Password", });
     internal_static_pactus_GetNewAddressResponse_descriptor =
       getDescriptor().getMessageTypes().get(5);
     internal_static_pactus_GetNewAddressResponse_fieldAccessorTable = new

@@ -12,14 +12,14 @@ import (
 )
 
 func TestSigning(t *testing.T) {
-	msg := []byte("zarb")
+	msg := []byte("pactus")
 	prv, _ := bls.PrivateKeyFromString(
 		"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
 	pub, _ := bls.PublicKeyFromString(
 		"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
 			"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47a")
 	sig, _ := bls.SignatureFromString(
-		"ad0f88cec815e9b8af3f0136297cb242ed8b6369af723fbdac077fa927f5780db7df47c77fb53f3a22324673f000c792")
+		"923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7")
 	addr, _ := crypto.AddressFromString("pc1p5x2a0lkt5nrrdqe0rkcv6r4pfkmdhrr3xk73tq")
 
 	sig1 := prv.Sign(msg)
@@ -30,13 +30,13 @@ func TestSigning(t *testing.T) {
 }
 
 func TestSignatureAggregate(t *testing.T) {
-	msg := []byte("zarb")
+	msg := []byte("pactus")
 	prv1, _ := bls.PrivateKeyFromString(
 		"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
 	prv2, _ := bls.PrivateKeyFromString(
 		"SECRET1PDUV97560CWDGW2DR453YPUT84REN04G0DZFAPJQL5DV0CKDAN75QCJEV6F")
 	agg, _ := bls.SignatureFromString(
-		"a390ffec7061827b7e89193a26841dd9e3537b5db0af55661b624e8b93b855e9f65278850002ea72fb3098e674220eca")
+		"ad747172697127cb08dda29a386e106eb24ab0edfbc044014c3bd7a5f583cc38b3a223ff2c1df9c0b4df110630e6946b")
 	sig1 := prv1.Sign(msg).(*bls.Signature)
 	sig2 := prv2.Sign(msg).(*bls.Signature)
 
@@ -51,8 +51,8 @@ func TestAggregateFailed(t *testing.T) {
 	pub2, prv2 := ts.RandBLSKeyPair()
 	pub3, prv3 := ts.RandBLSKeyPair()
 	pub4, prv4 := ts.RandBLSKeyPair()
-	msg1 := []byte("zarb")
-	msg2 := []byte("zarb0")
+	msg1 := []byte("pactus")
+	msg2 := []byte("pactus0")
 
 	sig1 := prv1.Sign(msg1).(*bls.Signature)
 	sig11 := prv1.Sign(msg2).(*bls.Signature)
@@ -103,7 +103,7 @@ func TestAggregateOnlyOneSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	_, prv1 := ts.RandBLSKeyPair()
-	msg1 := []byte("zarb")
+	msg1 := []byte("pactus")
 	sig1 := prv1.Sign(msg1).(*bls.Signature)
 	agg1 := bls.SignatureAggregate(sig1)
 
@@ -126,7 +126,7 @@ func TestDuplicatedAggregate(t *testing.T) {
 	pub1, prv1 := ts.RandBLSKeyPair()
 	pub2, prv2 := ts.RandBLSKeyPair()
 
-	msg1 := []byte("zarb")
+	msg1 := []byte("pactus")
 
 	sig1 := prv1.Sign(msg1).(*bls.Signature)
 	sig2 := prv2.Sign(msg1).(*bls.Signature)
@@ -145,7 +145,7 @@ func TestDuplicatedAggregate(t *testing.T) {
 // TestHashToCurve ensures that the hash-to-curve function in kilic/bls12-381
 // works as intended and is compatible with the spec.
 // test vectors can be found here:
-// https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-hash-to-curve-16#appendix-J.9.1
+// https://datatracker.ietf.org/doc/html/rfc9380
 func TestHashToCurve(t *testing.T) {
 	domain := []byte("QUUX-V01-CS02-with-BLS12381G1_XMD:SHA-256_SSWU_RO_")
 	tests := []struct {
@@ -172,6 +172,16 @@ func TestHashToCurve(t *testing.T) {
 				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq",
 			"15f68eaa693b95ccb85215dc65fa81038d69629f70aeee0d0f677cf22285e7bf58d7cb86eefe8f2e9bc3f8cb84fac488" +
 				"1807a1d50c29f430b8cafc4f8638dfeeadf51211e1602a5f184443076715f91bb90a48ba1e370edce6ae1062f5e6dd38",
+		},
+		{
+			"a512_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			"082aabae8b7dedb0e78aeb619ad3bfd9277a2f77ba7fad20ef6aabdc6c31d19ba5a6d12283553294c1825c4b3ca2dcfe" +
+				"05b84ae5a942248eea39e1d91030458c40153f3b654ab7872d779ad1e942856a20c438e8d99bc8abfbf74729ce1f7ac8",
 		},
 	}
 

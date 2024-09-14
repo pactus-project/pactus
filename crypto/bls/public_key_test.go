@@ -40,11 +40,11 @@ func TestPublicKeyEqualsTo(t *testing.T) {
 
 	pub1, _ := ts.RandBLSKeyPair()
 	pub2, _ := ts.RandBLSKeyPair()
+	pub3, _ := ts.RandEd25519KeyPair()
 
 	assert.True(t, pub1.EqualsTo(pub1))
 	assert.False(t, pub1.EqualsTo(pub2))
-	assert.Equal(t, pub1, pub1)
-	assert.NotEqual(t, pub1, pub2)
+	assert.False(t, pub1.EqualsTo(pub3))
 }
 
 func TestPublicKeyEncoding(t *testing.T) {
@@ -108,7 +108,7 @@ func TestNilSignature(t *testing.T) {
 	assert.Error(t, pub.Verify(nil, &bls.Signature{}))
 }
 
-func TestPublicKeyBytes(t *testing.T) {
+func TestPublicKeyFromString(t *testing.T) {
 	tests := []struct {
 		errMsg  string
 		encoded string

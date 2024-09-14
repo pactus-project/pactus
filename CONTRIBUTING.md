@@ -19,6 +19,7 @@ Please follow these guidelines when contributing to the project:
 You can use these commands in the Makefile:
 
 - `make build` compiles the code into executable binaries.
+- `make build_gui` compiles the gtk GUI code into executable binary.
 - `make devtools` installs required development tools.
 - `make fmt` formats the code according to the Go standards.
 - `make check` runs checks on the code, including formatting and linting.
@@ -26,6 +27,10 @@ You can use these commands in the Makefile:
 - `make unit_test` runs only unit tests.
 - `make proto` generates [protobuf](https://protobuf.dev/) files.
   Run this target if you have made any changes to the proto buffer files.
+
+### GUI Development
+
+Development of the Pactus Core GUI have some requirements on your machine which you can find a [quick guide about it here](./docs/gtk-gui-development.md).
 
 ### Error and Log Messages
 
@@ -115,4 +120,4 @@ Please read it before contributing to the project.
 
 ---
 
-Thank you for your contributions to Pactus blockchain!
+Thank you for your contributions to the Pactus blockchain!

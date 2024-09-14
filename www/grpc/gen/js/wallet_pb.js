@@ -1332,7 +1332,8 @@ proto.pactus.GetNewAddressRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
     addressType: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    label: jspb.Message.getFieldWithDefault(msg, 3, "")
+    label: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    password: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -1381,6 +1382,10 @@ proto.pactus.GetNewAddressRequest.deserializeBinaryFromReader = function(msg, re
       var value = /** @type {string} */ (reader.readString());
       msg.setLabel(value);
       break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPassword(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1428,6 +1433,13 @@ proto.pactus.GetNewAddressRequest.serializeBinaryToWriter = function(message, wr
   if (f.length > 0) {
     writer.writeString(
       3,
+      f
+    );
+  }
+  f = message.getPassword();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
       f
     );
   }
@@ -1485,6 +1497,24 @@ proto.pactus.GetNewAddressRequest.prototype.getLabel = function() {
  */
 proto.pactus.GetNewAddressRequest.prototype.setLabel = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string password = 4;
+ * @return {string}
+ */
+proto.pactus.GetNewAddressRequest.prototype.getPassword = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.GetNewAddressRequest} returns this
+ */
+proto.pactus.GetNewAddressRequest.prototype.setPassword = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
@@ -4055,7 +4085,8 @@ proto.pactus.SignMessageResponse.prototype.setSignature = function(value) {
 proto.pactus.AddressType = {
   ADDRESS_TYPE_TREASURY: 0,
   ADDRESS_TYPE_VALIDATOR: 1,
-  ADDRESS_TYPE_BLS_ACCOUNT: 2
+  ADDRESS_TYPE_BLS_ACCOUNT: 2,
+  ADDRESS_TYPE_ED25519_ACCOUNT: 3
 };
 
 goog.object.extend(exports, proto.pactus);

@@ -96,9 +96,9 @@ func TestOpenWallet(t *testing.T) {
 		assert.NoError(t, util.WriteFile(td.wallet.Path(), []byte("{}")))
 
 		_, err := wallet.Open(td.wallet.Path(), true)
-		assert.ErrorIs(t, err, wallet.CRCNotMatchError{
-			Expected: 634125391,
-			Got:      0,
+		assert.ErrorIs(t, err, wallet.UnsupportedVersionError{
+			WalletVersion:    0,
+			SupportedVersion: 2,
 		})
 	})
 
@@ -163,7 +163,7 @@ func TestImportPrivateKey(t *testing.T) {
 	defer td.Close()
 
 	_, prv := td.RandBLSKeyPair()
-	assert.NoError(t, td.wallet.ImportPrivateKey(td.password, prv))
+	assert.NoError(t, td.wallet.ImportBLSPrivateKey(td.password, prv))
 
 	pub := prv.PublicKeyNative()
 	accAddr := pub.AccountAddress().String()
@@ -189,7 +189,7 @@ func TestSignMessage(t *testing.T) {
 
 	require.NoError(t, err)
 
-	err = td.wallet.ImportPrivateKey(td.password, prv)
+	err = td.wallet.ImportBLSPrivateKey(td.password, prv)
 	assert.NoError(t, err)
 
 	sig, err := td.wallet.SignMessage(td.password, td.wallet.AllAccountAddresses()[0].Address, msg)
@@ -256,11 +256,40 @@ func TestStake(t *testing.T) {
 	})
 }
 
-func TestSigningTx(t *testing.T) {
+func TestSigningTxWithBLS(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
 
 	senderInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
+	receiver := td.RandAccAddress()
+	amt := td.RandAmount()
+	fee := td.RandFee()
+	lockTime := td.RandHeight()
+
+	opts := []wallet.TxOption{
+		wallet.OptionFee(fee),
+		wallet.OptionLockTime(lockTime),
+		wallet.OptionMemo("test"),
+	}
+
+	trx, err := td.wallet.MakeTransferTx(senderInfo.Address, receiver.String(), amt, opts...)
+	assert.NoError(t, err)
+	err = td.wallet.SignTransaction(td.password, trx)
+	assert.NoError(t, err)
+	assert.NotNil(t, trx.Signature())
+	assert.NoError(t, trx.BasicCheck())
+
+	id, err := td.wallet.BroadcastTransaction(trx)
+	assert.NoError(t, err)
+	assert.Equal(t, trx.ID().String(), id)
+	assert.Equal(t, fee, trx.Fee())
+}
+
+func TestSigningTxWithEd25519(t *testing.T) {
+	td := setup(t)
+	defer td.Close()
+
+	senderInfo, _ := td.wallet.NewEd25519AccountAddress("testing addr", td.password)
 	receiver := td.RandAccAddress()
 	amt := td.RandAmount()
 	fee := td.RandFee()

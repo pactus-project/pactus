@@ -7,10 +7,10 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/logger"
@@ -139,12 +139,12 @@ func (sb *sandbox) UpdateAccount(addr crypto.Address, acc *account.Account) {
 	s.updated = true
 }
 
-func (sb *sandbox) AnyRecentTransaction(txID tx.ID) bool {
+func (sb *sandbox) RecentTransaction(txID tx.ID) bool {
 	if sb.committedTrxs[txID] != nil {
 		return true
 	}
 
-	return sb.store.AnyRecentTransaction(txID)
+	return sb.store.RecentTransaction(txID)
 }
 
 func (sb *sandbox) Validator(addr crypto.Address) *validator.Validator {

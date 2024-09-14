@@ -2,11 +2,12 @@ package state
 
 import (
 	"testing"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,20 +16,18 @@ func TestProposeBlock(t *testing.T) {
 
 	proposer := td.state.Proposer(0)
 	lockTime := td.state.LastBlockHeight()
-	dupSubsidyTx := tx.NewSubsidyTx(lockTime, proposer.Address(),
-		td.state.params.BlockReward, tx.WithMemo("duplicated subsidy transaction"))
+	dupSubsidyTx := tx.NewSubsidyTx(lockTime, proposer.Address(), td.state.params.BlockReward)
 	invTransferTx := td.GenerateTestTransferTx()
 	invBondTx := td.GenerateTestBondTx()
 	invSortitionTx := td.GenerateTestSortitionTx()
 
-	pub, _ := td.RandBLSKeyPair()
-	validTrx1 := tx.NewTransferTx(lockTime, td.genAccKey.PublicKeyNative().AccountAddress(),
-		td.RandAccAddress(), 1, 1000)
-	td.HelperSignTransaction(td.genAccKey, validTrx1)
+	validTrx1 := td.GenerateTestTransferTx(
+		testsuite.TransactionWithLockTime(lockTime),
+		testsuite.TransactionWithEd25519Signer(td.genAccKey))
 
-	validTrx2 := tx.NewBondTx(lockTime, td.genAccKey.PublicKeyNative().AccountAddress(),
-		pub.ValidatorAddress(), pub, 1000000000, 100000)
-	td.HelperSignTransaction(td.genAccKey, validTrx2)
+	validTrx2 := td.GenerateTestTransferTx(
+		testsuite.TransactionWithLockTime(lockTime),
+		testsuite.TransactionWithEd25519Signer(td.genAccKey))
 
 	assert.NoError(t, td.state.AddPendingTx(invTransferTx))
 	assert.NoError(t, td.state.AddPendingTx(invBondTx))
@@ -42,9 +41,6 @@ func TestProposeBlock(t *testing.T) {
 	assert.Equal(t, block.Txs{validTrx1, validTrx2}, blk.Transactions()[1:])
 	assert.True(t, blk.Transactions()[0].IsSubsidyTx())
 	assert.NoError(t, td.state.CommitBlock(blk, cert))
-
-	assert.Equal(t, int64(1000000004), td.state.TotalPower())
-	assert.Equal(t, int64(4), td.state.committee.TotalPower())
 }
 
 func TestExecuteBlock(t *testing.T) {
@@ -71,7 +67,7 @@ func TestExecuteBlock(t *testing.T) {
 	t.Run("Subsidy tx is invalid", func(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(invSubsidyTx)
-		invBlock := block.MakeBlock(1, util.Now(), txs, td.state.lastInfo.BlockHash(),
+		invBlock := block.MakeBlock(1, time.Now(), txs, td.state.lastInfo.BlockHash(),
 			td.state.stateRoot(), td.state.lastInfo.Certificate(),
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
@@ -83,7 +79,7 @@ func TestExecuteBlock(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(validSubsidyTx)
 		txs.Append(invTransferTx)
-		invBlock := block.MakeBlock(1, util.Now(), txs, td.state.lastInfo.BlockHash(),
+		invBlock := block.MakeBlock(1, time.Now(), txs, td.state.lastInfo.BlockHash(),
 			td.state.stateRoot(), td.state.lastInfo.Certificate(),
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
@@ -95,7 +91,7 @@ func TestExecuteBlock(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(validTx1)
 		txs.Append(validSubsidyTx)
-		invBlock := block.MakeBlock(1, util.Now(), txs, td.state.lastInfo.BlockHash(),
+		invBlock := block.MakeBlock(1, time.Now(), txs, td.state.lastInfo.BlockHash(),
 			td.state.stateRoot(), td.state.lastInfo.Certificate(),
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
@@ -106,7 +102,7 @@ func TestExecuteBlock(t *testing.T) {
 	t.Run("Has no subsidy", func(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(validTx1)
-		invBlock := block.MakeBlock(1, util.Now(), txs, td.state.lastInfo.BlockHash(),
+		invBlock := block.MakeBlock(1, time.Now(), txs, td.state.lastInfo.BlockHash(),
 			td.state.stateRoot(), td.state.lastInfo.Certificate(),
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
@@ -118,7 +114,7 @@ func TestExecuteBlock(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(validSubsidyTx)
 		txs.Append(validSubsidyTx)
-		invBlock := block.MakeBlock(1, util.Now(), txs, td.state.lastInfo.BlockHash(),
+		invBlock := block.MakeBlock(1, time.Now(), txs, td.state.lastInfo.BlockHash(),
 			td.state.stateRoot(), td.state.lastInfo.Certificate(),
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
@@ -130,7 +126,7 @@ func TestExecuteBlock(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(validSubsidyTx)
 		txs.Append(validTx1)
-		invBlock := block.MakeBlock(1, util.Now(), txs, td.state.lastInfo.BlockHash(),
+		invBlock := block.MakeBlock(1, time.Now(), txs, td.state.lastInfo.BlockHash(),
 			td.state.stateRoot(), td.state.lastInfo.Certificate(),
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()

@@ -288,6 +288,9 @@ func (conf *Config) BasicCheck() error {
 	if err := conf.JSONRPC.BasicCheck(); err != nil {
 		return err
 	}
+	if err := conf.GRPC.BasicCheck(); err != nil {
+		return err
+	}
 
 	return conf.HTTP.BasicCheck()
 }

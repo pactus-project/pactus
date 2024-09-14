@@ -5,9 +5,9 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 )
@@ -18,7 +18,7 @@ type Sandbox interface {
 	UpdateAccount(crypto.Address, *account.Account)
 
 	CommitTransaction(trx *tx.Tx)
-	AnyRecentTransaction(txID tx.ID) bool
+	RecentTransaction(txID tx.ID) bool
 	IsBanned(crypto.Address) bool
 
 	Validator(crypto.Address) *validator.Validator

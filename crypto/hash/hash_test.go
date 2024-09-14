@@ -38,16 +38,16 @@ func TestHashEmpty(t *testing.T) {
 }
 
 func TestHash256(t *testing.T) {
-	data := []byte("zarb")
+	data := []byte("pactus")
 	h1 := hash.Hash256(data)
-	expected, _ := hex.DecodeString("12b38977f2d67f06f0c0cd54aaf7324cf4fee184398ea33d295e8d1543c2ee1a")
+	expected, _ := hex.DecodeString("ea020ace5c968f755dfc1b5921e574191cd9ff438639badae8a69f667e0d5970")
 	assert.Equal(t, expected, h1)
 }
 
 func TestHash160(t *testing.T) {
-	data := []byte("zarb")
+	data := []byte("pactus")
 	h := hash.Hash160(data)
-	expected, _ := hex.DecodeString("e93efc0c83176034cb828e39435eeecc07a29298")
+	expected, _ := hex.DecodeString("1e4633f850c9590a97633631eae007e18648e30e")
 	assert.Equal(t, expected, h)
 }
 

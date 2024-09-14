@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/account"
@@ -80,11 +79,11 @@ func (m *MockStore) SortitionSeed(blockHeight uint32) *sortition.VerifiableSeed 
 	return nil
 }
 
-func (m *MockStore) PublicKey(addr crypto.Address) (*bls.PublicKey, error) {
+func (m *MockStore) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
 	for _, blk := range m.Blocks {
 		for _, trx := range blk.Transactions() {
 			if trx.Payload().Signer() == addr {
-				return trx.PublicKey().(*bls.PublicKey), nil
+				return trx.PublicKey(), nil
 			}
 		}
 	}
@@ -116,7 +115,7 @@ func (m *MockStore) Transaction(id tx.ID) (*CommittedTx, error) {
 	return nil, fmt.Errorf("not found")
 }
 
-func (m *MockStore) AnyRecentTransaction(id tx.ID) bool {
+func (m *MockStore) RecentTransaction(id tx.ID) bool {
 	for _, blk := range m.Blocks {
 		for _, trx := range blk.Transactions() {
 			if trx.ID() == id {

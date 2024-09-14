@@ -182,13 +182,13 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 			fatalErrorCheck(err)
 			setMargin(listBox, 5, 5, 1, 1)
 			listBox.SetHAlign(gtk.ALIGN_CENTER)
-			listBox.SetSizeRequest(600, -1)
+			listBox.SetSizeRequest(700, -1)
 
 			ssDLBtn, err := gtk.ButtonNewWithLabel("⏬ Download")
 			fatalErrorCheck(err)
 			setMargin(ssDLBtn, 10, 5, 1, 1)
 			ssDLBtn.SetHAlign(gtk.ALIGN_CENTER)
-			ssDLBtn.SetSizeRequest(600, -1)
+			ssDLBtn.SetSizeRequest(700, -1)
 
 			ssPBLabel, err := gtk.LabelNew("")
 			fatalErrorCheck(err)

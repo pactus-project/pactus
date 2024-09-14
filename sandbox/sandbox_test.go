@@ -5,11 +5,12 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/state/param"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/param"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -28,7 +29,7 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 	mockStore := store.MockingStore(ts)
-	params := param.DefaultParams()
+	params := genesis.DefaultGenesisParams()
 	params.TransactionToLiveInterval = 64
 
 	cmt, valKeys := ts.GenerateTestCommittee(21)
@@ -54,9 +55,9 @@ func setup(t *testing.T) *testData {
 		mockStore.SaveBlock(blk, cert)
 	}
 	sandbox := NewSandbox(mockStore.LastHeight,
-		mockStore, params, cmt, totalPower).(*sandbox)
+		mockStore, param.FromGenesis(params), cmt, totalPower).(*sandbox)
 	assert.Equal(t, lastHeight, sandbox.CurrentHeight())
-	assert.Equal(t, params, sandbox.Params())
+	assert.Equal(t, param.FromGenesis(params), sandbox.Params())
 
 	return &testData{
 		TestSuite: ts,
@@ -135,7 +136,7 @@ func TestAccountChange(t *testing.T) {
 	})
 }
 
-func TestAnyRecentTransaction(t *testing.T) {
+func TestRecentTransaction(t *testing.T) {
 	td := setup(t)
 
 	randTx1 := td.GenerateTestTransferTx()
@@ -143,8 +144,8 @@ func TestAnyRecentTransaction(t *testing.T) {
 	td.sandbox.CommitTransaction(randTx1)
 	td.sandbox.CommitTransaction(randTx2)
 
-	assert.True(t, td.sandbox.AnyRecentTransaction(randTx1.ID()))
-	assert.True(t, td.sandbox.AnyRecentTransaction(randTx2.ID()))
+	assert.True(t, td.sandbox.RecentTransaction(randTx1.ID()))
+	assert.True(t, td.sandbox.RecentTransaction(randTx2.ID()))
 
 	totalTxFees := randTx1.Fee() + randTx2.Fee()
 	assert.Equal(t, totalTxFees, td.sandbox.AccumulatedFee())
