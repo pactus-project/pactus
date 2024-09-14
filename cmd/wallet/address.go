@@ -74,7 +74,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(newAddressCmd)
 
 	addressType := newAddressCmd.Flags().String("type",
-		wallet.AddressTypeBLSAccount, "the type of address: bls_account or validator")
+		wallet.AddressTypeBLSAccount, "the type of address: bls_account, ed25519_account and validator")
 
 	newAddressCmd.Run = func(_ *cobra.Command, _ []string) {
 		var addressInfo *vault.AddressInfo
