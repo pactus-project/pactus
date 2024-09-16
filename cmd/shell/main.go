@@ -59,7 +59,7 @@ func main() {
 
 	sh.PreRun = func(_ *cobra.Command, _ []string) {
 		cls()
-		cmd.PrintInfoMsgf("Welcome to PactusBlockchain shell\n\n- Home: https//pactus.org\n- " +
+		cmd.PrintInfoMsgf("Welcome to PactusBlockchain shell\n\n- Home: https://pactus.org\n- " +
 			"Docs: https://docs.pactus.org")
 		cmd.PrintLine()
 		_prefix = fmt.Sprintf("pactus@%s > ", serverAddr)
