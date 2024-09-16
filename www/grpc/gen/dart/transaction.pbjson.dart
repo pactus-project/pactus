@@ -106,18 +106,18 @@ const GetRawTransactionRequest$json = const {
   '2': const [
     const {'1': 'lock_time', '3': 1, '4': 1, '5': 13, '10': 'lockTime'},
     const {'1': 'memo', '3': 2, '4': 1, '5': 9, '10': 'memo'},
-    const {'1': 'transfer', '3': 3, '4': 1, '5': 11, '6': '.pactus.RawTransfer', '9': 0, '10': 'transfer'},
-    const {'1': 'bond', '3': 4, '4': 1, '5': 11, '6': '.pactus.RawBond', '9': 0, '10': 'bond'},
-    const {'1': 'unbond', '3': 5, '4': 1, '5': 11, '6': '.pactus.RawUnbond', '9': 0, '10': 'unbond'},
-    const {'1': 'withdraw', '3': 6, '4': 1, '5': 11, '6': '.pactus.RawWithdraw', '9': 0, '10': 'withdraw'},
+    const {'1': 'transfer', '3': 3, '4': 1, '5': 11, '6': '.pactus.TransferPayload', '9': 0, '10': 'transfer'},
+    const {'1': 'bond', '3': 4, '4': 1, '5': 11, '6': '.pactus.BondPayload', '9': 0, '10': 'bond'},
+    const {'1': 'unbond', '3': 5, '4': 1, '5': 11, '6': '.pactus.UnbondPayload', '9': 0, '10': 'unbond'},
+    const {'1': 'withdraw', '3': 6, '4': 1, '5': 11, '6': '.pactus.WithdrawPayload', '9': 0, '10': 'withdraw'},
   ],
   '8': const [
-    const {'1': 'transaction'},
+    const {'1': 'payload'},
   ],
 };
 
 /// Descriptor for `GetRawTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getRawTransactionRequestDescriptor = $convert.base64Decode('ChhHZXRSYXdUcmFuc2FjdGlvblJlcXVlc3QSGwoJbG9ja190aW1lGAEgASgNUghsb2NrVGltZRISCgRtZW1vGAIgASgJUgRtZW1vEjEKCHRyYW5zZmVyGAMgASgLMhMucGFjdHVzLlJhd1RyYW5zZmVySABSCHRyYW5zZmVyEiUKBGJvbmQYBCABKAsyDy5wYWN0dXMuUmF3Qm9uZEgAUgRib25kEisKBnVuYm9uZBgFIAEoCzIRLnBhY3R1cy5SYXdVbmJvbmRIAFIGdW5ib25kEjEKCHdpdGhkcmF3GAYgASgLMhMucGFjdHVzLlJhd1dpdGhkcmF3SABSCHdpdGhkcmF3Qg0KC3RyYW5zYWN0aW9u');
+final $typed_data.Uint8List getRawTransactionRequestDescriptor = $convert.base64Decode('ChhHZXRSYXdUcmFuc2FjdGlvblJlcXVlc3QSGwoJbG9ja190aW1lGAEgASgNUghsb2NrVGltZRISCgRtZW1vGAIgASgJUgRtZW1vEjUKCHRyYW5zZmVyGAMgASgLMhcucGFjdHVzLlRyYW5zZmVyUGF5bG9hZEgAUgh0cmFuc2ZlchIpCgRib25kGAQgASgLMhMucGFjdHVzLkJvbmRQYXlsb2FkSABSBGJvbmQSLwoGdW5ib25kGAUgASgLMhUucGFjdHVzLlVuYm9uZFBheWxvYWRIAFIGdW5ib25kEjUKCHdpdGhkcmF3GAYgASgLMhcucGFjdHVzLldpdGhkcmF3UGF5bG9hZEgAUgh3aXRoZHJhd0IJCgdwYXlsb2Fk');
 @$core.Deprecated('Use getRawTransferTransactionRequestDescriptor instead')
 const GetRawTransferTransactionRequest$json = const {
   '1': 'GetRawTransferTransactionRequest',
@@ -176,9 +176,9 @@ const GetRawWithdrawTransactionRequest$json = const {
 
 /// Descriptor for `GetRawWithdrawTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getRawWithdrawTransactionRequestDescriptor = $convert.base64Decode('CiBHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uUmVxdWVzdBIbCglsb2NrX3RpbWUYASABKA1SCGxvY2tUaW1lEisKEXZhbGlkYXRvcl9hZGRyZXNzGAIgASgJUhB2YWxpZGF0b3JBZGRyZXNzEicKD2FjY291bnRfYWRkcmVzcxgDIAEoCVIOYWNjb3VudEFkZHJlc3MSFgoGYW1vdW50GAQgASgDUgZhbW91bnQSEAoDZmVlGAUgASgDUgNmZWUSEgoEbWVtbxgGIAEoCVIEbWVtbw==');
-@$core.Deprecated('Use rawTransferDescriptor instead')
-const RawTransfer$json = const {
-  '1': 'RawTransfer',
+@$core.Deprecated('Use transferPayloadDescriptor instead')
+const TransferPayload$json = const {
+  '1': 'TransferPayload',
   '2': const [
     const {'1': 'sender', '3': 1, '4': 1, '5': 9, '10': 'sender'},
     const {'1': 'receiver', '3': 2, '4': 1, '5': 9, '10': 'receiver'},
@@ -187,11 +187,11 @@ const RawTransfer$json = const {
   ],
 };
 
-/// Descriptor for `RawTransfer`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List rawTransferDescriptor = $convert.base64Decode('CgtSYXdUcmFuc2ZlchIWCgZzZW5kZXIYASABKAlSBnNlbmRlchIaCghyZWNlaXZlchgCIAEoCVIIcmVjZWl2ZXISFgoGYW1vdW50GAMgASgDUgZhbW91bnQSEAoDZmVlGAQgASgDUgNmZWU=');
-@$core.Deprecated('Use rawBondDescriptor instead')
-const RawBond$json = const {
-  '1': 'RawBond',
+/// Descriptor for `TransferPayload`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List transferPayloadDescriptor = $convert.base64Decode('Cg9UcmFuc2ZlclBheWxvYWQSFgoGc2VuZGVyGAEgASgJUgZzZW5kZXISGgoIcmVjZWl2ZXIYAiABKAlSCHJlY2VpdmVyEhYKBmFtb3VudBgDIAEoA1IGYW1vdW50EhAKA2ZlZRgEIAEoA1IDZmVl');
+@$core.Deprecated('Use bondPayloadDescriptor instead')
+const BondPayload$json = const {
+  '1': 'BondPayload',
   '2': const [
     const {'1': 'sender', '3': 1, '4': 1, '5': 9, '10': 'sender'},
     const {'1': 'receiver', '3': 2, '4': 1, '5': 9, '10': 'receiver'},
@@ -201,21 +201,21 @@ const RawBond$json = const {
   ],
 };
 
-/// Descriptor for `RawBond`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List rawBondDescriptor = $convert.base64Decode('CgdSYXdCb25kEhYKBnNlbmRlchgBIAEoCVIGc2VuZGVyEhoKCHJlY2VpdmVyGAIgASgJUghyZWNlaXZlchIUCgVzdGFrZRgDIAEoA1IFc3Rha2USHQoKcHVibGljX2tleRgEIAEoCVIJcHVibGljS2V5EhAKA2ZlZRgFIAEoA1IDZmVl');
-@$core.Deprecated('Use rawUnbondDescriptor instead')
-const RawUnbond$json = const {
-  '1': 'RawUnbond',
+/// Descriptor for `BondPayload`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List bondPayloadDescriptor = $convert.base64Decode('CgtCb25kUGF5bG9hZBIWCgZzZW5kZXIYASABKAlSBnNlbmRlchIaCghyZWNlaXZlchgCIAEoCVIIcmVjZWl2ZXISFAoFc3Rha2UYAyABKANSBXN0YWtlEh0KCnB1YmxpY19rZXkYBCABKAlSCXB1YmxpY0tleRIQCgNmZWUYBSABKANSA2ZlZQ==');
+@$core.Deprecated('Use unbondPayloadDescriptor instead')
+const UnbondPayload$json = const {
+  '1': 'UnbondPayload',
   '2': const [
     const {'1': 'validator_address', '3': 1, '4': 1, '5': 9, '10': 'validatorAddress'},
   ],
 };
 
-/// Descriptor for `RawUnbond`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List rawUnbondDescriptor = $convert.base64Decode('CglSYXdVbmJvbmQSKwoRdmFsaWRhdG9yX2FkZHJlc3MYASABKAlSEHZhbGlkYXRvckFkZHJlc3M=');
-@$core.Deprecated('Use rawWithdrawDescriptor instead')
-const RawWithdraw$json = const {
-  '1': 'RawWithdraw',
+/// Descriptor for `UnbondPayload`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List unbondPayloadDescriptor = $convert.base64Decode('Cg1VbmJvbmRQYXlsb2FkEisKEXZhbGlkYXRvcl9hZGRyZXNzGAEgASgJUhB2YWxpZGF0b3JBZGRyZXNz');
+@$core.Deprecated('Use withdrawPayloadDescriptor instead')
+const WithdrawPayload$json = const {
+  '1': 'WithdrawPayload',
   '2': const [
     const {'1': 'validator_address', '3': 1, '4': 1, '5': 9, '10': 'validatorAddress'},
     const {'1': 'account_address', '3': 2, '4': 1, '5': 9, '10': 'accountAddress'},
@@ -224,8 +224,8 @@ const RawWithdraw$json = const {
   ],
 };
 
-/// Descriptor for `RawWithdraw`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List rawWithdrawDescriptor = $convert.base64Decode('CgtSYXdXaXRoZHJhdxIrChF2YWxpZGF0b3JfYWRkcmVzcxgBIAEoCVIQdmFsaWRhdG9yQWRkcmVzcxInCg9hY2NvdW50X2FkZHJlc3MYAiABKAlSDmFjY291bnRBZGRyZXNzEhYKBmFtb3VudBgDIAEoA1IGYW1vdW50EhAKA2ZlZRgEIAEoA1IDZmVl');
+/// Descriptor for `WithdrawPayload`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List withdrawPayloadDescriptor = $convert.base64Decode('Cg9XaXRoZHJhd1BheWxvYWQSKwoRdmFsaWRhdG9yX2FkZHJlc3MYASABKAlSEHZhbGlkYXRvckFkZHJlc3MSJwoPYWNjb3VudF9hZGRyZXNzGAIgASgJUg5hY2NvdW50QWRkcmVzcxIWCgZhbW91bnQYAyABKANSBmFtb3VudBIQCgNmZWUYBCABKANSA2ZlZQ==');
 @$core.Deprecated('Use getRawTransactionResponseDescriptor instead')
 const GetRawTransactionResponse$json = const {
   '1': 'GetRawTransactionResponse',
@@ -349,10 +349,10 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Transactio
   '.pactus.BroadcastTransactionRequest': BroadcastTransactionRequest$json,
   '.pactus.BroadcastTransactionResponse': BroadcastTransactionResponse$json,
   '.pactus.GetRawTransactionRequest': GetRawTransactionRequest$json,
-  '.pactus.RawTransfer': RawTransfer$json,
-  '.pactus.RawBond': RawBond$json,
-  '.pactus.RawUnbond': RawUnbond$json,
-  '.pactus.RawWithdraw': RawWithdraw$json,
+  '.pactus.TransferPayload': TransferPayload$json,
+  '.pactus.BondPayload': BondPayload$json,
+  '.pactus.UnbondPayload': UnbondPayload$json,
+  '.pactus.WithdrawPayload': WithdrawPayload$json,
   '.pactus.GetRawTransactionResponse': GetRawTransactionResponse$json,
   '.pactus.GetRawTransferTransactionRequest': GetRawTransferTransactionRequest$json,
   '.pactus.GetRawBondTransactionRequest': GetRawBondTransactionRequest$json,

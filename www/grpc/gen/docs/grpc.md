@@ -567,28 +567,28 @@ height.
   </tr>
   <tr>
     <td class="fw-bold">transfer</td>
-    <td> RawTransfer</td>
+    <td> TransferPayload</td>
     <td>
     (OneOf) 
     </td>
   </tr>
   <tr>
     <td class="fw-bold">bond</td>
-    <td> RawBond</td>
+    <td> BondPayload</td>
     <td>
     (OneOf) 
     </td>
   </tr>
   <tr>
     <td class="fw-bold">unbond</td>
-    <td> RawUnbond</td>
+    <td> UnbondPayload</td>
     <td>
     (OneOf) 
     </td>
   </tr>
   <tr>
     <td class="fw-bold">withdraw</td>
-    <td> RawWithdraw</td>
+    <td> WithdrawPayload</td>
     <td>
     (OneOf) 
     </td>

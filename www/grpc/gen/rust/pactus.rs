@@ -76,22 +76,22 @@ pub struct GetRawTransactionRequest {
     /// A memo string for the transaction.
     #[prost(string, tag="2")]
     pub memo: ::prost::alloc::string::String,
-    #[prost(oneof="get_raw_transaction_request::Transaction", tags="3, 4, 5, 6")]
-    pub transaction: ::core::option::Option<get_raw_transaction_request::Transaction>,
+    #[prost(oneof="get_raw_transaction_request::Payload", tags="3, 4, 5, 6")]
+    pub payload: ::core::option::Option<get_raw_transaction_request::Payload>,
 }
 /// Nested message and enum types in `GetRawTransactionRequest`.
 pub mod get_raw_transaction_request {
     #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Oneof)]
-    pub enum Transaction {
+    pub enum Payload {
         #[prost(message, tag="3")]
-        Transfer(super::RawTransfer),
+        Transfer(super::TransferPayload),
         #[prost(message, tag="4")]
-        Bond(super::RawBond),
+        Bond(super::BondPayload),
         #[prost(message, tag="5")]
-        Unbond(super::RawUnbond),
+        Unbond(super::UnbondPayload),
         #[prost(message, tag="6")]
-        Withdraw(super::RawWithdraw),
+        Withdraw(super::WithdrawPayload),
     }
 }
 /// Request message for retrieving raw details of a transfer transaction.
@@ -184,10 +184,10 @@ pub struct GetRawWithdrawTransactionRequest {
     #[prost(string, tag="6")]
     pub memo: ::prost::alloc::string::String,
 }
-/// Request message for retrieving raw details of a transfer transaction.
+/// Payload message for retrieving raw details of a transfer transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct RawTransfer {
+pub struct TransferPayload {
     /// The sender's account address.
     #[prost(string, tag="1")]
     pub sender: ::prost::alloc::string::String,
@@ -201,10 +201,10 @@ pub struct RawTransfer {
     #[prost(int64, tag="4")]
     pub fee: i64,
 }
-/// Request message for retrieving raw details of a bond transaction.
+/// Payload message for retrieving raw details of a bond transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct RawBond {
+pub struct BondPayload {
     /// The sender's account address.
     #[prost(string, tag="1")]
     pub sender: ::prost::alloc::string::String,
@@ -221,18 +221,18 @@ pub struct RawBond {
     #[prost(int64, tag="5")]
     pub fee: i64,
 }
-/// Request message for retrieving raw details of an unbond transaction.
+/// Payload message for retrieving raw details of an unbond transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct RawUnbond {
+pub struct UnbondPayload {
     /// The address of the validator to unbond from.
     #[prost(string, tag="1")]
     pub validator_address: ::prost::alloc::string::String,
 }
-/// Request message for retrieving raw details of a withdraw transaction.
+/// Payload message for retrieving raw details of a withdraw transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct RawWithdraw {
+pub struct WithdrawPayload {
     /// The address of the validator to withdraw from.
     #[prost(string, tag="1")]
     pub validator_address: ::prost::alloc::string::String,

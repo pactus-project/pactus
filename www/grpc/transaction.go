@@ -109,7 +109,7 @@ func (s *transactionServer) GetRawTransaction(_ context.Context,
 ) (*pactus.GetRawTransactionResponse, error) {
 	lockTime := s.getLockTime(req.LockTime)
 
-	switch r := req.Transaction.(type) {
+	switch r := req.Payload.(type) {
 	case *pactus.GetRawTransactionRequest_Transfer:
 		raw, err := s.handleRawTransfer(r, lockTime, req.Memo)
 

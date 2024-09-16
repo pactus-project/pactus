@@ -130,8 +130,8 @@ func TestGetRawTransaction(t *testing.T) {
 		amt := td.RandAmount()
 		res, err := client.GetRawTransaction(context.Background(),
 			&pactus.GetRawTransactionRequest{
-				Transaction: &pactus.GetRawTransactionRequest_Transfer{
-					Transfer: &pactus.RawTransfer{
+				Payload: &pactus.GetRawTransactionRequest_Transfer{
+					Transfer: &pactus.TransferPayload{
 						Sender:   td.RandAccAddress().String(),
 						Receiver: td.RandAccAddress().String(),
 						Amount:   amt.ToNanoPAC(),
@@ -158,8 +158,8 @@ func TestGetRawTransaction(t *testing.T) {
 
 		res, err := client.GetRawTransaction(context.Background(),
 			&pactus.GetRawTransactionRequest{
-				Transaction: &pactus.GetRawTransactionRequest_Bond{
-					Bond: &pactus.RawBond{
+				Payload: &pactus.GetRawTransactionRequest_Bond{
+					Bond: &pactus.BondPayload{
 						Sender:    td.RandAccAddress().String(),
 						Receiver:  td.RandValAddress().String(),
 						Stake:     amt.ToNanoPAC(),
@@ -184,8 +184,8 @@ func TestGetRawTransaction(t *testing.T) {
 	t.Run("Unbond", func(t *testing.T) {
 		res, err := client.GetRawTransaction(context.Background(),
 			&pactus.GetRawTransactionRequest{
-				Transaction: &pactus.GetRawTransactionRequest_Unbond{
-					Unbond: &pactus.RawUnbond{
+				Payload: &pactus.GetRawTransactionRequest_Unbond{
+					Unbond: &pactus.UnbondPayload{
 						ValidatorAddress: td.RandValAddress().String(),
 					},
 				},
@@ -207,8 +207,8 @@ func TestGetRawTransaction(t *testing.T) {
 		amt := td.RandAmount()
 		res, err := client.GetRawTransaction(context.Background(),
 			&pactus.GetRawTransactionRequest{
-				Transaction: &pactus.GetRawTransactionRequest_Withdraw{
-					Withdraw: &pactus.RawWithdraw{
+				Payload: &pactus.GetRawTransactionRequest_Withdraw{
+					Withdraw: &pactus.WithdrawPayload{
 						ValidatorAddress: td.RandValAddress().String(),
 						AccountAddress:   td.RandAccAddress().String(),
 						Amount:           amt.ToNanoPAC(),

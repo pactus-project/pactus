@@ -95,11 +95,11 @@ message GetRawTransactionRequest {
   // A memo string for the transaction.
   string memo = 2;
 
-  oneof transaction {
-    RawTransfer transfer = 3;
-    RawBond bond = 4;
-    RawUnbond unbond = 5;
-    RawWithdraw withdraw = 6;
+  oneof payload {
+    TransferPayload transfer = 3;
+    BondPayload bond = 4;
+    UnbondPayload unbond = 5;
+    WithdrawPayload withdraw = 6;
   }
 }
 
@@ -167,8 +167,8 @@ message GetRawWithdrawTransactionRequest {
   string memo = 6;
 }
 
-// Request message for retrieving raw details of a transfer transaction.
-message RawTransfer {
+// Payload message for retrieving raw details of a transfer transaction.
+message TransferPayload {
   // The sender's account address.
   string sender = 1;
   // The receiver's account address.
@@ -179,8 +179,8 @@ message RawTransfer {
   int64 fee = 4;
 }
 
-// Request message for retrieving raw details of a bond transaction.
-message RawBond {
+// Payload message for retrieving raw details of a bond transaction.
+message BondPayload {
   // The sender's account address.
   string sender = 1;
   // The receiver's validator address.
@@ -193,14 +193,14 @@ message RawBond {
   int64 fee = 5;
 }
 
-// Request message for retrieving raw details of an unbond transaction.
-message RawUnbond {
+// Payload message for retrieving raw details of an unbond transaction.
+message UnbondPayload {
   // The address of the validator to unbond from.
   string validator_address = 1;
 }
 
-// Request message for retrieving raw details of a withdraw transaction.
-message RawWithdraw {
+// Payload message for retrieving raw details of a withdraw transaction.
+message WithdrawPayload {
   // The address of the validator to withdraw from.
   string validator_address = 1;
   // The address of the account to withdraw to.

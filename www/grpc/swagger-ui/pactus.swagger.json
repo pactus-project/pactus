@@ -1256,6 +1256,34 @@
       "default": "BLOCK_DATA",
       "description": "Enumeration for verbosity levels when requesting block information.\n\n - BLOCK_DATA: Request only block data.\n - BLOCK_INFO: Request block information and transaction IDs.\n - BLOCK_TRANSACTIONS: Request block information and detailed transaction data."
     },
+    "pactusBondPayload": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string",
+          "description": "The sender's account address."
+        },
+        "receiver": {
+          "type": "string",
+          "description": "The receiver's validator address."
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64",
+          "description": "The stake amount in NanoPAC. Must be greater than 0."
+        },
+        "publicKey": {
+          "type": "string",
+          "description": "The public key of the validator."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
+        }
+      },
+      "description": "Payload message for retrieving raw details of a bond transaction."
+    },
     "pactusBroadcastTransactionResponse": {
       "type": "object",
       "properties": {
@@ -2032,92 +2060,6 @@
       },
       "description": "Message containing information about a proposal."
     },
-    "pactusRawBond": {
-      "type": "object",
-      "properties": {
-        "sender": {
-          "type": "string",
-          "description": "The sender's account address."
-        },
-        "receiver": {
-          "type": "string",
-          "description": "The receiver's validator address."
-        },
-        "stake": {
-          "type": "string",
-          "format": "int64",
-          "description": "The stake amount in NanoPAC. Must be greater than 0."
-        },
-        "publicKey": {
-          "type": "string",
-          "description": "The public key of the validator."
-        },
-        "fee": {
-          "type": "string",
-          "format": "int64",
-          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
-        }
-      },
-      "description": "Request message for retrieving raw details of a bond transaction."
-    },
-    "pactusRawTransfer": {
-      "type": "object",
-      "properties": {
-        "sender": {
-          "type": "string",
-          "description": "The sender's account address."
-        },
-        "receiver": {
-          "type": "string",
-          "description": "The receiver's account address."
-        },
-        "amount": {
-          "type": "string",
-          "format": "int64",
-          "description": "The amount to be transferred, specified in NanoPAC. Must be greater than 0."
-        },
-        "fee": {
-          "type": "string",
-          "format": "int64",
-          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
-        }
-      },
-      "description": "Request message for retrieving raw details of a transfer transaction."
-    },
-    "pactusRawUnbond": {
-      "type": "object",
-      "properties": {
-        "validatorAddress": {
-          "type": "string",
-          "description": "The address of the validator to unbond from."
-        }
-      },
-      "description": "Request message for retrieving raw details of an unbond transaction."
-    },
-    "pactusRawWithdraw": {
-      "type": "object",
-      "properties": {
-        "validatorAddress": {
-          "type": "string",
-          "description": "The address of the validator to withdraw from."
-        },
-        "accountAddress": {
-          "type": "string",
-          "description": "The address of the account to withdraw to."
-        },
-        "amount": {
-          "type": "string",
-          "format": "int64",
-          "description": "The withdrawal amount in NanoPAC. Must be greater than 0."
-        },
-        "fee": {
-          "type": "string",
-          "format": "int64",
-          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
-        }
-      },
-      "description": "Request message for retrieving raw details of a withdraw transaction."
-    },
     "pactusRestoreWalletResponse": {
       "type": "object",
       "properties": {
@@ -2241,6 +2183,40 @@
       "default": "TRANSACTION_DATA",
       "description": "Enumeration for verbosity levels when requesting transaction details.\n\n - TRANSACTION_DATA: Request transaction data only.\n - TRANSACTION_INFO: Request detailed transaction information."
     },
+    "pactusTransferPayload": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string",
+          "description": "The sender's account address."
+        },
+        "receiver": {
+          "type": "string",
+          "description": "The receiver's account address."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The amount to be transferred, specified in NanoPAC. Must be greater than 0."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
+        }
+      },
+      "description": "Payload message for retrieving raw details of a transfer transaction."
+    },
+    "pactusUnbondPayload": {
+      "type": "object",
+      "properties": {
+        "validatorAddress": {
+          "type": "string",
+          "description": "The address of the validator to unbond from."
+        }
+      },
+      "description": "Payload message for retrieving raw details of an unbond transaction."
+    },
     "pactusUnloadWalletResponse": {
       "type": "object",
       "properties": {
@@ -2356,6 +2332,30 @@
       ],
       "default": "VOTE_UNKNOWN",
       "description": "Enumeration for types of votes.\n\n - VOTE_UNKNOWN: Unknown vote type.\n - VOTE_PREPARE: Prepare vote type.\n - VOTE_PRECOMMIT: Precommit vote type.\n - VOTE_CHANGE_PROPOSER: Change proposer vote type."
+    },
+    "pactusWithdrawPayload": {
+      "type": "object",
+      "properties": {
+        "validatorAddress": {
+          "type": "string",
+          "description": "The address of the validator to withdraw from."
+        },
+        "accountAddress": {
+          "type": "string",
+          "description": "The address of the account to withdraw to."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The withdrawal amount in NanoPAC. Must be greater than 0."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
+        }
+      },
+      "description": "Payload message for retrieving raw details of a withdraw transaction."
     },
     "protobufAny": {
       "type": "object",
