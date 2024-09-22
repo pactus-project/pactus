@@ -1,6 +1,6 @@
 module github.com/pactus-project/pactus
 
-go 1.22.2
+go 1.23.1
 
 require (
 	github.com/NathanBaulch/protoc-gen-cobra v1.2.1
@@ -52,8 +52,8 @@ require (
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/containerd/cgroups v1.1.0 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
-	github.com/creachadair/jrpc2 v1.2.0 // indirect
-	github.com/creachadair/mds v0.15.0 // indirect
+	github.com/creachadair/jrpc2 v1.2.1 // indirect
+	github.com/creachadair/mds v0.21.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/davidlazar/go-crypto v0.0.0-20200604182044-b73af7476f6c // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect

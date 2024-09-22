@@ -107,6 +107,7 @@ func local_request_Utils_VerifyMessage_0(ctx context.Context, marshaler runtime.
 // UnaryRPC     :call UtilsServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterUtilsHandlerFromEndpoint instead.
+// GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterUtilsHandlerServer(ctx context.Context, mux *runtime.ServeMux, server UtilsServer) error {
 
 	mux.Handle("GET", pattern_Utils_SignMessageWithPrivateKey_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
@@ -197,7 +198,7 @@ func RegisterUtilsHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc
 // to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "UtilsClient".
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "UtilsClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "UtilsClient" to call the correct interceptors.
+// "UtilsClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterUtilsHandlerClient(ctx context.Context, mux *runtime.ServeMux, client UtilsClient) error {
 
 	mux.Handle("GET", pattern_Utils_SignMessageWithPrivateKey_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {

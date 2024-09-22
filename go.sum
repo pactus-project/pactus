@@ -52,10 +52,10 @@ github.com/coreos/go-systemd/v22 v22.5.0/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSV
 github.com/cpuguy83/go-md2man/v2 v2.0.0-20190314233015-f79a8a8ca69d/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
 github.com/cpuguy83/go-md2man/v2 v2.0.0/go.mod h1:maD7wRr/U5Z6m/iR4s+kqSMx2CaBsrgA7czyZG/E6dU=
 github.com/cpuguy83/go-md2man/v2 v2.0.4/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
-github.com/creachadair/jrpc2 v1.2.0 h1:SXr0OgnwM0X18P+HccJP0uT3KGSDk/BCSRlJBvE2bMY=
-github.com/creachadair/jrpc2 v1.2.0/go.mod h1:66uKSdr6tR5ZeNvkIjDSbbVUtOv0UhjS/vcd8ECP7Iw=
-github.com/creachadair/mds v0.15.0 h1:St6HvUcrX1UJ517Zha6GKxVibGyRDBDtInOjuaaHOrQ=
-github.com/creachadair/mds v0.15.0/go.mod h1:4vrFYUzTXMJpMBU+OA292I6IUxKWCCfZkgXg+/kBZMo=
+github.com/creachadair/jrpc2 v1.2.1 h1:eIgmguoqLbEjn4Pb/XYMg5U1PhVpAClGdhI/Q4gfC5o=
+github.com/creachadair/jrpc2 v1.2.1/go.mod h1:RvEKAYVpDBKn3YWlTVQJIFmxG5GuLD7ztp9FMTJx8eI=
+github.com/creachadair/mds v0.21.2 h1:D5130qi/kqmu+gGUQyDNOhrocGQp075ziTCgttxhh3k=
+github.com/creachadair/mds v0.21.2/go.mod h1:1ltMWZd9yXhaHEoZwBialMaviWVUpRPvMwVP7saFAzM=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
