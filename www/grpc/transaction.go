@@ -316,7 +316,7 @@ func (*transactionServer) handleRawUnBond(r *pactus.GetRawTransactionRequest_Unb
 	lockTime uint32,
 	memo string,
 ) ([]byte, error) {
-	validatorAddr, err := crypto.AddressFromString(r.Unbond.ValidatorAddress)
+	validatorAddr, err := crypto.AddressFromString(r.Unbond.Validator)
 	if err != nil {
 		return nil, err
 	}
@@ -422,9 +422,9 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		pld := trx.Payload().(*payload.WithdrawPayload)
 		transaction.Payload = &pactus.TransactionInfo_Withdraw{
 			Withdraw: &pactus.PayloadWithdraw{
-				From:   pld.From.String(),
-				To:     pld.To.String(),
-				Amount: pld.Amount.ToNanoPAC(),
+				ValidatorAddress: pld.From.String(),
+				AccountAddress:   pld.To.String(),
+				Amount:           pld.Amount.ToNanoPAC(),
 			},
 		}
 	default:

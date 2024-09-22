@@ -85,16 +85,16 @@ pub mod get_raw_transaction_request {
 #[derive(Clone, PartialEq, ::prost::Oneof)]
     pub enum Payload {
         #[prost(message, tag="3")]
-        Transfer(super::TransferPayload),
+        Transfer(super::PayloadTransfer),
         #[prost(message, tag="4")]
-        Bond(super::BondPayload),
+        Bond(super::PayloadBond),
         #[prost(message, tag="5")]
-        Unbond(super::UnbondPayload),
+        Unbond(super::PayloadUnbond),
         #[prost(message, tag="6")]
-        Withdraw(super::WithdrawPayload),
+        Withdraw(super::PayloadWithdraw),
     }
 }
-/// Request message for retrieving raw details of a transfer transaction.
+/// Deprecated: Request message for retrieving raw details of a transfer transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawTransferTransactionRequest {
@@ -118,7 +118,7 @@ pub struct GetRawTransferTransactionRequest {
     #[prost(string, tag="6")]
     pub memo: ::prost::alloc::string::String,
 }
-/// Request message for retrieving raw details of a bond transaction.
+/// Deprecated: Request message for retrieving raw details of a bond transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawBondTransactionRequest {
@@ -145,7 +145,7 @@ pub struct GetRawBondTransactionRequest {
     #[prost(string, tag="7")]
     pub memo: ::prost::alloc::string::String,
 }
-/// Request message for retrieving raw details of an unbond transaction.
+/// Deprecated: Request message for retrieving raw details of an unbond transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawUnbondTransactionRequest {
@@ -160,7 +160,7 @@ pub struct GetRawUnbondTransactionRequest {
     #[prost(string, tag="4")]
     pub memo: ::prost::alloc::string::String,
 }
-/// Request message for retrieving raw details of a withdraw transaction.
+/// Deprecated: Request message for retrieving raw details of a withdraw transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawWithdrawTransactionRequest {
@@ -184,68 +184,6 @@ pub struct GetRawWithdrawTransactionRequest {
     #[prost(string, tag="6")]
     pub memo: ::prost::alloc::string::String,
 }
-/// Payload message for retrieving raw details of a transfer transaction.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct TransferPayload {
-    /// The sender's account address.
-    #[prost(string, tag="1")]
-    pub sender: ::prost::alloc::string::String,
-    /// The receiver's account address.
-    #[prost(string, tag="2")]
-    pub receiver: ::prost::alloc::string::String,
-    /// The amount to be transferred, specified in NanoPAC. Must be greater than 0.
-    #[prost(int64, tag="3")]
-    pub amount: i64,
-    /// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-    #[prost(int64, tag="4")]
-    pub fee: i64,
-}
-/// Payload message for retrieving raw details of a bond transaction.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct BondPayload {
-    /// The sender's account address.
-    #[prost(string, tag="1")]
-    pub sender: ::prost::alloc::string::String,
-    /// The receiver's validator address.
-    #[prost(string, tag="2")]
-    pub receiver: ::prost::alloc::string::String,
-    /// The stake amount in NanoPAC. Must be greater than 0.
-    #[prost(int64, tag="3")]
-    pub stake: i64,
-    /// The public key of the validator.
-    #[prost(string, tag="4")]
-    pub public_key: ::prost::alloc::string::String,
-    /// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-    #[prost(int64, tag="5")]
-    pub fee: i64,
-}
-/// Payload message for retrieving raw details of an unbond transaction.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct UnbondPayload {
-    /// The address of the validator to unbond from.
-    #[prost(string, tag="1")]
-    pub validator_address: ::prost::alloc::string::String,
-}
-/// Payload message for retrieving raw details of a withdraw transaction.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct WithdrawPayload {
-    /// The address of the validator to withdraw from.
-    #[prost(string, tag="1")]
-    pub validator_address: ::prost::alloc::string::String,
-    /// The address of the account to withdraw to.
-    #[prost(string, tag="2")]
-    pub account_address: ::prost::alloc::string::String,
-    /// The withdrawal amount in NanoPAC. Must be greater than 0.
-    #[prost(int64, tag="3")]
-    pub amount: i64,
-    /// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-    #[prost(int64, tag="4")]
-    pub fee: i64,
-}
 /// Response message containing raw transaction data.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -267,6 +205,9 @@ pub struct PayloadTransfer {
     /// The amount to be transferred in NanoPAC.
     #[prost(int64, tag="3")]
     pub amount: i64,
+    /// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+    #[prost(int64, tag="4")]
+    pub fee: i64,
 }
 /// Payload for a bond transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -281,6 +222,12 @@ pub struct PayloadBond {
     /// The stake amount in NanoPAC.
     #[prost(int64, tag="3")]
     pub stake: i64,
+    /// The public key of the validator.
+    #[prost(string, tag="4")]
+    pub public_key: ::prost::alloc::string::String,
+    /// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+    #[prost(int64, tag="5")]
+    pub fee: i64,
 }
 /// Payload for a sortition transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -305,15 +252,18 @@ pub struct PayloadUnbond {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PayloadWithdraw {
-    /// The address to withdraw from.
+    /// The address of the validator to withdraw from.
     #[prost(string, tag="1")]
-    pub from: ::prost::alloc::string::String,
-    /// The address to withdraw to.
+    pub validator_address: ::prost::alloc::string::String,
+    /// The address of the account to withdraw to.
     #[prost(string, tag="2")]
-    pub to: ::prost::alloc::string::String,
+    pub account_address: ::prost::alloc::string::String,
     /// The withdrawal amount in NanoPAC.
     #[prost(int64, tag="3")]
     pub amount: i64,
+    /// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+    #[prost(int64, tag="4")]
+    pub fee: i64,
 }
 /// Information about a transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]

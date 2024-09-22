@@ -106,10 +106,10 @@ const GetRawTransactionRequest$json = const {
   '2': const [
     const {'1': 'lock_time', '3': 1, '4': 1, '5': 13, '10': 'lockTime'},
     const {'1': 'memo', '3': 2, '4': 1, '5': 9, '10': 'memo'},
-    const {'1': 'transfer', '3': 3, '4': 1, '5': 11, '6': '.pactus.TransferPayload', '9': 0, '10': 'transfer'},
-    const {'1': 'bond', '3': 4, '4': 1, '5': 11, '6': '.pactus.BondPayload', '9': 0, '10': 'bond'},
-    const {'1': 'unbond', '3': 5, '4': 1, '5': 11, '6': '.pactus.UnbondPayload', '9': 0, '10': 'unbond'},
-    const {'1': 'withdraw', '3': 6, '4': 1, '5': 11, '6': '.pactus.WithdrawPayload', '9': 0, '10': 'withdraw'},
+    const {'1': 'transfer', '3': 3, '4': 1, '5': 11, '6': '.pactus.PayloadTransfer', '9': 0, '10': 'transfer'},
+    const {'1': 'bond', '3': 4, '4': 1, '5': 11, '6': '.pactus.PayloadBond', '9': 0, '10': 'bond'},
+    const {'1': 'unbond', '3': 5, '4': 1, '5': 11, '6': '.pactus.PayloadUnbond', '9': 0, '10': 'unbond'},
+    const {'1': 'withdraw', '3': 6, '4': 1, '5': 11, '6': '.pactus.PayloadWithdraw', '9': 0, '10': 'withdraw'},
   ],
   '8': const [
     const {'1': 'payload'},
@@ -117,7 +117,7 @@ const GetRawTransactionRequest$json = const {
 };
 
 /// Descriptor for `GetRawTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getRawTransactionRequestDescriptor = $convert.base64Decode('ChhHZXRSYXdUcmFuc2FjdGlvblJlcXVlc3QSGwoJbG9ja190aW1lGAEgASgNUghsb2NrVGltZRISCgRtZW1vGAIgASgJUgRtZW1vEjUKCHRyYW5zZmVyGAMgASgLMhcucGFjdHVzLlRyYW5zZmVyUGF5bG9hZEgAUgh0cmFuc2ZlchIpCgRib25kGAQgASgLMhMucGFjdHVzLkJvbmRQYXlsb2FkSABSBGJvbmQSLwoGdW5ib25kGAUgASgLMhUucGFjdHVzLlVuYm9uZFBheWxvYWRIAFIGdW5ib25kEjUKCHdpdGhkcmF3GAYgASgLMhcucGFjdHVzLldpdGhkcmF3UGF5bG9hZEgAUgh3aXRoZHJhd0IJCgdwYXlsb2Fk');
+final $typed_data.Uint8List getRawTransactionRequestDescriptor = $convert.base64Decode('ChhHZXRSYXdUcmFuc2FjdGlvblJlcXVlc3QSGwoJbG9ja190aW1lGAEgASgNUghsb2NrVGltZRISCgRtZW1vGAIgASgJUgRtZW1vEjUKCHRyYW5zZmVyGAMgASgLMhcucGFjdHVzLlBheWxvYWRUcmFuc2ZlckgAUgh0cmFuc2ZlchIpCgRib25kGAQgASgLMhMucGFjdHVzLlBheWxvYWRCb25kSABSBGJvbmQSLwoGdW5ib25kGAUgASgLMhUucGFjdHVzLlBheWxvYWRVbmJvbmRIAFIGdW5ib25kEjUKCHdpdGhkcmF3GAYgASgLMhcucGFjdHVzLlBheWxvYWRXaXRoZHJhd0gAUgh3aXRoZHJhd0IJCgdwYXlsb2Fk');
 @$core.Deprecated('Use getRawTransferTransactionRequestDescriptor instead')
 const GetRawTransferTransactionRequest$json = const {
   '1': 'GetRawTransferTransactionRequest',
@@ -176,56 +176,6 @@ const GetRawWithdrawTransactionRequest$json = const {
 
 /// Descriptor for `GetRawWithdrawTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getRawWithdrawTransactionRequestDescriptor = $convert.base64Decode('CiBHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uUmVxdWVzdBIbCglsb2NrX3RpbWUYASABKA1SCGxvY2tUaW1lEisKEXZhbGlkYXRvcl9hZGRyZXNzGAIgASgJUhB2YWxpZGF0b3JBZGRyZXNzEicKD2FjY291bnRfYWRkcmVzcxgDIAEoCVIOYWNjb3VudEFkZHJlc3MSFgoGYW1vdW50GAQgASgDUgZhbW91bnQSEAoDZmVlGAUgASgDUgNmZWUSEgoEbWVtbxgGIAEoCVIEbWVtbw==');
-@$core.Deprecated('Use transferPayloadDescriptor instead')
-const TransferPayload$json = const {
-  '1': 'TransferPayload',
-  '2': const [
-    const {'1': 'sender', '3': 1, '4': 1, '5': 9, '10': 'sender'},
-    const {'1': 'receiver', '3': 2, '4': 1, '5': 9, '10': 'receiver'},
-    const {'1': 'amount', '3': 3, '4': 1, '5': 3, '10': 'amount'},
-    const {'1': 'fee', '3': 4, '4': 1, '5': 3, '10': 'fee'},
-  ],
-};
-
-/// Descriptor for `TransferPayload`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List transferPayloadDescriptor = $convert.base64Decode('Cg9UcmFuc2ZlclBheWxvYWQSFgoGc2VuZGVyGAEgASgJUgZzZW5kZXISGgoIcmVjZWl2ZXIYAiABKAlSCHJlY2VpdmVyEhYKBmFtb3VudBgDIAEoA1IGYW1vdW50EhAKA2ZlZRgEIAEoA1IDZmVl');
-@$core.Deprecated('Use bondPayloadDescriptor instead')
-const BondPayload$json = const {
-  '1': 'BondPayload',
-  '2': const [
-    const {'1': 'sender', '3': 1, '4': 1, '5': 9, '10': 'sender'},
-    const {'1': 'receiver', '3': 2, '4': 1, '5': 9, '10': 'receiver'},
-    const {'1': 'stake', '3': 3, '4': 1, '5': 3, '10': 'stake'},
-    const {'1': 'public_key', '3': 4, '4': 1, '5': 9, '10': 'publicKey'},
-    const {'1': 'fee', '3': 5, '4': 1, '5': 3, '10': 'fee'},
-  ],
-};
-
-/// Descriptor for `BondPayload`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List bondPayloadDescriptor = $convert.base64Decode('CgtCb25kUGF5bG9hZBIWCgZzZW5kZXIYASABKAlSBnNlbmRlchIaCghyZWNlaXZlchgCIAEoCVIIcmVjZWl2ZXISFAoFc3Rha2UYAyABKANSBXN0YWtlEh0KCnB1YmxpY19rZXkYBCABKAlSCXB1YmxpY0tleRIQCgNmZWUYBSABKANSA2ZlZQ==');
-@$core.Deprecated('Use unbondPayloadDescriptor instead')
-const UnbondPayload$json = const {
-  '1': 'UnbondPayload',
-  '2': const [
-    const {'1': 'validator_address', '3': 1, '4': 1, '5': 9, '10': 'validatorAddress'},
-  ],
-};
-
-/// Descriptor for `UnbondPayload`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List unbondPayloadDescriptor = $convert.base64Decode('Cg1VbmJvbmRQYXlsb2FkEisKEXZhbGlkYXRvcl9hZGRyZXNzGAEgASgJUhB2YWxpZGF0b3JBZGRyZXNz');
-@$core.Deprecated('Use withdrawPayloadDescriptor instead')
-const WithdrawPayload$json = const {
-  '1': 'WithdrawPayload',
-  '2': const [
-    const {'1': 'validator_address', '3': 1, '4': 1, '5': 9, '10': 'validatorAddress'},
-    const {'1': 'account_address', '3': 2, '4': 1, '5': 9, '10': 'accountAddress'},
-    const {'1': 'amount', '3': 3, '4': 1, '5': 3, '10': 'amount'},
-    const {'1': 'fee', '3': 4, '4': 1, '5': 3, '10': 'fee'},
-  ],
-};
-
-/// Descriptor for `WithdrawPayload`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List withdrawPayloadDescriptor = $convert.base64Decode('Cg9XaXRoZHJhd1BheWxvYWQSKwoRdmFsaWRhdG9yX2FkZHJlc3MYASABKAlSEHZhbGlkYXRvckFkZHJlc3MSJwoPYWNjb3VudF9hZGRyZXNzGAIgASgJUg5hY2NvdW50QWRkcmVzcxIWCgZhbW91bnQYAyABKANSBmFtb3VudBIQCgNmZWUYBCABKANSA2ZlZQ==');
 @$core.Deprecated('Use getRawTransactionResponseDescriptor instead')
 const GetRawTransactionResponse$json = const {
   '1': 'GetRawTransactionResponse',
@@ -243,11 +193,12 @@ const PayloadTransfer$json = const {
     const {'1': 'sender', '3': 1, '4': 1, '5': 9, '10': 'sender'},
     const {'1': 'receiver', '3': 2, '4': 1, '5': 9, '10': 'receiver'},
     const {'1': 'amount', '3': 3, '4': 1, '5': 3, '10': 'amount'},
+    const {'1': 'fee', '3': 4, '4': 1, '5': 3, '10': 'fee'},
   ],
 };
 
 /// Descriptor for `PayloadTransfer`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List payloadTransferDescriptor = $convert.base64Decode('Cg9QYXlsb2FkVHJhbnNmZXISFgoGc2VuZGVyGAEgASgJUgZzZW5kZXISGgoIcmVjZWl2ZXIYAiABKAlSCHJlY2VpdmVyEhYKBmFtb3VudBgDIAEoA1IGYW1vdW50');
+final $typed_data.Uint8List payloadTransferDescriptor = $convert.base64Decode('Cg9QYXlsb2FkVHJhbnNmZXISFgoGc2VuZGVyGAEgASgJUgZzZW5kZXISGgoIcmVjZWl2ZXIYAiABKAlSCHJlY2VpdmVyEhYKBmFtb3VudBgDIAEoA1IGYW1vdW50EhAKA2ZlZRgEIAEoA1IDZmVl');
 @$core.Deprecated('Use payloadBondDescriptor instead')
 const PayloadBond$json = const {
   '1': 'PayloadBond',
@@ -255,11 +206,13 @@ const PayloadBond$json = const {
     const {'1': 'sender', '3': 1, '4': 1, '5': 9, '10': 'sender'},
     const {'1': 'receiver', '3': 2, '4': 1, '5': 9, '10': 'receiver'},
     const {'1': 'stake', '3': 3, '4': 1, '5': 3, '10': 'stake'},
+    const {'1': 'public_key', '3': 4, '4': 1, '5': 9, '10': 'publicKey'},
+    const {'1': 'fee', '3': 5, '4': 1, '5': 3, '10': 'fee'},
   ],
 };
 
 /// Descriptor for `PayloadBond`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List payloadBondDescriptor = $convert.base64Decode('CgtQYXlsb2FkQm9uZBIWCgZzZW5kZXIYASABKAlSBnNlbmRlchIaCghyZWNlaXZlchgCIAEoCVIIcmVjZWl2ZXISFAoFc3Rha2UYAyABKANSBXN0YWtl');
+final $typed_data.Uint8List payloadBondDescriptor = $convert.base64Decode('CgtQYXlsb2FkQm9uZBIWCgZzZW5kZXIYASABKAlSBnNlbmRlchIaCghyZWNlaXZlchgCIAEoCVIIcmVjZWl2ZXISFAoFc3Rha2UYAyABKANSBXN0YWtlEh0KCnB1YmxpY19rZXkYBCABKAlSCXB1YmxpY0tleRIQCgNmZWUYBSABKANSA2ZlZQ==');
 @$core.Deprecated('Use payloadSortitionDescriptor instead')
 const PayloadSortition$json = const {
   '1': 'PayloadSortition',
@@ -285,14 +238,15 @@ final $typed_data.Uint8List payloadUnbondDescriptor = $convert.base64Decode('Cg1
 const PayloadWithdraw$json = const {
   '1': 'PayloadWithdraw',
   '2': const [
-    const {'1': 'from', '3': 1, '4': 1, '5': 9, '10': 'from'},
-    const {'1': 'to', '3': 2, '4': 1, '5': 9, '10': 'to'},
+    const {'1': 'validator_address', '3': 1, '4': 1, '5': 9, '10': 'validatorAddress'},
+    const {'1': 'account_address', '3': 2, '4': 1, '5': 9, '10': 'accountAddress'},
     const {'1': 'amount', '3': 3, '4': 1, '5': 3, '10': 'amount'},
+    const {'1': 'fee', '3': 4, '4': 1, '5': 3, '10': 'fee'},
   ],
 };
 
 /// Descriptor for `PayloadWithdraw`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List payloadWithdrawDescriptor = $convert.base64Decode('Cg9QYXlsb2FkV2l0aGRyYXcSEgoEZnJvbRgBIAEoCVIEZnJvbRIOCgJ0bxgCIAEoCVICdG8SFgoGYW1vdW50GAMgASgDUgZhbW91bnQ=');
+final $typed_data.Uint8List payloadWithdrawDescriptor = $convert.base64Decode('Cg9QYXlsb2FkV2l0aGRyYXcSKwoRdmFsaWRhdG9yX2FkZHJlc3MYASABKAlSEHZhbGlkYXRvckFkZHJlc3MSJwoPYWNjb3VudF9hZGRyZXNzGAIgASgJUg5hY2NvdW50QWRkcmVzcxIWCgZhbW91bnQYAyABKANSBmFtb3VudBIQCgNmZWUYBCABKANSA2ZlZQ==');
 @$core.Deprecated('Use transactionInfoDescriptor instead')
 const TransactionInfo$json = const {
   '1': 'TransactionInfo',
@@ -349,10 +303,6 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Transactio
   '.pactus.BroadcastTransactionRequest': BroadcastTransactionRequest$json,
   '.pactus.BroadcastTransactionResponse': BroadcastTransactionResponse$json,
   '.pactus.GetRawTransactionRequest': GetRawTransactionRequest$json,
-  '.pactus.TransferPayload': TransferPayload$json,
-  '.pactus.BondPayload': BondPayload$json,
-  '.pactus.UnbondPayload': UnbondPayload$json,
-  '.pactus.WithdrawPayload': WithdrawPayload$json,
   '.pactus.GetRawTransactionResponse': GetRawTransactionResponse$json,
   '.pactus.GetRawTransferTransactionRequest': GetRawTransferTransactionRequest$json,
   '.pactus.GetRawBondTransactionRequest': GetRawBondTransactionRequest$json,

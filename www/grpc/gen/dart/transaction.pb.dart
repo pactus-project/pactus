@@ -403,10 +403,10 @@ class GetRawTransactionRequest extends $pb.GeneratedMessage {
     ..oo(0, [3, 4, 5, 6])
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lockTime', $pb.PbFieldType.OU3)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'memo')
-    ..aOM<TransferPayload>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transfer', subBuilder: TransferPayload.create)
-    ..aOM<BondPayload>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bond', subBuilder: BondPayload.create)
-    ..aOM<UnbondPayload>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbond', subBuilder: UnbondPayload.create)
-    ..aOM<WithdrawPayload>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'withdraw', subBuilder: WithdrawPayload.create)
+    ..aOM<PayloadTransfer>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transfer', subBuilder: PayloadTransfer.create)
+    ..aOM<PayloadBond>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'bond', subBuilder: PayloadBond.create)
+    ..aOM<PayloadUnbond>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unbond', subBuilder: PayloadUnbond.create)
+    ..aOM<PayloadWithdraw>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'withdraw', subBuilder: PayloadWithdraw.create)
     ..hasRequiredFields = false
   ;
 
@@ -414,10 +414,10 @@ class GetRawTransactionRequest extends $pb.GeneratedMessage {
   factory GetRawTransactionRequest({
     $core.int? lockTime,
     $core.String? memo,
-    TransferPayload? transfer,
-    BondPayload? bond,
-    UnbondPayload? unbond,
-    WithdrawPayload? withdraw,
+    PayloadTransfer? transfer,
+    PayloadBond? bond,
+    PayloadUnbond? unbond,
+    PayloadWithdraw? withdraw,
   }) {
     final _result = create();
     if (lockTime != null) {
@@ -483,48 +483,48 @@ class GetRawTransactionRequest extends $pb.GeneratedMessage {
   void clearMemo() => clearField(2);
 
   @$pb.TagNumber(3)
-  TransferPayload get transfer => $_getN(2);
+  PayloadTransfer get transfer => $_getN(2);
   @$pb.TagNumber(3)
-  set transfer(TransferPayload v) { setField(3, v); }
+  set transfer(PayloadTransfer v) { setField(3, v); }
   @$pb.TagNumber(3)
   $core.bool hasTransfer() => $_has(2);
   @$pb.TagNumber(3)
   void clearTransfer() => clearField(3);
   @$pb.TagNumber(3)
-  TransferPayload ensureTransfer() => $_ensure(2);
+  PayloadTransfer ensureTransfer() => $_ensure(2);
 
   @$pb.TagNumber(4)
-  BondPayload get bond => $_getN(3);
+  PayloadBond get bond => $_getN(3);
   @$pb.TagNumber(4)
-  set bond(BondPayload v) { setField(4, v); }
+  set bond(PayloadBond v) { setField(4, v); }
   @$pb.TagNumber(4)
   $core.bool hasBond() => $_has(3);
   @$pb.TagNumber(4)
   void clearBond() => clearField(4);
   @$pb.TagNumber(4)
-  BondPayload ensureBond() => $_ensure(3);
+  PayloadBond ensureBond() => $_ensure(3);
 
   @$pb.TagNumber(5)
-  UnbondPayload get unbond => $_getN(4);
+  PayloadUnbond get unbond => $_getN(4);
   @$pb.TagNumber(5)
-  set unbond(UnbondPayload v) { setField(5, v); }
+  set unbond(PayloadUnbond v) { setField(5, v); }
   @$pb.TagNumber(5)
   $core.bool hasUnbond() => $_has(4);
   @$pb.TagNumber(5)
   void clearUnbond() => clearField(5);
   @$pb.TagNumber(5)
-  UnbondPayload ensureUnbond() => $_ensure(4);
+  PayloadUnbond ensureUnbond() => $_ensure(4);
 
   @$pb.TagNumber(6)
-  WithdrawPayload get withdraw => $_getN(5);
+  PayloadWithdraw get withdraw => $_getN(5);
   @$pb.TagNumber(6)
-  set withdraw(WithdrawPayload v) { setField(6, v); }
+  set withdraw(PayloadWithdraw v) { setField(6, v); }
   @$pb.TagNumber(6)
   $core.bool hasWithdraw() => $_has(5);
   @$pb.TagNumber(6)
   void clearWithdraw() => clearField(6);
   @$pb.TagNumber(6)
-  WithdrawPayload ensureWithdraw() => $_ensure(5);
+  PayloadWithdraw ensureWithdraw() => $_ensure(5);
 }
 
 class GetRawTransferTransactionRequest extends $pb.GeneratedMessage {
@@ -967,334 +967,6 @@ class GetRawWithdrawTransactionRequest extends $pb.GeneratedMessage {
   void clearMemo() => clearField(6);
 }
 
-class TransferPayload extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'TransferPayload', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sender')
-    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receiver')
-    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount')
-    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
-    ..hasRequiredFields = false
-  ;
-
-  TransferPayload._() : super();
-  factory TransferPayload({
-    $core.String? sender,
-    $core.String? receiver,
-    $fixnum.Int64? amount,
-    $fixnum.Int64? fee,
-  }) {
-    final _result = create();
-    if (sender != null) {
-      _result.sender = sender;
-    }
-    if (receiver != null) {
-      _result.receiver = receiver;
-    }
-    if (amount != null) {
-      _result.amount = amount;
-    }
-    if (fee != null) {
-      _result.fee = fee;
-    }
-    return _result;
-  }
-  factory TransferPayload.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory TransferPayload.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  TransferPayload clone() => TransferPayload()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  TransferPayload copyWith(void Function(TransferPayload) updates) => super.copyWith((message) => updates(message as TransferPayload)) as TransferPayload; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static TransferPayload create() => TransferPayload._();
-  TransferPayload createEmptyInstance() => create();
-  static $pb.PbList<TransferPayload> createRepeated() => $pb.PbList<TransferPayload>();
-  @$core.pragma('dart2js:noInline')
-  static TransferPayload getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TransferPayload>(create);
-  static TransferPayload? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.String get sender => $_getSZ(0);
-  @$pb.TagNumber(1)
-  set sender($core.String v) { $_setString(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasSender() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearSender() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.String get receiver => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set receiver($core.String v) { $_setString(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasReceiver() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearReceiver() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $fixnum.Int64 get amount => $_getI64(2);
-  @$pb.TagNumber(3)
-  set amount($fixnum.Int64 v) { $_setInt64(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasAmount() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearAmount() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $fixnum.Int64 get fee => $_getI64(3);
-  @$pb.TagNumber(4)
-  set fee($fixnum.Int64 v) { $_setInt64(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasFee() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearFee() => clearField(4);
-}
-
-class BondPayload extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BondPayload', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sender')
-    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receiver')
-    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stake')
-    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
-    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
-    ..hasRequiredFields = false
-  ;
-
-  BondPayload._() : super();
-  factory BondPayload({
-    $core.String? sender,
-    $core.String? receiver,
-    $fixnum.Int64? stake,
-    $core.String? publicKey,
-    $fixnum.Int64? fee,
-  }) {
-    final _result = create();
-    if (sender != null) {
-      _result.sender = sender;
-    }
-    if (receiver != null) {
-      _result.receiver = receiver;
-    }
-    if (stake != null) {
-      _result.stake = stake;
-    }
-    if (publicKey != null) {
-      _result.publicKey = publicKey;
-    }
-    if (fee != null) {
-      _result.fee = fee;
-    }
-    return _result;
-  }
-  factory BondPayload.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory BondPayload.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  BondPayload clone() => BondPayload()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  BondPayload copyWith(void Function(BondPayload) updates) => super.copyWith((message) => updates(message as BondPayload)) as BondPayload; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static BondPayload create() => BondPayload._();
-  BondPayload createEmptyInstance() => create();
-  static $pb.PbList<BondPayload> createRepeated() => $pb.PbList<BondPayload>();
-  @$core.pragma('dart2js:noInline')
-  static BondPayload getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BondPayload>(create);
-  static BondPayload? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.String get sender => $_getSZ(0);
-  @$pb.TagNumber(1)
-  set sender($core.String v) { $_setString(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasSender() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearSender() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.String get receiver => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set receiver($core.String v) { $_setString(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasReceiver() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearReceiver() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $fixnum.Int64 get stake => $_getI64(2);
-  @$pb.TagNumber(3)
-  set stake($fixnum.Int64 v) { $_setInt64(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasStake() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearStake() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $core.String get publicKey => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set publicKey($core.String v) { $_setString(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasPublicKey() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearPublicKey() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $fixnum.Int64 get fee => $_getI64(4);
-  @$pb.TagNumber(5)
-  set fee($fixnum.Int64 v) { $_setInt64(4, v); }
-  @$pb.TagNumber(5)
-  $core.bool hasFee() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearFee() => clearField(5);
-}
-
-class UnbondPayload extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UnbondPayload', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'validatorAddress')
-    ..hasRequiredFields = false
-  ;
-
-  UnbondPayload._() : super();
-  factory UnbondPayload({
-    $core.String? validatorAddress,
-  }) {
-    final _result = create();
-    if (validatorAddress != null) {
-      _result.validatorAddress = validatorAddress;
-    }
-    return _result;
-  }
-  factory UnbondPayload.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory UnbondPayload.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  UnbondPayload clone() => UnbondPayload()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  UnbondPayload copyWith(void Function(UnbondPayload) updates) => super.copyWith((message) => updates(message as UnbondPayload)) as UnbondPayload; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static UnbondPayload create() => UnbondPayload._();
-  UnbondPayload createEmptyInstance() => create();
-  static $pb.PbList<UnbondPayload> createRepeated() => $pb.PbList<UnbondPayload>();
-  @$core.pragma('dart2js:noInline')
-  static UnbondPayload getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UnbondPayload>(create);
-  static UnbondPayload? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.String get validatorAddress => $_getSZ(0);
-  @$pb.TagNumber(1)
-  set validatorAddress($core.String v) { $_setString(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasValidatorAddress() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearValidatorAddress() => clearField(1);
-}
-
-class WithdrawPayload extends $pb.GeneratedMessage {
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'WithdrawPayload', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'validatorAddress')
-    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'accountAddress')
-    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount')
-    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
-    ..hasRequiredFields = false
-  ;
-
-  WithdrawPayload._() : super();
-  factory WithdrawPayload({
-    $core.String? validatorAddress,
-    $core.String? accountAddress,
-    $fixnum.Int64? amount,
-    $fixnum.Int64? fee,
-  }) {
-    final _result = create();
-    if (validatorAddress != null) {
-      _result.validatorAddress = validatorAddress;
-    }
-    if (accountAddress != null) {
-      _result.accountAddress = accountAddress;
-    }
-    if (amount != null) {
-      _result.amount = amount;
-    }
-    if (fee != null) {
-      _result.fee = fee;
-    }
-    return _result;
-  }
-  factory WithdrawPayload.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory WithdrawPayload.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  WithdrawPayload clone() => WithdrawPayload()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  WithdrawPayload copyWith(void Function(WithdrawPayload) updates) => super.copyWith((message) => updates(message as WithdrawPayload)) as WithdrawPayload; // ignore: deprecated_member_use
-  $pb.BuilderInfo get info_ => _i;
-  @$core.pragma('dart2js:noInline')
-  static WithdrawPayload create() => WithdrawPayload._();
-  WithdrawPayload createEmptyInstance() => create();
-  static $pb.PbList<WithdrawPayload> createRepeated() => $pb.PbList<WithdrawPayload>();
-  @$core.pragma('dart2js:noInline')
-  static WithdrawPayload getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<WithdrawPayload>(create);
-  static WithdrawPayload? _defaultInstance;
-
-  @$pb.TagNumber(1)
-  $core.String get validatorAddress => $_getSZ(0);
-  @$pb.TagNumber(1)
-  set validatorAddress($core.String v) { $_setString(0, v); }
-  @$pb.TagNumber(1)
-  $core.bool hasValidatorAddress() => $_has(0);
-  @$pb.TagNumber(1)
-  void clearValidatorAddress() => clearField(1);
-
-  @$pb.TagNumber(2)
-  $core.String get accountAddress => $_getSZ(1);
-  @$pb.TagNumber(2)
-  set accountAddress($core.String v) { $_setString(1, v); }
-  @$pb.TagNumber(2)
-  $core.bool hasAccountAddress() => $_has(1);
-  @$pb.TagNumber(2)
-  void clearAccountAddress() => clearField(2);
-
-  @$pb.TagNumber(3)
-  $fixnum.Int64 get amount => $_getI64(2);
-  @$pb.TagNumber(3)
-  set amount($fixnum.Int64 v) { $_setInt64(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasAmount() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearAmount() => clearField(3);
-
-  @$pb.TagNumber(4)
-  $fixnum.Int64 get fee => $_getI64(3);
-  @$pb.TagNumber(4)
-  set fee($fixnum.Int64 v) { $_setInt64(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasFee() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearFee() => clearField(4);
-}
-
 class GetRawTransactionResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetRawTransactionResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'rawTransaction')
@@ -1347,6 +1019,7 @@ class PayloadTransfer extends $pb.GeneratedMessage {
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sender')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receiver')
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount')
+    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
     ..hasRequiredFields = false
   ;
 
@@ -1355,6 +1028,7 @@ class PayloadTransfer extends $pb.GeneratedMessage {
     $core.String? sender,
     $core.String? receiver,
     $fixnum.Int64? amount,
+    $fixnum.Int64? fee,
   }) {
     final _result = create();
     if (sender != null) {
@@ -1365,6 +1039,9 @@ class PayloadTransfer extends $pb.GeneratedMessage {
     }
     if (amount != null) {
       _result.amount = amount;
+    }
+    if (fee != null) {
+      _result.fee = fee;
     }
     return _result;
   }
@@ -1415,6 +1092,15 @@ class PayloadTransfer extends $pb.GeneratedMessage {
   $core.bool hasAmount() => $_has(2);
   @$pb.TagNumber(3)
   void clearAmount() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $fixnum.Int64 get fee => $_getI64(3);
+  @$pb.TagNumber(4)
+  set fee($fixnum.Int64 v) { $_setInt64(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasFee() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearFee() => clearField(4);
 }
 
 class PayloadBond extends $pb.GeneratedMessage {
@@ -1422,6 +1108,8 @@ class PayloadBond extends $pb.GeneratedMessage {
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sender')
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receiver')
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stake')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
+    ..aInt64(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
     ..hasRequiredFields = false
   ;
 
@@ -1430,6 +1118,8 @@ class PayloadBond extends $pb.GeneratedMessage {
     $core.String? sender,
     $core.String? receiver,
     $fixnum.Int64? stake,
+    $core.String? publicKey,
+    $fixnum.Int64? fee,
   }) {
     final _result = create();
     if (sender != null) {
@@ -1440,6 +1130,12 @@ class PayloadBond extends $pb.GeneratedMessage {
     }
     if (stake != null) {
       _result.stake = stake;
+    }
+    if (publicKey != null) {
+      _result.publicKey = publicKey;
+    }
+    if (fee != null) {
+      _result.fee = fee;
     }
     return _result;
   }
@@ -1490,6 +1186,24 @@ class PayloadBond extends $pb.GeneratedMessage {
   $core.bool hasStake() => $_has(2);
   @$pb.TagNumber(3)
   void clearStake() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get publicKey => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set publicKey($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasPublicKey() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearPublicKey() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $fixnum.Int64 get fee => $_getI64(4);
+  @$pb.TagNumber(5)
+  set fee($fixnum.Int64 v) { $_setInt64(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasFee() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearFee() => clearField(5);
 }
 
 class PayloadSortition extends $pb.GeneratedMessage {
@@ -1602,27 +1316,32 @@ class PayloadUnbond extends $pb.GeneratedMessage {
 
 class PayloadWithdraw extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'PayloadWithdraw', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'from')
-    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'to')
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'validatorAddress')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'accountAddress')
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount')
+    ..aInt64(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee')
     ..hasRequiredFields = false
   ;
 
   PayloadWithdraw._() : super();
   factory PayloadWithdraw({
-    $core.String? from,
-    $core.String? to,
+    $core.String? validatorAddress,
+    $core.String? accountAddress,
     $fixnum.Int64? amount,
+    $fixnum.Int64? fee,
   }) {
     final _result = create();
-    if (from != null) {
-      _result.from = from;
+    if (validatorAddress != null) {
+      _result.validatorAddress = validatorAddress;
     }
-    if (to != null) {
-      _result.to = to;
+    if (accountAddress != null) {
+      _result.accountAddress = accountAddress;
     }
     if (amount != null) {
       _result.amount = amount;
+    }
+    if (fee != null) {
+      _result.fee = fee;
     }
     return _result;
   }
@@ -1648,22 +1367,22 @@ class PayloadWithdraw extends $pb.GeneratedMessage {
   static PayloadWithdraw? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get from => $_getSZ(0);
+  $core.String get validatorAddress => $_getSZ(0);
   @$pb.TagNumber(1)
-  set from($core.String v) { $_setString(0, v); }
+  set validatorAddress($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasFrom() => $_has(0);
+  $core.bool hasValidatorAddress() => $_has(0);
   @$pb.TagNumber(1)
-  void clearFrom() => clearField(1);
+  void clearValidatorAddress() => clearField(1);
 
   @$pb.TagNumber(2)
-  $core.String get to => $_getSZ(1);
+  $core.String get accountAddress => $_getSZ(1);
   @$pb.TagNumber(2)
-  set to($core.String v) { $_setString(1, v); }
+  set accountAddress($core.String v) { $_setString(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasTo() => $_has(1);
+  $core.bool hasAccountAddress() => $_has(1);
   @$pb.TagNumber(2)
-  void clearTo() => clearField(2);
+  void clearAccountAddress() => clearField(2);
 
   @$pb.TagNumber(3)
   $fixnum.Int64 get amount => $_getI64(2);
@@ -1673,6 +1392,15 @@ class PayloadWithdraw extends $pb.GeneratedMessage {
   $core.bool hasAmount() => $_has(2);
   @$pb.TagNumber(3)
   void clearAmount() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $fixnum.Int64 get fee => $_getI64(3);
+  @$pb.TagNumber(4)
+  set fee($fixnum.Int64 v) { $_setInt64(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasFee() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearFee() => clearField(4);
 }
 
 enum TransactionInfo_Payload {

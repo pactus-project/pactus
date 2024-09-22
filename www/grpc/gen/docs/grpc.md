@@ -321,6 +321,13 @@ parameters.</p>
             </td>
           </tr>
           <tr>
+            <td class="fw-bold">transaction.transfer.fee</td>
+            <td> int64</td>
+            <td>
+            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+            </td>
+          </tr>
+          <tr>
         <td class="fw-bold">transaction.bond</td>
         <td> PayloadBond</td>
         <td>
@@ -346,6 +353,20 @@ parameters.</p>
             <td> int64</td>
             <td>
             The stake amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.bond.public_key</td>
+            <td> string</td>
+            <td>
+            The public key of the validator.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.bond.fee</td>
+            <td> int64</td>
+            <td>
+            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -391,17 +412,17 @@ parameters.</p>
         </td>
       </tr>
          <tr>
-            <td class="fw-bold">transaction.withdraw.from</td>
+            <td class="fw-bold">transaction.withdraw.validator_address</td>
             <td> string</td>
             <td>
-            The address to withdraw from.
+            The address of the validator to withdraw from.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">transaction.withdraw.to</td>
+            <td class="fw-bold">transaction.withdraw.account_address</td>
             <td> string</td>
             <td>
-            The address to withdraw to.
+            The address of the account to withdraw to.
             </td>
           </tr>
           <tr>
@@ -409,6 +430,13 @@ parameters.</p>
             <td> int64</td>
             <td>
             The withdrawal amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.withdraw.fee</td>
+            <td> int64</td>
+            <td>
+            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -567,28 +595,28 @@ height.
   </tr>
   <tr>
     <td class="fw-bold">transfer</td>
-    <td> TransferPayload</td>
+    <td> PayloadTransfer</td>
     <td>
     (OneOf) 
     </td>
   </tr>
   <tr>
     <td class="fw-bold">bond</td>
-    <td> BondPayload</td>
+    <td> PayloadBond</td>
     <td>
     (OneOf) 
     </td>
   </tr>
   <tr>
     <td class="fw-bold">unbond</td>
-    <td> UnbondPayload</td>
+    <td> PayloadUnbond</td>
     <td>
     (OneOf) 
     </td>
   </tr>
   <tr>
     <td class="fw-bold">withdraw</td>
-    <td> WithdrawPayload</td>
+    <td> PayloadWithdraw</td>
     <td>
     (OneOf) 
     </td>
@@ -1140,6 +1168,13 @@ BLOCK_TRANSACTIONS.
             </td>
           </tr>
           <tr>
+            <td class="fw-bold">txs[].transfer.fee</td>
+            <td> int64</td>
+            <td>
+            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+            </td>
+          </tr>
+          <tr>
         <td class="fw-bold">txs[].bond</td>
         <td> PayloadBond</td>
         <td>
@@ -1165,6 +1200,20 @@ BLOCK_TRANSACTIONS.
             <td> int64</td>
             <td>
             The stake amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].bond.public_key</td>
+            <td> string</td>
+            <td>
+            The public key of the validator.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].bond.fee</td>
+            <td> int64</td>
+            <td>
+            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -1210,17 +1259,17 @@ BLOCK_TRANSACTIONS.
         </td>
       </tr>
          <tr>
-            <td class="fw-bold">txs[].withdraw.from</td>
+            <td class="fw-bold">txs[].withdraw.validator_address</td>
             <td> string</td>
             <td>
-            The address to withdraw from.
+            The address of the validator to withdraw from.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">txs[].withdraw.to</td>
+            <td class="fw-bold">txs[].withdraw.account_address</td>
             <td> string</td>
             <td>
-            The address to withdraw to.
+            The address of the account to withdraw to.
             </td>
           </tr>
           <tr>
@@ -1228,6 +1277,13 @@ BLOCK_TRANSACTIONS.
             <td> int64</td>
             <td>
             The withdrawal amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].withdraw.fee</td>
+            <td> int64</td>
+            <td>
+            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -2108,6 +2164,13 @@ types.
             </td>
           </tr>
           <tr>
+            <td class="fw-bold">txs[].transfer.fee</td>
+            <td> int64</td>
+            <td>
+            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+            </td>
+          </tr>
+          <tr>
         <td class="fw-bold">txs[].bond</td>
         <td> PayloadBond</td>
         <td>
@@ -2133,6 +2196,20 @@ types.
             <td> int64</td>
             <td>
             The stake amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].bond.public_key</td>
+            <td> string</td>
+            <td>
+            The public key of the validator.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].bond.fee</td>
+            <td> int64</td>
+            <td>
+            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -2178,17 +2255,17 @@ types.
         </td>
       </tr>
          <tr>
-            <td class="fw-bold">txs[].withdraw.from</td>
+            <td class="fw-bold">txs[].withdraw.validator_address</td>
             <td> string</td>
             <td>
-            The address to withdraw from.
+            The address of the validator to withdraw from.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">txs[].withdraw.to</td>
+            <td class="fw-bold">txs[].withdraw.account_address</td>
             <td> string</td>
             <td>
-            The address to withdraw to.
+            The address of the account to withdraw to.
             </td>
           </tr>
           <tr>
@@ -2196,6 +2273,13 @@ types.
             <td> int64</td>
             <td>
             The withdrawal amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].withdraw.fee</td>
+            <td> int64</td>
+            <td>
+            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
