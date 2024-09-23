@@ -68,83 +68,83 @@ func (ts *TestSuite) RandBool() bool {
 }
 
 // RandInt8 returns a random int8 between 0 and max: [0, max).
-func (ts *TestSuite) RandInt8(max int8) int8 {
-	return int8(ts.RandUint64(uint64(max)))
+func (ts *TestSuite) RandInt8(maxVal int8) int8 {
+	return int8(ts.RandUint64(uint64(maxVal)))
 }
 
 // RandUint8 returns a random uint8 between 0 and max: [0, max).
-func (ts *TestSuite) RandUint8(max uint8) uint8 {
-	return uint8(ts.RandUint64(uint64(max)))
+func (ts *TestSuite) RandUint8(maxVal uint8) uint8 {
+	return uint8(ts.RandUint64(uint64(maxVal)))
 }
 
 // RandInt16 returns a random int16 between 0 and max: [0, max).
-func (ts *TestSuite) RandInt16(max int16) int16 {
-	return int16(ts.RandUint64(uint64(max)))
+func (ts *TestSuite) RandInt16(maxVal int16) int16 {
+	return int16(ts.RandUint64(uint64(maxVal)))
 }
 
 // RandUint16 returns a random uint16 between 0 and max: [0, max).
-func (ts *TestSuite) RandUint16(max uint16) uint16 {
-	return uint16(ts.RandUint64(uint64(max)))
+func (ts *TestSuite) RandUint16(maxVal uint16) uint16 {
+	return uint16(ts.RandUint64(uint64(maxVal)))
 }
 
 // RandInt32 returns a random int32 between 0 and max: [0, max).
-func (ts *TestSuite) RandInt32(max int32) int32 {
-	return int32(ts.RandUint64(uint64(max)))
+func (ts *TestSuite) RandInt32(maxVal int32) int32 {
+	return int32(ts.RandUint64(uint64(maxVal)))
 }
 
 // RandUint32 returns a random uint32 between 0 and max: [0, max).
-func (ts *TestSuite) RandUint32(max uint32) uint32 {
-	return uint32(ts.RandUint64(uint64(max)))
+func (ts *TestSuite) RandUint32(maxVal uint32) uint32 {
+	return uint32(ts.RandUint64(uint64(maxVal)))
 }
 
 // RandInt64 returns a random int64 between 0 and max: [0, max).
-func (ts *TestSuite) RandInt64(max int64) int64 {
-	return ts.Rand.Int63n(max)
+func (ts *TestSuite) RandInt64(maxVal int64) int64 {
+	return ts.Rand.Int63n(maxVal)
 }
 
 // RandUint64 returns a random uint64 between 0 and max: [0, max).
-func (ts *TestSuite) RandUint64(max uint64) uint64 {
-	return uint64(ts.RandInt64(int64(max)))
+func (ts *TestSuite) RandUint64(maxVal uint64) uint64 {
+	return uint64(ts.RandInt64(int64(maxVal)))
 }
 
 // RandInt returns a random int between 0 and max: [0, max).
-func (ts *TestSuite) RandInt(max int) int {
-	return int(ts.RandInt64(int64(max)))
+func (ts *TestSuite) RandInt(maxVal int) int {
+	return int(ts.RandInt64(int64(maxVal)))
 }
 
 // RandInt16NonZero returns a random int16 between 1 and max+1: [1, max+1).
-func (ts *TestSuite) RandInt16NonZero(max int16) int16 {
-	return ts.RandInt16(max) + 1
+func (ts *TestSuite) RandInt16NonZero(maxVal int16) int16 {
+	return ts.RandInt16(maxVal) + 1
 }
 
 // RandUint16NonZero returns a random uint16 between 1 and max+1: [1, max+1).
-func (ts *TestSuite) RandUint16NonZero(max uint16) uint16 {
-	return ts.RandUint16(max) + 1
+func (ts *TestSuite) RandUint16NonZero(maxVal uint16) uint16 {
+	return ts.RandUint16(maxVal) + 1
 }
 
 // RandInt32NonZero returns a random int32 between 1 and max+1: [1, max+1).
-func (ts *TestSuite) RandInt32NonZero(max int32) int32 {
-	return ts.RandInt32(max) + 1
+func (ts *TestSuite) RandInt32NonZero(maxVal int32) int32 {
+	return ts.RandInt32(maxVal) + 1
 }
 
 // RandUint32NonZero returns a random uint32 between 1 and max+1: [1, max+1).
-func (ts *TestSuite) RandUint32NonZero(max uint32) uint32 {
-	return ts.RandUint32(max) + 1
+func (ts *TestSuite) RandUint32NonZero(maxVal uint32) uint32 {
+	return ts.RandUint32(maxVal) + 1
 }
 
 // RandInt64NonZero returns a random int64 between 1 and max+1: [1, max+1).
-func (ts *TestSuite) RandInt64NonZero(max int64) int64 {
-	return ts.RandInt64(max) + 1
+func (ts *TestSuite) RandInt64NonZero(maxVal int64) int64 {
+	return ts.RandInt64(maxVal) + 1
 }
 
 // RandUint64NonZero returns a random uint64 between 1 and max+1: [1, max+1).
-func (ts *TestSuite) RandUint64NonZero(max uint64) uint64 {
-	return ts.RandUint64(max) + 1
+func (ts *TestSuite) RandUint64NonZero(maxVal uint64) uint64 {
+	return ts.RandUint64(maxVal) + 1
 }
 
 // RandIntNonZero returns a random int between 1 and max+1: [1, max+1).
-func (ts *TestSuite) RandIntNonZero(max int) int {
-	return ts.RandInt(max) + 1
+func (ts *TestSuite) RandIntNonZero(maxVal int) int {
+	return ts.RandInt(maxVal) + 1
 }
 
 // RandHeight returns a random number between [1000, 1000000] for block height.
@@ -163,10 +163,10 @@ func (ts *TestSuite) RandAmount() amount.Amount {
 }
 
 // RandAmountRange returns a random amount between [min, max).
-func (ts *TestSuite) RandAmountRange(min, max amount.Amount) amount.Amount {
-	amt := amount.Amount(ts.RandInt64NonZero(int64(max - min)))
+func (ts *TestSuite) RandAmountRange(minVal, maxVal amount.Amount) amount.Amount {
+	amt := amount.Amount(ts.RandInt64NonZero(int64(maxVal - minVal)))
 
-	return amt + min
+	return amt + minVal
 }
 
 // RandFee returns a random fee between [0, 1).

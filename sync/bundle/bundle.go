@@ -84,7 +84,7 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 	err := d.Decode(&bdl)
 	bytesRead := d.NumBytesRead()
 	if err != nil {
-		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, err.Error())
+		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, "%s", err.Error())
 	}
 
 	data := bdl.MessageData
@@ -96,7 +96,7 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 	if util.IsFlagSet(bdl.Flags, BundleFlagCompressed) {
 		c, err := util.DecompressBuffer(bdl.MessageData)
 		if err != nil {
-			return bytesRead, errors.Errorf(errors.ErrInvalidMessage, err.Error())
+			return bytesRead, errors.Errorf(errors.ErrInvalidMessage, "%s", err.Error())
 		}
 		data = c
 	}

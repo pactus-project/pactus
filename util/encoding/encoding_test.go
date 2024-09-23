@@ -92,7 +92,7 @@ func TestElementEncoding(t *testing.T) {
 func TestElementEncodingErrors(t *testing.T) {
 	tests := []struct {
 		in       any   // Value to encode
-		max      int   // Max size of fixed buffer to induce errors
+		maxVal   int   // Max size of fixed buffer to induce errors
 		writeErr error // Expected write error
 		readErr  error // Expected read error
 	}{
@@ -119,11 +119,11 @@ func TestElementEncodingErrors(t *testing.T) {
 
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
-		w := util.NewFixedWriter(test.max)
+		w := util.NewFixedWriter(test.maxVal)
 		err := WriteElement(w, test.in)
 		assert.ErrorIs(t, err, test.writeErr, "writeElement #%d", i)
 
-		r := util.NewFixedReader(test.max, nil)
+		r := util.NewFixedReader(test.maxVal, nil)
 		val := test.in
 		if reflect.ValueOf(test.in).Kind() != reflect.Ptr {
 			val = reflect.New(reflect.TypeOf(test.in)).Interface()
@@ -176,7 +176,7 @@ func TestVarStringEncodingErrors(t *testing.T) {
 	tests := []struct {
 		in       string // Value to encode
 		buf      []byte // Encoding bytes
-		max      int    // Max size of fixed buffer to induce errors
+		maxVal   int    // Max size of fixed buffer to induce errors
 		writeErr error  // Expected write error
 		readErr  error  // Expected read error
 	}{
@@ -191,11 +191,11 @@ func TestVarStringEncodingErrors(t *testing.T) {
 
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
-		w := util.NewFixedWriter(test.max)
+		w := util.NewFixedWriter(test.maxVal)
 		err := WriteVarString(w, test.in)
 		assert.ErrorIs(t, err, test.writeErr, "WriteVarString #%d", i)
 
-		r := util.NewFixedReader(test.max, test.buf)
+		r := util.NewFixedReader(test.maxVal, test.buf)
 		_, err = ReadVarString(r)
 		assert.ErrorIs(t, err, test.readErr, "ReadVarString #%d wrong", i)
 	}
@@ -264,7 +264,7 @@ func TestVarBytesEncodingErrors(t *testing.T) {
 	tests := []struct {
 		in       []byte // Byte Array to write
 		buf      []byte // Encoding bytes
-		max      int    // Max size of fixed buffer to induce errors
+		maxVal   int    // Max size of fixed buffer to induce errors
 		writeErr error  // Expected write error
 		readErr  error  // Expected read error
 	}{
@@ -279,11 +279,11 @@ func TestVarBytesEncodingErrors(t *testing.T) {
 
 	t.Logf("Running %d tests", len(tests))
 	for i, test := range tests {
-		w := util.NewFixedWriter(test.max)
+		w := util.NewFixedWriter(test.maxVal)
 		err := WriteVarBytes(w, test.in)
 		assert.ErrorIs(t, err, test.writeErr, "WriteVarBytes #%d", i)
 
-		r := util.NewFixedReader(test.max, test.buf)
+		r := util.NewFixedReader(test.maxVal, test.buf)
 		_, err = ReadVarBytes(r)
 		assert.ErrorIs(t, err, test.readErr, "ReadVarBytes #%d", i)
 	}

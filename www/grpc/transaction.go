@@ -54,7 +54,7 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 	case pactus.TransactionVerbosity_TRANSACTION_INFO:
 		trx, err := committedTx.ToTx()
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, err.Error())
+			return nil, status.Error(codes.Internal, err.Error())
 		}
 		res.Transaction = transactionToProto(trx)
 	}

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"golang.org/x/crypto/blake2b"
-	"golang.org/x/crypto/ripemd160" //nolint:staticcheck // use to hash the public key to get the address
+	"golang.org/x/crypto/ripemd160" //nolint:gosec,staticcheck // use to hash the public key to get the address
 )
 
 const HashSize = 32

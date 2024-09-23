@@ -50,43 +50,43 @@ func Min[T constraints.Integer](a, b T) T {
 
 // RandInt16 returns a random int16 in between 0 and max.
 // If max set to zero or negative, the max will set to MaxInt16.
-func RandInt16(max int16) int16 {
-	return int16(RandUint64(uint64(max)))
+func RandInt16(maxVal int16) int16 {
+	return int16(RandUint64(uint64(maxVal)))
 }
 
 // RandUint16 returns a random uint16 in between 0 and max.
 // If max set to zero or negative, the max will set to MaxUint16.
-func RandUint16(max uint32) uint16 {
-	return uint16(RandUint64(uint64(max)))
+func RandUint16(maxVal uint32) uint16 {
+	return uint16(RandUint64(uint64(maxVal)))
 }
 
 // RandInt32 returns a random int32 in between 0 and max.
 // If max set to zero or negative, the max will set to MaxInt32.
-func RandInt32(max int32) int32 {
-	return int32(RandUint64(uint64(max)))
+func RandInt32(maxVal int32) int32 {
+	return int32(RandUint64(uint64(maxVal)))
 }
 
 // RandUint32 returns a random uint32 in between 0 and max.
 // If max set to zero or negative, the max will set to MaxUint32.
-func RandUint32(max uint32) uint32 {
-	return uint32(RandUint64(uint64(max)))
+func RandUint32(maxVal uint32) uint32 {
+	return uint32(RandUint64(uint64(maxVal)))
 }
 
 // RandInt64 returns a random int64 in between 0 and max.
 // If max set to zero or negative, the max will set to MaxInt64.
-func RandInt64(max int64) int64 {
-	return int64(RandUint64(uint64(max)))
+func RandInt64(maxVal int64) int64 {
+	return int64(RandUint64(uint64(maxVal)))
 }
 
 // RandUint64 returns a random uint64 in between 0 and max.
 // If max set to zero or negative, the max will set to MaxUint64.
-func RandUint64(max uint64) uint64 {
-	if max <= 0 {
-		max = MaxUint64
+func RandUint64(maxVal uint64) uint64 {
+	if maxVal <= 0 {
+		maxVal = MaxUint64
 	}
 
 	bigMax := &big.Int{}
-	bigMax.SetUint64(max)
+	bigMax.SetUint64(maxVal)
 	bigRnd, _ := crand.Int(crand.Reader, bigMax)
 
 	return bigRnd.Uint64()

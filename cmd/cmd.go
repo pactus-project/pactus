@@ -95,7 +95,7 @@ func PromptConfirm(label string) bool {
 	}
 	result, err := prompt.Run()
 	if err != nil {
-		if !errors.Is(promptui.ErrAbort, err) {
+		if !errors.Is(err, promptui.ErrAbort) {
 			PrintErrorMsgf("prompt error: %v", err)
 		} else {
 			PrintWarnMsgf("Aborted.")
@@ -150,7 +150,7 @@ func PromptInputWithSuggestion(label, suggestion string) string {
 }
 
 // PromptInputWithRange prompts the user for an input integer within a specified range.
-func PromptInputWithRange(label string, def, min, max int) int {
+func PromptInputWithRange(label string, def, minVal, maxVal int) int {
 	prompt := promptui.Prompt{
 		Label:     label,
 		Default:   fmt.Sprintf("%v", def),
@@ -161,8 +161,8 @@ func PromptInputWithRange(label string, def, min, max int) int {
 			if err != nil {
 				return err
 			}
-			if num < min || num > max {
-				return fmt.Errorf("enter a number between %v and %v", min, max)
+			if num < minVal || num > maxVal {
+				return fmt.Errorf("enter a number between %v and %v", minVal, maxVal)
 			}
 
 			return nil
