@@ -62,6 +62,12 @@ func TestFromString(t *testing.T) {
 			crypto.AddressTypeTreasury,
 		},
 		{
+			"00",
+			bech32m.InvalidLengthError(2),
+			nil,
+			0,
+		},
+		{
 			"",
 			bech32m.InvalidLengthError(0),
 			nil,
@@ -159,7 +165,7 @@ func TestFromString(t *testing.T) {
 	}
 }
 
-func TestAddressEncoding(t *testing.T) {
+func TestAddressDecoding(t *testing.T) {
 	tests := []struct {
 		size int
 		hex  string
