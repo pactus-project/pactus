@@ -143,6 +143,7 @@ linters-settings:
     excludes:
       - G304
       - G204
+      - G115
 
   stylecheck:
     # TODO: enable ST1000 (at least one file in a package should have a package comment)
@@ -159,7 +160,7 @@ linters-settings:
   predeclared:
     # Comma-separated list of predeclared identifiers to not report on.
     # Default: ""
-    ignore: "len"
+    ignore: "len, min, max"
     # Include method names and field names (i.e., qualified names) in checks.
     # Default: false
     q: true

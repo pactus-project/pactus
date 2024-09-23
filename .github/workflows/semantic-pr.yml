@@ -55,6 +55,7 @@ jobs:
             version
             wallet
             grpc
+            proto
             http
             jsonrpc
             nanomsg
