@@ -1,6 +1,8 @@
 package state
 
 import (
+	"fmt"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
@@ -60,14 +62,12 @@ func (st *state) checkEd25519Fork(trx *tx.Tx) error {
 	// TODO: remove me after enabling Ed255519
 	if trx.Payload().Signer().Type() == crypto.AddressTypeEd25519Account {
 		if st.genDoc.ChainType().IsMainnet() {
-			return errors.Errorf(errors.ErrInvalidTx,
-				"ed255519 not supported yet")
+			return fmt.Errorf("ed255519 not supported yet")
 		}
 
 		if st.genDoc.ChainType().IsTestnet() {
 			if st.lastInfo.BlockHeight() < 1_320_000 {
-				return errors.Errorf(errors.ErrInvalidTx,
-					"ed255519 not supported yet")
+				return fmt.Errorf("ed255519 not supported yet")
 			}
 		}
 	}

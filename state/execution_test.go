@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/execution/executor"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -64,15 +66,19 @@ func TestExecuteBlock(t *testing.T) {
 	assert.NoError(t, td.state.AddPendingTx(invSubsidyTx))
 	assert.NoError(t, td.state.AddPendingTx(validTx1))
 
-	t.Run("Subsidy tx is invalid", func(t *testing.T) {
+	t.Run("Subsidy amount is invalid", func(t *testing.T) {
 		txs := block.NewTxs()
 		txs.Append(invSubsidyTx)
+		txs.Append(validTx1)
 		invBlock := block.MakeBlock(1, time.Now(), txs, td.state.lastInfo.BlockHash(),
 			td.state.stateRoot(), td.state.lastInfo.Certificate(),
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
-
-		assert.Error(t, td.state.executeBlock(invBlock, sb, true))
+		err := td.state.executeBlock(invBlock, sb, true)
+		assert.ErrorIs(t, err, InvalidSubsidyAmountError{
+			Expected: amount.Amount(1e9 + 1000),
+			Got:      amount.Amount(1e9 + 1001),
+		})
 	})
 
 	t.Run("Has invalid tx", func(t *testing.T) {
@@ -83,8 +89,10 @@ func TestExecuteBlock(t *testing.T) {
 			td.state.stateRoot(), td.state.lastInfo.Certificate(),
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
-
-		assert.Error(t, td.state.executeBlock(invBlock, sb, true))
+		err := td.state.executeBlock(invBlock, sb, true)
+		assert.ErrorIs(t, err, executor.AccountNotFoundError{
+			Address: invTransferTx.Payload().Signer(),
+		})
 	})
 
 	t.Run("Subsidy is not first tx", func(t *testing.T) {
@@ -95,8 +103,8 @@ func TestExecuteBlock(t *testing.T) {
 			td.state.stateRoot(), td.state.lastInfo.Certificate(),
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
-
-		assert.Error(t, td.state.executeBlock(invBlock, sb, true))
+		err := td.state.executeBlock(invBlock, sb, true)
+		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
 	t.Run("Has no subsidy", func(t *testing.T) {
@@ -106,8 +114,8 @@ func TestExecuteBlock(t *testing.T) {
 			td.state.stateRoot(), td.state.lastInfo.Certificate(),
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
-
-		assert.Error(t, td.state.executeBlock(invBlock, sb, true))
+		err := td.state.executeBlock(invBlock, sb, true)
+		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
 	t.Run("Two subsidy transactions", func(t *testing.T) {
@@ -118,8 +126,8 @@ func TestExecuteBlock(t *testing.T) {
 			td.state.stateRoot(), td.state.lastInfo.Certificate(),
 			td.state.lastInfo.SortitionSeed(), proposerAddr)
 		sb := td.state.concreteSandbox()
-
-		assert.Error(t, td.state.executeBlock(invBlock, sb, true))
+		err := td.state.executeBlock(invBlock, sb, true)
+		assert.ErrorIs(t, err, ErrDuplicatedSubsidyTransaction)
 	})
 
 	t.Run("OK", func(t *testing.T) {
