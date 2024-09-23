@@ -198,8 +198,9 @@ func _TransactionGetRawTransactionCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "The lock time for the transaction. If not set, defaults to the last block\n height.")
+	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "The lock time for the transaction. If not set, defaults to the last block height.")
 	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "A memo string for the transaction.")
+	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "The fee for the transaction in NanoPAC.")
 	_Transfer := &PayloadTransfer{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("Transfer"), false, "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Transfer"), func() { req.Payload = &GetRawTransactionRequest_Transfer{Transfer: _Transfer} })
@@ -209,8 +210,6 @@ func _TransactionGetRawTransactionCommand(cfg *client.Config) *cobra.Command {
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Transfer Receiver"), func() { req.Payload = &GetRawTransactionRequest_Transfer{Transfer: _Transfer} })
 	cmd.PersistentFlags().Int64Var(&_Transfer.Amount, cfg.FlagNamer("Transfer Amount"), 0, "The amount to be transferred in NanoPAC.")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Transfer Amount"), func() { req.Payload = &GetRawTransactionRequest_Transfer{Transfer: _Transfer} })
-	cmd.PersistentFlags().Int64Var(&_Transfer.Fee, cfg.FlagNamer("Transfer Fee"), 0, "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Transfer Fee"), func() { req.Payload = &GetRawTransactionRequest_Transfer{Transfer: _Transfer} })
 	_Bond := &PayloadBond{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("Bond"), false, "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Bond"), func() { req.Payload = &GetRawTransactionRequest_Bond{Bond: _Bond} })
@@ -222,8 +221,6 @@ func _TransactionGetRawTransactionCommand(cfg *client.Config) *cobra.Command {
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Bond Stake"), func() { req.Payload = &GetRawTransactionRequest_Bond{Bond: _Bond} })
 	cmd.PersistentFlags().StringVar(&_Bond.PublicKey, cfg.FlagNamer("Bond PublicKey"), "", "The public key of the validator.")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Bond PublicKey"), func() { req.Payload = &GetRawTransactionRequest_Bond{Bond: _Bond} })
-	cmd.PersistentFlags().Int64Var(&_Bond.Fee, cfg.FlagNamer("Bond Fee"), 0, "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Bond Fee"), func() { req.Payload = &GetRawTransactionRequest_Bond{Bond: _Bond} })
 	_Unbond := &PayloadUnbond{}
 	cmd.PersistentFlags().Bool(cfg.FlagNamer("Unbond"), false, "")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Unbond"), func() { req.Payload = &GetRawTransactionRequest_Unbond{Unbond: _Unbond} })
@@ -238,8 +235,6 @@ func _TransactionGetRawTransactionCommand(cfg *client.Config) *cobra.Command {
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Withdraw AccountAddress"), func() { req.Payload = &GetRawTransactionRequest_Withdraw{Withdraw: _Withdraw} })
 	cmd.PersistentFlags().Int64Var(&_Withdraw.Amount, cfg.FlagNamer("Withdraw Amount"), 0, "The withdrawal amount in NanoPAC.")
 	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Withdraw Amount"), func() { req.Payload = &GetRawTransactionRequest_Withdraw{Withdraw: _Withdraw} })
-	cmd.PersistentFlags().Int64Var(&_Withdraw.Fee, cfg.FlagNamer("Withdraw Fee"), 0, "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.")
-	flag.WithPostSetHook(cmd.PersistentFlags(), cfg.FlagNamer("Withdraw Fee"), func() { req.Payload = &GetRawTransactionRequest_Withdraw{Withdraw: _Withdraw} })
 
 	return cmd
 }

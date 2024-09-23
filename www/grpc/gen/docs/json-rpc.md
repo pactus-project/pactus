@@ -247,7 +247,7 @@ parameters.</p>
   </tr>
   <tr>
     <td class="fw-bold">verbosity</td>
-    <td> string</td>
+    <td> numeric</td>
     <td>
     (Enum) The verbosity level for transaction details.
     <br>Available values:<ul>
@@ -330,7 +330,7 @@ parameters.</p>
       </tr>
          <tr>
         <td class="fw-bold">transaction.payload_type</td>
-        <td> string</td>
+        <td> numeric</td>
         <td>
         (Enum) The type of transaction payload.
         <br>Available values:<ul>
@@ -372,13 +372,6 @@ parameters.</p>
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">transaction.transfer.fee</td>
-            <td> numeric</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-            </td>
-          </tr>
-          <tr>
         <td class="fw-bold">transaction.bond</td>
         <td> object</td>
         <td>
@@ -411,13 +404,6 @@ parameters.</p>
             <td> string</td>
             <td>
             The public key of the validator.
-            </td>
-          </tr>
-          <tr>
-            <td class="fw-bold">transaction.bond.fee</td>
-            <td> numeric</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -484,13 +470,6 @@ parameters.</p>
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">transaction.withdraw.fee</td>
-            <td> numeric</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-            </td>
-          </tr>
-          <tr>
         <td class="fw-bold">transaction.memo</td>
         <td> string</td>
         <td>
@@ -535,7 +514,7 @@ and payload type.</p>
   </tr>
   <tr>
     <td class="fw-bold">payload_type</td>
-    <td> string</td>
+    <td> numeric</td>
     <td>
     (Enum) The type of transaction payload.
     <br>Available values:<ul>
@@ -633,8 +612,7 @@ and payload type.</p>
     <td class="fw-bold">lock_time</td>
     <td> numeric</td>
     <td>
-    The lock time for the transaction. If not set, defaults to the last block
-height.
+    The lock time for the transaction. If not set, defaults to the last block height.
     </td>
   </tr>
   <tr>
@@ -642,6 +620,13 @@ height.
     <td> string</td>
     <td>
     A memo string for the transaction.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">fee</td>
+    <td> numeric</td>
+    <td>
+    The fee for the transaction in NanoPAC.
     </td>
   </tr>
   <tr>
@@ -686,6 +671,13 @@ height.
     <td> string</td>
     <td>
     The raw transaction data.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
     </td>
   </tr>
      </tbody>
@@ -759,6 +751,13 @@ height.
     <td> string</td>
     <td>
     The raw transaction data.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
     </td>
   </tr>
      </tbody>
@@ -841,6 +840,13 @@ height.
     The raw transaction data.
     </td>
   </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
+    </td>
+  </tr>
      </tbody>
 </table>
 
@@ -891,6 +897,13 @@ height.
     <td> string</td>
     <td>
     The raw transaction data.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
     </td>
   </tr>
      </tbody>
@@ -966,6 +979,13 @@ height.
     The raw transaction data.
     </td>
   </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
+    </td>
+  </tr>
      </tbody>
 </table>
 
@@ -994,7 +1014,7 @@ parameters.</p>
   </tr>
   <tr>
     <td class="fw-bold">verbosity</td>
-    <td> string</td>
+    <td> numeric</td>
     <td>
     (Enum) The verbosity level for block information.
     <br>Available values:<ul>
@@ -1177,7 +1197,7 @@ BLOCK_TRANSACTIONS.
       </tr>
          <tr>
         <td class="fw-bold">txs[].payload_type</td>
-        <td> string</td>
+        <td> numeric</td>
         <td>
         (Enum) The type of transaction payload.
         <br>Available values:<ul>
@@ -1219,13 +1239,6 @@ BLOCK_TRANSACTIONS.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">txs[].transfer.fee</td>
-            <td> numeric</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-            </td>
-          </tr>
-          <tr>
         <td class="fw-bold">txs[].bond</td>
         <td> object</td>
         <td>
@@ -1258,13 +1271,6 @@ BLOCK_TRANSACTIONS.
             <td> string</td>
             <td>
             The public key of the validator.
-            </td>
-          </tr>
-          <tr>
-            <td class="fw-bold">txs[].bond.fee</td>
-            <td> numeric</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -1328,13 +1334,6 @@ BLOCK_TRANSACTIONS.
             <td> numeric</td>
             <td>
             The withdrawal amount in NanoPAC.
-            </td>
-          </tr>
-          <tr>
-            <td class="fw-bold">txs[].withdraw.fee</td>
-            <td> numeric</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -1686,7 +1685,7 @@ committee.
       </tr>
          <tr>
             <td class="fw-bold">instances[].votes[].type</td>
-            <td> string</td>
+            <td> numeric</td>
             <td>
             (Enum) The type of the vote.
             <br>Available values:<ul>
@@ -2099,7 +2098,7 @@ address.</p>
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">payload_type</td>
-    <td> string</td>
+    <td> numeric</td>
     <td>
     (Enum) The type of transactions to retrieve from the transaction pool. 0 means all
 types.
@@ -2173,7 +2172,7 @@ types.
       </tr>
          <tr>
         <td class="fw-bold">txs[].payload_type</td>
-        <td> string</td>
+        <td> numeric</td>
         <td>
         (Enum) The type of transaction payload.
         <br>Available values:<ul>
@@ -2215,13 +2214,6 @@ types.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">txs[].transfer.fee</td>
-            <td> numeric</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-            </td>
-          </tr>
-          <tr>
         <td class="fw-bold">txs[].bond</td>
         <td> object</td>
         <td>
@@ -2254,13 +2246,6 @@ types.
             <td> string</td>
             <td>
             The public key of the validator.
-            </td>
-          </tr>
-          <tr>
-            <td class="fw-bold">txs[].bond.fee</td>
-            <td> numeric</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -2324,13 +2309,6 @@ types.
             <td> numeric</td>
             <td>
             The withdrawal amount in NanoPAC.
-            </td>
-          </tr>
-          <tr>
-            <td class="fw-bold">txs[].withdraw.fee</td>
-            <td> numeric</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -3128,7 +3106,7 @@ public key.</p>
   </tr>
   <tr>
     <td class="fw-bold">address_type</td>
-    <td> string</td>
+    <td> numeric</td>
     <td>
     (Enum) The type of address to generate.
     <br>Available values:<ul>

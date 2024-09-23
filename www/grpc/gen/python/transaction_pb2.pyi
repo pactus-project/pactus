@@ -76,20 +76,22 @@ class BroadcastTransactionResponse(_message.Message):
     def __init__(self, id: _Optional[str] = ...) -> None: ...
 
 class GetRawTransactionRequest(_message.Message):
-    __slots__ = ("lock_time", "memo", "transfer", "bond", "unbond", "withdraw")
+    __slots__ = ("lock_time", "memo", "fee", "transfer", "bond", "unbond", "withdraw")
     LOCK_TIME_FIELD_NUMBER: _ClassVar[int]
     MEMO_FIELD_NUMBER: _ClassVar[int]
+    FEE_FIELD_NUMBER: _ClassVar[int]
     TRANSFER_FIELD_NUMBER: _ClassVar[int]
     BOND_FIELD_NUMBER: _ClassVar[int]
     UNBOND_FIELD_NUMBER: _ClassVar[int]
     WITHDRAW_FIELD_NUMBER: _ClassVar[int]
     lock_time: int
     memo: str
+    fee: int
     transfer: PayloadTransfer
     bond: PayloadBond
     unbond: PayloadUnbond
     withdraw: PayloadWithdraw
-    def __init__(self, lock_time: _Optional[int] = ..., memo: _Optional[str] = ..., transfer: _Optional[_Union[PayloadTransfer, _Mapping]] = ..., bond: _Optional[_Union[PayloadBond, _Mapping]] = ..., unbond: _Optional[_Union[PayloadUnbond, _Mapping]] = ..., withdraw: _Optional[_Union[PayloadWithdraw, _Mapping]] = ...) -> None: ...
+    def __init__(self, lock_time: _Optional[int] = ..., memo: _Optional[str] = ..., fee: _Optional[int] = ..., transfer: _Optional[_Union[PayloadTransfer, _Mapping]] = ..., bond: _Optional[_Union[PayloadBond, _Mapping]] = ..., unbond: _Optional[_Union[PayloadUnbond, _Mapping]] = ..., withdraw: _Optional[_Union[PayloadWithdraw, _Mapping]] = ...) -> None: ...
 
 class GetRawTransferTransactionRequest(_message.Message):
     __slots__ = ("lock_time", "sender", "receiver", "amount", "fee", "memo")
@@ -152,36 +154,34 @@ class GetRawWithdrawTransactionRequest(_message.Message):
     def __init__(self, lock_time: _Optional[int] = ..., validator_address: _Optional[str] = ..., account_address: _Optional[str] = ..., amount: _Optional[int] = ..., fee: _Optional[int] = ..., memo: _Optional[str] = ...) -> None: ...
 
 class GetRawTransactionResponse(_message.Message):
-    __slots__ = ("raw_transaction",)
+    __slots__ = ("raw_transaction", "id")
     RAW_TRANSACTION_FIELD_NUMBER: _ClassVar[int]
+    ID_FIELD_NUMBER: _ClassVar[int]
     raw_transaction: str
-    def __init__(self, raw_transaction: _Optional[str] = ...) -> None: ...
+    id: str
+    def __init__(self, raw_transaction: _Optional[str] = ..., id: _Optional[str] = ...) -> None: ...
 
 class PayloadTransfer(_message.Message):
-    __slots__ = ("sender", "receiver", "amount", "fee")
+    __slots__ = ("sender", "receiver", "amount")
     SENDER_FIELD_NUMBER: _ClassVar[int]
     RECEIVER_FIELD_NUMBER: _ClassVar[int]
     AMOUNT_FIELD_NUMBER: _ClassVar[int]
-    FEE_FIELD_NUMBER: _ClassVar[int]
     sender: str
     receiver: str
     amount: int
-    fee: int
-    def __init__(self, sender: _Optional[str] = ..., receiver: _Optional[str] = ..., amount: _Optional[int] = ..., fee: _Optional[int] = ...) -> None: ...
+    def __init__(self, sender: _Optional[str] = ..., receiver: _Optional[str] = ..., amount: _Optional[int] = ...) -> None: ...
 
 class PayloadBond(_message.Message):
-    __slots__ = ("sender", "receiver", "stake", "public_key", "fee")
+    __slots__ = ("sender", "receiver", "stake", "public_key")
     SENDER_FIELD_NUMBER: _ClassVar[int]
     RECEIVER_FIELD_NUMBER: _ClassVar[int]
     STAKE_FIELD_NUMBER: _ClassVar[int]
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
-    FEE_FIELD_NUMBER: _ClassVar[int]
     sender: str
     receiver: str
     stake: int
     public_key: str
-    fee: int
-    def __init__(self, sender: _Optional[str] = ..., receiver: _Optional[str] = ..., stake: _Optional[int] = ..., public_key: _Optional[str] = ..., fee: _Optional[int] = ...) -> None: ...
+    def __init__(self, sender: _Optional[str] = ..., receiver: _Optional[str] = ..., stake: _Optional[int] = ..., public_key: _Optional[str] = ...) -> None: ...
 
 class PayloadSortition(_message.Message):
     __slots__ = ("address", "proof")
@@ -198,16 +198,14 @@ class PayloadUnbond(_message.Message):
     def __init__(self, validator: _Optional[str] = ...) -> None: ...
 
 class PayloadWithdraw(_message.Message):
-    __slots__ = ("validator_address", "account_address", "amount", "fee")
+    __slots__ = ("validator_address", "account_address", "amount")
     VALIDATOR_ADDRESS_FIELD_NUMBER: _ClassVar[int]
     ACCOUNT_ADDRESS_FIELD_NUMBER: _ClassVar[int]
     AMOUNT_FIELD_NUMBER: _ClassVar[int]
-    FEE_FIELD_NUMBER: _ClassVar[int]
     validator_address: str
     account_address: str
     amount: int
-    fee: int
-    def __init__(self, validator_address: _Optional[str] = ..., account_address: _Optional[str] = ..., amount: _Optional[int] = ..., fee: _Optional[int] = ...) -> None: ...
+    def __init__(self, validator_address: _Optional[str] = ..., account_address: _Optional[str] = ..., amount: _Optional[int] = ...) -> None: ...
 
 class TransactionInfo(_message.Message):
     __slots__ = ("id", "data", "version", "lock_time", "value", "fee", "payload_type", "transfer", "bond", "sortition", "unbond", "withdraw", "memo", "public_key", "signature")

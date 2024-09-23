@@ -4600,6 +4600,9 @@ impl serde::Serialize for GetRawTransactionRequest {
         if !self.memo.is_empty() {
             len += 1;
         }
+        if self.fee != 0 {
+            len += 1;
+        }
         if self.payload.is_some() {
             len += 1;
         }
@@ -4609,6 +4612,9 @@ impl serde::Serialize for GetRawTransactionRequest {
         }
         if !self.memo.is_empty() {
             struct_ser.serialize_field("memo", &self.memo)?;
+        }
+        if self.fee != 0 {
+            struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
         }
         if let Some(v) = self.payload.as_ref() {
             match v {
@@ -4639,6 +4645,7 @@ impl<'de> serde::Deserialize<'de> for GetRawTransactionRequest {
             "lock_time",
             "lockTime",
             "memo",
+            "fee",
             "transfer",
             "bond",
             "unbond",
@@ -4649,6 +4656,7 @@ impl<'de> serde::Deserialize<'de> for GetRawTransactionRequest {
         enum GeneratedField {
             LockTime,
             Memo,
+            Fee,
             Transfer,
             Bond,
             Unbond,
@@ -4676,6 +4684,7 @@ impl<'de> serde::Deserialize<'de> for GetRawTransactionRequest {
                         match value {
                             "lockTime" | "lock_time" => Ok(GeneratedField::LockTime),
                             "memo" => Ok(GeneratedField::Memo),
+                            "fee" => Ok(GeneratedField::Fee),
                             "transfer" => Ok(GeneratedField::Transfer),
                             "bond" => Ok(GeneratedField::Bond),
                             "unbond" => Ok(GeneratedField::Unbond),
@@ -4701,6 +4710,7 @@ impl<'de> serde::Deserialize<'de> for GetRawTransactionRequest {
             {
                 let mut lock_time__ = None;
                 let mut memo__ = None;
+                let mut fee__ = None;
                 let mut payload__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
@@ -4717,6 +4727,14 @@ impl<'de> serde::Deserialize<'de> for GetRawTransactionRequest {
                                 return Err(serde::de::Error::duplicate_field("memo"));
                             }
                             memo__ = Some(map.next_value()?);
+                        }
+                        GeneratedField::Fee => {
+                            if fee__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("fee"));
+                            }
+                            fee__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
                         }
                         GeneratedField::Transfer => {
                             if payload__.is_some() {
@@ -4751,6 +4769,7 @@ impl<'de> serde::Deserialize<'de> for GetRawTransactionRequest {
                 Ok(GetRawTransactionRequest {
                     lock_time: lock_time__.unwrap_or_default(),
                     memo: memo__.unwrap_or_default(),
+                    fee: fee__.unwrap_or_default(),
                     payload: payload__,
                 })
             }
@@ -4769,9 +4788,15 @@ impl serde::Serialize for GetRawTransactionResponse {
         if !self.raw_transaction.is_empty() {
             len += 1;
         }
+        if !self.id.is_empty() {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetRawTransactionResponse", len)?;
         if !self.raw_transaction.is_empty() {
             struct_ser.serialize_field("rawTransaction", &self.raw_transaction)?;
+        }
+        if !self.id.is_empty() {
+            struct_ser.serialize_field("id", &self.id)?;
         }
         struct_ser.end()
     }
@@ -4785,11 +4810,13 @@ impl<'de> serde::Deserialize<'de> for GetRawTransactionResponse {
         const FIELDS: &[&str] = &[
             "raw_transaction",
             "rawTransaction",
+            "id",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             RawTransaction,
+            Id,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -4812,6 +4839,7 @@ impl<'de> serde::Deserialize<'de> for GetRawTransactionResponse {
                     {
                         match value {
                             "rawTransaction" | "raw_transaction" => Ok(GeneratedField::RawTransaction),
+                            "id" => Ok(GeneratedField::Id),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -4832,6 +4860,7 @@ impl<'de> serde::Deserialize<'de> for GetRawTransactionResponse {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut raw_transaction__ = None;
+                let mut id__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::RawTransaction => {
@@ -4840,10 +4869,17 @@ impl<'de> serde::Deserialize<'de> for GetRawTransactionResponse {
                             }
                             raw_transaction__ = Some(map.next_value()?);
                         }
+                        GeneratedField::Id => {
+                            if id__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("id"));
+                            }
+                            id__ = Some(map.next_value()?);
+                        }
                     }
                 }
                 Ok(GetRawTransactionResponse {
                     raw_transaction: raw_transaction__.unwrap_or_default(),
+                    id: id__.unwrap_or_default(),
                 })
             }
         }
@@ -6966,9 +7002,6 @@ impl serde::Serialize for PayloadBond {
         if !self.public_key.is_empty() {
             len += 1;
         }
-        if self.fee != 0 {
-            len += 1;
-        }
         let mut struct_ser = serializer.serialize_struct("pactus.PayloadBond", len)?;
         if !self.sender.is_empty() {
             struct_ser.serialize_field("sender", &self.sender)?;
@@ -6981,9 +7014,6 @@ impl serde::Serialize for PayloadBond {
         }
         if !self.public_key.is_empty() {
             struct_ser.serialize_field("publicKey", &self.public_key)?;
-        }
-        if self.fee != 0 {
-            struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
         }
         struct_ser.end()
     }
@@ -7000,7 +7030,6 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
             "stake",
             "public_key",
             "publicKey",
-            "fee",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -7009,7 +7038,6 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
             Receiver,
             Stake,
             PublicKey,
-            Fee,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -7035,7 +7063,6 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
                             "receiver" => Ok(GeneratedField::Receiver),
                             "stake" => Ok(GeneratedField::Stake),
                             "publicKey" | "public_key" => Ok(GeneratedField::PublicKey),
-                            "fee" => Ok(GeneratedField::Fee),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -7059,7 +7086,6 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
                 let mut receiver__ = None;
                 let mut stake__ = None;
                 let mut public_key__ = None;
-                let mut fee__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::Sender => {
@@ -7088,14 +7114,6 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
                             }
                             public_key__ = Some(map.next_value()?);
                         }
-                        GeneratedField::Fee => {
-                            if fee__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("fee"));
-                            }
-                            fee__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
-                        }
                     }
                 }
                 Ok(PayloadBond {
@@ -7103,7 +7121,6 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
                     receiver: receiver__.unwrap_or_default(),
                     stake: stake__.unwrap_or_default(),
                     public_key: public_key__.unwrap_or_default(),
-                    fee: fee__.unwrap_or_default(),
                 })
             }
         }
@@ -7235,9 +7252,6 @@ impl serde::Serialize for PayloadTransfer {
         if self.amount != 0 {
             len += 1;
         }
-        if self.fee != 0 {
-            len += 1;
-        }
         let mut struct_ser = serializer.serialize_struct("pactus.PayloadTransfer", len)?;
         if !self.sender.is_empty() {
             struct_ser.serialize_field("sender", &self.sender)?;
@@ -7247,9 +7261,6 @@ impl serde::Serialize for PayloadTransfer {
         }
         if self.amount != 0 {
             struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
-        }
-        if self.fee != 0 {
-            struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
         }
         struct_ser.end()
     }
@@ -7264,7 +7275,6 @@ impl<'de> serde::Deserialize<'de> for PayloadTransfer {
             "sender",
             "receiver",
             "amount",
-            "fee",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -7272,7 +7282,6 @@ impl<'de> serde::Deserialize<'de> for PayloadTransfer {
             Sender,
             Receiver,
             Amount,
-            Fee,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -7297,7 +7306,6 @@ impl<'de> serde::Deserialize<'de> for PayloadTransfer {
                             "sender" => Ok(GeneratedField::Sender),
                             "receiver" => Ok(GeneratedField::Receiver),
                             "amount" => Ok(GeneratedField::Amount),
-                            "fee" => Ok(GeneratedField::Fee),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -7320,7 +7328,6 @@ impl<'de> serde::Deserialize<'de> for PayloadTransfer {
                 let mut sender__ = None;
                 let mut receiver__ = None;
                 let mut amount__ = None;
-                let mut fee__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::Sender => {
@@ -7343,21 +7350,12 @@ impl<'de> serde::Deserialize<'de> for PayloadTransfer {
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::Fee => {
-                            if fee__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("fee"));
-                            }
-                            fee__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
-                        }
                     }
                 }
                 Ok(PayloadTransfer {
                     sender: sender__.unwrap_or_default(),
                     receiver: receiver__.unwrap_or_default(),
                     amount: amount__.unwrap_or_default(),
-                    fee: fee__.unwrap_or_default(),
                 })
             }
         }
@@ -7557,9 +7555,6 @@ impl serde::Serialize for PayloadWithdraw {
         if self.amount != 0 {
             len += 1;
         }
-        if self.fee != 0 {
-            len += 1;
-        }
         let mut struct_ser = serializer.serialize_struct("pactus.PayloadWithdraw", len)?;
         if !self.validator_address.is_empty() {
             struct_ser.serialize_field("validatorAddress", &self.validator_address)?;
@@ -7569,9 +7564,6 @@ impl serde::Serialize for PayloadWithdraw {
         }
         if self.amount != 0 {
             struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
-        }
-        if self.fee != 0 {
-            struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
         }
         struct_ser.end()
     }
@@ -7588,7 +7580,6 @@ impl<'de> serde::Deserialize<'de> for PayloadWithdraw {
             "account_address",
             "accountAddress",
             "amount",
-            "fee",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -7596,7 +7587,6 @@ impl<'de> serde::Deserialize<'de> for PayloadWithdraw {
             ValidatorAddress,
             AccountAddress,
             Amount,
-            Fee,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -7621,7 +7611,6 @@ impl<'de> serde::Deserialize<'de> for PayloadWithdraw {
                             "validatorAddress" | "validator_address" => Ok(GeneratedField::ValidatorAddress),
                             "accountAddress" | "account_address" => Ok(GeneratedField::AccountAddress),
                             "amount" => Ok(GeneratedField::Amount),
-                            "fee" => Ok(GeneratedField::Fee),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -7644,7 +7633,6 @@ impl<'de> serde::Deserialize<'de> for PayloadWithdraw {
                 let mut validator_address__ = None;
                 let mut account_address__ = None;
                 let mut amount__ = None;
-                let mut fee__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::ValidatorAddress => {
@@ -7667,21 +7655,12 @@ impl<'de> serde::Deserialize<'de> for PayloadWithdraw {
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::Fee => {
-                            if fee__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("fee"));
-                            }
-                            fee__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
-                        }
                     }
                 }
                 Ok(PayloadWithdraw {
                     validator_address: validator_address__.unwrap_or_default(),
                     account_address: account_address__.unwrap_or_default(),
                     amount: amount__.unwrap_or_default(),
-                    fee: fee__.unwrap_or_default(),
                 })
             }
         }

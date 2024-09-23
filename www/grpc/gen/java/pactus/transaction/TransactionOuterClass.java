@@ -4432,8 +4432,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * The lock time for the transaction. If not set, defaults to the last block
-     * height.
+     * The lock time for the transaction. If not set, defaults to the last block height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -4462,62 +4461,72 @@ public final class TransactionOuterClass {
         getMemoBytes();
 
     /**
-     * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+     * <pre>
+     * The fee for the transaction in NanoPAC.
+     * </pre>
+     *
+     * <code>int64 fee = 3 [json_name = "fee"];</code>
+     * @return The fee.
+     */
+    long getFee();
+
+    /**
+     * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
      * @return Whether the transfer field is set.
      */
     boolean hasTransfer();
     /**
-     * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+     * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
      * @return The transfer.
      */
     pactus.transaction.TransactionOuterClass.PayloadTransfer getTransfer();
     /**
-     * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+     * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
      */
     pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder getTransferOrBuilder();
 
     /**
-     * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+     * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
      * @return Whether the bond field is set.
      */
     boolean hasBond();
     /**
-     * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+     * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
      * @return The bond.
      */
     pactus.transaction.TransactionOuterClass.PayloadBond getBond();
     /**
-     * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+     * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
      */
     pactus.transaction.TransactionOuterClass.PayloadBondOrBuilder getBondOrBuilder();
 
     /**
-     * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+     * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
      * @return Whether the unbond field is set.
      */
     boolean hasUnbond();
     /**
-     * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+     * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
      * @return The unbond.
      */
     pactus.transaction.TransactionOuterClass.PayloadUnbond getUnbond();
     /**
-     * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+     * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
      */
     pactus.transaction.TransactionOuterClass.PayloadUnbondOrBuilder getUnbondOrBuilder();
 
     /**
-     * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+     * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
      * @return Whether the withdraw field is set.
      */
     boolean hasWithdraw();
     /**
-     * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+     * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
      * @return The withdraw.
      */
     pactus.transaction.TransactionOuterClass.PayloadWithdraw getWithdraw();
     /**
-     * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+     * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
      */
     pactus.transaction.TransactionOuterClass.PayloadWithdrawOrBuilder getWithdrawOrBuilder();
 
@@ -4573,10 +4582,10 @@ public final class TransactionOuterClass {
     public enum PayloadCase
         implements com.google.protobuf.Internal.EnumLite,
             com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-      TRANSFER(3),
-      BOND(4),
-      UNBOND(5),
-      WITHDRAW(6),
+      TRANSFER(4),
+      BOND(5),
+      UNBOND(6),
+      WITHDRAW(7),
       PAYLOAD_NOT_SET(0);
       private final int value;
       private PayloadCase(int value) {
@@ -4594,10 +4603,10 @@ public final class TransactionOuterClass {
 
       public static PayloadCase forNumber(int value) {
         switch (value) {
-          case 3: return TRANSFER;
-          case 4: return BOND;
-          case 5: return UNBOND;
-          case 6: return WITHDRAW;
+          case 4: return TRANSFER;
+          case 5: return BOND;
+          case 6: return UNBOND;
+          case 7: return WITHDRAW;
           case 0: return PAYLOAD_NOT_SET;
           default: return null;
         }
@@ -4617,8 +4626,7 @@ public final class TransactionOuterClass {
     private int lockTime_;
     /**
      * <pre>
-     * The lock time for the transaction. If not set, defaults to the last block
-     * height.
+     * The lock time for the transaction. If not set, defaults to the last block height.
      * </pre>
      *
      * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -4675,125 +4683,140 @@ public final class TransactionOuterClass {
       }
     }
 
-    public static final int TRANSFER_FIELD_NUMBER = 3;
+    public static final int FEE_FIELD_NUMBER = 3;
+    private long fee_;
     /**
-     * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+     * <pre>
+     * The fee for the transaction in NanoPAC.
+     * </pre>
+     *
+     * <code>int64 fee = 3 [json_name = "fee"];</code>
+     * @return The fee.
+     */
+    @java.lang.Override
+    public long getFee() {
+      return fee_;
+    }
+
+    public static final int TRANSFER_FIELD_NUMBER = 4;
+    /**
+     * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
      * @return Whether the transfer field is set.
      */
     @java.lang.Override
     public boolean hasTransfer() {
-      return payloadCase_ == 3;
+      return payloadCase_ == 4;
     }
     /**
-     * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+     * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
      * @return The transfer.
      */
     @java.lang.Override
     public pactus.transaction.TransactionOuterClass.PayloadTransfer getTransfer() {
-      if (payloadCase_ == 3) {
+      if (payloadCase_ == 4) {
          return (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_;
       }
       return pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
     }
     /**
-     * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+     * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
      */
     @java.lang.Override
     public pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder getTransferOrBuilder() {
-      if (payloadCase_ == 3) {
+      if (payloadCase_ == 4) {
          return (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_;
       }
       return pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
     }
 
-    public static final int BOND_FIELD_NUMBER = 4;
+    public static final int BOND_FIELD_NUMBER = 5;
     /**
-     * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+     * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
      * @return Whether the bond field is set.
      */
     @java.lang.Override
     public boolean hasBond() {
-      return payloadCase_ == 4;
+      return payloadCase_ == 5;
     }
     /**
-     * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+     * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
      * @return The bond.
      */
     @java.lang.Override
     public pactus.transaction.TransactionOuterClass.PayloadBond getBond() {
-      if (payloadCase_ == 4) {
+      if (payloadCase_ == 5) {
          return (pactus.transaction.TransactionOuterClass.PayloadBond) payload_;
       }
       return pactus.transaction.TransactionOuterClass.PayloadBond.getDefaultInstance();
     }
     /**
-     * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+     * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
      */
     @java.lang.Override
     public pactus.transaction.TransactionOuterClass.PayloadBondOrBuilder getBondOrBuilder() {
-      if (payloadCase_ == 4) {
+      if (payloadCase_ == 5) {
          return (pactus.transaction.TransactionOuterClass.PayloadBond) payload_;
       }
       return pactus.transaction.TransactionOuterClass.PayloadBond.getDefaultInstance();
     }
 
-    public static final int UNBOND_FIELD_NUMBER = 5;
+    public static final int UNBOND_FIELD_NUMBER = 6;
     /**
-     * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+     * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
      * @return Whether the unbond field is set.
      */
     @java.lang.Override
     public boolean hasUnbond() {
-      return payloadCase_ == 5;
+      return payloadCase_ == 6;
     }
     /**
-     * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+     * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
      * @return The unbond.
      */
     @java.lang.Override
     public pactus.transaction.TransactionOuterClass.PayloadUnbond getUnbond() {
-      if (payloadCase_ == 5) {
+      if (payloadCase_ == 6) {
          return (pactus.transaction.TransactionOuterClass.PayloadUnbond) payload_;
       }
       return pactus.transaction.TransactionOuterClass.PayloadUnbond.getDefaultInstance();
     }
     /**
-     * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+     * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
      */
     @java.lang.Override
     public pactus.transaction.TransactionOuterClass.PayloadUnbondOrBuilder getUnbondOrBuilder() {
-      if (payloadCase_ == 5) {
+      if (payloadCase_ == 6) {
          return (pactus.transaction.TransactionOuterClass.PayloadUnbond) payload_;
       }
       return pactus.transaction.TransactionOuterClass.PayloadUnbond.getDefaultInstance();
     }
 
-    public static final int WITHDRAW_FIELD_NUMBER = 6;
+    public static final int WITHDRAW_FIELD_NUMBER = 7;
     /**
-     * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+     * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
      * @return Whether the withdraw field is set.
      */
     @java.lang.Override
     public boolean hasWithdraw() {
-      return payloadCase_ == 6;
+      return payloadCase_ == 7;
     }
     /**
-     * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+     * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
      * @return The withdraw.
      */
     @java.lang.Override
     public pactus.transaction.TransactionOuterClass.PayloadWithdraw getWithdraw() {
-      if (payloadCase_ == 6) {
+      if (payloadCase_ == 7) {
          return (pactus.transaction.TransactionOuterClass.PayloadWithdraw) payload_;
       }
       return pactus.transaction.TransactionOuterClass.PayloadWithdraw.getDefaultInstance();
     }
     /**
-     * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+     * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
      */
     @java.lang.Override
     public pactus.transaction.TransactionOuterClass.PayloadWithdrawOrBuilder getWithdrawOrBuilder() {
-      if (payloadCase_ == 6) {
+      if (payloadCase_ == 7) {
          return (pactus.transaction.TransactionOuterClass.PayloadWithdraw) payload_;
       }
       return pactus.transaction.TransactionOuterClass.PayloadWithdraw.getDefaultInstance();
@@ -4819,17 +4842,20 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, memo_);
       }
-      if (payloadCase_ == 3) {
-        output.writeMessage(3, (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_);
+      if (fee_ != 0L) {
+        output.writeInt64(3, fee_);
       }
       if (payloadCase_ == 4) {
-        output.writeMessage(4, (pactus.transaction.TransactionOuterClass.PayloadBond) payload_);
+        output.writeMessage(4, (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_);
       }
       if (payloadCase_ == 5) {
-        output.writeMessage(5, (pactus.transaction.TransactionOuterClass.PayloadUnbond) payload_);
+        output.writeMessage(5, (pactus.transaction.TransactionOuterClass.PayloadBond) payload_);
       }
       if (payloadCase_ == 6) {
-        output.writeMessage(6, (pactus.transaction.TransactionOuterClass.PayloadWithdraw) payload_);
+        output.writeMessage(6, (pactus.transaction.TransactionOuterClass.PayloadUnbond) payload_);
+      }
+      if (payloadCase_ == 7) {
+        output.writeMessage(7, (pactus.transaction.TransactionOuterClass.PayloadWithdraw) payload_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -4847,21 +4873,25 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(memo_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, memo_);
       }
-      if (payloadCase_ == 3) {
+      if (fee_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_);
+          .computeInt64Size(3, fee_);
       }
       if (payloadCase_ == 4) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(4, (pactus.transaction.TransactionOuterClass.PayloadBond) payload_);
+          .computeMessageSize(4, (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_);
       }
       if (payloadCase_ == 5) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(5, (pactus.transaction.TransactionOuterClass.PayloadUnbond) payload_);
+          .computeMessageSize(5, (pactus.transaction.TransactionOuterClass.PayloadBond) payload_);
       }
       if (payloadCase_ == 6) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(6, (pactus.transaction.TransactionOuterClass.PayloadWithdraw) payload_);
+          .computeMessageSize(6, (pactus.transaction.TransactionOuterClass.PayloadUnbond) payload_);
+      }
+      if (payloadCase_ == 7) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(7, (pactus.transaction.TransactionOuterClass.PayloadWithdraw) payload_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -4882,21 +4912,23 @@ public final class TransactionOuterClass {
           != other.getLockTime()) return false;
       if (!getMemo()
           .equals(other.getMemo())) return false;
+      if (getFee()
+          != other.getFee()) return false;
       if (!getPayloadCase().equals(other.getPayloadCase())) return false;
       switch (payloadCase_) {
-        case 3:
+        case 4:
           if (!getTransfer()
               .equals(other.getTransfer())) return false;
           break;
-        case 4:
+        case 5:
           if (!getBond()
               .equals(other.getBond())) return false;
           break;
-        case 5:
+        case 6:
           if (!getUnbond()
               .equals(other.getUnbond())) return false;
           break;
-        case 6:
+        case 7:
           if (!getWithdraw()
               .equals(other.getWithdraw())) return false;
           break;
@@ -4918,20 +4950,23 @@ public final class TransactionOuterClass {
       hash = (53 * hash) + getLockTime();
       hash = (37 * hash) + MEMO_FIELD_NUMBER;
       hash = (53 * hash) + getMemo().hashCode();
+      hash = (37 * hash) + FEE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getFee());
       switch (payloadCase_) {
-        case 3:
+        case 4:
           hash = (37 * hash) + TRANSFER_FIELD_NUMBER;
           hash = (53 * hash) + getTransfer().hashCode();
           break;
-        case 4:
+        case 5:
           hash = (37 * hash) + BOND_FIELD_NUMBER;
           hash = (53 * hash) + getBond().hashCode();
           break;
-        case 5:
+        case 6:
           hash = (37 * hash) + UNBOND_FIELD_NUMBER;
           hash = (53 * hash) + getUnbond().hashCode();
           break;
-        case 6:
+        case 7:
           hash = (37 * hash) + WITHDRAW_FIELD_NUMBER;
           hash = (53 * hash) + getWithdraw().hashCode();
           break;
@@ -5074,6 +5109,8 @@ public final class TransactionOuterClass {
 
         memo_ = "";
 
+        fee_ = 0L;
+
         if (transferBuilder_ != null) {
           transferBuilder_.clear();
         }
@@ -5116,28 +5153,29 @@ public final class TransactionOuterClass {
         pactus.transaction.TransactionOuterClass.GetRawTransactionRequest result = new pactus.transaction.TransactionOuterClass.GetRawTransactionRequest(this);
         result.lockTime_ = lockTime_;
         result.memo_ = memo_;
-        if (payloadCase_ == 3) {
+        result.fee_ = fee_;
+        if (payloadCase_ == 4) {
           if (transferBuilder_ == null) {
             result.payload_ = payload_;
           } else {
             result.payload_ = transferBuilder_.build();
           }
         }
-        if (payloadCase_ == 4) {
+        if (payloadCase_ == 5) {
           if (bondBuilder_ == null) {
             result.payload_ = payload_;
           } else {
             result.payload_ = bondBuilder_.build();
           }
         }
-        if (payloadCase_ == 5) {
+        if (payloadCase_ == 6) {
           if (unbondBuilder_ == null) {
             result.payload_ = payload_;
           } else {
             result.payload_ = unbondBuilder_.build();
           }
         }
-        if (payloadCase_ == 6) {
+        if (payloadCase_ == 7) {
           if (withdrawBuilder_ == null) {
             result.payload_ = payload_;
           } else {
@@ -5200,6 +5238,9 @@ public final class TransactionOuterClass {
           memo_ = other.memo_;
           onChanged();
         }
+        if (other.getFee() != 0L) {
+          setFee(other.getFee());
+        }
         switch (other.getPayloadCase()) {
           case TRANSFER: {
             mergeTransfer(other.getTransfer());
@@ -5257,34 +5298,39 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 18
-              case 26: {
-                input.readMessage(
-                    getTransferFieldBuilder().getBuilder(),
-                    extensionRegistry);
-                payloadCase_ = 3;
+              case 24: {
+                fee_ = input.readInt64();
+
                 break;
-              } // case 26
+              } // case 24
               case 34: {
                 input.readMessage(
-                    getBondFieldBuilder().getBuilder(),
+                    getTransferFieldBuilder().getBuilder(),
                     extensionRegistry);
                 payloadCase_ = 4;
                 break;
               } // case 34
               case 42: {
                 input.readMessage(
-                    getUnbondFieldBuilder().getBuilder(),
+                    getBondFieldBuilder().getBuilder(),
                     extensionRegistry);
                 payloadCase_ = 5;
                 break;
               } // case 42
               case 50: {
                 input.readMessage(
-                    getWithdrawFieldBuilder().getBuilder(),
+                    getUnbondFieldBuilder().getBuilder(),
                     extensionRegistry);
                 payloadCase_ = 6;
                 break;
               } // case 50
+              case 58: {
+                input.readMessage(
+                    getWithdrawFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                payloadCase_ = 7;
+                break;
+              } // case 58
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -5319,8 +5365,7 @@ public final class TransactionOuterClass {
       private int lockTime_ ;
       /**
        * <pre>
-       * The lock time for the transaction. If not set, defaults to the last block
-       * height.
+       * The lock time for the transaction. If not set, defaults to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -5332,8 +5377,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The lock time for the transaction. If not set, defaults to the last block
-       * height.
+       * The lock time for the transaction. If not set, defaults to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -5348,8 +5392,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The lock time for the transaction. If not set, defaults to the last block
-       * height.
+       * The lock time for the transaction. If not set, defaults to the last block height.
        * </pre>
        *
        * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
@@ -5458,36 +5501,79 @@ public final class TransactionOuterClass {
         return this;
       }
 
+      private long fee_ ;
+      /**
+       * <pre>
+       * The fee for the transaction in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 fee = 3 [json_name = "fee"];</code>
+       * @return The fee.
+       */
+      @java.lang.Override
+      public long getFee() {
+        return fee_;
+      }
+      /**
+       * <pre>
+       * The fee for the transaction in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 fee = 3 [json_name = "fee"];</code>
+       * @param value The fee to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFee(long value) {
+        
+        fee_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The fee for the transaction in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 fee = 3 [json_name = "fee"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFee() {
+        
+        fee_ = 0L;
+        onChanged();
+        return this;
+      }
+
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadTransfer, pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder, pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder> transferBuilder_;
       /**
-       * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
        * @return Whether the transfer field is set.
        */
       @java.lang.Override
       public boolean hasTransfer() {
-        return payloadCase_ == 3;
+        return payloadCase_ == 4;
       }
       /**
-       * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
        * @return The transfer.
        */
       @java.lang.Override
       public pactus.transaction.TransactionOuterClass.PayloadTransfer getTransfer() {
         if (transferBuilder_ == null) {
-          if (payloadCase_ == 3) {
+          if (payloadCase_ == 4) {
             return (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_;
           }
           return pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
         } else {
-          if (payloadCase_ == 3) {
+          if (payloadCase_ == 4) {
             return transferBuilder_.getMessage();
           }
           return pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
         }
       }
       /**
-       * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
        */
       public Builder setTransfer(pactus.transaction.TransactionOuterClass.PayloadTransfer value) {
         if (transferBuilder_ == null) {
@@ -5499,11 +5585,11 @@ public final class TransactionOuterClass {
         } else {
           transferBuilder_.setMessage(value);
         }
-        payloadCase_ = 3;
+        payloadCase_ = 4;
         return this;
       }
       /**
-       * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
        */
       public Builder setTransfer(
           pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder builderForValue) {
@@ -5513,15 +5599,15 @@ public final class TransactionOuterClass {
         } else {
           transferBuilder_.setMessage(builderForValue.build());
         }
-        payloadCase_ = 3;
+        payloadCase_ = 4;
         return this;
       }
       /**
-       * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
        */
       public Builder mergeTransfer(pactus.transaction.TransactionOuterClass.PayloadTransfer value) {
         if (transferBuilder_ == null) {
-          if (payloadCase_ == 3 &&
+          if (payloadCase_ == 4 &&
               payload_ != pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance()) {
             payload_ = pactus.transaction.TransactionOuterClass.PayloadTransfer.newBuilder((pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_)
                 .mergeFrom(value).buildPartial();
@@ -5530,27 +5616,27 @@ public final class TransactionOuterClass {
           }
           onChanged();
         } else {
-          if (payloadCase_ == 3) {
+          if (payloadCase_ == 4) {
             transferBuilder_.mergeFrom(value);
           } else {
             transferBuilder_.setMessage(value);
           }
         }
-        payloadCase_ = 3;
+        payloadCase_ = 4;
         return this;
       }
       /**
-       * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
        */
       public Builder clearTransfer() {
         if (transferBuilder_ == null) {
-          if (payloadCase_ == 3) {
+          if (payloadCase_ == 4) {
             payloadCase_ = 0;
             payload_ = null;
             onChanged();
           }
         } else {
-          if (payloadCase_ == 3) {
+          if (payloadCase_ == 4) {
             payloadCase_ = 0;
             payload_ = null;
           }
@@ -5559,33 +5645,33 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
        */
       public pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder getTransferBuilder() {
         return getTransferFieldBuilder().getBuilder();
       }
       /**
-       * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
        */
       @java.lang.Override
       public pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder getTransferOrBuilder() {
-        if ((payloadCase_ == 3) && (transferBuilder_ != null)) {
+        if ((payloadCase_ == 4) && (transferBuilder_ != null)) {
           return transferBuilder_.getMessageOrBuilder();
         } else {
-          if (payloadCase_ == 3) {
+          if (payloadCase_ == 4) {
             return (pactus.transaction.TransactionOuterClass.PayloadTransfer) payload_;
           }
           return pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
         }
       }
       /**
-       * <code>.pactus.PayloadTransfer transfer = 3 [json_name = "transfer"];</code>
+       * <code>.pactus.PayloadTransfer transfer = 4 [json_name = "transfer"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadTransfer, pactus.transaction.TransactionOuterClass.PayloadTransfer.Builder, pactus.transaction.TransactionOuterClass.PayloadTransferOrBuilder> 
           getTransferFieldBuilder() {
         if (transferBuilder_ == null) {
-          if (!(payloadCase_ == 3)) {
+          if (!(payloadCase_ == 4)) {
             payload_ = pactus.transaction.TransactionOuterClass.PayloadTransfer.getDefaultInstance();
           }
           transferBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -5595,7 +5681,7 @@ public final class TransactionOuterClass {
                   isClean());
           payload_ = null;
         }
-        payloadCase_ = 3;
+        payloadCase_ = 4;
         onChanged();;
         return transferBuilder_;
       }
@@ -5603,33 +5689,33 @@ public final class TransactionOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadBond, pactus.transaction.TransactionOuterClass.PayloadBond.Builder, pactus.transaction.TransactionOuterClass.PayloadBondOrBuilder> bondBuilder_;
       /**
-       * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+       * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
        * @return Whether the bond field is set.
        */
       @java.lang.Override
       public boolean hasBond() {
-        return payloadCase_ == 4;
+        return payloadCase_ == 5;
       }
       /**
-       * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+       * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
        * @return The bond.
        */
       @java.lang.Override
       public pactus.transaction.TransactionOuterClass.PayloadBond getBond() {
         if (bondBuilder_ == null) {
-          if (payloadCase_ == 4) {
+          if (payloadCase_ == 5) {
             return (pactus.transaction.TransactionOuterClass.PayloadBond) payload_;
           }
           return pactus.transaction.TransactionOuterClass.PayloadBond.getDefaultInstance();
         } else {
-          if (payloadCase_ == 4) {
+          if (payloadCase_ == 5) {
             return bondBuilder_.getMessage();
           }
           return pactus.transaction.TransactionOuterClass.PayloadBond.getDefaultInstance();
         }
       }
       /**
-       * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+       * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
        */
       public Builder setBond(pactus.transaction.TransactionOuterClass.PayloadBond value) {
         if (bondBuilder_ == null) {
@@ -5641,11 +5727,11 @@ public final class TransactionOuterClass {
         } else {
           bondBuilder_.setMessage(value);
         }
-        payloadCase_ = 4;
+        payloadCase_ = 5;
         return this;
       }
       /**
-       * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+       * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
        */
       public Builder setBond(
           pactus.transaction.TransactionOuterClass.PayloadBond.Builder builderForValue) {
@@ -5655,15 +5741,15 @@ public final class TransactionOuterClass {
         } else {
           bondBuilder_.setMessage(builderForValue.build());
         }
-        payloadCase_ = 4;
+        payloadCase_ = 5;
         return this;
       }
       /**
-       * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+       * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
        */
       public Builder mergeBond(pactus.transaction.TransactionOuterClass.PayloadBond value) {
         if (bondBuilder_ == null) {
-          if (payloadCase_ == 4 &&
+          if (payloadCase_ == 5 &&
               payload_ != pactus.transaction.TransactionOuterClass.PayloadBond.getDefaultInstance()) {
             payload_ = pactus.transaction.TransactionOuterClass.PayloadBond.newBuilder((pactus.transaction.TransactionOuterClass.PayloadBond) payload_)
                 .mergeFrom(value).buildPartial();
@@ -5672,27 +5758,27 @@ public final class TransactionOuterClass {
           }
           onChanged();
         } else {
-          if (payloadCase_ == 4) {
+          if (payloadCase_ == 5) {
             bondBuilder_.mergeFrom(value);
           } else {
             bondBuilder_.setMessage(value);
           }
         }
-        payloadCase_ = 4;
+        payloadCase_ = 5;
         return this;
       }
       /**
-       * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+       * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
        */
       public Builder clearBond() {
         if (bondBuilder_ == null) {
-          if (payloadCase_ == 4) {
+          if (payloadCase_ == 5) {
             payloadCase_ = 0;
             payload_ = null;
             onChanged();
           }
         } else {
-          if (payloadCase_ == 4) {
+          if (payloadCase_ == 5) {
             payloadCase_ = 0;
             payload_ = null;
           }
@@ -5701,33 +5787,33 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+       * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
        */
       public pactus.transaction.TransactionOuterClass.PayloadBond.Builder getBondBuilder() {
         return getBondFieldBuilder().getBuilder();
       }
       /**
-       * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+       * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
        */
       @java.lang.Override
       public pactus.transaction.TransactionOuterClass.PayloadBondOrBuilder getBondOrBuilder() {
-        if ((payloadCase_ == 4) && (bondBuilder_ != null)) {
+        if ((payloadCase_ == 5) && (bondBuilder_ != null)) {
           return bondBuilder_.getMessageOrBuilder();
         } else {
-          if (payloadCase_ == 4) {
+          if (payloadCase_ == 5) {
             return (pactus.transaction.TransactionOuterClass.PayloadBond) payload_;
           }
           return pactus.transaction.TransactionOuterClass.PayloadBond.getDefaultInstance();
         }
       }
       /**
-       * <code>.pactus.PayloadBond bond = 4 [json_name = "bond"];</code>
+       * <code>.pactus.PayloadBond bond = 5 [json_name = "bond"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadBond, pactus.transaction.TransactionOuterClass.PayloadBond.Builder, pactus.transaction.TransactionOuterClass.PayloadBondOrBuilder> 
           getBondFieldBuilder() {
         if (bondBuilder_ == null) {
-          if (!(payloadCase_ == 4)) {
+          if (!(payloadCase_ == 5)) {
             payload_ = pactus.transaction.TransactionOuterClass.PayloadBond.getDefaultInstance();
           }
           bondBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -5737,7 +5823,7 @@ public final class TransactionOuterClass {
                   isClean());
           payload_ = null;
         }
-        payloadCase_ = 4;
+        payloadCase_ = 5;
         onChanged();;
         return bondBuilder_;
       }
@@ -5745,33 +5831,33 @@ public final class TransactionOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadUnbond, pactus.transaction.TransactionOuterClass.PayloadUnbond.Builder, pactus.transaction.TransactionOuterClass.PayloadUnbondOrBuilder> unbondBuilder_;
       /**
-       * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+       * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
        * @return Whether the unbond field is set.
        */
       @java.lang.Override
       public boolean hasUnbond() {
-        return payloadCase_ == 5;
+        return payloadCase_ == 6;
       }
       /**
-       * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+       * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
        * @return The unbond.
        */
       @java.lang.Override
       public pactus.transaction.TransactionOuterClass.PayloadUnbond getUnbond() {
         if (unbondBuilder_ == null) {
-          if (payloadCase_ == 5) {
+          if (payloadCase_ == 6) {
             return (pactus.transaction.TransactionOuterClass.PayloadUnbond) payload_;
           }
           return pactus.transaction.TransactionOuterClass.PayloadUnbond.getDefaultInstance();
         } else {
-          if (payloadCase_ == 5) {
+          if (payloadCase_ == 6) {
             return unbondBuilder_.getMessage();
           }
           return pactus.transaction.TransactionOuterClass.PayloadUnbond.getDefaultInstance();
         }
       }
       /**
-       * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+       * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
        */
       public Builder setUnbond(pactus.transaction.TransactionOuterClass.PayloadUnbond value) {
         if (unbondBuilder_ == null) {
@@ -5783,11 +5869,11 @@ public final class TransactionOuterClass {
         } else {
           unbondBuilder_.setMessage(value);
         }
-        payloadCase_ = 5;
+        payloadCase_ = 6;
         return this;
       }
       /**
-       * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+       * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
        */
       public Builder setUnbond(
           pactus.transaction.TransactionOuterClass.PayloadUnbond.Builder builderForValue) {
@@ -5797,15 +5883,15 @@ public final class TransactionOuterClass {
         } else {
           unbondBuilder_.setMessage(builderForValue.build());
         }
-        payloadCase_ = 5;
+        payloadCase_ = 6;
         return this;
       }
       /**
-       * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+       * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
        */
       public Builder mergeUnbond(pactus.transaction.TransactionOuterClass.PayloadUnbond value) {
         if (unbondBuilder_ == null) {
-          if (payloadCase_ == 5 &&
+          if (payloadCase_ == 6 &&
               payload_ != pactus.transaction.TransactionOuterClass.PayloadUnbond.getDefaultInstance()) {
             payload_ = pactus.transaction.TransactionOuterClass.PayloadUnbond.newBuilder((pactus.transaction.TransactionOuterClass.PayloadUnbond) payload_)
                 .mergeFrom(value).buildPartial();
@@ -5814,27 +5900,27 @@ public final class TransactionOuterClass {
           }
           onChanged();
         } else {
-          if (payloadCase_ == 5) {
+          if (payloadCase_ == 6) {
             unbondBuilder_.mergeFrom(value);
           } else {
             unbondBuilder_.setMessage(value);
           }
         }
-        payloadCase_ = 5;
+        payloadCase_ = 6;
         return this;
       }
       /**
-       * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+       * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
        */
       public Builder clearUnbond() {
         if (unbondBuilder_ == null) {
-          if (payloadCase_ == 5) {
+          if (payloadCase_ == 6) {
             payloadCase_ = 0;
             payload_ = null;
             onChanged();
           }
         } else {
-          if (payloadCase_ == 5) {
+          if (payloadCase_ == 6) {
             payloadCase_ = 0;
             payload_ = null;
           }
@@ -5843,33 +5929,33 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+       * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
        */
       public pactus.transaction.TransactionOuterClass.PayloadUnbond.Builder getUnbondBuilder() {
         return getUnbondFieldBuilder().getBuilder();
       }
       /**
-       * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+       * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
        */
       @java.lang.Override
       public pactus.transaction.TransactionOuterClass.PayloadUnbondOrBuilder getUnbondOrBuilder() {
-        if ((payloadCase_ == 5) && (unbondBuilder_ != null)) {
+        if ((payloadCase_ == 6) && (unbondBuilder_ != null)) {
           return unbondBuilder_.getMessageOrBuilder();
         } else {
-          if (payloadCase_ == 5) {
+          if (payloadCase_ == 6) {
             return (pactus.transaction.TransactionOuterClass.PayloadUnbond) payload_;
           }
           return pactus.transaction.TransactionOuterClass.PayloadUnbond.getDefaultInstance();
         }
       }
       /**
-       * <code>.pactus.PayloadUnbond unbond = 5 [json_name = "unbond"];</code>
+       * <code>.pactus.PayloadUnbond unbond = 6 [json_name = "unbond"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadUnbond, pactus.transaction.TransactionOuterClass.PayloadUnbond.Builder, pactus.transaction.TransactionOuterClass.PayloadUnbondOrBuilder> 
           getUnbondFieldBuilder() {
         if (unbondBuilder_ == null) {
-          if (!(payloadCase_ == 5)) {
+          if (!(payloadCase_ == 6)) {
             payload_ = pactus.transaction.TransactionOuterClass.PayloadUnbond.getDefaultInstance();
           }
           unbondBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -5879,7 +5965,7 @@ public final class TransactionOuterClass {
                   isClean());
           payload_ = null;
         }
-        payloadCase_ = 5;
+        payloadCase_ = 6;
         onChanged();;
         return unbondBuilder_;
       }
@@ -5887,33 +5973,33 @@ public final class TransactionOuterClass {
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadWithdraw, pactus.transaction.TransactionOuterClass.PayloadWithdraw.Builder, pactus.transaction.TransactionOuterClass.PayloadWithdrawOrBuilder> withdrawBuilder_;
       /**
-       * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+       * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
        * @return Whether the withdraw field is set.
        */
       @java.lang.Override
       public boolean hasWithdraw() {
-        return payloadCase_ == 6;
+        return payloadCase_ == 7;
       }
       /**
-       * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+       * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
        * @return The withdraw.
        */
       @java.lang.Override
       public pactus.transaction.TransactionOuterClass.PayloadWithdraw getWithdraw() {
         if (withdrawBuilder_ == null) {
-          if (payloadCase_ == 6) {
+          if (payloadCase_ == 7) {
             return (pactus.transaction.TransactionOuterClass.PayloadWithdraw) payload_;
           }
           return pactus.transaction.TransactionOuterClass.PayloadWithdraw.getDefaultInstance();
         } else {
-          if (payloadCase_ == 6) {
+          if (payloadCase_ == 7) {
             return withdrawBuilder_.getMessage();
           }
           return pactus.transaction.TransactionOuterClass.PayloadWithdraw.getDefaultInstance();
         }
       }
       /**
-       * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+       * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
        */
       public Builder setWithdraw(pactus.transaction.TransactionOuterClass.PayloadWithdraw value) {
         if (withdrawBuilder_ == null) {
@@ -5925,11 +6011,11 @@ public final class TransactionOuterClass {
         } else {
           withdrawBuilder_.setMessage(value);
         }
-        payloadCase_ = 6;
+        payloadCase_ = 7;
         return this;
       }
       /**
-       * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+       * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
        */
       public Builder setWithdraw(
           pactus.transaction.TransactionOuterClass.PayloadWithdraw.Builder builderForValue) {
@@ -5939,15 +6025,15 @@ public final class TransactionOuterClass {
         } else {
           withdrawBuilder_.setMessage(builderForValue.build());
         }
-        payloadCase_ = 6;
+        payloadCase_ = 7;
         return this;
       }
       /**
-       * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+       * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
        */
       public Builder mergeWithdraw(pactus.transaction.TransactionOuterClass.PayloadWithdraw value) {
         if (withdrawBuilder_ == null) {
-          if (payloadCase_ == 6 &&
+          if (payloadCase_ == 7 &&
               payload_ != pactus.transaction.TransactionOuterClass.PayloadWithdraw.getDefaultInstance()) {
             payload_ = pactus.transaction.TransactionOuterClass.PayloadWithdraw.newBuilder((pactus.transaction.TransactionOuterClass.PayloadWithdraw) payload_)
                 .mergeFrom(value).buildPartial();
@@ -5956,27 +6042,27 @@ public final class TransactionOuterClass {
           }
           onChanged();
         } else {
-          if (payloadCase_ == 6) {
+          if (payloadCase_ == 7) {
             withdrawBuilder_.mergeFrom(value);
           } else {
             withdrawBuilder_.setMessage(value);
           }
         }
-        payloadCase_ = 6;
+        payloadCase_ = 7;
         return this;
       }
       /**
-       * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+       * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
        */
       public Builder clearWithdraw() {
         if (withdrawBuilder_ == null) {
-          if (payloadCase_ == 6) {
+          if (payloadCase_ == 7) {
             payloadCase_ = 0;
             payload_ = null;
             onChanged();
           }
         } else {
-          if (payloadCase_ == 6) {
+          if (payloadCase_ == 7) {
             payloadCase_ = 0;
             payload_ = null;
           }
@@ -5985,33 +6071,33 @@ public final class TransactionOuterClass {
         return this;
       }
       /**
-       * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+       * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
        */
       public pactus.transaction.TransactionOuterClass.PayloadWithdraw.Builder getWithdrawBuilder() {
         return getWithdrawFieldBuilder().getBuilder();
       }
       /**
-       * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+       * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
        */
       @java.lang.Override
       public pactus.transaction.TransactionOuterClass.PayloadWithdrawOrBuilder getWithdrawOrBuilder() {
-        if ((payloadCase_ == 6) && (withdrawBuilder_ != null)) {
+        if ((payloadCase_ == 7) && (withdrawBuilder_ != null)) {
           return withdrawBuilder_.getMessageOrBuilder();
         } else {
-          if (payloadCase_ == 6) {
+          if (payloadCase_ == 7) {
             return (pactus.transaction.TransactionOuterClass.PayloadWithdraw) payload_;
           }
           return pactus.transaction.TransactionOuterClass.PayloadWithdraw.getDefaultInstance();
         }
       }
       /**
-       * <code>.pactus.PayloadWithdraw withdraw = 6 [json_name = "withdraw"];</code>
+       * <code>.pactus.PayloadWithdraw withdraw = 7 [json_name = "withdraw"];</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           pactus.transaction.TransactionOuterClass.PayloadWithdraw, pactus.transaction.TransactionOuterClass.PayloadWithdraw.Builder, pactus.transaction.TransactionOuterClass.PayloadWithdrawOrBuilder> 
           getWithdrawFieldBuilder() {
         if (withdrawBuilder_ == null) {
-          if (!(payloadCase_ == 6)) {
+          if (!(payloadCase_ == 7)) {
             payload_ = pactus.transaction.TransactionOuterClass.PayloadWithdraw.getDefaultInstance();
           }
           withdrawBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -6021,7 +6107,7 @@ public final class TransactionOuterClass {
                   isClean());
           payload_ = null;
         }
-        payloadCase_ = 6;
+        payloadCase_ = 7;
         onChanged();;
         return withdrawBuilder_;
       }
@@ -10890,6 +10976,26 @@ public final class TransactionOuterClass {
      */
     com.google.protobuf.ByteString
         getRawTransactionBytes();
+
+    /**
+     * <pre>
+     * The unique ID of the transaction.
+     * </pre>
+     *
+     * <code>string id = 2 [json_name = "id"];</code>
+     * @return The id.
+     */
+    java.lang.String getId();
+    /**
+     * <pre>
+     * The unique ID of the transaction.
+     * </pre>
+     *
+     * <code>string id = 2 [json_name = "id"];</code>
+     * @return The bytes for id.
+     */
+    com.google.protobuf.ByteString
+        getIdBytes();
   }
   /**
    * <pre>
@@ -10909,6 +11015,7 @@ public final class TransactionOuterClass {
     }
     private GetRawTransactionResponse() {
       rawTransaction_ = "";
+      id_ = "";
     }
 
     @java.lang.Override
@@ -10982,6 +11089,52 @@ public final class TransactionOuterClass {
       }
     }
 
+    public static final int ID_FIELD_NUMBER = 2;
+    private volatile java.lang.Object id_;
+    /**
+     * <pre>
+     * The unique ID of the transaction.
+     * </pre>
+     *
+     * <code>string id = 2 [json_name = "id"];</code>
+     * @return The id.
+     */
+    @java.lang.Override
+    public java.lang.String getId() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        id_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The unique ID of the transaction.
+     * </pre>
+     *
+     * <code>string id = 2 [json_name = "id"];</code>
+     * @return The bytes for id.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getIdBytes() {
+      java.lang.Object ref = id_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        id_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -10999,6 +11152,9 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(rawTransaction_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, rawTransaction_);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, id_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -11010,6 +11166,9 @@ public final class TransactionOuterClass {
       size = 0;
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(rawTransaction_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, rawTransaction_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(id_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, id_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -11028,6 +11187,8 @@ public final class TransactionOuterClass {
 
       if (!getRawTransaction()
           .equals(other.getRawTransaction())) return false;
+      if (!getId()
+          .equals(other.getId())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -11041,6 +11202,8 @@ public final class TransactionOuterClass {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + RAW_TRANSACTION_FIELD_NUMBER;
       hash = (53 * hash) + getRawTransaction().hashCode();
+      hash = (37 * hash) + ID_FIELD_NUMBER;
+      hash = (53 * hash) + getId().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -11175,6 +11338,8 @@ public final class TransactionOuterClass {
         super.clear();
         rawTransaction_ = "";
 
+        id_ = "";
+
         return this;
       }
 
@@ -11202,6 +11367,7 @@ public final class TransactionOuterClass {
       public pactus.transaction.TransactionOuterClass.GetRawTransactionResponse buildPartial() {
         pactus.transaction.TransactionOuterClass.GetRawTransactionResponse result = new pactus.transaction.TransactionOuterClass.GetRawTransactionResponse(this);
         result.rawTransaction_ = rawTransaction_;
+        result.id_ = id_;
         onBuilt();
         return result;
       }
@@ -11254,6 +11420,10 @@ public final class TransactionOuterClass {
           rawTransaction_ = other.rawTransaction_;
           onChanged();
         }
+        if (!other.getId().isEmpty()) {
+          id_ = other.id_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -11285,6 +11455,11 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 10
+              case 18: {
+                id_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 18
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -11393,6 +11568,102 @@ public final class TransactionOuterClass {
   checkByteStringIsUtf8(value);
         
         rawTransaction_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object id_ = "";
+      /**
+       * <pre>
+       * The unique ID of the transaction.
+       * </pre>
+       *
+       * <code>string id = 2 [json_name = "id"];</code>
+       * @return The id.
+       */
+      public java.lang.String getId() {
+        java.lang.Object ref = id_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          id_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The unique ID of the transaction.
+       * </pre>
+       *
+       * <code>string id = 2 [json_name = "id"];</code>
+       * @return The bytes for id.
+       */
+      public com.google.protobuf.ByteString
+          getIdBytes() {
+        java.lang.Object ref = id_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          id_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The unique ID of the transaction.
+       * </pre>
+       *
+       * <code>string id = 2 [json_name = "id"];</code>
+       * @param value The id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setId(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        id_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The unique ID of the transaction.
+       * </pre>
+       *
+       * <code>string id = 2 [json_name = "id"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearId() {
+        
+        id_ = getDefaultInstance().getId();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The unique ID of the transaction.
+       * </pre>
+       *
+       * <code>string id = 2 [json_name = "id"];</code>
+       * @param value The bytes for id to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIdBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        id_ = value;
         onChanged();
         return this;
       }
@@ -11513,16 +11784,6 @@ public final class TransactionOuterClass {
      * @return The amount.
      */
     long getAmount();
-
-    /**
-     * <pre>
-     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-     * </pre>
-     *
-     * <code>int64 fee = 4 [json_name = "fee"];</code>
-     * @return The fee.
-     */
-    long getFee();
   }
   /**
    * <pre>
@@ -11677,21 +11938,6 @@ public final class TransactionOuterClass {
       return amount_;
     }
 
-    public static final int FEE_FIELD_NUMBER = 4;
-    private long fee_;
-    /**
-     * <pre>
-     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-     * </pre>
-     *
-     * <code>int64 fee = 4 [json_name = "fee"];</code>
-     * @return The fee.
-     */
-    @java.lang.Override
-    public long getFee() {
-      return fee_;
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -11715,9 +11961,6 @@ public final class TransactionOuterClass {
       if (amount_ != 0L) {
         output.writeInt64(3, amount_);
       }
-      if (fee_ != 0L) {
-        output.writeInt64(4, fee_);
-      }
       getUnknownFields().writeTo(output);
     }
 
@@ -11736,10 +11979,6 @@ public final class TransactionOuterClass {
       if (amount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(3, amount_);
-      }
-      if (fee_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, fee_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -11762,8 +12001,6 @@ public final class TransactionOuterClass {
           .equals(other.getReceiver())) return false;
       if (getAmount()
           != other.getAmount()) return false;
-      if (getFee()
-          != other.getFee()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -11782,9 +12019,6 @@ public final class TransactionOuterClass {
       hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getAmount());
-      hash = (37 * hash) + FEE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getFee());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -11923,8 +12157,6 @@ public final class TransactionOuterClass {
 
         amount_ = 0L;
 
-        fee_ = 0L;
-
         return this;
       }
 
@@ -11954,7 +12186,6 @@ public final class TransactionOuterClass {
         result.sender_ = sender_;
         result.receiver_ = receiver_;
         result.amount_ = amount_;
-        result.fee_ = fee_;
         onBuilt();
         return result;
       }
@@ -12014,9 +12245,6 @@ public final class TransactionOuterClass {
         if (other.getAmount() != 0L) {
           setAmount(other.getAmount());
         }
-        if (other.getFee() != 0L) {
-          setFee(other.getFee());
-        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -12058,11 +12286,6 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 24
-              case 32: {
-                fee_ = input.readInt64();
-
-                break;
-              } // case 32
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -12313,49 +12536,6 @@ public final class TransactionOuterClass {
         onChanged();
         return this;
       }
-
-      private long fee_ ;
-      /**
-       * <pre>
-       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-       * </pre>
-       *
-       * <code>int64 fee = 4 [json_name = "fee"];</code>
-       * @return The fee.
-       */
-      @java.lang.Override
-      public long getFee() {
-        return fee_;
-      }
-      /**
-       * <pre>
-       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-       * </pre>
-       *
-       * <code>int64 fee = 4 [json_name = "fee"];</code>
-       * @param value The fee to set.
-       * @return This builder for chaining.
-       */
-      public Builder setFee(long value) {
-        
-        fee_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-       * </pre>
-       *
-       * <code>int64 fee = 4 [json_name = "fee"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearFee() {
-        
-        fee_ = 0L;
-        onChanged();
-        return this;
-      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -12493,16 +12673,6 @@ public final class TransactionOuterClass {
      */
     com.google.protobuf.ByteString
         getPublicKeyBytes();
-
-    /**
-     * <pre>
-     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-     * </pre>
-     *
-     * <code>int64 fee = 5 [json_name = "fee"];</code>
-     * @return The fee.
-     */
-    long getFee();
   }
   /**
    * <pre>
@@ -12704,21 +12874,6 @@ public final class TransactionOuterClass {
       }
     }
 
-    public static final int FEE_FIELD_NUMBER = 5;
-    private long fee_;
-    /**
-     * <pre>
-     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-     * </pre>
-     *
-     * <code>int64 fee = 5 [json_name = "fee"];</code>
-     * @return The fee.
-     */
-    @java.lang.Override
-    public long getFee() {
-      return fee_;
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -12745,9 +12900,6 @@ public final class TransactionOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 4, publicKey_);
       }
-      if (fee_ != 0L) {
-        output.writeInt64(5, fee_);
-      }
       getUnknownFields().writeTo(output);
     }
 
@@ -12769,10 +12921,6 @@ public final class TransactionOuterClass {
       }
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(4, publicKey_);
-      }
-      if (fee_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(5, fee_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -12797,8 +12945,6 @@ public final class TransactionOuterClass {
           != other.getStake()) return false;
       if (!getPublicKey()
           .equals(other.getPublicKey())) return false;
-      if (getFee()
-          != other.getFee()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -12819,9 +12965,6 @@ public final class TransactionOuterClass {
           getStake());
       hash = (37 * hash) + PUBLIC_KEY_FIELD_NUMBER;
       hash = (53 * hash) + getPublicKey().hashCode();
-      hash = (37 * hash) + FEE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getFee());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -12962,8 +13105,6 @@ public final class TransactionOuterClass {
 
         publicKey_ = "";
 
-        fee_ = 0L;
-
         return this;
       }
 
@@ -12994,7 +13135,6 @@ public final class TransactionOuterClass {
         result.receiver_ = receiver_;
         result.stake_ = stake_;
         result.publicKey_ = publicKey_;
-        result.fee_ = fee_;
         onBuilt();
         return result;
       }
@@ -13058,9 +13198,6 @@ public final class TransactionOuterClass {
           publicKey_ = other.publicKey_;
           onChanged();
         }
-        if (other.getFee() != 0L) {
-          setFee(other.getFee());
-        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -13107,11 +13244,6 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 34
-              case 40: {
-                fee_ = input.readInt64();
-
-                break;
-              } // case 40
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -13455,49 +13587,6 @@ public final class TransactionOuterClass {
   checkByteStringIsUtf8(value);
         
         publicKey_ = value;
-        onChanged();
-        return this;
-      }
-
-      private long fee_ ;
-      /**
-       * <pre>
-       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-       * </pre>
-       *
-       * <code>int64 fee = 5 [json_name = "fee"];</code>
-       * @return The fee.
-       */
-      @java.lang.Override
-      public long getFee() {
-        return fee_;
-      }
-      /**
-       * <pre>
-       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-       * </pre>
-       *
-       * <code>int64 fee = 5 [json_name = "fee"];</code>
-       * @param value The fee to set.
-       * @return This builder for chaining.
-       */
-      public Builder setFee(long value) {
-        
-        fee_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-       * </pre>
-       *
-       * <code>int64 fee = 5 [json_name = "fee"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearFee() {
-        
-        fee_ = 0L;
         onChanged();
         return this;
       }
@@ -14989,16 +15078,6 @@ public final class TransactionOuterClass {
      * @return The amount.
      */
     long getAmount();
-
-    /**
-     * <pre>
-     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-     * </pre>
-     *
-     * <code>int64 fee = 4 [json_name = "fee"];</code>
-     * @return The fee.
-     */
-    long getFee();
   }
   /**
    * <pre>
@@ -15153,21 +15232,6 @@ public final class TransactionOuterClass {
       return amount_;
     }
 
-    public static final int FEE_FIELD_NUMBER = 4;
-    private long fee_;
-    /**
-     * <pre>
-     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-     * </pre>
-     *
-     * <code>int64 fee = 4 [json_name = "fee"];</code>
-     * @return The fee.
-     */
-    @java.lang.Override
-    public long getFee() {
-      return fee_;
-    }
-
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -15191,9 +15255,6 @@ public final class TransactionOuterClass {
       if (amount_ != 0L) {
         output.writeInt64(3, amount_);
       }
-      if (fee_ != 0L) {
-        output.writeInt64(4, fee_);
-      }
       getUnknownFields().writeTo(output);
     }
 
@@ -15212,10 +15273,6 @@ public final class TransactionOuterClass {
       if (amount_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(3, amount_);
-      }
-      if (fee_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, fee_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -15238,8 +15295,6 @@ public final class TransactionOuterClass {
           .equals(other.getAccountAddress())) return false;
       if (getAmount()
           != other.getAmount()) return false;
-      if (getFee()
-          != other.getFee()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -15258,9 +15313,6 @@ public final class TransactionOuterClass {
       hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getAmount());
-      hash = (37 * hash) + FEE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getFee());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -15399,8 +15451,6 @@ public final class TransactionOuterClass {
 
         amount_ = 0L;
 
-        fee_ = 0L;
-
         return this;
       }
 
@@ -15430,7 +15480,6 @@ public final class TransactionOuterClass {
         result.validatorAddress_ = validatorAddress_;
         result.accountAddress_ = accountAddress_;
         result.amount_ = amount_;
-        result.fee_ = fee_;
         onBuilt();
         return result;
       }
@@ -15490,9 +15539,6 @@ public final class TransactionOuterClass {
         if (other.getAmount() != 0L) {
           setAmount(other.getAmount());
         }
-        if (other.getFee() != 0L) {
-          setFee(other.getFee());
-        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -15534,11 +15580,6 @@ public final class TransactionOuterClass {
 
                 break;
               } // case 24
-              case 32: {
-                fee_ = input.readInt64();
-
-                break;
-              } // case 32
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -15786,49 +15827,6 @@ public final class TransactionOuterClass {
       public Builder clearAmount() {
         
         amount_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private long fee_ ;
-      /**
-       * <pre>
-       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-       * </pre>
-       *
-       * <code>int64 fee = 4 [json_name = "fee"];</code>
-       * @return The fee.
-       */
-      @java.lang.Override
-      public long getFee() {
-        return fee_;
-      }
-      /**
-       * <pre>
-       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-       * </pre>
-       *
-       * <code>int64 fee = 4 [json_name = "fee"];</code>
-       * @param value The fee to set.
-       * @return This builder for chaining.
-       */
-      public Builder setFee(long value) {
-        
-        fee_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-       * </pre>
-       *
-       * <code>int64 fee = 4 [json_name = "fee"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearFee() {
-        
-        fee_ = 0L;
         onChanged();
         return this;
       }
@@ -19348,87 +19346,87 @@ public final class TransactionOuterClass {
       "R\003fee\"S\n\033BroadcastTransactionRequest\0224\n\026" +
       "signed_raw_transaction\030\001 \001(\tR\024signedRawT" +
       "ransaction\".\n\034BroadcastTransactionRespon" +
-      "se\022\016\n\002id\030\001 \001(\tR\002id\"\240\002\n\030GetRawTransaction" +
+      "se\022\016\n\002id\030\001 \001(\tR\002id\"\262\002\n\030GetRawTransaction" +
       "Request\022\033\n\tlock_time\030\001 \001(\rR\010lockTime\022\022\n\004" +
-      "memo\030\002 \001(\tR\004memo\0225\n\010transfer\030\003 \001(\0132\027.pac" +
-      "tus.PayloadTransferH\000R\010transfer\022)\n\004bond\030" +
-      "\004 \001(\0132\023.pactus.PayloadBondH\000R\004bond\022/\n\006un" +
-      "bond\030\005 \001(\0132\025.pactus.PayloadUnbondH\000R\006unb" +
-      "ond\0225\n\010withdraw\030\006 \001(\0132\027.pactus.PayloadWi" +
-      "thdrawH\000R\010withdrawB\t\n\007payload\"\261\001\n GetRaw" +
-      "TransferTransactionRequest\022\033\n\tlock_time\030" +
-      "\001 \001(\rR\010lockTime\022\026\n\006sender\030\002 \001(\tR\006sender\022" +
-      "\032\n\010receiver\030\003 \001(\tR\010receiver\022\026\n\006amount\030\004 " +
-      "\001(\003R\006amount\022\020\n\003fee\030\005 \001(\003R\003fee\022\022\n\004memo\030\006 " +
-      "\001(\tR\004memo\"\312\001\n\034GetRawBondTransactionReque" +
-      "st\022\033\n\tlock_time\030\001 \001(\rR\010lockTime\022\026\n\006sende" +
-      "r\030\002 \001(\tR\006sender\022\032\n\010receiver\030\003 \001(\tR\010recei" +
-      "ver\022\024\n\005stake\030\004 \001(\003R\005stake\022\035\n\npublic_key\030" +
-      "\005 \001(\tR\tpublicKey\022\020\n\003fee\030\006 \001(\003R\003fee\022\022\n\004me" +
-      "mo\030\007 \001(\tR\004memo\"~\n\036GetRawUnbondTransactio" +
-      "nRequest\022\033\n\tlock_time\030\001 \001(\rR\010lockTime\022+\n" +
-      "\021validator_address\030\003 \001(\tR\020validatorAddre" +
-      "ss\022\022\n\004memo\030\004 \001(\tR\004memo\"\323\001\n GetRawWithdra" +
-      "wTransactionRequest\022\033\n\tlock_time\030\001 \001(\rR\010" +
-      "lockTime\022+\n\021validator_address\030\002 \001(\tR\020val" +
-      "idatorAddress\022\'\n\017account_address\030\003 \001(\tR\016" +
-      "accountAddress\022\026\n\006amount\030\004 \001(\003R\006amount\022\020" +
-      "\n\003fee\030\005 \001(\003R\003fee\022\022\n\004memo\030\006 \001(\tR\004memo\"D\n\031" +
-      "GetRawTransactionResponse\022\'\n\017raw_transac" +
-      "tion\030\001 \001(\tR\016rawTransaction\"o\n\017PayloadTra" +
-      "nsfer\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010receive" +
-      "r\030\002 \001(\tR\010receiver\022\026\n\006amount\030\003 \001(\003R\006amoun" +
-      "t\022\020\n\003fee\030\004 \001(\003R\003fee\"\210\001\n\013PayloadBond\022\026\n\006s" +
-      "ender\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010r" +
-      "eceiver\022\024\n\005stake\030\003 \001(\003R\005stake\022\035\n\npublic_" +
-      "key\030\004 \001(\tR\tpublicKey\022\020\n\003fee\030\005 \001(\003R\003fee\"B" +
-      "\n\020PayloadSortition\022\030\n\007address\030\001 \001(\tR\007add" +
-      "ress\022\024\n\005proof\030\002 \001(\tR\005proof\"-\n\rPayloadUnb" +
-      "ond\022\034\n\tvalidator\030\001 \001(\tR\tvalidator\"\221\001\n\017Pa" +
-      "yloadWithdraw\022+\n\021validator_address\030\001 \001(\t" +
-      "R\020validatorAddress\022\'\n\017account_address\030\002 " +
-      "\001(\tR\016accountAddress\022\026\n\006amount\030\003 \001(\003R\006amo" +
-      "unt\022\020\n\003fee\030\004 \001(\003R\003fee\"\254\004\n\017TransactionInf" +
-      "o\022\016\n\002id\030\001 \001(\tR\002id\022\022\n\004data\030\002 \001(\tR\004data\022\030\n" +
-      "\007version\030\003 \001(\005R\007version\022\033\n\tlock_time\030\004 \001" +
-      "(\rR\010lockTime\022\024\n\005value\030\005 \001(\003R\005value\022\020\n\003fe" +
-      "e\030\006 \001(\003R\003fee\0226\n\014payload_type\030\007 \001(\0162\023.pac" +
-      "tus.PayloadTypeR\013payloadType\0225\n\010transfer" +
-      "\030\036 \001(\0132\027.pactus.PayloadTransferH\000R\010trans" +
-      "fer\022)\n\004bond\030\037 \001(\0132\023.pactus.PayloadBondH\000" +
-      "R\004bond\0228\n\tsortition\030  \001(\0132\030.pactus.Paylo" +
-      "adSortitionH\000R\tsortition\022/\n\006unbond\030! \001(\013" +
-      "2\025.pactus.PayloadUnbondH\000R\006unbond\0225\n\010wit" +
-      "hdraw\030\" \001(\0132\027.pactus.PayloadWithdrawH\000R\010" +
-      "withdraw\022\022\n\004memo\030\010 \001(\tR\004memo\022\035\n\npublic_k" +
-      "ey\030\t \001(\tR\tpublicKey\022\034\n\tsignature\030\n \001(\tR\t" +
-      "signatureB\t\n\007payload*\203\001\n\013PayloadType\022\013\n\007" +
-      "UNKNOWN\020\000\022\024\n\020TRANSFER_PAYLOAD\020\001\022\020\n\014BOND_" +
-      "PAYLOAD\020\002\022\025\n\021SORTITION_PAYLOAD\020\003\022\022\n\016UNBO" +
-      "ND_PAYLOAD\020\004\022\024\n\020WITHDRAW_PAYLOAD\020\005*B\n\024Tr" +
-      "ansactionVerbosity\022\024\n\020TRANSACTION_DATA\020\000" +
-      "\022\024\n\020TRANSACTION_INFO\020\0012\202\006\n\013Transaction\022O" +
-      "\n\016GetTransaction\022\035.pactus.GetTransaction" +
-      "Request\032\036.pactus.GetTransactionResponse\022" +
-      "I\n\014CalculateFee\022\033.pactus.CalculateFeeReq" +
-      "uest\032\034.pactus.CalculateFeeResponse\022a\n\024Br" +
-      "oadcastTransaction\022#.pactus.BroadcastTra" +
-      "nsactionRequest\032$.pactus.BroadcastTransa" +
-      "ctionResponse\022X\n\021GetRawTransaction\022 .pac" +
-      "tus.GetRawTransactionRequest\032!.pactus.Ge" +
-      "tRawTransactionResponse\022h\n\031GetRawTransfe" +
-      "rTransaction\022(.pactus.GetRawTransferTran" +
-      "sactionRequest\032!.pactus.GetRawTransactio" +
-      "nResponse\022`\n\025GetRawBondTransaction\022$.pac" +
-      "tus.GetRawBondTransactionRequest\032!.pactu" +
-      "s.GetRawTransactionResponse\022d\n\027GetRawUnb" +
-      "ondTransaction\022&.pactus.GetRawUnbondTran" +
-      "sactionRequest\032!.pactus.GetRawTransactio" +
-      "nResponse\022h\n\031GetRawWithdrawTransaction\022(" +
-      ".pactus.GetRawWithdrawTransactionRequest" +
-      "\032!.pactus.GetRawTransactionResponseBF\n\022p" +
-      "actus.transactionZ0github.com/pactus-pro" +
-      "ject/pactus/www/grpc/pactusb\006proto3"
+      "memo\030\002 \001(\tR\004memo\022\020\n\003fee\030\003 \001(\003R\003fee\0225\n\010tr" +
+      "ansfer\030\004 \001(\0132\027.pactus.PayloadTransferH\000R" +
+      "\010transfer\022)\n\004bond\030\005 \001(\0132\023.pactus.Payload" +
+      "BondH\000R\004bond\022/\n\006unbond\030\006 \001(\0132\025.pactus.Pa" +
+      "yloadUnbondH\000R\006unbond\0225\n\010withdraw\030\007 \001(\0132" +
+      "\027.pactus.PayloadWithdrawH\000R\010withdrawB\t\n\007" +
+      "payload\"\261\001\n GetRawTransferTransactionReq" +
+      "uest\022\033\n\tlock_time\030\001 \001(\rR\010lockTime\022\026\n\006sen" +
+      "der\030\002 \001(\tR\006sender\022\032\n\010receiver\030\003 \001(\tR\010rec" +
+      "eiver\022\026\n\006amount\030\004 \001(\003R\006amount\022\020\n\003fee\030\005 \001" +
+      "(\003R\003fee\022\022\n\004memo\030\006 \001(\tR\004memo\"\312\001\n\034GetRawBo" +
+      "ndTransactionRequest\022\033\n\tlock_time\030\001 \001(\rR" +
+      "\010lockTime\022\026\n\006sender\030\002 \001(\tR\006sender\022\032\n\010rec" +
+      "eiver\030\003 \001(\tR\010receiver\022\024\n\005stake\030\004 \001(\003R\005st" +
+      "ake\022\035\n\npublic_key\030\005 \001(\tR\tpublicKey\022\020\n\003fe" +
+      "e\030\006 \001(\003R\003fee\022\022\n\004memo\030\007 \001(\tR\004memo\"~\n\036GetR" +
+      "awUnbondTransactionRequest\022\033\n\tlock_time\030" +
+      "\001 \001(\rR\010lockTime\022+\n\021validator_address\030\003 \001" +
+      "(\tR\020validatorAddress\022\022\n\004memo\030\004 \001(\tR\004memo" +
+      "\"\323\001\n GetRawWithdrawTransactionRequest\022\033\n" +
+      "\tlock_time\030\001 \001(\rR\010lockTime\022+\n\021validator_" +
+      "address\030\002 \001(\tR\020validatorAddress\022\'\n\017accou" +
+      "nt_address\030\003 \001(\tR\016accountAddress\022\026\n\006amou" +
+      "nt\030\004 \001(\003R\006amount\022\020\n\003fee\030\005 \001(\003R\003fee\022\022\n\004me" +
+      "mo\030\006 \001(\tR\004memo\"T\n\031GetRawTransactionRespo" +
+      "nse\022\'\n\017raw_transaction\030\001 \001(\tR\016rawTransac" +
+      "tion\022\016\n\002id\030\002 \001(\tR\002id\"]\n\017PayloadTransfer\022" +
+      "\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(" +
+      "\tR\010receiver\022\026\n\006amount\030\003 \001(\003R\006amount\"v\n\013P" +
+      "ayloadBond\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010re" +
+      "ceiver\030\002 \001(\tR\010receiver\022\024\n\005stake\030\003 \001(\003R\005s" +
+      "take\022\035\n\npublic_key\030\004 \001(\tR\tpublicKey\"B\n\020P" +
+      "ayloadSortition\022\030\n\007address\030\001 \001(\tR\007addres" +
+      "s\022\024\n\005proof\030\002 \001(\tR\005proof\"-\n\rPayloadUnbond" +
+      "\022\034\n\tvalidator\030\001 \001(\tR\tvalidator\"\177\n\017Payloa" +
+      "dWithdraw\022+\n\021validator_address\030\001 \001(\tR\020va" +
+      "lidatorAddress\022\'\n\017account_address\030\002 \001(\tR" +
+      "\016accountAddress\022\026\n\006amount\030\003 \001(\003R\006amount\"" +
+      "\254\004\n\017TransactionInfo\022\016\n\002id\030\001 \001(\tR\002id\022\022\n\004d" +
+      "ata\030\002 \001(\tR\004data\022\030\n\007version\030\003 \001(\005R\007versio" +
+      "n\022\033\n\tlock_time\030\004 \001(\rR\010lockTime\022\024\n\005value\030" +
+      "\005 \001(\003R\005value\022\020\n\003fee\030\006 \001(\003R\003fee\0226\n\014payloa" +
+      "d_type\030\007 \001(\0162\023.pactus.PayloadTypeR\013paylo" +
+      "adType\0225\n\010transfer\030\036 \001(\0132\027.pactus.Payloa" +
+      "dTransferH\000R\010transfer\022)\n\004bond\030\037 \001(\0132\023.pa" +
+      "ctus.PayloadBondH\000R\004bond\0228\n\tsortition\030  " +
+      "\001(\0132\030.pactus.PayloadSortitionH\000R\tsortiti" +
+      "on\022/\n\006unbond\030! \001(\0132\025.pactus.PayloadUnbon" +
+      "dH\000R\006unbond\0225\n\010withdraw\030\" \001(\0132\027.pactus.P" +
+      "ayloadWithdrawH\000R\010withdraw\022\022\n\004memo\030\010 \001(\t" +
+      "R\004memo\022\035\n\npublic_key\030\t \001(\tR\tpublicKey\022\034\n" +
+      "\tsignature\030\n \001(\tR\tsignatureB\t\n\007payload*\203" +
+      "\001\n\013PayloadType\022\013\n\007UNKNOWN\020\000\022\024\n\020TRANSFER_" +
+      "PAYLOAD\020\001\022\020\n\014BOND_PAYLOAD\020\002\022\025\n\021SORTITION" +
+      "_PAYLOAD\020\003\022\022\n\016UNBOND_PAYLOAD\020\004\022\024\n\020WITHDR" +
+      "AW_PAYLOAD\020\005*B\n\024TransactionVerbosity\022\024\n\020" +
+      "TRANSACTION_DATA\020\000\022\024\n\020TRANSACTION_INFO\020\001" +
+      "2\202\006\n\013Transaction\022O\n\016GetTransaction\022\035.pac" +
+      "tus.GetTransactionRequest\032\036.pactus.GetTr" +
+      "ansactionResponse\022I\n\014CalculateFee\022\033.pact" +
+      "us.CalculateFeeRequest\032\034.pactus.Calculat" +
+      "eFeeResponse\022a\n\024BroadcastTransaction\022#.p" +
+      "actus.BroadcastTransactionRequest\032$.pact" +
+      "us.BroadcastTransactionResponse\022X\n\021GetRa" +
+      "wTransaction\022 .pactus.GetRawTransactionR" +
+      "equest\032!.pactus.GetRawTransactionRespons" +
+      "e\022h\n\031GetRawTransferTransaction\022(.pactus." +
+      "GetRawTransferTransactionRequest\032!.pactu" +
+      "s.GetRawTransactionResponse\022`\n\025GetRawBon" +
+      "dTransaction\022$.pactus.GetRawBondTransact" +
+      "ionRequest\032!.pactus.GetRawTransactionRes" +
+      "ponse\022d\n\027GetRawUnbondTransaction\022&.pactu" +
+      "s.GetRawUnbondTransactionRequest\032!.pactu" +
+      "s.GetRawTransactionResponse\022h\n\031GetRawWit" +
+      "hdrawTransaction\022(.pactus.GetRawWithdraw" +
+      "TransactionRequest\032!.pactus.GetRawTransa" +
+      "ctionResponseBF\n\022pactus.transactionZ0git" +
+      "hub.com/pactus-project/pactus/www/grpc/p" +
+      "actusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -19475,7 +19473,7 @@ public final class TransactionOuterClass {
     internal_static_pactus_GetRawTransactionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetRawTransactionRequest_descriptor,
-        new java.lang.String[] { "LockTime", "Memo", "Transfer", "Bond", "Unbond", "Withdraw", "Payload", });
+        new java.lang.String[] { "LockTime", "Memo", "Fee", "Transfer", "Bond", "Unbond", "Withdraw", "Payload", });
     internal_static_pactus_GetRawTransferTransactionRequest_descriptor =
       getDescriptor().getMessageTypes().get(7);
     internal_static_pactus_GetRawTransferTransactionRequest_fieldAccessorTable = new
@@ -19505,19 +19503,19 @@ public final class TransactionOuterClass {
     internal_static_pactus_GetRawTransactionResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetRawTransactionResponse_descriptor,
-        new java.lang.String[] { "RawTransaction", });
+        new java.lang.String[] { "RawTransaction", "Id", });
     internal_static_pactus_PayloadTransfer_descriptor =
       getDescriptor().getMessageTypes().get(12);
     internal_static_pactus_PayloadTransfer_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PayloadTransfer_descriptor,
-        new java.lang.String[] { "Sender", "Receiver", "Amount", "Fee", });
+        new java.lang.String[] { "Sender", "Receiver", "Amount", });
     internal_static_pactus_PayloadBond_descriptor =
       getDescriptor().getMessageTypes().get(13);
     internal_static_pactus_PayloadBond_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PayloadBond_descriptor,
-        new java.lang.String[] { "Sender", "Receiver", "Stake", "PublicKey", "Fee", });
+        new java.lang.String[] { "Sender", "Receiver", "Stake", "PublicKey", });
     internal_static_pactus_PayloadSortition_descriptor =
       getDescriptor().getMessageTypes().get(14);
     internal_static_pactus_PayloadSortition_fieldAccessorTable = new
@@ -19535,7 +19533,7 @@ public final class TransactionOuterClass {
     internal_static_pactus_PayloadWithdraw_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PayloadWithdraw_descriptor,
-        new java.lang.String[] { "ValidatorAddress", "AccountAddress", "Amount", "Fee", });
+        new java.lang.String[] { "ValidatorAddress", "AccountAddress", "Amount", });
     internal_static_pactus_TransactionInfo_descriptor =
       getDescriptor().getMessageTypes().get(17);
     internal_static_pactus_TransactionInfo_fieldAccessorTable = new
