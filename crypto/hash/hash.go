@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"golang.org/x/crypto/blake2b"
-	"golang.org/x/crypto/ripemd160" //nolint:staticcheck // use to hash the public key to get the address
+	"golang.org/x/crypto/ripemd160" //nolint:all // used to hash the public key to generate the address.
 )
 
 const HashSize = 32
@@ -21,6 +21,7 @@ func Hash256(data []byte) []byte {
 }
 
 func Hash160(data []byte) []byte {
+	//nolint:all // used to hash the public key to generate the address.
 	h := ripemd160.New()
 	n, err := h.Write(data)
 	if err != nil {

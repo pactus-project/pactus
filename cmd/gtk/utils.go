@@ -36,7 +36,7 @@ func updateMessageDialog(dlg *gtk.MessageDialog) {
 
 func showQuestionDialog(parent gtk.IWindow, msg string) bool {
 	dlg := gtk.MessageDialogNew(parent,
-		gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, msg)
+		gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, "%s", msg)
 	updateMessageDialog(dlg)
 	res := dlg.Run()
 	dlg.Destroy()
@@ -46,7 +46,7 @@ func showQuestionDialog(parent gtk.IWindow, msg string) bool {
 
 func showInfoDialog(parent gtk.IWindow, msg string) {
 	dlg := gtk.MessageDialogNew(parent,
-		gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, msg)
+		gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "%s", msg)
 	updateMessageDialog(dlg)
 	dlg.Run()
 	dlg.Destroy()
@@ -54,7 +54,7 @@ func showInfoDialog(parent gtk.IWindow, msg string) {
 
 func showWarningDialog(parent gtk.IWindow, msg string) {
 	dlg := gtk.MessageDialogNew(parent,
-		gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, msg)
+		gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, "%s", msg)
 	updateMessageDialog(dlg)
 	dlg.Run()
 	dlg.Destroy()
@@ -62,7 +62,7 @@ func showWarningDialog(parent gtk.IWindow, msg string) {
 
 func showErrorDialog(parent gtk.IWindow, msg string) {
 	dlg := gtk.MessageDialogNew(parent,
-		gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, msg)
+		gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "%s", msg)
 	updateMessageDialog(dlg)
 	dlg.Run()
 	dlg.Destroy()
