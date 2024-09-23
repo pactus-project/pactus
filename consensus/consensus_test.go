@@ -1003,7 +1003,7 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 			m := rndMsg.message.(*message.QueryProposalMessage)
 			if m.Height == height {
 				for _, cons := range instances {
-					p := cons.HandleQueryProposal(m.Height, m.Round)
+					p := cons.Proposal()
 					if p != nil {
 						td.consMessages = append(td.consMessages, consMessage{
 							sender:  cons.valKey.Address(),
