@@ -25,8 +25,8 @@ func TestMessages(t *testing.T) {
 
 func TestErrorCode(t *testing.T) {
 	err1 := Error(ErrInvalidAmount)
-	err2 := Errorf(ErrInvalidTx, err1.Error())
-	err3 := Errorf(ErrInvalidBlock, err1.Error())
+	err2 := Errorf(ErrInvalidTx, "%s", err1.Error())
+	err3 := Errorf(ErrInvalidBlock, "%s", err1.Error())
 
 	assert.Equal(t, ErrInvalidTx, Code(err2))
 	assert.Equal(t, ErrInvalidBlock, Code(err3))

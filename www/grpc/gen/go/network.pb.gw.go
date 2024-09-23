@@ -89,6 +89,7 @@ func local_request_Network_GetNodeInfo_0(ctx context.Context, marshaler runtime.
 // UnaryRPC     :call NetworkServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterNetworkHandlerFromEndpoint instead.
+// GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
 func RegisterNetworkHandlerServer(ctx context.Context, mux *runtime.ServeMux, server NetworkServer) error {
 
 	mux.Handle("GET", pattern_Network_GetNetworkInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
@@ -179,7 +180,7 @@ func RegisterNetworkHandler(ctx context.Context, mux *runtime.ServeMux, conn *gr
 // to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "NetworkClient".
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "NetworkClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "NetworkClient" to call the correct interceptors.
+// "NetworkClient" to call the correct interceptors. This client ignores the HTTP middlewares.
 func RegisterNetworkHandlerClient(ctx context.Context, mux *runtime.ServeMux, client NetworkClient) error {
 
 	mux.Handle("GET", pattern_Network_GetNetworkInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
