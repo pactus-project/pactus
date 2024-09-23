@@ -490,7 +490,7 @@ func (w *Wallet) AddTransaction(id tx.ID) error {
 	return nil
 }
 
-func (w *Wallet) GetHistory(addr string) []HistoryInfo {
+func (w *Wallet) History(addr string) []HistoryInfo {
 	return w.store.History.getAddrHistory(addr)
 }
 
@@ -501,4 +501,16 @@ func (w *Wallet) SignMessage(password, addr, msg string) (string, error) {
 	}
 
 	return prv.Sign([]byte(msg)).String(), nil
+}
+
+func (w *Wallet) Version() int {
+	return w.store.Version
+}
+
+func (w *Wallet) CreationTime() time.Time {
+	return w.store.CreatedAt
+}
+
+func (w *Wallet) Network() genesis.ChainType {
+	return w.store.Network
 }

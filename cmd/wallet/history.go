@@ -63,7 +63,7 @@ func buildShowHistoryCmd(parentCmd *cobra.Command) {
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		history := wlt.GetHistory(addr)
+		history := wlt.History(addr)
 		for i, h := range history {
 			if h.Time != nil {
 				cmd.PrintInfoMsgf("%d %v %v %v %s\t%v",
