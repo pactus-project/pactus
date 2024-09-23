@@ -321,13 +321,6 @@ parameters.</p>
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">transaction.transfer.fee</td>
-            <td> int64</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-            </td>
-          </tr>
-          <tr>
         <td class="fw-bold">transaction.bond</td>
         <td> PayloadBond</td>
         <td>
@@ -360,13 +353,6 @@ parameters.</p>
             <td> string</td>
             <td>
             The public key of the validator.
-            </td>
-          </tr>
-          <tr>
-            <td class="fw-bold">transaction.bond.fee</td>
-            <td> int64</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -430,13 +416,6 @@ parameters.</p>
             <td> int64</td>
             <td>
             The withdrawal amount in NanoPAC.
-            </td>
-          </tr>
-          <tr>
-            <td class="fw-bold">transaction.withdraw.fee</td>
-            <td> int64</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -582,8 +561,7 @@ and payload type.</p>
     <td class="fw-bold">lock_time</td>
     <td> uint32</td>
     <td>
-    The lock time for the transaction. If not set, defaults to the last block
-height.
+    The lock time for the transaction. If not set, defaults to the last block height.
     </td>
   </tr>
   <tr>
@@ -591,6 +569,13 @@ height.
     <td> string</td>
     <td>
     A memo string for the transaction.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">fee</td>
+    <td> int64</td>
+    <td>
+    The fee for the transaction in NanoPAC.
     </td>
   </tr>
   <tr>
@@ -635,6 +620,13 @@ height.
     <td> string</td>
     <td>
     The raw transaction data.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
     </td>
   </tr>
      </tbody>
@@ -708,6 +700,13 @@ height.
     <td> string</td>
     <td>
     The raw transaction data.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
     </td>
   </tr>
      </tbody>
@@ -790,6 +789,13 @@ height.
     The raw transaction data.
     </td>
   </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
+    </td>
+  </tr>
      </tbody>
 </table>
 
@@ -840,6 +846,13 @@ height.
     <td> string</td>
     <td>
     The raw transaction data.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
     </td>
   </tr>
      </tbody>
@@ -913,6 +926,13 @@ height.
     <td> string</td>
     <td>
     The raw transaction data.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
     </td>
   </tr>
      </tbody>
@@ -1168,13 +1188,6 @@ BLOCK_TRANSACTIONS.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">txs[].transfer.fee</td>
-            <td> int64</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-            </td>
-          </tr>
-          <tr>
         <td class="fw-bold">txs[].bond</td>
         <td> PayloadBond</td>
         <td>
@@ -1207,13 +1220,6 @@ BLOCK_TRANSACTIONS.
             <td> string</td>
             <td>
             The public key of the validator.
-            </td>
-          </tr>
-          <tr>
-            <td class="fw-bold">txs[].bond.fee</td>
-            <td> int64</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -1277,13 +1283,6 @@ BLOCK_TRANSACTIONS.
             <td> int64</td>
             <td>
             The withdrawal amount in NanoPAC.
-            </td>
-          </tr>
-          <tr>
-            <td class="fw-bold">txs[].withdraw.fee</td>
-            <td> int64</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -2164,13 +2163,6 @@ types.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">txs[].transfer.fee</td>
-            <td> int64</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-            </td>
-          </tr>
-          <tr>
         <td class="fw-bold">txs[].bond</td>
         <td> PayloadBond</td>
         <td>
@@ -2203,13 +2195,6 @@ types.
             <td> string</td>
             <td>
             The public key of the validator.
-            </td>
-          </tr>
-          <tr>
-            <td class="fw-bold">txs[].bond.fee</td>
-            <td> int64</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>
@@ -2273,13 +2258,6 @@ types.
             <td> int64</td>
             <td>
             The withdrawal amount in NanoPAC.
-            </td>
-          </tr>
-          <tr>
-            <td class="fw-bold">txs[].withdraw.fee</td>
-            <td> int64</td>
-            <td>
-            The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
             </td>
           </tr>
           <tr>

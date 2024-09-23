@@ -20,7 +20,7 @@ service Transaction {
       returns (BroadcastTransactionResponse);
 
   // GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.
-  rpc GetRawTransaction(GetRawTransactionRequest) returns(GetRawTransactionResponse);
+  rpc GetRawTransaction(GetRawTransactionRequest) returns (GetRawTransactionResponse);
 
   // Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
   rpc GetRawTransferTransaction(GetRawTransferTransactionRequest)
@@ -89,17 +89,18 @@ message BroadcastTransactionResponse {
 
 // Request message for retrieving raw details of transaction.
 message GetRawTransactionRequest {
-  // The lock time for the transaction. If not set, defaults to the last block
-  // height.
+  // The lock time for the transaction. If not set, defaults to the last block height.
   uint32 lock_time = 1;
   // A memo string for the transaction.
   string memo = 2;
+  // The fee for the transaction in NanoPAC.
+  int64 fee = 3;
 
   oneof payload {
-    PayloadTransfer transfer = 3;
-    PayloadBond bond = 4;
-    PayloadUnbond unbond = 5;
-    PayloadWithdraw withdraw = 6;
+    PayloadTransfer transfer = 4;
+    PayloadBond bond = 5;
+    PayloadUnbond unbond = 6;
+    PayloadWithdraw withdraw = 7;
   }
 }
 
@@ -171,6 +172,8 @@ message GetRawWithdrawTransactionRequest {
 message GetRawTransactionResponse {
   // The raw transaction data.
   string raw_transaction = 1;
+  // The unique ID of the transaction.
+  string id = 2;
 }
 
 // Payload for a transfer transaction.
@@ -181,8 +184,6 @@ message PayloadTransfer {
   string receiver = 2;
   // The amount to be transferred in NanoPAC.
   int64 amount = 3;
-  // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-  int64 fee = 4;
 }
 
 // Payload for a bond transaction.
@@ -193,10 +194,8 @@ message PayloadBond {
   string receiver = 2;
   // The stake amount in NanoPAC.
   int64 stake = 3;
-   // The public key of the validator.
+  // The public key of the validator.
   string public_key = 4;
-  // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-  int64 fee = 5;
 }
 
 // Payload for a sortition transaction.
@@ -215,14 +214,12 @@ message PayloadUnbond {
 
 // Payload for a withdraw transaction.
 message PayloadWithdraw {
-   // The address of the validator to withdraw from.
+  // The address of the validator to withdraw from.
   string validator_address = 1;
   // The address of the account to withdraw to.
   string account_address = 2;
   // The withdrawal amount in NanoPAC.
   int64 amount = 3;
-  // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
-  int64 fee = 4;
 }
 
 // Information about a transaction.

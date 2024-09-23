@@ -617,7 +617,7 @@
         "parameters": [
           {
             "name": "lockTime",
-            "description": "The lock time for the transaction. If not set, defaults to the last block\nheight.",
+            "description": "The lock time for the transaction. If not set, defaults to the last block height.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -629,6 +629,14 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "fee",
+            "description": "The fee for the transaction in NanoPAC.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
           },
           {
             "name": "transfer.sender",
@@ -647,14 +655,6 @@
           {
             "name": "transfer.amount",
             "description": "The amount to be transferred in NanoPAC.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "transfer.fee",
-            "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -690,14 +690,6 @@
             "type": "string"
           },
           {
-            "name": "bond.fee",
-            "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          },
-          {
             "name": "unbond.validator",
             "description": "The address of the validator to unbond from.",
             "in": "query",
@@ -721,14 +713,6 @@
           {
             "name": "withdraw.amount",
             "description": "The withdrawal amount in NanoPAC.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "withdraw.fee",
-            "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -1678,6 +1662,10 @@
         "rawTransaction": {
           "type": "string",
           "description": "The raw transaction data."
+        },
+        "id": {
+          "type": "string",
+          "description": "The unique ID of the transaction."
         }
       },
       "description": "Response message containing raw transaction data."
@@ -1821,11 +1809,6 @@
         "publicKey": {
           "type": "string",
           "description": "The public key of the validator."
-        },
-        "fee": {
-          "type": "string",
-          "format": "int64",
-          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
         }
       },
       "description": "Payload for a bond transaction."
@@ -1859,11 +1842,6 @@
           "type": "string",
           "format": "int64",
           "description": "The amount to be transferred in NanoPAC."
-        },
-        "fee": {
-          "type": "string",
-          "format": "int64",
-          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
         }
       },
       "description": "Payload for a transfer transaction."
@@ -1906,11 +1884,6 @@
           "type": "string",
           "format": "int64",
           "description": "The withdrawal amount in NanoPAC."
-        },
-        "fee": {
-          "type": "string",
-          "format": "int64",
-          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
         }
       },
       "description": "Payload for a withdraw transaction."
