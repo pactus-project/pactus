@@ -20,12 +20,12 @@ func TestVRF(t *testing.T) {
 		seed := ts.RandSeed()
 		t.Logf("seed is: %x \n", seed)
 
-		maxVal := uint64(1 * 1e6)
-		index, proof := sortition.Evaluate(seed, valKey.PrivateKey(), maxVal)
+		maxSize := uint64(1 * 1e6)
+		index, proof := sortition.Evaluate(seed, valKey.PrivateKey(), maxSize)
 
-		assert.LessOrEqual(t, index, maxVal)
+		assert.LessOrEqual(t, index, maxSize)
 
-		index2, result := sortition.Verify(seed, pk, proof, maxVal)
+		index2, result := sortition.Verify(seed, pk, proof, maxSize)
 
 		assert.True(t, result)
 		assert.Equal(t, index, index2)

@@ -155,8 +155,8 @@ func (w *FixedWriter) Bytes() []byte {
 
 // NewFixedWriter returns a new io.Writer that will error once more bytes than
 // the specified max have been written.
-func NewFixedWriter(maxVal int) *FixedWriter {
-	b := make([]byte, maxVal)
+func NewFixedWriter(max int) *FixedWriter {
+	b := make([]byte, max)
 	fw := FixedWriter{b, 0}
 
 	return &fw
@@ -188,8 +188,8 @@ func (fr *FixedReader) Read(p []byte) (int, error) {
 
 // NewFixedReader returns a new io.Reader that will error once more bytes than
 // the specified max have been read.
-func NewFixedReader(maxVal int, buf []byte) *FixedReader {
-	b := make([]byte, maxVal)
+func NewFixedReader(max int, buf []byte) *FixedReader {
+	b := make([]byte, max)
 	if buf != nil {
 		copy(b, buf)
 	}

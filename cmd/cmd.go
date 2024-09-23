@@ -150,7 +150,7 @@ func PromptInputWithSuggestion(label, suggestion string) string {
 }
 
 // PromptInputWithRange prompts the user for an input integer within a specified range.
-func PromptInputWithRange(label string, def, minVal, maxVal int) int {
+func PromptInputWithRange(label string, def, min, max int) int {
 	prompt := promptui.Prompt{
 		Label:     label,
 		Default:   fmt.Sprintf("%v", def),
@@ -161,8 +161,8 @@ func PromptInputWithRange(label string, def, minVal, maxVal int) int {
 			if err != nil {
 				return err
 			}
-			if num < minVal || num > maxVal {
-				return fmt.Errorf("enter a number between %v and %v", minVal, maxVal)
+			if num < min || num > max {
+				return fmt.Errorf("enter a number between %v and %v", min, max)
 			}
 
 			return nil
