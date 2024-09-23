@@ -54,7 +54,7 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 	case pactus.TransactionVerbosity_TRANSACTION_INFO:
 		trx, err := committedTx.ToTx()
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, err.Error())
+			return nil, status.Errorf(codes.Internal, "%s", err.Error())
 		}
 		res.Transaction = transactionToProto(trx)
 	}
@@ -136,11 +136,11 @@ func (s *transactionServer) GetRawTransaction(_ context.Context,
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+
 	return &pactus.GetRawTransactionResponse{
 		RawTransaction: hex.EncodeToString(data),
 		Id:             trx.ID().String(),
 	}, err
-
 }
 
 // Deprecated: GetRawTransferTransaction is deprecated.
@@ -266,7 +266,9 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	}, nil
 }
 
-func (s *transactionServer) handleRawTransfer(lockTime uint32, memo string, feeInt int64, pld *pactus.PayloadTransfer) (*tx.Tx, error) {
+func (s *transactionServer) handleRawTransfer(lockTime uint32, memo string, feeInt int64,
+	pld *pactus.PayloadTransfer,
+) (*tx.Tx, error) {
 	sender, err := crypto.AddressFromString(pld.Sender)
 	if err != nil {
 		return nil, err
@@ -285,7 +287,9 @@ func (s *transactionServer) handleRawTransfer(lockTime uint32, memo string, feeI
 	return transferTx, nil
 }
 
-func (s *transactionServer) handleRawBond(lockTime uint32, memo string, feeInt int64, pld *pactus.PayloadBond) (*tx.Tx, error) {
+func (s *transactionServer) handleRawBond(lockTime uint32, memo string, feeInt int64,
+	pld *pactus.PayloadBond,
+) (*tx.Tx, error) {
 	sender, err := crypto.AddressFromString(pld.Sender)
 	if err != nil {
 		return nil, err
@@ -325,7 +329,9 @@ func (*transactionServer) handleRawUnbond(lockTime uint32, memo string, pld *pac
 	return unbondTx, nil
 }
 
-func (s *transactionServer) handleRawWithdraw(lockTime uint32, memo string, feeInt int64, pld *pactus.PayloadWithdraw) (*tx.Tx, error) {
+func (s *transactionServer) handleRawWithdraw(lockTime uint32, memo string, feeInt int64,
+	pld *pactus.PayloadWithdraw,
+) (*tx.Tx, error) {
 	validatorAddr, err := crypto.AddressFromString(pld.ValidatorAddress)
 	if err != nil {
 		return nil, err
