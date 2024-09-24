@@ -634,7 +634,8 @@ and payload type.</p>
 
 ### GetRawTransferTransaction <span id="pactus.Transaction.GetRawTransferTransaction" class="rpc-badge"></span>
 
-<p>Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.</p>
+<p>Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+Use GetRawTransaction instead.</p>
 
 <h4>GetRawTransferTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -714,7 +715,8 @@ height.
 
 ### GetRawBondTransaction <span id="pactus.Transaction.GetRawBondTransaction" class="rpc-badge"></span>
 
-<p>Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.</p>
+<p>Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+Use GetRawTransaction instead.</p>
 
 <h4>GetRawBondTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -801,7 +803,8 @@ height.
 
 ### GetRawUnbondTransaction <span id="pactus.Transaction.GetRawUnbondTransaction" class="rpc-badge"></span>
 
-<p>Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.</p>
+<p>Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+Use GetRawTransaction instead.</p>
 
 <h4>GetRawUnbondTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -860,7 +863,8 @@ height.
 
 ### GetRawWithdrawTransaction <span id="pactus.Transaction.GetRawWithdrawTransaction" class="rpc-badge"></span>
 
-<p>Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.</p>
+<p>Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+Use GetRawTransaction instead.</p>
 
 <h4>GetRawWithdrawTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 

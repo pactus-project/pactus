@@ -95,6 +95,7 @@ class TransactionServicer(object):
 
     def GetRawTransferTransaction(self, request, context):
         """Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+        Use GetRawTransaction instead.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -102,6 +103,7 @@ class TransactionServicer(object):
 
     def GetRawBondTransaction(self, request, context):
         """Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+        Use GetRawTransaction instead.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -109,6 +111,7 @@ class TransactionServicer(object):
 
     def GetRawUnbondTransaction(self, request, context):
         """Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+        Use GetRawTransaction instead.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -116,6 +119,7 @@ class TransactionServicer(object):
 
     def GetRawWithdrawTransaction(self, request, context):
         """Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+        Use GetRawTransaction instead.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')

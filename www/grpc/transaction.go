@@ -144,7 +144,7 @@ func (s *transactionServer) GetRawTransaction(_ context.Context,
 }
 
 // Deprecated: GetRawTransferTransaction is deprecated.
-// Use Get GetTransaction API instead.
+// Use GetRawTransaction API instead.
 func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	req *pactus.GetRawTransferTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
@@ -174,7 +174,7 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 }
 
 // Deprecated: GetRawBondTransaction is deprecated.
-// Use Get GetTransaction API instead.
+// Use GetRawTransaction API instead.
 func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	req *pactus.GetRawBondTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
@@ -214,7 +214,7 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 }
 
 // Deprecated: GetRawUnbondTransaction is deprecated.
-// Use Get GetTransaction API instead.
+// Use GetRawTransaction API instead.
 func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
 	req *pactus.GetRawUnbondTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
@@ -237,7 +237,7 @@ func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
 }
 
 // Deprecated: GetRawWithdrawTransaction is deprecated.
-// Use Get GetTransaction API instead.
+// Use GetRawTransaction API instead.
 func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	req *pactus.GetRawWithdrawTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {

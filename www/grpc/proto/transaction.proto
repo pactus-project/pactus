@@ -23,18 +23,22 @@ service Transaction {
   rpc GetRawTransaction(GetRawTransactionRequest) returns (GetRawTransactionResponse);
 
   // Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+  // Use GetRawTransaction instead.
   rpc GetRawTransferTransaction(GetRawTransferTransactionRequest)
       returns (GetRawTransactionResponse);
 
   // Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+  // Use GetRawTransaction instead.
   rpc GetRawBondTransaction(GetRawBondTransactionRequest)
       returns (GetRawTransactionResponse);
 
   // Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+  // Use GetRawTransaction instead.
   rpc GetRawUnbondTransaction(GetRawUnbondTransactionRequest)
       returns (GetRawTransactionResponse);
 
   // Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+  // Use GetRawTransaction instead.
   rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest)
       returns (GetRawTransactionResponse);
 }

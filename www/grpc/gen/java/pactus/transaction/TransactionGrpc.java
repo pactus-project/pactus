@@ -364,6 +364,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public void getRawTransferTransaction(pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest request,
@@ -374,6 +375,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public void getRawBondTransaction(pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest request,
@@ -384,6 +386,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public void getRawUnbondTransaction(pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest request,
@@ -394,6 +397,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public void getRawWithdrawTransaction(pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest request,
@@ -530,6 +534,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public void getRawTransferTransaction(pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest request,
@@ -541,6 +546,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public void getRawBondTransaction(pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest request,
@@ -552,6 +558,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public void getRawUnbondTransaction(pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest request,
@@ -563,6 +570,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public void getRawWithdrawTransaction(pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest request,
@@ -635,6 +643,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public pactus.transaction.TransactionOuterClass.GetRawTransactionResponse getRawTransferTransaction(pactus.transaction.TransactionOuterClass.GetRawTransferTransactionRequest request) {
@@ -645,6 +654,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public pactus.transaction.TransactionOuterClass.GetRawTransactionResponse getRawBondTransaction(pactus.transaction.TransactionOuterClass.GetRawBondTransactionRequest request) {
@@ -655,6 +665,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public pactus.transaction.TransactionOuterClass.GetRawTransactionResponse getRawUnbondTransaction(pactus.transaction.TransactionOuterClass.GetRawUnbondTransactionRequest request) {
@@ -665,6 +676,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public pactus.transaction.TransactionOuterClass.GetRawTransactionResponse getRawWithdrawTransaction(pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest request) {
@@ -740,6 +752,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getRawTransferTransaction(
@@ -751,6 +764,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getRawBondTransaction(
@@ -762,6 +776,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getRawUnbondTransaction(
@@ -773,6 +788,7 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+     * Use GetRawTransaction instead.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse> getRawWithdrawTransaction(

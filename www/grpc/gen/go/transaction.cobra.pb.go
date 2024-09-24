@@ -245,7 +245,7 @@ func _TransactionGetRawTransferTransactionCommand(cfg *client.Config) *cobra.Com
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetRawTransferTransaction"),
 		Short: "GetRawTransferTransaction RPC client",
-		Long:  "Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.",
+		Long:  "Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.\n Use GetRawTransaction instead.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -292,7 +292,7 @@ func _TransactionGetRawBondTransactionCommand(cfg *client.Config) *cobra.Command
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetRawBondTransaction"),
 		Short: "GetRawBondTransaction RPC client",
-		Long:  "Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.",
+		Long:  "Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.\n Use GetRawTransaction instead.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -340,7 +340,7 @@ func _TransactionGetRawUnbondTransactionCommand(cfg *client.Config) *cobra.Comma
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetRawUnbondTransaction"),
 		Short: "GetRawUnbondTransaction RPC client",
-		Long:  "Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.",
+		Long:  "Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.\n Use GetRawTransaction instead.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -384,7 +384,7 @@ func _TransactionGetRawWithdrawTransactionCommand(cfg *client.Config) *cobra.Com
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetRawWithdrawTransaction"),
 		Short: "GetRawWithdrawTransaction RPC client",
-		Long:  "Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.",
+		Long:  "Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.\n Use GetRawTransaction instead.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {

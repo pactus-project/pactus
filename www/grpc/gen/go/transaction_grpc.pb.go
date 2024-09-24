@@ -47,12 +47,16 @@ type TransactionClient interface {
 	// GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.
 	GetRawTransaction(ctx context.Context, in *GetRawTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+	// Use GetRawTransaction instead.
 	GetRawTransferTransaction(ctx context.Context, in *GetRawTransferTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+	// Use GetRawTransaction instead.
 	GetRawBondTransaction(ctx context.Context, in *GetRawBondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+	// Use GetRawTransaction instead.
 	GetRawUnbondTransaction(ctx context.Context, in *GetRawUnbondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+	// Use GetRawTransaction instead.
 	GetRawWithdrawTransaction(ctx context.Context, in *GetRawWithdrawTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 }
 
@@ -162,12 +166,16 @@ type TransactionServer interface {
 	// GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.
 	GetRawTransaction(context.Context, *GetRawTransactionRequest) (*GetRawTransactionResponse, error)
 	// Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+	// Use GetRawTransaction instead.
 	GetRawTransferTransaction(context.Context, *GetRawTransferTransactionRequest) (*GetRawTransactionResponse, error)
 	// Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+	// Use GetRawTransaction instead.
 	GetRawBondTransaction(context.Context, *GetRawBondTransactionRequest) (*GetRawTransactionResponse, error)
 	// Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+	// Use GetRawTransaction instead.
 	GetRawUnbondTransaction(context.Context, *GetRawUnbondTransactionRequest) (*GetRawTransactionResponse, error)
 	// Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+	// Use GetRawTransaction instead.
 	GetRawWithdrawTransaction(context.Context, *GetRawWithdrawTransactionRequest) (*GetRawTransactionResponse, error)
 }
 
