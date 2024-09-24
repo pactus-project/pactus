@@ -7,16 +7,12 @@ import (
 const (
 	ErrNone = iota
 	ErrGeneric
-	ErrInvalidBlock
-	ErrInvalidAmount
 	ErrInvalidAddress
 	ErrInvalidPublicKey
 	ErrInvalidPrivateKey
 	ErrInvalidSignature
-	ErrInvalidTx
 	ErrInvalidHeight
 	ErrInvalidRound
-	ErrInvalidProposal
 	ErrInvalidVote
 	ErrInvalidMessage
 	ErrDuplicateVote
@@ -27,16 +23,12 @@ const (
 var messages = map[int]string{
 	ErrNone:              "no error",
 	ErrGeneric:           "generic error",
-	ErrInvalidBlock:      "invalid block",
-	ErrInvalidAmount:     "invalid amount",
 	ErrInvalidAddress:    "invalid address",
 	ErrInvalidPublicKey:  "invalid public key",
 	ErrInvalidPrivateKey: "invalid private key",
 	ErrInvalidSignature:  "invalid signature",
-	ErrInvalidTx:         "invalid transaction",
 	ErrInvalidHeight:     "invalid height",
 	ErrInvalidRound:      "invalid round",
-	ErrInvalidProposal:   "invalid proposal",
 	ErrInvalidVote:       "invalid vote",
 	ErrInvalidMessage:    "invalid message",
 	ErrDuplicateVote:     "duplicate vote",

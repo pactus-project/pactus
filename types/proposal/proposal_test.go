@@ -61,21 +61,30 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("No block", func(t *testing.T) {
 		p := &proposal.Proposal{}
-		assert.Error(t, p.BasicCheck())
+		err := p.BasicCheck()
+		assert.ErrorIs(t, err, proposal.BasicCheckError{
+			Reason: "no block",
+		})
 	})
 
 	t.Run("Invalid height", func(t *testing.T) {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
 		p := proposal.NewProposal(0, 0, blk)
 		p.SetSignature(ts.RandBLSSignature())
-		assert.Error(t, p.BasicCheck())
+		err := p.BasicCheck()
+		assert.ErrorIs(t, err, proposal.BasicCheckError{
+			Reason: "invalid height",
+		})
 	})
 
 	t.Run("Invalid round", func(t *testing.T) {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
 		p := proposal.NewProposal(ts.RandHeight(), -1, blk)
 		p.SetSignature(ts.RandBLSSignature())
-		assert.Error(t, p.BasicCheck())
+		err := p.BasicCheck()
+		assert.ErrorIs(t, err, proposal.BasicCheckError{
+			Reason: "invalid round",
+		})
 	})
 
 	t.Run("No signature", func(t *testing.T) {
@@ -87,10 +96,15 @@ func TestBasicCheck(t *testing.T) {
 				"48bbbc616c005573d8ad4d5c6997996d6f488946cdd78410f0a400c4a7f9bdb41506bdf717a892fa0004f6")
 		p := &proposal.Proposal{}
 		err := cbor.Unmarshal(d, &p)
-
 		assert.NoError(t, err)
-		assert.Error(t, p.BasicCheck())
-		assert.Error(t, p.Verify(pub))
+
+		err = p.BasicCheck()
+		assert.ErrorIs(t, err, proposal.BasicCheckError{
+			Reason: "no signature",
+		})
+
+		err = p.Verify(pub)
+		assert.Error(t, err, crypto.ErrInvalidSignature)
 	})
 
 	t.Run("Ok", func(t *testing.T) {

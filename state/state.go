@@ -28,7 +28,6 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/persistentmerkle"
 	"github.com/pactus-project/pactus/util/simplemerkle"
@@ -305,9 +304,9 @@ func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 	return nil
 }
 
-func (st *state) createSubsidyTx(rewardAddr crypto.Address, fee amount.Amount) *tx.Tx {
+func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amount.Amount) *tx.Tx {
 	lockTime := st.lastInfo.BlockHeight() + 1
-	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+fee)
+	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
 
 	return transaction
 }
@@ -345,7 +344,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		// probably the node is shutting down.
 		st.logger.Error("no subsidy transaction")
 
-		return nil, errors.Errorf(errors.ErrInvalidBlock, "no subsidy transaction")
+		return nil, ErrInvalidSubsidyTransaction
 	}
 	txs.Prepend(subsidyTx)
 	prevSeed := st.lastInfo.SortitionSeed()
@@ -408,8 +407,6 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 		st.logger.Panic("a possible fork is detected",
 			"our hash", st.lastInfo.BlockHash(),
 			"block hash", blk.Header().PrevBlockHash())
-
-		return errors.Error(errors.ErrInvalidBlock)
 	}
 
 	err = st.validateBlock(blk, cert.Round())
@@ -551,19 +548,30 @@ func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
 
 func (st *state) validateBlockTime(t time.Time) error {
 	if t.Second()%st.params.BlockIntervalInSecond != 0 {
-		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is not rounded", t.String())
+		return InvalidBlockTimeError{
+			Reason: fmt.Sprintf("block time (%s) is not rounded",
+				t.String()),
+		}
 	}
 	if t.Before(st.lastInfo.BlockTime()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is before the last block time", t.String())
+		return InvalidBlockTimeError{
+			Reason: fmt.Sprintf("block time (%s) is before the last block time (%s)",
+				t.String(), st.lastInfo.BlockTime()),
+		}
 	}
 	if t.Equal(st.lastInfo.BlockTime()) {
-		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is same as the last block time", t.String())
+		return InvalidBlockTimeError{
+			Reason: fmt.Sprintf("block time (%s) is same as the last block time",
+				t.String()),
+		}
 	}
 	proposeTime := st.proposeNextBlockTime()
 	threshold := st.params.BlockInterval()
 	if t.After(proposeTime.Add(threshold)) {
-		return errors.Errorf(errors.ErrInvalidBlock, "block time (%s) is more than threshold (%s)",
-			t.String(), proposeTime.String())
+		return InvalidBlockTimeError{
+			Reason: fmt.Sprintf("block time (%s) is more than threshold (%s)",
+				t.String(), proposeTime.String()),
+		}
 	}
 
 	return nil
