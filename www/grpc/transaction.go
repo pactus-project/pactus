@@ -129,12 +129,12 @@ func (s *transactionServer) GetRawTransaction(_ context.Context,
 	}
 
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "%s", err.Error())
 	}
 
 	data, err := trx.Bytes()
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, "%s", err.Error())
 	}
 
 	return &pactus.GetRawTransactionResponse{
