@@ -5,7 +5,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type BlockVoteSet struct {
@@ -84,7 +83,7 @@ func (vs *BlockVoteSet) AddVote(v *vote.Vote) (bool, error) {
 		}
 
 		// It is a duplicated vote
-		err = errors.Error(errors.ErrDuplicateVote)
+		err = ErrDuplicatedVote
 	} else {
 		vs.allVotes[v.Signer()] = v
 	}

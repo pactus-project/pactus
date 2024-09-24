@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/fxamacker/cbor/v2"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type CPValue int8
@@ -36,12 +35,16 @@ type cpVote struct {
 
 func (v *cpVote) BasicCheck() error {
 	if v.Round < 0 {
-		return errors.Error(errors.ErrInvalidRound)
+		return BasicCheckError{
+			Reason: "invalid CP round",
+		}
 	}
 	if v.Value < CPValueNo ||
 		v.Value > CPValueAbstain {
 		// Invalid values
-		return errors.Errorf(errors.ErrInvalidVote, "cp value should be 0, 1 or abstain")
+		return BasicCheckError{
+			Reason: "invalid CP value",
+		}
 	}
 
 	return v.Just.BasicCheck()

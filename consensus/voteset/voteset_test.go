@@ -9,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -51,12 +50,12 @@ func TestAddBlockVote(t *testing.T) {
 
 	ts.HelperSignVote(invKey, v1)
 	added, err := vs.AddVote(v1)
-	assert.Equal(t, errors.ErrInvalidAddress, errors.Code(err)) // unknown validator
+	assert.ErrorIs(t, err, IneligibleVoterError{Address: v1.Signer()}) // unknown validator
 	assert.False(t, added)
 
 	ts.HelperSignVote(invKey, v2)
 	added, err = vs.AddVote(v2)
-	assert.Equal(t, errors.ErrInvalidSignature, errors.Code(err)) // invalid signature
+	assert.ErrorIs(t, err, crypto.ErrInvalidSignature) // invalid signature
 	assert.False(t, added)
 
 	ts.HelperSignVote(valKey, v2)
@@ -70,7 +69,7 @@ func TestAddBlockVote(t *testing.T) {
 
 	ts.HelperSignVote(valKey, v3)
 	added, err = vs.AddVote(v3)
-	assert.Equal(t, errors.ErrDuplicateVote, errors.Code(err))
+	assert.ErrorIs(t, err, ErrDuplicatedVote)
 	assert.True(t, added)
 }
 
@@ -96,12 +95,12 @@ func TestAddBinaryVote(t *testing.T) {
 
 	ts.HelperSignVote(invKey, v1)
 	added, err := vs.AddVote(v1)
-	assert.Equal(t, errors.ErrInvalidAddress, errors.Code(err)) // unknown validator
+	assert.ErrorIs(t, err, IneligibleVoterError{Address: v1.Signer()}) // unknown validator
 	assert.False(t, added)
 
 	ts.HelperSignVote(invKey, v2)
 	added, err = vs.AddVote(v2)
-	assert.Equal(t, errors.ErrInvalidSignature, errors.Code(err)) // invalid signature
+	assert.ErrorIs(t, err, crypto.ErrInvalidSignature) // invalid signature
 	assert.False(t, added)
 
 	ts.HelperSignVote(valKey, v2)
@@ -115,7 +114,7 @@ func TestAddBinaryVote(t *testing.T) {
 
 	ts.HelperSignVote(valKey, v3)
 	added, err = vs.AddVote(v3)
-	assert.Equal(t, errors.ErrDuplicateVote, errors.Code(err))
+	assert.ErrorIs(t, err, ErrDuplicatedVote)
 	assert.True(t, added)
 }
 
@@ -144,11 +143,11 @@ func TestDuplicateBlockVote(t *testing.T) {
 	assert.True(t, added)
 
 	added, err = vs.AddVote(duplicatedVote1)
-	assert.Equal(t, errors.ErrDuplicateVote, errors.Code(err))
+	assert.ErrorIs(t, err, ErrDuplicatedVote)
 	assert.True(t, added)
 
 	added, err = vs.AddVote(duplicatedVote2)
-	assert.Equal(t, errors.ErrDuplicateVote, errors.Code(err))
+	assert.ErrorIs(t, err, ErrDuplicatedVote)
 	assert.True(t, added)
 
 	bv1 := vs.BlockVotes(h1)
@@ -185,11 +184,11 @@ func TestDuplicateBinaryVote(t *testing.T) {
 	assert.True(t, added)
 
 	added, err = vs.AddVote(duplicatedVote1)
-	assert.Equal(t, errors.ErrDuplicateVote, errors.Code(err))
+	assert.ErrorIs(t, err, ErrDuplicatedVote)
 	assert.True(t, added)
 
 	added, err = vs.AddVote(duplicatedVote2)
-	assert.Equal(t, errors.ErrDuplicateVote, errors.Code(err))
+	assert.ErrorIs(t, err, ErrDuplicatedVote)
 	assert.True(t, added)
 
 	assert.False(t, vs.HasOneThirdOfTotalPower(0))
@@ -257,7 +256,7 @@ func TestAllBlockVotes(t *testing.T) {
 	ts.HelperSignVote(valKeys[0], v1)
 	ts.HelperSignVote(valKeys[1], v2)
 	ts.HelperSignVote(valKeys[2], v3)
-	ts.HelperSignVote(valKeys[3], v4)
+	ts.HelperSignVote(valKeys[0], v4)
 
 	_, err := vs.AddVote(v1)
 	assert.NoError(t, err)
@@ -271,7 +270,7 @@ func TestAllBlockVotes(t *testing.T) {
 	assert.Equal(t, &h1, vs.QuorumHash())
 
 	_, err = vs.AddVote(v4)
-	assert.Error(t, err) // duplicated
+	assert.ErrorIs(t, err, ErrDuplicatedVote) // duplicated
 
 	// Check accumulated power
 	assert.Equal(t, &h1, vs.QuorumHash())

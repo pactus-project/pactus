@@ -6,14 +6,14 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 )
 
-// invalidJustificationError is returned when the justification for a change-proposer
+// InvalidJustificationError is returned when the justification for a change-proposer
 // vote is invalid.
-type invalidJustificationError struct {
+type InvalidJustificationError struct {
 	JustType vote.JustType
 	Reason   string
 }
 
-func (e invalidJustificationError) Error() string {
+func (e InvalidJustificationError) Error() string {
 	return fmt.Sprintf("invalid justification: %s, reason: %s",
 		e.JustType.String(), e.Reason)
 }

@@ -4,10 +4,9 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -232,19 +231,25 @@ func TestVoteSignature(t *testing.T) {
 	v1 := vote.NewPrepareVote(h1, 101, 5, pb1.ValidatorAddress())
 	v2 := vote.NewPrepareVote(h1, 101, 5, pb2.ValidatorAddress())
 
-	assert.Error(t, v1.Verify(pb1), "No signature")
+	assert.Error(t, v1.BasicCheck(), "No signature")
 
-	sig1 := pv1.Sign(v1.SignBytes())
-	v1.SetSignature(sig1.(*bls.Signature))
-	assert.NoError(t, v1.Verify(pb1), "Ok")
+	sig1 := pv1.SignNative(v1.SignBytes())
+	v1.SetSignature(sig1)
+	err1 := v1.Verify(pb1)
+	assert.NoError(t, err1, "Ok")
 
-	sig2 := pv2.Sign(v2.SignBytes())
-	v2.SetSignature(sig2.(*bls.Signature))
-	assert.Error(t, v2.Verify(pb1), "invalid public key")
+	sig2 := pv2.SignNative(v2.SignBytes())
+	v2.SetSignature(sig2)
+	err2 := v2.Verify(pb1)
+	assert.ErrorIs(t, err2, vote.InvalidSignerError{
+		Expected: pb1.ValidatorAddress(),
+		Got:      pb2.ValidatorAddress(),
+	})
 
-	sig3 := pv1.Sign(v2.SignBytes())
-	v2.SetSignature(sig3.(*bls.Signature))
-	assert.Error(t, v2.Verify(pb2), "invalid signature")
+	sig3 := pv1.SignNative(v2.SignBytes())
+	v2.SetSignature(sig3)
+	err3 := v2.Verify(pb2)
+	assert.ErrorIs(t, err3, crypto.ErrInvalidSignature)
 }
 
 func TestCPPreVote(t *testing.T) {
@@ -254,20 +259,22 @@ func TestCPPreVote(t *testing.T) {
 	r := ts.RandRound()
 	just := &vote.JustInitYes{}
 
-	t.Run("Invalid round", func(t *testing.T) {
+	t.Run("Invalid CP round", func(t *testing.T) {
+		invalidCPRound := int16(-1)
 		v := vote.NewCPPreVote(hash.UndefHash, h, r,
-			-1, vote.CPValueYes, just, ts.RandAccAddress())
+			invalidCPRound, vote.CPValueYes, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.ErrInvalidRound, errors.Code(err))
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP round"})
 	})
 
-	t.Run("Invalid value", func(t *testing.T) {
+	t.Run("invalid CP value", func(t *testing.T) {
+		invalidCPValue := vote.CPValue(3)
 		v := vote.NewCPPreVote(hash.UndefHash, h, r,
-			1, 3, just, ts.RandAccAddress())
+			1, invalidCPValue, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.ErrInvalidVote, errors.Code(err))
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP value"})
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -290,31 +297,33 @@ func TestCPMainVote(t *testing.T) {
 	r := ts.RandRound()
 	just := &vote.JustInitYes{}
 
-	t.Run("Invalid round", func(t *testing.T) {
+	t.Run("Invalid CP round", func(t *testing.T) {
+		invalidCPRound := int16(-1)
 		v := vote.NewCPMainVote(hash.UndefHash, h, r,
-			-1, vote.CPValueNo, just, ts.RandAccAddress())
+			invalidCPRound, vote.CPValueNo, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.ErrInvalidRound, errors.Code(err))
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP round"})
 	})
 
 	t.Run("No CP data", func(t *testing.T) {
 		data, _ := hex.DecodeString("A701040218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
 			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
 		v := new(vote.Vote)
-		err := v.UnmarshalCBOR(data)
-		assert.NoError(t, err)
+		_ = v.UnmarshalCBOR(data)
 		v.SetSignature(ts.RandBLSSignature())
 
-		assert.Error(t, v.BasicCheck())
+		err := v.BasicCheck()
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "should have CP data"})
 	})
 
-	t.Run("Invalid value", func(t *testing.T) {
+	t.Run("Invalid CP value", func(t *testing.T) {
+		invalidCPValue := vote.CPValue(3)
 		v := vote.NewCPMainVote(hash.UndefHash, h, r,
-			1, 3, just, ts.RandAccAddress())
+			1, invalidCPValue, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.ErrInvalidVote, errors.Code(err))
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP value"})
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -338,30 +347,32 @@ func TestCPDecided(t *testing.T) {
 	just := &vote.JustInitYes{}
 
 	t.Run("Invalid round", func(t *testing.T) {
+		invalidCPRound := int16(-1)
 		v := vote.NewCPDecidedVote(hash.UndefHash, h, r,
-			-1, vote.CPValueNo, just, ts.RandAccAddress())
+			invalidCPRound, vote.CPValueNo, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.ErrInvalidRound, errors.Code(err))
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP round"})
 	})
 
 	t.Run("No CP data", func(t *testing.T) {
 		data, _ := hex.DecodeString("A701050218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
 			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
 		v := new(vote.Vote)
-		err := v.UnmarshalCBOR(data)
-		assert.NoError(t, err)
+		_ = v.UnmarshalCBOR(data)
 		v.SetSignature(ts.RandBLSSignature())
 
-		assert.Error(t, v.BasicCheck())
+		err := v.BasicCheck()
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "should have CP data"})
 	})
 
-	t.Run("Invalid value", func(t *testing.T) {
+	t.Run("Invalid CP value", func(t *testing.T) {
+		invalidCPValue := vote.CPValue(3)
 		v := vote.NewCPDecidedVote(hash.UndefHash, h, r,
-			1, 3, just, ts.RandAccAddress())
+			1, invalidCPValue, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.ErrInvalidVote, errors.Code(err))
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP value"})
 	})
 
 	t.Run("Ok", func(t *testing.T) {
@@ -380,7 +391,7 @@ func TestCPDecided(t *testing.T) {
 func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	t.Run("Invalid type", func(t *testing.T) {
+	t.Run("Should have CP data", func(t *testing.T) {
 		data, _ := hex.DecodeString("A701050218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
 			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
 		v := new(vote.Vote)
@@ -388,7 +399,7 @@ func TestBasicCheck(t *testing.T) {
 		assert.NoError(t, err)
 
 		err = v.BasicCheck()
-		assert.Equal(t, errors.ErrInvalidVote, errors.Code(err))
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "should have CP data"})
 	})
 
 	t.Run("Invalid height", func(t *testing.T) {
@@ -409,18 +420,18 @@ func TestBasicCheck(t *testing.T) {
 		v := vote.NewPrepareVote(ts.RandHash(), 100, 0, ts.RandAccAddress())
 
 		err := v.BasicCheck()
-		assert.Equal(t, errors.ErrInvalidSignature, errors.Code(err))
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "no signature"})
 	})
 
-	t.Run("Has CP data", func(t *testing.T) {
+	t.Run("Should not have CP data", func(t *testing.T) {
 		data, _ := hex.DecodeString("A701020218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
 			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06A40100020103020441A007f6")
 		v := new(vote.Vote)
-		err := v.UnmarshalCBOR(data)
-		assert.NoError(t, err)
+		_ = v.UnmarshalCBOR(data)
 		v.SetSignature(ts.RandBLSSignature())
 
-		assert.Error(t, v.BasicCheck())
+		err := v.BasicCheck()
+		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "should not have CP data"})
 	})
 
 	t.Run("Ok", func(t *testing.T) {

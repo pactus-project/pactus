@@ -4,7 +4,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type voteSet struct {
@@ -34,13 +33,13 @@ func (vs *voteSet) verifyVote(v *vote.Vote) (int64, error) {
 	signer := v.Signer()
 	val := vs.validators[signer]
 	if val == nil {
-		return 0, errors.Errorf(errors.ErrInvalidAddress,
-			"cannot find validator %s in committee", signer)
+		return 0, IneligibleVoterError{
+			Address: signer,
+		}
 	}
 
 	if err := v.Verify(val.PublicKey()); err != nil {
-		return 0, errors.Errorf(errors.ErrInvalidSignature,
-			"failed to verify vote")
+		return 0, err
 	}
 
 	return val.Power(), nil
