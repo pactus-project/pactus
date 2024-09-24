@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,7 +19,8 @@ func TestTransactionsMessage(t *testing.T) {
 	t.Run("No transactions", func(t *testing.T) {
 		m := NewTransactionsMessage(nil)
 
-		assert.Equal(t, errors.ErrInvalidMessage, errors.Code(m.BasicCheck()))
+		err := m.BasicCheck()
+		assert.ErrorIs(t, err, BasicCheckError{Reason: "no transaction"})
 	})
 
 	t.Run("OK", func(t *testing.T) {

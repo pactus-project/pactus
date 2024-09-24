@@ -179,7 +179,7 @@ func TestLoadWallet(t *testing.T) {
 		signedTx, err := tx.FromBytes(td.DecodingHex(res.SignedRawTransaction))
 		assert.NoError(t, err)
 		assert.NotNil(t, signedTx.Signature())
-		assert.Nil(t, signedTx.BasicCheck())
+		assert.NoError(t, signedTx.BasicCheck())
 	})
 
 	t.Run("Sign raw transaction using not loaded wallet", func(t *testing.T) {

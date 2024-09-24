@@ -6,7 +6,6 @@ import (
 
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type TransactionsMessage struct {
@@ -21,7 +20,7 @@ func NewTransactionsMessage(trxs []*tx.Tx) *TransactionsMessage {
 
 func (m *TransactionsMessage) BasicCheck() error {
 	if len(m.Transactions) == 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "no transaction")
+		return BasicCheckError{Reason: "no transaction"}
 	}
 	for _, trx := range m.Transactions {
 		if err := trx.BasicCheck(); err != nil {

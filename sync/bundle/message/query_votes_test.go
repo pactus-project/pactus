@@ -3,7 +3,6 @@ package message
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,7 +18,8 @@ func TestQueryVoteMessage(t *testing.T) {
 	t.Run("Invalid round", func(t *testing.T) {
 		m := NewQueryVoteMessage(0, -1, ts.RandValAddress())
 
-		assert.Equal(t, errors.ErrInvalidRound, errors.Code(m.BasicCheck()))
+		err := m.BasicCheck()
+		assert.ErrorIs(t, err, BasicCheckError{Reason: "invalid round"})
 	})
 
 	t.Run("OK", func(t *testing.T) {
