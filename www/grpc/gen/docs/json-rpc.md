@@ -79,6 +79,10 @@ curl --location 'http://localhost:8545/' \
           <span class="rpc-badge"></span> pactus.transaction.broadcast_transaction</a>
         </li>
         <li>
+          <a href="#pactus.transaction.get_raw_transaction">
+          <span class="rpc-badge"></span> pactus.transaction.get_raw_transaction</a>
+        </li>
+        <li>
           <a href="#pactus.transaction.get_raw_transfer_transaction">
           <span class="rpc-badge"></span> pactus.transaction.get_raw_transfer_transaction</a>
         </li>
@@ -396,6 +400,13 @@ parameters.</p>
             </td>
           </tr>
           <tr>
+            <td class="fw-bold">transaction.bond.public_key</td>
+            <td> string</td>
+            <td>
+            The public key of the validator.
+            </td>
+          </tr>
+          <tr>
         <td class="fw-bold">transaction.sortition</td>
         <td> object</td>
         <td>
@@ -438,17 +449,17 @@ parameters.</p>
         </td>
       </tr>
          <tr>
-            <td class="fw-bold">transaction.withdraw.from</td>
+            <td class="fw-bold">transaction.withdraw.validator_address</td>
             <td> string</td>
             <td>
-            The address to withdraw from.
+            The address of the validator to withdraw from.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">transaction.withdraw.to</td>
+            <td class="fw-bold">transaction.withdraw.account_address</td>
             <td> string</td>
             <td>
-            The address to withdraw to.
+            The address of the account to withdraw to.
             </td>
           </tr>
           <tr>
@@ -586,9 +597,96 @@ and payload type.</p>
      </tbody>
 </table>
 
+### pactus.transaction.get_raw_transaction <span id="pactus.transaction.get_raw_transaction" class="rpc-badge"></span>
+
+<p>GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.</p>
+
+<h4>Parameters</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">lock_time</td>
+    <td> numeric</td>
+    <td>
+    The lock time for the transaction. If not set, defaults to the last block height.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">memo</td>
+    <td> string</td>
+    <td>
+    A memo string for the transaction.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">fee</td>
+    <td> numeric</td>
+    <td>
+    The fee for the transaction in NanoPAC.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">transfer</td>
+    <td> object</td>
+    <td>
+    (OneOf) 
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">bond</td>
+    <td> object</td>
+    <td>
+    (OneOf) 
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">unbond</td>
+    <td> object</td>
+    <td>
+    (OneOf) 
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">withdraw</td>
+    <td> object</td>
+    <td>
+    (OneOf) 
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">raw_transaction</td>
+    <td> string</td>
+    <td>
+    The raw transaction data.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
 ### pactus.transaction.get_raw_transfer_transaction <span id="pactus.transaction.get_raw_transfer_transaction" class="rpc-badge"></span>
 
-<p>GetRawTransferTransaction retrieves raw details of a transfer transaction.</p>
+<p>Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+Use GetRawTransaction instead.</p>
 
 <h4>Parameters</h4>
 
@@ -656,12 +754,20 @@ height.
     The raw transaction data.
     </td>
   </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
+    </td>
+  </tr>
      </tbody>
 </table>
 
 ### pactus.transaction.get_raw_bond_transaction <span id="pactus.transaction.get_raw_bond_transaction" class="rpc-badge"></span>
 
-<p>GetRawBondTransaction retrieves raw details of a bond transaction.</p>
+<p>Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+Use GetRawTransaction instead.</p>
 
 <h4>Parameters</h4>
 
@@ -736,12 +842,20 @@ height.
     The raw transaction data.
     </td>
   </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
+    </td>
+  </tr>
      </tbody>
 </table>
 
 ### pactus.transaction.get_raw_unbond_transaction <span id="pactus.transaction.get_raw_unbond_transaction" class="rpc-badge"></span>
 
-<p>GetRawUnbondTransaction retrieves raw details of an unbond transaction.</p>
+<p>Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+Use GetRawTransaction instead.</p>
 
 <h4>Parameters</h4>
 
@@ -788,12 +902,20 @@ height.
     The raw transaction data.
     </td>
   </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
+    </td>
+  </tr>
      </tbody>
 </table>
 
 ### pactus.transaction.get_raw_withdraw_transaction <span id="pactus.transaction.get_raw_withdraw_transaction" class="rpc-badge"></span>
 
-<p>GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.</p>
+<p>Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+Use GetRawTransaction instead.</p>
 
 <h4>Parameters</h4>
 
@@ -859,6 +981,13 @@ height.
     <td> string</td>
     <td>
     The raw transaction data.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
     </td>
   </tr>
      </tbody>
@@ -1142,6 +1271,13 @@ BLOCK_TRANSACTIONS.
             </td>
           </tr>
           <tr>
+            <td class="fw-bold">txs[].bond.public_key</td>
+            <td> string</td>
+            <td>
+            The public key of the validator.
+            </td>
+          </tr>
+          <tr>
         <td class="fw-bold">txs[].sortition</td>
         <td> object</td>
         <td>
@@ -1184,17 +1320,17 @@ BLOCK_TRANSACTIONS.
         </td>
       </tr>
          <tr>
-            <td class="fw-bold">txs[].withdraw.from</td>
+            <td class="fw-bold">txs[].withdraw.validator_address</td>
             <td> string</td>
             <td>
-            The address to withdraw from.
+            The address of the validator to withdraw from.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">txs[].withdraw.to</td>
+            <td class="fw-bold">txs[].withdraw.account_address</td>
             <td> string</td>
             <td>
-            The address to withdraw to.
+            The address of the account to withdraw to.
             </td>
           </tr>
           <tr>
@@ -2110,6 +2246,13 @@ types.
             </td>
           </tr>
           <tr>
+            <td class="fw-bold">txs[].bond.public_key</td>
+            <td> string</td>
+            <td>
+            The public key of the validator.
+            </td>
+          </tr>
+          <tr>
         <td class="fw-bold">txs[].sortition</td>
         <td> object</td>
         <td>
@@ -2152,17 +2295,17 @@ types.
         </td>
       </tr>
          <tr>
-            <td class="fw-bold">txs[].withdraw.from</td>
+            <td class="fw-bold">txs[].withdraw.validator_address</td>
             <td> string</td>
             <td>
-            The address to withdraw from.
+            The address of the validator to withdraw from.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">txs[].withdraw.to</td>
+            <td class="fw-bold">txs[].withdraw.account_address</td>
             <td> string</td>
             <td>
-            The address to withdraw to.
+            The address of the account to withdraw to.
             </td>
           </tr>
           <tr>

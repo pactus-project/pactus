@@ -65,8 +65,8 @@ func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
 
 	case pactus.PayloadType_WITHDRAW_PAYLOAD:
 		pld := trx.Payload.(*pactus.TransactionInfo_Withdraw).Withdraw
-		tm.addRowValAddress("Sender", pld.From)
-		tm.addRowAccAddress("Receiver", pld.To)
+		tm.addRowValAddress("Sender", pld.ValidatorAddress)
+		tm.addRowAccAddress("Receiver", pld.AccountAddress)
 		tm.addRowAmount("Amount", amount.Amount(pld.Amount))
 
 	case pactus.PayloadType_UNKNOWN:

@@ -19,19 +19,26 @@ service Transaction {
   rpc BroadcastTransaction(BroadcastTransactionRequest)
       returns (BroadcastTransactionResponse);
 
-  // GetRawTransferTransaction retrieves raw details of a transfer transaction.
+  // GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.
+  rpc GetRawTransaction(GetRawTransactionRequest) returns (GetRawTransactionResponse);
+
+  // Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
+  // Use GetRawTransaction instead.
   rpc GetRawTransferTransaction(GetRawTransferTransactionRequest)
       returns (GetRawTransactionResponse);
 
-  // GetRawBondTransaction retrieves raw details of a bond transaction.
+  // Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
+  // Use GetRawTransaction instead.
   rpc GetRawBondTransaction(GetRawBondTransactionRequest)
       returns (GetRawTransactionResponse);
 
-  // GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+  // Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+  // Use GetRawTransaction instead.
   rpc GetRawUnbondTransaction(GetRawUnbondTransactionRequest)
       returns (GetRawTransactionResponse);
 
-  // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+  // Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+  // Use GetRawTransaction instead.
   rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest)
       returns (GetRawTransactionResponse);
 }
@@ -84,7 +91,24 @@ message BroadcastTransactionResponse {
   string id = 1;
 }
 
-// Request message for retrieving raw details of a transfer transaction.
+// Request message for retrieving raw details of transaction.
+message GetRawTransactionRequest {
+  // The lock time for the transaction. If not set, defaults to the last block height.
+  uint32 lock_time = 1;
+  // A memo string for the transaction.
+  string memo = 2;
+  // The fee for the transaction in NanoPAC.
+  int64 fee = 3;
+
+  oneof payload {
+    PayloadTransfer transfer = 4;
+    PayloadBond bond = 5;
+    PayloadUnbond unbond = 6;
+    PayloadWithdraw withdraw = 7;
+  }
+}
+
+// Deprecated: Request message for retrieving raw details of a transfer transaction.
 message GetRawTransferTransactionRequest {
   // The lock time for the transaction. If not set, defaults to the last block
   // height.
@@ -101,7 +125,7 @@ message GetRawTransferTransactionRequest {
   string memo = 6;
 }
 
-// Request message for retrieving raw details of a bond transaction.
+// Deprecated: Request message for retrieving raw details of a bond transaction.
 message GetRawBondTransactionRequest {
   // The lock time for the transaction. If not set, defaults to the last block
   // height.
@@ -120,7 +144,7 @@ message GetRawBondTransactionRequest {
   string memo = 7;
 }
 
-// Request message for retrieving raw details of an unbond transaction.
+// Deprecated: Request message for retrieving raw details of an unbond transaction.
 message GetRawUnbondTransactionRequest {
   // The lock time for the transaction. If not set, defaults to the last block
   // height.
@@ -131,7 +155,7 @@ message GetRawUnbondTransactionRequest {
   string memo = 4;
 }
 
-// Request message for retrieving raw details of a withdraw transaction.
+// Deprecated: Request message for retrieving raw details of a withdraw transaction.
 message GetRawWithdrawTransactionRequest {
   // The lock time for the transaction. If not set, defaults to the last block
   // height.
@@ -152,6 +176,8 @@ message GetRawWithdrawTransactionRequest {
 message GetRawTransactionResponse {
   // The raw transaction data.
   string raw_transaction = 1;
+  // The unique ID of the transaction.
+  string id = 2;
 }
 
 // Payload for a transfer transaction.
@@ -172,6 +198,8 @@ message PayloadBond {
   string receiver = 2;
   // The stake amount in NanoPAC.
   int64 stake = 3;
+  // The public key of the validator.
+  string public_key = 4;
 }
 
 // Payload for a sortition transaction.
@@ -190,10 +218,10 @@ message PayloadUnbond {
 
 // Payload for a withdraw transaction.
 message PayloadWithdraw {
-  // The address to withdraw from.
-  string from = 1;
-  // The address to withdraw to.
-  string to = 2;
+  // The address of the validator to withdraw from.
+  string validator_address = 1;
+  // The address of the account to withdraw to.
+  string account_address = 2;
   // The withdrawal amount in NanoPAC.
   int64 amount = 3;
 }
