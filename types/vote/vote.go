@@ -8,7 +8,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 // Vote is a struct that represents a consensus vote.
@@ -184,10 +183,6 @@ func (v *Vote) Hash() hash.Hash {
 
 // Verify checks the signature of the vote with the given public key.
 func (v *Vote) Verify(pubKey *bls.PublicKey) error {
-	if v.Signature() == nil {
-		return errors.Errorf(errors.ErrInvalidVote, "no signature")
-	}
-
 	if v.Signer() != pubKey.ValidatorAddress() {
 		return InvalidSignerError{
 			Expected: pubKey.ValidatorAddress(),
@@ -211,7 +206,9 @@ func (v *Vote) IsCPVote() bool {
 // BasicCheck performs a basic check on the vote.
 func (v *Vote) BasicCheck() error {
 	if !v.data.Type.IsValid() {
-		return errors.Errorf(errors.ErrInvalidVote, "invalid vote type")
+		return BasicCheckError{
+			Reason: "invalid vote type",
+		}
 	}
 	if v.data.Height <= 0 {
 		return BasicCheckError{
@@ -225,16 +222,22 @@ func (v *Vote) BasicCheck() error {
 	}
 	if v.IsCPVote() {
 		if v.data.CPVote == nil {
-			return errors.Errorf(errors.ErrInvalidVote, "should have cp data")
+			return BasicCheckError{
+				Reason: "should have CP data",
+			}
 		}
 		if err := v.data.CPVote.BasicCheck(); err != nil {
 			return err
 		}
 	} else if v.data.CPVote != nil {
-		return errors.Errorf(errors.ErrInvalidVote, "should not have cp data")
+		return BasicCheckError{
+			Reason: "should not have CP data",
+		}
 	}
 	if v.Signature() == nil {
-		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
+		return BasicCheckError{
+			Reason: "no signature",
+		}
 	}
 
 	return nil

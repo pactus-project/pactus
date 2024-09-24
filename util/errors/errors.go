@@ -7,15 +7,12 @@ import (
 const (
 	ErrNone = iota
 	ErrGeneric
-	ErrInvalidAddress
 	ErrInvalidPublicKey
 	ErrInvalidPrivateKey
 	ErrInvalidSignature
 	ErrInvalidHeight
 	ErrInvalidRound
-	ErrInvalidVote
 	ErrInvalidMessage
-	ErrDuplicateVote
 
 	ErrCount
 )
@@ -23,15 +20,12 @@ const (
 var messages = map[int]string{
 	ErrNone:              "no error",
 	ErrGeneric:           "generic error",
-	ErrInvalidAddress:    "invalid address",
 	ErrInvalidPublicKey:  "invalid public key",
 	ErrInvalidPrivateKey: "invalid private key",
 	ErrInvalidSignature:  "invalid signature",
 	ErrInvalidHeight:     "invalid height",
 	ErrInvalidRound:      "invalid round",
-	ErrInvalidVote:       "invalid vote",
 	ErrInvalidMessage:    "invalid message",
-	ErrDuplicateVote:     "duplicate vote",
 }
 
 type withCodeError struct {

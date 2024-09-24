@@ -4,7 +4,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type roundVotes struct {
@@ -105,7 +104,7 @@ func (vs *BinaryVoteSet) AddVote(v *vote.Vote) (bool, error) {
 		}
 
 		// It is a duplicated vote
-		err = errors.Error(errors.ErrDuplicateVote)
+		err = ErrDuplicatedVote
 	} else {
 		roundVotes.allVotes[v.Signer()] = v
 		roundVotes.votedPower += power
