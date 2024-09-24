@@ -78,7 +78,7 @@ func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 			if p.Block() != nil {
 				data, err := p.Block().Bytes()
 				if err != nil {
-					return nil, status.Errorf(codes.Internal, err.Error())
+					return nil, status.Error(codes.Internal, err.Error())
 				}
 
 				blockData = string(data)
@@ -148,7 +148,7 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 		pactus.BlockVerbosity_BLOCK_TRANSACTIONS:
 		block, err := cBlk.ToBlock()
 		if err != nil {
-			return nil, status.Errorf(codes.Internal, err.Error())
+			return nil, status.Error(codes.Internal, err.Error())
 		}
 		blockTime := block.Header().UnixTime()
 		seed := block.Header().SortitionSeed()

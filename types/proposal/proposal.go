@@ -9,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type Proposal struct {
@@ -50,19 +49,19 @@ func (p *Proposal) Signature() *bls.Signature {
 
 func (p *Proposal) BasicCheck() error {
 	if p.data.Block == nil {
-		return errors.Errorf(errors.ErrInvalidBlock, "no block")
+		return BasicCheckError{Reason: "no block"}
 	}
 	if p.data.Signature == nil {
-		return errors.Errorf(errors.ErrInvalidSignature, "no signature")
+		return BasicCheckError{Reason: "no signature"}
 	}
 	if err := p.data.Block.BasicCheck(); err != nil {
-		return err
+		return BasicCheckError{Reason: fmt.Sprintf("invalid block: %s", err.Error())}
 	}
 	if p.data.Height <= 0 {
-		return errors.Error(errors.ErrInvalidHeight)
+		return BasicCheckError{Reason: "invalid height"}
 	}
 	if p.data.Round < 0 {
-		return errors.Error(errors.ErrInvalidRound)
+		return BasicCheckError{Reason: "invalid round"}
 	}
 
 	return nil
@@ -86,7 +85,7 @@ func (p *Proposal) UnmarshalCBOR(bs []byte) error {
 
 func (p *Proposal) Verify(pubKey crypto.PublicKey) error {
 	if p.data.Signature == nil {
-		return errors.Errorf(errors.ErrInvalidProposal, "no signature")
+		return ErrNoSignature
 	}
 	if err := pubKey.VerifyAddress(p.data.Block.Header().ProposerAddress()); err != nil {
 		return err

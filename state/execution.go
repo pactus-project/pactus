@@ -1,12 +1,13 @@
 package state
 
 import (
+	"fmt"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox, check bool) error {
@@ -16,13 +17,11 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox, check bool) er
 		isSubsidyTx := (i == 0)
 		if isSubsidyTx {
 			if !trx.IsSubsidyTx() {
-				return errors.Errorf(errors.ErrInvalidTx,
-					"first transaction should be a subsidy transaction")
+				return ErrInvalidSubsidyTransaction
 			}
 			subsidyTrx = trx
 		} else if trx.IsSubsidyTx() {
-			return errors.Errorf(errors.ErrInvalidTx,
-				"duplicated subsidy transaction")
+			return ErrDuplicatedSubsidyTransaction
 		}
 
 		if check {
@@ -45,8 +44,10 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox, check bool) er
 	accumulatedFee := sb.AccumulatedFee()
 	subsidyAmt := st.params.BlockReward + sb.AccumulatedFee()
 	if subsidyTrx.Payload().Value() != subsidyAmt {
-		return errors.Errorf(errors.ErrInvalidTx,
-			"invalid subsidy amount, expected %v, got %v", subsidyAmt, subsidyTrx.Payload().Value())
+		return InvalidSubsidyAmountError{
+			Expected: subsidyAmt,
+			Got:      subsidyTrx.Payload().Value(),
+		}
 	}
 
 	// Claim accumulated fees
@@ -61,14 +62,12 @@ func (st *state) checkEd25519Fork(trx *tx.Tx) error {
 	// TODO: remove me after enabling Ed255519
 	if trx.Payload().Signer().Type() == crypto.AddressTypeEd25519Account {
 		if st.genDoc.ChainType().IsMainnet() {
-			return errors.Errorf(errors.ErrInvalidTx,
-				"ed255519 not supported yet")
+			return fmt.Errorf("ed255519 not supported yet")
 		}
 
 		if st.genDoc.ChainType().IsTestnet() {
 			if st.lastInfo.BlockHeight() < 1_320_000 {
-				return errors.Errorf(errors.ErrInvalidTx,
-					"ed255519 not supported yet")
+				return fmt.Errorf("ed255519 not supported yet")
 			}
 		}
 	}

@@ -15,7 +15,8 @@ var _ TxPool = &MockTxPool{}
 
 // MockTxPool is a testing mock.
 type MockTxPool struct {
-	Txs []*tx.Tx
+	Txs         []*tx.Tx
+	AppendError error
 }
 
 func MockingTxPool() *MockTxPool {
@@ -59,13 +60,13 @@ func (*MockTxPool) String() string {
 func (m *MockTxPool) AppendTx(trx *tx.Tx) error {
 	m.Txs = append(m.Txs, trx)
 
-	return nil
+	return m.AppendError
 }
 
 func (m *MockTxPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	m.Txs = append(m.Txs, trx)
 
-	return nil
+	return m.AppendError
 }
 
 func (m *MockTxPool) RemoveTx(id hash.Hash) {

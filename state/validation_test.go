@@ -1,13 +1,14 @@
 package state
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
-	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,17 +29,18 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().SortitionSeed(),
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
-
-		assert.Error(t, td.state.ValidateBlock(blk, round))
+		err := td.state.ValidateBlock(blk, round)
+		assert.ErrorIs(t, err, ErrInvalidBlockVersion)
 
 		// Receiving a block with version 2 and rejects it.
-		// It is possible that the same block would be considered valid by other nodes (Soft fork).
-		assert.Error(t, td.state.CommitBlock(blk, cert))
+		// It is possible that the same block would be considered valid by other nodes (Hard Fork).
+		err = td.state.CommitBlock(blk, cert)
+		assert.ErrorIs(t, err, ErrInvalidBlockVersion)
 	})
 
 	t.Run("Invalid time", func(t *testing.T) {
 		blk0, _ := td.makeBlockAndCertificate(t, round)
-		invBlockTime := util.RoundNow(td.state.params.BlockIntervalInSecond).Add(30 * time.Second)
+		invBlockTime := td.state.LastBlockTime().Add(-10 * time.Second)
 		blk := block.MakeBlock(
 			blk0.Header().Version(),
 			invBlockTime,
@@ -49,9 +51,14 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().SortitionSeed(),
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
+		err := td.state.ValidateBlock(blk, round)
+		assert.ErrorIs(t, err, InvalidBlockTimeError{
+			Reason: fmt.Sprintf("block time (%s) is before the last block time (%s)",
+				invBlockTime, td.state.LastBlockTime()),
+		})
 
-		assert.Error(t, td.state.ValidateBlock(blk, round))
-		assert.NoError(t, td.state.CommitBlock(blk, cert))
+		err = td.state.CommitBlock(blk, cert)
+		assert.NoError(t, err)
 	})
 
 	t.Run("Invalid StateRoot", func(t *testing.T) {
@@ -67,9 +74,17 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().SortitionSeed(),
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
+		err := td.state.ValidateBlock(blk, round)
+		assert.ErrorIs(t, err, InvalidStateRootHashError{
+			Expected: td.state.stateRoot(),
+			Got:      blk.Header().StateRoot(),
+		})
 
-		assert.Error(t, td.state.ValidateBlock(blk, round))
-		assert.Error(t, td.state.CommitBlock(blk, cert))
+		err = td.state.CommitBlock(blk, cert)
+		assert.ErrorIs(t, err, InvalidStateRootHashError{
+			Expected: td.state.stateRoot(),
+			Got:      blk.Header().StateRoot(),
+		})
 	})
 
 	t.Run("Invalid PrevCertificate", func(t *testing.T) {
@@ -93,9 +108,11 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().SortitionSeed(),
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
+		err := td.state.ValidateBlock(blk, round)
+		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
 
-		assert.Error(t, td.state.ValidateBlock(blk, round))
-		assert.Error(t, td.state.CommitBlock(blk, cert))
+		err = td.state.CommitBlock(blk, cert)
+		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	})
 
 	t.Run("Invalid ProposerAddress", func(t *testing.T) {
@@ -111,9 +128,17 @@ func TestBlockValidation(t *testing.T) {
 			blk0.Header().SortitionSeed(),
 			invProposerAddress)
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
+		err := td.state.ValidateBlock(blk, round)
+		assert.ErrorIs(t, err, InvalidProposerError{
+			Expected: td.state.committee.Proposer(round).Address(),
+			Got:      invProposerAddress,
+		})
 
-		assert.Error(t, td.state.ValidateBlock(blk, round))
-		assert.Error(t, td.state.CommitBlock(blk, cert))
+		err = td.state.CommitBlock(blk, cert)
+		assert.ErrorIs(t, err, InvalidProposerError{
+			Expected: td.state.committee.Proposer(round).Address(),
+			Got:      invProposerAddress,
+		})
 	})
 
 	t.Run("Invalid SortitionSeed", func(t *testing.T) {
@@ -129,9 +154,11 @@ func TestBlockValidation(t *testing.T) {
 			invSortitionSeed,
 			blk0.Header().ProposerAddress())
 		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
+		err := td.state.ValidateBlock(blk, round)
+		assert.ErrorIs(t, err, ErrInvalidSortitionSeed)
 
-		assert.Error(t, td.state.ValidateBlock(blk, round))
-		assert.Error(t, td.state.CommitBlock(blk, cert))
+		err = td.state.CommitBlock(blk, cert)
+		assert.ErrorIs(t, err, ErrInvalidSortitionSeed)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
