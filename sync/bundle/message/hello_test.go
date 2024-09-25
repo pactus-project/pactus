@@ -7,7 +7,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -27,7 +26,8 @@ func TestHelloMessage(t *testing.T) {
 		m.Sign([]*bls.ValidatorKey{valKey})
 		m.Signature = ts.RandBLSSignature()
 
-		assert.ErrorIs(t, crypto.ErrInvalidSignature, m.BasicCheck())
+		err := m.BasicCheck()
+		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	})
 
 	t.Run("Signature is nil", func(t *testing.T) {
@@ -37,7 +37,8 @@ func TestHelloMessage(t *testing.T) {
 		m.Sign([]*bls.ValidatorKey{valKey})
 		m.Signature = nil
 
-		assert.Equal(t, errors.ErrInvalidSignature, errors.Code(m.BasicCheck()))
+		err := m.BasicCheck()
+		assert.ErrorIs(t, err, BasicCheckError{"no signature"})
 	})
 
 	t.Run("PublicKeys are empty", func(t *testing.T) {
@@ -47,7 +48,8 @@ func TestHelloMessage(t *testing.T) {
 		m.Sign([]*bls.ValidatorKey{valKey})
 		m.PublicKeys = make([]*bls.PublicKey, 0)
 
-		assert.Equal(t, errors.ErrInvalidPublicKey, errors.Code(m.BasicCheck()))
+		err := m.BasicCheck()
+		assert.ErrorIs(t, err, BasicCheckError{"no public key"})
 	})
 
 	t.Run("MyTimeUnixMilli of time1 is less or equal than hello message time", func(t *testing.T) {

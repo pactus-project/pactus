@@ -89,41 +89,45 @@ func (t Type) String() string {
 	}
 }
 
-func MakeMessage(t Type) Message {
+func MakeMessage(t Type) (Message, error) {
+	var msg Message
 	switch t {
 	case TypeHello:
-		return &HelloMessage{}
+		msg = &HelloMessage{}
 
 	case TypeHelloAck:
-		return &HelloAckMessage{}
+		msg = &HelloAckMessage{}
 
 	case TypeTransaction:
-		return &TransactionsMessage{}
+		msg = &TransactionsMessage{}
 
 	case TypeQueryProposal:
-		return &QueryProposalMessage{}
+		msg = &QueryProposalMessage{}
 
 	case TypeProposal:
-		return &ProposalMessage{}
+		msg = &ProposalMessage{}
 
 	case TypeQueryVote:
-		return &QueryVoteMessage{}
+		msg = &QueryVoteMessage{}
 
 	case TypeVote:
-		return &VoteMessage{}
+		msg = &VoteMessage{}
 
 	case TypeBlockAnnounce:
-		return &BlockAnnounceMessage{}
+		msg = &BlockAnnounceMessage{}
 
 	case TypeBlocksRequest:
-		return &BlocksRequestMessage{}
+		msg = &BlocksRequestMessage{}
 
 	case TypeBlocksResponse:
-		return &BlocksResponseMessage{}
+		msg = &BlocksResponseMessage{}
+
+	default:
+		return nil, InvalidMessageTypeError{Type: int(t)}
 	}
 
 	//
-	return nil
+	return msg, nil
 }
 
 type Message interface {

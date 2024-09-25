@@ -13,7 +13,6 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/util/ipblocker"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/ratelimit"
@@ -152,7 +151,7 @@ func (f *Firewall) decodeBundle(r io.Reader, pid peer.ID) (*bundle.Bundle, error
 	bdl := new(bundle.Bundle)
 	bytesRead, err := bdl.Decode(r)
 	if err != nil {
-		return nil, errors.Errorf(errors.ErrInvalidMessage, "%s", err.Error())
+		return nil, err
 	}
 	f.peerSet.IncreaseReceivedBytesCounter(pid, bdl.Message.Type(), int64(bytesRead))
 
@@ -161,26 +160,23 @@ func (f *Firewall) decodeBundle(r io.Reader, pid peer.ID) (*bundle.Bundle, error
 
 func (f *Firewall) checkBundle(bdl *bundle.Bundle) error {
 	if err := bdl.BasicCheck(); err != nil {
-		return errors.Errorf(errors.ErrInvalidMessage, "%s", err.Error())
+		return err
 	}
 
 	switch f.state.Genesis().ChainType() {
 	case genesis.Mainnet:
 		if bdl.Flags&0x3 != bundle.BundleFlagNetworkMainnet {
-			return errors.Errorf(errors.ErrInvalidMessage,
-				"bundle is not for the mainnet")
+			return ErrNetworkMismatch
 		}
 
 	case genesis.Testnet:
 		if bdl.Flags&0x3 != bundle.BundleFlagNetworkTestnet {
-			return errors.Errorf(errors.ErrInvalidMessage,
-				"bundle is not for the testnet")
+			return ErrNetworkMismatch
 		}
 
 	case genesis.Localnet:
 		if bdl.Flags&0x3 != 0 {
-			return errors.Errorf(errors.ErrInvalidMessage,
-				"bundle is not for the localnet")
+			return ErrNetworkMismatch
 		}
 	}
 

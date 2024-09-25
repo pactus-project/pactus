@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/network"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestMessage(t *testing.T) {
@@ -27,9 +28,16 @@ func TestMessage(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		msg := MakeMessage(tc.msgType)
+		msg, err := MakeMessage(tc.msgType)
+		require.NoError(t, err)
+
 		assert.Equal(t, tc.typeName, msg.Type().String())
 		assert.Equal(t, tc.topicID, msg.TopicID())
 		assert.Equal(t, tc.shouldBroadcast, msg.ShouldBroadcast())
 	}
+}
+
+func TestInvalidMessageType(t *testing.T) {
+	_, err := MakeMessage(66)
+	assert.ErrorIs(t, err, InvalidMessageTypeError{Type: 66})
 }

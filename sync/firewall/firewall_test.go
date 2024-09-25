@@ -328,13 +328,16 @@ func TestNetworkFlagsMainnet(t *testing.T) {
 
 	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
-	assert.NoError(t, td.firewall.checkBundle(bdl))
+	err := td.firewall.checkBundle(bdl)
+	assert.NoError(t, err)
 
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-	assert.Error(t, td.firewall.checkBundle(bdl))
+	err = td.firewall.checkBundle(bdl)
+	assert.ErrorIs(t, err, ErrNetworkMismatch)
 
 	bdl.Flags = 0
-	assert.Error(t, td.firewall.checkBundle(bdl))
+	err = td.firewall.checkBundle(bdl)
+	assert.ErrorIs(t, err, ErrNetworkMismatch)
 }
 
 func TestNetworkFlagsTestnet(t *testing.T) {
@@ -343,13 +346,16 @@ func TestNetworkFlagsTestnet(t *testing.T) {
 
 	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-	assert.NoError(t, td.firewall.checkBundle(bdl))
+	err := td.firewall.checkBundle(bdl)
+	assert.NoError(t, err)
 
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
-	assert.Error(t, td.firewall.checkBundle(bdl))
+	err = td.firewall.checkBundle(bdl)
+	assert.ErrorIs(t, err, ErrNetworkMismatch)
 
 	bdl.Flags = 0
-	assert.Error(t, td.firewall.checkBundle(bdl))
+	err = td.firewall.checkBundle(bdl)
+	assert.ErrorIs(t, err, ErrNetworkMismatch)
 }
 
 func TestNetworkFlagsLocalnet(t *testing.T) {
@@ -358,13 +364,16 @@ func TestNetworkFlagsLocalnet(t *testing.T) {
 
 	bdl := bundle.NewBundle(message.NewQueryVoteMessage(td.RandHeight(), td.RandRound(), td.RandValAddress()))
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-	assert.Error(t, td.firewall.checkBundle(bdl))
+	err := td.firewall.checkBundle(bdl)
+	assert.ErrorIs(t, err, ErrNetworkMismatch)
 
 	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
-	assert.Error(t, td.firewall.checkBundle(bdl))
+	err = td.firewall.checkBundle(bdl)
+	assert.ErrorIs(t, err, ErrNetworkMismatch)
 
 	bdl.Flags = 0
-	assert.NoError(t, td.firewall.checkBundle(bdl))
+	err = td.firewall.checkBundle(bdl)
+	assert.NoError(t, err)
 }
 
 func TestParseP2PAddr(t *testing.T) {

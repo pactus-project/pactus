@@ -5,7 +5,6 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/network"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type QueryProposalMessage struct {
@@ -24,7 +23,7 @@ func NewQueryProposalMessage(height uint32, round int16, querier crypto.Address)
 
 func (m *QueryProposalMessage) BasicCheck() error {
 	if m.Round < 0 {
-		return errors.Error(errors.ErrInvalidRound)
+		return BasicCheckError{Reason: "invalid round"}
 	}
 
 	return nil

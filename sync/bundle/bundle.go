@@ -7,7 +7,6 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 const (
@@ -84,19 +83,19 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 	err := d.Decode(&bdl)
 	bytesRead := d.NumBytesRead()
 	if err != nil {
-		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, "%s", err.Error())
+		return bytesRead, err
 	}
 
 	data := bdl.MessageData
-	msg := message.MakeMessage(bdl.MessageType)
-	if msg == nil {
-		return bytesRead, errors.Errorf(errors.ErrInvalidMessage, "invalid data")
+	msg, err := message.MakeMessage(bdl.MessageType)
+	if err != nil {
+		return bytesRead, err
 	}
 
 	if util.IsFlagSet(bdl.Flags, BundleFlagCompressed) {
 		c, err := util.DecompressBuffer(bdl.MessageData)
 		if err != nil {
-			return bytesRead, errors.Errorf(errors.ErrInvalidMessage, "%s", err.Error())
+			return bytesRead, err
 		}
 		data = c
 	}

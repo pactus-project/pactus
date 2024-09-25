@@ -9,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
-	"github.com/pactus-project/pactus/util/errors"
 	"github.com/pactus-project/pactus/version"
 )
 
@@ -43,10 +42,10 @@ func NewHelloMessage(pid peer.ID, moniker string,
 
 func (m *HelloMessage) BasicCheck() error {
 	if m.Signature == nil {
-		return errors.Error(errors.ErrInvalidSignature)
+		return BasicCheckError{"no signature"}
 	}
 	if len(m.PublicKeys) == 0 {
-		return errors.Error(errors.ErrInvalidPublicKey)
+		return BasicCheckError{"no public key"}
 	}
 	aggPublicKey := bls.PublicKeyAggregate(m.PublicKeys...)
 

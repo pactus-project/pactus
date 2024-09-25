@@ -10,9 +10,6 @@ const (
 	ErrInvalidPublicKey
 	ErrInvalidPrivateKey
 	ErrInvalidSignature
-	ErrInvalidHeight
-	ErrInvalidRound
-	ErrInvalidMessage
 
 	ErrCount
 )
@@ -23,9 +20,6 @@ var messages = map[int]string{
 	ErrInvalidPublicKey:  "invalid public key",
 	ErrInvalidPrivateKey: "invalid private key",
 	ErrInvalidSignature:  "invalid signature",
-	ErrInvalidHeight:     "invalid height",
-	ErrInvalidRound:      "invalid round",
-	ErrInvalidMessage:    "invalid message",
 }
 
 type withCodeError struct {

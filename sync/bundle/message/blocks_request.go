@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/network"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 type BlocksRequestMessage struct {
@@ -27,10 +26,10 @@ func (m *BlocksRequestMessage) To() uint32 {
 
 func (m *BlocksRequestMessage) BasicCheck() error {
 	if m.From == 0 {
-		return errors.Errorf(errors.ErrInvalidHeight, "height is zero")
+		return BasicCheckError{Reason: "invalid height"}
 	}
 	if m.Count == 0 {
-		return errors.Errorf(errors.ErrInvalidMessage, "count is zero")
+		return BasicCheckError{Reason: "count is zero"}
 	}
 
 	return nil
