@@ -13,7 +13,6 @@ PACKAGE_NAME="pactus-cli_${VERSION}"
 
 for OS_ARCH in \
      "linux amd64" "linux arm64" \
-     "android arm64" \
      "freebsd amd64" "freebsd arm" \
      "darwin amd64" "darwin arm64" \
      "windows 386" "windows amd64"; do
@@ -31,9 +30,11 @@ for OS_ARCH in \
         EXE=".exe"
     fi
 
+    echo "Building Pactus for ${OS}-${ARCH}..."
+
     CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/${PACKAGE_NAME}/pactus-daemon${EXE} ./cmd/daemon
     CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/${PACKAGE_NAME}/pactus-wallet${EXE} ./cmd/wallet
-    CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/${PACKAGE_NAME}/pactus-shell${EXE} ./cmd/shell
+    CGO_ENABLED=0 GOOS=${OS} GOARCH=${ARCH} go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/${PACKAGE_NAME}/pactus-shell${EXE}  ./cmd/shell
 
     cd ${BUILD_DIR}
     if [ $OS = "windows" ]; then
