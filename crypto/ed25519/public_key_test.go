@@ -84,7 +84,7 @@ func TestNilPublicKey(t *testing.T) {
 	assert.Error(t, pub.VerifyAddress(ts.RandAccAddress()))
 	assert.Error(t, pub.VerifyAddress(ts.RandValAddress()))
 	assert.Error(t, pub.Verify(nil, nil))
-	assert.Panics(t, func() { pub.Verify(nil, randSig) })
+	assert.Panics(t, func() { _ = pub.Verify(nil, randSig) })
 }
 
 func TestNilSignature(t *testing.T) {
