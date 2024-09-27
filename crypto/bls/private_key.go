@@ -10,7 +10,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/bech32m"
-	"github.com/pactus-project/pactus/util/errors"
 	"golang.org/x/crypto/hkdf"
 )
 
@@ -37,8 +36,7 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	}
 
 	if typ != crypto.SignatureTypeBLS {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
-			"invalid private key type: %v", typ)
+		return nil, crypto.InvalidSignatureTypeError(typ)
 	}
 
 	return PrivateKeyFromBytes(data)
@@ -93,15 +91,13 @@ func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 // PrivateKeyFromBytes constructs a BLS private key from the raw bytes.
 func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	if len(data) != PrivateKeySize {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
-			"private key should be %d bytes, but it is %v bytes", PrivateKeySize, len(data))
+		return nil, crypto.InvalidLengthError(len(data))
 	}
 
 	fr := bls12381.NewFr()
 	fr.FromBytes(data)
 	if fr.IsZero() {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
-			"private key is zero")
+		return nil, crypto.ErrInvalidPrivateKey
 	}
 
 	return &PrivateKey{fr: *fr}, nil

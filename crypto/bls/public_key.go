@@ -12,7 +12,6 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/bech32m"
 	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 var _ crypto.PublicKey = &PublicKey{}
@@ -39,7 +38,7 @@ func PublicKeyFromString(text string) (*PublicKey, error) {
 	}
 
 	if typ != crypto.SignatureTypeBLS {
-		return nil, errors.Errorf(errors.ErrInvalidPublicKey, "invalid public key type: %v", typ)
+		return nil, crypto.InvalidSignatureTypeError(typ)
 	}
 
 	return PublicKeyFromBytes(data)
@@ -48,8 +47,7 @@ func PublicKeyFromString(text string) (*PublicKey, error) {
 // PublicKeyFromBytes constructs a BLS public key from the raw bytes.
 func PublicKeyFromBytes(data []byte) (*PublicKey, error) {
 	if len(data) != PublicKeySize {
-		return nil, errors.Errorf(errors.ErrInvalidPublicKey,
-			"public key should be %d bytes, but it is %v bytes", PublicKeySize, len(data))
+		return nil, crypto.InvalidLengthError(len(data))
 	}
 
 	return &PublicKey{data: data}, nil
@@ -108,7 +106,7 @@ func (pub *PublicKey) Decode(r io.Reader) error {
 // It's defined in section 2.6 of the spec: CoreVerify.
 func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	if sig == nil {
-		return errors.Error(errors.ErrInvalidSignature)
+		return crypto.ErrInvalidPublicKey
 	}
 	g1 := bls12381.NewG1()
 	g2 := bls12381.NewG2()

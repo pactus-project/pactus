@@ -79,12 +79,12 @@ func TestPublicKeyVerifyAddress(t *testing.T) {
 func TestNilPublicKey(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pub, _ := ts.RandEd25519KeyPair()
+	pub := &ed25519.PublicKey{}
 	randSig := ts.RandEd25519Signature()
 	assert.Error(t, pub.VerifyAddress(ts.RandAccAddress()))
 	assert.Error(t, pub.VerifyAddress(ts.RandValAddress()))
 	assert.Error(t, pub.Verify(nil, nil))
-	assert.Error(t, pub.Verify(nil, randSig))
+	assert.Panics(t, func() { pub.Verify(nil, randSig) })
 }
 
 func TestNilSignature(t *testing.T) {
@@ -119,12 +119,12 @@ func TestPublicKeyFromString(t *testing.T) {
 			false, nil,
 		},
 		{
-			"public key should be 32 bytes, but it is 31 bytes",
+			"invalid length: 31",
 			"public1ruwz86xyvhyehy8g7wg98jsmy07cfkjp6dy8zwxa8hqtdj99hquk7xyus",
 			false, nil,
 		},
 		{
-			"invalid public key type: 4",
+			"invalid signature type: 4",
 			"public1yafnl324uwngqdq455ax4e52fedmfcvskkwas6wsau0u0nwj4g96qdnx0mf",
 			false, nil,
 		},
