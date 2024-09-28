@@ -3,10 +3,12 @@ package http
 import (
 	"bytes"
 	"context"
+	"expvar"
 	"fmt"
 	"io"
 	"net"
 	"net/http"
+	"net/http/pprof"
 	"strings"
 	"time"
 
@@ -85,6 +87,8 @@ func (s *Server) StartServer(grpcServer string) error {
 	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
 	s.router.HandleFunc("/validator/number/{number}", s.GetValidatorByNumberHandler)
 	s.router.HandleFunc("/metrics/prometheus", promhttp.Handler().ServeHTTP)
+	s.router.HandleFunc("/debug/pprof/", pprof.Index)
+	s.router.Handle("/debug/vars", expvar.Handler())
 
 	if s.enableAuth {
 		http.Handle("/", handlers.RecoveryHandler()(basicAuth(s.router)))
