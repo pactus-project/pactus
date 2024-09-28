@@ -3,11 +3,10 @@ package bls
 import (
 	"bytes"
 	"crypto/subtle"
-	"fmt"
 	"io"
 
+	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
 	cbor "github.com/fxamacker/cbor/v2"
-	bls12381 "github.com/kilic/bls12-381"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/bech32m"
@@ -19,8 +18,8 @@ var _ crypto.PublicKey = &PublicKey{}
 const PublicKeySize = 96
 
 type PublicKey struct {
-	pointG2 *bls12381.PointG2 // Lazily initialized point on G2.
-	data    []byte            // Raw public key data.
+	pointG2 *bls12381.G2Affine // Lazily initialized point on G2.
+	data    []byte             // Raw public key data.
 }
 
 // PublicKeyFromString decodes the input string and returns the PublicKey
@@ -108,8 +107,6 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	if sig == nil {
 		return crypto.ErrInvalidPublicKey
 	}
-	g1 := bls12381.NewG1()
-	g2 := bls12381.NewG2()
 
 	r := sig.(*Signature)
 	pointG1, err := r.PointG1()
@@ -120,17 +117,22 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	if err != nil {
 		return err
 	}
-	q, err := g1.HashToCurve(msg, dst)
+	qAffine, err := bls12381.HashToG1(msg, dst)
 	if err != nil {
-		return err
+		panic(err)
 	}
-	g2one := g2.New().Set(&bls12381.G2One)
 
-	eng := bls12381.NewEngine()
-	eng.AddPair(q, &pointG2)
-	eng.AddPairInv(&pointG1, g2one)
+	var negP bls12381.G2Affine
+	negP.Neg(&gen2Aff)
 
-	if !eng.Check() {
+	check, err := bls12381.PairingCheck(
+		[]bls12381.G1Affine{qAffine, *pointG1},
+		[]bls12381.G2Affine{*pointG2, negP})
+	if err != nil {
+		return crypto.ErrInvalidSignature
+	}
+
+	if !check {
 		return crypto.ErrInvalidSignature
 	}
 
@@ -185,21 +187,27 @@ func (pub *PublicKey) VerifyAddress(addr crypto.Address) error {
 }
 
 // PointG2 returns the point on G2 for the public key.
-func (pub *PublicKey) PointG2() (bls12381.PointG2, error) {
+func (pub *PublicKey) PointG2() (*bls12381.G2Affine, error) {
 	if pub.pointG2 != nil {
-		return *pub.pointG2, nil
+		return pub.pointG2, nil
 	}
 
-	g2 := bls12381.NewG2()
-	pointG2, err := g2.FromCompressed(pub.data)
+	g2Aff := new(bls12381.G2Affine)
+	err := g2Aff.Unmarshal(pub.data)
 	if err != nil {
-		return bls12381.PointG2{}, err
+		return nil, err
 	}
-	if g2.IsZero(pointG2) {
-		return bls12381.PointG2{}, fmt.Errorf("public key is zero")
+	if g2Aff.IsInfinity() {
+		return nil, crypto.ErrInvalidPublicKey
+	}
+	if !g2Aff.IsInSubGroup() {
+		return nil, crypto.ErrInvalidPublicKey
+	}
+	if !g2Aff.IsOnCurve() {
+		return nil, crypto.ErrInvalidPublicKey
 	}
 
-	pub.pointG2 = pointG2
+	pub.pointG2 = g2Aff
 
-	return *pointG2, nil
+	return g2Aff, nil
 }

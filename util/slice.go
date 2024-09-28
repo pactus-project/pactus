@@ -196,11 +196,13 @@ func Reverse[S ~[]E, E any](s S) {
 }
 
 // Extend extends the slice 's' to length 'n' by appending zero-valued elements.
-func Extend[T any](s *[]T, n int) {
-	if len(*s) < n {
-		temp := make([]T, n-len(*s))
-		*s = append(*s, temp...)
+func Extend[T any](s []T, n int) []T {
+	if len(s) < n {
+		pad := make([]T, n-len(s), n+len(s))
+		s = append(pad, s...)
 	}
+
+	return s
 }
 
 // IsSubset checks if subSet is a subset of parentSet.

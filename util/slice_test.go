@@ -228,7 +228,7 @@ func TestExtendSlice(t *testing.T) {
 		size int
 		want []int
 	}{
-		{[]int{1, 2, 3}, 5, []int{1, 2, 3, 0, 0}},
+		{[]int{1, 2, 3}, 5, []int{0, 0, 1, 2, 3}},
 		{[]int{1, 2, 3}, 3, []int{1, 2, 3}},
 		{[]int{1, 2, 3}, 2, []int{1, 2, 3}},
 		{[]int{}, 5, []int{0, 0, 0, 0, 0}},
@@ -236,7 +236,7 @@ func TestExtendSlice(t *testing.T) {
 
 	for _, c := range cases {
 		inCopy := c.in
-		Extend(&inCopy, c.size)
+		inCopy = Extend(inCopy, c.size)
 		assert.Equal(t, c.want, inCopy, "ExtendSlice(%v, %v) == %v, want %v", c.in, c.size, c.in, c.want)
 	}
 }

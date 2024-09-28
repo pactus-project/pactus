@@ -4,11 +4,10 @@ import (
 	"bytes"
 	"crypto/subtle"
 	"encoding/hex"
-	"fmt"
 	"io"
 
+	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
 	cbor "github.com/fxamacker/cbor/v2"
-	bls12381 "github.com/kilic/bls12-381"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util/encoding"
 )
@@ -18,8 +17,8 @@ var _ crypto.Signature = &Signature{}
 const SignatureSize = 48
 
 type Signature struct {
-	pointG1 *bls12381.PointG1 // Lazily initialized point on G1.
-	data    []byte            // Raw signature data.
+	pointG1 *bls12381.G1Affine // Lazily initialized point on G1.
+	data    []byte             // Raw signature data.
 }
 
 // SignatureFromString decodes the input string and returns the Signature
@@ -97,21 +96,27 @@ func (sig *Signature) EqualsTo(x crypto.Signature) bool {
 }
 
 // PointG1 returns the point on G1 for the signature.
-func (sig *Signature) PointG1() (bls12381.PointG1, error) {
+func (sig *Signature) PointG1() (*bls12381.G1Affine, error) {
 	if sig.pointG1 != nil {
-		return *sig.pointG1, nil
+		return sig.pointG1, nil
 	}
 
-	g1 := bls12381.NewG1()
-	pointG1, err := g1.FromCompressed(sig.data)
+	g1Aff := new(bls12381.G1Affine)
+	err := g1Aff.Unmarshal(sig.data)
 	if err != nil {
-		return bls12381.PointG1{}, err
+		return nil, err
 	}
-	if g1.IsZero(pointG1) {
-		return bls12381.PointG1{}, fmt.Errorf("signature is zero")
+	if g1Aff.IsInfinity() {
+		return nil, crypto.ErrInvalidPublicKey
+	}
+	if !g1Aff.IsInSubGroup() {
+		return nil, crypto.ErrInvalidPublicKey
+	}
+	if !g1Aff.IsOnCurve() {
+		return nil, crypto.ErrInvalidPublicKey
 	}
 
-	sig.pointG1 = pointG1
+	sig.pointG1 = g1Aff
 
-	return *pointG1, nil
+	return g1Aff, nil
 }

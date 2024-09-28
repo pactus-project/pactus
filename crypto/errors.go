@@ -8,9 +8,6 @@ import (
 // ErrInvalidSignature is returned when a signature is invalid.
 var ErrInvalidSignature = errors.New("invalid signature")
 
-// ErrInvalidPrivateKey is returned when a private key is invalid.
-var ErrInvalidPrivateKey = errors.New("invalid private key")
-
 // ErrInvalidPublicKey is returned when a public key is invalid.
 var ErrInvalidPublicKey = errors.New("invalid public key")
 
