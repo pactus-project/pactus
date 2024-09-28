@@ -2,8 +2,9 @@ package bls_test
 
 import (
 	"crypto/rand"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"testing"
+
+	"github.com/pactus-project/pactus/crypto/bls"
 )
 
 func BenchmarkEncode(b *testing.B) {
