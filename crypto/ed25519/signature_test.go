@@ -97,7 +97,7 @@ func TestSignatureFromString(t *testing.T) {
 			false, nil,
 		},
 		{
-			"signature should be 64 bytes, but it is 0 bytes",
+			"invalid length: 0",
 			"",
 			false, nil,
 		},

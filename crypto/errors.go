@@ -8,6 +8,12 @@ import (
 // ErrInvalidSignature is returned when a signature is invalid.
 var ErrInvalidSignature = errors.New("invalid signature")
 
+// ErrInvalidPrivateKey is returned when a private key is invalid.
+var ErrInvalidPrivateKey = errors.New("invalid private key")
+
+// ErrInvalidPublicKey is returned when a public key is invalid.
+var ErrInvalidPublicKey = errors.New("invalid public key")
+
 // InvalidLengthError is returned when the length of the data
 // does not match the expected length.
 type InvalidLengthError int
@@ -29,6 +35,13 @@ type InvalidAddressTypeError int
 
 func (e InvalidAddressTypeError) Error() string {
 	return fmt.Sprintf("invalid address type: %d", int(e))
+}
+
+// InvalidSignatureTypeError is returned when the signature type is not recognized or supported.
+type InvalidSignatureTypeError int
+
+func (e InvalidSignatureTypeError) Error() string {
+	return fmt.Sprintf("invalid signature type: %d", int(e))
 }
 
 // AddressMismatchError is returned when the provided address is not derived

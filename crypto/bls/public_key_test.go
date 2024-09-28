@@ -148,13 +148,13 @@ func TestPublicKeyFromString(t *testing.T) {
 			false, nil,
 		},
 		{
-			"public key should be 96 bytes, but it is 95 bytes",
+			"invalid length: 95",
 			"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
 				"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg73y98kl",
 			false, nil,
 		},
 		{
-			"invalid public key type: 2",
+			"invalid signature type: 2",
 			"public1z372l5frmm5e7cn7ewfjdkx5t7y62kztqr82rtatat70cl8p8ng3rdzr02mzpwcfl6s2v26kry6mwg" +
 				"xpqy92ywx9wtff80mc9p3kr4cmhgekj048gavx2zdh78tsnh7eg5jzdw6s3et6c0dqyp22vslcgkukxh4l4",
 			false, nil,

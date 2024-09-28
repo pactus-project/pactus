@@ -11,7 +11,6 @@ import (
 	bls12381 "github.com/kilic/bls12-381"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util/encoding"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 var _ crypto.Signature = &Signature{}
@@ -37,8 +36,7 @@ func SignatureFromString(text string) (*Signature, error) {
 // SignatureFromBytes constructs a BLS signature from the raw bytes.
 func SignatureFromBytes(data []byte) (*Signature, error) {
 	if len(data) != SignatureSize {
-		return nil, errors.Errorf(errors.ErrInvalidSignature,
-			"signature should be %d bytes, but it is %v bytes", SignatureSize, len(data))
+		return nil, crypto.InvalidLengthError(len(data))
 	}
 
 	return &Signature{data: data}, nil
