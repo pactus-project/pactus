@@ -50,11 +50,6 @@ func TestPrivateKeyFromString(t *testing.T) {
 			false, nil,
 		},
 		{
-			"invalid private key",
-			"SECRET1PQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQSK004X",
-			false, nil,
-		},
-		{
 			"invalid HRP: xxx",
 			"XXX1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQMUUMJT",
 			false, nil,

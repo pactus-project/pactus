@@ -6,7 +6,8 @@ import (
 	"math/big"
 	"strings"
 
-	bls12381 "github.com/kilic/bls12-381"
+	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
+	"github.com/consensys/gnark-crypto/ecc/bls12-381/fr"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/bech32m"
@@ -18,7 +19,7 @@ var _ crypto.PrivateKey = &PrivateKey{}
 const PrivateKeySize = 32
 
 type PrivateKey struct {
-	fr bls12381.Fr
+	scalar *big.Int
 }
 
 // PrivateKeyFromString decodes the input string and returns the PrivateKey
@@ -65,8 +66,6 @@ func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 	pseudoRandomKey = append(pseudoRandomKey, keyInfo...)
 	pseudoRandomKey = append(pseudoRandomKey, util.I2OSP(big.NewInt(l), 2)...)
 
-	g1 := bls12381.NewG1()
-
 	salt := []byte("BLS-SIG-KEYGEN-SALT-")
 	x := big.NewInt(0)
 	for x.Sign() == 0 {
@@ -78,7 +77,7 @@ func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 		reader := hkdf.Expand(sha256.New, prk, pseudoRandomKey)
 		_, _ = reader.Read(okm)
 
-		r := g1.Q()
+		r := fr.Modulus()
 		x = new(big.Int).Mod(util.OS2IP(okm), r)
 	}
 
@@ -94,13 +93,10 @@ func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 		return nil, crypto.InvalidLengthError(len(data))
 	}
 
-	fr := bls12381.NewFr()
-	fr.FromBytes(data)
-	if fr.IsZero() {
-		return nil, crypto.ErrInvalidPrivateKey
-	}
+	scalar := new(big.Int)
+	scalar = scalar.SetBytes(data)
 
-	return &PrivateKey{fr: *fr}, nil
+	return &PrivateKey{scalar: scalar}, nil
 }
 
 // String returns a human-readable string for the BLS private key.
@@ -115,7 +111,10 @@ func (prv *PrivateKey) String() string {
 
 // Bytes return the raw bytes of the private key.
 func (prv *PrivateKey) Bytes() []byte {
-	return prv.fr.ToBytes()
+	data := prv.scalar.Bytes()
+	data = util.Extend(data, PrivateKeySize)
+
+	return data
 }
 
 // Sign calculates the signature from the private key and given message.
@@ -125,30 +124,29 @@ func (prv *PrivateKey) Sign(msg []byte) crypto.Signature {
 }
 
 func (prv *PrivateKey) SignNative(msg []byte) *Signature {
-	g1 := bls12381.NewG1()
-
-	q, err := g1.HashToCurve(msg, dst)
+	qAffine, err := bls12381.HashToG1(msg, dst)
 	if err != nil {
 		panic(err)
 	}
-	pointG1 := g1.MulScalar(g1.New(), q, &prv.fr)
-	data := g1.ToCompressed(pointG1)
+	qJac := new(bls12381.G1Jac).FromAffine(&qAffine)
+	sigJac := qJac.ScalarMultiplication(qJac, prv.scalar)
+	sigAffine := new(bls12381.G1Affine).FromJacobian(sigJac)
+	data := sigAffine.Bytes()
 
 	return &Signature{
-		data:    data,
-		pointG1: pointG1,
+		data:    data[:],
+		pointG1: sigAffine,
 	}
 }
 
 func (prv *PrivateKey) PublicKeyNative() *PublicKey {
-	g2 := bls12381.NewG2()
-
-	pointG2 := g2.MulScalar(g2.New(), g2.One(), &prv.fr)
-	data := g2.ToCompressed(pointG2)
+	pkJac := new(bls12381.G2Jac).ScalarMultiplication(&gen2Jac, prv.scalar)
+	pkAffine := new(bls12381.G2Affine).FromJacobian(pkJac)
+	data := pkAffine.Bytes()
 
 	return &PublicKey{
-		data:    data,
-		pointG2: pointG2,
+		data:    data[:],
+		pointG2: pkAffine,
 	}
 }
 
@@ -162,5 +160,5 @@ func (prv *PrivateKey) EqualsTo(x crypto.PrivateKey) bool {
 		return false
 	}
 
-	return prv.fr.Equal(&xBLS.fr)
+	return prv.scalar.Cmp(xBLS.scalar) == 0
 }

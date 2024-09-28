@@ -146,17 +146,17 @@ func TestPointG1(t *testing.T) {
 		valid   bool
 	}{
 		{
-			"compression flag must be set",
+			"short buffer",
 			"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
 			false,
 		},
 		{
-			"input string must be zero when infinity flag is set",
+			"invalid point encoding",
 			"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
 			false,
 		},
 		{
-			"signature is zero",
+			"invalid public key",
 			"c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
 			false,
 		},

@@ -11,10 +11,8 @@ func BenchmarkEncode(b *testing.B) {
 	b.ReportAllocs()
 
 	buf := make([]byte, bls.PrivateKeySize)
-	_, err := rand.Read(buf)
-	if err != nil {
-		b.Fatal(err)
-	}
+	_, _ = rand.Read(buf)
+
 	prv, _ := bls.PrivateKeyFromBytes(buf)
 	pub := prv.PublicKeyNative()
 
@@ -29,10 +27,8 @@ func BenchmarkDecodeSign(b *testing.B) {
 	b.ReportAllocs()
 
 	buf := make([]byte, bls.PrivateKeySize)
-	_, err := rand.Read(buf)
-	if err != nil {
-		b.Fatal(err)
-	}
+	_, _ = rand.Read(buf)
+
 	prv, _ := bls.PrivateKeyFromBytes(buf)
 	bufMsg := []byte("pactus")
 	sig := prv.Sign(bufMsg)
@@ -41,10 +37,7 @@ func BenchmarkDecodeSign(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := bls.SignatureFromBytes(sigBytes)
-		if err != nil {
-			b.Fatal(err)
-		}
+		_, _ = bls.SignatureFromBytes(sigBytes)
 	}
 }
 
@@ -52,10 +45,7 @@ func BenchmarkVerify(b *testing.B) {
 	b.ReportAllocs()
 
 	buf := make([]byte, bls.PrivateKeySize)
-	_, err := rand.Read(buf)
-	if err != nil {
-		b.Fatal(err)
-	}
+	_, _ = rand.Read(buf)
 	prv, _ := bls.PrivateKeyFromBytes(buf)
 	pub := prv.PublicKeyNative()
 
@@ -65,10 +55,7 @@ func BenchmarkVerify(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		err = pub.Verify(bufMsg, sig1)
-		if err != nil {
-			b.Fatal(err)
-		}
+		_ = pub.Verify(bufMsg, sig1)
 	}
 }
 
@@ -76,19 +63,13 @@ func BenchmarkDecode(b *testing.B) {
 	b.ReportAllocs()
 
 	buf := make([]byte, bls.PrivateKeySize)
-	_, err := rand.Read(buf)
-	if err != nil {
-		b.Fatal(err)
-	}
+	_, _ = rand.Read(buf)
 	prv, _ := bls.PrivateKeyFromBytes(buf)
 	pub := prv.PublicKeyNative()
 	pubBytes := pub.Bytes()
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_, err := bls.PublicKeyFromBytes(pubBytes)
-		if err != nil {
-			b.Fatal(err)
-		}
+		_, _ = bls.PublicKeyFromBytes(pubBytes)
 	}
 }

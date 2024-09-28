@@ -4,11 +4,12 @@ import (
 	"encoding/hex"
 	"testing"
 
-	bls12381 "github.com/kilic/bls12-381"
+	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSigning(t *testing.T) {
@@ -185,11 +186,14 @@ func TestHashToCurve(t *testing.T) {
 		},
 	}
 
-	g1 := bls12381.NewG1()
 	for no, test := range tests {
-		mappedPoint, _ := g1.HashToCurve([]byte(test.msg), domain)
+		mappedPoint, _ := bls12381.HashToG1([]byte(test.msg), domain)
 		d, _ := hex.DecodeString(test.expected)
-		expectedPoint, _ := g1.FromBytes(d)
+
+		expectedPoint := bls12381.G1Affine{}
+		err := expectedPoint.Unmarshal(d)
+		require.NoError(t, err)
+
 		assert.Equal(t, expectedPoint, mappedPoint,
 			"test %v: not match", no)
 	}
