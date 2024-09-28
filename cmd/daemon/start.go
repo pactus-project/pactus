@@ -1,11 +1,8 @@
 package main
 
 import (
-	"net/http"
-	_ "net/http/pprof" // #nosec
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
@@ -27,9 +24,6 @@ func buildStartCmd(parentCmd *cobra.Command) {
 	passwordOpt := startCmd.Flags().StringP("password", "p", "",
 		"the wallet password")
 
-	pprofOpt := startCmd.Flags().String("pprof", "",
-		"pprof server address (for debugging)")
-
 	startCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
 		// change working directory
@@ -47,18 +41,6 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
 
 			return
-		}
-
-		if *pprofOpt != "" {
-			cmd.PrintWarnMsgf("Starting Debug pprof server on: http://%s/debug/pprof/", *pprofOpt)
-			server := &http.Server{
-				Addr:              *pprofOpt,
-				ReadHeaderTimeout: 3 * time.Second,
-			}
-			go func() {
-				err := server.ListenAndServe()
-				cmd.FatalErrorCheck(err)
-			}()
 		}
 
 		passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
