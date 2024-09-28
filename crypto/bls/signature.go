@@ -106,13 +106,7 @@ func (sig *Signature) PointG1() (*bls12381.G1Affine, error) {
 	if err != nil {
 		return nil, err
 	}
-	if g1Aff.IsInfinity() {
-		return nil, crypto.ErrInvalidPublicKey
-	}
-	if !g1Aff.IsInSubGroup() {
-		return nil, crypto.ErrInvalidPublicKey
-	}
-	if !g1Aff.IsOnCurve() {
+	if g1Aff.IsInfinity() || !g1Aff.IsInSubGroup() {
 		return nil, crypto.ErrInvalidPublicKey
 	}
 

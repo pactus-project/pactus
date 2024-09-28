@@ -125,12 +125,9 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	var negP bls12381.G2Affine
 	negP.Neg(&gen2Aff)
 
-	check, err := bls12381.PairingCheck(
+	check, _ := bls12381.PairingCheck(
 		[]bls12381.G1Affine{qAffine, *pointG1},
 		[]bls12381.G2Affine{*pointG2, negP})
-	if err != nil {
-		return crypto.ErrInvalidSignature
-	}
 
 	if !check {
 		return crypto.ErrInvalidSignature
@@ -197,13 +194,7 @@ func (pub *PublicKey) PointG2() (*bls12381.G2Affine, error) {
 	if err != nil {
 		return nil, err
 	}
-	if g2Aff.IsInfinity() {
-		return nil, crypto.ErrInvalidPublicKey
-	}
-	if !g2Aff.IsInSubGroup() {
-		return nil, crypto.ErrInvalidPublicKey
-	}
-	if !g2Aff.IsOnCurve() {
+	if g2Aff.IsInfinity() || !g2Aff.IsInSubGroup() {
 		return nil, crypto.ErrInvalidPublicKey
 	}
 
