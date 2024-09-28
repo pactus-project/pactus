@@ -7,9 +7,14 @@ import (
 // set Ciphersuite for Basic mode
 // https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-04#section-4.2.1
 var (
-	dst                    = []byte("BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_")
-	_, gen2Jac, _, gen2Aff = bls12381.Generators()
+	dst     = []byte("BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_")
+	gen2Aff bls12381.G2Affine
+	gen2Jac bls12381.G2Jac
 )
+
+func init() {
+	_, gen2Jac, _, gen2Aff = bls12381.Generators()
+}
 
 func SignatureAggregate(sigs ...*Signature) *Signature {
 	if len(sigs) == 0 {
