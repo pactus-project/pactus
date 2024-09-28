@@ -44,12 +44,12 @@ func TestPrivateKeyFromString(t *testing.T) {
 			false, nil,
 		},
 		{
-			"invalid private key type: 4",
+			"invalid signature type: 4",
 			"SECRET1YVKPE43FDU9TC4C8LPFD4JY9METET3GEKQE7E7ECK4EJYV20WVAPQZCU0KL",
 			false, nil,
 		},
 		{
-			"private key should be 32 bytes, but it is 31 bytes",
+			"invalid length: 31",
 			"SECRET1RDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CCPV3HNE",
 			false, nil,
 		},

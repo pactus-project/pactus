@@ -6,7 +6,6 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util/bech32m"
-	"github.com/pactus-project/pactus/util/errors"
 )
 
 var _ crypto.PrivateKey = &PrivateKey{}
@@ -32,8 +31,7 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 	}
 
 	if typ != crypto.SignatureTypeEd25519 {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
-			"invalid private key type: %v", typ)
+		return nil, crypto.InvalidSignatureTypeError(typ)
 	}
 
 	return PrivateKeyFromBytes(data)
@@ -42,8 +40,7 @@ func PrivateKeyFromString(text string) (*PrivateKey, error) {
 // PrivateKeyFromBytes constructs a ED25519 private key from the raw bytes.
 func PrivateKeyFromBytes(data []byte) (*PrivateKey, error) {
 	if len(data) != PrivateKeySize {
-		return nil, errors.Errorf(errors.ErrInvalidPrivateKey,
-			"private key should be %d bytes, but it is %v bytes", PrivateKeySize, len(data))
+		return nil, crypto.InvalidLengthError(len(data))
 	}
 	inner := ed25519.NewKeyFromSeed(data)
 

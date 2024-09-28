@@ -50,7 +50,7 @@ func TestPrivateKeyFromString(t *testing.T) {
 			false, nil,
 		},
 		{
-			"private key is zero",
+			"invalid private key",
 			"SECRET1PQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQSK004X",
 			false, nil,
 		},
@@ -65,12 +65,12 @@ func TestPrivateKeyFromString(t *testing.T) {
 			false, nil,
 		},
 		{
-			"private key should be 32 bytes, but it is 31 bytes",
+			"invalid length: 31",
 			"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CCZ0EU7Z",
 			false, nil,
 		},
 		{
-			"invalid private key type: 2",
+			"invalid signature type: 2",
 			"SECRET1ZDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQG04E54",
 			false, nil,
 		},
