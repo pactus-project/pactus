@@ -3,7 +3,7 @@ package http
 type Config struct {
 	Enable         bool   `toml:"enable"`
 	Listen         string `toml:"listen"`
-	EnableDebugger bool   `toml:"-"`
+	EnableDebugger bool   `toml:"-"` // EnableDebugger is private configs
 }
 
 func DefaultConfig() *Config {
