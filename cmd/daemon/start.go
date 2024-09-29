@@ -24,6 +24,8 @@ func buildStartCmd(parentCmd *cobra.Command) {
 	passwordOpt := startCmd.Flags().StringP("password", "p", "",
 		"the wallet password")
 
+	debuggerOpt := startCmd.Flags().BoolP("debug", "d", false, "enable pprof debugger")
+
 	startCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
 		// change working directory
@@ -58,7 +60,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			return password, true
 		}
 		node, _, err := cmd.StartNode(
-			workingDir, passwordFetcher)
+			workingDir, passwordFetcher, *debuggerOpt)
 		cmd.FatalErrorCheck(err)
 
 		cmd.TrapSignal(func() {
