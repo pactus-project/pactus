@@ -61,7 +61,7 @@ func (ts *txStore) pruneCache(currentHeight uint32) {
 	}
 }
 
-func (ts *txStore) RecentTransaction(id tx.ID) bool {
+func (ts *txStore) recentTransaction(id tx.ID) bool {
 	return ts.txCache.Has(id)
 }
 

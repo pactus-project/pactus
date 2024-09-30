@@ -281,7 +281,7 @@ func (s *store) RecentTransaction(id tx.ID) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.txStore.RecentTransaction(id)
+	return s.txStore.recentTransaction(id)
 }
 
 func (s *store) HasAccount(addr crypto.Address) bool {
