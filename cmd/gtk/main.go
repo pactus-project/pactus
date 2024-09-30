@@ -25,7 +25,6 @@ const appID = "com.github.pactus-project.pactus.pactus-gui"
 
 var (
 	workingDirOpt *string
-	debuggerOpt   *bool
 	passwordOpt   *string
 	testnetOpt    *bool
 )
@@ -34,7 +33,6 @@ func init() {
 	workingDirOpt = flag.String("working-dir", cmd.PactusDefaultHomeDir(), "working directory path")
 	passwordOpt = flag.String("password", "", "wallet password")
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
-	debuggerOpt = flag.Bool("debug", false, "enable pprof debugger")
 	version.NodeAgent.AppType = "gui"
 	// the gtk on macos should run on main thread.
 	if runtime.GOOS == "darwin" {
@@ -157,7 +155,7 @@ func newNode(workingDir string) (*node.Node, *wallet.Wallet, error) {
 
 		return getWalletPassword(wlt)
 	}
-	n, wlt, err := cmd.StartNode(workingDir, passwordFetcher, *debuggerOpt)
+	n, wlt, err := cmd.StartNode(workingDir, passwordFetcher)
 	if err != nil {
 		return nil, nil, err
 	}
