@@ -32,10 +32,11 @@ func DefaultConfig() *Config {
 		BlockPerMessage: 60,
 		PruneWindow:     86_400, // Default retention blocks in prune mode
 		Firewall:        firewall.DefaultConfig(),
+		// v1.5.0 is the hard-fork for Ed25519 support.
 		LatestSupportingVer: version.Version{
 			Major: 1,
-			Minor: 1,
-			Patch: 8,
+			Minor: 5,
+			Patch: 0,
 		},
 	}
 }
