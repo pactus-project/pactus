@@ -373,15 +373,13 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 // The passwordFetcher will be used to fetch the password for the default_wallet if it is encrypted.
 // It returns an error if the genesis doc or default_wallet can't be found inside the working directory.
 // TODO: write test for me.
-func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool), enableDebugger bool) (
+func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool)) (
 	*node.Node, *wallet.Wallet, error,
 ) {
 	conf, gen, err := MakeConfig(workingDir)
 	if err != nil {
 		return nil, nil, err
 	}
-
-	conf.HTTP.EnableDebugger = enableDebugger
 
 	defaultWalletPath := PactusDefaultWalletPath(workingDir)
 	walletInstance, err := wallet.Open(defaultWalletPath, true,

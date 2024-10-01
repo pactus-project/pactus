@@ -40,7 +40,7 @@ func TestGetBlock(t *testing.T) {
 		assert.Empty(t, res.Txs)
 	})
 
-	t.Run("Should return object with  (verbosity: 1)", func(t *testing.T) {
+	t.Run("Should return object with (verbosity: 1)", func(t *testing.T) {
 		res, err := client.GetBlock(context.Background(),
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_INFO})
 
@@ -64,7 +64,7 @@ func TestGetBlock(t *testing.T) {
 		}
 	})
 
-	t.Run("Should return object with  (verbosity: 2)", func(t *testing.T) {
+	t.Run("Should return object with (verbosity: 2)", func(t *testing.T) {
 		res, err := client.GetBlock(context.Background(),
 			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS})
 
@@ -335,22 +335,37 @@ func TestConsensusInfo(t *testing.T) {
 	td := setup(t, nil)
 	conn, client := td.blockchainClient(t)
 
-	v1, _ := td.GenerateTestPrepareVote(100, 2)
-	v2, _ := td.GenerateTestPrepareVote(100, 2)
-	td.consMocks[1].Active = true
-	td.consMocks[1].Height = 100
-	td.consMocks[0].AddVote(v1)
-	td.consMocks[1].AddVote(v2)
+	consHeight := td.RandHeight()
+	consRound := td.RandRound()
+	vote1, _ := td.GenerateTestPrepareVote(consHeight, consRound)
+	vote2, _ := td.GenerateTestPrecommitVote(consHeight, consRound)
+
+	td.consMocks[0].Active = true
+	td.consMocks[0].Height = consHeight
+	td.consMocks[0].Round = consRound
+	td.consMocks[0].AddVote(vote1)
+	td.consMocks[0].AddVote(vote2)
+
+	td.consMocks[1].Active = false
+	td.consMocks[1].Height = consHeight
+	td.consMocks[1].Round = consRound
 
 	t.Run("Should return the consensus info", func(t *testing.T) {
 		res, err := client.GetConsensusInfo(context.Background(), &pactus.GetConsensusInfoRequest{})
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
-		assert.False(t, res.Instances[0].Active, true)
-		assert.True(t, res.Instances[1].Active, true)
-		assert.Equal(t, uint32(100), res.Instances[1].Height)
+
+		assert.True(t, res.Instances[0].Active)
+		assert.Equal(t, consHeight, res.Instances[0].Height)
+		assert.Equal(t, int32(consRound), res.Instances[0].Round)
+		assert.Len(t, res.Instances[0].Votes, 2)
 		assert.Equal(t, pactus.VoteType_VOTE_PREPARE, res.Instances[0].Votes[0].Type)
+		assert.Equal(t, pactus.VoteType_VOTE_PRECOMMIT, res.Instances[0].Votes[1].Type)
+
+		assert.False(t, res.Instances[1].Active)
+		assert.Equal(t, consHeight, res.Instances[1].Height)
+		assert.Equal(t, int32(consRound), res.Instances[1].Round)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

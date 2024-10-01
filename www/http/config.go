@@ -1,16 +1,16 @@
 package http
 
 type Config struct {
-	Enable         bool   `toml:"enable"`
-	Listen         string `toml:"listen"`
-	EnableDebugger bool   `toml:"-"` // EnableDebugger is private configs
+	Enable      bool   `toml:"enable"`
+	Listen      string `toml:"listen"`
+	EnablePprof bool   `toml:"enable_pprof"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		Enable:         false,
-		Listen:         "",
-		EnableDebugger: false,
+		Enable:      false,
+		Listen:      "",
+		EnablePprof: false,
 	}
 }
 
