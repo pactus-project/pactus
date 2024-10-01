@@ -152,6 +152,7 @@ func DefaultConfigMainnet() *Config {
 	conf.JSONRPC.Listen = "127.0.0.1:8545"
 	conf.HTTP.Enable = false
 	conf.HTTP.Listen = "127.0.0.1:80"
+	conf.HTTP.EnablePprof = false
 	conf.Nanomsg.Enable = false
 	conf.Nanomsg.Listen = "tcp://127.0.0.1:40899"
 
@@ -187,6 +188,7 @@ func DefaultConfigTestnet() *Config {
 	conf.JSONRPC.Listen = "127.0.0.1:8545"
 	conf.HTTP.Enable = false
 	conf.HTTP.Listen = "[::]:80"
+	conf.HTTP.EnablePprof = false
 	conf.Nanomsg.Enable = false
 	conf.Nanomsg.Listen = "tcp://[::]:40799"
 
@@ -214,6 +216,7 @@ func DefaultConfigLocalnet() *Config {
 	conf.JSONRPC.Listen = "127.0.0.1:8545"
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:0"
+	conf.HTTP.EnablePprof = true
 	conf.Nanomsg.Enable = true
 	conf.Nanomsg.Listen = "tcp://[::]:40799"
 

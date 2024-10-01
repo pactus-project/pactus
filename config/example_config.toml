@@ -213,6 +213,11 @@
   # `listen` is the address to listen for incoming connections for HTTP server.
   listen = "127.0.0.1:80"
 
+  # `enable_pprof` Enables Golang's pprof debugger for profiling CPU, memory, and goroutines,
+  # providing key performance insights. Be cautious as it exposes sensitive
+  # data, so enable only in secure environments with restricted access.
+  enable_pprof = false
+
 # Nanomsg configuration.
 [nanomsg]
 

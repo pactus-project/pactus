@@ -37,6 +37,12 @@ type Server struct {
 	logger      *logger.SubLogger
 }
 
+// init disables default pprof handlers registered by importing net/http/pprof.
+// Your pprof is showing (https://mmcloughlin.com/posts/your-pprof-is-showing)
+func init() {
+	http.DefaultServeMux = http.NewServeMux()
+}
+
 func NewServer(conf *Config, enableAuth bool) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -87,8 +93,11 @@ func (s *Server) StartServer(grpcServer string) error {
 	s.router.HandleFunc("/validator/number/{number}", s.GetValidatorByNumberHandler)
 	s.router.HandleFunc("/metrics/prometheus", promhttp.Handler().ServeHTTP)
 
-	if s.config.EnableDebugger {
-		s.router.HandleFunc("/debug/pprof/", pprof.Index)
+	if s.config.EnablePprof {
+		http.HandleFunc("/debug/pprof/", pprof.Index)
+		http.HandleFunc("/debug/pprof/profile", pprof.Profile)
+		http.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
+		http.HandleFunc("/debug/pprof/trace", pprof.Trace)
 	}
 
 	if s.enableAuth {
