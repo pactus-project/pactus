@@ -67,8 +67,8 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 	height := msg.From
 	count := msg.Count
 	for {
-		blockToRead := util.Min(handler.config.BlockPerMessage, count)
-		blocksData := handler.prepareBlocks(height, blockToRead)
+		blockCount := util.Min(handler.config.BlockPerMessage, count)
+		blocksData := handler.prepareBlocks(height, blockCount)
 		if len(blocksData) == 0 {
 			break
 		}
