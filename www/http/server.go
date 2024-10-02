@@ -98,6 +98,9 @@ func (s *Server) StartServer(grpcServer string) error {
 		http.HandleFunc("/debug/pprof/profile", pprof.Profile)
 		http.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
 		http.HandleFunc("/debug/pprof/trace", pprof.Trace)
+		s.router.HandleFunc("/debug/pprof", func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, "/debug/pprof/", http.StatusPermanentRedirect)
+		})
 	}
 
 	if s.enableAuth {
