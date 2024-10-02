@@ -317,6 +317,10 @@ func (sync *synchronizer) processGossipMessage(msg *network.GossipMessage) {
 func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 	sync.logger.Debug("processing stream message", "pid", msg.From)
 
+	defer func() {
+		_ = msg.Reader.Close()
+	}()
+
 	bdl, err := sync.firewall.OpenStreamBundle(msg.Reader, msg.From)
 	if err != nil {
 		sync.logger.Debug("error on parsing a Stream bundle",
@@ -324,12 +328,7 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 
 		return
 	}
-	if err := msg.Reader.Close(); err != nil {
-		// TODO: write test for me
-		sync.logger.Debug("error on closing stream", "error", err, "source", msg.From)
 
-		return
-	}
 	sync.processIncomingBundle(bdl, msg.From)
 }
 

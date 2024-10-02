@@ -62,9 +62,10 @@ func (b *Bundle) Encode() ([]byte, error) {
 
 	if util.IsFlagSet(b.Flags, BundleFlagCompressed) {
 		c, err := util.CompressBuffer(data)
-		if err == nil {
-			data = c
+		if err != nil {
+			return nil, err
 		}
+		data = c
 	}
 
 	msg := &_Bundle{
