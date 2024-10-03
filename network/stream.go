@@ -98,7 +98,7 @@ func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) (lp2pnetwork.Str
 		go func() {
 			// We need only one byte to read the EOF.
 			buf := make([]byte, 1)
-			_, err = stream.Read(buf)
+			_, _ = stream.Read(buf)
 			closed <- true
 		}()
 
