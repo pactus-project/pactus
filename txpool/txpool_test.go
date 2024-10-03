@@ -56,11 +56,11 @@ func setup(t *testing.T) *testData {
 func (td *testData) shouldPublishTransaction(t *testing.T, id tx.ID) {
 	t.Helper()
 
-	timeout := time.NewTimer(1 * time.Second)
+	timer := time.NewTimer(1 * time.Second)
 
 	for {
 		select {
-		case <-timeout.C:
+		case <-timer.C:
 			require.NoError(t, fmt.Errorf("Timeout"))
 
 			return
