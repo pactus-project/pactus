@@ -425,8 +425,8 @@ func TestConnections(t *testing.T) {
 	}{
 		{"/ip4/127.0.0.1/tcp/%d", "/ip4/127.0.0.1/tcp/0"},
 		{"/ip6/::1/tcp/%d", "/ip6/::1/tcp/0"},
-		// {"/ip4/127.0.0.1/udp/%d/quic-v1", "/ip4/127.0.0.1/udp/0/quic-v1"},
-		// {"/ip6/::1/udp/%d/quic-v1", "/ip6/::1/udp/0/quic-v1"},
+		{"/ip4/127.0.0.1/udp/%d/quic-v1", "/ip4/127.0.0.1/udp/0/quic-v1"},
+		{"/ip6/::1/udp/%d/quic-v1", "/ip6/::1/udp/0/quic-v1"},
 	}
 
 	for i, test := range tests {

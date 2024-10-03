@@ -65,5 +65,4 @@ func TestCloseStream(t *testing.T) {
 		_, err = stream.Write([]byte("should-be-closed"))
 		assert.ErrorContains(t, err, "write on closed stream")
 	})
-
 }
