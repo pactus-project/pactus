@@ -103,11 +103,11 @@ func setup(t *testing.T, config *Config) *testData {
 func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) *bundle.Bundle {
 	t.Helper()
 
-	timeout := time.NewTimer(3 * time.Second)
+	timer := time.NewTimer(3 * time.Second)
 
 	for {
 		select {
-		case <-timeout.C:
+		case <-timer.C:
 			require.NoError(t, fmt.Errorf("shouldPublishMessageWithThisType %v: Timeout, test: %v", msgType, t.Name()))
 
 			return nil
@@ -157,11 +157,11 @@ func (td *testData) shouldPublishMessageWithThisType(t *testing.T, msgType messa
 func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
 	t.Helper()
 
-	timeout := time.NewTimer(3 * time.Millisecond)
+	timer := time.NewTimer(3 * time.Millisecond)
 
 	for {
 		select {
-		case <-timeout.C:
+		case <-timer.C:
 			return
 
 		case b := <-net.PublishCh:

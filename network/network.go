@@ -254,11 +254,11 @@ func makeNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netw
 		self.mdns = newMdnsService(ctx, self.host, self.logger)
 	}
 
-	self.dht = newDHTService(self.ctx, self.host, kadProtocolID, conf, self.logger)
 	self.peerMgr = newPeerMgr(ctx, host, conf, self.logger)
-	self.stream = newStreamService(ctx, self.host, streamProtocolID, self.eventChannel, self.logger)
-	self.gossip = newGossipService(ctx, self.host, self.eventChannel, conf, self.logger)
-	self.notifee = newNotifeeService(ctx, self.host, self.eventChannel, self.peerMgr, streamProtocolID, self.logger)
+	self.dht = newDHTService(ctx, host, kadProtocolID, conf, self.logger)
+	self.stream = newStreamService(ctx, host, conf, streamProtocolID, self.eventChannel, self.logger)
+	self.gossip = newGossipService(ctx, host, conf, self.eventChannel, self.logger)
+	self.notifee = newNotifeeService(ctx, host, self.eventChannel, self.peerMgr, streamProtocolID, self.logger)
 
 	self.logger.Info("network setup", "id", self.host.ID(),
 		"name", conf.NetworkName,
@@ -372,7 +372,7 @@ func (n *network) Protect(pid lp2pcore.PeerID, tag string) {
 // It uses a goroutine to ensure that if sending is blocked, receiving messages won't be blocked.
 func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) {
 	go func() {
-		err := n.stream.SendRequest(msg, pid)
+		_, err := n.stream.SendRequest(msg, pid)
 		if err != nil {
 			n.logger.Warn("error on sending msg", "pid", pid, "error", err)
 		}

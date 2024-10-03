@@ -2,6 +2,7 @@ package network
 
 import (
 	"fmt"
+	"time"
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
@@ -25,11 +26,12 @@ type Config struct {
 	ForcePrivateNetwork  bool     `toml:"force_private_network"`
 
 	// Private configs
-	NetworkName                 string   `toml:"-"`
-	DefaultPort                 int      `toml:"-"`
-	DefaultBootstrapAddrStrings []string `toml:"-"`
-	IsBootstrapper              bool     `toml:"-"`
-	PeerStorePath               string   `toml:"-"`
+	NetworkName                 string        `toml:"-"`
+	DefaultPort                 int           `toml:"-"`
+	DefaultBootstrapAddrStrings []string      `toml:"-"`
+	IsBootstrapper              bool          `toml:"-"`
+	PeerStorePath               string        `toml:"-"`
+	StreamTimeout               time.Duration `toml:"-"`
 }
 
 func DefaultConfig() *Config {
@@ -50,6 +52,7 @@ func DefaultConfig() *Config {
 		DefaultPort:          0,
 		IsBootstrapper:       false,
 		PeerStorePath:        "peers.json",
+		StreamTimeout:        20 * time.Second,
 	}
 }
 

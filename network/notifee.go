@@ -116,7 +116,7 @@ func (s *NotifeeService) Listen(_ lp2pnetwork.Network, ma multiaddr.Multiaddr) {
 	s.logger.Debug("notifee Listen event emitted", "addr", ma.String())
 }
 
-// ListenClose is called when your node stops listening on an address.
+// ListenClose is called when the peer stops listening on an address.
 func (s *NotifeeService) ListenClose(_ lp2pnetwork.Network, ma multiaddr.Multiaddr) {
 	// Handle listen close event if needed.
 	s.logger.Debug("notifee ListenClose event emitted", "addr", ma.String())

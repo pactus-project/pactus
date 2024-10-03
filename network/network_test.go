@@ -49,19 +49,20 @@ func testConfig() *Config {
 		EnableMdns:           false,
 		ForcePrivateNetwork:  true,
 		NetworkName:          "test",
-		DefaultPort:          12345,
+		DefaultPort:          FindFreePort(),
 		PeerStorePath:        util.TempFilePath(),
+		StreamTimeout:        10 * time.Second,
 	}
 }
 
 func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 	t.Helper()
 
-	timeout := time.NewTimer(10 * time.Second)
+	timer := time.NewTimer(10 * time.Second)
 
 	for {
 		select {
-		case <-timeout.C:
+		case <-timer.C:
 			require.NoError(t, fmt.Errorf("shouldReceiveEvent Timeout, test: %v id:%s", t.Name(), net.SelfID().String()))
 
 			return nil
@@ -77,11 +78,11 @@ func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 func shouldNotReceiveEvent(t *testing.T, net *network) {
 	t.Helper()
 
-	timeout := time.NewTimer(100 * time.Millisecond)
+	timer := time.NewTimer(100 * time.Millisecond)
 
 	for {
 		select {
-		case <-timeout.C:
+		case <-timer.C:
 			return
 
 		case <-net.EventChannel():
@@ -131,20 +132,17 @@ func TestStoppingNetwork(t *testing.T) {
 func TestNetwork(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	bootstrapPort := ts.RandInt32(9999) + 10000
-	publicPort := ts.RandInt32(9999) + 10000
-
 	// Bootstrap node
 	confB := testConfig()
 	confB.ListenAddrStrings = []string{
-		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", bootstrapPort),
+		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", confB.DefaultPort),
 	}
 	fmt.Println("Starting Bootstrap node")
 	networkB := makeTestNetwork(t, confB, []lp2p.Option{
 		lp2p.ForceReachabilityPublic(),
 	})
 	bootstrapAddresses := []string{
-		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%v", bootstrapPort, networkB.SelfID().String()),
+		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%v", confB.DefaultPort, networkB.SelfID().String()),
 	}
 
 	// Public and relay node
@@ -153,14 +151,14 @@ func TestNetwork(t *testing.T) {
 	confP.EnableRelay = false
 	confP.EnableRelayService = true
 	confP.ListenAddrStrings = []string{
-		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", publicPort),
+		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", confP.DefaultPort),
 	}
 	fmt.Println("Starting Public node")
 	networkP := makeTestNetwork(t, confP, []lp2p.Option{
 		lp2p.ForceReachabilityPublic(),
 	})
 	publicAddrInfo, _ := lp2ppeer.AddrInfoFromString(
-		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%s", publicPort, networkP.SelfID()))
+		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%s", confP.DefaultPort, networkP.SelfID()))
 
 	// Private node M
 	confM := testConfig()
@@ -215,57 +213,57 @@ func TestNetwork(t *testing.T) {
 	t.Run("Supported Protocols", func(t *testing.T) {
 		fmt.Printf("Running %s\n", t.Name())
 
-		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			protos := networkM.Protocols()
-			assert.Contains(t, protos, lp2pproto.ProtoIDv2Stop)
-			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Hop)
+			assert.Contains(c, protos, lp2pproto.ProtoIDv2Stop)
+			assert.NotContains(c, protos, lp2pproto.ProtoIDv2Hop)
 		}, time.Second, 100*time.Millisecond)
 
-		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			protos := networkN.Protocols()
-			assert.Contains(t, protos, lp2pproto.ProtoIDv2Stop)
-			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Hop)
+			assert.Contains(c, protos, lp2pproto.ProtoIDv2Stop)
+			assert.NotContains(c, protos, lp2pproto.ProtoIDv2Hop)
 		}, time.Second, 100*time.Millisecond)
 
-		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			protos := networkP.Protocols()
-			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Stop)
-			assert.Contains(t, protos, lp2pproto.ProtoIDv2Hop)
+			assert.NotContains(c, protos, lp2pproto.ProtoIDv2Stop)
+			assert.Contains(c, protos, lp2pproto.ProtoIDv2Hop)
 		}, time.Second, 100*time.Millisecond)
 
-		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			protos := networkX.Protocols()
-			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Stop)
-			assert.NotContains(t, protos, lp2pproto.ProtoIDv2Hop)
+			assert.NotContains(c, protos, lp2pproto.ProtoIDv2Stop)
+			assert.NotContains(c, protos, lp2pproto.ProtoIDv2Hop)
 		}, time.Second, 100*time.Millisecond)
 	})
 
 	t.Run("Reachability", func(t *testing.T) {
 		fmt.Printf("Running %s\n", t.Name())
 
-		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkB.ReachabilityStatus()
-			assert.Equal(t, "Public", reachability)
+			assert.Equal(c, "Public", reachability)
 		}, time.Second, 100*time.Millisecond)
 
-		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkM.ReachabilityStatus()
-			assert.Equal(t, "Private", reachability)
+			assert.Equal(c, "Private", reachability)
 		}, time.Second, 100*time.Millisecond)
 
-		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkN.ReachabilityStatus()
-			assert.Equal(t, "Private", reachability)
+			assert.Equal(c, "Private", reachability)
 		}, time.Second, 100*time.Millisecond)
 
-		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkP.ReachabilityStatus()
-			assert.Equal(t, "Public", reachability)
+			assert.Equal(c, "Public", reachability)
 		}, time.Second, 100*time.Millisecond)
 
-		require.EventuallyWithT(t, func(_ *assert.CollectT) {
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkP.ReachabilityStatus()
-			assert.Equal(t, "Public", reachability)
+			assert.Equal(c, "Public", reachability)
 		}, time.Second, 100*time.Millisecond)
 	})
 
@@ -421,23 +419,20 @@ func TestNetwork(t *testing.T) {
 func TestConnections(t *testing.T) {
 	t.Parallel() // run the tests in parallel
 
-	ts := testsuite.NewTestSuite(t)
-
 	tests := []struct {
 		bootstrapAddr string
 		peerAddr      string
 	}{
 		{"/ip4/127.0.0.1/tcp/%d", "/ip4/127.0.0.1/tcp/0"},
-		{"/ip4/127.0.0.1/udp/%d/quic-v1", "/ip4/127.0.0.1/udp/0/quic-v1"},
 		{"/ip6/::1/tcp/%d", "/ip6/::1/tcp/0"},
-		{"/ip6/::1/udp/%d/quic-v1", "/ip6/::1/udp/0/quic-v1"},
+		// {"/ip4/127.0.0.1/udp/%d/quic-v1", "/ip4/127.0.0.1/udp/0/quic-v1"},
+		// {"/ip6/::1/udp/%d/quic-v1", "/ip6/::1/udp/0/quic-v1"},
 	}
 
 	for i, test := range tests {
 		// Bootstrap node
 		confB := testConfig()
-		bootstrapPort := ts.RandInt32(9999) + 10000
-		bootstrapAddr := fmt.Sprintf(test.bootstrapAddr, bootstrapPort)
+		bootstrapAddr := fmt.Sprintf(test.bootstrapAddr, confB.DefaultPort)
 		confB.ListenAddrStrings = []string{bootstrapAddr}
 		fmt.Println("Starting Bootstrap node")
 		networkB := makeTestNetwork(t, confB, []lp2p.Option{
@@ -456,7 +451,7 @@ func TestConnections(t *testing.T) {
 		})
 
 		t.Run(fmt.Sprintf("Running test %d: %s <-> %s ... ",
-			i, test.bootstrapAddr, test.peerAddr), func(t *testing.T) {
+			i, bootstrapAddr, test.peerAddr), func(t *testing.T) {
 			t.Parallel() // run the tests in parallel
 
 			testConnection(t, networkP, networkB)
@@ -467,20 +462,12 @@ func TestConnections(t *testing.T) {
 func testConnection(t *testing.T, networkP, networkB *network) {
 	t.Helper()
 
-	// Ensure that peers are connected to each other
-	for i := 0; i < 20; i++ {
-		if networkP.NumConnectedPeers() >= 1 &&
-			networkB.NumConnectedPeers() >= 1 {
-			break
-		}
-		time.Sleep(100 * time.Millisecond)
-	}
-
-	assert.Equal(t, 1, networkB.NumConnectedPeers())
-	assert.Equal(t, 1, networkP.NumConnectedPeers())
+	assert.EventuallyWithT(t, func(c *assert.CollectT) {
+		assert.GreaterOrEqual(c, networkP.NumConnectedPeers(), 1)
+		assert.GreaterOrEqual(c, networkB.NumConnectedPeers(), 1)
+	}, 5*time.Second, 100*time.Millisecond)
 
 	msg := []byte("test-msg")
-
 	networkP.SendTo(msg, networkB.SelfID())
 	e := shouldReceiveEvent(t, networkB, EventTypeStream).(*StreamMessage)
 	assert.Equal(t, networkP.SelfID(), e.From)

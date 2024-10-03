@@ -27,8 +27,8 @@ type gossipService struct {
 	logger           *logger.SubLogger
 }
 
-func newGossipService(ctx context.Context, host lp2phost.Host, eventCh chan Event,
-	conf *Config, log *logger.SubLogger,
+func newGossipService(ctx context.Context, host lp2phost.Host, conf *Config,
+	eventCh chan Event, log *logger.SubLogger,
 ) *gossipService {
 	opts := []lp2pps.Option{
 		lp2pps.WithFloodPublish(true),
