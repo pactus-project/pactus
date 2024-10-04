@@ -1,6 +1,6 @@
 module github.com/pactus-project/pactus
 
-go 1.23.1
+go 1.23.2
 
 require (
 	github.com/NathanBaulch/protoc-gen-cobra v1.2.1
