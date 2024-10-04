@@ -160,7 +160,7 @@ require (
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/cast v1.7.0 // indirect
 	github.com/whyrusleeping/go-keyspace v0.0.0-20160322163242-5b898ac5add1 // indirect
-	github.com/wlynxg/anet v0.0.4 // indirect
+	github.com/wlynxg/anet v0.0.5 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.opentelemetry.io/otel v1.30.0 // indirect
