@@ -26,7 +26,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23.1'
+        go-version: '1.23.2'
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_cli.sh
@@ -69,7 +69,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23.1'
+        go-version: '1.23.2'
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_gui_linux.sh
@@ -95,7 +95,7 @@ jobs:
 
   ########################################
   build-gui-macos:
-    runs-on: macos-12
+    runs-on: macos-13
     env:
       LIB_HOME: /usr/local
 
@@ -106,12 +106,12 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install Dependencies
-      run: brew install gtk+3 librsvg create-dmg coreutils pkg-config gdk-pixbuf glib glib-networking
+      run: brew install gtk+3 librsvg create-dmg coreutils gdk-pixbuf glib-networking
 
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23.1'
+        go-version: '1.23.2'
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_gui_macos.sh
@@ -150,12 +150,12 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install Dependencies
-      run: brew install gtk+3 librsvg create-dmg coreutils pkg-config gdk-pixbuf glib glib-networking
+      run: brew install gtk+3 librsvg create-dmg coreutils gdk-pixbuf glib-networking
 
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23.1'
+        go-version: '1.23.2'
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_gui_macos.sh
@@ -177,7 +177,6 @@ jobs:
           pactus-*.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
   ########################################
   build-gui-windows:
@@ -242,6 +241,13 @@ jobs:
         echo "${{ needs.build-gui-macos.outputs.checksums }}" >> SHA256SUMS
         echo "${{ needs.build-gui-macos-arm.outputs.checksums }}" >> SHA256SUMS
         echo "${{ needs.build-gui-windows.outputs.checksums }}" >> SHA256SUMS
+
+    - name: Upload SHA256SUMS as an artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: sha256sums
+        path: SHA256SUMS
+
     - name: Publish
       uses: softprops/action-gh-release@v2
       with:
@@ -250,8 +256,31 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   ########################################
-  downloader:
+  cosign:
     needs: [checksums]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download SHA256SUMS artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: sha256sums
+
+      - uses: sigstore/cosign-installer@v3.7.0
+
+      - name: Sign Checksum
+        run: cosign sign-blob --yes --key env://COSIGN_PRIVATE_KEY SHA256SUMS > SHA256SUMS.sig
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: SHA256SUMS.sig
+
+  ########################################
+  downloader:
+    needs: [cosign]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
