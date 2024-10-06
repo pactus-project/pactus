@@ -166,13 +166,13 @@ func DefaultConfigTestnet() *Config {
 		"/dns/testnet2.pactus.org/tcp/21777/p2p/12D3KooWQcDuFDMGsw6gG7oNFw7C4x7ozoMu69J7WEAojKCaNzji",
 		"/dns/testnet3.pactus.org/tcp/21777/p2p/12D3KooWLsAPSJ4xowd9thGbPmbweBT6sg3nEiPjDJccaWZacsUR",
 		"/dns/testnet4.pactus.org/tcp/21777/p2p/12D3KooWJKYdHzWZGibnj74NSSgKRu4Ez6MijDWMfLfXxeL4un6v",
-		"/ip4/128.140.41.234/tcp/21777/p2p/12D3KooWLV9Y2MzYMVMtqCuivFAzcgVM1H7US4Vud1NU6KFmJBkw",
-		"/ip4/113.176.163.161/tcp/21777/p2p/12D3KooWCNE13y2qh9W4qZFd61Me8nDDANGx36j2zWTz3sscBJou",
-		"/ip4/49.13.205.202/tcp/21777/p2p/12D3KooWLQdsUExqTux9T6xKbXE3JbgsEFx3Gu9AhCSV3L1ZuMNn",
-		"/ip4/104.234.1.82/tcp/21777/p2p/12D3KooWLnyM3SLvye7f2BW5AH1ZQQvkvZxKr9yaCNEPfFY4cbYx",
-		"/ip4/207.180.250.57/tcp/21777/p2p/12D3KooWFpSTV3r6auPeWfKM1vb4FNug6FeAuJkgmzPTUJocxD39",
-		"/ip4/202.182.126.146/tcp/21777/p2p/12D3KooWB4XaqGMDxAzaXypBBXBvwqZpgAAPcgkwuzy2LbKMRxpH",
-		"/ip4/157.90.111.140/tcp/21777/p2p/12D3KooWKwbdkwfCFdrucHir69U7E9P2BbHctmsBj8Hcms5jP64h",
+		"/ip4/65.108.211.187/tcp/21777/p2p/12D3KooWB42BLfzxSF5SMhSTSEyfJ6yhSM8togLfExrRWFMJeb5u",
+		"/ip4/103.27.206.208/tcp/21777/p2p/12D3KooWMTDwDTBMaf2Sem5tWRe1dB6PFY8LeqkZ2e5drrbbPTDn", // andrut.pactus.testnet
+		"/ip4/65.108.142.81/tcp/21777/p2p/12D3KooWAdRga2NCbaPfVgSEzAAZW2psfJmPi3PFJzF81qbccJsR",  // CherryValidator
+		"/ip4/95.217.89.202/tcp/21777/p2p/12D3KooWH3S9gMYybr1pd4K5o3CBLbZLQ1REKBsPWt6NWPi4bgPn",  // CodeBlockLab
+		"/ip4/65.109.234.125/tcp/21777/p2p/12D3KooWPWE8QwZxd32ui9DL115vmdcFo3cudGfVgHTX9Bo4HFEB", // Sensifai
+		"/ip4/77.37.122.54/tcp/22194/p2p/12D3KooWKwbdkwfCFdrucHir69U7E9P2BbHctmsBj8Hcms5jP64h",   // Javad
+		"/ip4/188.213.198.83/tcp/21777/p2p/12D3KooWJ5kSyD3VQb1ewhgRcmAPPg2zus1rYPbgnBMMGBtC9pr5",
 	}
 	conf.Network.MaxConns = 64
 	conf.Network.EnableNATService = false
