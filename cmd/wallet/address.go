@@ -89,7 +89,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		} else if *addressType == wallet.AddressTypeEd25519Account {
 			password := ""
 			if wlt.IsEncrypted() {
-				password = cmd.PromptInput("Password")
+				password = cmd.PromptPassword("Password", false)
 			}
 			addressInfo, err = wlt.NewEd25519AccountAddress(label, password)
 		} else if *addressType == wallet.AddressTypeValidator {
