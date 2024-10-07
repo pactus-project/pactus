@@ -62,11 +62,7 @@ func (st *state) checkEd25519Fork(trx *tx.Tx) error {
 	// TODO: remove me after enabling Ed255519
 	if trx.Payload().Signer().Type() == crypto.AddressTypeEd25519Account {
 		if st.genDoc.ChainType().IsMainnet() {
-			return fmt.Errorf("ed255519 not supported yet")
-		}
-
-		if st.genDoc.ChainType().IsTestnet() {
-			if st.lastInfo.BlockHeight() < 1_320_000 {
+			if st.lastInfo.BlockHeight() < 2_320_000 {
 				return fmt.Errorf("ed255519 not supported yet")
 			}
 		}
