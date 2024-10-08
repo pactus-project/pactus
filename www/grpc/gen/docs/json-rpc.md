@@ -65,7 +65,7 @@ curl --location 'http://localhost:8545/' \
 <div id="toc-container">
   <ul class="">
   <li> Transaction Service
-      <ul> 
+      <ul>
         <li>
           <a href="#pactus.transaction.get_transaction">
           <span class="rpc-badge"></span> pactus.transaction.get_transaction</a>
@@ -101,7 +101,7 @@ curl --location 'http://localhost:8545/' \
         </ul>
     </li>
     <li> Blockchain Service
-      <ul> 
+      <ul>
         <li>
           <a href="#pactus.blockchain.get_block">
           <span class="rpc-badge"></span> pactus.blockchain.get_block</a>
@@ -149,7 +149,7 @@ curl --location 'http://localhost:8545/' \
         </ul>
     </li>
     <li> Network Service
-      <ul> 
+      <ul>
         <li>
           <a href="#pactus.network.get_network_info">
           <span class="rpc-badge"></span> pactus.network.get_network_info</a>
@@ -161,7 +161,7 @@ curl --location 'http://localhost:8545/' \
         </ul>
     </li>
     <li> Utils Service
-      <ul> 
+      <ul>
         <li>
           <a href="#pactus.utils.sign_message_with_private_key">
           <span class="rpc-badge"></span> pactus.utils.sign_message_with_private_key</a>
@@ -173,7 +173,7 @@ curl --location 'http://localhost:8545/' \
         </ul>
     </li>
     <li> Wallet Service
-      <ul> 
+      <ul>
         <li>
           <a href="#pactus.wallet.create_wallet">
           <span class="rpc-badge"></span> pactus.wallet.create_wallet</a>
@@ -249,7 +249,7 @@ parameters.</p>
     <td class="fw-bold">verbosity</td>
     <td> numeric</td>
     <td>
-    (Enum) The verbosity level for transaction details.
+    (Enum)The verbosity level for transaction details.
     <br>Available values:<ul>
       <li>TRANSACTION_DATA = 0 (Request transaction data only.)</li>
       <li>TRANSACTION_INFO = 1 (Request detailed transaction information.)</li>
@@ -332,7 +332,7 @@ parameters.</p>
         <td class="fw-bold">transaction.payload_type</td>
         <td> numeric</td>
         <td>
-        (Enum) The type of transaction payload.
+        (Enum)The type of transaction payload.
         <br>Available values:<ul>
           <li>UNKNOWN = 0 (Unknown payload type.)</li>
           <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
@@ -347,7 +347,7 @@ parameters.</p>
         <td class="fw-bold">transaction.transfer</td>
         <td> object</td>
         <td>
-        (OneOf) Transfer transaction payload.
+        (OneOf)Transfer transaction payload.
         </td>
       </tr>
          <tr>
@@ -375,7 +375,7 @@ parameters.</p>
         <td class="fw-bold">transaction.bond</td>
         <td> object</td>
         <td>
-        (OneOf) Bond transaction payload.
+        (OneOf)Bond transaction payload.
         </td>
       </tr>
          <tr>
@@ -410,7 +410,7 @@ parameters.</p>
         <td class="fw-bold">transaction.sortition</td>
         <td> object</td>
         <td>
-        (OneOf) Sortition transaction payload.
+        (OneOf)Sortition transaction payload.
         </td>
       </tr>
          <tr>
@@ -431,7 +431,7 @@ parameters.</p>
         <td class="fw-bold">transaction.unbond</td>
         <td> object</td>
         <td>
-        (OneOf) Unbond transaction payload.
+        (OneOf)Unbond transaction payload.
         </td>
       </tr>
          <tr>
@@ -445,7 +445,7 @@ parameters.</p>
         <td class="fw-bold">transaction.withdraw</td>
         <td> object</td>
         <td>
-        (OneOf) Withdraw transaction payload.
+        (OneOf)Withdraw transaction payload.
         </td>
       </tr>
          <tr>
@@ -516,7 +516,7 @@ and payload type.</p>
     <td class="fw-bold">payload_type</td>
     <td> numeric</td>
     <td>
-    (Enum) The type of transaction payload.
+    (Enum)The type of transaction payload.
     <br>Available values:<ul>
       <li>UNKNOWN = 0 (Unknown payload type.)</li>
       <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
@@ -633,28 +633,28 @@ and payload type.</p>
     <td class="fw-bold">transfer</td>
     <td> object</td>
     <td>
-    (OneOf) 
+    (OneOf)
     </td>
   </tr>
   <tr>
     <td class="fw-bold">bond</td>
     <td> object</td>
     <td>
-    (OneOf) 
+    (OneOf)
     </td>
   </tr>
   <tr>
     <td class="fw-bold">unbond</td>
     <td> object</td>
     <td>
-    (OneOf) 
+    (OneOf)
     </td>
   </tr>
   <tr>
     <td class="fw-bold">withdraw</td>
     <td> object</td>
     <td>
-    (OneOf) 
+    (OneOf)
     </td>
   </tr>
   </tbody>
@@ -1020,7 +1020,7 @@ parameters.</p>
     <td class="fw-bold">verbosity</td>
     <td> numeric</td>
     <td>
-    (Enum) The verbosity level for block information.
+    (Enum)The verbosity level for block information.
     <br>Available values:<ul>
       <li>BLOCK_DATA = 0 (Request only block data.)</li>
       <li>BLOCK_INFO = 1 (Request block information and transaction IDs.)</li>
@@ -1203,7 +1203,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].payload_type</td>
         <td> numeric</td>
         <td>
-        (Enum) The type of transaction payload.
+        (Enum)The type of transaction payload.
         <br>Available values:<ul>
           <li>UNKNOWN = 0 (Unknown payload type.)</li>
           <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
@@ -1218,7 +1218,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].transfer</td>
         <td> object</td>
         <td>
-        (OneOf) Transfer transaction payload.
+        (OneOf)Transfer transaction payload.
         </td>
       </tr>
          <tr>
@@ -1246,7 +1246,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].bond</td>
         <td> object</td>
         <td>
-        (OneOf) Bond transaction payload.
+        (OneOf)Bond transaction payload.
         </td>
       </tr>
          <tr>
@@ -1281,7 +1281,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].sortition</td>
         <td> object</td>
         <td>
-        (OneOf) Sortition transaction payload.
+        (OneOf)Sortition transaction payload.
         </td>
       </tr>
          <tr>
@@ -1302,7 +1302,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].unbond</td>
         <td> object</td>
         <td>
-        (OneOf) Unbond transaction payload.
+        (OneOf)Unbond transaction payload.
         </td>
       </tr>
          <tr>
@@ -1316,7 +1316,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].withdraw</td>
         <td> object</td>
         <td>
-        (OneOf) Withdraw transaction payload.
+        (OneOf)Withdraw transaction payload.
         </td>
       </tr>
          <tr>
@@ -1691,7 +1691,7 @@ committee.
             <td class="fw-bold">instances[].votes[].type</td>
             <td> numeric</td>
             <td>
-            (Enum) The type of the vote.
+            (Enum)The type of the vote.
             <br>Available values:<ul>
               <li>VOTE_UNKNOWN = 0 (Unknown vote type.)</li>
               <li>VOTE_PREPARE = 1 (Prepare vote type.)</li>
@@ -2104,7 +2104,7 @@ address.</p>
     <td class="fw-bold">payload_type</td>
     <td> numeric</td>
     <td>
-    (Enum) The type of transactions to retrieve from the transaction pool. 0 means all
+    (Enum)The type of transactions to retrieve from the transaction pool. 0 means all
 types.
     <br>Available values:<ul>
       <li>UNKNOWN = 0 (Unknown payload type.)</li>
@@ -2178,7 +2178,7 @@ types.
         <td class="fw-bold">txs[].payload_type</td>
         <td> numeric</td>
         <td>
-        (Enum) The type of transaction payload.
+        (Enum)The type of transaction payload.
         <br>Available values:<ul>
           <li>UNKNOWN = 0 (Unknown payload type.)</li>
           <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
@@ -2193,7 +2193,7 @@ types.
         <td class="fw-bold">txs[].transfer</td>
         <td> object</td>
         <td>
-        (OneOf) Transfer transaction payload.
+        (OneOf)Transfer transaction payload.
         </td>
       </tr>
          <tr>
@@ -2221,7 +2221,7 @@ types.
         <td class="fw-bold">txs[].bond</td>
         <td> object</td>
         <td>
-        (OneOf) Bond transaction payload.
+        (OneOf)Bond transaction payload.
         </td>
       </tr>
          <tr>
@@ -2256,7 +2256,7 @@ types.
         <td class="fw-bold">txs[].sortition</td>
         <td> object</td>
         <td>
-        (OneOf) Sortition transaction payload.
+        (OneOf)Sortition transaction payload.
         </td>
       </tr>
          <tr>
@@ -2277,7 +2277,7 @@ types.
         <td class="fw-bold">txs[].unbond</td>
         <td> object</td>
         <td>
-        (OneOf) Unbond transaction payload.
+        (OneOf)Unbond transaction payload.
         </td>
       </tr>
          <tr>
@@ -2291,7 +2291,7 @@ types.
         <td class="fw-bold">txs[].withdraw</td>
         <td> object</td>
         <td>
-        (OneOf) Withdraw transaction payload.
+        (OneOf)Withdraw transaction payload.
         </td>
       </tr>
          <tr>
@@ -3112,7 +3112,7 @@ public key.</p>
     <td class="fw-bold">address_type</td>
     <td> numeric</td>
     <td>
-    (Enum) The type of address to generate.
+    (Enum)The type of address to generate.
     <br>Available values:<ul>
       <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
 Should not be used to generate new addresses.)</li>

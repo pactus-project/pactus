@@ -198,7 +198,7 @@ parameters.</p>
     <td class="fw-bold">verbosity</td>
     <td> TransactionVerbosity</td>
     <td>
-    (Enum) The verbosity level for transaction details.
+    (Enum)The verbosity level for transaction details.
     <br>Available values:<ul>
       <li>TRANSACTION_DATA = 0 (Request transaction data only.)</li>
       <li>TRANSACTION_INFO = 1 (Request detailed transaction information.)</li>
@@ -281,7 +281,7 @@ parameters.</p>
         <td class="fw-bold">transaction.payload_type</td>
         <td> PayloadType</td>
         <td>
-        (Enum) The type of transaction payload.
+        (Enum)The type of transaction payload.
         <br>Available values:<ul>
           <li>UNKNOWN = 0 (Unknown payload type.)</li>
           <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
@@ -296,7 +296,7 @@ parameters.</p>
         <td class="fw-bold">transaction.transfer</td>
         <td> PayloadTransfer</td>
         <td>
-        (OneOf) Transfer transaction payload.
+        (OneOf)Transfer transaction payload.
         </td>
       </tr>
          <tr>
@@ -324,7 +324,7 @@ parameters.</p>
         <td class="fw-bold">transaction.bond</td>
         <td> PayloadBond</td>
         <td>
-        (OneOf) Bond transaction payload.
+        (OneOf)Bond transaction payload.
         </td>
       </tr>
          <tr>
@@ -359,7 +359,7 @@ parameters.</p>
         <td class="fw-bold">transaction.sortition</td>
         <td> PayloadSortition</td>
         <td>
-        (OneOf) Sortition transaction payload.
+        (OneOf)Sortition transaction payload.
         </td>
       </tr>
          <tr>
@@ -380,7 +380,7 @@ parameters.</p>
         <td class="fw-bold">transaction.unbond</td>
         <td> PayloadUnbond</td>
         <td>
-        (OneOf) Unbond transaction payload.
+        (OneOf)Unbond transaction payload.
         </td>
       </tr>
          <tr>
@@ -394,7 +394,7 @@ parameters.</p>
         <td class="fw-bold">transaction.withdraw</td>
         <td> PayloadWithdraw</td>
         <td>
-        (OneOf) Withdraw transaction payload.
+        (OneOf)Withdraw transaction payload.
         </td>
       </tr>
          <tr>
@@ -465,7 +465,7 @@ and payload type.</p>
     <td class="fw-bold">payload_type</td>
     <td> PayloadType</td>
     <td>
-    (Enum) The type of transaction payload.
+    (Enum)The type of transaction payload.
     <br>Available values:<ul>
       <li>UNKNOWN = 0 (Unknown payload type.)</li>
       <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
@@ -582,28 +582,28 @@ and payload type.</p>
     <td class="fw-bold">transfer</td>
     <td> PayloadTransfer</td>
     <td>
-    (OneOf) 
+    (OneOf)
     </td>
   </tr>
   <tr>
     <td class="fw-bold">bond</td>
     <td> PayloadBond</td>
     <td>
-    (OneOf) 
+    (OneOf)
     </td>
   </tr>
   <tr>
     <td class="fw-bold">unbond</td>
     <td> PayloadUnbond</td>
     <td>
-    (OneOf) 
+    (OneOf)
     </td>
   </tr>
   <tr>
     <td class="fw-bold">withdraw</td>
     <td> PayloadWithdraw</td>
     <td>
-    (OneOf) 
+    (OneOf)
     </td>
   </tr>
   </tbody>
@@ -969,7 +969,7 @@ parameters.</p>
     <td class="fw-bold">verbosity</td>
     <td> BlockVerbosity</td>
     <td>
-    (Enum) The verbosity level for block information.
+    (Enum)The verbosity level for block information.
     <br>Available values:<ul>
       <li>BLOCK_DATA = 0 (Request only block data.)</li>
       <li>BLOCK_INFO = 1 (Request block information and transaction IDs.)</li>
@@ -1152,7 +1152,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].payload_type</td>
         <td> PayloadType</td>
         <td>
-        (Enum) The type of transaction payload.
+        (Enum)The type of transaction payload.
         <br>Available values:<ul>
           <li>UNKNOWN = 0 (Unknown payload type.)</li>
           <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
@@ -1167,7 +1167,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].transfer</td>
         <td> PayloadTransfer</td>
         <td>
-        (OneOf) Transfer transaction payload.
+        (OneOf)Transfer transaction payload.
         </td>
       </tr>
          <tr>
@@ -1195,7 +1195,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].bond</td>
         <td> PayloadBond</td>
         <td>
-        (OneOf) Bond transaction payload.
+        (OneOf)Bond transaction payload.
         </td>
       </tr>
          <tr>
@@ -1230,7 +1230,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].sortition</td>
         <td> PayloadSortition</td>
         <td>
-        (OneOf) Sortition transaction payload.
+        (OneOf)Sortition transaction payload.
         </td>
       </tr>
          <tr>
@@ -1251,7 +1251,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].unbond</td>
         <td> PayloadUnbond</td>
         <td>
-        (OneOf) Unbond transaction payload.
+        (OneOf)Unbond transaction payload.
         </td>
       </tr>
          <tr>
@@ -1265,7 +1265,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].withdraw</td>
         <td> PayloadWithdraw</td>
         <td>
-        (OneOf) Withdraw transaction payload.
+        (OneOf)Withdraw transaction payload.
         </td>
       </tr>
          <tr>
@@ -1640,7 +1640,7 @@ committee.
             <td class="fw-bold">instances[].votes[].type</td>
             <td> VoteType</td>
             <td>
-            (Enum) The type of the vote.
+            (Enum)The type of the vote.
             <br>Available values:<ul>
               <li>VOTE_UNKNOWN = 0 (Unknown vote type.)</li>
               <li>VOTE_PREPARE = 1 (Prepare vote type.)</li>
@@ -2053,7 +2053,7 @@ address.</p>
     <td class="fw-bold">payload_type</td>
     <td> PayloadType</td>
     <td>
-    (Enum) The type of transactions to retrieve from the transaction pool. 0 means all
+    (Enum)The type of transactions to retrieve from the transaction pool. 0 means all
 types.
     <br>Available values:<ul>
       <li>UNKNOWN = 0 (Unknown payload type.)</li>
@@ -2127,7 +2127,7 @@ types.
         <td class="fw-bold">txs[].payload_type</td>
         <td> PayloadType</td>
         <td>
-        (Enum) The type of transaction payload.
+        (Enum)The type of transaction payload.
         <br>Available values:<ul>
           <li>UNKNOWN = 0 (Unknown payload type.)</li>
           <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
@@ -2142,7 +2142,7 @@ types.
         <td class="fw-bold">txs[].transfer</td>
         <td> PayloadTransfer</td>
         <td>
-        (OneOf) Transfer transaction payload.
+        (OneOf)Transfer transaction payload.
         </td>
       </tr>
          <tr>
@@ -2170,7 +2170,7 @@ types.
         <td class="fw-bold">txs[].bond</td>
         <td> PayloadBond</td>
         <td>
-        (OneOf) Bond transaction payload.
+        (OneOf)Bond transaction payload.
         </td>
       </tr>
          <tr>
@@ -2205,7 +2205,7 @@ types.
         <td class="fw-bold">txs[].sortition</td>
         <td> PayloadSortition</td>
         <td>
-        (OneOf) Sortition transaction payload.
+        (OneOf)Sortition transaction payload.
         </td>
       </tr>
          <tr>
@@ -2226,7 +2226,7 @@ types.
         <td class="fw-bold">txs[].unbond</td>
         <td> PayloadUnbond</td>
         <td>
-        (OneOf) Unbond transaction payload.
+        (OneOf)Unbond transaction payload.
         </td>
       </tr>
          <tr>
@@ -2240,7 +2240,7 @@ types.
         <td class="fw-bold">txs[].withdraw</td>
         <td> PayloadWithdraw</td>
         <td>
-        (OneOf) Withdraw transaction payload.
+        (OneOf)Withdraw transaction payload.
         </td>
       </tr>
          <tr>
@@ -3061,7 +3061,7 @@ public key.</p>
     <td class="fw-bold">address_type</td>
     <td> AddressType</td>
     <td>
-    (Enum) The type of address to generate.
+    (Enum)The type of address to generate.
     <br>Available values:<ul>
       <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
 Should not be used to generate new addresses.)</li>
@@ -3283,7 +3283,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
   <thead>
     <tr><td>.proto Type</td><td>Go</td><td>C++</td><td>Rust</td><td>Java</td><td>Python</td><td>C#</td></tr>
   </thead>
-  <tbody class="table-group-divider"> 
+  <tbody class="table-group-divider">
       <tr id="double">
         <td class="fw-bold">double</td>
         <td>float64</td>
@@ -3292,7 +3292,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>double</td>
         <td>float</td>
         <td>double</td>
-      </tr> 
+      </tr>
       <tr id="float">
         <td class="fw-bold">float</td>
         <td>float32</td>
@@ -3301,7 +3301,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>float</td>
         <td>float</td>
         <td>float</td>
-      </tr> 
+      </tr>
       <tr id="int32">
         <td class="fw-bold">int32</td>
         <td>int32</td>
@@ -3310,7 +3310,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>int</td>
         <td>int</td>
         <td>int</td>
-      </tr> 
+      </tr>
       <tr id="int64">
         <td class="fw-bold">int64</td>
         <td>int64</td>
@@ -3319,7 +3319,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>long</td>
         <td>int/long</td>
         <td>long</td>
-      </tr> 
+      </tr>
       <tr id="uint32">
         <td class="fw-bold">uint32</td>
         <td>uint32</td>
@@ -3328,7 +3328,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>int</td>
         <td>int/long</td>
         <td>uint</td>
-      </tr> 
+      </tr>
       <tr id="uint64">
         <td class="fw-bold">uint64</td>
         <td>uint64</td>
@@ -3337,7 +3337,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>long</td>
         <td>int/long</td>
         <td>ulong</td>
-      </tr> 
+      </tr>
       <tr id="sint32">
         <td class="fw-bold">sint32</td>
         <td>int32</td>
@@ -3346,7 +3346,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>int</td>
         <td>int</td>
         <td>int</td>
-      </tr> 
+      </tr>
       <tr id="sint64">
         <td class="fw-bold">sint64</td>
         <td>int64</td>
@@ -3355,7 +3355,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>long</td>
         <td>int/long</td>
         <td>long</td>
-      </tr> 
+      </tr>
       <tr id="fixed32">
         <td class="fw-bold">fixed32</td>
         <td>uint32</td>
@@ -3364,7 +3364,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>int</td>
         <td>int</td>
         <td>uint</td>
-      </tr> 
+      </tr>
       <tr id="fixed64">
         <td class="fw-bold">fixed64</td>
         <td>uint64</td>
@@ -3373,7 +3373,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>long</td>
         <td>int/long</td>
         <td>ulong</td>
-      </tr> 
+      </tr>
       <tr id="sfixed32">
         <td class="fw-bold">sfixed32</td>
         <td>int32</td>
@@ -3382,7 +3382,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>int</td>
         <td>int</td>
         <td>int</td>
-      </tr> 
+      </tr>
       <tr id="sfixed64">
         <td class="fw-bold">sfixed64</td>
         <td>int64</td>
@@ -3391,7 +3391,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>long</td>
         <td>int/long</td>
         <td>long</td>
-      </tr> 
+      </tr>
       <tr id="bool">
         <td class="fw-bold">bool</td>
         <td>bool</td>
@@ -3400,7 +3400,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>boolean</td>
         <td>boolean</td>
         <td>bool</td>
-      </tr> 
+      </tr>
       <tr id="string">
         <td class="fw-bold">string</td>
         <td>string</td>
@@ -3409,7 +3409,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>String</td>
         <td>str/unicode</td>
         <td>string</td>
-      </tr> 
+      </tr>
       <tr id="bytes">
         <td class="fw-bold">bytes</td>
         <td>[]byte</td>
@@ -3418,6 +3418,6 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td>ByteString</td>
         <td>str</td>
         <td>ByteString</td>
-      </tr> 
+      </tr>
   </tbody>
 </table>
