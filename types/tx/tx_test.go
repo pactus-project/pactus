@@ -78,10 +78,16 @@ func TestTxIDNoSignatory(t *testing.T) {
 	tx1 := ts.GenerateTestTransferTx()
 	tx2 := new(tx.Tx)
 	*tx2 = *tx1
+
 	tx2.SetPublicKey(nil)
 	tx2.SetSignature(nil)
+
+	require.True(t, tx1.IsSigned())
+	require.False(t, tx2.IsSigned())
+
 	require.Equal(t, tx1.ID(), tx2.ID())
 	require.Equal(t, tx1.SignBytes(), tx2.SignBytes())
+
 }
 
 func TestBasicCheck(t *testing.T) {
@@ -196,7 +202,7 @@ func TestInvalidPayloadType(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	d := ts.DecodingHex(
-		"00" + // Flags
+		"02" + // Flags
 			"01" + // Version
 			"01020300" + // LockTime
 			"01" + // Fee
