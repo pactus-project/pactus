@@ -1,5 +1,58 @@
 # Changelog
 
+## [1.5.0](https://github.com/pactus-project/pactus/compare/v1.4.0...v1.5.0) (2024-10-08)
+
+### Feat
+
+- **cmd**: pactus-wallet add info commands ([#1496](https://github.com/pactus-project/pactus/pull/1496))
+- **state**: enable Ed25519 for the Testnet ([#1497](https://github.com/pactus-project/pactus/pull/1497))
+- **gtk**: support create Ed25519 in gtk ([#1489](https://github.com/pactus-project/pactus/pull/1489))
+- **grpc**: add Ed25519 to AddressType proto ([#1492](https://github.com/pactus-project/pactus/pull/1492))
+- **wallet**: upgrade wallet ([#1491](https://github.com/pactus-project/pactus/pull/1491))
+- **wallet**: supporting Ed25519 curve in wallet ([#1484](https://github.com/pactus-project/pactus/pull/1484))
+- **grpc**: add `Proposal` to `ConsensusInfo` API ([#1469](https://github.com/pactus-project/pactus/pull/1469))
+- **crypto**: supporting ed25519 ([#1481](https://github.com/pactus-project/pactus/pull/1481))
+- **gtk**: adding IsPrune to node widget ([#1470](https://github.com/pactus-project/pactus/pull/1470))
+- **daemon**: warn at pruning a prune node attempt ([#1471](https://github.com/pactus-project/pactus/pull/1471))
+- **genesis**: separating chain param from genesis param ([#1463](https://github.com/pactus-project/pactus/pull/1463))
+- **cmd**: pactus-shell support interactive shell ([#1460](https://github.com/pactus-project/pactus/pull/1460))
+
+### Fix
+
+- **gtk**: increase window width to show availability score ([#1529](https://github.com/pactus-project/pactus/pull/1529))
+- **state**: set hard-fork height for the mainnet ([#1528](https://github.com/pactus-project/pactus/pull/1528))
+- **wallet**: change to prompt password for masking ([#1527](https://github.com/pactus-project/pactus/pull/1527))
+- **deps**: go version docker image to build go v1.23.2 ([#1522](https://github.com/pactus-project/pactus/pull/1522))
+- **network**: close stream on timeout ([#1520](https://github.com/pactus-project/pactus/pull/1520))
+- **http**: add pprof link in http web interface ([#1518](https://github.com/pactus-project/pactus/pull/1518))
+- **sync**: close stream on read error ([#1519](https://github.com/pactus-project/pactus/pull/1519))
+- **sync**: set last support version to 1.5.0 ([#1517](https://github.com/pactus-project/pactus/pull/1517))
+- **http**: pprof in http server ([#1515](https://github.com/pactus-project/pactus/pull/1515))
+- **cmd**: add flag debug to enable pprof ([#1512](https://github.com/pactus-project/pactus/pull/1512))
+- **cmd**: add pprof as default in http server ([#1511](https://github.com/pactus-project/pactus/pull/1511))
+- **grpc**: merge raw transaction methods to one rpc method ([#1500](https://github.com/pactus-project/pactus/pull/1500))
+- **wallet, cmd**: adding ed25519_account in help and set as default ([#1485](https://github.com/pactus-project/pactus/pull/1485))
+- **wallet**: add memo in confirmation wallet CLI ([#1499](https://github.com/pactus-project/pactus/pull/1499))
+- **store**: cache Ed25519 Public Keys ([#1495](https://github.com/pactus-project/pactus/pull/1495))
+- **grpc**: adding pyi files for python generated files ([#1479](https://github.com/pactus-project/pactus/pull/1479))
+- **grpc**: change enum type to numeric for documentation ([#1474](https://github.com/pactus-project/pactus/pull/1474))
+- **shell**: stop showing usage on error ([#1467](https://github.com/pactus-project/pactus/pull/1467))
+- **util**: chunked download to improve download speed ([#1459](https://github.com/pactus-project/pactus/pull/1459))
+- **gtk**: width size of listbox and download button ([#1434](https://github.com/pactus-project/pactus/pull/1434))
+- **grpc**: add example json-rpc in generated doc ([#1461](https://github.com/pactus-project/pactus/pull/1461))
+- **grpc**: add basic check for grpc configuration to check basic auth ([#1455](https://github.com/pactus-project/pactus/pull/1455))
+- **util**: remove util.Now helper function ([#1442](https://github.com/pactus-project/pactus/pull/1442))
+
+### Refactor
+
+- **crypto**: replace bls12-381 kilic with gnark ([#1510](https://github.com/pactus-project/pactus/pull/1510))
+- **crypto**: define errors for crypto package ([#1507](https://github.com/pactus-project/pactus/pull/1507))
+- **sync**: define errors for sync package ([#1504](https://github.com/pactus-project/pactus/pull/1504))
+- **types**: define errors for vote package ([#1503](https://github.com/pactus-project/pactus/pull/1503))
+- **state**: define errors for state package ([#1457](https://github.com/pactus-project/pactus/pull/1457))
+- **util**: remove GenericError code ([#1454](https://github.com/pactus-project/pactus/pull/1454))
+- **types**: using options pattern for memo parameter on new tx functions ([#1443](https://github.com/pactus-project/pactus/pull/1443))
+
 ## [1.4.0](https://github.com/pactus-project/pactus/compare/v1.3.0...v1.4.0) (2024-08-01)
 
 ### Feat
