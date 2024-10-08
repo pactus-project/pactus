@@ -62,6 +62,7 @@ func TestPublicKeyEncoding(t *testing.T) {
 
 	r2 := util.NewFixedReader(bls.PublicKeySize, w2.Bytes())
 	assert.NoError(t, pub.Decode(r2))
+	assert.Equal(t, bls.PublicKeySize, pub.SerializeSize())
 }
 
 func TestPublicKeyVerifyAddress(t *testing.T) {

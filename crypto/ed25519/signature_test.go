@@ -64,6 +64,7 @@ func TestSignatureEncoding(t *testing.T) {
 
 	r2 := util.NewFixedReader(ed25519.SignatureSize, w2.Bytes())
 	assert.NoError(t, sig.Decode(r2))
+	assert.Equal(t, ed25519.SignatureSize, sig.SerializeSize())
 }
 
 func TestVerifyingSignature(t *testing.T) {
