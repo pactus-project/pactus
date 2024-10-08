@@ -16,7 +16,7 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
   {{range .Files}}{{- print "" -}}
     {{range .Services}}{{- print "" -}}
     <li> {{.Name}} Service
-      <ul> {{$service_name := .FullName}}
+      <ul>{{$service_name := .FullName}}
         {{range .Methods}}{{- print "" -}}
         <li>
           <a href="#{{$service_name}}.{{.Name}}">
