@@ -40,9 +40,9 @@ Create environment variables for the release version, which will be used in subs
 Keep your terminal open for further steps.
 
 ```bash
-PRV_VER="1.4.0"
-CUR_VER="1.5.0"
-NEXT_VER="1.6.0"
+PRV_VER="1.5.0"
+CUR_VER="1.6.0"
+NEXT_VER="1.7.0"
 BASE_BRANCH="main"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
@@ -131,7 +131,8 @@ Create a new announcement post on the
 Additionally, update the new release on the
 [GitHub Releases](https://github.com/pactus-project/pactus/releases) page.
 If gRPC APIs has changed in this version,
-be sure to update the [API documentation](https://docs.pactus.org/api/) accordingly.
+be sure to update the [API documentation](https://docs.pactus.org/api/) and
+[Python SDK](https://github.com/pactus-project/python-sdk) accordingly.
 
 ## 12. Celebrate 🎉
 

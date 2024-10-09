@@ -67,7 +67,7 @@ curl --location 'http://localhost:8545/' \
   {{range .Files}}{{- print "" -}}
     {{range .Services}}{{- print "" -}}
     <li> {{.Name}} Service
-      <ul> {{$service_name := .JSONName}}
+      <ul>{{$service_name := .JSONName}}
         {{range .Methods}}{{- print "" -}}
         <li>
           <a href="#{{.JSONName}}">
@@ -107,8 +107,8 @@ curl --location 'http://localhost:8545/' \
     <td class="fw-bold">{{.JSONName}}</td>
     <td>{{.Label}} {{.JSONType}}</td>
     <td>
-    {{if .IsEnum}}(Enum) {{end}}{{- print "" -}}
-    {{if .IsOneOf}}(OneOf) {{end}}{{- print "" -}}
+    {{if .IsEnum}}(Enum){{end}}{{- print "" -}}
+    {{if .IsOneOf}}(OneOf){{end}}{{- print "" -}}
     {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end}}{{- print "" -}}
     {{.Description}}
     {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}{{- print "" -}}
@@ -142,8 +142,8 @@ Parameters has no fields.
     <td class="fw-bold">{{.Name}}</td>
     <td>{{.Label}} {{.JSONType}}</td>
     <td>
-    {{if .IsEnum}}(Enum) {{end}}{{- print "" -}}
-    {{if .IsOneOf}}(OneOf) {{end}}{{- print "" -}}
+    {{if .IsEnum}}(Enum){{end}}{{- print "" -}}
+    {{if .IsOneOf}}(OneOf){{end}}{{- print "" -}}
     {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end}}{{- print "" -}}
     {{.Description}}
     {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}{{- print "" -}}
@@ -162,8 +162,8 @@ Parameters has no fields.
         <td class="fw-bold">{{$msg0.Name}}{{if $msg0.IsRepeated}}[]{{end}}.{{.Name}}</td>
         <td>{{.Label}} {{.JSONType}}</td>
         <td>
-        {{if .IsEnum}}(Enum) {{end}}{{- print "" -}}
-        {{if .IsOneOf}}(OneOf) {{end}}{{- print "" -}}
+        {{if .IsEnum}}(Enum){{end}}{{- print "" -}}
+        {{if .IsOneOf}}(OneOf){{end}}{{- print "" -}}
         {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end}}{{- print "" -}}
         {{.Description}}
         {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}{{- print "" -}}
@@ -182,8 +182,8 @@ Parameters has no fields.
             <td class="fw-bold">{{$msg0.Name}}{{if $msg0.IsRepeated}}[]{{end}}.{{$msg1.Name}}{{if $msg1.IsRepeated}}[]{{end}}.{{.Name}}</td>
             <td>{{.Label}} {{.JSONType}}</td>
             <td>
-            {{if .IsEnum}}(Enum) {{end}}{{- print "" -}}
-            {{if .IsOneOf}}(OneOf) {{end}}{{- print "" -}}
+            {{if .IsEnum}}(Enum){{end}}{{- print "" -}}
+            {{if .IsOneOf}}(OneOf){{end}}{{- print "" -}}
             {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end}}{{- print "" -}}
             {{.Description}}
             {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}{{- print "" -}}
