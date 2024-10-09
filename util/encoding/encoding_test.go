@@ -16,6 +16,8 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"golang.org/x/exp/rand"
 )
 
 // TestElementEncoding tests encode and decode for various element types.  This
@@ -356,6 +358,12 @@ func TestVarIntError(t *testing.T) {
 		readErr error
 	}{
 		{
+			[]byte{0x98, 0}, ErrNonCanonical,
+		},
+		{
+			[]byte{0xFF}, io.EOF,
+		},
+		{
 			[]byte{0x80, 0x00}, ErrNonCanonical,
 		},
 		{
@@ -378,16 +386,17 @@ func TestVarIntError(t *testing.T) {
 	}
 }
 
-func TestVarIntOverflow(t *testing.T) {
-	var buf bytes.Buffer
-	buf.Write([]byte{0xff, 0x00})
-	_, err := ReadVarInt(&buf)
-	assert.Error(t, err)
+func TestVarIntRandom(t *testing.T) {
+	randInt1 := uint64(rand.Int63())
+	var wBuf bytes.Buffer
+	err := WriteVarInt(&wBuf, randInt1)
+	require.NoError(t, err)
 
-	buf.Reset()
-	buf.Write([]byte{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff})
-	_, err = ReadVarInt(&buf)
-	assert.Error(t, err)
+	rBuf := bytes.NewReader(wBuf.Bytes())
+	randInt2, err := ReadVarInt(rBuf)
+	require.NoError(t, err)
+
+	assert.Equal(t, randInt1, randInt2)
 }
 
 func TestWriteElements(t *testing.T) {
