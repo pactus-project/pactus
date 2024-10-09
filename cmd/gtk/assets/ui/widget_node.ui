@@ -70,7 +70,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">📂 Working directory:</property>
+                        <property name="label" translatable="yes">📂 Working Directory:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -100,7 +100,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">🥡 Last block height:</property>
+                        <property name="label" translatable="yes">🥡 Last Block Height:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -129,7 +129,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">🕔 Last block time:</property>
+                        <property name="label" translatable="yes">🕔 Last Block Time:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -158,7 +158,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">📦 Remaining blocks:</property>
+                        <property name="label" translatable="yes">📦 Remaining Blocks:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -275,7 +275,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">⏰ Clock offset:</property>
+                        <property name="label" translatable="yes">⏰ Clock Offset:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -470,7 +470,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">👥 Committee size:</property>
+                        <property name="label" translatable="yes">👥 Committee Size:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -485,7 +485,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">💎 In committee now:</property>
+                        <property name="label" translatable="yes">💎 In Committee Now:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -500,7 +500,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">⚡️ Committee power:</property>
+                        <property name="label" translatable="yes">⚡️ Committee Power:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -575,7 +575,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">✨ Total power:</property>
+                        <property name="label" translatable="yes">✨ Total Power:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -590,7 +590,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">✅ Number of validators:</property>
+                        <property name="label" translatable="yes">✅ Number Of Validators:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
