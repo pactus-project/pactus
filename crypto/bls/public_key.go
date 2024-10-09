@@ -136,6 +136,10 @@ func (pub *PublicKey) Verify(msg []byte, sig crypto.Signature) error {
 	return nil
 }
 
+func (*PublicKey) SerializeSize() int {
+	return PublicKeySize
+}
+
 // EqualsTo checks if the current public key is equal to another public key.
 func (pub *PublicKey) EqualsTo(x crypto.PublicKey) bool {
 	xBLS, ok := x.(*PublicKey)

@@ -78,8 +78,13 @@ func TestTxIDNoSignatory(t *testing.T) {
 	tx1 := ts.GenerateTestTransferTx()
 	tx2 := new(tx.Tx)
 	*tx2 = *tx1
+
 	tx2.SetPublicKey(nil)
 	tx2.SetSignature(nil)
+
+	require.True(t, tx1.IsSigned())
+	require.False(t, tx2.IsSigned())
+
 	require.Equal(t, tx1.ID(), tx2.ID())
 	require.Equal(t, tx1.SignBytes(), tx2.SignBytes())
 }
@@ -196,7 +201,7 @@ func TestInvalidPayloadType(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	d := ts.DecodingHex(
-		"00" + // Flags
+		"02" + // Flags
 			"01" + // Version
 			"01020300" + // LockTime
 			"01" + // Fee
@@ -340,17 +345,17 @@ func TestSignBytesBLS(t *testing.T) {
 		"00" + // Flags
 			"01" + // Version
 			"01020304" + // LockTime
-			"01" + // Fee
+			"e807" + // Fee
 			"0474657374" + // Memo
 			"01" + // PayloadType
-			"013333333333333333333333333333333333333333" + // Sender
-			"012222222222222222222222222222222222222222" + // Receiver
-			"02" + // Amount
-			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // Signature
-			"8d82fa4fcac04a3b565267685e90db1b01420285d2f8295683c138c092c209479983ba1591370778846681b7b558e061" + // PublicKey
-			"1776208c0718006311c84b4a113335c70d1f5c7c5dd93a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc1")
+			"022109324a70c5bd7a0591bcd8d597cb3a06a91770" + // Sender (pc1zyyynyjnsck7h5pv3hnvdt97t8gr2j9ms0vrrp7)
+			"02b00c16e60f46390455baff5a8b69ac70e67f10c8" + // Receiver (pc1zkqxpdes0gcusg4d6ladgk6dvwrn87yxgumzwn3)
+			"a09c01" + // Amount
+			"86d45b6532d447070cf1ee67d4a04a13f337f6a2bfd6c54419efdd4b502b529d3f3be52567d8adaf494e0edc93d4ae51" + // Signature
+			"b805043a816c3213c67f365f83c6946546049f517ebe470f186b36ff53fb996ae2468b119582a7f18fe8f0bfb4e055d5" + // PublicKey
+			"190601a983fb4636c36287a73d80dbb14f244f319da5eeac02ce7ee9026245ac36b9978cabd6d2cbb3c1f87e55e2fc29")
 
-	h, _ := hash.FromString("084f69979757cecb58d0a37bdd10eebee912ed29f923adb93f09d6bde2b94d5f")
+	h, _ := hash.FromString("7ab1287fe4882918e69b9f83215378ea08f2d91e0700c2e35a73b7aae1d7bf2d")
 	trx, err := tx.FromBytes(d)
 	assert.NoError(t, err)
 	assert.Equal(t, len(d), trx.SerializeSize())
@@ -361,26 +366,27 @@ func TestSignBytesBLS(t *testing.T) {
 	assert.Equal(t, hash.CalcHash(sb), trx.ID())
 	assert.Equal(t, uint32(0x04030201), trx.LockTime())
 	assert.Equal(t, "test", trx.Memo())
-	assert.Equal(t, amount.Amount(1), trx.Fee())
-	assert.Equal(t, amount.Amount(2), trx.Payload().Value())
+	assert.Equal(t, amount.Amount(1000), trx.Fee())
+	assert.Equal(t, amount.Amount(20000), trx.Payload().Value())
+	assert.Equal(t, "pc1zyyynyjnsck7h5pv3hnvdt97t8gr2j9ms0vrrp7", trx.Payload().Signer().String())
 }
 
 func TestSignBytesEd25519(t *testing.T) {
 	d, _ := hex.DecodeString(
 		"00" + // Flags
 			"01" + // Version
-			"01020304" + // LockTime
-			"01" + // Fee
-			"0474657374" + // Memo
+			"01020300" + // LockTime
+			"e807" + // Fee (1000)
+			"0474657374" + // Memo ("test")
 			"01" + // PayloadType
-			"033333333333333333333333333333333333333333" + // Sender
-			"032222222222222222222222222222222222222222" + // Receiver
-			"02" + // Amount
-			"4ed287f380291202f36a6a7516d602f1a6eaf789d092dd4050c0907ce79f49db" + // Signature
-			"6e70c21c82411803815db09713eab426297210a6793658d6bd9ed116ef2c0aac" + // PublicKey
-			"0aacf0da469a4a47dfb968a321ad7d6b919fdc37d2d2834c69cef90692730902")
+			"037098338e0b6808119dfd4457ab806b9c2059b89b" + // Sender (pc1rwzvr8rstdqypr80ag3t6hqrtnss9nwymcxy3lr)
+			"037a14ae24533816e7faaa6ed28fcdde8e55a7df21" + // Receiver (pc1r0g22ufzn8qtw0742dmfglnw73e260hep0k3yra)
+			"a09c01" + // Amount (20000)
+			"95794161374b22c696dabb98e93f6ca9300b22f3b904921fbf560bb72145f4fa" + // Signature
+			"50ac25c7125271489b0cd230549257c93fb8c6265f2914a988ba7b81c1bc47ff" + // PublicKey
+			"f027412dd59447867911035ff69742d171060a1f132ac38b95acc6e39ec0bd09")
 
-	h, _ := hash.FromString("e5a0e1fb4ee6f26a867dd3c091fc9fdfcbd25a5caff8cf13a4485a716501150d")
+	h, _ := hash.FromString("34cd4656a98f7eb996e83efdc384cefbe3a9c52dca79a99245b4eacc0b0b4311")
 	trx, err := tx.FromBytes(d)
 	assert.NoError(t, err)
 	assert.Equal(t, len(d), trx.SerializeSize())
@@ -389,10 +395,11 @@ func TestSignBytesEd25519(t *testing.T) {
 	assert.Equal(t, sb, trx.SignBytes())
 	assert.Equal(t, h, trx.ID())
 	assert.Equal(t, hash.CalcHash(sb), trx.ID())
-	assert.Equal(t, uint32(0x04030201), trx.LockTime())
+	assert.Equal(t, uint32(0x00030201), trx.LockTime())
 	assert.Equal(t, "test", trx.Memo())
-	assert.Equal(t, amount.Amount(1), trx.Fee())
-	assert.Equal(t, amount.Amount(2), trx.Payload().Value())
+	assert.Equal(t, amount.Amount(1000), trx.Fee())
+	assert.Equal(t, amount.Amount(20000), trx.Payload().Value())
+	assert.Equal(t, "pc1rwzvr8rstdqypr80ag3t6hqrtnss9nwymcxy3lr", trx.Payload().Signer().String())
 }
 
 func TestStripPublicKey(t *testing.T) {
