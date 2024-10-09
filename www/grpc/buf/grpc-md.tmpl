@@ -16,7 +16,7 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
   {{range .Files}}{{- print "" -}}
     {{range .Services}}{{- print "" -}}
     <li> {{.Name}} Service
-      <ul> {{$service_name := .FullName}}
+      <ul>{{$service_name := .FullName}}
         {{range .Methods}}{{- print "" -}}
         <li>
           <a href="#{{$service_name}}.{{.Name}}">
@@ -56,8 +56,8 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
     <td class="fw-bold">{{.Name}}</td>
     <td>{{.Label}} {{.LongType}}</td>
     <td>
-    {{if .IsEnum}}(Enum) {{end}}{{- print "" -}}
-    {{if .IsOneOf}}(OneOf) {{end}}{{- print "" -}}
+    {{if .IsEnum}}(Enum){{end}}{{- print "" -}}
+    {{if .IsOneOf}}(OneOf){{end}}{{- print "" -}}
     {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end}}{{- print "" -}}
     {{.Description}}
     {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}{{- print "" -}}
@@ -91,8 +91,8 @@ Message has no fields.
     <td class="fw-bold">{{.Name}}</td>
     <td>{{.Label}} {{.LongType}}</td>
     <td>
-    {{if .IsEnum}}(Enum) {{end}}{{- print "" -}}
-    {{if .IsOneOf}}(OneOf) {{end}}{{- print "" -}}
+    {{if .IsEnum}}(Enum){{end}}{{- print "" -}}
+    {{if .IsOneOf}}(OneOf){{end}}{{- print "" -}}
     {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end}}{{- print "" -}}
     {{.Description}}
     {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}{{- print "" -}}
@@ -111,8 +111,8 @@ Message has no fields.
         <td class="fw-bold">{{$msg0.Name}}{{if $msg0.IsRepeated}}[]{{end}}.{{.Name}}</td>
         <td>{{.Label}} {{.LongType}}</td>
         <td>
-        {{if .IsEnum}}(Enum) {{end}}{{- print "" -}}
-        {{if .IsOneOf}}(OneOf) {{end}}{{- print "" -}}
+        {{if .IsEnum}}(Enum){{end}}{{- print "" -}}
+        {{if .IsOneOf}}(OneOf){{end}}{{- print "" -}}
         {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end}}{{- print "" -}}
         {{.Description}}
         {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}{{- print "" -}}
@@ -131,8 +131,8 @@ Message has no fields.
             <td class="fw-bold">{{$msg0.Name}}{{if $msg0.IsRepeated}}[]{{end}}.{{$msg1.Name}}{{if $msg1.IsRepeated}}[]{{end}}.{{.Name}}</td>
             <td>{{.Label}} {{.LongType}}</td>
             <td>
-            {{if .IsEnum}}(Enum) {{end}}{{- print "" -}}
-            {{if .IsOneOf}}(OneOf) {{end}}{{- print "" -}}
+            {{if .IsEnum}}(Enum){{end}}{{- print "" -}}
+            {{if .IsOneOf}}(OneOf){{end}}{{- print "" -}}
             {{if (index .Options "deprecated"|default false)}}<strong>(Deprecated) </strong>{{end}}{{- print "" -}}
             {{.Description}}
             {{if .DefaultValue}}Default: {{.DefaultValue}}{{end}}{{- print "" -}}
@@ -161,7 +161,7 @@ Message has no fields.
   <thead>
     <tr><td>.proto Type</td><td>Go</td><td>C++</td><td>Rust</td><td>Java</td><td>Python</td><td>C#</td></tr>
   </thead>
-  <tbody class="table-group-divider"> {{range .Scalars}}
+  <tbody class="table-group-divider">{{range .Scalars}}
       <tr id="{{.ProtoType}}">
         <td class="fw-bold">{{.ProtoType}}</td>
         <td>{{.GoType}}</td>
@@ -170,6 +170,6 @@ Message has no fields.
         <td>{{.JavaType}}</td>
         <td>{{.PythonType}}</td>
         <td>{{.CSharp}}</td>
-      </tr> {{end}}
+      </tr>{{end}}
   </tbody>
 </table>
