@@ -9,5 +9,6 @@ type Signature interface {
 	UnmarshalCBOR([]byte) error
 	Encode(io.Writer) error
 	Decode(io.Reader) error
+	SerializeSize() int
 	EqualsTo(right Signature) bool
 }

@@ -83,6 +83,10 @@ func (sig *Signature) Decode(r io.Reader) error {
 	return nil
 }
 
+func (*Signature) SerializeSize() int {
+	return SignatureSize
+}
+
 // EqualsTo checks if the current signature is equal to another signature.
 func (sig *Signature) EqualsTo(x crypto.Signature) bool {
 	xEd25519, ok := x.(*Signature)

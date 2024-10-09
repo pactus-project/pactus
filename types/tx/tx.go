@@ -258,30 +258,10 @@ func (tx *Tx) SerializeSize() int {
 		n += tx.Payload().SerializeSize()
 	}
 	if tx.data.Signature != nil {
-		switch tx.data.Payload.Signer().Type() {
-		case crypto.AddressTypeValidator,
-			crypto.AddressTypeBLSAccount:
-			n += bls.SignatureSize
-
-		case crypto.AddressTypeEd25519Account:
-			n += ed25519.SignatureSize
-
-		case crypto.AddressTypeTreasury:
-			n += 0
-		}
+		n += tx.data.Signature.SerializeSize()
 	}
 	if tx.data.PublicKey != nil {
-		switch tx.data.Payload.Signer().Type() {
-		case crypto.AddressTypeValidator,
-			crypto.AddressTypeBLSAccount:
-			n += bls.PublicKeySize
-
-		case crypto.AddressTypeEd25519Account:
-			n += ed25519.PublicKeySize
-
-		case crypto.AddressTypeTreasury:
-			n += 0
-		}
+		n += tx.data.PublicKey.SerializeSize()
 	}
 
 	return n
@@ -380,7 +360,7 @@ func (tx *Tx) Decode(r io.Reader) error {
 		return err
 	}
 
-	if util.IsFlagSet(tx.data.Flags, flagNotSigned) {
+	if !tx.IsSigned() {
 		return nil
 	}
 
