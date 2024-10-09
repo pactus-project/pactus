@@ -87,7 +87,6 @@ func TestTxIDNoSignatory(t *testing.T) {
 
 	require.Equal(t, tx1.ID(), tx2.ID())
 	require.Equal(t, tx1.SignBytes(), tx2.SignBytes())
-
 }
 
 func TestBasicCheck(t *testing.T) {
