@@ -339,12 +339,14 @@ func TestConsensusInfo(t *testing.T) {
 	consRound := td.RandRound()
 	vote1, _ := td.GenerateTestPrepareVote(consHeight, consRound)
 	vote2, _ := td.GenerateTestPrecommitVote(consHeight, consRound)
+	prop, _ := td.GenerateTestProposal(consHeight, consRound)
 
 	td.consMocks[0].Active = true
 	td.consMocks[0].Height = consHeight
 	td.consMocks[0].Round = consRound
 	td.consMocks[0].AddVote(vote1)
 	td.consMocks[0].AddVote(vote2)
+	td.consMocks[0].SetProposal(prop)
 
 	td.consMocks[1].Active = false
 	td.consMocks[1].Height = consHeight
@@ -366,6 +368,10 @@ func TestConsensusInfo(t *testing.T) {
 		assert.False(t, res.Instances[1].Active)
 		assert.Equal(t, consHeight, res.Instances[1].Height)
 		assert.Equal(t, int32(consRound), res.Instances[1].Round)
+
+		assert.Equal(t, consHeight, res.Proposal.Height)
+		assert.Equal(t, int32(consRound), res.Proposal.Round)
+		assert.Equal(t, prop.Signature().String(), res.Proposal.Signature)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")

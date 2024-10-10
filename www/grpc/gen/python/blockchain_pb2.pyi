@@ -165,9 +165,9 @@ class GetConsensusInfoResponse(_message.Message):
     __slots__ = ("proposal", "instances")
     PROPOSAL_FIELD_NUMBER: _ClassVar[int]
     INSTANCES_FIELD_NUMBER: _ClassVar[int]
-    proposal: Proposal
+    proposal: ProposalInfo
     instances: _containers.RepeatedCompositeFieldContainer[ConsensusInfo]
-    def __init__(self, proposal: _Optional[_Union[Proposal, _Mapping]] = ..., instances: _Optional[_Iterable[_Union[ConsensusInfo, _Mapping]]] = ...) -> None: ...
+    def __init__(self, proposal: _Optional[_Union[ProposalInfo, _Mapping]] = ..., instances: _Optional[_Iterable[_Union[ConsensusInfo, _Mapping]]] = ...) -> None: ...
 
 class GetTxPoolContentRequest(_message.Message):
     __slots__ = ("payload_type",)
@@ -277,14 +277,14 @@ class ConsensusInfo(_message.Message):
     votes: _containers.RepeatedCompositeFieldContainer[VoteInfo]
     def __init__(self, address: _Optional[str] = ..., active: bool = ..., height: _Optional[int] = ..., round: _Optional[int] = ..., votes: _Optional[_Iterable[_Union[VoteInfo, _Mapping]]] = ...) -> None: ...
 
-class Proposal(_message.Message):
-    __slots__ = ("height", "round", "block_data", "signature_data")
+class ProposalInfo(_message.Message):
+    __slots__ = ("height", "round", "block_data", "signature")
     HEIGHT_FIELD_NUMBER: _ClassVar[int]
     ROUND_FIELD_NUMBER: _ClassVar[int]
     BLOCK_DATA_FIELD_NUMBER: _ClassVar[int]
-    SIGNATURE_DATA_FIELD_NUMBER: _ClassVar[int]
+    SIGNATURE_FIELD_NUMBER: _ClassVar[int]
     height: int
     round: int
     block_data: str
-    signature_data: str
-    def __init__(self, height: _Optional[int] = ..., round: _Optional[int] = ..., block_data: _Optional[str] = ..., signature_data: _Optional[str] = ...) -> None: ...
+    signature: str
+    def __init__(self, height: _Optional[int] = ..., round: _Optional[int] = ..., block_data: _Optional[str] = ..., signature: _Optional[str] = ...) -> None: ...

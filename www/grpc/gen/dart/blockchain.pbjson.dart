@@ -226,13 +226,13 @@ final $typed_data.Uint8List getConsensusInfoRequestDescriptor = $convert.base64D
 const GetConsensusInfoResponse$json = const {
   '1': 'GetConsensusInfoResponse',
   '2': const [
-    const {'1': 'proposal', '3': 1, '4': 1, '5': 11, '6': '.pactus.Proposal', '10': 'proposal'},
+    const {'1': 'proposal', '3': 1, '4': 1, '5': 11, '6': '.pactus.ProposalInfo', '10': 'proposal'},
     const {'1': 'instances', '3': 2, '4': 3, '5': 11, '6': '.pactus.ConsensusInfo', '10': 'instances'},
   ],
 };
 
 /// Descriptor for `GetConsensusInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getConsensusInfoResponseDescriptor = $convert.base64Decode('ChhHZXRDb25zZW5zdXNJbmZvUmVzcG9uc2USLAoIcHJvcG9zYWwYASABKAsyEC5wYWN0dXMuUHJvcG9zYWxSCHByb3Bvc2FsEjMKCWluc3RhbmNlcxgCIAMoCzIVLnBhY3R1cy5Db25zZW5zdXNJbmZvUglpbnN0YW5jZXM=');
+final $typed_data.Uint8List getConsensusInfoResponseDescriptor = $convert.base64Decode('ChhHZXRDb25zZW5zdXNJbmZvUmVzcG9uc2USMAoIcHJvcG9zYWwYASABKAsyFC5wYWN0dXMuUHJvcG9zYWxJbmZvUghwcm9wb3NhbBIzCglpbnN0YW5jZXMYAiADKAsyFS5wYWN0dXMuQ29uc2Vuc3VzSW5mb1IJaW5zdGFuY2Vz');
 @$core.Deprecated('Use getTxPoolContentRequestDescriptor instead')
 const GetTxPoolContentRequest$json = const {
   '1': 'GetTxPoolContentRequest',
@@ -343,19 +343,19 @@ const ConsensusInfo$json = const {
 
 /// Descriptor for `ConsensusInfo`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List consensusInfoDescriptor = $convert.base64Decode('Cg1Db25zZW5zdXNJbmZvEhgKB2FkZHJlc3MYASABKAlSB2FkZHJlc3MSFgoGYWN0aXZlGAIgASgIUgZhY3RpdmUSFgoGaGVpZ2h0GAMgASgNUgZoZWlnaHQSFAoFcm91bmQYBCABKAVSBXJvdW5kEiYKBXZvdGVzGAUgAygLMhAucGFjdHVzLlZvdGVJbmZvUgV2b3Rlcw==');
-@$core.Deprecated('Use proposalDescriptor instead')
-const Proposal$json = const {
-  '1': 'Proposal',
+@$core.Deprecated('Use proposalInfoDescriptor instead')
+const ProposalInfo$json = const {
+  '1': 'ProposalInfo',
   '2': const [
     const {'1': 'height', '3': 1, '4': 1, '5': 13, '10': 'height'},
     const {'1': 'round', '3': 2, '4': 1, '5': 5, '10': 'round'},
     const {'1': 'block_data', '3': 3, '4': 1, '5': 9, '10': 'blockData'},
-    const {'1': 'signature_data', '3': 4, '4': 1, '5': 9, '10': 'signatureData'},
+    const {'1': 'signature', '3': 4, '4': 1, '5': 9, '10': 'signature'},
   ],
 };
 
-/// Descriptor for `Proposal`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List proposalDescriptor = $convert.base64Decode('CghQcm9wb3NhbBIWCgZoZWlnaHQYASABKA1SBmhlaWdodBIUCgVyb3VuZBgCIAEoBVIFcm91bmQSHQoKYmxvY2tfZGF0YRgDIAEoCVIJYmxvY2tEYXRhEiUKDnNpZ25hdHVyZV9kYXRhGAQgASgJUg1zaWduYXR1cmVEYXRh');
+/// Descriptor for `ProposalInfo`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List proposalInfoDescriptor = $convert.base64Decode('CgxQcm9wb3NhbEluZm8SFgoGaGVpZ2h0GAEgASgNUgZoZWlnaHQSFAoFcm91bmQYAiABKAVSBXJvdW5kEh0KCmJsb2NrX2RhdGEYAyABKAlSCWJsb2NrRGF0YRIcCglzaWduYXR1cmUYBCABKAlSCXNpZ25hdHVyZQ==');
 const $core.Map<$core.String, $core.dynamic> BlockchainServiceBase$json = const {
   '1': 'Blockchain',
   '2': const [
@@ -394,7 +394,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Blockchain
   '.pactus.ValidatorInfo': ValidatorInfo$json,
   '.pactus.GetConsensusInfoRequest': GetConsensusInfoRequest$json,
   '.pactus.GetConsensusInfoResponse': GetConsensusInfoResponse$json,
-  '.pactus.Proposal': Proposal$json,
+  '.pactus.ProposalInfo': ProposalInfo$json,
   '.pactus.ConsensusInfo': ConsensusInfo$json,
   '.pactus.VoteInfo': VoteInfo$json,
   '.pactus.GetAccountRequest': GetAccountRequest$json,

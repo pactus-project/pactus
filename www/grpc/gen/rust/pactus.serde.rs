@@ -8121,7 +8121,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
         deserializer.deserialize_struct("pactus.PeerInfo", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for Proposal {
+impl serde::Serialize for ProposalInfo {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -8138,10 +8138,10 @@ impl serde::Serialize for Proposal {
         if !self.block_data.is_empty() {
             len += 1;
         }
-        if !self.signature_data.is_empty() {
+        if !self.signature.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("pactus.Proposal", len)?;
+        let mut struct_ser = serializer.serialize_struct("pactus.ProposalInfo", len)?;
         if self.height != 0 {
             struct_ser.serialize_field("height", &self.height)?;
         }
@@ -8151,13 +8151,13 @@ impl serde::Serialize for Proposal {
         if !self.block_data.is_empty() {
             struct_ser.serialize_field("blockData", &self.block_data)?;
         }
-        if !self.signature_data.is_empty() {
-            struct_ser.serialize_field("signatureData", &self.signature_data)?;
+        if !self.signature.is_empty() {
+            struct_ser.serialize_field("signature", &self.signature)?;
         }
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for Proposal {
+impl<'de> serde::Deserialize<'de> for ProposalInfo {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -8168,8 +8168,7 @@ impl<'de> serde::Deserialize<'de> for Proposal {
             "round",
             "block_data",
             "blockData",
-            "signature_data",
-            "signatureData",
+            "signature",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -8177,7 +8176,7 @@ impl<'de> serde::Deserialize<'de> for Proposal {
             Height,
             Round,
             BlockData,
-            SignatureData,
+            Signature,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -8202,7 +8201,7 @@ impl<'de> serde::Deserialize<'de> for Proposal {
                             "height" => Ok(GeneratedField::Height),
                             "round" => Ok(GeneratedField::Round),
                             "blockData" | "block_data" => Ok(GeneratedField::BlockData),
-                            "signatureData" | "signature_data" => Ok(GeneratedField::SignatureData),
+                            "signature" => Ok(GeneratedField::Signature),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -8212,20 +8211,20 @@ impl<'de> serde::Deserialize<'de> for Proposal {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = Proposal;
+            type Value = ProposalInfo;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.Proposal")
+                formatter.write_str("struct pactus.ProposalInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<Proposal, V::Error>
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<ProposalInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut height__ = None;
                 let mut round__ = None;
                 let mut block_data__ = None;
-                let mut signature_data__ = None;
+                let mut signature__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::Height => {
@@ -8250,23 +8249,23 @@ impl<'de> serde::Deserialize<'de> for Proposal {
                             }
                             block_data__ = Some(map.next_value()?);
                         }
-                        GeneratedField::SignatureData => {
-                            if signature_data__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("signatureData"));
+                        GeneratedField::Signature => {
+                            if signature__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("signature"));
                             }
-                            signature_data__ = Some(map.next_value()?);
+                            signature__ = Some(map.next_value()?);
                         }
                     }
                 }
-                Ok(Proposal {
+                Ok(ProposalInfo {
                     height: height__.unwrap_or_default(),
                     round: round__.unwrap_or_default(),
                     block_data: block_data__.unwrap_or_default(),
-                    signature_data: signature_data__.unwrap_or_default(),
+                    signature: signature__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.Proposal", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.ProposalInfo", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for RestoreWalletRequest {
