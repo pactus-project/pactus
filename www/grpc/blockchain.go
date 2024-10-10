@@ -68,7 +68,6 @@ func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 				Round:   int32(round),
 				Votes:   voteInfos,
 			})
-
 	}
 
 	var proposal *pactus.Proposal
