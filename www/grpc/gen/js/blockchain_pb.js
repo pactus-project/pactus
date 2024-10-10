@@ -49,7 +49,7 @@ goog.exportSymbol('proto.pactus.GetValidatorAddressesResponse', null, global);
 goog.exportSymbol('proto.pactus.GetValidatorByNumberRequest', null, global);
 goog.exportSymbol('proto.pactus.GetValidatorRequest', null, global);
 goog.exportSymbol('proto.pactus.GetValidatorResponse', null, global);
-goog.exportSymbol('proto.pactus.Proposal', null, global);
+goog.exportSymbol('proto.pactus.ProposalInfo', null, global);
 goog.exportSymbol('proto.pactus.ValidatorInfo', null, global);
 goog.exportSymbol('proto.pactus.VoteInfo', null, global);
 goog.exportSymbol('proto.pactus.VoteType', null, global);
@@ -630,16 +630,16 @@ if (goog.DEBUG && !COMPILED) {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.pactus.Proposal = function(opt_data) {
+proto.pactus.ProposalInfo = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.pactus.Proposal, jspb.Message);
+goog.inherits(proto.pactus.ProposalInfo, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
   /**
    * @public
    * @override
    */
-  proto.pactus.Proposal.displayName = 'proto.pactus.Proposal';
+  proto.pactus.ProposalInfo.displayName = 'proto.pactus.ProposalInfo';
 }
 
 
@@ -3583,7 +3583,7 @@ proto.pactus.GetConsensusInfoResponse.prototype.toObject = function(opt_includeI
  */
 proto.pactus.GetConsensusInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    proposal: (f = msg.getProposal()) && proto.pactus.Proposal.toObject(includeInstance, f),
+    proposal: (f = msg.getProposal()) && proto.pactus.ProposalInfo.toObject(includeInstance, f),
     instancesList: jspb.Message.toObjectList(msg.getInstancesList(),
     proto.pactus.ConsensusInfo.toObject, includeInstance)
   };
@@ -3623,8 +3623,8 @@ proto.pactus.GetConsensusInfoResponse.deserializeBinaryFromReader = function(msg
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new proto.pactus.Proposal;
-      reader.readMessage(value,proto.pactus.Proposal.deserializeBinaryFromReader);
+      var value = new proto.pactus.ProposalInfo;
+      reader.readMessage(value,proto.pactus.ProposalInfo.deserializeBinaryFromReader);
       msg.setProposal(value);
       break;
     case 2:
@@ -3666,7 +3666,7 @@ proto.pactus.GetConsensusInfoResponse.serializeBinaryToWriter = function(message
     writer.writeMessage(
       1,
       f,
-      proto.pactus.Proposal.serializeBinaryToWriter
+      proto.pactus.ProposalInfo.serializeBinaryToWriter
     );
   }
   f = message.getInstancesList();
@@ -3681,17 +3681,17 @@ proto.pactus.GetConsensusInfoResponse.serializeBinaryToWriter = function(message
 
 
 /**
- * optional Proposal proposal = 1;
- * @return {?proto.pactus.Proposal}
+ * optional ProposalInfo proposal = 1;
+ * @return {?proto.pactus.ProposalInfo}
  */
 proto.pactus.GetConsensusInfoResponse.prototype.getProposal = function() {
-  return /** @type{?proto.pactus.Proposal} */ (
-    jspb.Message.getWrapperField(this, proto.pactus.Proposal, 1));
+  return /** @type{?proto.pactus.ProposalInfo} */ (
+    jspb.Message.getWrapperField(this, proto.pactus.ProposalInfo, 1));
 };
 
 
 /**
- * @param {?proto.pactus.Proposal|undefined} value
+ * @param {?proto.pactus.ProposalInfo|undefined} value
  * @return {!proto.pactus.GetConsensusInfoResponse} returns this
 */
 proto.pactus.GetConsensusInfoResponse.prototype.setProposal = function(value) {
@@ -5820,8 +5820,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.pactus.Proposal.prototype.toObject = function(opt_includeInstance) {
-  return proto.pactus.Proposal.toObject(opt_includeInstance, this);
+proto.pactus.ProposalInfo.prototype.toObject = function(opt_includeInstance) {
+  return proto.pactus.ProposalInfo.toObject(opt_includeInstance, this);
 };
 
 
@@ -5830,16 +5830,16 @@ proto.pactus.Proposal.prototype.toObject = function(opt_includeInstance) {
  * @param {boolean|undefined} includeInstance Deprecated. Whether to include
  *     the JSPB instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.pactus.Proposal} msg The msg instance to transform.
+ * @param {!proto.pactus.ProposalInfo} msg The msg instance to transform.
  * @return {!Object}
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.pactus.Proposal.toObject = function(includeInstance, msg) {
+proto.pactus.ProposalInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
     height: jspb.Message.getFieldWithDefault(msg, 1, 0),
     round: jspb.Message.getFieldWithDefault(msg, 2, 0),
     blockData: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    signatureData: jspb.Message.getFieldWithDefault(msg, 4, "")
+    signature: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -5853,23 +5853,23 @@ proto.pactus.Proposal.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.pactus.Proposal}
+ * @return {!proto.pactus.ProposalInfo}
  */
-proto.pactus.Proposal.deserializeBinary = function(bytes) {
+proto.pactus.ProposalInfo.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.pactus.Proposal;
-  return proto.pactus.Proposal.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.pactus.ProposalInfo;
+  return proto.pactus.ProposalInfo.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.pactus.Proposal} msg The message object to deserialize into.
+ * @param {!proto.pactus.ProposalInfo} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.pactus.Proposal}
+ * @return {!proto.pactus.ProposalInfo}
  */
-proto.pactus.Proposal.deserializeBinaryFromReader = function(msg, reader) {
+proto.pactus.ProposalInfo.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -5890,7 +5890,7 @@ proto.pactus.Proposal.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 4:
       var value = /** @type {string} */ (reader.readString());
-      msg.setSignatureData(value);
+      msg.setSignature(value);
       break;
     default:
       reader.skipField();
@@ -5905,9 +5905,9 @@ proto.pactus.Proposal.deserializeBinaryFromReader = function(msg, reader) {
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.pactus.Proposal.prototype.serializeBinary = function() {
+proto.pactus.ProposalInfo.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.pactus.Proposal.serializeBinaryToWriter(this, writer);
+  proto.pactus.ProposalInfo.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -5915,11 +5915,11 @@ proto.pactus.Proposal.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.pactus.Proposal} message
+ * @param {!proto.pactus.ProposalInfo} message
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.pactus.Proposal.serializeBinaryToWriter = function(message, writer) {
+proto.pactus.ProposalInfo.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getHeight();
   if (f !== 0) {
@@ -5942,7 +5942,7 @@ proto.pactus.Proposal.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getSignatureData();
+  f = message.getSignature();
   if (f.length > 0) {
     writer.writeString(
       4,
@@ -5956,16 +5956,16 @@ proto.pactus.Proposal.serializeBinaryToWriter = function(message, writer) {
  * optional uint32 height = 1;
  * @return {number}
  */
-proto.pactus.Proposal.prototype.getHeight = function() {
+proto.pactus.ProposalInfo.prototype.getHeight = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
 };
 
 
 /**
  * @param {number} value
- * @return {!proto.pactus.Proposal} returns this
+ * @return {!proto.pactus.ProposalInfo} returns this
  */
-proto.pactus.Proposal.prototype.setHeight = function(value) {
+proto.pactus.ProposalInfo.prototype.setHeight = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
 };
 
@@ -5974,16 +5974,16 @@ proto.pactus.Proposal.prototype.setHeight = function(value) {
  * optional int32 round = 2;
  * @return {number}
  */
-proto.pactus.Proposal.prototype.getRound = function() {
+proto.pactus.ProposalInfo.prototype.getRound = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
 /**
  * @param {number} value
- * @return {!proto.pactus.Proposal} returns this
+ * @return {!proto.pactus.ProposalInfo} returns this
  */
-proto.pactus.Proposal.prototype.setRound = function(value) {
+proto.pactus.ProposalInfo.prototype.setRound = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
 };
 
@@ -5992,34 +5992,34 @@ proto.pactus.Proposal.prototype.setRound = function(value) {
  * optional string block_data = 3;
  * @return {string}
  */
-proto.pactus.Proposal.prototype.getBlockData = function() {
+proto.pactus.ProposalInfo.prototype.getBlockData = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
 /**
  * @param {string} value
- * @return {!proto.pactus.Proposal} returns this
+ * @return {!proto.pactus.ProposalInfo} returns this
  */
-proto.pactus.Proposal.prototype.setBlockData = function(value) {
+proto.pactus.ProposalInfo.prototype.setBlockData = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
 /**
- * optional string signature_data = 4;
+ * optional string signature = 4;
  * @return {string}
  */
-proto.pactus.Proposal.prototype.getSignatureData = function() {
+proto.pactus.ProposalInfo.prototype.getSignature = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
 };
 
 
 /**
  * @param {string} value
- * @return {!proto.pactus.Proposal} returns this
+ * @return {!proto.pactus.ProposalInfo} returns this
  */
-proto.pactus.Proposal.prototype.setSignatureData = function(value) {
+proto.pactus.ProposalInfo.prototype.setSignature = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
 };
 

@@ -1510,7 +1510,7 @@
       "type": "object",
       "properties": {
         "proposal": {
-          "$ref": "#/definitions/pactusProposal",
+          "$ref": "#/definitions/pactusProposalInfo",
           "description": "The proposal of the consensus info."
         },
         "instances": {
@@ -2000,7 +2000,7 @@
       },
       "description": "Information about a peer in the network."
     },
-    "pactusProposal": {
+    "pactusProposalInfo": {
       "type": "object",
       "properties": {
         "height": {
@@ -2017,9 +2017,9 @@
           "type": "string",
           "description": "The block data of the proposal."
         },
-        "signatureData": {
+        "signature": {
           "type": "string",
-          "description": "The signature data of the proposal."
+          "description": "The signature of the proposal, signed by the proposer."
         }
       },
       "description": "Message containing information about a proposal."

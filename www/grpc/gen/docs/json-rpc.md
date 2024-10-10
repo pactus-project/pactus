@@ -1638,10 +1638,10 @@ Parameters has no fields.
         </td>
       </tr>
          <tr>
-        <td class="fw-bold">proposal.signature_data</td>
+        <td class="fw-bold">proposal.signature</td>
         <td> string</td>
         <td>
-        The signature data of the proposal.
+        The signature of the proposal, signed by the proposer.
         </td>
       </tr>
          <tr>

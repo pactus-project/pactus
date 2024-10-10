@@ -238,8 +238,8 @@ func (s *Server) ConsensusHandler(w http.ResponseWriter, r *http.Request) {
 	if res.Proposal != nil {
 		tm.addRowInt("Height", int(res.Proposal.Height))
 		tm.addRowInt("Round", int(res.Proposal.Round))
-		tm.addRowString("Data", res.Proposal.BlockData)
-		tm.addRowString("Signature", res.Proposal.SignatureData)
+		tm.addRowString("BlockData", res.Proposal.BlockData)
+		tm.addRowString("Signature", res.Proposal.Signature)
 	}
 
 	for i, cons := range res.Instances {

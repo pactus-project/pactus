@@ -70,7 +70,7 @@ func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 			})
 	}
 
-	var proposal *pactus.Proposal
+	var proposalInfo *pactus.ProposalInfo
 	prop := s.consMgr.Proposal()
 	if prop != nil {
 		var blockData string
@@ -80,15 +80,18 @@ func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 		}
 		blockData = hex.EncodeToString(data)
 
-		proposal = &pactus.Proposal{
-			Height:        prop.Height(),
-			Round:         int32(prop.Round()),
-			BlockData:     blockData,
-			SignatureData: prop.Signature().String(),
+		proposalInfo = &pactus.ProposalInfo{
+			Height:    prop.Height(),
+			Round:     int32(prop.Round()),
+			BlockData: blockData,
+			Signature: prop.Signature().String(),
 		}
 	}
 
-	return &pactus.GetConsensusInfoResponse{Instances: instances, Proposal: proposal}, nil
+	return &pactus.GetConsensusInfoResponse{
+		Instances: instances,
+		Proposal:  proposalInfo,
+	}, nil
 }
 
 func (s *blockchainServer) GetBlockHash(_ context.Context,
