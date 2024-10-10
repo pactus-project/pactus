@@ -283,8 +283,11 @@ func TestConsensusInfo(t *testing.T) {
 	h, _ := td.mockConsMgr.HeightRound()
 	v1, _ := td.GenerateTestPrepareVote(h, 1)
 	v2, _ := td.GenerateTestPrecommitVote(h, 2)
+	p, _ := td.GenerateTestProposal(h, 2)
+
 	td.mockConsMgr.AddVote(v1)
 	td.mockConsMgr.AddVote(v2)
+	td.mockConsMgr.SetProposal(p)
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)
@@ -294,6 +297,7 @@ func TestConsensusInfo(t *testing.T) {
 	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Body.String(), "<td>2</td>")
 	assert.Contains(t, w.Body.String(), v2.Signer().String())
+	assert.Contains(t, w.Body.String(), p.Signature().String())
 
 	td.StopServers()
 }

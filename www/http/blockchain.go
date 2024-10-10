@@ -234,11 +234,12 @@ func (s *Server) ConsensusHandler(w http.ResponseWriter, r *http.Request) {
 
 	tm := newTableMaker()
 
+	tm.addRowString("== Proposal", "")
 	if res.Proposal != nil {
-		tm.addRowInt("Proposal == Height", int(res.Proposal.Height))
-		tm.addRowInt("Proposal == Round", int(res.Proposal.Round))
-		tm.addRowString("Proposal == BlockData", res.Proposal.BlockData)
-		tm.addRowString("Proposal == SignatureData", res.Proposal.SignatureData)
+		tm.addRowInt("Height", int(res.Proposal.Height))
+		tm.addRowInt("Round", int(res.Proposal.Round))
+		tm.addRowString("Data", res.Proposal.BlockData)
+		tm.addRowString("Signature", res.Proposal.SignatureData)
 	}
 
 	for i, cons := range res.Instances {
@@ -250,12 +251,12 @@ func (s *Server) ConsensusHandler(w http.ResponseWriter, r *http.Request) {
 		tm.addRowString("Votes", "---")
 		for i, v := range cons.Votes {
 			tm.addRowInt("-- Vote #", i+1)
+			tm.addRowBlockHash("BlockHash", v.BlockHash)
 			tm.addRowString("Type", vote.Type(v.Type).String())
 			tm.addRowString("Voter", v.Voter)
 			tm.addRowInt("Round", int(v.Round))
 			tm.addRowInt("CPRound", int(v.CpRound))
 			tm.addRowInt("CPValue", int(v.CpValue))
-			tm.addRowBlockHash("BlockHash", v.BlockHash)
 		}
 	}
 

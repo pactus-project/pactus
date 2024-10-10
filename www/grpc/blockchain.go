@@ -51,7 +51,6 @@ func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 	_ *pactus.GetConsensusInfoRequest,
 ) (*pactus.GetConsensusInfoResponse, error) {
 	instances := make([]*pactus.ConsensusInfo, 0)
-	var proposal *pactus.Proposal
 
 	for _, cons := range s.consMgr.Instances() {
 		height, round := cons.HeightRound()
@@ -70,26 +69,23 @@ func (s *blockchainServer) GetConsensusInfo(_ context.Context,
 				Votes:   voteInfos,
 			})
 
-		if proposal == nil && cons.Proposal() != nil {
-			// All instances have the same proposal, so we just need to fill proposal once.
-			p := cons.Proposal()
+	}
 
-			var blockData string
-			if p.Block() != nil {
-				data, err := p.Block().Bytes()
-				if err != nil {
-					return nil, status.Error(codes.Internal, err.Error())
-				}
+	var proposal *pactus.Proposal
+	prop := s.consMgr.Proposal()
+	if prop != nil {
+		var blockData string
+		data, err := prop.Block().Bytes()
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+		blockData = hex.EncodeToString(data)
 
-				blockData = string(data)
-			}
-
-			proposal = &pactus.Proposal{
-				Height:        p.Height(),
-				Round:         int32(p.Round()),
-				BlockData:     blockData,
-				SignatureData: string(p.Signature().Bytes()),
-			}
+		proposal = &pactus.Proposal{
+			Height:        prop.Height(),
+			Round:         int32(prop.Round()),
+			BlockData:     blockData,
+			SignatureData: prop.Signature().String(),
 		}
 	}
 
