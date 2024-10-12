@@ -119,9 +119,21 @@
   # Default is `1000`.
   max_size = 1000
 
-  # `min_fee` indicates the minimum fee in PAC for the transaction to enter into the pool.
-  # Default is `0.01`.
-  min_fee = 0.01
+  # `tx_pool.fee` contains consumption fee model configs.
+  # This fee model is based on the amount of data that each address consumes daily.
+  [tx_pool.fee]
+
+    # `daily_limit` indicates the limit of consumption of each node in bytes per day.
+    # Default is `280` bytes.
+    daily_limit = 280
+
+    # `unit_price` indicates the fee of consumption unit.
+    # Default is `0.0` PAC.
+    unit_price = 0.0
+
+    # `fixed_price` is the constant fee applied to each transaction.
+    # Default is `0.01` PAC.
+    fixed_price = 0.01
 
 # `logger` contains configuration options for the logger.
 [logger]

@@ -5,14 +5,28 @@ import (
 )
 
 type Config struct {
-	MaxSize   int     `toml:"max_size"`
-	MinFeePAC float64 `toml:"min_fee"`
+	MaxSize int       `toml:"max_size"`
+	Fee     FeeConfig `toml:"fee"`
+}
+
+type FeeConfig struct {
+	DailyLimit uint32  `toml:"daily_limit"`
+	UnitPrice  float64 `toml:"unit_price"`
+	FixedPrice float64 `toml:"fixed_price"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		MaxSize:   1000,
-		MinFeePAC: 0.01,
+		MaxSize: 1000,
+		Fee:     DefaultFeeConfig(),
+	}
+}
+
+func DefaultFeeConfig() FeeConfig {
+	return FeeConfig{
+		DailyLimit: 280,
+		UnitPrice:  0,
+		FixedPrice: 0.01,
 	}
 }
 
@@ -24,11 +38,17 @@ func (conf *Config) BasicCheck() error {
 		}
 	}
 
+	if conf.Fee.DailyLimit == 0 {
+		return ConfigError{
+			Reason: "dailyLimit can't be zero",
+		}
+	}
+
 	return nil
 }
 
 func (conf *Config) minFee() amount.Amount {
-	amt, _ := amount.NewAmount(conf.MinFeePAC)
+	amt, _ := amount.NewAmount(conf.Fee.FixedPrice)
 
 	return amt
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/store"
+	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/validator"
@@ -69,7 +70,7 @@ func TestMain(m *testing.M) {
 		tValKeys[i][2] = bls.NewValidatorKey(key2)
 		tConfigs[i] = config.DefaultConfigMainnet()
 
-		tConfigs[i].TxPool.MinFeePAC = 0.000001
+		tConfigs[i].TxPool.Fee = txpool.DefaultFeeConfig()
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 2 * time.Second
 		tConfigs[i].Consensus.ChangeProposerDelta = 2 * time.Second
