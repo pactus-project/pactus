@@ -119,21 +119,26 @@
   # Default is `1000`.
   max_size = 1000
 
-  # `tx_pool.fee` contains consumption fee model configs.
-  # This fee model is based on the amount of data that each address consumes daily.
+  # `tx_pool.fee` contains configuration to calulcate the transaction fee.
   [tx_pool.fee]
 
-    # `daily_limit` indicates the limit of consumption of each node in bytes per day.
+    # The `fixed_fee` is a constant fee applied to each transaction, regardless of its size or type.
+    # Default is `0.01` PAC.
+    fixed_fee = 0.01
+
+    # The `daily_limit` is the number of bytes an account can send each day without paying a fee.
+    # The `daily_limit` is part of he consumptional fee model.
+    # To undesrstand how condumptional fee model works, you can refer to
+    # PIP-31: Consumptional Fee Mode: https://pips.pactus.org/PIPs/pip-31
     # Default is `280` bytes.
     daily_limit = 280
 
-    # `unit_price` indicates the fee of consumption unit.
+    # The `unit_price` defines the fee per byte in PAC.
+    # The `unit_price` is part of he consumptional fee model.
+    # To undesrstand how condumptional fee model works, you can refer to
+    # PIP-31: Consumptional Fee Mode: https://pips.pactus.org/PIPs/pip-31
     # Default is `0.0` PAC.
     unit_price = 0.0
-
-    # `fixed_price` is the constant fee applied to each transaction.
-    # Default is `0.01` PAC.
-    fixed_price = 0.01
 
 # `logger` contains configuration options for the logger.
 [logger]

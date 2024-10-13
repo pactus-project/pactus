@@ -12,7 +12,7 @@ type Config struct {
 type FeeConfig struct {
 	DailyLimit uint32  `toml:"daily_limit"`
 	UnitPrice  float64 `toml:"unit_price"`
-	FixedPrice float64 `toml:"fixed_price"`
+	FixedFee   float64 `toml:"fixed_fee"`
 }
 
 func DefaultConfig() *Config {
@@ -26,7 +26,7 @@ func DefaultFeeConfig() FeeConfig {
 	return FeeConfig{
 		DailyLimit: 280,
 		UnitPrice:  0,
-		FixedPrice: 0.01,
+		FixedFee:   0.01,
 	}
 }
 
@@ -48,7 +48,7 @@ func (conf *Config) BasicCheck() error {
 }
 
 func (conf *Config) minFee() amount.Amount {
-	amt, _ := amount.NewAmount(conf.Fee.FixedPrice)
+	amt, _ := amount.NewAmount(conf.Fee.FixedFee)
 
 	return amt
 }

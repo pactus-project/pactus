@@ -66,7 +66,7 @@ func TestConfigBasicCheck(t *testing.T) {
 				c.Fee = FeeConfig{
 					DailyLimit: 280,
 					UnitPrice:  0,
-					FixedPrice: 0.01,
+					FixedFee:   0.01,
 				}
 			},
 		},
