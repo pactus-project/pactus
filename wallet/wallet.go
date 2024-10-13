@@ -232,7 +232,7 @@ func (w *Wallet) TotalBalance() (amount.Amount, error) {
 	return amount.Amount(totalBalance), nil
 }
 
-// TotalStake return total available stake of the wallet
+// TotalStake return total available stake of the wallet.
 func (w *Wallet) TotalStake() (amount.Amount, error) {
 	totalStake := int64(0)
 
