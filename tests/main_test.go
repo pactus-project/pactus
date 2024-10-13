@@ -70,7 +70,11 @@ func TestMain(m *testing.M) {
 		tValKeys[i][2] = bls.NewValidatorKey(key2)
 		tConfigs[i] = config.DefaultConfigMainnet()
 
-		tConfigs[i].TxPool.Fee = txpool.DefaultFeeConfig()
+		tConfigs[i].TxPool.Fee = txpool.FeeConfig{
+			DailyLimit: 280,
+			UnitPrice:  0,
+			FixedPrice: 0.000001,
+		}
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 2 * time.Second
 		tConfigs[i].Consensus.ChangeProposerDelta = 2 * time.Second
