@@ -30,8 +30,8 @@ func testConfig() *Config {
 		MaxSize: 100,
 		Fee: FeeConfig{
 			DailyLimit: 280,
-			UnitPrice:  0.000005,
-			FixedPrice: 0.01,
+			UnitPrice:  0.0,
+			FixedPrice: 0.000001,
 		},
 	}
 }
