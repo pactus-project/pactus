@@ -232,6 +232,21 @@ func (w *Wallet) TotalBalance() (amount.Amount, error) {
 	return amount.Amount(totalBalance), nil
 }
 
+// TotalStake return total available stake of the wallet
+func (w *Wallet) TotalStake() (amount.Amount, error) {
+	totalStake := int64(0)
+
+	infos := w.store.Vault.AllValidatorAddresses()
+	for _, info := range infos {
+		val, _ := w.grpcClient.getValidator(info.Address)
+		if val != nil {
+			totalStake += val.Stake
+		}
+	}
+
+	return amount.Amount(totalStake), nil
+}
+
 // MakeTransferTx creates a new transfer transaction based on the given parameters.
 func (w *Wallet) MakeTransferTx(sender, receiver string, amt amount.Amount,
 	options ...TxOption,

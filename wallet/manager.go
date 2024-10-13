@@ -117,6 +117,15 @@ func (wm *Manager) TotalBalance(
 	return wlt.TotalBalance()
 }
 
+func (wm *Manager) TotalStake(walletName string) (amount.Amount, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return 0, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	return wlt.TotalStake()
+}
+
 func (wm *Manager) SignRawTransaction(
 	walletName, password string, rawTx []byte,
 ) ([]byte, []byte, error) {
@@ -210,4 +219,27 @@ func (wm *Manager) SignMessage(walletName, password, addr, msg string) (string, 
 	}
 
 	return wlt.SignMessage(password, addr, msg)
+}
+
+func (wm *Manager) GetAddressInfo(walletName, address string) (*vault.AddressInfo, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	return wlt.AddressInfo(address), nil
+}
+
+func (wm *Manager) SetAddressLabel(walletName, address, label string) error {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	err := wlt.SetLabel(address, label)
+	if err != nil {
+		return status.Error(codes.NotFound, err.Error())
+	}
+
+	return wlt.Save()
 }
