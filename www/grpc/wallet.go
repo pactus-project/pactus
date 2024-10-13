@@ -201,3 +201,40 @@ func (s *walletServer) SignMessage(_ context.Context,
 		Signature: sig,
 	}, nil
 }
+
+func (s *walletServer) GetTotalStake(_ context.Context,
+	req *pactus.GetTotalStakeRequest,
+) (*pactus.GetTotalStakeResponse, error) {
+	stake, err := s.walletManager.TotalStake(req.WalletName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.GetTotalStakeResponse{
+		TotalStake: stake.ToNanoPAC(),
+		WalletName: req.WalletName,
+	}, nil
+}
+
+func (s *walletServer) GetAddressInfo(_ context.Context,
+	req *pactus.GetAddressInfoRequest,
+) (*pactus.GetAddressInfoResponse, error) {
+	info, err := s.walletManager.GetAddressInfo(req.WalletName, req.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.GetAddressInfoResponse{
+		Address:    info.Address,
+		Path:       info.Path,
+		PublicKey:  info.PublicKey,
+		Label:      info.Label,
+		WalletName: req.WalletName,
+	}, nil
+}
+
+func (s *walletServer) SetAddressLabel(_ context.Context,
+	req *pactus.SetLabelRequest,
+) (*pactus.SetLabelResponse, error) {
+	return &pactus.SetLabelResponse{}, s.walletMgr.SetAddressLabel(req.WalletName, req.Address, req.Label)
+}

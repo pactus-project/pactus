@@ -263,6 +263,72 @@ const SignMessageResponse$json = const {
 
 /// Descriptor for `SignMessageResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List signMessageResponseDescriptor = $convert.base64Decode('ChNTaWduTWVzc2FnZVJlc3BvbnNlEhwKCXNpZ25hdHVyZRgBIAEoCVIJc2lnbmF0dXJl');
+@$core.Deprecated('Use getTotalStakeRequestDescriptor instead')
+const GetTotalStakeRequest$json = const {
+  '1': 'GetTotalStakeRequest',
+  '2': const [
+    const {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+  ],
+};
+
+/// Descriptor for `GetTotalStakeRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getTotalStakeRequestDescriptor = $convert.base64Decode('ChRHZXRUb3RhbFN0YWtlUmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZQ==');
+@$core.Deprecated('Use getTotalStakeResponseDescriptor instead')
+const GetTotalStakeResponse$json = const {
+  '1': 'GetTotalStakeResponse',
+  '2': const [
+    const {'1': 'total_stake', '3': 1, '4': 1, '5': 3, '10': 'totalStake'},
+    const {'1': 'wallet_name', '3': 2, '4': 1, '5': 9, '10': 'walletName'},
+  ],
+};
+
+/// Descriptor for `GetTotalStakeResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getTotalStakeResponseDescriptor = $convert.base64Decode('ChVHZXRUb3RhbFN0YWtlUmVzcG9uc2USHwoLdG90YWxfc3Rha2UYASABKANSCnRvdGFsU3Rha2USHwoLd2FsbGV0X25hbWUYAiABKAlSCndhbGxldE5hbWU=');
+@$core.Deprecated('Use getAddressInfoRequestDescriptor instead')
+const GetAddressInfoRequest$json = const {
+  '1': 'GetAddressInfoRequest',
+  '2': const [
+    const {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    const {'1': 'address', '3': 2, '4': 1, '5': 9, '10': 'address'},
+  ],
+};
+
+/// Descriptor for `GetAddressInfoRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getAddressInfoRequestDescriptor = $convert.base64Decode('ChVHZXRBZGRyZXNzSW5mb1JlcXVlc3QSHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbWUSGAoHYWRkcmVzcxgCIAEoCVIHYWRkcmVzcw==');
+@$core.Deprecated('Use getAddressInfoResponseDescriptor instead')
+const GetAddressInfoResponse$json = const {
+  '1': 'GetAddressInfoResponse',
+  '2': const [
+    const {'1': 'address', '3': 1, '4': 1, '5': 9, '10': 'address'},
+    const {'1': 'label', '3': 2, '4': 1, '5': 9, '10': 'label'},
+    const {'1': 'public_key', '3': 3, '4': 1, '5': 9, '10': 'publicKey'},
+    const {'1': 'path', '3': 4, '4': 1, '5': 9, '10': 'path'},
+    const {'1': 'wallet_name', '3': 5, '4': 1, '5': 9, '10': 'walletName'},
+  ],
+};
+
+/// Descriptor for `GetAddressInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getAddressInfoResponseDescriptor = $convert.base64Decode('ChZHZXRBZGRyZXNzSW5mb1Jlc3BvbnNlEhgKB2FkZHJlc3MYASABKAlSB2FkZHJlc3MSFAoFbGFiZWwYAiABKAlSBWxhYmVsEh0KCnB1YmxpY19rZXkYAyABKAlSCXB1YmxpY0tleRISCgRwYXRoGAQgASgJUgRwYXRoEh8KC3dhbGxldF9uYW1lGAUgASgJUgp3YWxsZXROYW1l');
+@$core.Deprecated('Use setLabelRequestDescriptor instead')
+const SetLabelRequest$json = const {
+  '1': 'SetLabelRequest',
+  '2': const [
+    const {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    const {'1': 'password', '3': 3, '4': 1, '5': 9, '10': 'password'},
+    const {'1': 'address', '3': 4, '4': 1, '5': 9, '10': 'address'},
+    const {'1': 'label', '3': 5, '4': 1, '5': 9, '10': 'label'},
+  ],
+};
+
+/// Descriptor for `SetLabelRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setLabelRequestDescriptor = $convert.base64Decode('Cg9TZXRMYWJlbFJlcXVlc3QSHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbWUSGgoIcGFzc3dvcmQYAyABKAlSCHBhc3N3b3JkEhgKB2FkZHJlc3MYBCABKAlSB2FkZHJlc3MSFAoFbGFiZWwYBSABKAlSBWxhYmVs');
+@$core.Deprecated('Use setLabelResponseDescriptor instead')
+const SetLabelResponse$json = const {
+  '1': 'SetLabelResponse',
+};
+
+/// Descriptor for `SetLabelResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List setLabelResponseDescriptor = $convert.base64Decode('ChBTZXRMYWJlbFJlc3BvbnNl');
 const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = const {
   '1': 'Wallet',
   '2': const [
@@ -276,6 +342,9 @@ const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = const {
     const {'1': 'GetNewAddress', '2': '.pactus.GetNewAddressRequest', '3': '.pactus.GetNewAddressResponse'},
     const {'1': 'GetAddressHistory', '2': '.pactus.GetAddressHistoryRequest', '3': '.pactus.GetAddressHistoryResponse'},
     const {'1': 'SignMessage', '2': '.pactus.SignMessageRequest', '3': '.pactus.SignMessageResponse'},
+    const {'1': 'GetTotalStake', '2': '.pactus.GetTotalStakeRequest', '3': '.pactus.GetTotalStakeResponse'},
+    const {'1': 'GetAddressInfo', '2': '.pactus.GetAddressInfoRequest', '3': '.pactus.GetAddressInfoResponse'},
+    const {'1': 'SetAddressLabel', '2': '.pactus.SetLabelRequest', '3': '.pactus.SetLabelResponse'},
   ],
 };
 
@@ -303,7 +372,13 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> WalletServ
   '.pactus.HistoryInfo': HistoryInfo$json,
   '.pactus.SignMessageRequest': SignMessageRequest$json,
   '.pactus.SignMessageResponse': SignMessageResponse$json,
+  '.pactus.GetTotalStakeRequest': GetTotalStakeRequest$json,
+  '.pactus.GetTotalStakeResponse': GetTotalStakeResponse$json,
+  '.pactus.GetAddressInfoRequest': GetAddressInfoRequest$json,
+  '.pactus.GetAddressInfoResponse': GetAddressInfoResponse$json,
+  '.pactus.SetLabelRequest': SetLabelRequest$json,
+  '.pactus.SetLabelResponse': SetLabelResponse$json,
 };
 
 /// Descriptor for `Wallet`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode('CgZXYWxsZXQSSQoMQ3JlYXRlV2FsbGV0EhsucGFjdHVzLkNyZWF0ZVdhbGxldFJlcXVlc3QaHC5wYWN0dXMuQ3JlYXRlV2FsbGV0UmVzcG9uc2USTAoNUmVzdG9yZVdhbGxldBIcLnBhY3R1cy5SZXN0b3JlV2FsbGV0UmVxdWVzdBodLnBhY3R1cy5SZXN0b3JlV2FsbGV0UmVzcG9uc2USQwoKTG9hZFdhbGxldBIZLnBhY3R1cy5Mb2FkV2FsbGV0UmVxdWVzdBoaLnBhY3R1cy5Mb2FkV2FsbGV0UmVzcG9uc2USSQoMVW5sb2FkV2FsbGV0EhsucGFjdHVzLlVubG9hZFdhbGxldFJlcXVlc3QaHC5wYWN0dXMuVW5sb2FkV2FsbGV0UmVzcG9uc2USUgoPR2V0VG90YWxCYWxhbmNlEh4ucGFjdHVzLkdldFRvdGFsQmFsYW5jZVJlcXVlc3QaHy5wYWN0dXMuR2V0VG90YWxCYWxhbmNlUmVzcG9uc2USWwoSU2lnblJhd1RyYW5zYWN0aW9uEiEucGFjdHVzLlNpZ25SYXdUcmFuc2FjdGlvblJlcXVlc3QaIi5wYWN0dXMuU2lnblJhd1RyYW5zYWN0aW9uUmVzcG9uc2USXgoTR2V0VmFsaWRhdG9yQWRkcmVzcxIiLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUmVxdWVzdBojLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUmVzcG9uc2USTAoNR2V0TmV3QWRkcmVzcxIcLnBhY3R1cy5HZXROZXdBZGRyZXNzUmVxdWVzdBodLnBhY3R1cy5HZXROZXdBZGRyZXNzUmVzcG9uc2USWAoRR2V0QWRkcmVzc0hpc3RvcnkSIC5wYWN0dXMuR2V0QWRkcmVzc0hpc3RvcnlSZXF1ZXN0GiEucGFjdHVzLkdldEFkZHJlc3NIaXN0b3J5UmVzcG9uc2USRgoLU2lnbk1lc3NhZ2USGi5wYWN0dXMuU2lnbk1lc3NhZ2VSZXF1ZXN0GhsucGFjdHVzLlNpZ25NZXNzYWdlUmVzcG9uc2U=');
+final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode('CgZXYWxsZXQSSQoMQ3JlYXRlV2FsbGV0EhsucGFjdHVzLkNyZWF0ZVdhbGxldFJlcXVlc3QaHC5wYWN0dXMuQ3JlYXRlV2FsbGV0UmVzcG9uc2USTAoNUmVzdG9yZVdhbGxldBIcLnBhY3R1cy5SZXN0b3JlV2FsbGV0UmVxdWVzdBodLnBhY3R1cy5SZXN0b3JlV2FsbGV0UmVzcG9uc2USQwoKTG9hZFdhbGxldBIZLnBhY3R1cy5Mb2FkV2FsbGV0UmVxdWVzdBoaLnBhY3R1cy5Mb2FkV2FsbGV0UmVzcG9uc2USSQoMVW5sb2FkV2FsbGV0EhsucGFjdHVzLlVubG9hZFdhbGxldFJlcXVlc3QaHC5wYWN0dXMuVW5sb2FkV2FsbGV0UmVzcG9uc2USUgoPR2V0VG90YWxCYWxhbmNlEh4ucGFjdHVzLkdldFRvdGFsQmFsYW5jZVJlcXVlc3QaHy5wYWN0dXMuR2V0VG90YWxCYWxhbmNlUmVzcG9uc2USWwoSU2lnblJhd1RyYW5zYWN0aW9uEiEucGFjdHVzLlNpZ25SYXdUcmFuc2FjdGlvblJlcXVlc3QaIi5wYWN0dXMuU2lnblJhd1RyYW5zYWN0aW9uUmVzcG9uc2USXgoTR2V0VmFsaWRhdG9yQWRkcmVzcxIiLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUmVxdWVzdBojLnBhY3R1cy5HZXRWYWxpZGF0b3JBZGRyZXNzUmVzcG9uc2USTAoNR2V0TmV3QWRkcmVzcxIcLnBhY3R1cy5HZXROZXdBZGRyZXNzUmVxdWVzdBodLnBhY3R1cy5HZXROZXdBZGRyZXNzUmVzcG9uc2USWAoRR2V0QWRkcmVzc0hpc3RvcnkSIC5wYWN0dXMuR2V0QWRkcmVzc0hpc3RvcnlSZXF1ZXN0GiEucGFjdHVzLkdldEFkZHJlc3NIaXN0b3J5UmVzcG9uc2USRgoLU2lnbk1lc3NhZ2USGi5wYWN0dXMuU2lnbk1lc3NhZ2VSZXF1ZXN0GhsucGFjdHVzLlNpZ25NZXNzYWdlUmVzcG9uc2USTAoNR2V0VG90YWxTdGFrZRIcLnBhY3R1cy5HZXRUb3RhbFN0YWtlUmVxdWVzdBodLnBhY3R1cy5HZXRUb3RhbFN0YWtlUmVzcG9uc2USTwoOR2V0QWRkcmVzc0luZm8SHS5wYWN0dXMuR2V0QWRkcmVzc0luZm9SZXF1ZXN0Gh4ucGFjdHVzLkdldEFkZHJlc3NJbmZvUmVzcG9uc2USRAoPU2V0QWRkcmVzc0xhYmVsEhcucGFjdHVzLlNldExhYmVsUmVxdWVzdBoYLnBhY3R1cy5TZXRMYWJlbFJlc3BvbnNl');

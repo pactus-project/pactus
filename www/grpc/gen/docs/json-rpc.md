@@ -214,6 +214,18 @@ curl --location 'http://localhost:8545/' \
           <a href="#pactus.wallet.sign_message">
           <span class="rpc-badge"></span> pactus.wallet.sign_message</a>
         </li>
+        <li>
+          <a href="#pactus.wallet.get_total_stake">
+          <span class="rpc-badge"></span> pactus.wallet.get_total_stake</a>
+        </li>
+        <li>
+          <a href="#pactus.wallet.get_address_info">
+          <span class="rpc-badge"></span> pactus.wallet.get_address_info</a>
+        </li>
+        <li>
+          <a href="#pactus.wallet.set_address_label">
+          <span class="rpc-badge"></span> pactus.wallet.set_address_label</a>
+        </li>
         </ul>
     </li>
     </ul>
@@ -3326,4 +3338,171 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     </td>
   </tr>
      </tbody>
+</table>
+
+### pactus.wallet.get_total_stake <span id="pactus.wallet.get_total_stake" class="rpc-badge"></span>
+
+<p>GetTotalStake return total stake of wallet</p>
+
+<h4>Parameters</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">total_stake</td>
+    <td> numeric</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### pactus.wallet.get_address_info <span id="pactus.wallet.get_address_info" class="rpc-badge"></span>
+
+<p>GetAddressInfo return address information</p>
+
+<h4>Parameters</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet to generate a new address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">label</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">public_key</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">path</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### pactus.wallet.set_address_label <span id="pactus.wallet.set_address_label" class="rpc-badge"></span>
+
+<p>SetAddressLabel set label for given address</p>
+
+<h4>Parameters</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet to generate a new address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+    The password for unlocking the wallet for signing.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">label</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  </tbody>
 </table>

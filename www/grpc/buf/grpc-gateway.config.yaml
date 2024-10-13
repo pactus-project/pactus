@@ -82,6 +82,18 @@ http:
     - selector: pactus.Wallet.SignMessage
       get: "/pactus/wallet/sign_message"
 
+    - selector: pactus.Wallet.GetTotalStake
+      get: "/pactus/wallet/get_total_stake"
+
+    - selector: pactus.Wallet.GetAddressInfo
+      get: "/pactus/wallet/get_address_info"
+
+    - selector: pactus.Wallet.GetAddressHistory
+      get: "/pactus/wallet/get_address_history"
+
+    - selector: pactus.Wallet.SetAddressLabel
+      patch: "/pactus/wallet/set_address_label"
+
     # Util APIs
     - selector: pactus.Utils.SignMessageWithPrivateKey
       get: "/pactus/Utils/sign_message_with_private_key"

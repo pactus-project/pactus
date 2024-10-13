@@ -1353,6 +1353,396 @@ class SignMessageResponse extends $pb.GeneratedMessage {
   void clearSignature() => clearField(1);
 }
 
+class GetTotalStakeRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetTotalStakeRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
+    ..hasRequiredFields = false
+  ;
+
+  GetTotalStakeRequest._() : super();
+  factory GetTotalStakeRequest({
+    $core.String? walletName,
+  }) {
+    final _result = create();
+    if (walletName != null) {
+      _result.walletName = walletName;
+    }
+    return _result;
+  }
+  factory GetTotalStakeRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetTotalStakeRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetTotalStakeRequest clone() => GetTotalStakeRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetTotalStakeRequest copyWith(void Function(GetTotalStakeRequest) updates) => super.copyWith((message) => updates(message as GetTotalStakeRequest)) as GetTotalStakeRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetTotalStakeRequest create() => GetTotalStakeRequest._();
+  GetTotalStakeRequest createEmptyInstance() => create();
+  static $pb.PbList<GetTotalStakeRequest> createRepeated() => $pb.PbList<GetTotalStakeRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetTotalStakeRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetTotalStakeRequest>(create);
+  static GetTotalStakeRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => clearField(1);
+}
+
+class GetTotalStakeResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetTotalStakeResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aInt64(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalStake')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
+    ..hasRequiredFields = false
+  ;
+
+  GetTotalStakeResponse._() : super();
+  factory GetTotalStakeResponse({
+    $fixnum.Int64? totalStake,
+    $core.String? walletName,
+  }) {
+    final _result = create();
+    if (totalStake != null) {
+      _result.totalStake = totalStake;
+    }
+    if (walletName != null) {
+      _result.walletName = walletName;
+    }
+    return _result;
+  }
+  factory GetTotalStakeResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetTotalStakeResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetTotalStakeResponse clone() => GetTotalStakeResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetTotalStakeResponse copyWith(void Function(GetTotalStakeResponse) updates) => super.copyWith((message) => updates(message as GetTotalStakeResponse)) as GetTotalStakeResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetTotalStakeResponse create() => GetTotalStakeResponse._();
+  GetTotalStakeResponse createEmptyInstance() => create();
+  static $pb.PbList<GetTotalStakeResponse> createRepeated() => $pb.PbList<GetTotalStakeResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetTotalStakeResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetTotalStakeResponse>(create);
+  static GetTotalStakeResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get totalStake => $_getI64(0);
+  @$pb.TagNumber(1)
+  set totalStake($fixnum.Int64 v) { $_setInt64(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasTotalStake() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearTotalStake() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get walletName => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set walletName($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasWalletName() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearWalletName() => clearField(2);
+}
+
+class GetAddressInfoRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetAddressInfoRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
+    ..hasRequiredFields = false
+  ;
+
+  GetAddressInfoRequest._() : super();
+  factory GetAddressInfoRequest({
+    $core.String? walletName,
+    $core.String? address,
+  }) {
+    final _result = create();
+    if (walletName != null) {
+      _result.walletName = walletName;
+    }
+    if (address != null) {
+      _result.address = address;
+    }
+    return _result;
+  }
+  factory GetAddressInfoRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetAddressInfoRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetAddressInfoRequest clone() => GetAddressInfoRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetAddressInfoRequest copyWith(void Function(GetAddressInfoRequest) updates) => super.copyWith((message) => updates(message as GetAddressInfoRequest)) as GetAddressInfoRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetAddressInfoRequest create() => GetAddressInfoRequest._();
+  GetAddressInfoRequest createEmptyInstance() => create();
+  static $pb.PbList<GetAddressInfoRequest> createRepeated() => $pb.PbList<GetAddressInfoRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetAddressInfoRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetAddressInfoRequest>(create);
+  static GetAddressInfoRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get address => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set address($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasAddress() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAddress() => clearField(2);
+}
+
+class GetAddressInfoResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetAddressInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'label')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'path')
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
+    ..hasRequiredFields = false
+  ;
+
+  GetAddressInfoResponse._() : super();
+  factory GetAddressInfoResponse({
+    $core.String? address,
+    $core.String? label,
+    $core.String? publicKey,
+    $core.String? path,
+    $core.String? walletName,
+  }) {
+    final _result = create();
+    if (address != null) {
+      _result.address = address;
+    }
+    if (label != null) {
+      _result.label = label;
+    }
+    if (publicKey != null) {
+      _result.publicKey = publicKey;
+    }
+    if (path != null) {
+      _result.path = path;
+    }
+    if (walletName != null) {
+      _result.walletName = walletName;
+    }
+    return _result;
+  }
+  factory GetAddressInfoResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetAddressInfoResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetAddressInfoResponse clone() => GetAddressInfoResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetAddressInfoResponse copyWith(void Function(GetAddressInfoResponse) updates) => super.copyWith((message) => updates(message as GetAddressInfoResponse)) as GetAddressInfoResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static GetAddressInfoResponse create() => GetAddressInfoResponse._();
+  GetAddressInfoResponse createEmptyInstance() => create();
+  static $pb.PbList<GetAddressInfoResponse> createRepeated() => $pb.PbList<GetAddressInfoResponse>();
+  @$core.pragma('dart2js:noInline')
+  static GetAddressInfoResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetAddressInfoResponse>(create);
+  static GetAddressInfoResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get address => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set address($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasAddress() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearAddress() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get label => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set label($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasLabel() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearLabel() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.String get publicKey => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set publicKey($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasPublicKey() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearPublicKey() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get path => $_getSZ(3);
+  @$pb.TagNumber(4)
+  set path($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasPath() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearPath() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get walletName => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set walletName($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasWalletName() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearWalletName() => clearField(5);
+}
+
+class SetLabelRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SetLabelRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'walletName')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'password')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'label')
+    ..hasRequiredFields = false
+  ;
+
+  SetLabelRequest._() : super();
+  factory SetLabelRequest({
+    $core.String? walletName,
+    $core.String? password,
+    $core.String? address,
+    $core.String? label,
+  }) {
+    final _result = create();
+    if (walletName != null) {
+      _result.walletName = walletName;
+    }
+    if (password != null) {
+      _result.password = password;
+    }
+    if (address != null) {
+      _result.address = address;
+    }
+    if (label != null) {
+      _result.label = label;
+    }
+    return _result;
+  }
+  factory SetLabelRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SetLabelRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SetLabelRequest clone() => SetLabelRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SetLabelRequest copyWith(void Function(SetLabelRequest) updates) => super.copyWith((message) => updates(message as SetLabelRequest)) as SetLabelRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SetLabelRequest create() => SetLabelRequest._();
+  SetLabelRequest createEmptyInstance() => create();
+  static $pb.PbList<SetLabelRequest> createRepeated() => $pb.PbList<SetLabelRequest>();
+  @$core.pragma('dart2js:noInline')
+  static SetLabelRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SetLabelRequest>(create);
+  static SetLabelRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => clearField(1);
+
+  @$pb.TagNumber(3)
+  $core.String get password => $_getSZ(1);
+  @$pb.TagNumber(3)
+  set password($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasPassword() => $_has(1);
+  @$pb.TagNumber(3)
+  void clearPassword() => clearField(3);
+
+  @$pb.TagNumber(4)
+  $core.String get address => $_getSZ(2);
+  @$pb.TagNumber(4)
+  set address($core.String v) { $_setString(2, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasAddress() => $_has(2);
+  @$pb.TagNumber(4)
+  void clearAddress() => clearField(4);
+
+  @$pb.TagNumber(5)
+  $core.String get label => $_getSZ(3);
+  @$pb.TagNumber(5)
+  set label($core.String v) { $_setString(3, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasLabel() => $_has(3);
+  @$pb.TagNumber(5)
+  void clearLabel() => clearField(5);
+}
+
+class SetLabelResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SetLabelResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  SetLabelResponse._() : super();
+  factory SetLabelResponse() => create();
+  factory SetLabelResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SetLabelResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SetLabelResponse clone() => SetLabelResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SetLabelResponse copyWith(void Function(SetLabelResponse) updates) => super.copyWith((message) => updates(message as SetLabelResponse)) as SetLabelResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SetLabelResponse create() => SetLabelResponse._();
+  SetLabelResponse createEmptyInstance() => create();
+  static $pb.PbList<SetLabelResponse> createRepeated() => $pb.PbList<SetLabelResponse>();
+  @$core.pragma('dart2js:noInline')
+  static SetLabelResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SetLabelResponse>(create);
+  static SetLabelResponse? _defaultInstance;
+}
+
 class WalletApi {
   $pb.RpcClient _client;
   WalletApi(this._client);
@@ -1396,6 +1786,18 @@ class WalletApi {
   $async.Future<SignMessageResponse> signMessage($pb.ClientContext? ctx, SignMessageRequest request) {
     var emptyResponse = SignMessageResponse();
     return _client.invoke<SignMessageResponse>(ctx, 'Wallet', 'SignMessage', request, emptyResponse);
+  }
+  $async.Future<GetTotalStakeResponse> getTotalStake($pb.ClientContext? ctx, GetTotalStakeRequest request) {
+    var emptyResponse = GetTotalStakeResponse();
+    return _client.invoke<GetTotalStakeResponse>(ctx, 'Wallet', 'GetTotalStake', request, emptyResponse);
+  }
+  $async.Future<GetAddressInfoResponse> getAddressInfo($pb.ClientContext? ctx, GetAddressInfoRequest request) {
+    var emptyResponse = GetAddressInfoResponse();
+    return _client.invoke<GetAddressInfoResponse>(ctx, 'Wallet', 'GetAddressInfo', request, emptyResponse);
+  }
+  $async.Future<SetLabelResponse> setAddressLabel($pb.ClientContext? ctx, SetLabelRequest request) {
+    var emptyResponse = SetLabelResponse();
+    return _client.invoke<SetLabelResponse>(ctx, 'Wallet', 'SetAddressLabel', request, emptyResponse);
   }
 }
 

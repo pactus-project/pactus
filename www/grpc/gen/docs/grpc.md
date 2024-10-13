@@ -163,6 +163,18 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <a href="#pactus.Wallet.SignMessage">
           <span class="rpc-badge"></span> SignMessage</a>
         </li>
+        <li>
+          <a href="#pactus.Wallet.GetTotalStake">
+          <span class="rpc-badge"></span> GetTotalStake</a>
+        </li>
+        <li>
+          <a href="#pactus.Wallet.GetAddressInfo">
+          <span class="rpc-badge"></span> GetAddressInfo</a>
+        </li>
+        <li>
+          <a href="#pactus.Wallet.SetAddressLabel">
+          <span class="rpc-badge"></span> SetAddressLabel</a>
+        </li>
         </ul>
     </li>
     </ul>
@@ -3275,6 +3287,173 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     </td>
   </tr>
      </tbody>
+</table>
+
+### GetTotalStake <span id="pactus.Wallet.GetTotalStake" class="rpc-badge"></span>
+
+<p>GetTotalStake return total stake of wallet</p>
+
+<h4>GetTotalStakeRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetTotalStakeResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">total_stake</td>
+    <td> int64</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### GetAddressInfo <span id="pactus.Wallet.GetAddressInfo" class="rpc-badge"></span>
+
+<p>GetAddressInfo return address information</p>
+
+<h4>GetAddressInfoRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet to generate a new address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetAddressInfoResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">label</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">public_key</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">path</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### SetAddressLabel <span id="pactus.Wallet.SetAddressLabel" class="rpc-badge"></span>
+
+<p>SetAddressLabel set label for given address</p>
+
+<h4>SetLabelRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet to generate a new address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">password</td>
+    <td> string</td>
+    <td>
+    The password for unlocking the wallet for signing.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">label</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>SetLabelResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  </tbody>
 </table>
 
 ## Scalar Value Types

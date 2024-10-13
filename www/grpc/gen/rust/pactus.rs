@@ -1274,6 +1274,62 @@ pub struct SignMessageResponse {
     #[prost(string, tag="1")]
     pub signature: ::prost::alloc::string::String,
 }
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetTotalStakeRequest {
+    /// The name of the wallet.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetTotalStakeResponse {
+    #[prost(int64, tag="1")]
+    pub total_stake: i64,
+    #[prost(string, tag="2")]
+    pub wallet_name: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetAddressInfoRequest {
+    /// The name of the wallet to generate a new address.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub address: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetAddressInfoResponse {
+    #[prost(string, tag="1")]
+    pub address: ::prost::alloc::string::String,
+    #[prost(string, tag="2")]
+    pub label: ::prost::alloc::string::String,
+    #[prost(string, tag="3")]
+    pub public_key: ::prost::alloc::string::String,
+    #[prost(string, tag="4")]
+    pub path: ::prost::alloc::string::String,
+    #[prost(string, tag="5")]
+    pub wallet_name: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SetLabelRequest {
+    /// The name of the wallet to generate a new address.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// The password for unlocking the wallet for signing.
+    #[prost(string, tag="3")]
+    pub password: ::prost::alloc::string::String,
+    #[prost(string, tag="4")]
+    pub address: ::prost::alloc::string::String,
+    #[prost(string, tag="5")]
+    pub label: ::prost::alloc::string::String,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SetLabelResponse {
+}
 /// Enum for the address type.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

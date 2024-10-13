@@ -44,6 +44,15 @@ service Wallet {
   // SignMessage signs an arbitrary message.
   rpc SignMessage(SignMessageRequest)
       returns (SignMessageResponse);
+
+  // GetTotalStake return total stake of wallet
+  rpc GetTotalStake(GetTotalStakeRequest) returns(GetTotalStakeResponse);
+
+  // GetAddressInfo return address information
+  rpc GetAddressInfo(GetAddressInfoRequest) returns(GetAddressInfoResponse);
+
+  // SetAddressLabel set label for given address
+  rpc SetAddressLabel(SetLabelRequest) returns(SetLabelResponse);
   }
 
 // Enum for the address type.
@@ -237,3 +246,38 @@ message SignMessageResponse {
   // Signature of the message.
   string signature = 1;
 }
+
+message GetTotalStakeRequest {
+  // The name of the wallet.
+  string wallet_name = 1;
+}
+
+message GetTotalStakeResponse {
+  int64 total_stake = 1;
+  string wallet_name = 2;
+}
+
+message GetAddressInfoRequest {
+  // The name of the wallet to generate a new address.
+  string wallet_name = 1;
+  string address = 2;
+}
+
+message GetAddressInfoResponse {
+  string address = 1;
+  string label = 2;
+  string public_key = 3;
+  string path = 4;
+  string wallet_name = 5;
+}
+
+message SetLabelRequest {
+  // The name of the wallet to generate a new address.
+  string wallet_name = 1;
+  // The password for unlocking the wallet for signing.
+  string password = 3;
+  string address = 4;
+  string label = 5;
+}
+
+message SetLabelResponse {}

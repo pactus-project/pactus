@@ -193,3 +193,55 @@ class SignMessageResponse(_message.Message):
     SIGNATURE_FIELD_NUMBER: _ClassVar[int]
     signature: str
     def __init__(self, signature: _Optional[str] = ...) -> None: ...
+
+class GetTotalStakeRequest(_message.Message):
+    __slots__ = ("wallet_name",)
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
+
+class GetTotalStakeResponse(_message.Message):
+    __slots__ = ("total_stake", "wallet_name")
+    TOTAL_STAKE_FIELD_NUMBER: _ClassVar[int]
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    total_stake: int
+    wallet_name: str
+    def __init__(self, total_stake: _Optional[int] = ..., wallet_name: _Optional[str] = ...) -> None: ...
+
+class GetAddressInfoRequest(_message.Message):
+    __slots__ = ("wallet_name", "address")
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    address: str
+    def __init__(self, wallet_name: _Optional[str] = ..., address: _Optional[str] = ...) -> None: ...
+
+class GetAddressInfoResponse(_message.Message):
+    __slots__ = ("address", "label", "public_key", "path", "wallet_name")
+    ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    LABEL_FIELD_NUMBER: _ClassVar[int]
+    PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
+    PATH_FIELD_NUMBER: _ClassVar[int]
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    address: str
+    label: str
+    public_key: str
+    path: str
+    wallet_name: str
+    def __init__(self, address: _Optional[str] = ..., label: _Optional[str] = ..., public_key: _Optional[str] = ..., path: _Optional[str] = ..., wallet_name: _Optional[str] = ...) -> None: ...
+
+class SetLabelRequest(_message.Message):
+    __slots__ = ("wallet_name", "password", "address", "label")
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    LABEL_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    password: str
+    address: str
+    label: str
+    def __init__(self, wallet_name: _Optional[str] = ..., password: _Optional[str] = ..., address: _Optional[str] = ..., label: _Optional[str] = ...) -> None: ...
+
+class SetLabelResponse(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...

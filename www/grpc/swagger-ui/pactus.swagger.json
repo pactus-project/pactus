@@ -807,6 +807,83 @@
         ]
       }
     },
+    "/pactus/wallet/get_address_history": {
+      "get": {
+        "summary": "GetAddressHistory retrieves the transaction history of an address.",
+        "operationId": "Wallet_GetAddressHistory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetAddressHistoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "description": "The address to retrieve the transaction history for.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/get_address_info": {
+      "get": {
+        "summary": "GetAddressInfo return address information",
+        "operationId": "Wallet_GetAddressInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetAddressInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet to generate a new address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
     "/pactus/wallet/get_new_address": {
       "get": {
         "summary": "GetNewAddress generates a new address for the specified wallet.",
@@ -889,6 +966,38 @@
           {
             "name": "walletName",
             "description": "The name of the wallet to get the total balance.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/get_total_stake": {
+      "get": {
+        "summary": "GetTotalStake return total stake of wallet",
+        "operationId": "Wallet_GetTotalStake",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetTotalStakeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet.",
             "in": "query",
             "required": false,
             "type": "string"
@@ -999,6 +1108,57 @@
           {
             "name": "password",
             "description": "The password for securing the wallet.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/set_address_label": {
+      "patch": {
+        "summary": "SetAddressLabel set label for given address",
+        "operationId": "Wallet_SetAddressLabel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSetLabelResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet to generate a new address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "The password for unlocking the wallet for signing.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "label",
             "in": "query",
             "required": false,
             "type": "string"
@@ -1388,6 +1548,26 @@
       },
       "description": "Response message containing the address transaction history."
     },
+    "pactusGetAddressInfoResponse": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "publicKey": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "walletName": {
+          "type": "string"
+        }
+      }
+    },
     "pactusGetBlockHashResponse": {
       "type": "object",
       "properties": {
@@ -1684,6 +1864,18 @@
         }
       },
       "description": "Response message containing the available balance of the wallet."
+    },
+    "pactusGetTotalStakeResponse": {
+      "type": "object",
+      "properties": {
+        "totalStake": {
+          "type": "string",
+          "format": "int64"
+        },
+        "walletName": {
+          "type": "string"
+        }
+      }
     },
     "pactusGetTransactionResponse": {
       "type": "object",
@@ -2033,6 +2225,9 @@
         }
       },
       "description": "Response message containing the name of the restored wallet."
+    },
+    "pactusSetLabelResponse": {
+      "type": "object"
     },
     "pactusSignMessageResponse": {
       "type": "object",
