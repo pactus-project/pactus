@@ -71,9 +71,9 @@ func TestMain(m *testing.M) {
 		tConfigs[i] = config.DefaultConfigMainnet()
 
 		tConfigs[i].TxPool.Fee = &txpool.FeeConfig{
+			FixedFee:   0.000001,
 			DailyLimit: 280,
 			UnitPrice:  0,
-			FixedFee:   0.000001,
 		}
 		tConfigs[i].Store.Path = util.TempDirPath()
 		tConfigs[i].Consensus.ChangeProposerTimeout = 2 * time.Second

@@ -64,9 +64,9 @@ func TestConfigBasicCheck(t *testing.T) {
 			updateFn: func(c *Config) {
 				c.MaxSize = 100
 				c.Fee = &FeeConfig{
+					FixedFee:   0.01,
 					DailyLimit: 280,
 					UnitPrice:  0,
-					FixedFee:   0.01,
 				}
 			},
 		},
