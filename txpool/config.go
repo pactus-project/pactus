@@ -5,8 +5,8 @@ import (
 )
 
 type Config struct {
-	MaxSize int       `toml:"max_size"`
-	Fee     FeeConfig `toml:"fee"`
+	MaxSize int        `toml:"max_size"`
+	Fee     *FeeConfig `toml:"fee"`
 }
 
 type FeeConfig struct {
@@ -22,11 +22,11 @@ func DefaultConfig() *Config {
 	}
 }
 
-func DefaultFeeConfig() FeeConfig {
-	return FeeConfig{
+func DefaultFeeConfig() *FeeConfig {
+	return &FeeConfig{
+		FixedFee:   0.01,
 		DailyLimit: 280,
 		UnitPrice:  0,
-		FixedFee:   0.01,
 	}
 }
 

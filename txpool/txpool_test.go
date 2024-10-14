@@ -28,7 +28,7 @@ type testData struct {
 func testConfig() *Config {
 	return &Config{
 		MaxSize: 100,
-		Fee: FeeConfig{
+		Fee: &FeeConfig{
 			DailyLimit: 280,
 			UnitPrice:  0.0,
 			FixedFee:   0.000001,

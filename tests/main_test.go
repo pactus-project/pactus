@@ -70,7 +70,7 @@ func TestMain(m *testing.M) {
 		tValKeys[i][2] = bls.NewValidatorKey(key2)
 		tConfigs[i] = config.DefaultConfigMainnet()
 
-		tConfigs[i].TxPool.Fee = txpool.FeeConfig{
+		tConfigs[i].TxPool.Fee = &txpool.FeeConfig{
 			DailyLimit: 280,
 			UnitPrice:  0,
 			FixedFee:   0.000001,
