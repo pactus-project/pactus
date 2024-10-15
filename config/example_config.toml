@@ -119,9 +119,26 @@
   # Default is `1000`.
   max_size = 1000
 
-  # `min_fee` indicates the minimum fee in PAC for the transaction to enter into the pool.
-  # Default is `0.01`.
-  min_fee = 0.01
+  # `tx_pool.fee` contains configuration to calulcate the transaction fee.
+  [tx_pool.fee]
+
+    # The `fixed_fee` is a constant fee applied to each transaction, regardless of its size or type.
+    # Default is `0.01` PAC.
+    fixed_fee = 0.01
+
+    # The `daily_limit` is the number of bytes an account can send each day without paying a fee.
+    # The `daily_limit` is part of he consumptional fee model.
+    # To undesrstand how condumptional fee model works, you can refer to
+    # PIP-31: Consumptional Fee Mode (https://pips.pactus.org/PIPs/pip-31)
+    # Default is `280` bytes.
+    daily_limit = 280
+
+    # The `unit_price` defines the fee per byte in PAC.
+    # The `unit_price` is part of he consumptional fee model.
+    # To undesrstand how condumptional fee model works, you can refer to
+    # PIP-31: Consumptional Fee Mode (https://pips.pactus.org/PIPs/pip-31)
+    # Default is `0.0` PAC.
+    unit_price = 0.0
 
 # `logger` contains configuration options for the logger.
 [logger]
