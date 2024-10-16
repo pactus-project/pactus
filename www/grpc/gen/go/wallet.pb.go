@@ -2387,7 +2387,7 @@ var file_wallet_proto_depIdxs = []int32{
 	25, // 15: pactus.Wallet.GetAddressInfo:input_type -> pactus.GetAddressInfoRequest
 	27, // 16: pactus.Wallet.SetAddressLabel:input_type -> pactus.SetLabelRequest
 	29, // 17: pactus.Wallet.ListWallet:input_type -> pactus.ListWalletRequest
-	31, // 18: pactus.Wallet.WalletInfo:input_type -> pactus.GetWalletInfoRequest
+	31, // 18: pactus.Wallet.GetWalletInfo:input_type -> pactus.GetWalletInfoRequest
 	33, // 19: pactus.Wallet.ListAddress:input_type -> pactus.ListAddressRequest
 	10, // 20: pactus.Wallet.CreateWallet:output_type -> pactus.CreateWalletResponse
 	8,  // 21: pactus.Wallet.RestoreWallet:output_type -> pactus.RestoreWalletResponse
@@ -2403,7 +2403,7 @@ var file_wallet_proto_depIdxs = []int32{
 	26, // 31: pactus.Wallet.GetAddressInfo:output_type -> pactus.GetAddressInfoResponse
 	28, // 32: pactus.Wallet.SetAddressLabel:output_type -> pactus.SetLabelResponse
 	30, // 33: pactus.Wallet.ListWallet:output_type -> pactus.ListWalletResponse
-	32, // 34: pactus.Wallet.WalletInfo:output_type -> pactus.GetWalletInfoResponse
+	32, // 34: pactus.Wallet.GetWalletInfo:output_type -> pactus.GetWalletInfoResponse
 	34, // 35: pactus.Wallet.ListAddress:output_type -> pactus.ListAddressResponse
 	20, // [20:36] is the sub-list for method output_type
 	4,  // [4:20] is the sub-list for method input_type

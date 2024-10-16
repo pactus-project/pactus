@@ -35,7 +35,7 @@ const (
 	Wallet_GetAddressInfo_FullMethodName      = "/pactus.Wallet/GetAddressInfo"
 	Wallet_SetAddressLabel_FullMethodName     = "/pactus.Wallet/SetAddressLabel"
 	Wallet_ListWallet_FullMethodName          = "/pactus.Wallet/ListWallet"
-	Wallet_GetWalletInfo_FullMethodName       = "/pactus.Wallet/WalletInfo"
+	Wallet_GetWalletInfo_FullMethodName       = "/pactus.Wallet/GetWalletInfo"
 	Wallet_ListAddress_FullMethodName         = "/pactus.Wallet/ListAddress"
 )
 
@@ -336,7 +336,7 @@ func (UnimplementedWalletServer) ListWallet(context.Context, *ListWalletRequest)
 	return nil, status.Errorf(codes.Unimplemented, "method ListWallet not implemented")
 }
 func (UnimplementedWalletServer) GetWalletInfo(context.Context, *GetWalletInfoRequest) (*GetWalletInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method WalletInfo not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method GetWalletInfo not implemented")
 }
 func (UnimplementedWalletServer) ListAddress(context.Context, *ListAddressRequest) (*ListAddressResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListAddress not implemented")
@@ -705,7 +705,7 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Wallet_ListWallet_Handler,
 		},
 		{
-			MethodName: "WalletInfo",
+			MethodName: "GetWalletInfo",
 			Handler:    _Wallet_GetWalletInfo_Handler,
 		},
 		{
