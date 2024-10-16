@@ -1274,6 +1274,7 @@ pub struct SignMessageResponse {
     #[prost(string, tag="1")]
     pub signature: ::prost::alloc::string::String,
 }
+/// Request message for get total of stake.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetTotalStakeRequest {
@@ -1281,6 +1282,7 @@ pub struct GetTotalStakeRequest {
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
 }
+/// Response return total stake in wallet.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetTotalStakeResponse {
@@ -1289,6 +1291,7 @@ pub struct GetTotalStakeResponse {
     #[prost(string, tag="2")]
     pub wallet_name: ::prost::alloc::string::String,
 }
+/// Request get address information.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetAddressInfoRequest {
@@ -1298,6 +1301,7 @@ pub struct GetAddressInfoRequest {
     #[prost(string, tag="2")]
     pub address: ::prost::alloc::string::String,
 }
+/// Response return address information.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetAddressInfoResponse {
@@ -1312,6 +1316,7 @@ pub struct GetAddressInfoResponse {
     #[prost(string, tag="5")]
     pub wallet_name: ::prost::alloc::string::String,
 }
+/// Request update label an address.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SetLabelRequest {
@@ -1326,9 +1331,61 @@ pub struct SetLabelRequest {
     #[prost(string, tag="5")]
     pub label: ::prost::alloc::string::String,
 }
+/// Response return empty response.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SetLabelResponse {
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListWalletRequest {
+}
+/// Response return list wallet name.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListWalletResponse {
+    #[prost(string, repeated, tag="1")]
+    pub wallets: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+/// Request get wallet information.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetWalletInfoRequest {
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+}
+/// Response return wallet information.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetWalletInfoResponse {
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    #[prost(int64, tag="2")]
+    pub version: i64,
+    #[prost(string, tag="3")]
+    pub network: ::prost::alloc::string::String,
+    #[prost(bool, tag="4")]
+    pub encrypted: bool,
+    #[prost(string, tag="5")]
+    pub uuid: ::prost::alloc::string::String,
+    #[prost(uint32, tag="6")]
+    pub crc: u32,
+    #[prost(int64, tag="7")]
+    pub created_at: i64,
+}
+/// Request get list of addresses in wallet.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListAddressRequest {
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+}
+/// Response return list addresses.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListAddressResponse {
+    #[prost(message, repeated, tag="1")]
+    pub data: ::prost::alloc::vec::Vec<AddressInfo>,
 }
 /// Enum for the address type.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]

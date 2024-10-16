@@ -226,6 +226,18 @@ curl --location 'http://localhost:8545/' \
           <a href="#pactus.wallet.set_address_label">
           <span class="rpc-badge"></span> pactus.wallet.set_address_label</a>
         </li>
+        <li>
+          <a href="#pactus.wallet.list_wallet">
+          <span class="rpc-badge"></span> pactus.wallet.list_wallet</a>
+        </li>
+        <li>
+          <a href="#pactus.wallet.get_wallet_info">
+          <span class="rpc-badge"></span> pactus.wallet.get_wallet_info</a>
+        </li>
+        <li>
+          <a href="#pactus.wallet.list_address">
+          <span class="rpc-badge"></span> pactus.wallet.list_address</a>
+        </li>
         </ul>
     </li>
     </ul>
@@ -3342,7 +3354,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 
 ### pactus.wallet.get_total_stake <span id="pactus.wallet.get_total_stake" class="rpc-badge"></span>
 
-<p>GetTotalStake return total stake of wallet</p>
+<p>GetTotalStake return total stake of wallet.</p>
 
 <h4>Parameters</h4>
 
@@ -3386,7 +3398,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 
 ### pactus.wallet.get_address_info <span id="pactus.wallet.get_address_info" class="rpc-badge"></span>
 
-<p>GetAddressInfo return address information</p>
+<p>GetAddressInfo return address information.</p>
 
 <h4>Parameters</h4>
 
@@ -3458,7 +3470,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 
 ### pactus.wallet.set_address_label <span id="pactus.wallet.set_address_label" class="rpc-badge"></span>
 
-<p>SetAddressLabel set label for given address</p>
+<p>SetAddressLabel set label for given address.</p>
 
 <h4>Parameters</h4>
 
@@ -3505,4 +3517,172 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
   </thead>
   <tbody class="table-group-divider">
   </tbody>
+</table>
+
+### pactus.wallet.list_wallet <span id="pactus.wallet.list_wallet" class="rpc-badge"></span>
+
+<p>ListWallet return list wallet name.</p>
+
+<h4>Parameters</h4>
+
+Parameters has no fields.
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallets</td>
+    <td>repeated string</td>
+    <td>
+    
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### pactus.wallet.get_wallet_info <span id="pactus.wallet.get_wallet_info" class="rpc-badge"></span>
+
+<p>GetWalletInfo return wallet information.</p>
+
+<h4>Parameters</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">version</td>
+    <td> numeric</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">network</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">encrypted</td>
+    <td> boolean</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">uuid</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">crc</td>
+    <td> numeric</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">created_at</td>
+    <td> numeric</td>
+    <td>
+    
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### pactus.wallet.list_address <span id="pactus.wallet.list_address" class="rpc-badge"></span>
+
+<p>ListAddress return list address in wallet.</p>
+
+<h4>Parameters</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">data</td>
+    <td>repeated object</td>
+    <td>
+    
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">data[].address</td>
+        <td> string</td>
+        <td>
+        The address string.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">data[].public_key</td>
+        <td> string</td>
+        <td>
+        The public key associated with the address.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">data[].label</td>
+        <td> string</td>
+        <td>
+        A label associated with the address.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">data[].path</td>
+        <td> string</td>
+        <td>
+        The Hierarchical Deterministic path of the address within the wallet.
+        </td>
+      </tr>
+         </tbody>
 </table>

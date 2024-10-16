@@ -3072,6 +3072,77 @@ pub mod wallet_client {
                 .insert(GrpcMethod::new("pactus.Wallet", "SetAddressLabel"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn list_wallet(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListWalletRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListWalletResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/pactus.Wallet/ListWallet");
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "ListWallet"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn get_wallet_info(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetWalletInfoRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetWalletInfoResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Wallet/GetWalletInfo",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Wallet", "GetWalletInfo"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn list_address(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ListAddressRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListAddressResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Wallet/ListAddress",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "ListAddress"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -3170,6 +3241,27 @@ pub mod wallet_server {
             request: tonic::Request<super::SetLabelRequest>,
         ) -> std::result::Result<
             tonic::Response<super::SetLabelResponse>,
+            tonic::Status,
+        >;
+        async fn list_wallet(
+            &self,
+            request: tonic::Request<super::ListWalletRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListWalletResponse>,
+            tonic::Status,
+        >;
+        async fn get_wallet_info(
+            &self,
+            request: tonic::Request<super::GetWalletInfoRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetWalletInfoResponse>,
+            tonic::Status,
+        >;
+        async fn list_address(
+            &self,
+            request: tonic::Request<super::ListAddressRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ListAddressResponse>,
             tonic::Status,
         >;
     }
@@ -3829,6 +3921,140 @@ pub mod wallet_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = SetAddressLabelSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Wallet/ListWallet" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListWalletSvc<T: Wallet>(pub Arc<T>);
+                    impl<T: Wallet> tonic::server::UnaryService<super::ListWalletRequest>
+                    for ListWalletSvc<T> {
+                        type Response = super::ListWalletResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListWalletRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move { (*inner).list_wallet(request).await };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = ListWalletSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Wallet/GetWalletInfo" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetWalletInfoSvc<T: Wallet>(pub Arc<T>);
+                    impl<
+                        T: Wallet,
+                    > tonic::server::UnaryService<super::GetWalletInfoRequest>
+                    for GetWalletInfoSvc<T> {
+                        type Response = super::GetWalletInfoResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetWalletInfoRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).get_wallet_info(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = GetWalletInfoSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Wallet/ListAddress" => {
+                    #[allow(non_camel_case_types)]
+                    struct ListAddressSvc<T: Wallet>(pub Arc<T>);
+                    impl<
+                        T: Wallet,
+                    > tonic::server::UnaryService<super::ListAddressRequest>
+                    for ListAddressSvc<T> {
+                        type Response = super::ListAddressResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ListAddressRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).list_address(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = ListAddressSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

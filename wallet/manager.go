@@ -1,6 +1,8 @@
 package wallet
 
 import (
+	"fmt"
+	"github.com/pactus-project/pactus/util/logger"
 	"path/filepath"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -242,4 +244,51 @@ func (wm *Manager) SetAddressLabel(walletName, address, label string) error {
 	}
 
 	return wlt.Save()
+}
+
+func (wm *Manager) GetWalletInfo(walletName string) (Info, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return Info{}, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	return Info{
+		WalletName: walletName,
+		Version:    int64(wlt.store.Version),
+		Network:    wlt.store.Network.String(),
+		Uuid:       wlt.store.UUID.String(),
+		Encrypted:  wlt.IsEncrypted(),
+		Crc:        wlt.store.VaultCRC,
+		CreatedAt:  wlt.store.CreatedAt,
+	}, nil
+}
+
+func (wm *Manager) ListWallet() ([]string, error) {
+	wallets := make([]string, 0)
+
+	files, err := util.ListFilesInDir(wm.walletDirectory)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, f := range files {
+		_, err = Open(f, true)
+		if err != nil {
+			logger.Warn(fmt.Sprintf("file %s is not wallet", f))
+			continue
+		}
+
+		wallets = append(wallets, filepath.Base(f))
+	}
+
+	return wallets, nil
+}
+
+func (wm *Manager) ListAddress(walletName string) ([]vault.AddressInfo, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	return append(wlt.AllValidatorAddresses(), wlt.AllAccountAddresses()...), nil
 }

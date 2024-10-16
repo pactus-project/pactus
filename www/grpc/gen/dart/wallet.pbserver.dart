@@ -29,6 +29,9 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
   $async.Future<$4.GetTotalStakeResponse> getTotalStake($pb.ServerContext ctx, $4.GetTotalStakeRequest request);
   $async.Future<$4.GetAddressInfoResponse> getAddressInfo($pb.ServerContext ctx, $4.GetAddressInfoRequest request);
   $async.Future<$4.SetLabelResponse> setAddressLabel($pb.ServerContext ctx, $4.SetLabelRequest request);
+  $async.Future<$4.ListWalletResponse> listWallet($pb.ServerContext ctx, $4.ListWalletRequest request);
+  $async.Future<$4.GetWalletInfoResponse> getWalletInfo($pb.ServerContext ctx, $4.GetWalletInfoRequest request);
+  $async.Future<$4.ListAddressResponse> listAddress($pb.ServerContext ctx, $4.ListAddressRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
     switch (method) {
@@ -45,6 +48,9 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       case 'GetTotalStake': return $4.GetTotalStakeRequest();
       case 'GetAddressInfo': return $4.GetAddressInfoRequest();
       case 'SetAddressLabel': return $4.SetLabelRequest();
+      case 'ListWallet': return $4.ListWalletRequest();
+      case 'GetWalletInfo': return $4.GetWalletInfoRequest();
+      case 'ListAddress': return $4.ListAddressRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
@@ -64,6 +70,9 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       case 'GetTotalStake': return this.getTotalStake(ctx, request as $4.GetTotalStakeRequest);
       case 'GetAddressInfo': return this.getAddressInfo(ctx, request as $4.GetAddressInfoRequest);
       case 'SetAddressLabel': return this.setAddressLabel(ctx, request as $4.SetLabelRequest);
+      case 'ListWallet': return this.listWallet(ctx, request as $4.ListWalletRequest);
+      case 'GetWalletInfo': return this.getWalletInfo(ctx, request as $4.GetWalletInfoRequest);
+      case 'ListAddress': return this.listAddress(ctx, request as $4.ListAddressRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
