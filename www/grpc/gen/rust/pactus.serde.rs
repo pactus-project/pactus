@@ -1514,6 +1514,118 @@ impl<'de> serde::Deserialize<'de> for ConsensusInfo {
         deserializer.deserialize_struct("pactus.ConsensusInfo", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for CounterInfo {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.bytes != 0 {
+            len += 1;
+        }
+        if self.bundles != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.CounterInfo", len)?;
+        if self.bytes != 0 {
+            struct_ser.serialize_field("Bytes", ToString::to_string(&self.bytes).as_str())?;
+        }
+        if self.bundles != 0 {
+            struct_ser.serialize_field("Bundles", ToString::to_string(&self.bundles).as_str())?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for CounterInfo {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "Bytes",
+            "Bundles",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Bytes,
+            Bundles,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "Bytes" => Ok(GeneratedField::Bytes),
+                            "Bundles" => Ok(GeneratedField::Bundles),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = CounterInfo;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.CounterInfo")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<CounterInfo, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut bytes__ = None;
+                let mut bundles__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::Bytes => {
+                            if bytes__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("Bytes"));
+                            }
+                            bytes__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Bundles => {
+                            if bundles__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("Bundles"));
+                            }
+                            bundles__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(CounterInfo {
+                    bytes: bytes__.unwrap_or_default(),
+                    bundles: bundles__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.CounterInfo", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for CreateWalletRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -3397,33 +3509,18 @@ impl serde::Serialize for GetNetworkInfoResponse {
         if !self.network_name.is_empty() {
             len += 1;
         }
-        if self.total_sent_bytes != 0 {
-            len += 1;
-        }
-        if self.total_received_bytes != 0 {
-            len += 1;
-        }
         if self.connected_peers_count != 0 {
             len += 1;
         }
         if !self.connected_peers.is_empty() {
             len += 1;
         }
-        if !self.sent_bytes.is_empty() {
-            len += 1;
-        }
-        if !self.received_bytes.is_empty() {
+        if self.metric_info.is_some() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetNetworkInfoResponse", len)?;
         if !self.network_name.is_empty() {
             struct_ser.serialize_field("networkName", &self.network_name)?;
-        }
-        if self.total_sent_bytes != 0 {
-            struct_ser.serialize_field("totalSentBytes", ToString::to_string(&self.total_sent_bytes).as_str())?;
-        }
-        if self.total_received_bytes != 0 {
-            struct_ser.serialize_field("totalReceivedBytes", ToString::to_string(&self.total_received_bytes).as_str())?;
         }
         if self.connected_peers_count != 0 {
             struct_ser.serialize_field("connectedPeersCount", &self.connected_peers_count)?;
@@ -3431,15 +3528,8 @@ impl serde::Serialize for GetNetworkInfoResponse {
         if !self.connected_peers.is_empty() {
             struct_ser.serialize_field("connectedPeers", &self.connected_peers)?;
         }
-        if !self.sent_bytes.is_empty() {
-            let v: std::collections::HashMap<_, _> = self.sent_bytes.iter()
-                .map(|(k, v)| (k, v.to_string())).collect();
-            struct_ser.serialize_field("sentBytes", &v)?;
-        }
-        if !self.received_bytes.is_empty() {
-            let v: std::collections::HashMap<_, _> = self.received_bytes.iter()
-                .map(|(k, v)| (k, v.to_string())).collect();
-            struct_ser.serialize_field("receivedBytes", &v)?;
+        if let Some(v) = self.metric_info.as_ref() {
+            struct_ser.serialize_field("metricInfo", v)?;
         }
         struct_ser.end()
     }
@@ -3453,29 +3543,20 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
         const FIELDS: &[&str] = &[
             "network_name",
             "networkName",
-            "total_sent_bytes",
-            "totalSentBytes",
-            "total_received_bytes",
-            "totalReceivedBytes",
             "connected_peers_count",
             "connectedPeersCount",
             "connected_peers",
             "connectedPeers",
-            "sent_bytes",
-            "sentBytes",
-            "received_bytes",
-            "receivedBytes",
+            "metric_info",
+            "metricInfo",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             NetworkName,
-            TotalSentBytes,
-            TotalReceivedBytes,
             ConnectedPeersCount,
             ConnectedPeers,
-            SentBytes,
-            ReceivedBytes,
+            MetricInfo,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -3498,12 +3579,9 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
                     {
                         match value {
                             "networkName" | "network_name" => Ok(GeneratedField::NetworkName),
-                            "totalSentBytes" | "total_sent_bytes" => Ok(GeneratedField::TotalSentBytes),
-                            "totalReceivedBytes" | "total_received_bytes" => Ok(GeneratedField::TotalReceivedBytes),
                             "connectedPeersCount" | "connected_peers_count" => Ok(GeneratedField::ConnectedPeersCount),
                             "connectedPeers" | "connected_peers" => Ok(GeneratedField::ConnectedPeers),
-                            "sentBytes" | "sent_bytes" => Ok(GeneratedField::SentBytes),
-                            "receivedBytes" | "received_bytes" => Ok(GeneratedField::ReceivedBytes),
+                            "metricInfo" | "metric_info" => Ok(GeneratedField::MetricInfo),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -3524,12 +3602,9 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut network_name__ = None;
-                let mut total_sent_bytes__ = None;
-                let mut total_received_bytes__ = None;
                 let mut connected_peers_count__ = None;
                 let mut connected_peers__ = None;
-                let mut sent_bytes__ = None;
-                let mut received_bytes__ = None;
+                let mut metric_info__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::NetworkName => {
@@ -3537,22 +3612,6 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
                                 return Err(serde::de::Error::duplicate_field("networkName"));
                             }
                             network_name__ = Some(map.next_value()?);
-                        }
-                        GeneratedField::TotalSentBytes => {
-                            if total_sent_bytes__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("totalSentBytes"));
-                            }
-                            total_sent_bytes__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
-                        }
-                        GeneratedField::TotalReceivedBytes => {
-                            if total_received_bytes__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("totalReceivedBytes"));
-                            }
-                            total_received_bytes__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
                         }
                         GeneratedField::ConnectedPeersCount => {
                             if connected_peers_count__.is_some() {
@@ -3568,34 +3627,19 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
                             }
                             connected_peers__ = Some(map.next_value()?);
                         }
-                        GeneratedField::SentBytes => {
-                            if sent_bytes__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("sentBytes"));
+                        GeneratedField::MetricInfo => {
+                            if metric_info__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("metricInfo"));
                             }
-                            sent_bytes__ = Some(
-                                map.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, ::pbjson::private::NumberDeserialize<i64>>>()?
-                                    .into_iter().map(|(k,v)| (k.0, v.0)).collect()
-                            );
-                        }
-                        GeneratedField::ReceivedBytes => {
-                            if received_bytes__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("receivedBytes"));
-                            }
-                            received_bytes__ = Some(
-                                map.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, ::pbjson::private::NumberDeserialize<i64>>>()?
-                                    .into_iter().map(|(k,v)| (k.0, v.0)).collect()
-                            );
+                            metric_info__ = map.next_value()?;
                         }
                     }
                 }
                 Ok(GetNetworkInfoResponse {
                     network_name: network_name__.unwrap_or_default(),
-                    total_sent_bytes: total_sent_bytes__.unwrap_or_default(),
-                    total_received_bytes: total_received_bytes__.unwrap_or_default(),
                     connected_peers_count: connected_peers_count__.unwrap_or_default(),
                     connected_peers: connected_peers__.unwrap_or_default(),
-                    sent_bytes: sent_bytes__.unwrap_or_default(),
-                    received_bytes: received_bytes__.unwrap_or_default(),
+                    metric_info: metric_info__,
                 })
             }
         }
@@ -6982,6 +7026,171 @@ impl<'de> serde::Deserialize<'de> for LoadWalletResponse {
         deserializer.deserialize_struct("pactus.LoadWalletResponse", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for MetricInfo {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.total_invalid.is_some() {
+            len += 1;
+        }
+        if self.total_sent.is_some() {
+            len += 1;
+        }
+        if self.total_received.is_some() {
+            len += 1;
+        }
+        if !self.message_sent.is_empty() {
+            len += 1;
+        }
+        if !self.message_received.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.MetricInfo", len)?;
+        if let Some(v) = self.total_invalid.as_ref() {
+            struct_ser.serialize_field("TotalInvalid", v)?;
+        }
+        if let Some(v) = self.total_sent.as_ref() {
+            struct_ser.serialize_field("TotalSent", v)?;
+        }
+        if let Some(v) = self.total_received.as_ref() {
+            struct_ser.serialize_field("TotalReceived", v)?;
+        }
+        if !self.message_sent.is_empty() {
+            struct_ser.serialize_field("MessageSent", &self.message_sent)?;
+        }
+        if !self.message_received.is_empty() {
+            struct_ser.serialize_field("MessageReceived", &self.message_received)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for MetricInfo {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "TotalInvalid",
+            "TotalSent",
+            "TotalReceived",
+            "MessageSent",
+            "MessageReceived",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            TotalInvalid,
+            TotalSent,
+            TotalReceived,
+            MessageSent,
+            MessageReceived,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "TotalInvalid" => Ok(GeneratedField::TotalInvalid),
+                            "TotalSent" => Ok(GeneratedField::TotalSent),
+                            "TotalReceived" => Ok(GeneratedField::TotalReceived),
+                            "MessageSent" => Ok(GeneratedField::MessageSent),
+                            "MessageReceived" => Ok(GeneratedField::MessageReceived),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = MetricInfo;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.MetricInfo")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<MetricInfo, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut total_invalid__ = None;
+                let mut total_sent__ = None;
+                let mut total_received__ = None;
+                let mut message_sent__ = None;
+                let mut message_received__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::TotalInvalid => {
+                            if total_invalid__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("TotalInvalid"));
+                            }
+                            total_invalid__ = map.next_value()?;
+                        }
+                        GeneratedField::TotalSent => {
+                            if total_sent__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("TotalSent"));
+                            }
+                            total_sent__ = map.next_value()?;
+                        }
+                        GeneratedField::TotalReceived => {
+                            if total_received__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("TotalReceived"));
+                            }
+                            total_received__ = map.next_value()?;
+                        }
+                        GeneratedField::MessageSent => {
+                            if message_sent__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("MessageSent"));
+                            }
+                            message_sent__ = Some(
+                                map.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, _>>()?
+                                    .into_iter().map(|(k,v)| (k.0, v)).collect()
+                            );
+                        }
+                        GeneratedField::MessageReceived => {
+                            if message_received__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("MessageReceived"));
+                            }
+                            message_received__ = Some(
+                                map.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, _>>()?
+                                    .into_iter().map(|(k,v)| (k.0, v)).collect()
+                            );
+                        }
+                    }
+                }
+                Ok(MetricInfo {
+                    total_invalid: total_invalid__,
+                    total_sent: total_sent__,
+                    total_received: total_received__,
+                    message_sent: message_sent__.unwrap_or_default(),
+                    message_received: message_received__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.MetricInfo", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for PayloadBond {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -7702,22 +7911,10 @@ impl serde::Serialize for PeerInfo {
         if self.height != 0 {
             len += 1;
         }
-        if self.received_bundles != 0 {
-            len += 1;
-        }
-        if self.invalid_bundles != 0 {
-            len += 1;
-        }
         if self.last_sent != 0 {
             len += 1;
         }
         if self.last_received != 0 {
-            len += 1;
-        }
-        if !self.sent_bytes.is_empty() {
-            len += 1;
-        }
-        if !self.received_bytes.is_empty() {
             len += 1;
         }
         if !self.address.is_empty() {
@@ -7733,6 +7930,9 @@ impl serde::Serialize for PeerInfo {
             len += 1;
         }
         if self.completed_sessions != 0 {
+            len += 1;
+        }
+        if self.metric_info.is_some() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.PeerInfo", len)?;
@@ -7763,27 +7963,11 @@ impl serde::Serialize for PeerInfo {
         if self.height != 0 {
             struct_ser.serialize_field("height", &self.height)?;
         }
-        if self.received_bundles != 0 {
-            struct_ser.serialize_field("receivedBundles", &self.received_bundles)?;
-        }
-        if self.invalid_bundles != 0 {
-            struct_ser.serialize_field("invalidBundles", &self.invalid_bundles)?;
-        }
         if self.last_sent != 0 {
             struct_ser.serialize_field("lastSent", ToString::to_string(&self.last_sent).as_str())?;
         }
         if self.last_received != 0 {
             struct_ser.serialize_field("lastReceived", ToString::to_string(&self.last_received).as_str())?;
-        }
-        if !self.sent_bytes.is_empty() {
-            let v: std::collections::HashMap<_, _> = self.sent_bytes.iter()
-                .map(|(k, v)| (k, v.to_string())).collect();
-            struct_ser.serialize_field("sentBytes", &v)?;
-        }
-        if !self.received_bytes.is_empty() {
-            let v: std::collections::HashMap<_, _> = self.received_bytes.iter()
-                .map(|(k, v)| (k, v.to_string())).collect();
-            struct_ser.serialize_field("receivedBytes", &v)?;
         }
         if !self.address.is_empty() {
             struct_ser.serialize_field("address", &self.address)?;
@@ -7799,6 +7983,9 @@ impl serde::Serialize for PeerInfo {
         }
         if self.completed_sessions != 0 {
             struct_ser.serialize_field("completedSessions", &self.completed_sessions)?;
+        }
+        if let Some(v) = self.metric_info.as_ref() {
+            struct_ser.serialize_field("metricInfo", v)?;
         }
         struct_ser.end()
     }
@@ -7823,18 +8010,10 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
             "last_block_hash",
             "lastBlockHash",
             "height",
-            "received_bundles",
-            "receivedBundles",
-            "invalid_bundles",
-            "invalidBundles",
             "last_sent",
             "lastSent",
             "last_received",
             "lastReceived",
-            "sent_bytes",
-            "sentBytes",
-            "received_bytes",
-            "receivedBytes",
             "address",
             "direction",
             "protocols",
@@ -7842,6 +8021,8 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
             "totalSessions",
             "completed_sessions",
             "completedSessions",
+            "metric_info",
+            "metricInfo",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -7855,17 +8036,14 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
             Services,
             LastBlockHash,
             Height,
-            ReceivedBundles,
-            InvalidBundles,
             LastSent,
             LastReceived,
-            SentBytes,
-            ReceivedBytes,
             Address,
             Direction,
             Protocols,
             TotalSessions,
             CompletedSessions,
+            MetricInfo,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -7896,17 +8074,14 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                             "services" => Ok(GeneratedField::Services),
                             "lastBlockHash" | "last_block_hash" => Ok(GeneratedField::LastBlockHash),
                             "height" => Ok(GeneratedField::Height),
-                            "receivedBundles" | "received_bundles" => Ok(GeneratedField::ReceivedBundles),
-                            "invalidBundles" | "invalid_bundles" => Ok(GeneratedField::InvalidBundles),
                             "lastSent" | "last_sent" => Ok(GeneratedField::LastSent),
                             "lastReceived" | "last_received" => Ok(GeneratedField::LastReceived),
-                            "sentBytes" | "sent_bytes" => Ok(GeneratedField::SentBytes),
-                            "receivedBytes" | "received_bytes" => Ok(GeneratedField::ReceivedBytes),
                             "address" => Ok(GeneratedField::Address),
                             "direction" => Ok(GeneratedField::Direction),
                             "protocols" => Ok(GeneratedField::Protocols),
                             "totalSessions" | "total_sessions" => Ok(GeneratedField::TotalSessions),
                             "completedSessions" | "completed_sessions" => Ok(GeneratedField::CompletedSessions),
+                            "metricInfo" | "metric_info" => Ok(GeneratedField::MetricInfo),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -7935,17 +8110,14 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                 let mut services__ = None;
                 let mut last_block_hash__ = None;
                 let mut height__ = None;
-                let mut received_bundles__ = None;
-                let mut invalid_bundles__ = None;
                 let mut last_sent__ = None;
                 let mut last_received__ = None;
-                let mut sent_bytes__ = None;
-                let mut received_bytes__ = None;
                 let mut address__ = None;
                 let mut direction__ = None;
                 let mut protocols__ = None;
                 let mut total_sessions__ = None;
                 let mut completed_sessions__ = None;
+                let mut metric_info__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::Status => {
@@ -8008,22 +8180,6 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
-                        GeneratedField::ReceivedBundles => {
-                            if received_bundles__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("receivedBundles"));
-                            }
-                            received_bundles__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
-                        }
-                        GeneratedField::InvalidBundles => {
-                            if invalid_bundles__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("invalidBundles"));
-                            }
-                            invalid_bundles__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
-                        }
                         GeneratedField::LastSent => {
                             if last_sent__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("lastSent"));
@@ -8039,24 +8195,6 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                             last_received__ = 
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
-                        }
-                        GeneratedField::SentBytes => {
-                            if sent_bytes__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("sentBytes"));
-                            }
-                            sent_bytes__ = Some(
-                                map.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, ::pbjson::private::NumberDeserialize<i64>>>()?
-                                    .into_iter().map(|(k,v)| (k.0, v.0)).collect()
-                            );
-                        }
-                        GeneratedField::ReceivedBytes => {
-                            if received_bytes__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("receivedBytes"));
-                            }
-                            received_bytes__ = Some(
-                                map.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, ::pbjson::private::NumberDeserialize<i64>>>()?
-                                    .into_iter().map(|(k,v)| (k.0, v.0)).collect()
-                            );
                         }
                         GeneratedField::Address => {
                             if address__.is_some() {
@@ -8092,6 +8230,12 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                                 Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
+                        GeneratedField::MetricInfo => {
+                            if metric_info__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("metricInfo"));
+                            }
+                            metric_info__ = map.next_value()?;
+                        }
                     }
                 }
                 Ok(PeerInfo {
@@ -8104,17 +8248,14 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                     services: services__.unwrap_or_default(),
                     last_block_hash: last_block_hash__.unwrap_or_default(),
                     height: height__.unwrap_or_default(),
-                    received_bundles: received_bundles__.unwrap_or_default(),
-                    invalid_bundles: invalid_bundles__.unwrap_or_default(),
                     last_sent: last_sent__.unwrap_or_default(),
                     last_received: last_received__.unwrap_or_default(),
-                    sent_bytes: sent_bytes__.unwrap_or_default(),
-                    received_bytes: received_bytes__.unwrap_or_default(),
                     address: address__.unwrap_or_default(),
                     direction: direction__.unwrap_or_default(),
                     protocols: protocols__.unwrap_or_default(),
                     total_sessions: total_sessions__.unwrap_or_default(),
                     completed_sessions: completed_sessions__.unwrap_or_default(),
+                    metric_info: metric_info__,
                 })
             }
         }

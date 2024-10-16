@@ -474,7 +474,7 @@
         "parameters": [
           {
             "name": "onlyConnected",
-            "description": "If true, only returns peers with connected status.",
+            "description": "If true, returns only peers that are currently connected.",
             "in": "query",
             "required": false,
             "type": "boolean"
@@ -1354,6 +1354,22 @@
       },
       "description": "Message containing information about a consensus instance."
     },
+    "pactusCounterInfo": {
+      "type": "object",
+      "properties": {
+        "Bytes": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Total number of bytes."
+        },
+        "Bundles": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Total number of bundles."
+        }
+      },
+      "description": "CounterInfo holds data regarding byte and bundle counts."
+    },
     "pactusCreateWalletResponse": {
       "type": "object",
       "properties": {
@@ -1531,16 +1547,6 @@
           "type": "string",
           "description": "Name of the network."
         },
-        "totalSentBytes": {
-          "type": "string",
-          "format": "int64",
-          "description": "Total bytes sent across the network."
-        },
-        "totalReceivedBytes": {
-          "type": "string",
-          "format": "int64",
-          "description": "Total bytes received across the network."
-        },
         "connectedPeersCount": {
           "type": "integer",
           "format": "int64",
@@ -1554,21 +1560,9 @@
           },
           "description": "List of connected peers."
         },
-        "sentBytes": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "format": "int64"
-          },
-          "description": "Bytes sent per peer ID."
-        },
-        "receivedBytes": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "format": "int64"
-          },
-          "description": "Bytes received per peer ID."
+        "metricInfo": {
+          "$ref": "#/definitions/pactusMetricInfo",
+          "description": "Metrics related to node activity."
         }
       },
       "description": "Response message containing information about the overall network."
@@ -1596,7 +1590,7 @@
         },
         "agent": {
           "type": "string",
-          "description": "Agent information of the node."
+          "description": "Version and agent details of the node."
         },
         "peerId": {
           "type": "string",
@@ -1605,7 +1599,7 @@
         "startedAt": {
           "type": "string",
           "format": "uint64",
-          "description": "Timestamp when the node started."
+          "description": "Time the node was started (in epoch format)."
         },
         "reachability": {
           "type": "string",
@@ -1614,7 +1608,7 @@
         "services": {
           "type": "integer",
           "format": "int32",
-          "description": "A bitfield indicating the services provided by the node."
+          "description": "Bitfield representing the services provided by the node."
         },
         "servicesNames": {
           "type": "string",
@@ -1637,7 +1631,7 @@
         "clockOffset": {
           "type": "number",
           "format": "double",
-          "description": "Clock offset of the node."
+          "description": "Offset between the node's clock and the network's clock (in seconds)."
         },
         "connectionInfo": {
           "$ref": "#/definitions/pactusConnectionInfo",
@@ -1790,6 +1784,38 @@
       },
       "description": "Response message containing the name of the loaded wallet."
     },
+    "pactusMetricInfo": {
+      "type": "object",
+      "properties": {
+        "TotalInvalid": {
+          "$ref": "#/definitions/pactusCounterInfo",
+          "description": "Total number of invalid bundles."
+        },
+        "TotalSent": {
+          "$ref": "#/definitions/pactusCounterInfo",
+          "description": "Total number of bundles sent."
+        },
+        "TotalReceived": {
+          "$ref": "#/definitions/pactusCounterInfo",
+          "description": "Total number of bundles received."
+        },
+        "MessageSent": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/pactusCounterInfo"
+          },
+          "description": "Number of sent bundles categorized by message type."
+        },
+        "MessageReceived": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/pactusCounterInfo"
+          },
+          "description": "Number of received bundles categorized by message type."
+        }
+      },
+      "description": "MetricInfo contains data regarding network actvity."
+    },
     "pactusPayloadBond": {
       "type": "object",
       "properties": {
@@ -1894,7 +1920,7 @@
         "status": {
           "type": "integer",
           "format": "int32",
-          "description": "Status of the peer."
+          "description": "Current status of the peer (e.g., connected, disconnected)."
         },
         "moniker": {
           "type": "string",
@@ -1902,7 +1928,7 @@
         },
         "agent": {
           "type": "string",
-          "description": "Agent information of the peer."
+          "description": "Version and agent details of the peer."
         },
         "peerId": {
           "type": "string",
@@ -1913,19 +1939,19 @@
           "items": {
             "type": "string"
           },
-          "description": "Consensus keys used by the peer."
+          "description": "List of consensus keys used by the peer."
         },
         "consensusAddresses": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Consensus addresses of the peer."
+          "description": "List of consensus addresses used by the peer."
         },
         "services": {
           "type": "integer",
           "format": "int64",
-          "description": "Services provided by the peer."
+          "description": "Bitfield representing the services provided by the peer."
         },
         "lastBlockHash": {
           "type": "string",
@@ -1936,41 +1962,15 @@
           "format": "int64",
           "description": "Blockchain height of the peer."
         },
-        "receivedBundles": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Number of received bundles."
-        },
-        "invalidBundles": {
-          "type": "integer",
-          "format": "int32",
-          "description": "Number of invalid bundles received."
-        },
         "lastSent": {
           "type": "string",
           "format": "int64",
-          "description": "Timestamp of the last sent bundle."
+          "description": "Time the last bundle sent to the peer (in epoch format)."
         },
         "lastReceived": {
           "type": "string",
           "format": "int64",
-          "description": "Timestamp of the last received bundle."
-        },
-        "sentBytes": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "format": "int64"
-          },
-          "description": "Bytes sent per message type."
-        },
-        "receivedBytes": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "format": "int64"
-          },
-          "description": "Bytes received per message type."
+          "description": "Time the last bundle received from the peer (in epoch format)."
         },
         "address": {
           "type": "string",
@@ -1978,7 +1978,7 @@
         },
         "direction": {
           "type": "string",
-          "description": "Direction of connection with the peer."
+          "description": "Connection direction (e.g., inbound, outbound)."
         },
         "protocols": {
           "type": "array",
@@ -1996,6 +1996,10 @@
           "type": "integer",
           "format": "int32",
           "description": "Completed download sessions with the peer."
+        },
+        "metricInfo": {
+          "$ref": "#/definitions/pactusMetricInfo",
+          "description": "Metrics related to peer activity."
         }
       },
       "description": "Information about a peer in the network."

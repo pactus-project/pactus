@@ -115,7 +115,7 @@ func (s *Server) blockByHeight(ctx context.Context, w http.ResponseWriter, block
 	tm.addRowString("--- Transactions", "---")
 	for i, trx := range res.Txs {
 		tm.addRowInt("Transaction #", i+1)
-		txToTable(trx, tm)
+		txToTable(tm, trx)
 	}
 
 	s.writeHTML(w, tm.html())
@@ -199,9 +199,9 @@ func (s *Server) GetTxPoolContentHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	tm := newTableMaker()
-	for i, tx := range res.Txs {
+	for i, trx := range res.Txs {
 		tm.addRowString("\n-------------- ", fmt.Sprintf("%d --------------\n", i))
-		txToTable(tx, tm)
+		txToTable(tm, trx)
 	}
 	s.writeHTML(w, tm.html())
 }

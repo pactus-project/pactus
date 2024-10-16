@@ -2307,7 +2307,7 @@ types.
     <td class="fw-bold">only_connected</td>
     <td> bool</td>
     <td>
-    If true, only returns peers with connected status.
+    If true, returns only peers that are currently connected.
     </td>
   </tr>
   </tbody>
@@ -2324,20 +2324,6 @@ types.
     <td> string</td>
     <td>
     Name of the network.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">total_sent_bytes</td>
-    <td> int64</td>
-    <td>
-    Total bytes sent across the network.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">total_received_bytes</td>
-    <td> int64</td>
-    <td>
-    Total bytes received across the network.
     </td>
   </tr>
      <tr>
@@ -2358,7 +2344,7 @@ types.
         <td class="fw-bold">connected_peers[].status</td>
         <td> int32</td>
         <td>
-        Status of the peer.
+        Current status of the peer (e.g., connected, disconnected).
         </td>
       </tr>
          <tr>
@@ -2372,7 +2358,7 @@ types.
         <td class="fw-bold">connected_peers[].agent</td>
         <td> string</td>
         <td>
-        Agent information of the peer.
+        Version and agent details of the peer.
         </td>
       </tr>
          <tr>
@@ -2386,21 +2372,21 @@ types.
         <td class="fw-bold">connected_peers[].consensus_keys</td>
         <td>repeated string</td>
         <td>
-        Consensus keys used by the peer.
+        List of consensus keys used by the peer.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].consensus_addresses</td>
         <td>repeated string</td>
         <td>
-        Consensus addresses of the peer.
+        List of consensus addresses used by the peer.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].services</td>
         <td> uint32</td>
         <td>
-        Services provided by the peer.
+        Bitfield representing the services provided by the peer.
         </td>
       </tr>
          <tr>
@@ -2418,45 +2404,17 @@ types.
         </td>
       </tr>
          <tr>
-        <td class="fw-bold">connected_peers[].received_bundles</td>
-        <td> int32</td>
-        <td>
-        Number of received bundles.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">connected_peers[].invalid_bundles</td>
-        <td> int32</td>
-        <td>
-        Number of invalid bundles received.
-        </td>
-      </tr>
-         <tr>
         <td class="fw-bold">connected_peers[].last_sent</td>
         <td> int64</td>
         <td>
-        Timestamp of the last sent bundle.
+        Time the last bundle sent to the peer (in epoch format).
         </td>
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].last_received</td>
         <td> int64</td>
         <td>
-        Timestamp of the last received bundle.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">connected_peers[].sent_bytes</td>
-        <td> map&lt;int32, int64&gt;</td>
-        <td>
-        Bytes sent per message type.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">connected_peers[].received_bytes</td>
-        <td> map&lt;int32, int64&gt;</td>
-        <td>
-        Bytes received per message type.
+        Time the last bundle received from the peer (in epoch format).
         </td>
       </tr>
          <tr>
@@ -2470,7 +2428,7 @@ types.
         <td class="fw-bold">connected_peers[].direction</td>
         <td> string</td>
         <td>
-        Direction of connection with the peer.
+        Connection direction (e.g., inbound, outbound).
         </td>
       </tr>
          <tr>
@@ -2495,20 +2453,132 @@ types.
         </td>
       </tr>
          <tr>
-    <td class="fw-bold">sent_bytes</td>
-    <td> map&lt;int32, int64&gt;</td>
+        <td class="fw-bold">connected_peers[].metric_info</td>
+        <td> MetricInfo</td>
+        <td>
+        Metrics related to peer activity.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">connected_peers[].metric_info.TotalInvalid</td>
+            <td> CounterInfo</td>
+            <td>
+            Total number of invalid bundles.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">connected_peers[].metric_info.TotalSent</td>
+            <td> CounterInfo</td>
+            <td>
+            Total number of bundles sent.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">connected_peers[].metric_info.TotalReceived</td>
+            <td> CounterInfo</td>
+            <td>
+            Total number of bundles received.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">connected_peers[].metric_info.MessageSent</td>
+            <td> map&lt;int32, CounterInfo&gt;</td>
+            <td>
+            Number of sent bundles categorized by message type.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">connected_peers[].metric_info.MessageReceived</td>
+            <td> map&lt;int32, CounterInfo&gt;</td>
+            <td>
+            Number of received bundles categorized by message type.
+            </td>
+          </tr>
+          <tr>
+    <td class="fw-bold">metric_info</td>
+    <td> MetricInfo</td>
     <td>
-    Bytes sent per peer ID.
+    Metrics related to node activity.
     </td>
   </tr>
      <tr>
-    <td class="fw-bold">received_bytes</td>
-    <td> map&lt;int32, int64&gt;</td>
-    <td>
-    Bytes received per peer ID.
-    </td>
-  </tr>
-     </tbody>
+        <td class="fw-bold">metric_info.TotalInvalid</td>
+        <td> CounterInfo</td>
+        <td>
+        Total number of invalid bundles.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">metric_info.TotalInvalid.Bytes</td>
+            <td> uint64</td>
+            <td>
+            Total number of bytes.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">metric_info.TotalInvalid.Bundles</td>
+            <td> uint64</td>
+            <td>
+            Total number of bundles.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">metric_info.TotalSent</td>
+        <td> CounterInfo</td>
+        <td>
+        Total number of bundles sent.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">metric_info.TotalSent.Bytes</td>
+            <td> uint64</td>
+            <td>
+            Total number of bytes.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">metric_info.TotalSent.Bundles</td>
+            <td> uint64</td>
+            <td>
+            Total number of bundles.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">metric_info.TotalReceived</td>
+        <td> CounterInfo</td>
+        <td>
+        Total number of bundles received.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">metric_info.TotalReceived.Bytes</td>
+            <td> uint64</td>
+            <td>
+            Total number of bytes.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">metric_info.TotalReceived.Bundles</td>
+            <td> uint64</td>
+            <td>
+            Total number of bundles.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">metric_info.MessageSent</td>
+        <td> map&lt;int32, CounterInfo&gt;</td>
+        <td>
+        Number of sent bundles categorized by message type.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">metric_info.MessageReceived</td>
+        <td> map&lt;int32, CounterInfo&gt;</td>
+        <td>
+        Number of received bundles categorized by message type.
+        </td>
+      </tr>
+         </tbody>
 </table>
 
 ### GetNodeInfo <span id="pactus.Network.GetNodeInfo" class="rpc-badge"></span>
@@ -2536,7 +2606,7 @@ Message has no fields.
     <td class="fw-bold">agent</td>
     <td> string</td>
     <td>
-    Agent information of the node.
+    Version and agent details of the node.
     </td>
   </tr>
      <tr>
@@ -2550,7 +2620,7 @@ Message has no fields.
     <td class="fw-bold">started_at</td>
     <td> uint64</td>
     <td>
-    Timestamp when the node started.
+    Time the node was started (in epoch format).
     </td>
   </tr>
      <tr>
@@ -2564,7 +2634,7 @@ Message has no fields.
     <td class="fw-bold">services</td>
     <td> int32</td>
     <td>
-    A bitfield indicating the services provided by the node.
+    Bitfield representing the services provided by the node.
     </td>
   </tr>
      <tr>
@@ -2592,7 +2662,7 @@ Message has no fields.
     <td class="fw-bold">clock_offset</td>
     <td> double</td>
     <td>
-    Clock offset of the node.
+    Offset between the node's clock and the network's clock (in seconds).
     </td>
   </tr>
      <tr>

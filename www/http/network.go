@@ -12,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
+	"github.com/pactus-project/pactus/util"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
@@ -35,37 +36,16 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	printSortedMap := func(tm *tableMaker, stats map[int32]int64) {
-		keys := make([]int32, 0, len(stats))
-		for k := range stats {
-			keys = append(keys, k)
-		}
-
-		sort.Slice(keys, func(i, j int) bool {
-			return stats[keys[i]] > stats[keys[j]]
-		})
-
-		for _, key := range keys {
-			tm.addRowInt(message.Type(key).String(), int(stats[key]))
-		}
-	}
-
 	tm := newTableMaker()
 	tm.addRowString("Network Name", res.NetworkName)
-	tm.addRowInt("Total Sent Bytes", int(res.TotalSentBytes))
-	tm.addRowInt("Total Received Bytes", int(res.TotalReceivedBytes))
 	tm.addRowInt("Connected Peers Count", int(res.ConnectedPeersCount))
-
-	tm.addRowString("ReceivedBytes", "---")
-	printSortedMap(tm, res.ReceivedBytes)
-
-	tm.addRowString("SentBytes", "---")
-	printSortedMap(tm, res.SentBytes)
+	metricToTable(tm, res.MetricInfo)
 
 	tm.addRowString("Peers", "---")
 
 	sort.Slice(res.ConnectedPeers, func(i, j int) bool {
-		return res.ConnectedPeers[i].ReceivedBundles > res.ConnectedPeers[j].ReceivedBundles
+		return res.ConnectedPeers[i].MetricInfo.TotalReceived.Bundles >
+			res.ConnectedPeers[j].MetricInfo.TotalReceived.Bundles
 	})
 
 	for i, p := range res.ConnectedPeers {
@@ -86,19 +66,12 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		tm.addRowInt("Height", int(p.Height))
 		tm.addRowInt("TotalSessions", int(p.TotalSessions))
 		tm.addRowInt("CompletedSessions", int(p.CompletedSessions))
-		tm.addRowInt("InvalidBundles", int(p.InvalidBundles))
-		tm.addRowInt("ReceivedBundles", int(p.ReceivedBundles))
-
-		tm.addRowString("ReceivedBytes", "---")
-		printSortedMap(tm, p.ReceivedBytes)
-
-		tm.addRowString("SentBytes", "---")
-		printSortedMap(tm, p.SentBytes)
+		metricToTable(tm, p.MetricInfo)
 
 		for _, key := range p.ConsensusKeys {
 			pub, _ := bls.PublicKeyFromString(key)
-			tm.addRowString("  PublicKey", pub.String())
-			tm.addRowValAddress("  Address", pub.ValidatorAddress().String())
+			tm.addRowString("-- PublicKey", pub.String())
+			tm.addRowValAddress("-- Address", pub.ValidatorAddress().String())
 		}
 	}
 	s.writeHTML(w, tm.html())
@@ -142,4 +115,36 @@ func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s.writeHTML(w, tm.html())
+}
+
+func metricToTable(tm *tableMaker, mi *pactus.MetricInfo) {
+	printCounter := func(tm *tableMaker, name string, c *pactus.CounterInfo) {
+		tm.addRowString(name,
+			fmt.Sprintf("[%d, %s]", c.Bundles, util.FormatBytesToHumanReadable(c.Bytes)))
+	}
+
+	printSortedMap := func(tm *tableMaker, msgCounter map[int32]*pactus.CounterInfo) {
+		keys := make([]int32, 0, len(msgCounter))
+		for k := range msgCounter {
+			keys = append(keys, k)
+		}
+
+		sort.Slice(keys, func(i, j int) bool {
+			return msgCounter[keys[i]].Bundles > msgCounter[keys[j]].Bundles
+		})
+
+		for _, key := range keys {
+			printCounter(tm, message.Type(key).String(), msgCounter[key])
+		}
+	}
+
+	printCounter(tm, "Total Invalid", mi.TotalInvalid)
+
+	tm.addRowString("Sent Metric", "---")
+	printCounter(tm, "Total Sent", mi.TotalSent)
+	printSortedMap(tm, mi.MessageSent)
+
+	tm.addRowString("Received Metric", "---")
+	printCounter(tm, "Total Received", mi.TotalReceived)
+	printSortedMap(tm, mi.MessageReceived)
 }

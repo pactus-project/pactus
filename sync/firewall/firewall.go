@@ -109,7 +109,6 @@ func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) (*bundle.Bundle, 
 
 func (f *Firewall) openBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error) {
 	f.peerSet.UpdateLastReceived(from)
-	f.peerSet.IncreaseReceivedBundlesCounter(from)
 
 	p := f.peerSet.GetPeer(from)
 	if p.Status.IsBanned() {
@@ -131,31 +130,32 @@ func (f *Firewall) openBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error)
 		}
 	}
 
-	bdl, err := f.decodeBundle(r, from)
+	bdl, bytesRead, err := f.decodeBundle(r)
 	if err != nil {
-		f.peerSet.IncreaseInvalidBundlesCounter(from)
+		f.peerSet.UpdateInvalidMetric(from, int64(bytesRead))
 
 		return nil, err
 	}
 
 	if err := f.checkBundle(bdl); err != nil {
-		f.peerSet.IncreaseInvalidBundlesCounter(from)
+		f.peerSet.UpdateInvalidMetric(from, int64(bytesRead))
 
 		return bdl, err
 	}
 
+	f.peerSet.UpdateReceivedMetric(from, bdl.Message.Type(), int64(bytesRead))
+
 	return bdl, nil
 }
 
-func (f *Firewall) decodeBundle(r io.Reader, pid peer.ID) (*bundle.Bundle, error) {
+func (f *Firewall) decodeBundle(r io.Reader) (*bundle.Bundle, int, error) {
 	bdl := new(bundle.Bundle)
 	bytesRead, err := bdl.Decode(r)
 	if err != nil {
-		return nil, err
+		return nil, bytesRead, err
 	}
-	f.peerSet.IncreaseReceivedBytesCounter(pid, bdl.Message.Type(), int64(bytesRead))
 
-	return bdl, nil
+	return bdl, bytesRead, nil
 }
 
 func (f *Firewall) checkBundle(bdl *bundle.Bundle) error {

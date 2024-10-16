@@ -6,6 +6,7 @@ import (
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer/metric"
 	"github.com/pactus-project/pactus/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
@@ -79,24 +80,13 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		p.Services = uint32(peer.Services)
 		p.Height = peer.Height
 		p.Protocols = peer.Protocols
-		p.ReceivedBundles = int32(peer.ReceivedBundles)
-		p.InvalidBundles = int32(peer.InvalidBundles)
 		p.Status = int32(peer.Status)
 		p.LastSent = peer.LastSent.Unix()
 		p.LastReceived = peer.LastReceived.Unix()
 		p.LastBlockHash = peer.LastBlockHash.String()
 		p.TotalSessions = int32(peer.TotalSessions)
 		p.CompletedSessions = int32(peer.CompletedSessions)
-
-		p.ReceivedBytes = make(map[int32]int64)
-		for msgType, bytes := range peer.ReceivedBytes {
-			p.ReceivedBytes[int32(msgType)] = bytes
-		}
-
-		p.SentBytes = make(map[int32]int64)
-		for msgType, bytes := range peer.SentBytes {
-			p.SentBytes[int32(msgType)] = bytes
-		}
+		p.MetricInfo = metricToProto(peer.Metric)
 
 		for _, key := range peer.ConsensusKeys {
 			p.ConsensusKeys = append(p.ConsensusKeys, key.String())
@@ -106,23 +96,47 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		return false
 	})
 
-	sentBytes := make(map[int32]int64)
-	for msgType, bytes := range ps.SentBytes() {
-		sentBytes[int32(msgType)] = bytes
-	}
-
-	receivedBytes := make(map[int32]int64)
-	for msgType, bytes := range ps.ReceivedBytes() {
-		receivedBytes[int32(msgType)] = bytes
-	}
-
 	return &pactus.GetNetworkInfoResponse{
-		TotalSentBytes:      ps.TotalSentBytes(),
-		TotalReceivedBytes:  ps.TotalReceivedBytes(),
 		NetworkName:         s.net.Name(),
 		ConnectedPeersCount: uint32(len(peerInfos)),
 		ConnectedPeers:      peerInfos,
-		SentBytes:           sentBytes,
-		ReceivedBytes:       receivedBytes,
+		MetricInfo:          metricToProto(ps.Metric()),
 	}, nil
+}
+
+func metricToProto(m metric.Metric) *pactus.MetricInfo {
+	metricInfo := &pactus.MetricInfo{
+		TotalInvalid: &pactus.CounterInfo{
+			Bytes:   uint64(m.TotalInvalid.Bytes),
+			Bundles: uint64(m.TotalInvalid.Bundles),
+		},
+
+		TotalSent: &pactus.CounterInfo{
+			Bytes:   uint64(m.TotalSent.Bytes),
+			Bundles: uint64(m.TotalSent.Bundles),
+		},
+
+		TotalReceived: &pactus.CounterInfo{
+			Bytes:   uint64(m.TotalReceived.Bytes),
+			Bundles: uint64(m.TotalReceived.Bundles),
+		},
+	}
+
+	metricInfo.MessageSent = make(map[int32]*pactus.CounterInfo)
+	for msgType, counter := range m.MessageSent {
+		metricInfo.MessageSent[int32(msgType)] = &pactus.CounterInfo{
+			Bytes:   uint64(counter.Bytes),
+			Bundles: uint64(counter.Bundles),
+		}
+	}
+
+	metricInfo.MessageReceived = make(map[int32]*pactus.CounterInfo)
+	for msgType, counter := range m.MessageReceived {
+		metricInfo.MessageReceived[int32(msgType)] = &pactus.CounterInfo{
+			Bytes:   uint64(counter.Bytes),
+			Bundles: uint64(counter.Bundles),
+		}
+	}
+
+	return metricInfo
 }

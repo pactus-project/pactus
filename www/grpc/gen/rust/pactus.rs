@@ -836,7 +836,7 @@ impl VoteType {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetNetworkInfoRequest {
-    /// If true, only returns peers with connected status.
+    /// If true, returns only peers that are currently connected.
     #[prost(bool, tag="1")]
     pub only_connected: bool,
 }
@@ -847,27 +847,17 @@ pub struct GetNetworkInfoResponse {
     /// Name of the network.
     #[prost(string, tag="1")]
     pub network_name: ::prost::alloc::string::String,
-    /// Total bytes sent across the network.
-    #[prost(int64, tag="2")]
-    pub total_sent_bytes: i64,
-    /// Total bytes received across the network.
-    #[prost(int64, tag="3")]
-    pub total_received_bytes: i64,
     /// Number of connected peers.
-    #[prost(uint32, tag="4")]
+    #[prost(uint32, tag="2")]
     pub connected_peers_count: u32,
     /// List of connected peers.
-    #[prost(message, repeated, tag="5")]
+    #[prost(message, repeated, tag="3")]
     pub connected_peers: ::prost::alloc::vec::Vec<PeerInfo>,
-    /// Bytes sent per peer ID.
-    #[prost(map="int32, int64", tag="6")]
-    pub sent_bytes: ::std::collections::HashMap<i32, i64>,
-    /// Bytes received per peer ID.
-    #[prost(map="int32, int64", tag="7")]
-    pub received_bytes: ::std::collections::HashMap<i32, i64>,
+    /// Metrics related to node activity.
+    #[prost(message, optional, tag="4")]
+    pub metric_info: ::core::option::Option<MetricInfo>,
 }
-/// Request message for retrieving information about a specific node in the
-/// network.
+/// Request message for retrieving information of the node.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetNodeInfoRequest {
@@ -879,19 +869,19 @@ pub struct GetNodeInfoResponse {
     /// Moniker of the node.
     #[prost(string, tag="1")]
     pub moniker: ::prost::alloc::string::String,
-    /// Agent information of the node.
+    /// Version and agent details of the node.
     #[prost(string, tag="2")]
     pub agent: ::prost::alloc::string::String,
     /// Peer ID of the node.
     #[prost(string, tag="3")]
     pub peer_id: ::prost::alloc::string::String,
-    /// Timestamp when the node started.
+    /// Time the node was started (in epoch format).
     #[prost(uint64, tag="4")]
     pub started_at: u64,
     /// Reachability status of the node.
     #[prost(string, tag="5")]
     pub reachability: ::prost::alloc::string::String,
-    /// A bitfield indicating the services provided by the node.
+    /// Bitfield representing the services provided by the node.
     #[prost(int32, tag="6")]
     pub services: i32,
     /// Names of services provided by the node.
@@ -903,7 +893,7 @@ pub struct GetNodeInfoResponse {
     /// List of protocols supported by the node.
     #[prost(string, repeated, tag="9")]
     pub protocols: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    /// Clock offset of the node.
+    /// Offset between the node's clock and the network's clock (in seconds).
     #[prost(double, tag="13")]
     pub clock_offset: f64,
     /// Information about the node's connections.
@@ -914,25 +904,25 @@ pub struct GetNodeInfoResponse {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct PeerInfo {
-    /// Status of the peer.
+    /// Current status of the peer (e.g., connected, disconnected).
     #[prost(int32, tag="1")]
     pub status: i32,
     /// Moniker of the peer.
     #[prost(string, tag="2")]
     pub moniker: ::prost::alloc::string::String,
-    /// Agent information of the peer.
+    /// Version and agent details of the peer.
     #[prost(string, tag="3")]
     pub agent: ::prost::alloc::string::String,
     /// Peer ID of the peer.
     #[prost(string, tag="4")]
     pub peer_id: ::prost::alloc::string::String,
-    /// Consensus keys used by the peer.
+    /// List of consensus keys used by the peer.
     #[prost(string, repeated, tag="5")]
     pub consensus_keys: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    /// Consensus addresses of the peer.
+    /// List of consensus addresses used by the peer.
     #[prost(string, repeated, tag="6")]
     pub consensus_addresses: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    /// Services provided by the peer.
+    /// Bitfield representing the services provided by the peer.
     #[prost(uint32, tag="7")]
     pub services: u32,
     /// Hash of the last block the peer knows.
@@ -941,39 +931,30 @@ pub struct PeerInfo {
     /// Blockchain height of the peer.
     #[prost(uint32, tag="9")]
     pub height: u32,
-    /// Number of received bundles.
-    #[prost(int32, tag="10")]
-    pub received_bundles: i32,
-    /// Number of invalid bundles received.
-    #[prost(int32, tag="11")]
-    pub invalid_bundles: i32,
-    /// Timestamp of the last sent bundle.
-    #[prost(int64, tag="12")]
+    /// Time the last bundle sent to the peer (in epoch format).
+    #[prost(int64, tag="10")]
     pub last_sent: i64,
-    /// Timestamp of the last received bundle.
-    #[prost(int64, tag="13")]
+    /// Time the last bundle received from the peer (in epoch format).
+    #[prost(int64, tag="11")]
     pub last_received: i64,
-    /// Bytes sent per message type.
-    #[prost(map="int32, int64", tag="14")]
-    pub sent_bytes: ::std::collections::HashMap<i32, i64>,
-    /// Bytes received per message type.
-    #[prost(map="int32, int64", tag="15")]
-    pub received_bytes: ::std::collections::HashMap<i32, i64>,
     /// Network address of the peer.
-    #[prost(string, tag="16")]
+    #[prost(string, tag="12")]
     pub address: ::prost::alloc::string::String,
-    /// Direction of connection with the peer.
-    #[prost(string, tag="17")]
+    /// Connection direction (e.g., inbound, outbound).
+    #[prost(string, tag="13")]
     pub direction: ::prost::alloc::string::String,
     /// List of protocols supported by the peer.
-    #[prost(string, repeated, tag="18")]
+    #[prost(string, repeated, tag="14")]
     pub protocols: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// Total download sessions with the peer.
-    #[prost(int32, tag="19")]
+    #[prost(int32, tag="15")]
     pub total_sessions: i32,
     /// Completed download sessions with the peer.
-    #[prost(int32, tag="20")]
+    #[prost(int32, tag="16")]
     pub completed_sessions: i32,
+    /// Metrics related to peer activity.
+    #[prost(message, optional, tag="17")]
+    pub metric_info: ::core::option::Option<MetricInfo>,
 }
 /// ConnectionInfo contains information about the node's connections.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -988,6 +969,37 @@ pub struct ConnectionInfo {
     /// Number of outbound connections.
     #[prost(uint64, tag="3")]
     pub outbound_connections: u64,
+}
+/// MetricInfo contains data regarding network actvity.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct MetricInfo {
+    /// Total number of invalid bundles.
+    #[prost(message, optional, tag="1")]
+    pub total_invalid: ::core::option::Option<CounterInfo>,
+    /// Total number of bundles sent.
+    #[prost(message, optional, tag="2")]
+    pub total_sent: ::core::option::Option<CounterInfo>,
+    /// Total number of bundles received.
+    #[prost(message, optional, tag="3")]
+    pub total_received: ::core::option::Option<CounterInfo>,
+    /// Number of sent bundles categorized by message type.
+    #[prost(map="int32, message", tag="4")]
+    pub message_sent: ::std::collections::HashMap<i32, CounterInfo>,
+    /// Number of received bundles categorized by message type.
+    #[prost(map="int32, message", tag="5")]
+    pub message_received: ::std::collections::HashMap<i32, CounterInfo>,
+}
+/// CounterInfo holds data regarding byte and bundle counts.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CounterInfo {
+    /// Total number of bytes.
+    #[prost(uint64, tag="1")]
+    pub bytes: u64,
+    /// Total number of bundles.
+    #[prost(uint64, tag="2")]
+    pub bundles: u64,
 }
 /// Request message for sign message with private key.
 #[allow(clippy::derive_partial_eq_without_eq)]
