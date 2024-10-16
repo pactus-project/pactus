@@ -34,7 +34,7 @@ type Info struct {
 	WalletName string
 	Version    int64
 	Network    string
-	Uuid       string
+	UUID       string
 	Encrypted  bool
 	Crc        uint32
 	CreatedAt  time.Time

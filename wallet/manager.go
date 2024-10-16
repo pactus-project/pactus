@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"fmt"
-	"github.com/pactus-project/pactus/util/logger"
 	"path/filepath"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -11,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet/vault"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -256,7 +256,7 @@ func (wm *Manager) GetWalletInfo(walletName string) (Info, error) {
 		WalletName: walletName,
 		Version:    int64(wlt.store.Version),
 		Network:    wlt.store.Network.String(),
-		Uuid:       wlt.store.UUID.String(),
+		UUID:       wlt.store.UUID.String(),
 		Encrypted:  wlt.IsEncrypted(),
 		Crc:        wlt.store.VaultCRC,
 		CreatedAt:  wlt.store.CreatedAt,
@@ -275,6 +275,7 @@ func (wm *Manager) ListWallet() ([]string, error) {
 		_, err = Open(f, true)
 		if err != nil {
 			logger.Warn(fmt.Sprintf("file %s is not wallet", f))
+
 			continue
 		}
 

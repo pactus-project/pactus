@@ -240,7 +240,8 @@ func (s *walletServer) SetAddressLabel(_ context.Context,
 }
 
 func (s *walletServer) ListWallet(_ context.Context,
-	_ *pactus.ListWalletRequest) (*pactus.ListWalletResponse, error) {
+	_ *pactus.ListWalletRequest,
+) (*pactus.ListWalletResponse, error) {
 	wallets, err := s.walletManager.ListWallet()
 	if err != nil {
 		return nil, err
@@ -252,7 +253,8 @@ func (s *walletServer) ListWallet(_ context.Context,
 }
 
 func (s *walletServer) GetWalletInfo(_ context.Context,
-	req *pactus.GetWalletInfoRequest) (*pactus.GetWalletInfoResponse, error) {
+	req *pactus.GetWalletInfoRequest,
+) (*pactus.GetWalletInfoResponse, error) {
 	info, err := s.walletManager.GetWalletInfo(req.WalletName)
 	if err != nil {
 		return nil, err
@@ -263,14 +265,15 @@ func (s *walletServer) GetWalletInfo(_ context.Context,
 		Version:    info.Version,
 		Network:    info.Network,
 		Encrypted:  info.Encrypted,
-		Uuid:       info.Uuid,
+		Uuid:       info.UUID,
 		Crc:        info.Crc,
 		CreatedAt:  info.CreatedAt.Unix(),
 	}, nil
 }
 
 func (s *walletServer) ListAddress(_ context.Context,
-	req *pactus.ListAddressRequest) (*pactus.ListAddressResponse, error) {
+	req *pactus.ListAddressRequest,
+) (*pactus.ListAddressResponse, error) {
 	addrs, err := s.walletManager.ListAddress(req.WalletName)
 	if err != nil {
 		return nil, err

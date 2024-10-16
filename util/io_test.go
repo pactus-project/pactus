@@ -2,7 +2,6 @@ package util
 
 import (
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -11,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const invalidDirName = "/invalid:path/\x00*folder?\\CON"

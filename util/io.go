@@ -248,7 +248,6 @@ func ListFilesInDir(dir string) ([]string, error) {
 
 		return nil
 	})
-
 	if err != nil {
 		return nil, err
 	}
