@@ -148,7 +148,7 @@ func (f *Firewall) openBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error)
 	return bdl, nil
 }
 
-func (f *Firewall) decodeBundle(r io.Reader) (*bundle.Bundle, int, error) {
+func (*Firewall) decodeBundle(r io.Reader) (*bundle.Bundle, int, error) {
 	bdl := new(bundle.Bundle)
 	bytesRead, err := bdl.Decode(r)
 	if err != nil {

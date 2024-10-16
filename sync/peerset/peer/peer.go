@@ -34,11 +34,11 @@ type Peer struct {
 
 func NewPeer(peerID ID) *Peer {
 	return &Peer{
-		ConsensusKeys:   make([]*bls.PublicKey, 0),
-		Status:          status.StatusUnknown,
-		PeerID:          peerID,
-		Metric:          metric.NewMetric(),
-		Protocols:       make([]string, 0),
+		ConsensusKeys: make([]*bls.PublicKey, 0),
+		Status:        status.StatusUnknown,
+		PeerID:        peerID,
+		Metric:        metric.NewMetric(),
+		Protocols:     make([]string, 0),
 	}
 }
 

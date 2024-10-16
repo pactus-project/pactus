@@ -43,5 +43,4 @@ func TestUpdateInvalidMetric(t *testing.T) {
 	metric.UpdateInvalidMetric(123)
 	assert.Equal(t, int64(1), metric.TotalInvalid.Bundles)
 	assert.Equal(t, int64(123), metric.TotalInvalid.Bytes)
-
 }
