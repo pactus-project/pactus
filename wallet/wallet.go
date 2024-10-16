@@ -30,6 +30,16 @@ type Wallet struct {
 	grpcClient *grpcClient
 }
 
+type Info struct {
+	WalletName string
+	Version    int64
+	Network    string
+	Uuid       string
+	Encrypted  bool
+	Crc        uint32
+	CreatedAt  time.Time
+}
+
 //go:embed servers.json
 var serversJSON []byte
 
