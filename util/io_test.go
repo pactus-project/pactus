@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/require"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -211,4 +212,21 @@ func TestSanitizeArchivePath(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestListFilesInDir(t *testing.T) {
+	tmpDir := TempDirPath()
+
+	file1, err := os.Create(filepath.Join(tmpDir, "file1.txt"))
+	require.NoError(t, err)
+	require.NoError(t, file1.Close())
+
+	file2, err := os.Create(filepath.Join(tmpDir, "file2.txt"))
+	require.NoError(t, err)
+	require.NoError(t, file2.Close())
+
+	files, err := ListFilesInDir(tmpDir)
+	require.NoError(t, err)
+
+	assert.Len(t, files, 2)
 }
