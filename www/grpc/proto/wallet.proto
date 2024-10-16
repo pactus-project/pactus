@@ -44,6 +44,24 @@ service Wallet {
   // SignMessage signs an arbitrary message.
   rpc SignMessage(SignMessageRequest)
       returns (SignMessageResponse);
+
+  // GetTotalStake return total stake of wallet.
+  rpc GetTotalStake(GetTotalStakeRequest) returns(GetTotalStakeResponse);
+
+  // GetAddressInfo return address information.
+  rpc GetAddressInfo(GetAddressInfoRequest) returns(GetAddressInfoResponse);
+
+  // SetAddressLabel set label for given address.
+  rpc SetAddressLabel(SetLabelRequest) returns(SetLabelResponse);
+
+  // ListWallet return list wallet name.
+  rpc ListWallet(ListWalletRequest) returns(ListWalletResponse);
+
+  // GetWalletInfo return wallet information.
+  rpc GetWalletInfo(GetWalletInfoRequest) returns(GetWalletInfoResponse);
+
+  // ListAddress return list address in wallet.
+  rpc ListAddress(ListAddressRequest) returns(ListAddressResponse);
   }
 
 // Enum for the address type.
@@ -236,4 +254,77 @@ message SignMessageRequest {
 message SignMessageResponse {
   // Signature of the message.
   string signature = 1;
+}
+
+// Request message for get total of stake.
+message GetTotalStakeRequest {
+  // The name of the wallet.
+  string wallet_name = 1;
+}
+
+// Response return total stake in wallet.
+message GetTotalStakeResponse {
+  int64 total_stake = 1;
+  string wallet_name = 2;
+}
+
+// Request get address information.
+message GetAddressInfoRequest {
+  // The name of the wallet to generate a new address.
+  string wallet_name = 1;
+  string address = 2;
+}
+
+// Response return address information.
+message GetAddressInfoResponse {
+  string address = 1;
+  string label = 2;
+  string public_key = 3;
+  string path = 4;
+  string wallet_name = 5;
+}
+
+// Request update label an address.
+message SetLabelRequest {
+  // The name of the wallet to generate a new address.
+  string wallet_name = 1;
+  // The password for unlocking the wallet for signing.
+  string password = 3;
+  string address = 4;
+  string label = 5;
+}
+
+// Response return empty response.
+message SetLabelResponse {}
+
+message ListWalletRequest {}
+
+// Response return list wallet name.
+message ListWalletResponse {
+  repeated string wallets = 1;
+}
+
+// Request get wallet information.
+message GetWalletInfoRequest {
+  string wallet_name = 1;
+}
+
+// Response return wallet information.
+message GetWalletInfoResponse {
+  string wallet_name = 1;
+  int64 version = 2;
+  string network = 3;
+  bool encrypted = 4;
+  string uuid = 5;
+  int64 created_at = 6;
+}
+
+// Request get list of addresses in wallet.
+message ListAddressRequest {
+  string wallet_name = 1;
+}
+
+// Response return list addresses.
+message ListAddressResponse {
+  repeated AddressInfo data = 1;
 }

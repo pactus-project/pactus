@@ -232,3 +232,25 @@ func SanitizeArchivePath(baseDir, archivePath string) (fullPath string, err erro
 
 	return "", fmt.Errorf("%s: %s", "content filepath is tainted", archivePath)
 }
+
+// ListFilesInDir return list of files in directory.
+func ListFilesInDir(dir string) ([]string, error) {
+	files := make([]string, 0)
+
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() {
+			files = append(files, path)
+		}
+
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return files, nil
+}

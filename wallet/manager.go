@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"fmt"
 	"path/filepath"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -9,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet/vault"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -117,6 +119,15 @@ func (wm *Manager) TotalBalance(
 	return wlt.TotalBalance()
 }
 
+func (wm *Manager) TotalStake(walletName string) (amount.Amount, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return 0, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	return wlt.TotalStake()
+}
+
 func (wm *Manager) SignRawTransaction(
 	walletName, password string, rawTx []byte,
 ) ([]byte, []byte, error) {
@@ -210,4 +221,67 @@ func (wm *Manager) SignMessage(walletName, password, addr, msg string) (string, 
 	}
 
 	return wlt.SignMessage(password, addr, msg)
+}
+
+func (wm *Manager) GetAddressInfo(walletName, address string) (*vault.AddressInfo, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	return wlt.AddressInfo(address), nil
+}
+
+func (wm *Manager) SetAddressLabel(walletName, address, label string) error {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	err := wlt.SetLabel(address, label)
+	if err != nil {
+		return status.Error(codes.NotFound, err.Error())
+	}
+
+	return wlt.Save()
+}
+
+func (wm *Manager) WalletInfo(walletName string) (*Info, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	return wlt.Info(), nil
+}
+
+func (wm *Manager) ListWallet() ([]string, error) {
+	wallets := make([]string, 0)
+
+	files, err := util.ListFilesInDir(wm.walletDirectory)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, f := range files {
+		_, err = Open(f, true)
+		if err != nil {
+			logger.Warn(fmt.Sprintf("file %s is not wallet", f))
+
+			continue
+		}
+
+		wallets = append(wallets, filepath.Base(f))
+	}
+
+	return wallets, nil
+}
+
+func (wm *Manager) ListAddress(walletName string) ([]vault.AddressInfo, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+	}
+
+	return wlt.AddressInfos(), nil
 }

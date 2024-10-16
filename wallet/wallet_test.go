@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
@@ -616,4 +617,32 @@ func TestTotalBalance(t *testing.T) {
 	totalBalance, err := td.wallet.TotalBalance()
 	assert.NoError(t, err)
 	assert.Equal(t, totalBalance, acc1.Balance()+acc3.Balance())
+}
+
+func TestTotalStake(t *testing.T) {
+	td := setup(t)
+	defer td.Close()
+
+	addrInfo1, _ := td.wallet.NewValidatorAddress("val-1")
+	addrInfo2, _ := td.wallet.NewValidatorAddress("val-2")
+
+	addr1, _ := crypto.AddressFromString(addrInfo1.Address)
+	addr3, _ := crypto.AddressFromString(addrInfo2.Address)
+
+	pub1, _ := bls.PublicKeyFromString(addrInfo1.PublicKey)
+	pub2, _ := bls.PublicKeyFromString(addrInfo2.PublicKey)
+
+	val1 := validator.NewValidator(pub1, 1)
+	val2 := validator.NewValidator(pub2, 2)
+
+	td.mockState.TestStore.Validators[addr1] = val1
+	td.mockState.TestStore.Validators[addr3] = val2
+
+	val1.AddToStake(td.RandAmount())
+	val2.AddToStake(td.RandAmount())
+
+	stake, err := td.wallet.TotalStake()
+	require.NoError(t, err)
+
+	require.Equal(t, stake, val1.Stake()+val2.Stake())
 }

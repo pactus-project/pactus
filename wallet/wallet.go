@@ -30,6 +30,15 @@ type Wallet struct {
 	grpcClient *grpcClient
 }
 
+type Info struct {
+	WalletName string
+	Version    int64
+	Network    string
+	UUID       string
+	Encrypted  bool
+	CreatedAt  time.Time
+}
+
 //go:embed servers.json
 var serversJSON []byte
 
@@ -230,6 +239,21 @@ func (w *Wallet) TotalBalance() (amount.Amount, error) {
 	}
 
 	return amount.Amount(totalBalance), nil
+}
+
+// TotalStake return total available stake of the wallet.
+func (w *Wallet) TotalStake() (amount.Amount, error) {
+	totalStake := int64(0)
+
+	infos := w.store.Vault.AllValidatorAddresses()
+	for _, info := range infos {
+		val, _ := w.grpcClient.getValidator(info.Address)
+		if val != nil {
+			totalStake += val.Stake
+		}
+	}
+
+	return amount.Amount(totalStake), nil
 }
 
 // MakeTransferTx creates a new transfer transaction based on the given parameters.
@@ -513,4 +537,15 @@ func (w *Wallet) CreationTime() time.Time {
 
 func (w *Wallet) Network() genesis.ChainType {
 	return w.store.Network
+}
+
+func (w *Wallet) Info() *Info {
+	return &Info{
+		WalletName: w.Name(),
+		Version:    int64(w.store.Version),
+		Network:    w.store.Network.String(),
+		UUID:       w.store.UUID.String(),
+		Encrypted:  w.IsEncrypted(),
+		CreatedAt:  w.store.CreatedAt,
+	}
 }

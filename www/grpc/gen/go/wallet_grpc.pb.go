@@ -31,6 +31,12 @@ const (
 	Wallet_GetNewAddress_FullMethodName       = "/pactus.Wallet/GetNewAddress"
 	Wallet_GetAddressHistory_FullMethodName   = "/pactus.Wallet/GetAddressHistory"
 	Wallet_SignMessage_FullMethodName         = "/pactus.Wallet/SignMessage"
+	Wallet_GetTotalStake_FullMethodName       = "/pactus.Wallet/GetTotalStake"
+	Wallet_GetAddressInfo_FullMethodName      = "/pactus.Wallet/GetAddressInfo"
+	Wallet_SetAddressLabel_FullMethodName     = "/pactus.Wallet/SetAddressLabel"
+	Wallet_ListWallet_FullMethodName          = "/pactus.Wallet/ListWallet"
+	Wallet_GetWalletInfo_FullMethodName       = "/pactus.Wallet/WalletInfo"
+	Wallet_ListAddress_FullMethodName         = "/pactus.Wallet/ListAddress"
 )
 
 // WalletClient is the client API for Wallet service.
@@ -60,6 +66,18 @@ type WalletClient interface {
 	GetAddressHistory(ctx context.Context, in *GetAddressHistoryRequest, opts ...grpc.CallOption) (*GetAddressHistoryResponse, error)
 	// SignMessage signs an arbitrary message.
 	SignMessage(ctx context.Context, in *SignMessageRequest, opts ...grpc.CallOption) (*SignMessageResponse, error)
+	// GetTotalStake return total stake of wallet.
+	GetTotalStake(ctx context.Context, in *GetTotalStakeRequest, opts ...grpc.CallOption) (*GetTotalStakeResponse, error)
+	// GetAddressInfo return address information.
+	GetAddressInfo(ctx context.Context, in *GetAddressInfoRequest, opts ...grpc.CallOption) (*GetAddressInfoResponse, error)
+	// SetAddressLabel set label for given address.
+	SetAddressLabel(ctx context.Context, in *SetLabelRequest, opts ...grpc.CallOption) (*SetLabelResponse, error)
+	// ListWallet return list wallet name.
+	ListWallet(ctx context.Context, in *ListWalletRequest, opts ...grpc.CallOption) (*ListWalletResponse, error)
+	// GetWalletInfo return wallet information.
+	GetWalletInfo(ctx context.Context, in *GetWalletInfoRequest, opts ...grpc.CallOption) (*GetWalletInfoResponse, error)
+	// ListAddress return list address in wallet.
+	ListAddress(ctx context.Context, in *ListAddressRequest, opts ...grpc.CallOption) (*ListAddressResponse, error)
 }
 
 type walletClient struct {
@@ -170,6 +188,66 @@ func (c *walletClient) SignMessage(ctx context.Context, in *SignMessageRequest, 
 	return out, nil
 }
 
+func (c *walletClient) GetTotalStake(ctx context.Context, in *GetTotalStakeRequest, opts ...grpc.CallOption) (*GetTotalStakeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetTotalStakeResponse)
+	err := c.cc.Invoke(ctx, Wallet_GetTotalStake_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) GetAddressInfo(ctx context.Context, in *GetAddressInfoRequest, opts ...grpc.CallOption) (*GetAddressInfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetAddressInfoResponse)
+	err := c.cc.Invoke(ctx, Wallet_GetAddressInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) SetAddressLabel(ctx context.Context, in *SetLabelRequest, opts ...grpc.CallOption) (*SetLabelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetLabelResponse)
+	err := c.cc.Invoke(ctx, Wallet_SetAddressLabel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) ListWallet(ctx context.Context, in *ListWalletRequest, opts ...grpc.CallOption) (*ListWalletResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListWalletResponse)
+	err := c.cc.Invoke(ctx, Wallet_ListWallet_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) GetWalletInfo(ctx context.Context, in *GetWalletInfoRequest, opts ...grpc.CallOption) (*GetWalletInfoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetWalletInfoResponse)
+	err := c.cc.Invoke(ctx, Wallet_GetWalletInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) ListAddress(ctx context.Context, in *ListAddressRequest, opts ...grpc.CallOption) (*ListAddressResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAddressResponse)
+	err := c.cc.Invoke(ctx, Wallet_ListAddress_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletServer is the server API for Wallet service.
 // All implementations should embed UnimplementedWalletServer
 // for forward compatibility
@@ -197,6 +275,18 @@ type WalletServer interface {
 	GetAddressHistory(context.Context, *GetAddressHistoryRequest) (*GetAddressHistoryResponse, error)
 	// SignMessage signs an arbitrary message.
 	SignMessage(context.Context, *SignMessageRequest) (*SignMessageResponse, error)
+	// GetTotalStake return total stake of wallet.
+	GetTotalStake(context.Context, *GetTotalStakeRequest) (*GetTotalStakeResponse, error)
+	// GetAddressInfo return address information.
+	GetAddressInfo(context.Context, *GetAddressInfoRequest) (*GetAddressInfoResponse, error)
+	// SetAddressLabel set label for given address.
+	SetAddressLabel(context.Context, *SetLabelRequest) (*SetLabelResponse, error)
+	// ListWallet return list wallet name.
+	ListWallet(context.Context, *ListWalletRequest) (*ListWalletResponse, error)
+	// GetWalletInfo return wallet information.
+	GetWalletInfo(context.Context, *GetWalletInfoRequest) (*GetWalletInfoResponse, error)
+	// ListAddress return list address in wallet.
+	ListAddress(context.Context, *ListAddressRequest) (*ListAddressResponse, error)
 }
 
 // UnimplementedWalletServer should be embedded to have forward compatible implementations.
@@ -232,6 +322,24 @@ func (UnimplementedWalletServer) GetAddressHistory(context.Context, *GetAddressH
 }
 func (UnimplementedWalletServer) SignMessage(context.Context, *SignMessageRequest) (*SignMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignMessage not implemented")
+}
+func (UnimplementedWalletServer) GetTotalStake(context.Context, *GetTotalStakeRequest) (*GetTotalStakeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTotalStake not implemented")
+}
+func (UnimplementedWalletServer) GetAddressInfo(context.Context, *GetAddressInfoRequest) (*GetAddressInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAddressInfo not implemented")
+}
+func (UnimplementedWalletServer) SetAddressLabel(context.Context, *SetLabelRequest) (*SetLabelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetAddressLabel not implemented")
+}
+func (UnimplementedWalletServer) ListWallet(context.Context, *ListWalletRequest) (*ListWalletResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListWallet not implemented")
+}
+func (UnimplementedWalletServer) GetWalletInfo(context.Context, *GetWalletInfoRequest) (*GetWalletInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WalletInfo not implemented")
+}
+func (UnimplementedWalletServer) ListAddress(context.Context, *ListAddressRequest) (*ListAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAddress not implemented")
 }
 
 // UnsafeWalletServer may be embedded to opt out of forward compatibility for this service.
@@ -425,6 +533,114 @@ func _Wallet_SignMessage_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Wallet_GetTotalStake_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTotalStakeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).GetTotalStake(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_GetTotalStake_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).GetTotalStake(ctx, req.(*GetTotalStakeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_GetAddressInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAddressInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).GetAddressInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_GetAddressInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).GetAddressInfo(ctx, req.(*GetAddressInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_SetAddressLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetLabelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).SetAddressLabel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_SetAddressLabel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).SetAddressLabel(ctx, req.(*SetLabelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_ListWallet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListWalletRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).ListWallet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_ListWallet_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).ListWallet(ctx, req.(*ListWalletRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_GetWalletInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetWalletInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).GetWalletInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_GetWalletInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).GetWalletInfo(ctx, req.(*GetWalletInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_ListAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAddressRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).ListAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_ListAddress_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).ListAddress(ctx, req.(*ListAddressRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Wallet_ServiceDesc is the grpc.ServiceDesc for Wallet service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -471,6 +687,30 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SignMessage",
 			Handler:    _Wallet_SignMessage_Handler,
+		},
+		{
+			MethodName: "GetTotalStake",
+			Handler:    _Wallet_GetTotalStake_Handler,
+		},
+		{
+			MethodName: "GetAddressInfo",
+			Handler:    _Wallet_GetAddressInfo_Handler,
+		},
+		{
+			MethodName: "SetAddressLabel",
+			Handler:    _Wallet_SetAddressLabel_Handler,
+		},
+		{
+			MethodName: "ListWallet",
+			Handler:    _Wallet_ListWallet_Handler,
+		},
+		{
+			MethodName: "WalletInfo",
+			Handler:    _Wallet_GetWalletInfo_Handler,
+		},
+		{
+			MethodName: "ListAddress",
+			Handler:    _Wallet_ListAddress_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

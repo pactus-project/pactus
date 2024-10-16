@@ -328,6 +328,192 @@ public final class WalletGrpc {
     return getSignMessageMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetTotalStakeRequest,
+      pactus.wallet.WalletOuterClass.GetTotalStakeResponse> getGetTotalStakeMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetTotalStake",
+      requestType = pactus.wallet.WalletOuterClass.GetTotalStakeRequest.class,
+      responseType = pactus.wallet.WalletOuterClass.GetTotalStakeResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetTotalStakeRequest,
+      pactus.wallet.WalletOuterClass.GetTotalStakeResponse> getGetTotalStakeMethod() {
+    io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetTotalStakeRequest, pactus.wallet.WalletOuterClass.GetTotalStakeResponse> getGetTotalStakeMethod;
+    if ((getGetTotalStakeMethod = WalletGrpc.getGetTotalStakeMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getGetTotalStakeMethod = WalletGrpc.getGetTotalStakeMethod) == null) {
+          WalletGrpc.getGetTotalStakeMethod = getGetTotalStakeMethod =
+              io.grpc.MethodDescriptor.<pactus.wallet.WalletOuterClass.GetTotalStakeRequest, pactus.wallet.WalletOuterClass.GetTotalStakeResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetTotalStake"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.GetTotalStakeRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.GetTotalStakeResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("GetTotalStake"))
+              .build();
+        }
+      }
+    }
+    return getGetTotalStakeMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetAddressInfoRequest,
+      pactus.wallet.WalletOuterClass.GetAddressInfoResponse> getGetAddressInfoMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetAddressInfo",
+      requestType = pactus.wallet.WalletOuterClass.GetAddressInfoRequest.class,
+      responseType = pactus.wallet.WalletOuterClass.GetAddressInfoResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetAddressInfoRequest,
+      pactus.wallet.WalletOuterClass.GetAddressInfoResponse> getGetAddressInfoMethod() {
+    io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetAddressInfoRequest, pactus.wallet.WalletOuterClass.GetAddressInfoResponse> getGetAddressInfoMethod;
+    if ((getGetAddressInfoMethod = WalletGrpc.getGetAddressInfoMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getGetAddressInfoMethod = WalletGrpc.getGetAddressInfoMethod) == null) {
+          WalletGrpc.getGetAddressInfoMethod = getGetAddressInfoMethod =
+              io.grpc.MethodDescriptor.<pactus.wallet.WalletOuterClass.GetAddressInfoRequest, pactus.wallet.WalletOuterClass.GetAddressInfoResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAddressInfo"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.GetAddressInfoRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.GetAddressInfoResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("GetAddressInfo"))
+              .build();
+        }
+      }
+    }
+    return getGetAddressInfoMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.SetLabelRequest,
+      pactus.wallet.WalletOuterClass.SetLabelResponse> getSetAddressLabelMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "SetAddressLabel",
+      requestType = pactus.wallet.WalletOuterClass.SetLabelRequest.class,
+      responseType = pactus.wallet.WalletOuterClass.SetLabelResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.SetLabelRequest,
+      pactus.wallet.WalletOuterClass.SetLabelResponse> getSetAddressLabelMethod() {
+    io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.SetLabelRequest, pactus.wallet.WalletOuterClass.SetLabelResponse> getSetAddressLabelMethod;
+    if ((getSetAddressLabelMethod = WalletGrpc.getSetAddressLabelMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getSetAddressLabelMethod = WalletGrpc.getSetAddressLabelMethod) == null) {
+          WalletGrpc.getSetAddressLabelMethod = getSetAddressLabelMethod =
+              io.grpc.MethodDescriptor.<pactus.wallet.WalletOuterClass.SetLabelRequest, pactus.wallet.WalletOuterClass.SetLabelResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "SetAddressLabel"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.SetLabelRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.SetLabelResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("SetAddressLabel"))
+              .build();
+        }
+      }
+    }
+    return getSetAddressLabelMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.ListWalletRequest,
+      pactus.wallet.WalletOuterClass.ListWalletResponse> getListWalletMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ListWallet",
+      requestType = pactus.wallet.WalletOuterClass.ListWalletRequest.class,
+      responseType = pactus.wallet.WalletOuterClass.ListWalletResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.ListWalletRequest,
+      pactus.wallet.WalletOuterClass.ListWalletResponse> getListWalletMethod() {
+    io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.ListWalletRequest, pactus.wallet.WalletOuterClass.ListWalletResponse> getListWalletMethod;
+    if ((getListWalletMethod = WalletGrpc.getListWalletMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getListWalletMethod = WalletGrpc.getListWalletMethod) == null) {
+          WalletGrpc.getListWalletMethod = getListWalletMethod =
+              io.grpc.MethodDescriptor.<pactus.wallet.WalletOuterClass.ListWalletRequest, pactus.wallet.WalletOuterClass.ListWalletResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ListWallet"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.ListWalletRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.ListWalletResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("ListWallet"))
+              .build();
+        }
+      }
+    }
+    return getListWalletMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetWalletInfoRequest,
+      pactus.wallet.WalletOuterClass.GetWalletInfoResponse> getGetWalletInfoMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "GetWalletInfo",
+      requestType = pactus.wallet.WalletOuterClass.GetWalletInfoRequest.class,
+      responseType = pactus.wallet.WalletOuterClass.GetWalletInfoResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetWalletInfoRequest,
+      pactus.wallet.WalletOuterClass.GetWalletInfoResponse> getGetWalletInfoMethod() {
+    io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.GetWalletInfoRequest, pactus.wallet.WalletOuterClass.GetWalletInfoResponse> getGetWalletInfoMethod;
+    if ((getGetWalletInfoMethod = WalletGrpc.getGetWalletInfoMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getGetWalletInfoMethod = WalletGrpc.getGetWalletInfoMethod) == null) {
+          WalletGrpc.getGetWalletInfoMethod = getGetWalletInfoMethod =
+              io.grpc.MethodDescriptor.<pactus.wallet.WalletOuterClass.GetWalletInfoRequest, pactus.wallet.WalletOuterClass.GetWalletInfoResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetWalletInfo"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.GetWalletInfoRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.GetWalletInfoResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("GetWalletInfo"))
+              .build();
+        }
+      }
+    }
+    return getGetWalletInfoMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.ListAddressRequest,
+      pactus.wallet.WalletOuterClass.ListAddressResponse> getListAddressMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "ListAddress",
+      requestType = pactus.wallet.WalletOuterClass.ListAddressRequest.class,
+      responseType = pactus.wallet.WalletOuterClass.ListAddressResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.ListAddressRequest,
+      pactus.wallet.WalletOuterClass.ListAddressResponse> getListAddressMethod() {
+    io.grpc.MethodDescriptor<pactus.wallet.WalletOuterClass.ListAddressRequest, pactus.wallet.WalletOuterClass.ListAddressResponse> getListAddressMethod;
+    if ((getListAddressMethod = WalletGrpc.getListAddressMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getListAddressMethod = WalletGrpc.getListAddressMethod) == null) {
+          WalletGrpc.getListAddressMethod = getListAddressMethod =
+              io.grpc.MethodDescriptor.<pactus.wallet.WalletOuterClass.ListAddressRequest, pactus.wallet.WalletOuterClass.ListAddressResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ListAddress"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.ListAddressRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.wallet.WalletOuterClass.ListAddressResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("ListAddress"))
+              .build();
+        }
+      }
+    }
+    return getListAddressMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -480,6 +666,66 @@ public final class WalletGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSignMessageMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * GetTotalStake return total stake of wallet.
+     * </pre>
+     */
+    public void getTotalStake(pactus.wallet.WalletOuterClass.GetTotalStakeRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetTotalStakeResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetTotalStakeMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * GetAddressInfo return address information.
+     * </pre>
+     */
+    public void getAddressInfo(pactus.wallet.WalletOuterClass.GetAddressInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetAddressInfoResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAddressInfoMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * SetAddressLabel set label for given address.
+     * </pre>
+     */
+    public void setAddressLabel(pactus.wallet.WalletOuterClass.SetLabelRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.SetLabelResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSetAddressLabelMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * ListWallet return list wallet name.
+     * </pre>
+     */
+    public void listWallet(pactus.wallet.WalletOuterClass.ListWalletRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.ListWalletResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListWalletMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * GetWalletInfo return wallet information.
+     * </pre>
+     */
+    public void getWalletInfo(pactus.wallet.WalletOuterClass.GetWalletInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetWalletInfoResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetWalletInfoMethod(), responseObserver);
+    }
+
+    /**
+     * <pre>
+     * ListAddress return list address in wallet.
+     * </pre>
+     */
+    public void listAddress(pactus.wallet.WalletOuterClass.ListAddressRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.ListAddressResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListAddressMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -552,6 +798,48 @@ public final class WalletGrpc {
                 pactus.wallet.WalletOuterClass.SignMessageRequest,
                 pactus.wallet.WalletOuterClass.SignMessageResponse>(
                   this, METHODID_SIGN_MESSAGE)))
+          .addMethod(
+            getGetTotalStakeMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.wallet.WalletOuterClass.GetTotalStakeRequest,
+                pactus.wallet.WalletOuterClass.GetTotalStakeResponse>(
+                  this, METHODID_GET_TOTAL_STAKE)))
+          .addMethod(
+            getGetAddressInfoMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.wallet.WalletOuterClass.GetAddressInfoRequest,
+                pactus.wallet.WalletOuterClass.GetAddressInfoResponse>(
+                  this, METHODID_GET_ADDRESS_INFO)))
+          .addMethod(
+            getSetAddressLabelMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.wallet.WalletOuterClass.SetLabelRequest,
+                pactus.wallet.WalletOuterClass.SetLabelResponse>(
+                  this, METHODID_SET_ADDRESS_LABEL)))
+          .addMethod(
+            getListWalletMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.wallet.WalletOuterClass.ListWalletRequest,
+                pactus.wallet.WalletOuterClass.ListWalletResponse>(
+                  this, METHODID_LIST_WALLET)))
+          .addMethod(
+            getGetWalletInfoMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.wallet.WalletOuterClass.GetWalletInfoRequest,
+                pactus.wallet.WalletOuterClass.GetWalletInfoResponse>(
+                  this, METHODID_GET_WALLET_INFO)))
+          .addMethod(
+            getListAddressMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.wallet.WalletOuterClass.ListAddressRequest,
+                pactus.wallet.WalletOuterClass.ListAddressResponse>(
+                  this, METHODID_LIST_ADDRESS)))
           .build();
     }
   }
@@ -683,6 +971,72 @@ public final class WalletGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSignMessageMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * GetTotalStake return total stake of wallet.
+     * </pre>
+     */
+    public void getTotalStake(pactus.wallet.WalletOuterClass.GetTotalStakeRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetTotalStakeResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetTotalStakeMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * GetAddressInfo return address information.
+     * </pre>
+     */
+    public void getAddressInfo(pactus.wallet.WalletOuterClass.GetAddressInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetAddressInfoResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetAddressInfoMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * SetAddressLabel set label for given address.
+     * </pre>
+     */
+    public void setAddressLabel(pactus.wallet.WalletOuterClass.SetLabelRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.SetLabelResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getSetAddressLabelMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * ListWallet return list wallet name.
+     * </pre>
+     */
+    public void listWallet(pactus.wallet.WalletOuterClass.ListWalletRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.ListWalletResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getListWalletMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * GetWalletInfo return wallet information.
+     * </pre>
+     */
+    public void getWalletInfo(pactus.wallet.WalletOuterClass.GetWalletInfoRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetWalletInfoResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getGetWalletInfoMethod(), getCallOptions()), request, responseObserver);
+    }
+
+    /**
+     * <pre>
+     * ListAddress return list address in wallet.
+     * </pre>
+     */
+    public void listAddress(pactus.wallet.WalletOuterClass.ListAddressRequest request,
+        io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.ListAddressResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getListAddressMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -801,6 +1155,66 @@ public final class WalletGrpc {
     public pactus.wallet.WalletOuterClass.SignMessageResponse signMessage(pactus.wallet.WalletOuterClass.SignMessageRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSignMessageMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * GetTotalStake return total stake of wallet.
+     * </pre>
+     */
+    public pactus.wallet.WalletOuterClass.GetTotalStakeResponse getTotalStake(pactus.wallet.WalletOuterClass.GetTotalStakeRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetTotalStakeMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * GetAddressInfo return address information.
+     * </pre>
+     */
+    public pactus.wallet.WalletOuterClass.GetAddressInfoResponse getAddressInfo(pactus.wallet.WalletOuterClass.GetAddressInfoRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetAddressInfoMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * SetAddressLabel set label for given address.
+     * </pre>
+     */
+    public pactus.wallet.WalletOuterClass.SetLabelResponse setAddressLabel(pactus.wallet.WalletOuterClass.SetLabelRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getSetAddressLabelMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * ListWallet return list wallet name.
+     * </pre>
+     */
+    public pactus.wallet.WalletOuterClass.ListWalletResponse listWallet(pactus.wallet.WalletOuterClass.ListWalletRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getListWalletMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * GetWalletInfo return wallet information.
+     * </pre>
+     */
+    public pactus.wallet.WalletOuterClass.GetWalletInfoResponse getWalletInfo(pactus.wallet.WalletOuterClass.GetWalletInfoRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getGetWalletInfoMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * ListAddress return list address in wallet.
+     * </pre>
+     */
+    public pactus.wallet.WalletOuterClass.ListAddressResponse listAddress(pactus.wallet.WalletOuterClass.ListAddressRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getListAddressMethod(), getCallOptions(), request);
     }
   }
 
@@ -931,6 +1345,72 @@ public final class WalletGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSignMessageMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * GetTotalStake return total stake of wallet.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.GetTotalStakeResponse> getTotalStake(
+        pactus.wallet.WalletOuterClass.GetTotalStakeRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetTotalStakeMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * GetAddressInfo return address information.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.GetAddressInfoResponse> getAddressInfo(
+        pactus.wallet.WalletOuterClass.GetAddressInfoRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetAddressInfoMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * SetAddressLabel set label for given address.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.SetLabelResponse> setAddressLabel(
+        pactus.wallet.WalletOuterClass.SetLabelRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getSetAddressLabelMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * ListWallet return list wallet name.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.ListWalletResponse> listWallet(
+        pactus.wallet.WalletOuterClass.ListWalletRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getListWalletMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * GetWalletInfo return wallet information.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.GetWalletInfoResponse> getWalletInfo(
+        pactus.wallet.WalletOuterClass.GetWalletInfoRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getGetWalletInfoMethod(), getCallOptions()), request);
+    }
+
+    /**
+     * <pre>
+     * ListAddress return list address in wallet.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.wallet.WalletOuterClass.ListAddressResponse> listAddress(
+        pactus.wallet.WalletOuterClass.ListAddressRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getListAddressMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_WALLET = 0;
@@ -943,6 +1423,12 @@ public final class WalletGrpc {
   private static final int METHODID_GET_NEW_ADDRESS = 7;
   private static final int METHODID_GET_ADDRESS_HISTORY = 8;
   private static final int METHODID_SIGN_MESSAGE = 9;
+  private static final int METHODID_GET_TOTAL_STAKE = 10;
+  private static final int METHODID_GET_ADDRESS_INFO = 11;
+  private static final int METHODID_SET_ADDRESS_LABEL = 12;
+  private static final int METHODID_LIST_WALLET = 13;
+  private static final int METHODID_GET_WALLET_INFO = 14;
+  private static final int METHODID_LIST_ADDRESS = 15;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1000,6 +1486,30 @@ public final class WalletGrpc {
         case METHODID_SIGN_MESSAGE:
           serviceImpl.signMessage((pactus.wallet.WalletOuterClass.SignMessageRequest) request,
               (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.SignMessageResponse>) responseObserver);
+          break;
+        case METHODID_GET_TOTAL_STAKE:
+          serviceImpl.getTotalStake((pactus.wallet.WalletOuterClass.GetTotalStakeRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetTotalStakeResponse>) responseObserver);
+          break;
+        case METHODID_GET_ADDRESS_INFO:
+          serviceImpl.getAddressInfo((pactus.wallet.WalletOuterClass.GetAddressInfoRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetAddressInfoResponse>) responseObserver);
+          break;
+        case METHODID_SET_ADDRESS_LABEL:
+          serviceImpl.setAddressLabel((pactus.wallet.WalletOuterClass.SetLabelRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.SetLabelResponse>) responseObserver);
+          break;
+        case METHODID_LIST_WALLET:
+          serviceImpl.listWallet((pactus.wallet.WalletOuterClass.ListWalletRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.ListWalletResponse>) responseObserver);
+          break;
+        case METHODID_GET_WALLET_INFO:
+          serviceImpl.getWalletInfo((pactus.wallet.WalletOuterClass.GetWalletInfoRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.GetWalletInfoResponse>) responseObserver);
+          break;
+        case METHODID_LIST_ADDRESS:
+          serviceImpl.listAddress((pactus.wallet.WalletOuterClass.ListAddressRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.wallet.WalletOuterClass.ListAddressResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1072,6 +1582,12 @@ public final class WalletGrpc {
               .addMethod(getGetNewAddressMethod())
               .addMethod(getGetAddressHistoryMethod())
               .addMethod(getSignMessageMethod())
+              .addMethod(getGetTotalStakeMethod())
+              .addMethod(getGetAddressInfoMethod())
+              .addMethod(getSetAddressLabelMethod())
+              .addMethod(getListWalletMethod())
+              .addMethod(getGetWalletInfoMethod())
+              .addMethod(getListAddressMethod())
               .build();
         }
       }
