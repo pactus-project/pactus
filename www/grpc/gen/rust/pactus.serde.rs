@@ -7222,9 +7222,6 @@ impl serde::Serialize for GetWalletInfoResponse {
         if !self.uuid.is_empty() {
             len += 1;
         }
-        if self.crc != 0 {
-            len += 1;
-        }
         if self.created_at != 0 {
             len += 1;
         }
@@ -7243,9 +7240,6 @@ impl serde::Serialize for GetWalletInfoResponse {
         }
         if !self.uuid.is_empty() {
             struct_ser.serialize_field("uuid", &self.uuid)?;
-        }
-        if self.crc != 0 {
-            struct_ser.serialize_field("crc", &self.crc)?;
         }
         if self.created_at != 0 {
             struct_ser.serialize_field("createdAt", ToString::to_string(&self.created_at).as_str())?;
@@ -7266,7 +7260,6 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
             "network",
             "encrypted",
             "uuid",
-            "crc",
             "created_at",
             "createdAt",
         ];
@@ -7278,7 +7271,6 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
             Network,
             Encrypted,
             Uuid,
-            Crc,
             CreatedAt,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -7306,7 +7298,6 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                             "network" => Ok(GeneratedField::Network),
                             "encrypted" => Ok(GeneratedField::Encrypted),
                             "uuid" => Ok(GeneratedField::Uuid),
-                            "crc" => Ok(GeneratedField::Crc),
                             "createdAt" | "created_at" => Ok(GeneratedField::CreatedAt),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
@@ -7332,7 +7323,6 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                 let mut network__ = None;
                 let mut encrypted__ = None;
                 let mut uuid__ = None;
-                let mut crc__ = None;
                 let mut created_at__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
@@ -7368,14 +7358,6 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                             }
                             uuid__ = Some(map.next_value()?);
                         }
-                        GeneratedField::Crc => {
-                            if crc__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("crc"));
-                            }
-                            crc__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
-                            ;
-                        }
                         GeneratedField::CreatedAt => {
                             if created_at__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("createdAt"));
@@ -7392,7 +7374,6 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                     network: network__.unwrap_or_default(),
                     encrypted: encrypted__.unwrap_or_default(),
                     uuid: uuid__.unwrap_or_default(),
-                    crc: crc__.unwrap_or_default(),
                     created_at: created_at__.unwrap_or_default(),
                 })
             }

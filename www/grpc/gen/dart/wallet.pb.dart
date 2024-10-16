@@ -1867,8 +1867,7 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
     ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'network')
     ..aOB(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'encrypted')
     ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'uuid')
-    ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'crc', $pb.PbFieldType.OU3)
-    ..aInt64(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
+    ..aInt64(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'createdAt')
     ..hasRequiredFields = false
   ;
 
@@ -1879,7 +1878,6 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
     $core.String? network,
     $core.bool? encrypted,
     $core.String? uuid,
-    $core.int? crc,
     $fixnum.Int64? createdAt,
   }) {
     final _result = create();
@@ -1897,9 +1895,6 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
     }
     if (uuid != null) {
       _result.uuid = uuid;
-    }
-    if (crc != null) {
-      _result.crc = crc;
     }
     if (createdAt != null) {
       _result.createdAt = createdAt;
@@ -1973,22 +1968,13 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
   void clearUuid() => clearField(5);
 
   @$pb.TagNumber(6)
-  $core.int get crc => $_getIZ(5);
+  $fixnum.Int64 get createdAt => $_getI64(5);
   @$pb.TagNumber(6)
-  set crc($core.int v) { $_setUnsignedInt32(5, v); }
+  set createdAt($fixnum.Int64 v) { $_setInt64(5, v); }
   @$pb.TagNumber(6)
-  $core.bool hasCrc() => $_has(5);
+  $core.bool hasCreatedAt() => $_has(5);
   @$pb.TagNumber(6)
-  void clearCrc() => clearField(6);
-
-  @$pb.TagNumber(7)
-  $fixnum.Int64 get createdAt => $_getI64(6);
-  @$pb.TagNumber(7)
-  set createdAt($fixnum.Int64 v) { $_setInt64(6, v); }
-  @$pb.TagNumber(7)
-  $core.bool hasCreatedAt() => $_has(6);
-  @$pb.TagNumber(7)
-  void clearCreatedAt() => clearField(7);
+  void clearCreatedAt() => clearField(6);
 }
 
 class ListAddressRequest extends $pb.GeneratedMessage {

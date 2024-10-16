@@ -23579,13 +23579,7 @@ public final class WalletOuterClass {
         getUuidBytes();
 
     /**
-     * <code>uint32 crc = 6 [json_name = "crc"];</code>
-     * @return The crc.
-     */
-    int getCrc();
-
-    /**
-     * <code>int64 created_at = 7 [json_name = "createdAt"];</code>
+     * <code>int64 created_at = 6 [json_name = "createdAt"];</code>
      * @return The createdAt.
      */
     long getCreatedAt();
@@ -23773,21 +23767,10 @@ public final class WalletOuterClass {
       }
     }
 
-    public static final int CRC_FIELD_NUMBER = 6;
-    private int crc_;
-    /**
-     * <code>uint32 crc = 6 [json_name = "crc"];</code>
-     * @return The crc.
-     */
-    @java.lang.Override
-    public int getCrc() {
-      return crc_;
-    }
-
-    public static final int CREATED_AT_FIELD_NUMBER = 7;
+    public static final int CREATED_AT_FIELD_NUMBER = 6;
     private long createdAt_;
     /**
-     * <code>int64 created_at = 7 [json_name = "createdAt"];</code>
+     * <code>int64 created_at = 6 [json_name = "createdAt"];</code>
      * @return The createdAt.
      */
     @java.lang.Override
@@ -23824,11 +23807,8 @@ public final class WalletOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(uuid_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 5, uuid_);
       }
-      if (crc_ != 0) {
-        output.writeUInt32(6, crc_);
-      }
       if (createdAt_ != 0L) {
-        output.writeInt64(7, createdAt_);
+        output.writeInt64(6, createdAt_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -23856,13 +23836,9 @@ public final class WalletOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(uuid_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, uuid_);
       }
-      if (crc_ != 0) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(6, crc_);
-      }
       if (createdAt_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(7, createdAt_);
+          .computeInt64Size(6, createdAt_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -23889,8 +23865,6 @@ public final class WalletOuterClass {
           != other.getEncrypted()) return false;
       if (!getUuid()
           .equals(other.getUuid())) return false;
-      if (getCrc()
-          != other.getCrc()) return false;
       if (getCreatedAt()
           != other.getCreatedAt()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -23916,8 +23890,6 @@ public final class WalletOuterClass {
           getEncrypted());
       hash = (37 * hash) + UUID_FIELD_NUMBER;
       hash = (53 * hash) + getUuid().hashCode();
-      hash = (37 * hash) + CRC_FIELD_NUMBER;
-      hash = (53 * hash) + getCrc();
       hash = (37 * hash) + CREATED_AT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getCreatedAt());
@@ -24063,8 +24035,6 @@ public final class WalletOuterClass {
 
         uuid_ = "";
 
-        crc_ = 0;
-
         createdAt_ = 0L;
 
         return this;
@@ -24098,7 +24068,6 @@ public final class WalletOuterClass {
         result.network_ = network_;
         result.encrypted_ = encrypted_;
         result.uuid_ = uuid_;
-        result.crc_ = crc_;
         result.createdAt_ = createdAt_;
         onBuilt();
         return result;
@@ -24166,9 +24135,6 @@ public final class WalletOuterClass {
           uuid_ = other.uuid_;
           onChanged();
         }
-        if (other.getCrc() != 0) {
-          setCrc(other.getCrc());
-        }
         if (other.getCreatedAt() != 0L) {
           setCreatedAt(other.getCreatedAt());
         }
@@ -24224,15 +24190,10 @@ public final class WalletOuterClass {
                 break;
               } // case 42
               case 48: {
-                crc_ = input.readUInt32();
-
-                break;
-              } // case 48
-              case 56: {
                 createdAt_ = input.readInt64();
 
                 break;
-              } // case 56
+              } // case 48
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -24539,40 +24500,9 @@ public final class WalletOuterClass {
         return this;
       }
 
-      private int crc_ ;
-      /**
-       * <code>uint32 crc = 6 [json_name = "crc"];</code>
-       * @return The crc.
-       */
-      @java.lang.Override
-      public int getCrc() {
-        return crc_;
-      }
-      /**
-       * <code>uint32 crc = 6 [json_name = "crc"];</code>
-       * @param value The crc to set.
-       * @return This builder for chaining.
-       */
-      public Builder setCrc(int value) {
-        
-        crc_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>uint32 crc = 6 [json_name = "crc"];</code>
-       * @return This builder for chaining.
-       */
-      public Builder clearCrc() {
-        
-        crc_ = 0;
-        onChanged();
-        return this;
-      }
-
       private long createdAt_ ;
       /**
-       * <code>int64 created_at = 7 [json_name = "createdAt"];</code>
+       * <code>int64 created_at = 6 [json_name = "createdAt"];</code>
        * @return The createdAt.
        */
       @java.lang.Override
@@ -24580,7 +24510,7 @@ public final class WalletOuterClass {
         return createdAt_;
       }
       /**
-       * <code>int64 created_at = 7 [json_name = "createdAt"];</code>
+       * <code>int64 created_at = 6 [json_name = "createdAt"];</code>
        * @param value The createdAt to set.
        * @return This builder for chaining.
        */
@@ -24591,7 +24521,7 @@ public final class WalletOuterClass {
         return this;
       }
       /**
-       * <code>int64 created_at = 7 [json_name = "createdAt"];</code>
+       * <code>int64 created_at = 6 [json_name = "createdAt"];</code>
        * @return This builder for chaining.
        */
       public Builder clearCreatedAt() {
@@ -26250,52 +26180,51 @@ public final class WalletOuterClass {
       "\023\n\021ListWalletRequest\".\n\022ListWalletRespon" +
       "se\022\030\n\007wallets\030\001 \003(\tR\007wallets\"7\n\024GetWalle" +
       "tInfoRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwalle" +
-      "tName\"\317\001\n\025GetWalletInfoResponse\022\037\n\013walle" +
+      "tName\"\275\001\n\025GetWalletInfoResponse\022\037\n\013walle" +
       "t_name\030\001 \001(\tR\nwalletName\022\030\n\007version\030\002 \001(" +
       "\003R\007version\022\030\n\007network\030\003 \001(\tR\007network\022\034\n\t" +
       "encrypted\030\004 \001(\010R\tencrypted\022\022\n\004uuid\030\005 \001(\t" +
-      "R\004uuid\022\020\n\003crc\030\006 \001(\rR\003crc\022\035\n\ncreated_at\030\007" +
-      " \001(\003R\tcreatedAt\"5\n\022ListAddressRequest\022\037\n" +
-      "\013wallet_name\030\001 \001(\tR\nwalletName\">\n\023ListAd" +
-      "dressResponse\022\'\n\004data\030\001 \003(\0132\023.pactus.Add" +
-      "ressInfoR\004data*\204\001\n\013AddressType\022\031\n\025ADDRES" +
-      "S_TYPE_TREASURY\020\000\022\032\n\026ADDRESS_TYPE_VALIDA" +
-      "TOR\020\001\022\034\n\030ADDRESS_TYPE_BLS_ACCOUNT\020\002\022 \n\034A" +
-      "DDRESS_TYPE_ED25519_ACCOUNT\020\0032\362\t\n\006Wallet" +
-      "\022I\n\014CreateWallet\022\033.pactus.CreateWalletRe" +
-      "quest\032\034.pactus.CreateWalletResponse\022L\n\rR" +
-      "estoreWallet\022\034.pactus.RestoreWalletReque" +
-      "st\032\035.pactus.RestoreWalletResponse\022C\n\nLoa" +
-      "dWallet\022\031.pactus.LoadWalletRequest\032\032.pac" +
-      "tus.LoadWalletResponse\022I\n\014UnloadWallet\022\033" +
-      ".pactus.UnloadWalletRequest\032\034.pactus.Unl" +
-      "oadWalletResponse\022R\n\017GetTotalBalance\022\036.p" +
-      "actus.GetTotalBalanceRequest\032\037.pactus.Ge" +
-      "tTotalBalanceResponse\022[\n\022SignRawTransact" +
-      "ion\022!.pactus.SignRawTransactionRequest\032\"" +
-      ".pactus.SignRawTransactionResponse\022^\n\023Ge" +
-      "tValidatorAddress\022\".pactus.GetValidatorA" +
-      "ddressRequest\032#.pactus.GetValidatorAddre" +
-      "ssResponse\022L\n\rGetNewAddress\022\034.pactus.Get" +
-      "NewAddressRequest\032\035.pactus.GetNewAddress" +
-      "Response\022X\n\021GetAddressHistory\022 .pactus.G" +
-      "etAddressHistoryRequest\032!.pactus.GetAddr" +
-      "essHistoryResponse\022F\n\013SignMessage\022\032.pact" +
-      "us.SignMessageRequest\032\033.pactus.SignMessa" +
-      "geResponse\022L\n\rGetTotalStake\022\034.pactus.Get" +
-      "TotalStakeRequest\032\035.pactus.GetTotalStake" +
-      "Response\022O\n\016GetAddressInfo\022\035.pactus.GetA" +
-      "ddressInfoRequest\032\036.pactus.GetAddressInf" +
-      "oResponse\022D\n\017SetAddressLabel\022\027.pactus.Se" +
-      "tLabelRequest\032\030.pactus.SetLabelResponse\022" +
-      "C\n\nListWallet\022\031.pactus.ListWalletRequest" +
-      "\032\032.pactus.ListWalletResponse\022L\n\rGetWalle" +
-      "tInfo\022\034.pactus.GetWalletInfoRequest\032\035.pa" +
-      "ctus.GetWalletInfoResponse\022F\n\013ListAddres" +
-      "s\022\032.pactus.ListAddressRequest\032\033.pactus.L" +
-      "istAddressResponseBA\n\rpactus.walletZ0git" +
-      "hub.com/pactus-project/pactus/www/grpc/p" +
-      "actusb\006proto3"
+      "R\004uuid\022\035\n\ncreated_at\030\006 \001(\003R\tcreatedAt\"5\n" +
+      "\022ListAddressRequest\022\037\n\013wallet_name\030\001 \001(\t" +
+      "R\nwalletName\">\n\023ListAddressResponse\022\'\n\004d" +
+      "ata\030\001 \003(\0132\023.pactus.AddressInfoR\004data*\204\001\n" +
+      "\013AddressType\022\031\n\025ADDRESS_TYPE_TREASURY\020\000\022" +
+      "\032\n\026ADDRESS_TYPE_VALIDATOR\020\001\022\034\n\030ADDRESS_T" +
+      "YPE_BLS_ACCOUNT\020\002\022 \n\034ADDRESS_TYPE_ED2551" +
+      "9_ACCOUNT\020\0032\362\t\n\006Wallet\022I\n\014CreateWallet\022\033" +
+      ".pactus.CreateWalletRequest\032\034.pactus.Cre" +
+      "ateWalletResponse\022L\n\rRestoreWallet\022\034.pac" +
+      "tus.RestoreWalletRequest\032\035.pactus.Restor" +
+      "eWalletResponse\022C\n\nLoadWallet\022\031.pactus.L" +
+      "oadWalletRequest\032\032.pactus.LoadWalletResp" +
+      "onse\022I\n\014UnloadWallet\022\033.pactus.UnloadWall" +
+      "etRequest\032\034.pactus.UnloadWalletResponse\022" +
+      "R\n\017GetTotalBalance\022\036.pactus.GetTotalBala" +
+      "nceRequest\032\037.pactus.GetTotalBalanceRespo" +
+      "nse\022[\n\022SignRawTransaction\022!.pactus.SignR" +
+      "awTransactionRequest\032\".pactus.SignRawTra" +
+      "nsactionResponse\022^\n\023GetValidatorAddress\022" +
+      "\".pactus.GetValidatorAddressRequest\032#.pa" +
+      "ctus.GetValidatorAddressResponse\022L\n\rGetN" +
+      "ewAddress\022\034.pactus.GetNewAddressRequest\032" +
+      "\035.pactus.GetNewAddressResponse\022X\n\021GetAdd" +
+      "ressHistory\022 .pactus.GetAddressHistoryRe" +
+      "quest\032!.pactus.GetAddressHistoryResponse" +
+      "\022F\n\013SignMessage\022\032.pactus.SignMessageRequ" +
+      "est\032\033.pactus.SignMessageResponse\022L\n\rGetT" +
+      "otalStake\022\034.pactus.GetTotalStakeRequest\032" +
+      "\035.pactus.GetTotalStakeResponse\022O\n\016GetAdd" +
+      "ressInfo\022\035.pactus.GetAddressInfoRequest\032" +
+      "\036.pactus.GetAddressInfoResponse\022D\n\017SetAd" +
+      "dressLabel\022\027.pactus.SetLabelRequest\032\030.pa" +
+      "ctus.SetLabelResponse\022C\n\nListWallet\022\031.pa" +
+      "ctus.ListWalletRequest\032\032.pactus.ListWall" +
+      "etResponse\022L\n\rGetWalletInfo\022\034.pactus.Get" +
+      "WalletInfoRequest\032\035.pactus.GetWalletInfo" +
+      "Response\022F\n\013ListAddress\022\032.pactus.ListAdd" +
+      "ressRequest\032\033.pactus.ListAddressResponse" +
+      "BA\n\rpactus.walletZ0github.com/pactus-pro" +
+      "ject/pactus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -26493,7 +26422,7 @@ public final class WalletOuterClass {
     internal_static_pactus_GetWalletInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetWalletInfoResponse_descriptor,
-        new java.lang.String[] { "WalletName", "Version", "Network", "Encrypted", "Uuid", "Crc", "CreatedAt", });
+        new java.lang.String[] { "WalletName", "Version", "Network", "Encrypted", "Uuid", "CreatedAt", });
     internal_static_pactus_ListAddressRequest_descriptor =
       getDescriptor().getMessageTypes().get(32);
     internal_static_pactus_ListAddressRequest_fieldAccessorTable = new

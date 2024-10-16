@@ -2050,10 +2050,6 @@
         "uuid": {
           "type": "string"
         },
-        "crc": {
-          "type": "integer",
-          "format": "int64"
-        },
         "createdAt": {
           "type": "string",
           "format": "int64"

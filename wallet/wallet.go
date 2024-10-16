@@ -36,7 +36,6 @@ type Info struct {
 	Network    string
 	UUID       string
 	Encrypted  bool
-	Crc        uint32
 	CreatedAt  time.Time
 }
 

@@ -316,8 +316,7 @@ message GetWalletInfoResponse {
   string network = 3;
   bool encrypted = 4;
   string uuid = 5;
-  uint32 crc = 6;
-  int64 created_at = 7;
+  int64 created_at = 6;
 }
 
 // Request get list of addresses in wallet.

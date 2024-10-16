@@ -1368,9 +1368,7 @@ pub struct GetWalletInfoResponse {
     pub encrypted: bool,
     #[prost(string, tag="5")]
     pub uuid: ::prost::alloc::string::String,
-    #[prost(uint32, tag="6")]
-    pub crc: u32,
-    #[prost(int64, tag="7")]
+    #[prost(int64, tag="6")]
     pub created_at: i64,
 }
 /// Request get list of addresses in wallet.

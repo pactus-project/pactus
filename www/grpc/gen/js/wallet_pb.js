@@ -5788,8 +5788,7 @@ proto.pactus.GetWalletInfoResponse.toObject = function(includeInstance, msg) {
     network: jspb.Message.getFieldWithDefault(msg, 3, ""),
     encrypted: jspb.Message.getBooleanFieldWithDefault(msg, 4, false),
     uuid: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    crc: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    createdAt: jspb.Message.getFieldWithDefault(msg, 7, 0)
+    createdAt: jspb.Message.getFieldWithDefault(msg, 6, 0)
   };
 
   if (includeInstance) {
@@ -5847,10 +5846,6 @@ proto.pactus.GetWalletInfoResponse.deserializeBinaryFromReader = function(msg, r
       msg.setUuid(value);
       break;
     case 6:
-      var value = /** @type {number} */ (reader.readUint32());
-      msg.setCrc(value);
-      break;
-    case 7:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setCreatedAt(value);
       break;
@@ -5918,17 +5913,10 @@ proto.pactus.GetWalletInfoResponse.serializeBinaryToWriter = function(message, w
       f
     );
   }
-  f = message.getCrc();
-  if (f !== 0) {
-    writer.writeUint32(
-      6,
-      f
-    );
-  }
   f = message.getCreatedAt();
   if (f !== 0) {
     writer.writeInt64(
-      7,
+      6,
       f
     );
   }
@@ -6026,10 +6014,10 @@ proto.pactus.GetWalletInfoResponse.prototype.setUuid = function(value) {
 
 
 /**
- * optional uint32 crc = 6;
+ * optional int64 created_at = 6;
  * @return {number}
  */
-proto.pactus.GetWalletInfoResponse.prototype.getCrc = function() {
+proto.pactus.GetWalletInfoResponse.prototype.getCreatedAt = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
@@ -6038,26 +6026,8 @@ proto.pactus.GetWalletInfoResponse.prototype.getCrc = function() {
  * @param {number} value
  * @return {!proto.pactus.GetWalletInfoResponse} returns this
  */
-proto.pactus.GetWalletInfoResponse.prototype.setCrc = function(value) {
-  return jspb.Message.setProto3IntField(this, 6, value);
-};
-
-
-/**
- * optional int64 created_at = 7;
- * @return {number}
- */
-proto.pactus.GetWalletInfoResponse.prototype.getCreatedAt = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
-};
-
-
-/**
- * @param {number} value
- * @return {!proto.pactus.GetWalletInfoResponse} returns this
- */
 proto.pactus.GetWalletInfoResponse.prototype.setCreatedAt = function(value) {
-  return jspb.Message.setProto3IntField(this, 7, value);
+  return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 

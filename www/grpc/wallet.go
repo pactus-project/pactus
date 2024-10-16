@@ -266,7 +266,6 @@ func (s *walletServer) GetWalletInfo(_ context.Context,
 		Network:    info.Network,
 		Encrypted:  info.Encrypted,
 		Uuid:       info.UUID,
-		Crc:        info.Crc,
 		CreatedAt:  info.CreatedAt.Unix(),
 	}, nil
 }
