@@ -646,15 +646,15 @@ func _WalletGetWalletInfoCommand(cfg *client.Config) *cobra.Command {
 	req := &GetWalletInfoRequest{}
 
 	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("GetWalletInfo"),
-		Short: "GetWalletInfo RPC client",
-		Long:  "GetWalletInfo return wallet information.",
+		Use:   cfg.CommandNamer("WalletInfo"),
+		Short: "WalletInfo RPC client",
+		Long:  "WalletInfo return wallet information.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "GetWalletInfo"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "WalletInfo"); err != nil {
 					return err
 				}
 			}

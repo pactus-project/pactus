@@ -246,21 +246,13 @@ func (wm *Manager) SetAddressLabel(walletName, address, label string) error {
 	return wlt.Save()
 }
 
-func (wm *Manager) GetWalletInfo(walletName string) (Info, error) {
+func (wm *Manager) WalletInfo(walletName string) (*Info, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
-		return Info{}, status.Errorf(codes.NotFound, "wallet is not loaded")
+		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
 	}
 
-	return Info{
-		WalletName: walletName,
-		Version:    int64(wlt.store.Version),
-		Network:    wlt.store.Network.String(),
-		UUID:       wlt.store.UUID.String(),
-		Encrypted:  wlt.IsEncrypted(),
-		Crc:        wlt.store.VaultCRC,
-		CreatedAt:  wlt.store.CreatedAt,
-	}, nil
+	return wlt.Info(), nil
 }
 
 func (wm *Manager) ListWallet() ([]string, error) {
@@ -291,5 +283,5 @@ func (wm *Manager) ListAddress(walletName string) ([]vault.AddressInfo, error) {
 		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
 	}
 
-	return append(wlt.AllValidatorAddresses(), wlt.AllAccountAddresses()...), nil
+	return wlt.AddressInfos(), nil
 }

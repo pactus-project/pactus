@@ -255,7 +255,7 @@ func (s *walletServer) ListWallet(_ context.Context,
 func (s *walletServer) GetWalletInfo(_ context.Context,
 	req *pactus.GetWalletInfoRequest,
 ) (*pactus.GetWalletInfoResponse, error) {
-	info, err := s.walletManager.GetWalletInfo(req.WalletName)
+	info, err := s.walletManager.WalletInfo(req.WalletName)
 	if err != nil {
 		return nil, err
 	}

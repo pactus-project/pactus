@@ -538,3 +538,14 @@ func (w *Wallet) CreationTime() time.Time {
 func (w *Wallet) Network() genesis.ChainType {
 	return w.store.Network
 }
+
+func (w *Wallet) Info() *Info {
+	return &Info{
+		WalletName: w.Name(),
+		Version:    int64(w.store.Version),
+		Network:    w.store.Network.String(),
+		UUID:       w.store.UUID.String(),
+		Encrypted:  w.IsEncrypted(),
+		CreatedAt:  w.store.CreatedAt,
+	}
+}
