@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pactus-project/pactus/store"
+
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/sync/bundle/message"
@@ -22,12 +24,14 @@ type testData struct {
 
 	pool    *txPool
 	sandbox *sandbox.MockSandbox
+	str     *store.MockStore
 	ch      chan message.Message
 }
 
 func testConfig() *Config {
 	return &Config{
-		MaxSize: 10,
+		MaxSize:           10,
+		ConsumptionBlocks: 3,
 		Fee: &FeeConfig{
 			FixedFee:   0.000001,
 			DailyLimit: 280,
@@ -44,7 +48,8 @@ func setup(t *testing.T) *testData {
 	ch := make(chan message.Message, 10)
 	sb := sandbox.MockingSandbox(ts)
 	config := testConfig()
-	p := NewTxPool(config, ch)
+	mockStore := store.MockingStore(ts)
+	p := NewTxPool(config, ch, mockStore)
 	p.SetNewSandboxAndRecheck(sb)
 	pool := p.(*txPool)
 	assert.NotNil(t, pool)
@@ -53,6 +58,7 @@ func setup(t *testing.T) *testData {
 		TestSuite: ts,
 		pool:      pool,
 		sandbox:   sb,
+		str:       mockStore,
 		ch:        ch,
 	}
 }
@@ -96,9 +102,34 @@ func TestAppendAndRemove(t *testing.T) {
 	// Appending the same transaction again, should not return any error
 	assert.NoError(t, td.pool.AppendTx(testTrx))
 
-	td.pool.RemoveTx(testTrx.ID())
+	td.pool.removeTx(testTrx.ID())
 	assert.False(t, td.pool.HasTx(testTrx.ID()), "Transaction should be removed")
 	assert.Nil(t, td.pool.PendingTx(testTrx.ID()))
+}
+
+func TestCalculatingConsumption(t *testing.T) {
+	td := setup(t)
+
+	_, prv := td.TestSuite.RandEd25519KeyPair()
+	signer := prv
+
+	for i := uint32(1); i < 10; i++ {
+		txr := td.GenerateTestTransferTx(func(tm *testsuite.TransactionMaker) {
+			tm.Signer = signer
+		})
+
+		blk, cert := td.TestSuite.GenerateTestBlock(i, func(bm *testsuite.BlockMaker) {
+			bm.Txs = []*tx.Tx{txr}
+		})
+
+		td.str.SaveBlock(blk, cert)
+
+		err := td.pool.HandleCommittedBlock(blk)
+		require.NoError(t, err)
+
+		//t.Log(td.pool.consumptionMap[txr.Payload().Signer()])
+	}
+
 }
 
 func TestAppendInvalidTransaction(t *testing.T) {
