@@ -206,5 +206,107 @@ func (s *WalletJsonRPC) Methods() map[string]func(ctx context.Context, message j
 
 			return s.client.SignMessage(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
+
+		"pactus.wallet.get_total_stake": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetTotalStakeRequest)
+
+			var jrpcData paramsAndHeadersWallet
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.GetTotalStake(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
+		"pactus.wallet.get_address_info": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetAddressInfoRequest)
+
+			var jrpcData paramsAndHeadersWallet
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.GetAddressInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
+		"pactus.wallet.set_address_label": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(SetLabelRequest)
+
+			var jrpcData paramsAndHeadersWallet
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.SetAddressLabel(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
+		"pactus.wallet.list_wallet": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(ListWalletRequest)
+
+			var jrpcData paramsAndHeadersWallet
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.ListWallet(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
+		"pactus.wallet.get_wallet_info": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(GetWalletInfoRequest)
+
+			var jrpcData paramsAndHeadersWallet
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.GetWalletInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
+		"pactus.wallet.list_address": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(ListAddressRequest)
+
+			var jrpcData paramsAndHeadersWallet
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.ListAddress(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
 	}
 }

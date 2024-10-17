@@ -65,6 +65,36 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.SignMessageRequest.SerializeToString,
                 response_deserializer=wallet__pb2.SignMessageResponse.FromString,
                 )
+        self.GetTotalStake = channel.unary_unary(
+                '/pactus.Wallet/GetTotalStake',
+                request_serializer=wallet__pb2.GetTotalStakeRequest.SerializeToString,
+                response_deserializer=wallet__pb2.GetTotalStakeResponse.FromString,
+                )
+        self.GetAddressInfo = channel.unary_unary(
+                '/pactus.Wallet/GetAddressInfo',
+                request_serializer=wallet__pb2.GetAddressInfoRequest.SerializeToString,
+                response_deserializer=wallet__pb2.GetAddressInfoResponse.FromString,
+                )
+        self.SetAddressLabel = channel.unary_unary(
+                '/pactus.Wallet/SetAddressLabel',
+                request_serializer=wallet__pb2.SetLabelRequest.SerializeToString,
+                response_deserializer=wallet__pb2.SetLabelResponse.FromString,
+                )
+        self.ListWallet = channel.unary_unary(
+                '/pactus.Wallet/ListWallet',
+                request_serializer=wallet__pb2.ListWalletRequest.SerializeToString,
+                response_deserializer=wallet__pb2.ListWalletResponse.FromString,
+                )
+        self.GetWalletInfo = channel.unary_unary(
+                '/pactus.Wallet/GetWalletInfo',
+                request_serializer=wallet__pb2.GetWalletInfoRequest.SerializeToString,
+                response_deserializer=wallet__pb2.GetWalletInfoResponse.FromString,
+                )
+        self.ListAddress = channel.unary_unary(
+                '/pactus.Wallet/ListAddress',
+                request_serializer=wallet__pb2.ListAddressRequest.SerializeToString,
+                response_deserializer=wallet__pb2.ListAddressResponse.FromString,
+                )
 
 
 class WalletServicer(object):
@@ -142,6 +172,48 @@ class WalletServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetTotalStake(self, request, context):
+        """GetTotalStake return total stake of wallet.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetAddressInfo(self, request, context):
+        """GetAddressInfo return address information.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetAddressLabel(self, request, context):
+        """SetAddressLabel set label for given address.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListWallet(self, request, context):
+        """ListWallet return list wallet name.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetWalletInfo(self, request, context):
+        """GetWalletInfo return wallet information.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListAddress(self, request, context):
+        """ListAddress return list address in wallet.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_WalletServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -194,6 +266,36 @@ def add_WalletServicer_to_server(servicer, server):
                     servicer.SignMessage,
                     request_deserializer=wallet__pb2.SignMessageRequest.FromString,
                     response_serializer=wallet__pb2.SignMessageResponse.SerializeToString,
+            ),
+            'GetTotalStake': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetTotalStake,
+                    request_deserializer=wallet__pb2.GetTotalStakeRequest.FromString,
+                    response_serializer=wallet__pb2.GetTotalStakeResponse.SerializeToString,
+            ),
+            'GetAddressInfo': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAddressInfo,
+                    request_deserializer=wallet__pb2.GetAddressInfoRequest.FromString,
+                    response_serializer=wallet__pb2.GetAddressInfoResponse.SerializeToString,
+            ),
+            'SetAddressLabel': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetAddressLabel,
+                    request_deserializer=wallet__pb2.SetLabelRequest.FromString,
+                    response_serializer=wallet__pb2.SetLabelResponse.SerializeToString,
+            ),
+            'ListWallet': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListWallet,
+                    request_deserializer=wallet__pb2.ListWalletRequest.FromString,
+                    response_serializer=wallet__pb2.ListWalletResponse.SerializeToString,
+            ),
+            'GetWalletInfo': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetWalletInfo,
+                    request_deserializer=wallet__pb2.GetWalletInfoRequest.FromString,
+                    response_serializer=wallet__pb2.GetWalletInfoResponse.SerializeToString,
+            ),
+            'ListAddress': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListAddress,
+                    request_deserializer=wallet__pb2.ListAddressRequest.FromString,
+                    response_serializer=wallet__pb2.ListAddressResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -373,5 +475,107 @@ class Wallet(object):
         return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/SignMessage',
             wallet__pb2.SignMessageRequest.SerializeToString,
             wallet__pb2.SignMessageResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetTotalStake(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/GetTotalStake',
+            wallet__pb2.GetTotalStakeRequest.SerializeToString,
+            wallet__pb2.GetTotalStakeResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetAddressInfo(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/GetAddressInfo',
+            wallet__pb2.GetAddressInfoRequest.SerializeToString,
+            wallet__pb2.GetAddressInfoResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SetAddressLabel(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/SetAddressLabel',
+            wallet__pb2.SetLabelRequest.SerializeToString,
+            wallet__pb2.SetLabelResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListWallet(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/ListWallet',
+            wallet__pb2.ListWalletRequest.SerializeToString,
+            wallet__pb2.ListWalletResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetWalletInfo(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/GetWalletInfo',
+            wallet__pb2.GetWalletInfoRequest.SerializeToString,
+            wallet__pb2.GetWalletInfoResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ListAddress(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/pactus.Wallet/ListAddress',
+            wallet__pb2.ListAddressRequest.SerializeToString,
+            wallet__pb2.ListAddressResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

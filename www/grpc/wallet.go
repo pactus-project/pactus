@@ -201,3 +201,94 @@ func (s *walletServer) SignMessage(_ context.Context,
 		Signature: sig,
 	}, nil
 }
+
+func (s *walletServer) GetTotalStake(_ context.Context,
+	req *pactus.GetTotalStakeRequest,
+) (*pactus.GetTotalStakeResponse, error) {
+	stake, err := s.walletManager.TotalStake(req.WalletName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.GetTotalStakeResponse{
+		TotalStake: stake.ToNanoPAC(),
+		WalletName: req.WalletName,
+	}, nil
+}
+
+func (s *walletServer) GetAddressInfo(_ context.Context,
+	req *pactus.GetAddressInfoRequest,
+) (*pactus.GetAddressInfoResponse, error) {
+	info, err := s.walletManager.GetAddressInfo(req.WalletName, req.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.GetAddressInfoResponse{
+		Address:    info.Address,
+		Path:       info.Path,
+		PublicKey:  info.PublicKey,
+		Label:      info.Label,
+		WalletName: req.WalletName,
+	}, nil
+}
+
+func (s *walletServer) SetAddressLabel(_ context.Context,
+	req *pactus.SetLabelRequest,
+) (*pactus.SetLabelResponse, error) {
+	return &pactus.SetLabelResponse{}, s.walletMgr.SetAddressLabel(req.WalletName, req.Address, req.Label)
+}
+
+func (s *walletServer) ListWallet(_ context.Context,
+	_ *pactus.ListWalletRequest,
+) (*pactus.ListWalletResponse, error) {
+	wallets, err := s.walletManager.ListWallet()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.ListWalletResponse{
+		Wallets: wallets,
+	}, nil
+}
+
+func (s *walletServer) GetWalletInfo(_ context.Context,
+	req *pactus.GetWalletInfoRequest,
+) (*pactus.GetWalletInfoResponse, error) {
+	info, err := s.walletManager.WalletInfo(req.WalletName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.GetWalletInfoResponse{
+		WalletName: info.WalletName,
+		Version:    info.Version,
+		Network:    info.Network,
+		Encrypted:  info.Encrypted,
+		Uuid:       info.UUID,
+		CreatedAt:  info.CreatedAt.Unix(),
+	}, nil
+}
+
+func (s *walletServer) ListAddress(_ context.Context,
+	req *pactus.ListAddressRequest,
+) (*pactus.ListAddressResponse, error) {
+	addrs, err := s.walletManager.ListAddress(req.WalletName)
+	if err != nil {
+		return nil, err
+	}
+
+	addrsPB := make([]*pactus.AddressInfo, 0, len(addrs))
+	for _, addr := range addrs {
+		addrsPB = append(addrsPB, &pactus.AddressInfo{
+			Address:   addr.Address,
+			Label:     addr.Label,
+			PublicKey: addr.PublicKey,
+			Path:      addr.Path,
+		})
+	}
+
+	return &pactus.ListAddressResponse{
+		Data: addrsPB,
+	}, nil
+}

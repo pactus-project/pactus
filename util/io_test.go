@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const invalidDirName = "/invalid:path/\x00*folder?\\CON"
@@ -211,4 +212,21 @@ func TestSanitizeArchivePath(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestListFilesInDir(t *testing.T) {
+	tmpDir := TempDirPath()
+
+	file1, err := os.Create(filepath.Join(tmpDir, ".file1"))
+	require.NoError(t, err)
+	require.NoError(t, file1.Close())
+
+	file2, err := os.Create(filepath.Join(tmpDir, ".file2"))
+	require.NoError(t, err)
+	require.NoError(t, file2.Close())
+
+	files, err := ListFilesInDir(tmpDir)
+	require.NoError(t, err)
+
+	assert.Len(t, files, 2)
 }
