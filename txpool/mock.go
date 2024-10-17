@@ -79,6 +79,10 @@ func (m *MockTxPool) RemoveTx(id hash.Hash) {
 	}
 }
 
+func (m *MockTxPool) HandleCommittedBlock(_ *block.Block) error {
+	return nil
+}
+
 func (m *MockTxPool) PrepareBlockTransactions() block.Txs {
 	txs := make([]*tx.Tx, m.Size())
 	copy(txs, m.Txs)
