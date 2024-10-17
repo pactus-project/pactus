@@ -6,7 +6,7 @@ import (
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/sync/bundle/message"
+	"github.com/pactus-project/pactus/sync/peerset/peer/metric"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 )
@@ -27,12 +27,9 @@ type Peer struct {
 	LastReceived      time.Time
 	LastBlockHash     hash.Hash
 	Height            uint32
-	ReceivedBundles   int
-	InvalidBundles    int
 	TotalSessions     int
 	CompletedSessions int
-	ReceivedBytes     map[message.Type]int64
-	SentBytes         map[message.Type]int64
+	Metric            metric.Metric
 }
 
 func NewPeer(peerID ID) *Peer {
@@ -40,8 +37,7 @@ func NewPeer(peerID ID) *Peer {
 		ConsensusKeys: make([]*bls.PublicKey, 0),
 		Status:        status.StatusUnknown,
 		PeerID:        peerID,
-		ReceivedBytes: make(map[message.Type]int64),
-		SentBytes:     make(map[message.Type]int64),
+		Metric:        metric.NewMetric(),
 		Protocols:     make([]string, 0),
 	}
 }

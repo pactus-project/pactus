@@ -1,7 +1,6 @@
 package peerset
 
 import (
-	"maps"
 	"sync"
 	"time"
 
@@ -9,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
+	"github.com/pactus-project/pactus/sync/peerset/peer/metric"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/sync/peerset/session"
@@ -18,14 +18,10 @@ import (
 type PeerSet struct {
 	lk sync.RWMutex
 
-	peers              map[peer.ID]*peer.Peer
-	sessionManager     *session.Manager
-	totalSentBundles   int
-	totalSentBytes     int64
-	totalReceivedBytes int64
-	sentBytes          map[message.Type]int64
-	receivedBytes      map[message.Type]int64
-	startedAt          time.Time
+	peers          map[peer.ID]*peer.Peer
+	sessionManager *session.Manager
+	startedAt      time.Time
+	metric         metric.Metric
 }
 
 // NewPeerSet constructs a new PeerSet for managing peer information.
@@ -33,8 +29,7 @@ func NewPeerSet(sessionTimeout time.Duration) *PeerSet {
 	return &PeerSet{
 		peers:          make(map[peer.ID]*peer.Peer),
 		sessionManager: session.NewManager(sessionTimeout),
-		sentBytes:      make(map[message.Type]int64),
-		receivedBytes:  make(map[message.Type]int64),
+		metric:         metric.NewMetric(),
 		startedAt:      time.Now(),
 	}
 }
@@ -257,44 +252,35 @@ func (ps *PeerSet) UpdateLastReceived(pid peer.ID) {
 	p.LastReceived = time.Now()
 }
 
-func (ps *PeerSet) IncreaseReceivedBundlesCounter(pid peer.ID) {
+func (ps *PeerSet) UpdateInvalidMetric(pid peer.ID, bytes int64) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
+
+	ps.metric.UpdateInvalidMetric(bytes)
 
 	p := ps.findOrCreatePeer(pid)
-	p.ReceivedBundles++
+	p.Metric.UpdateInvalidMetric(bytes)
 }
 
-func (ps *PeerSet) IncreaseInvalidBundlesCounter(pid peer.ID) {
+func (ps *PeerSet) UpdateReceivedMetric(pid peer.ID, msgType message.Type, bytes int64) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
+
+	ps.metric.UpdateReceivedMetric(msgType, bytes)
 
 	p := ps.findOrCreatePeer(pid)
-	p.InvalidBundles++
+	p.Metric.UpdateReceivedMetric(msgType, bytes)
 }
 
-func (ps *PeerSet) IncreaseReceivedBytesCounter(pid peer.ID, msgType message.Type, c int64) {
+func (ps *PeerSet) UpdateSentMetric(pid *peer.ID, msgType message.Type, bytes int64) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	p := ps.findOrCreatePeer(pid)
-	p.ReceivedBytes[msgType] += c
-
-	ps.totalReceivedBytes += c
-	ps.receivedBytes[msgType] += c
-}
-
-func (ps *PeerSet) IncreaseSentCounters(msgType message.Type, c int64, pid *peer.ID) {
-	ps.lk.Lock()
-	defer ps.lk.Unlock()
-
-	ps.totalSentBundles++
-	ps.totalSentBytes += c
-	ps.sentBytes[msgType] += c
+	ps.metric.UpdateSentMetric(msgType, bytes)
 
 	if pid != nil {
 		p := ps.findOrCreatePeer(*pid)
-		p.SentBytes[msgType] += c
+		p.Metric.UpdateSentMetric(msgType, bytes)
 	}
 }
 
@@ -302,51 +288,7 @@ func (ps *PeerSet) TotalSentBundles() int {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()
 
-	return ps.totalSentBundles
-}
-
-func (ps *PeerSet) TotalSentBytes() int64 {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
-
-	return ps.totalSentBytes
-}
-
-func (ps *PeerSet) TotalReceivedBytes() int64 {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
-
-	return ps.totalReceivedBytes
-}
-
-func (ps *PeerSet) SentBytesMessageType(msgType message.Type) int64 {
-	if sentBytes, ok := ps.sentBytes[msgType]; ok {
-		return sentBytes
-	}
-
-	return 0
-}
-
-func (ps *PeerSet) ReceivedBytesMessageType(msgType message.Type) int64 {
-	if receivedBytes, ok := ps.receivedBytes[msgType]; ok {
-		return receivedBytes
-	}
-
-	return 0
-}
-
-func (ps *PeerSet) SentBytes() map[message.Type]int64 {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
-
-	return maps.Clone(ps.sentBytes)
-}
-
-func (ps *PeerSet) ReceivedBytes() map[message.Type]int64 {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
-
-	return maps.Clone(ps.receivedBytes)
+	return int(ps.metric.TotalSent.Bundles)
 }
 
 func (ps *PeerSet) StartedAt() time.Time {
@@ -373,6 +315,13 @@ func (ps *PeerSet) Sessions() []*session.Session {
 	defer ps.lk.RUnlock()
 
 	return ps.sessionManager.Sessions()
+}
+
+func (ps *PeerSet) Metric() metric.Metric {
+	ps.lk.RLock()
+	defer ps.lk.RUnlock()
+
+	return ps.metric
 }
 
 // GetRandomPeer selects a random peer from the peer set based on their download score.

@@ -15,7 +15,7 @@ service Network {
 
 // Request message for retrieving overall network information.
 message GetNetworkInfoRequest {
-  // If true, only returns peers with connected status.
+  // If true, returns only peers that are currently connected.
   bool only_connected = 1;
 }
 
@@ -23,37 +23,30 @@ message GetNetworkInfoRequest {
 message GetNetworkInfoResponse {
   // Name of the network.
   string network_name = 1;
-  // Total bytes sent across the network.
-  int64 total_sent_bytes = 2;
-  // Total bytes received across the network.
-  int64 total_received_bytes = 3;
   // Number of connected peers.
-  uint32 connected_peers_count = 4;
+  uint32 connected_peers_count = 2;
   // List of connected peers.
-  repeated PeerInfo connected_peers = 5;
-  // Bytes sent per peer ID.
-  map<int32, int64> sent_bytes = 6;
-  // Bytes received per peer ID.
-  map<int32, int64> received_bytes = 7;
+  repeated PeerInfo connected_peers = 3;
+  // Metrics related to node activity.
+  MetricInfo metric_info = 4;
 }
 
-// Request message for retrieving information about a specific node in the
-// network.
+// Request message for retrieving information of the node.
 message GetNodeInfoRequest {}
 
 // Response message containing information about a specific node in the network.
 message GetNodeInfoResponse {
   // Moniker of the node.
   string moniker = 1;
-  // Agent information of the node.
+  // Version and agent details of the node.
   string agent = 2;
   // Peer ID of the node.
   string peer_id = 3;
-  // Timestamp when the node started.
+  // Time the node was started (in epoch format).
   uint64 started_at = 4;
   // Reachability status of the node.
   string reachability = 5;
-  // A bitfield indicating the services provided by the node.
+  // Bitfield representing the services provided by the node.
   int32 services = 6;
   // Names of services provided by the node.
   string services_names = 7;
@@ -61,7 +54,7 @@ message GetNodeInfoResponse {
   repeated string local_addrs = 8;
   // List of protocols supported by the node.
   repeated string protocols = 9;
-  // Clock offset of the node.
+  // Offset between the node's clock and the network's clock (in seconds).
   double clock_offset = 13;
   // Information about the node's connections.
   ConnectionInfo connection_info = 14;
@@ -69,46 +62,40 @@ message GetNodeInfoResponse {
 
 // Information about a peer in the network.
 message PeerInfo {
-  // Status of the peer.
+  // Current status of the peer (e.g., connected, disconnected).
   int32 status = 1;
   // Moniker of the peer.
   string moniker = 2;
-  // Agent information of the peer.
+  // Version and agent details of the peer.
   string agent = 3;
   // Peer ID of the peer.
   string peer_id = 4;
-  // Consensus keys used by the peer.
+  // List of consensus keys used by the peer.
   repeated string consensus_keys = 5;
-  // Consensus addresses of the peer.
+  // List of consensus addresses used by the peer.
   repeated string consensus_addresses = 6;
-  // Services provided by the peer.
+  // Bitfield representing the services provided by the peer.
   uint32 services = 7;
   // Hash of the last block the peer knows.
   string last_block_hash = 8;
   // Blockchain height of the peer.
   uint32 height = 9;
-  // Number of received bundles.
-  int32 received_bundles = 10;
-  // Number of invalid bundles received.
-  int32 invalid_bundles = 11;
-  // Timestamp of the last sent bundle.
-  int64 last_sent = 12;
-  // Timestamp of the last received bundle.
-  int64 last_received = 13;
-  // Bytes sent per message type.
-  map<int32, int64> sent_bytes = 14;
-  // Bytes received per message type.
-  map<int32, int64> received_bytes = 15;
+  // Time the last bundle sent to the peer (in epoch format).
+  int64 last_sent = 10;
+  // Time the last bundle received from the peer (in epoch format).
+  int64 last_received = 11;
   // Network address of the peer.
-  string address = 16;
-  // Direction of connection with the peer.
-  string direction = 17;
+  string address = 12;
+  // Connection direction (e.g., inbound, outbound).
+  string direction = 13;
   // List of protocols supported by the peer.
-  repeated string protocols = 18;
+  repeated string protocols = 14;
   // Total download sessions with the peer.
-  int32 total_sessions = 19;
+  int32 total_sessions = 15;
   // Completed download sessions with the peer.
-  int32 completed_sessions = 20;
+  int32 completed_sessions = 16;
+  // Metrics related to peer activity.
+  MetricInfo metric_info = 17;
 }
 
 // ConnectionInfo contains information about the node's connections.
@@ -119,4 +106,26 @@ message ConnectionInfo {
   uint64 inbound_connections = 2;
   // Number of outbound connections.
   uint64 outbound_connections = 3;
+}
+
+// MetricInfo contains data regarding network actvity.
+message MetricInfo {
+  // Total number of invalid bundles.
+  CounterInfo TotalInvalid = 1;
+  // Total number of bundles sent.
+  CounterInfo TotalSent = 2;
+  // Total number of bundles received.
+  CounterInfo TotalReceived = 3;
+  // Number of sent bundles categorized by message type.
+  map<int32, CounterInfo> MessageSent = 4;
+  // Number of received bundles categorized by message type.
+  map<int32, CounterInfo> MessageReceived = 5;
+}
+
+// CounterInfo holds data regarding byte and bundle counts.
+message CounterInfo {
+  // Total number of bytes.
+  uint64 Bytes = 1;
+  // Total number of bundles.
+  uint64 Bundles = 2;
 }

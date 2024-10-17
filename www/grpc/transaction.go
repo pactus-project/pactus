@@ -368,7 +368,7 @@ func (s *transactionServer) getLockTime(lockTime uint32) uint32 {
 }
 
 func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
-	transaction := &pactus.TransactionInfo{
+	trxInfo := &pactus.TransactionInfo{
 		Id:          trx.ID().String(),
 		Version:     int32(trx.Version()),
 		LockTime:    trx.LockTime(),
@@ -379,17 +379,17 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 	}
 
 	if trx.PublicKey() != nil {
-		transaction.PublicKey = trx.PublicKey().String()
+		trxInfo.PublicKey = trx.PublicKey().String()
 	}
 
 	if trx.Signature() != nil {
-		transaction.Signature = trx.Signature().String()
+		trxInfo.Signature = trx.Signature().String()
 	}
 
 	switch trx.Payload().Type() {
 	case payload.TypeTransfer:
 		pld := trx.Payload().(*payload.TransferPayload)
-		transaction.Payload = &pactus.TransactionInfo_Transfer{
+		trxInfo.Payload = &pactus.TransactionInfo_Transfer{
 			Transfer: &pactus.PayloadTransfer{
 				Sender:   pld.From.String(),
 				Receiver: pld.To.String(),
@@ -398,7 +398,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		}
 	case payload.TypeBond:
 		pld := trx.Payload().(*payload.BondPayload)
-		transaction.Payload = &pactus.TransactionInfo_Bond{
+		trxInfo.Payload = &pactus.TransactionInfo_Bond{
 			Bond: &pactus.PayloadBond{
 				Sender:   pld.From.String(),
 				Receiver: pld.To.String(),
@@ -407,7 +407,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		}
 	case payload.TypeSortition:
 		pld := trx.Payload().(*payload.SortitionPayload)
-		transaction.Payload = &pactus.TransactionInfo_Sortition{
+		trxInfo.Payload = &pactus.TransactionInfo_Sortition{
 			Sortition: &pactus.PayloadSortition{
 				Address: pld.Validator.String(),
 				Proof:   hex.EncodeToString(pld.Proof[:]),
@@ -415,14 +415,14 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		}
 	case payload.TypeUnbond:
 		pld := trx.Payload().(*payload.UnbondPayload)
-		transaction.Payload = &pactus.TransactionInfo_Unbond{
+		trxInfo.Payload = &pactus.TransactionInfo_Unbond{
 			Unbond: &pactus.PayloadUnbond{
 				Validator: pld.Validator.String(),
 			},
 		}
 	case payload.TypeWithdraw:
 		pld := trx.Payload().(*payload.WithdrawPayload)
-		transaction.Payload = &pactus.TransactionInfo_Withdraw{
+		trxInfo.Payload = &pactus.TransactionInfo_Withdraw{
 			Withdraw: &pactus.PayloadWithdraw{
 				ValidatorAddress: pld.From.String(),
 				AccountAddress:   pld.To.String(),
@@ -433,5 +433,5 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		logger.Error("payload type not defined", "type", trx.Payload().Type())
 	}
 
-	return transaction
+	return trxInfo
 }

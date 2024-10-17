@@ -157,45 +157,35 @@ func (sync *synchronizer) moveConsensusToNewHeight() {
 
 func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 	h := sync.handlers[msg.Type()]
-	if h == nil {
-		sync.logger.Warn("invalid message type: %v", msg.Type())
-
-		return nil
-	}
 	bdl := h.PrepareBundle(msg)
-	if bdl != nil {
-		// Bundles will be carried through LibP2P.
-		// In future we might support other libraries.
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P)
 
-		switch sync.state.Genesis().ChainType() {
-		case genesis.Mainnet:
-			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
-		case genesis.Testnet:
-			bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
-		case genesis.Localnet:
-			// It's localnet and for testing purpose only
-		}
+	// Bundles will be carried through LibP2P.
+	// In future we might support other libraries.
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagCarrierLibP2P)
 
-		bdl.SetSequenceNo(sync.peerSet.TotalSentBundles())
-
-		return bdl
+	switch sync.state.Genesis().ChainType() {
+	case genesis.Mainnet:
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
+	case genesis.Testnet:
+		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkTestnet)
+	case genesis.Localnet:
+		// It's localnet and for testing purpose only
 	}
 
-	return nil
+	bdl.SetSequenceNo(sync.peerSet.TotalSentBundles())
+
+	return bdl
 }
 
 func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
 	bdl := sync.prepareBundle(msg)
-	if bdl != nil {
-		data, _ := bdl.Encode()
+	data, _ := bdl.Encode()
 
-		sync.network.SendTo(data, to)
-		sync.peerSet.UpdateLastSent(to)
-		sync.peerSet.IncreaseSentCounters(msg.Type(), int64(len(data)), &to)
+	sync.network.SendTo(data, to)
+	sync.peerSet.UpdateLastSent(to)
+	sync.peerSet.UpdateSentMetric(&to, msg.Type(), int64(len(data)))
 
-		sync.logger.Debug("bundle sent", "bundle", bdl, "to", to)
-	}
+	sync.logger.Debug("bundle sent", "bundle", bdl, "to", to)
 }
 
 func (sync *synchronizer) broadcast(msg message.Message) {
@@ -210,15 +200,13 @@ func (sync *synchronizer) broadcast(msg message.Message) {
 	}
 
 	bdl := sync.prepareBundle(msg)
-	if bdl != nil {
-		bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagBroadcasted)
 
-		data, _ := bdl.Encode()
-		sync.network.Broadcast(data, msg.TopicID())
-		sync.peerSet.IncreaseSentCounters(msg.Type(), int64(len(data)), nil)
+	data, _ := bdl.Encode()
+	sync.network.Broadcast(data, msg.TopicID())
+	sync.peerSet.UpdateSentMetric(nil, msg.Type(), int64(len(data)))
 
-		sync.logger.Debug("bundle broadcasted", "bundle", bdl)
-	}
+	sync.logger.Debug("bundle broadcasted", "bundle", bdl)
 }
 
 func (sync *synchronizer) SelfID() peer.ID {

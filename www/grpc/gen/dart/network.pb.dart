@@ -61,34 +61,22 @@ class GetNetworkInfoRequest extends $pb.GeneratedMessage {
 class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetNetworkInfoResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'networkName')
-    ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalSentBytes')
-    ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalReceivedBytes')
-    ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectedPeersCount', $pb.PbFieldType.OU3)
-    ..pc<PeerInfo>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectedPeers', $pb.PbFieldType.PM, subBuilder: PeerInfo.create)
-    ..m<$core.int, $fixnum.Int64>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sentBytes', entryClassName: 'GetNetworkInfoResponse.SentBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
-    ..m<$core.int, $fixnum.Int64>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', entryClassName: 'GetNetworkInfoResponse.ReceivedBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectedPeersCount', $pb.PbFieldType.OU3)
+    ..pc<PeerInfo>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectedPeers', $pb.PbFieldType.PM, subBuilder: PeerInfo.create)
+    ..aOM<MetricInfo>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metricInfo', subBuilder: MetricInfo.create)
     ..hasRequiredFields = false
   ;
 
   GetNetworkInfoResponse._() : super();
   factory GetNetworkInfoResponse({
     $core.String? networkName,
-    $fixnum.Int64? totalSentBytes,
-    $fixnum.Int64? totalReceivedBytes,
     $core.int? connectedPeersCount,
     $core.Iterable<PeerInfo>? connectedPeers,
-    $core.Map<$core.int, $fixnum.Int64>? sentBytes,
-    $core.Map<$core.int, $fixnum.Int64>? receivedBytes,
+    MetricInfo? metricInfo,
   }) {
     final _result = create();
     if (networkName != null) {
       _result.networkName = networkName;
-    }
-    if (totalSentBytes != null) {
-      _result.totalSentBytes = totalSentBytes;
-    }
-    if (totalReceivedBytes != null) {
-      _result.totalReceivedBytes = totalReceivedBytes;
     }
     if (connectedPeersCount != null) {
       _result.connectedPeersCount = connectedPeersCount;
@@ -96,11 +84,8 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
     if (connectedPeers != null) {
       _result.connectedPeers.addAll(connectedPeers);
     }
-    if (sentBytes != null) {
-      _result.sentBytes.addAll(sentBytes);
-    }
-    if (receivedBytes != null) {
-      _result.receivedBytes.addAll(receivedBytes);
+    if (metricInfo != null) {
+      _result.metricInfo = metricInfo;
     }
     return _result;
   }
@@ -135,40 +120,27 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   void clearNetworkName() => clearField(1);
 
   @$pb.TagNumber(2)
-  $fixnum.Int64 get totalSentBytes => $_getI64(1);
+  $core.int get connectedPeersCount => $_getIZ(1);
   @$pb.TagNumber(2)
-  set totalSentBytes($fixnum.Int64 v) { $_setInt64(1, v); }
+  set connectedPeersCount($core.int v) { $_setUnsignedInt32(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasTotalSentBytes() => $_has(1);
+  $core.bool hasConnectedPeersCount() => $_has(1);
   @$pb.TagNumber(2)
-  void clearTotalSentBytes() => clearField(2);
+  void clearConnectedPeersCount() => clearField(2);
 
   @$pb.TagNumber(3)
-  $fixnum.Int64 get totalReceivedBytes => $_getI64(2);
-  @$pb.TagNumber(3)
-  set totalReceivedBytes($fixnum.Int64 v) { $_setInt64(2, v); }
-  @$pb.TagNumber(3)
-  $core.bool hasTotalReceivedBytes() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearTotalReceivedBytes() => clearField(3);
+  $core.List<PeerInfo> get connectedPeers => $_getList(2);
 
   @$pb.TagNumber(4)
-  $core.int get connectedPeersCount => $_getIZ(3);
+  MetricInfo get metricInfo => $_getN(3);
   @$pb.TagNumber(4)
-  set connectedPeersCount($core.int v) { $_setUnsignedInt32(3, v); }
+  set metricInfo(MetricInfo v) { setField(4, v); }
   @$pb.TagNumber(4)
-  $core.bool hasConnectedPeersCount() => $_has(3);
+  $core.bool hasMetricInfo() => $_has(3);
   @$pb.TagNumber(4)
-  void clearConnectedPeersCount() => clearField(4);
-
-  @$pb.TagNumber(5)
-  $core.List<PeerInfo> get connectedPeers => $_getList(4);
-
-  @$pb.TagNumber(6)
-  $core.Map<$core.int, $fixnum.Int64> get sentBytes => $_getMap(5);
-
-  @$pb.TagNumber(7)
-  $core.Map<$core.int, $fixnum.Int64> get receivedBytes => $_getMap(6);
+  void clearMetricInfo() => clearField(4);
+  @$pb.TagNumber(4)
+  MetricInfo ensureMetricInfo() => $_ensure(3);
 }
 
 class GetNodeInfoRequest extends $pb.GeneratedMessage {
@@ -388,17 +360,14 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'services', $pb.PbFieldType.OU3)
     ..aOS(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastBlockHash')
     ..a<$core.int>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'height', $pb.PbFieldType.OU3)
-    ..a<$core.int>(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBundles', $pb.PbFieldType.O3)
-    ..a<$core.int>(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invalidBundles', $pb.PbFieldType.O3)
-    ..aInt64(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSent')
-    ..aInt64(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastReceived')
-    ..m<$core.int, $fixnum.Int64>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sentBytes', entryClassName: 'PeerInfo.SentBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
-    ..m<$core.int, $fixnum.Int64>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'receivedBytes', entryClassName: 'PeerInfo.ReceivedBytesEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.O6, packageName: const $pb.PackageName('pactus'))
-    ..aOS(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
-    ..aOS(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'direction')
-    ..pPS(18, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'protocols')
-    ..a<$core.int>(19, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalSessions', $pb.PbFieldType.O3)
-    ..a<$core.int>(20, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'completedSessions', $pb.PbFieldType.O3)
+    ..aInt64(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastSent')
+    ..aInt64(11, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'lastReceived')
+    ..aOS(12, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
+    ..aOS(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'direction')
+    ..pPS(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'protocols')
+    ..a<$core.int>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'totalSessions', $pb.PbFieldType.O3)
+    ..a<$core.int>(16, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'completedSessions', $pb.PbFieldType.O3)
+    ..aOM<MetricInfo>(17, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'metricInfo', subBuilder: MetricInfo.create)
     ..hasRequiredFields = false
   ;
 
@@ -413,17 +382,14 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.int? services,
     $core.String? lastBlockHash,
     $core.int? height,
-    $core.int? receivedBundles,
-    $core.int? invalidBundles,
     $fixnum.Int64? lastSent,
     $fixnum.Int64? lastReceived,
-    $core.Map<$core.int, $fixnum.Int64>? sentBytes,
-    $core.Map<$core.int, $fixnum.Int64>? receivedBytes,
     $core.String? address,
     $core.String? direction,
     $core.Iterable<$core.String>? protocols,
     $core.int? totalSessions,
     $core.int? completedSessions,
+    MetricInfo? metricInfo,
   }) {
     final _result = create();
     if (status != null) {
@@ -453,23 +419,11 @@ class PeerInfo extends $pb.GeneratedMessage {
     if (height != null) {
       _result.height = height;
     }
-    if (receivedBundles != null) {
-      _result.receivedBundles = receivedBundles;
-    }
-    if (invalidBundles != null) {
-      _result.invalidBundles = invalidBundles;
-    }
     if (lastSent != null) {
       _result.lastSent = lastSent;
     }
     if (lastReceived != null) {
       _result.lastReceived = lastReceived;
-    }
-    if (sentBytes != null) {
-      _result.sentBytes.addAll(sentBytes);
-    }
-    if (receivedBytes != null) {
-      _result.receivedBytes.addAll(receivedBytes);
     }
     if (address != null) {
       _result.address = address;
@@ -485,6 +439,9 @@ class PeerInfo extends $pb.GeneratedMessage {
     }
     if (completedSessions != null) {
       _result.completedSessions = completedSessions;
+    }
+    if (metricInfo != null) {
+      _result.metricInfo = metricInfo;
     }
     return _result;
   }
@@ -579,85 +536,72 @@ class PeerInfo extends $pb.GeneratedMessage {
   void clearHeight() => clearField(9);
 
   @$pb.TagNumber(10)
-  $core.int get receivedBundles => $_getIZ(9);
+  $fixnum.Int64 get lastSent => $_getI64(9);
   @$pb.TagNumber(10)
-  set receivedBundles($core.int v) { $_setSignedInt32(9, v); }
+  set lastSent($fixnum.Int64 v) { $_setInt64(9, v); }
   @$pb.TagNumber(10)
-  $core.bool hasReceivedBundles() => $_has(9);
+  $core.bool hasLastSent() => $_has(9);
   @$pb.TagNumber(10)
-  void clearReceivedBundles() => clearField(10);
+  void clearLastSent() => clearField(10);
 
   @$pb.TagNumber(11)
-  $core.int get invalidBundles => $_getIZ(10);
+  $fixnum.Int64 get lastReceived => $_getI64(10);
   @$pb.TagNumber(11)
-  set invalidBundles($core.int v) { $_setSignedInt32(10, v); }
+  set lastReceived($fixnum.Int64 v) { $_setInt64(10, v); }
   @$pb.TagNumber(11)
-  $core.bool hasInvalidBundles() => $_has(10);
+  $core.bool hasLastReceived() => $_has(10);
   @$pb.TagNumber(11)
-  void clearInvalidBundles() => clearField(11);
+  void clearLastReceived() => clearField(11);
 
   @$pb.TagNumber(12)
-  $fixnum.Int64 get lastSent => $_getI64(11);
+  $core.String get address => $_getSZ(11);
   @$pb.TagNumber(12)
-  set lastSent($fixnum.Int64 v) { $_setInt64(11, v); }
+  set address($core.String v) { $_setString(11, v); }
   @$pb.TagNumber(12)
-  $core.bool hasLastSent() => $_has(11);
+  $core.bool hasAddress() => $_has(11);
   @$pb.TagNumber(12)
-  void clearLastSent() => clearField(12);
+  void clearAddress() => clearField(12);
 
   @$pb.TagNumber(13)
-  $fixnum.Int64 get lastReceived => $_getI64(12);
+  $core.String get direction => $_getSZ(12);
   @$pb.TagNumber(13)
-  set lastReceived($fixnum.Int64 v) { $_setInt64(12, v); }
+  set direction($core.String v) { $_setString(12, v); }
   @$pb.TagNumber(13)
-  $core.bool hasLastReceived() => $_has(12);
+  $core.bool hasDirection() => $_has(12);
   @$pb.TagNumber(13)
-  void clearLastReceived() => clearField(13);
+  void clearDirection() => clearField(13);
 
   @$pb.TagNumber(14)
-  $core.Map<$core.int, $fixnum.Int64> get sentBytes => $_getMap(13);
+  $core.List<$core.String> get protocols => $_getList(13);
 
   @$pb.TagNumber(15)
-  $core.Map<$core.int, $fixnum.Int64> get receivedBytes => $_getMap(14);
+  $core.int get totalSessions => $_getIZ(14);
+  @$pb.TagNumber(15)
+  set totalSessions($core.int v) { $_setSignedInt32(14, v); }
+  @$pb.TagNumber(15)
+  $core.bool hasTotalSessions() => $_has(14);
+  @$pb.TagNumber(15)
+  void clearTotalSessions() => clearField(15);
 
   @$pb.TagNumber(16)
-  $core.String get address => $_getSZ(15);
+  $core.int get completedSessions => $_getIZ(15);
   @$pb.TagNumber(16)
-  set address($core.String v) { $_setString(15, v); }
+  set completedSessions($core.int v) { $_setSignedInt32(15, v); }
   @$pb.TagNumber(16)
-  $core.bool hasAddress() => $_has(15);
+  $core.bool hasCompletedSessions() => $_has(15);
   @$pb.TagNumber(16)
-  void clearAddress() => clearField(16);
+  void clearCompletedSessions() => clearField(16);
 
   @$pb.TagNumber(17)
-  $core.String get direction => $_getSZ(16);
+  MetricInfo get metricInfo => $_getN(16);
   @$pb.TagNumber(17)
-  set direction($core.String v) { $_setString(16, v); }
+  set metricInfo(MetricInfo v) { setField(17, v); }
   @$pb.TagNumber(17)
-  $core.bool hasDirection() => $_has(16);
+  $core.bool hasMetricInfo() => $_has(16);
   @$pb.TagNumber(17)
-  void clearDirection() => clearField(17);
-
-  @$pb.TagNumber(18)
-  $core.List<$core.String> get protocols => $_getList(17);
-
-  @$pb.TagNumber(19)
-  $core.int get totalSessions => $_getIZ(18);
-  @$pb.TagNumber(19)
-  set totalSessions($core.int v) { $_setSignedInt32(18, v); }
-  @$pb.TagNumber(19)
-  $core.bool hasTotalSessions() => $_has(18);
-  @$pb.TagNumber(19)
-  void clearTotalSessions() => clearField(19);
-
-  @$pb.TagNumber(20)
-  $core.int get completedSessions => $_getIZ(19);
-  @$pb.TagNumber(20)
-  set completedSessions($core.int v) { $_setSignedInt32(19, v); }
-  @$pb.TagNumber(20)
-  $core.bool hasCompletedSessions() => $_has(19);
-  @$pb.TagNumber(20)
-  void clearCompletedSessions() => clearField(20);
+  void clearMetricInfo() => clearField(17);
+  @$pb.TagNumber(17)
+  MetricInfo ensureMetricInfo() => $_ensure(16);
 }
 
 class ConnectionInfo extends $pb.GeneratedMessage {
@@ -733,6 +677,164 @@ class ConnectionInfo extends $pb.GeneratedMessage {
   $core.bool hasOutboundConnections() => $_has(2);
   @$pb.TagNumber(3)
   void clearOutboundConnections() => clearField(3);
+}
+
+class MetricInfo extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'MetricInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOM<CounterInfo>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'TotalInvalid', protoName: 'TotalInvalid', subBuilder: CounterInfo.create)
+    ..aOM<CounterInfo>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'TotalSent', protoName: 'TotalSent', subBuilder: CounterInfo.create)
+    ..aOM<CounterInfo>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'TotalReceived', protoName: 'TotalReceived', subBuilder: CounterInfo.create)
+    ..m<$core.int, CounterInfo>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'MessageSent', protoName: 'MessageSent', entryClassName: 'MetricInfo.MessageSentEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.OM, valueCreator: CounterInfo.create, packageName: const $pb.PackageName('pactus'))
+    ..m<$core.int, CounterInfo>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'MessageReceived', protoName: 'MessageReceived', entryClassName: 'MetricInfo.MessageReceivedEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.OM, valueCreator: CounterInfo.create, packageName: const $pb.PackageName('pactus'))
+    ..hasRequiredFields = false
+  ;
+
+  MetricInfo._() : super();
+  factory MetricInfo({
+    CounterInfo? totalInvalid,
+    CounterInfo? totalSent,
+    CounterInfo? totalReceived,
+    $core.Map<$core.int, CounterInfo>? messageSent,
+    $core.Map<$core.int, CounterInfo>? messageReceived,
+  }) {
+    final _result = create();
+    if (totalInvalid != null) {
+      _result.totalInvalid = totalInvalid;
+    }
+    if (totalSent != null) {
+      _result.totalSent = totalSent;
+    }
+    if (totalReceived != null) {
+      _result.totalReceived = totalReceived;
+    }
+    if (messageSent != null) {
+      _result.messageSent.addAll(messageSent);
+    }
+    if (messageReceived != null) {
+      _result.messageReceived.addAll(messageReceived);
+    }
+    return _result;
+  }
+  factory MetricInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory MetricInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  MetricInfo clone() => MetricInfo()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  MetricInfo copyWith(void Function(MetricInfo) updates) => super.copyWith((message) => updates(message as MetricInfo)) as MetricInfo; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static MetricInfo create() => MetricInfo._();
+  MetricInfo createEmptyInstance() => create();
+  static $pb.PbList<MetricInfo> createRepeated() => $pb.PbList<MetricInfo>();
+  @$core.pragma('dart2js:noInline')
+  static MetricInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MetricInfo>(create);
+  static MetricInfo? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  CounterInfo get totalInvalid => $_getN(0);
+  @$pb.TagNumber(1)
+  set totalInvalid(CounterInfo v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasTotalInvalid() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearTotalInvalid() => clearField(1);
+  @$pb.TagNumber(1)
+  CounterInfo ensureTotalInvalid() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  CounterInfo get totalSent => $_getN(1);
+  @$pb.TagNumber(2)
+  set totalSent(CounterInfo v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasTotalSent() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearTotalSent() => clearField(2);
+  @$pb.TagNumber(2)
+  CounterInfo ensureTotalSent() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  CounterInfo get totalReceived => $_getN(2);
+  @$pb.TagNumber(3)
+  set totalReceived(CounterInfo v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasTotalReceived() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearTotalReceived() => clearField(3);
+  @$pb.TagNumber(3)
+  CounterInfo ensureTotalReceived() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  $core.Map<$core.int, CounterInfo> get messageSent => $_getMap(3);
+
+  @$pb.TagNumber(5)
+  $core.Map<$core.int, CounterInfo> get messageReceived => $_getMap(4);
+}
+
+class CounterInfo extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'CounterInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..a<$fixnum.Int64>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'Bytes', $pb.PbFieldType.OU6, protoName: 'Bytes', defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$fixnum.Int64>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'Bundles', $pb.PbFieldType.OU6, protoName: 'Bundles', defaultOrMaker: $fixnum.Int64.ZERO)
+    ..hasRequiredFields = false
+  ;
+
+  CounterInfo._() : super();
+  factory CounterInfo({
+    $fixnum.Int64? bytes,
+    $fixnum.Int64? bundles,
+  }) {
+    final _result = create();
+    if (bytes != null) {
+      _result.bytes = bytes;
+    }
+    if (bundles != null) {
+      _result.bundles = bundles;
+    }
+    return _result;
+  }
+  factory CounterInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory CounterInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  CounterInfo clone() => CounterInfo()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  CounterInfo copyWith(void Function(CounterInfo) updates) => super.copyWith((message) => updates(message as CounterInfo)) as CounterInfo; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static CounterInfo create() => CounterInfo._();
+  CounterInfo createEmptyInstance() => create();
+  static $pb.PbList<CounterInfo> createRepeated() => $pb.PbList<CounterInfo>();
+  @$core.pragma('dart2js:noInline')
+  static CounterInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CounterInfo>(create);
+  static CounterInfo? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $fixnum.Int64 get bytes => $_getI64(0);
+  @$pb.TagNumber(1)
+  set bytes($fixnum.Int64 v) { $_setInt64(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasBytes() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearBytes() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get bundles => $_getI64(1);
+  @$pb.TagNumber(2)
+  set bundles($fixnum.Int64 v) { $_setInt64(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasBundles() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearBundles() => clearField(2);
 }
 
 class NetworkApi {

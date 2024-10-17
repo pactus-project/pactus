@@ -2382,7 +2382,7 @@ types.
     <td class="fw-bold">only_connected</td>
     <td> boolean</td>
     <td>
-    If true, only returns peers with connected status.
+    If true, returns only peers that are currently connected.
     </td>
   </tr>
   </tbody>
@@ -2399,20 +2399,6 @@ types.
     <td> string</td>
     <td>
     Name of the network.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">total_sent_bytes</td>
-    <td> numeric</td>
-    <td>
-    Total bytes sent across the network.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">total_received_bytes</td>
-    <td> numeric</td>
-    <td>
-    Total bytes received across the network.
     </td>
   </tr>
      <tr>
@@ -2433,7 +2419,7 @@ types.
         <td class="fw-bold">connected_peers[].status</td>
         <td> numeric</td>
         <td>
-        Status of the peer.
+        Current status of the peer (e.g., connected, disconnected).
         </td>
       </tr>
          <tr>
@@ -2447,7 +2433,7 @@ types.
         <td class="fw-bold">connected_peers[].agent</td>
         <td> string</td>
         <td>
-        Agent information of the peer.
+        Version and agent details of the peer.
         </td>
       </tr>
          <tr>
@@ -2461,21 +2447,21 @@ types.
         <td class="fw-bold">connected_peers[].consensus_keys</td>
         <td>repeated string</td>
         <td>
-        Consensus keys used by the peer.
+        List of consensus keys used by the peer.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].consensus_addresses</td>
         <td>repeated string</td>
         <td>
-        Consensus addresses of the peer.
+        List of consensus addresses used by the peer.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].services</td>
         <td> numeric</td>
         <td>
-        Services provided by the peer.
+        Bitfield representing the services provided by the peer.
         </td>
       </tr>
          <tr>
@@ -2493,45 +2479,17 @@ types.
         </td>
       </tr>
          <tr>
-        <td class="fw-bold">connected_peers[].received_bundles</td>
-        <td> numeric</td>
-        <td>
-        Number of received bundles.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">connected_peers[].invalid_bundles</td>
-        <td> numeric</td>
-        <td>
-        Number of invalid bundles received.
-        </td>
-      </tr>
-         <tr>
         <td class="fw-bold">connected_peers[].last_sent</td>
         <td> numeric</td>
         <td>
-        Timestamp of the last sent bundle.
+        Time the last bundle sent to the peer (in epoch format).
         </td>
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].last_received</td>
         <td> numeric</td>
         <td>
-        Timestamp of the last received bundle.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">connected_peers[].sent_bytes</td>
-        <td> object</td>
-        <td>
-        Bytes sent per message type.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">connected_peers[].received_bytes</td>
-        <td> object</td>
-        <td>
-        Bytes received per message type.
+        Time the last bundle received from the peer (in epoch format).
         </td>
       </tr>
          <tr>
@@ -2545,7 +2503,7 @@ types.
         <td class="fw-bold">connected_peers[].direction</td>
         <td> string</td>
         <td>
-        Direction of connection with the peer.
+        Connection direction (e.g., inbound, outbound).
         </td>
       </tr>
          <tr>
@@ -2570,20 +2528,132 @@ types.
         </td>
       </tr>
          <tr>
-    <td class="fw-bold">sent_bytes</td>
+        <td class="fw-bold">connected_peers[].metric_info</td>
+        <td> object</td>
+        <td>
+        Metrics related to peer activity.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">connected_peers[].metric_info.TotalInvalid</td>
+            <td> object</td>
+            <td>
+            Total number of invalid bundles.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">connected_peers[].metric_info.TotalSent</td>
+            <td> object</td>
+            <td>
+            Total number of bundles sent.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">connected_peers[].metric_info.TotalReceived</td>
+            <td> object</td>
+            <td>
+            Total number of bundles received.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">connected_peers[].metric_info.MessageSent</td>
+            <td> object</td>
+            <td>
+            Number of sent bundles categorized by message type.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">connected_peers[].metric_info.MessageReceived</td>
+            <td> object</td>
+            <td>
+            Number of received bundles categorized by message type.
+            </td>
+          </tr>
+          <tr>
+    <td class="fw-bold">metric_info</td>
     <td> object</td>
     <td>
-    Bytes sent per peer ID.
+    Metrics related to node activity.
     </td>
   </tr>
      <tr>
-    <td class="fw-bold">received_bytes</td>
-    <td> object</td>
-    <td>
-    Bytes received per peer ID.
-    </td>
-  </tr>
-     </tbody>
+        <td class="fw-bold">metric_info.TotalInvalid</td>
+        <td> object</td>
+        <td>
+        Total number of invalid bundles.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">metric_info.TotalInvalid.Bytes</td>
+            <td> numeric</td>
+            <td>
+            Total number of bytes.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">metric_info.TotalInvalid.Bundles</td>
+            <td> numeric</td>
+            <td>
+            Total number of bundles.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">metric_info.TotalSent</td>
+        <td> object</td>
+        <td>
+        Total number of bundles sent.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">metric_info.TotalSent.Bytes</td>
+            <td> numeric</td>
+            <td>
+            Total number of bytes.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">metric_info.TotalSent.Bundles</td>
+            <td> numeric</td>
+            <td>
+            Total number of bundles.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">metric_info.TotalReceived</td>
+        <td> object</td>
+        <td>
+        Total number of bundles received.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">metric_info.TotalReceived.Bytes</td>
+            <td> numeric</td>
+            <td>
+            Total number of bytes.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">metric_info.TotalReceived.Bundles</td>
+            <td> numeric</td>
+            <td>
+            Total number of bundles.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">metric_info.MessageSent</td>
+        <td> object</td>
+        <td>
+        Number of sent bundles categorized by message type.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">metric_info.MessageReceived</td>
+        <td> object</td>
+        <td>
+        Number of received bundles categorized by message type.
+        </td>
+      </tr>
+         </tbody>
 </table>
 
 ### pactus.network.get_node_info <span id="pactus.network.get_node_info" class="rpc-badge"></span>
@@ -2611,7 +2681,7 @@ Parameters has no fields.
     <td class="fw-bold">agent</td>
     <td> string</td>
     <td>
-    Agent information of the node.
+    Version and agent details of the node.
     </td>
   </tr>
      <tr>
@@ -2625,7 +2695,7 @@ Parameters has no fields.
     <td class="fw-bold">started_at</td>
     <td> numeric</td>
     <td>
-    Timestamp when the node started.
+    Time the node was started (in epoch format).
     </td>
   </tr>
      <tr>
@@ -2639,7 +2709,7 @@ Parameters has no fields.
     <td class="fw-bold">services</td>
     <td> numeric</td>
     <td>
-    A bitfield indicating the services provided by the node.
+    Bitfield representing the services provided by the node.
     </td>
   </tr>
      <tr>
@@ -2667,7 +2737,7 @@ Parameters has no fields.
     <td class="fw-bold">clock_offset</td>
     <td> numeric</td>
     <td>
-    Clock offset of the node.
+    Offset between the node's clock and the network's clock (in seconds).
     </td>
   </tr>
      <tr>

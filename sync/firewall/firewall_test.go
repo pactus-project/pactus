@@ -163,8 +163,8 @@ func TestDecodeBundles(t *testing.T) {
 	}
 
 	p := td.firewall.peerSet.GetPeer(td.unknownPeerID)
-	assert.Equal(t, 5, p.ReceivedBundles)
-	assert.Equal(t, 4, p.InvalidBundles)
+	assert.Equal(t, int64(1), p.Metric.TotalReceived.Bundles)
+	assert.Equal(t, int64(4), p.Metric.TotalInvalid.Bundles)
 }
 
 func TestGossipMessage(t *testing.T) {
