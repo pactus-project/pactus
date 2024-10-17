@@ -59,12 +59,12 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		eventCh = nil
 	}
 
-	txPool := txpool.NewTxPool(conf.TxPool, messageCh)
-
 	str, err := store.NewStore(conf.Store)
 	if err != nil {
 		return nil, err
 	}
+
+	txPool := txpool.NewTxPool(conf.TxPool, messageCh, str)
 
 	st, err := state.LoadOrNewState(genDoc, valKeys, str, txPool, eventCh)
 	if err != nil {
