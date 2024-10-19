@@ -5,10 +5,9 @@ import (
 	"sync"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/store"
-
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
@@ -157,16 +156,17 @@ func (p *txPool) handleIncreaseConsumption(trx *tx.Tx) {
 	if trx.IsTransferTx() || trx.IsBondTx() || trx.IsWithdrawTx() {
 		signer := trx.Payload().Signer()
 
-		// retrieve existing consumption or start with 0
-		p.consumptionMap[signer] = p.consumptionMap[signer] + uint32(trx.SerializeSize())
+		p.consumptionMap[signer] += uint32(trx.SerializeSize())
 	}
 }
 
 func (p *txPool) handleDecreaseConsumption(height uint32) error {
+	// If height is less than or equal to ConsumptionBlocks, nothing to do
 	if height <= p.config.ConsumptionBlocks {
 		return nil
 	}
 
+	// Calculate the height of the old block based on ConsumptionBlocks
 	oldConsumptionHeight := height - p.config.ConsumptionBlocks
 	committedBlock, err := p.strReader.Block(oldConsumptionHeight)
 	if err != nil {
@@ -182,7 +182,16 @@ func (p *txPool) handleDecreaseConsumption(height uint32) error {
 		if trx.IsTransferTx() || trx.IsBondTx() || trx.IsWithdrawTx() {
 			signer := trx.Payload().Signer()
 			if v, ok := p.consumptionMap[signer]; ok {
-				p.consumptionMap[signer] = v - uint32(trx.SerializeSize())
+				// Decrease the consumption by the size of the transaction
+				v -= uint32(trx.SerializeSize())
+
+				// If the new value is zero, remove the signer from the consumptionMap
+				if v == 0 {
+					delete(p.consumptionMap, signer)
+				} else {
+					// Otherwise, update the map with the new value
+					p.consumptionMap[signer] = v
+				}
 			}
 		}
 	}

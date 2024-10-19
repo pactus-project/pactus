@@ -79,7 +79,7 @@ func (m *MockTxPool) RemoveTx(id hash.Hash) {
 	}
 }
 
-func (m *MockTxPool) HandleCommittedBlock(_ *block.Block) error {
+func (*MockTxPool) HandleCommittedBlock(_ *block.Block) error {
 	return nil
 }
 

@@ -23,5 +23,5 @@ type TxPool interface {
 	SetNewSandboxAndRecheck(sb sandbox.Sandbox)
 	AppendTxAndBroadcast(trx *tx.Tx) error
 	AppendTx(trx *tx.Tx) error
-	HandleCommittedBlock(block *block.Block) error
+	HandleCommittedBlock(blk *block.Block) error
 }
