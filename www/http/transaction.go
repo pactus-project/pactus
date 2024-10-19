@@ -26,11 +26,11 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tm := newTableMaker()
-	txToTable(res.Transaction, tm)
+	txToTable(tm, res.Transaction)
 	s.writeHTML(w, tm.html())
 }
 
-func txToTable(trx *pactus.TransactionInfo, tm *tableMaker) {
+func txToTable(tm *tableMaker, trx *pactus.TransactionInfo) {
 	if trx == nil {
 		return
 	}

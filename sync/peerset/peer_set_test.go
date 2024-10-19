@@ -31,20 +31,20 @@ func TestPeerSet(t *testing.T) {
 
 	peerSet := NewPeerSet(time.Minute)
 
-	pk1, _ := ts.RandBLSKeyPair()
-	pk2, _ := ts.RandBLSKeyPair()
-	pk3, _ := ts.RandBLSKeyPair()
-	pk4, _ := ts.RandBLSKeyPair()
-	pk5, _ := ts.RandBLSKeyPair()
+	pk11, _ := ts.RandBLSKeyPair()
+	pk12, _ := ts.RandBLSKeyPair()
+	pk21, _ := ts.RandBLSKeyPair()
+	pk31, _ := ts.RandBLSKeyPair()
+	pk32, _ := ts.RandBLSKeyPair()
 	pid1 := ts.RandPeerID()
 	pid2 := ts.RandPeerID()
 	pid3 := ts.RandPeerID()
 	peerSet.UpdateInfo(pid1, "Moniker1", "Agent1",
-		[]*bls.PublicKey{pk1, pk2}, service.New(service.FullNode))
+		[]*bls.PublicKey{pk11, pk12}, service.New(service.FullNode))
 	peerSet.UpdateInfo(pid2, "Moniker2", "Agent2",
-		[]*bls.PublicKey{pk3}, service.New(service.None))
+		[]*bls.PublicKey{pk21}, service.New(service.None))
 	peerSet.UpdateInfo(pid3, "Moniker3", "Agent3",
-		[]*bls.PublicKey{pk4, pk5}, service.New(service.FullNode))
+		[]*bls.PublicKey{pk31, pk32}, service.New(service.FullNode))
 
 	t.Run("Testing Len", func(t *testing.T) {
 		assert.Equal(t, 3, peerSet.Len())
@@ -78,40 +78,30 @@ func TestPeerSet(t *testing.T) {
 	t.Run("Testing ConsensusKeys", func(t *testing.T) {
 		p := peerSet.GetPeer(pid3)
 
-		assert.Contains(t, p.ConsensusKeys, pk4)
-		assert.Contains(t, p.ConsensusKeys, pk5)
+		assert.Contains(t, p.ConsensusKeys, pk31)
+		assert.Contains(t, p.ConsensusKeys, pk32)
 	})
 
 	t.Run("Testing counters", func(t *testing.T) {
-		peerSet.IncreaseInvalidBundlesCounter(pid1)
-		peerSet.IncreaseReceivedBundlesCounter(pid1)
-		peerSet.IncreaseReceivedBytesCounter(pid1, message.TypeBlocksResponse, 100)
-		peerSet.IncreaseReceivedBytesCounter(pid1, message.TypeTransaction, 150)
-		peerSet.IncreaseSentCounters(message.TypeBlocksRequest, 200, nil)
-		peerSet.IncreaseSentCounters(message.TypeBlocksRequest, 250, &pid1)
+		peerSet.UpdateInvalidMetric(pid1, 123)
+		peerSet.UpdateReceivedMetric(pid1, message.TypeBlocksResponse, 100)
+		peerSet.UpdateReceivedMetric(pid1, message.TypeTransaction, 150)
+		peerSet.UpdateSentMetric(nil, message.TypeBlocksRequest, 200)
+		peerSet.UpdateSentMetric(&pid1, message.TypeBlocksRequest, 250)
 
 		peer1 := peerSet.findPeer(pid1)
+		assert.Equal(t, int64(1), peer1.Metric.TotalInvalid.Bundles)
+		assert.Equal(t, int64(2), peer1.Metric.TotalReceived.Bundles)
+		assert.Equal(t, int64(100), peer1.Metric.MessageReceived[message.TypeBlocksResponse].Bytes)
+		assert.Equal(t, int64(150), peer1.Metric.MessageReceived[message.TypeTransaction].Bytes)
+		assert.Equal(t, int64(250), peer1.Metric.MessageSent[message.TypeBlocksRequest].Bytes)
 
-		receivedBytes := make(map[message.Type]int64)
-		receivedBytes[message.TypeBlocksResponse] = 100
-		receivedBytes[message.TypeTransaction] = 150
-
-		sentBytes := make(map[message.Type]int64)
-		sentBytes[message.TypeBlocksRequest] = 450
-
-		assert.Equal(t, 1, peer1.InvalidBundles)
-		assert.Equal(t, 1, peer1.ReceivedBundles)
-		assert.Equal(t, int64(100), peer1.ReceivedBytes[message.TypeBlocksResponse])
-		assert.Equal(t, int64(150), peer1.ReceivedBytes[message.TypeTransaction])
-		assert.Equal(t, int64(250), peer1.SentBytes[message.TypeBlocksRequest])
-
-		assert.Equal(t, int64(250), peerSet.TotalReceivedBytes())
-		assert.Equal(t, int64(100), peerSet.ReceivedBytesMessageType(message.TypeBlocksResponse))
-		assert.Equal(t, int64(150), peerSet.ReceivedBytesMessageType(message.TypeTransaction))
-		assert.Equal(t, receivedBytes, peerSet.ReceivedBytes())
-		assert.Equal(t, int64(450), peerSet.TotalSentBytes())
-		assert.Equal(t, int64(450), peerSet.SentBytesMessageType(message.TypeBlocksRequest))
-		assert.Equal(t, sentBytes, peerSet.SentBytes())
+		peersetMetric := peerSet.Metric()
+		assert.Equal(t, int64(250), peersetMetric.TotalReceived.Bytes)
+		assert.Equal(t, int64(100), peersetMetric.MessageReceived[message.TypeBlocksResponse].Bytes)
+		assert.Equal(t, int64(150), peersetMetric.MessageReceived[message.TypeTransaction].Bytes)
+		assert.Equal(t, int64(450), peersetMetric.TotalSent.Bytes)
+		assert.Equal(t, int64(450), peersetMetric.MessageSent[message.TypeBlocksRequest].Bytes)
 		assert.Equal(t, 2, peerSet.TotalSentBundles())
 	})
 
@@ -127,9 +117,11 @@ func TestPeerSet(t *testing.T) {
 
 	t.Run("Testing UpdateStatus", func(t *testing.T) {
 		peerSet.UpdateStatus(pid1, status.StatusBanned)
+		peerStatus := peerSet.GetPeerStatus(pid1)
+		assert.Equal(t, status.StatusBanned, peerStatus)
 
-		peer1 := peerSet.findPeer(pid1)
-		assert.Equal(t, status.StatusBanned, peer1.Status)
+		peerStatus = peerSet.GetPeerStatus(ts.RandPeerID())
+		assert.Equal(t, status.StatusUnknown, peerStatus)
 	})
 
 	t.Run("Testing UpdateLastSent", func(t *testing.T) {

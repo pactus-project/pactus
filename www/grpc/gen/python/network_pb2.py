@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rnetwork.proto\x12\x06pactus\">\n\x15GetNetworkInfoRequest\x12%\n\x0eonly_connected\x18\x01 \x01(\x08R\ronlyConnected\"\xae\x04\n\x16GetNetworkInfoResponse\x12!\n\x0cnetwork_name\x18\x01 \x01(\tR\x0bnetworkName\x12(\n\x10total_sent_bytes\x18\x02 \x01(\x03R\x0etotalSentBytes\x12\x30\n\x14total_received_bytes\x18\x03 \x01(\x03R\x12totalReceivedBytes\x12\x32\n\x15\x63onnected_peers_count\x18\x04 \x01(\rR\x13\x63onnectedPeersCount\x12\x39\n\x0f\x63onnected_peers\x18\x05 \x03(\x0b\x32\x10.pactus.PeerInfoR\x0e\x63onnectedPeers\x12L\n\nsent_bytes\x18\x06 \x03(\x0b\x32-.pactus.GetNetworkInfoResponse.SentBytesEntryR\tsentBytes\x12X\n\x0ereceived_bytes\x18\x07 \x03(\x0b\x32\x31.pactus.GetNetworkInfoResponse.ReceivedBytesEntryR\rreceivedBytes\x1a<\n\x0eSentBytesEntry\x12\x10\n\x03key\x18\x01 \x01(\x05R\x03key\x12\x14\n\x05value\x18\x02 \x01(\x03R\x05value:\x02\x38\x01\x1a@\n\x12ReceivedBytesEntry\x12\x10\n\x03key\x18\x01 \x01(\x05R\x03key\x12\x14\n\x05value\x18\x02 \x01(\x03R\x05value:\x02\x38\x01\"\x14\n\x12GetNodeInfoRequest\"\x87\x03\n\x13GetNodeInfoResponse\x12\x18\n\x07moniker\x18\x01 \x01(\tR\x07moniker\x12\x14\n\x05\x61gent\x18\x02 \x01(\tR\x05\x61gent\x12\x17\n\x07peer_id\x18\x03 \x01(\tR\x06peerId\x12\x1d\n\nstarted_at\x18\x04 \x01(\x04R\tstartedAt\x12\"\n\x0creachability\x18\x05 \x01(\tR\x0creachability\x12\x1a\n\x08services\x18\x06 \x01(\x05R\x08services\x12%\n\x0eservices_names\x18\x07 \x01(\tR\rservicesNames\x12\x1f\n\x0blocal_addrs\x18\x08 \x03(\tR\nlocalAddrs\x12\x1c\n\tprotocols\x18\t \x03(\tR\tprotocols\x12!\n\x0c\x63lock_offset\x18\r \x01(\x01R\x0b\x63lockOffset\x12?\n\x0f\x63onnection_info\x18\x0e \x01(\x0b\x32\x16.pactus.ConnectionInfoR\x0e\x63onnectionInfo\"\xed\x06\n\x08PeerInfo\x12\x16\n\x06status\x18\x01 \x01(\x05R\x06status\x12\x18\n\x07moniker\x18\x02 \x01(\tR\x07moniker\x12\x14\n\x05\x61gent\x18\x03 \x01(\tR\x05\x61gent\x12\x17\n\x07peer_id\x18\x04 \x01(\tR\x06peerId\x12%\n\x0e\x63onsensus_keys\x18\x05 \x03(\tR\rconsensusKeys\x12/\n\x13\x63onsensus_addresses\x18\x06 \x03(\tR\x12\x63onsensusAddresses\x12\x1a\n\x08services\x18\x07 \x01(\rR\x08services\x12&\n\x0flast_block_hash\x18\x08 \x01(\tR\rlastBlockHash\x12\x16\n\x06height\x18\t \x01(\rR\x06height\x12)\n\x10received_bundles\x18\n \x01(\x05R\x0freceivedBundles\x12\'\n\x0finvalid_bundles\x18\x0b \x01(\x05R\x0einvalidBundles\x12\x1b\n\tlast_sent\x18\x0c \x01(\x03R\x08lastSent\x12#\n\rlast_received\x18\r \x01(\x03R\x0clastReceived\x12>\n\nsent_bytes\x18\x0e \x03(\x0b\x32\x1f.pactus.PeerInfo.SentBytesEntryR\tsentBytes\x12J\n\x0ereceived_bytes\x18\x0f \x03(\x0b\x32#.pactus.PeerInfo.ReceivedBytesEntryR\rreceivedBytes\x12\x18\n\x07\x61\x64\x64ress\x18\x10 \x01(\tR\x07\x61\x64\x64ress\x12\x1c\n\tdirection\x18\x11 \x01(\tR\tdirection\x12\x1c\n\tprotocols\x18\x12 \x03(\tR\tprotocols\x12%\n\x0etotal_sessions\x18\x13 \x01(\x05R\rtotalSessions\x12-\n\x12\x63ompleted_sessions\x18\x14 \x01(\x05R\x11\x63ompletedSessions\x1a<\n\x0eSentBytesEntry\x12\x10\n\x03key\x18\x01 \x01(\x05R\x03key\x12\x14\n\x05value\x18\x02 \x01(\x03R\x05value:\x02\x38\x01\x1a@\n\x12ReceivedBytesEntry\x12\x10\n\x03key\x18\x01 \x01(\x05R\x03key\x12\x14\n\x05value\x18\x02 \x01(\x03R\x05value:\x02\x38\x01\"\x96\x01\n\x0e\x43onnectionInfo\x12 \n\x0b\x63onnections\x18\x01 \x01(\x04R\x0b\x63onnections\x12/\n\x13inbound_connections\x18\x02 \x01(\x04R\x12inboundConnections\x12\x31\n\x14outbound_connections\x18\x03 \x01(\x04R\x13outboundConnections2\xa2\x01\n\x07Network\x12O\n\x0eGetNetworkInfo\x12\x1d.pactus.GetNetworkInfoRequest\x1a\x1e.pactus.GetNetworkInfoResponse\x12\x46\n\x0bGetNodeInfo\x12\x1a.pactus.GetNodeInfoRequest\x1a\x1b.pactus.GetNodeInfoResponseBB\n\x0epactus.networkZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rnetwork.proto\x12\x06pactus\">\n\x15GetNetworkInfoRequest\x12%\n\x0eonly_connected\x18\x01 \x01(\x08R\ronlyConnected\"\xdf\x01\n\x16GetNetworkInfoResponse\x12!\n\x0cnetwork_name\x18\x01 \x01(\tR\x0bnetworkName\x12\x32\n\x15\x63onnected_peers_count\x18\x02 \x01(\rR\x13\x63onnectedPeersCount\x12\x39\n\x0f\x63onnected_peers\x18\x03 \x03(\x0b\x32\x10.pactus.PeerInfoR\x0e\x63onnectedPeers\x12\x33\n\x0bmetric_info\x18\x04 \x01(\x0b\x32\x12.pactus.MetricInfoR\nmetricInfo\"\x14\n\x12GetNodeInfoRequest\"\x87\x03\n\x13GetNodeInfoResponse\x12\x18\n\x07moniker\x18\x01 \x01(\tR\x07moniker\x12\x14\n\x05\x61gent\x18\x02 \x01(\tR\x05\x61gent\x12\x17\n\x07peer_id\x18\x03 \x01(\tR\x06peerId\x12\x1d\n\nstarted_at\x18\x04 \x01(\x04R\tstartedAt\x12\"\n\x0creachability\x18\x05 \x01(\tR\x0creachability\x12\x1a\n\x08services\x18\x06 \x01(\x05R\x08services\x12%\n\x0eservices_names\x18\x07 \x01(\tR\rservicesNames\x12\x1f\n\x0blocal_addrs\x18\x08 \x03(\tR\nlocalAddrs\x12\x1c\n\tprotocols\x18\t \x03(\tR\tprotocols\x12!\n\x0c\x63lock_offset\x18\r \x01(\x01R\x0b\x63lockOffset\x12?\n\x0f\x63onnection_info\x18\x0e \x01(\x0b\x32\x16.pactus.ConnectionInfoR\x0e\x63onnectionInfo\"\xc2\x04\n\x08PeerInfo\x12\x16\n\x06status\x18\x01 \x01(\x05R\x06status\x12\x18\n\x07moniker\x18\x02 \x01(\tR\x07moniker\x12\x14\n\x05\x61gent\x18\x03 \x01(\tR\x05\x61gent\x12\x17\n\x07peer_id\x18\x04 \x01(\tR\x06peerId\x12%\n\x0e\x63onsensus_keys\x18\x05 \x03(\tR\rconsensusKeys\x12/\n\x13\x63onsensus_addresses\x18\x06 \x03(\tR\x12\x63onsensusAddresses\x12\x1a\n\x08services\x18\x07 \x01(\rR\x08services\x12&\n\x0flast_block_hash\x18\x08 \x01(\tR\rlastBlockHash\x12\x16\n\x06height\x18\t \x01(\rR\x06height\x12\x1b\n\tlast_sent\x18\n \x01(\x03R\x08lastSent\x12#\n\rlast_received\x18\x0b \x01(\x03R\x0clastReceived\x12\x18\n\x07\x61\x64\x64ress\x18\x0c \x01(\tR\x07\x61\x64\x64ress\x12\x1c\n\tdirection\x18\r \x01(\tR\tdirection\x12\x1c\n\tprotocols\x18\x0e \x03(\tR\tprotocols\x12%\n\x0etotal_sessions\x18\x0f \x01(\x05R\rtotalSessions\x12-\n\x12\x63ompleted_sessions\x18\x10 \x01(\x05R\x11\x63ompletedSessions\x12\x33\n\x0bmetric_info\x18\x11 \x01(\x0b\x32\x12.pactus.MetricInfoR\nmetricInfo\"\x96\x01\n\x0e\x43onnectionInfo\x12 \n\x0b\x63onnections\x18\x01 \x01(\x04R\x0b\x63onnections\x12/\n\x13inbound_connections\x18\x02 \x01(\x04R\x12inboundConnections\x12\x31\n\x14outbound_connections\x18\x03 \x01(\x04R\x13outboundConnections\"\xfb\x03\n\nMetricInfo\x12\x37\n\x0cTotalInvalid\x18\x01 \x01(\x0b\x32\x13.pactus.CounterInfoR\x0cTotalInvalid\x12\x31\n\tTotalSent\x18\x02 \x01(\x0b\x32\x13.pactus.CounterInfoR\tTotalSent\x12\x39\n\rTotalReceived\x18\x03 \x01(\x0b\x32\x13.pactus.CounterInfoR\rTotalReceived\x12\x45\n\x0bMessageSent\x18\x04 \x03(\x0b\x32#.pactus.MetricInfo.MessageSentEntryR\x0bMessageSent\x12Q\n\x0fMessageReceived\x18\x05 \x03(\x0b\x32\'.pactus.MetricInfo.MessageReceivedEntryR\x0fMessageReceived\x1aS\n\x10MessageSentEntry\x12\x10\n\x03key\x18\x01 \x01(\x05R\x03key\x12)\n\x05value\x18\x02 \x01(\x0b\x32\x13.pactus.CounterInfoR\x05value:\x02\x38\x01\x1aW\n\x14MessageReceivedEntry\x12\x10\n\x03key\x18\x01 \x01(\x05R\x03key\x12)\n\x05value\x18\x02 \x01(\x0b\x32\x13.pactus.CounterInfoR\x05value:\x02\x38\x01\"=\n\x0b\x43ounterInfo\x12\x14\n\x05\x42ytes\x18\x01 \x01(\x04R\x05\x42ytes\x12\x18\n\x07\x42undles\x18\x02 \x01(\x04R\x07\x42undles2\xa2\x01\n\x07Network\x12O\n\x0eGetNetworkInfo\x12\x1d.pactus.GetNetworkInfoRequest\x1a\x1e.pactus.GetNetworkInfoResponse\x12\x46\n\x0bGetNodeInfo\x12\x1a.pactus.GetNodeInfoRequest\x1a\x1b.pactus.GetNodeInfoResponseBB\n\x0epactus.networkZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'network_pb2', globals())
@@ -21,34 +21,30 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'\n\016pactus.networkZ0github.com/pactus-project/pactus/www/grpc/pactus'
-  _GETNETWORKINFORESPONSE_SENTBYTESENTRY._options = None
-  _GETNETWORKINFORESPONSE_SENTBYTESENTRY._serialized_options = b'8\001'
-  _GETNETWORKINFORESPONSE_RECEIVEDBYTESENTRY._options = None
-  _GETNETWORKINFORESPONSE_RECEIVEDBYTESENTRY._serialized_options = b'8\001'
-  _PEERINFO_SENTBYTESENTRY._options = None
-  _PEERINFO_SENTBYTESENTRY._serialized_options = b'8\001'
-  _PEERINFO_RECEIVEDBYTESENTRY._options = None
-  _PEERINFO_RECEIVEDBYTESENTRY._serialized_options = b'8\001'
+  _METRICINFO_MESSAGESENTENTRY._options = None
+  _METRICINFO_MESSAGESENTENTRY._serialized_options = b'8\001'
+  _METRICINFO_MESSAGERECEIVEDENTRY._options = None
+  _METRICINFO_MESSAGERECEIVEDENTRY._serialized_options = b'8\001'
   _GETNETWORKINFOREQUEST._serialized_start=25
   _GETNETWORKINFOREQUEST._serialized_end=87
   _GETNETWORKINFORESPONSE._serialized_start=90
-  _GETNETWORKINFORESPONSE._serialized_end=648
-  _GETNETWORKINFORESPONSE_SENTBYTESENTRY._serialized_start=522
-  _GETNETWORKINFORESPONSE_SENTBYTESENTRY._serialized_end=582
-  _GETNETWORKINFORESPONSE_RECEIVEDBYTESENTRY._serialized_start=584
-  _GETNETWORKINFORESPONSE_RECEIVEDBYTESENTRY._serialized_end=648
-  _GETNODEINFOREQUEST._serialized_start=650
-  _GETNODEINFOREQUEST._serialized_end=670
-  _GETNODEINFORESPONSE._serialized_start=673
-  _GETNODEINFORESPONSE._serialized_end=1064
-  _PEERINFO._serialized_start=1067
-  _PEERINFO._serialized_end=1944
-  _PEERINFO_SENTBYTESENTRY._serialized_start=522
-  _PEERINFO_SENTBYTESENTRY._serialized_end=582
-  _PEERINFO_RECEIVEDBYTESENTRY._serialized_start=584
-  _PEERINFO_RECEIVEDBYTESENTRY._serialized_end=648
-  _CONNECTIONINFO._serialized_start=1947
-  _CONNECTIONINFO._serialized_end=2097
-  _NETWORK._serialized_start=2100
-  _NETWORK._serialized_end=2262
+  _GETNETWORKINFORESPONSE._serialized_end=313
+  _GETNODEINFOREQUEST._serialized_start=315
+  _GETNODEINFOREQUEST._serialized_end=335
+  _GETNODEINFORESPONSE._serialized_start=338
+  _GETNODEINFORESPONSE._serialized_end=729
+  _PEERINFO._serialized_start=732
+  _PEERINFO._serialized_end=1310
+  _CONNECTIONINFO._serialized_start=1313
+  _CONNECTIONINFO._serialized_end=1463
+  _METRICINFO._serialized_start=1466
+  _METRICINFO._serialized_end=1973
+  _METRICINFO_MESSAGESENTENTRY._serialized_start=1801
+  _METRICINFO_MESSAGESENTENTRY._serialized_end=1884
+  _METRICINFO_MESSAGERECEIVEDENTRY._serialized_start=1886
+  _METRICINFO_MESSAGERECEIVEDENTRY._serialized_end=1973
+  _COUNTERINFO._serialized_start=1975
+  _COUNTERINFO._serialized_end=2036
+  _NETWORK._serialized_start=2039
+  _NETWORK._serialized_end=2201
 # @@protoc_insertion_point(module_scope)
