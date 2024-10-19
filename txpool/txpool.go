@@ -30,7 +30,7 @@ type txPool struct {
 	logger         *logger.SubLogger
 }
 
-func NewTxPool(conf *Config, broadcastCh chan message.Message, storeReader store.Reader) TxPool {
+func NewTxPool(conf *Config, storeReader store.Reader, broadcastCh chan message.Message) TxPool {
 	pools := make(map[payload.Type]pool)
 	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.minFee())
 	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), conf.minFee())
@@ -185,8 +185,8 @@ func (p *txPool) handleDecreaseConsumption(height uint32) error {
 				// Decrease the consumption by the size of the transaction
 				v -= uint32(trx.SerializeSize())
 
-				// If the new value is zero, remove the signer from the consumptionMap
 				if v == 0 {
+					// If the new value is zero, remove the signer from the consumptionMap
 					delete(p.consumptionMap, signer)
 				} else {
 					// Otherwise, update the map with the new value

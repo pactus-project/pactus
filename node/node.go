@@ -64,7 +64,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	txPool := txpool.NewTxPool(conf.TxPool, messageCh, str)
+	txPool := txpool.NewTxPool(conf.TxPool, str, messageCh)
 
 	st, err := state.LoadOrNewState(genDoc, valKeys, str, txPool, eventCh)
 	if err != nil {

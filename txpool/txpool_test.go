@@ -49,7 +49,7 @@ func setup(t *testing.T) *testData {
 	sb := sandbox.MockingSandbox(ts)
 	config := testConfig()
 	mockStore := store.MockingStore(ts)
-	p := NewTxPool(config, ch, mockStore)
+	p := NewTxPool(config, mockStore, ch)
 	p.SetNewSandboxAndRecheck(sb)
 	pool := p.(*txPool)
 	assert.NotNil(t, pool)
