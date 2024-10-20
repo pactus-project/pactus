@@ -28,10 +28,6 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <span class="rpc-badge"></span> BroadcastTransaction</a>
         </li>
         <li>
-          <a href="#pactus.Transaction.GetRawTransaction">
-          <span class="rpc-badge"></span> GetRawTransaction</a>
-        </li>
-        <li>
           <a href="#pactus.Transaction.GetRawTransferTransaction">
           <span class="rpc-badge"></span> GetRawTransferTransaction</a>
         </li>
@@ -570,96 +566,9 @@ and payload type.</p>
      </tbody>
 </table>
 
-### GetRawTransaction <span id="pactus.Transaction.GetRawTransaction" class="rpc-badge"></span>
-
-<p>GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.</p>
-
-<h4>GetRawTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">lock_time</td>
-    <td> uint32</td>
-    <td>
-    The lock time for the transaction. If not set, defaults to the last block height.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">memo</td>
-    <td> string</td>
-    <td>
-    A memo string for the transaction.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">fee</td>
-    <td> int64</td>
-    <td>
-    The fee for the transaction in NanoPAC.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">transfer</td>
-    <td> PayloadTransfer</td>
-    <td>
-    (OneOf)
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">bond</td>
-    <td> PayloadBond</td>
-    <td>
-    (OneOf)
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">unbond</td>
-    <td> PayloadUnbond</td>
-    <td>
-    (OneOf)
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">withdraw</td>
-    <td> PayloadWithdraw</td>
-    <td>
-    (OneOf)
-    </td>
-  </tr>
-  </tbody>
-</table>
-  <h4>GetRawTransactionResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">raw_transaction</td>
-    <td> string</td>
-    <td>
-    The raw transaction data.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">id</td>
-    <td> string</td>
-    <td>
-    The unique ID of the transaction.
-    </td>
-  </tr>
-     </tbody>
-</table>
-
 ### GetRawTransferTransaction <span id="pactus.Transaction.GetRawTransferTransaction" class="rpc-badge"></span>
 
-<p>Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
-Use GetRawTransaction instead.</p>
+<p>GetRawTransferTransaction retrieves raw details of a transfer transaction.</p>
 
 <h4>GetRawTransferTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -739,8 +648,7 @@ height.
 
 ### GetRawBondTransaction <span id="pactus.Transaction.GetRawBondTransaction" class="rpc-badge"></span>
 
-<p>Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
-Use GetRawTransaction instead.</p>
+<p>GetRawBondTransaction retrieves raw details of a bond transaction.</p>
 
 <h4>GetRawBondTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -827,8 +735,7 @@ height.
 
 ### GetRawUnbondTransaction <span id="pactus.Transaction.GetRawUnbondTransaction" class="rpc-badge"></span>
 
-<p>Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-Use GetRawTransaction instead.</p>
+<p>GetRawUnbondTransaction retrieves raw details of an unbond transaction.</p>
 
 <h4>GetRawUnbondTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -887,8 +794,7 @@ height.
 
 ### GetRawWithdrawTransaction <span id="pactus.Transaction.GetRawWithdrawTransaction" class="rpc-badge"></span>
 
-<p>Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-Use GetRawTransaction instead.</p>
+<p>GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.</p>
 
 <h4>GetRawWithdrawTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
