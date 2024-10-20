@@ -31,7 +31,7 @@ type testData struct {
 func testConfig() *Config {
 	return &Config{
 		MaxSize:           10,
-		ConsumptionBlocks: 3,
+		ConsumptionWindow: 3,
 		Fee: &FeeConfig{
 			FixedFee:   0.000001,
 			DailyLimit: 280,

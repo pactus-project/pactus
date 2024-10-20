@@ -30,6 +30,8 @@ type txPool struct {
 	logger         *logger.SubLogger
 }
 
+// NewTxPool constructs a new transaction pool with various sub-pools for different transaction types.
+// The transaction pool also maintains a consumption map for tracking byte usage per address.
 func NewTxPool(conf *Config, storeReader store.Reader, broadcastCh chan message.Message) TxPool {
 	pools := make(map[payload.Type]pool)
 	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.minFee())
@@ -51,6 +53,8 @@ func NewTxPool(conf *Config, storeReader store.Reader, broadcastCh chan message.
 	return pool
 }
 
+// SetNewSandboxAndRecheck updates the sandbox and rechecks all transactions,
+// removing expired or invalid ones.
 func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
@@ -161,14 +165,14 @@ func (p *txPool) handleIncreaseConsumption(trx *tx.Tx) {
 }
 
 func (p *txPool) handleDecreaseConsumption(height uint32) error {
-	// If height is less than or equal to ConsumptionBlocks, nothing to do
-	if height <= p.config.ConsumptionBlocks {
+	// If height is less than or equal to ConsumptionWindow, nothing to do.
+	if height <= p.config.ConsumptionWindow {
 		return nil
 	}
 
-	// Calculate the height of the old block based on ConsumptionBlocks
-	oldConsumptionHeight := height - p.config.ConsumptionBlocks
-	committedBlock, err := p.strReader.Block(oldConsumptionHeight)
+	// Calculate the block height that has passed out of the consumption window.
+	windowedBlockHeight := height - p.config.ConsumptionWindow
+	committedBlock, err := p.strReader.Block(windowedBlockHeight)
 	if err != nil {
 		return err
 	}
