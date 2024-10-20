@@ -2717,6 +2717,34 @@ Message has no fields.
         Number of outbound connections.
         </td>
       </tr>
+         <tr>
+    <td class="fw-bold">fee</td>
+    <td> FeeConfig</td>
+    <td>
+    Fee config of the node.
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">fee.fixed_fee</td>
+        <td> double</td>
+        <td>
+        Fixed fee for each transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">fee.daily_limit</td>
+        <td> uint32</td>
+        <td>
+        Number of bytes an account can send each day without paying a fee.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">fee.unit_price</td>
+        <td> double</td>
+        <td>
+        Fee per byte in PAC.
+        </td>
+      </tr>
          </tbody>
 </table>
 

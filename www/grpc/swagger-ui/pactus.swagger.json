@@ -1625,6 +1625,27 @@
       },
       "description": "Response message containing the mnemonic for wallet recovery."
     },
+    "pactusFeeConfig": {
+      "type": "object",
+      "properties": {
+        "fixedFee": {
+          "type": "number",
+          "format": "double",
+          "description": "Fixed fee for each transaction."
+        },
+        "dailyLimit": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Number of bytes an account can send each day without paying a fee."
+        },
+        "unitPrice": {
+          "type": "number",
+          "format": "double",
+          "description": "Fee per byte in PAC."
+        }
+      },
+      "description": "FeeConfig holds the fee configuration that stored in node config."
+    },
     "pactusGetAccountResponse": {
       "type": "object",
       "properties": {
@@ -1902,6 +1923,10 @@
         "connectionInfo": {
           "$ref": "#/definitions/pactusConnectionInfo",
           "description": "Information about the node's connections."
+        },
+        "fee": {
+          "$ref": "#/definitions/pactusFeeConfig",
+          "description": "Fee config of the node."
         }
       },
       "description": "Response message containing information about a specific node in the network."

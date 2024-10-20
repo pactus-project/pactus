@@ -28,7 +28,7 @@ class GetNodeInfoRequest(_message.Message):
     def __init__(self) -> None: ...
 
 class GetNodeInfoResponse(_message.Message):
-    __slots__ = ("moniker", "agent", "peer_id", "started_at", "reachability", "services", "services_names", "local_addrs", "protocols", "clock_offset", "connection_info")
+    __slots__ = ("moniker", "agent", "peer_id", "started_at", "reachability", "services", "services_names", "local_addrs", "protocols", "clock_offset", "connection_info", "fee")
     MONIKER_FIELD_NUMBER: _ClassVar[int]
     AGENT_FIELD_NUMBER: _ClassVar[int]
     PEER_ID_FIELD_NUMBER: _ClassVar[int]
@@ -40,6 +40,7 @@ class GetNodeInfoResponse(_message.Message):
     PROTOCOLS_FIELD_NUMBER: _ClassVar[int]
     CLOCK_OFFSET_FIELD_NUMBER: _ClassVar[int]
     CONNECTION_INFO_FIELD_NUMBER: _ClassVar[int]
+    FEE_FIELD_NUMBER: _ClassVar[int]
     moniker: str
     agent: str
     peer_id: str
@@ -51,7 +52,8 @@ class GetNodeInfoResponse(_message.Message):
     protocols: _containers.RepeatedScalarFieldContainer[str]
     clock_offset: float
     connection_info: ConnectionInfo
-    def __init__(self, moniker: _Optional[str] = ..., agent: _Optional[str] = ..., peer_id: _Optional[str] = ..., started_at: _Optional[int] = ..., reachability: _Optional[str] = ..., services: _Optional[int] = ..., services_names: _Optional[str] = ..., local_addrs: _Optional[_Iterable[str]] = ..., protocols: _Optional[_Iterable[str]] = ..., clock_offset: _Optional[float] = ..., connection_info: _Optional[_Union[ConnectionInfo, _Mapping]] = ...) -> None: ...
+    fee: FeeConfig
+    def __init__(self, moniker: _Optional[str] = ..., agent: _Optional[str] = ..., peer_id: _Optional[str] = ..., started_at: _Optional[int] = ..., reachability: _Optional[str] = ..., services: _Optional[int] = ..., services_names: _Optional[str] = ..., local_addrs: _Optional[_Iterable[str]] = ..., protocols: _Optional[_Iterable[str]] = ..., clock_offset: _Optional[float] = ..., connection_info: _Optional[_Union[ConnectionInfo, _Mapping]] = ..., fee: _Optional[_Union[FeeConfig, _Mapping]] = ...) -> None: ...
 
 class PeerInfo(_message.Message):
     __slots__ = ("status", "moniker", "agent", "peer_id", "consensus_keys", "consensus_addresses", "services", "last_block_hash", "height", "last_sent", "last_received", "address", "direction", "protocols", "total_sessions", "completed_sessions", "metric_info")
@@ -136,3 +138,13 @@ class CounterInfo(_message.Message):
     Bytes: int
     Bundles: int
     def __init__(self, Bytes: _Optional[int] = ..., Bundles: _Optional[int] = ...) -> None: ...
+
+class FeeConfig(_message.Message):
+    __slots__ = ("fixed_fee", "daily_limit", "unit_price")
+    FIXED_FEE_FIELD_NUMBER: _ClassVar[int]
+    DAILY_LIMIT_FIELD_NUMBER: _ClassVar[int]
+    UNIT_PRICE_FIELD_NUMBER: _ClassVar[int]
+    fixed_fee: float
+    daily_limit: int
+    unit_price: float
+    def __init__(self, fixed_fee: _Optional[float] = ..., daily_limit: _Optional[int] = ..., unit_price: _Optional[float] = ...) -> None: ...

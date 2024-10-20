@@ -47,6 +47,11 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 			InboundConnections:  uint64(s.net.NumInbound()),
 			OutboundConnections: uint64(s.net.NumOutbound()),
 		},
+		Fee: &pactus.FeeConfig{
+			FixedFee:   s.txpoolConfig.Fee.FixedFee,
+			DailyLimit: s.txpoolConfig.Fee.DailyLimit,
+			UnitPrice:  s.txpoolConfig.Fee.UnitPrice,
+		},
 	}, nil
 }
 

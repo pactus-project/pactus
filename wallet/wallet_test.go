@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/state"
+	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -45,11 +46,15 @@ func setup(t *testing.T) *testData {
 		WalletsDir: util.TempDirPath(),
 		ChainType:  genesis.Mainnet,
 	}
+
+	txpoolConf := txpool.DefaultConfig()
+
 	mockState := state.MockingState(ts)
 	gRPCServer := grpc.NewServer(
 		grpcConf, mockState,
 		nil, nil,
 		nil, wallet.NewWalletManager(walletMgrConf),
+		txpoolConf,
 	)
 
 	assert.NoError(t, gRPCServer.StartServer())

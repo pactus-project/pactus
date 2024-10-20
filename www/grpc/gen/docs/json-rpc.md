@@ -2768,6 +2768,34 @@ Parameters has no fields.
         Number of outbound connections.
         </td>
       </tr>
+         <tr>
+    <td class="fw-bold">fee</td>
+    <td> object</td>
+    <td>
+    Fee config of the node.
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">fee.fixed_fee</td>
+        <td> numeric</td>
+        <td>
+        Fixed fee for each transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">fee.daily_limit</td>
+        <td> numeric</td>
+        <td>
+        Number of bytes an account can send each day without paying a fee.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">fee.unit_price</td>
+        <td> numeric</td>
+        <td>
+        Fee per byte in PAC.
+        </td>
+      </tr>
          </tbody>
 </table>
 

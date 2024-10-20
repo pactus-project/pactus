@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
@@ -65,10 +66,13 @@ func setup(t *testing.T) *testData {
 		ChainType:  mockState.Genesis().ChainType(),
 	}
 
+	txpoolConf := txpool.DefaultConfig()
+
 	gRPCServer := grpc.NewServer(
 		grpcConf, mockState,
 		mockSync, mockNet,
 		mockConsMgr, wallet.NewWalletManager(walletMgrConf),
+		txpoolConf,
 	)
 	assert.NoError(t, gRPCServer.StartServer())
 

@@ -1,6 +1,8 @@
 package grpc
 
-import "github.com/pactus-project/pactus/util/htpasswd"
+import (
+	"github.com/pactus-project/pactus/util/htpasswd"
+)
 
 type Config struct {
 	Enable       bool          `toml:"enable"`

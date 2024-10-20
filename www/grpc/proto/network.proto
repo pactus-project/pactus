@@ -58,6 +58,8 @@ message GetNodeInfoResponse {
   double clock_offset = 13;
   // Information about the node's connections.
   ConnectionInfo connection_info = 14;
+  // Fee config of the node.
+  FeeConfig fee = 15;
 }
 
 // Information about a peer in the network.
@@ -128,4 +130,14 @@ message CounterInfo {
   uint64 Bytes = 1;
   // Total number of bundles.
   uint64 Bundles = 2;
+}
+
+// FeeConfig holds the fee configuration that stored in node config.
+message FeeConfig {
+  // Fixed fee for each transaction.
+  double fixed_fee = 1;
+  // Number of bytes an account can send each day without paying a fee.
+  uint32 daily_limit = 2;
+  // Fee per byte in PAC.
+  double unit_price = 3;
 }

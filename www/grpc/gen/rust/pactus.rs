@@ -899,6 +899,9 @@ pub struct GetNodeInfoResponse {
     /// Information about the node's connections.
     #[prost(message, optional, tag="14")]
     pub connection_info: ::core::option::Option<ConnectionInfo>,
+    /// Fee config of the node.
+    #[prost(message, optional, tag="15")]
+    pub fee: ::core::option::Option<FeeConfig>,
 }
 /// Information about a peer in the network.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -1000,6 +1003,20 @@ pub struct CounterInfo {
     /// Total number of bundles.
     #[prost(uint64, tag="2")]
     pub bundles: u64,
+}
+/// FeeConfig holds the fee configuration that stored in node config.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct FeeConfig {
+    /// Fixed fee for each transaction.
+    #[prost(double, tag="1")]
+    pub fixed_fee: f64,
+    /// Number of bytes an account can send each day without paying a fee.
+    #[prost(uint32, tag="2")]
+    pub daily_limit: u32,
+    /// Fee per byte in PAC.
+    #[prost(double, tag="3")]
+    pub unit_price: f64,
 }
 /// Request message for sign message with private key.
 #[allow(clippy::derive_partial_eq_without_eq)]
