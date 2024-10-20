@@ -19,7 +19,6 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
   $async.Future<$0.GetTransactionResponse> getTransaction($pb.ServerContext ctx, $0.GetTransactionRequest request);
   $async.Future<$0.CalculateFeeResponse> calculateFee($pb.ServerContext ctx, $0.CalculateFeeRequest request);
   $async.Future<$0.BroadcastTransactionResponse> broadcastTransaction($pb.ServerContext ctx, $0.BroadcastTransactionRequest request);
-  $async.Future<$0.GetRawTransactionResponse> getRawTransaction($pb.ServerContext ctx, $0.GetRawTransactionRequest request);
   $async.Future<$0.GetRawTransactionResponse> getRawTransferTransaction($pb.ServerContext ctx, $0.GetRawTransferTransactionRequest request);
   $async.Future<$0.GetRawTransactionResponse> getRawBondTransaction($pb.ServerContext ctx, $0.GetRawBondTransactionRequest request);
   $async.Future<$0.GetRawTransactionResponse> getRawUnbondTransaction($pb.ServerContext ctx, $0.GetRawUnbondTransactionRequest request);
@@ -30,7 +29,6 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
       case 'GetTransaction': return $0.GetTransactionRequest();
       case 'CalculateFee': return $0.CalculateFeeRequest();
       case 'BroadcastTransaction': return $0.BroadcastTransactionRequest();
-      case 'GetRawTransaction': return $0.GetRawTransactionRequest();
       case 'GetRawTransferTransaction': return $0.GetRawTransferTransactionRequest();
       case 'GetRawBondTransaction': return $0.GetRawBondTransactionRequest();
       case 'GetRawUnbondTransaction': return $0.GetRawUnbondTransactionRequest();
@@ -44,7 +42,6 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
       case 'GetTransaction': return this.getTransaction(ctx, request as $0.GetTransactionRequest);
       case 'CalculateFee': return this.calculateFee(ctx, request as $0.CalculateFeeRequest);
       case 'BroadcastTransaction': return this.broadcastTransaction(ctx, request as $0.BroadcastTransactionRequest);
-      case 'GetRawTransaction': return this.getRawTransaction(ctx, request as $0.GetRawTransactionRequest);
       case 'GetRawTransferTransaction': return this.getRawTransferTransaction(ctx, request as $0.GetRawTransferTransactionRequest);
       case 'GetRawBondTransaction': return this.getRawBondTransaction(ctx, request as $0.GetRawBondTransactionRequest);
       case 'GetRawUnbondTransaction': return this.getRawUnbondTransaction(ctx, request as $0.GetRawUnbondTransactionRequest);

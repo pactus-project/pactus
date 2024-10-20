@@ -65,38 +65,7 @@ pub struct BroadcastTransactionResponse {
     #[prost(string, tag="1")]
     pub id: ::prost::alloc::string::String,
 }
-/// Request message for retrieving raw details of transaction.
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct GetRawTransactionRequest {
-    /// The lock time for the transaction. If not set, defaults to the last block height.
-    #[prost(uint32, tag="1")]
-    pub lock_time: u32,
-    /// A memo string for the transaction.
-    #[prost(string, tag="2")]
-    pub memo: ::prost::alloc::string::String,
-    /// The fee for the transaction in NanoPAC.
-    #[prost(int64, tag="3")]
-    pub fee: i64,
-    #[prost(oneof="get_raw_transaction_request::Payload", tags="4, 5, 6, 7")]
-    pub payload: ::core::option::Option<get_raw_transaction_request::Payload>,
-}
-/// Nested message and enum types in `GetRawTransactionRequest`.
-pub mod get_raw_transaction_request {
-    #[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Oneof)]
-    pub enum Payload {
-        #[prost(message, tag="4")]
-        Transfer(super::PayloadTransfer),
-        #[prost(message, tag="5")]
-        Bond(super::PayloadBond),
-        #[prost(message, tag="6")]
-        Unbond(super::PayloadUnbond),
-        #[prost(message, tag="7")]
-        Withdraw(super::PayloadWithdraw),
-    }
-}
-/// Deprecated: Request message for retrieving raw details of a transfer transaction.
+/// Request message for retrieving raw details of a transfer transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawTransferTransactionRequest {
@@ -120,7 +89,7 @@ pub struct GetRawTransferTransactionRequest {
     #[prost(string, tag="6")]
     pub memo: ::prost::alloc::string::String,
 }
-/// Deprecated: Request message for retrieving raw details of a bond transaction.
+/// Request message for retrieving raw details of a bond transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawBondTransactionRequest {
@@ -147,7 +116,7 @@ pub struct GetRawBondTransactionRequest {
     #[prost(string, tag="7")]
     pub memo: ::prost::alloc::string::String,
 }
-/// Deprecated: Request message for retrieving raw details of an unbond transaction.
+/// Request message for retrieving raw details of an unbond transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawUnbondTransactionRequest {
@@ -162,7 +131,7 @@ pub struct GetRawUnbondTransactionRequest {
     #[prost(string, tag="4")]
     pub memo: ::prost::alloc::string::String,
 }
-/// Deprecated: Request message for retrieving raw details of a withdraw transaction.
+/// Request message for retrieving raw details of a withdraw transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawWithdrawTransactionRequest {

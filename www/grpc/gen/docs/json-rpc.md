@@ -79,10 +79,6 @@ curl --location 'http://localhost:8545/' \
           <span class="rpc-badge"></span> pactus.transaction.broadcast_transaction</a>
         </li>
         <li>
-          <a href="#pactus.transaction.get_raw_transaction">
-          <span class="rpc-badge"></span> pactus.transaction.get_raw_transaction</a>
-        </li>
-        <li>
           <a href="#pactus.transaction.get_raw_transfer_transaction">
           <span class="rpc-badge"></span> pactus.transaction.get_raw_transfer_transaction</a>
         </li>
@@ -621,96 +617,9 @@ and payload type.</p>
      </tbody>
 </table>
 
-### pactus.transaction.get_raw_transaction <span id="pactus.transaction.get_raw_transaction" class="rpc-badge"></span>
-
-<p>GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.</p>
-
-<h4>Parameters</h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">lock_time</td>
-    <td> numeric</td>
-    <td>
-    The lock time for the transaction. If not set, defaults to the last block height.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">memo</td>
-    <td> string</td>
-    <td>
-    A memo string for the transaction.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">fee</td>
-    <td> numeric</td>
-    <td>
-    The fee for the transaction in NanoPAC.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">transfer</td>
-    <td> object</td>
-    <td>
-    (OneOf)
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">bond</td>
-    <td> object</td>
-    <td>
-    (OneOf)
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">unbond</td>
-    <td> object</td>
-    <td>
-    (OneOf)
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">withdraw</td>
-    <td> object</td>
-    <td>
-    (OneOf)
-    </td>
-  </tr>
-  </tbody>
-</table>
-  <h4>Result</h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">raw_transaction</td>
-    <td> string</td>
-    <td>
-    The raw transaction data.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">id</td>
-    <td> string</td>
-    <td>
-    The unique ID of the transaction.
-    </td>
-  </tr>
-     </tbody>
-</table>
-
 ### pactus.transaction.get_raw_transfer_transaction <span id="pactus.transaction.get_raw_transfer_transaction" class="rpc-badge"></span>
 
-<p>Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
-Use GetRawTransaction instead.</p>
+<p>GetRawTransferTransaction retrieves raw details of a transfer transaction.</p>
 
 <h4>Parameters</h4>
 
@@ -790,8 +699,7 @@ height.
 
 ### pactus.transaction.get_raw_bond_transaction <span id="pactus.transaction.get_raw_bond_transaction" class="rpc-badge"></span>
 
-<p>Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
-Use GetRawTransaction instead.</p>
+<p>GetRawBondTransaction retrieves raw details of a bond transaction.</p>
 
 <h4>Parameters</h4>
 
@@ -878,8 +786,7 @@ height.
 
 ### pactus.transaction.get_raw_unbond_transaction <span id="pactus.transaction.get_raw_unbond_transaction" class="rpc-badge"></span>
 
-<p>Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-Use GetRawTransaction instead.</p>
+<p>GetRawUnbondTransaction retrieves raw details of an unbond transaction.</p>
 
 <h4>Parameters</h4>
 
@@ -938,8 +845,7 @@ height.
 
 ### pactus.transaction.get_raw_withdraw_transaction <span id="pactus.transaction.get_raw_withdraw_transaction" class="rpc-badge"></span>
 
-<p>Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-Use GetRawTransaction instead.</p>
+<p>GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.</p>
 
 <h4>Parameters</h4>
 

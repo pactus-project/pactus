@@ -59,17 +59,6 @@ function deserialize_pactus_GetRawBondTransactionRequest(buffer_arg) {
   return transaction_pb.GetRawBondTransactionRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_GetRawTransactionRequest(arg) {
-  if (!(arg instanceof transaction_pb.GetRawTransactionRequest)) {
-    throw new Error('Expected argument of type pactus.GetRawTransactionRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_GetRawTransactionRequest(buffer_arg) {
-  return transaction_pb.GetRawTransactionRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_pactus_GetRawTransactionResponse(arg) {
   if (!(arg instanceof transaction_pb.GetRawTransactionResponse)) {
     throw new Error('Expected argument of type pactus.GetRawTransactionResponse');
@@ -178,20 +167,7 @@ broadcastTransaction: {
     responseSerialize: serialize_pactus_BroadcastTransactionResponse,
     responseDeserialize: deserialize_pactus_BroadcastTransactionResponse,
   },
-  // GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.
-getRawTransaction: {
-    path: '/pactus.Transaction/GetRawTransaction',
-    requestStream: false,
-    responseStream: false,
-    requestType: transaction_pb.GetRawTransactionRequest,
-    responseType: transaction_pb.GetRawTransactionResponse,
-    requestSerialize: serialize_pactus_GetRawTransactionRequest,
-    requestDeserialize: deserialize_pactus_GetRawTransactionRequest,
-    responseSerialize: serialize_pactus_GetRawTransactionResponse,
-    responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
-  },
-  // Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
-// Use GetRawTransaction instead.
+  // GetRawTransferTransaction retrieves raw details of a transfer transaction.
 getRawTransferTransaction: {
     path: '/pactus.Transaction/GetRawTransferTransaction',
     requestStream: false,
@@ -203,8 +179,7 @@ getRawTransferTransaction: {
     responseSerialize: serialize_pactus_GetRawTransactionResponse,
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
-  // Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
-// Use GetRawTransaction instead.
+  // GetRawBondTransaction retrieves raw details of a bond transaction.
 getRawBondTransaction: {
     path: '/pactus.Transaction/GetRawBondTransaction',
     requestStream: false,
@@ -216,8 +191,7 @@ getRawBondTransaction: {
     responseSerialize: serialize_pactus_GetRawTransactionResponse,
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
-  // Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-// Use GetRawTransaction instead.
+  // GetRawUnbondTransaction retrieves raw details of an unbond transaction.
 getRawUnbondTransaction: {
     path: '/pactus.Transaction/GetRawUnbondTransaction',
     requestStream: false,
@@ -229,8 +203,7 @@ getRawUnbondTransaction: {
     responseSerialize: serialize_pactus_GetRawTransactionResponse,
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
-  // Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-// Use GetRawTransaction instead.
+  // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
 getRawWithdrawTransaction: {
     path: '/pactus.Transaction/GetRawWithdrawTransaction',
     requestStream: false,
