@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
@@ -19,14 +21,18 @@ import (
 type txPool struct {
 	lk sync.RWMutex
 
-	config      *Config
-	sandbox     sandbox.Sandbox
-	pools       map[payload.Type]pool
-	broadcastCh chan message.Message
-	logger      *logger.SubLogger
+	config         *Config
+	sandbox        sandbox.Sandbox
+	pools          map[payload.Type]pool
+	consumptionMap map[crypto.Address]uint32
+	broadcastCh    chan message.Message
+	strReader      store.Reader
+	logger         *logger.SubLogger
 }
 
-func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
+// NewTxPool constructs a new transaction pool with various sub-pools for different transaction types.
+// The transaction pool also maintains a consumption map for tracking byte usage per address.
+func NewTxPool(conf *Config, storeReader store.Reader, broadcastCh chan message.Message) TxPool {
 	pools := make(map[payload.Type]pool)
 	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.minFee())
 	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), conf.minFee())
@@ -35,9 +41,11 @@ func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 	pools[payload.TypeSortition] = newPool(conf.sortitionPoolSize(), 0)
 
 	pool := &txPool{
-		config:      conf,
-		pools:       pools,
-		broadcastCh: broadcastCh,
+		config:         conf,
+		pools:          pools,
+		consumptionMap: make(map[crypto.Address]uint32),
+		strReader:      storeReader,
+		broadcastCh:    broadcastCh,
 	}
 
 	pool.logger = logger.NewSubLogger("_pool", pool)
@@ -45,6 +53,8 @@ func NewTxPool(conf *Config, broadcastCh chan message.Message) TxPool {
 	return pool
 }
 
+// SetNewSandboxAndRecheck updates the sandbox and rechecks all transactions,
+// removing expired or invalid ones.
 func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
@@ -133,10 +143,67 @@ func (p *txPool) checkTx(trx *tx.Tx) error {
 	return nil
 }
 
-func (p *txPool) RemoveTx(id tx.ID) {
+func (p *txPool) HandleCommittedBlock(blk *block.Block) error {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
+	for _, trx := range blk.Transactions() {
+		p.removeTx(trx.ID())
+
+		p.handleIncreaseConsumption(trx)
+	}
+
+	return p.handleDecreaseConsumption(blk.Height())
+}
+
+func (p *txPool) handleIncreaseConsumption(trx *tx.Tx) {
+	if trx.IsTransferTx() || trx.IsBondTx() || trx.IsWithdrawTx() {
+		signer := trx.Payload().Signer()
+
+		p.consumptionMap[signer] += uint32(trx.SerializeSize())
+	}
+}
+
+func (p *txPool) handleDecreaseConsumption(height uint32) error {
+	// If height is less than or equal to ConsumptionWindow, nothing to do.
+	if height <= p.config.ConsumptionWindow {
+		return nil
+	}
+
+	// Calculate the block height that has passed out of the consumption window.
+	windowedBlockHeight := height - p.config.ConsumptionWindow
+	committedBlock, err := p.strReader.Block(windowedBlockHeight)
+	if err != nil {
+		return err
+	}
+
+	blk, err := committedBlock.ToBlock()
+	if err != nil {
+		return err
+	}
+
+	for _, trx := range blk.Transactions() {
+		if trx.IsTransferTx() || trx.IsBondTx() || trx.IsWithdrawTx() {
+			signer := trx.Payload().Signer()
+			if v, ok := p.consumptionMap[signer]; ok {
+				// Decrease the consumption by the size of the transaction
+				v -= uint32(trx.SerializeSize())
+
+				if v == 0 {
+					// If the new value is zero, remove the signer from the consumptionMap
+					delete(p.consumptionMap, signer)
+				} else {
+					// Otherwise, update the map with the new value
+					p.consumptionMap[signer] = v
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+func (p *txPool) removeTx(id tx.ID) {
 	for _, pool := range p.pools {
 		if pool.list.Remove(id) {
 			break

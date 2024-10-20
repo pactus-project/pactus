@@ -217,16 +217,23 @@ func TestSanitizeArchivePath(t *testing.T) {
 func TestListFilesInDir(t *testing.T) {
 	tmpDir := TempDirPath()
 
-	file1, err := os.Create(filepath.Join(tmpDir, ".file1"))
+	file1Path := filepath.Join(tmpDir, ".public_file")
+	file1, err := os.Create(file1Path)
 	require.NoError(t, err)
 	require.NoError(t, file1.Close())
 
-	file2, err := os.Create(filepath.Join(tmpDir, ".file2"))
+	file2Path := filepath.Join(tmpDir, ".hidden_file")
+	file2, err := os.Create(file2Path)
 	require.NoError(t, err)
 	require.NoError(t, file2.Close())
+
+	err = os.Mkdir(filepath.Join(tmpDir, "directory"), 0o750)
+	require.NoError(t, err)
 
 	files, err := ListFilesInDir(tmpDir)
 	require.NoError(t, err)
 
 	assert.Len(t, files, 2)
+	assert.Contains(t, files, file1Path)
+	assert.Contains(t, files, file2Path)
 }

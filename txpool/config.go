@@ -7,6 +7,9 @@ import (
 type Config struct {
 	MaxSize int        `toml:"max_size"`
 	Fee     *FeeConfig `toml:"fee"`
+
+	// Private configs
+	ConsumptionWindow uint32 `toml:"-"`
 }
 
 type FeeConfig struct {
@@ -17,8 +20,9 @@ type FeeConfig struct {
 
 func DefaultConfig() *Config {
 	return &Config{
-		MaxSize: 1000,
-		Fee:     DefaultFeeConfig(),
+		MaxSize:           1000,
+		Fee:               DefaultFeeConfig(),
+		ConsumptionWindow: 8640,
 	}
 }
 
