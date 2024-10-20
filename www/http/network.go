@@ -99,6 +99,11 @@ func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 	tm.addRowInt("Services", int(res.Services))
 	tm.addRowString("Services Names", res.ServicesNames)
 
+	tm.addRowString("Fee Config", "---")
+	tm.addRowDouble("--- Fixed Fee", res.Fee.FixedFee)
+	tm.addRowInt("--- Daily Limit", int(res.Fee.DailyLimit))
+	tm.addRowDouble("--- Unit Price", res.Fee.UnitPrice)
+
 	tm.addRowString("Connection Info", "---")
 	tm.addRowInt("-- Total connections", int(res.ConnectionInfo.Connections))
 	tm.addRowInt("-- Inbound connections", int(res.ConnectionInfo.InboundConnections))
