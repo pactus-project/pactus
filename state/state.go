@@ -325,7 +325,6 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		// Only one subsidy transaction per blk
 		if txs[i].IsSubsidyTx() {
 			st.logger.Error("found duplicated subsidy transaction", "tx", txs[i])
-			st.txPool.RemoveTx(txs[i].ID())
 			txs.Remove(i)
 			i--
 
@@ -434,13 +433,13 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 
 	st.store.SaveBlock(blk, cert)
 
-	// Remove transactions from pool
-	for _, trx := range blk.Transactions() {
-		st.txPool.RemoveTx(trx.ID())
-	}
-
 	if err := st.store.WriteBatch(); err != nil {
 		st.logger.Panic("unable to update state", "error", err)
+	}
+
+	// Remove transactions from pool and update consumption
+	if err := st.txPool.HandleCommittedBlock(blk); err != nil {
+		return err
 	}
 
 	st.logger.Info("new block committed", "block", blk, "round", cert.Round())

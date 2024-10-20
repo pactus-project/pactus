@@ -5,8 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
+	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/tx"
@@ -22,12 +24,14 @@ type testData struct {
 
 	pool    *txPool
 	sandbox *sandbox.MockSandbox
+	str     *store.MockStore
 	ch      chan message.Message
 }
 
 func testConfig() *Config {
 	return &Config{
-		MaxSize: 10,
+		MaxSize:           10,
+		ConsumptionBlocks: 3,
 		Fee: &FeeConfig{
 			FixedFee:   0.000001,
 			DailyLimit: 280,
@@ -44,7 +48,8 @@ func setup(t *testing.T) *testData {
 	ch := make(chan message.Message, 10)
 	sb := sandbox.MockingSandbox(ts)
 	config := testConfig()
-	p := NewTxPool(config, ch)
+	mockStore := store.MockingStore(ts)
+	p := NewTxPool(config, mockStore, ch)
 	p.SetNewSandboxAndRecheck(sb)
 	pool := p.(*txPool)
 	assert.NotNil(t, pool)
@@ -53,6 +58,7 @@ func setup(t *testing.T) *testData {
 		TestSuite: ts,
 		pool:      pool,
 		sandbox:   sb,
+		str:       mockStore,
 		ch:        ch,
 	}
 }
@@ -96,9 +102,60 @@ func TestAppendAndRemove(t *testing.T) {
 	// Appending the same transaction again, should not return any error
 	assert.NoError(t, td.pool.AppendTx(testTrx))
 
-	td.pool.RemoveTx(testTrx.ID())
+	td.pool.removeTx(testTrx.ID())
 	assert.False(t, td.pool.HasTx(testTrx.ID()), "Transaction should be removed")
 	assert.Nil(t, td.pool.PendingTx(testTrx.ID()))
+}
+
+func TestCalculatingConsumption(t *testing.T) {
+	td := setup(t)
+
+	// Generate keys for different transaction signers
+	_, prv1 := td.RandEd25519KeyPair()
+	_, prv2 := td.RandEd25519KeyPair()
+	_, prv3 := td.RandBLSKeyPair()
+	_, prv4 := td.RandBLSKeyPair()
+
+	// Generate different types of transactions
+	trx11 := td.GenerateTestTransferTx(testsuite.TransactionWithEd25519Signer(prv1))
+	trx12 := td.GenerateTestBondTx(testsuite.TransactionWithEd25519Signer(prv1))
+	trx13 := td.GenerateTestWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
+	trx14 := td.GenerateTestUnbondTx(testsuite.TransactionWithBLSSigner(prv4))
+	trx21 := td.GenerateTestTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
+	trx31 := td.GenerateTestBondTx(testsuite.TransactionWithBLSSigner(prv4))
+	trx41 := td.GenerateTestWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
+	trx42 := td.GenerateTestTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
+
+	// Expected consumption map after transactions
+	expected := map[crypto.Address]uint32{
+		prv2.PublicKeyNative().AccountAddress():   uint32(trx21.SerializeSize()) + uint32(trx42.SerializeSize()),
+		prv4.PublicKeyNative().AccountAddress():   uint32(trx31.SerializeSize()),
+		prv3.PublicKeyNative().ValidatorAddress(): uint32(trx41.SerializeSize()),
+	}
+
+	tests := []struct {
+		height uint32
+		txs    []*tx.Tx
+	}{
+		{1, []*tx.Tx{trx11, trx12, trx13, trx14}},
+		{2, []*tx.Tx{trx21}},
+		{3, []*tx.Tx{trx31}},
+		{4, []*tx.Tx{trx41, trx42}},
+	}
+
+	for _, tt := range tests {
+		// Generate a block with the transactions for the given height
+		blk, cert := td.TestSuite.GenerateTestBlock(tt.height, func(bm *testsuite.BlockMaker) {
+			bm.Txs = tt.txs
+		})
+		td.str.SaveBlock(blk, cert)
+
+		// Handle the block in the transaction pool
+		err := td.pool.HandleCommittedBlock(blk)
+		require.NoError(t, err)
+	}
+
+	require.Equal(t, expected, td.pool.consumptionMap)
 }
 
 func TestAppendInvalidTransaction(t *testing.T) {
