@@ -44,8 +44,17 @@ http:
     - selector: pactus.Transaction.CalculateFee
       get: "/pactus/transaction/calculate_fee"
 
-    - selector: pactus.Transaction.GetRawTransaction
-      get: "/pactus/transaction/get_raw_transaction"
+    - selector: pactus.Transaction.GetRawTransferTransaction
+      get: "/pactus/transaction/get_raw_transfer_transaction"
+
+    - selector: pactus.Transaction.GetRawBondTransaction
+      get: "/pactus/transaction/get_raw_bond_transaction"
+
+    - selector: pactus.Transaction.GetRawUnbondTransaction
+      get: "/pactus/transaction/get_raw_unbond_transaction"
+
+    - selector: pactus.Transaction.GetRawWithdrawTransaction
+      get: "/pactus/transaction/get_raw_withdraw_transaction"
 
     # Network APIs
     - selector: pactus.Network.GetNetworkInfo

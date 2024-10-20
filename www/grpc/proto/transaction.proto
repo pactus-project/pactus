@@ -19,26 +19,19 @@ service Transaction {
   rpc BroadcastTransaction(BroadcastTransactionRequest)
       returns (BroadcastTransactionResponse);
 
-  // GetRawTransaction retrieves raw details of transfer, bond, unbond or withdraw transaction.
-  rpc GetRawTransaction(GetRawTransactionRequest) returns (GetRawTransactionResponse);
-
-  // Deprecated: GetRawTransferTransaction retrieves raw details of a transfer transaction.
-  // Use GetRawTransaction instead.
+  // GetRawTransferTransaction retrieves raw details of a transfer transaction.
   rpc GetRawTransferTransaction(GetRawTransferTransactionRequest)
       returns (GetRawTransactionResponse);
 
-  // Deprecated: GetRawBondTransaction retrieves raw details of a bond transaction.
-  // Use GetRawTransaction instead.
+  // GetRawBondTransaction retrieves raw details of a bond transaction.
   rpc GetRawBondTransaction(GetRawBondTransactionRequest)
       returns (GetRawTransactionResponse);
 
-  // Deprecated: GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-  // Use GetRawTransaction instead.
+  // GetRawUnbondTransaction retrieves raw details of an unbond transaction.
   rpc GetRawUnbondTransaction(GetRawUnbondTransactionRequest)
       returns (GetRawTransactionResponse);
 
-  // Deprecated: GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-  // Use GetRawTransaction instead.
+  // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
   rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest)
       returns (GetRawTransactionResponse);
 }
@@ -91,24 +84,7 @@ message BroadcastTransactionResponse {
   string id = 1;
 }
 
-// Request message for retrieving raw details of transaction.
-message GetRawTransactionRequest {
-  // The lock time for the transaction. If not set, defaults to the last block height.
-  uint32 lock_time = 1;
-  // A memo string for the transaction.
-  string memo = 2;
-  // The fee for the transaction in NanoPAC.
-  int64 fee = 3;
-
-  oneof payload {
-    PayloadTransfer transfer = 4;
-    PayloadBond bond = 5;
-    PayloadUnbond unbond = 6;
-    PayloadWithdraw withdraw = 7;
-  }
-}
-
-// Deprecated: Request message for retrieving raw details of a transfer transaction.
+// Request message for retrieving raw details of a transfer transaction.
 message GetRawTransferTransactionRequest {
   // The lock time for the transaction. If not set, defaults to the last block
   // height.
@@ -125,7 +101,7 @@ message GetRawTransferTransactionRequest {
   string memo = 6;
 }
 
-// Deprecated: Request message for retrieving raw details of a bond transaction.
+// Request message for retrieving raw details of a bond transaction.
 message GetRawBondTransactionRequest {
   // The lock time for the transaction. If not set, defaults to the last block
   // height.
@@ -144,7 +120,7 @@ message GetRawBondTransactionRequest {
   string memo = 7;
 }
 
-// Deprecated: Request message for retrieving raw details of an unbond transaction.
+// Request message for retrieving raw details of an unbond transaction.
 message GetRawUnbondTransactionRequest {
   // The lock time for the transaction. If not set, defaults to the last block
   // height.
@@ -155,7 +131,7 @@ message GetRawUnbondTransactionRequest {
   string memo = 4;
 }
 
-// Deprecated: Request message for retrieving raw details of a withdraw transaction.
+// Request message for retrieving raw details of a withdraw transaction.
 message GetRawWithdrawTransactionRequest {
   // The lock time for the transaction. If not set, defaults to the last block
   // height.
