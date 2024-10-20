@@ -75,24 +75,6 @@ class BroadcastTransactionResponse(_message.Message):
     id: str
     def __init__(self, id: _Optional[str] = ...) -> None: ...
 
-class GetRawTransactionRequest(_message.Message):
-    __slots__ = ("lock_time", "memo", "fee", "transfer", "bond", "unbond", "withdraw")
-    LOCK_TIME_FIELD_NUMBER: _ClassVar[int]
-    MEMO_FIELD_NUMBER: _ClassVar[int]
-    FEE_FIELD_NUMBER: _ClassVar[int]
-    TRANSFER_FIELD_NUMBER: _ClassVar[int]
-    BOND_FIELD_NUMBER: _ClassVar[int]
-    UNBOND_FIELD_NUMBER: _ClassVar[int]
-    WITHDRAW_FIELD_NUMBER: _ClassVar[int]
-    lock_time: int
-    memo: str
-    fee: int
-    transfer: PayloadTransfer
-    bond: PayloadBond
-    unbond: PayloadUnbond
-    withdraw: PayloadWithdraw
-    def __init__(self, lock_time: _Optional[int] = ..., memo: _Optional[str] = ..., fee: _Optional[int] = ..., transfer: _Optional[_Union[PayloadTransfer, _Mapping]] = ..., bond: _Optional[_Union[PayloadBond, _Mapping]] = ..., unbond: _Optional[_Union[PayloadUnbond, _Mapping]] = ..., withdraw: _Optional[_Union[PayloadWithdraw, _Mapping]] = ...) -> None: ...
-
 class GetRawTransferTransactionRequest(_message.Message):
     __slots__ = ("lock_time", "sender", "receiver", "amount", "fee", "memo")
     LOCK_TIME_FIELD_NUMBER: _ClassVar[int]

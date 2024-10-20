@@ -104,47 +104,6 @@ func (s *transactionServer) CalculateFee(_ context.Context,
 	}, nil
 }
 
-func (s *transactionServer) GetRawTransaction(_ context.Context,
-	req *pactus.GetRawTransactionRequest,
-) (*pactus.GetRawTransactionResponse, error) {
-	lockTime := s.getLockTime(req.LockTime)
-
-	var trx *tx.Tx
-	var err error
-	switch pld := req.Payload.(type) {
-	case *pactus.GetRawTransactionRequest_Transfer:
-		trx, err = s.handleRawTransfer(lockTime, req.Memo, req.Fee, pld.Transfer)
-
-	case *pactus.GetRawTransactionRequest_Bond:
-		trx, err = s.handleRawBond(lockTime, req.Memo, req.Fee, pld.Bond)
-
-	case *pactus.GetRawTransactionRequest_Unbond:
-		trx, err = s.handleRawUnbond(lockTime, req.Memo, pld.Unbond)
-
-	case *pactus.GetRawTransactionRequest_Withdraw:
-		trx, err = s.handleRawWithdraw(lockTime, req.Memo, req.Fee, pld.Withdraw)
-
-	default:
-		return nil, status.Errorf(codes.InvalidArgument, "invalid transaction type")
-	}
-
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "%s", err.Error())
-	}
-
-	data, err := trx.Bytes()
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "%s", err.Error())
-	}
-
-	return &pactus.GetRawTransactionResponse{
-		RawTransaction: hex.EncodeToString(data),
-		Id:             trx.ID().String(),
-	}, err
-}
-
-// Deprecated: GetRawTransferTransaction is deprecated.
-// Use GetRawTransaction API instead.
 func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	req *pactus.GetRawTransferTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
@@ -173,8 +132,6 @@ func (s *transactionServer) GetRawTransferTransaction(_ context.Context,
 	}, nil
 }
 
-// Deprecated: GetRawBondTransaction is deprecated.
-// Use GetRawTransaction API instead.
 func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	req *pactus.GetRawBondTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
@@ -213,8 +170,6 @@ func (s *transactionServer) GetRawBondTransaction(_ context.Context,
 	}, nil
 }
 
-// Deprecated: GetRawUnbondTransaction is deprecated.
-// Use GetRawTransaction API instead.
 func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
 	req *pactus.GetRawUnbondTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
@@ -236,8 +191,6 @@ func (s *transactionServer) GetRawUnbondTransaction(_ context.Context,
 	}, nil
 }
 
-// Deprecated: GetRawWithdrawTransaction is deprecated.
-// Use GetRawTransaction API instead.
 func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	req *pactus.GetRawWithdrawTransactionRequest,
 ) (*pactus.GetRawTransactionResponse, error) {
@@ -264,90 +217,6 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	return &pactus.GetRawTransactionResponse{
 		RawTransaction: hex.EncodeToString(rawTx),
 	}, nil
-}
-
-func (s *transactionServer) handleRawTransfer(lockTime uint32, memo string, feeInt int64,
-	pld *pactus.PayloadTransfer,
-) (*tx.Tx, error) {
-	sender, err := crypto.AddressFromString(pld.Sender)
-	if err != nil {
-		return nil, err
-	}
-
-	receiver, err := crypto.AddressFromString(pld.Receiver)
-	if err != nil {
-		return nil, err
-	}
-
-	amt := amount.Amount(pld.Amount)
-	fee := s.getFee(feeInt, amt)
-
-	transferTx := tx.NewTransferTx(lockTime, sender, receiver, amt, fee, tx.WithMemo(memo))
-
-	return transferTx, nil
-}
-
-func (s *transactionServer) handleRawBond(lockTime uint32, memo string, feeInt int64,
-	pld *pactus.PayloadBond,
-) (*tx.Tx, error) {
-	sender, err := crypto.AddressFromString(pld.Sender)
-	if err != nil {
-		return nil, err
-	}
-
-	receiver, err := crypto.AddressFromString(pld.Receiver)
-	if err != nil {
-		return nil, err
-	}
-
-	var publicKey *bls.PublicKey
-	if pld.PublicKey != "" {
-		publicKey, err = bls.PublicKeyFromString(pld.PublicKey)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		publicKey = nil
-	}
-
-	amt := amount.Amount(pld.Stake)
-	fee := s.getFee(feeInt, amt)
-
-	bondTx := tx.NewBondTx(lockTime, sender, receiver, publicKey, amt, fee, tx.WithMemo(memo))
-
-	return bondTx, nil
-}
-
-func (*transactionServer) handleRawUnbond(lockTime uint32, memo string, pld *pactus.PayloadUnbond) (*tx.Tx, error) {
-	validatorAddr, err := crypto.AddressFromString(pld.Validator)
-	if err != nil {
-		return nil, err
-	}
-
-	unbondTx := tx.NewUnbondTx(lockTime, validatorAddr, tx.WithMemo(memo))
-
-	return unbondTx, nil
-}
-
-func (s *transactionServer) handleRawWithdraw(lockTime uint32, memo string, feeInt int64,
-	pld *pactus.PayloadWithdraw,
-) (*tx.Tx, error) {
-	validatorAddr, err := crypto.AddressFromString(pld.ValidatorAddress)
-	if err != nil {
-		return nil, err
-	}
-
-	accountAddr, err := crypto.AddressFromString(pld.AccountAddress)
-	if err != nil {
-		return nil, err
-	}
-
-	amt := amount.Amount(pld.Amount)
-	fee := s.getFee(feeInt, amt)
-
-	withdrawTx := tx.NewWithdrawTx(lockTime, validatorAddr, accountAddr, amt, fee, tx.WithMemo(memo))
-
-	return withdrawTx, nil
 }
 
 func (s *transactionServer) getFee(f int64, amt amount.Amount) amount.Amount {
