@@ -2594,6 +2594,33 @@ public final class NetworkOuterClass {
      * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
      */
     pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder getConnectionInfoOrBuilder();
+
+    /**
+     * <pre>
+     * Fee config of the node.
+     * </pre>
+     *
+     * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+     * @return Whether the fee field is set.
+     */
+    boolean hasFee();
+    /**
+     * <pre>
+     * Fee config of the node.
+     * </pre>
+     *
+     * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+     * @return The fee.
+     */
+    pactus.network.NetworkOuterClass.FeeConfig getFee();
+    /**
+     * <pre>
+     * Fee config of the node.
+     * </pre>
+     *
+     * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+     */
+    pactus.network.NetworkOuterClass.FeeConfigOrBuilder getFeeOrBuilder();
   }
   /**
    * <pre>
@@ -3061,6 +3088,44 @@ public final class NetworkOuterClass {
       return getConnectionInfo();
     }
 
+    public static final int FEE_FIELD_NUMBER = 15;
+    private pactus.network.NetworkOuterClass.FeeConfig fee_;
+    /**
+     * <pre>
+     * Fee config of the node.
+     * </pre>
+     *
+     * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+     * @return Whether the fee field is set.
+     */
+    @java.lang.Override
+    public boolean hasFee() {
+      return fee_ != null;
+    }
+    /**
+     * <pre>
+     * Fee config of the node.
+     * </pre>
+     *
+     * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+     * @return The fee.
+     */
+    @java.lang.Override
+    public pactus.network.NetworkOuterClass.FeeConfig getFee() {
+      return fee_ == null ? pactus.network.NetworkOuterClass.FeeConfig.getDefaultInstance() : fee_;
+    }
+    /**
+     * <pre>
+     * Fee config of the node.
+     * </pre>
+     *
+     * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+     */
+    @java.lang.Override
+    public pactus.network.NetworkOuterClass.FeeConfigOrBuilder getFeeOrBuilder() {
+      return getFee();
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -3107,6 +3172,9 @@ public final class NetworkOuterClass {
       }
       if (connectionInfo_ != null) {
         output.writeMessage(14, getConnectionInfo());
+      }
+      if (fee_ != null) {
+        output.writeMessage(15, getFee());
       }
       getUnknownFields().writeTo(output);
     }
@@ -3164,6 +3232,10 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(14, getConnectionInfo());
       }
+      if (fee_ != null) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(15, getFee());
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -3205,6 +3277,11 @@ public final class NetworkOuterClass {
         if (!getConnectionInfo()
             .equals(other.getConnectionInfo())) return false;
       }
+      if (hasFee() != other.hasFee()) return false;
+      if (hasFee()) {
+        if (!getFee()
+            .equals(other.getFee())) return false;
+      }
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -3245,6 +3322,10 @@ public final class NetworkOuterClass {
       if (hasConnectionInfo()) {
         hash = (37 * hash) + CONNECTION_INFO_FIELD_NUMBER;
         hash = (53 * hash) + getConnectionInfo().hashCode();
+      }
+      if (hasFee()) {
+        hash = (37 * hash) + FEE_FIELD_NUMBER;
+        hash = (53 * hash) + getFee().hashCode();
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
@@ -3404,6 +3485,12 @@ public final class NetworkOuterClass {
           connectionInfo_ = null;
           connectionInfoBuilder_ = null;
         }
+        if (feeBuilder_ == null) {
+          fee_ = null;
+        } else {
+          fee_ = null;
+          feeBuilder_ = null;
+        }
         return this;
       }
 
@@ -3453,6 +3540,11 @@ public final class NetworkOuterClass {
           result.connectionInfo_ = connectionInfo_;
         } else {
           result.connectionInfo_ = connectionInfoBuilder_.build();
+        }
+        if (feeBuilder_ == null) {
+          result.fee_ = fee_;
+        } else {
+          result.fee_ = feeBuilder_.build();
         }
         onBuilt();
         return result;
@@ -3554,6 +3646,9 @@ public final class NetworkOuterClass {
         if (other.hasConnectionInfo()) {
           mergeConnectionInfo(other.getConnectionInfo());
         }
+        if (other.hasFee()) {
+          mergeFee(other.getFee());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -3639,6 +3734,13 @@ public final class NetworkOuterClass {
 
                 break;
               } // case 114
+              case 122: {
+                input.readMessage(
+                    getFeeFieldBuilder().getBuilder(),
+                    extensionRegistry);
+
+                break;
+              } // case 122
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -4710,6 +4812,161 @@ public final class NetworkOuterClass {
           connectionInfo_ = null;
         }
         return connectionInfoBuilder_;
+      }
+
+      private pactus.network.NetworkOuterClass.FeeConfig fee_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+          pactus.network.NetworkOuterClass.FeeConfig, pactus.network.NetworkOuterClass.FeeConfig.Builder, pactus.network.NetworkOuterClass.FeeConfigOrBuilder> feeBuilder_;
+      /**
+       * <pre>
+       * Fee config of the node.
+       * </pre>
+       *
+       * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+       * @return Whether the fee field is set.
+       */
+      public boolean hasFee() {
+        return feeBuilder_ != null || fee_ != null;
+      }
+      /**
+       * <pre>
+       * Fee config of the node.
+       * </pre>
+       *
+       * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+       * @return The fee.
+       */
+      public pactus.network.NetworkOuterClass.FeeConfig getFee() {
+        if (feeBuilder_ == null) {
+          return fee_ == null ? pactus.network.NetworkOuterClass.FeeConfig.getDefaultInstance() : fee_;
+        } else {
+          return feeBuilder_.getMessage();
+        }
+      }
+      /**
+       * <pre>
+       * Fee config of the node.
+       * </pre>
+       *
+       * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+       */
+      public Builder setFee(pactus.network.NetworkOuterClass.FeeConfig value) {
+        if (feeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          fee_ = value;
+          onChanged();
+        } else {
+          feeBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       * Fee config of the node.
+       * </pre>
+       *
+       * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+       */
+      public Builder setFee(
+          pactus.network.NetworkOuterClass.FeeConfig.Builder builderForValue) {
+        if (feeBuilder_ == null) {
+          fee_ = builderForValue.build();
+          onChanged();
+        } else {
+          feeBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       * Fee config of the node.
+       * </pre>
+       *
+       * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+       */
+      public Builder mergeFee(pactus.network.NetworkOuterClass.FeeConfig value) {
+        if (feeBuilder_ == null) {
+          if (fee_ != null) {
+            fee_ =
+              pactus.network.NetworkOuterClass.FeeConfig.newBuilder(fee_).mergeFrom(value).buildPartial();
+          } else {
+            fee_ = value;
+          }
+          onChanged();
+        } else {
+          feeBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       * Fee config of the node.
+       * </pre>
+       *
+       * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+       */
+      public Builder clearFee() {
+        if (feeBuilder_ == null) {
+          fee_ = null;
+          onChanged();
+        } else {
+          fee_ = null;
+          feeBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       * <pre>
+       * Fee config of the node.
+       * </pre>
+       *
+       * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+       */
+      public pactus.network.NetworkOuterClass.FeeConfig.Builder getFeeBuilder() {
+        
+        onChanged();
+        return getFeeFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       * Fee config of the node.
+       * </pre>
+       *
+       * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+       */
+      public pactus.network.NetworkOuterClass.FeeConfigOrBuilder getFeeOrBuilder() {
+        if (feeBuilder_ != null) {
+          return feeBuilder_.getMessageOrBuilder();
+        } else {
+          return fee_ == null ?
+              pactus.network.NetworkOuterClass.FeeConfig.getDefaultInstance() : fee_;
+        }
+      }
+      /**
+       * <pre>
+       * Fee config of the node.
+       * </pre>
+       *
+       * <code>.pactus.FeeConfig fee = 15 [json_name = "fee"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          pactus.network.NetworkOuterClass.FeeConfig, pactus.network.NetworkOuterClass.FeeConfig.Builder, pactus.network.NetworkOuterClass.FeeConfigOrBuilder> 
+          getFeeFieldBuilder() {
+        if (feeBuilder_ == null) {
+          feeBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              pactus.network.NetworkOuterClass.FeeConfig, pactus.network.NetworkOuterClass.FeeConfig.Builder, pactus.network.NetworkOuterClass.FeeConfigOrBuilder>(
+                  getFee(),
+                  getParentForChildren(),
+                  isClean());
+          fee_ = null;
+        }
+        return feeBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -11207,6 +11464,688 @@ pactus.network.NetworkOuterClass.CounterInfo defaultValue);
 
   }
 
+  public interface FeeConfigOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.FeeConfig)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * Fixed fee for each transaction.
+     * </pre>
+     *
+     * <code>double fixed_fee = 1 [json_name = "fixedFee"];</code>
+     * @return The fixedFee.
+     */
+    double getFixedFee();
+
+    /**
+     * <pre>
+     * Number of bytes an account can send each day without paying a fee.
+     * </pre>
+     *
+     * <code>uint32 daily_limit = 2 [json_name = "dailyLimit"];</code>
+     * @return The dailyLimit.
+     */
+    int getDailyLimit();
+
+    /**
+     * <pre>
+     * Fee per byte in PAC.
+     * </pre>
+     *
+     * <code>double unit_price = 3 [json_name = "unitPrice"];</code>
+     * @return The unitPrice.
+     */
+    double getUnitPrice();
+  }
+  /**
+   * <pre>
+   * FeeConfig holds the fee configuration that stored in node config.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.FeeConfig}
+   */
+  public static final class FeeConfig extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.FeeConfig)
+      FeeConfigOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use FeeConfig.newBuilder() to construct.
+    private FeeConfig(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private FeeConfig() {
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new FeeConfig();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.network.NetworkOuterClass.internal_static_pactus_FeeConfig_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.network.NetworkOuterClass.internal_static_pactus_FeeConfig_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.network.NetworkOuterClass.FeeConfig.class, pactus.network.NetworkOuterClass.FeeConfig.Builder.class);
+    }
+
+    public static final int FIXED_FEE_FIELD_NUMBER = 1;
+    private double fixedFee_;
+    /**
+     * <pre>
+     * Fixed fee for each transaction.
+     * </pre>
+     *
+     * <code>double fixed_fee = 1 [json_name = "fixedFee"];</code>
+     * @return The fixedFee.
+     */
+    @java.lang.Override
+    public double getFixedFee() {
+      return fixedFee_;
+    }
+
+    public static final int DAILY_LIMIT_FIELD_NUMBER = 2;
+    private int dailyLimit_;
+    /**
+     * <pre>
+     * Number of bytes an account can send each day without paying a fee.
+     * </pre>
+     *
+     * <code>uint32 daily_limit = 2 [json_name = "dailyLimit"];</code>
+     * @return The dailyLimit.
+     */
+    @java.lang.Override
+    public int getDailyLimit() {
+      return dailyLimit_;
+    }
+
+    public static final int UNIT_PRICE_FIELD_NUMBER = 3;
+    private double unitPrice_;
+    /**
+     * <pre>
+     * Fee per byte in PAC.
+     * </pre>
+     *
+     * <code>double unit_price = 3 [json_name = "unitPrice"];</code>
+     * @return The unitPrice.
+     */
+    @java.lang.Override
+    public double getUnitPrice() {
+      return unitPrice_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (java.lang.Double.doubleToRawLongBits(fixedFee_) != 0) {
+        output.writeDouble(1, fixedFee_);
+      }
+      if (dailyLimit_ != 0) {
+        output.writeUInt32(2, dailyLimit_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(unitPrice_) != 0) {
+        output.writeDouble(3, unitPrice_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (java.lang.Double.doubleToRawLongBits(fixedFee_) != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(1, fixedFee_);
+      }
+      if (dailyLimit_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(2, dailyLimit_);
+      }
+      if (java.lang.Double.doubleToRawLongBits(unitPrice_) != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeDoubleSize(3, unitPrice_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.network.NetworkOuterClass.FeeConfig)) {
+        return super.equals(obj);
+      }
+      pactus.network.NetworkOuterClass.FeeConfig other = (pactus.network.NetworkOuterClass.FeeConfig) obj;
+
+      if (java.lang.Double.doubleToLongBits(getFixedFee())
+          != java.lang.Double.doubleToLongBits(
+              other.getFixedFee())) return false;
+      if (getDailyLimit()
+          != other.getDailyLimit()) return false;
+      if (java.lang.Double.doubleToLongBits(getUnitPrice())
+          != java.lang.Double.doubleToLongBits(
+              other.getUnitPrice())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + FIXED_FEE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          java.lang.Double.doubleToLongBits(getFixedFee()));
+      hash = (37 * hash) + DAILY_LIMIT_FIELD_NUMBER;
+      hash = (53 * hash) + getDailyLimit();
+      hash = (37 * hash) + UNIT_PRICE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          java.lang.Double.doubleToLongBits(getUnitPrice()));
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.network.NetworkOuterClass.FeeConfig parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.network.NetworkOuterClass.FeeConfig parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.FeeConfig parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.network.NetworkOuterClass.FeeConfig parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.FeeConfig parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.network.NetworkOuterClass.FeeConfig parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.FeeConfig parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.network.NetworkOuterClass.FeeConfig parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.FeeConfig parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.network.NetworkOuterClass.FeeConfig parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.FeeConfig parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.network.NetworkOuterClass.FeeConfig parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.network.NetworkOuterClass.FeeConfig prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * FeeConfig holds the fee configuration that stored in node config.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.FeeConfig}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.FeeConfig)
+        pactus.network.NetworkOuterClass.FeeConfigOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.network.NetworkOuterClass.internal_static_pactus_FeeConfig_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.network.NetworkOuterClass.internal_static_pactus_FeeConfig_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.network.NetworkOuterClass.FeeConfig.class, pactus.network.NetworkOuterClass.FeeConfig.Builder.class);
+      }
+
+      // Construct using pactus.network.NetworkOuterClass.FeeConfig.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        fixedFee_ = 0D;
+
+        dailyLimit_ = 0;
+
+        unitPrice_ = 0D;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.network.NetworkOuterClass.internal_static_pactus_FeeConfig_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.network.NetworkOuterClass.FeeConfig getDefaultInstanceForType() {
+        return pactus.network.NetworkOuterClass.FeeConfig.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.network.NetworkOuterClass.FeeConfig build() {
+        pactus.network.NetworkOuterClass.FeeConfig result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.network.NetworkOuterClass.FeeConfig buildPartial() {
+        pactus.network.NetworkOuterClass.FeeConfig result = new pactus.network.NetworkOuterClass.FeeConfig(this);
+        result.fixedFee_ = fixedFee_;
+        result.dailyLimit_ = dailyLimit_;
+        result.unitPrice_ = unitPrice_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.network.NetworkOuterClass.FeeConfig) {
+          return mergeFrom((pactus.network.NetworkOuterClass.FeeConfig)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.network.NetworkOuterClass.FeeConfig other) {
+        if (other == pactus.network.NetworkOuterClass.FeeConfig.getDefaultInstance()) return this;
+        if (other.getFixedFee() != 0D) {
+          setFixedFee(other.getFixedFee());
+        }
+        if (other.getDailyLimit() != 0) {
+          setDailyLimit(other.getDailyLimit());
+        }
+        if (other.getUnitPrice() != 0D) {
+          setUnitPrice(other.getUnitPrice());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 9: {
+                fixedFee_ = input.readDouble();
+
+                break;
+              } // case 9
+              case 16: {
+                dailyLimit_ = input.readUInt32();
+
+                break;
+              } // case 16
+              case 25: {
+                unitPrice_ = input.readDouble();
+
+                break;
+              } // case 25
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private double fixedFee_ ;
+      /**
+       * <pre>
+       * Fixed fee for each transaction.
+       * </pre>
+       *
+       * <code>double fixed_fee = 1 [json_name = "fixedFee"];</code>
+       * @return The fixedFee.
+       */
+      @java.lang.Override
+      public double getFixedFee() {
+        return fixedFee_;
+      }
+      /**
+       * <pre>
+       * Fixed fee for each transaction.
+       * </pre>
+       *
+       * <code>double fixed_fee = 1 [json_name = "fixedFee"];</code>
+       * @param value The fixedFee to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFixedFee(double value) {
+        
+        fixedFee_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Fixed fee for each transaction.
+       * </pre>
+       *
+       * <code>double fixed_fee = 1 [json_name = "fixedFee"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFixedFee() {
+        
+        fixedFee_ = 0D;
+        onChanged();
+        return this;
+      }
+
+      private int dailyLimit_ ;
+      /**
+       * <pre>
+       * Number of bytes an account can send each day without paying a fee.
+       * </pre>
+       *
+       * <code>uint32 daily_limit = 2 [json_name = "dailyLimit"];</code>
+       * @return The dailyLimit.
+       */
+      @java.lang.Override
+      public int getDailyLimit() {
+        return dailyLimit_;
+      }
+      /**
+       * <pre>
+       * Number of bytes an account can send each day without paying a fee.
+       * </pre>
+       *
+       * <code>uint32 daily_limit = 2 [json_name = "dailyLimit"];</code>
+       * @param value The dailyLimit to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDailyLimit(int value) {
+        
+        dailyLimit_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Number of bytes an account can send each day without paying a fee.
+       * </pre>
+       *
+       * <code>uint32 daily_limit = 2 [json_name = "dailyLimit"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDailyLimit() {
+        
+        dailyLimit_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private double unitPrice_ ;
+      /**
+       * <pre>
+       * Fee per byte in PAC.
+       * </pre>
+       *
+       * <code>double unit_price = 3 [json_name = "unitPrice"];</code>
+       * @return The unitPrice.
+       */
+      @java.lang.Override
+      public double getUnitPrice() {
+        return unitPrice_;
+      }
+      /**
+       * <pre>
+       * Fee per byte in PAC.
+       * </pre>
+       *
+       * <code>double unit_price = 3 [json_name = "unitPrice"];</code>
+       * @param value The unitPrice to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUnitPrice(double value) {
+        
+        unitPrice_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Fee per byte in PAC.
+       * </pre>
+       *
+       * <code>double unit_price = 3 [json_name = "unitPrice"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUnitPrice() {
+        
+        unitPrice_ = 0D;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.FeeConfig)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.FeeConfig)
+    private static final pactus.network.NetworkOuterClass.FeeConfig DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.network.NetworkOuterClass.FeeConfig();
+    }
+
+    public static pactus.network.NetworkOuterClass.FeeConfig getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<FeeConfig>
+        PARSER = new com.google.protobuf.AbstractParser<FeeConfig>() {
+      @java.lang.Override
+      public FeeConfig parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<FeeConfig> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<FeeConfig> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.network.NetworkOuterClass.FeeConfig getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_GetNetworkInfoRequest_descriptor;
   private static final 
@@ -11257,6 +12196,11 @@ pactus.network.NetworkOuterClass.CounterInfo defaultValue);
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_CounterInfo_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_FeeConfig_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_FeeConfig_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -11274,7 +12218,7 @@ pactus.network.NetworkOuterClass.CounterInfo defaultValue);
       "t\0229\n\017connected_peers\030\003 \003(\0132\020.pactus.Peer" +
       "InfoR\016connectedPeers\0223\n\013metric_info\030\004 \001(" +
       "\0132\022.pactus.MetricInfoR\nmetricInfo\"\024\n\022Get" +
-      "NodeInfoRequest\"\207\003\n\023GetNodeInfoResponse\022" +
+      "NodeInfoRequest\"\254\003\n\023GetNodeInfoResponse\022" +
       "\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002 \001(\t" +
       "R\005agent\022\027\n\007peer_id\030\003 \001(\tR\006peerId\022\035\n\nstar" +
       "ted_at\030\004 \001(\004R\tstartedAt\022\"\n\014reachability\030" +
@@ -11284,45 +12228,49 @@ pactus.network.NetworkOuterClass.CounterInfo defaultValue);
       "\034\n\tprotocols\030\t \003(\tR\tprotocols\022!\n\014clock_o" +
       "ffset\030\r \001(\001R\013clockOffset\022?\n\017connection_i" +
       "nfo\030\016 \001(\0132\026.pactus.ConnectionInfoR\016conne" +
-      "ctionInfo\"\302\004\n\010PeerInfo\022\026\n\006status\030\001 \001(\005R\006" +
-      "status\022\030\n\007moniker\030\002 \001(\tR\007moniker\022\024\n\005agen" +
-      "t\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\tR\006peerId\022" +
-      "%\n\016consensus_keys\030\005 \003(\tR\rconsensusKeys\022/" +
-      "\n\023consensus_addresses\030\006 \003(\tR\022consensusAd" +
-      "dresses\022\032\n\010services\030\007 \001(\rR\010services\022&\n\017l" +
-      "ast_block_hash\030\010 \001(\tR\rlastBlockHash\022\026\n\006h" +
-      "eight\030\t \001(\rR\006height\022\033\n\tlast_sent\030\n \001(\003R\010" +
-      "lastSent\022#\n\rlast_received\030\013 \001(\003R\014lastRec" +
-      "eived\022\030\n\007address\030\014 \001(\tR\007address\022\034\n\tdirec" +
-      "tion\030\r \001(\tR\tdirection\022\034\n\tprotocols\030\016 \003(\t" +
-      "R\tprotocols\022%\n\016total_sessions\030\017 \001(\005R\rtot" +
-      "alSessions\022-\n\022completed_sessions\030\020 \001(\005R\021" +
-      "completedSessions\0223\n\013metric_info\030\021 \001(\0132\022" +
-      ".pactus.MetricInfoR\nmetricInfo\"\226\001\n\016Conne" +
-      "ctionInfo\022 \n\013connections\030\001 \001(\004R\013connecti" +
-      "ons\022/\n\023inbound_connections\030\002 \001(\004R\022inboun" +
-      "dConnections\0221\n\024outbound_connections\030\003 \001" +
-      "(\004R\023outboundConnections\"\373\003\n\nMetricInfo\0227" +
-      "\n\014TotalInvalid\030\001 \001(\0132\023.pactus.CounterInf" +
-      "oR\014TotalInvalid\0221\n\tTotalSent\030\002 \001(\0132\023.pac" +
-      "tus.CounterInfoR\tTotalSent\0229\n\rTotalRecei" +
-      "ved\030\003 \001(\0132\023.pactus.CounterInfoR\rTotalRec" +
-      "eived\022E\n\013MessageSent\030\004 \003(\0132#.pactus.Metr" +
-      "icInfo.MessageSentEntryR\013MessageSent\022Q\n\017" +
-      "MessageReceived\030\005 \003(\0132\'.pactus.MetricInf" +
-      "o.MessageReceivedEntryR\017MessageReceived\032" +
-      "S\n\020MessageSentEntry\022\020\n\003key\030\001 \001(\005R\003key\022)\n" +
-      "\005value\030\002 \001(\0132\023.pactus.CounterInfoR\005value" +
-      ":\0028\001\032W\n\024MessageReceivedEntry\022\020\n\003key\030\001 \001(" +
-      "\005R\003key\022)\n\005value\030\002 \001(\0132\023.pactus.CounterIn" +
-      "foR\005value:\0028\001\"=\n\013CounterInfo\022\024\n\005Bytes\030\001 " +
-      "\001(\004R\005Bytes\022\030\n\007Bundles\030\002 \001(\004R\007Bundles2\242\001\n" +
-      "\007Network\022O\n\016GetNetworkInfo\022\035.pactus.GetN" +
-      "etworkInfoRequest\032\036.pactus.GetNetworkInf" +
-      "oResponse\022F\n\013GetNodeInfo\022\032.pactus.GetNod" +
-      "eInfoRequest\032\033.pactus.GetNodeInfoRespons" +
-      "eBB\n\016pactus.networkZ0github.com/pactus-p" +
-      "roject/pactus/www/grpc/pactusb\006proto3"
+      "ctionInfo\022#\n\003fee\030\017 \001(\0132\021.pactus.FeeConfi" +
+      "gR\003fee\"\302\004\n\010PeerInfo\022\026\n\006status\030\001 \001(\005R\006sta" +
+      "tus\022\030\n\007moniker\030\002 \001(\tR\007moniker\022\024\n\005agent\030\003" +
+      " \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\tR\006peerId\022%\n\016" +
+      "consensus_keys\030\005 \003(\tR\rconsensusKeys\022/\n\023c" +
+      "onsensus_addresses\030\006 \003(\tR\022consensusAddre" +
+      "sses\022\032\n\010services\030\007 \001(\rR\010services\022&\n\017last" +
+      "_block_hash\030\010 \001(\tR\rlastBlockHash\022\026\n\006heig" +
+      "ht\030\t \001(\rR\006height\022\033\n\tlast_sent\030\n \001(\003R\010las" +
+      "tSent\022#\n\rlast_received\030\013 \001(\003R\014lastReceiv" +
+      "ed\022\030\n\007address\030\014 \001(\tR\007address\022\034\n\tdirectio" +
+      "n\030\r \001(\tR\tdirection\022\034\n\tprotocols\030\016 \003(\tR\tp" +
+      "rotocols\022%\n\016total_sessions\030\017 \001(\005R\rtotalS" +
+      "essions\022-\n\022completed_sessions\030\020 \001(\005R\021com" +
+      "pletedSessions\0223\n\013metric_info\030\021 \001(\0132\022.pa" +
+      "ctus.MetricInfoR\nmetricInfo\"\226\001\n\016Connecti" +
+      "onInfo\022 \n\013connections\030\001 \001(\004R\013connections" +
+      "\022/\n\023inbound_connections\030\002 \001(\004R\022inboundCo" +
+      "nnections\0221\n\024outbound_connections\030\003 \001(\004R" +
+      "\023outboundConnections\"\373\003\n\nMetricInfo\0227\n\014T" +
+      "otalInvalid\030\001 \001(\0132\023.pactus.CounterInfoR\014" +
+      "TotalInvalid\0221\n\tTotalSent\030\002 \001(\0132\023.pactus" +
+      ".CounterInfoR\tTotalSent\0229\n\rTotalReceived" +
+      "\030\003 \001(\0132\023.pactus.CounterInfoR\rTotalReceiv" +
+      "ed\022E\n\013MessageSent\030\004 \003(\0132#.pactus.MetricI" +
+      "nfo.MessageSentEntryR\013MessageSent\022Q\n\017Mes" +
+      "sageReceived\030\005 \003(\0132\'.pactus.MetricInfo.M" +
+      "essageReceivedEntryR\017MessageReceived\032S\n\020" +
+      "MessageSentEntry\022\020\n\003key\030\001 \001(\005R\003key\022)\n\005va" +
+      "lue\030\002 \001(\0132\023.pactus.CounterInfoR\005value:\0028" +
+      "\001\032W\n\024MessageReceivedEntry\022\020\n\003key\030\001 \001(\005R\003" +
+      "key\022)\n\005value\030\002 \001(\0132\023.pactus.CounterInfoR" +
+      "\005value:\0028\001\"=\n\013CounterInfo\022\024\n\005Bytes\030\001 \001(\004" +
+      "R\005Bytes\022\030\n\007Bundles\030\002 \001(\004R\007Bundles\"h\n\tFee" +
+      "Config\022\033\n\tfixed_fee\030\001 \001(\001R\010fixedFee\022\037\n\013d" +
+      "aily_limit\030\002 \001(\rR\ndailyLimit\022\035\n\nunit_pri" +
+      "ce\030\003 \001(\001R\tunitPrice2\242\001\n\007Network\022O\n\016GetNe" +
+      "tworkInfo\022\035.pactus.GetNetworkInfoRequest" +
+      "\032\036.pactus.GetNetworkInfoResponse\022F\n\013GetN" +
+      "odeInfo\022\032.pactus.GetNodeInfoRequest\032\033.pa" +
+      "ctus.GetNodeInfoResponseBB\n\016pactus.netwo" +
+      "rkZ0github.com/pactus-project/pactus/www" +
+      "/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -11351,7 +12299,7 @@ pactus.network.NetworkOuterClass.CounterInfo defaultValue);
     internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNodeInfoResponse_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "LocalAddrs", "Protocols", "ClockOffset", "ConnectionInfo", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "LocalAddrs", "Protocols", "ClockOffset", "ConnectionInfo", "Fee", });
     internal_static_pactus_PeerInfo_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
@@ -11388,6 +12336,12 @@ pactus.network.NetworkOuterClass.CounterInfo defaultValue);
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_CounterInfo_descriptor,
         new java.lang.String[] { "Bytes", "Bundles", });
+    internal_static_pactus_FeeConfig_descriptor =
+      getDescriptor().getMessageTypes().get(8);
+    internal_static_pactus_FeeConfig_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_FeeConfig_descriptor,
+        new java.lang.String[] { "FixedFee", "DailyLimit", "UnitPrice", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
+	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -15,36 +16,38 @@ import (
 )
 
 type Server struct {
-	ctx       context.Context
-	cancel    context.CancelFunc
-	config    *Config
-	listener  net.Listener
-	address   string
-	grpc      *grpc.Server
-	state     state.Facade
-	net       network.Network
-	sync      sync.Synchronizer
-	consMgr   consensus.ManagerReader
-	walletMgr *wallet.Manager
-	logger    *logger.SubLogger
+	ctx          context.Context
+	cancel       context.CancelFunc
+	config       *Config
+	listener     net.Listener
+	address      string
+	grpc         *grpc.Server
+	state        state.Facade
+	net          network.Network
+	sync         sync.Synchronizer
+	consMgr      consensus.ManagerReader
+	walletMgr    *wallet.Manager
+	logger       *logger.SubLogger
+	txpoolConfig *txpool.Config
 }
 
 func NewServer(conf *Config, st state.Facade, syn sync.Synchronizer,
 	n network.Network, consMgr consensus.ManagerReader,
-	walletMgr *wallet.Manager,
+	walletMgr *wallet.Manager, txpoolConfig *txpool.Config,
 ) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &Server{
-		ctx:       ctx,
-		cancel:    cancel,
-		config:    conf,
-		state:     st,
-		sync:      syn,
-		net:       n,
-		consMgr:   consMgr,
-		walletMgr: walletMgr,
-		logger:    logger.NewSubLogger("_grpc", nil),
+		ctx:          ctx,
+		cancel:       cancel,
+		config:       conf,
+		state:        st,
+		sync:         syn,
+		net:          n,
+		consMgr:      consMgr,
+		walletMgr:    walletMgr,
+		logger:       logger.NewSubLogger("_grpc", nil),
+		txpoolConfig: txpoolConfig,
 	}
 }
 

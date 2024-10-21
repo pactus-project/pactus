@@ -1826,6 +1826,140 @@ impl<'de> serde::Deserialize<'de> for CreateWalletResponse {
         deserializer.deserialize_struct("pactus.CreateWalletResponse", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for FeeConfig {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.fixed_fee != 0. {
+            len += 1;
+        }
+        if self.daily_limit != 0 {
+            len += 1;
+        }
+        if self.unit_price != 0. {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.FeeConfig", len)?;
+        if self.fixed_fee != 0. {
+            struct_ser.serialize_field("fixedFee", &self.fixed_fee)?;
+        }
+        if self.daily_limit != 0 {
+            struct_ser.serialize_field("dailyLimit", &self.daily_limit)?;
+        }
+        if self.unit_price != 0. {
+            struct_ser.serialize_field("unitPrice", &self.unit_price)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for FeeConfig {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "fixed_fee",
+            "fixedFee",
+            "daily_limit",
+            "dailyLimit",
+            "unit_price",
+            "unitPrice",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            FixedFee,
+            DailyLimit,
+            UnitPrice,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "fixedFee" | "fixed_fee" => Ok(GeneratedField::FixedFee),
+                            "dailyLimit" | "daily_limit" => Ok(GeneratedField::DailyLimit),
+                            "unitPrice" | "unit_price" => Ok(GeneratedField::UnitPrice),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = FeeConfig;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.FeeConfig")
+            }
+
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<FeeConfig, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut fixed_fee__ = None;
+                let mut daily_limit__ = None;
+                let mut unit_price__ = None;
+                while let Some(k) = map.next_key()? {
+                    match k {
+                        GeneratedField::FixedFee => {
+                            if fixed_fee__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("fixedFee"));
+                            }
+                            fixed_fee__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::DailyLimit => {
+                            if daily_limit__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("dailyLimit"));
+                            }
+                            daily_limit__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::UnitPrice => {
+                            if unit_price__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("unitPrice"));
+                            }
+                            unit_price__ = 
+                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(FeeConfig {
+                    fixed_fee: fixed_fee__.unwrap_or_default(),
+                    daily_limit: daily_limit__.unwrap_or_default(),
+                    unit_price: unit_price__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.FeeConfig", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for GetAccountRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -4284,6 +4418,9 @@ impl serde::Serialize for GetNodeInfoResponse {
         if self.connection_info.is_some() {
             len += 1;
         }
+        if self.fee.is_some() {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetNodeInfoResponse", len)?;
         if !self.moniker.is_empty() {
             struct_ser.serialize_field("moniker", &self.moniker)?;
@@ -4318,6 +4455,9 @@ impl serde::Serialize for GetNodeInfoResponse {
         if let Some(v) = self.connection_info.as_ref() {
             struct_ser.serialize_field("connectionInfo", v)?;
         }
+        if let Some(v) = self.fee.as_ref() {
+            struct_ser.serialize_field("fee", v)?;
+        }
         struct_ser.end()
     }
 }
@@ -4345,6 +4485,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
             "clockOffset",
             "connection_info",
             "connectionInfo",
+            "fee",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -4360,6 +4501,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
             Protocols,
             ClockOffset,
             ConnectionInfo,
+            Fee,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -4392,6 +4534,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                             "protocols" => Ok(GeneratedField::Protocols),
                             "clockOffset" | "clock_offset" => Ok(GeneratedField::ClockOffset),
                             "connectionInfo" | "connection_info" => Ok(GeneratedField::ConnectionInfo),
+                            "fee" => Ok(GeneratedField::Fee),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -4422,6 +4565,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                 let mut protocols__ = None;
                 let mut clock_offset__ = None;
                 let mut connection_info__ = None;
+                let mut fee__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::Moniker => {
@@ -4496,6 +4640,12 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                             }
                             connection_info__ = map.next_value()?;
                         }
+                        GeneratedField::Fee => {
+                            if fee__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("fee"));
+                            }
+                            fee__ = map.next_value()?;
+                        }
                     }
                 }
                 Ok(GetNodeInfoResponse {
@@ -4510,6 +4660,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                     protocols: protocols__.unwrap_or_default(),
                     clock_offset: clock_offset__.unwrap_or_default(),
                     connection_info: connection_info__,
+                    fee: fee__,
                 })
             }
         }

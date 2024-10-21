@@ -53,11 +53,12 @@ const GetNodeInfoResponse$json = const {
     const {'1': 'protocols', '3': 9, '4': 3, '5': 9, '10': 'protocols'},
     const {'1': 'clock_offset', '3': 13, '4': 1, '5': 1, '10': 'clockOffset'},
     const {'1': 'connection_info', '3': 14, '4': 1, '5': 11, '6': '.pactus.ConnectionInfo', '10': 'connectionInfo'},
+    const {'1': 'fee', '3': 15, '4': 1, '5': 11, '6': '.pactus.FeeConfig', '10': 'fee'},
   ],
 };
 
 /// Descriptor for `GetNodeInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAlSBnBlZXJJZBIdCgpzdGFydGVkX2F0GAQgASgEUglzdGFydGVkQXQSIgoMcmVhY2hhYmlsaXR5GAUgASgJUgxyZWFjaGFiaWxpdHkSGgoIc2VydmljZXMYBiABKAVSCHNlcnZpY2VzEiUKDnNlcnZpY2VzX25hbWVzGAcgASgJUg1zZXJ2aWNlc05hbWVzEh8KC2xvY2FsX2FkZHJzGAggAygJUgpsb2NhbEFkZHJzEhwKCXByb3RvY29scxgJIAMoCVIJcHJvdG9jb2xzEiEKDGNsb2NrX29mZnNldBgNIAEoAVILY2xvY2tPZmZzZXQSPwoPY29ubmVjdGlvbl9pbmZvGA4gASgLMhYucGFjdHVzLkNvbm5lY3Rpb25JbmZvUg5jb25uZWN0aW9uSW5mbw==');
+final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAlSBnBlZXJJZBIdCgpzdGFydGVkX2F0GAQgASgEUglzdGFydGVkQXQSIgoMcmVhY2hhYmlsaXR5GAUgASgJUgxyZWFjaGFiaWxpdHkSGgoIc2VydmljZXMYBiABKAVSCHNlcnZpY2VzEiUKDnNlcnZpY2VzX25hbWVzGAcgASgJUg1zZXJ2aWNlc05hbWVzEh8KC2xvY2FsX2FkZHJzGAggAygJUgpsb2NhbEFkZHJzEhwKCXByb3RvY29scxgJIAMoCVIJcHJvdG9jb2xzEiEKDGNsb2NrX29mZnNldBgNIAEoAVILY2xvY2tPZmZzZXQSPwoPY29ubmVjdGlvbl9pbmZvGA4gASgLMhYucGFjdHVzLkNvbm5lY3Rpb25JbmZvUg5jb25uZWN0aW9uSW5mbxIjCgNmZWUYDyABKAsyES5wYWN0dXMuRmVlQ29uZmlnUgNmZWU=');
 @$core.Deprecated('Use peerInfoDescriptor instead')
 const PeerInfo$json = const {
   '1': 'PeerInfo',
@@ -142,6 +143,18 @@ const CounterInfo$json = const {
 
 /// Descriptor for `CounterInfo`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List counterInfoDescriptor = $convert.base64Decode('CgtDb3VudGVySW5mbxIUCgVCeXRlcxgBIAEoBFIFQnl0ZXMSGAoHQnVuZGxlcxgCIAEoBFIHQnVuZGxlcw==');
+@$core.Deprecated('Use feeConfigDescriptor instead')
+const FeeConfig$json = const {
+  '1': 'FeeConfig',
+  '2': const [
+    const {'1': 'fixed_fee', '3': 1, '4': 1, '5': 1, '10': 'fixedFee'},
+    const {'1': 'daily_limit', '3': 2, '4': 1, '5': 13, '10': 'dailyLimit'},
+    const {'1': 'unit_price', '3': 3, '4': 1, '5': 1, '10': 'unitPrice'},
+  ],
+};
+
+/// Descriptor for `FeeConfig`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List feeConfigDescriptor = $convert.base64Decode('CglGZWVDb25maWcSGwoJZml4ZWRfZmVlGAEgASgBUghmaXhlZEZlZRIfCgtkYWlseV9saW1pdBgCIAEoDVIKZGFpbHlMaW1pdBIdCgp1bml0X3ByaWNlGAMgASgBUgl1bml0UHJpY2U=');
 const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = const {
   '1': 'Network',
   '2': const [
@@ -162,6 +175,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> NetworkSer
   '.pactus.GetNodeInfoRequest': GetNodeInfoRequest$json,
   '.pactus.GetNodeInfoResponse': GetNodeInfoResponse$json,
   '.pactus.ConnectionInfo': ConnectionInfo$json,
+  '.pactus.FeeConfig': FeeConfig$json,
 };
 
 /// Descriptor for `Network`. Decode as a `google.protobuf.ServiceDescriptorProto`.

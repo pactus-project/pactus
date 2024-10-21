@@ -185,6 +185,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ..pPS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'protocols')
     ..a<$core.double>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'clockOffset', $pb.PbFieldType.OD)
     ..aOM<ConnectionInfo>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectionInfo', subBuilder: ConnectionInfo.create)
+    ..aOM<FeeConfig>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fee', subBuilder: FeeConfig.create)
     ..hasRequiredFields = false
   ;
 
@@ -201,6 +202,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     $core.Iterable<$core.String>? protocols,
     $core.double? clockOffset,
     ConnectionInfo? connectionInfo,
+    FeeConfig? fee,
   }) {
     final _result = create();
     if (moniker != null) {
@@ -235,6 +237,9 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     }
     if (connectionInfo != null) {
       _result.connectionInfo = connectionInfo;
+    }
+    if (fee != null) {
+      _result.fee = fee;
     }
     return _result;
   }
@@ -347,6 +352,17 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   void clearConnectionInfo() => clearField(14);
   @$pb.TagNumber(14)
   ConnectionInfo ensureConnectionInfo() => $_ensure(10);
+
+  @$pb.TagNumber(15)
+  FeeConfig get fee => $_getN(11);
+  @$pb.TagNumber(15)
+  set fee(FeeConfig v) { setField(15, v); }
+  @$pb.TagNumber(15)
+  $core.bool hasFee() => $_has(11);
+  @$pb.TagNumber(15)
+  void clearFee() => clearField(15);
+  @$pb.TagNumber(15)
+  FeeConfig ensureFee() => $_ensure(11);
 }
 
 class PeerInfo extends $pb.GeneratedMessage {
@@ -835,6 +851,81 @@ class CounterInfo extends $pb.GeneratedMessage {
   $core.bool hasBundles() => $_has(1);
   @$pb.TagNumber(2)
   void clearBundles() => clearField(2);
+}
+
+class FeeConfig extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'FeeConfig', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..a<$core.double>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'fixedFee', $pb.PbFieldType.OD)
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dailyLimit', $pb.PbFieldType.OU3)
+    ..a<$core.double>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'unitPrice', $pb.PbFieldType.OD)
+    ..hasRequiredFields = false
+  ;
+
+  FeeConfig._() : super();
+  factory FeeConfig({
+    $core.double? fixedFee,
+    $core.int? dailyLimit,
+    $core.double? unitPrice,
+  }) {
+    final _result = create();
+    if (fixedFee != null) {
+      _result.fixedFee = fixedFee;
+    }
+    if (dailyLimit != null) {
+      _result.dailyLimit = dailyLimit;
+    }
+    if (unitPrice != null) {
+      _result.unitPrice = unitPrice;
+    }
+    return _result;
+  }
+  factory FeeConfig.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory FeeConfig.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  FeeConfig clone() => FeeConfig()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  FeeConfig copyWith(void Function(FeeConfig) updates) => super.copyWith((message) => updates(message as FeeConfig)) as FeeConfig; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static FeeConfig create() => FeeConfig._();
+  FeeConfig createEmptyInstance() => create();
+  static $pb.PbList<FeeConfig> createRepeated() => $pb.PbList<FeeConfig>();
+  @$core.pragma('dart2js:noInline')
+  static FeeConfig getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FeeConfig>(create);
+  static FeeConfig? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.double get fixedFee => $_getN(0);
+  @$pb.TagNumber(1)
+  set fixedFee($core.double v) { $_setDouble(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasFixedFee() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearFixedFee() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.int get dailyLimit => $_getIZ(1);
+  @$pb.TagNumber(2)
+  set dailyLimit($core.int v) { $_setUnsignedInt32(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasDailyLimit() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearDailyLimit() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.double get unitPrice => $_getN(2);
+  @$pb.TagNumber(3)
+  set unitPrice($core.double v) { $_setDouble(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasUnitPrice() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearUnitPrice() => clearField(3);
 }
 
 class NetworkApi {
