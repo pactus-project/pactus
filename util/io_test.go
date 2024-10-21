@@ -217,7 +217,7 @@ func TestSanitizeArchivePath(t *testing.T) {
 func TestListFilesInDir(t *testing.T) {
 	tmpDir := TempDirPath()
 
-	file1Path := filepath.Join(tmpDir, ".public_file")
+	file1Path := filepath.Join(tmpDir, "public_file")
 	file1, err := os.Create(file1Path)
 	require.NoError(t, err)
 	require.NoError(t, file1.Close())
