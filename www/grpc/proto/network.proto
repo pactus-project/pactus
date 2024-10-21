@@ -137,7 +137,9 @@ message FeeConfig {
   // Fixed fee for each transaction.
   double fixed_fee = 1;
   // Number of bytes an account can send each day without paying a fee.
+  // The daily_limit is part of he consumptional fee model.
   uint32 daily_limit = 2;
   // Fee per byte in PAC.
+  // The unit_price is part of he consumptional fee model.
   double unit_price = 3;
 }
