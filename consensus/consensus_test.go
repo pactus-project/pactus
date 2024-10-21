@@ -398,6 +398,46 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 	return prop
 }
 
+func (td *testData) makeMainVoteCertificate(t *testing.T,
+	height uint32, round, cpRound int16,
+) *certificate.VoteCertificate {
+	t.Helper()
+
+	// === make valid certificate
+	preVoteCommitters := []int32{}
+	preVoteSigs := []*bls.Signature{}
+	for i, val := range td.consP.validators {
+		preVoteJust := &vote.JustInitYes{}
+		preVote := vote.NewCPPreVote(hash.UndefHash, height, round,
+			cpRound, vote.CPValueYes, preVoteJust, val.Address())
+		sbPreVote := preVote.SignBytes()
+
+		preVoteCommitters = append(preVoteCommitters, val.Number())
+		preVoteSigs = append(preVoteSigs, td.valKeys[i].Sign(sbPreVote))
+	}
+	preVoteAggSig := bls.SignatureAggregate(preVoteSigs...)
+	certPreVote := certificate.NewVoteCertificate(height, round)
+	certPreVote.SetSignature(preVoteCommitters, []int32{}, preVoteAggSig)
+
+	mainVoteCommitters := []int32{}
+	mainVoteSigs := []*bls.Signature{}
+	for i, val := range td.consP.validators {
+		mainVoteJust := &vote.JustMainVoteNoConflict{
+			QCert: certPreVote,
+		}
+		mainVote := vote.NewCPMainVote(hash.UndefHash, height, round, cpRound, vote.CPValueYes, mainVoteJust, val.Address())
+		sbMainVote := mainVote.SignBytes()
+
+		mainVoteCommitters = append(mainVoteCommitters, val.Number())
+		mainVoteSigs = append(mainVoteSigs, td.valKeys[i].Sign(sbMainVote))
+	}
+	mainVoteAggSig := bls.SignatureAggregate(mainVoteSigs...)
+	certMainVote := certificate.NewVoteCertificate(height, round)
+	certMainVote.SetSignature(mainVoteCommitters, []int32{}, mainVoteAggSig)
+
+	return certMainVote
+}
+
 func TestStart(t *testing.T) {
 	td := setup(t)
 
@@ -578,68 +618,59 @@ func TestHandleQueryVote(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consP)
-	assert.Nil(t, td.consP.HandleQueryVote(1, 0))
 	cpRound := int16(0)
+	height := uint32(1)
+	assert.Nil(t, td.consP.HandleQueryVote(height, 0))
 
-	// === make valid certificate
-	preVoteCommitters := []int32{}
-	preVoteSigs := []*bls.Signature{}
-	for index, val := range td.consP.validators {
-		preVoteJust := &vote.JustInitYes{}
-		preVote := vote.NewCPPreVote(hash.UndefHash, 1, 0, cpRound, vote.CPValueYes, preVoteJust, val.Address())
-		sbPreVote := preVote.SignBytes()
+	// Add some votes for Round 0
+	td.addPrepareVote(td.consP, td.RandHash(), height, 0, tIndexX)
+	td.addCPPreVote(td.consP, hash.UndefHash, height, 0, vote.CPValueYes,
+		&vote.JustInitYes{}, tIndexX)
+	td.addCPDecidedVote(td.consP, hash.UndefHash, height, 0, vote.CPValueYes,
+		&vote.JustDecided{QCert: td.makeMainVoteCertificate(t, height, 0, cpRound)}, tIndexY)
 
-		preVoteCommitters = append(preVoteCommitters, val.Number())
-		preVoteSigs = append(preVoteSigs, td.valKeys[index].Sign(sbPreVote))
-	}
-	preVoteAggSig := bls.SignatureAggregate(preVoteSigs...)
-	certPreVote := certificate.NewVoteCertificate(1, 0)
-	certPreVote.SetSignature(preVoteCommitters, []int32{}, preVoteAggSig)
-
-	mainVoteCommitters := []int32{}
-	mainVoteSigs := []*bls.Signature{}
-	for index, val := range td.consP.validators {
-		mainVoteJust := &vote.JustMainVoteNoConflict{
-			QCert: certPreVote,
-		}
-		mainVote := vote.NewCPMainVote(hash.UndefHash, 1, 0, cpRound, vote.CPValueYes, mainVoteJust, val.Address())
-		sbMainVote := mainVote.SignBytes()
-
-		mainVoteCommitters = append(mainVoteCommitters, val.Number())
-		mainVoteSigs = append(mainVoteSigs, td.valKeys[index].Sign(sbMainVote))
-	}
-	mainVoteAggSig := bls.SignatureAggregate(mainVoteSigs...)
-	certMainVote := certificate.NewVoteCertificate(1, 0)
-	certMainVote.SetSignature(mainVoteCommitters, []int32{}, mainVoteAggSig)
-	// ====
-
-	// round 0
-	td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
-	td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexY)
-	td.addCPPreVote(td.consP, hash.UndefHash, 1, 0, vote.CPValueYes,
-		&vote.JustInitYes{}, tIndexY)
-	td.addCPMainVote(td.consP, hash.UndefHash, 1, 0, vote.CPValueYes,
-		&vote.JustMainVoteNoConflict{QCert: certPreVote}, tIndexY)
-	td.addCPDecidedVote(td.consP, hash.UndefHash, 1, 0, vote.CPValueYes,
-		&vote.JustDecided{QCert: certMainVote}, tIndexY)
-
-	assert.NotNil(t, td.consP.HandleQueryVote(1, 0))
-
-	// Round 1
+	// Add some votes for Round 1
 	td.enterNextRound(td.consP)
-	td.addPrepareVote(td.consP, td.RandHash(), 1, 1, tIndexY)
+	td.addPrepareVote(td.consP, td.RandHash(), height, 1, tIndexX)
+	td.addCPPreVote(td.consP, hash.UndefHash, height, 1, vote.CPValueYes,
+		&vote.JustInitYes{}, tIndexY)
+	td.addCPDecidedVote(td.consP, hash.UndefHash, height, 1, vote.CPValueYes,
+		&vote.JustDecided{QCert: td.makeMainVoteCertificate(t, height, 1, cpRound)}, tIndexY)
 
-	rndVote0 := td.consP.HandleQueryVote(1, 0)
-	assert.Equal(t, vote.VoteTypeCPDecided, rndVote0.Type(), "should send the decided vote for the previous round")
+	// Add some votes for Round 2
+	td.enterNextRound(td.consP)
+	td.addPrepareVote(td.consP, td.RandHash(), height, 2, tIndexY)
 
-	rndVote1 := td.consP.HandleQueryVote(1, 1)
-	assert.Equal(t, vote.VoteTypePrepare, rndVote1.Type(), "should send the prepare vote for the current round")
+	t.Run("Query vote for round 0: should send the decided vote for the round 1", func(t *testing.T) {
+		rndVote := td.consP.HandleQueryVote(height, 0)
+		assert.Equal(t, vote.VoteTypeCPDecided, rndVote.Type())
+		assert.Equal(t, height, rndVote.Height())
+		assert.Equal(t, int16(1), rndVote.Round())
+	})
 
-	rndVote2 := td.consP.HandleQueryVote(1, 2)
-	assert.Nil(t, rndVote2, "should not send a vote for the next round")
+	t.Run("Query vote for round 1: should send the decided vote for the round 1", func(t *testing.T) {
+		rndVote := td.consP.HandleQueryVote(height, 1)
+		assert.Equal(t, vote.VoteTypeCPDecided, rndVote.Type())
+		assert.Equal(t, height, rndVote.Height())
+		assert.Equal(t, int16(1), rndVote.Round())
+	})
 
-	rndVote4 := td.consP.HandleQueryVote(2, 0)
-	assert.Nil(t, rndVote4, "should not have a vote for the next height")
+	t.Run("Query vote for round 2: should send the prepare vote for the current round", func(t *testing.T) {
+		rndVote := td.consP.HandleQueryVote(height, 2)
+		assert.Equal(t, vote.VoteTypePrepare, rndVote.Type())
+		assert.Equal(t, height, rndVote.Height())
+		assert.Equal(t, int16(2), rndVote.Round())
+	})
+
+	t.Run("Query vote for round 3: should not send a vote for the next round", func(t *testing.T) {
+		rndVote := td.consP.HandleQueryVote(height, 3)
+		assert.Nil(t, rndVote)
+	})
+
+	t.Run("Query vote for height 2: should not send a vote for the next height", func(t *testing.T) {
+		rndVote := td.consP.HandleQueryVote(height+1, 0)
+		assert.Nil(t, rndVote)
+	})
 }
 
 func TestHandleQueryProposal(t *testing.T) {

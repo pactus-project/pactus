@@ -514,13 +514,13 @@ func (cs *consensus) HandleQueryVote(height uint32, round int16) *vote.Vote {
 	votes := []*vote.Vote{}
 	switch {
 	case round < cs.round:
-		// Past round: Only broadcast cp:decided votes
-		vs := cs.log.CPDecidedVoteSet(round)
+		// Past round: broadcast cp:decided votes for the previous round.
+		vs := cs.log.CPDecidedVoteSet(cs.round - 1)
 		votes = append(votes, vs.AllVotes()...)
 
 	case round == cs.round:
 		// Current round
-		m := cs.log.RoundMessages(round)
+		m := cs.log.RoundMessages(cs.round)
 		votes = append(votes, m.AllVotes()...)
 
 	case round > cs.round:
