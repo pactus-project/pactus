@@ -69,13 +69,13 @@ func newTx(lockTime uint32, pld payload.Payload, fee amount.Amount, opts ...TxOp
 
 // FromBytes constructs a new transaction from byte array.
 func FromBytes(bs []byte) (*Tx, error) {
-	tx := new(Tx)
+	trx := new(Tx)
 	r := bytes.NewReader(bs)
-	if err := tx.Decode(r); err != nil {
+	if err := trx.Decode(r); err != nil {
 		return nil, err
 	}
 
-	return tx, nil
+	return trx, nil
 }
 
 func (tx *Tx) Version() uint8 {
@@ -208,8 +208,8 @@ func (tx *Tx) checkSignature() error {
 		}
 	}
 
-	bs := tx.SignBytes()
-	if err := tx.PublicKey().Verify(bs, tx.Signature()); err != nil {
+	signBytes := tx.SignBytes()
+	if err := tx.PublicKey().Verify(signBytes, tx.Signature()); err != nil {
 		return BasicCheckError{
 			Reason: "invalid signature",
 		}
@@ -220,13 +220,13 @@ func (tx *Tx) checkSignature() error {
 
 // Bytes returns the serialized bytes for the Transaction.
 func (tx *Tx) Bytes() ([]byte, error) {
-	w := bytes.NewBuffer(make([]byte, 0, tx.SerializeSize()))
-	err := tx.Encode(w)
+	buf := bytes.NewBuffer(make([]byte, 0, tx.SerializeSize()))
+	err := tx.Encode(buf)
 	if err != nil {
 		return nil, err
 	}
 
-	return w.Bytes(), nil
+	return buf.Bytes(), nil
 }
 
 func (tx *Tx) MarshalCBOR() ([]byte, error) {
@@ -251,20 +251,20 @@ func (tx *Tx) UnmarshalCBOR(bs []byte) error {
 
 // SerializeSize returns the number of bytes it would take to serialize the transaction.
 func (tx *Tx) SerializeSize() int {
-	n := 7 + //  flag (1) + version (1) + payload type (1) + lock_time (4)
+	size := 7 + //  flag (1) + version (1) + payload type (1) + lock_time (4)
 		encoding.VarIntSerializeSize(uint64(tx.Fee())) +
 		encoding.VarStringSerializeSize(tx.Memo())
 	if tx.Payload() != nil {
-		n += tx.Payload().SerializeSize()
+		size += tx.Payload().SerializeSize()
 	}
 	if tx.data.Signature != nil {
-		n += tx.data.Signature.SerializeSize()
+		size += tx.data.Signature.SerializeSize()
 	}
 	if tx.data.PublicKey != nil {
-		n += tx.data.PublicKey.SerializeSize()
+		size += tx.data.PublicKey.SerializeSize()
 	}
 
-	return n
+	return size
 }
 
 func (tx *Tx) Encode(w io.Writer) error {
@@ -337,7 +337,7 @@ func (tx *Tx) Decode(r io.Reader) error {
 		return err
 	}
 
-	switch t := payload.Type(payloadType); t {
+	switch typ := payload.Type(payloadType); typ {
 	case payload.TypeTransfer:
 		tx.data.Payload = new(payload.TransferPayload)
 	case payload.TypeBond:
@@ -351,7 +351,7 @@ func (tx *Tx) Decode(r io.Reader) error {
 
 	default:
 		return InvalidPayloadTypeError{
-			PayloadType: t,
+			PayloadType: typ,
 		}
 	}
 

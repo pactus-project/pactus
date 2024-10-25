@@ -134,14 +134,14 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 		return nil, err
 	}
 
-	ks := keyStore{
+	store := keyStore{
 		MasterNode: masterNode{
 			Mnemonic: mnemonic,
 		},
 		ImportedKeys: make([]string, 0),
 	}
 
-	keyStoreDate, err := json.Marshal(ks)
+	storeDate, err := json.Marshal(store)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +151,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 		CoinType:  coinType,
 		Encrypter: enc,
 		Addresses: make(map[string]AddressInfo),
-		KeyStore:  string(keyStoreDate),
+		KeyStore:  string(storeDate),
 		Purposes: purposes{
 			PurposeBLS: purposeBLS{
 				XPubValidator: xPubValidator.Neuter().String(),

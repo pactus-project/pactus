@@ -20,32 +20,32 @@ type MockSync struct {
 }
 
 func MockingSync(ts *testsuite.TestSuite) *MockSync {
-	ps := peerset.NewPeerSet(1 * time.Second)
+	peerSet := peerset.NewPeerSet(1 * time.Second)
 	pub1, _ := ts.RandBLSKeyPair()
 	pub2, _ := ts.RandBLSKeyPair()
 	pid1 := ts.RandPeerID()
 	pid2 := ts.RandPeerID()
-	ps.UpdateInfo(
+	peerSet.UpdateInfo(
 		pid1,
 		"test-peer-1",
 		version.NodeAgent.String(),
 		[]*bls.PublicKey{pub1},
 		service.New(service.FullNode))
-	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
+	peerSet.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
-	ps.UpdateInfo(
+	peerSet.UpdateInfo(
 		pid2,
 		"test-peer-2",
 		version.NodeAgent.String(),
 		[]*bls.PublicKey{pub2},
 		service.New(service.None))
-	ps.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
+	peerSet.UpdateHeight(pid1, ts.RandHeight(), ts.RandHash())
 
 	services := service.New()
 
 	return &MockSync{
 		TestID:       ts.RandPeerID(),
-		TestPeerSet:  ps,
+		TestPeerSet:  peerSet,
 		TestServices: services,
 	}
 }

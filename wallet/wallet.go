@@ -148,7 +148,7 @@ func newWallet(walletPath string, store *Store, offline bool, option *walletOpt)
 
 	client := newGrpcClient(option.timeout, option.servers)
 
-	w := &Wallet{
+	wlt := &Wallet{
 		store:      store,
 		path:       walletPath,
 		grpcClient: client,
@@ -162,7 +162,7 @@ func newWallet(walletPath string, store *Store, offline bool, option *walletOpt)
 		}
 
 		var netServers []string
-		switch w.store.Network {
+		switch wlt.store.Network {
 		case genesis.Mainnet:
 			netServers = serversInfo["mainnet"]
 
@@ -183,7 +183,7 @@ func newWallet(walletPath string, store *Store, offline bool, option *walletOpt)
 		}
 	}
 
-	return w, nil
+	return wlt, nil
 }
 
 func (w *Wallet) Name() string {
@@ -365,15 +365,15 @@ func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
 }
 
 func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
-	id, err := w.grpcClient.sendTx(trx)
+	txID, err := w.grpcClient.sendTx(trx)
 	if err != nil {
 		return "", err
 	}
 
-	d, _ := trx.Bytes()
-	w.store.History.addPending(trx.Payload().Signer().String(), trx.Payload().Value(), id, d)
+	data, _ := trx.Bytes()
+	w.store.History.addPending(trx.Payload().Signer().String(), trx.Payload().Value(), txID, data)
 
-	return id.String(), nil
+	return txID.String(), nil
 }
 
 func (w *Wallet) CalculateFee(amt amount.Amount, payloadType payload.Type) (amount.Amount, error) {
@@ -467,13 +467,13 @@ func (w *Wallet) SetLabel(addr, label string) error {
 	return w.store.Vault.SetLabel(addr, label)
 }
 
-func (w *Wallet) AddTransaction(id tx.ID) error {
-	idStr := id.String()
+func (w *Wallet) AddTransaction(txID tx.ID) error {
+	idStr := txID.String()
 	if w.store.History.hasTransaction(idStr) {
 		return ErrHistoryExists
 	}
 
-	trxRes, err := w.grpcClient.getTransaction(id)
+	trxRes, err := w.grpcClient.getTransaction(txID)
 	if err != nil {
 		return err
 	}

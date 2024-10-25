@@ -194,29 +194,29 @@ func TestVoteMarshaling(t *testing.T) {
 	}
 
 	ts := testsuite.NewTestSuite(t)
-	for _, test := range tests {
-		bz1, _ := hex.DecodeString(test.data)
+	for _, tt := range tests {
+		bz1, _ := hex.DecodeString(tt.data)
 
-		v := new(vote.Vote)
-		err := v.UnmarshalCBOR(bz1)
+		vote := new(vote.Vote)
+		err := vote.UnmarshalCBOR(bz1)
 		assert.NoError(t, err)
 
-		bz2, err := v.MarshalCBOR()
+		bz2, err := vote.MarshalCBOR()
 		assert.NoError(t, err)
 
 		assert.Equal(t, bz1, bz2)
 
 		expectedHash := hash.CalcHash(bz1)
-		assert.Equal(t, expectedHash, v.Hash())
+		assert.Equal(t, expectedHash, vote.Hash())
 
-		v.SetSignature(ts.RandBLSSignature())
-		assert.NoError(t, v.BasicCheck())
+		vote.SetSignature(ts.RandBLSSignature())
+		assert.NoError(t, vote.BasicCheck())
 
-		expectedSignBytes, _ := hex.DecodeString(test.signBytes)
-		assert.Equal(t, expectedSignBytes, v.SignBytes())
+		expectedSignBytes, _ := hex.DecodeString(tt.signBytes)
+		assert.Equal(t, expectedSignBytes, vote.SignBytes())
 
-		if test.justType != "" {
-			assert.Equal(t, test.justType, v.CPJust().Type().String())
+		if tt.justType != "" {
+			assert.Equal(t, tt.justType, vote.CPJust().Type().String())
 		}
 	}
 }
@@ -224,131 +224,132 @@ func TestVoteMarshaling(t *testing.T) {
 func TestVoteSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	h1 := ts.RandHash()
-	pb1, pv1 := ts.RandBLSKeyPair()
-	pb2, pv2 := ts.RandBLSKeyPair()
+	hash1 := ts.RandHash()
+	pub1, prv1 := ts.RandBLSKeyPair()
+	pub2, prv2 := ts.RandBLSKeyPair()
 
-	v1 := vote.NewPrepareVote(h1, 101, 5, pb1.ValidatorAddress())
-	v2 := vote.NewPrepareVote(h1, 101, 5, pb2.ValidatorAddress())
+	vote1 := vote.NewPrepareVote(hash1, 101, 5, pub1.ValidatorAddress())
+	vote2 := vote.NewPrepareVote(hash1, 101, 5, pub2.ValidatorAddress())
 
-	assert.Error(t, v1.BasicCheck(), "No signature")
+	assert.Error(t, vote1.BasicCheck(), "No signature")
 
-	sig1 := pv1.SignNative(v1.SignBytes())
-	v1.SetSignature(sig1)
-	err1 := v1.Verify(pb1)
+	sig1 := prv1.SignNative(vote1.SignBytes())
+	vote1.SetSignature(sig1)
+	err1 := vote1.Verify(pub1)
 	assert.NoError(t, err1, "Ok")
 
-	sig2 := pv2.SignNative(v2.SignBytes())
-	v2.SetSignature(sig2)
-	err2 := v2.Verify(pb1)
+	sig2 := prv2.SignNative(vote2.SignBytes())
+	vote2.SetSignature(sig2)
+	err2 := vote2.Verify(pub1)
 	assert.ErrorIs(t, err2, vote.InvalidSignerError{
-		Expected: pb1.ValidatorAddress(),
-		Got:      pb2.ValidatorAddress(),
+		Expected: pub1.ValidatorAddress(),
+		Got:      pub2.ValidatorAddress(),
 	})
 
-	sig3 := pv1.SignNative(v2.SignBytes())
-	v2.SetSignature(sig3)
-	err3 := v2.Verify(pb2)
+	sig3 := prv1.SignNative(vote2.SignBytes())
+	vote2.SetSignature(sig3)
+	err3 := vote2.Verify(pub2)
 	assert.ErrorIs(t, err3, crypto.ErrInvalidSignature)
 }
 
 func TestCPPreVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	h := ts.RandHeight()
-	r := ts.RandRound()
+	height := ts.RandHeight()
+	round := ts.RandRound()
 	just := &vote.JustInitYes{}
 
 	t.Run("Invalid CP round", func(t *testing.T) {
 		invalidCPRound := int16(-1)
-		v := vote.NewCPPreVote(hash.UndefHash, h, r,
+		cpVote := vote.NewCPPreVote(hash.UndefHash, height, round,
 			invalidCPRound, vote.CPValueYes, just, ts.RandAccAddress())
 
-		err := v.BasicCheck()
+		err := cpVote.BasicCheck()
 		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP round"})
 	})
 
 	t.Run("invalid CP value", func(t *testing.T) {
 		invalidCPValue := vote.CPValue(3)
-		v := vote.NewCPPreVote(hash.UndefHash, h, r,
+		cpVote := vote.NewCPPreVote(hash.UndefHash, height, round,
 			1, invalidCPValue, just, ts.RandAccAddress())
 
-		err := v.BasicCheck()
+		err := cpVote.BasicCheck()
 		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP value"})
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		v := vote.NewCPPreVote(hash.UndefHash, h, r,
+		cpVote := vote.NewCPPreVote(hash.UndefHash, height, round,
 			1, vote.CPValueNo, just, ts.RandAccAddress())
-		v.SetSignature(ts.RandBLSSignature())
+		cpVote.SetSignature(ts.RandBLSSignature())
 
-		err := v.BasicCheck()
+		err := cpVote.BasicCheck()
 		assert.NoError(t, err)
-		assert.Equal(t, int16(1), v.CPRound())
-		assert.Equal(t, vote.CPValueNo, v.CPValue())
-		assert.NotNil(t, v.CPJust())
+		assert.Equal(t, int16(1), cpVote.CPRound())
+		assert.Equal(t, vote.CPValueNo, cpVote.CPValue())
+		assert.NotNil(t, cpVote.CPJust())
 	})
 }
 
 func TestCPMainVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	h := ts.RandHeight()
-	r := ts.RandRound()
+	height := ts.RandHeight()
+	round := ts.RandRound()
 	just := &vote.JustInitYes{}
 
 	t.Run("Invalid CP round", func(t *testing.T) {
 		invalidCPRound := int16(-1)
-		v := vote.NewCPMainVote(hash.UndefHash, h, r,
+		invVote := vote.NewCPMainVote(hash.UndefHash, height, round,
 			invalidCPRound, vote.CPValueNo, just, ts.RandAccAddress())
 
-		err := v.BasicCheck()
+		err := invVote.BasicCheck()
 		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP round"})
 	})
 
 	t.Run("No CP data", func(t *testing.T) {
-		data, _ := hex.DecodeString("A701040218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
-			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
-		v := new(vote.Vote)
-		_ = v.UnmarshalCBOR(data)
-		v.SetSignature(ts.RandBLSSignature())
+		data, _ := hex.DecodeString(
+			"A701040218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
+				"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
+		decVote := new(vote.Vote)
+		_ = decVote.UnmarshalCBOR(data)
+		decVote.SetSignature(ts.RandBLSSignature())
 
-		err := v.BasicCheck()
+		err := decVote.BasicCheck()
 		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "should have CP data"})
 	})
 
 	t.Run("Invalid CP value", func(t *testing.T) {
 		invalidCPValue := vote.CPValue(3)
-		v := vote.NewCPMainVote(hash.UndefHash, h, r,
+		cpVote := vote.NewCPMainVote(hash.UndefHash, height, round,
 			1, invalidCPValue, just, ts.RandAccAddress())
 
-		err := v.BasicCheck()
+		err := cpVote.BasicCheck()
 		assert.ErrorIs(t, err, vote.BasicCheckError{Reason: "invalid CP value"})
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		v := vote.NewCPMainVote(hash.UndefHash, h, r,
+		cpVote := vote.NewCPMainVote(hash.UndefHash, height, round,
 			1, vote.CPValueAbstain, just, ts.RandAccAddress())
-		v.SetSignature(ts.RandBLSSignature())
+		cpVote.SetSignature(ts.RandBLSSignature())
 
-		err := v.BasicCheck()
+		err := cpVote.BasicCheck()
 		assert.NoError(t, err)
-		assert.Equal(t, int16(1), v.CPRound())
-		assert.Equal(t, vote.CPValueAbstain, v.CPValue())
-		assert.NotNil(t, v.CPJust())
+		assert.Equal(t, int16(1), cpVote.CPRound())
+		assert.Equal(t, vote.CPValueAbstain, cpVote.CPValue())
+		assert.NotNil(t, cpVote.CPJust())
 	})
 }
 
 func TestCPDecided(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	h := ts.RandHeight()
-	r := ts.RandRound()
+	height := ts.RandHeight()
+	round := ts.RandRound()
 	just := &vote.JustInitYes{}
 
 	t.Run("Invalid round", func(t *testing.T) {
 		invalidCPRound := int16(-1)
-		v := vote.NewCPDecidedVote(hash.UndefHash, h, r,
+		v := vote.NewCPDecidedVote(hash.UndefHash, height, round,
 			invalidCPRound, vote.CPValueNo, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
@@ -368,7 +369,7 @@ func TestCPDecided(t *testing.T) {
 
 	t.Run("Invalid CP value", func(t *testing.T) {
 		invalidCPValue := vote.CPValue(3)
-		v := vote.NewCPDecidedVote(hash.UndefHash, h, r,
+		v := vote.NewCPDecidedVote(hash.UndefHash, height, round,
 			1, invalidCPValue, just, ts.RandAccAddress())
 
 		err := v.BasicCheck()
@@ -376,15 +377,15 @@ func TestCPDecided(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		v := vote.NewCPDecidedVote(hash.UndefHash, h, r,
+		vte := vote.NewCPDecidedVote(hash.UndefHash, height, round,
 			1, vote.CPValueAbstain, just, ts.RandAccAddress())
-		v.SetSignature(ts.RandBLSSignature())
+		vte.SetSignature(ts.RandBLSSignature())
 
-		err := v.BasicCheck()
+		err := vte.BasicCheck()
 		assert.NoError(t, err)
-		assert.Equal(t, int16(1), v.CPRound())
-		assert.Equal(t, vote.CPValueAbstain, v.CPValue())
-		assert.NotNil(t, v.CPJust())
+		assert.Equal(t, int16(1), vte.CPRound())
+		assert.Equal(t, vote.CPValueAbstain, vte.CPValue())
+		assert.NotNil(t, vte.CPJust())
 	})
 }
 
@@ -452,28 +453,28 @@ func TestSignBytes(t *testing.T) {
 	cpRound := int16(10)
 	just := &vote.JustInitNo{}
 
-	v1 := vote.NewPrepareVote(blockHash, height, round, signer)
-	v2 := vote.NewPrecommitVote(blockHash, height, round, signer)
-	v3 := vote.NewCPPreVote(blockHash, height, round, cpRound, vote.CPValueNo, just, signer)
-	v4 := vote.NewCPMainVote(blockHash, height, round, cpRound, vote.CPValueAbstain, just, signer)
-	v5 := vote.NewCPDecidedVote(blockHash, height, round, cpRound, vote.CPValueYes, just, signer)
+	vote1 := vote.NewPrepareVote(blockHash, height, round, signer)
+	vote2 := vote.NewPrecommitVote(blockHash, height, round, signer)
+	vote3 := vote.NewCPPreVote(blockHash, height, round, cpRound, vote.CPValueNo, just, signer)
+	vote4 := vote.NewCPMainVote(blockHash, height, round, cpRound, vote.CPValueAbstain, just, signer)
+	vote5 := vote.NewCPDecidedVote(blockHash, height, round, cpRound, vote.CPValueYes, just, signer)
 
-	sb1 := v1.SignBytes()
-	sb2 := v2.SignBytes()
-	sb3 := v3.SignBytes()
-	sb4 := v4.SignBytes()
-	sb5 := v5.SignBytes()
+	sby1 := vote1.SignBytes()
+	sby2 := vote2.SignBytes()
+	sby3 := vote3.SignBytes()
+	sby4 := vote4.SignBytes()
+	sby5 := vote5.SignBytes()
 
-	assert.Equal(t, 45, len(sb1))
-	assert.Equal(t, 38, len(sb2))
-	assert.Equal(t, 49, len(sb3))
-	assert.Equal(t, 50, len(sb4))
-	assert.Equal(t, 48, len(sb5))
+	assert.Equal(t, 45, len(sby1))
+	assert.Equal(t, 38, len(sby2))
+	assert.Equal(t, 49, len(sby3))
+	assert.Equal(t, 50, len(sby4))
+	assert.Equal(t, 48, len(sby5))
 
-	assert.Contains(t, string(sb1), "PREPARE")
-	assert.Contains(t, string(sb3), "PRE-VOTE")
-	assert.Contains(t, string(sb4), "MAIN-VOTE")
-	assert.Contains(t, string(sb5), "DECIDED")
+	assert.Contains(t, string(sby1), "PREPARE")
+	assert.Contains(t, string(sby3), "PRE-VOTE")
+	assert.Contains(t, string(sby4), "MAIN-VOTE")
+	assert.Contains(t, string(sby5), "DECIDED")
 }
 
 func TestLog(t *testing.T) {

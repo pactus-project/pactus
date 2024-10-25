@@ -23,7 +23,7 @@ type lexer struct {
 
 // New creates a Cobra CLI command named "shell" which runs an interactive shell prompt for the root command.
 func New(root *cobra.Command, refresh func() *cobra.Command, opts ...prompt.Option) *cobra.Command {
-	sh := &lexer{
+	lexer := &lexer{
 		root:    root,
 		refresh: refresh,
 		cache:   make(map[string][]prompt.Suggest),
@@ -36,12 +36,12 @@ func New(root *cobra.Command, refresh func() *cobra.Command, opts ...prompt.Opti
 		Use:   "shell",
 		Short: "Start an interactive shell.",
 		Run: func(cmd *cobra.Command, _ []string) {
-			sh.saveStdin()
+			lexer.saveStdin()
 
-			sh.editCommandTree(cmd)
-			prompt.New(sh.executor, sh.completer, opts...).Run()
+			lexer.editCommandTree(cmd)
+			prompt.New(lexer.executor, lexer.completer, opts...).Run()
 
-			sh.restoreStdin()
+			lexer.restoreStdin()
 		},
 	}
 }
@@ -110,8 +110,8 @@ func (s *lexer) restoreStdin() {
 	}
 }
 
-func (s *lexer) completer(d prompt.Document) []prompt.Suggest {
-	args, err := buildCompletionArgs(d.CurrentLine())
+func (s *lexer) completer(doc prompt.Document) []prompt.Suggest {
+	args, err := buildCompletionArgs(doc.CurrentLine())
 	if err != nil {
 		return nil
 	}
@@ -132,7 +132,7 @@ func (s *lexer) completer(d prompt.Document) []prompt.Suggest {
 		s.cache[key] = suggestions
 	}
 
-	return prompt.FilterHasPrefix(suggestions, d.GetWordBeforeCursor(), true)
+	return prompt.FilterHasPrefix(suggestions, doc.GetWordBeforeCursor(), true)
 }
 
 func buildCompletionArgs(input string) ([]string, error) {
@@ -164,19 +164,19 @@ func readCommandOutput(cmd *cobra.Command, args []string) (string, error) {
 }
 
 func execute(cmd *cobra.Command, args []string) error {
-	if c, _, err := cmd.Find(args); err == nil {
+	if cobraCmd, _, err := cmd.Find(args); err == nil {
 		// Reset flag values between runs due to a limitation in Cobra
-		c.Flags().VisitAll(func(flag *pflag.Flag) {
+		cobraCmd.Flags().VisitAll(func(flag *pflag.Flag) {
 			if val, ok := flag.Value.(pflag.SliceValue); ok {
 				_ = val.Replace([]string{})
 			} else {
 				_ = flag.Value.Set(flag.DefValue)
 			}
 
-			_ = c.Flags().SetAnnotation(flag.Name, cobra.BashCompOneRequiredFlag, []string{"false"})
+			_ = cobraCmd.Flags().SetAnnotation(flag.Name, cobra.BashCompOneRequiredFlag, []string{"false"})
 		})
 
-		c.InitDefaultHelpFlag()
+		cobraCmd.InitDefaultHelpFlag()
 	}
 
 	cmd.SetArgs(args)
@@ -193,37 +193,37 @@ func parseSuggestions(out string) []prompt.Suggest {
 	}
 
 	for _, line := range x[:len(x)-2] {
-		l := strings.SplitN(line, "\t", 2)
+		tokens := strings.SplitN(line, "\t", 2)
 
-		if isShorthandFlag(l[0]) {
+		if isShorthandFlag(tokens[0]) {
 			continue
 		}
 
-		suggestion := prompt.Suggest{Text: escapeSpecialCharacters(l[0])}
-		if len(l) > 1 {
-			suggestion.Description = l[1]
+		suggestion := prompt.Suggest{Text: escapeSpecialCharacters(tokens[0])}
+		if len(tokens) > 1 {
+			suggestion.Description = tokens[1]
 		}
 
 		suggestions = append(suggestions, suggestion)
 	}
 
 	sort.Slice(suggestions, func(i, j int) bool {
-		it := suggestions[i].Text
-		jt := suggestions[j].Text
+		iText := suggestions[i].Text
+		jText := suggestions[j].Text
 
-		if isFlag(it) && isFlag(jt) {
-			return it < jt
+		if isFlag(iText) && isFlag(jText) {
+			return iText < jText
 		}
 
-		if isFlag(it) {
+		if isFlag(iText) {
 			return false
 		}
 
-		if isFlag(jt) {
+		if isFlag(jText) {
 			return true
 		}
 
-		return it < jt
+		return iText < jText
 	})
 
 	return suggestions

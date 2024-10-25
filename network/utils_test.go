@@ -10,7 +10,7 @@ import (
 )
 
 func TestMakeMultiAddrs(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name       string
 		inputAddrs []string
 		expected   []multiaddr.Multiaddr
@@ -38,12 +38,12 @@ func TestMakeMultiAddrs(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			actualPis, actualError := MakeMultiAddrs(tc.inputAddrs)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actualPis, actualError := MakeMultiAddrs(tt.inputAddrs)
 
-			if tc.expected != nil {
-				assert.Equal(t, tc.expected, actualPis)
+			if tt.expected != nil {
+				assert.Equal(t, tt.expected, actualPis)
 				assert.NoError(t, actualError)
 			} else {
 				assert.Error(t, actualError)
@@ -55,7 +55,7 @@ func TestMakeMultiAddrs(t *testing.T) {
 
 func TestMakeAddrInfos(t *testing.T) {
 	pid, _ := lp2ppeer.Decode("12D3KooWCwQZt8UriVXobQHPXPR8m83eceXVoeT6brPNiBHomebc")
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		inputAddrs  []string
 		expectedPis []lp2ppeer.AddrInfo
@@ -95,12 +95,12 @@ func TestMakeAddrInfos(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			actualPis, actualError := MakeAddrInfos(tc.inputAddrs)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actualPis, actualError := MakeAddrInfos(tt.inputAddrs)
 
-			if tc.expectedPis != nil {
-				assert.Equal(t, tc.expectedPis, actualPis)
+			if tt.expectedPis != nil {
+				assert.Equal(t, tt.expectedPis, actualPis)
 				assert.NoError(t, actualError)
 			} else {
 				assert.Error(t, actualError)
@@ -111,7 +111,7 @@ func TestMakeAddrInfos(t *testing.T) {
 }
 
 func TestIPToMultiAddr(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		ip       string
 		port     int
 		expected string
@@ -122,12 +122,12 @@ func TestIPToMultiAddr(t *testing.T) {
 		{"invalid_ip", 80, ""},
 	}
 
-	for _, testCase := range testCases {
-		t.Run(testCase.expected, func(t *testing.T) {
-			ma, err := IPToMultiAddr(testCase.ip, testCase.port)
-			if testCase.expected != "" {
+	for _, tt := range tests {
+		t.Run(tt.expected, func(t *testing.T) {
+			ma, err := IPToMultiAddr(tt.ip, tt.port)
+			if tt.expected != "" {
 				assert.NoError(t, err)
-				assert.Equal(t, testCase.expected, ma.String())
+				assert.Equal(t, tt.expected, ma.String())
 			} else {
 				assert.Error(t, err)
 			}
@@ -144,15 +144,15 @@ func TestHasPID(t *testing.T) {
 
 func TestSubnetsToFilters(t *testing.T) {
 	sns := PrivateSubnets()
-	f := SubnetsToFilters(sns, multiaddr.ActionDeny)
+	filter := SubnetsToFilters(sns, multiaddr.ActionDeny)
 
 	ma1, _ := multiaddr.NewMultiaddr("/ip4/0.0.0.0")
 	ma2, _ := multiaddr.NewMultiaddr("/ip4/127.0.0.1")
 	ma3, _ := multiaddr.NewMultiaddr("/ip4/8.8.8.8")
 
-	assert.False(t, f.AddrBlocked(ma1))
-	assert.True(t, f.AddrBlocked(ma2))
-	assert.False(t, f.AddrBlocked(ma3))
+	assert.False(t, filter.AddrBlocked(ma1))
+	assert.True(t, filter.AddrBlocked(ma2))
+	assert.False(t, filter.AddrBlocked(ma3))
 }
 
 func TestMessageIdFunc(t *testing.T) {

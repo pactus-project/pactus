@@ -155,7 +155,7 @@ func (e *Encrypter) Encrypt(message, password string) (string, error) {
 		case nameFuncAES256CTR:
 			// Using salt for Initialization Vector (IV)
 			iv := salt
-			ct := aesCrypt([]byte(message), iv, cipherKey)
+			cipher := aesCrypt([]byte(message), iv, cipherKey)
 
 			// MAC method
 			switch funcs[2] {
@@ -163,10 +163,10 @@ func (e *Encrypter) Encrypt(message, password string) (string, error) {
 				// Calculate the MAC
 				// We use the MAC to check if the password is correct
 				// https: //en.wikipedia.org/wiki/Authenticated_encryption#Encrypt-then-MAC_(EtM)
-				mac := calcMACv1(cipherKey[16:32], ct)
+				mac := calcMACv1(cipherKey[16:32], cipher)
 
 				data = append(data, salt...)
-				data = append(data, ct...)
+				data = append(data, cipher...)
 				data = append(data, mac...)
 
 			default:
@@ -251,13 +251,13 @@ func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 
 // aesCrypt encrypts/decrypts a message using AES-256-CTR and
 // returns the encoded/decoded bytes.
-func aesCrypt(message, iv, cipherKey []byte) []byte {
+func aesCrypt(message, initVec, cipherKey []byte) []byte {
 	// Generate the cipher message
 	cipherMsg := make([]byte, len(message))
 	aesCipher, err := aes.NewCipher(cipherKey)
 	exitOnErr(err)
 
-	stream := cipher.NewCTR(aesCipher, iv)
+	stream := cipher.NewCTR(aesCipher, initVec)
 	stream.XORKeyStream(cipherMsg, message)
 
 	return cipherMsg
@@ -265,13 +265,13 @@ func aesCrypt(message, iv, cipherKey []byte) []byte {
 
 // calcMACv1 calculates the 4 bytes MAC of the given slices base on SHA-256.
 func calcMACv1(data ...[]byte) []byte {
-	h := sha256.New()
+	hasher := sha256.New()
 	for _, d := range data {
-		_, err := h.Write(d)
+		_, err := hasher.Write(d)
 		exitOnErr(err)
 	}
 
-	return h.Sum(nil)[:4]
+	return hasher.Sum(nil)[:4]
 }
 
 // exitOnErr exit the software immediately if an error happens.

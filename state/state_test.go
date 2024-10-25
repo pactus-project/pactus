@@ -229,14 +229,14 @@ func TestCommitSandbox(t *testing.T) {
 	t.Run("Modify account", func(t *testing.T) {
 		td := setup(t)
 
-		sb := td.state.concreteSandbox()
+		sbx := td.state.concreteSandbox()
 		addr := td.genAccKey.PublicKeyNative().AccountAddress()
-		acc := sb.Account(addr)
+		acc := sbx.Account(addr)
 		bal := acc.Balance()
 		amt := td.RandAmount()
 		acc.SubtractFromBalance(amt)
-		sb.UpdateAccount(addr, acc)
-		td.state.commitSandbox(sb, 0)
+		sbx.UpdateAccount(addr, acc)
+		td.state.commitSandbox(sbx, 0)
 
 		stateAcc := td.state.AccountByAddress(addr)
 		assert.Equal(t, bal-amt, stateAcc.Balance())
@@ -245,14 +245,14 @@ func TestCommitSandbox(t *testing.T) {
 	t.Run("Modify validator", func(t *testing.T) {
 		td := setup(t)
 
-		sb := td.state.concreteSandbox()
+		sbx := td.state.concreteSandbox()
 		addr := td.genValKeys[0].Address()
-		val := sb.Validator(addr)
+		val := sbx.Validator(addr)
 		stake := val.Stake()
 		amt := td.RandAmount()
 		val.AddToStake(amt)
-		sb.UpdateValidator(val)
-		td.state.commitSandbox(sb, 0)
+		sbx.UpdateValidator(val)
+		td.state.commitSandbox(sbx, 0)
 
 		stateVal := td.state.ValidatorByAddress(addr)
 		assert.Equal(t, stake+amt, stateVal.Stake(), val.Stake())
@@ -298,39 +298,39 @@ func TestUpdateLastCertificate(t *testing.T) {
 	valKey4 := td.genValKeys[len(td.genValKeys)-1]
 	invValKey := td.RandValKey()
 
-	v1 := vote.NewPrepareVote(blk.Hash(), cert.Height(), cert.Round(), valKey4.Address())
-	v2 := vote.NewPrecommitVote(blk.Hash(), cert.Height()+1, cert.Round(), valKey4.Address())
-	v3 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round()-1, valKey4.Address())
-	v4 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), valKey4.Address())
-	v5 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), invValKey.Address())
-	v6 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), valKey1.Address())
-	v7 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), valKey4.Address())
+	vote1 := vote.NewPrepareVote(blk.Hash(), cert.Height(), cert.Round(), valKey4.Address())
+	vote2 := vote.NewPrecommitVote(blk.Hash(), cert.Height()+1, cert.Round(), valKey4.Address())
+	vote3 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round()-1, valKey4.Address())
+	vote4 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), valKey4.Address())
+	vote5 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), invValKey.Address())
+	vote6 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), valKey1.Address())
+	vote7 := vote.NewPrecommitVote(blk.Hash(), cert.Height(), cert.Round(), valKey4.Address())
 
-	td.HelperSignVote(valKey4, v1)
-	td.HelperSignVote(valKey4, v2)
-	td.HelperSignVote(valKey4, v3)
-	td.HelperSignVote(invValKey, v4)
-	td.HelperSignVote(invValKey, v5)
-	td.HelperSignVote(valKey4, v6)
-	td.HelperSignVote(valKey4, v7)
+	td.HelperSignVote(valKey4, vote1)
+	td.HelperSignVote(valKey4, vote2)
+	td.HelperSignVote(valKey4, vote3)
+	td.HelperSignVote(invValKey, vote4)
+	td.HelperSignVote(invValKey, vote5)
+	td.HelperSignVote(valKey4, vote6)
+	td.HelperSignVote(valKey4, vote7)
 
 	tests := []struct {
 		vote   *vote.Vote
 		err    error
 		reason string
 	}{
-		{v1, InvalidVoteForCertificateError{Vote: v1}, "invalid vote type"},
-		{v2, InvalidVoteForCertificateError{Vote: v2}, "invalid height"},
-		{v3, InvalidVoteForCertificateError{Vote: v3}, "invalid round"},
-		{v4, crypto.ErrInvalidSignature, "invalid signature"},
-		{v5, store.ErrNotFound, "unknown validator"},
-		{v6, InvalidVoteForCertificateError{Vote: v6}, "not in absentee"},
-		{v7, nil, "ok"},
+		{vote1, InvalidVoteForCertificateError{Vote: vote1}, "invalid vote type"},
+		{vote2, InvalidVoteForCertificateError{Vote: vote2}, "invalid height"},
+		{vote3, InvalidVoteForCertificateError{Vote: vote3}, "invalid round"},
+		{vote4, crypto.ErrInvalidSignature, "invalid signature"},
+		{vote5, store.ErrNotFound, "unknown validator"},
+		{vote6, InvalidVoteForCertificateError{Vote: vote6}, "not in absentee"},
+		{vote7, nil, "ok"},
 	}
 
-	for i, test := range tests {
-		err := td.state.UpdateLastCertificate(test.vote)
-		assert.ErrorIs(t, err, test.err, "error not matched for test %v", i)
+	for no, tt := range tests {
+		err := td.state.UpdateLastCertificate(tt.vote)
+		assert.ErrorIs(t, err, tt.err, "error not matched for test %v", no)
 	}
 }
 

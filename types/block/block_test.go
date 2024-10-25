@@ -17,7 +17,7 @@ func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("No transactions", func(t *testing.T) {
-		d := ts.DecodingHex(
+		data := ts.DecodingHex(
 			"01" + // Version
 				"00000000" + // UnixTime
 				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
@@ -33,25 +33,25 @@ func TestBasicCheck(t *testing.T) {
 				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
 				"00") // Txs: Len
 
-		b, _ := block.FromBytes(d)
+		blk, _ := block.FromBytes(data)
 
-		err := b.BasicCheck()
+		err := blk.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "no subsidy transaction",
 		})
 	})
 
 	t.Run("Without the previous certificate", func(t *testing.T) {
-		b, _ := ts.GenerateTestBlock(ts.RandHeight(), testsuite.BlockWithPrevCert(nil))
+		blk, _ := ts.GenerateTestBlock(ts.RandHeight(), testsuite.BlockWithPrevCert(nil))
 
-		err := b.BasicCheck()
+		err := blk.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "invalid genesis block hash",
 		})
 	})
 
 	t.Run("Invalid certificate", func(t *testing.T) {
-		d := ts.DecodingHex(
+		data := ts.DecodingHex(
 			"01" + // Version
 				"00000000" + // UnixTime
 				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
@@ -76,16 +76,16 @@ func TestBasicCheck(t *testing.T) {
 				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
 				"01") // Tx[0]: Amount
 
-		b, _ := block.FromBytes(d)
+		blk, _ := block.FromBytes(data)
 
-		err := b.BasicCheck()
+		err := blk.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "invalid certificate: height is not positive: 0",
 		})
 	})
 
 	t.Run("Invalid transaction", func(t *testing.T) {
-		d := ts.DecodingHex(
+		data := ts.DecodingHex(
 			"01" + // Version
 				"00000000" + // UnixTime
 				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
@@ -110,16 +110,16 @@ func TestBasicCheck(t *testing.T) {
 				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
 				"01") // Tx[0]: Amount
 
-		b, _ := block.FromBytes(d)
+		blk, _ := block.FromBytes(data)
 
-		err := b.BasicCheck()
+		err := blk.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "invalid transaction: invalid version: 0",
 		})
 	})
 
 	t.Run("Invalid previous block hash", func(t *testing.T) {
-		d := ts.DecodingHex(
+		data := ts.DecodingHex(
 			"01" + // Version
 				"00000000" + // UnixTime
 				"0000000000000000000000000000000000000000000000000000000000000000" + // PrevBlockHash
@@ -144,12 +144,12 @@ func TestBasicCheck(t *testing.T) {
 				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
 				"01") // Tx[0]: Amount
 
-		_, err := block.FromBytes(d)
+		_, err := block.FromBytes(data)
 		assert.Error(t, err)
 	})
 
 	t.Run("Invalid proposer address (type is 2)", func(t *testing.T) {
-		d := ts.DecodingHex(
+		data := ts.DecodingHex(
 			"01" + // Version
 				"00000000" + // UnixTime
 				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
@@ -174,15 +174,15 @@ func TestBasicCheck(t *testing.T) {
 				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
 				"01") // Tx[0]: Amount
 
-		b, _ := block.FromBytes(d)
-		err := b.BasicCheck()
+		blk, _ := block.FromBytes(data)
+		err := blk.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "invalid proposer address: pc1z42424242424242424242424242424242klpmq4",
 		})
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		d := ts.DecodingHex(
+		data := ts.DecodingHex(
 			"01" + // Version
 				"00000000" + // UnixTime
 				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
@@ -207,10 +207,10 @@ func TestBasicCheck(t *testing.T) {
 				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
 				"01") // Tx[0]: Amount
 
-		b, _ := block.FromBytes(d)
-		assert.NoError(t, b.BasicCheck())
-		assert.Zero(t, b.Header().UnixTime())
-		assert.Equal(t, uint8(1), b.Header().Version())
+		blk, _ := block.FromBytes(data)
+		assert.NoError(t, blk.BasicCheck())
+		assert.Zero(t, blk.Header().UnixTime())
+		assert.Equal(t, uint8(1), blk.Header().Version())
 	})
 }
 
@@ -242,17 +242,17 @@ func TestEncodingBlock(t *testing.T) {
 		w := util.NewFixedWriter(i)
 		assert.Error(t, blk.Encode(w), "encode test %v failed", i)
 	}
-	w := util.NewFixedWriter(length)
-	assert.NoError(t, blk.Encode(w))
+	writer := util.NewFixedWriter(length)
+	assert.NoError(t, blk.Encode(writer))
 
 	for i := 0; i < length; i++ {
 		blk2 := new(block.Block)
-		r := util.NewFixedReader(i, w.Bytes())
+		r := util.NewFixedReader(i, writer.Bytes())
 		assert.Error(t, blk2.Decode(r), "decode test %v failed", i)
 	}
 
 	blk2 := new(block.Block)
-	r := util.NewFixedReader(length, w.Bytes())
+	r := util.NewFixedReader(length, writer.Bytes())
 	assert.NoError(t, blk2.Decode(r))
 	assert.Equal(t, blk.Hash(), blk2.Hash())
 	assert.Equal(t, blk.Header(), blk2.Header())
@@ -274,7 +274,7 @@ func TestTxFromBytes(t *testing.T) {
 }
 
 func TestBlockHash(t *testing.T) {
-	d, _ := hex.DecodeString(
+	data, _ := hex.DecodeString(
 		"01" + // Version
 			"00000000" + // UnixTime
 			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
@@ -299,20 +299,21 @@ func TestBlockHash(t *testing.T) {
 			"012222222222222222222222222222222222222222" + // Tx[0]: Receiver
 			"01") // Tx[0]: Amount
 
-	b, err := block.FromBytes(d)
+	blk, err := block.FromBytes(data)
 	assert.NoError(t, err)
-	assert.Equal(t, len(d), b.SerializeSize())
-	d2, _ := b.Bytes()
-	assert.Equal(t, d, d2)
+	assert.Equal(t, len(data), blk.SerializeSize())
 
-	headerSize := b.Header().SerializeSize()
-	headerData := d[:headerSize]
-	certSize := b.PrevCertificate().SerializeSize()
-	certData := d[headerSize : headerSize+certSize]
+	blockData, _ := blk.Bytes()
+	assert.Equal(t, data, blockData)
+
+	headerSize := blk.Header().SerializeSize()
+	headerData := data[:headerSize]
+	certSize := blk.PrevCertificate().SerializeSize()
+	certData := data[headerSize : headerSize+certSize]
 	certHash := hash.CalcHash(certData)
 
 	txHashes := make([]hash.Hash, 0)
-	for _, trx := range b.Transactions() {
+	for _, trx := range blk.Transactions() {
 		txHashes = append(txHashes, trx.ID())
 	}
 	txRoot := simplemerkle.NewTreeFromHashes(txHashes).Root()
@@ -320,12 +321,12 @@ func TestBlockHash(t *testing.T) {
 	hashData := headerData
 	hashData = append(hashData, certHash.Bytes()...)
 	hashData = append(hashData, txRoot.Bytes()...)
-	hashData = append(hashData, util.Int32ToSlice(int32(b.Transactions().Len()))...)
+	hashData = append(hashData, util.Int32ToSlice(int32(blk.Transactions().Len()))...)
 
 	expected1 := hash.CalcHash(hashData)
 	expected2, _ := hash.FromString("43399fa59adcfb7d8c515460ec9ca27b6a1cb865f5b7d9bde8fe56c18eaec9ab")
-	assert.Equal(t, expected1, b.Hash())
-	assert.Equal(t, expected2, b.Hash())
+	assert.Equal(t, expected1, blk.Hash())
+	assert.Equal(t, expected2, blk.Hash())
 }
 
 func TestMakeBlock(t *testing.T) {

@@ -3,135 +3,135 @@ package linkedlist_test
 import (
 	"testing"
 
-	ll "github.com/pactus-project/pactus/util/linkedlist"
+	"github.com/pactus-project/pactus/util/linkedlist"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDoublyLink_InsertAtHead(t *testing.T) {
-	link := ll.New[int]()
-	link.InsertAtHead(1)
-	link.InsertAtHead(2)
-	link.InsertAtHead(3)
-	link.InsertAtHead(4)
+	list := linkedlist.New[int]()
+	list.InsertAtHead(1)
+	list.InsertAtHead(2)
+	list.InsertAtHead(3)
+	list.InsertAtHead(4)
 
-	assert.Equal(t, []int{4, 3, 2, 1}, link.Values())
-	assert.Equal(t, 4, link.Length())
-	assert.Equal(t, 4, link.Head.Data)
-	assert.Equal(t, 1, link.Tail.Data)
+	assert.Equal(t, []int{4, 3, 2, 1}, list.Values())
+	assert.Equal(t, 4, list.Length())
+	assert.Equal(t, 4, list.Head.Data)
+	assert.Equal(t, 1, list.Tail.Data)
 }
 
 func TestSinglyLink_InsertAtTail(t *testing.T) {
-	link := ll.New[int]()
-	link.InsertAtTail(1)
-	link.InsertAtTail(2)
-	link.InsertAtTail(3)
-	link.InsertAtTail(4)
+	list := linkedlist.New[int]()
+	list.InsertAtTail(1)
+	list.InsertAtTail(2)
+	list.InsertAtTail(3)
+	list.InsertAtTail(4)
 
-	assert.Equal(t, []int{1, 2, 3, 4}, link.Values())
-	assert.Equal(t, 4, link.Length())
-	assert.Equal(t, 1, link.Head.Data)
-	assert.Equal(t, 4, link.Tail.Data)
+	assert.Equal(t, []int{1, 2, 3, 4}, list.Values())
+	assert.Equal(t, 4, list.Length())
+	assert.Equal(t, 1, list.Head.Data)
+	assert.Equal(t, 4, list.Tail.Data)
 }
 
 func TestDeleteAtHead(t *testing.T) {
-	link := ll.New[int]()
-	link.InsertAtTail(1)
-	link.InsertAtTail(2)
-	link.InsertAtTail(3)
+	list := linkedlist.New[int]()
+	list.InsertAtTail(1)
+	list.InsertAtTail(2)
+	list.InsertAtTail(3)
 
-	link.DeleteAtHead()
-	assert.Equal(t, []int{2, 3}, link.Values())
-	assert.Equal(t, 2, link.Length())
+	list.DeleteAtHead()
+	assert.Equal(t, []int{2, 3}, list.Values())
+	assert.Equal(t, 2, list.Length())
 
-	link.DeleteAtHead()
-	assert.Equal(t, []int{3}, link.Values())
-	assert.Equal(t, 1, link.Length())
+	list.DeleteAtHead()
+	assert.Equal(t, []int{3}, list.Values())
+	assert.Equal(t, 1, list.Length())
 
-	link.DeleteAtHead()
-	assert.Equal(t, []int{}, link.Values())
-	assert.Equal(t, 0, link.Length())
+	list.DeleteAtHead()
+	assert.Equal(t, []int{}, list.Values())
+	assert.Equal(t, 0, list.Length())
 
-	link.DeleteAtHead()
-	assert.Equal(t, []int{}, link.Values())
-	assert.Equal(t, 0, link.Length())
+	list.DeleteAtHead()
+	assert.Equal(t, []int{}, list.Values())
+	assert.Equal(t, 0, list.Length())
 }
 
 func TestDeleteAtTail(t *testing.T) {
-	link := ll.New[int]()
-	link.InsertAtTail(1)
-	link.InsertAtTail(2)
-	link.InsertAtTail(3)
+	list := linkedlist.New[int]()
+	list.InsertAtTail(1)
+	list.InsertAtTail(2)
+	list.InsertAtTail(3)
 
-	link.DeleteAtTail()
-	assert.Equal(t, []int{1, 2}, link.Values())
-	assert.Equal(t, 2, link.Length())
+	list.DeleteAtTail()
+	assert.Equal(t, []int{1, 2}, list.Values())
+	assert.Equal(t, 2, list.Length())
 
-	link.DeleteAtTail()
-	assert.Equal(t, []int{1}, link.Values())
-	assert.Equal(t, 1, link.Length())
+	list.DeleteAtTail()
+	assert.Equal(t, []int{1}, list.Values())
+	assert.Equal(t, 1, list.Length())
 
-	link.DeleteAtTail()
-	assert.Equal(t, []int{}, link.Values())
-	assert.Equal(t, 0, link.Length())
+	list.DeleteAtTail()
+	assert.Equal(t, []int{}, list.Values())
+	assert.Equal(t, 0, list.Length())
 
-	link.DeleteAtTail()
-	assert.Equal(t, []int{}, link.Values())
-	assert.Equal(t, 0, link.Length())
+	list.DeleteAtTail()
+	assert.Equal(t, []int{}, list.Values())
+	assert.Equal(t, 0, list.Length())
 }
 
 func TestDelete(t *testing.T) {
-	link := ll.New[int]()
-	n1 := link.InsertAtTail(1)
-	n2 := link.InsertAtTail(2)
-	n3 := link.InsertAtTail(3)
-	n4 := link.InsertAtTail(4)
+	list := linkedlist.New[int]()
+	elm1 := list.InsertAtTail(1)
+	elm2 := list.InsertAtTail(2)
+	elm3 := list.InsertAtTail(3)
+	elm4 := list.InsertAtTail(4)
 
-	link.Delete(n1)
-	assert.Equal(t, []int{2, 3, 4}, link.Values())
-	assert.Equal(t, 3, link.Length())
+	list.Delete(elm1)
+	assert.Equal(t, []int{2, 3, 4}, list.Values())
+	assert.Equal(t, 3, list.Length())
 
-	link.Delete(n4)
-	assert.Equal(t, []int{2, 3}, link.Values())
-	assert.Equal(t, 2, link.Length())
+	list.Delete(elm4)
+	assert.Equal(t, []int{2, 3}, list.Values())
+	assert.Equal(t, 2, list.Length())
 
-	link.Delete(n2)
-	assert.Equal(t, []int{3}, link.Values())
-	assert.Equal(t, 1, link.Length())
+	list.Delete(elm2)
+	assert.Equal(t, []int{3}, list.Values())
+	assert.Equal(t, 1, list.Length())
 
-	link.Delete(n3)
-	assert.Equal(t, []int{}, link.Values())
-	assert.Equal(t, 0, link.Length())
+	list.Delete(elm3)
+	assert.Equal(t, []int{}, list.Values())
+	assert.Equal(t, 0, list.Length())
 }
 
 func TestClear(t *testing.T) {
-	link := ll.New[int]()
-	link.InsertAtTail(1)
-	link.InsertAtTail(2)
-	link.InsertAtTail(3)
+	list := linkedlist.New[int]()
+	list.InsertAtTail(1)
+	list.InsertAtTail(2)
+	list.InsertAtTail(3)
 
-	link.Clear()
-	assert.Equal(t, []int{}, link.Values())
-	assert.Equal(t, 0, link.Length())
+	list.Clear()
+	assert.Equal(t, []int{}, list.Values())
+	assert.Equal(t, 0, list.Length())
 }
 
 func TestInsertAfter(t *testing.T) {
-	link := ll.New[int]()
-	e1 := link.InsertAtHead(1)
-	e2 := link.InsertAfter(2, e1)
-	link.InsertAfter(3, e2)
-	link.InsertAfter(4, link.Head)
-	link.InsertAfter(5, link.Tail)
+	list := linkedlist.New[int]()
+	elm1 := list.InsertAtHead(1)
+	elm2 := list.InsertAfter(2, elm1)
+	list.InsertAfter(3, elm2)
+	list.InsertAfter(4, list.Head)
+	list.InsertAfter(5, list.Tail)
 
-	assert.Equal(t, []int{1, 4, 2, 3, 5}, link.Values())
+	assert.Equal(t, []int{1, 4, 2, 3, 5}, list.Values())
 }
 
 func TestInsertBefore(t *testing.T) {
-	link := ll.New[int]()
-	e1 := link.InsertAtHead(1)
-	e2 := link.InsertBefore(2, e1)
-	link.InsertBefore(3, e2)
-	link.InsertBefore(4, link.Head)
-	link.InsertBefore(5, link.Tail)
+	list := linkedlist.New[int]()
+	elm1 := list.InsertAtHead(1)
+	elm2 := list.InsertBefore(2, elm1)
+	list.InsertBefore(3, elm2)
+	list.InsertBefore(4, list.Head)
+	list.InsertBefore(5, list.Tail)
 
-	assert.Equal(t, []int{4, 3, 2, 5, 1}, link.Values())
+	assert.Equal(t, []int{4, 3, 2, 5, 1}, list.Values())
 }

@@ -64,13 +64,13 @@ func buildShowHistoryCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		history := wlt.History(addr)
-		for i, h := range history {
-			if h.Time != nil {
+		for i, item := range history {
+			if item.Time != nil {
 				cmd.PrintInfoMsgf("%d %v %v %v %s\t%v",
-					i+1, h.Time.Format(time.RFC822), h.TxID, h.PayloadType, h.Desc, h.Amount)
+					i+1, item.Time.Format(time.RFC822), item.TxID, item.PayloadType, item.Desc, item.Amount)
 			} else {
 				cmd.PrintInfoMsgf("%d              %v  %s\t%v",
-					i+1, h.TxID, h.Desc, h.Amount)
+					i+1, item.TxID, item.Desc, item.Amount)
 			}
 		}
 	}

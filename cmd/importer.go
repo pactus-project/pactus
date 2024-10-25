@@ -140,11 +140,11 @@ func (i *Importer) Download(ctx context.Context, metadata *Metadata,
 	i.dataFileName = fileName
 	filePath := fmt.Sprintf("%s/%s", i.tempDir, fileName)
 
-	d := downloader.New(dlLink, filePath, metadata.Data.Sha)
-	d.Start(ctx)
+	downloader := downloader.New(dlLink, filePath, metadata.Data.Sha)
+	downloader.Start(ctx)
 
 	go func() {
-		err := <-d.Errors()
+		err := <-downloader.Errors()
 		if err != nil {
 			log.Printf("download encountered an error: %s\n", err)
 			done <- err
@@ -152,7 +152,7 @@ func (i *Importer) Download(ctx context.Context, metadata *Metadata,
 	}()
 
 	go func() {
-		for state := range d.Stats() {
+		for state := range downloader.Stats() {
 			stateFunc(fileName, state.TotalSize, state.Downloaded, state.Percent)
 			if state.Completed {
 				log.Println("download completed")
@@ -172,16 +172,16 @@ func (i *Importer) Cleanup() error {
 
 func (i *Importer) ExtractAndStoreFiles() error {
 	zipPath := filepath.Join(i.tempDir, i.dataFileName)
-	r, err := zip.OpenReader(zipPath)
+	reader, err := zip.OpenReader(zipPath)
 	if err != nil {
 		return fmt.Errorf("failed to open zip file: %w", err)
 	}
 	defer func() {
-		_ = r.Close()
+		_ = reader.Close()
 	}()
 
-	for _, f := range r.File {
-		if err := i.extractAndWriteFile(f); err != nil {
+	for _, file := range reader.File {
+		if err := i.extractAndWriteFile(file); err != nil {
 			return err
 		}
 	}
@@ -189,21 +189,21 @@ func (i *Importer) ExtractAndStoreFiles() error {
 	return nil
 }
 
-func (i *Importer) extractAndWriteFile(f *zip.File) error {
-	rc, err := f.Open()
+func (i *Importer) extractAndWriteFile(file *zip.File) error {
+	reader, err := file.Open()
 	if err != nil {
 		return fmt.Errorf("failed to open file in zip archive: %w", err)
 	}
 	defer func() {
-		_ = rc.Close()
+		_ = reader.Close()
 	}()
 
-	fPath, err := util.SanitizeArchivePath(i.tempDir, f.Name)
+	fPath, err := util.SanitizeArchivePath(i.tempDir, file.Name)
 	if err != nil {
 		return fmt.Errorf("failed to make archive path: %w", err)
 	}
 
-	if f.FileInfo().IsDir() {
+	if file.FileInfo().IsDir() {
 		return util.Mkdir(fPath)
 	}
 
@@ -220,7 +220,7 @@ func (i *Importer) extractAndWriteFile(f *zip.File) error {
 	}()
 
 	// Use a limited reader to prevent DoS attacks via decompression bomb
-	lr := &io.LimitedReader{R: rc, N: maxDecompressedSize}
+	lr := &io.LimitedReader{R: reader, N: maxDecompressedSize}
 	written, err := io.Copy(outFile, lr)
 	if err != nil {
 		return fmt.Errorf("failed to copy file contents: %w", err)

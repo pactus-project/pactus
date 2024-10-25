@@ -49,13 +49,13 @@ func (vs *BlockVoteSet) BlockVotes(blockHash hash.Hash) map[crypto.Address]*vote
 }
 
 func (vs *BlockVoteSet) mustGetBlockVotes(blockHash hash.Hash) *voteBox {
-	bv, exists := vs.blockVotes[blockHash]
+	box, exists := vs.blockVotes[blockHash]
 	if !exists {
-		bv = newVoteBox()
-		vs.blockVotes[blockHash] = bv
+		box = newVoteBox()
+		vs.blockVotes[blockHash] = box
 	}
 
-	return bv
+	return box
 }
 
 // AllVotes returns a list of all votes in the VoteSet.
@@ -69,15 +69,15 @@ func (vs *BlockVoteSet) AllVotes() []*vote.Vote {
 }
 
 // AddVote attempts to add a vote to the VoteSet. Returns an error if the vote is invalid.
-func (vs *BlockVoteSet) AddVote(v *vote.Vote) (bool, error) {
-	power, err := vs.voteSet.verifyVote(v)
+func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
+	power, err := vs.voteSet.verifyVote(vote)
 	if err != nil {
 		return false, err
 	}
 
-	existingVote, ok := vs.allVotes[v.Signer()]
+	existingVote, ok := vs.allVotes[vote.Signer()]
 	if ok {
-		if existingVote.Hash() == v.Hash() {
+		if existingVote.Hash() == vote.Hash() {
 			// The vote is already added
 			return false, nil
 		}
@@ -85,13 +85,13 @@ func (vs *BlockVoteSet) AddVote(v *vote.Vote) (bool, error) {
 		// It is a duplicated vote
 		err = ErrDuplicatedVote
 	} else {
-		vs.allVotes[v.Signer()] = v
+		vs.allVotes[vote.Signer()] = vote
 	}
 
-	blockVotes := vs.mustGetBlockVotes(v.BlockHash())
-	blockVotes.addVote(v, power)
+	blockVotes := vs.mustGetBlockVotes(vote.BlockHash())
+	blockVotes.addVote(vote, power)
 	if vs.isTwoThirdOfTotalPower(blockVotes.votedPower) {
-		h := v.BlockHash()
+		h := vote.BlockHash()
 		vs.quorumHash = &h
 	}
 

@@ -39,14 +39,14 @@ func setup(t *testing.T, config *Config) *testData {
 		config = testConfig()
 	}
 
-	s, err := NewStore(config)
+	storeInt, err := NewStore(config)
 	require.NoError(t, err)
-	assert.False(t, s.IsPruned(), "empty store should not be in prune mode")
-	assert.Zero(t, s.PruningHeight(), "pruning height should be zero for an empty store")
+	assert.False(t, storeInt.IsPruned(), "empty store should not be in prune mode")
+	assert.Zero(t, storeInt.PruningHeight(), "pruning height should be zero for an empty store")
 
 	td := &testData{
 		TestSuite: ts,
-		store:     s.(*store),
+		store:     storeInt.(*store),
 	}
 
 	// Save 10 blocks
@@ -198,8 +198,8 @@ func TestStrippedPublicKey(t *testing.T) {
 		{trx5, true},  // unknown public key and stripped
 	}
 
-	for i, test := range tests {
-		trxs := block.Txs{test.trx}
+	for no, tt := range tests {
+		trxs := block.Txs{tt.trx}
 		blockHeight := td.store.LastCertificate().Height()
 		blk, cert := td.GenerateTestBlock(blockHeight+1, testsuite.BlockWithTransactions(trxs))
 		td.store.SaveBlock(blk, cert)
@@ -209,26 +209,26 @@ func TestStrippedPublicKey(t *testing.T) {
 		cBlk, err := td.store.Block(blockHeight + 1)
 		require.NoError(t, err)
 
-		cTrx, err := td.store.Transaction(test.trx.ID())
+		cTrx, err := td.store.Transaction(tt.trx.ID())
 		require.NoError(t, err)
 
 		//
-		if test.failed {
+		if tt.failed {
 			_, err := cBlk.ToBlock()
 			assert.ErrorIs(t, err, PublicKeyNotFoundError{
-				Address: test.trx.Payload().Signer(),
-			}, "test %d failed, expected error", i+1)
+				Address: tt.trx.Payload().Signer(),
+			}, "test %d failed, expected error", no+1)
 
 			_, err = cTrx.ToTx()
 			assert.ErrorIs(t, err, PublicKeyNotFoundError{
-				Address: test.trx.Payload().Signer(),
-			}, "test %d failed, expected error", i+1)
+				Address: tt.trx.Payload().Signer(),
+			}, "test %d failed, expected error", no+1)
 		} else {
 			_, err := cBlk.ToBlock()
-			assert.NoError(t, err, "test %d failed, not expected error", i+1)
+			assert.NoError(t, err, "test %d failed, not expected error", no+1)
 
 			_, err = cTrx.ToTx()
-			assert.NoError(t, err, "test %d failed, not expected error", i+1)
+			assert.NoError(t, err, "test %d failed, not expected error", no+1)
 		}
 	}
 }
@@ -289,7 +289,7 @@ func TestPrune(t *testing.T) {
 
 	totalPruned := uint32(0)
 	lastPruningHeight := uint32(0)
-	cb := func(pruned bool, pruningHeight uint32) bool {
+	callback := func(pruned bool, pruningHeight uint32) bool {
 		if pruned {
 			totalPruned++
 		}
@@ -303,7 +303,7 @@ func TestPrune(t *testing.T) {
 		lastPruningHeight = uint32(0)
 
 		// Store doesn't have blocks for one day
-		err := td.store.Prune(cb)
+		err := td.store.Prune(callback)
 		assert.NoError(t, err)
 
 		assert.Zero(t, totalPruned)
@@ -325,7 +325,7 @@ func TestPrune(t *testing.T) {
 		require.NoError(t, err)
 
 		// It should remove blocks [1..8]
-		err = td.store.Prune(cb)
+		err = td.store.Prune(callback)
 		assert.NoError(t, err)
 
 		assert.Equal(t, uint32(8), totalPruned)
@@ -363,7 +363,7 @@ func TestCancelPrune(t *testing.T) {
 	td := setup(t, conf)
 
 	hits := uint32(0)
-	cb := func(_ bool, _ uint32) bool {
+	callback := func(_ bool, _ uint32) bool {
 		hits++
 
 		return true // Cancel pruning
@@ -375,7 +375,7 @@ func TestCancelPrune(t *testing.T) {
 		err := td.store.WriteBatch()
 		require.NoError(t, err)
 
-		err = td.store.Prune(cb)
+		err = td.store.Prune(callback)
 		assert.NoError(t, err)
 
 		assert.Equal(t, uint32(1), hits)

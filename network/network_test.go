@@ -429,10 +429,10 @@ func TestConnections(t *testing.T) {
 		{"/ip6/::1/udp/%d/quic-v1", "/ip6/::1/udp/0/quic-v1"},
 	}
 
-	for i, test := range tests {
+	for no, tt := range tests {
 		// Bootstrap node
 		confB := testConfig()
-		bootstrapAddr := fmt.Sprintf(test.bootstrapAddr, confB.DefaultPort)
+		bootstrapAddr := fmt.Sprintf(tt.bootstrapAddr, confB.DefaultPort)
 		confB.ListenAddrStrings = []string{bootstrapAddr}
 		fmt.Println("Starting Bootstrap node")
 		networkB := makeTestNetwork(t, confB, []lp2p.Option{
@@ -444,14 +444,14 @@ func TestConnections(t *testing.T) {
 		confP.BootstrapAddrStrings = []string{
 			fmt.Sprintf("%s/p2p/%v", bootstrapAddr, networkB.SelfID().String()),
 		}
-		confP.ListenAddrStrings = []string{test.peerAddr}
+		confP.ListenAddrStrings = []string{tt.peerAddr}
 		fmt.Println("Starting Public node")
 		networkP := makeTestNetwork(t, confP, []lp2p.Option{
 			lp2p.ForceReachabilityPublic(),
 		})
 
 		t.Run(fmt.Sprintf("Running test %d: %s <-> %s ... ",
-			i, bootstrapAddr, test.peerAddr), func(t *testing.T) {
+			no, bootstrapAddr, tt.peerAddr), func(t *testing.T) {
 			t.Parallel() // run the tests in parallel
 
 			testConnection(t, networkP, networkB)

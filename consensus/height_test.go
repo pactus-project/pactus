@@ -13,14 +13,14 @@ func TestNewHeightTimeout(t *testing.T) {
 	td.enterNewHeight(td.consY)
 	td.commitBlockForAllStates(t)
 
-	s := &newHeightState{td.consY}
-	s.enter()
+	consState := &newHeightState{td.consY}
+	consState.enter()
 
 	// Invalid target
-	s.onTimeout(&ticker{Height: 2, Target: -1})
+	consState.onTimeout(&ticker{Height: 2, Target: -1})
 	td.checkHeightRound(t, td.consY, 2, 0)
 
-	s.onTimeout(&ticker{Height: 2, Target: tickerTargetNewHeight})
+	consState.onTimeout(&ticker{Height: 2, Target: tickerTargetNewHeight})
 	td.checkHeightRound(t, td.consY, 2, 0)
 	td.shouldPublishProposal(t, td.consY, 2, 0)
 }
@@ -47,15 +47,15 @@ func TestNewHeightTimeBehindNetwork(t *testing.T) {
 	td.commitBlockForAllStates(t)
 	td.consP.MoveToNewHeight()
 
-	h := uint32(2)
-	r := int16(0)
-	p := td.makeProposal(t, h, r)
+	height := uint32(2)
+	round := int16(0)
+	prop := td.makeProposal(t, height, round)
 
-	td.consP.SetProposal(p)
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexX)
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexY)
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexB)
+	td.consP.SetProposal(prop)
+	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexX)
+	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexY)
+	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexB)
 
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, p.Block().Hash())
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, p.Block().Hash())
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, prop.Block().Hash())
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop.Block().Hash())
 }

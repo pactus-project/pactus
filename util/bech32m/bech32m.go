@@ -173,15 +173,15 @@ func DecodeNoLimit(bech string) (string, []byte, error) {
 
 	// Only	ASCII characters between 33 and 126 are allowed.
 	var hasLower, hasUpper bool
-	for i := 0; i < len(bech); i++ {
-		if bech[i] < 33 || bech[i] > 126 {
-			return "", nil, InvalidCharacterError(bech[i])
+	for index := 0; index < len(bech); index++ {
+		if bech[index] < 33 || bech[index] > 126 {
+			return "", nil, InvalidCharacterError(bech[index])
 		}
 
 		// The characters must be either all lowercase or all uppercase. Testing
 		// directly with ascii codes is safe here, given the previous test.
-		hasLower = hasLower || (bech[i] >= 97 && bech[i] <= 122)
-		hasUpper = hasUpper || (bech[i] >= 65 && bech[i] <= 90)
+		hasLower = hasLower || (bech[index] >= 97 && bech[index] <= 122)
+		hasUpper = hasUpper || (bech[index] >= 65 && bech[index] <= 90)
 		if hasLower && hasUpper {
 			return "", nil, MixedCaseError{}
 		}
@@ -303,9 +303,9 @@ func ConvertBits(data []byte, fromBits, toBits uint8, pad bool) ([]byte, error) 
 	nextByte := byte(0)
 	filledBits := uint8(0)
 
-	for _, b := range data {
+	for _, byt := range data {
 		// Discard unused bits.
-		b <<= (8 - fromBits)
+		byt <<= (8 - fromBits)
 
 		// How many bits remaining to extract from the input data.
 		remFromBits := fromBits
@@ -322,11 +322,11 @@ func ConvertBits(data []byte, fromBits, toBits uint8, pad bool) ([]byte, error) 
 
 			// Add the next bits to nextByte, shifting the already
 			// added bits to the left.
-			nextByte = (nextByte << toExtract) | (b >> (8 - toExtract))
+			nextByte = (nextByte << toExtract) | (byt >> (8 - toExtract))
 
 			// Discard the bits we just extracted and get ready for
 			// next iteration.
-			b <<= toExtract
+			byt <<= toExtract
 			remFromBits -= toExtract
 			filledBits += toExtract
 

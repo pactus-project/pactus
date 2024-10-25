@@ -59,7 +59,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		}
 		cmd.PrintLine()
 
-		str, err := store.NewStore(conf.Store)
+		store, err := store.NewStore(conf.Store)
 		cmd.FatalErrorCheck(err)
 
 		prunedCount := uint32(0)
@@ -73,7 +73,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 			<-closed
 		})
 
-		err = str.Prune(func(pruned bool, pruningHeight uint32) bool {
+		err = store.Prune(func(pruned bool, pruningHeight uint32) bool {
 			if pruned {
 				prunedCount++
 			} else {
@@ -108,7 +108,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 			cmd.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
 		}
 
-		str.Close()
+		store.Close()
 		_ = fileLock.Unlock()
 
 		closed <- true

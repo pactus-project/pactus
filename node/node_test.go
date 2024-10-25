@@ -48,27 +48,27 @@ func TestRunningNode(t *testing.T) {
 
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}
-	nd, err := NewNode(gen, conf, valKeys, rewardAddrs)
+	node, err := NewNode(gen, conf, valKeys, rewardAddrs)
 	assert.True(t, conf.Sync.Services.IsFullNode())
 	assert.True(t, conf.Sync.Services.IsPrunedNode())
 
 	require.NoError(t, err)
-	assert.Equal(t, hash.UndefHash, nd.state.LastBlockHash())
+	assert.Equal(t, hash.UndefHash, node.state.LastBlockHash())
 
-	err = nd.Start()
+	err = node.Start()
 	require.NoError(t, err)
 
-	consHeight, _ := nd.ConsManager().HeightRound()
+	consHeight, _ := node.ConsManager().HeightRound()
 	assert.Equal(t, uint32(1), consHeight)
 
-	lastBlockTime := nd.State().LastBlockTime()
+	lastBlockTime := node.State().LastBlockTime()
 	assert.Equal(t, gen.GenesisTime(), lastBlockTime)
 
-	syncSelfID := nd.Sync().SelfID()
-	netSelfID := nd.Network().SelfID()
+	syncSelfID := node.Sync().SelfID()
+	netSelfID := node.Network().SelfID()
 	assert.Equal(t, syncSelfID, netSelfID)
 
-	assert.NotEmpty(t, nd.GRPC().Address())
+	assert.NotEmpty(t, node.GRPC().Address())
 
-	nd.Stop()
+	node.Stop()
 }

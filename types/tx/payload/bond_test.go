@@ -236,35 +236,35 @@ func TestBondDecoding(t *testing.T) {
 		},
 	}
 
-	for n, test := range tests {
+	for no, tt := range tests {
 		pld := BondPayload{}
-		r := util.NewFixedReader(len(test.raw), test.raw)
+		r := util.NewFixedReader(len(tt.raw), tt.raw)
 		err := pld.Decode(r)
-		if test.readErr != nil {
-			assert.ErrorIs(t, err, test.readErr)
+		if tt.readErr != nil {
+			assert.ErrorIs(t, err, tt.readErr)
 		} else {
 			assert.NoError(t, err)
 
 			for i := 0; i < pld.SerializeSize(); i++ {
 				w := util.NewFixedWriter(i)
-				require.Error(t, pld.Encode(w), "encode %v failed", n)
+				require.Error(t, pld.Encode(w), "encode %v failed", no)
 			}
 			w := util.NewFixedWriter(pld.SerializeSize())
 			require.NoError(t, pld.Encode(w))
 			assert.Equal(t, pld.SerializeSize(), len(w.Bytes()))
-			assert.Equal(t, test.raw, w.Bytes())
+			assert.Equal(t, tt.raw, w.Bytes())
 
 			// Basic check
-			if test.basicErr != nil {
+			if tt.basicErr != nil {
 				err := pld.BasicCheck()
-				require.ErrorIs(t, err, test.basicErr, "basic check %v failed", n)
+				require.ErrorIs(t, err, tt.basicErr, "basic check %v failed", no)
 			} else {
 				assert.NoError(t, pld.BasicCheck())
 
 				// Check signer
-				assert.Equal(t, crypto.Address(test.raw[:21]), pld.Signer())
-				assert.Equal(t, crypto.Address(test.raw[21:42]), *pld.Receiver())
-				assert.Equal(t, test.value, pld.Value())
+				assert.Equal(t, crypto.Address(tt.raw[:21]), pld.Signer())
+				assert.Equal(t, crypto.Address(tt.raw[21:42]), *pld.Receiver())
+				assert.Equal(t, tt.value, pld.Value())
 			}
 		}
 	}

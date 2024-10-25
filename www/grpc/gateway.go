@@ -73,7 +73,7 @@ func (s *Server) startGateway(grpcAddr string) error {
 		return err
 	}
 
-	oa, err := s.getOpenAPIHandler()
+	handler, err := s.getOpenAPIHandler()
 	if err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func (s *Server) startGateway(grpcAddr string) error {
 
 				return
 			}
-			oa.ServeHTTP(w, r)
+			handler.ServeHTTP(w, r)
 		}),
 	}
 
@@ -123,7 +123,7 @@ func preflightHandler(w http.ResponseWriter) {
 
 // allowCORS allows Cross Origin Resource Sharing from any origin.
 // Don't do this without consideration in production systems.
-func allowCORS(h http.Handler) http.Handler {
+func allowCORS(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if origin := r.Header.Get("Origin"); origin != "" {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
@@ -133,6 +133,6 @@ func allowCORS(h http.Handler) http.Handler {
 				return
 			}
 		}
-		h.ServeHTTP(w, r)
+		handler.ServeHTTP(w, r)
 	})
 }

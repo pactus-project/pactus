@@ -21,7 +21,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	})
 
 	t.Run("should respond to the query proposal message", func(t *testing.T) {
-		prop, _ := td.GenerateTestProposal(consHeight, 0)
+		prop := td.GenerateTestProposal(consHeight, 0)
 		pid := td.RandPeerID()
 		td.consMgr.SetProposal(prop)
 		msg := message.NewQueryProposalMessage(consHeight, consRound, td.RandValAddress())

@@ -51,17 +51,17 @@ func TestPublicKeyEncoding(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	pub, _ := ts.RandBLSKeyPair()
-	w1 := util.NewFixedWriter(20)
-	assert.Error(t, pub.Encode(w1))
+	fw1 := util.NewFixedWriter(20)
+	assert.Error(t, pub.Encode(fw1))
 
-	w2 := util.NewFixedWriter(bls.PublicKeySize)
-	assert.NoError(t, pub.Encode(w2))
+	fw2 := util.NewFixedWriter(bls.PublicKeySize)
+	assert.NoError(t, pub.Encode(fw2))
 
-	r1 := util.NewFixedReader(20, w2.Bytes())
-	assert.Error(t, pub.Decode(r1))
+	fr1 := util.NewFixedReader(20, fw2.Bytes())
+	assert.Error(t, pub.Decode(fr1))
 
-	r2 := util.NewFixedReader(bls.PublicKeySize, w2.Bytes())
-	assert.NoError(t, pub.Decode(r2))
+	fr2 := util.NewFixedReader(bls.PublicKeySize, fw2.Bytes())
+	assert.NoError(t, pub.Decode(fr2))
 	assert.Equal(t, bls.PublicKeySize, pub.SerializeSize())
 }
 
@@ -176,14 +176,14 @@ func TestPublicKeyFromString(t *testing.T) {
 		},
 	}
 
-	for no, test := range tests {
-		pub, err := bls.PublicKeyFromString(test.encoded)
-		if test.valid {
+	for no, tt := range tests {
+		pub, err := bls.PublicKeyFromString(tt.encoded)
+		if tt.valid {
 			assert.NoError(t, err, "test %v: unexpected error", no)
-			assert.Equal(t, test.result, pub.Bytes(), "test %v: invalid bytes", no)
-			assert.Equal(t, test.encoded, pub.String(), "test %v: invalid encoded", no)
+			assert.Equal(t, tt.result, pub.Bytes(), "test %v: invalid bytes", no)
+			assert.Equal(t, tt.encoded, pub.String(), "test %v: invalid encoded", no)
 		} else {
-			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
+			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
 		}
 	}
 }
@@ -220,15 +220,15 @@ func TestPointG2(t *testing.T) {
 		},
 	}
 
-	for no, test := range tests {
-		pub, err := bls.PublicKeyFromString(test.encoded)
+	for no, tt := range tests {
+		pub, err := bls.PublicKeyFromString(tt.encoded)
 		require.NoError(t, err)
 
 		_, err = pub.PointG2()
-		if test.valid {
+		if tt.valid {
 			assert.NoError(t, err, "test %v: unexpected error", no)
 		} else {
-			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
+			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
 		}
 	}
 }

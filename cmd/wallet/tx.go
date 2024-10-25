@@ -35,8 +35,8 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 	passOpt := addPasswordOption(transferCmd)
 
 	transferCmd.Run = func(_ *cobra.Command, args []string) {
-		from := args[0]
-		to := args[1]
+		sender := args[0]
+		receiver := args[1]
 		amt, err := amount.FromString(args[2])
 		cmd.FatalErrorCheck(err)
 
@@ -52,13 +52,13 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 			wallet.OptionMemo(*memoOpt),
 		}
 
-		trx, err := wlt.MakeTransferTx(from, to, amt, opts...)
+		trx, err := wlt.MakeTransferTx(sender, receiver, amt, opts...)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
 		cmd.PrintInfoMsgf("You are going to sign this \033[1mTransfer\033[0m transition:")
-		cmd.PrintInfoMsgf("From  : %s", from)
-		cmd.PrintInfoMsgf("To    : %s", to)
+		cmd.PrintInfoMsgf("From  : %s", sender)
+		cmd.PrintInfoMsgf("To    : %s", receiver)
 		cmd.PrintInfoMsgf("Amount: %s", amt)
 		cmd.PrintInfoMsgf("Fee   : %s", trx.Fee())
 		cmd.PrintInfoMsgf("Memo  : %s", trx.Memo())
@@ -81,8 +81,8 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 	passOpt := addPasswordOption(bondCmd)
 
 	bondCmd.Run = func(_ *cobra.Command, args []string) {
-		from := args[0]
-		to := args[1]
+		sender := args[0]
+		receiver := args[1]
 		amt, err := amount.FromString(args[2])
 		cmd.FatalErrorCheck(err)
 
@@ -98,13 +98,13 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 			wallet.OptionMemo(*memoOpt),
 		}
 
-		trx, err := wlt.MakeBondTx(from, to, *pubKeyOpt, amt, opts...)
+		trx, err := wlt.MakeBondTx(sender, receiver, *pubKeyOpt, amt, opts...)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
 		cmd.PrintInfoMsgf("You are going to sign this \033[1mBond\033[0m transition:")
-		cmd.PrintInfoMsgf("Account  : %s", from)
-		cmd.PrintInfoMsgf("Validator: %s", to)
+		cmd.PrintInfoMsgf("Account  : %s", sender)
+		cmd.PrintInfoMsgf("Validator: %s", receiver)
 		cmd.PrintInfoMsgf("Stake    : %s", amt)
 		cmd.PrintInfoMsgf("Fee      : %s", trx.Fee())
 		cmd.PrintInfoMsgf("Memo     : %s", trx.Memo())
@@ -166,8 +166,8 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 	passOpt := addPasswordOption(withdrawCmd)
 
 	withdrawCmd.Run = func(_ *cobra.Command, args []string) {
-		from := args[0]
-		to := args[1]
+		sender := args[0]
+		receiver := args[1]
 		amt, err := amount.FromString(args[2])
 		cmd.FatalErrorCheck(err)
 
@@ -183,13 +183,13 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 			wallet.OptionMemo(*memoOpt),
 		}
 
-		trx, err := wlt.MakeWithdrawTx(from, to, amt, opts...)
+		trx, err := wlt.MakeWithdrawTx(sender, receiver, amt, opts...)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
 		cmd.PrintInfoMsgf("You are going to sign this \033[1mWithdraw\033[0m transition:")
-		cmd.PrintInfoMsgf("Validator: %s", from)
-		cmd.PrintInfoMsgf("Account  : %s", to)
+		cmd.PrintInfoMsgf("Validator: %s", sender)
+		cmd.PrintInfoMsgf("Account  : %s", receiver)
 		cmd.PrintInfoMsgf("Amount   : %s", amt)
 		cmd.PrintInfoMsgf("Fee      : %s", trx.Fee())
 		cmd.PrintInfoMsgf("Memo     : %s", trx.Memo())
@@ -198,17 +198,17 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 	}
 }
 
-func addCommonTxOptions(c *cobra.Command) (*int, *float64, *string, *bool) {
-	lockTimeOpt := c.Flags().Int("lock-time", 0,
+func addCommonTxOptions(cobra *cobra.Command) (*int, *float64, *string, *bool) {
+	lockTimeOpt := cobra.Flags().Int("lock-time", 0,
 		"transaction lock-time, if not specified will be the current height")
 
-	feeOpt := c.Flags().Float64("fee", 0,
+	feeOpt := cobra.Flags().Float64("fee", 0,
 		"transaction fee in PAC, if not specified will calculate from the amount")
 
-	memoOpt := c.Flags().String("memo", "",
+	memoOpt := cobra.Flags().String("memo", "",
 		"transaction memo, maximum should be 64 character")
 
-	noConfirmOpt := c.Flags().Bool("no-confirm", false,
+	noConfirmOpt := cobra.Flags().Bool("no-confirm", false,
 		"no confirmation question")
 
 	return lockTimeOpt, feeOpt, memoOpt, noConfirmOpt

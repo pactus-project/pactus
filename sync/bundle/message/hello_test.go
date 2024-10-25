@@ -12,8 +12,8 @@ import (
 )
 
 func TestHelloType(t *testing.T) {
-	m := &HelloMessage{}
-	assert.Equal(t, TypeHello, m.Type())
+	msg := &HelloMessage{}
+	assert.Equal(t, TypeHello, msg.Type())
 }
 
 func TestHelloMessage(t *testing.T) {
@@ -21,34 +21,34 @@ func TestHelloMessage(t *testing.T) {
 
 	t.Run("Invalid signature", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		m := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
+		msg := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
 			ts.RandHeight(), ts.RandHash(), ts.RandHash())
-		m.Sign([]*bls.ValidatorKey{valKey})
-		m.Signature = ts.RandBLSSignature()
+		msg.Sign([]*bls.ValidatorKey{valKey})
+		msg.Signature = ts.RandBLSSignature()
 
-		err := m.BasicCheck()
+		err := msg.BasicCheck()
 		assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	})
 
 	t.Run("Signature is nil", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		m := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
+		msg := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
 			ts.RandHeight(), ts.RandHash(), ts.RandHash())
-		m.Sign([]*bls.ValidatorKey{valKey})
-		m.Signature = nil
+		msg.Sign([]*bls.ValidatorKey{valKey})
+		msg.Signature = nil
 
-		err := m.BasicCheck()
+		err := msg.BasicCheck()
 		assert.ErrorIs(t, err, BasicCheckError{"no signature"})
 	})
 
 	t.Run("PublicKeys are empty", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		m := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
+		msg := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
 			ts.RandHeight(), ts.RandHash(), ts.RandHash())
-		m.Sign([]*bls.ValidatorKey{valKey})
-		m.PublicKeys = make([]*bls.PublicKey, 0)
+		msg.Sign([]*bls.ValidatorKey{valKey})
+		msg.PublicKeys = make([]*bls.PublicKey, 0)
 
-		err := m.BasicCheck()
+		err := msg.BasicCheck()
 		assert.ErrorIs(t, err, BasicCheckError{"no public key"})
 	})
 
@@ -56,21 +56,21 @@ func TestHelloMessage(t *testing.T) {
 		time1 := time.Now()
 		myTimeUnixMilli := time1.UnixMilli()
 
-		m := NewHelloMessage(ts.RandPeerID(), "Alice", service.New(service.FullNode),
+		msg := NewHelloMessage(ts.RandPeerID(), "Alice", service.New(service.FullNode),
 			ts.RandHeight(), ts.RandHash(), ts.RandHash())
 
-		assert.LessOrEqual(t, m.MyTimeUnixMilli, time.Now().UnixMilli())
-		assert.GreaterOrEqual(t, m.MyTimeUnixMilli, myTimeUnixMilli)
+		assert.LessOrEqual(t, msg.MyTimeUnixMilli, time.Now().UnixMilli())
+		assert.GreaterOrEqual(t, msg.MyTimeUnixMilli, myTimeUnixMilli)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		m := NewHelloMessage(ts.RandPeerID(), "Alice", service.New(service.FullNode),
+		msg := NewHelloMessage(ts.RandPeerID(), "Alice", service.New(service.FullNode),
 			ts.RandHeight(), ts.RandHash(), ts.RandHash())
-		m.Sign([]*bls.ValidatorKey{valKey})
+		msg.Sign([]*bls.ValidatorKey{valKey})
 
-		assert.NoError(t, m.BasicCheck())
-		assert.Contains(t, m.String(), "Alice")
-		assert.Contains(t, m.String(), "FULL")
+		assert.NoError(t, msg.BasicCheck())
+		assert.Contains(t, msg.String(), "Alice")
+		assert.Contains(t, msg.String(), "FULL")
 	})
 }

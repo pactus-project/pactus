@@ -28,9 +28,9 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 	_ *pactus.GetBlockchainInfoRequest,
 ) (*pactus.GetBlockchainInfoResponse, error) {
 	vals := s.state.CommitteeValidators()
-	cv := make([]*pactus.ValidatorInfo, 0, len(vals))
-	for _, v := range vals {
-		cv = append(cv, s.validatorToProto(v))
+	valInfos := make([]*pactus.ValidatorInfo, 0, len(vals))
+	for _, val := range vals {
+		valInfos = append(valInfos, s.validatorToProto(val))
 	}
 
 	return &pactus.GetBlockchainInfoResponse{
@@ -43,7 +43,7 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 		IsPruned:            s.state.IsPruned(),
 		PruningHeight:       s.state.PruningHeight(),
 		LastBlockTime:       s.state.LastBlockTime().Unix(),
-		CommitteeValidators: cv,
+		CommitteeValidators: valInfos,
 	}, nil
 }
 
@@ -318,19 +318,19 @@ func (*blockchainServer) accountToProto(addr crypto.Address, acc *account.Accoun
 	}
 }
 
-func (*blockchainServer) voteToProto(v *vote.Vote) *pactus.VoteInfo {
+func (*blockchainServer) voteToProto(vte *vote.Vote) *pactus.VoteInfo {
 	cpRound := int32(0)
 	cpValue := int32(0)
-	if v.IsCPVote() {
-		cpRound = int32(v.CPRound())
-		cpValue = int32(v.CPValue())
+	if vte.IsCPVote() {
+		cpRound = int32(vte.CPRound())
+		cpValue = int32(vte.CPValue())
 	}
 
 	return &pactus.VoteInfo{
-		Type:      pactus.VoteType(v.Type()),
-		Voter:     v.Signer().String(),
-		BlockHash: v.BlockHash().String(),
-		Round:     int32(v.Round()),
+		Type:      pactus.VoteType(vte.Type()),
+		Voter:     vte.Signer().String(),
+		BlockHash: vte.BlockHash().String(),
+		Round:     int32(vte.Round()),
 		CpRound:   cpRound,
 		CpValue:   cpValue,
 	}

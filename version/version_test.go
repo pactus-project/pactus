@@ -94,13 +94,13 @@ func TestParseVersion(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			v, err := version.ParseVersion(tt.input)
+			ver, err := version.ParseVersion(tt.input)
 
 			if tt.expectedErr {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
-				assert.Equal(t, tt.expected, v)
+				assert.Equal(t, tt.expected, ver)
 			}
 		})
 	}
@@ -153,14 +153,14 @@ func TestVersionComparison(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			v1, err := version.ParseVersion(tt.v1Input)
+			ver1, err := version.ParseVersion(tt.v1Input)
 			assert.NoError(t, err)
 
-			v2, err := version.ParseVersion(tt.v2Input)
+			ver2, err := version.ParseVersion(tt.v2Input)
 			assert.NoError(t, err)
 
 			expectedSign := tt.expectedSign
-			actualSign := v1.Compare(v2)
+			actualSign := ver1.Compare(ver2)
 
 			assert.Equal(t, expectedSign, actualSign,
 				fmt.Sprintf("Comparison result mismatch for %s vs %s", tt.v1Input, tt.v2Input))

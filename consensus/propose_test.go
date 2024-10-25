@@ -69,22 +69,22 @@ func TestNetworkLagging(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 
-	h := uint32(1)
-	r := int16(0)
-	p := td.makeProposal(t, h, r)
+	height := uint32(1)
+	round := int16(0)
+	prop := td.makeProposal(t, height, round)
 
 	// consP doesn't have the proposal, but it has received prepared votes from other peers
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexX)
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexY)
+	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexX)
+	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexY)
 
 	td.queryProposalTimeout(td.consP)
-	td.shouldPublishQueryProposal(t, td.consP, h)
+	td.shouldPublishQueryProposal(t, td.consP, height)
 
 	// Proposal is received now
-	td.consP.SetProposal(p)
+	td.consP.SetProposal(prop)
 
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, p.Block().Hash())
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, p.Block().Hash())
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, prop.Block().Hash())
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop.Block().Hash())
 }
 
 func TestProposalNextRound(t *testing.T) {

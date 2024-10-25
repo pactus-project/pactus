@@ -39,42 +39,42 @@ func NewPrecommitVote(blockHash hash.Hash, height uint32, round int16, signer cr
 func NewCPPreVote(blockHash hash.Hash, height uint32, round int16,
 	cpRound int16, cpValue CPValue, just Just, signer crypto.Address,
 ) *Vote {
-	v := newVote(VoteTypeCPPreVote, blockHash, height, round, signer)
-	v.data.CPVote = &cpVote{
+	vote := newVote(VoteTypeCPPreVote, blockHash, height, round, signer)
+	vote.data.CPVote = &cpVote{
 		Round: cpRound,
 		Value: cpValue,
 		Just:  just,
 	}
 
-	return v
+	return vote
 }
 
 // NewCPMainVote creates a new cp:MAIN-VOTE with the specified parameters.
 func NewCPMainVote(blockHash hash.Hash, height uint32, round int16,
 	cpRound int16, cpValue CPValue, just Just, signer crypto.Address,
 ) *Vote {
-	v := newVote(VoteTypeCPMainVote, blockHash, height, round, signer)
-	v.data.CPVote = &cpVote{
+	vote := newVote(VoteTypeCPMainVote, blockHash, height, round, signer)
+	vote.data.CPVote = &cpVote{
 		Round: cpRound,
 		Value: cpValue,
 		Just:  just,
 	}
 
-	return v
+	return vote
 }
 
 // NewCPDecidedVote creates a new cp:Decided with the specified parameters.
 func NewCPDecidedVote(blockHash hash.Hash, height uint32, round int16,
 	cpRound int16, cpValue CPValue, just Just, signer crypto.Address,
 ) *Vote {
-	v := newVote(VoteTypeCPDecided, blockHash, height, round, signer)
-	v.data.CPVote = &cpVote{
+	vote := newVote(VoteTypeCPDecided, blockHash, height, round, signer)
+	vote.data.CPVote = &cpVote{
 		Round: cpRound,
 		Value: cpValue,
 		Just:  just,
 	}
 
-	return v
+	return vote
 }
 
 // newVote creates a new vote with the specified parameters.
@@ -94,24 +94,24 @@ func newVote(voteType Type, blockHash hash.Hash, height uint32, round int16,
 
 // SignBytes generates the bytes to be signed for the vote.
 func (v *Vote) SignBytes() []byte {
-	sb := v.data.BlockHash.Bytes()
-	sb = append(sb, util.Uint32ToSlice(v.data.Height)...)
-	sb = append(sb, util.Int16ToSlice(v.data.Round)...)
+	signBytes := v.data.BlockHash.Bytes()
+	signBytes = append(signBytes, util.Uint32ToSlice(v.data.Height)...)
+	signBytes = append(signBytes, util.Int16ToSlice(v.data.Round)...)
 
-	switch t := v.Type(); t {
+	switch typ := v.Type(); typ {
 	case VoteTypePrecommit:
 		// Nothing
 
 	case VoteTypePrepare:
-		sb = append(sb, util.StringToBytes(t.String())...)
+		signBytes = append(signBytes, util.StringToBytes(typ.String())...)
 
 	case VoteTypeCPPreVote, VoteTypeCPMainVote, VoteTypeCPDecided:
-		sb = append(sb, util.StringToBytes(t.String())...)
-		sb = append(sb, util.Int16ToSlice(v.data.CPVote.Round)...)
-		sb = append(sb, byte(v.data.CPVote.Value))
+		signBytes = append(signBytes, util.StringToBytes(typ.String())...)
+		signBytes = append(signBytes, util.Int16ToSlice(v.data.CPVote.Round)...)
+		signBytes = append(signBytes, byte(v.data.CPVote.Value))
 	}
 
-	return sb
+	return signBytes
 }
 
 // Type returns the type of the vote.

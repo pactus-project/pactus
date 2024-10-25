@@ -111,11 +111,11 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 			require.NoError(t, fmt.Errorf("shouldPublishMessageWithThisType %v: Timeout, test: %v", msgType, t.Name()))
 
 			return nil
-		case b := <-net.PublishCh:
-			net.SendToOthers(b.Data, b.Target)
+		case data := <-net.PublishCh:
+			net.SendToOthers(data.Data, data.Target)
 			// Decode message again to check the message type
 			bdl := new(bundle.Bundle)
-			_, err := bdl.Decode(bytes.NewReader(b.Data))
+			_, err := bdl.Decode(bytes.NewReader(data.Data))
 			require.NoError(t, err)
 
 			// -----------
@@ -123,7 +123,7 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 			require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagCarrierLibP2P), "invalid flag: %v", bdl)
 			require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagNetworkMainnet), "invalid flag: %v", bdl)
 
-			if b.Target == nil {
+			if data.Target == nil {
 				require.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagBroadcasted), "invalid flag: %v", bdl)
 			} else {
 				require.False(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagBroadcasted), "invalid flag: %v", bdl)
@@ -188,7 +188,7 @@ func (*testData) receivingNewMessage(sync *synchronizer, msg message.Message, fr
 	sync.processIncomingBundle(bdl, from)
 }
 
-func (td *testData) addPeer(t *testing.T, s status.Status, services service.Services) peer.ID {
+func (td *testData) addPeer(t *testing.T, status status.Status, services service.Services) peer.ID {
 	t.Helper()
 
 	pid := td.RandPeerID()
@@ -196,7 +196,7 @@ func (td *testData) addPeer(t *testing.T, s status.Status, services service.Serv
 
 	td.sync.peerSet.UpdateInfo(pid, t.Name(),
 		version.NodeAgent.String(), []*bls.PublicKey{pub}, services)
-	td.sync.peerSet.UpdateStatus(pid, s)
+	td.sync.peerSet.UpdateStatus(pid, status)
 
 	return pid
 }
@@ -250,13 +250,13 @@ func TestConnectEvent(t *testing.T) {
 	td.network.EventCh <- ce
 
 	assert.Eventually(t, func() bool {
-		p := td.sync.peerSet.GetPeer(pid)
-		if p == nil {
+		peer := td.sync.peerSet.GetPeer(pid)
+		if peer == nil {
 			return false
 		}
-		assert.Equal(t, "/ip4/2.2.2.2/tcp/21888", p.Address)
+		assert.Equal(t, "/ip4/2.2.2.2/tcp/21888", peer.Address)
 
-		return p.Status == status.StatusConnected
+		return peer.Status == status.StatusConnected
 	}, time.Second, 100*time.Millisecond)
 
 	p1 := td.sync.peerSet.GetPeer(pid)

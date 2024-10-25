@@ -29,18 +29,18 @@ func TestGetNetworkInfo(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(res.ConnectedPeers))
-		for _, p := range res.ConnectedPeers {
-			assert.NotEmpty(t, p.PeerId)
-			b, err := hex.DecodeString(p.PeerId)
+		for _, peer := range res.ConnectedPeers {
+			assert.NotEmpty(t, peer.PeerId)
+			b, err := hex.DecodeString(peer.PeerId)
 			assert.NoError(t, err)
 			pid, _ := lp2ppeer.IDFromBytes(b)
 			pp := td.mockSync.PeerSet().GetPeer(pid)
-			assert.Equal(t, p.Agent, pp.Agent)
-			assert.Equal(t, p.Moniker, pp.Moniker)
-			assert.Equal(t, p.Height, pp.Height)
+			assert.Equal(t, peer.Agent, pp.Agent)
+			assert.Equal(t, peer.Moniker, pp.Moniker)
+			assert.Equal(t, peer.Height, pp.Height)
 			assert.NotEmpty(t, pp.ConsensusKeys)
 			for _, key := range pp.ConsensusKeys {
-				assert.Contains(t, p.ConsensusKeys, key.String())
+				assert.Contains(t, peer.ConsensusKeys, key.String())
 			}
 		}
 	})

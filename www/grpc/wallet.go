@@ -25,15 +25,15 @@ func newWalletServer(server *Server, manager *wallet.Manager) *walletServer {
 	}
 }
 
-func (*walletServer) mapHistoryInfo(hi []wallet.HistoryInfo) []*pactus.HistoryInfo {
+func (*walletServer) mapHistoryInfo(his []wallet.HistoryInfo) []*pactus.HistoryInfo {
 	historyInfo := make([]*pactus.HistoryInfo, 0)
-	for _, hi := range hi {
+	for _, info := range his {
 		historyInfo = append(historyInfo, &pactus.HistoryInfo{
-			TransactionId: hi.TxID,
+			TransactionId: info.TxID,
 			// Time:          uint32(hi.Time.Unix()),  // TODO: Fix me
-			PayloadType: hi.PayloadType,
-			Description: hi.Desc,
-			Amount:      hi.Amount.ToNanoPAC(),
+			PayloadType: info.PayloadType,
+			Description: info.Desc,
+			Amount:      info.Amount.ToNanoPAC(),
 		})
 	}
 
@@ -139,7 +139,7 @@ func (s *walletServer) SignRawTransaction(_ context.Context,
 		return nil, err
 	}
 
-	id, data, err := s.walletManager.SignRawTransaction(
+	txID, data, err := s.walletManager.SignRawTransaction(
 		req.WalletName, req.Password, rawBytes,
 	)
 	if err != nil {
@@ -147,7 +147,7 @@ func (s *walletServer) SignRawTransaction(_ context.Context,
 	}
 
 	return &pactus.SignRawTransactionResponse{
-		TransactionId:        hex.EncodeToString(id),
+		TransactionId:        hex.EncodeToString(txID),
 		SignedRawTransaction: hex.EncodeToString(data),
 	}, nil
 }

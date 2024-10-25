@@ -23,7 +23,7 @@ type streamService struct {
 func newStreamService(ctx context.Context, host lp2phost.Host, conf *Config,
 	protocolID lp2pcore.ProtocolID, eventCh chan Event, log *logger.SubLogger,
 ) *streamService {
-	s := &streamService{
+	service := &streamService{
 		ctx:        ctx,
 		host:       host,
 		protocolID: protocolID,
@@ -32,9 +32,9 @@ func newStreamService(ctx context.Context, host lp2phost.Host, conf *Config,
 		logger:     log,
 	}
 
-	s.host.SetStreamHandler(protocolID, s.handleStream)
+	service.host.SetStreamHandler(protocolID, service.handleStream)
 
-	return s
+	return service
 }
 
 func (*streamService) Start() {}

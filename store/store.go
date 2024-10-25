@@ -52,14 +52,14 @@ func tryGet(db *leveldb.DB, key []byte) ([]byte, error) {
 }
 
 func tryHas(db *leveldb.DB, key []byte) bool {
-	ok, err := db.Has(key, nil)
+	has, err := db.Has(key, nil)
 	if err != nil {
 		logger.Error("database `has` error", "error", err, "key", key)
 
 		return false
 	}
 
-	return ok
+	return has
 }
 
 type store struct {
@@ -85,7 +85,7 @@ func NewStore(conf *Config) (Store, error) {
 	if err != nil {
 		return nil, err
 	}
-	s := &store{
+	store := &store{
 		config:         conf,
 		db:             db,
 		batch:          new(leveldb.Batch),
@@ -96,25 +96,25 @@ func NewStore(conf *Config) (Store, error) {
 		isPruned:       false,
 	}
 
-	lc := s.lastCertificate()
-	if lc == nil {
-		return s, nil
+	lastCert := store.lastCertificate()
+	if lastCert == nil {
+		return store, nil
 	}
 
 	// Check if the node is pruned by checking genesis block.
-	cBlkOne, _ := s.block(1)
+	cBlkOne, _ := store.block(1)
 	if cBlkOne == nil {
-		s.isPruned = true
+		store.isPruned = true
 	}
 
-	currentHeight := lc.Height()
+	currentHeight := lastCert.Height()
 	startHeight := uint32(1)
 	if currentHeight > conf.TxCacheWindow {
 		startHeight = currentHeight - conf.TxCacheWindow
 	}
 
-	for i := startHeight; i < currentHeight+1; i++ {
-		cBlk, err := s.block(i)
+	for height := startHeight; height < currentHeight+1; height++ {
+		cBlk, err := store.block(height)
 		if err != nil {
 			return nil, err
 		}
@@ -125,14 +125,14 @@ func NewStore(conf *Config) (Store, error) {
 
 		txs := blk.Transactions()
 		for _, transaction := range txs {
-			s.txStore.addToCache(transaction.ID(), i)
+			store.txStore.addToCache(transaction.ID(), height)
 		}
 
 		sortitionSeed := blk.Header().SortitionSeed()
-		s.blockStore.addToCache(i, sortitionSeed)
+		store.blockStore.addToCache(height, sortitionSeed)
 	}
 
-	return s, nil
+	return store, nil
 }
 
 func (s *store) Close() {
@@ -171,17 +171,17 @@ func (s *store) SaveBlock(blk *block.Block, cert *certificate.BlockCertificate) 
 	}
 
 	// Save last certificate: [version: 4 bytes]+[certificate: variant]
-	w := bytes.NewBuffer(make([]byte, 0, 4+cert.SerializeSize()))
-	err := encoding.WriteElements(w, lastStoreVersion)
+	buf := bytes.NewBuffer(make([]byte, 0, 4+cert.SerializeSize()))
+	err := encoding.WriteElements(buf, lastStoreVersion)
 	if err != nil {
 		panic(err)
 	}
-	err = cert.Encode(w)
+	err = cert.Encode(buf)
 	if err != nil {
 		panic(err)
 	}
 
-	s.batch.Put(lastInfoKey, w.Bytes())
+	s.batch.Put(lastInfoKey, buf.Bytes())
 }
 
 func (s *store) Block(height uint32) (*CommittedBlock, error) {
@@ -245,11 +245,11 @@ func (s *store) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
 	return s.blockStore.publicKey(addr)
 }
 
-func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
+func (s *store) Transaction(txID tx.ID) (*CommittedTx, error) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	pos, err := s.txStore.tx(id)
+	pos, err := s.txStore.tx(txID)
 	if err != nil {
 		return nil, err
 	}
@@ -266,7 +266,7 @@ func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
 
 	return &CommittedTx{
 		store:     s,
-		TxID:      id,
+		TxID:      txID,
 		Height:    pos.height,
 		BlockTime: blockTime,
 		Data:      data[start:end],
@@ -277,11 +277,11 @@ func (s *store) Transaction(id tx.ID) (*CommittedTx, error) {
 // within the last 8640 blocks.
 // The time window for recent transactions is determined by the
 // TransactionToLive interval, which is part of the consensus parameters.
-func (s *store) RecentTransaction(id tx.ID) bool {
+func (s *store) RecentTransaction(txID tx.ID) bool {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
-	return s.txStore.recentTransaction(id)
+	return s.txStore.recentTransaction(txID)
 }
 
 func (s *store) HasAccount(addr crypto.Address) bool {
@@ -381,14 +381,14 @@ func (s *store) lastCertificate() *certificate.BlockCertificate {
 		// Genesis block
 		return nil
 	}
-	r := bytes.NewReader(data)
+	reader := bytes.NewReader(data)
 	version := int32(0)
 	cert := new(certificate.BlockCertificate)
-	err := encoding.ReadElements(r, &version)
+	err := encoding.ReadElements(reader, &version)
 	if err != nil {
 		return nil
 	}
-	err = cert.Decode(r)
+	err = cert.Decode(reader)
 	if err != nil {
 		return nil
 	}
@@ -459,8 +459,8 @@ func (s *store) Prune(callback func(pruned bool, pruningHeight uint32) bool) err
 	}
 
 	pruningHeight := cert.Height() - retentionBlocks
-	for i := pruningHeight; i >= 1; i-- {
-		deleted, err := s.pruneBlock(i)
+	for height := pruningHeight; height >= 1; height-- {
+		deleted, err := s.pruneBlock(height)
 		if err != nil {
 			return err
 		}
@@ -469,7 +469,7 @@ func (s *store) Prune(callback func(pruned bool, pruningHeight uint32) bool) err
 			return err
 		}
 
-		if callback(deleted, i) {
+		if callback(deleted, height) {
 			// canceled
 			break
 		}

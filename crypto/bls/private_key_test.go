@@ -88,14 +88,14 @@ func TestPrivateKeyFromString(t *testing.T) {
 			},
 		},
 	}
-	for no, test := range tests {
-		prv, err := bls.PrivateKeyFromString(test.encoded)
-		if test.valid {
+	for no, tt := range tests {
+		prv, err := bls.PrivateKeyFromString(tt.encoded)
+		if tt.valid {
 			assert.NoError(t, err, "test %v: unexpected error", no)
-			assert.Equal(t, test.result, prv.Bytes(), "test %v: invalid bytes", no)
-			assert.Equal(t, strings.ToUpper(test.encoded), prv.String(), "test %v: invalid encoded", no)
+			assert.Equal(t, tt.result, prv.Bytes(), "test %v: invalid bytes", no)
+			assert.Equal(t, strings.ToUpper(tt.encoded), prv.String(), "test %v: invalid encoded", no)
 		} else {
-			assert.Contains(t, err.Error(), test.errMsg, "test %v: error not matched", no)
+			assert.Contains(t, err.Error(), tt.errMsg, "test %v: error not matched", no)
 		}
 	}
 }
@@ -143,17 +143,17 @@ func TestKeyGen(t *testing.T) {
 		},
 	}
 
-	for i, test := range tests {
-		ikm, _ := hex.DecodeString(test.ikm)
+	for no, tt := range tests {
+		ikm, _ := hex.DecodeString(tt.ikm)
 		prv, err := bls.KeyGen(ikm, nil)
-		if test.sk == "Err" {
+		if tt.sk == "Err" {
 			assert.Error(t, err,
-				"test '%v' failed. no error", i)
+				"test '%v' failed. no error", no)
 		} else {
 			assert.NoError(t, err,
-				"test'%v' failed. has error", i)
-			assert.Equal(t, test.sk, hex.EncodeToString(prv.Bytes()),
-				"test '%v' failed. not equal", i)
+				"test'%v' failed. has error", no)
+			assert.Equal(t, tt.sk, hex.EncodeToString(prv.Bytes()),
+				"test '%v' failed. not equal", no)
 		}
 	}
 }

@@ -89,9 +89,9 @@ func (t Type) String() string {
 	}
 }
 
-func MakeMessage(t Type) (Message, error) {
+func MakeMessage(msgType Type) (Message, error) {
 	var msg Message
-	switch t {
+	switch msgType {
 	case TypeHello:
 		msg = &HelloMessage{}
 
@@ -123,7 +123,7 @@ func MakeMessage(t Type) (Message, error) {
 		msg = &BlocksResponseMessage{}
 
 	default:
-		return nil, InvalidMessageTypeError{Type: int(t)}
+		return nil, InvalidMessageTypeError{Type: int(msgType)}
 	}
 
 	//

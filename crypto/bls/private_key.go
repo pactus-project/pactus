@@ -67,22 +67,22 @@ func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 	pseudoRandomKey = append(pseudoRandomKey, util.I2OSP(big.NewInt(l), 2)...)
 
 	salt := []byte("BLS-SIG-KEYGEN-SALT-")
-	x := big.NewInt(0)
-	for x.Sign() == 0 {
-		h := sha256.Sum256(salt)
-		salt = h[:]
+	num := big.NewInt(0)
+	for num.Sign() == 0 {
+		hash := sha256.Sum256(salt)
+		salt = hash[:]
 
 		okm := make([]byte, l)
 		prk := hkdf.Extract(sha256.New, secret, salt)
 		reader := hkdf.Expand(sha256.New, prk, pseudoRandomKey)
 		_, _ = reader.Read(okm)
 
-		r := fr.Modulus()
-		x = new(big.Int).Mod(util.OS2IP(okm), r)
+		order := fr.Modulus()
+		num = new(big.Int).Mod(util.OS2IP(okm), order)
 	}
 
 	sk := make([]byte, 32)
-	x.FillBytes(sk)
+	num.FillBytes(sk)
 
 	return PrivateKeyFromBytes(sk)
 }

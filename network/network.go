@@ -279,16 +279,16 @@ func findRelayPeers(networkGetter func() *network) func(ctx context.Context,
 
 		// Because the network is initialized after relay, we need to
 		// obtain them indirectly this way.
-		n := networkGetter()
-		if n == nil { // context canceled etc.
+		net := networkGetter()
+		if net == nil { // context canceled etc.
 			return r
 		}
 
-		n.logger.Debug("try to find relay peers", "num", num)
+		net.logger.Debug("try to find relay peers", "num", num)
 
-		peerStore := n.host.Peerstore()
-		for _, id := range peerStore.Peers() {
-			protos, err := peerStore.GetProtocols(id)
+		peerStore := net.host.Peerstore()
+		for _, pid := range peerStore.Peers() {
+			protos, err := peerStore.GetProtocols(pid)
 			if err != nil {
 				continue
 			}
@@ -297,9 +297,9 @@ func findRelayPeers(networkGetter func() *network) func(ctx context.Context,
 				continue
 			}
 
-			addr := peerStore.Addrs(id)
-			n.logger.Debug("found relay peer", "addr", addr)
-			dhtPeer := lp2ppeer.AddrInfo{ID: id, Addrs: addr}
+			addr := peerStore.Addrs(pid)
+			net.logger.Debug("found relay peer", "addr", addr)
+			dhtPeer := lp2ppeer.AddrInfo{ID: pid, Addrs: addr}
 			// Attempt to put peers on r if we have space,
 			// otherwise return (we reached numPeers)
 			select {

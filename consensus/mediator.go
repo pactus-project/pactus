@@ -9,7 +9,7 @@ import (
 // between independent consensus instances.
 type mediator interface {
 	OnPublishProposal(from Consensus, prop *proposal.Proposal)
-	OnPublishVote(from Consensus, vte *vote.Vote)
+	OnPublishVote(from Consensus, vote *vote.Vote)
 	OnBlockAnnounce(from Consensus)
 	Register(cons Consensus)
 }
@@ -31,10 +31,10 @@ func (m *ConcreteMediator) OnPublishProposal(from Consensus, prop *proposal.Prop
 	}
 }
 
-func (m *ConcreteMediator) OnPublishVote(from Consensus, vte *vote.Vote) {
+func (m *ConcreteMediator) OnPublishVote(from Consensus, vote *vote.Vote) {
 	for _, cons := range m.instances {
 		if cons != from {
-			cons.AddVote(vte)
+			cons.AddVote(vote)
 		}
 	}
 }

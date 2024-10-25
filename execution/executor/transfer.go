@@ -9,17 +9,17 @@ import (
 )
 
 type TransferExecutor struct {
-	sb       sandbox.Sandbox
+	sbx      sandbox.Sandbox
 	pld      *payload.TransferPayload
 	fee      amount.Amount
 	sender   *account.Account
 	receiver *account.Account
 }
 
-func newTransferExecutor(trx *tx.Tx, sb sandbox.Sandbox) (*TransferExecutor, error) {
+func newTransferExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*TransferExecutor, error) {
 	pld := trx.Payload().(*payload.TransferPayload)
 
-	sender := sb.Account(pld.From)
+	sender := sbx.Account(pld.From)
 	if sender == nil {
 		return nil, AccountNotFoundError{Address: pld.From}
 	}
@@ -28,14 +28,14 @@ func newTransferExecutor(trx *tx.Tx, sb sandbox.Sandbox) (*TransferExecutor, err
 	if pld.To == pld.From {
 		receiver = sender
 	} else {
-		receiver = sb.Account(pld.To)
+		receiver = sbx.Account(pld.To)
 		if receiver == nil {
-			receiver = sb.MakeNewAccount(pld.To)
+			receiver = sbx.MakeNewAccount(pld.To)
 		}
 	}
 
 	return &TransferExecutor{
-		sb:       sb,
+		sbx:      sbx,
 		pld:      pld,
 		fee:      trx.Fee(),
 		sender:   sender,
@@ -55,6 +55,6 @@ func (e *TransferExecutor) Execute() {
 	e.sender.SubtractFromBalance(e.pld.Amount + e.fee)
 	e.receiver.AddToBalance(e.pld.Amount)
 
-	e.sb.UpdateAccount(e.pld.From, e.sender)
-	e.sb.UpdateAccount(e.pld.To, e.receiver)
+	e.sbx.UpdateAccount(e.pld.From, e.sender)
+	e.sbx.UpdateAccount(e.pld.To, e.receiver)
 }

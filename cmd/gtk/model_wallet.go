@@ -75,7 +75,7 @@ func (model *walletModel) rebuildModel() {
 
 		glib.IdleAdd(func() bool {
 			model.listStore.Clear()
-			for _, d := range data {
+			for _, item := range data {
 				iter := model.listStore.Append()
 				err := model.listStore.Set(iter,
 					[]int{
@@ -87,12 +87,12 @@ func (model *walletModel) rebuildModel() {
 						IDAddressesColumnAvailabilityScore,
 					},
 					[]any{
-						d[0],
-						d[1],
-						d[2],
-						d[3],
-						d[4],
-						d[5],
+						item[0],
+						item[1],
+						item[2],
+						item[3],
+						item[4],
+						item[5],
 					})
 
 				errorCheck(err)

@@ -25,13 +25,13 @@ type MockNetwork struct {
 	OtherNets []*MockNetwork
 }
 
-func MockingNetwork(ts *testsuite.TestSuite, id lp2ppeer.ID) *MockNetwork {
+func MockingNetwork(ts *testsuite.TestSuite, pid lp2ppeer.ID) *MockNetwork {
 	return &MockNetwork{
 		TestSuite: ts,
 		PublishCh: make(chan PublishData, 100),
 		EventCh:   make(chan Event, 100),
 		OtherNets: make([]*MockNetwork, 0),
-		ID:        id,
+		ID:        pid,
 	}
 }
 

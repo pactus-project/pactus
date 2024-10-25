@@ -24,7 +24,7 @@ type Consensus interface {
 
 	Start()
 	MoveToNewHeight()
-	AddVote(vte *vote.Vote)
+	AddVote(vote *vote.Vote)
 	SetProposal(prop *proposal.Proposal)
 }
 
@@ -43,6 +43,6 @@ type Manager interface {
 	Start() error
 	Stop()
 	MoveToNewHeight()
-	AddVote(vte *vote.Vote)
+	AddVote(vote *vote.Vote)
 	SetProposal(prop *proposal.Proposal)
 }

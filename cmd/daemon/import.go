@@ -22,7 +22,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 	serverAddrOpt := importCmd.Flags().String("server-addr", cmd.DefaultSnapshotURL,
 		"import server address")
 
-	importCmd.Run = func(c *cobra.Command, _ []string) {
+	importCmd.Run = func(cobra *cobra.Command, _ []string) {
 		workingDir, err := filepath.Abs(*workingDirOpt)
 		cmd.FatalErrorCheck(err)
 
@@ -54,15 +54,15 @@ func buildImportCmd(parentCmd *cobra.Command) {
 		)
 		cmd.FatalErrorCheck(err)
 
-		metadata, err := importer.GetMetadata(c.Context())
+		metadata, err := importer.GetMetadata(cobra.Context())
 		cmd.FatalErrorCheck(err)
 
 		snapshots := make([]string, 0, len(metadata))
 
-		for _, m := range metadata {
+		for _, md := range metadata {
 			item := fmt.Sprintf("snapshot %s (%s)",
-				m.CreatedAtTime().Format("2006-01-02"),
-				util.FormatBytesToHumanReadable(m.Data.Size),
+				md.CreatedAtTime().Format("2006-01-02"),
+				util.FormatBytesToHumanReadable(md.Data.Size),
 			)
 
 			snapshots = append(snapshots, item)
@@ -81,7 +81,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		cmd.PrintLine()
 
-		err = importer.Download(c.Context(), &selected, downloadProgressBar)
+		err = importer.Download(cobra.Context(), &selected, downloadProgressBar)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()

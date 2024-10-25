@@ -20,14 +20,14 @@ func TestParsingQueryVoteMessages(t *testing.T) {
 	})
 
 	t.Run("should respond to the query votes message", func(t *testing.T) {
-		v1, _ := td.GenerateTestPrecommitVote(consHeight, consRound)
-		td.consMgr.AddVote(v1)
+		vote, _ := td.GenerateTestPrecommitVote(consHeight, consRound)
+		td.consMgr.AddVote(vote)
 		pid := td.RandPeerID()
 		msg := message.NewQueryVoteMessage(consHeight, consRound, td.RandValAddress())
 		td.receivingNewMessage(td.sync, msg, pid)
 
 		bdl := td.shouldPublishMessageWithThisType(t, message.TypeVote)
-		assert.Equal(t, v1.Hash(), bdl.Message.(*message.VoteMessage).Vote.Hash())
+		assert.Equal(t, vote.Hash(), bdl.Message.(*message.VoteMessage).Vote.Hash())
 	})
 }
 

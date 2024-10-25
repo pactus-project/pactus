@@ -60,7 +60,7 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 	labelMoniker.SetText(model.node.Sync().Moniker())
 	labelIsPrune.SetText(strconv.FormatBool(model.node.State().IsPruned()))
 
-	w := &widgetNode{
+	wdgNode := &widgetNode{
 		Box:                  box,
 		model:                model,
 		genesisTime:          model.node.State().Genesis().GenesisTime(),
@@ -81,14 +81,14 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 	signals := map[string]any{}
 	builder.ConnectSignals(signals)
 
-	glib.TimeoutAdd(1000, w.timeout1)
-	glib.TimeoutAdd(10000, w.timeout10)
+	glib.TimeoutAdd(1000, wdgNode.timeout1)
+	glib.TimeoutAdd(10000, wdgNode.timeout10)
 
 	// Update widget for the first time
-	w.timeout1()
-	w.timeout10()
+	wdgNode.timeout1()
+	wdgNode.timeout10()
 
-	return w, nil
+	return wdgNode, nil
 }
 
 func (wn *widgetNode) timeout1() bool {

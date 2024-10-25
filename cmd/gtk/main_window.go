@@ -40,31 +40,31 @@ func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel) *mainWindow
 	boxNode.Add(widgetNode)
 	boxDefaultWallet.Add(widgetWallet)
 
-	mw := &mainWindow{
+	mainWnd := &mainWindow{
 		ApplicationWindow: appWindow,
 		widgetNode:        widgetNode,
 		widgetWallet:      widgetWallet,
 	}
 
 	explorerItemMenu := getMenuItem(builder, "id_explorer_menu")
-	explorerItemMenu.Connect("activate", mw.onMenuItemActivateExplorer)
+	explorerItemMenu.Connect("activate", mainWnd.onMenuItemActivateExplorer)
 
 	websiteItemMenu := getMenuItem(builder, "id_website_menu")
-	websiteItemMenu.Connect("activate", mw.onMenuItemActivateWebsite)
+	websiteItemMenu.Connect("activate", mainWnd.onMenuItemActivateWebsite)
 
 	documentationItemMenu := getMenuItem(builder, "id_documentation_menu")
-	documentationItemMenu.Connect("activate", mw.onMenuItemActivateDocumentation)
+	documentationItemMenu.Connect("activate", mainWnd.onMenuItemActivateDocumentation)
 
 	// Map the handlers to callback functions, and connect the signals
 	// to the Builder.
 	signals := map[string]any{
-		"on_about_gtk":            mw.onAboutGtk,
-		"on_about":                mw.onAbout,
-		"on_quit":                 mw.onQuit,
-		"on_transaction_transfer": mw.OnTransactionTransfer,
-		"on_transaction_bond":     mw.OnTransactionBond,
-		"on_transaction_unbond":   mw.OnTransactionUnbond,
-		"on_transaction_withdraw": mw.OnTransactionWithdraw,
+		"on_about_gtk":            mainWnd.onAboutGtk,
+		"on_about":                mainWnd.onAbout,
+		"on_quit":                 mainWnd.onQuit,
+		"on_transaction_transfer": mainWnd.OnTransactionTransfer,
+		"on_transaction_bond":     mainWnd.OnTransactionBond,
+		"on_transaction_unbond":   mainWnd.OnTransactionUnbond,
+		"on_transaction_withdraw": mainWnd.OnTransactionWithdraw,
 	}
 	builder.ConnectSignals(signals)
 
@@ -80,7 +80,7 @@ func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel) *mainWindow
 
 	gtk.AddProviderForScreen(screen, provider, gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-	return mw
+	return mainWnd
 }
 
 func (mw *mainWindow) onQuit() {

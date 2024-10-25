@@ -49,27 +49,27 @@ func newBlockStore(db *leveldb.DB, seedCacheWindow uint32, publicKeyCacheSize in
 func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.Block) []blockRegion {
 	blockHash := blk.Hash()
 	regs := make([]blockRegion, blk.Transactions().Len())
-	w := bytes.NewBuffer(make([]byte, 0, blk.SerializeSize()+hash.HashSize))
-	err := encoding.WriteElement(w, &blockHash)
+	buf := bytes.NewBuffer(make([]byte, 0, blk.SerializeSize()+hash.HashSize))
+	err := encoding.WriteElement(buf, &blockHash)
 	if err != nil {
 		panic(err) // Should we panic?
 	}
-	err = blk.Header().Encode(w)
+	err = blk.Header().Encode(buf)
 	if err != nil {
 		panic(err) // Should we panic?
 	}
 	if blk.PrevCertificate() != nil {
-		err = blk.PrevCertificate().Encode(w)
+		err = blk.PrevCertificate().Encode(buf)
 		if err != nil {
 			panic(err) // Should we panic?
 		}
 	}
-	err = encoding.WriteVarInt(w, uint64(blk.Transactions().Len()))
+	err = encoding.WriteVarInt(buf, uint64(blk.Transactions().Len()))
 	if err != nil {
 		panic(err) // Should we panic?
 	}
 	for i, trx := range blk.Transactions() {
-		offset := w.Len()
+		offset := buf.Len()
 		regs[i].height = height
 		regs[i].offset = uint32(offset)
 
@@ -84,18 +84,18 @@ func (bs *blockStore) saveBlock(batch *leveldb.Batch, height uint32, blk *block.
 			}
 		}
 
-		err := trx.Encode(w)
+		err := trx.Encode(buf)
 		if err != nil {
 			panic(err) // Should we panic?
 		}
-		regs[i].length = uint32(w.Len() - offset)
+		regs[i].length = uint32(buf.Len() - offset)
 
 		trx.SetPublicKey(pubKey)
 	}
 	blockKey := blockKey(height)
 	blockHashKey := blockHashKey(blockHash)
 
-	batch.Put(blockKey, w.Bytes())
+	batch.Put(blockKey, buf.Bytes())
 	batch.Put(blockHashKey, util.Uint32ToSlice(height))
 
 	sortitionSeed := blk.Header().SortitionSeed()

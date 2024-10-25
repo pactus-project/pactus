@@ -23,8 +23,8 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 	msg := m.(*message.BlocksRequestMessage)
 	handler.logger.Trace("parsing BlocksRequest message", "msg", msg)
 
-	p := handler.peerSet.GetPeer(pid)
-	if p == nil {
+	peer := handler.peerSet.GetPeer(pid)
+	if peer == nil {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("unknown peer (%s)", pid.String()), msg.SessionID, 0, nil, nil)
 
@@ -33,9 +33,9 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 		return
 	}
 
-	if !p.Status.IsKnown() {
+	if !peer.Status.IsKnown() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
-			fmt.Sprintf("not handshaked (%s)", p.Status.String()), msg.SessionID, 0, nil, nil)
+			fmt.Sprintf("not handshaked (%s)", peer.Status.String()), msg.SessionID, 0, nil, nil)
 
 		handler.respond(response, pid)
 
@@ -104,15 +104,15 @@ func (*blocksRequestHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	return bundle.NewBundle(m)
 }
 
-func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage, to peer.ID) {
+func (handler *blocksRequestHandler) respond(msg *message.BlocksResponseMessage, pid peer.ID) {
 	if msg.ResponseCode == message.ResponseCodeRejected {
 		handler.logger.Debug("rejecting block request message", "msg", msg,
-			"to", to, "reason", msg.Reason)
+			"pid", pid, "reason", msg.Reason)
 
-		handler.sendTo(msg, to)
+		handler.sendTo(msg, pid)
 	} else {
-		handler.logger.Info("responding block request message", "msg", msg, "to", to)
+		handler.logger.Info("responding block request message", "msg", msg, "pid", pid)
 
-		handler.sendTo(msg, to)
+		handler.sendTo(msg, pid)
 	}
 }

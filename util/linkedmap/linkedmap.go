@@ -1,7 +1,7 @@
 package linkedmap
 
 import (
-	ll "github.com/pactus-project/pactus/util/linkedlist"
+	"github.com/pactus-project/pactus/util/linkedlist"
 )
 
 type Pair[K comparable, V any] struct {
@@ -10,16 +10,16 @@ type Pair[K comparable, V any] struct {
 }
 
 type LinkedMap[K comparable, V any] struct {
-	list     *ll.LinkedList[Pair[K, V]]
-	hashmap  map[K]*ll.Element[Pair[K, V]]
+	list     *linkedlist.LinkedList[Pair[K, V]]
+	hashmap  map[K]*linkedlist.Element[Pair[K, V]]
 	capacity int
 }
 
 // New creates a new LinkedMap with the specified capacity.
 func New[K comparable, V any](capacity int) *LinkedMap[K, V] {
 	return &LinkedMap[K, V]{
-		list:     ll.New[Pair[K, V]](),
-		hashmap:  make(map[K]*ll.Element[Pair[K, V]]),
+		list:     linkedlist.New[Pair[K, V]](),
+		hashmap:  make(map[K]*linkedlist.Element[Pair[K, V]]),
 		capacity: capacity,
 	}
 }
@@ -40,70 +40,70 @@ func (lm *LinkedMap[K, V]) Has(key K) bool {
 
 // PushBack adds a new key-value pair to the end of the LinkedMap.
 func (lm *LinkedMap[K, V]) PushBack(key K, value V) {
-	ln, found := lm.hashmap[key]
+	node, found := lm.hashmap[key]
 	if found {
 		// Update the value if the key already exists
-		ln.Data.Value = value
+		node.Data.Value = value
 
 		return
 	}
 
 	p := Pair[K, V]{Key: key, Value: value}
-	ln = lm.list.InsertAtTail(p)
-	lm.hashmap[key] = ln
+	node = lm.list.InsertAtTail(p)
+	lm.hashmap[key] = node
 
 	lm.prune()
 }
 
 // PushFront adds a new key-value pair to the beginning of the LinkedMap.
 func (lm *LinkedMap[K, V]) PushFront(key K, value V) {
-	ln, found := lm.hashmap[key]
+	node, found := lm.hashmap[key]
 	if found {
 		// Update the value if the key already exists
-		ln.Data.Value = value
+		node.Data.Value = value
 
 		return
 	}
 
 	p := Pair[K, V]{Key: key, Value: value}
-	ln = lm.list.InsertAtHead(p)
-	lm.hashmap[key] = ln
+	node = lm.list.InsertAtHead(p)
+	lm.hashmap[key] = node
 
 	lm.prune()
 }
 
-// GetNode returns the LinkNode corresponding to the specified key.
-func (lm *LinkedMap[K, V]) GetNode(key K) *ll.Element[Pair[K, V]] {
-	ln, found := lm.hashmap[key]
+// GetNode returns the Element corresponding to the specified key.
+func (lm *LinkedMap[K, V]) GetNode(key K) *linkedlist.Element[Pair[K, V]] {
+	node, found := lm.hashmap[key]
 	if found {
-		return ln
+		return node
 	}
 
 	return nil
 }
 
-// TailNode returns the LinkNode at the end (tail) of the LinkedMap.
-func (lm *LinkedMap[K, V]) TailNode() *ll.Element[Pair[K, V]] {
-	ln := lm.list.Tail
-	if ln == nil {
+// TailNode returns the Element at the end (tail) of the LinkedMap.
+func (lm *LinkedMap[K, V]) TailNode() *linkedlist.Element[Pair[K, V]] {
+	node := lm.list.Tail
+	if node == nil {
 		return nil
 	}
 
-	return ln
+	return node
 }
 
 func (lm *LinkedMap[K, V]) RemoveTail() {
 	lm.remove(lm.list.Tail)
 }
 
-// HeadNode returns the LinkNode at the beginning (head) of the LinkedMap.
-func (lm *LinkedMap[K, V]) HeadNode() *ll.Element[Pair[K, V]] {
-	ln := lm.list.Head
-	if ln == nil {
+// HeadNode returns the Element at the beginning (head) of the LinkedMap.
+func (lm *LinkedMap[K, V]) HeadNode() *linkedlist.Element[Pair[K, V]] {
+	node := lm.list.Head
+	if node == nil {
 		return nil
 	}
 
-	return ln
+	return node
 }
 
 func (lm *LinkedMap[K, V]) RemoveHead() {
@@ -122,7 +122,7 @@ func (lm *LinkedMap[K, V]) Remove(key K) bool {
 }
 
 // remove removes the specified element pair from the LinkedMap.
-func (lm *LinkedMap[K, V]) remove(element *ll.Element[Pair[K, V]]) {
+func (lm *LinkedMap[K, V]) remove(element *linkedlist.Element[Pair[K, V]]) {
 	lm.list.Delete(element)
 	delete(lm.hashmap, element.Data.Key)
 }
@@ -150,7 +150,7 @@ func (lm *LinkedMap[K, V]) Full() bool {
 // Clear removes all key-value pairs from the LinkedMap, making it empty.
 func (lm *LinkedMap[K, V]) Clear() {
 	lm.list.Clear()
-	lm.hashmap = make(map[K]*ll.Element[Pair[K, V]])
+	lm.hashmap = make(map[K]*linkedlist.Element[Pair[K, V]])
 }
 
 // prune removes excess elements from the LinkedMap if its size exceeds the capacity.

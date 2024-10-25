@@ -12,7 +12,7 @@ import (
 //go:embed assets/ui/dialog_wallet_create_address.ui
 var uiWalletCreateAddressDialog []byte
 
-func createAddress(ww *widgetWallet) {
+func createAddress(wdgWallet *widgetWallet) {
 	builder, err := gtk.BuilderNewFromString(string(uiWalletCreateAddressDialog))
 	fatalErrorCheck(err)
 
@@ -38,24 +38,24 @@ func createAddress(ww *widgetWallet) {
 
 		switch walletAddressType {
 		case wallet.AddressTypeEd25519Account:
-			password, ok := getWalletPassword(ww.model.wallet)
+			password, ok := getWalletPassword(wdgWallet.model.wallet)
 			if !ok {
 				return
 			}
 
-			_, err = ww.model.wallet.NewEd25519AccountAddress(walletAddressLabel, password)
+			_, err = wdgWallet.model.wallet.NewEd25519AccountAddress(walletAddressLabel, password)
 		case wallet.AddressTypeBLSAccount:
-			_, err = ww.model.wallet.NewBLSAccountAddress(walletAddressLabel)
+			_, err = wdgWallet.model.wallet.NewBLSAccountAddress(walletAddressLabel)
 		case wallet.AddressTypeValidator:
-			_, err = ww.model.wallet.NewValidatorAddress(walletAddressLabel)
+			_, err = wdgWallet.model.wallet.NewValidatorAddress(walletAddressLabel)
 		}
 
 		errorCheck(err)
 
-		err = ww.model.wallet.Save()
+		err = wdgWallet.model.wallet.Save()
 		errorCheck(err)
 
-		ww.model.rebuildModel()
+		wdgWallet.model.rebuildModel()
 
 		dlg.Close()
 	}

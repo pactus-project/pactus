@@ -186,9 +186,9 @@ func TestHashToCurve(t *testing.T) {
 		},
 	}
 
-	for no, test := range tests {
-		mappedPoint, _ := bls12381.HashToG1([]byte(test.msg), domain)
-		d, _ := hex.DecodeString(test.expected)
+	for no, tt := range tests {
+		mappedPoint, _ := bls12381.HashToG1([]byte(tt.msg), domain)
+		d, _ := hex.DecodeString(tt.expected)
 
 		expectedPoint := bls12381.G1Affine{}
 		err := expectedPoint.Unmarshal(d)

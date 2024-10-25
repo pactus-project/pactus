@@ -53,14 +53,14 @@ func Verify(seed VerifiableSeed, pub *bls.PublicKey, proof Proof, max uint64) (u
 }
 
 func GetIndex(proof Proof, max uint64) uint64 {
-	h := hash.CalcHash(proof[:])
+	hash := hash.CalcHash(proof[:])
 
 	// construct the numerator and denominator for normalizing the proof uint
 	bigRnd := &big.Int{}
 	bigMax := &big.Int{}
 	numerator := &big.Int{}
 
-	bigRnd.SetBytes(h.Bytes())
+	bigRnd.SetBytes(hash.Bytes())
 	bigMax.SetUint64(max)
 
 	numerator = numerator.Mul(bigRnd, bigMax)

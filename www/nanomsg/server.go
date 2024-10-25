@@ -79,14 +79,14 @@ func (s *Server) eventLoop() {
 			return
 
 		case e := <-s.eventCh:
-			w := bytes.NewBuffer(e)
-			err := encoding.WriteElement(w, s.seqNum)
+			writer := bytes.NewBuffer(e)
+			err := encoding.WriteElement(writer, s.seqNum)
 			if err != nil {
 				s.logger.Error("error on encoding event", "error", err)
 
 				return
 			}
-			err = s.publisher.Send(w.Bytes())
+			err = s.publisher.Send(writer.Bytes())
 			if err != nil {
 				s.logger.Error("error on emitting event", "error", err)
 

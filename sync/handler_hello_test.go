@@ -129,16 +129,16 @@ func TestParsingHelloMessages(t *testing.T) {
 			assert.Equal(t, message.ResponseCodeOK, bdl.Message.(*message.HelloAckMessage).ResponseCode)
 
 			// Check if the peer info is updated
-			p := td.sync.peerSet.GetPeer(pid)
+			peer := td.sync.peerSet.GetPeer(pid)
 
 			pub := valKey.PublicKey()
-			assert.Equal(t, status.StatusConnected, p.Status)
-			assert.Equal(t, version.NodeAgent.String(), p.Agent)
-			assert.Equal(t, "kitty", p.Moniker)
-			assert.Contains(t, p.ConsensusKeys, pub)
-			assert.Equal(t, pid, p.PeerID)
-			assert.Equal(t, peerHeight, p.Height)
-			assert.True(t, p.IsFullNode())
+			assert.Equal(t, status.StatusConnected, peer.Status)
+			assert.Equal(t, version.NodeAgent.String(), peer.Agent)
+			assert.Equal(t, "kitty", peer.Moniker)
+			assert.Contains(t, peer.ConsensusKeys, pub)
+			assert.Equal(t, pid, peer.PeerID)
+			assert.Equal(t, peerHeight, peer.Height)
+			assert.True(t, peer.IsFullNode())
 		})
 }
 

@@ -10,8 +10,8 @@ import (
 
 type Reader interface {
 	PrepareBlockTransactions() block.Txs
-	PendingTx(id tx.ID) *tx.Tx
-	HasTx(id tx.ID) bool
+	PendingTx(txID tx.ID) *tx.Tx
+	HasTx(txID tx.ID) bool
 	Size() int
 	EstimatedFee(amt amount.Amount, payloadType payload.Type) amount.Amount
 	AllPendingTxs() []*tx.Tx
@@ -20,7 +20,7 @@ type Reader interface {
 type TxPool interface {
 	Reader
 
-	SetNewSandboxAndRecheck(sb sandbox.Sandbox)
+	SetNewSandboxAndRecheck(sbx sandbox.Sandbox)
 	AppendTxAndBroadcast(trx *tx.Tx) error
 	AppendTx(trx *tx.Tx) error
 	HandleCommittedBlock(blk *block.Block) error

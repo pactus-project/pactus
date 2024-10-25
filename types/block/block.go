@@ -40,13 +40,13 @@ func NewBlock(header *Header, prevCert *certificate.BlockCertificate, txs Txs) *
 
 // FromBytes constructs a new block from byte array.
 func FromBytes(data []byte) (*Block, error) {
-	b := new(Block)
-	r := bytes.NewReader(data)
-	if err := b.Decode(r); err != nil {
+	blk := new(Block)
+	reader := bytes.NewReader(data)
+	if err := blk.Decode(reader); err != nil {
 		return nil, err
 	}
 
-	return b, nil
+	return blk, nil
 }
 
 func MakeBlock(version uint8, timestamp time.Time, txs Txs,
@@ -117,18 +117,18 @@ func (b *Block) Hash() hash.Hash {
 		return *b.memorizedHash
 	}
 
-	w := &bytes.Buffer{}
-	if err := b.data.Header.Encode(w); err != nil {
+	buf := bytes.NewBuffer(make([]byte, 0, b.SerializeSize()))
+	if err := b.data.Header.Encode(buf); err != nil {
 		return hash.UndefHash
 	}
 	// Genesis block has no certificate
 	if b.data.PrevCert != nil {
-		w.Write(b.data.PrevCert.Hash().Bytes())
+		buf.Write(b.data.PrevCert.Hash().Bytes())
 	}
-	w.Write(b.data.Txs.Root().Bytes())
-	w.Write(util.Int32ToSlice(int32(b.data.Txs.Len())))
+	buf.Write(b.data.Txs.Root().Bytes())
+	buf.Write(util.Int32ToSlice(int32(b.data.Txs.Len())))
 
-	h := hash.CalcHash(w.Bytes())
+	h := hash.CalcHash(buf.Bytes())
 	b.memorizedHash = &h
 
 	return h
@@ -221,18 +221,18 @@ func (b *Block) Decode(r io.Reader) error {
 
 // SerializeSize returns the number of bytes it would take to serialize the block.
 func (b *Block) SerializeSize() int {
-	n := b.Header().SerializeSize()
+	size := b.Header().SerializeSize()
 
 	if b.PrevCertificate() != nil {
-		n += b.PrevCertificate().SerializeSize()
+		size += b.PrevCertificate().SerializeSize()
 	}
 
-	n += encoding.VarIntSerializeSize(uint64(b.Transactions().Len()))
+	size += encoding.VarIntSerializeSize(uint64(b.Transactions().Len()))
 	for _, trx := range b.Transactions() {
-		n += trx.SerializeSize()
+		size += trx.SerializeSize()
 	}
 
-	return n
+	return size
 }
 
 // Bytes returns the serialized bytes for the Block. It caches the
@@ -243,14 +243,14 @@ func (b *Block) Bytes() ([]byte, error) {
 		return b.memorizedData, nil
 	}
 
-	w := bytes.NewBuffer(make([]byte, 0, b.SerializeSize()))
-	err := b.Encode(w)
+	writer := bytes.NewBuffer(make([]byte, 0, b.SerializeSize()))
+	err := b.Encode(writer)
 	if err != nil {
 		return nil, err
 	}
 
 	// Cache the serialized bytes and return them.
-	b.memorizedData = w.Bytes()
+	b.memorizedData = writer.Bytes()
 
 	return b.memorizedData, nil
 }

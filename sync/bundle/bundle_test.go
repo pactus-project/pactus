@@ -14,15 +14,15 @@ import (
 )
 
 func TestInvalidCBOR(t *testing.T) {
-	d1, _ := hex.DecodeString("00")
-	d2, _ := hex.DecodeString("A3")
-	d3, _ := hex.DecodeString("A3010002000340")
-	m := new(Bundle)
-	_, err := m.Decode(bytes.NewReader(d1))
+	data1, _ := hex.DecodeString("00")
+	data2, _ := hex.DecodeString("A3")
+	data3, _ := hex.DecodeString("A3010002000340")
+	bdl := new(Bundle)
+	_, err := bdl.Decode(bytes.NewReader(data1))
 	assert.Error(t, err)
-	_, err = m.Decode(bytes.NewReader(d2))
+	_, err = bdl.Decode(bytes.NewReader(data2))
 	assert.Error(t, err)
-	_, err = m.Decode(bytes.NewReader(d3))
+	_, err = bdl.Decode(bytes.NewReader(data3))
 	assert.Error(t, err)
 }
 
@@ -32,8 +32,8 @@ func TestMessageCompress(t *testing.T) {
 	blocksData := [][]byte{}
 	for i := 0; i < 10; i++ {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
-		d, _ := blk.Bytes()
-		blocksData = append(blocksData, d)
+		data, _ := blk.Bytes()
+		blocksData = append(blocksData, data)
 	}
 	msg := message.NewBlocksResponseMessage(message.ResponseCodeOK, message.ResponseCodeOK.String(),
 		1234, 888, blocksData, nil)
@@ -74,7 +74,7 @@ func TestDecodeVoteMessage(t *testing.T) {
 }
 
 func TestDecodeVoteCBOR(t *testing.T) {
-	d1, _ := hex.DecodeString(
+	dat1, _ := hex.DecodeString(
 		"a3" +
 			"0100" + // flags: 0
 			"0207" + // Type (vote)
@@ -83,7 +83,7 @@ func TestDecodeVoteCBOR(t *testing.T) {
 			"99943016d6a0f379cf09846c6f06f60758308ab7aecbe03c4ed5b688bcb7e848baffa62bcbf1a4021522c56693f0a7bbcc1f" +
 			"e865277556ee59c1f63ba592acfe1b43" +
 			"0401") // SequenceNo
-	d2, _ := hex.DecodeString(
+	data2, _ := hex.DecodeString(
 		"a3" +
 			"01190100" + // flags: 0x0100 (compressed)
 			"0207" + // Type (vote)
@@ -95,9 +95,9 @@ func TestDecodeVoteCBOR(t *testing.T) {
 
 	bdl1 := new(Bundle)
 	bdl2 := new(Bundle)
-	_, err := bdl1.Decode(bytes.NewReader(d1))
+	_, err := bdl1.Decode(bytes.NewReader(dat1))
 	require.NoError(t, err)
-	_, err = bdl2.Decode(bytes.NewReader(d2))
+	_, err = bdl2.Decode(bytes.NewReader(data2))
 	require.NoError(t, err)
 	assert.NoError(t, bdl2.BasicCheck())
 

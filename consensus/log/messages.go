@@ -18,21 +18,21 @@ type Messages struct {
 	proposal       *proposal.Proposal
 }
 
-func (m *Messages) addVote(v *vote.Vote) (bool, error) {
-	switch v.Type() {
+func (m *Messages) addVote(vte *vote.Vote) (bool, error) {
+	switch vte.Type() {
 	case vote.VoteTypePrepare:
-		return m.prepareVotes.AddVote(v)
+		return m.prepareVotes.AddVote(vte)
 	case vote.VoteTypePrecommit:
-		return m.precommitVotes.AddVote(v)
+		return m.precommitVotes.AddVote(vte)
 	case vote.VoteTypeCPPreVote:
-		return m.cpPreVotes.AddVote(v)
+		return m.cpPreVotes.AddVote(vte)
 	case vote.VoteTypeCPMainVote:
-		return m.cpMainVotes.AddVote(v)
+		return m.cpMainVotes.AddVote(vte)
 	case vote.VoteTypeCPDecided:
-		return m.cpDecidedVotes.AddVote(v)
+		return m.cpDecidedVotes.AddVote(vte)
 	}
 
-	return false, fmt.Errorf("unexpected vote type: %v", v.Type())
+	return false, fmt.Errorf("unexpected vote type: %v", vte.Type())
 }
 
 func (m *Messages) HasVote(h hash.Hash) bool {

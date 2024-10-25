@@ -13,19 +13,19 @@ type Cache struct {
 }
 
 func NewCache(size int) (*Cache, error) {
-	b, err := lru.New[uint32, *block.Block](size)
+	blockCache, err := lru.New[uint32, *block.Block](size)
 	if err != nil {
 		return nil, err
 	}
 
-	c, err := lru.New[uint32, *certificate.BlockCertificate](size)
+	certCache, err := lru.New[uint32, *certificate.BlockCertificate](size)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Cache{
-		blocks: b,
-		certs:  c,
+		blocks: blockCache,
+		certs:  certCache,
 	}, nil
 }
 

@@ -8,7 +8,7 @@ import (
 )
 
 func TestConfigBasicCheck(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		expectedErr error
 		updateFn    func(c *Config)
@@ -101,7 +101,9 @@ func TestConfigBasicCheck(t *testing.T) {
 		{
 			name: "Valid BootstrapAddrStrings",
 			updateFn: func(c *Config) {
-				c.BootstrapAddrStrings = []string{"/ip4/127.0.0.1/p2p/12D3KooWQBpPV6NtZy1dvN2oF7dJdLoooRZfEmwtHiDUf42ArDjT"}
+				c.BootstrapAddrStrings = []string{
+					"/ip4/127.0.0.1/p2p/12D3KooWQBpPV6NtZy1dvN2oF7dJdLoooRZfEmwtHiDUf42ArDjT",
+				}
 			},
 		},
 		{
@@ -110,17 +112,20 @@ func TestConfigBasicCheck(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
+	for no, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
 			conf := DefaultConfig()
-			tc.updateFn(conf)
-			if tc.expectedErr != nil {
+			tt.updateFn(conf)
+			if tt.expectedErr != nil {
 				err := conf.BasicCheck()
-				assert.ErrorIs(t, err, tc.expectedErr,
-					"Expected error not matched for test %d-%s, expected: %s, got: %s", i, tc.name, tc.expectedErr, err)
+				assert.ErrorIs(t, err, tt.expectedErr,
+					"Expected error not matched for test %d-%s, expected: %s, got: %s",
+					no, tt.name, tt.expectedErr, err)
 			} else {
 				err := conf.BasicCheck()
-				assert.NoError(t, err, "Expected no error for test %d-%s, get: %s", i, tc.name, err)
+				assert.NoError(t, err,
+					"Expected no error for test %d-%s, get: %s",
+					no, tt.name, err)
 			}
 		})
 	}
@@ -155,13 +160,13 @@ func TestMinConns(t *testing.T) {
 		{Config{MaxConns: 128}, 30},
 	}
 
-	for _, test := range tests {
-		resultMin := test.config.MinConns()
-		if resultMin != test.expectedMin {
+	for _, tt := range tests {
+		resultMin := tt.config.MinConns()
+		if resultMin != tt.expectedMin {
 			t.Errorf("For MaxConns %d, "+
 				"MinConns() returned %d (expected %d)",
-				test.config.MaxConns,
-				resultMin, test.expectedMin)
+				tt.config.MaxConns,
+				resultMin, tt.expectedMin)
 		}
 	}
 }

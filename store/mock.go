@@ -96,17 +96,17 @@ func (m *MockStore) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
 	return nil, ErrNotFound
 }
 
-func (m *MockStore) Transaction(id tx.ID) (*CommittedTx, error) {
+func (m *MockStore) Transaction(txID tx.ID) (*CommittedTx, error) {
 	for height, blk := range m.Blocks {
 		for _, trx := range blk.Transactions() {
-			if trx.ID() == id {
-				d, _ := trx.Bytes()
+			if trx.ID() == txID {
+				data, _ := trx.Bytes()
 
 				return &CommittedTx{
-					TxID:      id,
+					TxID:      txID,
 					Height:    height,
 					BlockTime: blk.Header().UnixTime(),
-					Data:      d,
+					Data:      data,
 				}, nil
 			}
 		}
@@ -115,10 +115,10 @@ func (m *MockStore) Transaction(id tx.ID) (*CommittedTx, error) {
 	return nil, fmt.Errorf("not found")
 }
 
-func (m *MockStore) RecentTransaction(id tx.ID) bool {
+func (m *MockStore) RecentTransaction(txID tx.ID) bool {
 	for _, blk := range m.Blocks {
 		for _, trx := range blk.Transactions() {
-			if trx.ID() == id {
+			if trx.ID() == txID {
 				return true
 			}
 		}
@@ -226,8 +226,8 @@ func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop 
 	}
 }
 
-func (m *MockStore) SaveBlock(b *block.Block, cert *certificate.BlockCertificate) {
-	m.Blocks[cert.Height()] = b
+func (m *MockStore) SaveBlock(blk *block.Block, cert *certificate.BlockCertificate) {
+	m.Blocks[cert.Height()] = blk
 	m.LastHeight = cert.Height()
 	m.LastCert = cert
 }

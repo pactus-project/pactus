@@ -14,8 +14,8 @@ func TestGetBlock(t *testing.T) {
 	conn, client := td.blockchainClient(t)
 
 	height := uint32(100)
-	b := td.mockState.TestStore.AddTestBlock(height)
-	data, _ := b.Bytes()
+	blk := td.mockState.TestStore.AddTestBlock(height)
+	data, _ := blk.Bytes()
 
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
 		res, err := client.GetBlock(context.Background(),
@@ -34,7 +34,7 @@ func TestGetBlock(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, height, res.Height)
-		assert.Equal(t, b.Hash().String(), res.Hash)
+		assert.Equal(t, blk.Hash().String(), res.Hash)
 		assert.Equal(t, hex.EncodeToString(data), res.Data)
 		assert.Empty(t, res.Header)
 		assert.Empty(t, res.Txs)
@@ -47,17 +47,17 @@ func TestGetBlock(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, height, res.Height)
-		assert.Equal(t, b.Hash().String(), res.Hash)
+		assert.Equal(t, blk.Hash().String(), res.Hash)
 		assert.Empty(t, res.Data)
 		assert.NotEmpty(t, res.Header)
-		assert.Equal(t, b.PrevCertificate().Committers(), res.PrevCert.Committers)
-		assert.Equal(t, b.PrevCertificate().Absentees(), res.PrevCert.Absentees)
+		assert.Equal(t, blk.PrevCertificate().Committers(), res.PrevCert.Committers)
+		assert.Equal(t, blk.PrevCertificate().Absentees(), res.PrevCert.Absentees)
 		for i, trx := range res.Txs {
-			blockTrx := b.Transactions()[i]
-			b, err := blockTrx.Bytes()
+			blockTrx := blk.Transactions()[i]
+			blk, err := blockTrx.Bytes()
 			assert.NoError(t, err)
 			assert.Equal(t, trx.Id, blockTrx.ID().String())
-			assert.Equal(t, trx.Data, hex.EncodeToString(b))
+			assert.Equal(t, trx.Data, hex.EncodeToString(blk))
 			assert.Zero(t, trx.LockTime)
 			assert.Empty(t, trx.Signature)
 			assert.Empty(t, trx.PublicKey)
@@ -71,12 +71,12 @@ func TestGetBlock(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, height, res.Height)
-		assert.Equal(t, b.Hash().String(), res.Hash)
+		assert.Equal(t, blk.Hash().String(), res.Hash)
 		assert.Empty(t, res.Data)
 		assert.NotEmpty(t, res.Header)
 		assert.NotEmpty(t, res.Txs)
 		for i, trx := range res.Txs {
-			blockTrx := b.Transactions()[i]
+			blockTrx := blk.Transactions()[i]
 
 			assert.Equal(t, trx.Id, blockTrx.ID().String())
 			assert.Empty(t, trx.Data)
@@ -94,7 +94,8 @@ func TestGetBlockHash(t *testing.T) {
 	td := setup(t, nil)
 	conn, client := td.blockchainClient(t)
 
-	b := td.mockState.TestStore.AddTestBlock(100)
+	height := td.RandHeight()
+	blk := td.mockState.TestStore.AddTestBlock(height)
 
 	t.Run("Should return error for non existing block", func(t *testing.T) {
 		res, err := client.GetBlockHash(context.Background(),
@@ -106,10 +107,10 @@ func TestGetBlockHash(t *testing.T) {
 
 	t.Run("Should return height of existing block", func(t *testing.T) {
 		res, err := client.GetBlockHash(context.Background(),
-			&pactus.GetBlockHashRequest{Height: 100})
+			&pactus.GetBlockHashRequest{Height: height})
 
 		assert.NoError(t, err)
-		assert.Equal(t, b.Hash().String(), res.Hash)
+		assert.Equal(t, blk.Hash().String(), res.Hash)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
@@ -120,7 +121,8 @@ func TestGetBlockHeight(t *testing.T) {
 	td := setup(t, nil)
 	conn, client := td.blockchainClient(t)
 
-	b := td.mockState.TestStore.AddTestBlock(100)
+	height := td.RandHeight()
+	blk := td.mockState.TestStore.AddTestBlock(height)
 
 	t.Run("Should return error for invalid hash", func(t *testing.T) {
 		res, err := client.GetBlockHeight(context.Background(),
@@ -140,10 +142,10 @@ func TestGetBlockHeight(t *testing.T) {
 
 	t.Run("Should return height of existing block", func(t *testing.T) {
 		res, err := client.GetBlockHeight(context.Background(),
-			&pactus.GetBlockHeightRequest{Hash: b.Hash().String()})
+			&pactus.GetBlockHeightRequest{Hash: blk.Hash().String()})
 
 		assert.NoError(t, err)
-		assert.Equal(t, uint32(100), res.Height)
+		assert.Equal(t, height, res.Height)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
@@ -339,7 +341,7 @@ func TestConsensusInfo(t *testing.T) {
 	consRound := td.RandRound()
 	vote1, _ := td.GenerateTestPrepareVote(consHeight, consRound)
 	vote2, _ := td.GenerateTestPrecommitVote(consHeight, consRound)
-	prop, _ := td.GenerateTestProposal(consHeight, consRound)
+	prop := td.GenerateTestProposal(consHeight, consRound)
 
 	td.consMocks[0].Active = true
 	td.consMocks[0].Height = consHeight

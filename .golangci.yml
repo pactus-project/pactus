@@ -75,6 +75,7 @@ linters:
     - whitespace
     # - wrapcheck
     - zerologlint
+    - varnamelen
 
 linters-settings:
   gosimple:
@@ -128,6 +129,9 @@ linters-settings:
       - name: "function-result-limit"
         disabled: true
 
+      - name: "import-shadowing"
+        disabled: true
+
       - name: unhandled-error
         arguments:
           - "fmt.Printf"
@@ -177,7 +181,7 @@ linters-settings:
     disabled-checks:
       - ifElseChain
       - unnamedResult
-      - builtinShadow
+      - importShadow
     enabled-tags:
       - diagnostic
       - style
@@ -187,6 +191,27 @@ linters-settings:
     # Minimal complexity of if statements to report.
     # Default: 5
     min-complexity: 6
+
+  varnamelen:
+    ignore-names:
+      - ok
+      - ip
+      - no
+      - tt # table tests
+      - i # for simple loops
+      - j # for simple loops
+      - l
+      - h
+      - il
+      - r # reader
+      - w # writer
+
+    ignore-decls:
+      - wg sync.WaitGroup
+      - ts *testsuite.TestSuite
+      - td *testData
+      - ma multiaddr.Multiaddr
+      - db *leveldb.DB
 
 issues:
   exclude-use-default: false
@@ -198,6 +223,8 @@ issues:
         - gocognit
         - forbidigo
 
-    - linters:
-        - govet
-      text: "shadow: declaration of \"err\" shadows"
+  exclude:
+    - "shadow: declaration of \"err\" shadows"
+    - "builtinShadow: shadowing of predeclared identifier: min"
+    - "builtinShadow: shadowing of predeclared identifier: max"
+    - "builtinShadow: shadowing of predeclared identifier: len"

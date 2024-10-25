@@ -14,7 +14,7 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	sandbox *sandbox.MockSandbox
+	sbx *sandbox.MockSandbox
 }
 
 func setup(t *testing.T) *testData {
@@ -22,13 +22,13 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
-	sb := sandbox.MockingSandbox(ts)
+	sbx := sandbox.MockingSandbox(ts)
 	randHeight := ts.RandHeight()
-	_ = sb.TestStore.AddTestBlock(randHeight)
+	_ = sbx.TestStore.AddTestBlock(randHeight)
 
 	return &testData{
 		TestSuite: ts,
-		sandbox:   sb,
+		sbx:       sbx,
 	}
 }
 
@@ -36,11 +36,11 @@ func (td *testData) checkTotalCoin(t *testing.T, fee amount.Amount) {
 	t.Helper()
 
 	total := amount.Amount(0)
-	for _, acc := range td.sandbox.TestStore.Accounts {
+	for _, acc := range td.sbx.TestStore.Accounts {
 		total += acc.Balance()
 	}
 
-	for _, val := range td.sandbox.TestStore.Validators {
+	for _, val := range td.sbx.TestStore.Validators {
 		total += val.Stake()
 	}
 	assert.Equal(t, total+fee, amount.Amount(21_000_000*1e9))
@@ -49,7 +49,7 @@ func (td *testData) checkTotalCoin(t *testing.T, fee amount.Amount) {
 func (td *testData) check(t *testing.T, trx *tx.Tx, strict bool, expectedErr error) {
 	t.Helper()
 
-	exe, err := MakeExecutor(trx, td.sandbox)
+	exe, err := MakeExecutor(trx, td.sbx)
 	if err != nil {
 		assert.ErrorIs(t, err, expectedErr)
 
@@ -63,7 +63,7 @@ func (td *testData) check(t *testing.T, trx *tx.Tx, strict bool, expectedErr err
 func (td *testData) execute(t *testing.T, trx *tx.Tx) {
 	t.Helper()
 
-	exe, err := MakeExecutor(trx, td.sandbox)
+	exe, err := MakeExecutor(trx, td.sbx)
 	require.NoError(t, err)
 
 	exe.Execute()

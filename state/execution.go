@@ -10,9 +10,9 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 )
 
-func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox, check bool) error {
+func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool) error {
 	var subsidyTrx *tx.Tx
-	for i, trx := range b.Transactions() {
+	for i, trx := range blk.Transactions() {
 		// The first transaction should be subsidy transaction
 		isSubsidyTx := (i == 0)
 		if isSubsidyTx {
@@ -29,20 +29,20 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox, check bool) er
 				return err
 			}
 
-			err := execution.CheckAndExecute(trx, sb, true)
+			err := execution.CheckAndExecute(trx, sbx, true)
 			if err != nil {
 				return err
 			}
 		} else {
-			err := execution.Execute(trx, sb)
+			err := execution.Execute(trx, sbx)
 			if err != nil {
 				return err
 			}
 		}
 	}
 
-	accumulatedFee := sb.AccumulatedFee()
-	subsidyAmt := st.params.BlockReward + sb.AccumulatedFee()
+	accumulatedFee := sbx.AccumulatedFee()
+	subsidyAmt := st.params.BlockReward + sbx.AccumulatedFee()
 	if subsidyTrx.Payload().Value() != subsidyAmt {
 		return InvalidSubsidyAmountError{
 			Expected: subsidyAmt,
@@ -51,9 +51,9 @@ func (st *state) executeBlock(b *block.Block, sb sandbox.Sandbox, check bool) er
 	}
 
 	// Claim accumulated fees
-	acc := sb.Account(crypto.TreasuryAddress)
+	acc := sbx.Account(crypto.TreasuryAddress)
 	acc.AddToBalance(accumulatedFee)
-	sb.UpdateAccount(crypto.TreasuryAddress, acc)
+	sbx.UpdateAccount(crypto.TreasuryAddress, acc)
 
 	return nil
 }

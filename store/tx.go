@@ -16,7 +16,7 @@ type blockRegion struct {
 	length uint32
 }
 
-func txKey(id tx.ID) []byte { return append(txPrefix, id.Bytes()...) }
+func txKey(txID tx.ID) []byte { return append(txPrefix, txID.Bytes()...) }
 
 type txStore struct {
 	db            *leveldb.DB
@@ -34,18 +34,18 @@ func newTxStore(db *leveldb.DB, txCacheWindow uint32) *txStore {
 
 func (ts *txStore) saveTxs(batch *leveldb.Batch, txs block.Txs, regs []blockRegion) {
 	for i, trx := range txs {
-		w := bytes.NewBuffer(make([]byte, 0, 32+4))
+		buf := bytes.NewBuffer(make([]byte, 0, 32+4))
 
 		reg := regs[i]
-		err := encoding.WriteElements(w, &reg.height, &reg.offset, &reg.length)
+		err := encoding.WriteElements(buf, &reg.height, &reg.offset, &reg.length)
 		if err != nil {
 			panic(err)
 		}
 
-		id := trx.ID()
-		key := txKey(id)
-		batch.Put(key, w.Bytes())
-		ts.addToCache(id, reg.height)
+		txID := trx.ID()
+		key := txKey(txID)
+		batch.Put(key, buf.Bytes())
+		ts.addToCache(txID, reg.height)
 	}
 }
 
@@ -61,12 +61,12 @@ func (ts *txStore) pruneCache(currentHeight uint32) {
 	}
 }
 
-func (ts *txStore) recentTransaction(id tx.ID) bool {
-	return ts.txCache.Has(id)
+func (ts *txStore) recentTransaction(txID tx.ID) bool {
+	return ts.txCache.Has(txID)
 }
 
-func (ts *txStore) tx(id tx.ID) (*blockRegion, error) {
-	data, err := tryGet(ts.db, txKey(id))
+func (ts *txStore) tx(txID tx.ID) (*blockRegion, error) {
+	data, err := tryGet(ts.db, txKey(txID))
 	if err != nil {
 		return nil, err
 	}
@@ -79,6 +79,6 @@ func (ts *txStore) tx(id tx.ID) (*blockRegion, error) {
 	return reg, nil
 }
 
-func (ts *txStore) addToCache(id tx.ID, height uint32) {
-	ts.txCache.PushBack(id, height)
+func (ts *txStore) addToCache(txID tx.ID, height uint32) {
+	ts.txCache.PushBack(txID, height)
 }

@@ -16,11 +16,11 @@ func TestServicesString(t *testing.T) {
 }
 
 func TestAppend(t *testing.T) {
-	s := New(FullNode)
-	assert.True(t, s.IsFullNode())
-	assert.False(t, s.IsPrunedNode())
+	services := New(FullNode)
+	assert.True(t, services.IsFullNode())
+	assert.False(t, services.IsPrunedNode())
 
-	s.Append(PrunedNode)
-	assert.True(t, s.IsFullNode())
-	assert.True(t, s.IsPrunedNode())
+	services.Append(PrunedNode)
+	assert.True(t, services.IsFullNode())
+	assert.True(t, services.IsPrunedNode())
 }

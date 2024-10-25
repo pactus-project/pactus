@@ -38,15 +38,15 @@ func TestObjLogger(t *testing.T) {
 	InitGlobalLogger(c)
 
 	globalInst.config.Levels["test"] = "warn"
-	l := NewSubLogger("test", Foo{})
+	subLogger := NewSubLogger("test", Foo{})
 	var buf bytes.Buffer
-	l.logger = l.logger.Output(&buf)
+	subLogger.logger = subLogger.logger.Output(&buf)
 
-	l.Trace("msg")
-	l.Debug("msg")
-	l.Info("msg")
-	l.Warn("msg")
-	l.Error("msg")
+	subLogger.Trace("msg")
+	subLogger.Debug("msg")
+	subLogger.Info("msg")
+	subLogger.Warn("msg")
+	subLogger.Error("msg")
 
 	out := buf.String()
 

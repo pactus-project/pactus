@@ -27,7 +27,7 @@ type manager struct {
 // It is not thread-safe.
 func NewManager(
 	conf *Config,
-	st state.Facade,
+	state state.Facade,
 	valKeys []*bls.ValidatorKey,
 	rewardAddrs []crypto.Address,
 	broadcastCh chan message.Message,
@@ -36,12 +36,12 @@ func NewManager(
 		instances:         make([]Consensus, len(valKeys)),
 		upcomingVotes:     make([]*vote.Vote, 0),
 		upcomingProposals: make([]*proposal.Proposal, 0),
-		state:             st,
+		state:             state,
 	}
 	mediatorConcrete := newConcreteMediator()
 
 	for i, key := range valKeys {
-		cons := NewConsensus(conf, st, key, rewardAddrs[i], broadcastCh, mediatorConcrete)
+		cons := NewConsensus(conf, state, key, rewardAddrs[i], broadcastCh, mediatorConcrete)
 
 		mgr.instances[i] = cons
 	}
@@ -119,81 +119,81 @@ func (mgr *manager) MoveToNewHeight() {
 		cons.MoveToNewHeight()
 	}
 
-	inst := mgr.getBestInstance()
-	curHeight, _ := inst.HeightRound()
-	for i := len(mgr.upcomingProposals) - 1; i >= 0; i-- {
-		p := mgr.upcomingProposals[i]
+	cons := mgr.getBestInstance()
+	curHeight, _ := cons.HeightRound()
+	for index := len(mgr.upcomingProposals) - 1; index >= 0; index-- {
+		prop := mgr.upcomingProposals[index]
 		switch {
-		case p.Height() < curHeight:
+		case prop.Height() < curHeight:
 			// Ignore old proposals
 
-		case p.Height() > curHeight:
+		case prop.Height() > curHeight:
 			// keep this vote
 			continue
 
-		case p.Height() == curHeight:
+		case prop.Height() == curHeight:
 			logger.Debug("upcoming proposal processed", "height", curHeight)
 			for _, cons := range mgr.instances {
-				cons.SetProposal(p)
+				cons.SetProposal(prop)
 			}
 		}
 
-		mgr.upcomingProposals = slices.Delete(mgr.upcomingProposals, i, i+1)
+		mgr.upcomingProposals = slices.Delete(mgr.upcomingProposals, index, index+1)
 	}
 
-	for i := len(mgr.upcomingVotes) - 1; i >= 0; i-- {
-		v := mgr.upcomingVotes[i]
+	for index := len(mgr.upcomingVotes) - 1; index >= 0; index-- {
+		vote := mgr.upcomingVotes[index]
 		switch {
-		case v.Height() < curHeight:
+		case vote.Height() < curHeight:
 			// Ignore old votes
 
-		case v.Height() > curHeight:
+		case vote.Height() > curHeight:
 			// keep this vote
 			continue
 
-		case v.Height() == curHeight:
+		case vote.Height() == curHeight:
 			logger.Debug("upcoming votes processed", "height", curHeight)
 			for _, cons := range mgr.instances {
-				cons.AddVote(v)
+				cons.AddVote(vote)
 			}
 		}
 
-		mgr.upcomingVotes = slices.Delete(mgr.upcomingVotes, i, i+1)
+		mgr.upcomingVotes = slices.Delete(mgr.upcomingVotes, index, index+1)
 	}
 }
 
 // AddVote adds a vote to all consensus instances.
-func (mgr *manager) AddVote(v *vote.Vote) {
-	inst := mgr.getBestInstance()
-	curHeight, _ := inst.HeightRound()
+func (mgr *manager) AddVote(vote *vote.Vote) {
+	cons := mgr.getBestInstance()
+	curHeight, _ := cons.HeightRound()
 	switch {
-	case v.Height() < curHeight:
-		_ = mgr.state.UpdateLastCertificate(v)
+	case vote.Height() < curHeight:
+		_ = mgr.state.UpdateLastCertificate(vote)
 
-	case v.Height() > curHeight:
-		mgr.upcomingVotes = append(mgr.upcomingVotes, v)
+	case vote.Height() > curHeight:
+		mgr.upcomingVotes = append(mgr.upcomingVotes, vote)
 
-	case v.Height() == curHeight:
+	case vote.Height() == curHeight:
 		for _, cons := range mgr.instances {
-			cons.AddVote(v)
+			cons.AddVote(vote)
 		}
 	}
 }
 
 // SetProposal sets the proposal for all consensus instances.
-func (mgr *manager) SetProposal(p *proposal.Proposal) {
-	inst := mgr.getBestInstance()
-	curHeight, _ := inst.HeightRound()
+func (mgr *manager) SetProposal(prop *proposal.Proposal) {
+	cons := mgr.getBestInstance()
+	curHeight, _ := cons.HeightRound()
 	switch {
-	case p.Height() < curHeight:
+	case prop.Height() < curHeight:
 		// discard the old proposal
 
-	case p.Height() > curHeight:
-		mgr.upcomingProposals = append(mgr.upcomingProposals, p)
+	case prop.Height() > curHeight:
+		mgr.upcomingProposals = append(mgr.upcomingProposals, prop)
 
-	case p.Height() == curHeight:
+	case prop.Height() == curHeight:
 		for _, cons := range mgr.instances {
-			cons.SetProposal(p)
+			cons.SetProposal(prop)
 		}
 	}
 }

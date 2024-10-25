@@ -96,12 +96,12 @@ func TestPeerSet(t *testing.T) {
 		assert.Equal(t, int64(150), peer1.Metric.MessageReceived[message.TypeTransaction].Bytes)
 		assert.Equal(t, int64(250), peer1.Metric.MessageSent[message.TypeBlocksRequest].Bytes)
 
-		peersetMetric := peerSet.Metric()
-		assert.Equal(t, int64(250), peersetMetric.TotalReceived.Bytes)
-		assert.Equal(t, int64(100), peersetMetric.MessageReceived[message.TypeBlocksResponse].Bytes)
-		assert.Equal(t, int64(150), peersetMetric.MessageReceived[message.TypeTransaction].Bytes)
-		assert.Equal(t, int64(450), peersetMetric.TotalSent.Bytes)
-		assert.Equal(t, int64(450), peersetMetric.MessageSent[message.TypeBlocksRequest].Bytes)
+		peerSetMetric := peerSet.Metric()
+		assert.Equal(t, int64(250), peerSetMetric.TotalReceived.Bytes)
+		assert.Equal(t, int64(100), peerSetMetric.MessageReceived[message.TypeBlocksResponse].Bytes)
+		assert.Equal(t, int64(150), peerSetMetric.MessageReceived[message.TypeTransaction].Bytes)
+		assert.Equal(t, int64(450), peerSetMetric.TotalSent.Bytes)
+		assert.Equal(t, int64(450), peerSetMetric.MessageSent[message.TypeBlocksRequest].Bytes)
 		assert.Equal(t, 2, peerSet.TotalSentBundles())
 	})
 
@@ -156,15 +156,15 @@ func TestPeerSet(t *testing.T) {
 func TestOpenSession(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	ps := NewPeerSet(time.Minute)
+	peerSet := NewPeerSet(time.Minute)
 
 	pid1 := ts.RandPeerID()
 	pid2 := ts.RandPeerID()
-	sid1 := ps.OpenSession(pid1, 100, 10)
-	sid2 := ps.OpenSession(pid2, 110, 10)
+	sid1 := peerSet.OpenSession(pid1, 100, 10)
+	sid2 := peerSet.OpenSession(pid2, 110, 10)
 
-	ssn1 := getSessionByID(ps, sid1)
-	ssn2 := getSessionByID(ps, sid1)
+	ssn1 := getSessionByID(peerSet, sid1)
+	ssn2 := getSessionByID(peerSet, sid1)
 	assert.NotNil(t, ssn1)
 	assert.Equal(t, uint32(100), ssn1.From)
 	assert.Equal(t, uint32(100), ssn2.From)
@@ -175,88 +175,88 @@ func TestOpenSession(t *testing.T) {
 	assert.LessOrEqual(t, ssn1.LastActivity, time.Now())
 	assert.Equal(t, 0, sid1)
 	assert.Equal(t, 1, sid2)
-	assert.True(t, ps.HasOpenSession(pid1))
-	assert.True(t, ps.HasOpenSession(pid2))
-	assert.False(t, ps.HasOpenSession(ts.RandPeerID()))
-	assert.Equal(t, 2, ps.NumberOfSessions())
+	assert.True(t, peerSet.HasOpenSession(pid1))
+	assert.True(t, peerSet.HasOpenSession(pid2))
+	assert.False(t, peerSet.HasOpenSession(ts.RandPeerID()))
+	assert.Equal(t, 2, peerSet.NumberOfSessions())
 }
 
 func TestNumberOfSessions(t *testing.T) {
-	ps := NewPeerSet(time.Minute)
+	peerSet := NewPeerSet(time.Minute)
 
 	// Test when there are no open sessions
-	assert.Equal(t, 0, ps.NumberOfSessions())
+	assert.Equal(t, 0, peerSet.NumberOfSessions())
 
 	// Test when there are multiple open sessions
-	ps.OpenSession("peer1", 100, 101)
-	ps.OpenSession("peer2", 200, 201)
-	ps.OpenSession("peer3", 300, 301)
+	peerSet.OpenSession("peer1", 100, 101)
+	peerSet.OpenSession("peer2", 200, 201)
+	peerSet.OpenSession("peer3", 300, 301)
 
-	assert.Equal(t, 3, ps.NumberOfSessions())
+	assert.Equal(t, 3, peerSet.NumberOfSessions())
 }
 
 func TestHasAnyOpenSession(t *testing.T) {
-	ps := NewPeerSet(time.Minute)
+	peerSet := NewPeerSet(time.Minute)
 
 	// Test when there are no open sessions
-	assert.False(t, ps.HasAnyOpenSession())
+	assert.False(t, peerSet.HasAnyOpenSession())
 
-	sid := ps.OpenSession("peer1", 100, 101)
-	assert.True(t, ps.HasAnyOpenSession())
+	sid := peerSet.OpenSession("peer1", 100, 101)
+	assert.True(t, peerSet.HasAnyOpenSession())
 
-	ps.SetSessionCompleted(sid)
-	assert.False(t, ps.HasAnyOpenSession())
+	peerSet.SetSessionCompleted(sid)
+	assert.False(t, peerSet.HasAnyOpenSession())
 }
 
 func TestRemoveAllSessions(t *testing.T) {
-	ps := NewPeerSet(time.Minute)
+	peerSet := NewPeerSet(time.Minute)
 
-	_ = ps.OpenSession("peer1", 100, 101)
-	_ = ps.OpenSession("peer2", 100, 101)
-	_ = ps.OpenSession("peer3", 100, 101)
+	_ = peerSet.OpenSession("peer1", 100, 101)
+	_ = peerSet.OpenSession("peer2", 100, 101)
+	_ = peerSet.OpenSession("peer3", 100, 101)
 
-	ps.RemoveAllSessions()
-	assert.Zero(t, ps.NumberOfSessions())
-	assert.False(t, ps.HasAnyOpenSession())
+	peerSet.RemoveAllSessions()
+	assert.Zero(t, peerSet.NumberOfSessions())
+	assert.False(t, peerSet.HasAnyOpenSession())
 }
 
 func TestCompletedSession(t *testing.T) {
-	ps := NewPeerSet(time.Minute)
+	peerSet := NewPeerSet(time.Minute)
 
-	sid := ps.OpenSession("peer1", 100, 101)
-	ssn := getSessionByID(ps, sid)
+	sid := peerSet.OpenSession("peer1", 100, 101)
+	ssn := getSessionByID(peerSet, sid)
 	assert.Equal(t, session.Open, ssn.Status)
 
-	ps.SetSessionCompleted(sid)
-	assert.Equal(t, 1, ps.NumberOfSessions())
-	assert.False(t, ps.HasAnyOpenSession())
+	peerSet.SetSessionCompleted(sid)
+	assert.Equal(t, 1, peerSet.NumberOfSessions())
+	assert.False(t, peerSet.HasAnyOpenSession())
 	assert.Equal(t, session.Completed, ssn.Status)
 }
 
 func TestUncompletedSession(t *testing.T) {
-	ps := NewPeerSet(time.Minute)
+	peerSet := NewPeerSet(time.Minute)
 
-	sid := ps.OpenSession("peer1", 100, 101)
-	ssn := getSessionByID(ps, sid)
+	sid := peerSet.OpenSession("peer1", 100, 101)
+	ssn := getSessionByID(peerSet, sid)
 	assert.Equal(t, session.Open, ssn.Status)
 
-	ps.SetSessionUncompleted(sid)
-	assert.Equal(t, 1, ps.NumberOfSessions())
-	assert.False(t, ps.HasAnyOpenSession())
+	peerSet.SetSessionUncompleted(sid)
+	assert.Equal(t, 1, peerSet.NumberOfSessions())
+	assert.False(t, peerSet.HasAnyOpenSession())
 	assert.Equal(t, session.Uncompleted, ssn.Status)
 }
 
 func TestExpireSessions(t *testing.T) {
 	timeout := 100 * time.Millisecond
-	ps := NewPeerSet(timeout)
+	peerSet := NewPeerSet(timeout)
 
-	sid := ps.OpenSession("peer1", 100, 101)
-	ssn := getSessionByID(ps, sid)
+	sid := peerSet.OpenSession("peer1", 100, 101)
+	ssn := getSessionByID(peerSet, sid)
 	time.Sleep(timeout)
 
-	ps.SetExpiredSessionsAsUncompleted()
-	assert.Equal(t, 1, ps.NumberOfSessions())
-	assert.False(t, ps.HasAnyOpenSession())
+	peerSet.SetExpiredSessionsAsUncompleted()
+	assert.Equal(t, 1, peerSet.NumberOfSessions())
+	assert.False(t, peerSet.HasAnyOpenSession())
 	assert.Equal(t, session.Uncompleted, ssn.Status)
 }
 
@@ -270,15 +270,15 @@ func TestGetRandomPeer(t *testing.T) {
 	// peer_5 has score 33
 	// peer_6 has score 16
 	peerSet := NewPeerSet(time.Minute)
-	for i := 0; i < 6; i++ {
-		pid := peer.ID(fmt.Sprintf("peer_%v", i+1))
-		peerSet.UpdateInfo(pid, fmt.Sprintf("Moniker_%v", i+1), "Agent1", nil, service.New())
+	for index := 0; index < 6; index++ {
+		pid := peer.ID(fmt.Sprintf("peer_%v", index+1))
+		peerSet.UpdateInfo(pid, fmt.Sprintf("Moniker_%v", index+1), "Agent1", nil, service.New())
 		peerSet.UpdateStatus(pid, status.StatusKnown)
 
 		for r := 0; r < 5; r++ {
 			sid := peerSet.OpenSession(pid, 0, 0)
 
-			if r < 5-i {
+			if r < 5-index {
 				peerSet.SetSessionCompleted(sid)
 			}
 		}
@@ -311,11 +311,11 @@ func TestGetRandomPeerConnected(t *testing.T) {
 	peerSet.UpdateStatus(pidConnected, status.StatusConnected)
 	peerSet.UpdateStatus(pidDisconnected, status.StatusDisconnected)
 
-	p := peerSet.GetRandomPeer()
+	peer := peerSet.GetRandomPeer()
 
-	assert.NotEqual(t, p.PeerID, pidBanned)
-	assert.NotEqual(t, p.PeerID, pidDisconnected)
-	assert.Equal(t, p.PeerID, pidConnected)
+	assert.NotEqual(t, peer.PeerID, pidBanned)
+	assert.NotEqual(t, peer.PeerID, pidDisconnected)
+	assert.Equal(t, peer.PeerID, pidConnected)
 }
 
 func TestGetRandomPeerNoPeer(t *testing.T) {
@@ -337,36 +337,36 @@ func TestGetRandomPeerOnePeer(t *testing.T) {
 }
 
 func TestUpdateAddress(t *testing.T) {
-	ps := NewPeerSet(time.Minute)
+	peerSet := NewPeerSet(time.Minute)
 
 	pid := peer.ID("peer1")
 	addr := "pid-1-address"
 	dir := "Inbound"
-	ps.UpdateAddress(pid, addr, dir)
+	peerSet.UpdateAddress(pid, addr, dir)
 
-	p := ps.GetPeer(pid)
+	p := peerSet.GetPeer(pid)
 	assert.Equal(t, addr, p.Address)
 	assert.Equal(t, dir, p.Direction)
 }
 
 func TestUpdateSessionLastActivity(t *testing.T) {
-	ps := NewPeerSet(time.Minute)
+	peerSet := NewPeerSet(time.Minute)
 
-	sid := ps.OpenSession("peer1", 100, 101)
-	ssn := getSessionByID(ps, sid)
+	sid := peerSet.OpenSession("peer1", 100, 101)
+	ssn := getSessionByID(peerSet, sid)
 	activity1 := ssn.LastActivity
 	time.Sleep(10 * time.Millisecond)
-	ps.UpdateSessionLastActivity(sid)
+	peerSet.UpdateSessionLastActivity(sid)
 	assert.Greater(t, ssn.LastActivity, activity1)
 }
 
 func TestUpdateProtocols(t *testing.T) {
-	ps := NewPeerSet(time.Minute)
+	peerSet := NewPeerSet(time.Minute)
 
 	pid := peer.ID("peer-1")
 	protocols := []string{"protocol-1"}
-	ps.UpdateProtocols(pid, protocols)
+	peerSet.UpdateProtocols(pid, protocols)
 
-	p := ps.GetPeer(pid)
+	p := peerSet.GetPeer(pid)
 	assert.Equal(t, protocols, p.Protocols)
 }
