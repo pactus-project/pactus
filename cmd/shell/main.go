@@ -37,7 +37,7 @@ func main() {
 		Long:         `pactus-shell is a command line tool for interacting with the Pactus blockchain using gRPC`,
 	}
 
-	sh := shell.New(rootCmd, nil,
+	shell := shell.New(rootCmd, nil,
 		prompt.OptionSuggestionBGColor(prompt.Black),
 		prompt.OptionSuggestionTextColor(prompt.Green),
 		prompt.OptionDescriptionBGColor(prompt.Black),
@@ -50,14 +50,14 @@ func main() {
 		fs.StringVar(&password, namer("auth-password"), "", "password for gRPC basic authentication")
 	})
 
-	sh.Flags().StringVar(&serverAddr, "server-addr", defaultServerAddr, "gRPC server address")
-	sh.Flags().StringVar(&username, "auth-username", "",
+	shell.Flags().StringVar(&serverAddr, "server-addr", defaultServerAddr, "gRPC server address")
+	shell.Flags().StringVar(&username, "auth-username", "",
 		"username for gRPC basic authentication")
 
-	sh.Flags().StringVar(&password, "auth-password", "",
+	shell.Flags().StringVar(&password, "auth-password", "",
 		"username for gRPC basic authentication")
 
-	sh.PreRun = func(_ *cobra.Command, _ []string) {
+	shell.PreRun = func(_ *cobra.Command, _ []string) {
 		cls()
 		cmd.PrintInfoMsgf("Welcome to PactusBlockchain shell\n\n- Home: https://pactus.org\n- " +
 			"Docs: https://docs.pactus.org")
@@ -65,7 +65,7 @@ func main() {
 		_prefix = fmt.Sprintf("pactus@%s > ", serverAddr)
 	}
 
-	sh.PersistentPreRun = func(cmd *cobra.Command, _ []string) {
+	shell.PersistentPreRun = func(cmd *cobra.Command, _ []string) {
 		setAuthContext(cmd, username, password)
 	}
 
@@ -73,14 +73,14 @@ func main() {
 		setAuthContext(cmd, username, password)
 	}
 
-	changeDefaultParameters := func(c *cobra.Command) *cobra.Command {
-		_ = c.PersistentFlags().Lookup("server-addr").Value.Set(defaultServerAddr)
-		c.PersistentFlags().Lookup("server-addr").DefValue = defaultServerAddr
+	changeDefaultParameters := func(cobra *cobra.Command) *cobra.Command {
+		_ = cobra.PersistentFlags().Lookup("server-addr").Value.Set(defaultServerAddr)
+		cobra.PersistentFlags().Lookup("server-addr").DefValue = defaultServerAddr
 
-		_ = c.PersistentFlags().Lookup("response-format").Value.Set(defaultResponseFormat)
-		c.PersistentFlags().Lookup("response-format").DefValue = defaultResponseFormat
+		_ = cobra.PersistentFlags().Lookup("response-format").Value.Set(defaultResponseFormat)
+		cobra.PersistentFlags().Lookup("response-format").DefValue = defaultResponseFormat
 
-		return c
+		return cobra
 	}
 
 	rootCmd.AddCommand(changeDefaultParameters(pb.BlockchainClientCommand()))
@@ -88,7 +88,7 @@ func main() {
 	rootCmd.AddCommand(changeDefaultParameters(pb.TransactionClientCommand()))
 	rootCmd.AddCommand(changeDefaultParameters(pb.WalletClientCommand()))
 	rootCmd.AddCommand(clearScreen())
-	rootCmd.AddCommand(sh)
+	rootCmd.AddCommand(shell)
 
 	err := rootCmd.Execute()
 	if err != nil {

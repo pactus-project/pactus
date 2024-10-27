@@ -24,13 +24,13 @@ type MockConsensus struct {
 	Round       int16
 }
 
-func MockingManager(ts *testsuite.TestSuite, st *state.MockState,
+func MockingManager(ts *testsuite.TestSuite, state *state.MockState,
 	valKeys []*bls.ValidatorKey,
 ) (Manager, []*MockConsensus) {
 	mocks := make([]*MockConsensus, len(valKeys))
 	instances := make([]Consensus, len(valKeys))
 	for i, key := range valKeys {
-		cons := MockingConsensus(ts, st, key)
+		cons := MockingConsensus(ts, state, key)
 		mocks[i] = cons
 		instances[i] = cons
 	}
@@ -42,10 +42,10 @@ func MockingManager(ts *testsuite.TestSuite, st *state.MockState,
 	}, mocks
 }
 
-func MockingConsensus(ts *testsuite.TestSuite, st *state.MockState, valKey *bls.ValidatorKey) *MockConsensus {
+func MockingConsensus(ts *testsuite.TestSuite, state *state.MockState, valKey *bls.ValidatorKey) *MockConsensus {
 	return &MockConsensus{
 		ts:     ts,
-		State:  st,
+		State:  state,
 		ValKey: valKey,
 	}
 }

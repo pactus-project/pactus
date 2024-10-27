@@ -6,37 +6,37 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 )
 
-func Execute(trx *tx.Tx, sb sandbox.Sandbox) error {
-	exe, err := executor.MakeExecutor(trx, sb)
+func Execute(trx *tx.Tx, sbx sandbox.Sandbox) error {
+	exe, err := executor.MakeExecutor(trx, sbx)
 	if err != nil {
 		return err
 	}
 
 	exe.Execute()
-	sb.CommitTransaction(trx)
+	sbx.CommitTransaction(trx)
 
 	return nil
 }
 
-func CheckAndExecute(trx *tx.Tx, sb sandbox.Sandbox, strict bool) error {
-	exe, err := executor.MakeExecutor(trx, sb)
+func CheckAndExecute(trx *tx.Tx, sbx sandbox.Sandbox, strict bool) error {
+	exe, err := executor.MakeExecutor(trx, sbx)
 	if err != nil {
 		return err
 	}
 
-	if sb.IsBanned(trx.Payload().Signer()) {
+	if sbx.IsBanned(trx.Payload().Signer()) {
 		return SignerBannedError{
 			addr: trx.Payload().Signer(),
 		}
 	}
 
-	if exists := sb.RecentTransaction(trx.ID()); exists {
+	if exists := sbx.RecentTransaction(trx.ID()); exists {
 		return TransactionCommittedError{
 			ID: trx.ID(),
 		}
 	}
 
-	if err := CheckLockTime(trx, sb, strict); err != nil {
+	if err := CheckLockTime(trx, sbx, strict); err != nil {
 		return err
 	}
 
@@ -49,22 +49,22 @@ func CheckAndExecute(trx *tx.Tx, sb sandbox.Sandbox, strict bool) error {
 	}
 
 	exe.Execute()
-	sb.CommitTransaction(trx)
+	sbx.CommitTransaction(trx)
 
 	return nil
 }
 
-func CheckLockTime(trx *tx.Tx, sb sandbox.Sandbox, strict bool) error {
-	interval := sb.Params().TransactionToLiveInterval
+func CheckLockTime(trx *tx.Tx, sbx sandbox.Sandbox, strict bool) error {
+	interval := sbx.Params().TransactionToLiveInterval
 
 	if trx.IsSubsidyTx() {
 		interval = 0
 	} else if trx.IsSortitionTx() {
-		interval = sb.Params().SortitionInterval
+		interval = sbx.Params().SortitionInterval
 	}
 
-	if sb.CurrentHeight() > interval {
-		if trx.LockTime() < sb.CurrentHeight()-interval {
+	if sbx.CurrentHeight() > interval {
+		if trx.LockTime() < sbx.CurrentHeight()-interval {
 			return LockTimeExpiredError{
 				LockTime: trx.LockTime(),
 			}
@@ -75,7 +75,7 @@ func CheckLockTime(trx *tx.Tx, sb sandbox.Sandbox, strict bool) error {
 		// In strict mode, transactions with future lock times are rejected.
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
-		if trx.LockTime() > sb.CurrentHeight() {
+		if trx.LockTime() > sbx.CurrentHeight() {
 			return LockTimeInFutureError{
 				LockTime: trx.LockTime(),
 			}

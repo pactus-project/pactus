@@ -9,7 +9,7 @@ import (
 )
 
 func TestMessage(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		msgType         Type
 		typeName        string
 		topicID         network.TopicID
@@ -27,13 +27,13 @@ func TestMessage(t *testing.T) {
 		{TypeBlocksResponse, "blocks-response", network.TopicIDUnspecified, false},
 	}
 
-	for _, tc := range testCases {
-		msg, err := MakeMessage(tc.msgType)
+	for _, tt := range tests {
+		msg, err := MakeMessage(tt.msgType)
 		require.NoError(t, err)
 
-		assert.Equal(t, tc.typeName, msg.Type().String())
-		assert.Equal(t, tc.topicID, msg.TopicID())
-		assert.Equal(t, tc.shouldBroadcast, msg.ShouldBroadcast())
+		assert.Equal(t, tt.typeName, msg.Type().String())
+		assert.Equal(t, tt.topicID, msg.TopicID())
+		assert.Equal(t, tt.shouldBroadcast, msg.ShouldBroadcast())
 	}
 }
 

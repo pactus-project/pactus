@@ -201,15 +201,15 @@ func TestMain(m *testing.M) {
 		tNodes[i].Stop()
 	}
 
-	s, _ := store.NewStore(tConfigs[tNodeIdx1].Store)
+	store, _ := store.NewStore(tConfigs[tNodeIdx1].Store)
 	total := amount.Amount(0)
-	s.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
+	store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
 		total += acc.Balance()
 
 		return false
 	})
 
-	s.IterateValidators(func(v *validator.Validator) bool {
+	store.IterateValidators(func(v *validator.Validator) bool {
 		total += v.Stake()
 
 		return false

@@ -100,14 +100,14 @@ func (*MockState) UpdateLastCertificate(_ *vote.Vote) error {
 	return nil
 }
 
-func (m *MockState) CommitBlock(b *block.Block, cert *certificate.BlockCertificate) error {
+func (m *MockState) CommitBlock(blk *block.Block, cert *certificate.BlockCertificate) error {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
 	if cert.Height() != m.TestStore.LastHeight+1 {
 		return fmt.Errorf("invalid height")
 	}
-	m.TestStore.SaveBlock(b, cert)
+	m.TestStore.SaveBlock(blk, cert)
 
 	return nil
 }
@@ -153,14 +153,14 @@ func (m *MockState) TotalAccounts() int32 {
 }
 
 func (m *MockState) TotalPower() int64 {
-	p := int64(0)
+	power := int64(0)
 	m.TestStore.IterateValidators(func(val *validator.Validator) bool {
-		p += val.Power()
+		power += val.Power()
 
 		return false
 	})
 
-	return p
+	return power
 }
 
 func (m *MockState) CommitteePower() int64 {
@@ -176,11 +176,11 @@ func (m *MockState) CommittedBlock(height uint32) *store.CommittedBlock {
 	return b
 }
 
-func (m *MockState) CommittedTx(id tx.ID) *store.CommittedTx {
+func (m *MockState) CommittedTx(txID tx.ID) *store.CommittedTx {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
-	trx, _ := m.TestStore.Transaction(id)
+	trx, _ := m.TestStore.Transaction(txID)
 
 	return trx
 }
@@ -227,8 +227,8 @@ func (m *MockState) ValidatorByNumber(n int32) *validator.Validator {
 	return v
 }
 
-func (m *MockState) PendingTx(id tx.ID) *tx.Tx {
-	return m.TestPool.PendingTx(id)
+func (m *MockState) PendingTx(txID tx.ID) *tx.Tx {
+	return m.TestPool.PendingTx(txID)
 }
 
 func (m *MockState) AddPendingTx(trx *tx.Tx) error {

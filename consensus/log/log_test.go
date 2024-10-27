@@ -24,20 +24,20 @@ func TestAddValidVote(t *testing.T) {
 	cmt, valKeys := ts.GenerateTestCommittee(4)
 	log := NewLog()
 	log.MoveToNewHeight(cmt.Validators())
-	h := ts.RandHeight()
-	r := ts.RandRound()
+	height := ts.RandHeight()
+	round := ts.RandRound()
 
-	prepares := log.PrepareVoteSet(r)
-	precommits := log.PrecommitVoteSet(r)
-	preVotes := log.CPPreVoteVoteSet(r)
-	mainVotes := log.CPMainVoteVoteSet(r)
+	prepares := log.PrepareVoteSet(round)
+	precommits := log.PrecommitVoteSet(round)
+	preVotes := log.CPPreVoteVoteSet(round)
+	mainVotes := log.CPMainVoteVoteSet(round)
 
-	v1 := vote.NewPrepareVote(ts.RandHash(), h, r, valKeys[0].Address())
-	v2 := vote.NewPrecommitVote(ts.RandHash(), h, r, valKeys[0].Address())
-	v3 := vote.NewCPPreVote(ts.RandHash(), h, r, 0, vote.CPValueYes, &vote.JustInitYes{}, valKeys[0].Address())
-	v4 := vote.NewCPMainVote(ts.RandHash(), h, r, 0, vote.CPValueNo, &vote.JustInitYes{}, valKeys[0].Address())
+	vote1 := vote.NewPrepareVote(ts.RandHash(), height, round, valKeys[0].Address())
+	vote2 := vote.NewPrecommitVote(ts.RandHash(), height, round, valKeys[0].Address())
+	vote3 := vote.NewCPPreVote(ts.RandHash(), height, round, 0, vote.CPValueYes, &vote.JustInitYes{}, valKeys[0].Address())
+	vote4 := vote.NewCPMainVote(ts.RandHash(), height, round, 0, vote.CPValueNo, &vote.JustInitYes{}, valKeys[0].Address())
 
-	for _, v := range []*vote.Vote{v1, v2, v3, v4} {
+	for _, v := range []*vote.Vote{vote1, vote2, vote3, vote4} {
 		ts.HelperSignVote(valKeys[0], v)
 
 		added, err := log.AddVote(v)
@@ -45,16 +45,16 @@ func TestAddValidVote(t *testing.T) {
 		assert.True(t, added)
 	}
 
-	assert.True(t, log.HasVote(v1.Hash()))
-	assert.True(t, log.HasVote(v2.Hash()))
-	assert.True(t, log.HasVote(v3.Hash()))
-	assert.True(t, log.HasVote(v4.Hash()))
+	assert.True(t, log.HasVote(vote1.Hash()))
+	assert.True(t, log.HasVote(vote2.Hash()))
+	assert.True(t, log.HasVote(vote3.Hash()))
+	assert.True(t, log.HasVote(vote4.Hash()))
 	assert.False(t, log.HasVote(ts.RandHash()))
 
-	assert.Contains(t, prepares.AllVotes(), v1)
-	assert.Contains(t, precommits.AllVotes(), v2)
-	assert.Contains(t, preVotes.AllVotes(), v3)
-	assert.Contains(t, mainVotes.AllVotes(), v4)
+	assert.Contains(t, prepares.AllVotes(), vote1)
+	assert.Contains(t, precommits.AllVotes(), vote2)
+	assert.Contains(t, preVotes.AllVotes(), vote3)
+	assert.Contains(t, mainVotes.AllVotes(), vote4)
 }
 
 func TestAddInvalidVoteType(t *testing.T) {
@@ -79,17 +79,18 @@ func TestAddInvalidVoteType(t *testing.T) {
 func TestSetRoundProposal(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	cmt, _ := ts.GenerateTestCommittee(4)
-	prop, _ := ts.GenerateTestProposal(101, 0)
+	height := ts.RandHeight()
+	round := ts.RandRound()
+
+	cmt, _ := ts.GenerateTestCommittee(7)
+	prop := ts.GenerateTestProposal(height, round)
 	log := NewLog()
 	log.MoveToNewHeight(cmt.Validators())
-	log.SetRoundProposal(4, prop)
-	assert.False(t, log.HasRoundProposal(0))
-	assert.True(t, log.HasRoundProposal(4))
-	assert.True(t, log.HasRoundProposal(4))
-	assert.Nil(t, log.RoundProposal(0))
-	assert.Nil(t, log.RoundProposal(5))
-	assert.Equal(t, prop.Hash(), log.RoundProposal(4).Hash())
+	log.SetRoundProposal(round, prop)
+	assert.False(t, log.HasRoundProposal(round+1))
+	assert.True(t, log.HasRoundProposal(round))
+	assert.Nil(t, log.RoundProposal(round+1))
+	assert.Equal(t, prop.Hash(), log.RoundProposal(round).Hash())
 }
 
 func TestCanVote(t *testing.T) {

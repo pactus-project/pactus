@@ -21,16 +21,16 @@ func TestSliceToInt16(t *testing.T) {
 		{MaxInt16, []byte{0xff, 0x7f}},
 	}
 
-	for _, test := range tests {
-		s1 := Uint16ToSlice(uint16(test.in))
-		s2 := Int16ToSlice(test.in)
+	for _, tt := range tests {
+		s1 := Uint16ToSlice(uint16(tt.in))
+		s2 := Int16ToSlice(tt.in)
 		assert.Equal(t, s1, s2)
-		assert.Equal(t, test.slice, s1)
+		assert.Equal(t, tt.slice, s1)
 
-		v1 := SliceToInt16(test.slice)
-		v2 := SliceToUint16(test.slice)
+		v1 := SliceToInt16(tt.slice)
+		v2 := SliceToUint16(tt.slice)
 		assert.Equal(t, int16(v2), v1)
-		assert.Equal(t, test.in, v1)
+		assert.Equal(t, tt.in, v1)
 	}
 }
 
@@ -48,16 +48,16 @@ func TestSliceToInt32(t *testing.T) {
 		{MaxInt32, []byte{0xff, 0xff, 0xff, 0x7f}},
 	}
 
-	for _, test := range tests {
-		s1 := Uint32ToSlice(uint32(test.in))
-		s2 := Int32ToSlice(test.in)
+	for _, tt := range tests {
+		s1 := Uint32ToSlice(uint32(tt.in))
+		s2 := Int32ToSlice(tt.in)
 		assert.Equal(t, s1, s2)
-		assert.Equal(t, test.slice, s1)
+		assert.Equal(t, tt.slice, s1)
 
-		v1 := SliceToInt32(test.slice)
-		v2 := SliceToUint32(test.slice)
+		v1 := SliceToInt32(tt.slice)
+		v2 := SliceToUint32(tt.slice)
 		assert.Equal(t, int32(v2), v1)
-		assert.Equal(t, test.in, v1)
+		assert.Equal(t, tt.in, v1)
 	}
 }
 
@@ -75,16 +75,16 @@ func TestSliceToInt64(t *testing.T) {
 		{MaxInt64, []byte{0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f}},
 	}
 
-	for _, test := range tests {
-		s1 := Uint64ToSlice(uint64(test.in))
-		s2 := Int64ToSlice(test.in)
+	for _, tt := range tests {
+		s1 := Uint64ToSlice(uint64(tt.in))
+		s2 := Int64ToSlice(tt.in)
 		assert.Equal(t, s1, s2)
-		assert.Equal(t, test.slice, s1)
+		assert.Equal(t, tt.slice, s1)
 
-		v1 := SliceToInt64(test.slice)
-		v2 := SliceToUint64(test.slice)
+		v1 := SliceToInt64(tt.slice)
+		v2 := SliceToUint64(tt.slice)
 		assert.Equal(t, int64(v2), v1)
-		assert.Equal(t, test.in, v1)
+		assert.Equal(t, tt.in, v1)
 	}
 }
 
@@ -98,14 +98,14 @@ func TestCompress(t *testing.T) {
 }
 
 func TestDecompress(t *testing.T) {
-	d, _ := hex.DecodeString(
+	data, _ := hex.DecodeString(
 		"1f8b08000000000000ff5accb8929191492afefe9620e60805060280254221ac2238cb57f8d6da3ecfc47b617bd47bf80fbe503b11b7aef3" +
 			"85a6c0ba159a2142ac110a1d8f2e447cd46a3f3d71d6fc5c9eac45377ec4efffa0b76c33bb1377fead15f5cdf7d9085bc44e58094784c216" +
 			"9fcd92c947ee35a43a49ff5d57b563eeaad9415b8ed6d685bd72aaf9afd3b5898b334455a26edf71fd634957941ead7f15ad5fe0e96517ce" +
 			"f48d79216323616702020000ffffa63359ef1b010000")
-	_, err := DecompressBuffer(d[1:])
+	_, err := DecompressBuffer(data[1:])
 	assert.Error(t, err)
-	_, err = DecompressBuffer(d)
+	_, err = DecompressBuffer(data)
 	assert.NoError(t, err)
 }
 
@@ -199,9 +199,9 @@ func TestMerge(t *testing.T) {
 		{[][]byte{{0}, {1}, {2}}, []byte{0, 1, 2}},
 	}
 
-	for _, test := range tests {
-		merged := Merge(test.slices...)
-		assert.Equal(t, test.merged, merged)
+	for _, tt := range tests {
+		merged := Merge(tt.slices...)
+		assert.Equal(t, tt.merged, merged)
 	}
 }
 
@@ -216,14 +216,14 @@ func TestReverse(t *testing.T) {
 		{[]byte{1, 2}, []byte{2, 1}},
 	}
 
-	for _, test := range tests {
-		Reverse(test.slice)
-		assert.Equal(t, test.slice, test.reversed)
+	for _, tt := range tests {
+		Reverse(tt.slice)
+		assert.Equal(t, tt.slice, tt.reversed)
 	}
 }
 
 func TestExtendSlice(t *testing.T) {
-	cases := []struct {
+	tests := []struct {
 		in   []int
 		size int
 		want []int
@@ -234,10 +234,10 @@ func TestExtendSlice(t *testing.T) {
 		{[]int{}, 5, []int{0, 0, 0, 0, 0}},
 	}
 
-	for _, c := range cases {
-		inCopy := c.in
-		inCopy = Extend(inCopy, c.size)
-		assert.Equal(t, c.want, inCopy, "ExtendSlice(%v, %v) == %v, want %v", c.in, c.size, c.in, c.want)
+	for _, tt := range tests {
+		inCopy := tt.in
+		inCopy = Extend(inCopy, tt.size)
+		assert.Equal(t, tt.want, inCopy, "ExtendSlice(%v, %v) == %v, want %v", tt.in, tt.size, tt.in, tt.want)
 	}
 }
 
@@ -273,9 +273,9 @@ func TestStringToBytes(t *testing.T) {
 		{"", []byte("")},
 	}
 
-	for _, test := range tests {
-		got := StringToBytes(test.input)
-		assert.Equal(t, test.output, got, "StringToBytes('%s') =  %v, want %v", test.input, got, test.output)
+	for _, tt := range tests {
+		got := StringToBytes(tt.input)
+		assert.Equal(t, tt.output, got, "StringToBytes('%s') =  %v, want %v", tt.input, got, tt.output)
 	}
 }
 

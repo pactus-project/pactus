@@ -76,7 +76,7 @@ func makeConsensus(
 	broadcaster broadcaster,
 	mediator mediator,
 ) *consensus {
-	cs := &consensus{
+	cons := &consensus{
 		config:      conf,
 		bcState:     bcState,
 		broadcaster: broadcaster,
@@ -84,34 +84,34 @@ func makeConsensus(
 	}
 
 	// Update height later, See enterNewHeight.
-	cs.log = log.NewLog()
-	cs.logger = logger.NewSubLogger("_consensus", cs)
-	cs.rewardAddr = rewardAddr
+	cons.log = log.NewLog()
+	cons.logger = logger.NewSubLogger("_consensus", cons)
+	cons.rewardAddr = rewardAddr
 
-	cs.changeProposer = &changeProposer{cs}
-	cs.newHeightState = &newHeightState{cs}
-	cs.proposeState = &proposeState{cs}
-	cs.prepareState = &prepareState{cs, false}
-	cs.precommitState = &precommitState{cs, false}
-	cs.commitState = &commitState{cs}
-	cs.cpPreVoteState = &cpPreVoteState{cs.changeProposer}
-	cs.cpMainVoteState = &cpMainVoteState{cs.changeProposer}
-	cs.cpDecideState = &cpDecideState{cs.changeProposer}
-	cs.currentState = cs.newHeightState
-	cs.mediator = mediator
+	cons.changeProposer = &changeProposer{cons}
+	cons.newHeightState = &newHeightState{cons}
+	cons.proposeState = &proposeState{cons}
+	cons.prepareState = &prepareState{cons, false}
+	cons.precommitState = &precommitState{cons, false}
+	cons.commitState = &commitState{cons}
+	cons.cpPreVoteState = &cpPreVoteState{cons.changeProposer}
+	cons.cpMainVoteState = &cpMainVoteState{cons.changeProposer}
+	cons.cpDecideState = &cpDecideState{cons.changeProposer}
+	cons.currentState = cons.newHeightState
+	cons.mediator = mediator
 
-	cs.height = 0
-	cs.round = 0
-	cs.active = false
-	cs.mediator = mediator
+	cons.height = 0
+	cons.round = 0
+	cons.active = false
+	cons.mediator = mediator
 
-	mediator.Register(cs)
+	mediator.Register(cons)
 
 	logger.Info("consensus instance created",
 		"validator address", valKey.Address().String(),
 		"reward address", rewardAddr.String())
 
-	return cs
+	return cons
 }
 
 func (cs *consensus) Start() {
@@ -184,34 +184,34 @@ func (cs *consensus) moveToNewHeight() {
 }
 
 func (cs *consensus) scheduleTimeout(duration time.Duration, height uint32, round int16, target tickerTarget) {
-	ti := &ticker{duration, height, round, target}
+	ticker := &ticker{duration, height, round, target}
 	timer := time.NewTimer(duration)
 	cs.logger.Trace("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
 
 	go func() {
 		<-timer.C
-		cs.handleTimeout(ti)
+		cs.handleTimeout(ticker)
 	}()
 }
 
-func (cs *consensus) handleTimeout(t *ticker) {
+func (cs *consensus) handleTimeout(ticker *ticker) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.logger.Trace("handle ticker", "ticker", t)
+	cs.logger.Trace("handle ticker", "ticker", ticker)
 
 	// Old tickers might be triggered now. Ignore them.
-	if cs.height != t.Height || cs.round != t.Round {
-		cs.logger.Trace("stale ticker", "ticker", t)
+	if cs.height != ticker.Height || cs.round != ticker.Round {
+		cs.logger.Trace("stale ticker", "ticker", ticker)
 
 		return
 	}
 
-	cs.logger.Debug("timer expired", "ticker", t)
-	cs.currentState.onTimeout(t)
+	cs.logger.Debug("timer expired", "ticker", ticker)
+	cs.currentState.onTimeout(ticker)
 }
 
-func (cs *consensus) SetProposal(p *proposal.Proposal) {
+func (cs *consensus) SetProposal(prop *proposal.Proposal) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
@@ -219,62 +219,62 @@ func (cs *consensus) SetProposal(p *proposal.Proposal) {
 		return
 	}
 
-	if p.Height() != cs.height {
+	if prop.Height() != cs.height {
 		return
 	}
 
-	if p.Round() < cs.round {
-		cs.logger.Debug("proposal for expired round", "proposal", p)
-
-		return
-	}
-
-	if err := p.BasicCheck(); err != nil {
-		cs.logger.Warn("invalid proposal", "proposal", p, "error", err)
+	if prop.Round() < cs.round {
+		cs.logger.Debug("proposal for expired round", "proposal", prop)
 
 		return
 	}
 
-	roundProposal := cs.log.RoundProposal(p.Round())
+	if err := prop.BasicCheck(); err != nil {
+		cs.logger.Warn("invalid proposal", "proposal", prop, "error", err)
+
+		return
+	}
+
+	roundProposal := cs.log.RoundProposal(prop.Round())
 	if roundProposal != nil {
-		cs.logger.Trace("this round has proposal", "proposal", p)
+		cs.logger.Trace("this round has proposal", "proposal", prop)
 
 		return
 	}
 
-	if p.Height() == cs.bcState.LastBlockHeight() {
+	if prop.Height() == cs.bcState.LastBlockHeight() {
 		// A slow node might receive a proposal after committing the proposed block.
 		// In this case, we accept the proposal and allow nodes to continue.
 		// By doing so, we enable the validator to broadcast its votes and
 		// prevent it from being marked as absent in the block certificate.
-		cs.logger.Warn("block committed before receiving proposal", "proposal", p)
-		if p.Block().Hash() != cs.bcState.LastBlockHash() {
-			cs.logger.Warn("proposal is not for the committed block", "proposal", p)
+		cs.logger.Warn("block committed before receiving proposal", "proposal", prop)
+		if prop.Block().Hash() != cs.bcState.LastBlockHash() {
+			cs.logger.Warn("proposal is not for the committed block", "proposal", prop)
 
 			return
 		}
 	} else {
-		proposer := cs.proposer(p.Round())
-		if err := p.Verify(proposer.PublicKey()); err != nil {
-			cs.logger.Warn("proposal is invalid", "proposal", p, "error", err)
+		proposer := cs.proposer(prop.Round())
+		if err := prop.Verify(proposer.PublicKey()); err != nil {
+			cs.logger.Warn("proposal is invalid", "proposal", prop, "error", err)
 
 			return
 		}
 
-		if err := cs.bcState.ValidateBlock(p.Block(), p.Round()); err != nil {
-			cs.logger.Warn("invalid block", "proposal", p, "error", err)
+		if err := cs.bcState.ValidateBlock(prop.Block(), prop.Round()); err != nil {
+			cs.logger.Warn("invalid block", "proposal", prop, "error", err)
 
 			return
 		}
 	}
 
-	cs.logger.Info("proposal set", "proposal", p)
-	cs.log.SetRoundProposal(p.Round(), p)
+	cs.logger.Info("proposal set", "proposal", prop)
+	cs.log.SetRoundProposal(prop.Round(), prop)
 
-	cs.currentState.onSetProposal(p)
+	cs.currentState.onSetProposal(prop)
 }
 
-func (cs *consensus) AddVote(v *vote.Vote) {
+func (cs *consensus) AddVote(vte *vote.Vote) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
@@ -282,39 +282,39 @@ func (cs *consensus) AddVote(v *vote.Vote) {
 		return
 	}
 
-	if v.Height() != cs.height {
+	if vte.Height() != cs.height {
 		return
 	}
 
-	if v.Round() < cs.round {
-		cs.logger.Debug("vote for expired round", "vote", v)
+	if vte.Round() < cs.round {
+		cs.logger.Debug("vote for expired round", "vote", vte)
 
 		return
 	}
 
-	if v.Type() == vote.VoteTypeCPPreVote ||
-		v.Type() == vote.VoteTypeCPMainVote ||
-		v.Type() == vote.VoteTypeCPDecided {
-		err := cs.changeProposer.checkJust(v)
+	if vte.Type() == vote.VoteTypeCPPreVote ||
+		vte.Type() == vote.VoteTypeCPMainVote ||
+		vte.Type() == vote.VoteTypeCPDecided {
+		err := cs.changeProposer.checkJust(vte)
 		if err != nil {
-			cs.logger.Error("error on adding a cp vote", "vote", v, "error", err)
+			cs.logger.Error("error on adding a cp vote", "vote", vte, "error", err)
 
 			return
 		}
 	}
 
-	added, err := cs.log.AddVote(v)
+	added, err := cs.log.AddVote(vte)
 	if err != nil {
-		cs.logger.Error("error on adding a vote", "vote", v, "error", err)
+		cs.logger.Error("error on adding a vote", "vote", vte, "error", err)
 	}
 	if added {
-		cs.logger.Info("new vote added", "vote", v)
+		cs.logger.Info("new vote added", "vote", vte)
 
-		cs.currentState.onAddVote(v)
+		cs.currentState.onAddVote(vte)
 
-		if v.Type() == vote.VoteTypeCPDecided {
-			if v.Round() > cs.round {
-				cs.changeProposer.cpDecide(v.Round(), v.CPValue())
+		if vte.Type() == vote.VoteTypeCPDecided {
+			if vte.Round() > cs.round {
+				cs.changeProposer.cpDecide(vte.Round(), vte.CPValue())
 			}
 		}
 	}
@@ -369,16 +369,16 @@ func (cs *consensus) signAddPrecommitVote(h hash.Hash) {
 	cs.signAddVote(v)
 }
 
-func (cs *consensus) signAddVote(v *vote.Vote) {
-	sig := cs.valKey.Sign(v.SignBytes())
-	v.SetSignature(sig)
-	cs.logger.Info("our vote signed and broadcasted", "vote", v)
+func (cs *consensus) signAddVote(vte *vote.Vote) {
+	sig := cs.valKey.Sign(vte.SignBytes())
+	vte.SetSignature(sig)
+	cs.logger.Info("our vote signed and broadcasted", "vote", vte)
 
-	_, err := cs.log.AddVote(v)
+	_, err := cs.log.AddVote(vte)
 	if err != nil {
-		cs.logger.Warn("error on adding our vote", "error", err, "vote", v)
+		cs.logger.Warn("error on adding our vote", "error", err, "vote", vte)
 	}
-	cs.broadcastVote(v)
+	cs.broadcastVote(vte)
 }
 
 // queryProposal requests any missing proposal from other validators.
@@ -430,9 +430,9 @@ func (cs *consensus) signersInfo(votes map[crypto.Address]*vote.Vote) ([]int32, 
 	sigs := make([]*bls.Signature, 0)
 
 	for i, val := range vals {
-		vte := votes[val.Address()]
-		if vte != nil {
-			sigs = append(sigs, vte.Signature())
+		vote := votes[val.Address()]
+		if vote != nil {
+			sigs = append(sigs, vote.Signature())
 		} else {
 			absentees = append(absentees, val.Number())
 		}

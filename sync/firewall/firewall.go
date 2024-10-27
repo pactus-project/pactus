@@ -31,7 +31,7 @@ type Firewall struct {
 	logger               *logger.SubLogger
 }
 
-func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st state.Facade,
+func NewFirewall(conf *Config, network network.Network, peerSet *peerset.PeerSet, state state.Facade,
 	log *logger.SubLogger,
 ) (*Firewall, error) {
 	blocker, err := ipblocker.New(conf.BannedNets)
@@ -45,9 +45,9 @@ func NewFirewall(conf *Config, net network.Network, peerSet *peerset.PeerSet, st
 
 	return &Firewall{
 		config:               conf,
-		network:              net,
+		network:              network,
 		peerSet:              peerSet,
-		state:                st,
+		state:                state,
 		ipBlocker:            blocker,
 		blockRateLimit:       blockRateLimit,
 		transactionRateLimit: transactionRateLimit,
@@ -110,23 +110,23 @@ func (f *Firewall) OpenStreamBundle(r io.Reader, from peer.ID) (*bundle.Bundle, 
 func (f *Firewall) openBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error) {
 	f.peerSet.UpdateLastReceived(from)
 
-	p := f.peerSet.GetPeer(from)
-	if p.Status.IsBanned() {
+	peer := f.peerSet.GetPeer(from)
+	if peer.Status.IsBanned() {
 		f.closeConnection(from)
 
 		return nil, PeerBannedError{
-			PeerID:  p.PeerID,
-			Address: p.Address,
+			PeerID:  peer.PeerID,
+			Address: peer.Address,
 		}
 	}
 
-	if f.IsBannedAddress(p.Address) {
+	if f.IsBannedAddress(peer.Address) {
 		f.closeConnection(from)
 		f.peerSet.UpdateStatus(from, status.StatusBanned)
 
 		return nil, PeerBannedError{
-			PeerID:  p.PeerID,
-			Address: p.Address,
+			PeerID:  peer.PeerID,
+			Address: peer.Address,
 		}
 	}
 

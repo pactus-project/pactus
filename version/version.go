@@ -34,7 +34,7 @@ type Version struct {
 // The format should be "Major.Minor.Patch-Meta", where Meta is optional.
 // Returns the parsed Version struct and an error if parsing fails.
 func ParseVersion(versionStr string) (Version, error) {
-	var v Version
+	var ver Version
 
 	if versionStr[0] == 'v' {
 		versionStr = versionStr[1:]
@@ -42,40 +42,40 @@ func ParseVersion(versionStr string) (Version, error) {
 	// Split the version string into parts
 	parts := strings.Split(versionStr, ".")
 	if len(parts) != 3 {
-		return v, errors.New("invalid version format")
+		return ver, errors.New("invalid version format")
 	}
 
 	// Parse Major version
 	major, err := strconv.ParseUint(parts[0], 10, 64)
 	if err != nil {
-		return v, fmt.Errorf("failed to parse Major version: %w", err)
+		return ver, fmt.Errorf("failed to parse Major version: %w", err)
 	}
-	v.Major = uint(major)
+	ver.Major = uint(major)
 
 	// Parse Minor version
 	minor, err := strconv.ParseUint(parts[1], 10, 64)
 	if err != nil {
-		return v, fmt.Errorf("failed to parse Minor version: %w", err)
+		return ver, fmt.Errorf("failed to parse Minor version: %w", err)
 	}
-	v.Minor = uint(minor)
+	ver.Minor = uint(minor)
 
 	// Parse Patch version and Meta (if present)
 	patchMeta := strings.Split(parts[2], "-")
 	if len(patchMeta) > 2 {
-		return v, errors.New("invalid Patch and Meta format")
+		return ver, errors.New("invalid Patch and Meta format")
 	}
 
 	patch, err := strconv.ParseUint(patchMeta[0], 10, 64)
 	if err != nil {
-		return v, fmt.Errorf("failed to parse Patch version: %w", err)
+		return ver, fmt.Errorf("failed to parse Patch version: %w", err)
 	}
-	v.Patch = uint(patch)
+	ver.Patch = uint(patch)
 
 	if len(patchMeta) == 2 {
-		v.Meta = patchMeta[1]
+		ver.Meta = patchMeta[1]
 	}
 
-	return v, nil
+	return ver, nil
 }
 
 // StringWithAlias returns a string representation of the Version object with the alias.

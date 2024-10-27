@@ -263,15 +263,15 @@ func (wm *Manager) ListWallet() ([]string, error) {
 		return nil, err
 	}
 
-	for _, f := range files {
-		_, err = Open(f, true)
+	for _, file := range files {
+		_, err = Open(file, true)
 		if err != nil {
-			logger.Warn(fmt.Sprintf("file %s is not wallet", f))
+			logger.Warn(fmt.Sprintf("file %s is not wallet", file))
 
 			continue
 		}
 
-		wallets = append(wallets, filepath.Base(f))
+		wallets = append(wallets, filepath.Base(file))
 	}
 
 	return wallets, nil

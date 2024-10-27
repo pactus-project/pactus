@@ -8,21 +8,21 @@ import (
 )
 
 type UnbondExecutor struct {
-	sb        sandbox.Sandbox
+	sbx       sandbox.Sandbox
 	pld       *payload.UnbondPayload
 	validator *validator.Validator
 }
 
-func newUnbondExecutor(trx *tx.Tx, sb sandbox.Sandbox) (*UnbondExecutor, error) {
+func newUnbondExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*UnbondExecutor, error) {
 	pld := trx.Payload().(*payload.UnbondPayload)
 
-	val := sb.Validator(pld.Signer())
+	val := sbx.Validator(pld.Signer())
 	if val == nil {
 		return nil, ValidatorNotFoundError{Address: pld.Validator}
 	}
 
 	return &UnbondExecutor{
-		sb:        sb,
+		sbx:       sbx,
 		pld:       pld,
 		validator: val,
 	}, nil
@@ -38,7 +38,7 @@ func (e *UnbondExecutor) Check(strict bool) error {
 		// validator is in the committee.
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
-		if e.sb.Committee().Contains(e.pld.Validator) {
+		if e.sbx.Committee().Contains(e.pld.Validator) {
 			return ErrValidatorInCommittee
 		}
 
@@ -46,7 +46,7 @@ func (e *UnbondExecutor) Check(strict bool) error {
 		// going to be in the committee for the next height.
 		// In non-strict mode, they are added to the transaction pool and
 		// processed once eligible.
-		if e.sb.IsJoinedCommittee(e.pld.Validator) {
+		if e.sbx.IsJoinedCommittee(e.pld.Validator) {
 			return ErrValidatorInCommittee
 		}
 	}
@@ -56,10 +56,10 @@ func (e *UnbondExecutor) Check(strict bool) error {
 
 func (e *UnbondExecutor) Execute() {
 	unbondedPower := e.validator.Power()
-	e.validator.UpdateUnbondingHeight(e.sb.CurrentHeight())
+	e.validator.UpdateUnbondingHeight(e.sbx.CurrentHeight())
 
 	// The validator's power is reduced to zero,
 	// so we update the power delta with the negative value of the validator's power.
-	e.sb.UpdatePowerDelta(-1 * unbondedPower)
-	e.sb.UpdateValidator(e.validator)
+	e.sbx.UpdatePowerDelta(-1 * unbondedPower)
+	e.sbx.UpdateValidator(e.validator)
 }

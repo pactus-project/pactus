@@ -62,16 +62,16 @@ func TestCacheIsFull(t *testing.T) {
 
 	cache, _ := NewCache(10)
 
-	i := int32(0)
-	for ; i < 10; i++ {
-		blk, _ := ts.GenerateTestBlock(uint32(i + 1))
+	height := uint32(0)
+	for ; height < 10; height++ {
+		blk, _ := ts.GenerateTestBlock(height + 1)
 		cache.AddBlock(blk)
 	}
 
-	newBlock, _ := ts.GenerateTestBlock(uint32(i + 1))
+	newBlock, _ := ts.GenerateTestBlock(height + 1)
 	cache.AddBlock(newBlock)
 
-	assert.NotNil(t, cache.GetBlock(uint32(i+1)))
+	assert.NotNil(t, cache.GetBlock(height+1))
 	assert.Nil(t, cache.GetBlock(1))
 }
 

@@ -143,14 +143,14 @@ func (c *grpcClient) sendTx(trx *tx.Tx) (tx.ID, error) {
 }
 
 // TODO: check the return value type.
-func (c *grpcClient) getTransaction(id tx.ID) (*pactus.GetTransactionResponse, error) {
+func (c *grpcClient) getTransaction(txID tx.ID) (*pactus.GetTransactionResponse, error) {
 	if err := c.connect(); err != nil {
 		return nil, err
 	}
 
 	res, err := c.transactionClient.GetTransaction(c.ctx,
 		&pactus.GetTransactionRequest{
-			Id:        id.String(),
+			Id:        txID.String(),
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
 		})
 	if err != nil {

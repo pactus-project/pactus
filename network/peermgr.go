@@ -37,7 +37,7 @@ type peerMgr struct {
 }
 
 // newPeerMgr creates a new Peer Manager instance.
-func newPeerMgr(ctx context.Context, h lp2phost.Host,
+func newPeerMgr(ctx context.Context, host lp2phost.Host,
 	conf *Config, log *logger.SubLogger,
 ) *peerMgr {
 	peerStore, err := loadPeerStore(conf.PeerStorePath)
@@ -57,18 +57,18 @@ func newPeerMgr(ctx context.Context, h lp2phost.Host,
 		}
 	}
 
-	pm := &peerMgr{
+	mgr := &peerMgr{
 		ctx:           ctx,
 		minConns:      conf.MinConns(),
 		peers:         peers,
 		peerStorePath: conf.PeerStorePath,
-		host:          h,
+		host:          host,
 		logger:        log,
 	}
 
-	log.Info("peer manager created", "minConns", pm.minConns)
+	log.Info("peer manager created", "minConns", mgr.minConns)
 
-	return pm
+	return mgr
 }
 
 // Start starts the Peer  Manager.
@@ -139,16 +139,16 @@ func (mgr *peerMgr) SetPeerDisconnected(pid lp2ppeer.ID) {
 }
 
 func (mgr *peerMgr) setPeerDisconnected(pid lp2ppeer.ID) {
-	pi, exists := mgr.peers[pid]
+	peerInfo, exists := mgr.peers[pid]
 	if !exists {
 		return
 	}
 
-	if !pi.Connected {
+	if !peerInfo.Connected {
 		return
 	}
 
-	switch pi.Direction {
+	switch peerInfo.Direction {
 	case lp2pnet.DirInbound:
 		mgr.numInbound--
 
@@ -159,8 +159,8 @@ func (mgr *peerMgr) setPeerDisconnected(pid lp2ppeer.ID) {
 		//
 	}
 
-	pi.Connected = false
-	pi.Direction = lp2pnet.DirUnknown
+	peerInfo.Connected = false
+	peerInfo.Direction = lp2pnet.DirUnknown
 }
 
 // CheckConnectivity performs the actual work of maintaining connections.
@@ -190,22 +190,22 @@ func (mgr *peerMgr) CheckConnectivity() {
 			"numConnected", numConnected,
 			"min", mgr.minConns)
 
-		for id, pi := range mgr.peers {
+		for pid, info := range mgr.peers {
 			// preventing self dialing.
-			if id == mgr.host.ID() {
+			if pid == mgr.host.ID() {
 				continue
 			}
 
-			mgr.logger.Debug("try connecting to a bootstrap peer", "peer", id.String())
+			mgr.logger.Debug("try connecting to a bootstrap peer", "peer", pid.String())
 
 			// Don't try to connect to an already connected peer.
-			if pi.Connected {
+			if info.Connected {
 				continue
 			}
 
 			ai := lp2ppeer.AddrInfo{
-				ID:    id,
-				Addrs: []multiaddr.Multiaddr{pi.MultiAddress},
+				ID:    pid,
+				Addrs: []multiaddr.Multiaddr{info.MultiAddress},
 			}
 			ConnectAsync(mgr.ctx, mgr.host, ai, mgr.logger)
 		}
@@ -251,13 +251,13 @@ func loadPeerStore(path string) ([]lp2ppeer.AddrInfo, error) {
 		return peerStore, err
 	}
 
-	ps := make([]string, 0)
-	err = json.Unmarshal(data, &ps)
+	addrs := make([]string, 0)
+	err = json.Unmarshal(data, &addrs)
 	if err != nil {
 		return peerStore, err
 	}
 
-	peerStore, err = MakeAddrInfos(ps)
+	peerStore, err = MakeAddrInfos(addrs)
 	if err != nil {
 		return []lp2ppeer.AddrInfo{}, err
 	}

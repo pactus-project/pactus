@@ -21,13 +21,13 @@ func TestQueryProposal(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	h := uint32(2)
+	height := uint32(2)
 
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
 	td.queryProposalTimeout(td.consP)
 
-	td.shouldPublishQueryProposal(t, td.consP, h)
+	td.shouldPublishQueryProposal(t, td.consP, height)
 	td.shouldNotPublish(t, td.consP, message.TypeQueryVote)
 }
 
@@ -36,16 +36,16 @@ func TestQueryVote(t *testing.T) {
 
 	td.commitBlockForAllStates(t)
 	td.commitBlockForAllStates(t)
-	h := uint32(3)
-	r := int16(1)
+	height := uint32(3)
+	round := int16(1)
 
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
 
 	// consP is the proposer for this round, but there are not enough votes.
 	td.queryProposalTimeout(td.consP)
-	td.shouldPublishProposal(t, td.consP, h, r)
-	td.shouldPublishQueryVote(t, td.consP, h, r)
+	td.shouldPublishProposal(t, td.consP, height, round)
+	td.shouldPublishQueryVote(t, td.consP, height, round)
 	td.shouldNotPublish(t, td.consP, message.TypeQueryProposal)
 }
 

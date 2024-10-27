@@ -36,45 +36,45 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tm := newTableMaker()
-	tm.addRowString("Network Name", res.NetworkName)
-	tm.addRowInt("Connected Peers Count", int(res.ConnectedPeersCount))
-	metricToTable(tm, res.MetricInfo)
+	tmk := newTableMaker()
+	tmk.addRowString("Network Name", res.NetworkName)
+	tmk.addRowInt("Connected Peers Count", int(res.ConnectedPeersCount))
+	metricToTable(tmk, res.MetricInfo)
 
-	tm.addRowString("Peers", "---")
+	tmk.addRowString("Peers", "---")
 
 	sort.Slice(res.ConnectedPeers, func(i, j int) bool {
 		return res.ConnectedPeers[i].MetricInfo.TotalReceived.Bundles >
 			res.ConnectedPeers[j].MetricInfo.TotalReceived.Bundles
 	})
 
-	for i, p := range res.ConnectedPeers {
-		id, _ := hex.DecodeString(p.PeerId)
+	for index, peer := range res.ConnectedPeers {
+		id, _ := hex.DecodeString(peer.PeerId)
 		pid, _ := lp2ppeer.IDFromBytes(id)
-		tm.addRowInt("-- Peer #", i+1)
-		tm.addRowString("Status", status.Status(p.Status).String())
-		tm.addRowString("PeerID", pid.String())
-		tm.addRowString("Services", service.Services(p.Services).String())
-		tm.addRowString("Agent", p.Agent)
-		tm.addRowString("Moniker", p.Moniker)
-		tm.addRowString("Remote Address", p.Address)
-		tm.addRowString("Direction", p.Direction)
-		tm.addRowStrings("Protocols", p.Protocols)
-		tm.addRowString("LastSent", time.Unix(p.LastSent, 0).String())
-		tm.addRowString("LastReceived", time.Unix(p.LastReceived, 0).String())
-		tm.addRowBlockHash("Last block Hash", p.LastBlockHash)
-		tm.addRowInt("Height", int(p.Height))
-		tm.addRowInt("TotalSessions", int(p.TotalSessions))
-		tm.addRowInt("CompletedSessions", int(p.CompletedSessions))
-		metricToTable(tm, p.MetricInfo)
+		tmk.addRowInt("-- Peer #", index+1)
+		tmk.addRowString("Status", status.Status(peer.Status).String())
+		tmk.addRowString("PeerID", pid.String())
+		tmk.addRowString("Services", service.Services(peer.Services).String())
+		tmk.addRowString("Agent", peer.Agent)
+		tmk.addRowString("Moniker", peer.Moniker)
+		tmk.addRowString("Remote Address", peer.Address)
+		tmk.addRowString("Direction", peer.Direction)
+		tmk.addRowStrings("Protocols", peer.Protocols)
+		tmk.addRowString("LastSent", time.Unix(peer.LastSent, 0).String())
+		tmk.addRowString("LastReceived", time.Unix(peer.LastReceived, 0).String())
+		tmk.addRowBlockHash("Last block Hash", peer.LastBlockHash)
+		tmk.addRowInt("Height", int(peer.Height))
+		tmk.addRowInt("TotalSessions", int(peer.TotalSessions))
+		tmk.addRowInt("CompletedSessions", int(peer.CompletedSessions))
+		metricToTable(tmk, peer.MetricInfo)
 
-		for _, key := range p.ConsensusKeys {
+		for _, key := range peer.ConsensusKeys {
 			pub, _ := bls.PublicKeyFromString(key)
-			tm.addRowString("-- PublicKey", pub.String())
-			tm.addRowValAddress("-- Address", pub.ValidatorAddress().String())
+			tmk.addRowString("-- PublicKey", pub.String())
+			tmk.addRowValAddress("-- Address", pub.ValidatorAddress().String())
 		}
 	}
-	s.writeHTML(w, tm.html())
+	s.writeHTML(w, tmk.html())
 }
 
 func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
@@ -87,43 +87,43 @@ func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	id, _ := hex.DecodeString(res.PeerId)
-	sid, _ := lp2ppeer.IDFromBytes(id)
-	tm := newTableMaker()
-	tm.addRowString("Peer ID", sid.String())
-	tm.addRowString("Agent", res.Agent)
-	tm.addRowString("Moniker", res.Moniker)
-	tm.addRowTime("Started at", int64(res.StartedAt))
-	tm.addRowString("Reachability", res.Reachability)
-	tm.addRowFloat64("Clock Offset", res.ClockOffset)
-	tm.addRowInt("Services", int(res.Services))
-	tm.addRowString("Services Names", res.ServicesNames)
+	pid, _ := hex.DecodeString(res.PeerId)
+	sid, _ := lp2ppeer.IDFromBytes(pid)
+	tmk := newTableMaker()
+	tmk.addRowString("Peer ID", sid.String())
+	tmk.addRowString("Agent", res.Agent)
+	tmk.addRowString("Moniker", res.Moniker)
+	tmk.addRowTime("Started at", int64(res.StartedAt))
+	tmk.addRowString("Reachability", res.Reachability)
+	tmk.addRowFloat64("Clock Offset", res.ClockOffset)
+	tmk.addRowInt("Services", int(res.Services))
+	tmk.addRowString("Services Names", res.ServicesNames)
 
-	tm.addRowString("Connection Info", "---")
-	tm.addRowInt("-- Total connections", int(res.ConnectionInfo.Connections))
-	tm.addRowInt("-- Inbound connections", int(res.ConnectionInfo.InboundConnections))
-	tm.addRowInt("-- Outbound connections", int(res.ConnectionInfo.OutboundConnections))
+	tmk.addRowString("Connection Info", "---")
+	tmk.addRowInt("-- Total connections", int(res.ConnectionInfo.Connections))
+	tmk.addRowInt("-- Inbound connections", int(res.ConnectionInfo.InboundConnections))
+	tmk.addRowInt("-- Outbound connections", int(res.ConnectionInfo.OutboundConnections))
 
-	tm.addRowString("Protocols", "---")
+	tmk.addRowString("Protocols", "---")
 	for i, p := range res.Protocols {
-		tm.addRowString(fmt.Sprint(i), p)
+		tmk.addRowString(fmt.Sprint(i), p)
 	}
 
-	tm.addRowString("Local Addresses", "---")
+	tmk.addRowString("Local Addresses", "---")
 	for i, la := range res.LocalAddrs {
-		tm.addRowString(fmt.Sprint(i), la)
+		tmk.addRowString(fmt.Sprint(i), la)
 	}
 
-	s.writeHTML(w, tm.html())
+	s.writeHTML(w, tmk.html())
 }
 
-func metricToTable(tm *tableMaker, mi *pactus.MetricInfo) {
-	printCounter := func(tm *tableMaker, name string, c *pactus.CounterInfo) {
-		tm.addRowString(name,
-			fmt.Sprintf("[%d, %s]", c.Bundles, util.FormatBytesToHumanReadable(c.Bytes)))
+func metricToTable(tmk *tableMaker, metricInfo *pactus.MetricInfo) {
+	printCounter := func(tmk *tableMaker, name string, counterInfo *pactus.CounterInfo) {
+		tmk.addRowString(name,
+			fmt.Sprintf("[%d, %s]", counterInfo.Bundles, util.FormatBytesToHumanReadable(counterInfo.Bytes)))
 	}
 
-	printSortedMap := func(tm *tableMaker, msgCounter map[int32]*pactus.CounterInfo) {
+	printSortedMap := func(tmk *tableMaker, msgCounter map[int32]*pactus.CounterInfo) {
 		keys := make([]int32, 0, len(msgCounter))
 		for k := range msgCounter {
 			keys = append(keys, k)
@@ -134,17 +134,17 @@ func metricToTable(tm *tableMaker, mi *pactus.MetricInfo) {
 		})
 
 		for _, key := range keys {
-			printCounter(tm, message.Type(key).String(), msgCounter[key])
+			printCounter(tmk, message.Type(key).String(), msgCounter[key])
 		}
 	}
 
-	printCounter(tm, "Total Invalid", mi.TotalInvalid)
+	printCounter(tmk, "Total Invalid", metricInfo.TotalInvalid)
 
-	tm.addRowString("Sent Metric", "---")
-	printCounter(tm, "Total Sent", mi.TotalSent)
-	printSortedMap(tm, mi.MessageSent)
+	tmk.addRowString("Sent Metric", "---")
+	printCounter(tmk, "Total Sent", metricInfo.TotalSent)
+	printSortedMap(tmk, metricInfo.MessageSent)
 
-	tm.addRowString("Received Metric", "---")
-	printCounter(tm, "Total Received", mi.TotalReceived)
-	printSortedMap(tm, mi.MessageReceived)
+	tmk.addRowString("Received Metric", "---")
+	printCounter(tmk, "Total Received", metricInfo.TotalReceived)
+	printSortedMap(tmk, metricInfo.MessageReceived)
 }

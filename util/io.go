@@ -10,20 +10,20 @@ import (
 	"strings"
 )
 
-func IsAbsPath(p string) bool {
-	return filepath.IsAbs(p)
+func IsAbsPath(path string) bool {
+	return filepath.IsAbs(path)
 }
 
-func MakeAbs(p string) string {
-	if IsAbsPath(p) {
-		return p
+func MakeAbs(path string) string {
+	if IsAbsPath(path) {
+		return path
 	}
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
 
-	return filepath.Clean(filepath.Join(wd, p))
+	return filepath.Clean(filepath.Join(wd, path))
 }
 
 func ReadFile(filename string) ([]byte, error) {
@@ -42,17 +42,17 @@ func WriteFile(filename string, data []byte) error {
 	return nil
 }
 
-func Mkdir(dir string) error {
+func Mkdir(path string) error {
 	// create the directory
-	if err := os.MkdirAll(dir, 0o750); err != nil {
-		return fmt.Errorf("could not create directory %s", dir)
+	if err := os.MkdirAll(path, 0o750); err != nil {
+		return fmt.Errorf("could not create directory %s", path)
 	}
 
 	return nil
 }
 
-func PathExists(p string) bool {
-	_, err := os.Stat(p)
+func PathExists(path string) bool {
+	_, err := os.Stat(path)
 	if os.IsNotExist(err) {
 		return false
 	}
@@ -61,12 +61,12 @@ func PathExists(p string) bool {
 }
 
 func TempDirPath() string {
-	p, err := os.MkdirTemp("", "pactus*")
+	path, err := os.MkdirTemp("", "pactus*")
 	if err != nil {
 		panic(err)
 	}
 
-	return p
+	return path
 }
 
 func TempFilePath() string {
@@ -74,39 +74,39 @@ func TempFilePath() string {
 }
 
 // IsDirEmpty checks if a directory is empty.
-func IsDirEmpty(name string) bool {
-	f, err := os.Open(name)
+func IsDirEmpty(path string) bool {
+	file, err := os.Open(path)
 	if err != nil {
 		panic(err)
 	}
 	defer func() {
-		_ = f.Close()
+		_ = file.Close()
 	}()
 
 	// read in ONLY one file
-	_, err = f.Readdir(1)
+	_, err = file.Readdir(1)
 
 	// and if the file is EOF... well, the dir is empty.
 	return errors.Is(err, io.EOF)
 }
 
 // IsDirNotExistsOrEmpty checks if the path exists and, if so, whether the directory is empty.
-func IsDirNotExistsOrEmpty(name string) bool {
-	if !PathExists(name) {
+func IsDirNotExistsOrEmpty(path string) bool {
+	if !PathExists(path) {
 		return true
 	}
 
-	return IsDirEmpty(name)
+	return IsDirEmpty(path)
 }
 
-func IsValidDirPath(fp string) bool {
-	fi, err := os.Stat(fp)
+func IsValidDirPath(path string) bool {
+	fi, err := os.Stat(path)
 	if err == nil {
 		if fi.IsDir() {
-			if err := os.WriteFile(fp+"/test", []byte{}, 0o600); err != nil {
+			if err := os.WriteFile(path+"/test", []byte{}, 0o600); err != nil {
 				return false
 			}
-			_ = os.Remove(fp + "/test")
+			_ = os.Remove(path + "/test")
 
 			return true
 		}
@@ -114,10 +114,10 @@ func IsValidDirPath(fp string) bool {
 		return false
 	}
 
-	if err := Mkdir(fp); err != nil {
+	if err := Mkdir(path); err != nil {
 		return false
 	}
-	_ = os.Remove(fp)
+	_ = os.Remove(path)
 
 	return true
 }
@@ -136,14 +136,14 @@ type FixedWriter struct {
 // io.ErrShortWrite is returned and the writer is left unchanged.
 //
 // This satisfies the io.Writer interface.
-func (w *FixedWriter) Write(p []byte) (int, error) {
-	lenp := len(p)
+func (w *FixedWriter) Write(data []byte) (int, error) {
+	lenp := len(data)
 
 	if w.pos+lenp > cap(w.b) {
 		return 0, io.ErrShortWrite
 	}
 
-	w.pos += copy(w.b[w.pos:], p)
+	w.pos += copy(w.b[w.pos:], data)
 
 	return lenp, nil
 }
@@ -176,26 +176,26 @@ type FixedReader struct {
 //
 // This satisfies the io.Reader interface.
 func (fr *FixedReader) Read(p []byte) (int, error) {
-	n, err := fr.iobuf.Read(p)
+	count, err := fr.iobuf.Read(p)
 	if err != nil {
 		return 0, err
 	}
 
-	fr.pos += n
+	fr.pos += count
 
-	return n, nil
+	return count, nil
 }
 
 // NewFixedReader returns a new io.Reader that will error once more bytes than
 // the specified max have been read.
-func NewFixedReader(max int, buf []byte) *FixedReader {
-	b := make([]byte, max)
-	if buf != nil {
-		copy(b, buf)
+func NewFixedReader(max int, data []byte) *FixedReader {
+	buf := make([]byte, max)
+	if data != nil {
+		copy(buf, data)
 	}
 
-	iobuf := bytes.NewBuffer(b)
-	fr := FixedReader{b, 0, iobuf}
+	iobuf := bytes.NewBuffer(buf)
+	fr := FixedReader{buf, 0, iobuf}
 
 	return &fr
 }

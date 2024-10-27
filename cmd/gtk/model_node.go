@@ -10,8 +10,8 @@ type nodeModel struct {
 	node *node.Node
 }
 
-func newNodeModel(nde *node.Node) *nodeModel {
+func newNodeModel(node *node.Node) *nodeModel {
 	return &nodeModel{
-		node: nde,
+		node: node,
 	}
 }

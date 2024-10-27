@@ -69,25 +69,25 @@ func TestMakeConfig(t *testing.T) {
 }
 
 // captureOutput is a helper function to capture the printed output of a function.
-func captureOutput(f func()) string {
+func captureOutput(fun func()) string {
 	// Redirect stdout to a buffer
 	oldStdout := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
+	reader, writer, _ := os.Pipe()
+	os.Stdout = writer
 
 	// Capture the printed output
 	outC := make(chan string)
 	go func() {
 		var buf bytes.Buffer
-		_, _ = io.Copy(&buf, r)
+		_, _ = io.Copy(&buf, reader)
 		outC <- buf.String()
 	}()
 
 	// Execute the function
-	f()
+	fun()
 
 	// Reset stdout
-	_ = w.Close()
+	_ = writer.Close()
 	os.Stdout = oldStdout
 	out := <-outC
 
@@ -167,16 +167,16 @@ func TestPathsUnix(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
-		walletDir := PactusWalletDir(test.home)
-		defaultWalletPath := PactusDefaultWalletPath(test.home)
-		genesisPath := PactusGenesisPath(test.home)
-		configPath := PactusConfigPath(test.home)
+	for _, tt := range tests {
+		walletDir := PactusWalletDir(tt.home)
+		defaultWalletPath := PactusDefaultWalletPath(tt.home)
+		genesisPath := PactusGenesisPath(tt.home)
+		configPath := PactusConfigPath(tt.home)
 
-		assert.Equal(t, test.expectedWalletDir, walletDir)
-		assert.Equal(t, test.expectedDefaultWalletPath, defaultWalletPath)
-		assert.Equal(t, test.expectedGenesisPath, genesisPath)
-		assert.Equal(t, test.expectedConfigPath, configPath)
+		assert.Equal(t, tt.expectedWalletDir, walletDir)
+		assert.Equal(t, tt.expectedDefaultWalletPath, defaultWalletPath)
+		assert.Equal(t, tt.expectedGenesisPath, genesisPath)
+		assert.Equal(t, tt.expectedConfigPath, configPath)
 	}
 }
 
@@ -207,16 +207,16 @@ func TestPathsWindows(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
-		walletDir := PactusWalletDir(test.home)
-		defaultWalletPath := PactusDefaultWalletPath(test.home)
-		genesisPath := PactusGenesisPath(test.home)
-		configPath := PactusConfigPath(test.home)
+	for _, tt := range tests {
+		walletDir := PactusWalletDir(tt.home)
+		defaultWalletPath := PactusDefaultWalletPath(tt.home)
+		genesisPath := PactusGenesisPath(tt.home)
+		configPath := PactusConfigPath(tt.home)
 
-		assert.Equal(t, test.expectedWalletDir, walletDir)
-		assert.Equal(t, test.expectedDefaultWalletPath, defaultWalletPath)
-		assert.Equal(t, test.expectedGenesisPath, genesisPath)
-		assert.Equal(t, test.expectedConfigPath, configPath)
+		assert.Equal(t, tt.expectedWalletDir, walletDir)
+		assert.Equal(t, tt.expectedDefaultWalletPath, defaultWalletPath)
+		assert.Equal(t, tt.expectedGenesisPath, genesisPath)
+		assert.Equal(t, tt.expectedConfigPath, configPath)
 	}
 }
 
@@ -364,16 +364,16 @@ func TestCreateNode(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+	for _, tt := range tests {
 		validatorAddrs, rewardAddrs, err := CreateNode(
-			test.numValidators, test.chain, test.workingDir, test.mnemonic, "")
+			tt.numValidators, tt.chain, tt.workingDir, tt.mnemonic, "")
 
-		if test.withErr {
+		if tt.withErr {
 			assert.Error(t, err)
 		} else {
 			assert.NoError(t, err)
-			assert.Equal(t, test.validatorAddrs, validatorAddrs)
-			assert.Equal(t, test.rewardAddrs, rewardAddrs)
+			assert.Equal(t, tt.validatorAddrs, validatorAddrs)
+			assert.Equal(t, tt.rewardAddrs, rewardAddrs)
 		}
 	}
 }

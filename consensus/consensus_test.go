@@ -93,16 +93,16 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	getTime := util.RoundNow(params.BlockIntervalInSecond).
 		Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
-	stX, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
+	stateX, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
 		store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
-	stY, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexY]},
+	stateY, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexY]},
 		store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
-	stB, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexB]},
+	stateB, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexB]},
 		store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
-	stP, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexP]},
+	stateP, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexP]},
 		store.MockingStore(ts), txPool, nil)
 	require.NoError(t, err)
 
@@ -121,13 +121,13 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 			message: msg,
 		})
 	}
-	td.consX = makeConsensus(testConfig(), stX, valKeys[tIndexX],
+	td.consX = makeConsensus(testConfig(), stateX, valKeys[tIndexX],
 		valKeys[tIndexX].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
-	td.consY = makeConsensus(testConfig(), stY, valKeys[tIndexY],
+	td.consY = makeConsensus(testConfig(), stateY, valKeys[tIndexY],
 		valKeys[tIndexY].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
-	td.consB = makeConsensus(testConfig(), stB, valKeys[tIndexB],
+	td.consB = makeConsensus(testConfig(), stateB, valKeys[tIndexB],
 		valKeys[tIndexB].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
-	td.consP = makeConsensus(testConfig(), stP, valKeys[tIndexP],
+	td.consP = makeConsensus(testConfig(), stateP, valKeys[tIndexP],
 		valKeys[tIndexP].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
 
 	// -------------------------------
@@ -148,14 +148,14 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	return td
 }
 
-func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, h hash.Hash) {
+func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, hash hash.Hash) {
 	t.Helper()
 
 	for _, consMsg := range td.consMessages {
 		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == message.TypeBlockAnnounce {
 			m := consMsg.message.(*message.BlockAnnounceMessage)
-			assert.Equal(t, h, m.Block.Hash())
+			assert.Equal(t, hash, m.Block.Hash())
 
 			return
 		}
@@ -231,7 +231,7 @@ func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height
 	require.NoError(t, fmt.Errorf("Not found"))
 }
 
-func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, h hash.Hash) *vote.Vote {
+func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, hash hash.Hash) *vote.Vote {
 	t.Helper()
 
 	for i := len(td.consMessages) - 1; i >= 0; i-- {
@@ -240,7 +240,7 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vo
 			consMsg.message.Type() == message.TypeVote {
 			m := consMsg.message.(*message.VoteMessage)
 			if m.Vote.Type() == voteType &&
-				m.Vote.BlockHash() == h {
+				m.Vote.BlockHash() == hash {
 				return m.Vote
 			}
 		}
@@ -346,11 +346,11 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	prop := td.makeProposal(t, height+1, 0)
 
 	cert := certificate.NewBlockCertificate(height+1, 0)
-	sb := cert.SignBytes(prop.Block().Hash())
-	sig1 := td.consX.valKey.Sign(sb)
-	sig2 := td.consY.valKey.Sign(sb)
-	sig3 := td.consB.valKey.Sign(sb)
-	sig4 := td.consP.valKey.Sign(sb)
+	signBytes := cert.SignBytes(prop.Block().Hash())
+	sig1 := td.consX.valKey.Sign(signBytes)
+	sig2 := td.consY.valKey.Sign(signBytes)
+	sig3 := td.consB.valKey.Sign(signBytes)
+	sig4 := td.consP.valKey.Sign(signBytes)
 
 	sig := bls.SignatureAggregate(sig1, sig2, sig3, sig4)
 	cert.SetSignature([]int32{tIndexX, tIndexY, tIndexB, tIndexP}, []int32{}, sig)
@@ -371,31 +371,31 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *proposal.Proposal {
 	t.Helper()
 
-	var p *proposal.Proposal
+	var prop *proposal.Proposal
 	switch (height % 4) + uint32(round%4) {
 	case 1:
 		blk, err := td.consX.bcState.ProposeBlock(td.consX.valKey, td.consX.rewardAddr)
 		require.NoError(t, err)
-		p = proposal.NewProposal(height, round, blk)
-		td.HelperSignProposal(td.consX.valKey, p)
+		prop = proposal.NewProposal(height, round, blk)
+		td.HelperSignProposal(td.consX.valKey, prop)
 	case 2:
 		blk, err := td.consY.bcState.ProposeBlock(td.consY.valKey, td.consY.rewardAddr)
 		require.NoError(t, err)
-		p = proposal.NewProposal(height, round, blk)
-		td.HelperSignProposal(td.consY.valKey, p)
+		prop = proposal.NewProposal(height, round, blk)
+		td.HelperSignProposal(td.consY.valKey, prop)
 	case 3:
 		blk, err := td.consB.bcState.ProposeBlock(td.consB.valKey, td.consB.rewardAddr)
 		require.NoError(t, err)
-		p = proposal.NewProposal(height, round, blk)
-		td.HelperSignProposal(td.consB.valKey, p)
+		prop = proposal.NewProposal(height, round, blk)
+		td.HelperSignProposal(td.consB.valKey, prop)
 	case 0, 4:
 		blk, err := td.consP.bcState.ProposeBlock(td.consP.valKey, td.consP.rewardAddr)
 		require.NoError(t, err)
-		p = proposal.NewProposal(height, round, blk)
-		td.HelperSignProposal(td.consP.valKey, p)
+		prop = proposal.NewProposal(height, round, blk)
+		td.HelperSignProposal(td.consP.valKey, prop)
 	}
 
-	return p
+	return prop
 }
 
 func TestStart(t *testing.T) {
@@ -409,12 +409,12 @@ func TestNotInCommittee(t *testing.T) {
 	td := setup(t)
 
 	valKey := td.RandValKey()
-	str := store.MockingStore(td.TestSuite)
+	store := store.MockingStore(td.TestSuite)
 
-	st, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, str, td.txPool, nil)
-	consInst := NewConsensus(testConfig(), st, valKey, valKey.Address(), make(chan message.Message, 100),
+	state, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, store, td.txPool, nil)
+	consInt := NewConsensus(testConfig(), state, valKey, valKey.Address(), make(chan message.Message, 100),
 		newConcreteMediator())
-	cons := consInst.(*consensus)
+	cons := consInt.(*consensus)
 
 	td.enterNewHeight(cons)
 	td.newHeightTimeout(cons)
@@ -458,18 +458,18 @@ func TestConsensusNormalCase(t *testing.T) {
 	td.enterNewHeight(td.consX)
 	td.checkHeightRound(t, td.consX, 2, 0)
 
-	p := td.makeProposal(t, 2, 0)
-	td.consX.SetProposal(p)
+	prop := td.makeProposal(t, 2, 0)
+	td.consX.SetProposal(prop)
 
-	td.addPrepareVote(td.consX, p.Block().Hash(), 2, 0, tIndexY)
-	td.addPrepareVote(td.consX, p.Block().Hash(), 2, 0, tIndexP)
-	td.shouldPublishVote(t, td.consX, vote.VoteTypePrepare, p.Block().Hash())
+	td.addPrepareVote(td.consX, prop.Block().Hash(), 2, 0, tIndexY)
+	td.addPrepareVote(td.consX, prop.Block().Hash(), 2, 0, tIndexP)
+	td.shouldPublishVote(t, td.consX, vote.VoteTypePrepare, prop.Block().Hash())
 
-	td.addPrecommitVote(td.consX, p.Block().Hash(), 2, 0, tIndexY)
-	td.addPrecommitVote(td.consX, p.Block().Hash(), 2, 0, tIndexP)
-	td.shouldPublishVote(t, td.consX, vote.VoteTypePrecommit, p.Block().Hash())
+	td.addPrecommitVote(td.consX, prop.Block().Hash(), 2, 0, tIndexY)
+	td.addPrecommitVote(td.consX, prop.Block().Hash(), 2, 0, tIndexP)
+	td.shouldPublishVote(t, td.consX, vote.VoteTypePrecommit, prop.Block().Hash())
 
-	td.shouldPublishBlockAnnounce(t, td.consX, p.Block().Hash())
+	td.shouldPublishBlockAnnounce(t, td.consX, prop.Block().Hash())
 }
 
 func TestConsensusAddVote(t *testing.T) {
@@ -478,23 +478,23 @@ func TestConsensusAddVote(t *testing.T) {
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
 
-	v1 := td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
-	v2 := td.addPrepareVote(td.consP, td.RandHash(), 1, 2, tIndexX)
-	v3 := td.addPrepareVote(td.consP, td.RandHash(), 1, 1, tIndexX)
-	v4 := td.addPrecommitVote(td.consP, td.RandHash(), 1, 1, tIndexX)
-	v5 := td.addPrepareVote(td.consP, td.RandHash(), 2, 0, tIndexX)
-	v6, _ := td.GenerateTestPrepareVote(1, 0)
-	td.consP.AddVote(v6)
+	vote1 := td.addPrepareVote(td.consP, td.RandHash(), 1, 0, tIndexX)
+	vote2 := td.addPrepareVote(td.consP, td.RandHash(), 1, 2, tIndexX)
+	vote3 := td.addPrepareVote(td.consP, td.RandHash(), 1, 1, tIndexX)
+	vote4 := td.addPrecommitVote(td.consP, td.RandHash(), 1, 1, tIndexX)
+	vote5 := td.addPrepareVote(td.consP, td.RandHash(), 2, 0, tIndexX)
+	vote6, _ := td.GenerateTestPrepareVote(1, 0)
+	td.consP.AddVote(vote6)
 
-	assert.False(t, td.consP.HasVote(v1.Hash())) // previous round
-	assert.True(t, td.consP.HasVote(v2.Hash()))  // next round
-	assert.True(t, td.consP.HasVote(v3.Hash()))
-	assert.True(t, td.consP.HasVote(v4.Hash()))
-	assert.False(t, td.consP.HasVote(v5.Hash())) // valid votes for the next height
-	assert.False(t, td.consP.HasVote(v6.Hash())) // invalid votes
+	assert.False(t, td.consP.HasVote(vote1.Hash())) // previous round
+	assert.True(t, td.consP.HasVote(vote2.Hash()))  // next round
+	assert.True(t, td.consP.HasVote(vote3.Hash()))
+	assert.True(t, td.consP.HasVote(vote4.Hash()))
+	assert.False(t, td.consP.HasVote(vote5.Hash())) // valid votes for the next height
+	assert.False(t, td.consP.HasVote(vote6.Hash())) // invalid votes
 
-	assert.Equal(t, []*vote.Vote{v3, v4}, td.consP.AllVotes())
-	assert.NotContains(t, td.consP.AllVotes(), v2)
+	assert.Equal(t, []*vote.Vote{vote3, vote4}, td.consP.AllVotes())
+	assert.NotContains(t, td.consP.AllVotes(), vote2)
 }
 
 // TestConsensusLateProposal tests the scenario where a slow node receives a proposal
@@ -506,17 +506,17 @@ func TestConsensusLateProposal(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 
-	h := uint32(2)
-	r := int16(0)
-	p := td.makeProposal(t, h, r)
-	require.NotNil(t, p)
+	height := uint32(2)
+	round := int16(0)
+	prop := td.makeProposal(t, height, round)
+	require.NotNil(t, prop)
 
 	td.commitBlockForAllStates(t) // height 2
 
 	// Partitioned node receives proposal now
-	td.consP.SetProposal(p)
+	td.consP.SetProposal(prop)
 
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, p.Block().Hash())
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, prop.Block().Hash())
 }
 
 // TestSetProposalOnPrepare tests the scenario where a slow node receives a proposal
@@ -528,20 +528,20 @@ func TestSetProposalOnPrepare(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 
-	h := uint32(2)
-	r := int16(0)
-	p := td.makeProposal(t, h, r)
-	require.NotNil(t, p)
+	height := uint32(2)
+	round := int16(0)
+	prop := td.makeProposal(t, height, round)
+	require.NotNil(t, prop)
 
 	// The partitioned node receives all the votes first
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexX)
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexY)
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexB)
+	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexX)
+	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexY)
+	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexB)
 
 	// Partitioned node receives proposal now
-	td.consP.SetProposal(p)
+	td.consP.SetProposal(prop)
 
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, p.Block().Hash())
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop.Block().Hash())
 }
 
 // TestSetProposalOnPrecommit tests the scenario where a slow node receives a proposal
@@ -553,25 +553,25 @@ func TestSetProposalOnPrecommit(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 
-	h := uint32(2)
-	r := int16(0)
-	p := td.makeProposal(t, h, r)
-	require.NotNil(t, p)
+	height := uint32(2)
+	round := int16(0)
+	prop := td.makeProposal(t, height, round)
+	require.NotNil(t, prop)
 
 	// The partitioned node receives all the votes first
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexX)
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexY)
-	td.addPrepareVote(td.consP, p.Block().Hash(), h, r, tIndexB)
+	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexX)
+	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexY)
+	td.addPrepareVote(td.consP, prop.Block().Hash(), height, round, tIndexB)
 
-	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexX)
-	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexY)
-	td.addPrecommitVote(td.consP, p.Block().Hash(), h, r, tIndexB)
+	td.addPrecommitVote(td.consP, prop.Block().Hash(), height, round, tIndexX)
+	td.addPrecommitVote(td.consP, prop.Block().Hash(), height, round, tIndexY)
+	td.addPrecommitVote(td.consP, prop.Block().Hash(), height, round, tIndexB)
 
 	// Partitioned node receives proposal now
-	td.consP.SetProposal(p)
+	td.consP.SetProposal(prop)
 
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, p.Block().Hash())
-	td.shouldPublishBlockAnnounce(t, td.consP, p.Block().Hash())
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop.Block().Hash())
+	td.shouldPublishBlockAnnounce(t, td.consP, prop.Block().Hash())
 }
 
 func TestHandleQueryVote(t *testing.T) {
@@ -584,13 +584,13 @@ func TestHandleQueryVote(t *testing.T) {
 	// === make valid certificate
 	preVoteCommitters := []int32{}
 	preVoteSigs := []*bls.Signature{}
-	for i, val := range td.consP.validators {
+	for index, val := range td.consP.validators {
 		preVoteJust := &vote.JustInitYes{}
 		preVote := vote.NewCPPreVote(hash.UndefHash, 1, 0, cpRound, vote.CPValueYes, preVoteJust, val.Address())
 		sbPreVote := preVote.SignBytes()
 
 		preVoteCommitters = append(preVoteCommitters, val.Number())
-		preVoteSigs = append(preVoteSigs, td.valKeys[i].Sign(sbPreVote))
+		preVoteSigs = append(preVoteSigs, td.valKeys[index].Sign(sbPreVote))
 	}
 	preVoteAggSig := bls.SignatureAggregate(preVoteSigs...)
 	certPreVote := certificate.NewVoteCertificate(1, 0)
@@ -598,7 +598,7 @@ func TestHandleQueryVote(t *testing.T) {
 
 	mainVoteCommitters := []int32{}
 	mainVoteSigs := []*bls.Signature{}
-	for i, val := range td.consP.validators {
+	for index, val := range td.consP.validators {
 		mainVoteJust := &vote.JustMainVoteNoConflict{
 			QCert: certPreVote,
 		}
@@ -606,7 +606,7 @@ func TestHandleQueryVote(t *testing.T) {
 		sbMainVote := mainVote.SignBytes()
 
 		mainVoteCommitters = append(mainVoteCommitters, val.Number())
-		mainVoteSigs = append(mainVoteSigs, td.valKeys[i].Sign(sbMainVote))
+		mainVoteSigs = append(mainVoteSigs, td.valKeys[index].Sign(sbMainVote))
 	}
 	mainVoteAggSig := bls.SignatureAggregate(mainVoteSigs...)
 	certMainVote := certificate.NewVoteCertificate(1, 0)
@@ -706,30 +706,30 @@ func TestDuplicateProposal(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 
-	h := uint32(4)
-	r := int16(0)
-	p1 := td.makeProposal(t, h, r)
-	trx := tx.NewTransferTx(h, td.consX.rewardAddr, td.RandAccAddress(), 1000,
+	height := uint32(4)
+	round := int16(0)
+	prop1 := td.makeProposal(t, height, round)
+	trx := tx.NewTransferTx(height, td.consX.rewardAddr, td.RandAccAddress(), 1000,
 		1000, tx.WithMemo("proposal changer"))
 	td.HelperSignTransaction(td.consX.valKey.PrivateKey(), trx)
 
 	assert.NoError(t, td.txPool.AppendTx(trx))
-	p2 := td.makeProposal(t, h, r)
-	assert.NotEqual(t, p1.Hash(), p2.Hash())
+	p2 := td.makeProposal(t, height, round)
+	assert.NotEqual(t, prop1.Hash(), p2.Hash())
 
-	td.consX.SetProposal(p1)
+	td.consX.SetProposal(prop1)
 	td.consX.SetProposal(p2)
 
-	assert.Equal(t, p1.Hash(), td.consX.Proposal().Hash())
+	assert.Equal(t, prop1.Hash(), td.consX.Proposal().Hash())
 }
 
 func TestNonActiveValidator(t *testing.T) {
 	td := setup(t)
 
 	valKey := td.RandValKey()
-	consInst := NewConsensus(testConfig(), state.MockingState(td.TestSuite),
+	consInt := NewConsensus(testConfig(), state.MockingState(td.TestSuite),
 		valKey, valKey.Address(), make(chan message.Message, 100), newConcreteMediator())
-	nonActiveCons := consInst.(*consensus)
+	nonActiveCons := consInt.(*consensus)
 
 	t.Run("non-active instances should be in new-height state", func(t *testing.T) {
 		nonActiveCons.MoveToNewHeight()
@@ -796,9 +796,9 @@ func TestInvalidProposal(t *testing.T) {
 
 	td.enterNewHeight(td.consP)
 
-	p := td.makeProposal(t, 1, 0)
-	p.SetSignature(nil) // Make proposal invalid
-	td.consP.SetProposal(p)
+	prop := td.makeProposal(t, 1, 0)
+	prop.SetSignature(nil) // Make proposal invalid
+	td.consP.SetProposal(prop)
 	assert.Nil(t, td.consP.Proposal())
 }
 
@@ -815,8 +815,8 @@ func TestCases(t *testing.T) {
 		{1697887970998950590, 1, "consP & consB: Change Proposer, consX & consY: Commit (2 block announces)"},
 	}
 
-	for i, test := range tests {
-		td := setupWithSeed(t, test.seed)
+	for no, tt := range tests {
+		td := setupWithSeed(t, tt.seed)
 		td.commitBlockForAllStates(t)
 
 		td.enterNewHeight(td.consX)
@@ -826,10 +826,10 @@ func TestCases(t *testing.T) {
 
 		cert, err := checkConsensus(td, 2, nil)
 		require.NoError(t, err,
-			"test %v failed: %s", i+1, err)
-		require.Equal(t, test.round, cert.Round(),
+			"test %v failed: %s", no+1, err)
+		require.Equal(t, tt.round, cert.Round(),
 			"test %v failed. round not matched (expected %d, got %d)",
-			i+1, test.round, cert.Round())
+			no+1, tt.round, cert.Round())
 	}
 }
 
@@ -866,20 +866,20 @@ func TestByzantine(t *testing.T) {
 		td.commitBlockForAllStates(t)
 	}
 
-	h := uint32(7)
-	r := int16(0)
-	p1 := td.makeProposal(t, h, r)
+	height := uint32(7)
+	round := int16(0)
+	prop1 := td.makeProposal(t, height, round)
 
 	// =================================
 	// X, Y votes
 	td.enterNewHeight(td.consX)
 	td.enterNewHeight(td.consY)
 
-	td.consX.SetProposal(p1)
-	td.consY.SetProposal(p1)
+	td.consX.SetProposal(prop1)
+	td.consY.SetProposal(prop1)
 
-	voteX := td.shouldPublishVote(t, td.consX, vote.VoteTypePrepare, p1.Block().Hash())
-	voteY := td.shouldPublishVote(t, td.consY, vote.VoteTypePrepare, p1.Block().Hash())
+	voteX := td.shouldPublishVote(t, td.consX, vote.VoteTypePrepare, prop1.Block().Hash())
+	voteY := td.shouldPublishVote(t, td.consY, vote.VoteTypePrepare, prop1.Block().Hash())
 
 	// Byzantine node doesn't broadcast the prepare vote
 	// X and Y request to change proposer
@@ -896,38 +896,38 @@ func TestByzantine(t *testing.T) {
 	// B votes
 	td.enterNewHeight(td.consB)
 
-	td.consB.SetProposal(p1)
+	td.consB.SetProposal(prop1)
 
 	td.consB.AddVote(voteX)
 	td.consB.AddVote(voteY)
-	td.shouldPublishVote(t, td.consB, vote.VoteTypePrepare, p1.Block().Hash())
-	td.shouldPublishVote(t, td.consB, vote.VoteTypePrecommit, p1.Block().Hash())
+	td.shouldPublishVote(t, td.consB, vote.VoteTypePrepare, prop1.Block().Hash())
+	td.shouldPublishVote(t, td.consB, vote.VoteTypePrecommit, prop1.Block().Hash())
 
 	td.changeProposerTimeout(td.consB)
 
 	// B requests to NOT change the proposer
-	byzVote1 := td.shouldPublishVote(t, td.consB, vote.VoteTypeCPPreVote, p1.Block().Hash())
+	byzVote1 := td.shouldPublishVote(t, td.consB, vote.VoteTypeCPPreVote, prop1.Block().Hash())
 
 	// =================================
 	// P votes
 	// Byzantine node create the second proposal and send it to the partitioned node P
-	byzTrx := tx.NewTransferTx(h,
+	byzTrx := tx.NewTransferTx(height,
 		td.consB.rewardAddr, td.RandAccAddress(), 1000, 1000)
 	td.HelperSignTransaction(td.consB.valKey.PrivateKey(), byzTrx)
 	assert.NoError(t, td.txPool.AppendTx(byzTrx))
-	p2 := td.makeProposal(t, h, r)
+	prop2 := td.makeProposal(t, height, round)
 
-	require.NotEqual(t, p1.Block().Hash(), p2.Block().Hash())
-	require.Equal(t, td.consB.valKey.Address(), p1.Block().Header().ProposerAddress())
-	require.Equal(t, td.consB.valKey.Address(), p2.Block().Header().ProposerAddress())
+	require.NotEqual(t, prop1.Block().Hash(), prop2.Block().Hash())
+	require.Equal(t, td.consB.valKey.Address(), prop1.Block().Header().ProposerAddress())
+	require.Equal(t, td.consB.valKey.Address(), prop2.Block().Header().ProposerAddress())
 
 	td.enterNewHeight(td.consP)
 
 	// P receives the Seconds proposal
-	td.consP.SetProposal(p2)
+	td.consP.SetProposal(prop2)
 
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, p2.Block().Hash())
-	byzVote2 := td.addPrepareVote(td.consP, p2.Block().Hash(), h, r, tIndexB)
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, prop2.Block().Hash())
+	byzVote2 := td.addPrepareVote(td.consP, prop2.Block().Hash(), height, round, tIndexB)
 
 	// Request to change proposer
 	td.changeProposerTimeout(td.consP)
@@ -938,9 +938,9 @@ func TestByzantine(t *testing.T) {
 
 	// =================================
 
-	td.checkHeightRound(t, td.consX, h, r)
-	td.checkHeightRound(t, td.consY, h, r)
-	td.checkHeightRound(t, td.consP, h, r)
+	td.checkHeightRound(t, td.consX, height, round)
+	td.checkHeightRound(t, td.consY, height, round)
+	td.checkHeightRound(t, td.consP, height, round)
 
 	// Let's make Byzantine node happy by removing his votes from the log
 	for j := len(td.consMessages) - 1; j >= 0; j-- {
@@ -952,10 +952,10 @@ func TestByzantine(t *testing.T) {
 	// =================================
 	// Now, Partition heals
 	fmt.Println("== Partition heals")
-	cert, err := checkConsensus(td, h, []*vote.Vote{byzVote1, byzVote2})
+	cert, err := checkConsensus(td, height, []*vote.Vote{byzVote1, byzVote2})
 
 	require.NoError(t, err)
-	require.Equal(t, h, cert.Height())
+	require.Equal(t, height, cert.Height())
 	require.Contains(t, cert.Absentees(), int32(tIndexB))
 }
 

@@ -30,22 +30,23 @@ func TestBlockchainInfo(t *testing.T) {
 func TestBlock(t *testing.T) {
 	td := setup(t)
 
-	b := td.mockState.TestStore.AddTestBlock(100)
+	height := td.RandHeight()
+	blk := td.mockState.TestStore.AddTestBlock(height)
 
 	t.Run("Shall return a block", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"hash": b.Hash().String()})
+		r = mux.SetURLVars(r, map[string]string{"hash": blk.Hash().String()})
 		td.httpServer.GetBlockByHashHandler(w, r)
 
 		assert.Equal(t, 200, w.Code)
-		assert.Contains(t, w.Body.String(), b.Hash().String())
+		assert.Contains(t, w.Body.String(), blk.Hash().String())
 	})
 
 	t.Run("Shall return a block", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		r := new(http.Request)
-		r = mux.SetURLVars(r, map[string]string{"height": "100"})
+		r = mux.SetURLVars(r, map[string]string{"height": fmt.Sprintf("%d", height)})
 		td.httpServer.GetBlockByHeightHandler(w, r)
 
 		assert.Equal(t, 200, w.Code)
@@ -280,14 +281,14 @@ func TestValidatorByNumber(t *testing.T) {
 func TestConsensusInfo(t *testing.T) {
 	td := setup(t)
 
-	h, _ := td.mockConsMgr.HeightRound()
-	v1, _ := td.GenerateTestPrepareVote(h, 1)
-	v2, _ := td.GenerateTestPrecommitVote(h, 2)
-	p, _ := td.GenerateTestProposal(h, 2)
+	height, _ := td.mockConsMgr.HeightRound()
+	vote1, _ := td.GenerateTestPrepareVote(height, 1)
+	vote2, _ := td.GenerateTestPrecommitVote(height, 2)
+	prop := td.GenerateTestProposal(height, 2)
 
-	td.mockConsMgr.AddVote(v1)
-	td.mockConsMgr.AddVote(v2)
-	td.mockConsMgr.SetProposal(p)
+	td.mockConsMgr.AddVote(vote1)
+	td.mockConsMgr.AddVote(vote2)
+	td.mockConsMgr.SetProposal(prop)
 
 	w := httptest.NewRecorder()
 	r := new(http.Request)
@@ -296,8 +297,8 @@ func TestConsensusInfo(t *testing.T) {
 
 	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Body.String(), "<td>2</td>")
-	assert.Contains(t, w.Body.String(), v2.Signer().String())
-	assert.Contains(t, w.Body.String(), p.Signature().String())
+	assert.Contains(t, w.Body.String(), vote2.Signer().String())
+	assert.Contains(t, w.Body.String(), prop.Signature().String())
 
 	td.StopServers()
 }

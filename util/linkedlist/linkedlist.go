@@ -29,138 +29,136 @@ func New[T any]() *LinkedList[T] {
 	}
 }
 
-// InsertAtHead inserts a new node at the head of the list.
-func (l *LinkedList[T]) InsertAtHead(data T) *Element[T] {
-	newNode := NewElement(data)
-
-	if l.Head == nil {
+// InsertAtHead inserts a new element at the head of the list.
+func (ll *LinkedList[T]) InsertAtHead(data T) *Element[T] {
+	elm := NewElement(data)
+	if ll.Head == nil {
 		// Empty list case
-		l.Head = newNode
-		l.Tail = newNode
+		ll.Head = elm
+		ll.Tail = elm
 	} else {
-		newNode.Next = l.Head
-		l.Head.Prev = newNode
-		l.Head = newNode
+		elm.Next = ll.Head
+		ll.Head.Prev = elm
+		ll.Head = elm
 	}
 
-	l.length++
+	ll.length++
 
-	return newNode
+	return elm
 }
 
-// InsertAtTail appends a new node at the tail of the list.
-func (l *LinkedList[T]) InsertAtTail(data T) *Element[T] {
-	newNode := NewElement(data)
-
-	if l.Head == nil {
+// InsertAtTail appends a new element at the tail of the list.
+func (ll *LinkedList[T]) InsertAtTail(data T) *Element[T] {
+	elm := NewElement(data)
+	if ll.Head == nil {
 		// Empty list case
-		l.Head = newNode
-		l.Tail = newNode
+		ll.Head = elm
+		ll.Tail = elm
 	} else {
-		newNode.Prev = l.Tail
-		l.Tail.Next = newNode
-		l.Tail = newNode
+		elm.Prev = ll.Tail
+		ll.Tail.Next = elm
+		ll.Tail = elm
 	}
 
-	l.length++
+	ll.length++
 
-	return newNode
+	return elm
 }
 
-func (l *LinkedList[T]) InsertBefore(data T, at *Element[T]) *Element[T] {
-	e := NewElement[T](data)
-	if at == l.Head {
-		l.Head = e
-		e.Next = at
-		e.Next.Prev = e
+func (ll *LinkedList[T]) InsertBefore(data T, pos *Element[T]) *Element[T] {
+	elm := NewElement[T](data)
+	if pos == ll.Head {
+		ll.Head = elm
+		elm.Next = pos
+		elm.Next.Prev = elm
 	} else {
-		e.Prev = at.Prev
-		e.Next = at
-		e.Next.Prev = e
-		e.Prev.Next = e
+		elm.Prev = pos.Prev
+		elm.Next = pos
+		elm.Next.Prev = elm
+		elm.Prev.Next = elm
 	}
-	l.length++
+	ll.length++
 
-	return e
+	return elm
 }
 
-func (l *LinkedList[T]) InsertAfter(data T, at *Element[T]) *Element[T] {
-	e := NewElement[T](data)
-	if at == l.Tail {
-		l.Tail = e
-		e.Prev = at
-		e.Prev.Next = e
+func (ll *LinkedList[T]) InsertAfter(data T, pos *Element[T]) *Element[T] {
+	elm := NewElement[T](data)
+	if pos == ll.Tail {
+		ll.Tail = elm
+		elm.Prev = pos
+		elm.Prev.Next = elm
 	} else {
-		e.Prev = at
-		e.Next = at.Next
-		e.Prev.Next = e
-		e.Next.Prev = e
+		elm.Prev = pos
+		elm.Next = pos.Next
+		elm.Prev.Next = elm
+		elm.Next.Prev = elm
 	}
-	l.length++
+	ll.length++
 
-	return e
+	return elm
 }
 
-// DeleteAtHead deletes the node at the head of the list.
-func (l *LinkedList[T]) DeleteAtHead() {
-	if l.Head == nil {
+// DeleteAtHead deletes the element at the head of the list.
+func (ll *LinkedList[T]) DeleteAtHead() {
+	if ll.Head == nil {
 		// Empty list case
 		return
 	}
 
-	l.Head = l.Head.Next
-	if l.Head != nil {
-		l.Head.Prev = nil
+	ll.Head = ll.Head.Next
+	if ll.Head != nil {
+		ll.Head.Prev = nil
 	} else {
-		l.Tail = nil
+		ll.Tail = nil
 	}
 
-	l.length--
+	ll.length--
 }
 
-// DeleteAtTail deletes the node at the tail of the list.
-func (l *LinkedList[T]) DeleteAtTail() {
-	if l.Tail == nil {
+// DeleteAtTail deletes the element at the tail of the list.
+func (ll *LinkedList[T]) DeleteAtTail() {
+	if ll.Tail == nil {
 		// Empty list case
 		return
 	}
 
-	l.Tail = l.Tail.Prev
-	if l.Tail != nil {
-		l.Tail.Next = nil
+	ll.Tail = ll.Tail.Prev
+	if ll.Tail != nil {
+		ll.Tail.Next = nil
 	} else {
-		l.Head = nil
+		ll.Head = nil
 	}
 
-	l.length--
+	ll.length--
 }
 
-// Delete removes a specific node from the list.
-func (l *LinkedList[T]) Delete(ln *Element[T]) {
-	if ln.Prev != nil {
-		ln.Prev.Next = ln.Next
+// Delete removes a specific element from the list.
+func (ll *LinkedList[T]) Delete(elm *Element[T]) {
+	if elm.Prev != nil {
+		elm.Prev.Next = elm.Next
 	} else {
-		l.Head = ln.Next
+		ll.Head = elm.Next
 	}
 
-	if ln.Next != nil {
-		ln.Next.Prev = ln.Prev
+	if elm.Next != nil {
+		elm.Next.Prev = elm.Prev
 	} else {
-		l.Tail = ln.Prev
+		ll.Tail = elm.Prev
 	}
 
-	l.length--
+	ll.length--
 }
 
-// Length returns the number of nodes in the list.
-func (l *LinkedList[T]) Length() int {
-	return l.length
+// Length returns the number of elements in the list.
+func (ll *LinkedList[T]) Length() int {
+	return ll.length
 }
 
 // Values returns a slice of values in the list.
-func (l *LinkedList[T]) Values() []T {
+func (ll *LinkedList[T]) Values() []T {
 	values := []T{}
-	cur := l.Head
+	cur := ll.Head
 	for cur != nil {
 		values = append(values, cur.Data)
 		cur = cur.Next
@@ -169,9 +167,9 @@ func (l *LinkedList[T]) Values() []T {
 	return values
 }
 
-// Clear removes all nodes from the list, making it empty.
-func (l *LinkedList[T]) Clear() {
-	l.Head = nil
-	l.Tail = nil
-	l.length = 0
+// Clear removes all elements from the list, making it empty.
+func (ll *LinkedList[T]) Clear() {
+	ll.Head = nil
+	ll.Tail = nil
+	ll.length = 0
 }

@@ -73,21 +73,24 @@ func InitGlobalLogger(conf *Config) {
 	writers := []io.Writer{}
 
 	if slices.Contains(conf.Targets, "file") {
-		// file writer
-		fw := &lumberjack.Logger{
+		fileWriter := &lumberjack.Logger{
 			Filename:   LogFilename,
 			MaxSize:    MaxLogSize,
 			MaxBackups: conf.MaxBackups,
 			Compress:   conf.Compress,
 			MaxAge:     conf.RotateLogAfterDays,
 		}
-		writers = append(writers, fw)
+		writers = append(writers, fileWriter)
 	}
 
 	if slices.Contains(conf.Targets, "console") {
 		// console writer
 		if conf.Colorful {
-			writers = append(writers, zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05"})
+			consoleWriter := &zerolog.ConsoleWriter{
+				Out:        os.Stderr,
+				TimeFormat: "15:04:05",
+			}
+			writers = append(writers, consoleWriter)
 		} else {
 			writers = append(writers, os.Stderr)
 		}
@@ -111,32 +114,32 @@ func addFields(event *zerolog.Event, keyvals ...any) *zerolog.Event {
 	if len(keyvals)%2 != 0 {
 		keyvals = append(keyvals, "!MISSING-VALUE!")
 	}
-	for i := 0; i < len(keyvals); i += 2 {
-		key, ok := keyvals[i].(string)
+	for index := 0; index < len(keyvals); index += 2 {
+		key, ok := keyvals[index].(string)
 		if !ok {
 			key = "!INVALID-KEY!"
 		}
 
-		value := keyvals[i+1]
-		switch v := value.(type) {
+		value := keyvals[index+1]
+		switch typ := value.(type) {
 		case fmt.Stringer:
-			if isNil(v) {
-				event.Any(key, v)
+			if isNil(typ) {
+				event.Any(key, typ)
 			} else {
-				event.Stringer(key, v)
+				event.Stringer(key, typ)
 			}
 		case ShortStringer:
-			if isNil(v) {
-				event.Any(key, v)
+			if isNil(typ) {
+				event.Any(key, typ)
 			} else {
-				event.Str(key, v.ShortString())
+				event.Str(key, typ.ShortString())
 			}
 		case error:
-			event.AnErr(key, v)
+			event.AnErr(key, typ)
 		case []byte:
-			event.Str(key, hex.EncodeToString(v))
+			event.Str(key, hex.EncodeToString(typ))
 		default:
-			event.Any(key, v)
+			event.Any(key, typ)
 		}
 	}
 
@@ -145,7 +148,7 @@ func addFields(event *zerolog.Event, keyvals ...any) *zerolog.Event {
 
 func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 	inst := getLoggersInst()
-	sl := &SubLogger{
+	sub := &SubLogger{
 		logger: zerolog.New(inst.writer).With().Timestamp().Logger(),
 		name:   name,
 		obj:    obj,
@@ -160,11 +163,11 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 	if err != nil {
 		Warn("invalid log level", "error", err, "name", name)
 	}
-	sl.logger = sl.logger.Level(lvl)
+	sub.logger = sub.logger.Level(lvl)
 
-	inst.subs[name] = sl
+	inst.subs[name] = sub
 
-	return sl
+	return sub
 }
 
 func (sl *SubLogger) logObj(event *zerolog.Event, msg string, keyvals ...any) {

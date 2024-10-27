@@ -10,20 +10,20 @@ import (
 func TestExecuteUnbondTx(t *testing.T) {
 	td := setup(t)
 
-	bonderAddr, bonderAcc := td.sandbox.TestStore.RandomTestAcc()
+	bonderAddr, bonderAcc := td.sbx.TestStore.RandomTestAcc()
 	bonderBalance := bonderAcc.Balance()
 	stake := td.RandAmountRange(
-		td.sandbox.TestParams.MinimumStake,
+		td.sbx.TestParams.MinimumStake,
 		bonderBalance)
 	bonderAcc.SubtractFromBalance(stake)
-	td.sandbox.UpdateAccount(bonderAddr, bonderAcc)
+	td.sbx.UpdateAccount(bonderAddr, bonderAcc)
 
 	valPub, _ := td.RandBLSKeyPair()
 	valAddr := valPub.ValidatorAddress()
-	val := td.sandbox.MakeNewValidator(valPub)
+	val := td.sbx.MakeNewValidator(valPub)
 	val.AddToStake(stake)
-	td.sandbox.UpdateValidator(val)
-	lockTime := td.sandbox.CurrentHeight()
+	td.sbx.UpdateValidator(val)
+	lockTime := td.sbx.CurrentHeight()
 
 	t.Run("Should fail, unknown address", func(t *testing.T) {
 		randomAddr := td.RandValAddress()
@@ -34,7 +34,7 @@ func TestExecuteUnbondTx(t *testing.T) {
 	})
 
 	t.Run("Should fail, inside committee", func(t *testing.T) {
-		val0 := td.sandbox.Committee().Proposer(0)
+		val0 := td.sbx.Committee().Proposer(0)
 		trx := tx.NewUnbondTx(lockTime, val0.Address())
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
@@ -43,9 +43,9 @@ func TestExecuteUnbondTx(t *testing.T) {
 
 	t.Run("Should fail, joining committee", func(t *testing.T) {
 		randPub, _ := td.RandBLSKeyPair()
-		randVal := td.sandbox.MakeNewValidator(randPub)
-		td.sandbox.UpdateValidator(randVal)
-		td.sandbox.JoinedToCommittee(randVal.Address())
+		randVal := td.sbx.MakeNewValidator(randPub)
+		td.sbx.UpdateValidator(randVal)
+		td.sbx.JoinedToCommittee(randVal.Address())
 		trx := tx.NewUnbondTx(lockTime, randPub.ValidatorAddress())
 
 		td.check(t, trx, true, ErrValidatorInCommittee)
@@ -67,12 +67,12 @@ func TestExecuteUnbondTx(t *testing.T) {
 		td.check(t, trx, false, ErrValidatorUnbonded)
 	})
 
-	updatedVal := td.sandbox.Validator(valAddr)
+	updatedVal := td.sbx.Validator(valAddr)
 
 	assert.Equal(t, stake, updatedVal.Stake())
 	assert.Zero(t, updatedVal.Power())
 	assert.Equal(t, lockTime, updatedVal.UnbondingHeight())
-	assert.Equal(t, int64(-stake), td.sandbox.PowerDelta())
+	assert.Equal(t, int64(-stake), td.sbx.PowerDelta())
 
 	td.checkTotalCoin(t, 0)
 }
@@ -82,14 +82,14 @@ func TestPowerDeltaUnbond(t *testing.T) {
 
 	pub, _ := td.RandBLSKeyPair()
 	valAddr := pub.ValidatorAddress()
-	val := td.sandbox.MakeNewValidator(pub)
+	val := td.sbx.MakeNewValidator(pub)
 	amt := td.RandAmount()
 	val.AddToStake(amt)
-	td.sandbox.UpdateValidator(val)
-	lockTime := td.sandbox.CurrentHeight()
+	td.sbx.UpdateValidator(val)
+	lockTime := td.sbx.CurrentHeight()
 	trx := tx.NewUnbondTx(lockTime, valAddr)
 
 	td.execute(t, trx)
 
-	assert.Equal(t, int64(-amt), td.sandbox.PowerDelta())
+	assert.Equal(t, int64(-amt), td.sbx.PowerDelta())
 }

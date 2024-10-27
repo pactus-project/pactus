@@ -5,7 +5,6 @@ import (
 	"compress/gzip"
 	"crypto/subtle"
 	"encoding/binary"
-	"io"
 	"math/rand"
 )
 
@@ -73,29 +72,28 @@ func StringToBytes(s string) []byte {
 	return []byte(s)
 }
 
-func CompressBuffer(s []byte) ([]byte, error) {
-	var b bytes.Buffer
-	gz := gzip.NewWriter(&b)
-	if _, err := gz.Write(s); err != nil {
+func CompressBuffer(data []byte) ([]byte, error) {
+	var buf bytes.Buffer
+	gz := gzip.NewWriter(&buf)
+	if _, err := gz.Write(data); err != nil {
 		return nil, err
 	}
 	if err := gz.Close(); err != nil {
 		return nil, err
 	}
 
-	return b.Bytes(), nil
+	return buf.Bytes(), nil
 }
 
 func DecompressBuffer(s []byte) ([]byte, error) {
-	b := bytes.NewBuffer(s)
-	var r io.Reader
-	r, err := gzip.NewReader(b)
+	buf := bytes.NewBuffer(s)
+	reader, err := gzip.NewReader(buf)
 	if err != nil {
 		return nil, err
 	}
 
 	var res bytes.Buffer
-	if _, err = res.ReadFrom(r); err != nil {
+	if _, err = res.ReadFrom(reader); err != nil {
 		return nil, err
 	}
 
@@ -117,17 +115,17 @@ func Subtracts(slice1, slice2 []int32) []int32 {
 		return slice1
 	}
 
-	for _, s1 := range slice1 {
+	for _, num1 := range slice1 {
 		found := false
-		for _, s2 := range slice2 {
-			if s1 == s2 {
+		for _, num2 := range slice2 {
+			if num1 == num2 {
 				found = true
 
 				break
 			}
 		}
 		if !found {
-			sub = append(sub, s1)
+			sub = append(sub, num1)
 		}
 	}
 
@@ -163,8 +161,8 @@ func Equal[T comparable](a, b []T) bool {
 // SafeCmp compares two slices with constant time.
 // Note that we are using the subtle.ConstantTimeCompare() function for this
 // to help prevent timing attacks.
-func SafeCmp(s1, s2 []byte) bool {
-	return subtle.ConstantTimeCompare(s1, s2) == 1
+func SafeCmp(left, right []byte) bool {
+	return subtle.ConstantTimeCompare(left, right) == 1
 }
 
 // Merge accepts multiple slices and returns a single merged slice.
@@ -189,20 +187,20 @@ func Merge[T any](slices ...[]T) []T {
 
 // Reverse replace the contents of a slice with the same elements but in
 // reverse order.
-func Reverse[S ~[]E, E any](s S) {
-	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
-		s[i], s[j] = s[j], s[i]
+func Reverse[S ~[]E, E any](slice S) {
+	for i, j := 0, len(slice)-1; i < j; i, j = i+1, j-1 {
+		slice[i], slice[j] = slice[j], slice[i]
 	}
 }
 
-// Extend extends the slice 's' to length 'n' by appending zero-valued elements.
-func Extend[T any](s []T, n int) []T {
-	if len(s) < n {
-		pad := make([]T, n-len(s), n+len(s))
-		s = append(pad, s...)
+// Extend extends the slice to the given length by appending zero-valued elements.
+func Extend[T any](slice []T, length int) []T {
+	if len(slice) < length {
+		pad := make([]T, length-len(slice), length+len(slice))
+		slice = append(pad, slice...)
 	}
 
-	return s
+	return slice
 }
 
 // IsSubset checks if subSet is a subset of parentSet.
@@ -227,24 +225,24 @@ func IsSubset[T comparable](parentSet, subSet []T) bool {
 	return true
 }
 
-// RemoveFirstOccurrenceOf removes the first occurrence of element e from slice s.
+// RemoveFirstOccurrenceOf removes the first occurrence of element from slice.
 // It returns the modified slice and a boolean indicating whether an element was removed.
-func RemoveFirstOccurrenceOf[T comparable](s []T, e T) ([]T, bool) {
-	for i, v := range s {
-		if v == e {
-			return append(s[:i], s[i+1:]...), true
+func RemoveFirstOccurrenceOf[T comparable](slice []T, element T) ([]T, bool) {
+	for i, v := range slice {
+		if v == element {
+			return append(slice[:i], slice[i+1:]...), true
 		}
 	}
 
-	return s, false
+	return slice, false
 }
 
-func Trim[T any](s []T, newLength int) []T {
-	if newLength <= len(s) {
-		return s[:newLength]
+func Trim[T any](slice []T, newLength int) []T {
+	if newLength <= len(slice) {
+		return slice[:newLength]
 	}
 
-	return s
+	return slice
 }
 
 // Shuffle shuffles a slice of any type.

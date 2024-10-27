@@ -11,23 +11,23 @@ type Executor interface {
 	Execute()
 }
 
-func MakeExecutor(trx *tx.Tx, sb sandbox.Sandbox) (Executor, error) {
+func MakeExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (Executor, error) {
 	var exe Executor
 	var err error
-	switch t := trx.Payload().Type(); t {
+	switch typ := trx.Payload().Type(); typ {
 	case payload.TypeTransfer:
-		exe, err = newTransferExecutor(trx, sb)
+		exe, err = newTransferExecutor(trx, sbx)
 	case payload.TypeBond:
-		exe, err = newBondExecutor(trx, sb)
+		exe, err = newBondExecutor(trx, sbx)
 	case payload.TypeUnbond:
-		exe, err = newUnbondExecutor(trx, sb)
+		exe, err = newUnbondExecutor(trx, sbx)
 	case payload.TypeWithdraw:
-		exe, err = newWithdrawExecutor(trx, sb)
+		exe, err = newWithdrawExecutor(trx, sbx)
 	case payload.TypeSortition:
-		exe, err = newSortitionExecutor(trx, sb)
+		exe, err = newSortitionExecutor(trx, sbx)
 	default:
 		return nil, InvalidPayloadTypeError{
-			PayloadType: t,
+			PayloadType: typ,
 		}
 	}
 

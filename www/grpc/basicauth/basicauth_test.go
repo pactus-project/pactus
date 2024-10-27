@@ -8,7 +8,7 @@ import (
 )
 
 func TestMakeCredentials(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		username string
 		password string
 		expected string
@@ -20,13 +20,13 @@ func TestMakeCredentials(t *testing.T) {
 	}
 
 	// Iterate over test cases
-	for _, tc := range testCases {
-		t.Run(fmt.Sprintf("Username: %s, Password: %s", tc.username, tc.password), func(t *testing.T) {
+	for _, tt := range tests {
+		t.Run(fmt.Sprintf("Username: %s, Password: %s", tt.username, tt.password), func(t *testing.T) {
 			// Call basicAuth function
-			result := EncodeBasicAuth(tc.username, tc.password)
+			result := EncodeBasicAuth(tt.username, tt.password)
 
 			// Check if the result matches the expected output
-			assert.Equal(t, tc.expected, result)
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }

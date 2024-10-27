@@ -114,18 +114,18 @@ func TestEncodingCertificate(t *testing.T) {
 		w := util.NewFixedWriter(i)
 		assert.Error(t, cert1.Encode(w), "encode test %v failed", i)
 	}
-	w := util.NewFixedWriter(length)
-	assert.NoError(t, cert1.Encode(w))
+	writer := util.NewFixedWriter(length)
+	assert.NoError(t, cert1.Encode(writer))
 
 	for i := 0; i < length; i++ {
 		cert := new(certificate.BlockCertificate)
-		r := util.NewFixedReader(i, w.Bytes())
+		r := util.NewFixedReader(i, writer.Bytes())
 		assert.Error(t, cert.Decode(r), "decode test %v failed", i)
 	}
 
 	cert2 := new(certificate.BlockCertificate)
-	r := util.NewFixedReader(length, w.Bytes())
-	assert.NoError(t, cert2.Decode(r))
+	reader := util.NewFixedReader(length, writer.Bytes())
+	assert.NoError(t, cert2.Decode(reader))
 	assert.Equal(t, cert1.Hash(), cert2.Hash())
 }
 

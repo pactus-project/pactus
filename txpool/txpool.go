@@ -22,11 +22,11 @@ type txPool struct {
 	lk sync.RWMutex
 
 	config         *Config
-	sandbox        sandbox.Sandbox
+	sbx            sandbox.Sandbox
 	pools          map[payload.Type]pool
 	consumptionMap map[crypto.Address]uint32
 	broadcastCh    chan message.Message
-	strReader      store.Reader
+	store          store.Reader
 	logger         *logger.SubLogger
 }
 
@@ -44,7 +44,7 @@ func NewTxPool(conf *Config, storeReader store.Reader, broadcastCh chan message.
 		config:         conf,
 		pools:          pools,
 		consumptionMap: make(map[crypto.Address]uint32),
-		strReader:      storeReader,
+		store:          storeReader,
 		broadcastCh:    broadcastCh,
 	}
 
@@ -55,11 +55,11 @@ func NewTxPool(conf *Config, storeReader store.Reader, broadcastCh chan message.
 
 // SetNewSandboxAndRecheck updates the sandbox and rechecks all transactions,
 // removing expired or invalid ones.
-func (p *txPool) SetNewSandboxAndRecheck(sb sandbox.Sandbox) {
+func (p *txPool) SetNewSandboxAndRecheck(sbx sandbox.Sandbox) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
-	p.sandbox = sb
+	p.sbx = sbx
 	p.logger.Debug("set new sandbox")
 
 	var next *linkedlist.Element[linkedmap.Pair[tx.ID, *tx.Tx]]
@@ -134,7 +134,7 @@ func (p *txPool) appendTx(trx *tx.Tx) error {
 }
 
 func (p *txPool) checkTx(trx *tx.Tx) error {
-	if err := execution.CheckAndExecute(trx, p.sandbox, false); err != nil {
+	if err := execution.CheckAndExecute(trx, p.sbx, false); err != nil {
 		p.logger.Debug("invalid transaction", "tx", trx, "error", err)
 
 		return err
@@ -172,7 +172,7 @@ func (p *txPool) handleDecreaseConsumption(height uint32) error {
 
 	// Calculate the block height that has passed out of the consumption window.
 	windowedBlockHeight := height - p.config.ConsumptionWindow
-	committedBlock, err := p.strReader.Block(windowedBlockHeight)
+	committedBlock, err := p.store.Block(windowedBlockHeight)
 	if err != nil {
 		return err
 	}
@@ -185,16 +185,16 @@ func (p *txPool) handleDecreaseConsumption(height uint32) error {
 	for _, trx := range blk.Transactions() {
 		if trx.IsTransferTx() || trx.IsBondTx() || trx.IsWithdrawTx() {
 			signer := trx.Payload().Signer()
-			if v, ok := p.consumptionMap[signer]; ok {
+			if consumption, ok := p.consumptionMap[signer]; ok {
 				// Decrease the consumption by the size of the transaction
-				v -= uint32(trx.SerializeSize())
+				consumption -= uint32(trx.SerializeSize())
 
-				if v == 0 {
+				if consumption == 0 {
 					// If the new value is zero, remove the signer from the consumptionMap
 					delete(p.consumptionMap, signer)
 				} else {
 					// Otherwise, update the map with the new value
-					p.consumptionMap[signer] = v
+					p.consumptionMap[signer] = consumption
 				}
 			}
 		}
@@ -203,9 +203,9 @@ func (p *txPool) handleDecreaseConsumption(height uint32) error {
 	return nil
 }
 
-func (p *txPool) removeTx(id tx.ID) {
+func (p *txPool) removeTx(txID tx.ID) {
 	for _, pool := range p.pools {
-		if pool.list.Remove(id) {
+		if pool.list.Remove(txID) {
 			break
 		}
 	}
@@ -213,12 +213,12 @@ func (p *txPool) removeTx(id tx.ID) {
 
 // PendingTx searches inside the transaction pool and returns the associated transaction.
 // If transaction doesn't exist inside the pool, it returns nil.
-func (p *txPool) PendingTx(id tx.ID) *tx.Tx {
+func (p *txPool) PendingTx(txID tx.ID) *tx.Tx {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
 	for _, pool := range p.pools {
-		n := pool.list.GetNode(id)
+		n := pool.list.GetNode(txID)
 		if n != nil {
 			return n.Data.Value
 		}
@@ -266,12 +266,12 @@ func (p *txPool) PrepareBlockTransactions() block.Txs {
 	return trxs
 }
 
-func (p *txPool) HasTx(id tx.ID) bool {
+func (p *txPool) HasTx(txID tx.ID) bool {
 	p.lk.RLock()
 	defer p.lk.RUnlock()
 
 	for _, pool := range p.pools {
-		if pool.list.Has(id) {
+		if pool.list.Has(txID) {
 			return true
 		}
 	}

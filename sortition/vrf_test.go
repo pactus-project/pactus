@@ -14,8 +14,8 @@ import (
 func TestVRF(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	pk, pv := ts.RandBLSKeyPair()
-	valKey := bls.NewValidatorKey(pv)
+	pub, prv := ts.RandBLSKeyPair()
+	valKey := bls.NewValidatorKey(prv)
 	for i := 0; i < 100; i++ {
 		seed := ts.RandSeed()
 		t.Logf("seed is: %x \n", seed)
@@ -25,7 +25,7 @@ func TestVRF(t *testing.T) {
 
 		assert.LessOrEqual(t, index, maxSize)
 
-		index2, result := sortition.Verify(seed, pk, proof, maxSize)
+		index2, result := sortition.Verify(seed, pub, proof, maxSize)
 
 		assert.True(t, result)
 		assert.Equal(t, index, index2)

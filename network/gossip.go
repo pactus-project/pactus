@@ -115,7 +115,7 @@ func (g *gossipService) publish(msg []byte, topic *lp2pps.Topic) error {
 }
 
 // JoinTopic joins to the topic with the given name and subscribes to receive topic messages.
-func (g *gossipService) JoinTopic(topicID TopicID, sp ShouldPropagate) error {
+func (g *gossipService) JoinTopic(topicID TopicID, shouldPropagate ShouldPropagate) error {
 	switch topicID {
 	case TopicIDUnspecified:
 		return InvalidTopicError{TopicID: topicID}
@@ -127,7 +127,7 @@ func (g *gossipService) JoinTopic(topicID TopicID, sp ShouldPropagate) error {
 			return nil
 		}
 
-		topic, err := g.joinTopic(topicID, sp)
+		topic, err := g.joinTopic(topicID, shouldPropagate)
 		if err != nil {
 			return err
 		}
@@ -142,7 +142,7 @@ func (g *gossipService) JoinTopic(topicID TopicID, sp ShouldPropagate) error {
 			return nil
 		}
 
-		topic, err := g.joinTopic(topicID, sp)
+		topic, err := g.joinTopic(topicID, shouldPropagate)
 		if err != nil {
 			return err
 		}
@@ -157,7 +157,7 @@ func (g *gossipService) JoinTopic(topicID TopicID, sp ShouldPropagate) error {
 			return nil
 		}
 
-		topic, err := g.joinTopic(topicID, sp)
+		topic, err := g.joinTopic(topicID, shouldPropagate)
 		if err != nil {
 			return err
 		}
@@ -176,7 +176,7 @@ func (g *gossipService) TopicName(topicID TopicID) string {
 
 // joinTopic joins a given topic and registers a validator for it.
 // If successful, it returns the topic and subscribes to it.
-func (g *gossipService) joinTopic(topicID TopicID, sp ShouldPropagate) (*lp2pps.Topic, error) {
+func (g *gossipService) joinTopic(topicID TopicID, shouldPropagate ShouldPropagate) (*lp2pps.Topic, error) {
 	topicName := g.TopicName(topicID)
 	topic, err := g.pubsub.Join(topicName)
 	if err != nil {
@@ -189,7 +189,7 @@ func (g *gossipService) joinTopic(topicID TopicID, sp ShouldPropagate) (*lp2pps.
 	}
 
 	err = g.pubsub.RegisterTopicValidator(
-		topicName, g.createValidator(topicID, sp))
+		topicName, g.createValidator(topicID, shouldPropagate))
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
@@ -202,26 +202,32 @@ func (g *gossipService) joinTopic(topicID TopicID, sp ShouldPropagate) (*lp2pps.
 		defer g.wg.Done()
 
 		for {
-			m, err := sub.Next(g.ctx)
+			lp2pMsg, err := sub.Next(g.ctx)
 			if err != nil {
 				g.logger.Debug("readLoop error", "error", err)
 
 				return
 			}
 
-			g.onReceiveMessage(m)
+			msg := &GossipMessage{
+				From:    lp2pMsg.ReceivedFrom,
+				Data:    lp2pMsg.Data,
+				TopicID: topicID,
+			}
+
+			g.onReceiveMessage(msg)
 		}
 	}()
 
 	return topic, nil
 }
 
-func (g *gossipService) createValidator(topicID TopicID, sp ShouldPropagate,
+func (g *gossipService) createValidator(topicID TopicID, shouldPropagate ShouldPropagate,
 ) func(context.Context, lp2pcore.PeerID, *lp2pps.Message) lp2pps.ValidationResult {
-	return func(_ context.Context, peerId lp2pcore.PeerID, m *lp2pps.Message) lp2pps.ValidationResult {
+	return func(_ context.Context, peerId lp2pcore.PeerID, lp2pMsg *lp2pps.Message) lp2pps.ValidationResult {
 		msg := &GossipMessage{
 			From:    peerId,
-			Data:    m.Data,
+			Data:    lp2pMsg.Data,
 			TopicID: topicID,
 		}
 
@@ -230,11 +236,11 @@ func (g *gossipService) createValidator(topicID TopicID, sp ShouldPropagate,
 			return lp2pps.ValidationAccept
 		}
 
-		if !sp(msg) {
+		if !shouldPropagate(msg) {
 			g.logger.Debug("message ignored", "from", peerId, "topic", topicID)
 
 			// Consume the message first
-			g.onReceiveMessage(m)
+			g.onReceiveMessage(msg)
 
 			return lp2pps.ValidationIgnore
 		}
@@ -260,17 +266,12 @@ func (g *gossipService) Stop() {
 	g.wg.Wait()
 }
 
-func (g *gossipService) onReceiveMessage(m *lp2pps.Message) {
+func (g *gossipService) onReceiveMessage(msg *GossipMessage) {
 	// only forward messages delivered by others
-	if m.ReceivedFrom == g.host.ID() {
+	if msg.From == g.host.ID() {
 		return
 	}
 
-	g.logger.Debug("receiving new gossip message", "from", m.ReceivedFrom)
-	event := &GossipMessage{
-		From: m.ReceivedFrom,
-		Data: m.Data,
-	}
-
-	g.eventCh <- event
+	g.logger.Debug("receiving new gossip message", "from", msg.From)
+	g.eventCh <- msg
 }

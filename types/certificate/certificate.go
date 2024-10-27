@@ -81,12 +81,12 @@ func (cert *baseCertificate) BasicCheck() error {
 }
 
 func (cert *baseCertificate) Hash() hash.Hash {
-	w := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
-	if err := cert.Encode(w); err != nil {
+	buf := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
+	if err := cert.Encode(buf); err != nil {
 		return hash.UndefHash
 	}
 
-	return hash.CalcHash(w.Bytes())
+	return hash.CalcHash(buf.Bytes())
 }
 
 func (cert *baseCertificate) SetSignature(committers, absentees []int32, signature *bls.Signature) {
@@ -97,20 +97,20 @@ func (cert *baseCertificate) SetSignature(committers, absentees []int32, signatu
 
 // SerializeSize returns the number of bytes it would take to serialize the block.
 func (cert *baseCertificate) SerializeSize() int {
-	sz := 6 + // height (4) + round(2)
+	size := 6 + // height (4) + round(2)
 		encoding.VarIntSerializeSize(uint64(len(cert.committers))) +
 		encoding.VarIntSerializeSize(uint64(len(cert.absentees))) +
 		bls.SignatureSize
 
 	for _, n := range cert.committers {
-		sz += encoding.VarIntSerializeSize(uint64(n))
+		size += encoding.VarIntSerializeSize(uint64(n))
 	}
 
 	for _, n := range cert.absentees {
-		sz += encoding.VarIntSerializeSize(uint64(n))
+		size += encoding.VarIntSerializeSize(uint64(n))
 	}
 
-	return sz
+	return size
 }
 
 func (cert *baseCertificate) MarshalCBOR() ([]byte, error) {

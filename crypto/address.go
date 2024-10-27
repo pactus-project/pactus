@@ -112,7 +112,7 @@ func (addr Address) Type() AddressType {
 }
 
 func (addr Address) Encode(w io.Writer) error {
-	switch t := addr.Type(); t {
+	switch typ := addr.Type(); typ {
 	case AddressTypeTreasury:
 		return encoding.WriteElement(w, uint8(0))
 	case AddressTypeValidator,
@@ -120,7 +120,7 @@ func (addr Address) Encode(w io.Writer) error {
 		AddressTypeEd25519Account:
 		return encoding.WriteElement(w, addr)
 	default:
-		return InvalidAddressTypeError(t)
+		return InvalidAddressTypeError(typ)
 	}
 }
 
@@ -129,7 +129,7 @@ func (addr *Address) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	switch t := addr.Type(); t {
+	switch typ := addr.Type(); typ {
 	case AddressTypeTreasury:
 		return nil
 	case AddressTypeValidator,
@@ -137,13 +137,13 @@ func (addr *Address) Decode(r io.Reader) error {
 		AddressTypeEd25519Account:
 		return encoding.ReadElement(r, addr[1:])
 	default:
-		return InvalidAddressTypeError(t)
+		return InvalidAddressTypeError(typ)
 	}
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the address.
 func (addr Address) SerializeSize() int {
-	switch t := addr.Type(); t {
+	switch typ := addr.Type(); typ {
 	case AddressTypeTreasury:
 		return 1
 	case AddressTypeValidator,

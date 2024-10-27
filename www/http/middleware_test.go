@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -20,35 +21,33 @@ func TestBasicAuthMiddleware(t *testing.T) {
 
 	t.Run("NoAuth", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/", http.NoBody)
-		rr := httptest.NewRecorder()
+		rec := httptest.NewRecorder()
 
-		handler.ServeHTTP(rr, req)
+		handler.ServeHTTP(rec, req)
 
-		assert.Equal(t, http.StatusUnauthorized, rr.Code)
-		assert.Equal(t, `Basic realm="restricted", charset="UTF-8"`, rr.Header().Get("WWW-Authenticate"))
+		assert.Equal(t, http.StatusUnauthorized, rec.Code)
+		assert.Equal(t, `Basic realm="restricted", charset="UTF-8"`, rec.Header().Get("WWW-Authenticate"))
 	})
 
 	t.Run("WithAuth", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/", http.NoBody)
 		req.SetBasicAuth("username", "password")
-		rr := httptest.NewRecorder()
+		rec := httptest.NewRecorder()
 
-		handler.ServeHTTP(rr, req)
+		handler.ServeHTTP(rec, req)
 
-		assert.Equal(t, http.StatusOK, rr.Code)
-		assert.Equal(t, "authorized", rr.Body.String())
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "authorized", rec.Body.String())
 	})
 
 	t.Run("CheckMetadata", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodGet, "/", http.NoBody)
 		req.SetBasicAuth("username", "password")
-		rr := httptest.NewRecorder()
+		rec := httptest.NewRecorder()
 
 		checkMetadataHandler := basicAuth(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			md, ok := metadata.FromOutgoingContext(r.Context())
-			if !ok {
-				t.Errorf("No metadata in context")
-			}
+			require.True(t, ok, "No metadata in context")
 
 			auth := md["authorization"][0]
 
@@ -65,8 +64,8 @@ func TestBasicAuthMiddleware(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 		}))
 
-		checkMetadataHandler.ServeHTTP(rr, req)
+		checkMetadataHandler.ServeHTTP(rec, req)
 
-		assert.Equal(t, http.StatusOK, rr.Code)
+		assert.Equal(t, http.StatusOK, rec.Code)
 	})
 }

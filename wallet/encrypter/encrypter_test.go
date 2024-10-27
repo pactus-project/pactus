@@ -7,23 +7,23 @@ import (
 )
 
 func TestNopeEncrypter(t *testing.T) {
-	e := NopeEncrypter()
-	assert.Equal(t, "", e.Method)
-	assert.Nil(t, e.Params)
-	assert.False(t, e.IsEncrypted())
+	enc := NopeEncrypter()
+	assert.Equal(t, "", enc.Method)
+	assert.Nil(t, enc.Params)
+	assert.False(t, enc.IsEncrypted())
 
 	msg := "foo"
-	_, err := e.Encrypt(msg, "password")
+	_, err := enc.Encrypt(msg, "password")
 	assert.ErrorIs(t, err, ErrInvalidPassword)
-	enc, err := e.Encrypt(msg, "")
+	cipher, err := enc.Encrypt(msg, "")
 	assert.NoError(t, err)
-	assert.Equal(t, msg, enc)
+	assert.Equal(t, msg, cipher)
 
-	_, err = e.Decrypt(enc, "password")
+	_, err = enc.Decrypt(cipher, "password")
 	assert.ErrorIs(t, err, ErrInvalidPassword)
-	dec, err := e.Decrypt(enc, "")
+	decipher, err := enc.Decrypt(cipher, "")
 	assert.NoError(t, err)
-	assert.Equal(t, msg, dec)
+	assert.Equal(t, msg, decipher)
 }
 
 func TestDefaultEncrypter(t *testing.T) {
@@ -32,16 +32,16 @@ func TestDefaultEncrypter(t *testing.T) {
 		OptionMemory(4),
 		OptionParallelism(5),
 	}
-	e := DefaultEncrypter(opts...)
-	assert.Equal(t, "ARGON2ID-AES_256_CTR-MACV1", e.Method)
-	assert.Equal(t, "3", e.Params["iterations"])
-	assert.Equal(t, "4", e.Params["memory"])
-	assert.Equal(t, "5", e.Params["parallelism"])
-	assert.True(t, e.IsEncrypted())
+	enc := DefaultEncrypter(opts...)
+	assert.Equal(t, "ARGON2ID-AES_256_CTR-MACV1", enc.Method)
+	assert.Equal(t, "3", enc.Params["iterations"])
+	assert.Equal(t, "4", enc.Params["memory"])
+	assert.Equal(t, "5", enc.Params["parallelism"])
+	assert.True(t, enc.IsEncrypted())
 }
 
 func TestEncrypter(t *testing.T) {
-	e := &Encrypter{
+	enc := &Encrypter{
 		Method: "ARGON2ID-AES_256_CTR-MACV1",
 		Params: params{
 			nameParamIterations:  "1",
@@ -50,18 +50,19 @@ func TestEncrypter(t *testing.T) {
 		},
 	}
 
-	password := "cowboy"
 	msg := "foo"
-	enc, err := e.Encrypt(msg, password)
+
+	_, err := enc.Encrypt(msg, "")
+	assert.ErrorIs(t, err, ErrInvalidPassword)
+
+	password := "cowboy"
+	cipher, err := enc.Encrypt(msg, password)
 	assert.NoError(t, err)
 
-	dec, err := e.Decrypt(enc, password)
+	dec, err := enc.Decrypt(cipher, password)
 	assert.NoError(t, err)
 	assert.Equal(t, msg, dec)
 
-	_, err = e.Decrypt(enc, "invalid-password")
-	assert.ErrorIs(t, err, ErrInvalidPassword)
-
-	_, err = e.Encrypt(enc, "")
+	_, err = enc.Decrypt(cipher, "invalid-password")
 	assert.ErrorIs(t, err, ErrInvalidPassword)
 }

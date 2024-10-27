@@ -46,24 +46,24 @@ type sandboxAccount struct {
 	updated bool
 }
 
-func NewSandbox(height uint32, str store.Reader, params *param.Params,
-	cmt committee.Reader, totalPower int64,
+func NewSandbox(height uint32, store store.Reader, params *param.Params,
+	committee committee.Reader, totalPower int64,
 ) Sandbox {
-	sb := &sandbox{
+	sbx := &sandbox{
 		height:     height,
-		store:      str,
-		committee:  cmt,
+		store:      store,
+		committee:  committee,
 		totalPower: totalPower,
 		params:     params,
 	}
 
-	sb.accounts = make(map[crypto.Address]*sandboxAccount)
-	sb.validators = make(map[crypto.Address]*sandboxValidator)
-	sb.committedTrxs = make(map[tx.ID]*tx.Tx)
-	sb.totalAccounts = sb.store.TotalAccounts()
-	sb.totalValidators = sb.store.TotalValidators()
+	sbx.accounts = make(map[crypto.Address]*sandboxAccount)
+	sbx.validators = make(map[crypto.Address]*sandboxValidator)
+	sbx.committedTrxs = make(map[tx.ID]*tx.Tx)
+	sbx.totalAccounts = sbx.store.TotalAccounts()
+	sbx.totalValidators = sbx.store.TotalValidators()
 
-	return sb
+	return sbx
 }
 
 func (*sandbox) shouldPanicForDuplicatedAddress() {
@@ -218,13 +218,13 @@ func (sb *sandbox) UpdateValidator(val *validator.Validator) {
 	defer sb.lk.Unlock()
 
 	addr := val.Address()
-	s, ok := sb.validators[addr]
+	sbVal, ok := sb.validators[addr]
 	if !ok {
 		sb.shouldPanicForUnknownAddress()
 	}
 
-	s.validator = val
-	s.updated = true
+	sbVal.validator = val
+	sbVal.updated = true
 }
 
 func (sb *sandbox) Params() *param.Params {

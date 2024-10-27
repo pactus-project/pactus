@@ -189,13 +189,13 @@ func FatalErrorCheck(err error) {
 	}
 }
 
-func PrintErrorMsgf(format string, a ...any) {
+func PrintErrorMsgf(format string, args ...any) {
 	format = "[ERROR] " + format
 	if terminalSupported {
 		// Print error msg with red color
 		format = fmt.Sprintf("\033[31m%s\033[0m", format)
 	}
-	fmt.Printf(format+"\n", a...)
+	fmt.Printf(format+"\n", args...)
 }
 
 func PrintSuccessMsgf(format string, a ...any) {
@@ -408,21 +408,21 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		return nil, nil, err
 	}
 
-	nd, err := node.NewNode(gen, conf, valKeys, rewardAddrs)
+	node, err := node.NewNode(gen, conf, valKeys, rewardAddrs)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	err = nd.Start()
+	err = node.Start()
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return nd, walletInstance, nil
+	return node, walletInstance, nil
 }
 
 // makeLocalGenesis makes genesis file for the local network.
-func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
+func makeLocalGenesis(wlt wallet.Wallet) *genesis.Genesis {
 	// Treasury account
 	acc := account.NewAccount(0)
 	acc.AddToBalance(21 * 1e14)
@@ -433,7 +433,7 @@ func makeLocalGenesis(w wallet.Wallet) *genesis.Genesis {
 	genValNum := 4
 	vals := make([]*validator.Validator, genValNum)
 	for i := 0; i < genValNum; i++ {
-		info := w.AddressInfo(w.AddressInfos()[i].Address)
+		info := wlt.AddressInfo(wlt.AddressInfos()[i].Address)
 		pub, _ := bls.PublicKeyFromString(info.PublicKey)
 		vals[i] = validator.NewValidator(pub, int32(i))
 	}

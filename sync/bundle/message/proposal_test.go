@@ -8,18 +8,18 @@ import (
 )
 
 func TestProposalType(t *testing.T) {
-	m := &ProposalMessage{}
-	assert.Equal(t, TypeProposal, m.Type())
+	msg := &ProposalMessage{}
+	assert.Equal(t, TypeProposal, msg.Type())
 }
 
 func TestProposalMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("OK", func(t *testing.T) {
-		prop, _ := ts.GenerateTestProposal(100, 0)
-		m := NewProposalMessage(prop)
+		prop := ts.GenerateTestProposal(100, 0)
+		msg := NewProposalMessage(prop)
 
-		assert.NoError(t, m.BasicCheck())
-		assert.Contains(t, m.String(), "100")
+		assert.NoError(t, msg.BasicCheck())
+		assert.Contains(t, msg.String(), "100")
 	})
 }

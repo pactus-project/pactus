@@ -29,8 +29,8 @@ type Server struct {
 	logger    *logger.SubLogger
 }
 
-func NewServer(conf *Config, st state.Facade, syn sync.Synchronizer,
-	n network.Network, consMgr consensus.ManagerReader,
+func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
+	network network.Network, consMgr consensus.ManagerReader,
 	walletMgr *wallet.Manager,
 ) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -39,9 +39,9 @@ func NewServer(conf *Config, st state.Facade, syn sync.Synchronizer,
 		ctx:       ctx,
 		cancel:    cancel,
 		config:    conf,
-		state:     st,
-		sync:      syn,
-		net:       n,
+		state:     state,
+		sync:      sync,
+		net:       network,
 		consMgr:   consMgr,
 		walletMgr: walletMgr,
 		logger:    logger.NewSubLogger("_grpc", nil),

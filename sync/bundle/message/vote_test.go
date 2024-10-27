@@ -9,25 +9,25 @@ import (
 )
 
 func TestVoteType(t *testing.T) {
-	m := &VoteMessage{}
-	assert.Equal(t, TypeVote, m.Type())
+	msg := &VoteMessage{}
+	assert.Equal(t, TypeVote, msg.Type())
 }
 
 func TestVoteMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid vote", func(t *testing.T) {
-		v := vote.NewPrepareVote(ts.RandHash(), ts.RandHeight(), -1, ts.RandValAddress())
-		m := NewVoteMessage(v)
+		vte := vote.NewPrepareVote(ts.RandHash(), ts.RandHeight(), -1, ts.RandValAddress())
+		msg := NewVoteMessage(vte)
 
-		assert.ErrorIs(t, m.BasicCheck(), vote.BasicCheckError{Reason: "invalid round"})
+		assert.ErrorIs(t, msg.BasicCheck(), vote.BasicCheckError{Reason: "invalid round"})
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		v, _ := ts.GenerateTestPrepareVote(100, 0)
-		m := NewVoteMessage(v)
+		vte, _ := ts.GenerateTestPrepareVote(100, 0)
+		msg := NewVoteMessage(vte)
 
-		assert.NoError(t, m.BasicCheck())
-		assert.Contains(t, m.String(), v.String())
+		assert.NoError(t, msg.BasicCheck())
+		assert.Contains(t, msg.String(), vte.String())
 	})
 }

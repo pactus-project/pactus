@@ -10,13 +10,13 @@ import (
 func TestExecuteTransferTx(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
+	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
 	senderBalance := senderAcc.Balance()
 	receiverAddr := td.RandAccAddress()
 
 	amt := td.RandAmountRange(0, senderBalance)
 	fee := td.RandFee()
-	lockTime := td.sandbox.CurrentHeight()
+	lockTime := td.sbx.CurrentHeight()
 
 	t.Run("Should fail, unknown address", func(t *testing.T) {
 		randomAddr := td.RandAccAddress()
@@ -41,8 +41,8 @@ func TestExecuteTransferTx(t *testing.T) {
 		td.execute(t, trx)
 	})
 
-	updatedSenderAcc := td.sandbox.Account(senderAddr)
-	updatedReceiverAcc := td.sandbox.Account(receiverAddr)
+	updatedSenderAcc := td.sbx.Account(senderAddr)
+	updatedReceiverAcc := td.sbx.Account(receiverAddr)
 
 	assert.Equal(t, senderBalance-(amt+fee), updatedSenderAcc.Balance())
 	assert.Equal(t, amt, updatedReceiverAcc.Balance())
@@ -53,10 +53,10 @@ func TestExecuteTransferTx(t *testing.T) {
 func TestTransferToSelf(t *testing.T) {
 	td := setup(t)
 
-	senderAddr, senderAcc := td.sandbox.TestStore.RandomTestAcc()
+	senderAddr, senderAcc := td.sbx.TestStore.RandomTestAcc()
 	amt := td.RandAmountRange(0, senderAcc.Balance())
 	fee := td.RandFee()
-	lockTime := td.sandbox.CurrentHeight()
+	lockTime := td.sbx.CurrentHeight()
 
 	trx := tx.NewTransferTx(lockTime, senderAddr, senderAddr, amt, fee)
 	td.check(t, trx, true, nil)
@@ -64,7 +64,7 @@ func TestTransferToSelf(t *testing.T) {
 	td.execute(t, trx)
 
 	expectedBalance := senderAcc.Balance() - fee // Fee should be deducted
-	updatedAcc := td.sandbox.Account(senderAddr)
+	updatedAcc := td.sbx.Account(senderAddr)
 	assert.Equal(t, expectedBalance, updatedAcc.Balance())
 
 	td.checkTotalCoin(t, fee)

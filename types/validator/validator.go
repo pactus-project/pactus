@@ -41,14 +41,14 @@ func NewValidator(publicKey *bls.PublicKey, number int32) *Validator {
 // FromBytes constructs a new validator from a byte array.
 func FromBytes(data []byte) (*Validator, error) {
 	acc := new(Validator)
-	r := bytes.NewReader(data)
+	reader := bytes.NewReader(data)
 
 	acc.data.PublicKey = new(bls.PublicKey)
-	if err := acc.data.PublicKey.Decode(r); err != nil {
+	if err := acc.data.PublicKey.Decode(reader); err != nil {
 		return nil, err
 	}
 
-	err := encoding.ReadElements(r,
+	err := encoding.ReadElements(reader,
 		&acc.data.Number,
 		&acc.data.Stake,
 		&acc.data.LastBondingHeight,
@@ -152,13 +152,13 @@ func (*Validator) SerializeSize() int {
 
 // Bytes returns the serialized byte representation of the validator.
 func (val *Validator) Bytes() ([]byte, error) {
-	w := bytes.NewBuffer(make([]byte, 0, val.SerializeSize()))
+	buf := bytes.NewBuffer(make([]byte, 0, val.SerializeSize()))
 
-	if err := val.data.PublicKey.Encode(w); err != nil {
+	if err := val.data.PublicKey.Encode(buf); err != nil {
 		return nil, err
 	}
 
-	err := encoding.WriteElements(w,
+	err := encoding.WriteElements(buf,
 		val.data.Number,
 		val.data.Stake,
 		val.data.LastBondingHeight,
@@ -168,7 +168,7 @@ func (val *Validator) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	return w.Bytes(), nil
+	return buf.Bytes(), nil
 }
 
 // Clone creates a deep copy of the validator.

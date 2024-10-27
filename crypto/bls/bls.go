@@ -20,14 +20,14 @@ func SignatureAggregate(sigs ...*Signature) *Signature {
 	if len(sigs) == 0 {
 		return nil
 	}
-	g1 := new(bls12381.G1Affine)
+	grp1 := new(bls12381.G1Affine)
 	aggPointG1, err := sigs[0].PointG1()
 	if err != nil {
 		return nil
 	}
 	for i := 1; i < len(sigs); i++ {
 		pointG1, _ := sigs[i].PointG1()
-		aggPointG1 = g1.Add(aggPointG1, pointG1)
+		aggPointG1 = grp1.Add(aggPointG1, pointG1)
 	}
 
 	data := aggPointG1.Bytes()
@@ -42,14 +42,14 @@ func PublicKeyAggregate(pubs ...*PublicKey) *PublicKey {
 	if len(pubs) == 0 {
 		return nil
 	}
-	g2 := new(bls12381.G2Affine)
+	grp2 := new(bls12381.G2Affine)
 	aggPointG2, err := pubs[0].PointG2()
 	if err != nil {
 		return nil
 	}
 	for i := 1; i < len(pubs); i++ {
 		pointG2, _ := pubs[i].PointG2()
-		aggPointG2 = g2.Add(aggPointG2, pointG2)
+		aggPointG2 = grp2.Add(aggPointG2, pointG2)
 	}
 
 	data := aggPointG2.Bytes()

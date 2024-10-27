@@ -28,20 +28,20 @@ func TestFromBytes(t *testing.T) {
 }
 
 func TestDecoding(t *testing.T) {
-	d, _ := hex.DecodeString(
+	data, _ := hex.DecodeString(
 		"01000000" + // number
 			"0200000000000000") // balance
 
-	acc, err := account.FromBytes(d)
+	acc, err := account.FromBytes(data)
 	require.NoError(t, err)
 	assert.Equal(t, int32(1), acc.Number())
 	assert.Equal(t, amount.Amount(2), acc.Balance())
-	d2, _ := acc.Bytes()
-	assert.Equal(t, d, d2)
-	assert.Equal(t, hash.CalcHash(d), acc.Hash())
+	accData, _ := acc.Bytes()
+	assert.Equal(t, data, accData)
+	assert.Equal(t, hash.CalcHash(data), acc.Hash())
 	expected, _ := hash.FromString("c3b75f08e64a66cb980fdc03c3a0b78635a7b1db049096e8bbbd9a2873f3071a")
 	assert.Equal(t, expected, acc.Hash())
-	assert.Equal(t, len(d), acc.SerializeSize())
+	assert.Equal(t, len(data), acc.SerializeSize())
 }
 
 func TestAddToBalance(t *testing.T) {

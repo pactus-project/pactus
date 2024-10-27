@@ -146,34 +146,34 @@ func (k *ExtendedKey) String() string {
 	// - Key data: The key data that is 32 bytes.
 	//
 
-	w := bytes.NewBuffer(make([]byte, 0))
-	err := encoding.WriteElement(w, byte(len(k.path)))
+	buf := bytes.NewBuffer(make([]byte, 0))
+	err := encoding.WriteElement(buf, byte(len(k.path)))
 	if err != nil {
 		return err.Error()
 	}
 
 	for _, p := range k.path {
-		err := encoding.WriteElement(w, p)
+		err := encoding.WriteElement(buf, p)
 		if err != nil {
 			return err.Error()
 		}
 	}
-	err = encoding.WriteVarBytes(w, k.chainCode)
+	err = encoding.WriteVarBytes(buf, k.chainCode)
 	if err != nil {
 		return err.Error()
 	}
 
-	err = encoding.WriteElement(w, uint8(0))
+	err = encoding.WriteElement(buf, uint8(0))
 	if err != nil {
 		return err.Error()
 	}
 
-	err = encoding.WriteVarBytes(w, k.key)
+	err = encoding.WriteVarBytes(buf, k.key)
 	if err != nil {
 		return err.Error()
 	}
 
-	str, err := bech32m.EncodeFromBase256WithType(crypto.XPrivateKeyHRP, crypto.SignatureTypeEd25519, w.Bytes())
+	str, err := bech32m.EncodeFromBase256WithType(crypto.XPrivateKeyHRP, crypto.SignatureTypeEd25519, buf.Bytes())
 	if err != nil {
 		return err.Error()
 	}
@@ -198,33 +198,33 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 		return nil, ErrInvalidHRP
 	}
 
-	r := bytes.NewReader(data)
+	reader := bytes.NewReader(data)
 	depth := uint8(0)
-	err = encoding.ReadElement(r, &depth)
+	err = encoding.ReadElement(reader, &depth)
 	if err != nil {
 		return nil, err
 	}
 
 	path := make([]uint32, depth)
 	for i := byte(0); i < depth; i++ {
-		err := encoding.ReadElement(r, &path[i])
+		err := encoding.ReadElement(reader, &path[i])
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	chainCode, err := encoding.ReadVarBytes(r)
+	chainCode, err := encoding.ReadVarBytes(reader)
 	if err != nil {
 		return nil, err
 	}
 
 	var res uint8
-	err = encoding.ReadElement(r, &res)
+	err = encoding.ReadElement(reader, &res)
 	if err != nil {
 		return nil, err
 	}
 
-	key, err := encoding.ReadVarBytes(r)
+	key, err := encoding.ReadVarBytes(reader)
 	if err != nil {
 		return nil, err
 	}
@@ -246,13 +246,13 @@ func NewMaster(seed []byte) (*ExtendedKey, error) {
 	curve := []byte("ed25519 seed")
 	hmac512 := hmac.New(sha512.New, curve)
 	_, _ = hmac512.Write(seed)
-	lr := hmac512.Sum(nil)
+	ilr := hmac512.Sum(nil)
 
 	// Split "I" into two 32-byte sequences Il and Ir where:
 	//   Il = master key
 	//   Ir = master chain code
-	masterChainCode := lr[32:]
-	masterKey := lr[:32]
+	masterChainCode := ilr[32:]
+	masterKey := ilr[:32]
 
 	return newExtendedKey(masterKey, masterChainCode, []uint32{}), nil
 }

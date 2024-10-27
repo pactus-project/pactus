@@ -12,7 +12,7 @@ func TestParsingProposalMessages(t *testing.T) {
 
 	t.Run("Parsing proposal message", func(t *testing.T) {
 		consensusHeight := td.state.LastBlockHeight() + 1
-		prop, _ := td.GenerateTestProposal(consensusHeight, 0)
+		prop := td.GenerateTestProposal(consensusHeight, 0)
 		msg := message.NewProposalMessage(prop)
 		pid := td.RandPeerID()
 

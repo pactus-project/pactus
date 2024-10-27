@@ -115,13 +115,13 @@ func OS2IP(x []byte) *big.Int {
 
 // I2OSP converts a nonnegative integer to an octet string of a specified length.
 // https://datatracker.ietf.org/doc/html/rfc8017#section-4.1
-func I2OSP(x *big.Int, xLen int) []byte {
-	if x.Sign() == -1 {
+func I2OSP(num *big.Int, len int) []byte {
+	if num.Sign() == -1 {
 		return nil
 	}
-	buf := make([]byte, xLen)
+	buf := make([]byte, len)
 
-	return x.FillBytes(buf)
+	return num.FillBytes(buf)
 }
 
 // LogScale computes 2^⌈log₂(val)⌉, where ⌈x⌉ represents the ceiling of x.
@@ -134,28 +134,28 @@ func LogScale(val int) int {
 
 func FormatBytesToHumanReadable(bytes uint64) string {
 	const (
-		_  = iota
-		KB = 1 << (10 * iota)
-		MB
-		GB
-		TB
+		_        = iota
+		KiloBYte = 1 << (10 * iota)
+		MegaBYte
+		GigaByte
+		TeraByte
 	)
 	unit := "Bytes"
 	value := float64(bytes)
 
 	switch {
-	case bytes >= TB:
+	case bytes >= TeraByte:
 		unit = "TB"
-		value /= TB
-	case bytes >= GB:
+		value /= TeraByte
+	case bytes >= GigaByte:
 		unit = "GB"
-		value /= GB
-	case bytes >= MB:
+		value /= GigaByte
+	case bytes >= MegaBYte:
 		unit = "MB"
-		value /= MB
-	case bytes >= KB:
+		value /= MegaBYte
+	case bytes >= KiloBYte:
 		unit = "KB"
-		value /= KB
+		value /= KiloBYte
 	}
 
 	return fmt.Sprintf("%.2f %s", value, unit)

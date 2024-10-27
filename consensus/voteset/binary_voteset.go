@@ -89,16 +89,16 @@ func (vs *BinaryVoteSet) AllVotes() []*vote.Vote {
 }
 
 // AddVote attempts to add a vote to the VoteSet. Returns an error if the vote is invalid.
-func (vs *BinaryVoteSet) AddVote(v *vote.Vote) (bool, error) {
-	power, err := vs.voteSet.verifyVote(v)
+func (vs *BinaryVoteSet) AddVote(vote *vote.Vote) (bool, error) {
+	power, err := vs.voteSet.verifyVote(vote)
 	if err != nil {
 		return false, err
 	}
 
-	roundVotes := vs.mustGetRoundVotes(v.CPRound())
-	existingVote, ok := roundVotes.allVotes[v.Signer()]
+	roundVotes := vs.mustGetRoundVotes(vote.CPRound())
+	existingVote, ok := roundVotes.allVotes[vote.Signer()]
 	if ok {
-		if existingVote.Hash() == v.Hash() {
+		if existingVote.Hash() == vote.Hash() {
 			// The vote is already added
 			return false, nil
 		}
@@ -106,11 +106,11 @@ func (vs *BinaryVoteSet) AddVote(v *vote.Vote) (bool, error) {
 		// It is a duplicated vote
 		err = ErrDuplicatedVote
 	} else {
-		roundVotes.allVotes[v.Signer()] = v
+		roundVotes.allVotes[vote.Signer()] = vote
 		roundVotes.votedPower += power
 	}
 
-	roundVotes.addVote(v, power)
+	roundVotes.addVote(vote, power)
 
 	return true, err
 }

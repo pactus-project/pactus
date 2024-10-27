@@ -746,7 +746,7 @@ func assistantPageComplete(assistant *gtk.Assistant, page gtk.IWidget, completed
 
 func getMetadata(
 	ctx context.Context,
-	dm *cmd.Importer,
+	importer *cmd.Importer,
 	listBox *gtk.ListBox,
 ) <-chan []cmd.Metadata {
 	mdCh := make(chan []cmd.Metadata, 1)
@@ -761,7 +761,7 @@ func getMetadata(
 			children = children.Next()
 		}
 
-		metadata, err := dm.GetMetadata(ctx)
+		metadata, err := importer.GetMetadata(ctx)
 		if err != nil {
 			mdCh <- nil
 
@@ -769,13 +769,13 @@ func getMetadata(
 		}
 
 		for _, md := range metadata {
-			listBoxRow, err := gtk.ListBoxRowNew()
-			fatalErrorCheck(err)
-
 			label, err := gtk.LabelNew(fmt.Sprintf("snapshot %s (%s)",
 				md.CreatedAtTime().Format("2006-01-02"),
 				util.FormatBytesToHumanReadable(md.Data.Size),
 			))
+			fatalErrorCheck(err)
+
+			listBoxRow, err := gtk.ListBoxRowNew()
 			fatalErrorCheck(err)
 
 			listBoxRow.Add(label)

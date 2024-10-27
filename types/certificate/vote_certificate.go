@@ -25,14 +25,14 @@ func NewVoteCertificate(height uint32, round int16) *VoteCertificate {
 // SignBytes returns the sign bytes for the vote certificate.
 // This method provides the same data as the `SignBytes` function in vote struct.
 func (cert *VoteCertificate) SignBytes(blockHash hash.Hash, extraData ...[]byte) []byte {
-	sb := blockHash.Bytes()
-	sb = append(sb, util.Uint32ToSlice(cert.height)...)
-	sb = append(sb, util.Int16ToSlice(cert.round)...)
+	signBytes := blockHash.Bytes()
+	signBytes = append(signBytes, util.Uint32ToSlice(cert.height)...)
+	signBytes = append(signBytes, util.Int16ToSlice(cert.round)...)
 	for _, data := range extraData {
-		sb = append(sb, data...)
+		signBytes = append(signBytes, data...)
 	}
 
-	return sb
+	return signBytes
 }
 
 func (cert *VoteCertificate) ValidatePrepare(validators []*validator.Validator,

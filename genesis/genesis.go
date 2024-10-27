@@ -167,13 +167,13 @@ func LoadFromFile(file string) (*Genesis, error) {
 
 // SaveToFile saves the genesis into a JSON file.
 func (gen *Genesis) SaveToFile(file string) error {
-	j, err := gen.MarshalJSON()
+	data, err := gen.MarshalJSON()
 	if err != nil {
 		return err
 	}
 
 	// write  dataContent to file
-	return util.WriteFile(file, j)
+	return util.WriteFile(file, data)
 }
 
 func (gen *Genesis) TotalSupply() amount.Amount {

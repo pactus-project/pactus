@@ -53,9 +53,9 @@ type synchronizer struct {
 func NewSynchronizer(
 	conf *Config,
 	valKeys []*bls.ValidatorKey,
-	st state.Facade,
+	state state.Facade,
 	consMgr consensus.Manager,
-	net network.Network,
+	network network.Network,
 	broadcastCh <-chan message.Message,
 ) (Synchronizer, error) {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -64,17 +64,17 @@ func NewSynchronizer(
 		cancel:      cancel,
 		config:      conf,
 		valKeys:     valKeys,
-		state:       st,
+		state:       state,
 		consMgr:     consMgr,
-		network:     net,
+		network:     network,
 		broadcastCh: broadcastCh,
-		networkCh:   net.EventChannel(),
+		networkCh:   network.EventChannel(),
 		ntp:         ntp.NewNtpChecker(),
 	}
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout)
 	sync.logger = logger.NewSubLogger("_sync", sync)
-	fw, err := firewall.NewFirewall(conf.Firewall, net, sync.peerSet, st, sync.logger)
+	fw, err := firewall.NewFirewall(conf.Firewall, network, sync.peerSet, state, sync.logger)
 	if err != nil {
 		return nil, err
 	}
@@ -177,15 +177,15 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 	return bdl
 }
 
-func (sync *synchronizer) sendTo(msg message.Message, to peer.ID) {
+func (sync *synchronizer) sendTo(msg message.Message, pid peer.ID) {
 	bdl := sync.prepareBundle(msg)
 	data, _ := bdl.Encode()
 
-	sync.network.SendTo(data, to)
-	sync.peerSet.UpdateLastSent(to)
-	sync.peerSet.UpdateSentMetric(&to, msg.Type(), int64(len(data)))
+	sync.network.SendTo(data, pid)
+	sync.peerSet.UpdateLastSent(pid)
+	sync.peerSet.UpdateSentMetric(&pid, msg.Type(), int64(len(data)))
 
-	sync.logger.Debug("bundle sent", "bundle", bdl, "to", to)
+	sync.logger.Debug("bundle sent", "bundle", bdl, "pid", pid)
 }
 
 func (sync *synchronizer) broadcast(msg message.Message) {
@@ -225,8 +225,8 @@ func (sync *synchronizer) Services() service.Services {
 	return sync.config.Services
 }
 
-func (sync *synchronizer) sayHello(to peer.ID) {
-	s := sync.peerSet.GetPeerStatus(to)
+func (sync *synchronizer) sayHello(pid peer.ID) {
+	s := sync.peerSet.GetPeerStatus(pid)
 	if s.IsKnown() {
 		return
 	}
@@ -241,8 +241,8 @@ func (sync *synchronizer) sayHello(to peer.ID) {
 	)
 	msg.Sign(sync.valKeys)
 
-	sync.logger.Info("sending Hello message", "to", to)
-	sync.sendTo(msg, to)
+	sync.logger.Info("sending Hello message", "to", pid)
+	sync.sendTo(msg, pid)
 }
 
 func (sync *synchronizer) broadcastLoop() {
@@ -263,26 +263,26 @@ func (sync *synchronizer) receiveLoop() {
 		case <-sync.ctx.Done():
 			return
 
-		case e := <-sync.networkCh:
-			switch e.Type() {
+		case evt := <-sync.networkCh:
+			switch evt.Type() {
 			case network.EventTypeGossip:
-				ge := e.(*network.GossipMessage)
+				ge := evt.(*network.GossipMessage)
 				sync.processGossipMessage(ge)
 
 			case network.EventTypeStream:
-				se := e.(*network.StreamMessage)
+				se := evt.(*network.StreamMessage)
 				sync.processStreamMessage(se)
 
 			case network.EventTypeConnect:
-				ce := e.(*network.ConnectEvent)
+				ce := evt.(*network.ConnectEvent)
 				sync.processConnectEvent(ce)
 
 			case network.EventTypeDisconnect:
-				de := e.(*network.DisconnectEvent)
+				de := evt.(*network.DisconnectEvent)
 				sync.processDisconnectEvent(de)
 
 			case network.EventTypeProtocols:
-				pe := e.(*network.ProtocolsEvents)
+				pe := evt.(*network.ProtocolsEvents)
 				sync.processProtocolsEvent(pe)
 			}
 		}
@@ -343,14 +343,14 @@ func (sync *synchronizer) processDisconnectEvent(de *network.DisconnectEvent) {
 
 func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle, from peer.ID) {
 	sync.logger.Debug("received a bundle", "from", from, "bundle", bdl)
-	h := sync.handlers[bdl.Message.Type()]
-	if h == nil {
+	handler := sync.handlers[bdl.Message.Type()]
+	if handler == nil {
 		sync.logger.Error("invalid message type", "type", bdl.Message.Type())
 
 		return
 	}
 
-	h.ParseMessage(bdl.Message, from)
+	handler.ParseMessage(bdl.Message, from)
 }
 
 func (sync *synchronizer) String() string {
@@ -459,40 +459,40 @@ func (sync *synchronizer) sendBlockRequestToRandomPeer(from, count uint32, onlyF
 	}
 
 	for i := sync.peerSet.NumberOfSessions(); i < sync.config.MaxSessions; i++ {
-		p := sync.peerSet.GetRandomPeer()
-		if p == nil {
+		peer := sync.peerSet.GetRandomPeer()
+		if peer == nil {
 			break
 		}
 
 		// Don't open a new session if we already have an open session with the same peer.
 		// This helps us to get blocks from different peers.
-		if sync.peerSet.HasOpenSession(p.PeerID) {
+		if sync.peerSet.HasOpenSession(peer.PeerID) {
 			continue
 		}
 
 		// We haven't completed the handshake with this peer.
-		if !p.Status.IsKnown() {
+		if !peer.Status.IsKnown() {
 			if onlyFullNodes {
-				sync.network.CloseConnection(p.PeerID)
+				sync.network.CloseConnection(peer.PeerID)
 			}
 
 			continue
 		}
 
-		if onlyFullNodes && !p.IsFullNode() {
+		if onlyFullNodes && !peer.IsFullNode() {
 			if onlyFullNodes {
-				sync.network.CloseConnection(p.PeerID)
+				sync.network.CloseConnection(peer.PeerID)
 			}
 
 			continue
 		}
 
-		sid := sync.peerSet.OpenSession(p.PeerID, from, count)
+		sid := sync.peerSet.OpenSession(peer.PeerID, from, count)
 		msg := message.NewBlocksRequestMessage(sid, from, count)
-		sync.sendTo(msg, p.PeerID)
+		sync.sendTo(msg, peer.PeerID)
 
 		sync.logger.Info("blocks request sent",
-			"from", from+1, "count", count, "pid", p.PeerID, "sid", sid)
+			"from", from+1, "count", count, "pid", peer.PeerID, "sid", sid)
 
 		return true
 	}
@@ -571,15 +571,15 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 
 	blocks := make([][]byte, 0, count)
 
-	for h := from; h < from+count; h++ {
-		b := sync.state.CommittedBlock(h)
-		if b == nil {
-			sync.logger.Warn("unable to find a block", "height", h)
+	for height := from; height < from+count; height++ {
+		cBlk := sync.state.CommittedBlock(height)
+		if cBlk == nil {
+			sync.logger.Warn("unable to find a block", "height", height)
 
 			return nil
 		}
 
-		blocks = append(blocks, b.Data)
+		blocks = append(blocks, cBlk.Data)
 	}
 
 	return blocks

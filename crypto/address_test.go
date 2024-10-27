@@ -33,11 +33,11 @@ func TestAddressType(t *testing.T) {
 		{address: "pc1rspm7ps49gar9ft5g0tkl6lhxs8ygeakq87quh3", account: true, validator: false},
 	}
 
-	for _, test := range tests {
-		addr, _ := crypto.AddressFromString(test.address)
+	for _, tt := range tests {
+		addr, _ := crypto.AddressFromString(tt.address)
 
-		assert.Equal(t, test.account, addr.IsAccountAddress())
-		assert.Equal(t, test.validator, addr.IsValidatorAddress())
+		assert.Equal(t, tt.account, addr.IsAccountAddress())
+		assert.Equal(t, tt.validator, addr.IsValidatorAddress())
 	}
 }
 
@@ -152,15 +152,15 @@ func TestFromString(t *testing.T) {
 			crypto.AddressTypeEd25519Account,
 		},
 	}
-	for no, test := range tests {
-		addr, err := crypto.AddressFromString(test.encoded)
-		if test.err == nil {
+	for no, tt := range tests {
+		addr, err := crypto.AddressFromString(tt.encoded)
+		if tt.err == nil {
 			assert.NoError(t, err, "test %v: unexpected error", no)
-			assert.Equal(t, test.bytes, addr.Bytes(), "test %v: invalid result", no)
-			assert.Equal(t, strings.ToLower(test.encoded), addr.String(), "test %v: invalid encode", no)
-			assert.Equal(t, test.addrType, addr.Type(), "test %v: invalid type", no)
+			assert.Equal(t, tt.bytes, addr.Bytes(), "test %v: invalid result", no)
+			assert.Equal(t, strings.ToLower(tt.encoded), addr.String(), "test %v: invalid encode", no)
+			assert.Equal(t, tt.addrType, addr.Type(), "test %v: invalid type", no)
 		} else {
-			assert.ErrorIs(t, err, test.err, "test %v: invalid error", no)
+			assert.ErrorIs(t, err, tt.err, "test %v: invalid error", no)
 		}
 	}
 }
@@ -212,18 +212,18 @@ func TestAddressDecoding(t *testing.T) {
 			nil,
 		},
 	}
-	for no, test := range tests {
-		data, _ := hex.DecodeString(test.hex)
-		r := bytes.NewBuffer(data)
+	for no, tt := range tests {
+		data, _ := hex.DecodeString(tt.hex)
+		buf := bytes.NewBuffer(data)
 		addr := new(crypto.Address)
 
-		err := addr.Decode(r)
-		if test.err != nil {
-			assert.ErrorIs(t, err, test.err, "test %v: error not matched", no)
-			assert.Equal(t, test.size, addr.SerializeSize(), "test %v invalid size", no)
+		err := addr.Decode(buf)
+		if tt.err != nil {
+			assert.ErrorIs(t, err, tt.err, "test %v: error not matched", no)
+			assert.Equal(t, tt.size, addr.SerializeSize(), "test %v invalid size", no)
 		} else {
 			assert.NoError(t, err, "test %v expected no error", no)
-			assert.Equal(t, test.size, addr.SerializeSize(), "test %v invalid size", no)
+			assert.Equal(t, tt.size, addr.SerializeSize(), "test %v invalid size", no)
 
 			length := addr.SerializeSize()
 			for i := 0; i < length; i++ {

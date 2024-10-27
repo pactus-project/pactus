@@ -94,19 +94,19 @@ func TestDerivation(t *testing.T) {
 	}
 
 	masterKey, _ := NewMaster(testSeed)
-	for i, test := range tests {
-		extKey, err := masterKey.DerivePath(test.path)
+	for no, tt := range tests {
+		extKey, err := masterKey.DerivePath(tt.path)
 		require.NoError(t, err)
 
 		privKey := extKey.RawPrivateKey()
-		require.Equal(t, test.wantPrv, hex.EncodeToString(privKey),
-			"mismatched serialized private key for test #%v", i+1)
+		require.Equal(t, tt.wantPrv, hex.EncodeToString(privKey),
+			"mismatched serialized private key for test #%v", no+1)
 
 		pubKey := extKey.RawPublicKey()
-		require.Equal(t, test.wantPub, hex.EncodeToString(pubKey),
-			"mismatched serialized public key for test #%v", i+1)
+		require.Equal(t, tt.wantPub, hex.EncodeToString(pubKey),
+			"mismatched serialized public key for test #%v", no+1)
 
-		require.Equal(t, test.path, extKey.Path())
+		require.Equal(t, tt.path, extKey.Path())
 	}
 }
 
@@ -129,14 +129,14 @@ func TestGenerateSeed(t *testing.T) {
 		{name: "65 bytes", length: 65, err: ErrInvalidSeedLen},
 	}
 
-	for i, test := range tests {
-		seed, err := GenerateSeed(test.length)
-		assert.ErrorIs(t, err, test.err)
+	for no, tt := range tests {
+		seed, err := GenerateSeed(tt.length)
+		assert.ErrorIs(t, err, tt.err)
 
-		if test.err == nil {
-			assert.Len(t, seed, int(test.length),
+		if tt.err == nil {
+			assert.Len(t, seed, int(tt.length),
 				"GenerateSeed #%d (%s): length mismatch -- got %d, want %d",
-				i+1, test.name, len(seed), test.length)
+				no+1, tt.name, len(seed), tt.length)
 		}
 	}
 }
@@ -186,16 +186,16 @@ func TestNewMaster(t *testing.T) {
 		},
 	}
 
-	for i, test := range tests {
-		seed, _ := hex.DecodeString(test.seed)
+	for no, tt := range tests {
+		seed, _ := hex.DecodeString(tt.seed)
 		extKey, err := NewMaster(seed)
-		assert.ErrorIs(t, err, test.err)
+		assert.ErrorIs(t, err, tt.err)
 
-		if test.err == nil {
+		if tt.err == nil {
 			privKey := extKey.RawPrivateKey()
-			assert.Equal(t, test.key, hex.EncodeToString(privKey),
+			assert.Equal(t, tt.key, hex.EncodeToString(privKey),
 				"NewMaster #%d (%s): key mismatch -- got %x, want %s",
-				i+1, test.name, privKey, test.key)
+				no+1, tt.name, privKey, tt.key)
 		}
 	}
 }
@@ -244,15 +244,15 @@ func TestKeyToString(t *testing.T) {
 	}
 
 	masterKey, _ := NewMaster(testSeed)
-	for i, test := range tests {
-		extKey, _ := masterKey.DerivePath(test.path)
-		require.Equal(t, test.wantXPriv, extKey.String(), "test %d failed", i)
+	for no, tt := range tests {
+		extKey, _ := masterKey.DerivePath(tt.path)
+		require.Equal(t, tt.wantXPriv, extKey.String(), "test %d failed", no)
 
-		recoveredExtKey, err := NewKeyFromString(test.wantXPriv)
+		recoveredExtKey, err := NewKeyFromString(tt.wantXPriv)
 		require.NoError(t, err)
 
 		require.Equal(t, extKey, recoveredExtKey)
-		require.Equal(t, test.path, recoveredExtKey.path)
+		require.Equal(t, tt.path, recoveredExtKey.path)
 	}
 }
 
@@ -307,8 +307,8 @@ func TestInvalidString(t *testing.T) {
 		},
 	}
 
-	for i, test := range tests {
-		_, err := NewKeyFromString(test.str)
-		assert.ErrorIs(t, err, test.expectedError, "test %d error is not matched", i)
+	for no, tt := range tests {
+		_, err := NewKeyFromString(tt.str)
+		assert.ErrorIs(t, err, tt.expectedError, "test %d error is not matched", no)
 	}
 }

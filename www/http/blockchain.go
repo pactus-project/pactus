@@ -25,21 +25,21 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tm := newTableMaker()
-	tm.addRowBlockHash("Last Block Hash", res.LastBlockHash)
-	tm.addRowInt("Last Block Height", int(res.LastBlockHeight))
-	tm.addRowBool("Is Pruned", res.IsPruned)
-	tm.addRowInt("Pruning Height", int(res.PruningHeight))
-	tm.addRowString("--- Committee", "---")
-	tm.addRowPower("Total Power", res.TotalPower)
-	tm.addRowPower("Committee Power", res.CommitteePower)
+	tmk := newTableMaker()
+	tmk.addRowBlockHash("Last Block Hash", res.LastBlockHash)
+	tmk.addRowInt("Last Block Height", int(res.LastBlockHeight))
+	tmk.addRowBool("Is Pruned", res.IsPruned)
+	tmk.addRowInt("Pruning Height", int(res.PruningHeight))
+	tmk.addRowString("--- Committee", "---")
+	tmk.addRowPower("Total Power", res.TotalPower)
+	tmk.addRowPower("Committee Power", res.CommitteePower)
 	for i, val := range res.CommitteeValidators {
-		tm.addRowInt("--- Validator", i+1)
+		tmk.addRowInt("--- Validator", i+1)
 		tmVal := s.writeValidatorTable(val)
-		tm.addRowString("", tmVal.html())
+		tmk.addRowString("", tmVal.html())
 	}
 
-	s.writeHTML(w, tm.html())
+	s.writeHTML(w, tmk.html())
 }
 
 func (s *Server) GetBlockByHeightHandler(w http.ResponseWriter, r *http.Request) {
@@ -90,35 +90,35 @@ func (s *Server) blockByHeight(ctx context.Context, w http.ResponseWriter, block
 		return
 	}
 
-	tm := newTableMaker()
-	tm.addRowString("Time", time.Unix(int64(res.BlockTime), 0).String())
-	tm.addRowInt("Height", int(res.Height))
-	tm.addRowString("Hash", res.Hash)
-	tm.addRowString("Data", res.Data)
+	tmk := newTableMaker()
+	tmk.addRowString("Time", time.Unix(int64(res.BlockTime), 0).String())
+	tmk.addRowInt("Height", int(res.Height))
+	tmk.addRowString("Hash", res.Hash)
+	tmk.addRowString("Data", res.Data)
 	if res.Header != nil {
-		tm.addRowString("--- Header", "---")
-		tm.addRowInt("Version", int(res.Header.Version))
-		tm.addRowInt("UnixTime", int(res.BlockTime))
-		tm.addRowBlockHash("PrevBlockHash", res.Header.PrevBlockHash)
-		tm.addRowString("StateRoot", res.Header.StateRoot)
-		tm.addRowString("SortitionSeed", res.Header.SortitionSeed)
-		tm.addRowValAddress("ProposerAddress", res.Header.ProposerAddress)
+		tmk.addRowString("--- Header", "---")
+		tmk.addRowInt("Version", int(res.Header.Version))
+		tmk.addRowInt("UnixTime", int(res.BlockTime))
+		tmk.addRowBlockHash("PrevBlockHash", res.Header.PrevBlockHash)
+		tmk.addRowString("StateRoot", res.Header.StateRoot)
+		tmk.addRowString("SortitionSeed", res.Header.SortitionSeed)
+		tmk.addRowValAddress("ProposerAddress", res.Header.ProposerAddress)
 	}
 	if res.PrevCert != nil {
-		tm.addRowString("--- PrevCertificate", "---")
-		tm.addRowString("Hash", res.PrevCert.Hash)
-		tm.addRowInt("Round", int(res.PrevCert.Round))
-		tm.addRowInts("Committers", res.PrevCert.Committers)
-		tm.addRowInts("Absentees", res.PrevCert.Absentees)
-		tm.addRowString("Signature", res.PrevCert.Signature)
+		tmk.addRowString("--- PrevCertificate", "---")
+		tmk.addRowString("Hash", res.PrevCert.Hash)
+		tmk.addRowInt("Round", int(res.PrevCert.Round))
+		tmk.addRowInts("Committers", res.PrevCert.Committers)
+		tmk.addRowInts("Absentees", res.PrevCert.Absentees)
+		tmk.addRowString("Signature", res.PrevCert.Signature)
 	}
-	tm.addRowString("--- Transactions", "---")
+	tmk.addRowString("--- Transactions", "---")
 	for i, trx := range res.Txs {
-		tm.addRowInt("Transaction #", i+1)
-		txToTable(tm, trx)
+		tmk.addRowInt("Transaction #", i+1)
+		txToTable(tmk, trx)
 	}
 
-	s.writeHTML(w, tm.html())
+	s.writeHTML(w, tmk.html())
 }
 
 // GetAccountHandler returns a handler to get account by address.
@@ -135,13 +135,13 @@ func (s *Server) GetAccountHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	acc := res.Account
-	tm := newTableMaker()
-	tm.addRowAccAddress("Address", acc.Address)
-	tm.addRowInt("Number", int(acc.Number))
-	tm.addRowAmount("Balance", amount.Amount(acc.Balance))
-	tm.addRowString("Hash", acc.Hash)
+	tmk := newTableMaker()
+	tmk.addRowAccAddress("Address", acc.Address)
+	tmk.addRowInt("Number", int(acc.Number))
+	tmk.addRowAmount("Balance", amount.Amount(acc.Balance))
+	tmk.addRowString("Hash", acc.Hash)
 
-	s.writeHTML(w, tm.html())
+	s.writeHTML(w, tmk.html())
 }
 
 // GetValidatorHandler returns a handler to get validator by address.
@@ -207,18 +207,18 @@ func (s *Server) GetTxPoolContentHandler(w http.ResponseWriter, r *http.Request)
 }
 
 func (*Server) writeValidatorTable(val *pactus.ValidatorInfo) *tableMaker {
-	tm := newTableMaker()
-	tm.addRowString("Public Key", val.PublicKey)
-	tm.addRowValAddress("Address", val.Address)
-	tm.addRowInt("Number", int(val.Number))
-	tm.addRowAmount("Stake", amount.Amount(val.Stake))
-	tm.addRowInt("LastBondingHeight", int(val.LastBondingHeight))
-	tm.addRowInt("LastSortitionHeight", int(val.LastSortitionHeight))
-	tm.addRowInt("UnbondingHeight", int(val.UnbondingHeight))
-	tm.addRowDouble("AvailabilityScore", val.AvailabilityScore)
-	tm.addRowString("Hash", val.Hash)
+	tmk := newTableMaker()
+	tmk.addRowString("Public Key", val.PublicKey)
+	tmk.addRowValAddress("Address", val.Address)
+	tmk.addRowInt("Number", int(val.Number))
+	tmk.addRowAmount("Stake", amount.Amount(val.Stake))
+	tmk.addRowInt("LastBondingHeight", int(val.LastBondingHeight))
+	tmk.addRowInt("LastSortitionHeight", int(val.LastSortitionHeight))
+	tmk.addRowInt("UnbondingHeight", int(val.UnbondingHeight))
+	tmk.addRowDouble("AvailabilityScore", val.AvailabilityScore)
+	tmk.addRowString("Hash", val.Hash)
 
-	return tm
+	return tmk
 }
 
 func (s *Server) ConsensusHandler(w http.ResponseWriter, r *http.Request) {
@@ -232,33 +232,33 @@ func (s *Server) ConsensusHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tm := newTableMaker()
+	tmk := newTableMaker()
 
-	tm.addRowString("== Proposal", "")
+	tmk.addRowString("== Proposal", "")
 	if res.Proposal != nil {
-		tm.addRowInt("Height", int(res.Proposal.Height))
-		tm.addRowInt("Round", int(res.Proposal.Round))
-		tm.addRowString("BlockData", res.Proposal.BlockData)
-		tm.addRowString("Signature", res.Proposal.Signature)
+		tmk.addRowInt("Height", int(res.Proposal.Height))
+		tmk.addRowInt("Round", int(res.Proposal.Round))
+		tmk.addRowString("BlockData", res.Proposal.BlockData)
+		tmk.addRowString("Signature", res.Proposal.Signature)
 	}
 
 	for i, cons := range res.Instances {
-		tm.addRowInt("== Validator", i+1)
-		tm.addRowValAddress("Address", cons.Address)
-		tm.addRowBool("Active", cons.Active)
-		tm.addRowInt("Height", int(cons.Height))
-		tm.addRowInt("Round", int(cons.Round))
-		tm.addRowString("Votes", "---")
-		for i, v := range cons.Votes {
-			tm.addRowInt("-- Vote #", i+1)
-			tm.addRowBlockHash("BlockHash", v.BlockHash)
-			tm.addRowString("Type", vote.Type(v.Type).String())
-			tm.addRowString("Voter", v.Voter)
-			tm.addRowInt("Round", int(v.Round))
-			tm.addRowInt("CPRound", int(v.CpRound))
-			tm.addRowInt("CPValue", int(v.CpValue))
+		tmk.addRowInt("== Validator", i+1)
+		tmk.addRowValAddress("Address", cons.Address)
+		tmk.addRowBool("Active", cons.Active)
+		tmk.addRowInt("Height", int(cons.Height))
+		tmk.addRowInt("Round", int(cons.Round))
+		tmk.addRowString("Votes", "---")
+		for index, vte := range cons.Votes {
+			tmk.addRowInt("-- Vote #", index+1)
+			tmk.addRowBlockHash("BlockHash", vte.BlockHash)
+			tmk.addRowString("Type", vote.Type(vte.Type).String())
+			tmk.addRowString("Voter", vte.Voter)
+			tmk.addRowInt("Round", int(vte.Round))
+			tmk.addRowInt("CPRound", int(vte.CpRound))
+			tmk.addRowInt("CPValue", int(vte.CpValue))
 		}
 	}
 
-	s.writeHTML(w, tm.html())
+	s.writeHTML(w, tmk.html())
 }

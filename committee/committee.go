@@ -43,14 +43,14 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 }
 
 func (c *committee) TotalPower() int64 {
-	p := int64(0)
+	power := int64(0)
 	c.iterate(func(v *validator.Validator) bool {
-		p += v.Power()
+		power += v.Power()
 
 		return false
 	})
 
-	return p
+	return power
 }
 
 func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
@@ -97,14 +97,14 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 	}
 
 	adjust := c.validatorList.Length() - c.committeeSize
-	for n := 0; n < adjust; n++ {
-		if oldestFirst[n] == c.proposerPos {
+	for j := 0; j < adjust; j++ {
+		if oldestFirst[j] == c.proposerPos {
 			c.proposerPos = c.proposerPos.Next
 			if c.proposerPos == nil {
 				c.proposerPos = c.validatorList.Head
 			}
 		}
-		c.validatorList.Delete(oldestFirst[n])
+		c.validatorList.Delete(oldestFirst[j])
 	}
 }
 

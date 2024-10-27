@@ -176,7 +176,7 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid version", func(t *testing.T) {
-		d := ts.DecodingHex(
+		data := ts.DecodingHex(
 			"02" + // Flags
 				"02" + // Version
 				"01020304" + // LockTime
@@ -187,20 +187,20 @@ func TestBasicCheck(t *testing.T) {
 				"012222222222222222222222222222222222222222" + // Receiver
 				"01") // Amount
 
-		trx, err := tx.FromBytes(d)
+		trx, err := tx.FromBytes(data)
 		assert.NoError(t, err)
 		err = trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "invalid version: 2",
 		})
-		assert.Equal(t, len(d), trx.SerializeSize())
+		assert.Equal(t, len(data), trx.SerializeSize())
 	})
 }
 
 func TestInvalidPayloadType(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	d := ts.DecodingHex(
+	data := ts.DecodingHex(
 		"02" + // Flags
 			"01" + // Version
 			"01020300" + // LockTime
@@ -211,7 +211,7 @@ func TestInvalidPayloadType(t *testing.T) {
 			"012222222222222222222222222222222222222222" + // Receiver
 			"01") // Amount
 
-	_, err := tx.FromBytes(d)
+	_, err := tx.FromBytes(data)
 	assert.ErrorIs(t, err, tx.InvalidPayloadTypeError{
 		PayloadType: payload.Type(6),
 	})
@@ -341,7 +341,7 @@ func TestInvalidSignature(t *testing.T) {
 }
 
 func TestSignBytesBLS(t *testing.T) {
-	d, _ := hex.DecodeString(
+	data, _ := hex.DecodeString(
 		"00" + // Flags
 			"01" + // Version
 			"01020304" + // LockTime
@@ -355,15 +355,15 @@ func TestSignBytesBLS(t *testing.T) {
 			"b805043a816c3213c67f365f83c6946546049f517ebe470f186b36ff53fb996ae2468b119582a7f18fe8f0bfb4e055d5" + // PublicKey
 			"190601a983fb4636c36287a73d80dbb14f244f319da5eeac02ce7ee9026245ac36b9978cabd6d2cbb3c1f87e55e2fc29")
 
-	h, _ := hash.FromString("7ab1287fe4882918e69b9f83215378ea08f2d91e0700c2e35a73b7aae1d7bf2d")
-	trx, err := tx.FromBytes(d)
+	txID, _ := hash.FromString("7ab1287fe4882918e69b9f83215378ea08f2d91e0700c2e35a73b7aae1d7bf2d")
+	trx, err := tx.FromBytes(data)
 	assert.NoError(t, err)
-	assert.Equal(t, len(d), trx.SerializeSize())
+	assert.Equal(t, len(data), trx.SerializeSize())
 
-	sb := d[1 : len(d)-bls.PublicKeySize-bls.SignatureSize]
-	assert.Equal(t, sb, trx.SignBytes())
-	assert.Equal(t, h, trx.ID())
-	assert.Equal(t, hash.CalcHash(sb), trx.ID())
+	signBytes := data[1 : len(data)-bls.PublicKeySize-bls.SignatureSize]
+	assert.Equal(t, signBytes, trx.SignBytes())
+	assert.Equal(t, hash.CalcHash(signBytes), trx.ID())
+	assert.Equal(t, txID, trx.ID())
 	assert.Equal(t, uint32(0x04030201), trx.LockTime())
 	assert.Equal(t, "test", trx.Memo())
 	assert.Equal(t, amount.Amount(1000), trx.Fee())
@@ -372,7 +372,7 @@ func TestSignBytesBLS(t *testing.T) {
 }
 
 func TestSignBytesEd25519(t *testing.T) {
-	d, _ := hex.DecodeString(
+	data, _ := hex.DecodeString(
 		"00" + // Flags
 			"01" + // Version
 			"01020300" + // LockTime
@@ -386,15 +386,15 @@ func TestSignBytesEd25519(t *testing.T) {
 			"50ac25c7125271489b0cd230549257c93fb8c6265f2914a988ba7b81c1bc47ff" + // PublicKey
 			"f027412dd59447867911035ff69742d171060a1f132ac38b95acc6e39ec0bd09")
 
-	h, _ := hash.FromString("34cd4656a98f7eb996e83efdc384cefbe3a9c52dca79a99245b4eacc0b0b4311")
-	trx, err := tx.FromBytes(d)
+	txID, _ := hash.FromString("34cd4656a98f7eb996e83efdc384cefbe3a9c52dca79a99245b4eacc0b0b4311")
+	trx, err := tx.FromBytes(data)
 	assert.NoError(t, err)
-	assert.Equal(t, len(d), trx.SerializeSize())
+	assert.Equal(t, len(data), trx.SerializeSize())
 
-	sb := d[1 : len(d)-ed25519.PublicKeySize-ed25519.SignatureSize]
-	assert.Equal(t, sb, trx.SignBytes())
-	assert.Equal(t, h, trx.ID())
-	assert.Equal(t, hash.CalcHash(sb), trx.ID())
+	signBytes := data[1 : len(data)-ed25519.PublicKeySize-ed25519.SignatureSize]
+	assert.Equal(t, signBytes, trx.SignBytes())
+	assert.Equal(t, hash.CalcHash(signBytes), trx.ID())
+	assert.Equal(t, txID, trx.ID())
 	assert.Equal(t, uint32(0x00030201), trx.LockTime())
 	assert.Equal(t, "test", trx.Memo())
 	assert.Equal(t, amount.Amount(1000), trx.Fee())

@@ -70,23 +70,23 @@ func (k *ExtendedKey) pubKeyBytes() []byte {
 	if !k.isPrivate {
 		return k.key
 	}
-	g1 := bls12381.NewG1()
+	grp1 := bls12381.NewG1()
 
 	privKey := bls12381.NewFr()
 	privKey.FromBytes(k.key)
 	if k.pubOnG1 {
 		pub := new(bls12381.PointG1)
-		g1.MulScalar(pub, g1.One(), privKey)
+		grp1.MulScalar(pub, grp1.One(), privKey)
 
-		return g1.ToCompressed(pub)
+		return grp1.ToCompressed(pub)
 	}
 
-	g2 := bls12381.NewG2()
+	grp2 := bls12381.NewG2()
 
 	pub := new(bls12381.PointG2)
-	g2.MulScalar(pub, g2.One(), privKey)
+	grp2.MulScalar(pub, grp2.One(), privKey)
 
-	return g2.ToCompressed(pub)
+	return grp2.ToCompressed(pub)
 }
 
 // IsPrivate returns whether or not the extended key is a private extended key.
@@ -255,36 +255,36 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 			// Public key is in G1 subgroup
 			//
 			// childKey = pointG1(parse256(Il)) + parentKey
-			g1 := bls12381.NewG1()
+			grp1 := bls12381.NewG1()
 
 			ilPoint := new(bls12381.PointG1)
-			g1.MulScalar(ilPoint, g1.One(), ilFr)
+			grp1.MulScalar(ilPoint, grp1.One(), ilFr)
 
-			pubKey, err := g1.FromCompressed(k.key)
+			pubKey, err := grp1.FromCompressed(k.key)
 			if err != nil {
 				return nil, err
 			}
 			childPubKey := new(bls12381.PointG1)
-			g1.Add(childPubKey, pubKey, ilPoint)
+			grp1.Add(childPubKey, pubKey, ilPoint)
 
-			childKey = g1.ToCompressed(childPubKey)
+			childKey = grp1.ToCompressed(childPubKey)
 		} else {
 			// Public key is in G2 subgroup
 			//
 			// childKey = pointG2(parse256(Il)) + parentKey
-			g2 := bls12381.NewG2()
+			grp2 := bls12381.NewG2()
 
 			ilPoint := new(bls12381.PointG2)
-			g2.MulScalar(ilPoint, g2.One(), ilFr)
+			grp2.MulScalar(ilPoint, grp2.One(), ilFr)
 
-			pubKey, err := g2.FromCompressed(k.key)
+			pubKey, err := grp2.FromCompressed(k.key)
 			if err != nil {
 				return nil, err
 			}
 			childPubKey := new(bls12381.PointG2)
-			g2.Add(childPubKey, pubKey, ilPoint)
+			grp2.Add(childPubKey, pubKey, ilPoint)
 
-			childKey = g2.ToCompressed(childPubKey)
+			childKey = grp2.ToCompressed(childPubKey)
 		}
 	}
 
@@ -362,29 +362,29 @@ func (k *ExtendedKey) String() string {
 	// - Key data: Can be 32, 48, or 96 bytes.
 	//
 
-	w := bytes.NewBuffer(make([]byte, 0))
-	err := encoding.WriteElement(w, byte(len(k.path)))
+	buf := bytes.NewBuffer(make([]byte, 0))
+	err := encoding.WriteElement(buf, byte(len(k.path)))
 	if err != nil {
 		return err.Error()
 	}
 
 	for _, p := range k.path {
-		err := encoding.WriteElement(w, p)
+		err := encoding.WriteElement(buf, p)
 		if err != nil {
 			return err.Error()
 		}
 	}
-	err = encoding.WriteVarBytes(w, k.chainCode)
+	err = encoding.WriteVarBytes(buf, k.chainCode)
 	if err != nil {
 		return err.Error()
 	}
 
-	err = encoding.WriteElement(w, k.pubOnG1)
+	err = encoding.WriteElement(buf, k.pubOnG1)
 	if err != nil {
 		return err.Error()
 	}
 
-	err = encoding.WriteVarBytes(w, k.key)
+	err = encoding.WriteVarBytes(buf, k.key)
 	if err != nil {
 		return err.Error()
 	}
@@ -394,7 +394,7 @@ func (k *ExtendedKey) String() string {
 		hrp = crypto.XPrivateKeyHRP
 	}
 
-	str, err := bech32m.EncodeFromBase256WithType(hrp, crypto.SignatureTypeBLS, w.Bytes())
+	str, err := bech32m.EncodeFromBase256WithType(hrp, crypto.SignatureTypeBLS, buf.Bytes())
 	if err != nil {
 		return err.Error()
 	}
@@ -417,33 +417,33 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 		return nil, ErrInvalidKeyData
 	}
 
-	r := bytes.NewReader(data)
+	reader := bytes.NewReader(data)
 	depth := uint8(0)
-	err = encoding.ReadElement(r, &depth)
+	err = encoding.ReadElement(reader, &depth)
 	if err != nil {
 		return nil, err
 	}
 
 	path := make([]uint32, depth)
 	for i := byte(0); i < depth; i++ {
-		err := encoding.ReadElement(r, &path[i])
+		err := encoding.ReadElement(reader, &path[i])
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	chainCode, err := encoding.ReadVarBytes(r)
+	chainCode, err := encoding.ReadVarBytes(reader)
 	if err != nil {
 		return nil, err
 	}
 
 	var pubOnG1 bool
-	err = encoding.ReadElement(r, &pubOnG1)
+	err = encoding.ReadElement(reader, &pubOnG1)
 	if err != nil {
 		return nil, err
 	}
 
-	key, err := encoding.ReadVarBytes(r)
+	key, err := encoding.ReadVarBytes(reader)
 	if err != nil {
 		return nil, err
 	}
@@ -477,13 +477,13 @@ func NewMaster(seed []byte, pubOnG1 bool) (*ExtendedKey, error) {
 	//   I = HMAC-SHA512(Key = "BLS12381-HD seed", Data = S)
 	hmac512 := hmac.New(sha512.New, masterKey)
 	_, _ = hmac512.Write(seed)
-	lr := hmac512.Sum(nil)
+	ilr := hmac512.Sum(nil)
 
 	// Split "I" into two 32-byte sequences Il and Ir where:
 	//   Il = master IKM
 	//   Ir = master chain code
-	ikm := lr[:len(lr)/2]
-	chainCode := lr[len(lr)/2:]
+	ikm := ilr[:len(ilr)/2]
+	chainCode := ilr[len(ilr)/2:]
 
 	// Using BLS KeyGen to generate the master private key from the IKM.
 	privKey, err := bls.KeyGen(ikm, nil)

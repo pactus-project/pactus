@@ -10,8 +10,8 @@ import (
 )
 
 func TestBlockAnnounceType(t *testing.T) {
-	m := &BlockAnnounceMessage{}
-	assert.Equal(t, TypeBlockAnnounce, m.Type())
+	smg := &BlockAnnounceMessage{}
+	assert.Equal(t, TypeBlockAnnounce, smg.Type())
 }
 
 func TestBlockAnnounceMessage(t *testing.T) {
@@ -20,8 +20,8 @@ func TestBlockAnnounceMessage(t *testing.T) {
 	t.Run("Invalid certificate", func(t *testing.T) {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
 		cert := certificate.NewBlockCertificate(0, 0)
-		m := NewBlockAnnounceMessage(blk, cert)
-		err := m.BasicCheck()
+		msg := NewBlockAnnounceMessage(blk, cert)
+		err := msg.BasicCheck()
 
 		assert.ErrorIs(t, err, certificate.BasicCheckError{
 			Reason: "height is not positive: 0",
@@ -31,10 +31,10 @@ func TestBlockAnnounceMessage(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 		height := ts.RandHeight()
 		blk, cert := ts.GenerateTestBlock(height)
-		m := NewBlockAnnounceMessage(blk, cert)
+		msg := NewBlockAnnounceMessage(blk, cert)
 
-		assert.NoError(t, m.BasicCheck())
-		assert.Equal(t, height, m.Height())
-		assert.Contains(t, m.String(), fmt.Sprintf("%d", height))
+		assert.NoError(t, msg.BasicCheck())
+		assert.Equal(t, height, msg.Height())
+		assert.Contains(t, msg.String(), fmt.Sprintf("%d", height))
 	})
 }

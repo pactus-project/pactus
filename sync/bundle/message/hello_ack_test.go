@@ -7,11 +7,11 @@ import (
 )
 
 func TestHelloAckType(t *testing.T) {
-	m := &HelloAckMessage{}
-	assert.Equal(t, TypeHelloAck, m.Type())
+	smg := &HelloAckMessage{}
+	assert.Equal(t, TypeHelloAck, smg.Type())
 }
 
 func TestHelloAckMessage(t *testing.T) {
-	m := NewHelloAckMessage(ResponseCodeRejected, "rejected", 0)
-	assert.NoError(t, m.BasicCheck())
+	msg := NewHelloAckMessage(ResponseCodeRejected, "rejected", 0)
+	assert.NoError(t, msg.BasicCheck())
 }

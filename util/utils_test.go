@@ -102,7 +102,7 @@ func TestIS2OP(t *testing.T) {
 }
 
 func TestLogScale(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		input    int
 		expected int
 	}{
@@ -113,9 +113,9 @@ func TestLogScale(t *testing.T) {
 		{8, 8},
 	}
 
-	for _, testCase := range testCases {
-		result := LogScale(testCase.input)
-		assert.Equal(t, testCase.expected, result, "LogScale(%d) failed", testCase.input)
+	for _, tt := range tests {
+		result := LogScale(tt.input)
+		assert.Equal(t, tt.expected, result, "LogScale(%d) failed", tt.input)
 	}
 }
 
@@ -132,10 +132,10 @@ func TestFormatBytesToHumanReadable(t *testing.T) {
 		{1_099_511_627_776, "1.00 TB"},
 	}
 
-	for _, test := range tests {
-		result := FormatBytesToHumanReadable(test.bytes)
-		if result != test.expected {
-			t.Errorf("FormatBytesToHumanReadable(%d) returned %s, expected %s", test.bytes, result, test.expected)
+	for _, tt := range tests {
+		result := FormatBytesToHumanReadable(tt.bytes)
+		if result != tt.expected {
+			t.Errorf("FormatBytesToHumanReadable(%d) returned %s, expected %s", tt.bytes, result, tt.expected)
 		}
 	}
 }

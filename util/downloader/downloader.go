@@ -107,7 +107,7 @@ func (d *Downloader) download(ctx context.Context) {
 	d.statsCh <- stats
 
 	var wg sync.WaitGroup
-	for _, c := range d.chunks {
+	for _, chuck := range d.chunks {
 		wg.Add(1)
 		go func(c *chunk) {
 			defer wg.Done()
@@ -117,7 +117,7 @@ func (d *Downloader) download(ctx context.Context) {
 
 				return
 			}
-		}(c)
+		}(chuck)
 	}
 
 	wg.Wait()
@@ -167,13 +167,13 @@ func (d *Downloader) createDir() error {
 	return nil
 }
 
-func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File, c *chunk, totalSize int64) error {
+func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File, chuck *chunk, totalSize int64) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, d.url, http.NoBody)
 	if err != nil {
 		return &Error{Message: "failed to create new request for download chunk", Reason: err}
 	}
 
-	req.Header.Set("Range", c.rangeHeader())
+	req.Header.Set("Range", chuck.rangeHeader())
 	resp, err := d.client.Do(req)
 	if err != nil {
 		return &Error{Message: "failed to do request download chunk", Reason: err}
@@ -191,22 +191,22 @@ func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File,
 	}
 
 	buf := make([]byte, 32*1024) // 32KB buffer for reading the response body
-	offset := c.start
+	offset := chuck.start
 	for {
-		n, err := resp.Body.Read(buf)
-		if n > 0 {
+		count, err := resp.Body.Read(buf)
+		if count > 0 {
 			d.mu.Lock()
-			for written := 0; written < n; {
-				w, err := out.WriteAt(buf[written:n], offset+int64(written))
+			for written := 0; written < count; {
+				numBytes, err := out.WriteAt(buf[written:count], offset+int64(written))
 				if err != nil {
 					d.mu.Unlock()
 
 					return &Error{Message: "failed write data into file", Reason: err}
 				}
-				written += w
+				written += numBytes
 			}
-			offset += int64(n)
-			d.downloaded += int64(n)
+			offset += int64(count)
+			d.downloaded += int64(count)
 			d.updateStats(d.downloaded, totalSize)
 			d.mu.Unlock()
 		}

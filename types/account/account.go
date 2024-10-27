@@ -80,15 +80,15 @@ func (*Account) SerializeSize() int {
 
 // Bytes returns the serialized byte representation of the account.
 func (acc *Account) Bytes() ([]byte, error) {
-	w := bytes.NewBuffer(make([]byte, 0, acc.SerializeSize()))
-	err := encoding.WriteElements(w,
+	buf := bytes.NewBuffer(make([]byte, 0, acc.SerializeSize()))
+	err := encoding.WriteElements(buf,
 		acc.data.Number,
 		acc.data.Balance)
 	if err != nil {
 		return nil, err
 	}
 
-	return w.Bytes(), nil
+	return buf.Bytes(), nil
 }
 
 // Clone creates a deep copy of the account.

@@ -29,8 +29,8 @@ func (vs *voteSet) Round() int16 {
 
 // verifyVote checks if the given vote is valid.
 // It returns the voting power of if valid, or an error if not.
-func (vs *voteSet) verifyVote(v *vote.Vote) (int64, error) {
-	signer := v.Signer()
+func (vs *voteSet) verifyVote(vote *vote.Vote) (int64, error) {
+	signer := vote.Signer()
 	val := vs.validators[signer]
 	if val == nil {
 		return 0, IneligibleVoterError{
@@ -38,7 +38,7 @@ func (vs *voteSet) verifyVote(v *vote.Vote) (int64, error) {
 		}
 	}
 
-	if err := v.Verify(val.PublicKey()); err != nil {
+	if err := vote.Verify(val.PublicKey()); err != nil {
 		return 0, err
 	}
 

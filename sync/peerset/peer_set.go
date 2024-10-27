@@ -163,13 +163,13 @@ func (ps *PeerSet) findPeer(pid peer.ID) *peer.Peer {
 // FindOrCreatePeer tries to find a peer with the given pid.
 // If not found, it creates a new peer and assigns the pid to it.
 func (ps *PeerSet) findOrCreatePeer(pid peer.ID) *peer.Peer {
-	p := ps.findPeer(pid)
-	if p == nil {
-		p = peer.NewPeer(pid)
-		ps.peers[pid] = p
+	per := ps.findPeer(pid)
+	if per == nil {
+		per = peer.NewPeer(pid)
+		ps.peers[pid] = per
 	}
 
-	return p
+	return per
 }
 
 func (ps *PeerSet) UpdateInfo(
@@ -207,7 +207,7 @@ func (ps *PeerSet) UpdateAddress(pid peer.ID, addr, direction string) {
 	p.Direction = direction
 }
 
-func (ps *PeerSet) UpdateStatus(pid peer.ID, s status.Status) {
+func (ps *PeerSet) UpdateStatus(pid peer.ID, status status.Status) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
@@ -215,11 +215,11 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, s status.Status) {
 
 	if !p.Status.IsBanned() || // Don't update the status if peer is banned
 		// Don't change status to connected if peer is known already
-		!(p.Status.IsKnown() && s.IsConnected()) {
-		p.Status = s
+		!(p.Status.IsKnown() && status.IsConnected()) {
+		p.Status = status
 	}
 
-	if s.IsDisconnected() {
+	if status.IsDisconnected() {
 		for _, ssn := range ps.sessionManager.Sessions() {
 			if ssn.PeerID == pid {
 				ssn.Status = session.Uncompleted
@@ -338,15 +338,15 @@ func (ps *PeerSet) GetRandomPeer() *peer.Peer {
 	//
 	totalScore := 0
 	peers := make([]scoredPeer, 0, len(ps.peers))
-	for _, p := range ps.peers {
-		if !p.Status.IsConnectedOrKnown() {
+	for _, peer := range ps.peers {
+		if !peer.Status.IsConnectedOrKnown() {
 			continue
 		}
 
-		score := p.DownloadScore()
+		score := peer.DownloadScore()
 		totalScore += score
 		peers = append(peers, scoredPeer{
-			peer:  p,
+			peer:  peer,
 			score: score,
 		})
 	}

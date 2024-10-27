@@ -55,62 +55,62 @@ type state struct {
 func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	valKeys []*bls.ValidatorKey,
-	str store.Store,
+	store store.Store,
 	txPool txpool.TxPool, eventCh chan event.Event,
 ) (Facade, error) {
-	st := &state{
+	state := &state{
 		valKeys:         valKeys,
 		genDoc:          genDoc,
 		txPool:          txPool,
 		params:          param.FromGenesis(genDoc.Params()),
-		store:           str,
+		store:           store,
 		lastInfo:        lastinfo.NewLastInfo(),
 		accountMerkle:   persistentmerkle.New(),
 		validatorMerkle: persistentmerkle.New(),
 		eventCh:         eventCh,
 	}
-	st.logger = logger.NewSubLogger("_state", st)
-	st.store = str
+	state.logger = logger.NewSubLogger("_state", state)
+	state.store = store
 
 	// Check if the number of accounts is greater than the genesis time;
 	// this indicates we are not at the genesis height anymore.
-	if str.TotalAccounts() > int32(len(genDoc.Accounts())) {
-		err := st.tryLoadLastInfo()
+	if store.TotalAccounts() > int32(len(genDoc.Accounts())) {
+		err := state.tryLoadLastInfo()
 		if err != nil {
 			return nil, err
 		}
 	} else {
 		// We are at the genesis height.
-		err := st.makeGenesisState(genDoc)
+		err := state.makeGenesisState(genDoc)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	st.totalPower = st.retrieveTotalPower()
+	state.totalPower = state.retrieveTotalPower()
 
-	st.loadMerkels()
+	state.loadMerkels()
 
-	txPool.SetNewSandboxAndRecheck(st.concreteSandbox())
+	txPool.SetNewSandboxAndRecheck(state.concreteSandbox())
 
 	// Restoring score manager
-	st.logger.Info("calculating the availability scores...")
+	state.logger.Info("calculating the availability scores...")
 	scoreWindow := uint32(60000)
 	startHeight := uint32(2)
-	endHeight := st.lastInfo.BlockHeight()
+	endHeight := state.lastInfo.BlockHeight()
 	if endHeight > scoreWindow {
 		startHeight = endHeight - scoreWindow
 	}
 
 	scoreMgr := score.NewScoreManager(scoreWindow)
 	for h := startHeight; h <= endHeight; h++ {
-		cb, err := st.store.Block(h)
+		cBlk, err := state.store.Block(h)
 		if err != nil {
 			return nil, err
 		}
 		// This code decodes the block certificate from the block data
 		// without decoding the header and transactions.
-		r := bytes.NewReader(cb.Data[138:]) // Block header is 138 bytes
+		r := bytes.NewReader(cBlk.Data[138:]) // Block header is 138 bytes
 		cert := new(certificate.BlockCertificate)
 		err = cert.Decode(r)
 		if err != nil {
@@ -118,15 +118,15 @@ func LoadOrNewState(
 		}
 		scoreMgr.SetCertificate(cert)
 	}
-	st.scoreMgr = scoreMgr
+	state.scoreMgr = scoreMgr
 
-	for _, num := range st.committee.Committers() {
-		st.logger.Debug("availability score", "val", num, "score", st.scoreMgr.AvailabilityScore(num))
+	for _, num := range state.committee.Committers() {
+		state.logger.Debug("availability score", "val", num, "score", state.scoreMgr.AvailabilityScore(num))
 	}
 
-	st.logger.Debug("last info", "committers", st.committee.Committers(), "state_root", st.stateRoot())
+	state.logger.Debug("last info", "committers", state.committee.Committers(), "state_root", state.stateRoot())
 
-	return st, nil
+	return state, nil
 }
 
 func (st *state) concreteSandbox() sandbox.Sandbox {
@@ -264,31 +264,31 @@ func (st *state) LastCertificate() *certificate.BlockCertificate {
 	return st.lastInfo.Certificate()
 }
 
-func (st *state) UpdateLastCertificate(v *vote.Vote) error {
+func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
 	lastCert := st.lastInfo.Certificate()
-	if v.Type() != vote.VoteTypePrecommit ||
-		v.Height() != lastCert.Height() ||
-		v.Round() != lastCert.Round() {
+	if vte.Type() != vote.VoteTypePrecommit ||
+		vte.Height() != lastCert.Height() ||
+		vte.Round() != lastCert.Round() {
 		return InvalidVoteForCertificateError{
-			Vote: v,
+			Vote: vte,
 		}
 	}
 
-	val, err := st.store.Validator(v.Signer())
+	val, err := st.store.Validator(vte.Signer())
 	if err != nil {
 		return err
 	}
 
 	if !util.Contains(lastCert.Absentees(), val.Number()) {
 		return InvalidVoteForCertificateError{
-			Vote: v,
+			Vote: vte,
 		}
 	}
 
-	err = v.Verify(val.PublicKey())
+	err = vte.Verify(val.PublicKey())
 	if err != nil {
 		return err
 	}
@@ -296,7 +296,7 @@ func (st *state) UpdateLastCertificate(v *vote.Vote) error {
 	// prevent race condition
 	cloneLastCert := lastCert.Clone()
 
-	cloneLastCert.AddSignature(val.Number(), v.Signature())
+	cloneLastCert.AddSignature(val.Number(), vte.Signature())
 	st.lastInfo.UpdateCertificate(cloneLastCert)
 
 	st.logger.Debug("certificate updated", "validator", val.Address(), "power", val.Power())
@@ -315,8 +315,8 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	// Create new sandbox and execute transactions
-	sb := st.concreteSandbox()
+	// Create new sbx and execute transactions
+	sbx := st.concreteSandbox()
 
 	// Re-check all transactions strictly and remove invalid ones
 	txs := st.txPool.PrepareBlockTransactions()
@@ -331,14 +331,14 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 			continue
 		}
 
-		if err := execution.CheckAndExecute(txs[i], sb, true); err != nil {
+		if err := execution.CheckAndExecute(txs[i], sbx, true); err != nil {
 			st.logger.Debug("found invalid transaction", "tx", txs[i], "error", err)
 			txs.Remove(i)
 			i--
 		}
 	}
 
-	subsidyTx := st.createSubsidyTx(rewardAddr, sb.AccumulatedFee())
+	subsidyTx := st.createSubsidyTx(rewardAddr, sbx.AccumulatedFee())
 	if subsidyTx == nil {
 		// probably the node is shutting down.
 		st.logger.Error("no subsidy transaction")
@@ -415,8 +415,8 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 
 	// -----------------------------------
 	// Execute block
-	sb := st.concreteSandbox()
-	if err := st.executeBlock(blk, sb, false); err != nil {
+	sbx := st.concreteSandbox()
+	if err := st.executeBlock(blk, sbx, false); err != nil {
 		return err
 	}
 
@@ -429,7 +429,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 	st.lastInfo.UpdateValidators(st.committee.Validators())
 
 	// Commit and update the committee
-	st.commitSandbox(sb, cert.Round())
+	st.commitSandbox(sbx, cert.Round())
 
 	st.store.SaveBlock(blk, cert)
 
@@ -517,9 +517,9 @@ func (st *state) String() string {
 		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 
-func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
+func (st *state) commitSandbox(sbx sandbox.Sandbox, round int16) {
 	joiningCommittee := make([]*validator.Validator, 0)
-	sb.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
+	sbx.IterateValidators(func(val *validator.Validator, _ bool, joined bool) {
 		if joined {
 			st.logger.Debug("new validator joined", "address", val.Address(), "power", val.Power())
 
@@ -528,48 +528,48 @@ func (st *state) commitSandbox(sb sandbox.Sandbox, round int16) {
 	})
 	st.committee.Update(round, joiningCommittee)
 
-	sb.IterateAccounts(func(addr crypto.Address, acc *account.Account, updated bool) {
+	sbx.IterateAccounts(func(addr crypto.Address, acc *account.Account, updated bool) {
 		if updated {
 			st.store.UpdateAccount(addr, acc)
 			st.accountMerkle.SetHash(int(acc.Number()), acc.Hash())
 		}
 	})
 
-	sb.IterateValidators(func(val *validator.Validator, updated bool, _ bool) {
+	sbx.IterateValidators(func(val *validator.Validator, updated bool, _ bool) {
 		if updated {
 			st.store.UpdateValidator(val)
 			st.validatorMerkle.SetHash(int(val.Number()), val.Hash())
 		}
 	})
 
-	st.totalPower += sb.PowerDelta()
+	st.totalPower += sbx.PowerDelta()
 }
 
-func (st *state) validateBlockTime(t time.Time) error {
-	if t.Second()%st.params.BlockIntervalInSecond != 0 {
+func (st *state) validateBlockTime(blockTime time.Time) error {
+	if blockTime.Second()%st.params.BlockIntervalInSecond != 0 {
 		return InvalidBlockTimeError{
 			Reason: fmt.Sprintf("block time (%s) is not rounded",
-				t.String()),
+				blockTime.String()),
 		}
 	}
-	if t.Before(st.lastInfo.BlockTime()) {
+	if blockTime.Before(st.lastInfo.BlockTime()) {
 		return InvalidBlockTimeError{
 			Reason: fmt.Sprintf("block time (%s) is before the last block time (%s)",
-				t.String(), st.lastInfo.BlockTime()),
+				blockTime.String(), st.lastInfo.BlockTime()),
 		}
 	}
-	if t.Equal(st.lastInfo.BlockTime()) {
+	if blockTime.Equal(st.lastInfo.BlockTime()) {
 		return InvalidBlockTimeError{
 			Reason: fmt.Sprintf("block time (%s) is same as the last block time",
-				t.String()),
+				blockTime.String()),
 		}
 	}
 	proposeTime := st.proposeNextBlockTime()
 	threshold := st.params.BlockInterval()
-	if t.After(proposeTime.Add(threshold)) {
+	if blockTime.After(proposeTime.Add(threshold)) {
 		return InvalidBlockTimeError{
 			Reason: fmt.Sprintf("block time (%s) is more than threshold (%s)",
-				t.String(), proposeTime.String()),
+				blockTime.String(), proposeTime.String()),
 		}
 	}
 
@@ -643,20 +643,20 @@ func (st *state) IsValidator(addr crypto.Address) bool {
 }
 
 func (st *state) CommittedBlock(height uint32) *store.CommittedBlock {
-	b, err := st.store.Block(height)
+	blk, err := st.store.Block(height)
 	if err != nil {
 		st.logger.Trace("error on retrieving block", "error", err)
 
 		return nil
 	}
 
-	return b
+	return blk
 }
 
-func (st *state) CommittedTx(id tx.ID) *store.CommittedTx {
-	transaction, err := st.store.Transaction(id)
+func (st *state) CommittedTx(txID tx.ID) *store.CommittedTx {
+	transaction, err := st.store.Transaction(txID)
 	if err != nil {
-		st.logger.Trace("searching transaction in local store failed", "id", id, "error", err)
+		st.logger.Trace("searching transaction in local store failed", "id", txID, "error", err)
 	}
 
 	return transaction
@@ -702,8 +702,8 @@ func (st *state) ValidatorByNumber(n int32) *validator.Validator {
 	return val
 }
 
-func (st *state) PendingTx(id tx.ID) *tx.Tx {
-	return st.txPool.PendingTx(id)
+func (st *state) PendingTx(txID tx.ID) *tx.Tx {
+	return st.txPool.PendingTx(txID)
 }
 
 func (st *state) AddPendingTx(trx *tx.Tx) error {

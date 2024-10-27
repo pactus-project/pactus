@@ -60,21 +60,21 @@ func (s *NotifeeService) Start() {
 		for {
 			select {
 			case evt := <-s.lp2pEventSub.Out():
-				switch e := evt.(type) {
+				switch evt := evt.(type) {
 				case lp2pevent.EvtLocalReachabilityChanged:
-					s.logger.Info("reachability changed", "reachability", e.Reachability)
-					s.reachability = e.Reachability
+					s.logger.Info("reachability changed", "reachability", evt.Reachability)
+					s.reachability = evt.Reachability
 
 				case lp2pevent.EvtPeerIdentificationCompleted:
-					s.logger.Debug("identification completed", "pid", e.Peer)
-					s.sendProtocolsEvent(e.Peer)
+					s.logger.Debug("identification completed", "pid", evt.Peer)
+					s.sendProtocolsEvent(evt.Peer)
 
 				case lp2pevent.EvtPeerIdentificationFailed:
-					s.logger.Warn("identification failed", "pid", e.Peer)
+					s.logger.Warn("identification failed", "pid", evt.Peer)
 
 				case lp2pevent.EvtPeerProtocolsUpdated:
-					s.logger.Debug("protocols updated", "pid", e.Peer, "protocols", e.Added)
-					s.sendProtocolsEvent(e.Peer)
+					s.logger.Debug("protocols updated", "pid", evt.Peer, "protocols", evt.Added)
+					s.sendProtocolsEvent(evt.Peer)
 
 				default:
 					s.logger.Debug("unhandled libp2p event", "event", evt)

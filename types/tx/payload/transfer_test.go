@@ -121,39 +121,39 @@ func TestTransferDecoding(t *testing.T) {
 		},
 	}
 
-	for n, test := range tests {
+	for no, tt := range tests {
 		pld := TransferPayload{}
-		r := util.NewFixedReader(len(test.raw), test.raw)
+		r := util.NewFixedReader(len(tt.raw), tt.raw)
 		err := pld.Decode(r)
-		if test.readErr != nil {
-			assert.ErrorIs(t, err, test.readErr)
+		if tt.readErr != nil {
+			assert.ErrorIs(t, err, tt.readErr)
 		} else {
 			assert.NoError(t, err)
 
 			for i := 0; i < pld.SerializeSize(); i++ {
 				w := util.NewFixedWriter(i)
-				assert.Error(t, pld.Encode(w), "encode test %v failed", n)
+				assert.Error(t, pld.Encode(w), "encode test %v failed", no)
 			}
 			w := util.NewFixedWriter(pld.SerializeSize())
 			assert.NoError(t, pld.Encode(w))
 			assert.Equal(t, pld.SerializeSize(), len(w.Bytes()))
-			assert.Equal(t, test.raw, w.Bytes())
+			assert.Equal(t, tt.raw, w.Bytes())
 
 			// Basic check
-			if test.basicErr != nil {
-				assert.ErrorIs(t, pld.BasicCheck(), test.basicErr)
+			if tt.basicErr != nil {
+				assert.ErrorIs(t, pld.BasicCheck(), tt.basicErr)
 			} else {
 				assert.NoError(t, pld.BasicCheck())
 
 				// Check signer
-				if test.raw[0] != 0 {
-					assert.Equal(t, crypto.Address(test.raw[:21]), pld.Signer())
-					assert.Equal(t, crypto.Address(test.raw[21:42]), *pld.Receiver())
+				if tt.raw[0] != 0 {
+					assert.Equal(t, crypto.Address(tt.raw[:21]), pld.Signer())
+					assert.Equal(t, crypto.Address(tt.raw[21:42]), *pld.Receiver())
 				} else {
 					assert.Equal(t, crypto.TreasuryAddress, pld.Signer())
-					assert.Equal(t, crypto.Address(test.raw[1:22]), *pld.Receiver())
+					assert.Equal(t, crypto.Address(tt.raw[1:22]), *pld.Receiver())
 				}
-				assert.Equal(t, test.value, pld.Value())
+				assert.Equal(t, tt.value, pld.Value())
 			}
 		}
 	}

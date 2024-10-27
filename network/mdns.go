@@ -34,14 +34,14 @@ func newMdnsService(ctx context.Context, host lp2phost.Host, log *logger.SubLogg
 // HandlePeerFound connects to peers discovered via mDNS. Once they're connected,
 // the PubSub system will automatically start interacting with them if they also
 // support PubSub.
-func (s *mdnsService) HandlePeerFound(pi lp2ppeer.AddrInfo) {
+func (s *mdnsService) HandlePeerFound(addrInfo lp2ppeer.AddrInfo) {
 	ctx, cancel := context.WithTimeout(s.ctx, time.Second*10)
 	defer cancel()
 
-	if pi.ID != s.host.ID() {
-		s.logger.Debug("connecting to new peer", "addr", pi.Addrs, "id", pi.ID)
-		if err := s.host.Connect(ctx, pi); err != nil {
-			s.logger.Error("error on connecting to peer", "id", pi.ID, "error", err)
+	if addrInfo.ID != s.host.ID() {
+		s.logger.Debug("connecting to new peer", "addr", addrInfo.Addrs, "id", addrInfo.ID)
+		if err := s.host.Connect(ctx, addrInfo); err != nil {
+			s.logger.Error("error on connecting to peer", "id", addrInfo.ID, "error", err)
 		}
 	}
 }

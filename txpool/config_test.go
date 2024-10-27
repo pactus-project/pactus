@@ -8,26 +8,26 @@ import (
 )
 
 func TestDefaultConfig(t *testing.T) {
-	c := DefaultConfig()
-	assert.NoError(t, c.BasicCheck())
+	conf := DefaultConfig()
+	assert.NoError(t, conf.BasicCheck())
 
-	assert.Equal(t, 600, c.transferPoolSize())
-	assert.Equal(t, 100, c.bondPoolSize())
-	assert.Equal(t, 100, c.unbondPoolSize())
-	assert.Equal(t, 100, c.withdrawPoolSize())
-	assert.Equal(t, 100, c.sortitionPoolSize())
-	assert.Equal(t, amount.Amount(0.1e8), c.minFee())
+	assert.Equal(t, 600, conf.transferPoolSize())
+	assert.Equal(t, 100, conf.bondPoolSize())
+	assert.Equal(t, 100, conf.unbondPoolSize())
+	assert.Equal(t, 100, conf.withdrawPoolSize())
+	assert.Equal(t, 100, conf.sortitionPoolSize())
+	assert.Equal(t, amount.Amount(0.1e8), conf.minFee())
 
 	assert.Equal(t,
-		c.transferPoolSize()+
-			c.bondPoolSize()+
-			c.unbondPoolSize()+
-			c.withdrawPoolSize()+
-			c.sortitionPoolSize(), c.MaxSize)
+		conf.transferPoolSize()+
+			conf.bondPoolSize()+
+			conf.unbondPoolSize()+
+			conf.withdrawPoolSize()+
+			conf.sortitionPoolSize(), conf.MaxSize)
 }
 
 func TestConfigBasicCheck(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		expectedErr error
 		updateFn    func(c *Config)
@@ -76,17 +76,17 @@ func TestConfigBasicCheck(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
+	for no, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
 			conf := DefaultConfig()
-			tc.updateFn(conf)
-			if tc.expectedErr != nil {
+			tt.updateFn(conf)
+			if tt.expectedErr != nil {
 				err := conf.BasicCheck()
-				assert.ErrorIs(t, tc.expectedErr, err,
-					"Expected error not matched for test %d-%s, expected: %s, got: %s", i, tc.name, tc.expectedErr, err)
+				assert.ErrorIs(t, tt.expectedErr, err,
+					"Expected error not matched for test %d-%s, expected: %s, got: %s", no, tt.name, tt.expectedErr, err)
 			} else {
 				err := conf.BasicCheck()
-				assert.NoError(t, err, "Expected no error for test %d-%s, get: %s", i, tc.name, err)
+				assert.NoError(t, err, "Expected no error for test %d-%s, get: %s", no, tt.name, err)
 			}
 		})
 	}

@@ -25,9 +25,9 @@ func MockingTxPool() *MockTxPool {
 	}
 }
 func (*MockTxPool) SetNewSandboxAndRecheck(_ sandbox.Sandbox) {}
-func (m *MockTxPool) PendingTx(id tx.ID) *tx.Tx {
+func (m *MockTxPool) PendingTx(txID tx.ID) *tx.Tx {
 	for _, t := range m.Txs {
-		if t.ID() == id {
+		if t.ID() == txID {
 			return t
 		}
 	}
@@ -35,13 +35,13 @@ func (m *MockTxPool) PendingTx(id tx.ID) *tx.Tx {
 	return nil
 }
 
-func (m *MockTxPool) QueryTx(id tx.ID) *tx.Tx {
-	return m.PendingTx(id)
+func (m *MockTxPool) QueryTx(txID tx.ID) *tx.Tx {
+	return m.PendingTx(txID)
 }
 
-func (m *MockTxPool) HasTx(id tx.ID) bool {
+func (m *MockTxPool) HasTx(txID tx.ID) bool {
 	for _, t := range m.Txs {
-		if t.ID() == id {
+		if t.ID() == txID {
 			return true
 		}
 	}

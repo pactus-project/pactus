@@ -23,16 +23,16 @@ func (cp *changeProposer) onTimeout(t *ticker) {
 	}
 }
 
-func (*changeProposer) checkCPValue(vte *vote.Vote, allowedValues ...vote.CPValue) error {
+func (*changeProposer) checkCPValue(vote *vote.Vote, allowedValues ...vote.CPValue) error {
 	for _, v := range allowedValues {
-		if vte.CPValue() == v {
+		if vote.CPValue() == v {
 			return nil
 		}
 	}
 
 	return InvalidJustificationError{
-		JustType: vte.CPJust().Type(),
-		Reason:   fmt.Sprintf("invalid value: %v", vte.CPValue()),
+		JustType: vote.CPJust().Type(),
+		Reason:   fmt.Sprintf("invalid value: %v", vote.CPValue()),
 	}
 }
 
@@ -191,20 +191,20 @@ func (cp *changeProposer) checkJustMainVoteConflict(just vote.Just,
 }
 
 //nolint:exhaustive // refactor me; check just by just_type, not vote_type
-func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
-	just := v.CPJust()
-	if v.CPRound() == 0 {
+func (cp *changeProposer) checkJustPreVote(vte *vote.Vote) error {
+	just := vte.CPJust()
+	if vte.CPRound() == 0 {
 		switch just.Type() {
 		case vote.JustTypeInitNo:
-			err := cp.checkCPValue(v, vote.CPValueNo)
+			err := cp.checkCPValue(vte, vote.CPValueNo)
 			if err != nil {
 				return err
 			}
 
-			return cp.checkJustInitZero(just, v.BlockHash())
+			return cp.checkJustInitZero(just, vte.BlockHash())
 
 		case vote.JustTypeInitYes:
-			err := cp.checkCPValue(v, vote.CPValueYes)
+			err := cp.checkCPValue(vte, vote.CPValueYes)
 			if err != nil {
 				return err
 			}
@@ -219,20 +219,20 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 	} else {
 		switch just.Type() {
 		case vote.JustTypePreVoteSoft:
-			err := cp.checkCPValue(v, vote.CPValueNo, vote.CPValueYes)
+			err := cp.checkCPValue(vte, vote.CPValueNo, vote.CPValueYes)
 			if err != nil {
 				return err
 			}
 
-			return cp.checkJustPreVoteSoft(just, v.BlockHash(), v.CPRound())
+			return cp.checkJustPreVoteSoft(just, vte.BlockHash(), vte.CPRound())
 
 		case vote.JustTypePreVoteHard:
-			err := cp.checkCPValue(v, vote.CPValueNo, vote.CPValueYes)
+			err := cp.checkCPValue(vte, vote.CPValueNo, vote.CPValueYes)
 			if err != nil {
 				return err
 			}
 
-			return cp.checkJustPreVoteHard(just, v.BlockHash(), v.CPRound(), v.CPValue())
+			return cp.checkJustPreVoteHard(just, vte.BlockHash(), vte.CPRound(), vte.CPValue())
 
 		default:
 			return InvalidJustificationError{
@@ -244,24 +244,24 @@ func (cp *changeProposer) checkJustPreVote(v *vote.Vote) error {
 }
 
 //nolint:exhaustive // refactor me; check just by just_type, not vote_type
-func (cp *changeProposer) checkJustMainVote(v *vote.Vote) error {
-	just := v.CPJust()
+func (cp *changeProposer) checkJustMainVote(vte *vote.Vote) error {
+	just := vte.CPJust()
 	switch just.Type() {
 	case vote.JustTypeMainVoteNoConflict:
-		err := cp.checkCPValue(v, vote.CPValueNo, vote.CPValueYes)
+		err := cp.checkCPValue(vte, vote.CPValueNo, vote.CPValueYes)
 		if err != nil {
 			return err
 		}
 
-		return cp.checkJustMainVoteNoConflict(just, v.BlockHash(), v.CPRound(), v.CPValue())
+		return cp.checkJustMainVoteNoConflict(just, vte.BlockHash(), vte.CPRound(), vte.CPValue())
 
 	case vote.JustTypeMainVoteConflict:
-		err := cp.checkCPValue(v, vote.CPValueAbstain)
+		err := cp.checkCPValue(vte, vote.CPValueAbstain)
 		if err != nil {
 			return err
 		}
 
-		return cp.checkJustMainVoteConflict(just, v.BlockHash(), v.CPRound())
+		return cp.checkJustMainVoteConflict(just, vte.BlockHash(), vte.CPRound())
 
 	default:
 		return InvalidJustificationError{
@@ -271,12 +271,12 @@ func (cp *changeProposer) checkJustMainVote(v *vote.Vote) error {
 	}
 }
 
-func (cp *changeProposer) checkJustDecide(v *vote.Vote) error {
-	err := cp.checkCPValue(v, vote.CPValueNo, vote.CPValueYes)
+func (cp *changeProposer) checkJustDecide(vte *vote.Vote) error {
+	err := cp.checkCPValue(vte, vote.CPValueNo, vote.CPValueYes)
 	if err != nil {
 		return err
 	}
-	j, ok := v.CPJust().(*vote.JustDecided)
+	j, ok := vte.CPJust().(*vote.JustDecided)
 	if !ok {
 		return InvalidJustificationError{
 			JustType: j.Type(),
@@ -285,7 +285,7 @@ func (cp *changeProposer) checkJustDecide(v *vote.Vote) error {
 	}
 
 	err = j.QCert.ValidateCPMainVote(cp.validators,
-		v.BlockHash(), v.CPRound(), byte(v.CPValue()))
+		vte.BlockHash(), vte.CPRound(), byte(vte.CPValue()))
 	if err != nil {
 		return InvalidJustificationError{
 			JustType: j.Type(),
@@ -297,14 +297,14 @@ func (cp *changeProposer) checkJustDecide(v *vote.Vote) error {
 }
 
 //nolint:exhaustive // refactor me; check just by just_type, not vote_type
-func (cp *changeProposer) checkJust(v *vote.Vote) error {
-	switch v.Type() {
+func (cp *changeProposer) checkJust(vte *vote.Vote) error {
+	switch vte.Type() {
 	case vote.VoteTypeCPPreVote:
-		return cp.checkJustPreVote(v)
+		return cp.checkJustPreVote(vte)
 	case vote.VoteTypeCPMainVote:
-		return cp.checkJustMainVote(v)
+		return cp.checkJustMainVote(vte)
 	case vote.VoteTypeCPDecided:
-		return cp.checkJustDecide(v)
+		return cp.checkJustDecide(vte)
 	default:
 		panic("unreachable")
 	}

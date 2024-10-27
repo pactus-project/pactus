@@ -8,24 +8,24 @@ import (
 )
 
 func TestQueryVotesType(t *testing.T) {
-	m := &QueryVoteMessage{}
-	assert.Equal(t, TypeQueryVote, m.Type())
+	msg := &QueryVoteMessage{}
+	assert.Equal(t, TypeQueryVote, msg.Type())
 }
 
 func TestQueryVoteMessage(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid round", func(t *testing.T) {
-		m := NewQueryVoteMessage(0, -1, ts.RandValAddress())
+		msg := NewQueryVoteMessage(0, -1, ts.RandValAddress())
 
-		err := m.BasicCheck()
+		err := msg.BasicCheck()
 		assert.ErrorIs(t, err, BasicCheckError{Reason: "invalid round"})
 	})
 
 	t.Run("OK", func(t *testing.T) {
-		m := NewQueryVoteMessage(100, 0, ts.RandValAddress())
+		msg := NewQueryVoteMessage(100, 0, ts.RandValAddress())
 
-		assert.NoError(t, m.BasicCheck())
-		assert.Contains(t, m.String(), "100")
+		assert.NoError(t, msg.BasicCheck())
+		assert.Contains(t, msg.String(), "100")
 	})
 }

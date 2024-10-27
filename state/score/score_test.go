@@ -9,7 +9,7 @@ import (
 
 func TestScoreManager(t *testing.T) {
 	maxCert := uint32(3)
-	sm := NewScoreManager(maxCert)
+	scoreMgr := NewScoreManager(maxCert)
 
 	cert1 := certificate.NewBlockCertificate(1, 0)
 	cert1.SetSignature([]int32{0, 1, 2, 3}, []int32{0}, nil)
@@ -41,27 +41,27 @@ func TestScoreManager(t *testing.T) {
 		{cert5, 1, 1, 0, 1, 1},
 	}
 
-	for i, test := range tests {
-		sm.SetCertificate(test.cert)
+	for no, tt := range tests {
+		scoreMgr.SetCertificate(tt.cert)
 
-		score0 := sm.AvailabilityScore(0)
-		assert.Equal(t, test.score0, score0, "#%v: invalid score0, expected %v, got %v",
-			i, test.score0, score0)
+		score0 := scoreMgr.AvailabilityScore(0)
+		assert.Equal(t, tt.score0, score0, "#%v: invalid score0, expected %v, got %v",
+			no, tt.score0, score0)
 
-		score1 := sm.AvailabilityScore(1)
-		assert.Equal(t, test.score1, score1, "#%v: invalid score1, expected %v, got %v",
-			i, test.score1, score1)
+		score1 := scoreMgr.AvailabilityScore(1)
+		assert.Equal(t, tt.score1, score1, "#%v: invalid score1, expected %v, got %v",
+			no, tt.score1, score1)
 
-		score2 := sm.AvailabilityScore(2)
-		assert.Equal(t, test.score2, score2, "#%v: invalid score2, expected %v, got %v",
-			i, test.score2, score2)
+		score2 := scoreMgr.AvailabilityScore(2)
+		assert.Equal(t, tt.score2, score2, "#%v: invalid score2, expected %v, got %v",
+			no, tt.score2, score2)
 
-		score3 := sm.AvailabilityScore(3)
-		assert.Equal(t, test.score3, score3, "#%v: invalid score3, expected %v, got %v",
-			i, test.score3, score3)
+		score3 := scoreMgr.AvailabilityScore(3)
+		assert.Equal(t, tt.score3, score3, "#%v: invalid score3, expected %v, got %v",
+			no, tt.score3, score3)
 
-		score4 := sm.AvailabilityScore(4)
-		assert.Equal(t, test.score4, score4, "#%v: invalid score4, expected %v, got %v",
-			i, test.score4, score4)
+		score4 := scoreMgr.AvailabilityScore(4)
+		assert.Equal(t, tt.score4, score4, "#%v: invalid score4, expected %v, got %v",
+			no, tt.score4, score4)
 	}
 }

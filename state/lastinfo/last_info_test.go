@@ -102,9 +102,9 @@ func setup(t *testing.T) *testData {
 func TestRestoreCommittee(t *testing.T) {
 	td := setup(t)
 
-	li := NewLastInfo()
+	lastInfo := NewLastInfo()
 
-	cmt, err := li.RestoreLastInfo(td.store, 4)
+	cmt, err := lastInfo.RestoreLastInfo(td.store, 4)
 	assert.NoError(t, err)
 
 	val0, _ := td.store.ValidatorByNumber(0)
@@ -112,11 +112,11 @@ func TestRestoreCommittee(t *testing.T) {
 	val2, _ := td.store.ValidatorByNumber(2)
 	val3, _ := td.store.ValidatorByNumber(3)
 
-	assert.Equal(t, td.lastInfo.SortitionSeed(), li.SortitionSeed())
-	assert.Equal(t, td.lastInfo.BlockHeight(), li.BlockHeight())
-	assert.Equal(t, td.lastInfo.BlockHash(), li.BlockHash())
-	assert.Equal(t, td.lastInfo.Certificate().Hash(), li.Certificate().Hash())
-	assert.Equal(t, td.lastInfo.BlockTime(), li.BlockTime())
+	assert.Equal(t, td.lastInfo.SortitionSeed(), lastInfo.SortitionSeed())
+	assert.Equal(t, td.lastInfo.BlockHeight(), lastInfo.BlockHeight())
+	assert.Equal(t, td.lastInfo.BlockHash(), lastInfo.BlockHash())
+	assert.Equal(t, td.lastInfo.Certificate().Hash(), lastInfo.Certificate().Hash())
+	assert.Equal(t, td.lastInfo.BlockTime(), lastInfo.BlockTime())
 	assert.Equal(t, td.lastInfo.Validators(), []*validator.Validator{val0, val1, val2, val3})
 	assert.Equal(t, []int32{1, 4, 2, 3}, cmt.Committers())
 }

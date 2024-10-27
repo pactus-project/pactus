@@ -38,14 +38,14 @@ func setup(t *testing.T, conf *Config) *testData {
 
 	subLogger := logger.NewSubLogger("firewall", nil)
 	peerSet := peerset.NewPeerSet(1 * time.Minute)
-	st := state.MockingState(ts)
+	state := state.MockingState(ts)
 	net := network.MockingNetwork(ts, ts.RandPeerID())
 
 	if conf == nil {
 		conf = DefaultConfig()
 	}
 	require.NoError(t, conf.BasicCheck())
-	firewall, err := NewFirewall(conf, net, peerSet, st, subLogger)
+	firewall, err := NewFirewall(conf, net, peerSet, state, subLogger)
 	if err != nil {
 		return nil
 	}
@@ -66,7 +66,7 @@ func setup(t *testing.T, conf *Config) *testData {
 		TestSuite:     ts,
 		firewall:      firewall,
 		network:       net,
-		state:         st,
+		state:         state,
 		bannedPeerID:  bannedPeerID,
 		goodPeerID:    goodPeerID,
 		unknownPeerID: unknownPeerID,
@@ -92,7 +92,7 @@ func (td *testData) testStreamBundle() []byte {
 func TestDecodeBundles(t *testing.T) {
 	td := setup(t, nil)
 
-	testCases := []struct {
+	tests := []struct {
 		name    string
 		data    string
 		peerID  string
@@ -150,11 +150,11 @@ func TestDecodeBundles(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			bs := td.DecodingHex(tc.data)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			bs := td.DecodingHex(tt.data)
 			_, err := td.firewall.OpenGossipBundle(bs, td.unknownPeerID)
-			if tc.wantErr {
+			if tt.wantErr {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
@@ -281,7 +281,7 @@ func TestBannedAddress(t *testing.T) {
 	}
 	td := setup(t, conf)
 
-	testCases := []struct {
+	tests := []struct {
 		addr   string
 		banned bool
 	}{
@@ -303,22 +303,22 @@ func TestBannedAddress(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
+	for no, tt := range tests {
 		peerID := td.RandPeerID()
-		td.firewall.peerSet.UpdateAddress(peerID, tc.addr, "inbound")
+		td.firewall.peerSet.UpdateAddress(peerID, tt.addr, "inbound")
 		data := td.testGossipBundle()
 		_, err := td.firewall.OpenGossipBundle(data, peerID)
 
-		if tc.banned {
+		if tt.banned {
 			expectedErr := PeerBannedError{
 				PeerID:  peerID,
-				Address: tc.addr,
+				Address: tt.addr,
 			}
 			assert.ErrorIs(t, err, expectedErr,
-				"test %v failed, addr %v should be banned", i, tc.addr)
+				"test %v failed, addr %v should be banned", no, tt.addr)
 		} else {
 			assert.NoError(t, err,
-				"test %v failed, addr %v should not be banned", i, tc.addr)
+				"test %v failed, addr %v should not be banned", no, tt.addr)
 		}
 	}
 }

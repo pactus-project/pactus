@@ -310,16 +310,16 @@ func TestGetPrivateKeys(t *testing.T) {
 		for _, info := range td.vault.AddressInfos() {
 			prv, err := td.vault.PrivateKeys(tPassword, []string{info.Address})
 			assert.NoError(t, err)
-			i := td.vault.AddressInfo(info.Address)
+			addrInfo := td.vault.AddressInfo(info.Address)
 			path, _ := addresspath.FromString(info.Path)
 
 			switch path.AddressType() - addresspath.HardenedKeyStart {
 			case uint32(crypto.AddressTypeBLSAccount),
 				uint32(crypto.AddressTypeValidator):
-				pub, _ := bls.PublicKeyFromString(i.PublicKey)
+				pub, _ := bls.PublicKeyFromString(addrInfo.PublicKey)
 				require.True(t, prv[0].PublicKey().EqualsTo(pub))
 			case uint32(crypto.AddressTypeEd25519Account):
-				pub, _ := ed25519.PublicKeyFromString(i.PublicKey)
+				pub, _ := ed25519.PublicKeyFromString(addrInfo.PublicKey)
 				require.True(t, prv[0].PublicKey().EqualsTo(pub))
 			default:
 				assert.Fail(t, "not supported")

@@ -16,9 +16,9 @@ func TestParamsUint8(t *testing.T) {
 	}
 
 	p := params{}
-	for _, test := range tests {
-		p.SetUint8(test.key, test.val)
-		assert.Equal(t, test.val, p.GetUint8(test.key))
+	for _, tt := range tests {
+		p.SetUint8(tt.key, tt.val)
+		assert.Equal(t, tt.val, p.GetUint8(tt.key))
 	}
 }
 
@@ -32,9 +32,9 @@ func TestParamsUint32(t *testing.T) {
 	}
 
 	p := params{}
-	for _, test := range tests {
-		p.SetUint32(test.key, test.val)
-		assert.Equal(t, test.val, p.GetUint32(test.key))
+	for _, tt := range tests {
+		p.SetUint32(tt.key, tt.val)
+		assert.Equal(t, tt.val, p.GetUint32(tt.key))
 	}
 }
 
@@ -48,9 +48,9 @@ func TestParamsUint64(t *testing.T) {
 	}
 
 	p := params{}
-	for _, test := range tests {
-		p.SetUint64(test.key, test.val)
-		assert.Equal(t, test.val, p.GetUint64(test.key))
+	for _, tt := range tests {
+		p.SetUint64(tt.key, tt.val)
+		assert.Equal(t, tt.val, p.GetUint64(tt.key))
 	}
 }
 
@@ -65,9 +65,9 @@ func TestParamsBytes(t *testing.T) {
 	}
 
 	p := params{}
-	for _, test := range tests {
-		p.SetBytes(test.key, test.val)
-		assert.Equal(t, test.val, p.GetBytes(test.key))
+	for _, tt := range tests {
+		p.SetBytes(tt.key, tt.val)
+		assert.Equal(t, tt.val, p.GetBytes(tt.key))
 	}
 }
 
@@ -82,8 +82,8 @@ func TestParamsString(t *testing.T) {
 	}
 
 	p := params{}
-	for _, test := range tests {
-		p.SetString(test.key, test.val)
-		assert.Equal(t, test.val, p.GetString(test.key))
+	for _, tt := range tests {
+		p.SetString(tt.key, tt.val)
+		assert.Equal(t, tt.val, p.GetString(tt.key))
 	}
 }

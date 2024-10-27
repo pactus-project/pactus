@@ -157,7 +157,7 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 	randValAddr := ts.RandValAddress()
 
-	testCases := []struct {
+	tests := []struct {
 		name        string
 		expectedErr error
 		updateFn    func(c *NodeConfig)
@@ -205,17 +205,18 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 		},
 	}
 
-	for i, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
+	for no, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
 			conf := DefaultNodeConfig()
-			tc.updateFn(conf)
-			if tc.expectedErr != nil {
+			tt.updateFn(conf)
+			if tt.expectedErr != nil {
 				err := conf.BasicCheck()
-				assert.ErrorIs(t, tc.expectedErr, err,
-					"Expected error not matched for test %d-%s, expected: %s, got: %s", i, tc.name, tc.expectedErr, err)
+				assert.ErrorIs(t, tt.expectedErr, err,
+					"Expected error not matched for test %d-%s, expected: %s, got: %s",
+					no, tt.name, tt.expectedErr, err)
 			} else {
 				err := conf.BasicCheck()
-				assert.NoError(t, err, "Expected no error for test %d-%s, get: %s", i, tc.name, err)
+				assert.NoError(t, err, "Expected no error for test %d-%s, get: %s", no, tt.name, err)
 			}
 		})
 	}

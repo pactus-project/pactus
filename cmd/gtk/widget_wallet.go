@@ -87,7 +87,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	treeViewWallet.AppendColumn(colScore)
 	treeViewWallet.SetModel(model.ToTreeModel())
 
-	w := &widgetWallet{
+	wdgWallet := &widgetWallet{
 		Box:               box,
 		treeViewWallet:    treeViewWallet,
 		labelTotalBalance: labelTotalBalance,
@@ -104,7 +104,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	item.SetUseUnderline(true)
 	item.Show()
 	item.Connect("activate", func(_ *gtk.MenuItem) bool {
-		w.onUpdateLabel()
+		wdgWallet.onUpdateLabel()
 
 		return false
 	})
@@ -117,7 +117,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	item.SetUseUnderline(true)
 	item.Show()
 	item.Connect("activate", func(_ *gtk.MenuItem) bool {
-		w.onShowDetails()
+		wdgWallet.onShowDetails()
 
 		return false
 	})
@@ -130,7 +130,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	item.SetUseUnderline(true)
 	item.Show()
 	item.Connect("activate", func(_ *gtk.MenuItem) bool {
-		w.onShowPrivateKey()
+		wdgWallet.onShowPrivateKey()
 
 		return false
 	})
@@ -148,15 +148,15 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 		})
 
 	signals := map[string]any{
-		"on_new_address":     w.onNewAddress,
-		"on_change_password": w.onChangePassword,
-		"on_show_seed":       w.onShowSeed,
+		"on_new_address":     wdgWallet.onNewAddress,
+		"on_change_password": wdgWallet.onChangePassword,
+		"on_show_seed":       wdgWallet.onShowSeed,
 	}
 	builder.ConnectSignals(signals)
 
-	glib.TimeoutAdd(15000, w.timeout) // each 15 seconds
+	glib.TimeoutAdd(15000, wdgWallet.timeout) // each 15 seconds
 
-	return w, nil
+	return wdgWallet, nil
 }
 
 func (ww *widgetWallet) onChangePassword() {

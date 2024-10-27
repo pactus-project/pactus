@@ -24,11 +24,11 @@ func NewBlockCertificate(height uint32, round int16) *BlockCertificate {
 }
 
 func (cert *BlockCertificate) SignBytes(blockHash hash.Hash) []byte {
-	sb := blockHash.Bytes()
-	sb = append(sb, util.Uint32ToSlice(cert.height)...)
-	sb = append(sb, util.Int16ToSlice(cert.round)...)
+	signBytes := blockHash.Bytes()
+	signBytes = append(signBytes, util.Uint32ToSlice(cert.height)...)
+	signBytes = append(signBytes, util.Int16ToSlice(cert.round)...)
 
-	return sb
+	return signBytes
 }
 
 func (cert *BlockCertificate) Validate(validators []*validator.Validator, blockHash hash.Hash) error {

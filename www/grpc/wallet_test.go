@@ -164,13 +164,13 @@ func TestLoadWallet(t *testing.T) {
 		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(),
 			td.RandAmount())
 
-		b, err := bondTx.Bytes()
+		data, err := bondTx.Bytes()
 		assert.NoError(t, err)
 
 		res, err := client.SignRawTransaction(context.Background(),
 			&pactus.SignRawTransactionRequest{
 				WalletName:     wltName,
-				RawTransaction: hex.EncodeToString(b),
+				RawTransaction: hex.EncodeToString(data),
 				Password:       "",
 			})
 		assert.NoError(t, err)
@@ -187,13 +187,13 @@ func TestLoadWallet(t *testing.T) {
 		bondTx := tx.NewBondTx(td.RandHeight(), wltAddr, td.RandValAddress(), nil, td.RandAmount(),
 			td.RandAmount())
 
-		b, err := bondTx.Bytes()
+		data, err := bondTx.Bytes()
 		assert.NoError(t, err)
 
 		res, err := client.SignRawTransaction(context.Background(),
 			&pactus.SignRawTransactionRequest{
 				WalletName:     "not-loaded-wallet",
-				RawTransaction: hex.EncodeToString(b),
+				RawTransaction: hex.EncodeToString(data),
 				Password:       "",
 			})
 		assert.Error(t, err)

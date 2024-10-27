@@ -33,7 +33,7 @@ type MockSandbox struct {
 func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 	cmt, _ := ts.GenerateTestCommittee(7)
 
-	sb := &MockSandbox{
+	sbx := &MockSandbox{
 		ts:                   ts,
 		TestParams:           param.FromGenesis(genesis.DefaultGenesisParams()),
 		TestStore:            store.MockingStore(ts),
@@ -47,17 +47,17 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 	for i, val := range cmt.Validators() {
 		acc := account.NewAccount(int32(i + 1))
 		acc.AddToBalance(10000 * 1e9)
-		sb.UpdateAccount(val.Address(), acc)
-		sb.UpdateValidator(val)
+		sbx.UpdateAccount(val.Address(), acc)
+		sbx.UpdateValidator(val)
 
 		treasuryAmt -= val.Stake()
 		treasuryAmt -= acc.Balance()
 	}
 	acc0 := account.NewAccount(0)
 	acc0.AddToBalance(treasuryAmt)
-	sb.UpdateAccount(crypto.TreasuryAddress, acc0)
+	sbx.UpdateAccount(crypto.TreasuryAddress, acc0)
 
-	return sb
+	return sbx
 }
 
 func (m *MockSandbox) Account(addr crypto.Address) *account.Account {

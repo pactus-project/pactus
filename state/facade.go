@@ -38,11 +38,11 @@ type Facade interface {
 	TotalAccounts() int32
 	TotalValidators() int32
 	CommitteePower() int64
-	PendingTx(id tx.ID) *tx.Tx
+	PendingTx(txID tx.ID) *tx.Tx
 	AddPendingTx(trx *tx.Tx) error
 	AddPendingTxAndBroadcast(trx *tx.Tx) error
 	CommittedBlock(height uint32) *store.CommittedBlock
-	CommittedTx(id tx.ID) *store.CommittedTx
+	CommittedTx(txID tx.ID) *store.CommittedTx
 	BlockHash(height uint32) hash.Hash
 	BlockHeight(h hash.Hash) uint32
 	AccountByAddress(addr crypto.Address) *account.Account

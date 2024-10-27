@@ -98,15 +98,15 @@ func (t *Tree) Root() hash.Hash {
 }
 
 func (t *Tree) nodeHash(width, height int) hash.Hash {
-	n := t.getNode(width, height)
-	if n == nil {
-		n = t.getNode(width-1, height)
-		if n == nil {
+	node := t.getNode(width, height)
+	if node == nil {
+		node = t.getNode(width-1, height)
+		if node == nil {
 			panic("invalid merkle tree")
 		}
 	}
-	if n.hash != nil {
-		return *n.hash
+	if node.hash != nil {
+		return *node.hash
 	}
 
 	left := t.nodeHash(width*2, height-1)
@@ -117,7 +117,7 @@ func (t *Tree) nodeHash(width, height int) hash.Hash {
 	copy(data[hash.HashSize:], right.Bytes())
 
 	h := hash.CalcHash(data)
-	n.hash = &h
+	node.hash = &h
 
 	return h
 }

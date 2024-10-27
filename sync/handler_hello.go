@@ -91,17 +91,17 @@ func (*helloHandler) PrepareBundle(m message.Message) *bundle.Bundle {
 	return bdl
 }
 
-func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, to peer.ID) {
+func (handler *helloHandler) acknowledge(msg *message.HelloAckMessage, pid peer.ID) {
 	if msg.ResponseCode == message.ResponseCodeRejected {
 		handler.logger.Info("rejecting hello message", "msg", msg,
-			"to", to, "reason", msg.Reason)
+			"pid", pid, "reason", msg.Reason)
 
-		handler.sendTo(msg, to)
-		handler.peerSet.UpdateStatus(to, status.StatusBanned)
+		handler.sendTo(msg, pid)
+		handler.peerSet.UpdateStatus(pid, status.StatusBanned)
 	} else {
 		handler.logger.Info("acknowledging hello message", "msg", msg,
-			"to", to)
+			"pid", pid)
 
-		handler.sendTo(msg, to)
+		handler.sendTo(msg, pid)
 	}
 }

@@ -20,10 +20,10 @@ func TestFromBytes(t *testing.T) {
 	val.UpdateLastBondingHeight(ts.RandHeight())
 	val.UpdateLastSortitionHeight(ts.RandHeight())
 	val.UpdateUnbondingHeight(ts.RandHeight())
-	bs, err := val.Bytes()
+	data, err := val.Bytes()
 	require.NoError(t, err)
-	require.Equal(t, val.SerializeSize(), len(bs))
-	val2, err := validator.FromBytes(bs)
+	require.Equal(t, val.SerializeSize(), len(data))
+	val2, err := validator.FromBytes(data)
 	require.NoError(t, err)
 	assert.Equal(t, val.Address(), val2.Address())
 	assert.Equal(t, val.Number(), val2.Number())
@@ -35,13 +35,13 @@ func TestFromBytes(t *testing.T) {
 	_, err = validator.FromBytes([]byte("asdfghjkl"))
 	require.Error(t, err)
 
-	bs = bs[:len(bs)-1]
-	_, err = validator.FromBytes(bs)
+	data = data[:len(data)-1]
+	_, err = validator.FromBytes(data)
 	require.Error(t, err)
 }
 
 func TestDecoding(t *testing.T) {
-	d, _ := hex.DecodeString(
+	data, _ := hex.DecodeString(
 		"8d82fa4fcac04a3b565267685e90db1b01420285d2f8295683c138c092c209479983ba1591370778846681b7b558e061" + // PublicKey
 			"1776208c0718006311c84b4a113335c70d1f5c7c5dd93a5625c4af51c48847abd0b590c055306162d2a03ca1cbf7bcc1" +
 			"01000000" + // Number
@@ -50,7 +50,7 @@ func TestDecoding(t *testing.T) {
 			"04000000" + // UnbondingHeight
 			"05000000") // LastSortitionHeight
 
-	val, err := validator.FromBytes(d)
+	val, err := validator.FromBytes(data)
 	require.NoError(t, err)
 	assert.Equal(t, int32(1), val.Number())
 	assert.Equal(t, amount.Amount(2), val.Stake())
@@ -58,13 +58,13 @@ func TestDecoding(t *testing.T) {
 	assert.Equal(t, uint32(4), val.UnbondingHeight())
 	assert.Equal(t, uint32(5), val.LastSortitionHeight())
 	d2, _ := val.Bytes()
-	assert.Equal(t, d, d2)
-	assert.Equal(t, hash.CalcHash(d), val.Hash())
+	assert.Equal(t, data, d2)
+	assert.Equal(t, hash.CalcHash(data), val.Hash())
 	expected, _ := hash.FromString("243e65ae04727f21d5f7618cea9ff8d4bc82fded1179cf8bd9e11a6b99ac42b2")
 	assert.Equal(t, expected, val.Hash())
-	pub, _ := bls.PublicKeyFromBytes(d[:96])
+	pub, _ := bls.PublicKeyFromBytes(data[:96])
 	assert.True(t, val.PublicKey().EqualsTo(pub))
-	assert.Equal(t, len(d), val.SerializeSize())
+	assert.Equal(t, len(data), val.SerializeSize())
 }
 
 func TestPower(t *testing.T) {

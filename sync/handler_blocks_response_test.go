@@ -34,12 +34,12 @@ func TestInvalidBlockData(t *testing.T) {
 		{data: data},
 	}
 
-	for _, test := range tests {
+	for _, tt := range tests {
 		pid := td.RandPeerID()
 		sid := td.RandInt(1000)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks,
 			message.ResponseCodeMoreBlocks.String(),
-			sid, lastHeight+1, [][]byte{test.data}, cert)
+			sid, lastHeight+1, [][]byte{tt.data}, cert)
 
 		td.receivingNewMessage(td.sync, msg, pid)
 		assert.Nil(t, td.sync.cache.GetBlock(msg.From))
@@ -109,15 +109,15 @@ func TestStrippedPublicKey(t *testing.T) {
 	// Add a peer
 	pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 
-	for _, tc := range tests {
-		blkData, _ := tc.receivedBlock.Bytes()
+	for _, tt := range tests {
+		blkData, _ := tt.receivedBlock.Bytes()
 		sid := td.RandInt(1000)
 		cert := td.GenerateTestBlockCertificate(lastHeight + 1)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
 			lastHeight+1, [][]byte{blkData}, cert)
 		td.receivingNewMessage(td.sync, msg, pid)
 
-		if tc.shouldFail {
+		if tt.shouldFail {
 			assert.Nil(t, td.sync.cache.GetBlock(msg.From))
 		} else {
 			assert.NotNil(t, td.sync.cache.GetBlock(msg.From))
@@ -244,13 +244,13 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 // TestIdenticalBundles tests if two different peers publish the same message,
 // whether the bundle data is also the same.
 func TestIdenticalBundles(t *testing.T) {
-	td := makeAliceAndBobNetworks(t)
+	nets := makeAliceAndBobNetworks(t)
 
-	blk, cert := td.GenerateTestBlock(td.RandHeight())
+	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
 	msg := message.NewBlockAnnounceMessage(blk, cert)
 
-	bdlAlice := td.syncAlice.prepareBundle(msg)
-	bdlBob := td.syncBob.prepareBundle(msg)
+	bdlAlice := nets.syncAlice.prepareBundle(msg)
+	bdlBob := nets.syncBob.prepareBundle(msg)
 
 	assert.Equal(t, bdlAlice, bdlBob)
 }
@@ -259,100 +259,100 @@ func TestIdenticalBundles(t *testing.T) {
 // test nodes, Alice and Bob. In real-world scenarios, multiple nodes are typically
 // involved, but the procedure remains similar.
 func TestSyncing(t *testing.T) {
-	td := makeAliceAndBobNetworks(t)
+	nets := makeAliceAndBobNetworks(t)
 
 	// Adding 100 blocks for Bob
-	blockInterval := td.syncBob.state.Genesis().Params().BlockInterval()
-	blockTime := td.syncBob.state.Genesis().GenesisTime()
+	blockInterval := nets.syncBob.state.Genesis().Params().BlockInterval()
+	blockTime := nets.syncBob.state.Genesis().GenesisTime()
 	for i := uint32(0); i < 100; i++ {
-		blk, cert := td.GenerateTestBlock(i+1, testsuite.BlockWithTime(blockTime))
-		assert.NoError(t, td.syncBob.state.CommitBlock(blk, cert))
+		blk, cert := nets.GenerateTestBlock(i+1, testsuite.BlockWithTime(blockTime))
+		assert.NoError(t, nets.syncBob.state.CommitBlock(blk, cert))
 
 		blockTime = blockTime.Add(blockInterval)
 	}
 
-	assert.Equal(t, uint32(0), td.syncAlice.state.LastBlockHeight())
-	assert.Equal(t, uint32(100), td.syncBob.state.LastBlockHeight())
+	assert.Equal(t, uint32(0), nets.syncAlice.state.LastBlockHeight())
+	assert.Equal(t, uint32(100), nets.syncBob.state.LastBlockHeight())
 
 	// Announcing a block
-	blk, cert := td.GenerateTestBlock(td.RandHeight())
+	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
 	msg := message.NewBlockAnnounceMessage(blk, cert)
-	td.syncBob.broadcast(msg)
-	shouldPublishMessageWithThisType(t, td.networkBob, message.TypeBlockAnnounce)
+	nets.syncBob.broadcast(msg)
+	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 
 	// Perform block syncing
-	assert.Equal(t, uint32(11), td.syncAlice.config.BlockPerMessage)
-	assert.Equal(t, uint32(23), td.syncAlice.config.BlockPerSession)
+	assert.Equal(t, uint32(11), nets.syncAlice.config.BlockPerMessage)
+	assert.Equal(t, uint32(23), nets.syncAlice.config.BlockPerSession)
 
-	shouldNotPublishMessageWithThisType(t, td.networkBob, message.TypeBlocksRequest)
-	shouldPublishBlockRequest(t, td.networkAlice, 1)
-	shouldPublishBlockResponse(t, td.networkBob, 1, 11, message.ResponseCodeMoreBlocks)  // 1-11
-	shouldPublishBlockResponse(t, td.networkBob, 12, 11, message.ResponseCodeMoreBlocks) // 12-22
-	shouldPublishBlockResponse(t, td.networkBob, 23, 1, message.ResponseCodeMoreBlocks)  // 23-23
-	shouldPublishBlockResponse(t, td.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
+	shouldNotPublishMessageWithThisType(t, nets.networkBob, message.TypeBlocksRequest)
+	shouldPublishBlockRequest(t, nets.networkAlice, 1)
+	shouldPublishBlockResponse(t, nets.networkBob, 1, 11, message.ResponseCodeMoreBlocks)  // 1-11
+	shouldPublishBlockResponse(t, nets.networkBob, 12, 11, message.ResponseCodeMoreBlocks) // 12-22
+	shouldPublishBlockResponse(t, nets.networkBob, 23, 1, message.ResponseCodeMoreBlocks)  // 23-23
+	shouldPublishBlockResponse(t, nets.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
 
-	shouldPublishBlockRequest(t, td.networkAlice, 24)
-	shouldPublishBlockResponse(t, td.networkBob, 24, 11, message.ResponseCodeMoreBlocks) // 24-34
-	shouldPublishBlockResponse(t, td.networkBob, 35, 11, message.ResponseCodeMoreBlocks) // 35-45
-	shouldPublishBlockResponse(t, td.networkBob, 46, 1, message.ResponseCodeMoreBlocks)  // 46-46
-	shouldPublishBlockResponse(t, td.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
+	shouldPublishBlockRequest(t, nets.networkAlice, 24)
+	shouldPublishBlockResponse(t, nets.networkBob, 24, 11, message.ResponseCodeMoreBlocks) // 24-34
+	shouldPublishBlockResponse(t, nets.networkBob, 35, 11, message.ResponseCodeMoreBlocks) // 35-45
+	shouldPublishBlockResponse(t, nets.networkBob, 46, 1, message.ResponseCodeMoreBlocks)  // 46-46
+	shouldPublishBlockResponse(t, nets.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
 
-	shouldPublishBlockRequest(t, td.networkAlice, 47)
-	shouldPublishBlockResponse(t, td.networkBob, 47, 11, message.ResponseCodeMoreBlocks) // 47-57
-	shouldPublishBlockResponse(t, td.networkBob, 58, 11, message.ResponseCodeMoreBlocks) // 58-68
-	shouldPublishBlockResponse(t, td.networkBob, 69, 1, message.ResponseCodeMoreBlocks)  // 69-69
-	shouldPublishBlockResponse(t, td.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
+	shouldPublishBlockRequest(t, nets.networkAlice, 47)
+	shouldPublishBlockResponse(t, nets.networkBob, 47, 11, message.ResponseCodeMoreBlocks) // 47-57
+	shouldPublishBlockResponse(t, nets.networkBob, 58, 11, message.ResponseCodeMoreBlocks) // 58-68
+	shouldPublishBlockResponse(t, nets.networkBob, 69, 1, message.ResponseCodeMoreBlocks)  // 69-69
+	shouldPublishBlockResponse(t, nets.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
 
-	shouldPublishBlockRequest(t, td.networkAlice, 70)
-	shouldPublishBlockResponse(t, td.networkBob, 70, 11, message.ResponseCodeMoreBlocks) // 70-80
-	shouldPublishBlockResponse(t, td.networkBob, 81, 11, message.ResponseCodeMoreBlocks) // 81-91
-	shouldPublishBlockResponse(t, td.networkBob, 92, 1, message.ResponseCodeMoreBlocks)  // 92-92
-	shouldPublishBlockResponse(t, td.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
+	shouldPublishBlockRequest(t, nets.networkAlice, 70)
+	shouldPublishBlockResponse(t, nets.networkBob, 70, 11, message.ResponseCodeMoreBlocks) // 70-80
+	shouldPublishBlockResponse(t, nets.networkBob, 81, 11, message.ResponseCodeMoreBlocks) // 81-91
+	shouldPublishBlockResponse(t, nets.networkBob, 92, 1, message.ResponseCodeMoreBlocks)  // 92-92
+	shouldPublishBlockResponse(t, nets.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
 
 	// Last block requests
-	shouldPublishBlockRequest(t, td.networkAlice, 93)                                   // 93-116
-	shouldPublishBlockResponse(t, td.networkBob, 93, 8, message.ResponseCodeMoreBlocks) // 93-100
-	shouldPublishBlockResponse(t, td.networkBob, 100, 0, message.ResponseCodeSynced)    // Synced
+	shouldPublishBlockRequest(t, nets.networkAlice, 93)                                   // 93-116
+	shouldPublishBlockResponse(t, nets.networkBob, 93, 8, message.ResponseCodeMoreBlocks) // 93-100
+	shouldPublishBlockResponse(t, nets.networkBob, 100, 0, message.ResponseCodeSynced)    // Synced
 
 	assert.Eventually(t, func() bool {
-		return td.syncAlice.state.LastBlockHeight() == uint32(100)
+		return nets.syncAlice.state.LastBlockHeight() == uint32(100)
 	}, 10*time.Second, 1*time.Second)
 }
 
 func TestSyncingHasBlockInCache(t *testing.T) {
-	td := makeAliceAndBobNetworks(t)
+	nets := makeAliceAndBobNetworks(t)
 
 	// Adding 100 blocks for Bob
-	blockInterval := td.syncBob.state.Genesis().Params().BlockInterval()
-	blockTime := td.syncBob.state.Genesis().GenesisTime()
+	blockInterval := nets.syncBob.state.Genesis().Params().BlockInterval()
+	blockTime := nets.syncBob.state.Genesis().GenesisTime()
 	for i := uint32(0); i < 23; i++ {
-		blk, cert := td.GenerateTestBlock(i+1, testsuite.BlockWithTime(blockTime))
-		assert.NoError(t, td.syncBob.state.CommitBlock(blk, cert))
+		blk, cert := nets.GenerateTestBlock(i+1, testsuite.BlockWithTime(blockTime))
+		assert.NoError(t, nets.syncBob.state.CommitBlock(blk, cert))
 
 		blockTime = blockTime.Add(blockInterval)
 	}
 
-	assert.Equal(t, uint32(0), td.syncAlice.state.LastBlockHeight())
-	assert.Equal(t, uint32(23), td.syncBob.state.LastBlockHeight())
+	assert.Equal(t, uint32(0), nets.syncAlice.state.LastBlockHeight())
+	assert.Equal(t, uint32(23), nets.syncBob.state.LastBlockHeight())
 
 	// Adding some blocs to the cache
-	blk1 := td.stateBob.TestStore.Blocks[1]
-	blk2 := td.stateBob.TestStore.Blocks[2]
-	blk3 := td.stateBob.TestStore.Blocks[3]
-	td.syncAlice.cache.AddBlock(blk1)
-	td.syncAlice.cache.AddBlock(blk2)
-	td.syncAlice.cache.AddBlock(blk3)
+	blk1 := nets.stateBob.TestStore.Blocks[1]
+	blk2 := nets.stateBob.TestStore.Blocks[2]
+	blk3 := nets.stateBob.TestStore.Blocks[3]
+	nets.syncAlice.cache.AddBlock(blk1)
+	nets.syncAlice.cache.AddBlock(blk2)
+	nets.syncAlice.cache.AddBlock(blk3)
 
 	// Announcing a block
-	blk, cert := td.GenerateTestBlock(td.RandHeight())
+	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
 	msg := message.NewBlockAnnounceMessage(blk, cert)
-	td.syncBob.broadcast(msg)
-	shouldPublishMessageWithThisType(t, td.networkBob, message.TypeBlockAnnounce)
+	nets.syncBob.broadcast(msg)
+	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 
-	shouldNotPublishMessageWithThisType(t, td.networkBob, message.TypeBlocksRequest)
+	shouldNotPublishMessageWithThisType(t, nets.networkBob, message.TypeBlocksRequest)
 	// blocks 1-2 are inside the cache
-	shouldPublishBlockRequest(t, td.networkAlice, 4)
-	shouldPublishBlockResponse(t, td.networkBob, 4, 11, message.ResponseCodeMoreBlocks) // 4-14
-	shouldPublishBlockResponse(t, td.networkBob, 15, 9, message.ResponseCodeMoreBlocks) // 15-23
-	shouldPublishBlockResponse(t, td.networkBob, 23, 0, message.ResponseCodeSynced)     // Synced
+	shouldPublishBlockRequest(t, nets.networkAlice, 4)
+	shouldPublishBlockResponse(t, nets.networkBob, 4, 11, message.ResponseCodeMoreBlocks) // 4-14
+	shouldPublishBlockResponse(t, nets.networkBob, 15, 9, message.ResponseCodeMoreBlocks) // 15-23
+	shouldPublishBlockResponse(t, nets.networkBob, 23, 0, message.ResponseCodeSynced)     // Synced
 }

@@ -59,14 +59,14 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		eventCh = nil
 	}
 
-	str, err := store.NewStore(conf.Store)
+	store, err := store.NewStore(conf.Store)
 	if err != nil {
 		return nil, err
 	}
 
-	txPool := txpool.NewTxPool(conf.TxPool, str, messageCh)
+	txPool := txpool.NewTxPool(conf.TxPool, store, messageCh)
 
-	st, err := state.LoadOrNewState(genDoc, valKeys, str, txPool, eventCh)
+	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventCh)
 	if err != nil {
 		return nil, err
 	}
@@ -76,13 +76,13 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	consMgr := consensus.NewManager(conf.Consensus, st, valKeys, rewardAddrs, messageCh)
+	consMgr := consensus.NewManager(conf.Consensus, state, valKeys, rewardAddrs, messageCh)
 	walletMgr := wallet.NewWalletManager(conf.WalletManager)
 
-	if !str.IsPruned() {
+	if !store.IsPruned() {
 		conf.Sync.Services.Append(service.FullNode)
 	}
-	syn, err := sync.NewSynchronizer(conf.Sync, valKeys, st, consMgr, net, messageCh)
+	syn, err := sync.NewSynchronizer(conf.Sync, valKeys, state, consMgr, net, messageCh)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +91,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	if conf.GRPC.BasicAuth != "" {
 		enableHTTPAuth = true
 	}
-	grpcServer := grpc.NewServer(conf.GRPC, st, syn, net, consMgr, walletMgr)
+	grpcServer := grpc.NewServer(conf.GRPC, state, syn, net, consMgr, walletMgr)
 	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
 	jsonrpcServer := jsonrpc.NewServer(conf.JSONRPC)
 	nanomsgServer := nanomsg.NewServer(conf.Nanomsg, eventCh)
@@ -100,11 +100,11 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		config:     conf,
 		genesisDoc: genDoc,
 		network:    net,
-		state:      st,
+		state:      state,
 		txPool:     txPool,
 		consMgr:    consMgr,
 		sync:       syn,
-		store:      str,
+		store:      store,
 		http:       httpServer,
 		grpc:       grpcServer,
 		jsonrpc:    jsonrpcServer,

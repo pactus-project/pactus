@@ -178,49 +178,49 @@ var binarySerializer binaryFreeList = make(chan []byte, binaryFreeListMaxItems)
 
 // ReadElement reads the next sequence of bytes from r using little endian
 // depending on the concrete type of element pointed to.
-func ReadElement(r io.Reader, element any) error {
+func ReadElement(r io.Reader, elm any) error {
 	// Attempt to read the element based on the concrete type via fast
 	// type assertions first.
 	var err error
-	switch e := element.(type) {
+	switch elm := elm.(type) {
 	case *bool:
-		rv := uint8(0)
-		err = binarySerializer.Uint8(r, &rv)
-		if rv == 0x00 {
-			*e = false
+		val := uint8(0)
+		err = binarySerializer.Uint8(r, &val)
+		if val == 0x00 {
+			*elm = false
 		} else {
-			*e = true
+			*elm = true
 		}
 	case *int8:
-		rv := uint8(0)
-		err = binarySerializer.Uint8(r, &rv)
-		*e = int8(rv)
+		val := uint8(0)
+		err = binarySerializer.Uint8(r, &val)
+		*elm = int8(val)
 	case *uint8:
-		err = binarySerializer.Uint8(r, e)
+		err = binarySerializer.Uint8(r, elm)
 	case *int16:
-		rv := uint16(0)
-		err = binarySerializer.Uint16(r, &rv)
-		*e = int16(rv)
+		val := uint16(0)
+		err = binarySerializer.Uint16(r, &val)
+		*elm = int16(val)
 	case *uint16:
-		err = binarySerializer.Uint16(r, e)
+		err = binarySerializer.Uint16(r, elm)
 	case *int32:
 		rv := uint32(0)
 		err = binarySerializer.Uint32(r, &rv)
-		*e = int32(rv)
+		*elm = int32(rv)
 	case *uint32:
-		err = binarySerializer.Uint32(r, e)
+		err = binarySerializer.Uint32(r, elm)
 	case *int64:
-		rv := uint64(0)
-		err = binarySerializer.Uint64(r, &rv)
-		*e = int64(rv)
+		val := uint64(0)
+		err = binarySerializer.Uint64(r, &val)
+		*elm = int64(val)
 	case *uint64:
-		err = binarySerializer.Uint64(r, e)
+		err = binarySerializer.Uint64(r, elm)
 	case *hash.Hash:
-		_, err = io.ReadFull(r, e[:])
+		_, err = io.ReadFull(r, elm[:])
 	default:
 		// Fall back to the slower binary.Read if a fast path was not available
 		// above.
-		err = binary.Read(r, binary.LittleEndian, element)
+		err = binary.Read(r, binary.LittleEndian, elm)
 	}
 
 	return err
@@ -228,8 +228,8 @@ func ReadElement(r io.Reader, element any) error {
 
 // ReadElements reads multiple items from r.  It is equivalent to multiple
 // calls to readElement.
-func ReadElements(r io.Reader, elements ...any) error {
-	for _, element := range elements {
+func ReadElements(r io.Reader, elms ...any) error {
+	for _, element := range elms {
 		err := ReadElement(r, element)
 		if err != nil {
 			return err
@@ -240,39 +240,39 @@ func ReadElements(r io.Reader, elements ...any) error {
 }
 
 // WriteElement writes the little endian representation of element to w.
-func WriteElement(w io.Writer, element any) error {
+func WriteElement(w io.Writer, elm any) error {
 	// Attempt to write the element based on the concrete type via fast
 	// type assertions first.
 	var err error
-	switch e := element.(type) {
+	switch elm := elm.(type) {
 	case bool:
-		if e {
+		if elm {
 			err = binarySerializer.PutUint8(w, 0x01)
 		} else {
 			err = binarySerializer.PutUint8(w, 0x00)
 		}
 	case int8:
-		err = binarySerializer.PutUint8(w, uint8(e))
+		err = binarySerializer.PutUint8(w, uint8(elm))
 	case uint8:
-		err = binarySerializer.PutUint8(w, e)
+		err = binarySerializer.PutUint8(w, elm)
 	case int16:
-		err = binarySerializer.PutUint16(w, uint16(e))
+		err = binarySerializer.PutUint16(w, uint16(elm))
 	case uint16:
-		err = binarySerializer.PutUint16(w, e)
+		err = binarySerializer.PutUint16(w, elm)
 	case int32:
-		err = binarySerializer.PutUint32(w, uint32(e))
+		err = binarySerializer.PutUint32(w, uint32(elm))
 	case uint32:
-		err = binarySerializer.PutUint32(w, e)
+		err = binarySerializer.PutUint32(w, elm)
 	case int64:
-		err = binarySerializer.PutUint64(w, uint64(e))
+		err = binarySerializer.PutUint64(w, uint64(elm))
 	case uint64:
-		err = binarySerializer.PutUint64(w, e)
+		err = binarySerializer.PutUint64(w, elm)
 	case *hash.Hash:
-		_, err = w.Write(e[:])
+		_, err = w.Write(elm[:])
 	default:
 		// Fall back to the slower binary.Write if a fast path was not available
 		// above.
-		err = binary.Write(w, binary.LittleEndian, element)
+		err = binary.Write(w, binary.LittleEndian, elm)
 	}
 
 	return err
@@ -296,22 +296,22 @@ func ReadVarInt(r io.Reader) (uint64, error) {
 	bits := 64
 	write := uint64(0)
 	for shift := 0; ; shift += 7 {
-		b := uint8(0)
-		err := binarySerializer.Uint8(r, &b)
+		byt := uint8(0)
+		err := binarySerializer.Uint8(r, &byt)
 		if err != nil {
 			return 0, err
 		}
-		if shift+7 >= bits && b >= 1<<(bits-shift) {
+		if shift+7 >= bits && byt >= 1<<(bits-shift) {
 			return uint64(0), ErrOverflow
 		}
-		if b == 0 && shift != 0 {
+		if byt == 0 && shift != 0 {
 			return uint64(0), ErrNonCanonical
 		}
 
-		write |= uint64(b&0x7f) << shift // Does the actually placing into write, stripping the first bit
+		write |= uint64(byt&0x7f) << shift // Does the actually placing into write, stripping the first bit
 
 		// If there is no next
-		if (b & 0x80) == 0 {
+		if (byt & 0x80) == 0 {
 			break
 		}
 	}
@@ -435,13 +435,13 @@ func ReadVarBytes(r io.Reader) ([]byte, error) {
 			"[count %d, max %d]", count, MaxPayloadSize)
 	}
 
-	b := make([]byte, count)
-	_, err = io.ReadFull(r, b)
+	buf := make([]byte, count)
+	_, err = io.ReadFull(r, buf)
 	if err != nil {
 		return nil, err
 	}
 
-	return b, nil
+	return buf, nil
 }
 
 // WriteVarBytes serializes a variable length byte array to w as a varInt
