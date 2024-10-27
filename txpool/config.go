@@ -1,8 +1,6 @@
 package txpool
 
-import (
-	"github.com/pactus-project/pactus/types/amount"
-)
+import "github.com/pactus-project/pactus/types/amount"
 
 type Config struct {
 	MaxSize int        `toml:"max_size"`
@@ -51,7 +49,11 @@ func (conf *Config) BasicCheck() error {
 	return nil
 }
 
-func (conf *Config) minFee() amount.Amount {
+func (conf *Config) CalculateConsumption() bool {
+	return conf.Fee.UnitPrice > 0
+}
+
+func (conf *Config) fixedFee() amount.Amount {
 	amt, _ := amount.NewAmount(conf.Fee.FixedFee)
 
 	return amt
