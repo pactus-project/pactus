@@ -85,6 +85,7 @@ type Reader interface {
 	Transaction(txID tx.ID) (*CommittedTx, error)
 	RecentTransaction(txID tx.ID) bool
 	PublicKey(addr crypto.Address) (crypto.PublicKey, error)
+	HasPublicKey(addr crypto.Address) bool
 	HasAccount(crypto.Address) bool
 	Account(addr crypto.Address) (*account.Account, error)
 	TotalAccounts() int32
