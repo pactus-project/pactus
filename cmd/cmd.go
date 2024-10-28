@@ -294,31 +294,29 @@ func TrapSignal(cleanupFunc func()) {
 
 func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	mnemonic string, walletPassword string,
-) ([]string, []string, error) {
+) ([]string, string, error) {
 	// To make process faster, we update the password after creating the addresses
 	walletPath := PactusDefaultWalletPath(workingDir)
 	walletInstance, err := wallet.Create(walletPath, mnemonic, "", chain)
 	if err != nil {
-		return nil, nil, err
+		return nil, "", err
 	}
 
 	validatorAddrs := []string{}
 	for i := 0; i < numValidators; i++ {
 		addressInfo, err := walletInstance.NewValidatorAddress(fmt.Sprintf("Validator address %v", i+1))
 		if err != nil {
-			return nil, nil, err
+			return nil, "", err
 		}
 		validatorAddrs = append(validatorAddrs, addressInfo.Address)
 	}
 
-	rewardAddrs := []string{}
-	for i := 0; i < numValidators; i++ {
-		addressInfo, err := walletInstance.NewBLSAccountAddress(fmt.Sprintf("Reward address %v", i+1))
-		if err != nil {
-			return nil, nil, err
-		}
-		rewardAddrs = append(rewardAddrs, addressInfo.Address)
+	addressInfo, err := walletInstance.NewEd25519AccountAddress(
+		"Reward address ", "")
+	if err != nil {
+		return nil, "", err
 	}
+	rewardAddrs := addressInfo.Address
 
 	confPath := PactusConfigPath(workingDir)
 	genPath := PactusGenesisPath(workingDir)
@@ -327,43 +325,43 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	case genesis.Mainnet:
 		genDoc := genesis.MainnetGenesis()
 		if err := genDoc.SaveToFile(genPath); err != nil {
-			return nil, nil, err
+			return nil, "", err
 		}
 		err := config.SaveMainnetConfig(confPath)
 		if err != nil {
-			return nil, nil, err
+			return nil, "", err
 		}
 	case genesis.Testnet:
 		genDoc := genesis.TestnetGenesis()
 		if err := genDoc.SaveToFile(genPath); err != nil {
-			return nil, nil, err
+			return nil, "", err
 		}
 		conf := config.DefaultConfigTestnet()
 		if err := conf.Save(confPath); err != nil {
-			return nil, nil, err
+			return nil, "", err
 		}
 
 	case genesis.Localnet:
 		if numValidators < 4 {
-			return nil, nil, fmt.Errorf("LocalNeed needs at least 4 validators")
+			return nil, "", fmt.Errorf("LocalNeed needs at least 4 validators")
 		}
 		genDoc := makeLocalGenesis(*walletInstance)
 		if err := genDoc.SaveToFile(genPath); err != nil {
-			return nil, nil, err
+			return nil, "", err
 		}
 
 		conf := config.DefaultConfigLocalnet()
 		if err := conf.Save(confPath); err != nil {
-			return nil, nil, err
+			return nil, "", err
 		}
 	}
 
 	if err := walletInstance.UpdatePassword("", walletPassword); err != nil {
-		return nil, nil, err
+		return nil, "", err
 	}
 
 	if err := walletInstance.Save(); err != nil {
-		return nil, nil, err
+		return nil, "", err
 	}
 
 	return validatorAddrs, rewardAddrs, nil
@@ -433,7 +431,7 @@ func makeLocalGenesis(wlt wallet.Wallet) *genesis.Genesis {
 	genValNum := 4
 	vals := make([]*validator.Validator, genValNum)
 	for i := 0; i < genValNum; i++ {
-		info := wlt.AddressInfo(wlt.AddressInfos()[i].Address)
+		info := wlt.AddressInfo(wlt.AllValidatorAddresses()[i].Address)
 		pub, _ := bls.PublicKeyFromString(info.PublicKey)
 		vals[i] = validator.NewValidator(pub, int32(i))
 	}

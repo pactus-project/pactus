@@ -333,9 +333,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 			}
 
 			nodeInfo += "\nReward addresses:\n"
-			for i, addr := range rewardAddrs {
-				nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)
-			}
+			nodeInfo += fmt.Sprintf("%s", rewardAddrs)
 
 			setTextViewContent(txtNodeInfo, nodeInfo)
 		}

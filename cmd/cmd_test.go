@@ -299,7 +299,7 @@ func TestCreateNode(t *testing.T) {
 		mnemonic       string
 		withErr        bool
 		validatorAddrs []string
-		rewardAddrs    []string
+		rewardAddrs    string
 	}{
 		{
 			name:           "Create node for Mainnet",
@@ -308,7 +308,7 @@ func TestCreateNode(t *testing.T) {
 			workingDir:     util.TempDirPath(),
 			mnemonic:       "legal winner thank year wave sausage worth useful legal winner thank yellow",
 			validatorAddrs: []string{"pc1pqpu5tkuctj6ecxjs85f9apm802hhc65amwhuyw"},
-			rewardAddrs:    []string{"pc1zmpnme0xrgzhml77e3k70ey9hwwwsfed6l04pqc"},
+			rewardAddrs:    "pc1rkg0nhswqj85wnz9sm0g9kfkxj68lfx9lhftl8n",
 			withErr:        false,
 		},
 		{
@@ -318,7 +318,7 @@ func TestCreateNode(t *testing.T) {
 			workingDir:     util.TempDirPath(),
 			mnemonic:       "legal winner thank year wave sausage worth useful legal winner thank yellow",
 			validatorAddrs: []string{"tpc1p54ex6jvqkz6qyld5wgm77qm7walgy664hxz2pc"},
-			rewardAddrs:    []string{"tpc1zlkjrgfkrh7f9enpt730tp5vgx7tgtqzplhfksa"},
+			rewardAddrs:    "tpc1rps3xncfvepre5w754xtxxqmrmhwuackjvaft5y",
 			withErr:        false,
 		},
 
@@ -334,13 +334,8 @@ func TestCreateNode(t *testing.T) {
 				"tpc1pe5px2dddn6g4zgnu3wpwgrqpdjrufvda57a4wm",
 				"tpc1p8yyhysp380j9q9gxa6vlhstgkd94238kunttpr",
 			},
-			rewardAddrs: []string{
-				"tpc1zlkjrgfkrh7f9enpt730tp5vgx7tgtqzplhfksa",
-				"tpc1ztzwc9x98j88wctmzm5t09z592lqw0sqc3rn6lu",
-				"tpc1zslef8hjkwqxdcekcqxra6djgjr5gryrj8l3fyf",
-				"tpc1zru3xxmgz5dqqkv0mesqq3t3luepzg3e6jeqkeu",
-			},
-			withErr: false,
+			rewardAddrs: "tpc1rps3xncfvepre5w754xtxxqmrmhwuackjvaft5y",
+			withErr:     false,
 		},
 		{
 			name:           "Localnet with one validator",
@@ -349,7 +344,7 @@ func TestCreateNode(t *testing.T) {
 			workingDir:     util.TempDirPath(),
 			mnemonic:       "legal winner thank year wave sausage worth useful legal winner thank yellow",
 			validatorAddrs: nil,
-			rewardAddrs:    nil,
+			rewardAddrs:    "",
 			withErr:        true,
 		},
 		{
@@ -359,7 +354,7 @@ func TestCreateNode(t *testing.T) {
 			workingDir:     util.TempDirPath(),
 			mnemonic:       "",
 			validatorAddrs: nil,
-			rewardAddrs:    nil,
+			rewardAddrs:    "",
 			withErr:        true,
 		},
 	}

@@ -110,9 +110,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		cmd.PrintLine()
 
 		cmd.PrintInfoMsgBoldf("Reward addresses:")
-		for i, addr := range rewardAddrs {
-			cmd.PrintInfoMsgf("%v- %s", i+1, addr)
-		}
+		cmd.PrintInfoMsgf("%s", rewardAddrs)
 
 		cmd.PrintLine()
 		cmd.PrintInfoMsgBoldf("Network: %v", chain.String())
