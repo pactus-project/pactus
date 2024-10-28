@@ -584,8 +584,17 @@ func MakeRewardAddresses(walletInstance *wallet.Wallet,
 
 			addrInfo := walletInstance.AddressFromPath(accAddrPath.String())
 			if addrInfo == nil {
-				return nil, fmt.Errorf("unable to find reward address for: %s [%s]",
-					valAddrsInfo[i].Address, accAddrPath)
+				accAddrPath = addresspath.NewPath(
+					vault.PurposeBIP44+hdkeychain.HardenedKeyStart,
+					valAddrPath.CoinType(),
+					uint32(crypto.AddressTypeEd25519Account)+hdkeychain.HardenedKeyStart,
+					0+hdkeychain.HardenedKeyStart)
+
+				addrInfo = walletInstance.AddressFromPath(accAddrPath.String())
+				if addrInfo == nil {
+					return nil, fmt.Errorf("unable to find reward address for: %s [%s]",
+						valAddrsInfo[i].Address, accAddrPath)
+				}
 			}
 
 			addr, _ := crypto.AddressFromString(addrInfo.Address)
