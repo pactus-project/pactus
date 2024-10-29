@@ -312,11 +312,11 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	}
 
 	addressInfo, err := walletInstance.NewEd25519AccountAddress(
-		"Reward address ", "")
+		"Reward address", "")
 	if err != nil {
 		return nil, "", err
 	}
-	rewardAddrs := addressInfo.Address
+	rewardAddress := addressInfo.Address
 
 	confPath := PactusConfigPath(workingDir)
 	genPath := PactusGenesisPath(workingDir)
@@ -364,7 +364,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		return nil, "", err
 	}
 
-	return validatorAddrs, rewardAddrs, nil
+	return validatorAddrs, rewardAddress, nil
 }
 
 // StartNode starts the node from the given working directory.
