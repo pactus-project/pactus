@@ -316,7 +316,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	if err != nil {
 		return nil, "", err
 	}
-	rewardAddress := addressInfo.Address
+	rewardAddr := addressInfo.Address
 
 	confPath := PactusConfigPath(workingDir)
 	genPath := PactusGenesisPath(workingDir)
@@ -364,12 +364,12 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		return nil, "", err
 	}
 
-	return validatorAddrs, rewardAddress, nil
+	return validatorAddrs, rewardAddr, nil
 }
 
 // StartNode starts the node from the given working directory.
 // The passwordFetcher will be used to fetch the password for the default_wallet if it is encrypted.
-// It returns an error if the genesis doc or default_wallet can't be found inside the working directory.
+// It returns an error if the genesis doc or default_wallet can't be found inside the working directory.1234
 // TODO: write test for me.
 func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool)) (
 	*node.Node, *wallet.Wallet, error,
