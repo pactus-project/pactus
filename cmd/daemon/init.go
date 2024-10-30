@@ -109,7 +109,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		}
 		cmd.PrintLine()
 
-		cmd.PrintInfoMsgBoldf("Reward addresses:")
+		cmd.PrintInfoMsgBoldf("Reward address:")
 		cmd.PrintInfoMsgf("%s", rewardAddrs)
 
 		cmd.PrintLine()
