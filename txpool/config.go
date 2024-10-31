@@ -27,7 +27,7 @@ func DefaultConfig() *Config {
 func DefaultFeeConfig() *FeeConfig {
 	return &FeeConfig{
 		FixedFee:   0.01,
-		DailyLimit: 280,
+		DailyLimit: 360,
 		UnitPrice:  0,
 	}
 }
