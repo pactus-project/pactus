@@ -249,10 +249,10 @@ func (s *store) HasPublicKey(addr crypto.Address) bool {
 	s.lk.RLock()
 	defer s.lk.RUnlock()
 
-	_, err := s.blockStore.publicKey(addr)
-	return err == nil
-}
+	pub, _ := s.blockStore.publicKey(addr)
 
+	return pub != nil
+}
 
 func (s *store) Transaction(txID tx.ID) (*CommittedTx, error) {
 	s.lk.Lock()
