@@ -127,14 +127,14 @@
     fixed_fee = 0.01
 
     # The `daily_limit` is the number of bytes an account can send each day without paying a fee.
-    # The `daily_limit` is part of he consumptional fee model.
+    # The `daily_limit` is part of the consumptional fee model.
     # To undesrstand how condumptional fee model works, you can refer to
     # PIP-31: Consumptional Fee Mode (https://pips.pactus.org/PIPs/pip-31)
     # Default is `360` bytes.
     daily_limit = 360
 
     # The `unit_price` defines the fee per byte in PAC.
-    # The `unit_price` is part of the consumptional fee model and enable consumtional.
+    # The `unit_price` is part of he consumptional fee model.
     # To undesrstand how condumptional fee model works, you can refer to
     # PIP-31: Consumptional Fee Mode (https://pips.pactus.org/PIPs/pip-31)
     # Default is `0.0` PAC.
