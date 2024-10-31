@@ -131,7 +131,7 @@
     # To undesrstand how condumptional fee model works, you can refer to
     # PIP-31: Consumptional Fee Mode (https://pips.pactus.org/PIPs/pip-31)
     # Default is `280` bytes.
-    daily_limit = 280
+    daily_limit = 360
 
     # The `unit_price` defines the fee per byte in PAC.
     # The `unit_price` is part of he consumptional fee model.
