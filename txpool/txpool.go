@@ -130,14 +130,14 @@ func (p *txPool) appendTx(trx *tx.Tx) error {
 	}
 
 	payloadPool.list.PushBack(trx.ID(), trx)
-	p.logger.Debug("transaction appended into pool", "txs", trx)
+	p.logger.Debug("transaction appended into pool", "trx", trx)
 
 	return nil
 }
 
 func (p *txPool) checkTx(trx *tx.Tx) error {
 	if err := execution.CheckAndExecute(trx, p.sbx, false); err != nil {
-		p.logger.Debug("invalid transaction", "txs", trx, "error", err)
+		p.logger.Debug("invalid transaction", "trx", trx, "error", err)
 
 		return err
 	}
