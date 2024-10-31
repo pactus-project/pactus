@@ -13,7 +13,6 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet"
@@ -182,25 +181,24 @@ func updateValidatorHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
 }
 
 func updateAccountHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
-	balance, _ := wlt.Balance(addr)
-	hint := fmt.Sprintf("balance: %s", balance)
-
 	info := wlt.AddressInfo(addr)
 	if info != nil && info.Label != "" {
-		hint += ", label: " + info.Label
+		updateHintLabel(lbl, fmt.Sprintf("label: %s", info.Label))
 	}
-	updateHintLabel(lbl, hint)
 }
 
-func updateFeeHint(lbl *gtk.Label, amtStr string, wlt *wallet.Wallet, payloadType payload.Type) {
-	amt, err := amount.FromString(amtStr)
-	if err != nil {
-		updateHintLabel(lbl, "")
+func updateFeeHint(lbl *gtk.Label, wlt *wallet.Wallet, payloadType payload.Type) {
+	fee, _ := wlt.CalculateFee(0, payloadType)
+	updateHintLabel(lbl, fmt.Sprintf("fee: %s", fee))
+}
+
+func updateAmountHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
+	balance, err := wlt.Balance(addr)
+	if err == nil {
+		updateHintLabel(lbl, fmt.Sprintf("balance: %s", balance))
 	} else {
-		fee, _ := wlt.CalculateFee(amt, payloadType)
-		hint := fmt.Sprintf("payable: %s, fee: %s",
-			fee+amt, fee)
-		updateHintLabel(lbl, hint)
+		stake, _ := wlt.Stake(addr)
+		updateHintLabel(lbl, fmt.Sprintf("stake: %s", stake))
 	}
 }
 
