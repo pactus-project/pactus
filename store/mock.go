@@ -97,20 +97,9 @@ func (m *MockStore) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
 }
 
 func (m *MockStore) HasPublicKey(addr crypto.Address) bool {
-	for _, blk := range m.Blocks {
-		for _, trx := range blk.Transactions() {
-			if trx.Payload().Signer() == addr {
-				return true
-			}
-		}
-	}
-	for _, val := range m.Validators {
-		if val.Address() == addr {
-			return true
-		}
-	}
+	pub, _ := m.PublicKey(addr)
 
-	return false
+	return pub != nil
 }
 
 func (m *MockStore) Transaction(txID tx.ID) (*CommittedTx, error) {
