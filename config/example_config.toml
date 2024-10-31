@@ -134,7 +134,8 @@
     daily_limit = 360
 
     # The `unit_price` defines the fee per byte in PAC.
-    # The `unit_price` is part of he consumptional fee model.
+    # The `unit_price` is part of the consumptional fee model.
+    # If it is zero, the consumptional fee will be ignored.
     # To undesrstand how condumptional fee model works, you can refer to
     # PIP-31: Consumptional Fee Mode (https://pips.pactus.org/PIPs/pip-31)
     # Default is `0.0` PAC.
