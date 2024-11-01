@@ -157,9 +157,15 @@ func (ts *TestSuite) RandRound() int16 {
 	return ts.RandInt16(10)
 }
 
-// RandAmount returns a random amount between [0, 1000).
-func (ts *TestSuite) RandAmount() amount.Amount {
-	return ts.RandAmountRange(0, 1000e9)
+// RandAmount returns a random amount between [0, maxAmount).
+// If maxAmount is not set, it defaults to 1000e9.
+func (ts *TestSuite) RandAmount(maxAmount ...amount.Amount) amount.Amount {
+	max := amount.Amount(1000e9) // default max amount
+	if len(maxAmount) > 0 {
+		max = maxAmount[0]
+	}
+
+	return ts.RandAmountRange(0, max)
 }
 
 // RandAmountRange returns a random amount between [min, max).
@@ -169,11 +175,15 @@ func (ts *TestSuite) RandAmountRange(min, max amount.Amount) amount.Amount {
 	return amt + min
 }
 
-// RandFee returns a random fee between [0, 1).
-func (ts *TestSuite) RandFee() amount.Amount {
-	fee := amount.Amount(ts.RandInt64(1e9))
+// RandAmount returns a random amount between [0, maxAmount).
+// If maxAmount is not set, it defaults to 1e9.
+func (ts *TestSuite) RandFee(maxFee ...amount.Amount) amount.Amount {
+	max := amount.Amount(1e9) // default max fee
+	if len(maxFee) > 0 {
+		max = maxFee[0]
+	}
 
-	return fee
+	return ts.RandAmountRange(0, max)
 }
 
 // RandBytes returns a slice of random bytes of the given length.
@@ -523,10 +533,11 @@ func (ts *TestSuite) GenerateTestProposal(height uint32, round int16,
 }
 
 type TransactionMaker struct {
-	LockTime uint32
-	Amount   amount.Amount
-	Fee      amount.Amount
-	Signer   crypto.PrivateKey
+	LockTime  uint32
+	Amount    amount.Amount
+	Fee       amount.Amount
+	Signer    crypto.PrivateKey
+	ValPubKey *bls.PublicKey
 }
 
 func (tm *TransactionMaker) SignerAccountAddress() crypto.Address {
@@ -548,10 +559,11 @@ func (tm *TransactionMaker) SignerValidatorAddress() crypto.Address {
 // NewTransactionMaker creates a new TransactionMaker instance.
 func (ts *TestSuite) NewTransactionMaker() *TransactionMaker {
 	return &TransactionMaker{
-		LockTime: ts.RandHeight(),
-		Amount:   ts.RandAmount(),
-		Fee:      ts.RandFee(),
-		Signer:   nil,
+		LockTime:  ts.RandHeight(),
+		Amount:    ts.RandAmount(),
+		Fee:       ts.RandFee(),
+		Signer:    nil,
+		ValPubKey: nil,
 	}
 }
 
@@ -587,6 +599,13 @@ func TransactionWithBLSSigner(signer *bls.PrivateKey) func(tm *TransactionMaker)
 func TransactionWithEd25519Signer(signer *ed25519.PrivateKey) func(tm *TransactionMaker) {
 	return func(tm *TransactionMaker) {
 		tm.Signer = signer
+	}
+}
+
+// TransactionWithValidatorPublicKey sets the Validator's public key for the Bond transaction.
+func TransactionWithValidatorPublicKey(pubKey *bls.PublicKey) func(tm *TransactionMaker) {
+	return func(tm *TransactionMaker) {
+		tm.ValPubKey = pubKey
 	}
 }
 
@@ -636,7 +655,11 @@ func (ts *TestSuite) GenerateTestBondTx(options ...func(tm *TransactionMaker)) *
 	}
 
 	sender := tmk.SignerAccountAddress()
-	trx := tx.NewBondTx(tmk.LockTime, sender, ts.RandValAddress(), nil, tmk.Amount, tmk.Fee)
+	receiver := ts.RandValAddress()
+	if tmk.ValPubKey != nil {
+		receiver = tmk.ValPubKey.ValidatorAddress()
+	}
+	trx := tx.NewBondTx(tmk.LockTime, sender, receiver, tmk.ValPubKey, tmk.Amount, tmk.Fee)
 	ts.HelperSignTransaction(tmk.Signer, trx)
 
 	return trx

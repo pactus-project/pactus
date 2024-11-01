@@ -267,13 +267,21 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 		}
 	case payload.TypeBond:
 		pld := trx.Payload().(*payload.BondPayload)
+
+		publicKeyStr := ""
+		if pld.PublicKey != nil {
+			publicKeyStr = pld.PublicKey.String()
+		}
+
 		trxInfo.Payload = &pactus.TransactionInfo_Bond{
 			Bond: &pactus.PayloadBond{
-				Sender:   pld.From.String(),
-				Receiver: pld.To.String(),
-				Stake:    pld.Stake.ToNanoPAC(),
+				Sender:    pld.From.String(),
+				Receiver:  pld.To.String(),
+				Stake:     pld.Stake.ToNanoPAC(),
+				PublicKey: publicKeyStr,
 			},
 		}
+
 	case payload.TypeSortition:
 		pld := trx.Payload().(*payload.SortitionPayload)
 		trxInfo.Payload = &pactus.TransactionInfo_Sortition{

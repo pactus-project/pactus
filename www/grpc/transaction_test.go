@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,23 +18,28 @@ func TestGetTransaction(t *testing.T) {
 	td := setup(t, nil)
 	conn, client := td.transactionClient(t)
 
-	testBlock := td.mockState.TestStore.AddTestBlock(1)
-	trx1 := testBlock.Transactions()[0]
+	blockHeight := td.RandHeight()
+	valPubKey, _ := td.RandBLSKeyPair()
+	textTrx := td.GenerateTestBondTx(
+		testsuite.TransactionWithValidatorPublicKey(valPubKey))
+	testBlock, testCert := td.GenerateTestBlock(blockHeight,
+		testsuite.BlockWithTransactions([]*tx.Tx{textTrx}))
+	td.mockState.TestStore.SaveBlock(testBlock, testCert)
 
 	t.Run("Should return transaction (verbosity: 0)", func(t *testing.T) {
 		res, err := client.GetTransaction(context.Background(),
 			&pactus.GetTransactionRequest{
-				Id:        trx1.ID().String(),
+				Id:        textTrx.ID().String(),
 				Verbosity: pactus.TransactionVerbosity_TRANSACTION_DATA,
 			})
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.NotEmpty(t, res.Transaction)
-		assert.Equal(t, uint32(0x1), res.BlockHeight)
-		assert.Equal(t, trx1.ID().String(), res.Transaction.Id)
+		assert.Equal(t, blockHeight, res.BlockHeight)
+		assert.Equal(t, textTrx.ID().String(), res.Transaction.Id)
 
-		b, err := trx1.Bytes()
+		b, err := textTrx.Bytes()
 		assert.NoError(t, err)
 
 		assert.Equal(t, hex.EncodeToString(b), res.Transaction.Data)
@@ -43,27 +49,28 @@ func TestGetTransaction(t *testing.T) {
 	t.Run("Should return transaction (verbosity: 1)", func(t *testing.T) {
 		res, err := client.GetTransaction(context.Background(),
 			&pactus.GetTransactionRequest{
-				Id:        trx1.ID().String(),
+				Id:        textTrx.ID().String(),
 				Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
 			})
-		pld := res.Transaction.Payload.(*pactus.TransactionInfo_Transfer)
+		pld := res.Transaction.Payload.(*pactus.TransactionInfo_Bond)
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
 		assert.NotEmpty(t, res.Transaction)
 		assert.Empty(t, res.Transaction.Data)
-		assert.Equal(t, uint32(0x1), res.BlockHeight)
+		assert.Equal(t, blockHeight, res.BlockHeight)
 		assert.Equal(t, testBlock.Header().UnixTime(), res.BlockTime)
-		assert.Equal(t, trx1.ID().String(), res.Transaction.Id)
-		assert.Equal(t, trx1.Fee().ToNanoPAC(), res.Transaction.Fee)
-		assert.Equal(t, trx1.Memo(), res.Transaction.Memo)
-		assert.Equal(t, trx1.Payload().Type(), payload.Type(res.Transaction.PayloadType))
-		assert.Equal(t, trx1.LockTime(), res.Transaction.LockTime)
-		assert.Equal(t, trx1.Signature().String(), res.Transaction.Signature)
-		assert.Equal(t, trx1.PublicKey().String(), res.Transaction.PublicKey)
-		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).Amount.ToNanoPAC(), pld.Transfer.Amount)
-		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).From.String(), pld.Transfer.Sender)
-		assert.Equal(t, trx1.Payload().(*payload.TransferPayload).To.String(), pld.Transfer.Receiver)
+		assert.Equal(t, textTrx.ID().String(), res.Transaction.Id)
+		assert.Equal(t, textTrx.Fee().ToNanoPAC(), res.Transaction.Fee)
+		assert.Equal(t, textTrx.Memo(), res.Transaction.Memo)
+		assert.Equal(t, textTrx.Payload().Type(), payload.Type(res.Transaction.PayloadType))
+		assert.Equal(t, textTrx.LockTime(), res.Transaction.LockTime)
+		assert.Equal(t, textTrx.Signature().String(), res.Transaction.Signature)
+		assert.Equal(t, textTrx.PublicKey().String(), res.Transaction.PublicKey)
+		assert.Equal(t, textTrx.Payload().(*payload.BondPayload).Stake.ToNanoPAC(), pld.Bond.Stake)
+		assert.Equal(t, textTrx.Payload().(*payload.BondPayload).From.String(), pld.Bond.Sender)
+		assert.Equal(t, textTrx.Payload().(*payload.BondPayload).To.String(), pld.Bond.Receiver)
+		assert.Equal(t, textTrx.Payload().(*payload.BondPayload).PublicKey.String(), pld.Bond.PublicKey)
 	})
 
 	t.Run("Should return nil value because transaction id is invalid", func(t *testing.T) {
@@ -150,7 +157,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.Equal(t, expectedFee, decodedTrx.Fee())
 	})
 
-	t.Run("Bond", func(t *testing.T) {
+	t.Run("Bond with the Public Key", func(t *testing.T) {
 		amt := td.RandAmount()
 		pub, _ := td.RandBLSKeyPair()
 
@@ -161,6 +168,29 @@ func TestGetRawTransaction(t *testing.T) {
 				Stake:     amt.ToNanoPAC(),
 				PublicKey: pub.String(),
 				Memo:      td.RandString(32),
+			})
+		assert.NoError(t, err)
+		assert.NotEmpty(t, res.RawTransaction)
+
+		decodedTrx, err := tx.FromBytes(td.DecodingHex(res.RawTransaction))
+		assert.NoError(t, err)
+		expectedLockTime := td.mockState.LastBlockHeight()
+		expectedFee := td.mockState.CalculateFee(amt, payload.TypeBond)
+
+		assert.Equal(t, amt, decodedTrx.Payload().Value())
+		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
+		assert.Equal(t, expectedFee, decodedTrx.Fee())
+	})
+
+	t.Run("Bond without the Public Key", func(t *testing.T) {
+		amt := td.RandAmount()
+
+		res, err := client.GetRawBondTransaction(context.Background(),
+			&pactus.GetRawBondTransactionRequest{
+				Sender:   td.RandAccAddress().String(),
+				Receiver: td.RandValAddress().String(),
+				Stake:    amt.ToNanoPAC(),
+				Memo:     td.RandString(32),
 			})
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
