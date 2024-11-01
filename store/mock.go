@@ -96,6 +96,12 @@ func (m *MockStore) PublicKey(addr crypto.Address) (crypto.PublicKey, error) {
 	return nil, ErrNotFound
 }
 
+func (m *MockStore) HasPublicKey(addr crypto.Address) bool {
+	pub, _ := m.PublicKey(addr)
+
+	return pub != nil
+}
+
 func (m *MockStore) Transaction(txID tx.ID) (*CommittedTx, error) {
 	for height, blk := range m.Blocks {
 		for _, trx := range blk.Transactions() {

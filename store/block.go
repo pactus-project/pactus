@@ -17,6 +17,7 @@ import (
 )
 
 func blockKey(height uint32) []byte { return append(blockPrefix, util.Uint32ToSlice(height)...) }
+
 func publicKeyKey(addr crypto.Address) []byte {
 	return append(publicKeyPrefix, addr.Bytes()...)
 }

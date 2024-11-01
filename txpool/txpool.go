@@ -34,10 +34,10 @@ type txPool struct {
 // The transaction pool also maintains a consumption map for tracking byte usage per address.
 func NewTxPool(conf *Config, storeReader store.Reader, broadcastCh chan message.Message) TxPool {
 	pools := make(map[payload.Type]pool)
-	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.minFee())
-	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), conf.minFee())
+	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.fixedFee())
+	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), conf.fixedFee())
 	pools[payload.TypeUnbond] = newPool(conf.unbondPoolSize(), 0)
-	pools[payload.TypeWithdraw] = newPool(conf.withdrawPoolSize(), conf.minFee())
+	pools[payload.TypeWithdraw] = newPool(conf.withdrawPoolSize(), conf.fixedFee())
 	pools[payload.TypeSortition] = newPool(conf.sortitionPoolSize(), 0)
 
 	pool := &txPool{
@@ -112,11 +112,13 @@ func (p *txPool) appendTx(trx *tx.Tx) error {
 	}
 
 	if !trx.IsFreeTx() {
-		if trx.Fee() < payloadPool.estimatedFee() {
-			p.logger.Warn("low fee transaction", "tx", trx, "minFee", payloadPool.estimatedFee())
+		minFee := p.estimatedMinimumFee(trx)
+
+		if trx.Fee() < minFee {
+			p.logger.Warn("low fee transaction", "txs", trx, "minFee", minFee)
 
 			return AppendError{
-				Err: fmt.Errorf("low fee transaction, expected to be more than %s", payloadPool.estimatedFee()),
+				Err: fmt.Errorf("low fee transaction, expected to be more than %s", minFee),
 			}
 		}
 	}
@@ -128,14 +130,14 @@ func (p *txPool) appendTx(trx *tx.Tx) error {
 	}
 
 	payloadPool.list.PushBack(trx.ID(), trx)
-	p.logger.Debug("transaction appended into pool", "tx", trx)
+	p.logger.Debug("transaction appended into pool", "trx", trx)
 
 	return nil
 }
 
 func (p *txPool) checkTx(trx *tx.Tx) error {
 	if err := execution.CheckAndExecute(trx, p.sbx, false); err != nil {
-		p.logger.Debug("invalid transaction", "tx", trx, "error", err)
+		p.logger.Debug("invalid transaction", "trx", trx, "error", err)
 
 		return err
 	}
@@ -143,17 +145,29 @@ func (p *txPool) checkTx(trx *tx.Tx) error {
 	return nil
 }
 
-func (p *txPool) HandleCommittedBlock(blk *block.Block) error {
+func (p *txPool) EstimatedFee(_ amount.Amount, payloadType payload.Type) amount.Amount {
+	selectedPool, ok := p.pools[payloadType]
+	if !ok {
+		return 0
+	}
+
+	return selectedPool.estimatedFee()
+}
+
+func (p *txPool) HandleCommittedBlock(blk *block.Block) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
 
 	for _, trx := range blk.Transactions() {
 		p.removeTx(trx.ID())
-
-		p.handleIncreaseConsumption(trx)
 	}
 
-	return p.handleDecreaseConsumption(blk.Height())
+	if p.config.CalculateConsumption() {
+		for _, trx := range blk.Transactions() {
+			p.handleIncreaseConsumption(trx)
+		}
+		p.handleDecreaseConsumption(blk.Height())
+	}
 }
 
 func (p *txPool) handleIncreaseConsumption(trx *tx.Tx) {
@@ -164,26 +178,30 @@ func (p *txPool) handleIncreaseConsumption(trx *tx.Tx) {
 	}
 }
 
-func (p *txPool) handleDecreaseConsumption(height uint32) error {
+func (p *txPool) handleDecreaseConsumption(height uint32) {
 	// If height is less than or equal to ConsumptionWindow, nothing to do.
 	if height <= p.config.ConsumptionWindow {
-		return nil
+		return
 	}
 
 	// Calculate the block height that has passed out of the consumption window.
 	windowedBlockHeight := height - p.config.ConsumptionWindow
 	committedBlock, err := p.store.Block(windowedBlockHeight)
 	if err != nil {
-		return err
+		p.logger.Error("failed to read block", "height", windowedBlockHeight, "err", err)
+
+		return
 	}
 
 	blk, err := committedBlock.ToBlock()
 	if err != nil {
-		return err
+		p.logger.Error("failed to parse block", "height", windowedBlockHeight, "err", err)
+
+		return
 	}
 
 	for _, trx := range blk.Transactions() {
-		if trx.IsTransferTx() || trx.IsBondTx() || trx.IsWithdrawTx() {
+		if !trx.IsFreeTx() {
 			signer := trx.Payload().Signer()
 			if consumption, ok := p.consumptionMap[signer]; ok {
 				// Decrease the consumption by the size of the transaction
@@ -199,8 +217,6 @@ func (p *txPool) handleDecreaseConsumption(height uint32) error {
 			}
 		}
 	}
-
-	return nil
 }
 
 func (p *txPool) removeTx(txID tx.ID) {
@@ -291,16 +307,31 @@ func (p *txPool) Size() int {
 	return size
 }
 
-func (p *txPool) EstimatedFee(_ amount.Amount, payloadType payload.Type) amount.Amount {
-	p.lk.RLock()
-	defer p.lk.RUnlock()
+func (p *txPool) estimatedMinimumFee(trx *tx.Tx) amount.Amount {
+	return p.fixedFee() + p.consumptionalFee(trx)
+}
 
-	payloadPool, ok := p.pools[payloadType]
-	if !ok {
-		return 0
+func (p *txPool) fixedFee() amount.Amount {
+	return p.config.fixedFee()
+}
+
+// consumptionalFee calculates based on the amount of data each address consumes daily.
+func (p *txPool) consumptionalFee(trx *tx.Tx) amount.Amount {
+	var consumption uint32
+	signer := trx.Payload().Signer()
+	txSize := uint32(trx.SerializeSize())
+
+	if !p.store.HasPublicKey(signer) {
+		consumption = p.config.Fee.DailyLimit
+	} else {
+		consumption = p.consumptionMap[signer] + txSize + p.getPendingConsumption(signer)
 	}
 
-	return payloadPool.estimatedFee()
+	coefficient := consumption / p.config.Fee.DailyLimit
+
+	consumptionalFee, _ := amount.NewAmount(float64(coefficient) * float64(consumption) * p.config.Fee.UnitPrice)
+
+	return consumptionalFee
 }
 
 func (p *txPool) AllPendingTxs() []*tx.Tx {
@@ -320,6 +351,25 @@ func (p *txPool) AllPendingTxs() []*tx.Tx {
 	}
 
 	return txs
+}
+
+func (p *txPool) getPendingConsumption(signer crypto.Address) uint32 {
+	totalSize := uint32(0)
+
+	// TODO: big o is "o(n * m)"
+	var next *linkedlist.Element[linkedmap.Pair[tx.ID, *tx.Tx]]
+	for ptype, pool := range p.pools {
+		if ptype == payload.TypeTransfer || ptype == payload.TypeBond || ptype == payload.TypeWithdraw {
+			for e := pool.list.HeadNode(); e != nil; e = next {
+				next = e.Next
+				if e.Data.Value.Payload().Signer() == signer {
+					totalSize += uint32(e.Data.Value.SerializeSize())
+				}
+			}
+		}
+	}
+
+	return totalSize
 }
 
 func (p *txPool) String() string {
