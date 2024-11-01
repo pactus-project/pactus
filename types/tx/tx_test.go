@@ -94,7 +94,7 @@ func TestBasicCheck(t *testing.T) {
 
 	t.Run("LockTime is not defined", func(t *testing.T) {
 		trx := tx.NewTransferTx(0,
-			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandAmount())
+			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandFee())
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -106,7 +106,7 @@ func TestBasicCheck(t *testing.T) {
 		bigMemo := strings.Repeat("a", 65)
 
 		trx := tx.NewTransferTx(ts.RandHeight(),
-			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandAmount(), tx.WithMemo(bigMemo))
+			ts.RandAccAddress(), ts.RandAccAddress(), ts.RandAmount(), ts.RandFee(), tx.WithMemo(bigMemo))
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -117,7 +117,7 @@ func TestBasicCheck(t *testing.T) {
 	t.Run("Invalid payload, Should returns error", func(t *testing.T) {
 		invAddr := ts.RandAccAddress()
 		invAddr[0] = 4
-		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), invAddr, 1e9, ts.RandAmount())
+		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), invAddr, 1e9, ts.RandFee())
 
 		err := trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
@@ -430,7 +430,7 @@ func TestFlagNotSigned(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(),
-		ts.RandAmount(), ts.RandAmount())
+		ts.RandAmount(), ts.RandFee())
 	assert.False(t, trx.IsSigned(), "FlagNotSigned should not be set for new transactions")
 
 	trx.SetSignature(ts.RandBLSSignature())
@@ -444,7 +444,7 @@ func TestInvalidSignerSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	trx := tx.NewTransferTx(ts.RandHeight(), crypto.TreasuryAddress, ts.RandAccAddress(),
-		ts.RandAmount(), ts.RandAmount())
+		ts.RandAmount(), ts.RandFee())
 	trx.SetSignature(ts.RandBLSSignature())
 
 	bytes, _ := trx.Bytes()
@@ -456,7 +456,7 @@ func TestInvalidSignerPublicKey(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	trx := tx.NewTransferTx(ts.RandHeight(), crypto.TreasuryAddress, ts.RandAccAddress(),
-		ts.RandAmount(), ts.RandAmount())
+		ts.RandAmount(), ts.RandFee())
 	pub, _ := ts.RandBLSKeyPair()
 	trx.SetSignature(ts.RandBLSSignature())
 	trx.SetPublicKey(pub)
