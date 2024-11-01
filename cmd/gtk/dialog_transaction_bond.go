@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet"
@@ -28,6 +29,8 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 	publicKeyEntry := getEntryObj(builder, "id_entry_public_key")
 	amountEntry := getEntryObj(builder, "id_entry_amount")
 	amountHint := getLabelObj(builder, "id_hint_amount")
+	feeEntry := getEntryObj(builder, "id_entry_fee")
+	feeHint := getLabelObj(builder, "id_hint_fee")
 	memoEntry := getEntryObj(builder, "id_entry_memo")
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
@@ -54,8 +57,11 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 	}
 
 	onAmountChanged := func() {
-		amtStr, _ := amountEntry.GetText()
-		updateFeeHint(amountHint, amtStr, wlt, payload.TypeBond)
+		updateAmountHint(amountHint, senderEntry.GetActiveID(), wlt)
+	}
+
+	onFeeChanged := func() {
+		updateFeeHint(feeHint, wlt, payload.TypeTransfer)
 	}
 
 	onSend := func() {
@@ -75,6 +81,13 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 
 		opts := []wallet.TxOption{
 			wallet.OptionMemo(memo),
+		}
+
+		fee, _ := feeEntry.GetText()
+		if fee != "" {
+			feeAmount, err := amount.FromString(fee)
+			cmd.FatalErrorCheck(err)
+			opts = append(opts, wallet.OptionFee(feeAmount))
 		}
 
 		trx, err := wlt.MakeBondTx(sender, receiver, publicKey, amt, opts...)
@@ -108,6 +121,7 @@ Memo:   %s
 		"on_sender_changed":   onSenderChanged,
 		"on_receiver_changed": onReceiverChanged,
 		"on_amount_changed":   onAmountChanged,
+		"on_fee_changed":      onFeeChanged,
 		"on_send":             onSend,
 		"on_cancel":           onClose,
 	}

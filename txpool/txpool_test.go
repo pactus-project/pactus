@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/account"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/logger"
@@ -33,14 +34,14 @@ func testConfig() *Config {
 		MaxSize:           10,
 		ConsumptionWindow: 3,
 		Fee: &FeeConfig{
-			FixedFee:   0.000001,
+			FixedFee:   0.01,
 			DailyLimit: 280,
-			UnitPrice:  0.0,
+			UnitPrice:  0.00005,
 		},
 	}
 }
 
-func setup(t *testing.T) *testData {
+func setup(t *testing.T, cfg *Config) *testData {
 	t.Helper()
 
 	ts := testsuite.NewTestSuite(t)
@@ -48,6 +49,9 @@ func setup(t *testing.T) *testData {
 	broadcastCh := make(chan message.Message, 10)
 	sbx := sandbox.MockingSandbox(ts)
 	config := testConfig()
+	if cfg != nil {
+		config = cfg
+	}
 	mockStore := store.MockingStore(ts)
 	poolInt := NewTxPool(config, mockStore, broadcastCh)
 	poolInt.SetNewSandboxAndRecheck(sbx)
@@ -89,7 +93,7 @@ func (td *testData) shouldPublishTransaction(t *testing.T, txID tx.ID) {
 }
 
 func TestAppendAndRemove(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	height := td.RandHeight()
 	td.sbx.TestStore.AddTestBlock(height)
@@ -108,7 +112,7 @@ func TestAppendAndRemove(t *testing.T) {
 }
 
 func TestCalculatingConsumption(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	// Generate keys for different transaction signers
 	_, prv1 := td.RandEd25519KeyPair()
@@ -145,21 +149,86 @@ func TestCalculatingConsumption(t *testing.T) {
 
 	for _, tt := range tests {
 		// Generate a block with the transactions for the given height
-		blk, cert := td.TestSuite.GenerateTestBlock(tt.height, func(bm *testsuite.BlockMaker) {
+		blk, cert := td.GenerateTestBlock(tt.height, func(bm *testsuite.BlockMaker) {
 			bm.Txs = tt.txs
 		})
 		td.store.SaveBlock(blk, cert)
 
 		// Handle the block in the transaction pool
-		err := td.pool.HandleCommittedBlock(blk)
-		require.NoError(t, err)
+		td.pool.HandleCommittedBlock(blk)
 	}
 
 	require.Equal(t, expected, td.pool.consumptionMap)
 }
 
+func TestEstimatedConsumptionalFee(t *testing.T) {
+	td := setup(t, &Config{
+		MaxSize:           10,
+		ConsumptionWindow: 3,
+		Fee: &FeeConfig{
+			FixedFee:   0,
+			DailyLimit: 360,
+			UnitPrice:  0.000005,
+		},
+	})
+
+	t.Run("Test indexed signer", func(t *testing.T) {
+		accPub, accPrv := td.RandEd25519KeyPair()
+		acc1Addr := accPub.AccountAddress()
+		acc1 := account.NewAccount(0)
+		acc1.AddToBalance(1000e9)
+		td.sbx.UpdateAccount(acc1Addr, acc1)
+
+		txr := td.GenerateTestTransferTx(testsuite.TransactionWithEd25519Signer(accPrv), testsuite.TransactionWithAmount(1e9))
+
+		blk, cert := td.GenerateTestBlock(td.RandHeight(), testsuite.BlockWithTransactions([]*tx.Tx{txr}))
+		td.store.SaveBlock(blk, cert)
+
+		tests := []struct {
+			value   amount.Amount
+			fee     amount.Amount
+			withErr bool
+		}{
+			{1e9, 0, false},
+			{1e9, 0, false},
+			{1e9, 89800000, false},
+			{1e9, 90000000, false},
+			{1e9, 7000000000, false},
+			{1e9, 0, true},
+		}
+
+		for _, tt := range tests {
+			trx := td.GenerateTestTransferTx(
+				testsuite.TransactionWithEd25519Signer(accPrv),
+				testsuite.TransactionWithAmount(tt.value),
+				testsuite.TransactionWithFee(tt.fee),
+			)
+
+			err := td.pool.AppendTx(trx)
+			if tt.withErr {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+		}
+	})
+
+	t.Run("Test non-indexed signer", func(t *testing.T) {
+		_, accPrv := td.RandEd25519KeyPair()
+
+		trx := td.GenerateTestTransferTx(
+			testsuite.TransactionWithEd25519Signer(accPrv),
+			testsuite.TransactionWithAmount(1e9),
+			testsuite.TransactionWithFee(0),
+		)
+
+		err := td.pool.AppendTx(trx)
+		assert.Error(t, err)
+	})
+}
+
 func TestAppendInvalidTransaction(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	invTrx := td.GenerateTestTransferTx()
 	assert.Error(t, td.pool.AppendTx(invTrx))
@@ -167,7 +236,7 @@ func TestAppendInvalidTransaction(t *testing.T) {
 
 // TestFullPool tests if the pool prunes the old transactions when it is full.
 func TestFullPool(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	randHeight := td.RandHeight()
 	_ = td.sbx.TestStore.AddTestBlock(randHeight)
@@ -194,13 +263,13 @@ func TestFullPool(t *testing.T) {
 }
 
 func TestEmptyPool(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	assert.Empty(t, td.pool.PrepareBlockTransactions(), "pool should be empty")
 }
 
 func TestPrepareBlockTransactions(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	randHeight := td.RandHeight() + td.sbx.TestParams.UnbondInterval
 	_ = td.sbx.TestStore.AddTestBlock(randHeight)
@@ -255,7 +324,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 }
 
 func TestAppendAndBroadcast(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	height := td.RandHeight()
 	td.sbx.TestStore.AddTestBlock(height)
@@ -269,7 +338,7 @@ func TestAppendAndBroadcast(t *testing.T) {
 }
 
 func TestAddSubsidyTransactions(t *testing.T) {
-	td := setup(t)
+	td := setup(t, nil)
 
 	randHeight := td.RandHeight()
 	td.sbx.TestStore.AddTestBlock(randHeight)

@@ -438,9 +438,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 	}
 
 	// Remove transactions from pool and update consumption
-	if err := st.txPool.HandleCommittedBlock(blk); err != nil {
-		return err
-	}
+	st.txPool.HandleCommittedBlock(blk)
 
 	st.logger.Info("new block committed", "block", blk, "round", cert.Round())
 

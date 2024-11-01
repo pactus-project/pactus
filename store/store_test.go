@@ -138,6 +138,9 @@ func TestIndexingPublicKeys(t *testing.T) {
 			pub, err := td.store.PublicKey(addr)
 			assert.NoError(t, err)
 
+			ok := td.store.HasPublicKey(addr)
+			assert.True(t, ok)
+
 			assert.True(t, trx.PublicKey().EqualsTo(pub))
 		}
 	})
@@ -145,6 +148,10 @@ func TestIndexingPublicKeys(t *testing.T) {
 	t.Run("Query non existing public key", func(t *testing.T) {
 		randValAddress := td.RandValAddress()
 		pubKey, err := td.store.PublicKey(randValAddress)
+
+		ok := td.store.HasPublicKey(randValAddress)
+		assert.False(t, ok)
+
 		assert.Error(t, err)
 		assert.Nil(t, pubKey)
 	})
