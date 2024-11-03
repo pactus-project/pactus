@@ -234,7 +234,7 @@ func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, wlt *wallet.Wal
 		}
 
 		showInfoDialog(parent,
-			fmt.Sprintf("Transaction Hash: <a href=\"https://pacviewer.com/transactions/%s\">%s</a>", txID, txID))
+			fmt.Sprintf("Transaction Hash: <a href=\"https://pacviewer.com/transaction/%s\">%s</a>", txID, txID))
 	}
 }
 
