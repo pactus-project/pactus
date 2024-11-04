@@ -19,12 +19,6 @@ import (
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-const (
-	AddressTypeBLSAccount     string = "bls_account"
-	AddressTypeEd25519Account string = "ed25519_account"
-	AddressTypeValidator      string = "validator"
-)
-
 type Wallet struct {
 	store      *Store
 	path       string

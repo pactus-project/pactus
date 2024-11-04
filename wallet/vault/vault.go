@@ -3,7 +3,6 @@ package vault
 import (
 	"cmp"
 	"encoding/json"
-	"fmt"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -69,6 +68,10 @@ const (
 	PurposeBLS12381         = uint32(12381)
 	PurposeBIP44            = uint32(44)
 	PurposeImportPrivateKey = uint32(65535)
+
+	PurposeBLS12381Hardened         = PurposeBLS12381 + addresspath.HardenedKeyStart
+	PurposeBIP44Hardened            = PurposeBIP44 + addresspath.HardenedKeyStart
+	PurposeImportPrivateKeyHardened = PurposeImportPrivateKey + addresspath.HardenedKeyStart
 )
 
 type Vault struct {
@@ -117,18 +120,18 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 	enc := encrypter.NopeEncrypter()
 
 	xPubValidator, err := masterKey.DerivePath([]uint32{
-		H(PurposeBLS12381),
-		H(coinType),
-		H(crypto.AddressTypeValidator),
+		_H(PurposeBLS12381),
+		_H(coinType),
+		_H(crypto.AddressTypeValidator),
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	xPubAccount, err := masterKey.DerivePath([]uint32{
-		H(PurposeBLS12381),
-		H(coinType),
-		H(crypto.AddressTypeBLSAccount),
+		_H(PurposeBLS12381),
+		_H(coinType),
+		_H(crypto.AddressTypeBLSAccount),
 	})
 	if err != nil {
 		return nil, err
@@ -234,9 +237,9 @@ func (v *Vault) AddressInfos() []AddressInfo {
 		addrs = append(addrs, addrInfo)
 	}
 
-	v.SortAddressesByAddressIndex(addrs...)
-	v.SortAddressesByAddressType(addrs...)
-	v.SortAddressesByPurpose(addrs...)
+	v.sortAddressesByAddressIndex(addrs...)
+	v.sortAddressesByAddressType(addrs...)
+	v.sortAddressesByPurpose(addrs...)
 
 	return addrs
 }
@@ -245,13 +248,13 @@ func (v *Vault) AllValidatorAddresses() []AddressInfo {
 	addrs := make([]AddressInfo, 0, v.AddressCount()/2)
 	for _, addrInfo := range v.Addresses {
 		addrPath, _ := addresspath.FromString(addrInfo.Path)
-		if addrPath.AddressType() == H(crypto.AddressTypeValidator) {
+		if addrPath.AddressType() == _H(crypto.AddressTypeValidator) {
 			addrs = append(addrs, addrInfo)
 		}
 	}
 
-	v.SortAddressesByAddressIndex(addrs...)
-	v.SortAddressesByPurpose(addrs...)
+	v.sortAddressesByAddressIndex(addrs...)
+	v.sortAddressesByPurpose(addrs...)
 
 	return addrs
 }
@@ -260,33 +263,18 @@ func (v *Vault) AllAccountAddresses() []AddressInfo {
 	addrs := make([]AddressInfo, 0, v.AddressCount()/2)
 	for _, addrInfo := range v.Addresses {
 		addrPath, _ := addresspath.FromString(addrInfo.Path)
-		if addrPath.AddressType() != H(crypto.AddressTypeValidator) {
+		if addrPath.AddressType() != _H(crypto.AddressTypeValidator) {
 			addrs = append(addrs, addrInfo)
 		}
 	}
 
-	v.SortAddressesByAddressIndex(addrs...)
-	v.SortAddressesByPurpose(addrs...)
+	v.sortAddressesByAddressIndex(addrs...)
+	v.sortAddressesByPurpose(addrs...)
 
 	return addrs
 }
 
-func (v *Vault) AllImportedPrivateKeysAddresses() []AddressInfo {
-	addrs := make([]AddressInfo, 0, v.AddressCount()/2)
-	for _, addrInfo := range v.Addresses {
-		addrPath, _ := addresspath.FromString(addrInfo.Path)
-		if addrPath.Purpose() == H(PurposeImportPrivateKey) {
-			addrs = append(addrs, addrInfo)
-		}
-	}
-
-	v.SortAddressesByAddressIndex(addrs...)
-	v.SortAddressesByAddressType(addrs...)
-
-	return addrs
-}
-
-func (*Vault) SortAddressesByPurpose(addrs ...AddressInfo) {
+func (*Vault) sortAddressesByPurpose(addrs ...AddressInfo) {
 	slices.SortStableFunc(addrs, func(a, b AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
@@ -295,7 +283,7 @@ func (*Vault) SortAddressesByPurpose(addrs ...AddressInfo) {
 	})
 }
 
-func (*Vault) SortAddressesByAddressType(addrs ...AddressInfo) {
+func (*Vault) sortAddressesByAddressType(addrs ...AddressInfo) {
 	slices.SortStableFunc(addrs, func(a, b AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
@@ -304,7 +292,7 @@ func (*Vault) SortAddressesByAddressType(addrs ...AddressInfo) {
 	})
 }
 
-func (*Vault) SortAddressesByAddressIndex(addrs ...AddressInfo) {
+func (*Vault) sortAddressesByAddressIndex(addrs ...AddressInfo) {
 	slices.SortStableFunc(addrs, func(a, b AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
@@ -355,29 +343,28 @@ func (v *Vault) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) error 
 	}
 
 	blsAccPathStr := addresspath.NewPath(
-		H(PurposeImportPrivateKey),
-		H(v.CoinType),
-		H(crypto.AddressTypeBLSAccount),
-		H(addressIndex)).String()
+		_H(PurposeImportPrivateKey),
+		_H(v.CoinType),
+		_H(crypto.AddressTypeBLSAccount),
+		_H(addressIndex)).String()
 
 	blsValidatorPathStr := addresspath.NewPath(
-		H(PurposeImportPrivateKey),
-		H(v.CoinType),
-		H(crypto.AddressTypeValidator),
-		H(addressIndex)).String()
+		_H(PurposeImportPrivateKey),
+		_H(v.CoinType),
+		_H(crypto.AddressTypeValidator),
+		_H(addressIndex)).String()
 
-	importedPrvLabelCounter := (len(v.AllImportedPrivateKeysAddresses()) / 2) + 1
 	v.Addresses[accAddr.String()] = AddressInfo{
 		Address:   accAddr.String(),
 		PublicKey: pub.String(),
-		Label:     fmt.Sprintf("Imported BLS Account Address %d", importedPrvLabelCounter),
+		Label:     "Imported BLS Account Address",
 		Path:      blsAccPathStr,
 	}
 
 	v.Addresses[valAddr.String()] = AddressInfo{
 		Address:   valAddr.String(),
 		PublicKey: pub.String(),
-		Label:     fmt.Sprintf("Imported Validator Address %d", importedPrvLabelCounter),
+		Label:     "Imported Validator Address",
 		Path:      blsValidatorPathStr,
 	}
 
@@ -409,36 +396,17 @@ func (v *Vault) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKey
 		return ErrAddressExists
 	}
 
-	valAddr := pub.ValidatorAddress()
-	if v.Contains(valAddr.String()) {
-		return ErrAddressExists
-	}
+	accPathStr := addresspath.NewPath(
+		_H(PurposeImportPrivateKey),
+		_H(v.CoinType),
+		_H(crypto.AddressTypeEd25519Account),
+		_H(addressIndex)).String()
 
-	blsAccPathStr := addresspath.NewPath(
-		H(PurposeImportPrivateKey),
-		H(v.CoinType),
-		H(crypto.AddressTypeBLSAccount),
-		H(addressIndex)).String()
-
-	blsValidatorPathStr := addresspath.NewPath(
-		H(PurposeImportPrivateKey),
-		H(v.CoinType),
-		H(crypto.AddressTypeValidator),
-		H(addressIndex)).String()
-
-	importedPrvLabelCounter := (len(v.AllImportedPrivateKeysAddresses()) / 2) + 1
 	v.Addresses[accAddr.String()] = AddressInfo{
 		Address:   accAddr.String(),
 		PublicKey: pub.String(),
-		Label:     fmt.Sprintf("Imported Ed25519 Account Address %d", importedPrvLabelCounter),
-		Path:      blsAccPathStr,
-	}
-
-	v.Addresses[valAddr.String()] = AddressInfo{
-		Address:   valAddr.String(),
-		PublicKey: pub.String(),
-		Label:     fmt.Sprintf("Imported Validator Address %d", importedPrvLabelCounter),
-		Path:      blsValidatorPathStr,
+		Label:     "Imported Ed25519 Account Address",
+		Path:      accPathStr,
 	}
 
 	keyStore.ImportedKeys = append(keyStore.ImportedKeys, prv.String())
@@ -476,31 +444,43 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 			return nil, err
 		}
 
-		if hdPath.CoinType() != H(v.CoinType) {
+		if hdPath.CoinType() != _H(v.CoinType) {
 			return nil, ErrInvalidCoinType
 		}
 
 		switch hdPath.Purpose() {
-		case H(PurposeBLS12381):
+		case _H(PurposeBLS12381):
 			prvKey, err := v.deriveBLSPrivateKey(mnemonicSeed, hdPath)
 			if err != nil {
 				return nil, err
 			}
 			keys[i] = prvKey
-		case H(PurposeBIP44):
+		case _H(PurposeBIP44):
 			prvKey, err := v.deriveEd25519PrivateKey(mnemonicSeed, hdPath)
 			if err != nil {
 				return nil, err
 			}
 			keys[i] = prvKey
-		case H(PurposeImportPrivateKey):
-			index := hdPath.AddressIndex() - blshdkeychain.HardenedKeyStart
-			// TODO: Check if index is within the valid range.
+		case _H(PurposeImportPrivateKey):
+			index := _N(hdPath.AddressIndex())
 			str := keyStore.ImportedKeys[index]
-			prv, err := bls.PrivateKeyFromString(str)
-			if err != nil {
-				return nil, err
+
+			var prv crypto.PrivateKey
+			switch _N(hdPath.AddressType()) {
+			case uint32(crypto.AddressTypeValidator),
+				uint32(crypto.AddressTypeBLSAccount):
+				prv, err = bls.PrivateKeyFromString(str)
+				if err != nil {
+					return nil, err
+				}
+
+			case uint32(crypto.AddressTypeEd25519Account):
+				prv, err = ed25519.PrivateKeyFromString(str)
+				if err != nil {
+					return nil, err
+				}
 			}
+
 			keys[i] = prv
 		default:
 			return nil, ErrUnsupportedPurpose
@@ -581,10 +561,10 @@ func (v *Vault) NewEd25519AccountAddress(label, password string) (*AddressInfo, 
 
 	index := v.Purposes.PurposeBIP44.NextEd25519Index
 	ext, err := masterKey.DerivePath([]uint32{
-		H(PurposeBIP44),
-		H(v.CoinType),
-		H(crypto.AddressTypeEd25519Account),
-		H(index),
+		_H(PurposeBIP44),
+		_H(v.CoinType),
+		_H(crypto.AddressTypeEd25519Account),
+		_H(index),
 	})
 	if err != nil {
 		return nil, err

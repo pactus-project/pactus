@@ -21,9 +21,10 @@ const tPassword = "super_secret_password"
 type testData struct {
 	*testsuite.TestSuite
 
-	vault       *Vault
-	mnemonic    string
-	importedPrv crypto.PrivateKey
+	vault              *Vault
+	mnemonic           string
+	importedBLSPrv     *bls.PrivateKey
+	importedEd25519Prv *ed25519.PrivateKey
 }
 
 // setup returns an instances of vault fo testing.
@@ -33,7 +34,6 @@ func setup(t *testing.T) *testData {
 	ts := testsuite.NewTestSuite(t)
 
 	mnemonic, _ := GenerateMnemonic(128)
-	_, importedPrv := ts.RandBLSKeyPair()
 	vault, err := CreateVaultFromMnemonic(mnemonic, 21888)
 	assert.NoError(t, err)
 
@@ -48,9 +48,15 @@ func setup(t *testing.T) *testData {
 	_, err = vault.NewValidatorAddress("validator-address")
 	assert.NoError(t, err)
 
-	assert.NoError(t, vault.ImportBLSPrivateKey("", importedPrv))
+	_, importedBLSPrv := ts.RandBLSKeyPair()
+	assert.NoError(t, vault.ImportBLSPrivateKey("", importedBLSPrv))
+
+	_, importedEd25519Prv := ts.RandEd25519KeyPair()
+	assert.NoError(t, vault.ImportEd25519PrivateKey("", importedEd25519Prv))
+
 	assert.False(t, vault.IsEncrypted())
 
+	// Set encryption options to minimal values for faster test execution.
 	opts := []encrypter.Option{
 		encrypter.OptionIteration(1),
 		encrypter.OptionMemory(1),
@@ -62,58 +68,38 @@ func setup(t *testing.T) *testData {
 	assert.True(t, vault.IsEncrypted())
 
 	return &testData{
-		TestSuite:   ts,
-		vault:       vault,
-		mnemonic:    mnemonic,
-		importedPrv: importedPrv,
+		TestSuite:          ts,
+		vault:              vault,
+		mnemonic:           mnemonic,
+		importedBLSPrv:     importedBLSPrv,
+		importedEd25519Prv: importedEd25519Prv,
 	}
 }
 
-func TestAddressInfo(t *testing.T) {
+func TestAddressCount(t *testing.T) {
 	td := setup(t)
 
-	assert.Equal(t, td.vault.AddressCount(), 5)
-	infos := td.vault.AddressInfos()
-	for _, i := range infos {
-		info := td.vault.AddressInfo(i.Address)
-
-		addr, _ := crypto.AddressFromString(info.Address)
-		path, _ := addresspath.FromString(info.Path)
-
-		switch path.Purpose() {
-		case H(PurposeBLS12381):
-			if addr.IsValidatorAddress() {
-				assert.Equal(t, fmt.Sprintf("m/12381'/%d'/1'/%d",
-					td.vault.CoinType, path.AddressIndex()), info.Path)
-			}
-
-			if addr.IsAccountAddress() {
-				assert.Equal(t, fmt.Sprintf("m/12381'/%d'/2'/%d",
-					td.vault.CoinType, path.AddressIndex()), info.Path)
-			}
-		case H(PurposeBIP44):
-			assert.Equal(t, fmt.Sprintf("m/44'/%d'/3'/%d'",
-				td.vault.CoinType, path.AddressIndex()-addresspath.HardenedKeyStart), info.Path)
-
-		case H(PurposeImportPrivateKey):
-			if addr.IsValidatorAddress() {
-				assert.Equal(t, fmt.Sprintf("m/65535'/%d'/1'/%d'",
-					td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart), info.Path)
-			}
-
-			if addr.IsAccountAddress() {
-				assert.Equal(t, fmt.Sprintf("m/65535'/%d'/2'/%d'",
-					td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart), info.Path)
-			}
-
-		default:
-			assert.Fail(t, "not supported")
-		}
-	}
+	assert.Equal(t, 6, td.vault.AddressCount())
 
 	// Neutered
 	neutered := td.vault.Neuter()
-	assert.Equal(t, 5, neutered.AddressCount())
+	assert.Equal(t, 6, neutered.AddressCount())
+}
+
+func TestContains(t *testing.T) {
+	td := setup(t)
+
+	t.Run("Vault should contain all known addresses", func(t *testing.T) {
+		infos := td.vault.AddressInfos()
+		for _, i := range infos {
+			assert.True(t, td.vault.Contains(i.Address))
+		}
+	})
+
+	t.Run("Vault should not contain unknown address", func(t *testing.T) {
+		unknownAddr := td.RandAccAddress().String()
+		assert.False(t, td.vault.Contains(unknownAddr))
+	})
 }
 
 func TestSortAddressInfo(t *testing.T) {
@@ -121,11 +107,15 @@ func TestSortAddressInfo(t *testing.T) {
 
 	infos := td.vault.AddressInfos()
 
+	// Ed25519 Keys
 	assert.Equal(t, "m/44'/21888'/3'/0'", infos[0].Path)
+	// BLS Keys
 	assert.Equal(t, "m/12381'/21888'/1'/0", infos[1].Path)
 	assert.Equal(t, "m/12381'/21888'/2'/0", infos[2].Path)
+	// Imported Keys
 	assert.Equal(t, "m/65535'/21888'/1'/0'", infos[3].Path)
 	assert.Equal(t, "m/65535'/21888'/2'/0'", infos[4].Path)
+	assert.Equal(t, "m/65535'/21888'/3'/1'", infos[5].Path)
 }
 
 func TestAllAccountAddresses(t *testing.T) {
@@ -136,7 +126,7 @@ func TestAllAccountAddresses(t *testing.T) {
 		path, err := addresspath.FromString(i.Path)
 		assert.NoError(t, err)
 
-		assert.NotEqual(t, H(crypto.AddressTypeValidator), path.AddressType())
+		assert.NotEqual(t, _H(crypto.AddressTypeValidator), path.AddressType())
 	}
 }
 
@@ -151,12 +141,12 @@ func TestAllValidatorAddresses(t *testing.T) {
 		path, _ := addresspath.FromString(info.Path)
 
 		switch path.Purpose() {
-		case H(PurposeBLS12381):
+		case _H(PurposeBLS12381):
 			assert.Equal(t, fmt.Sprintf("m/%d'/%d'/1'/%d",
 				PurposeBLS12381, td.vault.CoinType, path.AddressIndex()), info.Path)
-		case H(PurposeImportPrivateKey):
+		case _H(PurposeImportPrivateKey):
 			assert.Equal(t, fmt.Sprintf("m/%d'/%d'/1'/%d'",
-				PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart), info.Path)
+				PurposeImportPrivateKey, td.vault.CoinType, _N(path.AddressIndex())), info.Path)
 		default:
 			assert.Fail(t, "not supported")
 		}
@@ -193,29 +183,6 @@ func TestAddressFromPath(t *testing.T) {
 
 		assert.Equal(t, address, td.vault.AddressFromPath(addrInfo.Path).Address)
 	})
-}
-
-func TestAllImportedPrivateKeysAddresses(t *testing.T) {
-	td := setup(t)
-
-	importedPrvAddrs := td.vault.AllImportedPrivateKeysAddresses()
-	for _, i := range importedPrvAddrs {
-		info := td.vault.AddressInfo(i.Address)
-		assert.Equal(t, i.Address, info.Address)
-
-		addr, _ := crypto.AddressFromString(info.Address)
-		path, _ := addresspath.FromString(info.Path)
-
-		if addr.IsValidatorAddress() {
-			assert.Equal(t, fmt.Sprintf("m/%d'/%d'/1'/%d'",
-				PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart), info.Path)
-		}
-
-		if addr.IsAccountAddress() {
-			assert.Equal(t, fmt.Sprintf("m/%d'/%d'/2'/%d'",
-				PurposeImportPrivateKey, td.vault.CoinType, path.AddressIndex()-hdkeychain.HardenedKeyStart), info.Path)
-		}
-	}
 }
 
 func TestNewValidatorAddress(t *testing.T) {
@@ -313,7 +280,7 @@ func TestGetPrivateKeys(t *testing.T) {
 			addrInfo := td.vault.AddressInfo(info.Address)
 			path, _ := addresspath.FromString(info.Path)
 
-			switch path.AddressType() - addresspath.HardenedKeyStart {
+			switch _N(path.AddressType()) {
 			case uint32(crypto.AddressTypeBLSAccount),
 				uint32(crypto.AddressTypeValidator):
 				pub, _ := bls.PublicKeyFromString(addrInfo.PublicKey)
@@ -328,25 +295,71 @@ func TestGetPrivateKeys(t *testing.T) {
 	})
 }
 
-func TestImportPrivateKey(t *testing.T) {
+func TestImportBLSPrivateKey(t *testing.T) {
 	td := setup(t)
 
-	t.Run("Reimporting private key", func(t *testing.T) {
-		err := td.vault.ImportBLSPrivateKey(tPassword, td.importedPrv.(*bls.PrivateKey))
-		assert.ErrorIs(t, err, ErrAddressExists)
-	})
+	_, prv := td.RandBLSKeyPair()
 
 	t.Run("Invalid password", func(t *testing.T) {
-		_, prv := td.RandBLSKeyPair()
 		err := td.vault.ImportBLSPrivateKey("invalid-password", prv)
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		_, prv := td.RandBLSKeyPair()
-		assert.NoError(t, td.vault.ImportBLSPrivateKey(tPassword, prv))
-		assert.True(t, td.vault.Contains(prv.PublicKeyNative().AccountAddress().String()))
-		assert.True(t, td.vault.Contains(prv.PublicKeyNative().ValidatorAddress().String()))
+		err := td.vault.ImportBLSPrivateKey(tPassword, prv)
+		assert.NoError(t, err)
+
+		valAddr := prv.PublicKeyNative().ValidatorAddress().String()
+		accAddr := prv.PublicKeyNative().AccountAddress().String()
+
+		valAddrInfo := td.vault.AddressInfo(valAddr)
+		accAddrInfo := td.vault.AddressInfo(accAddr)
+
+		assert.True(t, td.vault.Contains(valAddr))
+		assert.True(t, td.vault.Contains(accAddr))
+
+		assert.Equal(t, valAddr, valAddrInfo.Address)
+		assert.Equal(t, accAddr, accAddrInfo.Address)
+
+		assert.Equal(t, prv.PublicKeyNative().String(), valAddrInfo.PublicKey)
+		assert.Equal(t, prv.PublicKeyNative().String(), accAddrInfo.PublicKey)
+
+		assert.Equal(t, "m/65535'/21888'/1'/2'", valAddrInfo.Path)
+		assert.Equal(t, "m/65535'/21888'/2'/2'", accAddrInfo.Path)
+	})
+
+	t.Run("Reimporting private key", func(t *testing.T) {
+		err := td.vault.ImportBLSPrivateKey(tPassword, prv)
+		assert.ErrorIs(t, err, ErrAddressExists)
+	})
+}
+
+func TestImportEd25519PrivateKey(t *testing.T) {
+	td := setup(t)
+
+	_, prv := td.RandEd25519KeyPair()
+
+	t.Run("Invalid password", func(t *testing.T) {
+		err := td.vault.ImportEd25519PrivateKey("invalid-password", prv)
+		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		err := td.vault.ImportEd25519PrivateKey(tPassword, prv)
+		assert.NoError(t, err)
+
+		accAddr := prv.PublicKeyNative().AccountAddress().String()
+
+		accAddrInfo := td.vault.AddressInfo(accAddr)
+		assert.True(t, td.vault.Contains(accAddr))
+		assert.Equal(t, accAddr, accAddrInfo.Address)
+		assert.Equal(t, prv.PublicKeyNative().String(), accAddrInfo.PublicKey)
+		assert.Equal(t, "m/65535'/21888'/3'/2'", accAddrInfo.Path)
+	})
+
+	t.Run("Reimporting private key", func(t *testing.T) {
+		err := td.vault.ImportEd25519PrivateKey(tPassword, td.importedEd25519Prv)
+		assert.ErrorIs(t, err, ErrAddressExists)
 	})
 }
 
@@ -378,39 +391,40 @@ func TestGetMnemonic(t *testing.T) {
 func TestUpdatePassword(t *testing.T) {
 	td := setup(t)
 
-	infos := make([]*AddressInfo, 0, td.vault.AddressCount())
-	for _, info := range td.vault.AddressInfos() {
-		info := td.vault.AddressInfo(info.Address)
-		infos = append(infos, info)
+	opts := []encrypter.Option{
+		encrypter.OptionIteration(1),
+		encrypter.OptionMemory(1),
+		encrypter.OptionParallelism(1),
 	}
 
+	addrInfos := td.vault.AddressInfos()
 	newPassword := "new-password"
-	t.Run("Change password", func(t *testing.T) {
-		opts := []encrypter.Option{
-			encrypter.OptionIteration(1),
-			encrypter.OptionMemory(1),
-			encrypter.OptionParallelism(1),
-		}
 
+	t.Run("Empty password", func(t *testing.T) {
 		err := td.vault.UpdatePassword("", newPassword)
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
-		err = td.vault.UpdatePassword("invalid-password", newPassword)
-		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
-		assert.NoError(t, td.vault.UpdatePassword(tPassword, newPassword, opts...))
-		assert.True(t, td.vault.IsEncrypted())
-		for _, info := range infos {
-			assert.Equal(t, info, td.vault.AddressInfo(info.Address))
-		}
 	})
 
-	t.Run("Set empty password for the vault", func(t *testing.T) {
+	t.Run("Incorrect password", func(t *testing.T) {
 		err := td.vault.UpdatePassword("invalid-password", newPassword)
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+	})
+
+	t.Run("Valid password update", func(t *testing.T) {
+		assert.NoError(t, td.vault.UpdatePassword(tPassword, newPassword, opts...))
+		assert.True(t, td.vault.IsEncrypted())
+		assert.Equal(t, addrInfos, td.vault.AddressInfos())
+	})
+
+	t.Run("Old password should no longer be valid", func(t *testing.T) {
+		err := td.vault.UpdatePassword(tPassword, newPassword)
+		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+	})
+
+	t.Run("Set vault password to empty", func(t *testing.T) {
 		assert.NoError(t, td.vault.UpdatePassword(newPassword, ""))
 		assert.False(t, td.vault.IsEncrypted())
-		for _, info := range infos {
-			assert.Equal(t, info, td.vault.AddressInfo(info.Address))
-		}
+		assert.Equal(t, addrInfos, td.vault.AddressInfos())
 	})
 }
 
@@ -457,7 +471,8 @@ func TestNeuter(t *testing.T) {
 	})
 	assert.ErrorIs(t, err, ErrNeutered)
 
-	err = neutered.ImportBLSPrivateKey("any", td.importedPrv.(*bls.PrivateKey))
+	_, prv := td.RandBLSKeyPair()
+	err = neutered.ImportBLSPrivateKey("any", prv)
 	assert.ErrorIs(t, err, ErrNeutered)
 
 	err = td.vault.Neuter().UpdatePassword("any", "any")
