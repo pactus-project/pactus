@@ -139,12 +139,19 @@ func buildPrivateKeyCmd(parentCmd *cobra.Command) {
 		Short: "displays the private key for a specified address",
 		Args:  cobra.ExactArgs(1),
 	}
+
+	testnetOpt := privateKeyCmd.Flags().Bool("testnet", false,
+		"get address private key for the testnet environment")
 	parentCmd.AddCommand(privateKeyCmd)
 
 	passOpt := addPasswordOption(privateKeyCmd)
 
 	privateKeyCmd.Run = func(_ *cobra.Command, args []string) {
 		addr := args[0]
+
+		if *testnetOpt {
+			crypto.ToTestnetHRP()
+		}
 
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
@@ -165,6 +172,7 @@ func buildPublicKeyCmd(parentCmd *cobra.Command) {
 		Short: "displays the public key for a specified address",
 		Args:  cobra.ExactArgs(1),
 	}
+
 	parentCmd.AddCommand(publicKeyCmd)
 
 	publicKeyCmd.Run = func(_ *cobra.Command, args []string) {
@@ -197,7 +205,7 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(importPrivateKeyCmd)
 
 	testnetOpt := importPrivateKeyCmd.Flags().Bool("testnet", false,
-		"create a wallet for the testnet environment")
+		"import address for the testnet environment")
 	passOpt := addPasswordOption(importPrivateKeyCmd)
 
 	importPrivateKeyCmd.Run = func(_ *cobra.Command, _ []string) {
