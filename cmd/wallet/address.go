@@ -4,7 +4,10 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
+	"github.com/pactus-project/pactus/util/privkey"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/vault"
 	"github.com/spf13/cobra"
@@ -203,18 +206,36 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		prv, err := bls.PrivateKeyFromString(prvStr)
+		privType, err := privkey.PrivateKeyTypeFromString(prvStr)
 		cmd.FatalErrorCheck(err)
 
-		password := getPassword(wlt, *passOpt)
-		err = wlt.ImportBLSPrivateKey(password, prv)
-		cmd.FatalErrorCheck(err)
+		var password string
+		var accountAddress crypto.Address
+
+		if privType == privkey.PrivateKeyTypeBLS {
+			prv, err := bls.PrivateKeyFromString(prvStr)
+			cmd.FatalErrorCheck(err)
+
+			password = getPassword(wlt, *passOpt)
+			err = wlt.ImportBLSPrivateKey(password, prv)
+			cmd.FatalErrorCheck(err)
+			accountAddress = prv.PublicKeyNative().AccountAddress()
+		}
+		if privType == privkey.PrivateKeyTypeEd25519 {
+			prv, err := ed25519.PrivateKeyFromString(prvStr)
+			cmd.FatalErrorCheck(err)
+
+			password = getPassword(wlt, *passOpt)
+			err = wlt.ImportEd25519PrivateKey(password, prv)
+			cmd.FatalErrorCheck(err)
+			accountAddress = prv.PublicKeyNative().AccountAddress()
+		}
 
 		err = wlt.Save()
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgBoldf("Imported Address: %v", prv.PublicKeyNative().AccountAddress())
+		cmd.PrintInfoMsgBoldf("Imported Address: %v", accountAddress)
 		cmd.PrintSuccessMsgf("Private Key imported successfully.")
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
@@ -415,6 +416,10 @@ func (w *Wallet) AddressFromPath(p string) *vault.AddressInfo {
 
 func (w *Wallet) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) error {
 	return w.store.Vault.ImportBLSPrivateKey(password, prv)
+}
+
+func (w *Wallet) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKey) error {
+	return w.store.Vault.ImportEd25519PrivateKey(password, prv)
 }
 
 func (w *Wallet) PrivateKey(password, addr string) (crypto.PrivateKey, error) {

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/bech32m"
 )
 
@@ -96,4 +97,12 @@ func (prv *PrivateKey) EqualsTo(x crypto.PrivateKey) bool {
 	}
 
 	return prv.inner.Equal(xEd25519.inner)
+}
+
+// ValidatorAddress returns the validator address derived from the public key.
+func (pub *PublicKey) ValidatorAddress() crypto.Address {
+	data := hash.Hash160(hash.Hash256(pub.Bytes()))
+	addr := crypto.NewAddress(crypto.AddressTypeValidator, data)
+
+	return addr
 }

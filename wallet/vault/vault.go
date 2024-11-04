@@ -391,6 +391,66 @@ func (v *Vault) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) error 
 	return nil
 }
 
+func (v *Vault) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKey) error {
+	if v.IsNeutered() {
+		return ErrNeutered
+	}
+
+	keyStore, err := v.decryptKeyStore(password)
+	if err != nil {
+		return err
+	}
+
+	addressIndex := len(keyStore.ImportedKeys)
+	pub := prv.PublicKeyNative()
+
+	accAddr := pub.AccountAddress()
+	if v.Contains(accAddr.String()) {
+		return ErrAddressExists
+	}
+
+	valAddr := pub.ValidatorAddress()
+	if v.Contains(valAddr.String()) {
+		return ErrAddressExists
+	}
+
+	blsAccPathStr := addresspath.NewPath(
+		H(PurposeImportPrivateKey),
+		H(v.CoinType),
+		H(crypto.AddressTypeBLSAccount),
+		H(addressIndex)).String()
+
+	blsValidatorPathStr := addresspath.NewPath(
+		H(PurposeImportPrivateKey),
+		H(v.CoinType),
+		H(crypto.AddressTypeValidator),
+		H(addressIndex)).String()
+
+	importedPrvLabelCounter := (len(v.AllImportedPrivateKeysAddresses()) / 2) + 1
+	v.Addresses[accAddr.String()] = AddressInfo{
+		Address:   accAddr.String(),
+		PublicKey: pub.String(),
+		Label:     fmt.Sprintf("Imported Ed25519 Account Address %d", importedPrvLabelCounter),
+		Path:      blsAccPathStr,
+	}
+
+	v.Addresses[valAddr.String()] = AddressInfo{
+		Address:   valAddr.String(),
+		PublicKey: pub.String(),
+		Label:     fmt.Sprintf("Imported Validator Address %d", importedPrvLabelCounter),
+		Path:      blsValidatorPathStr,
+	}
+
+	keyStore.ImportedKeys = append(keyStore.ImportedKeys, prv.String())
+
+	err = v.encryptKeyStore(keyStore, password)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // PrivateKeys retrieves the private keys for the given addresses using the provided password.
 func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKey, error) {
 	if v.IsNeutered() {
