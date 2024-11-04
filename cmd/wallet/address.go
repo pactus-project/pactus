@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/vault"
@@ -195,10 +196,16 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(importPrivateKeyCmd)
 
+	testnetOpt := importPrivateKeyCmd.Flags().Bool("testnet", false,
+		"create a wallet for the testnet environment")
 	passOpt := addPasswordOption(importPrivateKeyCmd)
 
 	importPrivateKeyCmd.Run = func(_ *cobra.Command, _ []string) {
 		prvStr := cmd.PromptInput("Private Key")
+
+		if *testnetOpt {
+			crypto.ToTestnetHRP()
+		}
 
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
