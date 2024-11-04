@@ -21,11 +21,11 @@ import (
 )
 
 const (
-	// HardenedKeyStart is the index at which a hardened key starts.  Each
+	// hardenedKeyStart is the index at which a hardened key starts.  Each
 	// extended key has 2^31 normal child keys and 2^31 hardened child keys.
 	// Thus the range for normal child keys is [0, 2^31 - 1] and the range
 	// for hardened child keys is [2^31, 2^32 - 1].
-	HardenedKeyStart = uint32(0x80000000) // 2^31
+	hardenedKeyStart = uint32(0x80000000) // 2^31
 
 	// MinSeedBytes is the minimum number of bytes allowed for a seed to
 	// a master node.
@@ -119,7 +119,7 @@ func (k *ExtendedKey) DerivePath(path []uint32) (*ExtendedKey, error) {
 // function), a private extended key will be derived. Otherwise, the derived
 // extended key will be a public extended key.
 //
-// When the index is greater to or equal than the HardenedKeyStart constant, the
+// When the index is greater to or equal than the hardenedKeyStart constant, the
 // derived extended key will be a hardened extended key.  It is only possible to
 // derive a hardened extended key from a private extended key. Consequently,
 // this function will return ErrDeriveHardFromPublic if a hardened child
@@ -139,7 +139,7 @@ func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
 	// 3) Public extended key -> Non-hardened child public extended key
 	// 4) Public extended key -> Hardened child public extended key (INVALID!)
 
-	isChildHardened := index >= HardenedKeyStart
+	isChildHardened := index >= hardenedKeyStart
 
 	// The data used to derive the child key depends on whether or not the
 	// child is hardened.
