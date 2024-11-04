@@ -11,15 +11,6 @@ import (
 // Address format:
 // hrp + `1` + type + data + checksum
 
-type AddressType byte
-
-const (
-	AddressTypeTreasury       AddressType = 0
-	AddressTypeValidator      AddressType = 1
-	AddressTypeBLSAccount     AddressType = 2
-	AddressTypeEd25519Account AddressType = 3
-)
-
 const (
 	SignatureTypeBLS     byte = 1
 	SignatureTypeEd25519 byte = 3

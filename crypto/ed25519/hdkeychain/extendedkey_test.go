@@ -18,7 +18,7 @@ func TestNonHardenedDerivation(t *testing.T) {
 
 	testSeed := ts.RandBytes(32)
 	path := []uint32{
-		ts.RandUint32(HardenedKeyStart),
+		ts.RandUint32(hardenedKeyStart),
 	}
 
 	masterKey, _ := NewMaster(testSeed)
@@ -32,7 +32,7 @@ func TestHardenedDerivation(t *testing.T) {
 
 	testSeed := ts.RandBytes(32)
 	path := []uint32{
-		ts.RandUint32(HardenedKeyStart) + HardenedKeyStart,
+		ts.RandUint32(hardenedKeyStart) + hardenedKeyStart,
 	}
 
 	masterKey, err := NewMaster(testSeed)
@@ -48,7 +48,7 @@ func TestHardenedDerivation(t *testing.T) {
 // The test cases are based on the SLIP-0010 standard.
 func TestDerivation(t *testing.T) {
 	testSeed, _ := hex.DecodeString("000102030405060708090a0b0c0d0e0f")
-	h := HardenedKeyStart
+	h := hardenedKeyStart
 	tests := []struct {
 		name    string
 		path    []uint32
@@ -205,7 +205,7 @@ func TestNewMaster(t *testing.T) {
 //nolint:lll // long extended keys
 func TestKeyToString(t *testing.T) {
 	testSeed, _ := hex.DecodeString("000102030405060708090a0b0c0d0e0f")
-	h := HardenedKeyStart
+	h := hardenedKeyStart
 	tests := []struct {
 		name      string
 		path      []uint32
