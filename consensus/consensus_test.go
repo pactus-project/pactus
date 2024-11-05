@@ -623,9 +623,6 @@ func TestHandleQueryVote(t *testing.T) {
 	assert.Nil(t, td.consP.HandleQueryVote(height, 0))
 
 	// Add some votes for Round 0
-	td.addPrepareVote(td.consP, td.RandHash(), height, 0, tIndexX)
-	td.addCPPreVote(td.consP, hash.UndefHash, height, 0, vote.CPValueYes,
-		&vote.JustInitYes{}, tIndexX)
 	td.addCPDecidedVote(td.consP, hash.UndefHash, height, 0, vote.CPValueYes,
 		&vote.JustDecided{QCert: td.makeMainVoteCertificate(t, height, 0, cpRound)}, tIndexY)
 

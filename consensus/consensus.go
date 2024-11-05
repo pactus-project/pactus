@@ -514,7 +514,8 @@ func (cs *consensus) HandleQueryVote(height uint32, round int16) *vote.Vote {
 	votes := []*vote.Vote{}
 	switch {
 	case round < cs.round:
-		// Past round: broadcast cp:decided votes for the previous round.
+		// A validator requests votes for past rounds.
+		// Sending cp:decide for the last round helps them advance to the current round.
 		vs := cs.log.CPDecidedVoteSet(cs.round - 1)
 		votes = append(votes, vs.AllVotes()...)
 
