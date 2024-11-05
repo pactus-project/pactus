@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/wallet/vault"
 	"github.com/spf13/cobra"
 )
@@ -75,7 +76,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 	parentCmd.AddCommand(newAddressCmd)
 
 	addressType := newAddressCmd.Flags().String("type",
-		wallet.AddressTypeBLSAccount, "the type of address: bls_account, ed25519_account and validator")
+		crypto.AddressTypeEd25519Account.String(), "the type of address: ed25519_account, bls_account and validator")
 
 	newAddressCmd.Run = func(_ *cobra.Command, _ []string) {
 		var addressInfo *vault.AddressInfo
@@ -85,15 +86,15 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		if *addressType == wallet.AddressTypeBLSAccount {
+		if *addressType == crypto.AddressTypeBLSAccount.String() {
 			addressInfo, err = wlt.NewBLSAccountAddress(label)
-		} else if *addressType == wallet.AddressTypeEd25519Account {
+		} else if *addressType == crypto.AddressTypeEd25519Account.String() {
 			password := ""
 			if wlt.IsEncrypted() {
 				password = cmd.PromptPassword("Password", false)
 			}
 			addressInfo, err = wlt.NewEd25519AccountAddress(label, password)
-		} else if *addressType == wallet.AddressTypeValidator {
+		} else if *addressType == crypto.AddressTypeValidator.String() {
 			addressInfo, err = wlt.NewValidatorAddress(label)
 		} else {
 			err = fmt.Errorf("invalid address type '%s'", *addressType)
@@ -218,18 +219,44 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		prv, err := bls.PrivateKeyFromString(prvStr)
-		cmd.FatalErrorCheck(err)
-
 		password := getPassword(wlt, *passOpt)
-		err = wlt.ImportBLSPrivateKey(password, prv)
-		cmd.FatalErrorCheck(err)
+
+		maybeBLSPrivateKey := func(str string) bool {
+			// BLS private keys start with "SECRET1P..." or "TSECRET1P...".
+			return strings.Contains(strings.ToLower(str), "secret1p")
+		}
+
+		maybeEd25519PrivateKey := func(str string) bool {
+			// Ed25519 private keys start with "SECRET1R..." or "TSECRET1R...".
+			return strings.Contains(strings.ToLower(str), "secret1r")
+		}
+
+		switch {
+		case maybeBLSPrivateKey(prvStr):
+			blsPrv, err := bls.PrivateKeyFromString(prvStr)
+			cmd.FatalErrorCheck(err)
+
+			err = wlt.ImportBLSPrivateKey(password, blsPrv)
+			cmd.FatalErrorCheck(err)
+
+		case maybeEd25519PrivateKey(prvStr):
+			ed25519Prv, err := ed25519.PrivateKeyFromString(prvStr)
+			cmd.FatalErrorCheck(err)
+
+			err = wlt.ImportEd25519PrivateKey(password, ed25519Prv)
+			cmd.FatalErrorCheck(err)
+
+		default:
+			// The private key cannot be decoded as either BLS or Ed25519.
+			cmd.PrintErrorMsgf("Invalid private key.")
+
+			return
+		}
 
 		err = wlt.Save()
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgBoldf("Imported Address: %v", prv.PublicKeyNative().AccountAddress())
 		cmd.PrintSuccessMsgf("Private Key imported successfully.")
 	}
 }

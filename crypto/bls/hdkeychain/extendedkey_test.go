@@ -19,10 +19,10 @@ func TestNonHardenedDerivation(t *testing.T) {
 
 	testSeed := ts.RandBytes(32)
 	path := []uint32{
-		ts.RandUint32(HardenedKeyStart),
-		ts.RandUint32(HardenedKeyStart),
-		ts.RandUint32(HardenedKeyStart),
-		ts.RandUint32(HardenedKeyStart),
+		ts.RandUint32(hardenedKeyStart),
+		ts.RandUint32(hardenedKeyStart),
+		ts.RandUint32(hardenedKeyStart),
+		ts.RandUint32(hardenedKeyStart),
 	}
 
 	checkPublicKeyDerivation := func(masterKey *ExtendedKey, path []uint32) {
@@ -51,10 +51,10 @@ func TestHardenedDerivation(t *testing.T) {
 
 	testSeed := ts.RandBytes(32)
 	path := []uint32{
-		ts.RandUint32(HardenedKeyStart) + HardenedKeyStart,
-		ts.RandUint32(HardenedKeyStart) + HardenedKeyStart,
-		ts.RandUint32(HardenedKeyStart) + HardenedKeyStart,
-		ts.RandUint32(HardenedKeyStart) + HardenedKeyStart,
+		ts.RandUint32(hardenedKeyStart) + hardenedKeyStart,
+		ts.RandUint32(hardenedKeyStart) + hardenedKeyStart,
+		ts.RandUint32(hardenedKeyStart) + hardenedKeyStart,
+		ts.RandUint32(hardenedKeyStart) + hardenedKeyStart,
 	}
 
 	masterKey, _ := NewMaster(testSeed, false)
@@ -70,7 +70,7 @@ func TestHardenedDerivation(t *testing.T) {
 // TestDerivation tests derive private keys in hardened and non hardened modes.
 func TestDerivation(t *testing.T) {
 	testSeed, _ := hex.DecodeString("000102030405060708090a0b0c0d0e0f")
-	h := HardenedKeyStart
+	h := hardenedKeyStart
 	tests := []struct {
 		name       string
 		path       []uint32
@@ -195,7 +195,7 @@ func TestInvalidDerivation(t *testing.T) {
 		key := [31]byte{0}
 		chainCode := [32]byte{0}
 		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, true, false)
-		_, err := ext.Derive(HardenedKeyStart)
+		_, err := ext.Derive(hardenedKeyStart)
 		assert.ErrorIs(t, err, ErrInvalidKeyData)
 	})
 
@@ -227,7 +227,7 @@ func TestInvalidDerivation(t *testing.T) {
 		key := [32]byte{0}
 		chainCode := [32]byte{0}
 		ext := newExtendedKey(key[:], chainCode[:], []uint32{}, false, false)
-		_, err := ext.Derive(HardenedKeyStart)
+		_, err := ext.Derive(hardenedKeyStart)
 		assert.ErrorIs(t, err, ErrDeriveHardFromPublic)
 	})
 }
@@ -335,7 +335,7 @@ func TestNewMaster(t *testing.T) {
 //nolint:lll // long extended keys
 func TestKeyToString(t *testing.T) {
 	testSeed, _ := hex.DecodeString("000102030405060708090a0b0c0d0e0f")
-	h := HardenedKeyStart
+	h := hardenedKeyStart
 	tests := []struct {
 		name        string
 		path        []uint32
