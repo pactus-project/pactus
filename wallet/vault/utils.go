@@ -1,7 +1,7 @@
 package vault
 
 import (
-	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
+	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/tyler-smith/go-bip39"
 	"golang.org/x/exp/constraints"
 )
@@ -26,7 +26,14 @@ func CheckMnemonic(mnemonic string) error {
 	return err
 }
 
-// H hardens the value 'i' by adding it to 0x80000000 (2^31).
-func H[T constraints.Integer](i T) uint32 {
-	return uint32(i) + hdkeychain.HardenedKeyStart
+// _H hardens the integer value 'i' by adding 0x80000000 (2^31) to it.
+// This function does not check if 'i' is already hardened.
+func _H[T constraints.Integer](i T) uint32 {
+	return uint32(i) + addresspath.HardenedKeyStart
+}
+
+// _N de-hardens the integer value 'i' by subtracting 0x80000000 (2^31) from it.
+// This function does not check if 'i' is already non-hardened.
+func _N[T constraints.Integer](i T) uint32 {
+	return uint32(i) - addresspath.HardenedKeyStart
 }

@@ -20,7 +20,6 @@ import (
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/types/account"
@@ -579,16 +578,16 @@ func MakeRewardAddresses(walletInstance *wallet.Wallet,
 			accAddrPath := addresspath.NewPath(
 				valAddrPath.Purpose(),
 				valAddrPath.CoinType(),
-				uint32(crypto.AddressTypeBLSAccount)+hdkeychain.HardenedKeyStart,
+				uint32(crypto.AddressTypeBLSAccount)+addresspath.HardenedKeyStart,
 				valAddrPath.AddressIndex())
 
 			addrInfo := walletInstance.AddressFromPath(accAddrPath.String())
 			if addrInfo == nil {
 				accAddrPath = addresspath.NewPath(
-					vault.PurposeBIP44+hdkeychain.HardenedKeyStart,
+					vault.PurposeBIP44Hardened,
 					valAddrPath.CoinType(),
-					uint32(crypto.AddressTypeEd25519Account)+hdkeychain.HardenedKeyStart,
-					0+hdkeychain.HardenedKeyStart)
+					uint32(crypto.AddressTypeEd25519Account)+addresspath.HardenedKeyStart,
+					uint32(0)+addresspath.HardenedKeyStart)
 
 				addrInfo = walletInstance.AddressFromPath(accAddrPath.String())
 				if addrInfo == nil {
