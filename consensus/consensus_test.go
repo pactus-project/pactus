@@ -399,8 +399,7 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 }
 
 func (td *testData) makeMainVoteCertificate(t *testing.T,
-	height uint32, round, cpRound int16,
-) *certificate.VoteCertificate {
+	height uint32, round, cpRound int16) *certificate.VoteCertificate {
 	t.Helper()
 
 	// === make valid certificate
