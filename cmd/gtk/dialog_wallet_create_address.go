@@ -6,7 +6,7 @@ import (
 	_ "embed"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/crypto"
 )
 
 //go:embed assets/ui/dialog_wallet_create_address.ui
@@ -20,9 +20,9 @@ func createAddress(wdgWallet *widgetWallet) {
 	addressLabel := getEntryObj(builder, "id_entry_account_label")
 
 	addressTypeCombo := getComboBoxTextObj(builder, "id_combo_address_type")
-	addressTypeCombo.Append(wallet.AddressTypeEd25519Account, "ED25519 Account")
-	addressTypeCombo.Append(wallet.AddressTypeBLSAccount, "BLS Account")
-	addressTypeCombo.Append(wallet.AddressTypeValidator, "Validator")
+	addressTypeCombo.Append(crypto.AddressTypeEd25519Account.String(), "ED25519 Account")
+	addressTypeCombo.Append(crypto.AddressTypeBLSAccount.String(), "BLS Account")
+	addressTypeCombo.Append(crypto.AddressTypeValidator.String(), "Validator")
 
 	addressTypeCombo.SetActive(0)
 
@@ -37,16 +37,16 @@ func createAddress(wdgWallet *widgetWallet) {
 		fatalErrorCheck(err)
 
 		switch walletAddressType {
-		case wallet.AddressTypeEd25519Account:
+		case crypto.AddressTypeEd25519Account.String():
 			password, ok := getWalletPassword(wdgWallet.model.wallet)
 			if !ok {
 				return
 			}
 
 			_, err = wdgWallet.model.wallet.NewEd25519AccountAddress(walletAddressLabel, password)
-		case wallet.AddressTypeBLSAccount:
+		case crypto.AddressTypeBLSAccount.String():
 			_, err = wdgWallet.model.wallet.NewBLSAccountAddress(walletAddressLabel)
-		case wallet.AddressTypeValidator:
+		case crypto.AddressTypeValidator.String():
 			_, err = wdgWallet.model.wallet.NewValidatorAddress(walletAddressLabel)
 		}
 

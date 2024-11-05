@@ -19,8 +19,8 @@ import (
 )
 
 const (
-	// HardenedKeyStart is the index at which a hardened key starts.
-	HardenedKeyStart = uint32(0x80000000) // 2^31
+	// hardenedKeyStart is the index at which a hardened key starts.
+	hardenedKeyStart = uint32(0x80000000) // 2^31
 
 	// MinSeedBytes is the minimum number of bytes allowed for a seed to
 	// a master node.
@@ -72,7 +72,7 @@ func (k *ExtendedKey) DerivePath(path []uint32) (*ExtendedKey, error) {
 // For this reason, our scheme for ed25519 and curve25519 does not support public key derivation and
 // uses the produced hashes directly as private keys.
 func (k *ExtendedKey) Derive(index uint32) (*ExtendedKey, error) {
-	isChildHardened := index >= HardenedKeyStart
+	isChildHardened := index >= hardenedKeyStart
 
 	if !isChildHardened {
 		return nil, ErrNonHardenedPath
