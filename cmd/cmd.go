@@ -455,11 +455,7 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 	}
 
 	if !gen.ChainType().IsMainnet() {
-		crypto.AddressHRP = "tpc"
-		crypto.PublicKeyHRP = "tpublic"
-		crypto.PrivateKeyHRP = "tsecret"
-		crypto.XPublicKeyHRP = "txpublic"
-		crypto.XPrivateKeyHRP = "txsecret"
+		crypto.ToTestnetHRP()
 	}
 
 	walletsDir := PactusWalletDir(workingDir)
