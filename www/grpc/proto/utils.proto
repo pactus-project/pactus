@@ -12,6 +12,12 @@ service Utils {
 
   // VerifyMessage verify signature with public key and message
   rpc VerifyMessage(VerifyMessageRequest) returns (VerifyMessageResponse);
+
+  // BLSPublicKeyAggregate aggregates bls public keys.
+  rpc BLSPublicKeyAggregate(BLSPublicKeyAggregateRequest) returns (BLSPublicKeyAggregateResponse);
+
+  // BLSSignatureAggregate aggregates bls signatures.
+  rpc BLSSignatureAggregate(BLSSignatureAggregateRequest) returns (BLSSignatureAggregateResponse);
 }
 
 // Request message for sign message with private key.
@@ -43,4 +49,29 @@ message VerifyMessageRequest {
 message VerifyMessageResponse {
   // Indicates if the signature is valid (true) or not (false).
   bool is_valid = 1;
+}
+
+// Request message for aggregating BLS public keys.
+message BLSPublicKeyAggregateRequest {
+  // The public keys to aggregate.
+  repeated string public_keys = 1;
+}
+
+// Response message containing the aggregated public key.
+message BLSPublicKeyAggregateResponse {
+  // The aggregated public key.
+  string public_key = 1;
+}
+
+
+// Request message for aggregating BLS signatures.
+message BLSSignatureAggregateRequest {
+  // The signatures to aggregate.
+  repeated string signatures = 1;
+}
+
+// Response message containing the aggregated signature.
+message BLSSignatureAggregateResponse {
+  // The aggregated signature.
+  string signature = 1;
 }
