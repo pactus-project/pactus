@@ -240,6 +240,182 @@ class VerifyMessageResponse extends $pb.GeneratedMessage {
   void clearIsValid() => clearField(1);
 }
 
+class BLSPublicKeyAggregateRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BLSPublicKeyAggregateRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..pPS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKeys')
+    ..hasRequiredFields = false
+  ;
+
+  BLSPublicKeyAggregateRequest._() : super();
+  factory BLSPublicKeyAggregateRequest({
+    $core.Iterable<$core.String>? publicKeys,
+  }) {
+    final _result = create();
+    if (publicKeys != null) {
+      _result.publicKeys.addAll(publicKeys);
+    }
+    return _result;
+  }
+  factory BLSPublicKeyAggregateRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory BLSPublicKeyAggregateRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  BLSPublicKeyAggregateRequest clone() => BLSPublicKeyAggregateRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  BLSPublicKeyAggregateRequest copyWith(void Function(BLSPublicKeyAggregateRequest) updates) => super.copyWith((message) => updates(message as BLSPublicKeyAggregateRequest)) as BLSPublicKeyAggregateRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static BLSPublicKeyAggregateRequest create() => BLSPublicKeyAggregateRequest._();
+  BLSPublicKeyAggregateRequest createEmptyInstance() => create();
+  static $pb.PbList<BLSPublicKeyAggregateRequest> createRepeated() => $pb.PbList<BLSPublicKeyAggregateRequest>();
+  @$core.pragma('dart2js:noInline')
+  static BLSPublicKeyAggregateRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BLSPublicKeyAggregateRequest>(create);
+  static BLSPublicKeyAggregateRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.String> get publicKeys => $_getList(0);
+}
+
+class BLSPublicKeyAggregateResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BLSPublicKeyAggregateResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
+    ..hasRequiredFields = false
+  ;
+
+  BLSPublicKeyAggregateResponse._() : super();
+  factory BLSPublicKeyAggregateResponse({
+    $core.String? publicKey,
+  }) {
+    final _result = create();
+    if (publicKey != null) {
+      _result.publicKey = publicKey;
+    }
+    return _result;
+  }
+  factory BLSPublicKeyAggregateResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory BLSPublicKeyAggregateResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  BLSPublicKeyAggregateResponse clone() => BLSPublicKeyAggregateResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  BLSPublicKeyAggregateResponse copyWith(void Function(BLSPublicKeyAggregateResponse) updates) => super.copyWith((message) => updates(message as BLSPublicKeyAggregateResponse)) as BLSPublicKeyAggregateResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static BLSPublicKeyAggregateResponse create() => BLSPublicKeyAggregateResponse._();
+  BLSPublicKeyAggregateResponse createEmptyInstance() => create();
+  static $pb.PbList<BLSPublicKeyAggregateResponse> createRepeated() => $pb.PbList<BLSPublicKeyAggregateResponse>();
+  @$core.pragma('dart2js:noInline')
+  static BLSPublicKeyAggregateResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BLSPublicKeyAggregateResponse>(create);
+  static BLSPublicKeyAggregateResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get publicKey => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set publicKey($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasPublicKey() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearPublicKey() => clearField(1);
+}
+
+class BLSSignatureAggregateRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BLSSignatureAggregateRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..pPS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signatures')
+    ..hasRequiredFields = false
+  ;
+
+  BLSSignatureAggregateRequest._() : super();
+  factory BLSSignatureAggregateRequest({
+    $core.Iterable<$core.String>? signatures,
+  }) {
+    final _result = create();
+    if (signatures != null) {
+      _result.signatures.addAll(signatures);
+    }
+    return _result;
+  }
+  factory BLSSignatureAggregateRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory BLSSignatureAggregateRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  BLSSignatureAggregateRequest clone() => BLSSignatureAggregateRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  BLSSignatureAggregateRequest copyWith(void Function(BLSSignatureAggregateRequest) updates) => super.copyWith((message) => updates(message as BLSSignatureAggregateRequest)) as BLSSignatureAggregateRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static BLSSignatureAggregateRequest create() => BLSSignatureAggregateRequest._();
+  BLSSignatureAggregateRequest createEmptyInstance() => create();
+  static $pb.PbList<BLSSignatureAggregateRequest> createRepeated() => $pb.PbList<BLSSignatureAggregateRequest>();
+  @$core.pragma('dart2js:noInline')
+  static BLSSignatureAggregateRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BLSSignatureAggregateRequest>(create);
+  static BLSSignatureAggregateRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.List<$core.String> get signatures => $_getList(0);
+}
+
+class BLSSignatureAggregateResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BLSSignatureAggregateResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature')
+    ..hasRequiredFields = false
+  ;
+
+  BLSSignatureAggregateResponse._() : super();
+  factory BLSSignatureAggregateResponse({
+    $core.String? signature,
+  }) {
+    final _result = create();
+    if (signature != null) {
+      _result.signature = signature;
+    }
+    return _result;
+  }
+  factory BLSSignatureAggregateResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory BLSSignatureAggregateResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  BLSSignatureAggregateResponse clone() => BLSSignatureAggregateResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  BLSSignatureAggregateResponse copyWith(void Function(BLSSignatureAggregateResponse) updates) => super.copyWith((message) => updates(message as BLSSignatureAggregateResponse)) as BLSSignatureAggregateResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static BLSSignatureAggregateResponse create() => BLSSignatureAggregateResponse._();
+  BLSSignatureAggregateResponse createEmptyInstance() => create();
+  static $pb.PbList<BLSSignatureAggregateResponse> createRepeated() => $pb.PbList<BLSSignatureAggregateResponse>();
+  @$core.pragma('dart2js:noInline')
+  static BLSSignatureAggregateResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BLSSignatureAggregateResponse>(create);
+  static BLSSignatureAggregateResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get signature => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set signature($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSignature() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSignature() => clearField(1);
+}
+
 class UtilsApi {
   $pb.RpcClient _client;
   UtilsApi(this._client);
@@ -251,6 +427,14 @@ class UtilsApi {
   $async.Future<VerifyMessageResponse> verifyMessage($pb.ClientContext? ctx, VerifyMessageRequest request) {
     var emptyResponse = VerifyMessageResponse();
     return _client.invoke<VerifyMessageResponse>(ctx, 'Utils', 'VerifyMessage', request, emptyResponse);
+  }
+  $async.Future<BLSPublicKeyAggregateResponse> bLSPublicKeyAggregate($pb.ClientContext? ctx, BLSPublicKeyAggregateRequest request) {
+    var emptyResponse = BLSPublicKeyAggregateResponse();
+    return _client.invoke<BLSPublicKeyAggregateResponse>(ctx, 'Utils', 'BLSPublicKeyAggregate', request, emptyResponse);
+  }
+  $async.Future<BLSSignatureAggregateResponse> bLSSignatureAggregate($pb.ClientContext? ctx, BLSSignatureAggregateRequest request) {
+    var emptyResponse = BLSSignatureAggregateResponse();
+    return _client.invoke<BLSSignatureAggregateResponse>(ctx, 'Utils', 'BLSSignatureAggregate', request, emptyResponse);
   }
 }
 

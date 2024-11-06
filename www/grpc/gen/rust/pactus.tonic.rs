@@ -2349,6 +2349,56 @@ pub mod utils_client {
                 .insert(GrpcMethod::new("pactus.Utils", "VerifyMessage"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn bls_public_key_aggregate(
+            &mut self,
+            request: impl tonic::IntoRequest<super::BlsPublicKeyAggregateRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::BlsPublicKeyAggregateResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Utils/BLSPublicKeyAggregate",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Utils", "BLSPublicKeyAggregate"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn bls_signature_aggregate(
+            &mut self,
+            request: impl tonic::IntoRequest<super::BlsSignatureAggregateRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::BlsSignatureAggregateResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Utils/BLSSignatureAggregate",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Utils", "BLSSignatureAggregate"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -2370,6 +2420,20 @@ pub mod utils_server {
             request: tonic::Request<super::VerifyMessageRequest>,
         ) -> std::result::Result<
             tonic::Response<super::VerifyMessageResponse>,
+            tonic::Status,
+        >;
+        async fn bls_public_key_aggregate(
+            &self,
+            request: tonic::Request<super::BlsPublicKeyAggregateRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::BlsPublicKeyAggregateResponse>,
+            tonic::Status,
+        >;
+        async fn bls_signature_aggregate(
+            &self,
+            request: tonic::Request<super::BlsSignatureAggregateRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::BlsSignatureAggregateResponse>,
             tonic::Status,
         >;
     }
@@ -2532,6 +2596,98 @@ pub mod utils_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = VerifyMessageSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Utils/BLSPublicKeyAggregate" => {
+                    #[allow(non_camel_case_types)]
+                    struct BLSPublicKeyAggregateSvc<T: Utils>(pub Arc<T>);
+                    impl<
+                        T: Utils,
+                    > tonic::server::UnaryService<super::BlsPublicKeyAggregateRequest>
+                    for BLSPublicKeyAggregateSvc<T> {
+                        type Response = super::BlsPublicKeyAggregateResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::BlsPublicKeyAggregateRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).bls_public_key_aggregate(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = BLSPublicKeyAggregateSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Utils/BLSSignatureAggregate" => {
+                    #[allow(non_camel_case_types)]
+                    struct BLSSignatureAggregateSvc<T: Utils>(pub Arc<T>);
+                    impl<
+                        T: Utils,
+                    > tonic::server::UnaryService<super::BlsSignatureAggregateRequest>
+                    for BLSSignatureAggregateSvc<T> {
+                        type Response = super::BlsSignatureAggregateResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::BlsSignatureAggregateRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).bls_signature_aggregate(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = BLSSignatureAggregateSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

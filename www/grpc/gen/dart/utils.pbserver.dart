@@ -18,11 +18,15 @@ export 'utils.pb.dart';
 abstract class UtilsServiceBase extends $pb.GeneratedService {
   $async.Future<$3.SignMessageWithPrivateKeyResponse> signMessageWithPrivateKey($pb.ServerContext ctx, $3.SignMessageWithPrivateKeyRequest request);
   $async.Future<$3.VerifyMessageResponse> verifyMessage($pb.ServerContext ctx, $3.VerifyMessageRequest request);
+  $async.Future<$3.BLSPublicKeyAggregateResponse> bLSPublicKeyAggregate($pb.ServerContext ctx, $3.BLSPublicKeyAggregateRequest request);
+  $async.Future<$3.BLSSignatureAggregateResponse> bLSSignatureAggregate($pb.ServerContext ctx, $3.BLSSignatureAggregateRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
     switch (method) {
       case 'SignMessageWithPrivateKey': return $3.SignMessageWithPrivateKeyRequest();
       case 'VerifyMessage': return $3.VerifyMessageRequest();
+      case 'BLSPublicKeyAggregate': return $3.BLSPublicKeyAggregateRequest();
+      case 'BLSSignatureAggregate': return $3.BLSSignatureAggregateRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
@@ -31,6 +35,8 @@ abstract class UtilsServiceBase extends $pb.GeneratedService {
     switch (method) {
       case 'SignMessageWithPrivateKey': return this.signMessageWithPrivateKey(ctx, request as $3.SignMessageWithPrivateKeyRequest);
       case 'VerifyMessage': return this.verifyMessage(ctx, request as $3.VerifyMessageRequest);
+      case 'BLSPublicKeyAggregate': return this.bLSPublicKeyAggregate(ctx, request as $3.BLSPublicKeyAggregateRequest);
+      case 'BLSSignatureAggregate': return this.bLSSignatureAggregate(ctx, request as $3.BLSSignatureAggregateRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }

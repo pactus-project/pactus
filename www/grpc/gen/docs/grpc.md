@@ -115,6 +115,14 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <a href="#pactus.Utils.VerifyMessage">
           <span class="rpc-badge"></span> VerifyMessage</a>
         </li>
+        <li>
+          <a href="#pactus.Utils.BLSPublicKeyAggregate">
+          <span class="rpc-badge"></span> BLSPublicKeyAggregate</a>
+        </li>
+        <li>
+          <a href="#pactus.Utils.BLSSignatureAggregate">
+          <span class="rpc-badge"></span> BLSSignatureAggregate</a>
+        </li>
         </ul>
     </li>
     <li> Wallet Service
@@ -2633,7 +2641,7 @@ signing and verification.</p>
 
 ### SignMessageWithPrivateKey <span id="pactus.Utils.SignMessageWithPrivateKey" class="rpc-badge"></span>
 
-<p>SignMessageWithPrivateKey sign message with provided private key.</p>
+<p>SignMessageWithPrivateKey signs message with provided private key.</p>
 
 <h4>SignMessageWithPrivateKeyRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2677,7 +2685,7 @@ signing and verification.</p>
 
 ### VerifyMessage <span id="pactus.Utils.VerifyMessage" class="rpc-badge"></span>
 
-<p>VerifyMessage verify signature with public key and message</p>
+<p>VerifyMessage verifies signature with public key and message.</p>
 
 <h4>VerifyMessageRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2721,6 +2729,80 @@ signing and verification.</p>
     <td> bool</td>
     <td>
     Indicates if the signature is valid (true) or not (false).
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### BLSPublicKeyAggregate <span id="pactus.Utils.BLSPublicKeyAggregate" class="rpc-badge"></span>
+
+<p>BLSPublicKeyAggregate aggregates bls public keys.</p>
+
+<h4>BLSPublicKeyAggregateRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">public_keys</td>
+    <td>repeated string</td>
+    <td>
+    The public keys to aggregate.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>BLSPublicKeyAggregateResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">public_key</td>
+    <td> string</td>
+    <td>
+    The aggregated public key.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### BLSSignatureAggregate <span id="pactus.Utils.BLSSignatureAggregate" class="rpc-badge"></span>
+
+<p>BLSSignatureAggregate aggregates bls signatures.</p>
+
+<h4>BLSSignatureAggregateRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">signatures</td>
+    <td>repeated string</td>
+    <td>
+    The signatures to aggregate.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>BLSSignatureAggregateResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">signature</td>
+    <td> string</td>
+    <td>
+    The aggregated signature.
     </td>
   </tr>
      </tbody>

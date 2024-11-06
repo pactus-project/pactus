@@ -21,6 +21,8 @@ const _ = grpc.SupportPackageIsVersion8
 const (
 	Utils_SignMessageWithPrivateKey_FullMethodName = "/pactus.Utils/SignMessageWithPrivateKey"
 	Utils_VerifyMessage_FullMethodName             = "/pactus.Utils/VerifyMessage"
+	Utils_BLSPublicKeyAggregate_FullMethodName     = "/pactus.Utils/BLSPublicKeyAggregate"
+	Utils_BLSSignatureAggregate_FullMethodName     = "/pactus.Utils/BLSSignatureAggregate"
 )
 
 // UtilsClient is the client API for Utils service.
@@ -30,10 +32,14 @@ const (
 // Utils service defines RPC methods for utility functions such as message
 // signing and verification.
 type UtilsClient interface {
-	// SignMessageWithPrivateKey sign message with provided private key.
+	// SignMessageWithPrivateKey signs message with provided private key.
 	SignMessageWithPrivateKey(ctx context.Context, in *SignMessageWithPrivateKeyRequest, opts ...grpc.CallOption) (*SignMessageWithPrivateKeyResponse, error)
-	// VerifyMessage verify signature with public key and message
+	// VerifyMessage verifies signature with public key and message.
 	VerifyMessage(ctx context.Context, in *VerifyMessageRequest, opts ...grpc.CallOption) (*VerifyMessageResponse, error)
+	// BLSPublicKeyAggregate aggregates bls public keys.
+	BLSPublicKeyAggregate(ctx context.Context, in *BLSPublicKeyAggregateRequest, opts ...grpc.CallOption) (*BLSPublicKeyAggregateResponse, error)
+	// BLSSignatureAggregate aggregates bls signatures.
+	BLSSignatureAggregate(ctx context.Context, in *BLSSignatureAggregateRequest, opts ...grpc.CallOption) (*BLSSignatureAggregateResponse, error)
 }
 
 type utilsClient struct {
@@ -64,6 +70,26 @@ func (c *utilsClient) VerifyMessage(ctx context.Context, in *VerifyMessageReques
 	return out, nil
 }
 
+func (c *utilsClient) BLSPublicKeyAggregate(ctx context.Context, in *BLSPublicKeyAggregateRequest, opts ...grpc.CallOption) (*BLSPublicKeyAggregateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BLSPublicKeyAggregateResponse)
+	err := c.cc.Invoke(ctx, Utils_BLSPublicKeyAggregate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *utilsClient) BLSSignatureAggregate(ctx context.Context, in *BLSSignatureAggregateRequest, opts ...grpc.CallOption) (*BLSSignatureAggregateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BLSSignatureAggregateResponse)
+	err := c.cc.Invoke(ctx, Utils_BLSSignatureAggregate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UtilsServer is the server API for Utils service.
 // All implementations should embed UnimplementedUtilsServer
 // for forward compatibility
@@ -71,10 +97,14 @@ func (c *utilsClient) VerifyMessage(ctx context.Context, in *VerifyMessageReques
 // Utils service defines RPC methods for utility functions such as message
 // signing and verification.
 type UtilsServer interface {
-	// SignMessageWithPrivateKey sign message with provided private key.
+	// SignMessageWithPrivateKey signs message with provided private key.
 	SignMessageWithPrivateKey(context.Context, *SignMessageWithPrivateKeyRequest) (*SignMessageWithPrivateKeyResponse, error)
-	// VerifyMessage verify signature with public key and message
+	// VerifyMessage verifies signature with public key and message.
 	VerifyMessage(context.Context, *VerifyMessageRequest) (*VerifyMessageResponse, error)
+	// BLSPublicKeyAggregate aggregates bls public keys.
+	BLSPublicKeyAggregate(context.Context, *BLSPublicKeyAggregateRequest) (*BLSPublicKeyAggregateResponse, error)
+	// BLSSignatureAggregate aggregates bls signatures.
+	BLSSignatureAggregate(context.Context, *BLSSignatureAggregateRequest) (*BLSSignatureAggregateResponse, error)
 }
 
 // UnimplementedUtilsServer should be embedded to have forward compatible implementations.
@@ -86,6 +116,12 @@ func (UnimplementedUtilsServer) SignMessageWithPrivateKey(context.Context, *Sign
 }
 func (UnimplementedUtilsServer) VerifyMessage(context.Context, *VerifyMessageRequest) (*VerifyMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyMessage not implemented")
+}
+func (UnimplementedUtilsServer) BLSPublicKeyAggregate(context.Context, *BLSPublicKeyAggregateRequest) (*BLSPublicKeyAggregateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BLSPublicKeyAggregate not implemented")
+}
+func (UnimplementedUtilsServer) BLSSignatureAggregate(context.Context, *BLSSignatureAggregateRequest) (*BLSSignatureAggregateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BLSSignatureAggregate not implemented")
 }
 
 // UnsafeUtilsServer may be embedded to opt out of forward compatibility for this service.
@@ -135,6 +171,42 @@ func _Utils_VerifyMessage_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Utils_BLSPublicKeyAggregate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BLSPublicKeyAggregateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UtilsServer).BLSPublicKeyAggregate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Utils_BLSPublicKeyAggregate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UtilsServer).BLSPublicKeyAggregate(ctx, req.(*BLSPublicKeyAggregateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Utils_BLSSignatureAggregate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BLSSignatureAggregateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UtilsServer).BLSSignatureAggregate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Utils_BLSSignatureAggregate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UtilsServer).BLSSignatureAggregate(ctx, req.(*BLSSignatureAggregateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Utils_ServiceDesc is the grpc.ServiceDesc for Utils service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -149,6 +221,14 @@ var Utils_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifyMessage",
 			Handler:    _Utils_VerifyMessage_Handler,
+		},
+		{
+			MethodName: "BLSPublicKeyAggregate",
+			Handler:    _Utils_BLSPublicKeyAggregate_Handler,
+		},
+		{
+			MethodName: "BLSSignatureAggregate",
+			Handler:    _Utils_BLSSignatureAggregate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

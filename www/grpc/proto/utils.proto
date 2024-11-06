@@ -63,7 +63,6 @@ message BLSPublicKeyAggregateResponse {
   string public_key = 1;
 }
 
-
 // Request message for aggregating BLS signatures.
 message BLSSignatureAggregateRequest {
   // The signatures to aggregate.

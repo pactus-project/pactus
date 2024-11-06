@@ -43,7 +43,7 @@
   "paths": {
     "/pactus/Utils/sign_message_with_private_key": {
       "get": {
-        "summary": "SignMessageWithPrivateKey sign message with provided private key.",
+        "summary": "SignMessageWithPrivateKey signs message with provided private key.",
         "operationId": "Utils_SignMessageWithPrivateKey",
         "responses": {
           "200": {
@@ -82,7 +82,7 @@
     },
     "/pactus/Utils/verify_message": {
       "get": {
-        "summary": "VerifyMessage verify signature with public key and message",
+        "summary": "VerifyMessage verifies signature with public key and message.",
         "operationId": "Utils_VerifyMessage",
         "responses": {
           "200": {
@@ -1583,6 +1583,26 @@
       ],
       "default": "ADDRESS_TYPE_TREASURY",
       "description": "Enum for the address type.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password."
+    },
+    "pactusBLSPublicKeyAggregateResponse": {
+      "type": "object",
+      "properties": {
+        "publicKey": {
+          "type": "string",
+          "description": "The aggregated public key."
+        }
+      },
+      "description": "Response message containing the aggregated public key."
+    },
+    "pactusBLSSignatureAggregateResponse": {
+      "type": "object",
+      "properties": {
+        "signature": {
+          "type": "string",
+          "description": "The aggregated signature."
+        }
+      },
+      "description": "Response message containing the aggregated signature."
     },
     "pactusBlockHeaderInfo": {
       "type": "object",

@@ -166,6 +166,14 @@ curl --location 'http://localhost:8545/' \
           <a href="#pactus.utils.verify_message">
           <span class="rpc-badge"></span> pactus.utils.verify_message</a>
         </li>
+        <li>
+          <a href="#pactus.utils.b_l_s_public_key_aggregate">
+          <span class="rpc-badge"></span> pactus.utils.b_l_s_public_key_aggregate</a>
+        </li>
+        <li>
+          <a href="#pactus.utils.b_l_s_signature_aggregate">
+          <span class="rpc-badge"></span> pactus.utils.b_l_s_signature_aggregate</a>
+        </li>
         </ul>
     </li>
     <li> Wallet Service
@@ -2684,7 +2692,7 @@ signing and verification.</p>
 
 ### pactus.utils.sign_message_with_private_key <span id="pactus.utils.sign_message_with_private_key" class="rpc-badge"></span>
 
-<p>SignMessageWithPrivateKey sign message with provided private key.</p>
+<p>SignMessageWithPrivateKey signs message with provided private key.</p>
 
 <h4>Parameters</h4>
 
@@ -2728,7 +2736,7 @@ signing and verification.</p>
 
 ### pactus.utils.verify_message <span id="pactus.utils.verify_message" class="rpc-badge"></span>
 
-<p>VerifyMessage verify signature with public key and message</p>
+<p>VerifyMessage verifies signature with public key and message.</p>
 
 <h4>Parameters</h4>
 
@@ -2772,6 +2780,80 @@ signing and verification.</p>
     <td> boolean</td>
     <td>
     Indicates if the signature is valid (true) or not (false).
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### pactus.utils.b_l_s_public_key_aggregate <span id="pactus.utils.b_l_s_public_key_aggregate" class="rpc-badge"></span>
+
+<p>BLSPublicKeyAggregate aggregates bls public keys.</p>
+
+<h4>Parameters</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">public_keys</td>
+    <td>repeated string</td>
+    <td>
+    The public keys to aggregate.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">public_key</td>
+    <td> string</td>
+    <td>
+    The aggregated public key.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
+### pactus.utils.b_l_s_signature_aggregate <span id="pactus.utils.b_l_s_signature_aggregate" class="rpc-badge"></span>
+
+<p>BLSSignatureAggregate aggregates bls signatures.</p>
+
+<h4>Parameters</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">signatures</td>
+    <td>repeated string</td>
+    <td>
+    The signatures to aggregate.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">signature</td>
+    <td> string</td>
+    <td>
+    The aggregated signature.
     </td>
   </tr>
      </tbody>
