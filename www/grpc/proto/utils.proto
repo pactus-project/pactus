@@ -7,10 +7,10 @@ option java_package = "pactus.utils";
 // Utils service defines RPC methods for utility functions such as message
 // signing and verification.
 service Utils {
-  // SignMessageWithPrivateKey sign message with provided private key.
+  // SignMessageWithPrivateKey signs message with provided private key.
   rpc SignMessageWithPrivateKey(SignMessageWithPrivateKeyRequest) returns (SignMessageWithPrivateKeyResponse);
 
-  // VerifyMessage verify signature with public key and message
+  // VerifyMessage verifies signature with public key and message.
   rpc VerifyMessage(VerifyMessageRequest) returns (VerifyMessageResponse);
 
   // BLSPublicKeyAggregate aggregates bls public keys.
