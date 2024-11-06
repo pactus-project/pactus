@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/util/testsuite"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 )
@@ -76,6 +78,118 @@ func TestVerifyMessage(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.False(t, res.IsValid)
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}
+
+func TestBLSPublicKeyAggregate(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	conf := testConfig()
+	td := setup(t, conf)
+	conn, client := td.utilClient(t)
+
+	pub1, _ := ts.RandBLSKeyPair()
+	pub2, _ := ts.RandBLSKeyPair()
+	pub3, _ := ts.RandBLSKeyPair()
+	aggPub := bls.PublicKeyAggregate(pub1, pub2, pub3)
+	invalidPub := "invalidpub"
+
+	t.Run("zero public keys", func(t *testing.T) {
+		res, err := client.BLSPublicKeyAggregate(context.Background(),
+			&pactus.BLSPublicKeyAggregateRequest{
+				PublicKeys: []string{},
+			})
+
+		assert.NotNil(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("only one public key", func(t *testing.T) {
+		res, err := client.BLSPublicKeyAggregate(context.Background(),
+			&pactus.BLSPublicKeyAggregateRequest{
+				PublicKeys: []string{pub1.String()},
+			})
+
+		assert.Nil(t, err)
+		assert.Equal(t, pub1.String(), res.PublicKey)
+	})
+
+	t.Run("invalid public key", func(t *testing.T) {
+		res, err := client.BLSPublicKeyAggregate(context.Background(),
+			&pactus.BLSPublicKeyAggregateRequest{
+				PublicKeys: []string{pub1.String(), pub2.String(), invalidPub, pub3.String()},
+			})
+
+		assert.NotNil(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("valid public keys", func(t *testing.T) {
+		res, err := client.BLSPublicKeyAggregate(context.Background(),
+			&pactus.BLSPublicKeyAggregateRequest{
+				PublicKeys: []string{pub1.String(), pub2.String(), pub3.String()},
+			})
+
+		assert.Nil(t, err)
+		assert.Equal(t, aggPub.String(), res.PublicKey)
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}
+
+func TestBLSSignatureAggregate(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	conf := testConfig()
+	td := setup(t, conf)
+	conn, client := td.utilClient(t)
+
+	sig1 := ts.RandBLSSignature()
+	sig2 := ts.RandBLSSignature()
+	sig3 := ts.RandBLSSignature()
+	aggSig := bls.SignatureAggregate(sig1, sig2, sig3)
+	invalidSig := "invalidsig"
+
+	t.Run("zero signatures", func(t *testing.T) {
+		res, err := client.BLSSignatureAggregate(context.Background(),
+			&pactus.BLSSignatureAggregateRequest{
+				Signatures: []string{},
+			})
+
+		assert.NotNil(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("only one signature", func(t *testing.T) {
+		res, err := client.BLSSignatureAggregate(context.Background(),
+			&pactus.BLSSignatureAggregateRequest{
+				Signatures: []string{sig1.String()},
+			})
+
+		assert.Nil(t, err)
+		assert.Equal(t, sig1.String(), res.Signature)
+	})
+
+	t.Run("invalid signature", func(t *testing.T) {
+		res, err := client.BLSSignatureAggregate(context.Background(),
+			&pactus.BLSSignatureAggregateRequest{
+				Signatures: []string{sig1.String(), sig2.String(), invalidSig, sig3.String()},
+			})
+
+		assert.NotNil(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("valid signatures", func(t *testing.T) {
+		res, err := client.BLSSignatureAggregate(context.Background(),
+			&pactus.BLSSignatureAggregateRequest{
+				Signatures: []string{sig1.String(), sig2.String(), sig3.String()},
+			})
+
+		assert.Nil(t, err)
+		assert.Equal(t, aggSig.String(), res.Signature)
 	})
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
