@@ -140,6 +140,7 @@ func buildPrivateKeyCmd(parentCmd *cobra.Command) {
 		Short: "displays the private key for a specified address",
 		Args:  cobra.ExactArgs(1),
 	}
+
 	parentCmd.AddCommand(privateKeyCmd)
 
 	passOpt := addPasswordOption(privateKeyCmd)
@@ -166,6 +167,7 @@ func buildPublicKeyCmd(parentCmd *cobra.Command) {
 		Short: "displays the public key for a specified address",
 		Args:  cobra.ExactArgs(1),
 	}
+
 	parentCmd.AddCommand(publicKeyCmd)
 
 	publicKeyCmd.Run = func(_ *cobra.Command, args []string) {

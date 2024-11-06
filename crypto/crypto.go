@@ -12,3 +12,12 @@ var (
 	// XPrivateKeyHRP is the Human Readable Part (HRP) for extended private key.
 	XPrivateKeyHRP = "xsecret"
 )
+
+// ToTestnetHRP makes HRPs testnet specified.
+func ToTestnetHRP() {
+	AddressHRP = "tpc"
+	PublicKeyHRP = "tpublic"
+	PrivateKeyHRP = "tsecret"
+	XPublicKeyHRP = "txpublic"
+	XPrivateKeyHRP = "txsecret"
+}
