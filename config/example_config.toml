@@ -28,7 +28,7 @@
   # Default is `"network_key"`.
   network_key = "network_key"
 
-  # `public_addr` is the the address that is public and accessible to other nodes.
+  # `public_addr` is the address that is public and accessible to other nodes.
   public_addr = ""
 
   # `listen_addrs` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
@@ -47,7 +47,7 @@
   # Default is `false`.
   enable_udp = false
 
-  # `enable_nat_service` provides a service to other peer for determining their reachability status.
+  # `enable_nat_service` provides a service to other peers for determining their reachability status.
   # Default is `false`.
   enable_nat_service = false
 
@@ -100,7 +100,7 @@
 
     # `rate_limit` contains the rate limit configurations for network topics.
     # The rate limit specifies the number of messages per second that are allowed.
-    # If set to zero, it allows all requests without any limit.`
+    # If set to zero, it allows all requests without any limit.
     [sync.firewall.rate_limit]
 
       # `block_topic` specifies the rate limit for the block topic.
@@ -119,7 +119,7 @@
   # Default is `1000`.
   max_size = 1000
 
-  # `tx_pool.fee` contains configuration to calulcate the transaction fee.
+  # `tx_pool.fee` contains configuration to calculate the transaction fee.
   [tx_pool.fee]
 
     # The `fixed_fee` is a constant fee applied to each transaction, regardless of its size or type.
@@ -128,7 +128,7 @@
 
     # The `daily_limit` is the number of bytes an account can send each day without paying a fee.
     # The `daily_limit` is part of the consumptional fee model.
-    # To undesrstand how condumptional fee model works, you can refer to
+    # To understand how the consumptional fee model works, you can refer to
     # PIP-31: Consumptional Fee Mode (https://pips.pactus.org/PIPs/pip-31)
     # Default is `360` bytes.
     daily_limit = 360
@@ -136,7 +136,7 @@
     # The `unit_price` defines the fee per byte in PAC.
     # The `unit_price` is part of the consumptional fee model.
     # If it is zero, the consumptional fee will be ignored.
-    # To undesrstand how condumptional fee model works, you can refer to
+    # To understand how the consumptional fee model works, you can refer to
     # PIP-31: Consumptional Fee Mode (https://pips.pactus.org/PIPs/pip-31)
     # Default is `0.0` PAC.
     unit_price = 0.0
@@ -178,7 +178,7 @@
     _sync = "error"
     default = "info"
 
-# `grpc` contains configuration of the gRRC module.
+# `grpc` contains configuration of the gRPC module.
 [grpc]
 
   # `enable` indicates whether gRPC service should be enabled or not.
@@ -243,5 +243,5 @@
   # Default is `false`.
   enable = false
 
-  # `listen` is the address to listen for incoming connections for nanomsg server.
+  # `listen` is the address for incoming connections to the nanomsg server.
   listen = "tcp://127.0.0.1:40899"
