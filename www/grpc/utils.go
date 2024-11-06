@@ -73,6 +73,7 @@ func (*utilServer) BLSPublicKeyAggregate(_ context.Context,
 		}
 		pubs[i] = p
 	}
+
 	return &pactus.BLSPublicKeyAggregateResponse{
 		PublicKey: bls.PublicKeyAggregate(pubs...).String(),
 	}, nil
@@ -92,6 +93,7 @@ func (*utilServer) BLSSignatureAggregate(_ context.Context,
 		}
 		sigs[i] = s
 	}
+
 	return &pactus.BLSSignatureAggregateResponse{
 		Signature: bls.SignatureAggregate(sigs...).String(),
 	}, nil
