@@ -277,11 +277,14 @@ func (s *blockchainServer) GetPublicKey(_ context.Context,
 }
 
 func (s *blockchainServer) GetTxPoolContent(_ context.Context,
-	_ *pactus.GetTxPoolContentRequest,
+	req *pactus.GetTxPoolContentRequest,
 ) (*pactus.GetTxPoolContentResponse, error) {
 	result := make([]*pactus.TransactionInfo, 0)
+
 	for _, t := range s.state.AllPendingTxs() {
-		result = append(result, transactionToProto(t))
+		if req.PayloadType == pactus.PayloadType_UNKNOWN || req.PayloadType == pactus.PayloadType(t.Payload().Type()) {
+			result = append(result, transactionToProto(t))
+		}
 	}
 
 	return &pactus.GetTxPoolContentResponse{

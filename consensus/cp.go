@@ -36,7 +36,7 @@ func (*changeProposer) checkCPValue(vote *vote.Vote, allowedValues ...vote.CPVal
 	}
 }
 
-func (cp *changeProposer) checkJustInitZero(just vote.Just, blockHash hash.Hash) error {
+func (cp *changeProposer) checkJustInitNo(just vote.Just, blockHash hash.Hash) error {
 	j, ok := just.(*vote.JustInitNo)
 	if !ok {
 		return InvalidJustificationError{
@@ -56,7 +56,7 @@ func (cp *changeProposer) checkJustInitZero(just vote.Just, blockHash hash.Hash)
 	return nil
 }
 
-func (*changeProposer) checkJustInitOne(just vote.Just) error {
+func (*changeProposer) checkJustInitYes(just vote.Just) error {
 	_, ok := just.(*vote.JustInitYes)
 	if !ok {
 		return InvalidJustificationError{
@@ -150,12 +150,12 @@ func (cp *changeProposer) checkJustMainVoteConflict(just vote.Just,
 	}
 
 	if cpRound == 0 {
-		err := cp.checkJustInitZero(j.JustNo, blockHash)
+		err := cp.checkJustInitNo(j.JustNo, blockHash)
 		if err != nil {
 			return err
 		}
 
-		err = cp.checkJustInitOne(j.JustYes)
+		err = cp.checkJustInitYes(j.JustYes)
 		if err != nil {
 			return err
 		}
@@ -201,7 +201,7 @@ func (cp *changeProposer) checkJustPreVote(vte *vote.Vote) error {
 				return err
 			}
 
-			return cp.checkJustInitZero(just, vte.BlockHash())
+			return cp.checkJustInitNo(just, vte.BlockHash())
 
 		case vote.JustTypeInitYes:
 			err := cp.checkCPValue(vte, vote.CPValueYes)
@@ -209,7 +209,7 @@ func (cp *changeProposer) checkJustPreVote(vte *vote.Vote) error {
 				return err
 			}
 
-			return cp.checkJustInitOne(just)
+			return cp.checkJustInitYes(just)
 		default:
 			return InvalidJustificationError{
 				JustType: just.Type(),
