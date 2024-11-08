@@ -167,12 +167,12 @@ curl --location 'http://localhost:8545/' \
           <span class="rpc-badge"></span> pactus.utils.verify_message</a>
         </li>
         <li>
-          <a href="#pactus.utils.b_l_s_public_key_aggregate">
-          <span class="rpc-badge"></span> pactus.utils.b_l_s_public_key_aggregate</a>
+          <a href="#pactus.utils.b_l_s_public_key_aggregation">
+          <span class="rpc-badge"></span> pactus.utils.b_l_s_public_key_aggregation</a>
         </li>
         <li>
-          <a href="#pactus.utils.b_l_s_signature_aggregate">
-          <span class="rpc-badge"></span> pactus.utils.b_l_s_signature_aggregate</a>
+          <a href="#pactus.utils.b_l_s_signature_aggregation">
+          <span class="rpc-badge"></span> pactus.utils.b_l_s_signature_aggregation</a>
         </li>
         </ul>
     </li>
@@ -2785,9 +2785,9 @@ signing and verification.</p>
      </tbody>
 </table>
 
-### pactus.utils.b_l_s_public_key_aggregate <span id="pactus.utils.b_l_s_public_key_aggregate" class="rpc-badge"></span>
+### pactus.utils.b_l_s_public_key_aggregation <span id="pactus.utils.b_l_s_public_key_aggregation" class="rpc-badge"></span>
 
-<p>BLSPublicKeyAggregate aggregates bls public keys.</p>
+<p>BLSPublicKeyAggregation aggregates bls public keys.</p>
 
 <h4>Parameters</h4>
 
@@ -2822,9 +2822,9 @@ signing and verification.</p>
      </tbody>
 </table>
 
-### pactus.utils.b_l_s_signature_aggregate <span id="pactus.utils.b_l_s_signature_aggregate" class="rpc-badge"></span>
+### pactus.utils.b_l_s_signature_aggregation <span id="pactus.utils.b_l_s_signature_aggregation" class="rpc-badge"></span>
 
-<p>BLSSignatureAggregate aggregates bls signatures.</p>
+<p>BLSSignatureAggregation aggregates bls signatures.</p>
 
 <h4>Parameters</h4>
 

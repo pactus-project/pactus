@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0butils.proto\x12\x06pactus\"]\n SignMessageWithPrivateKeyRequest\x12\x1f\n\x0bprivate_key\x18\x01 \x01(\tR\nprivateKey\x12\x18\n\x07message\x18\x02 \x01(\tR\x07message\"A\n!SignMessageWithPrivateKeyResponse\x12\x1c\n\tsignature\x18\x01 \x01(\tR\tsignature\"m\n\x14VerifyMessageRequest\x12\x18\n\x07message\x18\x01 \x01(\tR\x07message\x12\x1c\n\tsignature\x18\x02 \x01(\tR\tsignature\x12\x1d\n\npublic_key\x18\x03 \x01(\tR\tpublicKey\"2\n\x15VerifyMessageResponse\x12\x19\n\x08is_valid\x18\x01 \x01(\x08R\x07isValid\"?\n\x1c\x42LSPublicKeyAggregateRequest\x12\x1f\n\x0bpublic_keys\x18\x01 \x03(\tR\npublicKeys\">\n\x1d\x42LSPublicKeyAggregateResponse\x12\x1d\n\npublic_key\x18\x01 \x01(\tR\tpublicKey\">\n\x1c\x42LSSignatureAggregateRequest\x12\x1e\n\nsignatures\x18\x01 \x03(\tR\nsignatures\"=\n\x1d\x42LSSignatureAggregateResponse\x12\x1c\n\tsignature\x18\x01 \x01(\tR\tsignature2\x93\x03\n\x05Utils\x12p\n\x19SignMessageWithPrivateKey\x12(.pactus.SignMessageWithPrivateKeyRequest\x1a).pactus.SignMessageWithPrivateKeyResponse\x12L\n\rVerifyMessage\x12\x1c.pactus.VerifyMessageRequest\x1a\x1d.pactus.VerifyMessageResponse\x12\x64\n\x15\x42LSPublicKeyAggregate\x12$.pactus.BLSPublicKeyAggregateRequest\x1a%.pactus.BLSPublicKeyAggregateResponse\x12\x64\n\x15\x42LSSignatureAggregate\x12$.pactus.BLSSignatureAggregateRequest\x1a%.pactus.BLSSignatureAggregateResponseB@\n\x0cpactus.utilsZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0butils.proto\x12\x06pactus\"]\n SignMessageWithPrivateKeyRequest\x12\x1f\n\x0bprivate_key\x18\x01 \x01(\tR\nprivateKey\x12\x18\n\x07message\x18\x02 \x01(\tR\x07message\"A\n!SignMessageWithPrivateKeyResponse\x12\x1c\n\tsignature\x18\x01 \x01(\tR\tsignature\"m\n\x14VerifyMessageRequest\x12\x18\n\x07message\x18\x01 \x01(\tR\x07message\x12\x1c\n\tsignature\x18\x02 \x01(\tR\tsignature\x12\x1d\n\npublic_key\x18\x03 \x01(\tR\tpublicKey\"2\n\x15VerifyMessageResponse\x12\x19\n\x08is_valid\x18\x01 \x01(\x08R\x07isValid\"A\n\x1e\x42LSPublicKeyAggregationRequest\x12\x1f\n\x0bpublic_keys\x18\x01 \x03(\tR\npublicKeys\"@\n\x1f\x42LSPublicKeyAggregationResponse\x12\x1d\n\npublic_key\x18\x01 \x01(\tR\tpublicKey\"@\n\x1e\x42LSSignatureAggregationRequest\x12\x1e\n\nsignatures\x18\x01 \x03(\tR\nsignatures\"?\n\x1f\x42LSSignatureAggregationResponse\x12\x1c\n\tsignature\x18\x01 \x01(\tR\tsignature2\x9f\x03\n\x05Utils\x12p\n\x19SignMessageWithPrivateKey\x12(.pactus.SignMessageWithPrivateKeyRequest\x1a).pactus.SignMessageWithPrivateKeyResponse\x12L\n\rVerifyMessage\x12\x1c.pactus.VerifyMessageRequest\x1a\x1d.pactus.VerifyMessageResponse\x12j\n\x17\x42LSPublicKeyAggregation\x12&.pactus.BLSPublicKeyAggregationRequest\x1a\'.pactus.BLSPublicKeyAggregationResponse\x12j\n\x17\x42LSSignatureAggregation\x12&.pactus.BLSSignatureAggregationRequest\x1a\'.pactus.BLSSignatureAggregationResponseB@\n\x0cpactus.utilsZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3')
 
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'utils_pb2', globals())
@@ -29,14 +29,14 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _VERIFYMESSAGEREQUEST._serialized_end=294
   _VERIFYMESSAGERESPONSE._serialized_start=296
   _VERIFYMESSAGERESPONSE._serialized_end=346
-  _BLSPUBLICKEYAGGREGATEREQUEST._serialized_start=348
-  _BLSPUBLICKEYAGGREGATEREQUEST._serialized_end=411
-  _BLSPUBLICKEYAGGREGATERESPONSE._serialized_start=413
-  _BLSPUBLICKEYAGGREGATERESPONSE._serialized_end=475
-  _BLSSIGNATUREAGGREGATEREQUEST._serialized_start=477
-  _BLSSIGNATUREAGGREGATEREQUEST._serialized_end=539
-  _BLSSIGNATUREAGGREGATERESPONSE._serialized_start=541
-  _BLSSIGNATUREAGGREGATERESPONSE._serialized_end=602
-  _UTILS._serialized_start=605
-  _UTILS._serialized_end=1008
+  _BLSPUBLICKEYAGGREGATIONREQUEST._serialized_start=348
+  _BLSPUBLICKEYAGGREGATIONREQUEST._serialized_end=413
+  _BLSPUBLICKEYAGGREGATIONRESPONSE._serialized_start=415
+  _BLSPUBLICKEYAGGREGATIONRESPONSE._serialized_end=479
+  _BLSSIGNATUREAGGREGATIONREQUEST._serialized_start=481
+  _BLSSIGNATUREAGGREGATIONREQUEST._serialized_end=545
+  _BLSSIGNATUREAGGREGATIONRESPONSE._serialized_start=547
+  _BLSSIGNATUREAGGREGATIONRESPONSE._serialized_end=610
+  _UTILS._serialized_start=613
+  _UTILS._serialized_end=1028
 # @@protoc_insertion_point(module_scope)

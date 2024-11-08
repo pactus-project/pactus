@@ -2349,11 +2349,11 @@ pub mod utils_client {
                 .insert(GrpcMethod::new("pactus.Utils", "VerifyMessage"));
             self.inner.unary(req, path, codec).await
         }
-        pub async fn bls_public_key_aggregate(
+        pub async fn bls_public_key_aggregation(
             &mut self,
-            request: impl tonic::IntoRequest<super::BlsPublicKeyAggregateRequest>,
+            request: impl tonic::IntoRequest<super::BlsPublicKeyAggregationRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::BlsPublicKeyAggregateResponse>,
+            tonic::Response<super::BlsPublicKeyAggregationResponse>,
             tonic::Status,
         > {
             self.inner
@@ -2367,18 +2367,18 @@ pub mod utils_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Utils/BLSPublicKeyAggregate",
+                "/pactus.Utils/BLSPublicKeyAggregation",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Utils", "BLSPublicKeyAggregate"));
+                .insert(GrpcMethod::new("pactus.Utils", "BLSPublicKeyAggregation"));
             self.inner.unary(req, path, codec).await
         }
-        pub async fn bls_signature_aggregate(
+        pub async fn bls_signature_aggregation(
             &mut self,
-            request: impl tonic::IntoRequest<super::BlsSignatureAggregateRequest>,
+            request: impl tonic::IntoRequest<super::BlsSignatureAggregationRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::BlsSignatureAggregateResponse>,
+            tonic::Response<super::BlsSignatureAggregationResponse>,
             tonic::Status,
         > {
             self.inner
@@ -2392,11 +2392,11 @@ pub mod utils_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Utils/BLSSignatureAggregate",
+                "/pactus.Utils/BLSSignatureAggregation",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Utils", "BLSSignatureAggregate"));
+                .insert(GrpcMethod::new("pactus.Utils", "BLSSignatureAggregation"));
             self.inner.unary(req, path, codec).await
         }
     }
@@ -2422,18 +2422,18 @@ pub mod utils_server {
             tonic::Response<super::VerifyMessageResponse>,
             tonic::Status,
         >;
-        async fn bls_public_key_aggregate(
+        async fn bls_public_key_aggregation(
             &self,
-            request: tonic::Request<super::BlsPublicKeyAggregateRequest>,
+            request: tonic::Request<super::BlsPublicKeyAggregationRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::BlsPublicKeyAggregateResponse>,
+            tonic::Response<super::BlsPublicKeyAggregationResponse>,
             tonic::Status,
         >;
-        async fn bls_signature_aggregate(
+        async fn bls_signature_aggregation(
             &self,
-            request: tonic::Request<super::BlsSignatureAggregateRequest>,
+            request: tonic::Request<super::BlsSignatureAggregationRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::BlsSignatureAggregateResponse>,
+            tonic::Response<super::BlsSignatureAggregationResponse>,
             tonic::Status,
         >;
     }
@@ -2611,25 +2611,27 @@ pub mod utils_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Utils/BLSPublicKeyAggregate" => {
+                "/pactus.Utils/BLSPublicKeyAggregation" => {
                     #[allow(non_camel_case_types)]
-                    struct BLSPublicKeyAggregateSvc<T: Utils>(pub Arc<T>);
+                    struct BLSPublicKeyAggregationSvc<T: Utils>(pub Arc<T>);
                     impl<
                         T: Utils,
-                    > tonic::server::UnaryService<super::BlsPublicKeyAggregateRequest>
-                    for BLSPublicKeyAggregateSvc<T> {
-                        type Response = super::BlsPublicKeyAggregateResponse;
+                    > tonic::server::UnaryService<super::BlsPublicKeyAggregationRequest>
+                    for BLSPublicKeyAggregationSvc<T> {
+                        type Response = super::BlsPublicKeyAggregationResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::BlsPublicKeyAggregateRequest>,
+                            request: tonic::Request<
+                                super::BlsPublicKeyAggregationRequest,
+                            >,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).bls_public_key_aggregate(request).await
+                                (*inner).bls_public_key_aggregation(request).await
                             };
                             Box::pin(fut)
                         }
@@ -2641,7 +2643,7 @@ pub mod utils_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
-                        let method = BLSPublicKeyAggregateSvc(inner);
+                        let method = BLSPublicKeyAggregationSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -2657,25 +2659,27 @@ pub mod utils_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Utils/BLSSignatureAggregate" => {
+                "/pactus.Utils/BLSSignatureAggregation" => {
                     #[allow(non_camel_case_types)]
-                    struct BLSSignatureAggregateSvc<T: Utils>(pub Arc<T>);
+                    struct BLSSignatureAggregationSvc<T: Utils>(pub Arc<T>);
                     impl<
                         T: Utils,
-                    > tonic::server::UnaryService<super::BlsSignatureAggregateRequest>
-                    for BLSSignatureAggregateSvc<T> {
-                        type Response = super::BlsSignatureAggregateResponse;
+                    > tonic::server::UnaryService<super::BlsSignatureAggregationRequest>
+                    for BLSSignatureAggregationSvc<T> {
+                        type Response = super::BlsSignatureAggregationResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::BlsSignatureAggregateRequest>,
+                            request: tonic::Request<
+                                super::BlsSignatureAggregationRequest,
+                            >,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).bls_signature_aggregate(request).await
+                                (*inner).bls_signature_aggregation(request).await
                             };
                             Box::pin(fut)
                         }
@@ -2687,7 +2691,7 @@ pub mod utils_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
-                        let method = BLSSignatureAggregateSvc(inner);
+                        let method = BLSSignatureAggregationSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

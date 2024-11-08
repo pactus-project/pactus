@@ -21,8 +21,8 @@ const _ = grpc.SupportPackageIsVersion8
 const (
 	Utils_SignMessageWithPrivateKey_FullMethodName = "/pactus.Utils/SignMessageWithPrivateKey"
 	Utils_VerifyMessage_FullMethodName             = "/pactus.Utils/VerifyMessage"
-	Utils_BLSPublicKeyAggregate_FullMethodName     = "/pactus.Utils/BLSPublicKeyAggregate"
-	Utils_BLSSignatureAggregate_FullMethodName     = "/pactus.Utils/BLSSignatureAggregate"
+	Utils_BLSPublicKeyAggregation_FullMethodName   = "/pactus.Utils/BLSPublicKeyAggregation"
+	Utils_BLSSignatureAggregation_FullMethodName   = "/pactus.Utils/BLSSignatureAggregation"
 )
 
 // UtilsClient is the client API for Utils service.
@@ -36,10 +36,10 @@ type UtilsClient interface {
 	SignMessageWithPrivateKey(ctx context.Context, in *SignMessageWithPrivateKeyRequest, opts ...grpc.CallOption) (*SignMessageWithPrivateKeyResponse, error)
 	// VerifyMessage verifies signature with public key and message.
 	VerifyMessage(ctx context.Context, in *VerifyMessageRequest, opts ...grpc.CallOption) (*VerifyMessageResponse, error)
-	// BLSPublicKeyAggregate aggregates bls public keys.
-	BLSPublicKeyAggregate(ctx context.Context, in *BLSPublicKeyAggregateRequest, opts ...grpc.CallOption) (*BLSPublicKeyAggregateResponse, error)
-	// BLSSignatureAggregate aggregates bls signatures.
-	BLSSignatureAggregate(ctx context.Context, in *BLSSignatureAggregateRequest, opts ...grpc.CallOption) (*BLSSignatureAggregateResponse, error)
+	// BLSPublicKeyAggregation aggregates bls public keys.
+	BLSPublicKeyAggregation(ctx context.Context, in *BLSPublicKeyAggregationRequest, opts ...grpc.CallOption) (*BLSPublicKeyAggregationResponse, error)
+	// BLSSignatureAggregation aggregates bls signatures.
+	BLSSignatureAggregation(ctx context.Context, in *BLSSignatureAggregationRequest, opts ...grpc.CallOption) (*BLSSignatureAggregationResponse, error)
 }
 
 type utilsClient struct {
@@ -70,20 +70,20 @@ func (c *utilsClient) VerifyMessage(ctx context.Context, in *VerifyMessageReques
 	return out, nil
 }
 
-func (c *utilsClient) BLSPublicKeyAggregate(ctx context.Context, in *BLSPublicKeyAggregateRequest, opts ...grpc.CallOption) (*BLSPublicKeyAggregateResponse, error) {
+func (c *utilsClient) BLSPublicKeyAggregation(ctx context.Context, in *BLSPublicKeyAggregationRequest, opts ...grpc.CallOption) (*BLSPublicKeyAggregationResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BLSPublicKeyAggregateResponse)
-	err := c.cc.Invoke(ctx, Utils_BLSPublicKeyAggregate_FullMethodName, in, out, cOpts...)
+	out := new(BLSPublicKeyAggregationResponse)
+	err := c.cc.Invoke(ctx, Utils_BLSPublicKeyAggregation_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *utilsClient) BLSSignatureAggregate(ctx context.Context, in *BLSSignatureAggregateRequest, opts ...grpc.CallOption) (*BLSSignatureAggregateResponse, error) {
+func (c *utilsClient) BLSSignatureAggregation(ctx context.Context, in *BLSSignatureAggregationRequest, opts ...grpc.CallOption) (*BLSSignatureAggregationResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BLSSignatureAggregateResponse)
-	err := c.cc.Invoke(ctx, Utils_BLSSignatureAggregate_FullMethodName, in, out, cOpts...)
+	out := new(BLSSignatureAggregationResponse)
+	err := c.cc.Invoke(ctx, Utils_BLSSignatureAggregation_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -101,10 +101,10 @@ type UtilsServer interface {
 	SignMessageWithPrivateKey(context.Context, *SignMessageWithPrivateKeyRequest) (*SignMessageWithPrivateKeyResponse, error)
 	// VerifyMessage verifies signature with public key and message.
 	VerifyMessage(context.Context, *VerifyMessageRequest) (*VerifyMessageResponse, error)
-	// BLSPublicKeyAggregate aggregates bls public keys.
-	BLSPublicKeyAggregate(context.Context, *BLSPublicKeyAggregateRequest) (*BLSPublicKeyAggregateResponse, error)
-	// BLSSignatureAggregate aggregates bls signatures.
-	BLSSignatureAggregate(context.Context, *BLSSignatureAggregateRequest) (*BLSSignatureAggregateResponse, error)
+	// BLSPublicKeyAggregation aggregates bls public keys.
+	BLSPublicKeyAggregation(context.Context, *BLSPublicKeyAggregationRequest) (*BLSPublicKeyAggregationResponse, error)
+	// BLSSignatureAggregation aggregates bls signatures.
+	BLSSignatureAggregation(context.Context, *BLSSignatureAggregationRequest) (*BLSSignatureAggregationResponse, error)
 }
 
 // UnimplementedUtilsServer should be embedded to have forward compatible implementations.
@@ -117,11 +117,11 @@ func (UnimplementedUtilsServer) SignMessageWithPrivateKey(context.Context, *Sign
 func (UnimplementedUtilsServer) VerifyMessage(context.Context, *VerifyMessageRequest) (*VerifyMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyMessage not implemented")
 }
-func (UnimplementedUtilsServer) BLSPublicKeyAggregate(context.Context, *BLSPublicKeyAggregateRequest) (*BLSPublicKeyAggregateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BLSPublicKeyAggregate not implemented")
+func (UnimplementedUtilsServer) BLSPublicKeyAggregation(context.Context, *BLSPublicKeyAggregationRequest) (*BLSPublicKeyAggregationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BLSPublicKeyAggregation not implemented")
 }
-func (UnimplementedUtilsServer) BLSSignatureAggregate(context.Context, *BLSSignatureAggregateRequest) (*BLSSignatureAggregateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BLSSignatureAggregate not implemented")
+func (UnimplementedUtilsServer) BLSSignatureAggregation(context.Context, *BLSSignatureAggregationRequest) (*BLSSignatureAggregationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BLSSignatureAggregation not implemented")
 }
 
 // UnsafeUtilsServer may be embedded to opt out of forward compatibility for this service.
@@ -171,38 +171,38 @@ func _Utils_VerifyMessage_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Utils_BLSPublicKeyAggregate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BLSPublicKeyAggregateRequest)
+func _Utils_BLSPublicKeyAggregation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BLSPublicKeyAggregationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UtilsServer).BLSPublicKeyAggregate(ctx, in)
+		return srv.(UtilsServer).BLSPublicKeyAggregation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Utils_BLSPublicKeyAggregate_FullMethodName,
+		FullMethod: Utils_BLSPublicKeyAggregation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UtilsServer).BLSPublicKeyAggregate(ctx, req.(*BLSPublicKeyAggregateRequest))
+		return srv.(UtilsServer).BLSPublicKeyAggregation(ctx, req.(*BLSPublicKeyAggregationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Utils_BLSSignatureAggregate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BLSSignatureAggregateRequest)
+func _Utils_BLSSignatureAggregation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BLSSignatureAggregationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UtilsServer).BLSSignatureAggregate(ctx, in)
+		return srv.(UtilsServer).BLSSignatureAggregation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Utils_BLSSignatureAggregate_FullMethodName,
+		FullMethod: Utils_BLSSignatureAggregation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UtilsServer).BLSSignatureAggregate(ctx, req.(*BLSSignatureAggregateRequest))
+		return srv.(UtilsServer).BLSSignatureAggregation(ctx, req.(*BLSSignatureAggregationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -223,12 +223,12 @@ var Utils_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Utils_VerifyMessage_Handler,
 		},
 		{
-			MethodName: "BLSPublicKeyAggregate",
-			Handler:    _Utils_BLSPublicKeyAggregate_Handler,
+			MethodName: "BLSPublicKeyAggregation",
+			Handler:    _Utils_BLSPublicKeyAggregation_Handler,
 		},
 		{
-			MethodName: "BLSSignatureAggregate",
-			Handler:    _Utils_BLSSignatureAggregate_Handler,
+			MethodName: "BLSSignatureAggregation",
+			Handler:    _Utils_BLSSignatureAggregation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

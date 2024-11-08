@@ -35,25 +35,25 @@ class VerifyMessageResponse(_message.Message):
     is_valid: bool
     def __init__(self, is_valid: bool = ...) -> None: ...
 
-class BLSPublicKeyAggregateRequest(_message.Message):
+class BLSPublicKeyAggregationRequest(_message.Message):
     __slots__ = ("public_keys",)
     PUBLIC_KEYS_FIELD_NUMBER: _ClassVar[int]
     public_keys: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, public_keys: _Optional[_Iterable[str]] = ...) -> None: ...
 
-class BLSPublicKeyAggregateResponse(_message.Message):
+class BLSPublicKeyAggregationResponse(_message.Message):
     __slots__ = ("public_key",)
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
     public_key: str
     def __init__(self, public_key: _Optional[str] = ...) -> None: ...
 
-class BLSSignatureAggregateRequest(_message.Message):
+class BLSSignatureAggregationRequest(_message.Message):
     __slots__ = ("signatures",)
     SIGNATURES_FIELD_NUMBER: _ClassVar[int]
     signatures: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, signatures: _Optional[_Iterable[str]] = ...) -> None: ...
 
-class BLSSignatureAggregateResponse(_message.Message):
+class BLSSignatureAggregationResponse(_message.Message):
     __slots__ = ("signature",)
     SIGNATURE_FIELD_NUMBER: _ClassVar[int]
     signature: str

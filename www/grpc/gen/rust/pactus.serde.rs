@@ -384,7 +384,7 @@ impl<'de> serde::Deserialize<'de> for AddressType {
         deserializer.deserialize_any(GeneratedVisitor)
     }
 }
-impl serde::Serialize for BlsPublicKeyAggregateRequest {
+impl serde::Serialize for BlsPublicKeyAggregationRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -395,14 +395,14 @@ impl serde::Serialize for BlsPublicKeyAggregateRequest {
         if !self.public_keys.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("pactus.BLSPublicKeyAggregateRequest", len)?;
+        let mut struct_ser = serializer.serialize_struct("pactus.BLSPublicKeyAggregationRequest", len)?;
         if !self.public_keys.is_empty() {
             struct_ser.serialize_field("publicKeys", &self.public_keys)?;
         }
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregateRequest {
+impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregationRequest {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -447,13 +447,13 @@ impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregateRequest {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = BlsPublicKeyAggregateRequest;
+            type Value = BlsPublicKeyAggregationRequest;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.BLSPublicKeyAggregateRequest")
+                formatter.write_str("struct pactus.BLSPublicKeyAggregationRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlsPublicKeyAggregateRequest, V::Error>
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlsPublicKeyAggregationRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -468,15 +468,15 @@ impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregateRequest {
                         }
                     }
                 }
-                Ok(BlsPublicKeyAggregateRequest {
+                Ok(BlsPublicKeyAggregationRequest {
                     public_keys: public_keys__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.BLSPublicKeyAggregateRequest", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.BLSPublicKeyAggregationRequest", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for BlsPublicKeyAggregateResponse {
+impl serde::Serialize for BlsPublicKeyAggregationResponse {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -487,14 +487,14 @@ impl serde::Serialize for BlsPublicKeyAggregateResponse {
         if !self.public_key.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("pactus.BLSPublicKeyAggregateResponse", len)?;
+        let mut struct_ser = serializer.serialize_struct("pactus.BLSPublicKeyAggregationResponse", len)?;
         if !self.public_key.is_empty() {
             struct_ser.serialize_field("publicKey", &self.public_key)?;
         }
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregateResponse {
+impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregationResponse {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -539,13 +539,13 @@ impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregateResponse {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = BlsPublicKeyAggregateResponse;
+            type Value = BlsPublicKeyAggregationResponse;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.BLSPublicKeyAggregateResponse")
+                formatter.write_str("struct pactus.BLSPublicKeyAggregationResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlsPublicKeyAggregateResponse, V::Error>
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlsPublicKeyAggregationResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -560,15 +560,15 @@ impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregateResponse {
                         }
                     }
                 }
-                Ok(BlsPublicKeyAggregateResponse {
+                Ok(BlsPublicKeyAggregationResponse {
                     public_key: public_key__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.BLSPublicKeyAggregateResponse", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.BLSPublicKeyAggregationResponse", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for BlsSignatureAggregateRequest {
+impl serde::Serialize for BlsSignatureAggregationRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -579,14 +579,14 @@ impl serde::Serialize for BlsSignatureAggregateRequest {
         if !self.signatures.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("pactus.BLSSignatureAggregateRequest", len)?;
+        let mut struct_ser = serializer.serialize_struct("pactus.BLSSignatureAggregationRequest", len)?;
         if !self.signatures.is_empty() {
             struct_ser.serialize_field("signatures", &self.signatures)?;
         }
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for BlsSignatureAggregateRequest {
+impl<'de> serde::Deserialize<'de> for BlsSignatureAggregationRequest {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -630,13 +630,13 @@ impl<'de> serde::Deserialize<'de> for BlsSignatureAggregateRequest {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = BlsSignatureAggregateRequest;
+            type Value = BlsSignatureAggregationRequest;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.BLSSignatureAggregateRequest")
+                formatter.write_str("struct pactus.BLSSignatureAggregationRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlsSignatureAggregateRequest, V::Error>
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlsSignatureAggregationRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -651,15 +651,15 @@ impl<'de> serde::Deserialize<'de> for BlsSignatureAggregateRequest {
                         }
                     }
                 }
-                Ok(BlsSignatureAggregateRequest {
+                Ok(BlsSignatureAggregationRequest {
                     signatures: signatures__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.BLSSignatureAggregateRequest", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.BLSSignatureAggregationRequest", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for BlsSignatureAggregateResponse {
+impl serde::Serialize for BlsSignatureAggregationResponse {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -670,14 +670,14 @@ impl serde::Serialize for BlsSignatureAggregateResponse {
         if !self.signature.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("pactus.BLSSignatureAggregateResponse", len)?;
+        let mut struct_ser = serializer.serialize_struct("pactus.BLSSignatureAggregationResponse", len)?;
         if !self.signature.is_empty() {
             struct_ser.serialize_field("signature", &self.signature)?;
         }
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for BlsSignatureAggregateResponse {
+impl<'de> serde::Deserialize<'de> for BlsSignatureAggregationResponse {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -721,13 +721,13 @@ impl<'de> serde::Deserialize<'de> for BlsSignatureAggregateResponse {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = BlsSignatureAggregateResponse;
+            type Value = BlsSignatureAggregationResponse;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.BLSSignatureAggregateResponse")
+                formatter.write_str("struct pactus.BLSSignatureAggregationResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlsSignatureAggregateResponse, V::Error>
+            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlsSignatureAggregationResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -742,12 +742,12 @@ impl<'de> serde::Deserialize<'de> for BlsSignatureAggregateResponse {
                         }
                     }
                 }
-                Ok(BlsSignatureAggregateResponse {
+                Ok(BlsSignatureAggregationResponse {
                     signature: signature__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.BLSSignatureAggregateResponse", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.BLSSignatureAggregationResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for BlockHeaderInfo {

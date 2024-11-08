@@ -1584,7 +1584,7 @@
       "default": "ADDRESS_TYPE_TREASURY",
       "description": "Enum for the address type.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password."
     },
-    "pactusBLSPublicKeyAggregateResponse": {
+    "pactusBLSPublicKeyAggregationResponse": {
       "type": "object",
       "properties": {
         "publicKey": {
@@ -1594,7 +1594,7 @@
       },
       "description": "Response message containing the aggregated public key."
     },
-    "pactusBLSSignatureAggregateResponse": {
+    "pactusBLSSignatureAggregationResponse": {
       "type": "object",
       "properties": {
         "signature": {

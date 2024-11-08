@@ -1014,7 +1014,7 @@ pub struct VerifyMessageResponse {
 /// Request message for aggregating BLS public keys.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct BlsPublicKeyAggregateRequest {
+pub struct BlsPublicKeyAggregationRequest {
     /// The public keys to aggregate.
     #[prost(string, repeated, tag="1")]
     pub public_keys: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
@@ -1022,7 +1022,7 @@ pub struct BlsPublicKeyAggregateRequest {
 /// Response message containing the aggregated public key.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct BlsPublicKeyAggregateResponse {
+pub struct BlsPublicKeyAggregationResponse {
     /// The aggregated public key.
     #[prost(string, tag="1")]
     pub public_key: ::prost::alloc::string::String,
@@ -1030,7 +1030,7 @@ pub struct BlsPublicKeyAggregateResponse {
 /// Request message for aggregating BLS signatures.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct BlsSignatureAggregateRequest {
+pub struct BlsSignatureAggregationRequest {
     /// The signatures to aggregate.
     #[prost(string, repeated, tag="1")]
     pub signatures: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
@@ -1038,7 +1038,7 @@ pub struct BlsSignatureAggregateRequest {
 /// Response message containing the aggregated signature.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct BlsSignatureAggregateResponse {
+pub struct BlsSignatureAggregationResponse {
     /// The aggregated signature.
     #[prost(string, tag="1")]
     pub signature: ::prost::alloc::string::String,

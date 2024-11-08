@@ -116,12 +116,12 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <span class="rpc-badge"></span> VerifyMessage</a>
         </li>
         <li>
-          <a href="#pactus.Utils.BLSPublicKeyAggregate">
-          <span class="rpc-badge"></span> BLSPublicKeyAggregate</a>
+          <a href="#pactus.Utils.BLSPublicKeyAggregation">
+          <span class="rpc-badge"></span> BLSPublicKeyAggregation</a>
         </li>
         <li>
-          <a href="#pactus.Utils.BLSSignatureAggregate">
-          <span class="rpc-badge"></span> BLSSignatureAggregate</a>
+          <a href="#pactus.Utils.BLSSignatureAggregation">
+          <span class="rpc-badge"></span> BLSSignatureAggregation</a>
         </li>
         </ul>
     </li>
@@ -2734,11 +2734,11 @@ signing and verification.</p>
      </tbody>
 </table>
 
-### BLSPublicKeyAggregate <span id="pactus.Utils.BLSPublicKeyAggregate" class="rpc-badge"></span>
+### BLSPublicKeyAggregation <span id="pactus.Utils.BLSPublicKeyAggregation" class="rpc-badge"></span>
 
-<p>BLSPublicKeyAggregate aggregates bls public keys.</p>
+<p>BLSPublicKeyAggregation aggregates bls public keys.</p>
 
-<h4>BLSPublicKeyAggregateRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<h4>BLSPublicKeyAggregationRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -2754,7 +2754,7 @@ signing and verification.</p>
   </tr>
   </tbody>
 </table>
-  <h4>BLSPublicKeyAggregateResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+  <h4>BLSPublicKeyAggregationResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -2771,11 +2771,11 @@ signing and verification.</p>
      </tbody>
 </table>
 
-### BLSSignatureAggregate <span id="pactus.Utils.BLSSignatureAggregate" class="rpc-badge"></span>
+### BLSSignatureAggregation <span id="pactus.Utils.BLSSignatureAggregation" class="rpc-badge"></span>
 
-<p>BLSSignatureAggregate aggregates bls signatures.</p>
+<p>BLSSignatureAggregation aggregates bls signatures.</p>
 
-<h4>BLSSignatureAggregateRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<h4>BLSSignatureAggregationRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -2791,7 +2791,7 @@ signing and verification.</p>
   </tr>
   </tbody>
 </table>
-  <h4>BLSSignatureAggregateResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+  <h4>BLSSignatureAggregationResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>

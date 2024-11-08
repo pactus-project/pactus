@@ -81,66 +81,66 @@ public final class UtilsGrpc {
     return getVerifyMessageMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateRequest,
-      pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateResponse> getBLSPublicKeyAggregateMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest,
+      pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse> getBLSPublicKeyAggregationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "BLSPublicKeyAggregate",
-      requestType = pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateRequest.class,
-      responseType = pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateResponse.class,
+      fullMethodName = SERVICE_NAME + '/' + "BLSPublicKeyAggregation",
+      requestType = pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest.class,
+      responseType = pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateRequest,
-      pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateResponse> getBLSPublicKeyAggregateMethod() {
-    io.grpc.MethodDescriptor<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateRequest, pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateResponse> getBLSPublicKeyAggregateMethod;
-    if ((getBLSPublicKeyAggregateMethod = UtilsGrpc.getBLSPublicKeyAggregateMethod) == null) {
+  public static io.grpc.MethodDescriptor<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest,
+      pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse> getBLSPublicKeyAggregationMethod() {
+    io.grpc.MethodDescriptor<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest, pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse> getBLSPublicKeyAggregationMethod;
+    if ((getBLSPublicKeyAggregationMethod = UtilsGrpc.getBLSPublicKeyAggregationMethod) == null) {
       synchronized (UtilsGrpc.class) {
-        if ((getBLSPublicKeyAggregateMethod = UtilsGrpc.getBLSPublicKeyAggregateMethod) == null) {
-          UtilsGrpc.getBLSPublicKeyAggregateMethod = getBLSPublicKeyAggregateMethod =
-              io.grpc.MethodDescriptor.<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateRequest, pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateResponse>newBuilder()
+        if ((getBLSPublicKeyAggregationMethod = UtilsGrpc.getBLSPublicKeyAggregationMethod) == null) {
+          UtilsGrpc.getBLSPublicKeyAggregationMethod = getBLSPublicKeyAggregationMethod =
+              io.grpc.MethodDescriptor.<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest, pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "BLSPublicKeyAggregate"))
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "BLSPublicKeyAggregation"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateRequest.getDefaultInstance()))
+                  pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new UtilsMethodDescriptorSupplier("BLSPublicKeyAggregate"))
+                  pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new UtilsMethodDescriptorSupplier("BLSPublicKeyAggregation"))
               .build();
         }
       }
     }
-    return getBLSPublicKeyAggregateMethod;
+    return getBLSPublicKeyAggregationMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.utils.UtilsOuterClass.BLSSignatureAggregateRequest,
-      pactus.utils.UtilsOuterClass.BLSSignatureAggregateResponse> getBLSSignatureAggregateMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest,
+      pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse> getBLSSignatureAggregationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "BLSSignatureAggregate",
-      requestType = pactus.utils.UtilsOuterClass.BLSSignatureAggregateRequest.class,
-      responseType = pactus.utils.UtilsOuterClass.BLSSignatureAggregateResponse.class,
+      fullMethodName = SERVICE_NAME + '/' + "BLSSignatureAggregation",
+      requestType = pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest.class,
+      responseType = pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.utils.UtilsOuterClass.BLSSignatureAggregateRequest,
-      pactus.utils.UtilsOuterClass.BLSSignatureAggregateResponse> getBLSSignatureAggregateMethod() {
-    io.grpc.MethodDescriptor<pactus.utils.UtilsOuterClass.BLSSignatureAggregateRequest, pactus.utils.UtilsOuterClass.BLSSignatureAggregateResponse> getBLSSignatureAggregateMethod;
-    if ((getBLSSignatureAggregateMethod = UtilsGrpc.getBLSSignatureAggregateMethod) == null) {
+  public static io.grpc.MethodDescriptor<pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest,
+      pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse> getBLSSignatureAggregationMethod() {
+    io.grpc.MethodDescriptor<pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest, pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse> getBLSSignatureAggregationMethod;
+    if ((getBLSSignatureAggregationMethod = UtilsGrpc.getBLSSignatureAggregationMethod) == null) {
       synchronized (UtilsGrpc.class) {
-        if ((getBLSSignatureAggregateMethod = UtilsGrpc.getBLSSignatureAggregateMethod) == null) {
-          UtilsGrpc.getBLSSignatureAggregateMethod = getBLSSignatureAggregateMethod =
-              io.grpc.MethodDescriptor.<pactus.utils.UtilsOuterClass.BLSSignatureAggregateRequest, pactus.utils.UtilsOuterClass.BLSSignatureAggregateResponse>newBuilder()
+        if ((getBLSSignatureAggregationMethod = UtilsGrpc.getBLSSignatureAggregationMethod) == null) {
+          UtilsGrpc.getBLSSignatureAggregationMethod = getBLSSignatureAggregationMethod =
+              io.grpc.MethodDescriptor.<pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest, pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "BLSSignatureAggregate"))
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "BLSSignatureAggregation"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.utils.UtilsOuterClass.BLSSignatureAggregateRequest.getDefaultInstance()))
+                  pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.utils.UtilsOuterClass.BLSSignatureAggregateResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new UtilsMethodDescriptorSupplier("BLSSignatureAggregate"))
+                  pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new UtilsMethodDescriptorSupplier("BLSSignatureAggregation"))
               .build();
         }
       }
     }
-    return getBLSSignatureAggregateMethod;
+    return getBLSSignatureAggregationMethod;
   }
 
   /**
@@ -217,22 +217,22 @@ public final class UtilsGrpc {
 
     /**
      * <pre>
-     * BLSPublicKeyAggregate aggregates bls public keys.
+     * BLSPublicKeyAggregation aggregates bls public keys.
      * </pre>
      */
-    public void bLSPublicKeyAggregate(pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateRequest request,
-        io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getBLSPublicKeyAggregateMethod(), responseObserver);
+    public void bLSPublicKeyAggregation(pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest request,
+        io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getBLSPublicKeyAggregationMethod(), responseObserver);
     }
 
     /**
      * <pre>
-     * BLSSignatureAggregate aggregates bls signatures.
+     * BLSSignatureAggregation aggregates bls signatures.
      * </pre>
      */
-    public void bLSSignatureAggregate(pactus.utils.UtilsOuterClass.BLSSignatureAggregateRequest request,
-        io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.BLSSignatureAggregateResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getBLSSignatureAggregateMethod(), responseObserver);
+    public void bLSSignatureAggregation(pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest request,
+        io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getBLSSignatureAggregationMethod(), responseObserver);
     }
 
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
@@ -252,19 +252,19 @@ public final class UtilsGrpc {
                 pactus.utils.UtilsOuterClass.VerifyMessageResponse>(
                   this, METHODID_VERIFY_MESSAGE)))
           .addMethod(
-            getBLSPublicKeyAggregateMethod(),
+            getBLSPublicKeyAggregationMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateRequest,
-                pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateResponse>(
-                  this, METHODID_BLSPUBLIC_KEY_AGGREGATE)))
+                pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest,
+                pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse>(
+                  this, METHODID_BLSPUBLIC_KEY_AGGREGATION)))
           .addMethod(
-            getBLSSignatureAggregateMethod(),
+            getBLSSignatureAggregationMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                pactus.utils.UtilsOuterClass.BLSSignatureAggregateRequest,
-                pactus.utils.UtilsOuterClass.BLSSignatureAggregateResponse>(
-                  this, METHODID_BLSSIGNATURE_AGGREGATE)))
+                pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest,
+                pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse>(
+                  this, METHODID_BLSSIGNATURE_AGGREGATION)))
           .build();
     }
   }
@@ -311,24 +311,24 @@ public final class UtilsGrpc {
 
     /**
      * <pre>
-     * BLSPublicKeyAggregate aggregates bls public keys.
+     * BLSPublicKeyAggregation aggregates bls public keys.
      * </pre>
      */
-    public void bLSPublicKeyAggregate(pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateRequest request,
-        io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateResponse> responseObserver) {
+    public void bLSPublicKeyAggregation(pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest request,
+        io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getBLSPublicKeyAggregateMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getBLSPublicKeyAggregationMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      * <pre>
-     * BLSSignatureAggregate aggregates bls signatures.
+     * BLSSignatureAggregation aggregates bls signatures.
      * </pre>
      */
-    public void bLSSignatureAggregate(pactus.utils.UtilsOuterClass.BLSSignatureAggregateRequest request,
-        io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.BLSSignatureAggregateResponse> responseObserver) {
+    public void bLSSignatureAggregation(pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest request,
+        io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getBLSSignatureAggregateMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getBLSSignatureAggregationMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -372,22 +372,22 @@ public final class UtilsGrpc {
 
     /**
      * <pre>
-     * BLSPublicKeyAggregate aggregates bls public keys.
+     * BLSPublicKeyAggregation aggregates bls public keys.
      * </pre>
      */
-    public pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateResponse bLSPublicKeyAggregate(pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateRequest request) {
+    public pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse bLSPublicKeyAggregation(pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getBLSPublicKeyAggregateMethod(), getCallOptions(), request);
+          getChannel(), getBLSPublicKeyAggregationMethod(), getCallOptions(), request);
     }
 
     /**
      * <pre>
-     * BLSSignatureAggregate aggregates bls signatures.
+     * BLSSignatureAggregation aggregates bls signatures.
      * </pre>
      */
-    public pactus.utils.UtilsOuterClass.BLSSignatureAggregateResponse bLSSignatureAggregate(pactus.utils.UtilsOuterClass.BLSSignatureAggregateRequest request) {
+    public pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse bLSSignatureAggregation(pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getBLSSignatureAggregateMethod(), getCallOptions(), request);
+          getChannel(), getBLSSignatureAggregationMethod(), getCallOptions(), request);
     }
   }
 
@@ -433,31 +433,31 @@ public final class UtilsGrpc {
 
     /**
      * <pre>
-     * BLSPublicKeyAggregate aggregates bls public keys.
+     * BLSPublicKeyAggregation aggregates bls public keys.
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateResponse> bLSPublicKeyAggregate(
-        pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse> bLSPublicKeyAggregation(
+        pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getBLSPublicKeyAggregateMethod(), getCallOptions()), request);
+          getChannel().newCall(getBLSPublicKeyAggregationMethod(), getCallOptions()), request);
     }
 
     /**
      * <pre>
-     * BLSSignatureAggregate aggregates bls signatures.
+     * BLSSignatureAggregation aggregates bls signatures.
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.utils.UtilsOuterClass.BLSSignatureAggregateResponse> bLSSignatureAggregate(
-        pactus.utils.UtilsOuterClass.BLSSignatureAggregateRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse> bLSSignatureAggregation(
+        pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getBLSSignatureAggregateMethod(), getCallOptions()), request);
+          getChannel().newCall(getBLSSignatureAggregationMethod(), getCallOptions()), request);
     }
   }
 
   private static final int METHODID_SIGN_MESSAGE_WITH_PRIVATE_KEY = 0;
   private static final int METHODID_VERIFY_MESSAGE = 1;
-  private static final int METHODID_BLSPUBLIC_KEY_AGGREGATE = 2;
-  private static final int METHODID_BLSSIGNATURE_AGGREGATE = 3;
+  private static final int METHODID_BLSPUBLIC_KEY_AGGREGATION = 2;
+  private static final int METHODID_BLSSIGNATURE_AGGREGATION = 3;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -484,13 +484,13 @@ public final class UtilsGrpc {
           serviceImpl.verifyMessage((pactus.utils.UtilsOuterClass.VerifyMessageRequest) request,
               (io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.VerifyMessageResponse>) responseObserver);
           break;
-        case METHODID_BLSPUBLIC_KEY_AGGREGATE:
-          serviceImpl.bLSPublicKeyAggregate((pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregateResponse>) responseObserver);
+        case METHODID_BLSPUBLIC_KEY_AGGREGATION:
+          serviceImpl.bLSPublicKeyAggregation((pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse>) responseObserver);
           break;
-        case METHODID_BLSSIGNATURE_AGGREGATE:
-          serviceImpl.bLSSignatureAggregate((pactus.utils.UtilsOuterClass.BLSSignatureAggregateRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.BLSSignatureAggregateResponse>) responseObserver);
+        case METHODID_BLSSIGNATURE_AGGREGATION:
+          serviceImpl.bLSSignatureAggregation((pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -555,8 +555,8 @@ public final class UtilsGrpc {
               .setSchemaDescriptor(new UtilsFileDescriptorSupplier())
               .addMethod(getSignMessageWithPrivateKeyMethod())
               .addMethod(getVerifyMessageMethod())
-              .addMethod(getBLSPublicKeyAggregateMethod())
-              .addMethod(getBLSSignatureAggregateMethod())
+              .addMethod(getBLSPublicKeyAggregationMethod())
+              .addMethod(getBLSSignatureAggregationMethod())
               .build();
         }
       }

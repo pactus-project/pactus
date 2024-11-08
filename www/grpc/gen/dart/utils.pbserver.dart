@@ -18,15 +18,15 @@ export 'utils.pb.dart';
 abstract class UtilsServiceBase extends $pb.GeneratedService {
   $async.Future<$3.SignMessageWithPrivateKeyResponse> signMessageWithPrivateKey($pb.ServerContext ctx, $3.SignMessageWithPrivateKeyRequest request);
   $async.Future<$3.VerifyMessageResponse> verifyMessage($pb.ServerContext ctx, $3.VerifyMessageRequest request);
-  $async.Future<$3.BLSPublicKeyAggregateResponse> bLSPublicKeyAggregate($pb.ServerContext ctx, $3.BLSPublicKeyAggregateRequest request);
-  $async.Future<$3.BLSSignatureAggregateResponse> bLSSignatureAggregate($pb.ServerContext ctx, $3.BLSSignatureAggregateRequest request);
+  $async.Future<$3.BLSPublicKeyAggregationResponse> bLSPublicKeyAggregation($pb.ServerContext ctx, $3.BLSPublicKeyAggregationRequest request);
+  $async.Future<$3.BLSSignatureAggregationResponse> bLSSignatureAggregation($pb.ServerContext ctx, $3.BLSSignatureAggregationRequest request);
 
   $pb.GeneratedMessage createRequest($core.String method) {
     switch (method) {
       case 'SignMessageWithPrivateKey': return $3.SignMessageWithPrivateKeyRequest();
       case 'VerifyMessage': return $3.VerifyMessageRequest();
-      case 'BLSPublicKeyAggregate': return $3.BLSPublicKeyAggregateRequest();
-      case 'BLSSignatureAggregate': return $3.BLSSignatureAggregateRequest();
+      case 'BLSPublicKeyAggregation': return $3.BLSPublicKeyAggregationRequest();
+      case 'BLSSignatureAggregation': return $3.BLSSignatureAggregationRequest();
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
@@ -35,8 +35,8 @@ abstract class UtilsServiceBase extends $pb.GeneratedService {
     switch (method) {
       case 'SignMessageWithPrivateKey': return this.signMessageWithPrivateKey(ctx, request as $3.SignMessageWithPrivateKeyRequest);
       case 'VerifyMessage': return this.verifyMessage(ctx, request as $3.VerifyMessageRequest);
-      case 'BLSPublicKeyAggregate': return this.bLSPublicKeyAggregate(ctx, request as $3.BLSPublicKeyAggregateRequest);
-      case 'BLSSignatureAggregate': return this.bLSSignatureAggregate(ctx, request as $3.BLSSignatureAggregateRequest);
+      case 'BLSPublicKeyAggregation': return this.bLSPublicKeyAggregation(ctx, request as $3.BLSPublicKeyAggregationRequest);
+      case 'BLSSignatureAggregation': return this.bLSSignatureAggregation(ctx, request as $3.BLSSignatureAggregationRequest);
       default: throw $core.ArgumentError('Unknown method: $method');
     }
   }
