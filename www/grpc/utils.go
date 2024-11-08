@@ -59,9 +59,9 @@ func (*utilServer) VerifyMessage(_ context.Context,
 	}, nil
 }
 
-func (*utilServer) BLSPublicKeyAggregate(_ context.Context,
-	req *pactus.BLSPublicKeyAggregateRequest,
-) (*pactus.BLSPublicKeyAggregateResponse, error) {
+func (*utilServer) BLSPublicKeyAggregation(_ context.Context,
+	req *pactus.BLSPublicKeyAggregationRequest,
+) (*pactus.BLSPublicKeyAggregationResponse, error) {
 	if len(req.PublicKeys) == 0 {
 		return nil, status.Error(codes.InvalidArgument, "no public keys provided")
 	}
@@ -74,14 +74,14 @@ func (*utilServer) BLSPublicKeyAggregate(_ context.Context,
 		pubs[i] = p
 	}
 
-	return &pactus.BLSPublicKeyAggregateResponse{
+	return &pactus.BLSPublicKeyAggregationResponse{
 		PublicKey: bls.PublicKeyAggregate(pubs...).String(),
 	}, nil
 }
 
-func (*utilServer) BLSSignatureAggregate(_ context.Context,
-	req *pactus.BLSSignatureAggregateRequest,
-) (*pactus.BLSSignatureAggregateResponse, error) {
+func (*utilServer) BLSSignatureAggregation(_ context.Context,
+	req *pactus.BLSSignatureAggregationRequest,
+) (*pactus.BLSSignatureAggregationResponse, error) {
 	if len(req.Signatures) == 0 {
 		return nil, status.Error(codes.InvalidArgument, "no signatures provided")
 	}
@@ -94,7 +94,7 @@ func (*utilServer) BLSSignatureAggregate(_ context.Context,
 		sigs[i] = s
 	}
 
-	return &pactus.BLSSignatureAggregateResponse{
+	return &pactus.BLSSignatureAggregationResponse{
 		Signature: bls.SignatureAggregate(sigs...).String(),
 	}, nil
 }
