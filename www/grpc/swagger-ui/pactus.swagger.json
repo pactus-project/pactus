@@ -41,6 +41,78 @@
     "application/json"
   ],
   "paths": {
+    "/pactus/Utils/bls_public_key_aggregation": {
+      "get": {
+        "summary": "BLSPublicKeyAggregation aggregates bls public keys.",
+        "operationId": "Utils_BLSPublicKeyAggregation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusBLSPublicKeyAggregationResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "publicKeys",
+            "description": "The public keys to aggregate.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Utils"
+        ]
+      }
+    },
+    "/pactus/Utils/bls_signature_aggregation": {
+      "get": {
+        "summary": "BLSSignatureAggregation aggregates bls signatures.",
+        "operationId": "Utils_BLSSignatureAggregation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusBLSSignatureAggregationResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "signatures",
+            "description": "The signatures to aggregate.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Utils"
+        ]
+      }
+    },
     "/pactus/Utils/sign_message_with_private_key": {
       "get": {
         "summary": "SignMessageWithPrivateKey signs message with provided private key.",
