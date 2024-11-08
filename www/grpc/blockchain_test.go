@@ -379,3 +379,107 @@ func TestConsensusInfo(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()
 }
+
+func TestGetTxPoolContent(t *testing.T) {
+	td := setup(t, nil)
+	conn, client := td.blockchainClient(t)
+
+	_ = td.mockState.AddPendingTx(td.GenerateTestBondTx())
+	_ = td.mockState.AddPendingTx(td.GenerateTestBondTx())
+	_ = td.mockState.AddPendingTx(td.GenerateTestTransferTx())
+	_ = td.mockState.AddPendingTx(td.GenerateTestUnbondTx())
+	_ = td.mockState.AddPendingTx(td.GenerateTestSortitionTx())
+	_ = td.mockState.AddPendingTx(td.GenerateTestSortitionTx())
+	_ = td.mockState.AddPendingTx(td.GenerateTestTransferTx())
+	_ = td.mockState.AddPendingTx(td.GenerateTestWithdrawTx())
+
+	t.Run("Should return all transactions", func(t *testing.T) {
+		in := &pactus.GetTxPoolContentRequest{
+			PayloadType: pactus.PayloadType_UNKNOWN,
+		}
+		resp, err := client.GetTxPoolContent(context.Background(), in)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, resp)
+
+		assert.Equal(t, 8, len(resp.Txs))
+	})
+
+	t.Run("Should return all Bond transactions", func(t *testing.T) {
+		in := &pactus.GetTxPoolContentRequest{
+			PayloadType: pactus.PayloadType_BOND_PAYLOAD,
+		}
+		resp, err := client.GetTxPoolContent(context.Background(), in)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, resp)
+		assert.Greater(t, len(resp.Txs), 0)
+
+		for _, tx := range resp.Txs {
+			assert.Equal(t, pactus.PayloadType_BOND_PAYLOAD, tx.PayloadType)
+		}
+	})
+
+	t.Run("Should return all Transfer transactions", func(t *testing.T) {
+		in := &pactus.GetTxPoolContentRequest{
+			PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+		}
+		resp, err := client.GetTxPoolContent(context.Background(), in)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, resp)
+		assert.Greater(t, len(resp.Txs), 0)
+
+		for _, tx := range resp.Txs {
+			assert.Equal(t, pactus.PayloadType_TRANSFER_PAYLOAD, tx.PayloadType)
+		}
+	})
+
+	t.Run("Should return all Unbond transactions", func(t *testing.T) {
+		in := &pactus.GetTxPoolContentRequest{
+			PayloadType: pactus.PayloadType_UNBOND_PAYLOAD,
+		}
+		resp, err := client.GetTxPoolContent(context.Background(), in)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, resp)
+		assert.Greater(t, len(resp.Txs), 0)
+
+		for _, tx := range resp.Txs {
+			assert.Equal(t, pactus.PayloadType_UNBOND_PAYLOAD, tx.PayloadType)
+		}
+	})
+
+	t.Run("Should return all Sortition transactions", func(t *testing.T) {
+		in := &pactus.GetTxPoolContentRequest{
+			PayloadType: pactus.PayloadType_SORTITION_PAYLOAD,
+		}
+		resp, err := client.GetTxPoolContent(context.Background(), in)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, resp)
+		assert.Greater(t, len(resp.Txs), 0)
+
+		for _, tx := range resp.Txs {
+			assert.Equal(t, pactus.PayloadType_SORTITION_PAYLOAD, tx.PayloadType)
+		}
+	})
+
+	t.Run("Should return all Withdraw transactions", func(t *testing.T) {
+		in := &pactus.GetTxPoolContentRequest{
+			PayloadType: pactus.PayloadType_WITHDRAW_PAYLOAD,
+		}
+		resp, err := client.GetTxPoolContent(context.Background(), in)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, resp)
+		assert.Greater(t, len(resp.Txs), 0)
+
+		for _, tx := range resp.Txs {
+			assert.Equal(t, pactus.PayloadType_WITHDRAW_PAYLOAD, tx.PayloadType)
+		}
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}

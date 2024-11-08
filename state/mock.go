@@ -255,8 +255,8 @@ func (*MockState) AvailabilityScore(_ int32) float64 {
 	return 0.987
 }
 
-func (*MockState) AllPendingTxs() []*tx.Tx {
-	return make([]*tx.Tx, 0)
+func (m *MockState) AllPendingTxs() []*tx.Tx {
+	return m.TestPool.Txs
 }
 
 func (m *MockState) IsPruned() bool {

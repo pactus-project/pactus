@@ -134,11 +134,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType,
 
 func newWallet(walletPath string, store *Store, offline bool, option *walletOpt) (*Wallet, error) {
 	if !store.Network.IsMainnet() {
-		crypto.AddressHRP = "tpc"
-		crypto.PublicKeyHRP = "tpublic"
-		crypto.PrivateKeyHRP = "tsecret"
-		crypto.XPublicKeyHRP = "txpublic"
-		crypto.XPrivateKeyHRP = "txsecret"
+		crypto.ToTestnetHRP()
 	}
 
 	client := newGrpcClient(option.timeout, option.servers)
