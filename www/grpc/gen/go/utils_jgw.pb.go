@@ -70,5 +70,39 @@ func (s *UtilsJsonRPC) Methods() map[string]func(ctx context.Context, message js
 
 			return s.client.VerifyMessage(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
+
+		"pactus.utils.b_l_s_public_key_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(BLSPublicKeyAggregationRequest)
+
+			var jrpcData paramsAndHeadersUtils
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.BLSPublicKeyAggregation(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
+
+		"pactus.utils.b_l_s_signature_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(BLSSignatureAggregationRequest)
+
+			var jrpcData paramsAndHeadersUtils
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.BLSSignatureAggregation(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
 	}
 }

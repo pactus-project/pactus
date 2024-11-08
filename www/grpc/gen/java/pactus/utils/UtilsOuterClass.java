@@ -2847,6 +2847,2570 @@ public final class UtilsOuterClass {
 
   }
 
+  public interface BLSPublicKeyAggregationRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.BLSPublicKeyAggregationRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The public keys to aggregate.
+     * </pre>
+     *
+     * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+     * @return A list containing the publicKeys.
+     */
+    java.util.List<java.lang.String>
+        getPublicKeysList();
+    /**
+     * <pre>
+     * The public keys to aggregate.
+     * </pre>
+     *
+     * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+     * @return The count of publicKeys.
+     */
+    int getPublicKeysCount();
+    /**
+     * <pre>
+     * The public keys to aggregate.
+     * </pre>
+     *
+     * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+     * @param index The index of the element to return.
+     * @return The publicKeys at the given index.
+     */
+    java.lang.String getPublicKeys(int index);
+    /**
+     * <pre>
+     * The public keys to aggregate.
+     * </pre>
+     *
+     * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the publicKeys at the given index.
+     */
+    com.google.protobuf.ByteString
+        getPublicKeysBytes(int index);
+  }
+  /**
+   * <pre>
+   * Request message for aggregating BLS public keys.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.BLSPublicKeyAggregationRequest}
+   */
+  public static final class BLSPublicKeyAggregationRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.BLSPublicKeyAggregationRequest)
+      BLSPublicKeyAggregationRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use BLSPublicKeyAggregationRequest.newBuilder() to construct.
+    private BLSPublicKeyAggregationRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private BLSPublicKeyAggregationRequest() {
+      publicKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new BLSPublicKeyAggregationRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSPublicKeyAggregationRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSPublicKeyAggregationRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest.class, pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest.Builder.class);
+    }
+
+    public static final int PUBLIC_KEYS_FIELD_NUMBER = 1;
+    private com.google.protobuf.LazyStringList publicKeys_;
+    /**
+     * <pre>
+     * The public keys to aggregate.
+     * </pre>
+     *
+     * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+     * @return A list containing the publicKeys.
+     */
+    public com.google.protobuf.ProtocolStringList
+        getPublicKeysList() {
+      return publicKeys_;
+    }
+    /**
+     * <pre>
+     * The public keys to aggregate.
+     * </pre>
+     *
+     * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+     * @return The count of publicKeys.
+     */
+    public int getPublicKeysCount() {
+      return publicKeys_.size();
+    }
+    /**
+     * <pre>
+     * The public keys to aggregate.
+     * </pre>
+     *
+     * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+     * @param index The index of the element to return.
+     * @return The publicKeys at the given index.
+     */
+    public java.lang.String getPublicKeys(int index) {
+      return publicKeys_.get(index);
+    }
+    /**
+     * <pre>
+     * The public keys to aggregate.
+     * </pre>
+     *
+     * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the publicKeys at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getPublicKeysBytes(int index) {
+      return publicKeys_.getByteString(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < publicKeys_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, publicKeys_.getRaw(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < publicKeys_.size(); i++) {
+          dataSize += computeStringSizeNoTag(publicKeys_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getPublicKeysList().size();
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest)) {
+        return super.equals(obj);
+      }
+      pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest other = (pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest) obj;
+
+      if (!getPublicKeysList()
+          .equals(other.getPublicKeysList())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getPublicKeysCount() > 0) {
+        hash = (37 * hash) + PUBLIC_KEYS_FIELD_NUMBER;
+        hash = (53 * hash) + getPublicKeysList().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Request message for aggregating BLS public keys.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.BLSPublicKeyAggregationRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.BLSPublicKeyAggregationRequest)
+        pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSPublicKeyAggregationRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSPublicKeyAggregationRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest.class, pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest.Builder.class);
+      }
+
+      // Construct using pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        publicKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSPublicKeyAggregationRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest getDefaultInstanceForType() {
+        return pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest build() {
+        pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest buildPartial() {
+        pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest result = new pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          publicKeys_ = publicKeys_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.publicKeys_ = publicKeys_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest) {
+          return mergeFrom((pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest other) {
+        if (other == pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest.getDefaultInstance()) return this;
+        if (!other.publicKeys_.isEmpty()) {
+          if (publicKeys_.isEmpty()) {
+            publicKeys_ = other.publicKeys_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensurePublicKeysIsMutable();
+            publicKeys_.addAll(other.publicKeys_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                java.lang.String s = input.readStringRequireUtf8();
+                ensurePublicKeysIsMutable();
+                publicKeys_.add(s);
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private com.google.protobuf.LazyStringList publicKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensurePublicKeysIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          publicKeys_ = new com.google.protobuf.LazyStringArrayList(publicKeys_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <pre>
+       * The public keys to aggregate.
+       * </pre>
+       *
+       * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+       * @return A list containing the publicKeys.
+       */
+      public com.google.protobuf.ProtocolStringList
+          getPublicKeysList() {
+        return publicKeys_.getUnmodifiableView();
+      }
+      /**
+       * <pre>
+       * The public keys to aggregate.
+       * </pre>
+       *
+       * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+       * @return The count of publicKeys.
+       */
+      public int getPublicKeysCount() {
+        return publicKeys_.size();
+      }
+      /**
+       * <pre>
+       * The public keys to aggregate.
+       * </pre>
+       *
+       * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+       * @param index The index of the element to return.
+       * @return The publicKeys at the given index.
+       */
+      public java.lang.String getPublicKeys(int index) {
+        return publicKeys_.get(index);
+      }
+      /**
+       * <pre>
+       * The public keys to aggregate.
+       * </pre>
+       *
+       * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the publicKeys at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getPublicKeysBytes(int index) {
+        return publicKeys_.getByteString(index);
+      }
+      /**
+       * <pre>
+       * The public keys to aggregate.
+       * </pre>
+       *
+       * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+       * @param index The index to set the value at.
+       * @param value The publicKeys to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPublicKeys(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensurePublicKeysIsMutable();
+        publicKeys_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The public keys to aggregate.
+       * </pre>
+       *
+       * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+       * @param value The publicKeys to add.
+       * @return This builder for chaining.
+       */
+      public Builder addPublicKeys(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensurePublicKeysIsMutable();
+        publicKeys_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The public keys to aggregate.
+       * </pre>
+       *
+       * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+       * @param values The publicKeys to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllPublicKeys(
+          java.lang.Iterable<java.lang.String> values) {
+        ensurePublicKeysIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, publicKeys_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The public keys to aggregate.
+       * </pre>
+       *
+       * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPublicKeys() {
+        publicKeys_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The public keys to aggregate.
+       * </pre>
+       *
+       * <code>repeated string public_keys = 1 [json_name = "publicKeys"];</code>
+       * @param value The bytes of the publicKeys to add.
+       * @return This builder for chaining.
+       */
+      public Builder addPublicKeysBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        ensurePublicKeysIsMutable();
+        publicKeys_.add(value);
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.BLSPublicKeyAggregationRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.BLSPublicKeyAggregationRequest)
+    private static final pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest();
+    }
+
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<BLSPublicKeyAggregationRequest>
+        PARSER = new com.google.protobuf.AbstractParser<BLSPublicKeyAggregationRequest>() {
+      @java.lang.Override
+      public BLSPublicKeyAggregationRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<BLSPublicKeyAggregationRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BLSPublicKeyAggregationRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface BLSPublicKeyAggregationResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.BLSPublicKeyAggregationResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The aggregated public key.
+     * </pre>
+     *
+     * <code>string public_key = 1 [json_name = "publicKey"];</code>
+     * @return The publicKey.
+     */
+    java.lang.String getPublicKey();
+    /**
+     * <pre>
+     * The aggregated public key.
+     * </pre>
+     *
+     * <code>string public_key = 1 [json_name = "publicKey"];</code>
+     * @return The bytes for publicKey.
+     */
+    com.google.protobuf.ByteString
+        getPublicKeyBytes();
+  }
+  /**
+   * <pre>
+   * Response message containing the aggregated public key.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.BLSPublicKeyAggregationResponse}
+   */
+  public static final class BLSPublicKeyAggregationResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.BLSPublicKeyAggregationResponse)
+      BLSPublicKeyAggregationResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use BLSPublicKeyAggregationResponse.newBuilder() to construct.
+    private BLSPublicKeyAggregationResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private BLSPublicKeyAggregationResponse() {
+      publicKey_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new BLSPublicKeyAggregationResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSPublicKeyAggregationResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSPublicKeyAggregationResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse.class, pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse.Builder.class);
+    }
+
+    public static final int PUBLIC_KEY_FIELD_NUMBER = 1;
+    private volatile java.lang.Object publicKey_;
+    /**
+     * <pre>
+     * The aggregated public key.
+     * </pre>
+     *
+     * <code>string public_key = 1 [json_name = "publicKey"];</code>
+     * @return The publicKey.
+     */
+    @java.lang.Override
+    public java.lang.String getPublicKey() {
+      java.lang.Object ref = publicKey_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        publicKey_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The aggregated public key.
+     * </pre>
+     *
+     * <code>string public_key = 1 [json_name = "publicKey"];</code>
+     * @return The bytes for publicKey.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getPublicKeyBytes() {
+      java.lang.Object ref = publicKey_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        publicKey_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, publicKey_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, publicKey_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse)) {
+        return super.equals(obj);
+      }
+      pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse other = (pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse) obj;
+
+      if (!getPublicKey()
+          .equals(other.getPublicKey())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + PUBLIC_KEY_FIELD_NUMBER;
+      hash = (53 * hash) + getPublicKey().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Response message containing the aggregated public key.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.BLSPublicKeyAggregationResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.BLSPublicKeyAggregationResponse)
+        pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSPublicKeyAggregationResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSPublicKeyAggregationResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse.class, pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse.Builder.class);
+      }
+
+      // Construct using pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        publicKey_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSPublicKeyAggregationResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse getDefaultInstanceForType() {
+        return pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse build() {
+        pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse buildPartial() {
+        pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse result = new pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse(this);
+        result.publicKey_ = publicKey_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse) {
+          return mergeFrom((pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse other) {
+        if (other == pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse.getDefaultInstance()) return this;
+        if (!other.getPublicKey().isEmpty()) {
+          publicKey_ = other.publicKey_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                publicKey_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private java.lang.Object publicKey_ = "";
+      /**
+       * <pre>
+       * The aggregated public key.
+       * </pre>
+       *
+       * <code>string public_key = 1 [json_name = "publicKey"];</code>
+       * @return The publicKey.
+       */
+      public java.lang.String getPublicKey() {
+        java.lang.Object ref = publicKey_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          publicKey_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The aggregated public key.
+       * </pre>
+       *
+       * <code>string public_key = 1 [json_name = "publicKey"];</code>
+       * @return The bytes for publicKey.
+       */
+      public com.google.protobuf.ByteString
+          getPublicKeyBytes() {
+        java.lang.Object ref = publicKey_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          publicKey_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The aggregated public key.
+       * </pre>
+       *
+       * <code>string public_key = 1 [json_name = "publicKey"];</code>
+       * @param value The publicKey to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPublicKey(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        publicKey_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The aggregated public key.
+       * </pre>
+       *
+       * <code>string public_key = 1 [json_name = "publicKey"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPublicKey() {
+        
+        publicKey_ = getDefaultInstance().getPublicKey();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The aggregated public key.
+       * </pre>
+       *
+       * <code>string public_key = 1 [json_name = "publicKey"];</code>
+       * @param value The bytes for publicKey to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPublicKeyBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        publicKey_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.BLSPublicKeyAggregationResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.BLSPublicKeyAggregationResponse)
+    private static final pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse();
+    }
+
+    public static pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<BLSPublicKeyAggregationResponse>
+        PARSER = new com.google.protobuf.AbstractParser<BLSPublicKeyAggregationResponse>() {
+      @java.lang.Override
+      public BLSPublicKeyAggregationResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<BLSPublicKeyAggregationResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BLSPublicKeyAggregationResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface BLSSignatureAggregationRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.BLSSignatureAggregationRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The signatures to aggregate.
+     * </pre>
+     *
+     * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+     * @return A list containing the signatures.
+     */
+    java.util.List<java.lang.String>
+        getSignaturesList();
+    /**
+     * <pre>
+     * The signatures to aggregate.
+     * </pre>
+     *
+     * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+     * @return The count of signatures.
+     */
+    int getSignaturesCount();
+    /**
+     * <pre>
+     * The signatures to aggregate.
+     * </pre>
+     *
+     * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+     * @param index The index of the element to return.
+     * @return The signatures at the given index.
+     */
+    java.lang.String getSignatures(int index);
+    /**
+     * <pre>
+     * The signatures to aggregate.
+     * </pre>
+     *
+     * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the signatures at the given index.
+     */
+    com.google.protobuf.ByteString
+        getSignaturesBytes(int index);
+  }
+  /**
+   * <pre>
+   * Request message for aggregating BLS signatures.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.BLSSignatureAggregationRequest}
+   */
+  public static final class BLSSignatureAggregationRequest extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.BLSSignatureAggregationRequest)
+      BLSSignatureAggregationRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use BLSSignatureAggregationRequest.newBuilder() to construct.
+    private BLSSignatureAggregationRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private BLSSignatureAggregationRequest() {
+      signatures_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new BLSSignatureAggregationRequest();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSSignatureAggregationRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSSignatureAggregationRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest.class, pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest.Builder.class);
+    }
+
+    public static final int SIGNATURES_FIELD_NUMBER = 1;
+    private com.google.protobuf.LazyStringList signatures_;
+    /**
+     * <pre>
+     * The signatures to aggregate.
+     * </pre>
+     *
+     * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+     * @return A list containing the signatures.
+     */
+    public com.google.protobuf.ProtocolStringList
+        getSignaturesList() {
+      return signatures_;
+    }
+    /**
+     * <pre>
+     * The signatures to aggregate.
+     * </pre>
+     *
+     * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+     * @return The count of signatures.
+     */
+    public int getSignaturesCount() {
+      return signatures_.size();
+    }
+    /**
+     * <pre>
+     * The signatures to aggregate.
+     * </pre>
+     *
+     * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+     * @param index The index of the element to return.
+     * @return The signatures at the given index.
+     */
+    public java.lang.String getSignatures(int index) {
+      return signatures_.get(index);
+    }
+    /**
+     * <pre>
+     * The signatures to aggregate.
+     * </pre>
+     *
+     * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+     * @param index The index of the value to return.
+     * @return The bytes of the signatures at the given index.
+     */
+    public com.google.protobuf.ByteString
+        getSignaturesBytes(int index) {
+      return signatures_.getByteString(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      for (int i = 0; i < signatures_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, signatures_.getRaw(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < signatures_.size(); i++) {
+          dataSize += computeStringSizeNoTag(signatures_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getSignaturesList().size();
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest)) {
+        return super.equals(obj);
+      }
+      pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest other = (pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest) obj;
+
+      if (!getSignaturesList()
+          .equals(other.getSignaturesList())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getSignaturesCount() > 0) {
+        hash = (37 * hash) + SIGNATURES_FIELD_NUMBER;
+        hash = (53 * hash) + getSignaturesList().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Request message for aggregating BLS signatures.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.BLSSignatureAggregationRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.BLSSignatureAggregationRequest)
+        pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSSignatureAggregationRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSSignatureAggregationRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest.class, pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest.Builder.class);
+      }
+
+      // Construct using pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        signatures_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSSignatureAggregationRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest getDefaultInstanceForType() {
+        return pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest build() {
+        pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest buildPartial() {
+        pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest result = new pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          signatures_ = signatures_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.signatures_ = signatures_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest) {
+          return mergeFrom((pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest other) {
+        if (other == pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest.getDefaultInstance()) return this;
+        if (!other.signatures_.isEmpty()) {
+          if (signatures_.isEmpty()) {
+            signatures_ = other.signatures_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureSignaturesIsMutable();
+            signatures_.addAll(other.signatures_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                java.lang.String s = input.readStringRequireUtf8();
+                ensureSignaturesIsMutable();
+                signatures_.add(s);
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private com.google.protobuf.LazyStringList signatures_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureSignaturesIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          signatures_ = new com.google.protobuf.LazyStringArrayList(signatures_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <pre>
+       * The signatures to aggregate.
+       * </pre>
+       *
+       * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+       * @return A list containing the signatures.
+       */
+      public com.google.protobuf.ProtocolStringList
+          getSignaturesList() {
+        return signatures_.getUnmodifiableView();
+      }
+      /**
+       * <pre>
+       * The signatures to aggregate.
+       * </pre>
+       *
+       * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+       * @return The count of signatures.
+       */
+      public int getSignaturesCount() {
+        return signatures_.size();
+      }
+      /**
+       * <pre>
+       * The signatures to aggregate.
+       * </pre>
+       *
+       * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+       * @param index The index of the element to return.
+       * @return The signatures at the given index.
+       */
+      public java.lang.String getSignatures(int index) {
+        return signatures_.get(index);
+      }
+      /**
+       * <pre>
+       * The signatures to aggregate.
+       * </pre>
+       *
+       * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the signatures at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getSignaturesBytes(int index) {
+        return signatures_.getByteString(index);
+      }
+      /**
+       * <pre>
+       * The signatures to aggregate.
+       * </pre>
+       *
+       * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+       * @param index The index to set the value at.
+       * @param value The signatures to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSignatures(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureSignaturesIsMutable();
+        signatures_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The signatures to aggregate.
+       * </pre>
+       *
+       * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+       * @param value The signatures to add.
+       * @return This builder for chaining.
+       */
+      public Builder addSignatures(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureSignaturesIsMutable();
+        signatures_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The signatures to aggregate.
+       * </pre>
+       *
+       * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+       * @param values The signatures to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllSignatures(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureSignaturesIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, signatures_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The signatures to aggregate.
+       * </pre>
+       *
+       * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSignatures() {
+        signatures_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The signatures to aggregate.
+       * </pre>
+       *
+       * <code>repeated string signatures = 1 [json_name = "signatures"];</code>
+       * @param value The bytes of the signatures to add.
+       * @return This builder for chaining.
+       */
+      public Builder addSignaturesBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        ensureSignaturesIsMutable();
+        signatures_.add(value);
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.BLSSignatureAggregationRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.BLSSignatureAggregationRequest)
+    private static final pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest();
+    }
+
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<BLSSignatureAggregationRequest>
+        PARSER = new com.google.protobuf.AbstractParser<BLSSignatureAggregationRequest>() {
+      @java.lang.Override
+      public BLSSignatureAggregationRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<BLSSignatureAggregationRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BLSSignatureAggregationRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.utils.UtilsOuterClass.BLSSignatureAggregationRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface BLSSignatureAggregationResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.BLSSignatureAggregationResponse)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The aggregated signature.
+     * </pre>
+     *
+     * <code>string signature = 1 [json_name = "signature"];</code>
+     * @return The signature.
+     */
+    java.lang.String getSignature();
+    /**
+     * <pre>
+     * The aggregated signature.
+     * </pre>
+     *
+     * <code>string signature = 1 [json_name = "signature"];</code>
+     * @return The bytes for signature.
+     */
+    com.google.protobuf.ByteString
+        getSignatureBytes();
+  }
+  /**
+   * <pre>
+   * Response message containing the aggregated signature.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.BLSSignatureAggregationResponse}
+   */
+  public static final class BLSSignatureAggregationResponse extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.BLSSignatureAggregationResponse)
+      BLSSignatureAggregationResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use BLSSignatureAggregationResponse.newBuilder() to construct.
+    private BLSSignatureAggregationResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private BLSSignatureAggregationResponse() {
+      signature_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new BLSSignatureAggregationResponse();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSSignatureAggregationResponse_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSSignatureAggregationResponse_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse.class, pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse.Builder.class);
+    }
+
+    public static final int SIGNATURE_FIELD_NUMBER = 1;
+    private volatile java.lang.Object signature_;
+    /**
+     * <pre>
+     * The aggregated signature.
+     * </pre>
+     *
+     * <code>string signature = 1 [json_name = "signature"];</code>
+     * @return The signature.
+     */
+    @java.lang.Override
+    public java.lang.String getSignature() {
+      java.lang.Object ref = signature_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        signature_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The aggregated signature.
+     * </pre>
+     *
+     * <code>string signature = 1 [json_name = "signature"];</code>
+     * @return The bytes for signature.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSignatureBytes() {
+      java.lang.Object ref = signature_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        signature_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(signature_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, signature_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(signature_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, signature_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse)) {
+        return super.equals(obj);
+      }
+      pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse other = (pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse) obj;
+
+      if (!getSignature()
+          .equals(other.getSignature())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + SIGNATURE_FIELD_NUMBER;
+      hash = (53 * hash) + getSignature().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Response message containing the aggregated signature.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.BLSSignatureAggregationResponse}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.BLSSignatureAggregationResponse)
+        pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponseOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSSignatureAggregationResponse_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSSignatureAggregationResponse_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse.class, pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse.Builder.class);
+      }
+
+      // Construct using pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        signature_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.utils.UtilsOuterClass.internal_static_pactus_BLSSignatureAggregationResponse_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse getDefaultInstanceForType() {
+        return pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse build() {
+        pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse buildPartial() {
+        pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse result = new pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse(this);
+        result.signature_ = signature_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse) {
+          return mergeFrom((pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse other) {
+        if (other == pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse.getDefaultInstance()) return this;
+        if (!other.getSignature().isEmpty()) {
+          signature_ = other.signature_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                signature_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 10
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private java.lang.Object signature_ = "";
+      /**
+       * <pre>
+       * The aggregated signature.
+       * </pre>
+       *
+       * <code>string signature = 1 [json_name = "signature"];</code>
+       * @return The signature.
+       */
+      public java.lang.String getSignature() {
+        java.lang.Object ref = signature_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          signature_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The aggregated signature.
+       * </pre>
+       *
+       * <code>string signature = 1 [json_name = "signature"];</code>
+       * @return The bytes for signature.
+       */
+      public com.google.protobuf.ByteString
+          getSignatureBytes() {
+        java.lang.Object ref = signature_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          signature_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The aggregated signature.
+       * </pre>
+       *
+       * <code>string signature = 1 [json_name = "signature"];</code>
+       * @param value The signature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSignature(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        signature_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The aggregated signature.
+       * </pre>
+       *
+       * <code>string signature = 1 [json_name = "signature"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSignature() {
+        
+        signature_ = getDefaultInstance().getSignature();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The aggregated signature.
+       * </pre>
+       *
+       * <code>string signature = 1 [json_name = "signature"];</code>
+       * @param value The bytes for signature to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSignatureBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        signature_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.BLSSignatureAggregationResponse)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.BLSSignatureAggregationResponse)
+    private static final pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse();
+    }
+
+    public static pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<BLSSignatureAggregationResponse>
+        PARSER = new com.google.protobuf.AbstractParser<BLSSignatureAggregationResponse>() {
+      @java.lang.Override
+      public BLSSignatureAggregationResponse parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<BLSSignatureAggregationResponse> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BLSSignatureAggregationResponse> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.utils.UtilsOuterClass.BLSSignatureAggregationResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_SignMessageWithPrivateKeyRequest_descriptor;
   private static final 
@@ -2867,6 +5431,26 @@ public final class UtilsOuterClass {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_VerifyMessageResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_BLSPublicKeyAggregationRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_BLSPublicKeyAggregationRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_BLSPublicKeyAggregationResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_BLSPublicKeyAggregationResponse_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_BLSSignatureAggregationRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_BLSSignatureAggregationRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_BLSSignatureAggregationResponse_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_BLSSignatureAggregationResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -2884,12 +5468,24 @@ public final class UtilsOuterClass {
       "Request\022\030\n\007message\030\001 \001(\tR\007message\022\034\n\tsig" +
       "nature\030\002 \001(\tR\tsignature\022\035\n\npublic_key\030\003 " +
       "\001(\tR\tpublicKey\"2\n\025VerifyMessageResponse\022" +
-      "\031\n\010is_valid\030\001 \001(\010R\007isValid2\307\001\n\005Utils\022p\n\031" +
-      "SignMessageWithPrivateKey\022(.pactus.SignM" +
-      "essageWithPrivateKeyRequest\032).pactus.Sig" +
-      "nMessageWithPrivateKeyResponse\022L\n\rVerify" +
-      "Message\022\034.pactus.VerifyMessageRequest\032\035." +
-      "pactus.VerifyMessageResponseB@\n\014pactus.u" +
+      "\031\n\010is_valid\030\001 \001(\010R\007isValid\"A\n\036BLSPublicK" +
+      "eyAggregationRequest\022\037\n\013public_keys\030\001 \003(" +
+      "\tR\npublicKeys\"@\n\037BLSPublicKeyAggregation" +
+      "Response\022\035\n\npublic_key\030\001 \001(\tR\tpublicKey\"" +
+      "@\n\036BLSSignatureAggregationRequest\022\036\n\nsig" +
+      "natures\030\001 \003(\tR\nsignatures\"?\n\037BLSSignatur" +
+      "eAggregationResponse\022\034\n\tsignature\030\001 \001(\tR" +
+      "\tsignature2\237\003\n\005Utils\022p\n\031SignMessageWithP" +
+      "rivateKey\022(.pactus.SignMessageWithPrivat" +
+      "eKeyRequest\032).pactus.SignMessageWithPriv" +
+      "ateKeyResponse\022L\n\rVerifyMessage\022\034.pactus" +
+      ".VerifyMessageRequest\032\035.pactus.VerifyMes" +
+      "sageResponse\022j\n\027BLSPublicKeyAggregation\022" +
+      "&.pactus.BLSPublicKeyAggregationRequest\032" +
+      "\'.pactus.BLSPublicKeyAggregationResponse" +
+      "\022j\n\027BLSSignatureAggregation\022&.pactus.BLS" +
+      "SignatureAggregationRequest\032\'.pactus.BLS" +
+      "SignatureAggregationResponseB@\n\014pactus.u" +
       "tilsZ0github.com/pactus-project/pactus/w" +
       "ww/grpc/pactusb\006proto3"
     };
@@ -2921,6 +5517,30 @@ public final class UtilsOuterClass {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_VerifyMessageResponse_descriptor,
         new java.lang.String[] { "IsValid", });
+    internal_static_pactus_BLSPublicKeyAggregationRequest_descriptor =
+      getDescriptor().getMessageTypes().get(4);
+    internal_static_pactus_BLSPublicKeyAggregationRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_BLSPublicKeyAggregationRequest_descriptor,
+        new java.lang.String[] { "PublicKeys", });
+    internal_static_pactus_BLSPublicKeyAggregationResponse_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_pactus_BLSPublicKeyAggregationResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_BLSPublicKeyAggregationResponse_descriptor,
+        new java.lang.String[] { "PublicKey", });
+    internal_static_pactus_BLSSignatureAggregationRequest_descriptor =
+      getDescriptor().getMessageTypes().get(6);
+    internal_static_pactus_BLSSignatureAggregationRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_BLSSignatureAggregationRequest_descriptor,
+        new java.lang.String[] { "Signatures", });
+    internal_static_pactus_BLSSignatureAggregationResponse_descriptor =
+      getDescriptor().getMessageTypes().get(7);
+    internal_static_pactus_BLSSignatureAggregationResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_BLSSignatureAggregationResponse_descriptor,
+        new java.lang.String[] { "Signature", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
