@@ -6,7 +6,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
-	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -184,48 +183,6 @@ func TestSubsidyLockTime(t *testing.T) {
 	}
 }
 
-func TestCheckFee(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	tests := []struct {
-		name        string
-		trx         *tx.Tx
-		expectedErr error
-	}{
-		{
-			name: "Subsidy transaction with fee",
-			trx: tx.NewTransferTx(ts.RandHeight(), crypto.TreasuryAddress, ts.RandAccAddress(),
-				ts.RandAmount(), 1),
-			expectedErr: InvalidFeeError{Fee: 1, Expected: 0},
-		},
-		{
-			name: "Subsidy transaction without fee",
-			trx: tx.NewTransferTx(ts.RandHeight(), crypto.TreasuryAddress, ts.RandAccAddress(),
-				ts.RandAmount(), 0),
-			expectedErr: nil,
-		},
-		{
-			name: "Transfer transaction with fee",
-			trx: tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(),
-				ts.RandAmount(), 0),
-			expectedErr: nil,
-		},
-		{
-			name: "Transfer transaction without fee",
-			trx: tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(),
-				ts.RandAmount(), 0),
-			expectedErr: nil,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := CheckFee(tt.trx)
-			assert.ErrorIs(t, err, tt.expectedErr)
-		})
-	}
-}
-
 func TestExecute(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
@@ -264,14 +221,6 @@ func TestCheck(t *testing.T) {
 
 		err := CheckAndExecute(trx, sbx, true)
 		assert.ErrorIs(t, err, LockTimeInFutureError{LockTime: invalidLocoTme})
-	})
-
-	t.Run("Invalid fee, Should return error", func(t *testing.T) {
-		invalidFee := amount.Amount(1)
-		trx := tx.NewTransferTx(lockTime, crypto.TreasuryAddress, ts.RandAccAddress(), ts.RandAmount(), invalidFee)
-
-		err := CheckAndExecute(trx, sbx, true)
-		assert.ErrorIs(t, err, InvalidFeeError{Fee: invalidFee, Expected: 0})
 	})
 
 	t.Run("Invalid transaction, Should return error", func(t *testing.T) {

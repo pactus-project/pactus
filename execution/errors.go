@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 )
 
@@ -41,16 +40,6 @@ type LockTimeInFutureError struct {
 
 func (e LockTimeInFutureError) Error() string {
 	return fmt.Sprintf("lock time is in the future: %v", e.LockTime)
-}
-
-// InvalidFeeError is returned when the transaction fee is not valid.
-type InvalidFeeError struct {
-	Fee      amount.Amount
-	Expected amount.Amount
-}
-
-func (e InvalidFeeError) Error() string {
-	return fmt.Sprintf("fee is invalid, expected: %s, got: %s", e.Expected, e.Fee)
 }
 
 // SignerBannedError is returned when the signer of transaction is banned and its assets is freezed.

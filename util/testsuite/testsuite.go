@@ -792,8 +792,4 @@ func (*TestSuite) HelperSignTransaction(prv crypto.PrivateKey, trx *tx.Tx) {
 	sig := prv.Sign(trx.SignBytes())
 	trx.SetSignature(sig)
 	trx.SetPublicKey(prv.PublicKey())
-
-	if err := trx.BasicCheck(); err != nil {
-		panic(err)
-	}
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet"
@@ -67,13 +68,14 @@ func showErrorDialog(parent gtk.IWindow, msg string) {
 	dlg.Destroy()
 }
 
-func errorCheck(err error) {
-	if err != nil {
-		showErrorDialog(nil, err.Error())
-		log.Print(err.Error())
-	}
+// showError displays an error dialog and logs the error message.
+func showError(err error) {
+	showErrorDialog(nil, err.Error())
+	log.Print(err.Error())
 }
 
+// fatalErrorCheck checks for an error, shows an error dialog and terminates the program.
+// Use with caution.
 func fatalErrorCheck(err error) {
 	if err != nil {
 		showErrorDialog(nil, err.Error())
@@ -187,18 +189,34 @@ func updateAccountHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
 	}
 }
 
-func updateFeeHint(lbl *gtk.Label, wlt *wallet.Wallet, payloadType payload.Type) {
-	fee, _ := wlt.CalculateFee(0, payloadType)
-	updateHintLabel(lbl, fmt.Sprintf("fee: %s", fee))
+func updateFeeHint(_ *gtk.Label, _ *wallet.Wallet, _ payload.Type) {
+	// Nothing for now!
+	// The goal is to show an estimate of how long it takes for a transaction
+	// with the given fee to be confirmed (confirmation time).
+	// We can analyze data from past blocks to estimate the confirmation time.
 }
 
-func updateAmountHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
+func estimatedFee(wlt *wallet.Wallet, payloadType payload.Type) amount.Amount {
+	fee, _ := wlt.CalculateFee(0, payloadType)
+
+	return fee
+}
+
+func updateBalanceHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
 	balance, err := wlt.Balance(addr)
 	if err == nil {
-		updateHintLabel(lbl, fmt.Sprintf("balance: %s", balance))
+		updateHintLabel(lbl, fmt.Sprintf("Total Balance: %s", balance))
 	} else {
-		stake, _ := wlt.Stake(addr)
-		updateHintLabel(lbl, fmt.Sprintf("stake: %s", stake))
+		updateHintLabel(lbl, "")
+	}
+}
+
+func updateStakeHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
+	stake, err := wlt.Stake(addr)
+	if err == nil {
+		updateHintLabel(lbl, fmt.Sprintf("Total Stake: %s", stake))
+	} else {
+		updateHintLabel(lbl, "")
 	}
 }
 
@@ -215,23 +233,19 @@ func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, wlt *wallet.Wal
 		}
 		err := wlt.SignTransaction(password, trx)
 		if err != nil {
-			errorCheck(err)
+			showError(err)
 
 			return
 		}
 		txID, err := wlt.BroadcastTransaction(trx)
 		if err != nil {
-			errorCheck(err)
+			showError(err)
 
 			return
 		}
 
 		err = wlt.Save()
-		if err != nil {
-			errorCheck(err)
-
-			return
-		}
+		fatalErrorCheck(err)
 
 		showInfoDialog(parent,
 			fmt.Sprintf("Transaction Hash: <a href=\"https://pacviewer.com/transaction/%s\">%s</a>", txID, txID))

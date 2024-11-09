@@ -143,24 +143,6 @@ func TestBasicCheck(t *testing.T) {
 		})
 	})
 
-	t.Run("Invalid fee", func(t *testing.T) {
-		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(), 1, -1)
-
-		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid fee: -0.000000001 PAC",
-		})
-	})
-
-	t.Run("Invalid fee", func(t *testing.T) {
-		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(), 1, (42e15)+1)
-
-		err := trx.BasicCheck()
-		assert.ErrorIs(t, err, tx.BasicCheckError{
-			Reason: "invalid fee: 42000000 PAC",
-		})
-	})
-
 	t.Run("Invalid signer address", func(t *testing.T) {
 		valKey := ts.RandValKey()
 		trx := tx.NewTransferTx(ts.RandHeight(), ts.RandAccAddress(), ts.RandAccAddress(), 1, 1)
@@ -486,4 +468,62 @@ func TestIsFreeTx(t *testing.T) {
 	assert.True(t, trx3.IsFreeTx())
 	assert.False(t, trx4.IsFreeTx())
 	assert.True(t, trx5.IsFreeTx())
+}
+
+func TestCheckFee(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	tests := []struct {
+		name        string
+		trx         *tx.Tx
+		expectedErr error
+	}{
+		{
+			name: "Negative fee",
+			trx: ts.GenerateTestTransferTx(
+				testsuite.TransactionWithFee(-1)),
+			expectedErr: tx.BasicCheckError{Reason: "invalid fee: -0.000000001 PAC"},
+		},
+		{
+			name: "Big fee",
+			trx: ts.GenerateTestTransferTx(
+				testsuite.TransactionWithFee(42e15 + 1)),
+			expectedErr: tx.BasicCheckError{Reason: "invalid fee: 42000000 PAC"},
+		},
+		{
+			name:        "Subsidy transaction with fee",
+			trx:         tx.NewTransferTx(ts.RandHeight(), crypto.TreasuryAddress, ts.RandAccAddress(), ts.RandAmount(), 1),
+			expectedErr: tx.BasicCheckError{Reason: "invalid fee: 0.000000001 PAC"},
+		},
+		{
+			name:        "Subsidy transaction with zero fee",
+			trx:         tx.NewTransferTx(ts.RandHeight(), crypto.TreasuryAddress, ts.RandAccAddress(), ts.RandAmount(), 0),
+			expectedErr: nil,
+		},
+		{
+			name: "Transfer transaction with zero fee",
+			trx: ts.GenerateTestTransferTx(
+				testsuite.TransactionWithFee(0)),
+			expectedErr: nil,
+		},
+		{
+			name: "Transfer transaction with non-zero fee",
+			trx: ts.GenerateTestTransferTx(
+				testsuite.TransactionWithFee(1)),
+			expectedErr: nil,
+		},
+		{
+			name: "Unbond transaction with zero fee",
+			trx: ts.GenerateTestUnbondTx(
+				testsuite.TransactionWithFee(0)),
+			expectedErr: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.trx.BasicCheck()
+			assert.ErrorIs(t, err, tt.expectedErr)
+		})
+	}
 }

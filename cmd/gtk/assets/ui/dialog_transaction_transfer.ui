@@ -231,7 +231,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="label" translatable="yes">Fee (Optional):</property>
+                <property name="label" translatable="yes">Fee:</property>
               </object>
               <packing>
                 <property name="expand">False</property>

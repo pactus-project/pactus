@@ -47,10 +47,14 @@ func changePassword(wlt *wallet.Wallet) {
 		}
 
 		err = wlt.UpdatePassword(oldPassword, newPassword)
-		errorCheck(err)
+		if err != nil {
+			showError(err)
+
+			return
+		}
 
 		err = wlt.Save()
-		errorCheck(err)
+		fatalErrorCheck(err)
 
 		dlg.Close()
 	}

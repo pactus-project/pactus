@@ -77,7 +77,7 @@ func (model *walletModel) rebuildModel() {
 			model.listStore.Clear()
 			for _, item := range data {
 				iter := model.listStore.Append()
-				err := model.listStore.Set(iter,
+				_ = model.listStore.Set(iter,
 					[]int{
 						IDAddressesColumnNo,
 						IDAddressesColumnAddress,
@@ -94,8 +94,6 @@ func (model *walletModel) rebuildModel() {
 						item[4],
 						item[5],
 					})
-
-				errorCheck(err)
 			}
 
 			return false

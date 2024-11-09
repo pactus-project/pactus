@@ -10,8 +10,10 @@ import (
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
+// TxOption defines a function type used to apply options to a txBuilder.
 type TxOption func(builder *txBuilder) error
 
+// OptionLockTime sets the lock time for the transaction.
 func OptionLockTime(lockTime uint32) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
 		builder.lockTime = lockTime
@@ -20,14 +22,29 @@ func OptionLockTime(lockTime uint32) func(builder *txBuilder) error {
 	}
 }
 
-func OptionFee(fee amount.Amount) func(builder *txBuilder) error {
+// OptionFeeFromString sets the transaction fee using a string input.
+func OptionFeeFromString(feeStr string) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
-		builder.fee = fee
+		fee, err := amount.FromString(feeStr)
+		if err != nil {
+			return err
+		}
+		builder.fee = &fee
 
 		return nil
 	}
 }
 
+// OptionFee sets the transaction fee using an Amount input.
+func OptionFee(fee amount.Amount) func(builder *txBuilder) error {
+	return func(builder *txBuilder) error {
+		builder.fee = &fee
+
+		return nil
+	}
+}
+
+// OptionMemo sets a memo or note for the transaction.
 func OptionMemo(memo string) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
 		builder.memo = memo
@@ -36,18 +53,20 @@ func OptionMemo(memo string) func(builder *txBuilder) error {
 	}
 }
 
+// txBuilder helps build and configure a transaction before submitting it.
 type txBuilder struct {
 	client   *grpcClient
-	from     *crypto.Address
-	to       *crypto.Address
+	sender   *crypto.Address
+	receiver *crypto.Address
 	pub      *bls.PublicKey
 	typ      payload.Type
 	lockTime uint32
 	amount   amount.Amount
-	fee      amount.Amount
+	fee      *amount.Amount
 	memo     string
 }
 
+// newTxBuilder initializes a txBuilder with provided options, allowing for flexible configuration of the transaction.
 func newTxBuilder(client *grpcClient, options ...TxOption) (*txBuilder, error) {
 	builder := &txBuilder{
 		client: client,
@@ -62,26 +81,29 @@ func newTxBuilder(client *grpcClient, options ...TxOption) (*txBuilder, error) {
 	return builder, nil
 }
 
-func (m *txBuilder) setFromAddr(addr string) error {
-	from, err := crypto.AddressFromString(addr)
+// setSenderAddr sets the sender's address for the transaction.
+func (m *txBuilder) setSenderAddr(addr string) error {
+	sender, err := crypto.AddressFromString(addr)
 	if err != nil {
 		return err
 	}
-	m.from = &from
+	m.sender = &sender
 
 	return nil
 }
 
-func (m *txBuilder) setToAddress(addr string) error {
-	to, err := crypto.AddressFromString(addr)
+// setReceiverAddress sets the recipient's address for the transaction.
+func (m *txBuilder) setReceiverAddress(addr string) error {
+	receiver, err := crypto.AddressFromString(addr)
 	if err != nil {
 		return err
 	}
-	m.to = &to
+	m.receiver = &receiver
 
 	return nil
 }
 
+// build constructs and finalizes the transaction, selecting the appropriate type based on the builder's configuration.
 func (m *txBuilder) build() (*tx.Tx, error) {
 	err := m.setLockTime()
 	if err != nil {
@@ -96,21 +118,21 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 	var trx *tx.Tx
 	switch m.typ {
 	case payload.TypeTransfer:
-		trx = tx.NewTransferTx(m.lockTime, *m.from, *m.to, m.amount, m.fee, tx.WithMemo(m.memo))
+		trx = tx.NewTransferTx(m.lockTime, *m.sender, *m.receiver, m.amount, *m.fee, tx.WithMemo(m.memo))
 	case payload.TypeBond:
 		pub := m.pub
-		val, _ := m.client.getValidator(m.to.String())
+		val, _ := m.client.getValidator(m.receiver.String())
 		if val != nil {
 			// validator exists
 			pub = nil
 		}
-		trx = tx.NewBondTx(m.lockTime, *m.from, *m.to, pub, m.amount, m.fee, tx.WithMemo(m.memo))
+		trx = tx.NewBondTx(m.lockTime, *m.sender, *m.receiver, pub, m.amount, *m.fee, tx.WithMemo(m.memo))
 
 	case payload.TypeUnbond:
-		trx = tx.NewUnbondTx(m.lockTime, *m.from, tx.WithMemo(m.memo))
+		trx = tx.NewUnbondTx(m.lockTime, *m.sender, tx.WithMemo(m.memo))
 
 	case payload.TypeWithdraw:
-		trx = tx.NewWithdrawTx(m.lockTime, *m.from, *m.to, m.amount, m.fee, tx.WithMemo(m.memo))
+		trx = tx.NewWithdrawTx(m.lockTime, *m.sender, *m.receiver, m.amount, *m.fee, tx.WithMemo(m.memo))
 
 	case payload.TypeSortition:
 		return nil, fmt.Errorf("unable to build sortition transactions")
@@ -119,6 +141,8 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 	return trx, nil
 }
 
+// setLockTime assigns a lock time to the transaction.
+// If not provided, it retrieves the last block height and increments it.
 func (m *txBuilder) setLockTime() error {
 	if m.lockTime == 0 {
 		if m.client == nil {
@@ -135,8 +159,10 @@ func (m *txBuilder) setLockTime() error {
 	return nil
 }
 
+// setFee determines the fee for the transaction.
+// If not set, it retrieves the fee from the client based on amount and transaction type.
 func (m *txBuilder) setFee() error {
-	if m.fee == 0 {
+	if m.fee == nil {
 		if m.client == nil {
 			return ErrOffline
 		}
@@ -144,7 +170,7 @@ func (m *txBuilder) setFee() error {
 		if err != nil {
 			return err
 		}
-		m.fee = fee
+		m.fee = &fee
 	}
 
 	return nil

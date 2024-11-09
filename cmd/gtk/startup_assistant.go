@@ -225,7 +225,11 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 								snapshotURL,
 								storeDir,
 							)
-							fatalErrorCheck(err)
+							if err != nil {
+								showError(err)
+
+								return
+							}
 
 							ctx := context.Background()
 							mdCh := getMetadata(ctx, importer, listBox)

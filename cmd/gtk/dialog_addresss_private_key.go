@@ -22,7 +22,11 @@ func showAddressPrivateKey(wlt *wallet.Wallet, addr string) {
 	}
 
 	prv, err := wlt.PrivateKey(password, addr)
-	errorCheck(err)
+	if err != nil {
+		showError(err)
+
+		return
+	}
 
 	dlg := getDialogObj(builder, "id_dialog_address_private_key")
 	addressEntry := getEntryObj(builder, "id_entry_address")
