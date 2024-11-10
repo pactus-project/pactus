@@ -40,9 +40,9 @@ func (conf *Config) BasicCheck() error {
 		}
 	}
 
-	if conf.Fee.DailyLimit == 0 {
+	if conf.Fee.DailyLimit <= 0 {
 		return ConfigError{
-			Reason: "dailyLimit can't be zero",
+			Reason: "dailyLimit should be positive",
 		}
 	}
 

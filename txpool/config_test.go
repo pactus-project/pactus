@@ -53,10 +53,19 @@ func TestConfigBasicCheck(t *testing.T) {
 		{
 			name: "Invalid DailyLimit",
 			expectedErr: ConfigError{
-				Reason: "dailyLimit can't be zero",
+				Reason: "dailyLimit should be positive",
 			},
 			updateFn: func(c *Config) {
 				c.Fee.DailyLimit = 0
+			},
+		},
+		{
+			name: "Negative DailyLimit",
+			expectedErr: ConfigError{
+				Reason: "dailyLimit should be positive",
+			},
+			updateFn: func(c *Config) {
+				c.Fee.DailyLimit = -1
 			},
 		},
 		{
