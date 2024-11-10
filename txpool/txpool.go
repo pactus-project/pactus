@@ -105,10 +105,11 @@ func (p *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 		return err
 	}
 
-	err := p.checkFee(trx)
-	if err == nil {
-		p.appendTx(trx)
+	if err := p.checkFee(trx); err != nil {
+		return err
 	}
+
+	p.appendTx(trx)
 
 	go func(t *tx.Tx) {
 		p.broadcastCh <- message.NewTransactionsMessage([]*tx.Tx{t})
