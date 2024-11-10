@@ -1,6 +1,10 @@
 package txpool
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/pactus-project/pactus/types/amount"
+)
 
 // ConfigError is returned when the txPool configuration is invalid.
 type ConfigError struct {
@@ -11,11 +15,11 @@ func (e ConfigError) Error() string {
 	return e.Reason
 }
 
-// AppendError is returned when the txPool configuration is invalid.
-type AppendError struct {
-	Err error
+// InvalidFeeError indicates that the transaction fee is below the minimum required.
+type InvalidFeeError struct {
+	MinimumFee amount.Amount
 }
 
-func (e AppendError) Error() string {
-	return fmt.Sprintf("unable to append transaction to pool: %s", e.Err)
+func (e InvalidFeeError) Error() string {
+	return fmt.Sprintf("transaction fee is below the minimum of %s", e.MinimumFee)
 }

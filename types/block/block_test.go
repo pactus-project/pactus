@@ -200,7 +200,7 @@ func TestBasicCheck(t *testing.T) {
 				"02" + // Tx[0]: Flags
 				"01" + // Tx[0]: Version
 				"01000000" + // Tx[0]: LockTime
-				"01" + // Tx[0]: Fee
+				"00" + // Tx[0]: Fee
 				"00" + // Tx[0]: Memo
 				"01" + // Tx[0]: PayloadType
 				"00" + // Tx[0]: Sender (treasury)

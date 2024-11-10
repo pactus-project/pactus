@@ -73,10 +73,6 @@ func TestTransactions(t *testing.T) {
 		require.NoError(t, broadcastSendTransaction(t, tValKeys[tNodeIdx2][0], pubAlice.AccountAddress(), 80000000, 8000))
 	})
 
-	t.Run("Invalid fee", func(t *testing.T) {
-		require.Error(t, broadcastSendTransaction(t, valKeyAlice, pubBob.AccountAddress(), 500000, 0))
-	})
-
 	t.Run("Alice tries double spending", func(t *testing.T) {
 		require.NoError(t, broadcastSendTransaction(t, valKeyAlice, pubBob.AccountAddress(), 50000000, 5000))
 

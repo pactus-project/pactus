@@ -157,7 +157,7 @@ func (ts *TestSuite) RandRound() int16 {
 	return ts.RandInt16(10)
 }
 
-// RandAmount returns a random amount between [0, max).
+// RandAmount returns a random amount between [1e9, max).
 // If max is not set, it defaults to 1000e9.
 func (ts *TestSuite) RandAmount(max ...amount.Amount) amount.Amount {
 	maxAmt := amount.Amount(1000e9) // default max amount
@@ -165,7 +165,7 @@ func (ts *TestSuite) RandAmount(max ...amount.Amount) amount.Amount {
 		maxAmt = max[0]
 	}
 
-	return ts.RandAmountRange(0, maxAmt)
+	return ts.RandAmountRange(1e9, maxAmt)
 }
 
 // RandAmountRange returns a random amount between [min, max).
@@ -175,7 +175,7 @@ func (ts *TestSuite) RandAmountRange(min, max amount.Amount) amount.Amount {
 	return amt + min
 }
 
-// RandFee returns a random fee between [0, max).
+// RandFee returns a random fee between [1e7, max).
 // If max is not set, it defaults to 1e9.
 func (ts *TestSuite) RandFee(max ...amount.Amount) amount.Amount {
 	maxFee := amount.Amount(1e9) // default max fee
@@ -183,7 +183,7 @@ func (ts *TestSuite) RandFee(max ...amount.Amount) amount.Amount {
 		maxFee = max[0]
 	}
 
-	return ts.RandAmountRange(0, maxFee)
+	return ts.RandAmountRange(1e7, maxFee)
 }
 
 // RandBytes returns a slice of random bytes of the given length.

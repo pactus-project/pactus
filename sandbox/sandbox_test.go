@@ -278,14 +278,14 @@ func TestUpdateFromOutsideTheSandbox(t *testing.T) {
 
 	t.Run("Try update an account from outside the sandbox, Should panic", func(t *testing.T) {
 		assert.Panics(t, func() {
-			acc, addr := td.GenerateTestAccount(td.RandInt32(0))
+			acc, addr := td.GenerateTestAccount(td.RandInt32(10000))
 			td.sbx.UpdateAccount(addr, acc)
 		})
 	})
 
 	t.Run("Try update a validator from outside the sandbox, Should panic", func(t *testing.T) {
 		assert.Panics(t, func() {
-			val, _ := td.GenerateTestValidator(td.RandInt32(0))
+			val, _ := td.GenerateTestValidator(td.RandInt32(10000))
 			td.sbx.UpdateValidator(val)
 		})
 	})

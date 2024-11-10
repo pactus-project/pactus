@@ -25,6 +25,10 @@ func OptionLockTime(lockTime uint32) func(builder *txBuilder) error {
 // OptionFeeFromString sets the transaction fee using a string input.
 func OptionFeeFromString(feeStr string) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
+		if feeStr == "" {
+			return nil
+		}
+
 		fee, err := amount.FromString(feeStr)
 		if err != nil {
 			return err
