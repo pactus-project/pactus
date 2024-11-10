@@ -16,7 +16,7 @@ type TransactionCommittedError struct {
 }
 
 func (e TransactionCommittedError) Error() string {
-	return fmt.Sprintf("the transaction committed before: %s",
+	return fmt.Sprintf("the transaction submitted before: %s",
 		e.ID.String())
 }
 

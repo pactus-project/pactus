@@ -302,6 +302,10 @@ func (p *txPool) Size() int {
 	p.lk.RLock()
 	defer p.lk.RUnlock()
 
+	return p.size()
+}
+
+func (p *txPool) size() int {
 	size := 0
 	for _, pool := range p.pools {
 		size += pool.list.Size()
@@ -345,7 +349,7 @@ func (p *txPool) AllPendingTxs() []*tx.Tx {
 	p.lk.RLock()
 	defer p.lk.RUnlock()
 
-	txs := make([]*tx.Tx, 0, p.Size())
+	txs := make([]*tx.Tx, 0, p.size())
 
 	var next *linkedlist.Element[linkedmap.Pair[tx.ID, *tx.Tx]]
 	for _, pool := range p.pools {

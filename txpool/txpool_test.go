@@ -257,8 +257,7 @@ func TestCalculatingConsumption(t *testing.T) {
 		// Handle the block in the transaction pool
 		td.pool.HandleCommittedBlock(blk)
 
-		// Uncomment me to track consumption map.
-		// fmt.Println(td.pool.consumptionMap)
+		t.Logf("consumption Map: %v\n", td.pool.consumptionMap)
 	}
 
 	require.Equal(t, expected, td.pool.consumptionMap)

@@ -39,8 +39,8 @@ func GenerateSeed() int64 {
 	return time.Now().UTC().UnixNano()
 }
 
-// NewTestSuiteForSeed creates a new TestSuite with the given seed.
-func NewTestSuiteForSeed(seed int64) *TestSuite {
+// NewTestSuiteFromSeed creates a new TestSuite with the given seed.
+func NewTestSuiteFromSeed(seed int64) *TestSuite {
 	return &TestSuite{
 		Seed: seed,
 		//nolint:gosec // to reproduce the failed tests

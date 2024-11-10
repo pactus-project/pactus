@@ -50,7 +50,7 @@ func setup(t *testing.T, conf *Config) *testData {
 		conf = testConfig()
 	}
 
-	ts := testsuite.NewTestSuiteForSeed(1717506021599855072)
+	ts := testsuite.NewTestSuite(t)
 
 	// for saving test wallets in temp directory
 	err := os.Chdir(util.TempDirPath())
