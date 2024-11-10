@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet"
@@ -35,6 +34,9 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
+	estimatedFee := estimatedFee(wlt, payload.TypeBond)
+	feeEntry.SetText(fmt.Sprintf("%g", estimatedFee.ToPAC()))
+
 	for _, ai := range wlt.AllAccountAddresses() {
 		senderEntry.Append(ai.Address, ai.Address)
 	}
@@ -48,16 +50,13 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 	onSenderChanged := func() {
 		senderStr := senderEntry.GetActiveID()
 		updateAccountHint(senderHint, senderStr, wlt)
+		updateBalanceHint(amountHint, senderEntry.GetActiveID(), wlt)
 	}
 
 	onReceiverChanged := func() {
 		receiverEntry, _ := receiverCombo.GetEntry()
 		receiverStr, _ := receiverEntry.GetText()
 		updateValidatorHint(receiverHint, receiverStr, wlt)
-	}
-
-	onAmountChanged := func() {
-		updateAmountHint(amountHint, senderEntry.GetActiveID(), wlt)
 	}
 
 	onFeeChanged := func() {
@@ -74,25 +73,20 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 
 		amt, err := amount.FromString(amountStr)
 		if err != nil {
-			errorCheck(err)
+			showError(err)
 
 			return
 		}
 
+		feeStr, _ := feeEntry.GetText()
 		opts := []wallet.TxOption{
 			wallet.OptionMemo(memo),
-		}
-
-		fee, _ := feeEntry.GetText()
-		if fee != "" {
-			feeAmount, err := amount.FromString(fee)
-			cmd.FatalErrorCheck(err)
-			opts = append(opts, wallet.OptionFee(feeAmount))
+			wallet.OptionFeeFromString(feeStr),
 		}
 
 		trx, err := wlt.MakeBondTx(sender, receiver, publicKey, amt, opts...)
 		if err != nil {
-			errorCheck(err)
+			showError(err)
 
 			return
 		}
@@ -120,7 +114,6 @@ Memo:   %s
 	signals := map[string]any{
 		"on_sender_changed":   onSenderChanged,
 		"on_receiver_changed": onReceiverChanged,
-		"on_amount_changed":   onAmountChanged,
 		"on_fee_changed":      onFeeChanged,
 		"on_send":             onSend,
 		"on_cancel":           onClose,

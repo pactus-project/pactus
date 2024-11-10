@@ -40,14 +40,11 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 		amt, err := amount.FromString(args[2])
 		cmd.FatalErrorCheck(err)
 
-		fee, err := amount.NewAmount(*feeOpt)
-		cmd.FatalErrorCheck(err)
-
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionFee(fee),
+			wallet.OptionFeeFromString(*feeOpt),
 			wallet.OptionLockTime(uint32(*lockTimeOpt)),
 			wallet.OptionMemo(*memoOpt),
 		}
@@ -86,14 +83,11 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 		amt, err := amount.FromString(args[2])
 		cmd.FatalErrorCheck(err)
 
-		fee, err := amount.NewAmount(*feeOpt)
-		cmd.FatalErrorCheck(err)
-
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionFee(fee),
+			wallet.OptionFeeFromString(*feeOpt),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
 		}
@@ -128,14 +122,11 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 	unbondCmd.Run = func(_ *cobra.Command, args []string) {
 		from := args[0]
 
-		fee, err := amount.NewAmount(*feeOpt)
-		cmd.FatalErrorCheck(err)
-
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionFee(fee),
+			wallet.OptionFeeFromString(*feeOpt),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
 		}
@@ -171,7 +162,7 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		amt, err := amount.FromString(args[2])
 		cmd.FatalErrorCheck(err)
 
-		fee, err := amount.NewAmount(*feeOpt)
+		fee, err := amount.FromString(*feeOpt)
 		cmd.FatalErrorCheck(err)
 
 		wlt, err := openWallet()
@@ -198,12 +189,12 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 	}
 }
 
-func addCommonTxOptions(cobra *cobra.Command) (*int, *float64, *string, *bool) {
+func addCommonTxOptions(cobra *cobra.Command) (*int, *string, *string, *bool) {
 	lockTimeOpt := cobra.Flags().Int("lock-time", 0,
-		"transaction lock-time, if not specified will be the current height")
+		"transaction lock-time, if not specified will be the latest height")
 
-	feeOpt := cobra.Flags().Float64("fee", 0,
-		"transaction fee in PAC, if not specified will calculate from the amount")
+	feeOpt := cobra.Flags().String("fee", "",
+		"transaction fee in PAC, if not specified will set to the estimated value")
 
 	memoOpt := cobra.Flags().String("memo", "",
 		"transaction memo, maximum should be 64 character")

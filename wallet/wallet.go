@@ -255,11 +255,11 @@ func (w *Wallet) MakeTransferTx(sender, receiver string, amt amount.Amount,
 	if err != nil {
 		return nil, err
 	}
-	err = maker.setFromAddr(sender)
+	err = maker.setSenderAddr(sender)
 	if err != nil {
 		return nil, err
 	}
-	err = maker.setToAddress(receiver)
+	err = maker.setReceiverAddress(receiver)
 	if err != nil {
 		return nil, err
 	}
@@ -277,11 +277,11 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amt amount.Amount,
 	if err != nil {
 		return nil, err
 	}
-	err = maker.setFromAddr(sender)
+	err = maker.setSenderAddr(sender)
 	if err != nil {
 		return nil, err
 	}
-	err = maker.setToAddress(receiver)
+	err = maker.setReceiverAddress(receiver)
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +310,7 @@ func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = maker.setFromAddr(addr)
+	err = maker.setSenderAddr(addr)
 	if err != nil {
 		return nil, err
 	}
@@ -328,11 +328,11 @@ func (w *Wallet) MakeWithdrawTx(sender, receiver string, amt amount.Amount,
 	if err != nil {
 		return nil, err
 	}
-	err = maker.setFromAddr(sender)
+	err = maker.setSenderAddr(sender)
 	if err != nil {
 		return nil, err
 	}
-	err = maker.setToAddress(receiver)
+	err = maker.setReceiverAddress(receiver)
 	if err != nil {
 		return nil, err
 	}

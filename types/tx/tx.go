@@ -148,19 +148,14 @@ func (tx *Tx) BasicCheck() error {
 			Reason: "lock time is not defined",
 		}
 	}
-	if tx.Payload().Value() < 0 || tx.Payload().Value() > amount.MaxNanoPAC {
-		return BasicCheckError{
-			Reason: fmt.Sprintf("invalid amount: %s", tx.Payload().Value()),
-		}
-	}
-	if tx.Fee() < 0 || tx.Fee() > amount.MaxNanoPAC {
-		return BasicCheckError{
-			Reason: fmt.Sprintf("invalid fee: %s", tx.Fee()),
-		}
-	}
 	if len(tx.Memo()) > maxMemoLength {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("memo length exceeded: %d", len(tx.Memo())),
+		}
+	}
+	if tx.Payload().Value() < 0 || tx.Payload().Value() > amount.MaxNanoPAC {
+		return BasicCheckError{
+			Reason: fmt.Sprintf("invalid amount: %s", tx.Payload().Value()),
 		}
 	}
 	if err := tx.Payload().BasicCheck(); err != nil {
@@ -168,11 +163,31 @@ func (tx *Tx) BasicCheck() error {
 			Reason: fmt.Sprintf("invalid payload: %s", err.Error()),
 		}
 	}
+	if err := tx.checkFee(); err != nil {
+		return err
+	}
 	if err := tx.checkSignature(); err != nil {
 		return err
 	}
 
 	tx.basicChecked = true
+
+	return nil
+}
+
+func (tx *Tx) checkFee() error {
+	if tx.Fee() < 0 || tx.Fee() > amount.MaxNanoPAC {
+		return BasicCheckError{
+			Reason: fmt.Sprintf("invalid fee: %s", tx.Fee()),
+		}
+	}
+	if tx.IsFreeTx() {
+		if tx.Fee() != 0 {
+			return BasicCheckError{
+				Reason: fmt.Sprintf("invalid fee: %s", tx.Fee()),
+			}
+		}
+	}
 
 	return nil
 }

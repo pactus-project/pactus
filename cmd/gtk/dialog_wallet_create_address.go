@@ -50,10 +50,14 @@ func createAddress(wdgWallet *widgetWallet) {
 			_, err = wdgWallet.model.wallet.NewValidatorAddress(walletAddressLabel)
 		}
 
-		errorCheck(err)
+		if err != nil {
+			showError(err)
+
+			return
+		}
 
 		err = wdgWallet.model.wallet.Save()
-		errorCheck(err)
+		fatalErrorCheck(err)
 
 		wdgWallet.model.rebuildModel()
 

@@ -6,14 +6,13 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
-	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync/bundle/message"
-	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -23,20 +22,23 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	pool  *txPool
-	sbx   *sandbox.MockSandbox
-	store *store.MockStore
-	ch    chan message.Message
+	pool *txPool
+	sbx  *sandbox.MockSandbox
+	ch   chan message.Message
 }
 
-func testConfig() *Config {
+func testDefaultConfig() *Config {
+	return DefaultConfig()
+}
+
+func testConsumptionalConfig() *Config {
 	return &Config{
 		MaxSize:           10,
 		ConsumptionWindow: 3,
 		Fee: &FeeConfig{
-			FixedFee:   0.01,
-			DailyLimit: 280,
-			UnitPrice:  0.00005,
+			FixedFee:   0,
+			DailyLimit: 360,
+			UnitPrice:  0.000005,
 		},
 	}
 }
@@ -48,21 +50,21 @@ func setup(t *testing.T, cfg *Config) *testData {
 
 	broadcastCh := make(chan message.Message, 10)
 	sbx := sandbox.MockingSandbox(ts)
-	config := testConfig()
+	config := testDefaultConfig()
 	if cfg != nil {
 		config = cfg
 	}
-	mockStore := store.MockingStore(ts)
-	poolInt := NewTxPool(config, mockStore, broadcastCh)
+	poolInt := NewTxPool(config, sbx.TestStore, broadcastCh)
 	poolInt.SetNewSandboxAndRecheck(sbx)
 	pool := poolInt.(*txPool)
 	assert.NotNil(t, pool)
+
+	sbx.TestAcceptSortition = true
 
 	return &testData{
 		TestSuite: ts,
 		pool:      pool,
 		sbx:       sbx,
-		store:     mockStore,
 		ch:        broadcastCh,
 	}
 }
@@ -92,119 +94,203 @@ func (td *testData) shouldPublishTransaction(t *testing.T, txID tx.ID) {
 	}
 }
 
+// makeValidTransferTx makes a valid Transfer transaction for testing purpose.
+func (td *testData) makeValidTransferTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
+	trx := td.GenerateTestTransferTx(options...)
+	signer := trx.Payload().Signer()
+
+	acc := td.sbx.MakeNewAccount(signer)
+	acc.AddToBalance(trx.Payload().Value() + trx.Fee())
+	td.sbx.UpdateAccount(signer, acc)
+
+	return trx
+}
+
+// makeValidBondTx makes a valid Bond transaction for testing purpose.
+func (td *testData) makeValidBondTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
+	trx := td.GenerateTestBondTx(options...)
+	signer := trx.Payload().Signer()
+
+	acc := td.sbx.MakeNewAccount(signer)
+	acc.AddToBalance(trx.Payload().Value() + trx.Fee())
+	td.sbx.UpdateAccount(signer, acc)
+
+	return trx
+}
+
+// makeValidUnbondTx makes a valid Unbond transaction for testing purpose.
+// Ensure that the signer key is set through the options.
+func (td *testData) makeValidUnbondTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
+	trx := td.GenerateTestUnbondTx(options...)
+
+	validatorPublicKey := trx.PublicKey().(*bls.PublicKey)
+	val := td.sbx.MakeNewValidator(validatorPublicKey)
+	td.sbx.UpdateValidator(val)
+
+	return trx
+}
+
+// makeValidUnbondTx makes a valid Withdraw transaction for testing purpose.
+// Ensure that the signer key is set through the options.
+func (td *testData) makeValidWithdrawTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
+	trx := td.GenerateTestWithdrawTx(options...)
+
+	validatorPublicKey := trx.PublicKey().(*bls.PublicKey)
+	val := td.sbx.MakeNewValidator(validatorPublicKey)
+	val.AddToStake(trx.Payload().Value() + trx.Fee())
+	val.UpdateUnbondingHeight(td.sbx.CurrentHeight() - (td.sbx.TestParams.UnbondInterval + 1))
+	td.sbx.UpdateValidator(val)
+
+	return trx
+}
+
+// makeValidSortitionTx makes a valid Sortition transaction for testing purpose.
+// Ensure that the signer key is set through the options.
+func (td *testData) makeValidSortitionTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
+	trx := td.GenerateTestSortitionTx(options...)
+
+	validatorPublicKey := trx.PublicKey().(*bls.PublicKey)
+	val := td.sbx.MakeNewValidator(validatorPublicKey)
+	val.UpdateLastBondingHeight(td.sbx.CurrentHeight() - (td.sbx.TestParams.BondInterval + 1))
+	td.sbx.UpdateValidator(val)
+
+	return trx
+}
+
 func TestAppendAndRemove(t *testing.T) {
 	td := setup(t, nil)
 
-	height := td.RandHeight()
-	td.sbx.TestStore.AddTestBlock(height)
-	testTrx := tx.NewSubsidyTx(height+1, td.RandAccAddress(), 1e9)
+	trx := td.makeValidTransferTx()
 
-	assert.NoError(t, td.pool.AppendTx(testTrx))
-	assert.True(t, td.pool.HasTx(testTrx.ID()))
-	assert.Equal(t, testTrx, td.pool.PendingTx(testTrx.ID()))
+	assert.NoError(t, td.pool.AppendTx(trx))
+	assert.True(t, td.pool.HasTx(trx.ID()))
+	assert.Equal(t, trx, td.pool.PendingTx(trx.ID()))
 
-	// Appending the same transaction again, should not return any error
-	assert.NoError(t, td.pool.AppendTx(testTrx))
+	td.pool.removeTx(trx.ID())
+	assert.False(t, td.pool.HasTx(trx.ID()), "Transaction should be removed")
+	assert.Nil(t, td.pool.PendingTx(trx.ID()))
+}
 
-	td.pool.removeTx(testTrx.ID())
-	assert.False(t, td.pool.HasTx(testTrx.ID()), "Transaction should be removed")
-	assert.Nil(t, td.pool.PendingTx(testTrx.ID()))
+func TestAppendSameTransaction(t *testing.T) {
+	td := setup(t, nil)
+
+	trx := td.makeValidTransferTx()
+
+	err := td.pool.AppendTx(trx)
+	assert.NoError(t, err)
+
+	err = td.pool.AppendTx(trx)
+	assert.ErrorIs(t, err, execution.TransactionCommittedError{ID: trx.ID()})
+}
+
+func TestDisableConsumption(t *testing.T) {
+	td := setup(t, testDefaultConfig())
+
+	trx := td.GenerateTestTransferTx()
+	assert.Zero(t, td.pool.consumptionalFee(trx))
 }
 
 func TestCalculatingConsumption(t *testing.T) {
-	td := setup(t, nil)
+	td := setup(t, testConsumptionalConfig())
 
 	// Generate keys for different transaction signers
 	_, prv1 := td.RandEd25519KeyPair()
-	_, prv2 := td.RandEd25519KeyPair()
-	_, prv3 := td.RandBLSKeyPair()
-	_, prv4 := td.RandBLSKeyPair()
+	pub2, prv2 := td.RandEd25519KeyPair()
+	pub3, prv3 := td.RandBLSKeyPair()
+	pub4, prv4 := td.RandBLSKeyPair()
 
 	// Generate different types of transactions
-	trx11 := td.GenerateTestTransferTx(testsuite.TransactionWithEd25519Signer(prv1))
-	trx12 := td.GenerateTestBondTx(testsuite.TransactionWithEd25519Signer(prv1))
-	trx13 := td.GenerateTestWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
-	trx14 := td.GenerateTestUnbondTx(testsuite.TransactionWithBLSSigner(prv4))
-	trx21 := td.GenerateTestTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
-	trx31 := td.GenerateTestBondTx(testsuite.TransactionWithBLSSigner(prv4))
-	trx41 := td.GenerateTestWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
-	trx42 := td.GenerateTestTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
+	trx10 := tx.NewSubsidyTx(1, td.RandAccAddress(), 1e9)
+	trx11 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv1))
+	trx12 := td.makeValidBondTx(testsuite.TransactionWithEd25519Signer(prv2))
+	trx13 := td.makeValidUnbondTx(testsuite.TransactionWithBLSSigner(prv4))
+	trx20 := tx.NewSubsidyTx(2, td.RandAccAddress(), 1e9)
+	trx21 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv1))
+	trx30 := tx.NewSubsidyTx(3, td.RandAccAddress(), 1e9)
+	trx31 := td.makeValidBondTx(testsuite.TransactionWithBLSSigner(prv3))
+	trx32 := td.makeValidSortitionTx(testsuite.TransactionWithBLSSigner(prv4))
+	trx40 := tx.NewSubsidyTx(4, td.RandAccAddress(), 1e9)
+	trx41 := td.makeValidUnbondTx(testsuite.TransactionWithBLSSigner(prv3))
+	trx42 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
+	trx50 := tx.NewSubsidyTx(5, td.RandAccAddress(), 1e9)
+	trx51 := td.makeValidWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
+	trx52 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
+
+	// Commit the first block
+	blk1, cert1 := td.GenerateTestBlock(1,
+		testsuite.BlockWithTransactions([]*tx.Tx{trx10, trx11, trx12, trx13}))
+	td.sbx.TestStore.SaveBlock(blk1, cert1)
 
 	// Expected consumption map after transactions
-	expected := map[crypto.Address]uint32{
-		prv2.PublicKeyNative().AccountAddress():   uint32(trx21.SerializeSize()) + uint32(trx42.SerializeSize()),
-		prv4.PublicKeyNative().AccountAddress():   uint32(trx31.SerializeSize()),
-		prv3.PublicKeyNative().ValidatorAddress(): uint32(trx41.SerializeSize()),
+	diff2 := 0
+	if trx42.SerializeSize() > trx12.SerializeSize() {
+		diff2 = trx42.SerializeSize() - trx12.SerializeSize()
+	}
+
+	expected := map[crypto.Address]int{
+		pub2.AccountAddress():   trx52.SerializeSize() + diff2,
+		pub3.AccountAddress():   trx31.SerializeSize(),
+		pub3.ValidatorAddress(): trx41.SerializeSize() + trx51.SerializeSize(),
+		pub4.ValidatorAddress(): trx32.SerializeSize() - trx13.SerializeSize(),
 	}
 
 	tests := []struct {
 		height uint32
 		txs    []*tx.Tx
 	}{
-		{1, []*tx.Tx{trx11, trx12, trx13, trx14}},
-		{2, []*tx.Tx{trx21}},
-		{3, []*tx.Tx{trx31}},
-		{4, []*tx.Tx{trx41, trx42}},
+		{2, []*tx.Tx{trx20, trx21}},
+		{3, []*tx.Tx{trx30, trx31, trx32}},
+		{4, []*tx.Tx{trx40, trx41, trx42}},
+		{5, []*tx.Tx{trx50, trx51, trx52}},
 	}
 
 	for _, tt := range tests {
 		// Generate a block with the transactions for the given height
-		blk, cert := td.GenerateTestBlock(tt.height, func(bm *testsuite.BlockMaker) {
-			bm.Txs = tt.txs
-		})
-		td.store.SaveBlock(blk, cert)
+		blk, cert := td.GenerateTestBlock(tt.height, testsuite.BlockWithTransactions(tt.txs))
+		td.sbx.TestStore.SaveBlock(blk, cert)
 
 		// Handle the block in the transaction pool
 		td.pool.HandleCommittedBlock(blk)
+
+		t.Logf("consumption Map: %v\n", td.pool.consumptionMap)
 	}
 
 	require.Equal(t, expected, td.pool.consumptionMap)
 }
 
 func TestEstimatedConsumptionalFee(t *testing.T) {
-	td := setup(t, &Config{
-		MaxSize:           10,
-		ConsumptionWindow: 3,
-		Fee: &FeeConfig{
-			FixedFee:   0,
-			DailyLimit: 360,
-			UnitPrice:  0.000005,
-		},
-	})
+	td := setup(t, testConsumptionalConfig())
 
 	t.Run("Test indexed signer", func(t *testing.T) {
-		accPub, accPrv := td.RandEd25519KeyPair()
-		acc1Addr := accPub.AccountAddress()
-		acc1 := account.NewAccount(0)
-		acc1.AddToBalance(1000e9)
-		td.sbx.UpdateAccount(acc1Addr, acc1)
-
-		txr := td.GenerateTestTransferTx(testsuite.TransactionWithEd25519Signer(accPrv), testsuite.TransactionWithAmount(1e9))
-
-		blk, cert := td.GenerateTestBlock(td.RandHeight(), testsuite.BlockWithTransactions([]*tx.Tx{txr}))
-		td.store.SaveBlock(blk, cert)
+		_, accPrv := td.RandEd25519KeyPair()
+		trx := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(accPrv))
+		blk, cert := td.GenerateTestBlock(td.RandHeight(), testsuite.BlockWithTransactions([]*tx.Tx{trx}))
+		td.sbx.TestStore.SaveBlock(blk, cert)
 
 		tests := []struct {
-			value   amount.Amount
 			fee     amount.Amount
 			withErr bool
 		}{
-			{1e9, 0, false},
-			{1e9, 0, false},
-			{1e9, 89800000, false},
-			{1e9, 90000000, false},
-			{1e9, 7000000000, false},
-			{1e9, 0, true},
+			{0, false},
+			{0, false},
+			{2_310_000, false},
+			{3_090_000, false},
+			{7_740_000, false},
+			{9_300_000, false},
+			{0, true},
 		}
 
 		for _, tt := range tests {
-			trx := td.GenerateTestTransferTx(
+			testTrx := td.makeValidTransferTx(
 				testsuite.TransactionWithEd25519Signer(accPrv),
-				testsuite.TransactionWithAmount(tt.value),
-				testsuite.TransactionWithFee(tt.fee),
-			)
+				testsuite.TransactionWithFee(tt.fee))
 
-			err := td.pool.AppendTx(trx)
+			err := td.pool.AppendTx(testTrx)
 			if tt.withErr {
 				assert.Error(t, err)
 			} else {
@@ -214,13 +300,7 @@ func TestEstimatedConsumptionalFee(t *testing.T) {
 	})
 
 	t.Run("Test non-indexed signer", func(t *testing.T) {
-		_, accPrv := td.RandEd25519KeyPair()
-
-		trx := td.GenerateTestTransferTx(
-			testsuite.TransactionWithEd25519Signer(accPrv),
-			testsuite.TransactionWithAmount(1e9),
-			testsuite.TransactionWithFee(0),
-		)
+		trx := td.makeValidTransferTx(testsuite.TransactionWithFee(0))
 
 		err := td.pool.AppendTx(trx)
 		assert.Error(t, err)
@@ -231,27 +311,24 @@ func TestAppendInvalidTransaction(t *testing.T) {
 	td := setup(t, nil)
 
 	invTrx := td.GenerateTestTransferTx()
-	assert.Error(t, td.pool.AppendTx(invTrx))
+
+	err := td.pool.AppendTx(invTrx)
+	assert.Error(t, err)
 }
 
 // TestFullPool tests if the pool prunes the old transactions when it is full.
 func TestFullPool(t *testing.T) {
-	td := setup(t, nil)
+	conf := testDefaultConfig()
+	conf.MaxSize = 10
+	td := setup(t, conf)
 
-	randHeight := td.RandHeight()
-	_ = td.sbx.TestStore.AddTestBlock(randHeight)
 	trxs := make([]*tx.Tx, td.pool.config.transferPoolSize()+1)
-
-	senderAddr := td.RandAccAddress()
-	senderAcc := account.NewAccount(0)
-	senderAcc.AddToBalance(1000e9)
-	td.sbx.UpdateAccount(senderAddr, senderAcc)
 
 	// Make sure the pool is empty
 	assert.Equal(t, 0, td.pool.Size())
 
 	for i := 0; i < len(trxs); i++ {
-		trx := tx.NewTransferTx(randHeight+1, senderAddr, td.RandAccAddress(), 1e9, 1000_000_000)
+		trx := td.makeValidTransferTx()
 
 		assert.NoError(t, td.pool.AppendTx(trx))
 		trxs[i] = trx
@@ -265,48 +342,23 @@ func TestFullPool(t *testing.T) {
 func TestEmptyPool(t *testing.T) {
 	td := setup(t, nil)
 
-	assert.Empty(t, td.pool.PrepareBlockTransactions(), "pool should be empty")
+	trxs := td.pool.AllPendingTxs()
+	assert.Empty(t, trxs, "pool should be empty")
 }
 
 func TestPrepareBlockTransactions(t *testing.T) {
 	td := setup(t, nil)
 
-	randHeight := td.RandHeight() + td.sbx.TestParams.UnbondInterval
-	_ = td.sbx.TestStore.AddTestBlock(randHeight)
+	pub1, _ := td.RandBLSKeyPair()
+	_, prv2 := td.RandBLSKeyPair()
+	_, prv3 := td.RandBLSKeyPair()
+	_, prv4 := td.RandBLSKeyPair()
 
-	acc1Addr := td.RandAccAddress()
-	acc1 := account.NewAccount(0)
-	acc1.AddToBalance(1000e9)
-	td.sbx.UpdateAccount(acc1Addr, acc1)
-
-	val1PubKey, _ := td.RandBLSKeyPair()
-	val1 := validator.NewValidator(val1PubKey, 0)
-	val1.AddToStake(1000e9)
-	td.sbx.UpdateValidator(val1)
-
-	val2PubKey, _ := td.RandBLSKeyPair()
-	val2 := validator.NewValidator(val2PubKey, 0)
-	val2.AddToStake(1000e9)
-	val2.UpdateUnbondingHeight(1)
-	td.sbx.UpdateValidator(val2)
-
-	val3PubKey, _ := td.RandBLSKeyPair()
-	val3 := validator.NewValidator(val3PubKey, 0)
-	val3.AddToStake(1000e9)
-	td.sbx.UpdateValidator(val3)
-
-	transferTx := tx.NewTransferTx(randHeight+1, acc1Addr, td.RandAccAddress(), 1e9, 100_000_000)
-
-	pub, _ := td.RandBLSKeyPair()
-	bondTx := tx.NewBondTx(randHeight+2, acc1Addr, pub.ValidatorAddress(), pub, 1e9, 100_000_000)
-
-	unbondTx := tx.NewUnbondTx(randHeight+3, val1.Address())
-
-	withdrawTx := tx.NewWithdrawTx(randHeight+4, val2.Address(), td.RandAccAddress(), 1e9, 100_000_000)
-
-	td.sbx.TestAcceptSortition = true
-	sortitionTx := tx.NewSortitionTx(randHeight, val3.Address(),
-		td.RandProof())
+	transferTx := td.makeValidTransferTx()
+	bondTx := td.makeValidBondTx(testsuite.TransactionWithValidatorPublicKey(pub1))
+	unbondTx := td.makeValidUnbondTx(testsuite.TransactionWithBLSSigner(prv2))
+	withdrawTx := td.makeValidWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
+	sortitionTx := td.makeValidSortitionTx(testsuite.TransactionWithBLSSigner(prv4))
 
 	assert.NoError(t, td.pool.AppendTx(transferTx))
 	assert.NoError(t, td.pool.AppendTx(unbondTx))
@@ -323,46 +375,104 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	assert.Equal(t, transferTx.ID(), trxs[4].ID())
 }
 
-func TestAppendAndBroadcast(t *testing.T) {
-	td := setup(t, nil)
-
-	height := td.RandHeight()
-	td.sbx.TestStore.AddTestBlock(height)
-	testTrx := tx.NewSubsidyTx(height+1, td.RandAccAddress(), 1e9)
-
-	assert.NoError(t, td.pool.AppendTxAndBroadcast(testTrx))
-	td.shouldPublishTransaction(t, testTrx.ID())
-
-	invTrx := td.GenerateTestBondTx()
-	assert.Error(t, td.pool.AppendTxAndBroadcast(invTrx))
-}
-
 func TestAddSubsidyTransactions(t *testing.T) {
-	td := setup(t, nil)
+	t.Run("invalid transaction: Should return error", func(t *testing.T) {
+		td := setup(t, nil)
 
-	randHeight := td.RandHeight()
-	td.sbx.TestStore.AddTestBlock(randHeight)
-	proposer1 := td.RandAccAddress()
-	proposer2 := td.RandAccAddress()
-	trx1 := tx.NewSubsidyTx(randHeight, proposer1, 1e9, tx.WithMemo("subsidy-tx-1"))
-	trx2 := tx.NewSubsidyTx(randHeight+1, proposer1, 1e9, tx.WithMemo("subsidy-tx-1"))
-	trx3 := tx.NewSubsidyTx(randHeight+1, proposer2, 1e9, tx.WithMemo("subsidy-tx-2"))
+		randHeight := td.RandHeight()
+		td.sbx.TestStore.AddTestBlock(randHeight)
+		trx := tx.NewSubsidyTx(randHeight, td.RandAccAddress(), 1e9)
 
-	err := td.pool.AppendTx(trx1)
-	assert.ErrorIs(t, err, AppendError{
-		Err: execution.LockTimeExpiredError{
+		err := td.pool.AppendTx(trx)
+		assert.ErrorIs(t, err, execution.LockTimeExpiredError{
 			LockTime: randHeight,
-		},
+		})
 	})
 
-	err = td.pool.AppendTx(trx2)
-	assert.NoError(t, err)
+	t.Run("valid transaction: Should add it to the pool", func(t *testing.T) {
+		td := setup(t, nil)
 
-	err = td.pool.AppendTx(trx3)
-	assert.NoError(t, err)
+		trx := tx.NewSubsidyTx(td.RandHeight(), td.RandAccAddress(), 1e9)
 
-	td.sbx.TestStore.AddTestBlock(randHeight + 1)
+		err := td.pool.AppendTx(trx)
+		assert.NoError(t, err)
+	})
+}
+
+func TestRecheckTransactions(t *testing.T) {
+	td := setup(t, nil)
+
+	trx := tx.NewSubsidyTx(td.RandHeight(), td.RandAccAddress(), 1e9)
+
+	err := td.pool.AppendTx(trx)
+	assert.NoError(t, err)
+	assert.Equal(t, 1, td.pool.Size())
 
 	td.pool.SetNewSandboxAndRecheck(td.sbx)
-	assert.Zero(t, td.pool.Size())
+	assert.Equal(t, 0, td.pool.Size())
+}
+
+func TestAppendAndBroadcast(t *testing.T) {
+	t.Run("Invalid transaction: Should return error", func(t *testing.T) {
+		td := setup(t, nil)
+
+		invTrx := td.GenerateTestTransferTx()
+		assert.Error(t, td.pool.AppendTxAndBroadcast(invTrx))
+	})
+
+	t.Run("Valid transaction with valid fee: Should add to pool and broadcast", func(t *testing.T) {
+		td := setup(t, nil)
+
+		trx := td.makeValidTransferTx()
+
+		err := td.pool.AppendTxAndBroadcast(trx)
+		assert.NoError(t, err)
+
+		assert.Equal(t, 1, td.pool.Size())
+		td.shouldPublishTransaction(t, trx.ID())
+	})
+
+	t.Run("Valid transaction with zero fee: Should broadcast but not add to the pool", func(t *testing.T) {
+		td := setup(t, nil)
+
+		trx := td.makeValidTransferTx(testsuite.TransactionWithFee(0))
+
+		err := td.pool.AppendTxAndBroadcast(trx)
+		assert.NoError(t, err)
+
+		assert.Zero(t, td.pool.Size())
+		td.shouldPublishTransaction(t, trx.ID())
+	})
+}
+
+func TestAllPendingTxs(t *testing.T) {
+	td := setup(t, nil)
+
+	trxs := td.pool.AllPendingTxs()
+	assert.Empty(t, trxs, 0)
+
+	pub1, _ := td.RandBLSKeyPair()
+	_, prv2 := td.RandBLSKeyPair()
+
+	transferTx := td.makeValidTransferTx()
+	bondTx := td.makeValidBondTx(testsuite.TransactionWithValidatorPublicKey(pub1))
+	unbondTx := td.makeValidUnbondTx()
+	withdrawTx := td.makeValidWithdrawTx()
+	sortitionTx := td.makeValidSortitionTx(testsuite.TransactionWithBLSSigner(prv2))
+
+	assert.NoError(t, td.pool.AppendTx(transferTx))
+	assert.NoError(t, td.pool.AppendTx(bondTx))
+	assert.NoError(t, td.pool.AppendTx(unbondTx))
+	assert.NoError(t, td.pool.AppendTx(withdrawTx))
+	assert.NoError(t, td.pool.AppendTx(sortitionTx))
+
+	trxs = td.pool.AllPendingTxs()
+	assert.Len(t, trxs, 5)
+}
+
+func TestEstimatedFee(t *testing.T) {
+	td := setup(t, nil)
+
+	estimatedFee := td.pool.EstimatedFee(td.RandAmount(), payload.TypeTransfer)
+	assert.Equal(t, td.pool.config.fixedFee(), estimatedFee)
 }

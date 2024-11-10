@@ -174,7 +174,11 @@ func (ww *widgetWallet) onShowSeed() {
 	}
 
 	seed, err := ww.model.wallet.Mnemonic(password)
-	errorCheck(err)
+	if err != nil {
+		showError(err)
+
+		return
+	}
 
 	showSeed(seed)
 }

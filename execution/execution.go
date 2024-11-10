@@ -40,10 +40,6 @@ func CheckAndExecute(trx *tx.Tx, sbx sandbox.Sandbox, strict bool) error {
 		return err
 	}
 
-	if err := CheckFee(trx); err != nil {
-		return err
-	}
-
 	if err := exe.Check(strict); err != nil {
 		return err
 	}
@@ -78,20 +74,6 @@ func CheckLockTime(trx *tx.Tx, sbx sandbox.Sandbox, strict bool) error {
 		if trx.LockTime() > sbx.CurrentHeight() {
 			return LockTimeInFutureError{
 				LockTime: trx.LockTime(),
-			}
-		}
-	}
-
-	return nil
-}
-
-func CheckFee(trx *tx.Tx) error {
-	// TODO: This check maybe can be done in BasicCheck?
-	if trx.IsFreeTx() {
-		if trx.Fee() != 0 {
-			return InvalidFeeError{
-				Fee:      trx.Fee(),
-				Expected: 0,
 			}
 		}
 	}

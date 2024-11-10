@@ -12,7 +12,7 @@ type Config struct {
 
 type FeeConfig struct {
 	FixedFee   float64 `toml:"fixed_fee"`
-	DailyLimit uint32  `toml:"daily_limit"`
+	DailyLimit int     `toml:"daily_limit"`
 	UnitPrice  float64 `toml:"unit_price"`
 }
 
@@ -40,16 +40,16 @@ func (conf *Config) BasicCheck() error {
 		}
 	}
 
-	if conf.Fee.DailyLimit == 0 {
+	if conf.Fee.DailyLimit <= 0 {
 		return ConfigError{
-			Reason: "dailyLimit can't be zero",
+			Reason: "dailyLimit should be positive",
 		}
 	}
 
 	return nil
 }
 
-func (conf *Config) CalculateConsumption() bool {
+func (conf *Config) calculateConsumption() bool {
 	return conf.Fee.UnitPrice > 0
 }
 
