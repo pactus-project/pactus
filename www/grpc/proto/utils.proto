@@ -7,11 +7,17 @@ option java_package = "pactus.utils";
 // Utils service defines RPC methods for utility functions such as message
 // signing and verification.
 service Utils {
-  // SignMessageWithPrivateKey sign message with provided private key.
+  // SignMessageWithPrivateKey signs message with provided private key.
   rpc SignMessageWithPrivateKey(SignMessageWithPrivateKeyRequest) returns (SignMessageWithPrivateKeyResponse);
 
-  // VerifyMessage verify signature with public key and message
+  // VerifyMessage verifies signature with public key and message.
   rpc VerifyMessage(VerifyMessageRequest) returns (VerifyMessageResponse);
+
+  // BLSPublicKeyAggregation aggregates bls public keys.
+  rpc BLSPublicKeyAggregation(BLSPublicKeyAggregationRequest) returns (BLSPublicKeyAggregationResponse);
+
+  // BLSSignatureAggregation aggregates bls signatures.
+  rpc BLSSignatureAggregation(BLSSignatureAggregationRequest) returns (BLSSignatureAggregationResponse);
 }
 
 // Request message for sign message with private key.
@@ -43,4 +49,28 @@ message VerifyMessageRequest {
 message VerifyMessageResponse {
   // Indicates if the signature is valid (true) or not (false).
   bool is_valid = 1;
+}
+
+// Request message for aggregating BLS public keys.
+message BLSPublicKeyAggregationRequest {
+  // The public keys to aggregate.
+  repeated string public_keys = 1;
+}
+
+// Response message containing the aggregated public key.
+message BLSPublicKeyAggregationResponse {
+  // The aggregated public key.
+  string public_key = 1;
+}
+
+// Request message for aggregating BLS signatures.
+message BLSSignatureAggregationRequest {
+  // The signatures to aggregate.
+  repeated string signatures = 1;
+}
+
+// Response message containing the aggregated signature.
+message BLSSignatureAggregationResponse {
+  // The aggregated signature.
+  string signature = 1;
 }

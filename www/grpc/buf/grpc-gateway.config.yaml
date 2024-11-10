@@ -118,3 +118,9 @@ http:
 
     - selector: pactus.Utils.VerifyMessage
       get: "/pactus/Utils/verify_message"
+
+    - selector: pactus.Utils.BLSPublicKeyAggregation
+      get: "/pactus/Utils/bls_public_key_aggregation"
+
+    - selector: pactus.Utils.BLSSignatureAggregation
+      get: "/pactus/Utils/bls_signature_aggregation"
