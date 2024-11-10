@@ -4,6 +4,7 @@ package main
 
 import (
 	_ "embed"
+	"github.com/gotk3/gotk3/gdk"
 
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/crypto"
@@ -26,10 +27,23 @@ func createAddress(wdgWallet *widgetWallet) {
 
 	addressTypeCombo.SetActive(0)
 
-	getButtonObj(builder, "id_button_ok").SetImage(OkIcon())
+	okBtn := getButtonObj(builder, "id_button_ok")
+	okBtn.SetImage(OkIcon())
+
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 
+	dlg.Connect("key-press-event", func(widget *gtk.Dialog, event *gdk.Event) {
+		keyEvent := &gdk.EventKey{Event: event}
+		// Check if the Enter key was pressed
+		if keyEvent.KeyVal() == gdk.KEY_Return || keyEvent.KeyVal() == gdk.KEY_KP_Enter {
+			// Prevent Enter from triggering default behavior twice
+			_, _ = okBtn.Emit("clicked")
+		}
+	})
+
 	onOk := func() {
+		okBtn.SetSensitive(false)
+
 		walletAddressLabel, err := addressLabel.GetText()
 		fatalErrorCheck(err)
 
@@ -51,6 +65,7 @@ func createAddress(wdgWallet *widgetWallet) {
 		}
 
 		if err != nil {
+			okBtn.SetSensitive(true)
 			showError(err)
 
 			return
