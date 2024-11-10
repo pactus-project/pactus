@@ -4,8 +4,8 @@ package main
 
 import (
 	_ "embed"
-	"github.com/gotk3/gotk3/gdk"
 
+	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/crypto"
 )
@@ -32,7 +32,7 @@ func createAddress(wdgWallet *widgetWallet) {
 
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 
-	dlg.Connect("key-press-event", func(widget *gtk.Dialog, event *gdk.Event) {
+	dlg.Connect("key-press-event", func(_ *gtk.Dialog, event *gdk.Event) {
 		keyEvent := &gdk.EventKey{Event: event}
 		// Check if the Enter key was pressed
 		if keyEvent.KeyVal() == gdk.KEY_Return || keyEvent.KeyVal() == gdk.KEY_KP_Enter {
