@@ -239,6 +239,7 @@ func (v *Vault) AddressInfos() []AddressInfo {
 
 	v.sortAddressesByAddressIndex(addrs...)
 	v.sortAddressesByAddressType(addrs...)
+	v.sortAddressesByPurpose(addrs...)
 
 	return addrs
 }
