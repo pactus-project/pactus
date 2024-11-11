@@ -7,10 +7,10 @@ on:
     branches:
       - main
 
-# build multiple platforms base on https://docs.docker.com/build/ci/github-actions/multi-platform/
 jobs:
   docker:
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -35,9 +35,9 @@ jobs:
 
     - name: Build and push
       uses: docker/build-push-action@v6
+      platforms: linux/amd64,linux/arm64,linux/arm/v6,linux/arm/v7,linux/386,linux/ppc64le
       with:
         context: .
-        platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v6,linux/arm/v7,linux/ppc64le
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
