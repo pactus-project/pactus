@@ -150,6 +150,9 @@ func TestExampleConfig(t *testing.T) {
 	exampleToml = strings.ReplaceAll(exampleToml, "\n\n", "\n")
 	defaultToml = strings.ReplaceAll(defaultToml, "\n\n", "\n")
 
+	defaultToml = strings.TrimSpace(defaultToml)
+	exampleToml = strings.TrimSpace(exampleToml)
+
 	assert.Equal(t, defaultToml, exampleToml)
 }
 

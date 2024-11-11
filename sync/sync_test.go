@@ -42,7 +42,7 @@ type testData struct {
 func testConfig() *Config {
 	return &Config{
 		Moniker:             "test",
-		SessionTimeout:      time.Second * 1,
+		SessionTimeoutStr:   "1s",
 		BlockPerMessage:     11,
 		MaxSessions:         4,
 		BlockPerSession:     23,

@@ -10,9 +10,9 @@ import (
 )
 
 type Config struct {
-	Moniker        string           `toml:"moniker"`
-	SessionTimeout time.Duration    `toml:"session_timeout"`
-	Firewall       *firewall.Config `toml:"firewall"`
+	Moniker           string           `toml:"moniker"`
+	SessionTimeoutStr string           `toml:"session_timeout"`
+	Firewall          *firewall.Config `toml:"firewall"`
 
 	// Private configs
 	MaxSessions         int              `toml:"-"`
@@ -25,13 +25,13 @@ type Config struct {
 
 func DefaultConfig() *Config {
 	return &Config{
-		SessionTimeout:  time.Second * 10,
-		Services:        service.New(service.PrunedNode),
-		MaxSessions:     8,
-		BlockPerSession: 720,
-		BlockPerMessage: 60,
-		PruneWindow:     86_400, // Default retention blocks in prune mode
-		Firewall:        firewall.DefaultConfig(),
+		SessionTimeoutStr: "10s",
+		Services:          service.New(service.PrunedNode),
+		MaxSessions:       8,
+		BlockPerSession:   720,
+		BlockPerMessage:   60,
+		PruneWindow:       86_400, // Default retention blocks in prune mode
+		Firewall:          firewall.DefaultConfig(),
 		// v1.5.0 is the hard-fork for Ed25519 support.
 		LatestSupportingVer: version.Version{
 			Major: 1,
@@ -43,10 +43,21 @@ func DefaultConfig() *Config {
 
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
+	_, err := time.ParseDuration(conf.SessionTimeoutStr)
+	if err != nil {
+		return err
+	}
+
 	return conf.Firewall.BasicCheck()
 }
 
 func (conf *Config) CacheSize() int {
 	return util.LogScale(
 		int(conf.BlockPerMessage * conf.BlockPerSession))
+}
+
+func (conf *Config) SessionTimeout() time.Duration {
+	timeout, _ := time.ParseDuration(conf.SessionTimeoutStr)
+
+	return timeout
 }
