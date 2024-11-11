@@ -181,6 +181,10 @@ func (w *Wallet) Name() string {
 	return path.Base(w.path)
 }
 
+func (w *Wallet) CoinType() uint32 {
+	return w.store.Vault.CoinType
+}
+
 func (w *Wallet) IsOffline() bool {
 	return len(w.grpcClient.servers) == 0
 }
