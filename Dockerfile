@@ -30,5 +30,3 @@ ENV WORKING_DIR="/pactus"
 
 VOLUME $WORKING_DIR
 WORKDIR $WORKING_DIR
-
-CMD["pactus-daemon"]
