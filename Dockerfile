@@ -1,10 +1,16 @@
 ARG ALPINE_VERSION=3.20
 ARG GO_VERSION=1.23.2
+ARG XCPUTRANSLATE_VERSION=v0.6.0
 ARG BUILDPLATFORM=linux/amd64
-ARG TARGETOS
-ARG TARGETARCH
 
+FROM --platform=${BUILDPLATFORM} qmcgaw/xcputranslate:${XCPUTRANSLATE_VERSION} AS xcputranslate
 FROM --platform=${BUILDPLATFORM} golang:${GO_VERSION}-alpine${ALPINE_VERSION} AS builder
+ARG TARGETPLATFORM
+
+COPY --from=xcputranslate /xcputranslate /usr/local/bin/xcputranslate
+
+# disable CGO
+ENV CGO_ENABLED=0
 
 WORKDIR /pactus
 
@@ -14,10 +20,19 @@ RUN apk add --no-cache git gmp-dev build-base openssl-dev
 # Copy source code
 COPY . .
 
+# download go modules for build
+RUN go mod download -x
+
 # Build pactus-daemon, pactus-wallet, and pactus-shell
-RUN GOOS={$TARGETOS} GOARCH={$TARGETARCH} CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ./build/pactus-daemon ./cmd/daemon && \
-    GOOS={$TARGETOS} GOARCH={$TARGETARCH} CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ./build/pactus-wallet ./cmd/wallet && \
-    GOOS={$TARGETOS} GOARCH={$TARGETARCH} CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ./build/pactus-shell ./cmd/shell
+RUN GOARCH="$(xcputranslate translate -field arch -targetplatform ${TARGETPLATFORM})" \
+    GOARM="$(xcputranslate translate -field arm -targetplatform ${TARGETPLATFORM})" \
+     go build -ldflags "-s -w" -trimpath -o ./build/pactus-daemon ./cmd/daemon && \
+    GOARCH="$(xcputranslate translate -field arch -targetplatform ${TARGETPLATFORM})" \
+    GOARM="$(xcputranslate translate -field arm -targetplatform ${TARGETPLATFORM})" \
+     go build -ldflags "-s -w" -trimpath -o ./build/pactus-wallet ./cmd/wallet && \
+    GOARCH="$(xcputranslate translate -field arch -targetplatform ${TARGETPLATFORM})" \
+    GOARM="$(xcputranslate translate -field arm -targetplatform ${TARGETPLATFORM})" \
+     go build -ldflags "-s -w" -trimpath -o ./build/pactus-shell ./cmd/shell
 
 # Final stage
 FROM alpine:${ALPINE_VERSION}
