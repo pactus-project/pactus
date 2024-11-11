@@ -21,7 +21,7 @@ RUN apk add --no-cache git gmp-dev build-base openssl-dev
 COPY . .
 
 # download go modules for build
-RUN go mod download -x
+RUN go mod download
 
 # Build pactus-daemon, pactus-wallet, and pactus-shell
 RUN GOARCH="$(xcputranslate translate -field arch -targetplatform ${TARGETPLATFORM})" \
