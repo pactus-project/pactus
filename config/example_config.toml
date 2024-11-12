@@ -13,23 +13,23 @@
 [store]
 
   # `path` specifies the directory where blockchain data will be stored.
-  # Default is `"data"`.
-  path = "data"
+  # Default is 'data'.
+  path = 'data'
 
   # `retention_days` this parameter indicates the number of days for which the node should keep or retain the blocks
   # before pruning them. It is only applicable if the node is in Prune Mode.
-  # Default is `10`.
+  # Default is `10` days.
   retention_days = 10
 
 # `network` contains configuration options for the network module, which manages communication between nodes.
 [network]
 
   # `network_key` specifies the private key filename to use for node authentication and encryption in the p2p protocol.
-  # Default is `"network_key"`.
-  network_key = "network_key"
+  # Default is `'network_key'`.
+  network_key = 'network_key'
 
   # `public_addr` is the address that is public and accessible to other nodes.
-  public_addr = ""
+  public_addr = ''
 
   # `listen_addrs` specifies the addresses and ports where the node will listen for incoming connections from other nodes.
   listen_addrs = []
@@ -84,13 +84,13 @@
 [sync]
 
   # `moniker` is a custom human-readable name for this node.
-  moniker = ""
+  moniker = ''
 
   # `session_timeout` is a timeout for a download session to remain open.
   # When a block download request is sent, this timer starts. If there is no activity from the target Node,
-  # the session will be closed after the timeout and try to get the block from another Node.
-  # Default is `10s`.
-  session_timeout = "10s"
+  # the session will be closed after the timeout and try to get the block from another peer.
+  # Default is `'10s'`.
+  session_timeout = '10s'
 
   # `sync.firewall` contains configuration options for the sync firewall.
   [sync.firewall]
@@ -122,7 +122,7 @@
   # `tx_pool.fee` contains configuration to calculate the transaction fee.
   [tx_pool.fee]
 
-    # The `fixed_fee` is a constant fee applied to each transaction, regardless of its size or type.
+    # The `fixed_fee` is a constant fee in PAC that applies to each transaction, regardless of its size or type.
     # Default is `0.01` PAC.
     fixed_fee = 0.01
 
@@ -160,23 +160,23 @@
   compress = true
 
   # `targets` determines where the logs will be shown, saved, or sent.
-  # Default is `["console", "file"]`.
-  targets = ["console", "file"]
+  # Default is `['console', 'file']`.
+  targets = ['console', 'file']
 
   # `logger.levels` contains the level of logger per module.
   # Available log levels are:
-  #   "trace", "debug", "info", "warn", and "error".
+  #   'trace', 'debug', 'info', 'warn', and 'error'.
   [logger.levels]
-    _consensus = "warn"
-    _grpc = "info"
-    _http = "info"
-    _jsonrpc = "info"
-    _network = "error"
-    _nonomsg = "info"
-    _pool = "error"
-    _state = "info"
-    _sync = "error"
-    default = "info"
+    _consensus = 'warn'
+    _grpc = 'info'
+    _http = 'info'
+    _jsonrpc = 'info'
+    _network = 'error'
+    _nonomsg = 'info'
+    _pool = 'error'
+    _state = 'info'
+    _sync = 'error'
+    default = 'info'
 
 # `grpc` contains configuration of the gRPC module.
 [grpc]
@@ -190,10 +190,10 @@
   enable_wallet = false
 
   # `listen` is the address to listen for incoming connections for gRPC server.
-  listen = "127.0.0.1:50051"
+  listen = '127.0.0.1:50051'
 
   # `basic_auth`  is the Basic Auth credential used to enhance gRPC security.
-  basic_auth = ""
+  basic_auth = ''
 
   # `grpc.gateway` contains configuration for the gRPC Gateway server
   # which translates a RESTful HTTP API into gRPC.
@@ -204,7 +204,7 @@
     enable = false
 
     # `listen` is the address to listen for incoming connections for gRPCGateway server.
-    listen = "127.0.0.1:8080"
+    listen = '127.0.0.1:8080'
 
     # `enable_cors` indicates whether Cross-Origin Request Sharing (CORS)
     # protection should be enabled or not.
@@ -219,7 +219,7 @@
   enable = false
 
   # `listen` is the address to listen for incoming connections for JSON-RPC server.
-  listen = "127.0.0.1:8545"
+  listen = '127.0.0.1:8545'
 
 # `http` configuration.
 [http]
@@ -229,7 +229,7 @@
   enable = false
 
   # `listen` is the address to listen for incoming connections for HTTP server.
-  listen = "127.0.0.1:80"
+  listen = '127.0.0.1:80'
 
   # `enable_pprof` Enables Golang's pprof debugger for profiling CPU, memory, and goroutines,
   # providing key performance insights. Be cautious as it exposes sensitive
@@ -244,4 +244,4 @@
   enable = false
 
   # `listen` is the address for incoming connections to the nanomsg server.
-  listen = "tcp://127.0.0.1:40899"
+  listen = 'tcp://127.0.0.1:40899'

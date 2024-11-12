@@ -20,7 +20,7 @@ import (
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
 	"github.com/pactus-project/pactus/www/nanomsg"
-	"github.com/pelletier/go-toml"
+	"github.com/pelletier/go-toml/v2"
 )
 
 var (
@@ -236,7 +236,7 @@ func (conf *Config) Save(path string) error {
 func (conf *Config) toTOML() []byte {
 	buf := new(bytes.Buffer)
 	encoder := toml.NewEncoder(buf)
-	encoder.Order(toml.OrderPreserve)
+	encoder.SetIndentTables(true)
 	err := encoder.Encode(conf)
 	if err != nil {
 		panic(err)
@@ -254,7 +254,9 @@ func LoadFromFile(file string, strict bool, defaultConfig *Config) (*Config, err
 	conf := defaultConfig
 	buf := bytes.NewBuffer(data)
 	decoder := toml.NewDecoder(buf)
-	decoder.Strict(strict)
+	if strict {
+		decoder.DisallowUnknownFields()
+	}
 	if err := decoder.Decode(conf); err != nil {
 		return nil, err
 	}
