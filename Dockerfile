@@ -17,7 +17,7 @@ COPY --from=builder /pactus/build/pactus-daemon /usr/bin
 COPY --from=builder /pactus/build/pactus-wallet /usr/bin
 COPY --from=builder /pactus/build/pactus-shell /usr/bin
 
-ENV WORKING_DIR "/pactus"
+ENV WORKING_DIR="/pactus"
 
 VOLUME $WORKING_DIR
 WORKDIR $WORKING_DIR
