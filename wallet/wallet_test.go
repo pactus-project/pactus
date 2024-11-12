@@ -646,3 +646,10 @@ func TestTotalStake(t *testing.T) {
 
 	require.Equal(t, stake, val1.Stake()+val2.Stake())
 }
+
+func TestCoinType(t *testing.T) {
+	td := setup(t)
+	defer td.Close()
+
+	assert.Equal(t, td.wallet.CoinType(), uint32(21888))
+}

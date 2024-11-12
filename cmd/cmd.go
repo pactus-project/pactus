@@ -296,21 +296,21 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 ) ([]string, string, error) {
 	// To make process faster, we update the password after creating the addresses
 	walletPath := PactusDefaultWalletPath(workingDir)
-	walletInstance, err := wallet.Create(walletPath, mnemonic, "", chain)
+	wlt, err := wallet.Create(walletPath, mnemonic, "", chain)
 	if err != nil {
 		return nil, "", err
 	}
 
 	validatorAddrs := []string{}
 	for i := 0; i < numValidators; i++ {
-		addressInfo, err := walletInstance.NewValidatorAddress(fmt.Sprintf("Validator address %v", i+1))
+		addressInfo, err := wlt.NewValidatorAddress(fmt.Sprintf("Validator address %v", i+1))
 		if err != nil {
 			return nil, "", err
 		}
 		validatorAddrs = append(validatorAddrs, addressInfo.Address)
 	}
 
-	addressInfo, err := walletInstance.NewEd25519AccountAddress(
+	addressInfo, err := wlt.NewEd25519AccountAddress(
 		"Reward address", "")
 	if err != nil {
 		return nil, "", err
@@ -344,7 +344,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		if numValidators < 4 {
 			return nil, "", fmt.Errorf("LocalNeed needs at least 4 validators")
 		}
-		genDoc := makeLocalGenesis(*walletInstance)
+		genDoc := makeLocalGenesis(*wlt)
 		if err := genDoc.SaveToFile(genPath); err != nil {
 			return nil, "", err
 		}
@@ -355,11 +355,11 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		}
 	}
 
-	if err := walletInstance.UpdatePassword("", walletPassword); err != nil {
+	if err := wlt.UpdatePassword("", walletPassword); err != nil {
 		return nil, "", err
 	}
 
-	if err := walletInstance.Save(); err != nil {
+	if err := wlt.Save(); err != nil {
 		return nil, "", err
 	}
 
@@ -379,13 +379,13 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	defaultWalletPath := PactusDefaultWalletPath(workingDir)
-	walletInstance, err := wallet.Open(defaultWalletPath, true,
+	wlt, err := wallet.Open(defaultWalletPath, true,
 		wallet.WithCustomServers([]string{conf.GRPC.Listen}))
 	if err != nil {
 		return nil, nil, err
 	}
 
-	valAddrsInfo := walletInstance.AllValidatorAddresses()
+	valAddrsInfo := wlt.AllValidatorAddresses()
 	if len(valAddrsInfo) == 0 {
 		return nil, nil, fmt.Errorf("no validator addresses found in the wallet")
 	}
@@ -395,12 +395,12 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		valAddrsInfo = valAddrsInfo[:32]
 	}
 
-	rewardAddrs, err := MakeRewardAddresses(walletInstance, valAddrsInfo, conf.Node.RewardAddresses)
+	rewardAddrs, err := MakeRewardAddresses(wlt, valAddrsInfo, conf.Node.RewardAddresses)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	valKeys, err := MakeValidatorKey(walletInstance, valAddrsInfo, passwordFetcher)
+	valKeys, err := MakeValidatorKey(wlt, valAddrsInfo, passwordFetcher)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -415,7 +415,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		return nil, nil, err
 	}
 
-	return node, walletInstance, nil
+	return node, wlt, nil
 }
 
 // makeLocalGenesis makes genesis file for the local network.
@@ -547,61 +547,63 @@ func RecoverConfig(confPath string, defConf *config.Config, chainType genesis.Ch
 	return conf, err
 }
 
-func MakeRewardAddresses(walletInstance *wallet.Wallet,
-	valAddrsInfo []vault.AddressInfo, confRewardAddresses []string,
+// MakeRewardAddresses generates a list of reward addresses based on wallet and configuration.
+// If no reward addresses are provided in the config,
+// the function attempts to use Ed25519 or BLS addresses from the wallet.
+func MakeRewardAddresses(wlt *wallet.Wallet, valAddrsInfo []vault.AddressInfo,
+	confRewardAddrs []string,
 ) ([]crypto.Address, error) {
-	if len(confRewardAddresses) > 1 &&
-		len(confRewardAddresses) != len(valAddrsInfo) {
-		return nil, fmt.Errorf("reward addresses should be %v", len(valAddrsInfo))
-	}
-
-	// Create reward addresses
 	rewardAddrs := make([]crypto.Address, 0, len(valAddrsInfo))
-	if len(confRewardAddresses) != 0 {
-		for _, addrStr := range confRewardAddresses {
-			addr, _ := crypto.AddressFromString(addrStr)
-			rewardAddrs = append(rewardAddrs, addr)
-		}
 
-		if len(rewardAddrs) == 1 {
-			for i := 1; i < len(valAddrsInfo); i++ {
-				rewardAddrs = append(rewardAddrs, rewardAddrs[0])
-			}
-		}
-	} else {
-		for i := 0; i < len(valAddrsInfo); i++ {
-			valAddrPath, _ := addresspath.FromString(valAddrsInfo[i].Path)
-			accAddrPath := addresspath.NewPath(
-				valAddrPath.Purpose(),
-				valAddrPath.CoinType(),
+	switch {
+	// Case 1: No reward addresses in the config file.
+	case len(confRewardAddrs) == 0:
+		// Try to use the first Ed25519 address from the wallet as the reward address.
+		firstEd25519AddrPath := addresspath.NewPath(
+			vault.PurposeBIP44Hardened,
+			wlt.CoinType()+addresspath.HardenedKeyStart,
+			uint32(crypto.AddressTypeEd25519Account)+addresspath.HardenedKeyStart,
+			uint32(0)+addresspath.HardenedKeyStart)
+
+		addrInfo := wlt.AddressFromPath(firstEd25519AddrPath.String())
+		if addrInfo == nil {
+			// If no Ed25519 address is found, try the first BLS address instead.
+			firstBLSAddrPath := addresspath.NewPath(
+				vault.PurposeBLS12381Hardened,
+				wlt.CoinType()+addresspath.HardenedKeyStart,
 				uint32(crypto.AddressTypeBLSAccount)+addresspath.HardenedKeyStart,
-				valAddrPath.AddressIndex())
+				uint32(0))
 
-			addrInfo := walletInstance.AddressFromPath(accAddrPath.String())
+			addrInfo = wlt.AddressFromPath(firstBLSAddrPath.String())
+
 			if addrInfo == nil {
-				accAddrPath = addresspath.NewPath(
-					vault.PurposeBIP44Hardened,
-					valAddrPath.CoinType(),
-					uint32(crypto.AddressTypeEd25519Account)+addresspath.HardenedKeyStart,
-					uint32(0)+addresspath.HardenedKeyStart)
-
-				addrInfo = walletInstance.AddressFromPath(accAddrPath.String())
-				if addrInfo == nil {
-					return nil, fmt.Errorf("unable to find reward address for: %s [%s]",
-						valAddrsInfo[i].Address, accAddrPath)
-				}
+				return nil, fmt.Errorf("unable to find a reward address in the wallet")
 			}
+		}
 
-			addr, _ := crypto.AddressFromString(addrInfo.Address)
+		addr, _ := crypto.AddressFromString(addrInfo.Address)
+		for i := 0; i < len(valAddrsInfo); i++ {
 			rewardAddrs = append(rewardAddrs, addr)
 		}
-	}
 
-	// Check if reward addresses are account address
-	for _, addr := range rewardAddrs {
-		if !addr.IsAccountAddress() {
-			return nil, fmt.Errorf("reward address is not an account address: %s", addr)
+	// Case 2: One reward address is specified in the config file.
+	case len(confRewardAddrs) == 1:
+		// Use this single address for all validators.
+		addr, _ := crypto.AddressFromString(confRewardAddrs[0])
+		for i := 0; i < len(valAddrsInfo); i++ {
+			rewardAddrs = append(rewardAddrs, addr)
 		}
+
+	// Case 3: Each validator has a corresponding reward address in the config file.
+	case len(confRewardAddrs) == len(valAddrsInfo):
+		for i := 0; i < len(valAddrsInfo); i++ {
+			addr, _ := crypto.AddressFromString(confRewardAddrs[i])
+			rewardAddrs = append(rewardAddrs, addr)
+		}
+
+	default:
+		return nil, fmt.Errorf("expected %v reward addresses, but got %v",
+			len(valAddrsInfo), len(confRewardAddrs))
 	}
 
 	return rewardAddrs, nil

@@ -223,71 +223,104 @@ func TestPathsWindows(t *testing.T) {
 func TestMakeRewardAddresses(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	walletPath := util.TempFilePath()
-	mnemonic, _ := wallet.GenerateMnemonic(128)
-	walletInstance, err := wallet.Create(walletPath, mnemonic, "", genesis.Mainnet)
-	assert.NoError(t, err)
+	setupWallet := func() *wallet.Wallet {
+		walletPath := util.TempFilePath()
+		mnemonic, _ := wallet.GenerateMnemonic(128)
+		wlt, err := wallet.Create(walletPath, mnemonic, "", genesis.Mainnet)
+		assert.NoError(t, err)
 
-	_, _ = walletInstance.NewValidatorAddress("")
-	_, _ = walletInstance.NewValidatorAddress("")
-	_, _ = walletInstance.NewValidatorAddress("")
+		_, _ = wlt.NewValidatorAddress("Validator 1")
+		_, _ = wlt.NewValidatorAddress("Validator 2")
+		_, _ = wlt.NewValidatorAddress("Validator 3")
 
-	// Test 1 - Wallet without reward addresses
-	valAddrsInfo := walletInstance.AllValidatorAddresses()
-	confRewardAddresses := []string{}
-	_, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.ErrorContains(t, err, "unable to find reward address for")
+		return wlt
+	}
 
-	// Test 2 - Not enough reward addresses in wallet
-	rewardAddr1Info, _ := walletInstance.NewBLSAccountAddress("")
-	rewardAddr2Info, _ := walletInstance.NewBLSAccountAddress("")
+	t.Run("No reward addresses in wallet", func(t *testing.T) {
+		wlt := setupWallet()
 
-	_, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.ErrorContains(t, err, "unable to find reward address for")
+		valAddrsInfo := wlt.AllValidatorAddresses()
+		confRewardAddresses := []string{}
+		_, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
+		assert.ErrorContains(t, err, "unable to find a reward address in the wallet")
+	})
 
-	// Test 3 - Get reward addresses from wallet
-	rewardAddr3Info, _ := walletInstance.NewBLSAccountAddress("")
+	t.Run("Wallet with one Ed25519 address", func(t *testing.T) {
+		wlt := setupWallet()
 
-	rewardAddrs, err := MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.NoError(t, err)
-	assert.Equal(t, rewardAddrs[0].String(), rewardAddr1Info.Address)
-	assert.Equal(t, rewardAddrs[1].String(), rewardAddr2Info.Address)
-	assert.Equal(t, rewardAddrs[2].String(), rewardAddr3Info.Address)
+		addr1Info, _ := wlt.NewEd25519AccountAddress("", "")
+		_, _ = wlt.NewEd25519AccountAddress("", "")
+		_, _ = wlt.NewBLSAccountAddress("")
 
-	// Test 4 - Not enough reward addresses in config
-	confRewardAddr1 := ts.RandAccAddress().String()
-	confRewardAddr2 := ts.RandAccAddress().String()
-	confRewardAddresses = []string{confRewardAddr1, confRewardAddr2}
+		valAddrsInfo := wlt.AllValidatorAddresses()
+		confRewardAddresses := []string{}
+		rewardAddrs, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
+		assert.NoError(t, err)
 
-	_, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.ErrorContains(t, err, "reward addresses should be 3")
+		assert.Equal(t, rewardAddrs[0].String(), addr1Info.Address)
+		assert.Equal(t, rewardAddrs[1].String(), addr1Info.Address)
+		assert.Equal(t, rewardAddrs[2].String(), addr1Info.Address)
+	})
 
-	// Test 5 - Get reward addresses from config
-	confRewardAddr3 := ts.RandAccAddress().String()
-	confRewardAddresses = []string{confRewardAddr1, confRewardAddr2, confRewardAddr3}
+	t.Run("Wallet with one BLS address", func(t *testing.T) {
+		wlt := setupWallet()
 
-	rewardAddrs, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.NoError(t, err)
-	assert.Equal(t, rewardAddrs[0].String(), confRewardAddr1)
-	assert.Equal(t, rewardAddrs[1].String(), confRewardAddr2)
-	assert.Equal(t, rewardAddrs[2].String(), confRewardAddr3)
+		addr1Info, _ := wlt.NewBLSAccountAddress("")
+		_, _ = wlt.NewBLSAccountAddress("")
 
-	// Test 6 - Set one reward addresses in config
-	confRewardAddr := ts.RandAccAddress().String()
-	confRewardAddresses = []string{confRewardAddr}
+		valAddrsInfo := wlt.AllValidatorAddresses()
+		confRewardAddresses := []string{}
+		rewardAddrs, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
+		assert.NoError(t, err)
 
-	rewardAddrs, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.NoError(t, err)
-	assert.Equal(t, rewardAddrs[0].String(), confRewardAddr)
-	assert.Equal(t, rewardAddrs[1].String(), confRewardAddr)
-	assert.Equal(t, rewardAddrs[2].String(), confRewardAddr)
+		assert.Equal(t, rewardAddrs[0].String(), addr1Info.Address)
+		assert.Equal(t, rewardAddrs[1].String(), addr1Info.Address)
+		assert.Equal(t, rewardAddrs[2].String(), addr1Info.Address)
+	})
 
-	// Test 7 - Set validator address as reward addresses in config
-	confRewardAddr = ts.RandValAddress().String()
-	confRewardAddresses = []string{confRewardAddr}
+	t.Run("One reward address in config", func(t *testing.T) {
+		wlt := setupWallet()
 
-	_, err = MakeRewardAddresses(walletInstance, valAddrsInfo, confRewardAddresses)
-	assert.ErrorContains(t, err, "reward address is not an account address")
+		valAddrsInfo := wlt.AllValidatorAddresses()
+		confRewardAddresses := []string{
+			ts.RandAccAddress().String(),
+		}
+		rewardAddrs, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
+		assert.NoError(t, err)
+
+		assert.Equal(t, rewardAddrs[0].String(), confRewardAddresses[0])
+		assert.Equal(t, rewardAddrs[1].String(), confRewardAddresses[0])
+		assert.Equal(t, rewardAddrs[2].String(), confRewardAddresses[0])
+	})
+
+	t.Run("Three reward addresses in config", func(t *testing.T) {
+		wlt := setupWallet()
+
+		valAddrsInfo := wlt.AllValidatorAddresses()
+		confRewardAddresses := []string{
+			ts.RandAccAddress().String(),
+			ts.RandAccAddress().String(),
+			ts.RandAccAddress().String(),
+		}
+		rewardAddrs, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
+		assert.NoError(t, err)
+
+		assert.Equal(t, rewardAddrs[0].String(), confRewardAddresses[0])
+		assert.Equal(t, rewardAddrs[1].String(), confRewardAddresses[1])
+		assert.Equal(t, rewardAddrs[2].String(), confRewardAddresses[2])
+	})
+
+	t.Run("Insufficient reward addresses in config", func(t *testing.T) {
+		wlt := setupWallet()
+
+		valAddrsInfo := wlt.AllValidatorAddresses()
+		confRewardAddresses := []string{
+			ts.RandAccAddress().String(),
+			ts.RandAccAddress().String(),
+		}
+		_, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
+		assert.ErrorContains(t, err, "expected 3 reward addresses, but got 2")
+	})
 }
 
 func TestCreateNode(t *testing.T) {
