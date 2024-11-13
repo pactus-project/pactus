@@ -1,5 +1,38 @@
 # Changelog
 
+## [1.6.0](https://github.com/pactus-project/pactus/compare/v1.5.0...v1.6.0) (2024-11-14)
+
+### Feat
+
+- **grpc**: add bls public key and signature aggregate methods ([#1587](https://github.com/pactus-project/pactus/pull/1587))
+- **wallet**: create single ed25519 reward address for all validators ([#1570](https://github.com/pactus-project/pactus/pull/1570))
+- **gtk**: add fee entry for transfer, bond and withdraw ([#1575](https://github.com/pactus-project/pactus/pull/1575))
+- **txpool**: add consumptional fee model ([#1572](https://github.com/pactus-project/pactus/pull/1572))
+- **txpool**: calculate consumption when committing a new block ([#1554](https://github.com/pactus-project/pactus/pull/1554))
+- **sync**: add metric to track the network activity ([#1552](https://github.com/pactus-project/pactus/pull/1552))
+- **wallet**: add wallet service API ([#1548](https://github.com/pactus-project/pactus/pull/1548))
+- **config**: add consumption fee configs ([#1547](https://github.com/pactus-project/pactus/pull/1547))
+
+### Fix
+
+- **config**: update TOML parser ([#1592](https://github.com/pactus-project/pactus/pull/1592))
+- **gtk**: prevent duplicate address on enter signal in create modal ([#1590](https://github.com/pactus-project/pactus/pull/1590))
+- **txpool, cmd, gtk**: broadcast transactions with zero fee ([#1589](https://github.com/pactus-project/pactus/pull/1589))
+- **consensus**: send decided vote for previous round on query vote ([#1567](https://github.com/pactus-project/pactus/pull/1567))
+- **grpc**: get tx pool content filter by payload type ([#1581](https://github.com/pactus-project/pactus/pull/1581))
+- **wallet, cmd**: add support for importing Ed25519 private keys ([#1584](https://github.com/pactus-project/pactus/pull/1584))
+- **gtk**: change transactions to transaction in tx link ([#1580](https://github.com/pactus-project/pactus/pull/1580))
+- **grpc**: set Bond public key for decoded transaction ([#1577](https://github.com/pactus-project/pactus/pull/1577))
+- **other**: add varnamelen linter to improve name convention ([#1568](https://github.com/pactus-project/pactus/pull/1568))
+- **grpc**: encode data and signature properly ([#1538](https://github.com/pactus-project/pactus/pull/1538))
+- **gtk**: change some text in GUI and pruned position ([#1536](https://github.com/pactus-project/pactus/pull/1536))
+
+### Refactor
+
+- **cmd**: get first account address from wallet as reward address ([#1594](https://github.com/pactus-project/pactus/pull/1594))
+- **grpc**: revert GetRawTransfer method and undo deprecation ([#1560](https://github.com/pactus-project/pactus/pull/1560))
+- **crypto**: define SerializeSize for PublicKey and Signature ([#1534](https://github.com/pactus-project/pactus/pull/1534))
+
 ## [1.5.0](https://github.com/pactus-project/pactus/compare/v1.4.0...v1.5.0) (2024-10-08)
 
 ### Feat
