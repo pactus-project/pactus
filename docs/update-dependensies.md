@@ -10,9 +10,11 @@ First of all you need to update golang dependencies to latest version using this
 go get -u ./...
 go mod tidy
 ```
-Once all packages got updated, make sure you run `make build`, `make test` and `make build_gui` commands to make sure
-none of previous behaviors are broken. If any packages had breaking changes or some of them are deprecated, you need to
-update the code and use new methods or use another package.
+
+Once all packages got updated, make sure you run `make build`, `make test` and `make build_gui` commands to
+make sure none of previous behaviors are broken.
+If any packages had breaking changes or some of them are deprecated,
+you need to update the code and use new methods or use another package.
 
 ### Dev tools
 
