@@ -162,14 +162,11 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		amt, err := amount.FromString(args[2])
 		cmd.FatalErrorCheck(err)
 
-		fee, err := amount.FromString(*feeOpt)
-		cmd.FatalErrorCheck(err)
-
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionFee(fee),
+			wallet.OptionFeeFromString(*feeOpt),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
 		}
