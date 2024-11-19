@@ -19,7 +19,7 @@ require (
 	github.com/hashicorp/golang-lru/v2 v2.0.7
 	github.com/inancgumus/screen v0.0.0-20190314163918-06e984b86ed3
 	github.com/k0kubun/go-ansi v0.0.0-20180517002512-3bf9e2903213
-	github.com/kilic/bls12-381 v0.1.0
+	github.com/kilic/bls12-381 v0.1.1-0.20210503002446-7b7597926c69
 	github.com/libp2p/go-libp2p v0.37.0
 	github.com/libp2p/go-libp2p-kad-dht v0.28.1
 	github.com/libp2p/go-libp2p-pubsub v0.12.0
