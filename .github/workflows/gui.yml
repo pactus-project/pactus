@@ -24,13 +24,13 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23.2'
+        go-version: '1.23.3'
 
     - name: Build the binary
       run: make build_gui
 
     - name: Installing golangci-lint
-      run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61
+      run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62
 
     - name: Lint check
       run: BUILD_TAG=gtk make check
@@ -47,7 +47,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23.2'
+        go-version: '1.23.3'
 
     - name: Build the binary
       run: make build_gui
