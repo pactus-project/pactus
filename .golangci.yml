@@ -22,7 +22,6 @@ linters:
     - copyloopvar
     - forbidigo
     - gci
-    - ginkgolinter
     - gocheckcompilerdirectives
     - gocognit
     - gocritic
@@ -130,6 +129,9 @@ linters-settings:
         disabled: true
 
       - name: "import-shadowing"
+        disabled: true
+
+      - name: redefines-builtin-id
         disabled: true
 
       - name: unhandled-error

@@ -26,7 +26,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23.2'
+        go-version: '1.23.3'
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_cli.sh
@@ -69,7 +69,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23.2'
+        go-version: '1.23.3'
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_gui_linux.sh
@@ -111,7 +111,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23.2'
+        go-version: '1.23.3'
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_gui_macos.sh
@@ -155,7 +155,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23.2'
+        go-version: '1.23.3'
 
     - name: Create release files
       run: bash ./.github/releasers/releaser_gui_macos.sh
@@ -261,11 +261,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download SHA256SUMS artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: sha256sums
 
-      - uses: sigstore/cosign-installer@v3.7.0
+      - uses: sigstore/cosign-installer@v3
 
       - name: Sign Checksum
         run: cosign sign-blob --yes --key env://COSIGN_PRIVATE_KEY SHA256SUMS > SHA256SUMS.sig
