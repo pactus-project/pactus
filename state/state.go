@@ -184,7 +184,7 @@ func (st *state) loadMerkels() {
 			panic(fmt.Sprintf(
 				"Account number is out of range: %v >= %v", acc.Number(), totalAccount))
 		}
-		st.accountMerkle.SetHash(int(acc.Number()), acc.Hash())
+		st.accountMerkle.SetHash(acc.Number(), acc.Hash())
 
 		return false
 	})
@@ -196,7 +196,7 @@ func (st *state) loadMerkels() {
 			panic(fmt.Sprintf(
 				"Validator number is out of range: %v >= %v", val.Number(), totalValidator))
 		}
-		st.validatorMerkle.SetHash(int(val.Number()), val.Hash())
+		st.validatorMerkle.SetHash(val.Number(), val.Hash())
 
 		return false
 	})
@@ -529,14 +529,14 @@ func (st *state) commitSandbox(sbx sandbox.Sandbox, round int16) {
 	sbx.IterateAccounts(func(addr crypto.Address, acc *account.Account, updated bool) {
 		if updated {
 			st.store.UpdateAccount(addr, acc)
-			st.accountMerkle.SetHash(int(acc.Number()), acc.Hash())
+			st.accountMerkle.SetHash(acc.Number(), acc.Hash())
 		}
 	})
 
 	sbx.IterateValidators(func(val *validator.Validator, updated bool, _ bool) {
 		if updated {
 			st.store.UpdateValidator(val)
-			st.validatorMerkle.SetHash(int(val.Number()), val.Hash())
+			st.validatorMerkle.SetHash(val.Number(), val.Hash())
 		}
 	})
 
