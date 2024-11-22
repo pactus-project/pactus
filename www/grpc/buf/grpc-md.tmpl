@@ -3,7 +3,9 @@ title: GRPC API Reference
 weight: 1
 ---
 
-Each node in the Pactus network can be configured to use the [gRPC](https://grpc.io/) protocol for communication.
+Each node in the Pactus network
+can be configured to use the
+[gRPC](https://grpc.io/) protocol for communication.
 Here you can find the list of all gRPC methods and messages.
 
 All the amounts and values in gRPC endpoints are in NanoPAC units, which are atomic and the smallest unit in the Pactus blockchain.
