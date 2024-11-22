@@ -42,10 +42,12 @@ class BLSPublicKeyAggregationRequest(_message.Message):
     def __init__(self, public_keys: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class BLSPublicKeyAggregationResponse(_message.Message):
-    __slots__ = ("public_key",)
+    __slots__ = ("public_key", "address")
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
+    ADDRESS_FIELD_NUMBER: _ClassVar[int]
     public_key: str
-    def __init__(self, public_key: _Optional[str] = ...) -> None: ...
+    address: str
+    def __init__(self, public_key: _Optional[str] = ..., address: _Optional[str] = ...) -> None: ...
 
 class BLSSignatureAggregationRequest(_message.Message):
     __slots__ = ("signatures",)

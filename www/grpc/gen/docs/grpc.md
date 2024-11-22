@@ -2768,6 +2768,13 @@ signing and verification.</p>
     The aggregated public key.
     </td>
   </tr>
+     <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    The aggregated public key account address.
+    </td>
+  </tr>
      </tbody>
 </table>
 

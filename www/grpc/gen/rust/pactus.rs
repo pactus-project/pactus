@@ -1026,6 +1026,9 @@ pub struct BlsPublicKeyAggregationResponse {
     /// The aggregated public key.
     #[prost(string, tag="1")]
     pub public_key: ::prost::alloc::string::String,
+    /// The aggregated public key account address.
+    #[prost(string, tag="2")]
+    pub address: ::prost::alloc::string::String,
 }
 /// Request message for aggregating BLS signatures.
 #[allow(clippy::derive_partial_eq_without_eq)]

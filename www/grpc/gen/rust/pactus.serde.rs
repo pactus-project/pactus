@@ -487,9 +487,15 @@ impl serde::Serialize for BlsPublicKeyAggregationResponse {
         if !self.public_key.is_empty() {
             len += 1;
         }
+        if !self.address.is_empty() {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.BLSPublicKeyAggregationResponse", len)?;
         if !self.public_key.is_empty() {
             struct_ser.serialize_field("publicKey", &self.public_key)?;
+        }
+        if !self.address.is_empty() {
+            struct_ser.serialize_field("address", &self.address)?;
         }
         struct_ser.end()
     }
@@ -503,11 +509,13 @@ impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregationResponse {
         const FIELDS: &[&str] = &[
             "public_key",
             "publicKey",
+            "address",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             PublicKey,
+            Address,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -530,6 +538,7 @@ impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregationResponse {
                     {
                         match value {
                             "publicKey" | "public_key" => Ok(GeneratedField::PublicKey),
+                            "address" => Ok(GeneratedField::Address),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -550,6 +559,7 @@ impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregationResponse {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut public_key__ = None;
+                let mut address__ = None;
                 while let Some(k) = map.next_key()? {
                     match k {
                         GeneratedField::PublicKey => {
@@ -558,10 +568,17 @@ impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregationResponse {
                             }
                             public_key__ = Some(map.next_value()?);
                         }
+                        GeneratedField::Address => {
+                            if address__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("address"));
+                            }
+                            address__ = Some(map.next_value()?);
+                        }
                     }
                 }
                 Ok(BlsPublicKeyAggregationResponse {
                     public_key: public_key__.unwrap_or_default(),
+                    address: address__.unwrap_or_default(),
                 })
             }
         }
