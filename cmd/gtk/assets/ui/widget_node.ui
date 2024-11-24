@@ -100,7 +100,7 @@
                         <property name="valign">start</property>
                         <property name="hexpand">True</property>
                         <property name="vexpand">True</property>
-                        <property name="label" translatable="yes">🥡 Last Block Height:</property>
+                        <property name="label" translatable="yes">⛓️ Last Block Height:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
