@@ -3,8 +3,7 @@ title: GRPC API Reference
 weight: 1
 ---
 
-Each node in the Pactus network
-can be configured to use the
+Each node in the Pactus network can be configured to use the
 [gRPC](https://grpc.io/) protocol for communication.
 Here you can find the list of all gRPC methods and messages.
 
