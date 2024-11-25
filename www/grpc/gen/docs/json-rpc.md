@@ -3,7 +3,8 @@ title: JSON-RPC API Reference
 weight: 2
 ---
 
-Each node in the Pactus network can be configured to use the [JSON-RPC](https://www.jsonrpc.org/specification) protocol for communication.
+Each node in the Pactus network can be configured to use the 
+[JSON-RPC](https://www.jsonrpc.org/specification) protocol for communication.
 Here, you can find the list of all JSON-RPC methods and messages.
 
 All the amounts and values in JSON-RPC endpoints are in NanoPAC units,
@@ -275,7 +276,7 @@ parameters.</p>
   </tr>
   <tr>
     <td class="fw-bold">verbosity</td>
-    <td> string</td>
+    <td> numeric</td>
     <td>
     (Enum)The verbosity level for transaction details.
     <br>Available values:<ul>
@@ -358,7 +359,7 @@ parameters.</p>
       </tr>
          <tr>
         <td class="fw-bold">transaction.payload_type</td>
-        <td> string</td>
+        <td> numeric</td>
         <td>
         (Enum)The type of transaction payload.
         <br>Available values:<ul>
@@ -542,7 +543,7 @@ and payload type.</p>
   </tr>
   <tr>
     <td class="fw-bold">payload_type</td>
-    <td> string</td>
+    <td> numeric</td>
     <td>
     (Enum)The type of transaction payload.
     <br>Available values:<ul>
@@ -956,7 +957,7 @@ parameters.</p>
   </tr>
   <tr>
     <td class="fw-bold">verbosity</td>
-    <td> string</td>
+    <td> numeric</td>
     <td>
     (Enum)The verbosity level for block information.
     <br>Available values:<ul>
@@ -1139,7 +1140,7 @@ BLOCK_TRANSACTIONS.
       </tr>
          <tr>
         <td class="fw-bold">txs[].payload_type</td>
-        <td> string</td>
+        <td> numeric</td>
         <td>
         (Enum)The type of transaction payload.
         <br>Available values:<ul>
@@ -1627,7 +1628,7 @@ committee.
       </tr>
          <tr>
             <td class="fw-bold">instances[].votes[].type</td>
-            <td> string</td>
+            <td> numeric</td>
             <td>
             (Enum)The type of the vote.
             <br>Available values:<ul>
@@ -2040,7 +2041,7 @@ address.</p>
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">payload_type</td>
-    <td> string</td>
+    <td> numeric</td>
     <td>
     (Enum)The type of transactions to retrieve from the transaction pool. 0 means all
 types.
@@ -2114,7 +2115,7 @@ types.
       </tr>
          <tr>
         <td class="fw-bold">txs[].payload_type</td>
-        <td> string</td>
+        <td> numeric</td>
         <td>
         (Enum)The type of transaction payload.
         <br>Available values:<ul>
@@ -3199,7 +3200,7 @@ public key.</p>
   </tr>
   <tr>
     <td class="fw-bold">address_type</td>
-    <td> string</td>
+    <td> numeric</td>
     <td>
     (Enum)The type of address to generate.
     <br>Available values:<ul>
