@@ -995,7 +995,8 @@ proto.pactus.BLSPublicKeyAggregationResponse.prototype.toObject = function(opt_i
  */
 proto.pactus.BLSPublicKeyAggregationResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    publicKey: jspb.Message.getFieldWithDefault(msg, 1, "")
+    publicKey: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    address: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -1036,6 +1037,10 @@ proto.pactus.BLSPublicKeyAggregationResponse.deserializeBinaryFromReader = funct
       var value = /** @type {string} */ (reader.readString());
       msg.setPublicKey(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setAddress(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1072,6 +1077,13 @@ proto.pactus.BLSPublicKeyAggregationResponse.serializeBinaryToWriter = function(
       f
     );
   }
+  f = message.getAddress();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -1090,6 +1102,24 @@ proto.pactus.BLSPublicKeyAggregationResponse.prototype.getPublicKey = function()
  */
 proto.pactus.BLSPublicKeyAggregationResponse.prototype.setPublicKey = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string address = 2;
+ * @return {string}
+ */
+proto.pactus.BLSPublicKeyAggregationResponse.prototype.getAddress = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.BLSPublicKeyAggregationResponse} returns this
+ */
+proto.pactus.BLSPublicKeyAggregationResponse.prototype.setAddress = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 

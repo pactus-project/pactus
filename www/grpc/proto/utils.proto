@@ -61,6 +61,8 @@ message BLSPublicKeyAggregationRequest {
 message BLSPublicKeyAggregationResponse {
   // The aggregated public key.
   string public_key = 1;
+  // The aggregated public key account address.
+  string address = 2;
 }
 
 // Request message for aggregating BLS signatures.
