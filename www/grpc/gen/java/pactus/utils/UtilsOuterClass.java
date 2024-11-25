@@ -3559,6 +3559,26 @@ public final class UtilsOuterClass {
      */
     com.google.protobuf.ByteString
         getPublicKeyBytes();
+
+    /**
+     * <pre>
+     * The aggregated public key account address.
+     * </pre>
+     *
+     * <code>string address = 2 [json_name = "address"];</code>
+     * @return The address.
+     */
+    java.lang.String getAddress();
+    /**
+     * <pre>
+     * The aggregated public key account address.
+     * </pre>
+     *
+     * <code>string address = 2 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    com.google.protobuf.ByteString
+        getAddressBytes();
   }
   /**
    * <pre>
@@ -3578,6 +3598,7 @@ public final class UtilsOuterClass {
     }
     private BLSPublicKeyAggregationResponse() {
       publicKey_ = "";
+      address_ = "";
     }
 
     @java.lang.Override
@@ -3651,6 +3672,52 @@ public final class UtilsOuterClass {
       }
     }
 
+    public static final int ADDRESS_FIELD_NUMBER = 2;
+    private volatile java.lang.Object address_;
+    /**
+     * <pre>
+     * The aggregated public key account address.
+     * </pre>
+     *
+     * <code>string address = 2 [json_name = "address"];</code>
+     * @return The address.
+     */
+    @java.lang.Override
+    public java.lang.String getAddress() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        address_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The aggregated public key account address.
+     * </pre>
+     *
+     * <code>string address = 2 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getAddressBytes() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        address_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -3668,6 +3735,9 @@ public final class UtilsOuterClass {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, publicKey_);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, address_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -3679,6 +3749,9 @@ public final class UtilsOuterClass {
       size = 0;
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicKey_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, publicKey_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, address_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -3697,6 +3770,8 @@ public final class UtilsOuterClass {
 
       if (!getPublicKey()
           .equals(other.getPublicKey())) return false;
+      if (!getAddress()
+          .equals(other.getAddress())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -3710,6 +3785,8 @@ public final class UtilsOuterClass {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + PUBLIC_KEY_FIELD_NUMBER;
       hash = (53 * hash) + getPublicKey().hashCode();
+      hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getAddress().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3844,6 +3921,8 @@ public final class UtilsOuterClass {
         super.clear();
         publicKey_ = "";
 
+        address_ = "";
+
         return this;
       }
 
@@ -3871,6 +3950,7 @@ public final class UtilsOuterClass {
       public pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse buildPartial() {
         pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse result = new pactus.utils.UtilsOuterClass.BLSPublicKeyAggregationResponse(this);
         result.publicKey_ = publicKey_;
+        result.address_ = address_;
         onBuilt();
         return result;
       }
@@ -3923,6 +4003,10 @@ public final class UtilsOuterClass {
           publicKey_ = other.publicKey_;
           onChanged();
         }
+        if (!other.getAddress().isEmpty()) {
+          address_ = other.address_;
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -3954,6 +4038,11 @@ public final class UtilsOuterClass {
 
                 break;
               } // case 10
+              case 18: {
+                address_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 18
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -4062,6 +4151,102 @@ public final class UtilsOuterClass {
   checkByteStringIsUtf8(value);
         
         publicKey_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object address_ = "";
+      /**
+       * <pre>
+       * The aggregated public key account address.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @return The address.
+       */
+      public java.lang.String getAddress() {
+        java.lang.Object ref = address_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          address_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The aggregated public key account address.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @return The bytes for address.
+       */
+      public com.google.protobuf.ByteString
+          getAddressBytes() {
+        java.lang.Object ref = address_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          address_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The aggregated public key account address.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @param value The address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddress(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        address_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The aggregated public key account address.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAddress() {
+        
+        address_ = getDefaultInstance().getAddress();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The aggregated public key account address.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @param value The bytes for address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        address_ = value;
         onChanged();
         return this;
       }
@@ -5470,24 +5655,25 @@ public final class UtilsOuterClass {
       "\001(\tR\tpublicKey\"2\n\025VerifyMessageResponse\022" +
       "\031\n\010is_valid\030\001 \001(\010R\007isValid\"A\n\036BLSPublicK" +
       "eyAggregationRequest\022\037\n\013public_keys\030\001 \003(" +
-      "\tR\npublicKeys\"@\n\037BLSPublicKeyAggregation" +
-      "Response\022\035\n\npublic_key\030\001 \001(\tR\tpublicKey\"" +
-      "@\n\036BLSSignatureAggregationRequest\022\036\n\nsig" +
-      "natures\030\001 \003(\tR\nsignatures\"?\n\037BLSSignatur" +
-      "eAggregationResponse\022\034\n\tsignature\030\001 \001(\tR" +
-      "\tsignature2\237\003\n\005Utils\022p\n\031SignMessageWithP" +
-      "rivateKey\022(.pactus.SignMessageWithPrivat" +
-      "eKeyRequest\032).pactus.SignMessageWithPriv" +
-      "ateKeyResponse\022L\n\rVerifyMessage\022\034.pactus" +
-      ".VerifyMessageRequest\032\035.pactus.VerifyMes" +
-      "sageResponse\022j\n\027BLSPublicKeyAggregation\022" +
-      "&.pactus.BLSPublicKeyAggregationRequest\032" +
-      "\'.pactus.BLSPublicKeyAggregationResponse" +
-      "\022j\n\027BLSSignatureAggregation\022&.pactus.BLS" +
-      "SignatureAggregationRequest\032\'.pactus.BLS" +
-      "SignatureAggregationResponseB@\n\014pactus.u" +
-      "tilsZ0github.com/pactus-project/pactus/w" +
-      "ww/grpc/pactusb\006proto3"
+      "\tR\npublicKeys\"Z\n\037BLSPublicKeyAggregation" +
+      "Response\022\035\n\npublic_key\030\001 \001(\tR\tpublicKey\022" +
+      "\030\n\007address\030\002 \001(\tR\007address\"@\n\036BLSSignatur" +
+      "eAggregationRequest\022\036\n\nsignatures\030\001 \003(\tR" +
+      "\nsignatures\"?\n\037BLSSignatureAggregationRe" +
+      "sponse\022\034\n\tsignature\030\001 \001(\tR\tsignature2\237\003\n" +
+      "\005Utils\022p\n\031SignMessageWithPrivateKey\022(.pa" +
+      "ctus.SignMessageWithPrivateKeyRequest\032)." +
+      "pactus.SignMessageWithPrivateKeyResponse" +
+      "\022L\n\rVerifyMessage\022\034.pactus.VerifyMessage" +
+      "Request\032\035.pactus.VerifyMessageResponse\022j" +
+      "\n\027BLSPublicKeyAggregation\022&.pactus.BLSPu" +
+      "blicKeyAggregationRequest\032\'.pactus.BLSPu" +
+      "blicKeyAggregationResponse\022j\n\027BLSSignatu" +
+      "reAggregation\022&.pactus.BLSSignatureAggre" +
+      "gationRequest\032\'.pactus.BLSSignatureAggre" +
+      "gationResponseB@\n\014pactus.utilsZ0github.c" +
+      "om/pactus-project/pactus/www/grpc/pactus" +
+      "b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -5528,7 +5714,7 @@ public final class UtilsOuterClass {
     internal_static_pactus_BLSPublicKeyAggregationResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_BLSPublicKeyAggregationResponse_descriptor,
-        new java.lang.String[] { "PublicKey", });
+        new java.lang.String[] { "PublicKey", "Address", });
     internal_static_pactus_BLSSignatureAggregationRequest_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_pactus_BLSSignatureAggregationRequest_fieldAccessorTable = new

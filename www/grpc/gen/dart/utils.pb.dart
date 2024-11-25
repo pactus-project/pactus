@@ -284,16 +284,21 @@ class BLSPublicKeyAggregationRequest extends $pb.GeneratedMessage {
 class BLSPublicKeyAggregationResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'BLSPublicKeyAggregationResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'publicKey')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
     ..hasRequiredFields = false
   ;
 
   BLSPublicKeyAggregationResponse._() : super();
   factory BLSPublicKeyAggregationResponse({
     $core.String? publicKey,
+    $core.String? address,
   }) {
     final _result = create();
     if (publicKey != null) {
       _result.publicKey = publicKey;
+    }
+    if (address != null) {
+      _result.address = address;
     }
     return _result;
   }
@@ -326,6 +331,15 @@ class BLSPublicKeyAggregationResponse extends $pb.GeneratedMessage {
   $core.bool hasPublicKey() => $_has(0);
   @$pb.TagNumber(1)
   void clearPublicKey() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get address => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set address($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasAddress() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAddress() => clearField(2);
 }
 
 class BLSSignatureAggregationRequest extends $pb.GeneratedMessage {

@@ -74,8 +74,11 @@ func (*utilServer) BLSPublicKeyAggregation(_ context.Context,
 		pubs[i] = p
 	}
 
+	pk := bls.PublicKeyAggregate(pubs...)
+
 	return &pactus.BLSPublicKeyAggregationResponse{
-		PublicKey: bls.PublicKeyAggregate(pubs...).String(),
+		PublicKey: pk.String(),
+		Address:   pk.AccountAddress().String(),
 	}, nil
 }
 

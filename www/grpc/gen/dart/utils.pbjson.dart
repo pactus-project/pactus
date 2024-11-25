@@ -66,11 +66,12 @@ const BLSPublicKeyAggregationResponse$json = const {
   '1': 'BLSPublicKeyAggregationResponse',
   '2': const [
     const {'1': 'public_key', '3': 1, '4': 1, '5': 9, '10': 'publicKey'},
+    const {'1': 'address', '3': 2, '4': 1, '5': 9, '10': 'address'},
   ],
 };
 
 /// Descriptor for `BLSPublicKeyAggregationResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List bLSPublicKeyAggregationResponseDescriptor = $convert.base64Decode('Ch9CTFNQdWJsaWNLZXlBZ2dyZWdhdGlvblJlc3BvbnNlEh0KCnB1YmxpY19rZXkYASABKAlSCXB1YmxpY0tleQ==');
+final $typed_data.Uint8List bLSPublicKeyAggregationResponseDescriptor = $convert.base64Decode('Ch9CTFNQdWJsaWNLZXlBZ2dyZWdhdGlvblJlc3BvbnNlEh0KCnB1YmxpY19rZXkYASABKAlSCXB1YmxpY0tleRIYCgdhZGRyZXNzGAIgASgJUgdhZGRyZXNz');
 @$core.Deprecated('Use bLSSignatureAggregationRequestDescriptor instead')
 const BLSSignatureAggregationRequest$json = const {
   '1': 'BLSSignatureAggregationRequest',
