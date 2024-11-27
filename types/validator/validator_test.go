@@ -16,7 +16,7 @@ import (
 func TestFromBytes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val, _ := ts.GenerateTestValidator(ts.RandInt32(1000000))
+	val := ts.GenerateTestValidator()
 	val.UpdateLastBondingHeight(ts.RandHeight())
 	val.UpdateLastSortitionHeight(ts.RandHeight())
 	val.UpdateUnbondingHeight(ts.RandHeight())
@@ -70,7 +70,7 @@ func TestDecoding(t *testing.T) {
 func TestPower(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val, _ := ts.GenerateTestValidator(ts.RandInt32(1000))
+	val := ts.GenerateTestValidator()
 	val.SubtractFromStake(val.Stake())
 	assert.Equal(t, amount.Amount(0), val.Stake())
 	assert.Equal(t, int64(1), val.Power())
@@ -85,7 +85,7 @@ func TestPower(t *testing.T) {
 func TestAddToStake(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val, _ := ts.GenerateTestValidator(100)
+	val := ts.GenerateTestValidator()
 	stake := val.Stake()
 	val.AddToStake(1)
 	assert.Equal(t, stake+1, val.Stake())
@@ -94,7 +94,7 @@ func TestAddToStake(t *testing.T) {
 func TestSubtractFromStake(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val, _ := ts.GenerateTestValidator(100)
+	val := ts.GenerateTestValidator()
 	stake := val.Stake()
 	val.SubtractFromStake(1)
 	assert.Equal(t, stake-1, val.Stake())
@@ -103,9 +103,11 @@ func TestSubtractFromStake(t *testing.T) {
 func TestClone(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val, _ := ts.GenerateTestValidator(100)
+	val := ts.GenerateTestValidator()
 	cloned := val.Clone()
 	cloned.AddToStake(1)
 
+	assert.Equal(t, val.Number(), cloned.Number())
+	assert.Equal(t, val.PublicKey(), cloned.PublicKey())
 	assert.NotEqual(t, val.Stake(), cloned.Stake())
 }

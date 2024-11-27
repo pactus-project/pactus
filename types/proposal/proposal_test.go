@@ -47,7 +47,7 @@ func TestProposalSignature(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	proposerKey := ts.RandValKey()
-	prop := ts.GenerateTestProposal(ts.RandHeight(), ts.RandRound(), testsuite.WithProposerKey(proposerKey))
+	prop := ts.GenerateTestProposal(ts.RandHeight(), ts.RandRound(), testsuite.ProposalWithKey(proposerKey))
 
 	err := prop.Verify(proposerKey.PublicKey())
 	assert.NoError(t, err)

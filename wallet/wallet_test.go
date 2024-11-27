@@ -8,9 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/state"
-	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
@@ -605,11 +603,8 @@ func TestTotalBalance(t *testing.T) {
 	addr1, _ := crypto.AddressFromString(addrInfo1.Address)
 	addr3, _ := crypto.AddressFromString(addrInfo3.Address)
 
-	acc1 := account.NewAccount(td.RandInt32(1000))
-	acc3 := account.NewAccount(td.RandInt32(1000))
-
-	acc1.AddToBalance(td.RandAmount())
-	acc3.AddToBalance(td.RandAmount())
+	acc1, _ := td.GenerateTestAccount()
+	acc3, _ := td.GenerateTestAccount()
 
 	td.mockState.TestStore.Accounts[addr1] = acc1
 	td.mockState.TestStore.Accounts[addr3] = acc3
@@ -629,17 +624,11 @@ func TestTotalStake(t *testing.T) {
 	addr1, _ := crypto.AddressFromString(addrInfo1.Address)
 	addr3, _ := crypto.AddressFromString(addrInfo2.Address)
 
-	pub1, _ := bls.PublicKeyFromString(addrInfo1.PublicKey)
-	pub2, _ := bls.PublicKeyFromString(addrInfo2.PublicKey)
-
-	val1 := validator.NewValidator(pub1, 1)
-	val2 := validator.NewValidator(pub2, 2)
+	val1 := td.GenerateTestValidator()
+	val2 := td.GenerateTestValidator()
 
 	td.mockState.TestStore.Validators[addr1] = val1
 	td.mockState.TestStore.Validators[addr3] = val2
-
-	val1.AddToStake(td.RandAmount())
-	val2.AddToStake(td.RandAmount())
 
 	stake, err := td.wallet.TotalStake()
 	require.NoError(t, err)

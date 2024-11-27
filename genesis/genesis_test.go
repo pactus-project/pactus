@@ -20,11 +20,14 @@ import (
 func TestMarshaling(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	acc, prv := ts.GenerateTestAccount(0)
-	acc.AddToBalance(100000)
-	val, _ := ts.GenerateTestValidator(0)
+	acc, addr := ts.GenerateTestAccount(
+		testsuite.AccountWithNumber(0),
+		testsuite.AccountWithBalance(100000))
+	val := ts.GenerateTestValidator(
+		testsuite.ValidatorWithNumber(0),
+	)
 	gen1 := genesis.MakeGenesis(util.RoundNow(10),
-		map[crypto.Address]*account.Account{prv: acc},
+		map[crypto.Address]*account.Account{addr: acc},
 		[]*validator.Validator{val}, genesis.DefaultGenesisParams())
 	gen2 := new(genesis.Genesis)
 

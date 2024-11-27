@@ -36,11 +36,11 @@ func TestProposer(t *testing.T) {
 func TestInvalidProposerJoinAndLeave(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val1, _ := ts.GenerateTestValidator(0)
-	val2, _ := ts.GenerateTestValidator(1)
-	val3, _ := ts.GenerateTestValidator(2)
-	val4, _ := ts.GenerateTestValidator(3)
-	val5, _ := ts.GenerateTestValidator(4)
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(0))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(1))
+	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(2))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
+	val5 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(4))
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val5.Address())
 	assert.Error(t, err)
@@ -50,13 +50,13 @@ func TestInvalidProposerJoinAndLeave(t *testing.T) {
 func TestProposerMove(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val1, _ := ts.GenerateTestValidator(1)
-	val2, _ := ts.GenerateTestValidator(2)
-	val3, _ := ts.GenerateTestValidator(3)
-	val4, _ := ts.GenerateTestValidator(4)
-	val5, _ := ts.GenerateTestValidator(5)
-	val6, _ := ts.GenerateTestValidator(6)
-	val7, _ := ts.GenerateTestValidator(7)
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(1))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(2))
+	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(4))
+	val5 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(5))
+	val6 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(6))
+	val7 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(7))
 
 	cmt, err := committee.NewCommittee(
 		[]*validator.Validator{val1, val2, val3, val4, val5, val6, val7}, 7, val1.Address())
@@ -97,10 +97,10 @@ func TestProposerMove(t *testing.T) {
 func TestValidatorConsistency(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val1, _ := ts.GenerateTestValidator(1)
-	val2, _ := ts.GenerateTestValidator(2)
-	val3, _ := ts.GenerateTestValidator(3)
-	val4, _ := ts.GenerateTestValidator(4)
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(1))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(2))
+	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(4))
 
 	cmt, _ := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
 
@@ -115,13 +115,13 @@ func TestValidatorConsistency(t *testing.T) {
 func TestProposerJoin(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val1, _ := ts.GenerateTestValidator(1)
-	val2, _ := ts.GenerateTestValidator(2)
-	val3, _ := ts.GenerateTestValidator(3)
-	val4, _ := ts.GenerateTestValidator(4)
-	val5, _ := ts.GenerateTestValidator(5)
-	val6, _ := ts.GenerateTestValidator(6)
-	val7, _ := ts.GenerateTestValidator(7)
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(1))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(2))
+	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(4))
+	val5 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(5))
+	val6 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(6))
+	val7 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(7))
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 7, val1.Address())
 	assert.NoError(t, err)
@@ -315,10 +315,10 @@ func TestProposerJoinAndLeave(t *testing.T) {
 func TestIsProposer(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val1, _ := ts.GenerateTestValidator(0)
-	val2, _ := ts.GenerateTestValidator(1)
-	val3, _ := ts.GenerateTestValidator(2)
-	val4, _ := ts.GenerateTestValidator(3)
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(0))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(1))
+	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(2))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
@@ -334,10 +334,10 @@ func TestIsProposer(t *testing.T) {
 func TestCommitters(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val1, _ := ts.GenerateTestValidator(0)
-	val2, _ := ts.GenerateTestValidator(1)
-	val3, _ := ts.GenerateTestValidator(2)
-	val4, _ := ts.GenerateTestValidator(3)
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(0))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(1))
+	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(2))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)
@@ -347,13 +347,13 @@ func TestCommitters(t *testing.T) {
 func TestSortJoined(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val1, _ := ts.GenerateTestValidator(0)
-	val2, _ := ts.GenerateTestValidator(1)
-	val3, _ := ts.GenerateTestValidator(2)
-	val4, _ := ts.GenerateTestValidator(3)
-	val5, _ := ts.GenerateTestValidator(4)
-	val6, _ := ts.GenerateTestValidator(5)
-	val7, _ := ts.GenerateTestValidator(6)
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(0))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(1))
+	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(2))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
+	val5 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(4))
+	val6 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(5))
+	val7 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(6))
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4}, 17, val1.Address())
 	assert.NoError(t, err)
@@ -369,10 +369,10 @@ func TestTotalPower(t *testing.T) {
 
 	pub, _ := ts.RandBLSKeyPair()
 	val0 := validator.NewValidator(pub, 0) // Bootstrap validator
-	val1, _ := ts.GenerateTestValidator(0)
-	val2, _ := ts.GenerateTestValidator(1)
-	val3, _ := ts.GenerateTestValidator(2)
-	val4, _ := ts.GenerateTestValidator(3)
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(0))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(1))
+	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(2))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithNumber(3))
 
 	cmt, err := committee.NewCommittee([]*validator.Validator{val0, val1, val2, val3, val4}, 4, val1.Address())
 	assert.NoError(t, err)

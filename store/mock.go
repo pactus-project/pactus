@@ -251,14 +251,14 @@ func (*MockStore) WriteBatch() error {
 }
 
 func (m *MockStore) AddTestValidator() *validator.Validator {
-	val, _ := m.ts.GenerateTestValidator(m.ts.RandInt32(10000))
+	val := m.ts.GenerateTestValidator()
 	m.UpdateValidator(val)
 
 	return val
 }
 
 func (m *MockStore) AddTestAccount() (*account.Account, crypto.Address) {
-	acc, addr := m.ts.GenerateTestAccount(m.ts.RandInt32(10000))
+	acc, addr := m.ts.GenerateTestAccount()
 	m.UpdateAccount(addr, acc)
 
 	return acc, addr
