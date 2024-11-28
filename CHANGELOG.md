@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.6.2](https://github.com/pactus-project/pactus/compare/v1.6.1...v1.6.2) (2024-11-29)
+
+- **releaser**: add libsharpyuv-0.dll to the Windows installer ([#1621](https://github.com/pactus-project/pactus/pull/1621))
+
 ## [1.6.1](https://github.com/pactus-project/pactus/compare/v1.6.0...v1.6.1) (2024-11-29)
 
 ### Feat
