@@ -15,7 +15,7 @@ import (
 var NodeVersion = Version{
 	Major: 1,
 	Minor: 6,
-	Patch: 1,
+	Patch: 2,
 	Meta:  "",
 	Alias: "Mumbai",
 }

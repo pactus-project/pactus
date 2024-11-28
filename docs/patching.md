@@ -14,9 +14,9 @@ Create environment variables for the patch version, which will be used in subseq
 Keep your terminal open for further steps.
 
 ```bash
-PRV_VER="1.6.0"
-CUR_VER="1.6.1"
-NEXT_VER="1.6.2"
+PRV_VER="1.6.1"
+CUR_VER="1.6.2"
+NEXT_VER="1.6.3"
 BASE_BRANCH="1.6.x"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
