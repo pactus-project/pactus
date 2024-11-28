@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.1](https://github.com/pactus-project/pactus/compare/v1.6.0...v1.6.1) (2024-11-29)
+
+### Feat
+
+- **sync**: check expired bundles ([#1618](https://github.com/pactus-project/pactus/pull/1618))
+
+### Fix
+
+- **crypto, state**: resolve panic on 32-bit OSes ([#1604](https://github.com/pactus-project/pactus/pull/1604))
+- **cmd**: parse withdraw fee using transaction options ([#1602](https://github.com/pactus-project/pactus/pull/1602))
+- **consensus**: prevent moving to next round on decided vote ([#1617](https://github.com/pactus-project/pactus/pull/1617))
+- **consensus**: ignore vote verification of existing votes ([#1616](https://github.com/pactus-project/pactus/pull/1616))
+
 ## [1.6.0](https://github.com/pactus-project/pactus/compare/v1.5.0...v1.6.0) (2024-11-14)
 
 ### Feat
