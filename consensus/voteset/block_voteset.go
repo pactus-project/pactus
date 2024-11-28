@@ -70,21 +70,25 @@ func (vs *BlockVoteSet) AllVotes() []*vote.Vote {
 
 // AddVote attempts to add a vote to the VoteSet. Returns an error if the vote is invalid.
 func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
-	power, err := vs.voteSet.verifyVote(vote)
-	if err != nil {
-		return false, err
-	}
+	var dupErr error
 
-	existingVote, ok := vs.allVotes[vote.Signer()]
-	if ok {
+	existingVote, exists := vs.allVotes[vote.Signer()]
+	if exists {
 		if existingVote.Hash() == vote.Hash() {
 			// The vote is already added
 			return false, nil
 		}
 
 		// It is a duplicated vote
-		err = ErrDuplicatedVote
-	} else {
+		dupErr = ErrDuplicatedVote
+	}
+
+	power, err := vs.voteSet.verifyVote(vote)
+	if err != nil {
+		return false, err
+	}
+
+	if !exists {
 		vs.allVotes[vote.Signer()] = vote
 	}
 
@@ -95,7 +99,7 @@ func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 		vs.quorumHash = &h
 	}
 
-	return true, err
+	return true, dupErr
 }
 
 // HasQuorumHash checks if there is a block that has received quorum votes (2/3+ of total power).
