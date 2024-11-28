@@ -13,6 +13,9 @@ var ErrGossipMessage = errors.New("receive stream message as gossip message")
 // ErrStreamMessage is returned when a gossip message sends as stream message.
 var ErrStreamMessage = errors.New("receive gossip message as stream message")
 
+// ErrExpiredMessage is returned when we receive a expired message from a peer.
+var ErrExpiredMessage = errors.New("received an expired message")
+
 // ErrNetworkMismatch is returned when the bundle doesn't belong to this network.
 var ErrNetworkMismatch = errors.New("bundle is not for this network")
 

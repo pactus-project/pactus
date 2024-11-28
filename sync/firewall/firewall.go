@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
@@ -59,7 +60,7 @@ func NewFirewall(conf *Config, network network.Network, peerSet *peerset.PeerSet
 func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) (*bundle.Bundle, error) {
 	bdl, err := f.openBundle(bytes.NewReader(data), from)
 	if err != nil {
-		return nil, err
+		return bdl, err
 	}
 
 	if !bdl.Message.ShouldBroadcast() {
@@ -132,9 +133,18 @@ func (f *Firewall) openBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error)
 
 	bdl, bytesRead, err := f.decodeBundle(r)
 	if err != nil {
+		f.closeConnection(from)
 		f.peerSet.UpdateInvalidMetric(from, int64(bytesRead))
 
 		return nil, err
+	}
+
+	if f.isExpired(bdl) {
+		f.logger.Info("drop expired bundle", "bundle", bdl)
+		f.closeConnection(from)
+		f.peerSet.UpdateInvalidMetric(from, int64(bytesRead))
+
+		return bdl, ErrExpiredMessage
 	}
 
 	if err := f.checkBundle(bdl); err != nil {
@@ -156,6 +166,38 @@ func (*Firewall) decodeBundle(r io.Reader) (*bundle.Bundle, int, error) {
 	}
 
 	return bdl, bytesRead, nil
+}
+
+func (f *Firewall) isExpired(bdl *bundle.Bundle) bool {
+	curHeight := f.state.LastBlockHeight()
+	msg := bdl.Message
+	thresholdHeight := curHeight - 3
+
+	switch msg.Type() {
+	case message.TypeQueryProposal:
+		return msg.(*message.QueryProposalMessage).Height < thresholdHeight
+
+	case message.TypeProposal:
+		return msg.(*message.ProposalMessage).Proposal.Height() < thresholdHeight
+
+	case message.TypeQueryVote:
+		return msg.(*message.QueryVoteMessage).Height < thresholdHeight
+
+	case message.TypeVote:
+		return msg.(*message.VoteMessage).Vote.Height() < thresholdHeight
+
+	case message.TypeBlockAnnounce:
+		return msg.(*message.BlockAnnounceMessage).Height() < thresholdHeight
+
+	case message.TypeBlocksRequest:
+	case message.TypeBlocksResponse:
+	case message.TypeHello:
+	case message.TypeHelloAck:
+	case message.TypeTransaction:
+		return false
+	}
+
+	return false
 }
 
 func (f *Firewall) checkBundle(bdl *bundle.Bundle) error {
