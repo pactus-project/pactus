@@ -86,6 +86,7 @@ cp -p \
   "libxml2-2.dll" \
   "libzstd.dll" \
   "zlib1.dll" \
+  "libsharpyuv-0.dll" \
   "${GUI_DIR}"
 
 
