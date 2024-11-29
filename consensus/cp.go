@@ -313,26 +313,19 @@ func (cp *changeProposer) checkJust(vte *vote.Vote) error {
 func (cp *changeProposer) cpStrongTermination() {
 	cpDecided := cp.log.CPDecidedVoteSet(cp.round)
 	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueNo) {
-		cp.cpDecide(cp.round, vote.CPValueNo)
-	} else if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueYes) {
-		cp.cpDecide(cp.round, vote.CPValueYes)
-	}
-}
-
-func (cp *changeProposer) cpDecide(round int16, cpValue vote.CPValue) {
-	if cpValue == vote.CPValueYes {
-		cp.round = round + 1
-		cp.cpDecided = 1
-		cp.enterNewState(cp.proposeState)
-	} else if cpValue == vote.CPValueNo {
-		cp.round = round
 		cp.cpDecided = 0
 
 		roundProposal := cp.log.RoundProposal(cp.round)
 		if roundProposal == nil {
 			cp.queryProposal()
 		}
-
 		cp.enterNewState(cp.prepareState)
+	} else if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueYes) {
+		cp.round += 1
+		cp.cpDecided = 1
+		cp.enterNewState(cp.proposeState)
+
+		// Check if there is any decided vote for the next round.
+		cp.cpStrongTermination()
 	}
 }
