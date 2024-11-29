@@ -243,7 +243,7 @@ jobs:
         echo "${{ needs.build-gui-windows.outputs.checksums }}" >> SHA256SUMS
 
     - name: Upload SHA256SUMS as an artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: sha256sums
         path: SHA256SUMS
