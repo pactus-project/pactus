@@ -315,7 +315,7 @@ func (cp *changeProposer) cpStrongTermination() {
 	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueNo) {
 		cp.cpDecided = 0
 
-		roundProposal := cp.log.RoundProposal(cp.cpRound)
+		roundProposal := cp.log.RoundProposal(cp.round)
 		if roundProposal == nil {
 			cp.queryProposal()
 		}
