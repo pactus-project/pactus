@@ -2,6 +2,7 @@ package firewall
 
 import (
 	"bytes"
+	"encoding/binary"
 	"io"
 	"time"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle"
-	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
@@ -133,18 +133,9 @@ func (f *Firewall) openBundle(r io.Reader, from peer.ID) (*bundle.Bundle, error)
 
 	bdl, bytesRead, err := f.decodeBundle(r)
 	if err != nil {
-		f.closeConnection(from)
 		f.peerSet.UpdateInvalidMetric(from, int64(bytesRead))
 
 		return nil, err
-	}
-
-	if f.isExpired(bdl) {
-		f.logger.Info("drop expired bundle", "bundle", bdl)
-		f.closeConnection(from)
-		f.peerSet.UpdateInvalidMetric(from, int64(bytesRead))
-
-		return bdl, ErrExpiredMessage
 	}
 
 	if err := f.checkBundle(bdl); err != nil {
@@ -166,38 +157,6 @@ func (*Firewall) decodeBundle(r io.Reader) (*bundle.Bundle, int, error) {
 	}
 
 	return bdl, bytesRead, nil
-}
-
-func (f *Firewall) isExpired(bdl *bundle.Bundle) bool {
-	curHeight := f.state.LastBlockHeight()
-	msg := bdl.Message
-	thresholdHeight := curHeight - 3
-
-	switch msg.Type() {
-	case message.TypeQueryProposal:
-		return msg.(*message.QueryProposalMessage).Height < thresholdHeight
-
-	case message.TypeProposal:
-		return msg.(*message.ProposalMessage).Proposal.Height() < thresholdHeight
-
-	case message.TypeQueryVote:
-		return msg.(*message.QueryVoteMessage).Height < thresholdHeight
-
-	case message.TypeVote:
-		return msg.(*message.VoteMessage).Vote.Height() < thresholdHeight
-
-	case message.TypeBlockAnnounce:
-		return msg.(*message.BlockAnnounceMessage).Height() < thresholdHeight
-
-	case message.TypeBlocksRequest:
-	case message.TypeBlocksResponse:
-	case message.TypeHello:
-	case message.TypeHelloAck:
-	case message.TypeTransaction:
-		return false
-	}
-
-	return false
 }
 
 func (f *Firewall) checkBundle(bdl *bundle.Bundle) error {
@@ -253,14 +212,70 @@ func (*Firewall) getIPFromMultiAddress(address string) (string, error) {
 	return ip, nil
 }
 
-func (f *Firewall) AllowBlockRequest() bool {
-	return f.blockRateLimit.AllowRequest()
+func (f *Firewall) isExpiredMessage(msgData []byte) bool {
+	msgLen := len(msgData)
+	if msgLen < 6 {
+		return true
+	}
+
+	var consensusHeight uint32
+	consensusHeightBytes := msgData[msgLen-6:]
+	// Check if consensus height is set. Refer to the bundle encoding for more details.
+	if consensusHeightBytes[0] == 0x04 && consensusHeightBytes[1] == 0x1a {
+		consensusHeight = binary.BigEndian.Uint32(consensusHeightBytes[2:])
+	} else {
+		// Decoding the message at this level is costly, and we should avoid it.
+		// In future versions, this code can be removed.
+		// However, at the time of writing this code, we need it to prevent replay attacks.
+		bdl := new(bundle.Bundle)
+		_, err := bdl.Decode(bytes.NewReader(msgData))
+		if err != nil {
+			return true
+		}
+
+		consensusHeight = bdl.Message.ConsensusHeight()
+	}
+
+	// The message is expired, or the consensus height is behind the network's current height.
+	// In either case, the message is dropped and won't be propagated.
+	if consensusHeight < f.state.LastBlockHeight()-1 ||
+		consensusHeight > f.state.LastBlockHeight()+1 {
+		f.logger.Debug("firewall: expired message", "message height", consensusHeight, "our height", f.state.LastBlockHeight())
+
+		return true
+	}
+
+	return false
 }
 
-func (f *Firewall) AllowTransactionRequest() bool {
-	return f.transactionRateLimit.AllowRequest()
+func (f *Firewall) AllowBlockRequest(gossipMsg *network.GossipMessage) network.PropagationPolicy {
+	if f.isExpiredMessage(gossipMsg.Data) {
+		return network.Drop
+	}
+
+	if !f.blockRateLimit.AllowRequest() {
+		return network.DropButConsume
+	}
+
+	return network.Propagate
 }
 
-func (f *Firewall) AllowConsensusRequest() bool {
-	return f.consensusRateLimit.AllowRequest()
+func (f *Firewall) AllowTransactionRequest(_ *network.GossipMessage) network.PropagationPolicy {
+	if !f.transactionRateLimit.AllowRequest() {
+		return network.DropButConsume
+	}
+
+	return network.Propagate
+}
+
+func (f *Firewall) AllowConsensusRequest(gossipMsg *network.GossipMessage) network.PropagationPolicy {
+	if f.isExpiredMessage(gossipMsg.Data) {
+		return network.Drop
+	}
+
+	if !f.consensusRateLimit.AllowRequest() {
+		return network.DropButConsume
+	}
+
+	return network.Propagate
 }

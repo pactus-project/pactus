@@ -638,11 +638,11 @@ func TestHandleQueryVote(t *testing.T) {
 	td.enterNextRound(td.consP)
 	td.addPrepareVote(td.consP, td.RandHash(), height, 2, tIndexY)
 
-	t.Run("Query vote for round 0: should send the decided vote for the round 1", func(t *testing.T) {
+	t.Run("Query vote for round 0: should send the decided vote for the round 0", func(t *testing.T) {
 		rndVote := td.consP.HandleQueryVote(height, 0)
 		assert.Equal(t, vote.VoteTypeCPDecided, rndVote.Type())
 		assert.Equal(t, height, rndVote.Height())
-		assert.Equal(t, int16(1), rndVote.Round())
+		assert.Equal(t, int16(0), rndVote.Round())
 	})
 
 	t.Run("Query vote for round 1: should send the decided vote for the round 1", func(t *testing.T) {
@@ -652,7 +652,7 @@ func TestHandleQueryVote(t *testing.T) {
 		assert.Equal(t, int16(1), rndVote.Round())
 	})
 
-	t.Run("Query vote for round 2: should send the prepare vote for the current round", func(t *testing.T) {
+	t.Run("Query vote for round 2: should send the prepare vote for the round 2", func(t *testing.T) {
 		rndVote := td.consP.HandleQueryVote(height, 2)
 		assert.Equal(t, vote.VoteTypePrepare, rndVote.Type())
 		assert.Equal(t, height, rndVote.Height())

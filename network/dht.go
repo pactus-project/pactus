@@ -6,6 +6,7 @@ import (
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
+	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -19,6 +20,9 @@ type dhtService struct {
 func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID,
 	conf *Config, log *logger.SubLogger,
 ) *dhtService {
+	// A dirty code in LibP2P!!!
+	lp2pdht.DefaultBootstrapPeers = []multiaddr.Multiaddr{}
+
 	mode := lp2pdht.ModeAuto
 	if conf.IsBootstrapper {
 		mode = lp2pdht.ModeServer

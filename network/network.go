@@ -390,8 +390,8 @@ func (n *network) Broadcast(msg []byte, topicID TopicID) {
 	}()
 }
 
-func (n *network) JoinTopic(topicID TopicID, sp ShouldPropagate) error {
-	return n.gossip.JoinTopic(topicID, sp)
+func (n *network) JoinTopic(topicID TopicID, evaluator PropagationEvaluator) error {
+	return n.gossip.JoinTopic(topicID, evaluator)
 }
 
 func (n *network) CloseConnection(pid lp2ppeer.ID) {
