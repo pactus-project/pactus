@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.3](https://github.com/pactus-project/pactus/compare/v1.6.2...v1.6.3) (2024-11-30)
+
+### Fix
+
+- **consensus**: send decided vote for past round
+- **network**: restore default message queue size in PubSub module ([#1626](https://github.com/pactus-project/pactus/pull/1626))
+- **consensus**: refcator strong termination for change-proposer phase ([#1625](https://github.com/pactus-project/pactus/pull/1625))
+
 ## [1.6.2](https://github.com/pactus-project/pactus/compare/v1.6.1...v1.6.2) (2024-11-29)
 
 - **releaser**: add libsharpyuv-0.dll to the Windows installer ([#1621](https://github.com/pactus-project/pactus/pull/1621))
