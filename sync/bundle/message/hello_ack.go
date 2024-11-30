@@ -36,6 +36,10 @@ func (*HelloAckMessage) ShouldBroadcast() bool {
 	return false
 }
 
+func (*HelloAckMessage) ConsensusHeight() uint32 {
+	return 0
+}
+
 func (m *HelloAckMessage) String() string {
 	return fmt.Sprintf("{%s: %s %v}", m.ResponseCode, m.Reason, m.Height)
 }

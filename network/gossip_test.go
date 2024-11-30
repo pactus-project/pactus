@@ -10,6 +10,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestJoinBlockTopic(t *testing.T) {
+	net := makeTestNetwork(t, testConfig(), nil)
+
+	msg := []byte("test-block-topic")
+
+	assert.ErrorIs(t, net.gossip.Broadcast(msg, TopicIDBlock),
+		NotSubscribedError{
+			TopicID: TopicIDBlock,
+		})
+	assert.NoError(t, net.JoinTopic(TopicIDBlock, alwaysPropagate))
+	assert.NoError(t, net.gossip.Broadcast(msg, TopicIDBlock))
+
+	assert.Error(t, net.JoinTopic(TopicIDBlock, alwaysPropagate), "already joined")
+}
+
 func TestJoinConsensusTopic(t *testing.T) {
 	net := makeTestNetwork(t, testConfig(), nil)
 
@@ -21,6 +36,23 @@ func TestJoinConsensusTopic(t *testing.T) {
 		})
 	assert.NoError(t, net.JoinTopic(TopicIDConsensus, alwaysPropagate))
 	assert.NoError(t, net.gossip.Broadcast(msg, TopicIDConsensus))
+
+	assert.Error(t, net.JoinTopic(TopicIDConsensus, alwaysPropagate), "already joined")
+}
+
+func TestJoinTransactionTopic(t *testing.T) {
+	net := makeTestNetwork(t, testConfig(), nil)
+
+	msg := []byte("test-transaction-topic")
+
+	assert.ErrorIs(t, net.gossip.Broadcast(msg, TopicIDTransaction),
+		NotSubscribedError{
+			TopicID: TopicIDTransaction,
+		})
+	assert.NoError(t, net.JoinTopic(TopicIDTransaction, alwaysPropagate))
+	assert.NoError(t, net.gossip.Broadcast(msg, TopicIDTransaction))
+
+	assert.Error(t, net.JoinTopic(TopicIDTransaction, alwaysPropagate), "already joined")
 }
 
 func TestJoinInvalidTopic(t *testing.T) {
@@ -57,31 +89,49 @@ func TestTopicValidator(t *testing.T) {
 	net := makeTestNetwork(t, testConfig(), nil)
 
 	selfID := net.host.ID()
-	propagate := false
+	propagate := Drop
 	validator := net.gossip.createValidator(TopicIDConsensus,
-		func(_ *GossipMessage) bool { return propagate })
+		func(_ *GossipMessage) PropagationPolicy { return propagate })
 
 	tests := []struct {
 		name           string
 		peerID         lp2pcore.PeerID
-		propagate      bool
+		policy         PropagationPolicy
 		expectedResult lp2pps.ValidationResult
 	}{
 		{
 			name:           "Message from self",
-			propagate:      false,
+			policy:         Drop,
+			peerID:         selfID,
+			expectedResult: lp2pps.ValidationAccept,
+		},
+		{
+			name:           "Message from self",
+			policy:         DropButConsume,
+			peerID:         selfID,
+			expectedResult: lp2pps.ValidationAccept,
+		},
+		{
+			name:           "Message from self",
+			policy:         propagate,
 			peerID:         selfID,
 			expectedResult: lp2pps.ValidationAccept,
 		},
 		{
 			name:           "Message from other peer, should not propagate",
-			propagate:      false,
+			policy:         Drop,
+			peerID:         "other-peerID",
+			expectedResult: lp2pps.ValidationIgnore,
+		},
+		{
+			name:           "Message from other peer, should not propagate",
+			policy:         DropButConsume,
 			peerID:         "other-peerID",
 			expectedResult: lp2pps.ValidationIgnore,
 		},
 		{
 			name:           "Message from other peer, should propagate",
-			propagate:      true,
+			policy:         Propagate,
 			peerID:         "other-peerID",
 			expectedResult: lp2pps.ValidationAccept,
 		},
@@ -94,7 +144,7 @@ func TestTopicValidator(t *testing.T) {
 					Data: []byte("some-data"),
 				},
 			}
-			propagate = tt.propagate
+			propagate = tt.policy
 			result := validator(context.Background(), tt.peerID, msg)
 			assert.Equal(t, result, tt.expectedResult)
 		})

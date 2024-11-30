@@ -51,6 +51,10 @@ func (*BlocksResponseMessage) ShouldBroadcast() bool {
 	return false
 }
 
+func (*BlocksResponseMessage) ConsensusHeight() uint32 {
+	return 0
+}
+
 func (m *BlocksResponseMessage) Count() uint32 {
 	return uint32(len(m.BlocksData))
 }

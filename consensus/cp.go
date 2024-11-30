@@ -321,7 +321,7 @@ func (cp *changeProposer) cpStrongTermination() {
 		}
 		cp.enterNewState(cp.prepareState)
 	} else if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueYes) {
-		cp.round += 1
+		cp.round++
 		cp.cpDecided = 1
 		cp.enterNewState(cp.proposeState)
 
