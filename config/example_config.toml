@@ -104,7 +104,7 @@
     [sync.firewall.rate_limit]
 
       # `block_topic` specifies the rate limit for the block topic.
-      block_topic = 0
+      block_topic = 1
 
       # `transaction_topic` specifies the rate limit for the transaction topic.
       transaction_topic = 5
