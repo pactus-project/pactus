@@ -30,6 +30,7 @@ jobs:
             other
             daemon
             cmd
+            firewall
             gtk
             shell
             wallet-cmd
