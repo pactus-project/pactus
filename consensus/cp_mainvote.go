@@ -91,7 +91,9 @@ func (s *cpMainVoteState) onAddVote(v *vote.Vote) {
 		s.decide()
 	}
 
-	s.cpStrongTermination()
+	if v.IsCPVote() {
+		s.cpStrongTermination(v.Round(), v.CPRound())
+	}
 }
 
 func (*cpMainVoteState) name() string {
