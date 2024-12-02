@@ -34,15 +34,14 @@ func init() {
 	passwordOpt = flag.String("password", "", "wallet password")
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
 	version.NodeAgent.AppType = "gui"
-	// the gtk on macos should run on main thread.
-	if runtime.GOOS == "darwin" {
-		runtime.UnlockOSThread()
-		runtime.LockOSThread()
-	}
-	gtk.Init(nil)
 }
 
 func main() {
+	// the gtk on macos should run on main thread.
+	runtime.LockOSThread()
+
+	gtk.Init(nil)
+
 	flag.Parse()
 
 	var err error
