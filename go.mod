@@ -19,7 +19,7 @@ require (
 	github.com/hashicorp/golang-lru/v2 v2.0.7
 	github.com/inancgumus/screen v0.0.0-20190314163918-06e984b86ed3
 	github.com/k0kubun/go-ansi v0.0.0-20180517002512-3bf9e2903213
-	github.com/kilic/bls12-381 v0.1.0
+	github.com/kilic/bls12-381 v0.1.1-0.20210503002446-7b7597926c69
 	github.com/libp2p/go-libp2p v0.36.5
 	github.com/libp2p/go-libp2p-kad-dht v0.26.1
 	github.com/libp2p/go-libp2p-pubsub v0.12.0
@@ -174,7 +174,7 @@ require (
 	golang.org/x/mod v0.21.0 // indirect
 	golang.org/x/net v0.30.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/sys v0.26.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.19.0 // indirect
 	golang.org/x/tools v0.26.0 // indirect
 	gonum.org/v1/gonum v0.15.1 // indirect
