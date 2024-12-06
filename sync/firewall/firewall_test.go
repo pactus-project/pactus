@@ -14,7 +14,6 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -36,7 +35,6 @@ func setup(t *testing.T, conf *Config) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
-	subLogger := logger.NewSubLogger("firewall", nil)
 	peerSet := peerset.NewPeerSet(1 * time.Minute)
 	state := state.MockingState(ts)
 	net := network.MockingNetwork(ts, ts.RandPeerID())
@@ -45,7 +43,7 @@ func setup(t *testing.T, conf *Config) *testData {
 		conf = DefaultConfig()
 	}
 	require.NoError(t, conf.BasicCheck())
-	firewall, err := NewFirewall(conf, net, peerSet, state, subLogger)
+	firewall, err := NewFirewall(conf, net, peerSet, state)
 	if err != nil {
 		return nil
 	}
