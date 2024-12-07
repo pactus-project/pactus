@@ -21,8 +21,11 @@ func setupCommittee(ts *testsuite.TestSuite, stakes ...amount.Amount) (
 	totalPower := int64(0)
 	for i, s := range stakes {
 		pub, prv := ts.RandBLSKeyPair()
-		val := validator.NewValidator(pub, int32(i))
-		val.AddToStake(s)
+		val := ts.GenerateTestValidator(
+			testsuite.ValidatorWithNumber(int32(i)),
+			testsuite.ValidatorWithPublicKey(pub),
+			testsuite.ValidatorWithStake(s),
+		)
 		valsMap[val.Address()] = val
 		totalPower += val.Power()
 		valKeys = append(valKeys, bls.NewValidatorKey(prv))

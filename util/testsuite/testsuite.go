@@ -331,22 +331,92 @@ func (ts *TestSuite) RandPeerID() peer.ID {
 	return peer.ID(id[:])
 }
 
-// GenerateTestAccount generates an account for testing purposes.
-func (ts *TestSuite) GenerateTestAccount(number int32) (*account.Account, crypto.Address) {
-	addr := ts.RandAccAddress()
-	acc := account.NewAccount(number)
-	acc.AddToBalance(ts.RandAmount())
+type AccountMaker struct {
+	Number  int32
+	Balance amount.Amount
+}
 
-	return acc, addr
+// NewAccountMaker creates a new instance of AccountMaker with random values.
+func (ts *TestSuite) NewAccountMaker() *AccountMaker {
+	return &AccountMaker{
+		Number:  ts.RandInt32NonZero(100000),
+		Balance: ts.RandAmount(100e9),
+	}
+}
+
+// AccountWithNumber sets the account number for the generated test account.
+func AccountWithNumber(number int32) func(*AccountMaker) {
+	return func(am *AccountMaker) {
+		am.Number = number
+	}
+}
+
+// AccountWithBalance sets the balance for the generated test account.
+func AccountWithBalance(balance amount.Amount) func(*AccountMaker) {
+	return func(am *AccountMaker) {
+		am.Balance = balance
+	}
+}
+
+// GenerateTestAccount generates an account for testing purposes.
+func (ts *TestSuite) GenerateTestAccount(options ...func(*AccountMaker)) (*account.Account, crypto.Address) {
+	amk := ts.NewAccountMaker()
+	for _, opt := range options {
+		opt(amk)
+	}
+	acc := account.NewAccount(amk.Number)
+	acc.AddToBalance(amk.Balance)
+
+	return acc, ts.RandAccAddress()
+}
+
+type ValidatorMaker struct {
+	Number    int32
+	Stake     amount.Amount
+	PublicKey *bls.PublicKey
+}
+
+// NewValidatorMaker creates a new instance of ValidatorMaker with random values.
+func (ts *TestSuite) NewValidatorMaker() *ValidatorMaker {
+	return &ValidatorMaker{
+		Number:    ts.RandInt32(100000),
+		Stake:     ts.RandAmount(100e9),
+		PublicKey: ts.RandValKey().PublicKey(),
+	}
+}
+
+// ValidatorWithNumber sets the validator number for the generated test validator.
+func ValidatorWithNumber(number int32) func(*ValidatorMaker) {
+	return func(vm *ValidatorMaker) {
+		vm.Number = number
+	}
+}
+
+// ValidatorWithStake sets the stake for the generated test account.
+func ValidatorWithStake(stake amount.Amount) func(*ValidatorMaker) {
+	return func(vm *ValidatorMaker) {
+		vm.Stake = stake
+	}
+}
+
+// ValidatorWithPublicKey sets the public Key for the generated test account.
+func ValidatorWithPublicKey(publicKey *bls.PublicKey) func(*ValidatorMaker) {
+	return func(vm *ValidatorMaker) {
+		vm.PublicKey = publicKey
+	}
 }
 
 // GenerateTestValidator generates a validator for testing purposes.
-func (ts *TestSuite) GenerateTestValidator(number int32) (*validator.Validator, *bls.ValidatorKey) {
-	pub, prv := ts.RandBLSKeyPair()
-	val := validator.NewValidator(pub, number)
-	val.AddToStake(ts.RandAmount())
+func (ts *TestSuite) GenerateTestValidator(options ...func(*ValidatorMaker)) *validator.Validator {
+	vmk := ts.NewValidatorMaker()
+	for _, opt := range options {
+		opt(vmk)
+	}
 
-	return val, bls.NewValidatorKey(prv)
+	val := validator.NewValidator(vmk.PublicKey, vmk.Number)
+	val.AddToStake(vmk.Stake)
+
+	return val
 }
 
 type BlockMaker struct {
@@ -387,63 +457,63 @@ func (ts *TestSuite) NewBlockMaker() *BlockMaker {
 }
 
 // BlockWithVersion sets version to the block.
-func BlockWithVersion(ver uint8) func(bm *BlockMaker) {
+func BlockWithVersion(ver uint8) func(*BlockMaker) {
 	return func(bm *BlockMaker) {
 		bm.Version = ver
 	}
 }
 
 // BlockWithProposer sets proposer address to the block.
-func BlockWithProposer(addr crypto.Address) func(bm *BlockMaker) {
+func BlockWithProposer(addr crypto.Address) func(*BlockMaker) {
 	return func(bm *BlockMaker) {
 		bm.Proposer = addr
 	}
 }
 
 // BlockWithTime sets block creation time to the block.
-func BlockWithTime(t time.Time) func(bm *BlockMaker) {
+func BlockWithTime(t time.Time) func(*BlockMaker) {
 	return func(bm *BlockMaker) {
 		bm.Time = t
 	}
 }
 
 // BlockWithStateHash sets state hash to the block.
-func BlockWithStateHash(h hash.Hash) func(bm *BlockMaker) {
+func BlockWithStateHash(h hash.Hash) func(*BlockMaker) {
 	return func(bm *BlockMaker) {
 		bm.StateHash = h
 	}
 }
 
 // BlockWithPrevHash sets previous block hash to the block.
-func BlockWithPrevHash(h hash.Hash) func(bm *BlockMaker) {
+func BlockWithPrevHash(h hash.Hash) func(*BlockMaker) {
 	return func(bm *BlockMaker) {
 		bm.PrevHash = h
 	}
 }
 
 // BlockWithSeed sets verifiable seed to the block.
-func BlockWithSeed(seed sortition.VerifiableSeed) func(bm *BlockMaker) {
+func BlockWithSeed(seed sortition.VerifiableSeed) func(*BlockMaker) {
 	return func(bm *BlockMaker) {
 		bm.Seed = seed
 	}
 }
 
 // BlockWithPrevCert sets previous block certificate to the block.
-func BlockWithPrevCert(cert *certificate.BlockCertificate) func(bm *BlockMaker) {
+func BlockWithPrevCert(cert *certificate.BlockCertificate) func(*BlockMaker) {
 	return func(bm *BlockMaker) {
 		bm.PrevCert = cert
 	}
 }
 
 // BlockWithTransactions adds transactions to the block.
-func BlockWithTransactions(txs block.Txs) func(bm *BlockMaker) {
+func BlockWithTransactions(txs block.Txs) func(*BlockMaker) {
 	return func(bm *BlockMaker) {
 		bm.Txs = txs
 	}
 }
 
 // GenerateTestBlock generates a block for testing purposes with optional configuration.
-func (ts *TestSuite) GenerateTestBlock(height uint32, options ...func(bm *BlockMaker)) (
+func (ts *TestSuite) GenerateTestBlock(height uint32, options ...func(*BlockMaker)) (
 	*block.Block, *certificate.BlockCertificate,
 ) {
 	bmk := ts.NewBlockMaker()
@@ -508,8 +578,8 @@ func (ts *TestSuite) NewProposalMaker() *ProposalMaker {
 	}
 }
 
-// WithProposerKey sets the private key of the proposer.
-func WithProposerKey(key *bls.ValidatorKey) func(pm *ProposalMaker) {
+// ProposalWithKey sets the private key of the proposer.
+func ProposalWithKey(key *bls.ValidatorKey) func(*ProposalMaker) {
 	return func(pm *ProposalMaker) {
 		pm.ProposerKey = key
 	}
@@ -517,7 +587,7 @@ func WithProposerKey(key *bls.ValidatorKey) func(pm *ProposalMaker) {
 
 // GenerateTestProposal generates a proposal for testing purposes.
 func (ts *TestSuite) GenerateTestProposal(height uint32, round int16,
-	options ...func(pmk *ProposalMaker),
+	options ...func(*ProposalMaker),
 ) *proposal.Proposal {
 	pmk := ts.NewProposalMaker()
 
@@ -568,49 +638,49 @@ func (ts *TestSuite) NewTransactionMaker() *TransactionMaker {
 }
 
 // TransactionWithLockTime sets lock-time to the transaction.
-func TransactionWithLockTime(lockTime uint32) func(tm *TransactionMaker) {
+func TransactionWithLockTime(lockTime uint32) func(*TransactionMaker) {
 	return func(tm *TransactionMaker) {
 		tm.LockTime = lockTime
 	}
 }
 
 // TransactionWithAmount sets amount to the transaction.
-func TransactionWithAmount(amt amount.Amount) func(tm *TransactionMaker) {
+func TransactionWithAmount(amt amount.Amount) func(*TransactionMaker) {
 	return func(tm *TransactionMaker) {
 		tm.Amount = amt
 	}
 }
 
 // TransactionWithFee sets fee to the transaction.
-func TransactionWithFee(fee amount.Amount) func(tm *TransactionMaker) {
+func TransactionWithFee(fee amount.Amount) func(*TransactionMaker) {
 	return func(tm *TransactionMaker) {
 		tm.Fee = fee
 	}
 }
 
 // TransactionWithBLSSigner sets the BLS signer to sign the test transaction.
-func TransactionWithBLSSigner(signer *bls.PrivateKey) func(tm *TransactionMaker) {
+func TransactionWithBLSSigner(signer *bls.PrivateKey) func(*TransactionMaker) {
 	return func(tm *TransactionMaker) {
 		tm.Signer = signer
 	}
 }
 
 // TransactionWithEd25519Signer sets the Ed25519 signer to sign the test transaction.
-func TransactionWithEd25519Signer(signer *ed25519.PrivateKey) func(tm *TransactionMaker) {
+func TransactionWithEd25519Signer(signer *ed25519.PrivateKey) func(*TransactionMaker) {
 	return func(tm *TransactionMaker) {
 		tm.Signer = signer
 	}
 }
 
 // TransactionWithValidatorPublicKey sets the Validator's public key for the Bond transaction.
-func TransactionWithValidatorPublicKey(pubKey *bls.PublicKey) func(tm *TransactionMaker) {
+func TransactionWithValidatorPublicKey(pubKey *bls.PublicKey) func(*TransactionMaker) {
 	return func(tm *TransactionMaker) {
 		tm.ValPubKey = pubKey
 	}
 }
 
 // GenerateTestTransferTx generates a transfer transaction for testing purposes.
-func (ts *TestSuite) GenerateTestTransferTx(options ...func(tm *TransactionMaker)) *tx.Tx {
+func (ts *TestSuite) GenerateTestTransferTx(options ...func(*TransactionMaker)) *tx.Tx {
 	tmk := ts.NewTransactionMaker()
 
 	for _, opt := range options {
@@ -636,7 +706,7 @@ func (ts *TestSuite) GenerateTestTransferTx(options ...func(tm *TransactionMaker
 }
 
 // GenerateTestBondTx generates a bond transaction for testing purposes.
-func (ts *TestSuite) GenerateTestBondTx(options ...func(tm *TransactionMaker)) *tx.Tx {
+func (ts *TestSuite) GenerateTestBondTx(options ...func(*TransactionMaker)) *tx.Tx {
 	tmk := ts.NewTransactionMaker()
 
 	for _, opt := range options {
@@ -666,7 +736,7 @@ func (ts *TestSuite) GenerateTestBondTx(options ...func(tm *TransactionMaker)) *
 }
 
 // GenerateTestSortitionTx generates a sortition transaction for testing purposes.
-func (ts *TestSuite) GenerateTestSortitionTx(options ...func(tm *TransactionMaker)) *tx.Tx {
+func (ts *TestSuite) GenerateTestSortitionTx(options ...func(*TransactionMaker)) *tx.Tx {
 	tmk := ts.NewTransactionMaker()
 
 	for _, opt := range options {
@@ -687,7 +757,7 @@ func (ts *TestSuite) GenerateTestSortitionTx(options ...func(tm *TransactionMake
 }
 
 // GenerateTestUnbondTx generates an unbond transaction for testing purposes.
-func (ts *TestSuite) GenerateTestUnbondTx(options ...func(tm *TransactionMaker)) *tx.Tx {
+func (ts *TestSuite) GenerateTestUnbondTx(options ...func(*TransactionMaker)) *tx.Tx {
 	tmk := ts.NewTransactionMaker()
 
 	for _, opt := range options {
@@ -707,7 +777,7 @@ func (ts *TestSuite) GenerateTestUnbondTx(options ...func(tm *TransactionMaker))
 }
 
 // GenerateTestWithdrawTx generates a withdraw transaction for testing purposes.
-func (ts *TestSuite) GenerateTestWithdrawTx(options ...func(tm *TransactionMaker)) *tx.Tx {
+func (ts *TestSuite) GenerateTestWithdrawTx(options ...func(*TransactionMaker)) *tx.Tx {
 	tmk := ts.NewTransactionMaker()
 
 	for _, opt := range options {
@@ -759,8 +829,11 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls
 	valKeys := make([]*bls.ValidatorKey, num)
 	vals := make([]*validator.Validator, num)
 	for index := int32(0); index < int32(num); index++ {
-		val, s := ts.GenerateTestValidator(index)
-		valKeys[index] = s
+		valKey := ts.RandValKey()
+		val := ts.GenerateTestValidator(
+			ValidatorWithNumber(index),
+			ValidatorWithPublicKey(valKey.PublicKey()))
+		valKeys[index] = valKey
 		vals[index] = val
 
 		val.UpdateLastBondingHeight(1 + uint32(index))

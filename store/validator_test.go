@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/validator"
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -13,8 +14,7 @@ import (
 func TestValidatorCounter(t *testing.T) {
 	td := setup(t, nil)
 
-	num := td.RandInt32(1000)
-	val, _ := td.GenerateTestValidator(num)
+	val := td.GenerateTestValidator()
 
 	t.Run("Add new validator, should increase the total validators number", func(t *testing.T) {
 		assert.Zero(t, td.store.TotalValidators())
@@ -36,7 +36,7 @@ func TestValidatorCounter(t *testing.T) {
 		val1, err := td.store.Validator(val.Address())
 		assert.NoError(t, err)
 
-		val2, err := td.store.ValidatorByNumber(num)
+		val2, err := td.store.ValidatorByNumber(val.Number())
 		assert.NoError(t, err)
 
 		assert.Equal(t, val1.Hash(), val2.Hash())
@@ -51,7 +51,7 @@ func TestValidatorBatchSaving(t *testing.T) {
 	total := td.RandInt32NonZero(100)
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
-			val, _ := td.GenerateTestValidator(i)
+			val := td.GenerateTestValidator(testsuite.ValidatorWithNumber(i))
 			td.store.UpdateValidator(val)
 		}
 		assert.NoError(t, td.store.WriteBatch())
@@ -72,7 +72,7 @@ func TestValidatorAddresses(t *testing.T) {
 	addrs1 := make([]crypto.Address, 0, total)
 
 	for i := int32(0); i < total; i++ {
-		val, _ := td.GenerateTestValidator(i)
+		val := td.GenerateTestValidator(testsuite.ValidatorWithNumber(i))
 		td.store.UpdateValidator(val)
 		addrs1 = append(addrs1, val.Address())
 	}
@@ -87,7 +87,7 @@ func TestValidatorByNumber(t *testing.T) {
 	total := td.RandInt32NonZero(100)
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
-			val, _ := td.GenerateTestValidator(i)
+			val := td.GenerateTestValidator(testsuite.ValidatorWithNumber(i))
 			td.store.UpdateValidator(val)
 		}
 		assert.NoError(t, td.store.WriteBatch())
@@ -140,7 +140,7 @@ func TestValidatorByAddress(t *testing.T) {
 	total := td.RandInt32NonZero(100)
 	t.Run("Add some validators", func(t *testing.T) {
 		for i := int32(0); i < total; i++ {
-			val, _ := td.GenerateTestValidator(i)
+			val := td.GenerateTestValidator(testsuite.ValidatorWithNumber(i))
 			td.store.UpdateValidator(val)
 		}
 		assert.NoError(t, td.store.WriteBatch())
@@ -181,7 +181,7 @@ func TestIterateValidators(t *testing.T) {
 	total := td.RandInt32NonZero(100)
 	hashes1 := []hash.Hash{}
 	for i := int32(0); i < total; i++ {
-		val, _ := td.GenerateTestValidator(i)
+		val := td.GenerateTestValidator(testsuite.ValidatorWithNumber(i))
 		td.store.UpdateValidator(val)
 		hashes1 = append(hashes1, val.Hash())
 	}
@@ -210,7 +210,7 @@ func TestValidatorDeepCopy(t *testing.T) {
 	td := setup(t, nil)
 
 	num := td.RandInt32NonZero(1000)
-	val1, _ := td.GenerateTestValidator(num)
+	val1 := td.GenerateTestValidator(testsuite.ValidatorWithNumber(num))
 	td.store.UpdateValidator(val1)
 
 	val2, _ := td.store.ValidatorByNumber(num)

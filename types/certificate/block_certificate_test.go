@@ -102,7 +102,7 @@ func TestBlockCertificateValidation(t *testing.T) {
 		cert.SetSignature(committers, absentees, aggSig)
 
 		invValidators := slices.Clone(validators)
-		invValidators[0], _ = ts.GenerateTestValidator(0)
+		invValidators[0] = ts.GenerateTestValidator()
 		err := cert.Validate(invValidators, blockHash)
 		assert.ErrorIs(t, err, certificate.UnexpectedCommittersError{
 			Committers: committers,

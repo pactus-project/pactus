@@ -80,7 +80,7 @@ func TestAccountChange(t *testing.T) {
 	})
 
 	t.Run("Retrieve an account from store and update it", func(t *testing.T) {
-		acc, addr := td.GenerateTestAccount(td.RandInt32(10000))
+		acc, addr := td.GenerateTestAccount()
 		bal := acc.Balance()
 		td.store.UpdateAccount(addr, acc)
 
@@ -164,7 +164,7 @@ func TestValidatorChange(t *testing.T) {
 	})
 
 	t.Run("Retrieve an validator from store and update it", func(t *testing.T) {
-		val, _ := td.GenerateTestValidator(td.RandInt32(10000))
+		val := td.GenerateTestValidator()
 		addr := val.Address()
 		stk := val.Stake()
 		td.store.UpdateValidator(val)
@@ -278,14 +278,14 @@ func TestUpdateFromOutsideTheSandbox(t *testing.T) {
 
 	t.Run("Try update an account from outside the sandbox, Should panic", func(t *testing.T) {
 		assert.Panics(t, func() {
-			acc, addr := td.GenerateTestAccount(td.RandInt32(10000))
+			acc, addr := td.GenerateTestAccount()
 			td.sbx.UpdateAccount(addr, acc)
 		})
 	})
 
 	t.Run("Try update a validator from outside the sandbox, Should panic", func(t *testing.T) {
 		assert.Panics(t, func() {
-			val, _ := td.GenerateTestValidator(td.RandInt32(10000))
+			val := td.GenerateTestValidator()
 			td.sbx.UpdateValidator(val)
 		})
 	})

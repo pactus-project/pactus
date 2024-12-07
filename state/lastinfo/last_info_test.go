@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/block"
@@ -41,7 +40,6 @@ func setup(t *testing.T) *testData {
 	pub2, _ := ts.RandBLSKeyPair()
 	pub3, _ := ts.RandBLSKeyPair()
 	pub4, prv4 := ts.RandBLSKeyPair()
-	valKey := bls.NewValidatorKey(prv4)
 
 	val0 := validator.NewValidator(pub0, 0)
 	val1 := validator.NewValidator(pub1, 1)
@@ -80,7 +78,7 @@ func setup(t *testing.T) *testData {
 		ts.RandHash(),
 		prevCert, lastSeed, val2.Address())
 
-	sig := valKey.Sign([]byte("fatdog"))
+	sig := ts.RandBLSSignature()
 	lastCert := certificate.NewBlockCertificate(lastHeight, 0)
 	lastCert.SetSignature(committers, []int32{}, sig)
 	mockStore.SaveBlock(lastBlock, lastCert)
