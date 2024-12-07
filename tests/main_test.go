@@ -85,6 +85,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["_consensus"] = "info"
 		tConfigs[i].Logger.Levels["_network"] = "info"
 		tConfigs[i].Logger.Levels["_pool"] = "info"
+		tConfigs[i].Logger.Levels["_firewall"] = "info"
 		tConfigs[i].Sync.Firewall.BannedNets = make([]string, 0)
 		tConfigs[i].Sync.BlockPerSession = 10
 		tConfigs[i].Network.EnableMdns = true
