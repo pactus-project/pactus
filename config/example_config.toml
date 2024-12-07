@@ -168,7 +168,7 @@
   #   'trace', 'debug', 'info', 'warn', and 'error'.
   [logger.levels]
     _consensus = 'warn'
-    _firewall = 'error'
+    _firewall = 'warn'
     _grpc = 'info'
     _http = 'info'
     _jsonrpc = 'info'
