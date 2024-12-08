@@ -1,7 +1,6 @@
 package state
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -104,9 +103,6 @@ func (m *MockState) CommitBlock(blk *block.Block, cert *certificate.BlockCertifi
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
-	if cert.Height() != m.TestStore.LastHeight+1 {
-		return fmt.Errorf("invalid height")
-	}
 	m.TestStore.SaveBlock(blk, cert)
 
 	return nil

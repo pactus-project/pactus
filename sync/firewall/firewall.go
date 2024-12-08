@@ -244,7 +244,7 @@ func (f *Firewall) isExpiredMessage(msgData []byte) bool {
 
 	// The message is expired, or the consensus height is behind the network's current height.
 	// In either case, the message is dropped and won't be propagated.
-	if consensusHeight < f.state.LastBlockHeight()-1 {
+	if f.state.LastBlockHeight() > 0 && consensusHeight < f.state.LastBlockHeight()-1 {
 		f.logger.Warn("firewall: expired message", "message height", consensusHeight, "our height", f.state.LastBlockHeight())
 
 		return true

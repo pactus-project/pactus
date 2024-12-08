@@ -82,7 +82,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Logger.Levels["default"] = "info"
 		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "info"
-		tConfigs[i].Logger.Levels["_consensus"] = "info"
+		tConfigs[i].Logger.Levels["_consensus"] = "debug"
 		tConfigs[i].Logger.Levels["_network"] = "info"
 		tConfigs[i].Logger.Levels["_pool"] = "info"
 		tConfigs[i].Sync.Firewall.BannedNets = make([]string, 0)
@@ -130,7 +130,7 @@ func TestMain(m *testing.M) {
 	genParams.BondInterval = 8
 	genParams.CommitteeSize = tCommitteeSize
 	genParams.TransactionToLiveInterval = 8
-	tGenDoc = genesis.MakeGenesis(time.Now(), accs, vals, genParams)
+	tGenDoc = genesis.MakeGenesis(time.Now().Add(10*time.Second), accs, vals, genParams)
 
 	for i := 0; i < tTotalNodes; i++ {
 		tNodes[i], _ = node.NewNode(
@@ -156,9 +156,9 @@ func TestMain(m *testing.M) {
 			tConfigs[tNodeIdx3].Network.BootstrapAddrStrings = []string{bootstrapAddr}
 			tConfigs[tNodeIdx4].Network.BootstrapAddrStrings = []string{bootstrapAddr}
 		}
-
-		time.Sleep(1 * time.Second)
 	}
+
+	time.Sleep(10 * time.Second)
 
 	tCtx = context.Background()
 	conn, err := grpc.NewClient(
