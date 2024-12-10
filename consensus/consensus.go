@@ -186,7 +186,7 @@ func (cs *consensus) moveToNewHeight() {
 func (cs *consensus) scheduleTimeout(duration time.Duration, height uint32, round int16, target tickerTarget) {
 	ticker := &ticker{duration, height, round, target}
 	timer := time.NewTimer(duration)
-	cs.logger.Debug("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
+	cs.logger.Trace("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
 
 	go func() {
 		<-timer.C
@@ -311,12 +311,6 @@ func (cs *consensus) AddVote(vte *vote.Vote) {
 		cs.logger.Info("new vote added", "vote", vte)
 
 		cs.currentState.onAddVote(vte)
-
-		if vte.Type() == vote.VoteTypeCPDecided {
-			if vte.Round() > cs.round {
-				cs.changeProposer.cpDecide(vte.Round(), vte.CPValue())
-			}
-		}
 	}
 }
 
@@ -514,6 +508,7 @@ func (cs *consensus) HandleQueryVote(height uint32, round int16) *vote.Vote {
 	votes := []*vote.Vote{}
 	switch {
 	case round < cs.round:
+		// Past round: Only broadcast cp:decided votes
 		vs := cs.log.CPDecidedVoteSet(round)
 		votes = append(votes, vs.AllVotes()...)
 
