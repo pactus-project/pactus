@@ -311,12 +311,6 @@ func (cs *consensus) AddVote(vte *vote.Vote) {
 		cs.logger.Info("new vote added", "vote", vte)
 
 		cs.currentState.onAddVote(vte)
-
-		if vte.Type() == vote.VoteTypeCPDecided {
-			if vte.Round() > cs.round {
-				cs.changeProposer.cpDecide(vte.Round(), vte.CPValue())
-			}
-		}
 	}
 }
 
