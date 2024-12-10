@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.6.4](https://github.com/pactus-project/pactus/compare/v1.6.3...v1.6.4) (2024-12-10)
+
+### Feat
+
+- **network**: evaluate propagate policy for gossip messages ([#1629](https://github.com/pactus-project/pactus/pull/1629))
+
+### Fix
+
+- **deps**: update some dependencies
+- move LockOSThread to init
+- **deps**: downgrade go-libp2p to v0.36.5 ([#1636](https://github.com/pactus-project/pactus/pull/1636))
+- **consensus**: ensure slow consensus terminates on cp-round > 0 ([#1634](https://github.com/pactus-project/pactus/pull/1634))
+- **gtk**: fix missing colon on connection label ([#1635](https://github.com/pactus-project/pactus/pull/1635))
+- **gtk**: fix panic on Windows 11 when laoding Pactus logo ([#1633](https://github.com/pactus-project/pactus/pull/1633))
+
 ## [1.6.3](https://github.com/pactus-project/pactus/compare/v1.6.2...v1.6.3) (2024-11-30)
 
 ### Fix
