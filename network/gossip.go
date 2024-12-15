@@ -35,11 +35,10 @@ func newGossipService(ctx context.Context, host lp2phost.Host, conf *Config,
 		lp2pps.WithMessageSignaturePolicy(lp2pps.StrictNoSign),
 		lp2pps.WithNoAuthor(),
 		lp2pps.WithMessageIdFn(MessageIDFunc),
-		lp2pps.WithPeerOutboundQueueSize(600),
 	}
 
 	if conf.IsBootstrapper {
-		// enable Peer eXchange on bootstrappers
+		// enable Peer exchange on bootstrappers
 		opts = append(opts, lp2pps.WithPeerExchange(true))
 	}
 
