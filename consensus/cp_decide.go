@@ -45,12 +45,14 @@ func (s *cpDecideState) decide() {
 	}
 }
 
-func (s *cpDecideState) onAddVote(v *vote.Vote) {
-	if v.Type() == vote.VoteTypeCPMainVote {
+func (s *cpDecideState) onAddVote(vte *vote.Vote) {
+	if vte.Type() == vote.VoteTypeCPMainVote {
 		s.decide()
 	}
 
-	s.cpStrongTermination()
+	if vte.IsCPVote() {
+		s.cpStrongTermination(vte.Round(), vte.CPRound())
+	}
 }
 
 func (*cpDecideState) name() string {

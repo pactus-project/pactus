@@ -86,12 +86,14 @@ func (s *cpMainVoteState) detectByzantineProposal() {
 	}
 }
 
-func (s *cpMainVoteState) onAddVote(v *vote.Vote) {
-	if v.Type() == vote.VoteTypeCPPreVote {
+func (s *cpMainVoteState) onAddVote(vte *vote.Vote) {
+	if vte.Type() == vote.VoteTypeCPPreVote {
 		s.decide()
 	}
 
-	s.cpStrongTermination()
+	if vte.IsCPVote() {
+		s.cpStrongTermination(vte.Round(), vte.CPRound())
+	}
 }
 
 func (*cpMainVoteState) name() string {

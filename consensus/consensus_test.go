@@ -638,7 +638,7 @@ func TestHandleQueryVote(t *testing.T) {
 	td.enterNextRound(td.consP)
 	td.addPrepareVote(td.consP, td.RandHash(), height, 2, tIndexY)
 
-	t.Run("Query vote for round 0: should send the decided vote for the round 1", func(t *testing.T) {
+	t.Run("Query vote for round 0: should send the decided vote for the round 0", func(t *testing.T) {
 		rndVote := td.consP.HandleQueryVote(height, 0)
 		assert.Equal(t, vote.VoteTypeCPDecided, rndVote.Type())
 		assert.Equal(t, height, rndVote.Height())
@@ -652,7 +652,7 @@ func TestHandleQueryVote(t *testing.T) {
 		assert.Equal(t, int16(1), rndVote.Round())
 	})
 
-	t.Run("Query vote for round 2: should send the prepare vote for the current round", func(t *testing.T) {
+	t.Run("Query vote for round 2: should send the prepare vote for the round 2", func(t *testing.T) {
 		rndVote := td.consP.HandleQueryVote(height, 2)
 		assert.Equal(t, vote.VoteTypePrepare, rndVote.Type())
 		assert.Equal(t, height, rndVote.Height())
@@ -840,7 +840,8 @@ func TestCases(t *testing.T) {
 		{1694848907840926239, 2, "1/3+ cp:PRE-VOTE in Precommit step"},
 		{1732698646319341342, 1, "Conflicting cp:PRE-VOTE in cp_round 0"},
 		{1732698786369716238, 1, "Conflicting cp:PRE-VOTE in cp_round 1"},
-		{1732702222972506364, 1, "consX & consY: Change Proposer, consB & consP: Committed block"},
+		{1733141709511627892, 0, "Conflicting votes, cp-round=1"},
+		{1733142353680459225, 1, "consP & consB: Change Proposer, consX & consY: Commit (2 block announces)"},
 	}
 
 	for no, tt := range tests {
