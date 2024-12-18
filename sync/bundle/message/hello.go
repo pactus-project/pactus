@@ -72,6 +72,10 @@ func (*HelloMessage) ShouldBroadcast() bool {
 	return false
 }
 
+func (*HelloMessage) ConsensusHeight() uint32 {
+	return 0
+}
+
 func (m *HelloMessage) String() string {
 	return fmt.Sprintf("{%s %d %s}", m.Moniker, m.Height, m.Services)
 }

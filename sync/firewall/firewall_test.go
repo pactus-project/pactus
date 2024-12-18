@@ -2,6 +2,7 @@ package firewall
 
 import (
 	"bytes"
+	"encoding/binary"
 	"testing"
 	"time"
 
@@ -116,7 +117,7 @@ func TestDecodeBundles(t *testing.T) {
 				"" + "01" + "1864" + // Key 1 (Height), Value: 100
 				"" + "02" + "20" + // Key 2 (Round), Value: -1
 				"" + "03" + "5501aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + // Key 3 (Querier), Value: 21 Bytes
-				"04" + "05", // Key 4 (Sequence number), Value: 5
+				"04" + "1a00001234", // Key 4 (Consensus Height), Value: 0x1234
 			wantErr: true,
 		},
 
@@ -130,7 +131,7 @@ func TestDecodeBundles(t *testing.T) {
 				"" + "01" + "1864" + // Key 1 (Height), Value: 100
 				"" + "02" + "00" + // Key 2 (Round), Value: 0
 				"" + "03" + "5501aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + // Key 3 (Querier), Value: 21 Bytes
-				"04" + "05", // Key 4 (Sequence number), Value: 5
+				"04" + "1a00001234", // Key 4 (Consensus Height), Value: 0x1234
 			wantErr: true,
 		},
 		{
@@ -143,7 +144,7 @@ func TestDecodeBundles(t *testing.T) {
 				"" + "01" + "1864" + // Key 1 (Height), Value: 100
 				"" + "02" + "00" + // Key 2 (Round), Value: 0
 				"" + "03" + "5501aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + // Key 3 (Querier), Value: 21 Bytes
-				"04" + "05", // Key 4 (Sequence number), Value: 5
+				"04" + "1a00001234", // Key 4 (Consensus Height), Value: 0x1234
 			wantErr: false,
 		},
 	}
@@ -425,8 +426,26 @@ func TestAllowBlockRequest(t *testing.T) {
 
 	td := setup(t, conf)
 
-	assert.True(t, td.firewall.AllowBlockRequest())
-	assert.False(t, td.firewall.AllowBlockRequest())
+	td.state.CommitTestBlocks(10)
+
+	t.Run("expired message", func(t *testing.T) {
+		msg := makeTestGossipMessage(td.state.LastBlockHeight() - 2)
+
+		assert.Equal(t, network.Drop, td.firewall.AllowBlockRequest(msg))
+	})
+
+	t.Run("expired message", func(t *testing.T) {
+		msg := makeTestGossipMessage(td.state.LastBlockHeight() + 2)
+
+		assert.Equal(t, network.Drop, td.firewall.AllowBlockRequest(msg))
+	})
+
+	t.Run("rate limit exceeded", func(t *testing.T) {
+		msg := makeTestGossipMessage(td.state.LastBlockHeight())
+
+		assert.Equal(t, network.Propagate, td.firewall.AllowBlockRequest(msg))
+		assert.Equal(t, network.DropButConsume, td.firewall.AllowBlockRequest(msg))
+	})
 }
 
 func TestAllowTransactionRequest(t *testing.T) {
@@ -435,8 +454,12 @@ func TestAllowTransactionRequest(t *testing.T) {
 
 	td := setup(t, conf)
 
-	assert.True(t, td.firewall.AllowTransactionRequest())
-	assert.False(t, td.firewall.AllowTransactionRequest())
+	t.Run("rate limit exceeded", func(t *testing.T) {
+		msg := makeTestGossipMessage(td.state.LastBlockHeight())
+
+		assert.Equal(t, network.Propagate, td.firewall.AllowTransactionRequest(msg))
+		assert.Equal(t, network.DropButConsume, td.firewall.AllowTransactionRequest(msg))
+	})
 }
 
 func TestAllowConsensusRequest(t *testing.T) {
@@ -445,6 +468,34 @@ func TestAllowConsensusRequest(t *testing.T) {
 
 	td := setup(t, conf)
 
-	assert.True(t, td.firewall.AllowConsensusRequest())
-	assert.False(t, td.firewall.AllowConsensusRequest())
+	td.state.CommitTestBlocks(10)
+
+	t.Run("expired message", func(t *testing.T) {
+		msg := makeTestGossipMessage(td.state.LastBlockHeight() - 2)
+
+		assert.Equal(t, network.Drop, td.firewall.AllowConsensusRequest(msg))
+	})
+
+	t.Run("expired message", func(t *testing.T) {
+		msg := makeTestGossipMessage(td.state.LastBlockHeight() + 2)
+
+		assert.Equal(t, network.Drop, td.firewall.AllowConsensusRequest(msg))
+	})
+
+	t.Run("rate limit exceeded", func(t *testing.T) {
+		msg := makeTestGossipMessage(td.state.LastBlockHeight())
+
+		assert.Equal(t, network.Propagate, td.firewall.AllowConsensusRequest(msg))
+		assert.Equal(t, network.DropButConsume, td.firewall.AllowConsensusRequest(msg))
+	})
+}
+
+func makeTestGossipMessage(consensusHeight uint32) *network.GossipMessage {
+	data := make([]byte, 0, 6)
+	data = append(data, 0x04, 0x1a)
+	data = binary.BigEndian.AppendUint32(data, consensusHeight)
+
+	return &network.GossipMessage{
+		Data: data,
+	}
 }

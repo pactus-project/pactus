@@ -1,6 +1,7 @@
 package bundle
 
 import (
+	"encoding/binary"
 	"fmt"
 	"io"
 
@@ -19,9 +20,28 @@ const (
 )
 
 type Bundle struct {
-	Flags      int
-	SequenceNo int
-	Message    message.Message
+	Flags   int
+	Message message.Message
+}
+
+// Custom type to enforce uint32 encoding as 4 bytes, ignoring zeros.
+type fixedUint32 uint32
+
+func (u fixedUint32) MarshalCBOR() ([]byte, error) {
+	if u == 0 {
+		// Why can't be empty??
+		return []byte{0}, nil
+	}
+
+	buf := make([]byte, 0, 5)
+
+	// The header for a 4-byte integer is 0x1A followed by the 4 bytes of the uint32.
+	buf = append(buf, 0x1A)
+
+	// Append the uint32 in big-endian format
+	buf = binary.BigEndian.AppendUint32(buf, uint32(u))
+
+	return buf, nil
 }
 
 func NewBundle(msg message.Message) *Bundle {
@@ -43,15 +63,11 @@ func (b *Bundle) CompressIt() {
 	b.Flags = util.SetFlag(b.Flags, BundleFlagCompressed)
 }
 
-func (b *Bundle) SetSequenceNo(seqNo int) {
-	b.SequenceNo = seqNo
-}
-
 type _Bundle struct {
-	Flags       int          `cbor:"1,keyasint"`
-	MessageType message.Type `cbor:"2,keyasint"`
-	MessageData []byte       `cbor:"3,keyasint"`
-	SequenceNo  int          `cbor:"4,keyasint"`
+	Flags           int          `cbor:"1,keyasint"`
+	MessageType     message.Type `cbor:"2,keyasint"`
+	MessageData     []byte       `cbor:"3,keyasint"`
+	ConsensusHeight fixedUint32  `cbor:"4,keyasint,omitempty"`
 }
 
 func (b *Bundle) Encode() ([]byte, error) {
@@ -69,10 +85,10 @@ func (b *Bundle) Encode() ([]byte, error) {
 	}
 
 	msg := &_Bundle{
-		Flags:       b.Flags,
-		MessageType: b.Message.Type(),
-		MessageData: data,
-		SequenceNo:  b.SequenceNo,
+		Flags:           b.Flags,
+		MessageType:     b.Message.Type(),
+		MessageData:     data,
+		ConsensusHeight: fixedUint32(b.Message.ConsensusHeight()),
 	}
 
 	return cbor.Marshal(msg)
@@ -102,7 +118,6 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 	}
 
 	b.Flags = bdl.Flags
-	b.SequenceNo = bdl.SequenceNo
 	b.Message = msg
 
 	return bytesRead, cbor.Unmarshal(data, msg)
