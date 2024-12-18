@@ -64,14 +64,14 @@ func TestAddInvalidVoteType(t *testing.T) {
 	log := NewLog()
 	log.MoveToNewHeight(cmt.Validators())
 
-	data, _ := hex.DecodeString("A701050218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
+	data, _ := hex.DecodeString("A7010F0218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
 		"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
 	invVote := new(vote.Vote)
 	err := invVote.UnmarshalCBOR(data)
 	assert.NoError(t, err)
 
 	added, err := log.AddVote(invVote)
-	assert.Error(t, err)
+	assert.ErrorContains(t, err, "unexpected vote type: 15")
 	assert.False(t, added)
 	assert.False(t, log.HasVote(invVote.Hash()))
 }
