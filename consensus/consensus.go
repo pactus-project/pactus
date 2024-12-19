@@ -186,7 +186,7 @@ func (cs *consensus) moveToNewHeight() {
 func (cs *consensus) scheduleTimeout(duration time.Duration, height uint32, round int16, target tickerTarget) {
 	ticker := &ticker{duration, height, round, target}
 	timer := time.NewTimer(duration)
-	cs.logger.Debug("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
+	cs.logger.Trace("new timer scheduled ⏱️", "duration", duration, "height", height, "round", round, "target", target)
 
 	go func() {
 		<-timer.C
@@ -508,14 +508,13 @@ func (cs *consensus) HandleQueryVote(height uint32, round int16) *vote.Vote {
 	votes := []*vote.Vote{}
 	switch {
 	case round < cs.round:
-		// A validator requests votes for past rounds.
-		// Sending cp:decide for the last round helps them advance to the current round.
-		vs := cs.log.CPDecidedVoteSet(cs.round - 1)
+		// Past round: Only broadcast cp:decided votes
+		vs := cs.log.CPDecidedVoteSet(round)
 		votes = append(votes, vs.AllVotes()...)
 
 	case round == cs.round:
 		// Current round
-		m := cs.log.RoundMessages(cs.round)
+		m := cs.log.RoundMessages(round)
 		votes = append(votes, m.AllVotes()...)
 
 	case round > cs.round:

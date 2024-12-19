@@ -1,5 +1,7 @@
 package vote
 
+import "fmt"
+
 type Type int
 
 const (
@@ -33,6 +35,6 @@ func (t Type) String() string {
 	case VoteTypeCPDecided:
 		return "DECIDED"
 	default:
-		return ("invalid vote type")
+		return fmt.Sprintf("%d", t)
 	}
 }
