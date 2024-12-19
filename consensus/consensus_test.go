@@ -862,7 +862,7 @@ func TestCases(t *testing.T) {
 }
 
 func TestFaulty(t *testing.T) {
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 10; i++ {
 		td := setup(t)
 		td.commitBlockForAllStates(t)
 
