@@ -322,7 +322,7 @@ func (cp *changeProposer) cpStrongTermination(round, cpRound int16) {
 		}
 		cp.enterNewState(cp.prepareState)
 	} else if cpDecided.HasAnyVoteFor(cpRound, vote.CPValueYes) {
-		cp.round = round + 1
+		cp.round++
 		cp.cpDecided = 1
 
 		cp.enterNewState(cp.proposeState)
