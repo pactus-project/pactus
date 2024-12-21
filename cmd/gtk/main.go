@@ -4,11 +4,6 @@ package main
 
 import (
 	"flag"
-	"log"
-	"os"
-	"path/filepath"
-	"runtime"
-
 	"github.com/gofrs/flock"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -19,6 +14,10 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
+	"log"
+	"os"
+	"path/filepath"
+	"runtime"
 )
 
 const appID = "com.github.pactus-project.pactus.pactus-gui"
@@ -34,14 +33,15 @@ func init() {
 	passwordOpt = flag.String("password", "", "wallet password")
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
 	version.NodeAgent.AppType = "gui"
-}
 
-func main() {
 	// the gtk on macos should run on main thread.
+	runtime.UnlockOSThread()
 	runtime.LockOSThread()
 
 	gtk.Init(nil)
+}
 
+func main() {
 	flag.Parse()
 
 	var err error
