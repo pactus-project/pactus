@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"github.com/multiformats/go-multiaddr"
 
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
@@ -19,6 +20,10 @@ type dhtService struct {
 func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID,
 	conf *Config, log *logger.SubLogger,
 ) *dhtService {
+	// A dirty code in LibP2P!!!
+	// prevent apply default bootstrap node of libp2p
+	lp2pdht.DefaultBootstrapPeers = []multiaddr.Multiaddr{}
+
 	mode := lp2pdht.ModeAuto
 	if conf.IsBootstrapper {
 		mode = lp2pdht.ModeServer
