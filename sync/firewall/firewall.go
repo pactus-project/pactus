@@ -218,6 +218,7 @@ func (f *Firewall) isExpiredMessage(msgData []byte) bool {
 		return true
 	}
 
+	// TODO: we remove on the version v1.8.0
 	consensusHeightExtracted := false
 	var consensusHeight uint32
 	consensusHeightBytes := msgData[msgLen-6:]
