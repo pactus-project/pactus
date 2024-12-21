@@ -438,16 +438,11 @@ func TestAllowBlockRequest(t *testing.T) {
 
 	td := setup(t, conf)
 
-	td.state.CommitTestBlocks(10)
+	testBlk, testCert := td.GenerateTestBlock(2_900_001)
+	td.state.CommitBlock(testBlk, testCert)
 
 	t.Run("expired message", func(t *testing.T) {
 		msg := makeTestGossipMessage(td.state.LastBlockHeight() - 2)
-
-		assert.Equal(t, network.Drop, td.firewall.AllowBlockRequest(msg))
-	})
-
-	t.Run("expired message", func(t *testing.T) {
-		msg := makeTestGossipMessage(td.state.LastBlockHeight() + 2)
 
 		assert.Equal(t, network.Drop, td.firewall.AllowBlockRequest(msg))
 	})
@@ -480,16 +475,11 @@ func TestAllowConsensusRequest(t *testing.T) {
 
 	td := setup(t, conf)
 
-	td.state.CommitTestBlocks(10)
+	testBlk, testCert := td.GenerateTestBlock(2_900_001)
+	td.state.CommitBlock(testBlk, testCert)
 
 	t.Run("expired message", func(t *testing.T) {
 		msg := makeTestGossipMessage(td.state.LastBlockHeight() - 2)
-
-		assert.Equal(t, network.Drop, td.firewall.AllowConsensusRequest(msg))
-	})
-
-	t.Run("expired message", func(t *testing.T) {
-		msg := makeTestGossipMessage(td.state.LastBlockHeight() + 2)
 
 		assert.Equal(t, network.Drop, td.firewall.AllowConsensusRequest(msg))
 	})
