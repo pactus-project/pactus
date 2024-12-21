@@ -81,6 +81,9 @@ func (m *MockState) LastBlockHash() hash.Hash {
 }
 
 func (m *MockState) LastBlockTime() time.Time {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
 	if len(m.TestStore.Blocks) > 0 {
 		return m.TestStore.Blocks[m.TestStore.LastHeight].Header().Time()
 	}
