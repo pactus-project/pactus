@@ -4,6 +4,11 @@ package main
 
 import (
 	"flag"
+	"log"
+	"os"
+	"path/filepath"
+	"runtime"
+
 	"github.com/gofrs/flock"
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -14,10 +19,6 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
-	"log"
-	"os"
-	"path/filepath"
-	"runtime"
 )
 
 const appID = "com.github.pactus-project.pactus.pactus-gui"
