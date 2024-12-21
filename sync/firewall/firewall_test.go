@@ -439,7 +439,7 @@ func TestAllowBlockRequest(t *testing.T) {
 	td := setup(t, conf)
 
 	testBlk, testCert := td.GenerateTestBlock(2_900_001)
-	td.state.CommitBlock(testBlk, testCert)
+	require.NoError(t, td.state.CommitBlock(testBlk, testCert))
 
 	t.Run("expired message", func(t *testing.T) {
 		msg := makeTestGossipMessage(td.state.LastBlockHeight() - 2)
@@ -476,7 +476,7 @@ func TestAllowConsensusRequest(t *testing.T) {
 	td := setup(t, conf)
 
 	testBlk, testCert := td.GenerateTestBlock(2_900_001)
-	td.state.CommitBlock(testBlk, testCert)
+	require.NoError(t, td.state.CommitBlock(testBlk, testCert))
 
 	t.Run("expired message", func(t *testing.T) {
 		msg := makeTestGossipMessage(td.state.LastBlockHeight() - 2)
