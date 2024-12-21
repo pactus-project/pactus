@@ -135,5 +135,9 @@ type Message interface {
 	Type() Type
 	TopicID() network.TopicID
 	ShouldBroadcast() bool
+	// ConsensusHeight indicates the consensus height at which the message is broadcast.
+	// This is applicable for consensus messages, including BlockAnnounce.
+	// For non-consensus messages, this height is set to zero.
+	ConsensusHeight() uint32
 	String() string
 }

@@ -102,7 +102,6 @@ func TestPeerSet(t *testing.T) {
 		assert.Equal(t, int64(150), peerSetMetric.MessageReceived[message.TypeTransaction].Bytes)
 		assert.Equal(t, int64(450), peerSetMetric.TotalSent.Bytes)
 		assert.Equal(t, int64(450), peerSetMetric.MessageSent[message.TypeBlocksRequest].Bytes)
-		assert.Equal(t, 2, peerSet.TotalSentBundles())
 	})
 
 	t.Run("Testing UpdateHeight", func(t *testing.T) {

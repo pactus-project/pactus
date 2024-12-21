@@ -31,6 +31,10 @@ func (*VoteMessage) ShouldBroadcast() bool {
 	return true
 }
 
+func (m *VoteMessage) ConsensusHeight() uint32 {
+	return m.Vote.Height()
+}
+
 func (m *VoteMessage) String() string {
 	return m.Vote.String()
 }

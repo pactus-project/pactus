@@ -33,6 +33,14 @@ func (*ProposalMessage) ShouldBroadcast() bool {
 	return true
 }
 
+func (m *ProposalMessage) ConsensusHeight() uint32 {
+	return m.Height()
+}
+
+func (m *ProposalMessage) Height() uint32 {
+	return m.Proposal.Height()
+}
+
 func (m *ProposalMessage) String() string {
 	return m.Proposal.String()
 }

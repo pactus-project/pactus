@@ -41,6 +41,10 @@ func (*QueryVoteMessage) ShouldBroadcast() bool {
 	return true
 }
 
+func (m *QueryVoteMessage) ConsensusHeight() uint32 {
+	return m.Height
+}
+
 func (m *QueryVoteMessage) String() string {
 	return fmt.Sprintf("{%d/%d %s}", m.Height, m.Round, m.Querier.ShortString())
 }

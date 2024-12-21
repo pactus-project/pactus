@@ -2,6 +2,7 @@ package firewall
 
 import (
 	"bytes"
+	"encoding/binary"
 	"io"
 	"time"
 
@@ -32,6 +33,7 @@ type Firewall struct {
 }
 
 func NewFirewall(conf *Config, network network.Network, peerSet *peerset.PeerSet, state state.Facade,
+	log *logger.SubLogger,
 ) (*Firewall, error) {
 	blocker, err := ipblocker.New(conf.BannedNets)
 	if err != nil {
@@ -51,14 +53,14 @@ func NewFirewall(conf *Config, network network.Network, peerSet *peerset.PeerSet
 		blockRateLimit:       blockRateLimit,
 		transactionRateLimit: transactionRateLimit,
 		consensusRateLimit:   consensusRateLimit,
-		logger:               logger.NewSubLogger("_firewall", nil),
+		logger:               log,
 	}, nil
 }
 
 func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) (*bundle.Bundle, error) {
 	bdl, err := f.openBundle(bytes.NewReader(data), from)
 	if err != nil {
-		return nil, err
+		return bdl, err
 	}
 
 	if !bdl.Message.ShouldBroadcast() {
@@ -210,14 +212,71 @@ func (*Firewall) getIPFromMultiAddress(address string) (string, error) {
 	return ip, nil
 }
 
-func (f *Firewall) AllowBlockRequest() bool {
-	return f.blockRateLimit.AllowRequest()
+func (f *Firewall) isExpiredMessage(msgData []byte) bool {
+	msgLen := len(msgData)
+	if msgLen < 6 {
+		return true
+	}
+
+	var consensusHeight uint32
+	consensusHeightBytes := msgData[msgLen-6:]
+	// Check if consensus height is set. Refer to the bundle encoding for more details.
+	if consensusHeightBytes[0] == 0x04 && consensusHeightBytes[1] == 0x1a {
+		consensusHeight = binary.BigEndian.Uint32(consensusHeightBytes[2:])
+	} else {
+		// Decoding the message at this level is costly, and we should avoid it.
+		// In future versions, this code can be removed.
+		// However, at the time of writing this code, we need it to prevent replay attacks.
+		bdl := new(bundle.Bundle)
+		_, err := bdl.Decode(bytes.NewReader(msgData))
+		if err != nil {
+			return true
+		}
+
+		consensusHeight = bdl.Message.ConsensusHeight()
+	}
+
+	// The message is expired, or the consensus height is behind the network's current height.
+	// In either case, the message is dropped and won't be propagated.
+	if consensusHeight < f.state.LastBlockHeight()-1 ||
+		consensusHeight > f.state.LastBlockHeight()+1 {
+		f.logger.Debug("firewall: expired message", "message height", consensusHeight,
+			"our height", f.state.LastBlockHeight())
+
+		return true
+	}
+
+	return false
 }
 
-func (f *Firewall) AllowTransactionRequest() bool {
-	return f.transactionRateLimit.AllowRequest()
+func (f *Firewall) AllowBlockRequest(gossipMsg *network.GossipMessage) network.PropagationPolicy {
+	if f.isExpiredMessage(gossipMsg.Data) {
+		return network.Drop
+	}
+
+	if !f.blockRateLimit.AllowRequest() {
+		return network.DropButConsume
+	}
+
+	return network.Propagate
 }
 
-func (f *Firewall) AllowConsensusRequest() bool {
-	return f.consensusRateLimit.AllowRequest()
+func (f *Firewall) AllowTransactionRequest(_ *network.GossipMessage) network.PropagationPolicy {
+	if !f.transactionRateLimit.AllowRequest() {
+		return network.DropButConsume
+	}
+
+	return network.Propagate
+}
+
+func (f *Firewall) AllowConsensusRequest(gossipMsg *network.GossipMessage) network.PropagationPolicy {
+	if f.isExpiredMessage(gossipMsg.Data) {
+		return network.Drop
+	}
+
+	if !f.consensusRateLimit.AllowRequest() {
+		return network.DropButConsume
+	}
+
+	return network.Propagate
 }

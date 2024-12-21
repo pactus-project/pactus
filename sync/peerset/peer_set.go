@@ -284,13 +284,6 @@ func (ps *PeerSet) UpdateSentMetric(pid *peer.ID, msgType message.Type, bytes in
 	}
 }
 
-func (ps *PeerSet) TotalSentBundles() int {
-	ps.lk.RLock()
-	defer ps.lk.RUnlock()
-
-	return int(ps.metric.TotalSent.Bundles)
-}
-
 func (ps *PeerSet) StartedAt() time.Time {
 	ps.lk.RLock()
 	defer ps.lk.RUnlock()

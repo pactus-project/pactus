@@ -44,6 +44,10 @@ func (*BlockAnnounceMessage) ShouldBroadcast() bool {
 	return true
 }
 
+func (m *BlockAnnounceMessage) ConsensusHeight() uint32 {
+	return m.Certificate.Height()
+}
+
 func (m *BlockAnnounceMessage) String() string {
 	return fmt.Sprintf("{⌘ %d %v}",
 		m.Certificate.Height(),

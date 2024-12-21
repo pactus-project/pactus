@@ -35,7 +35,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, conf *Config,
 		lp2pps.WithMessageSignaturePolicy(lp2pps.StrictNoSign),
 		lp2pps.WithNoAuthor(),
 		lp2pps.WithMessageIdFn(MessageIDFunc),
-		lp2pps.WithSeenMessagesTTL(conf.SeenMessageTTL),
+		lp2pps.WithSeenMessagesTTL(60 * time.Second),
 	}
 
 	if conf.IsBootstrapper {
@@ -238,8 +238,6 @@ func (g *gossipService) createValidator(topicID TopicID, evaluator PropagationEv
 		default:
 			panic("unreachable")
 		}
-
-		return lp2pps.ValidationAccept
 	}
 }
 

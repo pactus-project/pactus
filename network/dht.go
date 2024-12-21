@@ -2,11 +2,11 @@ package network
 
 import (
 	"context"
-	"github.com/multiformats/go-multiaddr"
 
 	lp2pdht "github.com/libp2p/go-libp2p-kad-dht"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
+	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/logger"
 )
 

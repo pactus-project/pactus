@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
@@ -200,18 +201,18 @@ func (td *testData) addPeer(t *testing.T, status status.Status, services service
 	return pid
 }
 
-func (td *testData) addValidatorToCommittee(t *testing.T, pub *bls.PublicKey) {
+func (td *testData) addValidatorToCommittee(t *testing.T, pub crypto.PublicKey) {
 	t.Helper()
 
 	if pub == nil {
 		pub, _ = td.RandBLSKeyPair()
 	}
-	val := td.GenerateTestValidator(testsuite.ValidatorWithPublicKey(pub))
+	val := validator.NewValidator(pub.(*bls.PublicKey), td.RandInt32(1000))
 	// Note: This may not be completely accurate, but it has no harm for testing purposes.
 	val.UpdateLastSortitionHeight(td.state.TestCommittee.Proposer(0).LastSortitionHeight() + 1)
 	td.state.TestStore.UpdateValidator(val)
 	td.state.TestCommittee.Update(0, []*validator.Validator{val})
-	require.True(t, td.state.TestCommittee.Contains(pub.ValidatorAddress()))
+	require.True(t, td.state.TestCommittee.Contains(pub.(*bls.PublicKey).ValidatorAddress()))
 
 	for _, cons := range td.consMocks {
 		cons.SetActive(cons.ValKey.PublicKey().EqualsTo(pub))
@@ -374,21 +375,6 @@ func TestBroadcastBlockAnnounce(t *testing.T) {
 
 		td.shouldNotPublishMessageWithThisType(t, message.TypeBlockAnnounce)
 	})
-}
-
-func TestBundleSequenceNo(t *testing.T) {
-	td := setup(t, nil)
-
-	msg := message.NewQueryProposalMessage(td.RandHeight(), td.RandRound(), td.RandValAddress())
-
-	td.sync.broadcast(msg)
-	bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeQueryProposal)
-	assert.Equal(t, 0, bdl1.SequenceNo)
-
-	// Sending the same message again
-	td.sync.broadcast(msg)
-	bdl2 := td.shouldPublishMessageWithThisType(t, message.TypeQueryProposal)
-	assert.Equal(t, 1, bdl2.SequenceNo)
 }
 
 func TestAllBlocksInCache(t *testing.T) {
