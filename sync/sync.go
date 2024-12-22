@@ -108,14 +108,14 @@ func NewSynchronizer(
 }
 
 func (sync *synchronizer) Start() error {
-	if err := sync.network.JoinTopic(network.TopicIDBlock, sync.shouldPropagateBlockMessage); err != nil {
+	if err := sync.network.JoinTopic(network.TopicIDBlock, sync.blockTopicEvaluator); err != nil {
 		return err
 	}
-	if err := sync.network.JoinTopic(network.TopicIDTransaction, sync.shouldPropagateTransactionMessage); err != nil {
+	if err := sync.network.JoinTopic(network.TopicIDTransaction, sync.transactionTopicEvaluator); err != nil {
 		return err
 	}
 	// TODO: Not joining consensus topic when we are syncing
-	if err := sync.network.JoinTopic(network.TopicIDConsensus, sync.shouldPropagateConsensusMessage); err != nil {
+	if err := sync.network.JoinTopic(network.TopicIDConsensus, sync.consensusTopicEvaluator); err != nil {
 		return err
 	}
 
@@ -171,8 +171,6 @@ func (sync *synchronizer) prepareBundle(msg message.Message) *bundle.Bundle {
 	case genesis.Localnet:
 		// It's localnet and for testing purpose only
 	}
-
-	bdl.SetSequenceNo(sync.peerSet.TotalSentBundles())
 
 	return bdl
 }
@@ -585,14 +583,14 @@ func (sync *synchronizer) prepareBlocks(from, count uint32) [][]byte {
 	return blocks
 }
 
-func (sync *synchronizer) shouldPropagateBlockMessage(_ *network.GossipMessage) bool {
-	return sync.firewall.AllowBlockRequest()
+func (sync *synchronizer) blockTopicEvaluator(msg *network.GossipMessage) network.PropagationPolicy {
+	return sync.firewall.AllowBlockRequest(msg)
 }
 
-func (sync *synchronizer) shouldPropagateTransactionMessage(_ *network.GossipMessage) bool {
-	return sync.firewall.AllowTransactionRequest()
+func (sync *synchronizer) transactionTopicEvaluator(msg *network.GossipMessage) network.PropagationPolicy {
+	return sync.firewall.AllowTransactionRequest(msg)
 }
 
-func (sync *synchronizer) shouldPropagateConsensusMessage(_ *network.GossipMessage) bool {
-	return sync.firewall.AllowConsensusRequest()
+func (sync *synchronizer) consensusTopicEvaluator(msg *network.GossipMessage) network.PropagationPolicy {
+	return sync.firewall.AllowConsensusRequest(msg)
 }

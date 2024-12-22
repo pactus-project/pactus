@@ -121,9 +121,20 @@ func (*ProtocolsEvents) Type() EventType {
 	return EventTypeProtocols
 }
 
-// ShouldPropagate determines whether a message should be disregarded:
-// it will be neither delivered to the application nor forwarded to the network.
-type ShouldPropagate func(*GossipMessage) bool
+// PropagationPolicy defines the possible actions for how a gossip message should propagate.
+type PropagationPolicy int
+
+const (
+	// Propagate means the message should be forwarded to other peers in the network.
+	Propagate = PropagationPolicy(0)
+	// DropButConsume means the message should not be forwarded but should be processed locally.
+	DropButConsume = PropagationPolicy(1)
+	// Drop means the message should be discarded without any further processing.
+	Drop = PropagationPolicy(2)
+)
+
+// PropagationEvaluator is a function that evaluates how a gossip message should propagate.
+type PropagationEvaluator func(*GossipMessage) PropagationPolicy
 
 type Network interface {
 	Start() error
@@ -132,7 +143,7 @@ type Network interface {
 	EventChannel() <-chan Event
 	Broadcast([]byte, TopicID)
 	SendTo([]byte, lp2pcore.PeerID)
-	JoinTopic(TopicID, ShouldPropagate) error
+	JoinTopic(TopicID, PropagationEvaluator) error
 	CloseConnection(lp2pcore.PeerID)
 	SelfID() lp2pcore.PeerID
 	NumConnectedPeers() int

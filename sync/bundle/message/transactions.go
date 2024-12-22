@@ -43,6 +43,10 @@ func (*TransactionsMessage) ShouldBroadcast() bool {
 	return true
 }
 
+func (*TransactionsMessage) ConsensusHeight() uint32 {
+	return 0
+}
+
 func (m *TransactionsMessage) String() string {
 	var builder strings.Builder
 

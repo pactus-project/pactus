@@ -47,6 +47,10 @@ func (*BlocksRequestMessage) ShouldBroadcast() bool {
 	return false
 }
 
+func (*BlocksRequestMessage) ConsensusHeight() uint32 {
+	return 0
+}
+
 func (m *BlocksRequestMessage) String() string {
 	return fmt.Sprintf("{⚓ %d %v:%v}", m.SessionID, m.From, m.To())
 }

@@ -1,7 +1,6 @@
 package state
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -82,6 +81,9 @@ func (m *MockState) LastBlockHash() hash.Hash {
 }
 
 func (m *MockState) LastBlockTime() time.Time {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
 	if len(m.TestStore.Blocks) > 0 {
 		return m.TestStore.Blocks[m.TestStore.LastHeight].Header().Time()
 	}
@@ -104,9 +106,6 @@ func (m *MockState) CommitBlock(blk *block.Block, cert *certificate.BlockCertifi
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
-	if cert.Height() != m.TestStore.LastHeight+1 {
-		return fmt.Errorf("invalid height")
-	}
 	m.TestStore.SaveBlock(blk, cert)
 
 	return nil

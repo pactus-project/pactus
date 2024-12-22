@@ -19,7 +19,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		BannedNets: make([]string, 0),
 		RateLimit: RateLimit{
-			BlockTopic:       0,
+			BlockTopic:       1,
 			TransactionTopic: 5,
 			ConsensusTopic:   0,
 		},

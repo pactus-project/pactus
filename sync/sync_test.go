@@ -376,21 +376,6 @@ func TestBroadcastBlockAnnounce(t *testing.T) {
 	})
 }
 
-func TestBundleSequenceNo(t *testing.T) {
-	td := setup(t, nil)
-
-	msg := message.NewQueryProposalMessage(td.RandHeight(), td.RandRound(), td.RandValAddress())
-
-	td.sync.broadcast(msg)
-	bdl1 := td.shouldPublishMessageWithThisType(t, message.TypeQueryProposal)
-	assert.Equal(t, 0, bdl1.SequenceNo)
-
-	// Sending the same message again
-	td.sync.broadcast(msg)
-	bdl2 := td.shouldPublishMessageWithThisType(t, message.TypeQueryProposal)
-	assert.Equal(t, 1, bdl2.SequenceNo)
-}
-
 func TestAllBlocksInCache(t *testing.T) {
 	td := setup(t, nil)
 

@@ -17,8 +17,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func alwaysPropagate(_ *GossipMessage) bool {
-	return true
+func alwaysPropagate(_ *GossipMessage) PropagationPolicy {
+	return Propagate
 }
 
 func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
@@ -416,6 +416,24 @@ func TestNetwork(t *testing.T) {
 	})
 }
 
+func TestHostAddrs(t *testing.T) {
+	conf := testConfig()
+	net, err := NewNetwork(conf)
+	assert.NoError(t, err)
+
+	addrs := net.HostAddrs()
+	assert.Contains(t, addrs, fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", conf.DefaultPort))
+	assert.Contains(t, addrs, fmt.Sprintf("/ip4/127.0.0.1/udp/%d/quic-v1", conf.DefaultPort))
+}
+
+func TestNetworkName(t *testing.T) {
+	conf := testConfig()
+	net, err := NewNetwork(conf)
+	assert.NoError(t, err)
+
+	assert.Equal(t, conf.NetworkName, net.Name())
+}
+
 func TestConnections(t *testing.T) {
 	t.Parallel() // run the tests in parallel
 
@@ -454,12 +472,12 @@ func TestConnections(t *testing.T) {
 			no, bootstrapAddr, tt.peerAddr), func(t *testing.T) {
 			t.Parallel() // run the tests in parallel
 
-			testConnection(t, networkP, networkB)
+			checkConnection(t, networkP, networkB)
 		})
 	}
 }
 
-func testConnection(t *testing.T, networkP, networkB *network) {
+func checkConnection(t *testing.T, networkP, networkB *network) {
 	t.Helper()
 
 	assert.EventuallyWithT(t, func(c *assert.CollectT) {
