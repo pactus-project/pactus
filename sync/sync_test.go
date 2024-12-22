@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/consensus"
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
@@ -201,18 +200,18 @@ func (td *testData) addPeer(t *testing.T, status status.Status, services service
 	return pid
 }
 
-func (td *testData) addValidatorToCommittee(t *testing.T, pub crypto.PublicKey) {
+func (td *testData) addValidatorToCommittee(t *testing.T, pub *bls.PublicKey) {
 	t.Helper()
 
 	if pub == nil {
 		pub, _ = td.RandBLSKeyPair()
 	}
-	val := validator.NewValidator(pub.(*bls.PublicKey), td.RandInt32(1000))
+	val := td.GenerateTestValidator(testsuite.ValidatorWithPublicKey(pub))
 	// Note: This may not be completely accurate, but it has no harm for testing purposes.
 	val.UpdateLastSortitionHeight(td.state.TestCommittee.Proposer(0).LastSortitionHeight() + 1)
 	td.state.TestStore.UpdateValidator(val)
 	td.state.TestCommittee.Update(0, []*validator.Validator{val})
-	require.True(t, td.state.TestCommittee.Contains(pub.(*bls.PublicKey).ValidatorAddress()))
+	require.True(t, td.state.TestCommittee.Contains(pub.ValidatorAddress()))
 
 	for _, cons := range td.consMocks {
 		cons.SetActive(cons.ValKey.PublicKey().EqualsTo(pub))

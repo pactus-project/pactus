@@ -33,7 +33,6 @@ type Firewall struct {
 }
 
 func NewFirewall(conf *Config, network network.Network, peerSet *peerset.PeerSet, state state.Facade,
-	log *logger.SubLogger,
 ) (*Firewall, error) {
 	blocker, err := ipblocker.New(conf.BannedNets)
 	if err != nil {
@@ -53,7 +52,7 @@ func NewFirewall(conf *Config, network network.Network, peerSet *peerset.PeerSet
 		blockRateLimit:       blockRateLimit,
 		transactionRateLimit: transactionRateLimit,
 		consensusRateLimit:   consensusRateLimit,
-		logger:               log,
+		logger:               logger.NewSubLogger("_firewall", nil),
 	}, nil
 }
 

@@ -32,7 +32,6 @@ type Config struct {
 	IsBootstrapper              bool          `toml:"-"`
 	PeerStorePath               string        `toml:"-"`
 	StreamTimeout               time.Duration `toml:"-"`
-	SeenMessageTTL              time.Duration `toml:"-"`
 }
 
 func DefaultConfig() *Config {
@@ -54,7 +53,6 @@ func DefaultConfig() *Config {
 		IsBootstrapper:       false,
 		PeerStorePath:        "peers.json",
 		StreamTimeout:        20 * time.Second,
-		SeenMessageTTL:       60 * time.Second,
 	}
 }
 
