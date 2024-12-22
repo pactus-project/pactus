@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"math/bits"
 	"os"
+	"strings"
 
 	"golang.org/x/exp/constraints"
 )
@@ -166,7 +167,7 @@ func FormatBytesToHumanReadable(bytes uint64) string {
 // ReadFileContent reads the content of the file at the given path
 // up to the specified maxSize. It returns the content as a string
 // and any error encountered.
-func ReadFileContent(filePath string, maxSize int) (string, error) {
+func ReadFileContent(filePath string) (string, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return "", fmt.Errorf("failed to open file: %w", err)
@@ -175,12 +176,10 @@ func ReadFileContent(filePath string, maxSize int) (string, error) {
 		_ = file.Close()
 	}()
 
-	buffer := make([]byte, maxSize)
-
-	n, err := file.Read(buffer)
-	if err != nil && err != io.EOF {
+	buf, err := io.ReadAll(file)
+	if err != nil {
 		return "", fmt.Errorf("failed to read file content: %w", err)
 	}
 
-	return string(buffer[:n]), nil
+	return strings.TrimSpace(string(buf)), nil
 }

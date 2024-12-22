@@ -145,70 +145,54 @@ func TestReadFileContent(t *testing.T) {
 	testCases := []struct {
 		name        string
 		fileContent string
-		maxSize     int
 		expected    string
 		expectErr   bool
 	}{
 		{
-			name:        "Read full content within maxSize",
+			name:        "Read full content",
 			fileContent: "Hello, World!",
-			maxSize:     50,
 			expected:    "Hello, World!",
-			expectErr:   false,
-		},
-		{
-			name:        "Read partial content limited by maxSize",
-			fileContent: "Hello, World!",
-			maxSize:     5,
-			expected:    "Hello",
 			expectErr:   false,
 		},
 		{
 			name:        "Empty file",
 			fileContent: "",
-			maxSize:     10,
-			expected:    "",
-			expectErr:   false,
-		},
-		{
-			name:        "Zero maxSize",
-			fileContent: "Content",
-			maxSize:     0,
 			expected:    "",
 			expectErr:   false,
 		},
 		{
 			name:        "Non-existent file",
 			fileContent: "",
-			maxSize:     10,
 			expected:    "",
 			expectErr:   true,
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
+	for _, test := range testCases {
+		t.Run(test.name, func(t *testing.T) {
 			var filePath string
-			if tc.fileContent != "" || tc.name == "Empty file" {
+			if test.fileContent != "" || test.name == "Empty file" {
 				tmpFile, err := os.CreateTemp(TempDirPath(), "testfile")
 				assert.NoError(t, err, "Failed to create temp file")
-				defer os.Remove(tmpFile.Name())
+				defer func() {
+					_ = os.Remove(tmpFile.Name())
+				}()
 
-				_, err = tmpFile.WriteString(tc.fileContent)
+				_, err = tmpFile.WriteString(test.fileContent)
 				assert.NoError(t, err, "Failed to write to temp file")
-				tmpFile.Close()
+				_ = tmpFile.Close()
 				filePath = tmpFile.Name()
 			} else {
 				filePath = "nonexistent_file"
 			}
 
-			content, err := ReadFileContent(filePath, tc.maxSize)
+			content, err := ReadFileContent(filePath)
 
-			if tc.expectErr {
+			if test.expectErr {
 				assert.Error(t, err, "Expected an error but got none")
 			} else {
 				assert.NoError(t, err, "Unexpected error occurred")
-				assert.Equal(t, tc.expected, content, "Content does not match expected value")
+				assert.Equal(t, test.expected, content, "Content does not match expected value")
 			}
 		})
 	}
