@@ -3,8 +3,10 @@ package util
 import (
 	crand "crypto/rand"
 	"fmt"
+	"io"
 	"math/big"
 	"math/bits"
+	"os"
 
 	"golang.org/x/exp/constraints"
 )
@@ -159,4 +161,26 @@ func FormatBytesToHumanReadable(bytes uint64) string {
 	}
 
 	return fmt.Sprintf("%.2f %s", value, unit)
+}
+
+// ReadFileContent reads the content of the file at the given path
+// up to the specified maxSize. It returns the content as a string
+// and any error encountered.
+func ReadFileContent(filePath string, maxSize int) (string, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return "", fmt.Errorf("failed to open file: %w", err)
+	}
+	defer func() {
+		_ = file.Close()
+	}()
+
+	buffer := make([]byte, maxSize)
+
+	n, err := file.Read(buffer)
+	if err != nil && err != io.EOF {
+		return "", fmt.Errorf("failed to read file content: %w", err)
+	}
+
+	return string(buffer[:n]), nil
 }
