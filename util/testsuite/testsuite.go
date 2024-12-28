@@ -3,6 +3,7 @@ package testsuite
 import (
 	"encoding/hex"
 	"math/rand"
+	"net"
 	"testing"
 	"time"
 
@@ -865,4 +866,13 @@ func (*TestSuite) HelperSignTransaction(prv crypto.PrivateKey, trx *tx.Tx) {
 	sig := prv.Sign(trx.SignBytes())
 	trx.SetSignature(sig)
 	trx.SetPublicKey(prv.PublicKey())
+}
+
+func FindFreePort() int {
+	listener, _ := net.Listen("tcp", "localhost:0")
+	defer func() {
+		_ = listener.Close()
+	}()
+
+	return listener.Addr().(*net.TCPAddr).Port
 }
