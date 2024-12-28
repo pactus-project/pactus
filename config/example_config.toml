@@ -177,6 +177,7 @@
     _pool = 'error'
     _state = 'info'
     _sync = 'error'
+    _zmq = 'info'
     default = 'info'
 
 # `grpc` contains configuration of the gRPC module.
