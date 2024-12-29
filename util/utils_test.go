@@ -2,7 +2,6 @@ package util
 
 import (
 	"math/big"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -138,62 +137,5 @@ func TestFormatBytesToHumanReadable(t *testing.T) {
 		if result != tt.expected {
 			t.Errorf("FormatBytesToHumanReadable(%d) returned %s, expected %s", tt.bytes, result, tt.expected)
 		}
-	}
-}
-
-func TestReadFileContent(t *testing.T) {
-	testCases := []struct {
-		name        string
-		fileContent string
-		expected    string
-		expectErr   bool
-	}{
-		{
-			name:        "Read full content",
-			fileContent: "Hello, World!",
-			expected:    "Hello, World!",
-			expectErr:   false,
-		},
-		{
-			name:        "Empty file",
-			fileContent: "",
-			expected:    "",
-			expectErr:   false,
-		},
-		{
-			name:        "Non-existent file",
-			fileContent: "",
-			expected:    "",
-			expectErr:   true,
-		},
-	}
-
-	for _, test := range testCases {
-		t.Run(test.name, func(t *testing.T) {
-			var filePath string
-			if test.fileContent != "" || test.name == "Empty file" {
-				tmpFile, err := os.CreateTemp(TempDirPath(), "testfile")
-				assert.NoError(t, err, "Failed to create temp file")
-				defer func() {
-					_ = os.Remove(tmpFile.Name())
-				}()
-
-				_, err = tmpFile.WriteString(test.fileContent)
-				assert.NoError(t, err, "Failed to write to temp file")
-				_ = tmpFile.Close()
-				filePath = tmpFile.Name()
-			} else {
-				filePath = "nonexistent_file"
-			}
-
-			content, err := ReadFileContent(filePath)
-
-			if test.expectErr {
-				assert.Error(t, err, "Expected an error but got none")
-			} else {
-				assert.NoError(t, err, "Unexpected error occurred")
-				assert.Equal(t, test.expected, content, "Content does not match expected value")
-			}
-		})
 	}
 }

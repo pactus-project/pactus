@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
@@ -57,10 +58,11 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			if *passwordOpt != "" {
 				password = *passwordOpt
 			} else if *passwordFromFileOpt != "" {
-				password, err = util.ReadFileContent(*passwordFromFileOpt)
+				b, err := util.ReadFile(*passwordFromFileOpt)
 				if err != nil {
 					return "", false
 				}
+				password = strings.TrimSpace(string(b))
 			} else {
 				password = cmd.PromptPassword("Wallet password", false)
 			}
