@@ -104,6 +104,8 @@ func (s *Server) receivedEventLoop(ctx context.Context) {
 			return
 		case event, ok := <-s.eventCh:
 			if !ok {
+				s.logger.Warn("event channel closed")
+
 				return
 			}
 

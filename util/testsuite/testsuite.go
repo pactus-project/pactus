@@ -868,7 +868,7 @@ func (*TestSuite) HelperSignTransaction(prv crypto.PrivateKey, trx *tx.Tx) {
 	trx.SetPublicKey(prv.PublicKey())
 }
 
-func FindFreePort() int {
+func (*TestSuite) FindFreePort() int {
 	listener, _ := net.Listen("tcp", "localhost:0")
 	defer func() {
 		_ = listener.Close()
