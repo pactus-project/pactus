@@ -3,11 +3,11 @@ package zmq
 import (
 	"context"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/util/testsuite"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -57,22 +57,22 @@ func (ts *testData) cleanup() func() {
 }
 
 func TestServerWithDefaultConfig(t *testing.T) {
-	ts := setup(t)
+	suite := setup(t)
 
 	conf := DefaultConfig()
 
-	err := ts.initServer(context.TODO(), conf)
-	t.Cleanup(ts.cleanup())
+	err := suite.initServer(context.TODO(), conf)
+	t.Cleanup(suite.cleanup())
 
 	assert.NoError(t, err)
-	require.NotNil(t, ts.server)
+	require.NotNil(t, suite.server)
 }
 
 func TestTopicsWithSameSocket(t *testing.T) {
-	ts := setup(t)
-	t.Cleanup(ts.cleanup())
+	suite := setup(t)
+	t.Cleanup(suite.cleanup())
 
-	port := ts.FindFreePort()
+	port := suite.FindFreePort()
 	addr := fmt.Sprintf("tcp://127.0.0.1:%d", port)
 
 	conf := DefaultConfig()
@@ -81,30 +81,30 @@ func TestTopicsWithSameSocket(t *testing.T) {
 	conf.ZmqPubRawBlock = addr
 	conf.ZmqPubRawTx = addr
 
-	err := ts.initServer(context.TODO(), conf)
+	err := suite.initServer(context.TODO(), conf)
 	require.NoError(t, err)
 
-	require.Len(t, ts.server.publishers, 4)
+	require.Len(t, suite.server.publishers, 4)
 
-	expectedAddr := ts.server.publishers[0].Address()
+	expectedAddr := suite.server.publishers[0].Address()
 
-	for _, pub := range ts.server.publishers {
+	for _, pub := range suite.server.publishers {
 		require.Equal(t, expectedAddr, pub.Address(), "All publishers must have the same address")
 	}
 }
 
 func TestTopicsWithDifferentSockets(t *testing.T) {
-	ts := setup(t)
-	t.Cleanup(ts.cleanup())
+	suite := setup(t)
+	t.Cleanup(suite.cleanup())
 
 	conf := DefaultConfig()
-	conf.ZmqPubBlockInfo = fmt.Sprintf("tcp://127.0.0.1:%d", ts.FindFreePort())
-	conf.ZmqPubTxInfo = fmt.Sprintf("tcp://127.0.0.1:%d", ts.FindFreePort())
-	conf.ZmqPubRawBlock = fmt.Sprintf("tcp://127.0.0.1:%d", ts.FindFreePort())
-	conf.ZmqPubRawTx = fmt.Sprintf("tcp://127.0.0.1:%d", ts.FindFreePort())
+	conf.ZmqPubBlockInfo = fmt.Sprintf("tcp://127.0.0.1:%d", suite.FindFreePort())
+	conf.ZmqPubTxInfo = fmt.Sprintf("tcp://127.0.0.1:%d", suite.FindFreePort())
+	conf.ZmqPubRawBlock = fmt.Sprintf("tcp://127.0.0.1:%d", suite.FindFreePort())
+	conf.ZmqPubRawTx = fmt.Sprintf("tcp://127.0.0.1:%d", suite.FindFreePort())
 
-	err := ts.initServer(context.TODO(), conf)
+	err := suite.initServer(context.TODO(), conf)
 	require.NoError(t, err)
 
-	require.Len(t, ts.server.publishers, 4)
+	require.Len(t, suite.server.publishers, 4)
 }

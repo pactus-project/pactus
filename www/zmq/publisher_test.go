@@ -3,18 +3,19 @@ package zmq
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"testing"
+
 	"github.com/go-zeromq/zmq4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"net/url"
-	"testing"
 )
 
 func TestBasePublisher(t *testing.T) {
-	ts := setup(t)
+	suite := setup(t)
 
 	topic := BlockInfo
-	addr, err := url.Parse(fmt.Sprintf("tcp://127.0.0.1:%d", ts.FindFreePort()))
+	addr, err := url.Parse(fmt.Sprintf("tcp://127.0.0.1:%d", suite.FindFreePort()))
 	require.NoError(t, err)
 
 	base := &basePub{
