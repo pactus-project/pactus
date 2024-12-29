@@ -24,16 +24,14 @@ import (
 const appID = "com.github.pactus-project.pactus.pactus-gui"
 
 var (
-	workingDirOpt       *string
-	passwordOpt         *string
-	passwordFromFileOpt *string
-	testnetOpt          *bool
+	workingDirOpt *string
+	passwordOpt   *string
+	testnetOpt    *bool
 )
 
 func init() {
 	workingDirOpt = flag.String("working-dir", cmd.PactusDefaultHomeDir(), "working directory path")
 	passwordOpt = flag.String("password", "", "wallet password")
-	passwordFromFileOpt = flag.String("password-from-file", "", "file containing the wallet password")
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
 	version.NodeAgent.AppType = "gui"
 
@@ -153,15 +151,6 @@ func newNode(workingDir string) (*node.Node, *wallet.Wallet, error) {
 	passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
 		if *passwordOpt != "" {
 			return *passwordOpt, true
-		}
-
-		if *passwordFromFileOpt != "" {
-			password, err := util.ReadFileContent(*passwordFromFileOpt)
-			if err != nil {
-				return "", false
-			}
-
-			return password, true
 		}
 
 		return getWalletPassword(wlt)
