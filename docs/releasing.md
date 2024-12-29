@@ -137,4 +137,4 @@ be sure to update the [API documentation](https://docs.pactus.org/api/) and
 ## 12. Celebrate 🎉
 
 Before celebrating, ensure that the release has been tested and that all documentation is up to date.
-Don't forget to update dependencies after major releases (see [Update Dependencies](./update-dependensies.md)).
+Don't forget to update dependencies after major releases (see [Update Dependencies](./update-dependencies.md)).
