@@ -3,9 +3,11 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -23,6 +25,9 @@ func buildStartCmd(parentCmd *cobra.Command) {
 
 	passwordOpt := startCmd.Flags().StringP("password", "p", "",
 		"the wallet password")
+
+	passwordFromFileOpt := startCmd.Flags().String("password-from-file", "",
+		"the file containing the wallet password")
 
 	startCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
@@ -49,8 +54,14 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			}
 
 			var password string
+
 			if *passwordOpt != "" {
 				password = *passwordOpt
+			} else if *passwordFromFileOpt != "" {
+				b, err := util.ReadFile(*passwordFromFileOpt)
+				cmd.FatalErrorCheck(err)
+
+				password = strings.TrimSpace(string(b))
 			} else {
 				password = cmd.PromptPassword("Wallet password", false)
 			}
