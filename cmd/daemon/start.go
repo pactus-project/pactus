@@ -59,9 +59,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 				password = *passwordOpt
 			} else if *passwordFromFileOpt != "" {
 				b, err := util.ReadFile(*passwordFromFileOpt)
-				if err != nil {
-					return "", false
-				}
+				cmd.FatalErrorCheck(err)
 				password = strings.TrimSpace(string(b))
 			} else {
 				password = cmd.PromptPassword("Wallet password", false)
