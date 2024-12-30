@@ -106,10 +106,10 @@ Here’s a list of available scopes: [available scopes](./.github/workflows/sema
 
   - Correct ✅: "feat(grpc): sign transaction using wallet client"
   - Correct ✅: "feat(grpc, wallet): sign transaction using wallet client"
-  - Incorrect ❌: 'feat(gRPC): Sign transaction using wallet client."
-  - Incorrect ❌: 'feat(grpc): Sign transaction using wallet client."
-  - Incorrect ❌: 'feat(grpc): signed transaction using wallet client"
-  - Incorrect ❌: 'sign transaction using wallet client"
+  - Incorrect ❌: "feat(gRPC): Sign transaction using wallet client."
+  - Incorrect ❌: "feat(grpc): Sign transaction using wallet client."
+  - Incorrect ❌: "feat(grpc): signed transaction using wallet client"
+  - Incorrect ❌: "sign transaction using wallet client"
 
 ## Code of Conduct
 
