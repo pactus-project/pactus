@@ -60,6 +60,7 @@ jobs:
             http
             jsonrpc
             nanomsg
+            zeromq
             windows
             linux
             macos

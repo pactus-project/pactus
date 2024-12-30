@@ -20,6 +20,7 @@ import (
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
 	"github.com/pactus-project/pactus/www/nanomsg"
+	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/pelletier/go-toml/v2"
 )
 
@@ -47,6 +48,7 @@ type Config struct {
 	HTTP          *http.Config      `toml:"http"`
 	WalletManager *wallet.Config    `toml:"-"`
 	Nanomsg       *nanomsg.Config   `toml:"nanomsg"`
+	ZeroMq        *zmq.Config       `toml:"zeromq"`
 }
 
 type BootstrapInfo struct {
@@ -99,6 +101,7 @@ func defaultConfig() *Config {
 		JSONRPC:       jsonrpc.DefaultConfig(),
 		HTTP:          http.DefaultConfig(),
 		Nanomsg:       nanomsg.DefaultConfig(),
+		ZeroMq:        zmq.DefaultConfig(),
 		WalletManager: wallet.DefaultConfig(),
 	}
 
@@ -219,6 +222,11 @@ func DefaultConfigLocalnet() *Config {
 	conf.HTTP.EnablePprof = true
 	conf.Nanomsg.Enable = true
 	conf.Nanomsg.Listen = "tcp://[::]:40799"
+	conf.ZeroMq.ZmqPubBlockInfo = "tcp://127.0.0.1:28332"
+	conf.ZeroMq.ZmqPubTxInfo = "tcp://127.0.0.1:28333"
+	conf.ZeroMq.ZmqPubRawBlock = "tcp://127.0.0.1:28334"
+	conf.ZeroMq.ZmqPubRawTx = "tcp://127.0.0.1:28335"
+	conf.ZeroMq.ZmqPubHWM = 1000
 
 	return conf
 }
@@ -294,6 +302,9 @@ func (conf *Config) BasicCheck() error {
 		return err
 	}
 	if err := conf.GRPC.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.ZeroMq.BasicCheck(); err != nil {
 		return err
 	}
 
