@@ -50,9 +50,7 @@ func New(ctx context.Context, conf *Config, eventCh <-chan any) (*Server, error)
 		}
 
 		pub := newPublisher(socket, svr.logger)
-
 		svr.publishers = append(svr.publishers, pub)
-
 		svr.sockets[addr] = socket
 
 		svr.logger.Info("publisher initialized", "topic", pub.TopicName(), "socket", addr)
