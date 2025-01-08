@@ -8,6 +8,7 @@ require (
 	github.com/c-bata/go-prompt v0.2.6
 	github.com/consensys/gnark-crypto v0.14.0
 	github.com/fxamacker/cbor/v2 v2.7.0
+	github.com/go-zeromq/zmq4 v0.17.0
 	github.com/gofrs/flock v0.12.1
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	github.com/google/uuid v1.6.0
@@ -68,6 +69,7 @@ require (
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
+	github.com/go-zeromq/goczmq/v4 v4.2.2 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/snappy v0.0.4 // indirect

@@ -54,6 +54,7 @@ func getLoggersInst() *logger {
 		conf.Levels["_pool"] = "debug"
 		conf.Levels["_http"] = "debug"
 		conf.Levels["_grpc"] = "debug"
+		conf.Levels["_zmq"] = "debug"
 		conf.Levels["_firewall"] = "debug"
 		globalInst = &logger{
 			config: conf,
