@@ -31,7 +31,6 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/persistentmerkle"
 	"github.com/pactus-project/pactus/util/simplemerkle"
-	"github.com/pactus-project/pactus/www/nanomsg/event"
 )
 
 type state struct {
@@ -49,14 +48,14 @@ type state struct {
 	validatorMerkle *persistentmerkle.Tree
 	scoreMgr        *score.Manager
 	logger          *logger.SubLogger
-	eventCh         chan event.Event
+	eventCh         chan<- any
 }
 
 func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	valKeys []*bls.ValidatorKey,
 	store store.Store,
-	txPool txpool.TxPool, eventCh chan event.Event,
+	txPool txpool.TxPool, eventCh chan<- any,
 ) (Facade, error) {
 	state := &state{
 		valKeys:         valKeys,
@@ -459,9 +458,8 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 		}
 	}
 
-	// -----------------------------------
-	// Publishing the events to the nano message.
-	st.publishEvents(height, blk)
+	// publish committed block to event channel zeromq
+	st.publishEvent(blk)
 
 	return nil
 }
@@ -716,30 +714,6 @@ func (st *state) Params() *param.Params {
 	return st.params
 }
 
-// publishEvents publishes block related events.
-func (st *state) publishEvents(height uint32, blk *block.Block) {
-	if st.eventCh == nil {
-		return
-	}
-	blockEvent := event.CreateBlockEvent(blk.Hash(), height)
-	st.eventCh <- blockEvent
-
-	for i := 1; i < blk.Transactions().Len(); i++ {
-		transaction := blk.Transactions().Get(i)
-
-		senderChangeEvent := event.CreateAccountChangeEvent(transaction.Payload().Signer(), height)
-		st.eventCh <- senderChangeEvent
-
-		if transaction.Payload().Receiver() != nil {
-			receiverChangeEvent := event.CreateAccountChangeEvent(*transaction.Payload().Receiver(), height)
-			st.eventCh <- receiverChangeEvent
-		}
-
-		txEvent := event.CreateTransactionEvent(transaction.ID(), height)
-		st.eventCh <- txEvent
-	}
-}
-
 func (st *state) CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount {
 	return st.txPool.EstimatedFee(amt, payloadType)
 }
@@ -771,4 +745,12 @@ func (st *state) IsPruned() bool {
 
 func (st *state) PruningHeight() uint32 {
 	return st.store.PruningHeight()
+}
+
+func (st *state) publishEvent(msg any) {
+	if st.eventCh == nil {
+		return
+	}
+
+	st.eventCh <- msg
 }

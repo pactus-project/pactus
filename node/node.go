@@ -1,6 +1,7 @@
 package node
 
 import (
+	"context"
 	"time"
 
 	"github.com/pactus-project/pactus/config"
@@ -21,8 +22,7 @@ import (
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
-	"github.com/pactus-project/pactus/www/nanomsg"
-	"github.com/pactus-project/pactus/www/nanomsg/event"
+	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/pkg/errors"
 )
 
@@ -38,7 +38,8 @@ type Node struct {
 	http       *http.Server
 	grpc       *grpc.Server
 	jsonrpc    *jsonrpc.Server
-	nanomsg    *nanomsg.Server
+	zeromq     *zmq.Server
+	eventCh    chan any
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config,
@@ -54,10 +55,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"network", chainType)
 
 	messageCh := make(chan message.Message, 500)
-	eventCh := make(chan event.Event, 500)
-	if !conf.Nanomsg.Enable {
-		eventCh = nil
-	}
+	eventCh := make(chan any)
 
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
@@ -91,10 +89,15 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	if conf.GRPC.BasicAuth != "" {
 		enableHTTPAuth = true
 	}
+
+	zeromqServer, err := zmq.New(context.TODO(), conf.ZeroMq, eventCh)
+	if err != nil {
+		return nil, err
+	}
+
 	grpcServer := grpc.NewServer(conf.GRPC, state, syn, net, consMgr, walletMgr)
 	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
 	jsonrpcServer := jsonrpc.NewServer(conf.JSONRPC)
-	nanomsgServer := nanomsg.NewServer(conf.Nanomsg, eventCh)
 
 	node := &Node{
 		config:     conf,
@@ -108,7 +111,8 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		http:       httpServer,
 		grpc:       grpcServer,
 		jsonrpc:    jsonrpcServer,
-		nanomsg:    nanomsgServer,
+		zeromq:     zeromqServer,
+		eventCh:    eventCh,
 	}
 
 	return node, nil
@@ -152,11 +156,6 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start JSON-RPC server")
 	}
 
-	err = n.nanomsg.StartServer()
-	if err != nil {
-		return errors.Wrap(err, "could not start Nanomsg server")
-	}
-
 	return nil
 }
 
@@ -168,6 +167,7 @@ func (n *Node) Stop() {
 	// Wait for network to stop
 	time.Sleep(1 * time.Second)
 
+	close(n.eventCh)
 	n.consMgr.Stop()
 	n.sync.Stop()
 	n.state.Close()
@@ -175,7 +175,7 @@ func (n *Node) Stop() {
 	n.grpc.StopServer()
 	n.http.StopServer()
 	n.jsonrpc.StopServer()
-	n.nanomsg.StopServer()
+	n.zeromq.Close()
 }
 
 // these methods are using by GUI.

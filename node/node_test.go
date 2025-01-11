@@ -39,8 +39,6 @@ func TestRunningNode(t *testing.T) {
 	conf.HTTP.Listen = "0.0.0.0:0"
 	conf.JSONRPC.Enable = true
 	conf.JSONRPC.Listen = "0.0.0.0:0"
-	conf.Nanomsg.Enable = true
-	conf.Nanomsg.Listen = "tcp://0.0.0.0:0"
 	conf.Store.Path = util.TempDirPath()
 	conf.Network.EnableRelay = false
 	conf.Network.NetworkKey = util.TempFilePath()

@@ -48,12 +48,10 @@ func TestDefaultConfig(t *testing.T) {
 	assert.False(t, conf.GRPC.Enable)
 	assert.False(t, conf.GRPC.Gateway.Enable)
 	assert.False(t, conf.HTTP.Enable)
-	assert.False(t, conf.Nanomsg.Enable)
 
 	assert.Zero(t, conf.GRPC.Listen)
 	assert.Zero(t, conf.GRPC.Gateway.Listen)
 	assert.Zero(t, conf.HTTP.Listen)
-	assert.Zero(t, conf.Nanomsg.Listen)
 }
 
 func TestMainnetConfig(t *testing.T) {
@@ -67,12 +65,10 @@ func TestMainnetConfig(t *testing.T) {
 	assert.True(t, conf.GRPC.Enable)
 	assert.False(t, conf.GRPC.Gateway.Enable)
 	assert.False(t, conf.HTTP.Enable)
-	assert.False(t, conf.Nanomsg.Enable)
 
 	assert.Equal(t, "127.0.0.1:50051", conf.GRPC.Listen)
 	assert.Equal(t, "127.0.0.1:8080", conf.GRPC.Gateway.Listen)
 	assert.Equal(t, "127.0.0.1:80", conf.HTTP.Listen)
-	assert.Equal(t, "tcp://127.0.0.1:40899", conf.Nanomsg.Listen)
 }
 
 func TestTestnetConfig(t *testing.T) {
@@ -86,12 +82,10 @@ func TestTestnetConfig(t *testing.T) {
 	assert.True(t, conf.GRPC.Enable)
 	assert.True(t, conf.GRPC.Gateway.Enable)
 	assert.False(t, conf.HTTP.Enable)
-	assert.False(t, conf.Nanomsg.Enable)
 
 	assert.Equal(t, "[::]:50052", conf.GRPC.Listen)
 	assert.Equal(t, "[::]:8080", conf.GRPC.Gateway.Listen)
 	assert.Equal(t, "[::]:80", conf.HTTP.Listen)
-	assert.Equal(t, "tcp://[::]:40799", conf.Nanomsg.Listen)
 }
 
 func TestLocalnetConfig(t *testing.T) {
@@ -105,12 +99,10 @@ func TestLocalnetConfig(t *testing.T) {
 	assert.True(t, conf.GRPC.Enable)
 	assert.True(t, conf.GRPC.Gateway.Enable)
 	assert.True(t, conf.HTTP.Enable)
-	assert.True(t, conf.Nanomsg.Enable)
 
 	assert.Equal(t, "[::]:50052", conf.GRPC.Listen)
 	assert.Equal(t, "[::]:8080", conf.GRPC.Gateway.Listen)
 	assert.Equal(t, "[::]:0", conf.HTTP.Listen)
-	assert.Equal(t, "tcp://[::]:40799", conf.Nanomsg.Listen)
 }
 
 func TestLoadFromFile(t *testing.T) {
