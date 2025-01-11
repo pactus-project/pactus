@@ -1,6 +1,7 @@
 package node
 
 import (
+	"context"
 	"time"
 
 	"github.com/pactus-project/pactus/config"
@@ -21,6 +22,7 @@ import (
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
+	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/pkg/errors"
 )
 
@@ -36,6 +38,8 @@ type Node struct {
 	http       *http.Server
 	grpc       *grpc.Server
 	jsonrpc    *jsonrpc.Server
+	zeromq     *zmq.Server
+	eventCh    chan any
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config,
@@ -51,6 +55,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"network", chainType)
 
 	messageCh := make(chan message.Message, 500)
+	eventCh := make(chan any)
 
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
@@ -59,7 +64,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	txPool := txpool.NewTxPool(conf.TxPool, store, messageCh)
 
-	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool)
+	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventCh)
 	if err != nil {
 		return nil, err
 	}
@@ -84,6 +89,12 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	if conf.GRPC.BasicAuth != "" {
 		enableHTTPAuth = true
 	}
+
+	zeromqServer, err := zmq.New(context.TODO(), conf.ZeroMq, eventCh)
+	if err != nil {
+		return nil, err
+	}
+
 	grpcServer := grpc.NewServer(conf.GRPC, state, syn, net, consMgr, walletMgr)
 	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
 	jsonrpcServer := jsonrpc.NewServer(conf.JSONRPC)
@@ -100,6 +111,8 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		http:       httpServer,
 		grpc:       grpcServer,
 		jsonrpc:    jsonrpcServer,
+		zeromq:     zeromqServer,
+		eventCh:    eventCh,
 	}
 
 	return node, nil
@@ -154,6 +167,7 @@ func (n *Node) Stop() {
 	// Wait for network to stop
 	time.Sleep(1 * time.Second)
 
+	close(n.eventCh)
 	n.consMgr.Stop()
 	n.sync.Stop()
 	n.state.Close()
@@ -161,6 +175,7 @@ func (n *Node) Stop() {
 	n.grpc.StopServer()
 	n.http.StopServer()
 	n.jsonrpc.StopServer()
+	n.zeromq.Close()
 }
 
 // these methods are using by GUI.

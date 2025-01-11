@@ -48,13 +48,14 @@ type state struct {
 	validatorMerkle *persistentmerkle.Tree
 	scoreMgr        *score.Manager
 	logger          *logger.SubLogger
+	eventCh         chan<- any
 }
 
 func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	valKeys []*bls.ValidatorKey,
 	store store.Store,
-	txPool txpool.TxPool,
+	txPool txpool.TxPool, eventCh chan<- any,
 ) (Facade, error) {
 	state := &state{
 		valKeys:         valKeys,
@@ -65,6 +66,7 @@ func LoadOrNewState(
 		lastInfo:        lastinfo.NewLastInfo(),
 		accountMerkle:   persistentmerkle.New(),
 		validatorMerkle: persistentmerkle.New(),
+		eventCh:         eventCh,
 	}
 	state.logger = logger.NewSubLogger("_state", state)
 	state.store = store
@@ -456,6 +458,9 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 		}
 	}
 
+	// publish committed block to event channel zeromq
+	st.publishEvent(blk)
+
 	return nil
 }
 
@@ -740,4 +745,12 @@ func (st *state) IsPruned() bool {
 
 func (st *state) PruningHeight() uint32 {
 	return st.store.PruningHeight()
+}
+
+func (st *state) publishEvent(msg any) {
+	if st.eventCh == nil {
+		return
+	}
+
+	st.eventCh <- msg
 }

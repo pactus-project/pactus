@@ -74,7 +74,7 @@ func setup(t *testing.T) *testData {
 
 	// First validator is in the committee
 	valKeys := []*bls.ValidatorKey{genValKeys[0], ts.RandValKey()}
-	st1, err := LoadOrNewState(gnDoc, valKeys, mockStore, mockTxPool)
+	st1, err := LoadOrNewState(gnDoc, valKeys, mockStore, mockTxPool, nil)
 	require.NoError(t, err)
 
 	state, _ := st1.(*state)
@@ -539,7 +539,7 @@ func TestLoadState(t *testing.T) {
 
 	// Load last state info
 	newState, err := LoadOrNewState(td.state.genDoc, td.state.valKeys,
-		td.state.store, td.commonTxPool)
+		td.state.store, td.commonTxPool, nil)
 	require.NoError(t, err)
 
 	assert.Equal(t, td.state.TotalAccounts(), newState.TotalAccounts())
