@@ -31,7 +31,6 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/persistentmerkle"
 	"github.com/pactus-project/pactus/util/simplemerkle"
-	"github.com/pactus-project/pactus/www/nanomsg/event"
 )
 
 type state struct {
@@ -49,14 +48,13 @@ type state struct {
 	validatorMerkle *persistentmerkle.Tree
 	scoreMgr        *score.Manager
 	logger          *logger.SubLogger
-	eventCh         chan event.Event
 }
 
 func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	valKeys []*bls.ValidatorKey,
 	store store.Store,
-	txPool txpool.TxPool, eventCh chan event.Event,
+	txPool txpool.TxPool,
 ) (Facade, error) {
 	state := &state{
 		valKeys:         valKeys,
@@ -67,7 +65,6 @@ func LoadOrNewState(
 		lastInfo:        lastinfo.NewLastInfo(),
 		accountMerkle:   persistentmerkle.New(),
 		validatorMerkle: persistentmerkle.New(),
-		eventCh:         eventCh,
 	}
 	state.logger = logger.NewSubLogger("_state", state)
 	state.store = store
@@ -459,10 +456,6 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 		}
 	}
 
-	// -----------------------------------
-	// Publishing the events to the nano message.
-	st.publishEvents(height, blk)
-
 	return nil
 }
 
@@ -714,30 +707,6 @@ func (st *state) AddPendingTxAndBroadcast(trx *tx.Tx) error {
 
 func (st *state) Params() *param.Params {
 	return st.params
-}
-
-// publishEvents publishes block related events.
-func (st *state) publishEvents(height uint32, blk *block.Block) {
-	if st.eventCh == nil {
-		return
-	}
-	blockEvent := event.CreateBlockEvent(blk.Hash(), height)
-	st.eventCh <- blockEvent
-
-	for i := 1; i < blk.Transactions().Len(); i++ {
-		transaction := blk.Transactions().Get(i)
-
-		senderChangeEvent := event.CreateAccountChangeEvent(transaction.Payload().Signer(), height)
-		st.eventCh <- senderChangeEvent
-
-		if transaction.Payload().Receiver() != nil {
-			receiverChangeEvent := event.CreateAccountChangeEvent(*transaction.Payload().Receiver(), height)
-			st.eventCh <- receiverChangeEvent
-		}
-
-		txEvent := event.CreateTransactionEvent(transaction.ID(), height)
-		st.eventCh <- txEvent
-	}
 }
 
 func (st *state) CalculateFee(amt amount.Amount, payloadType payload.Type) amount.Amount {

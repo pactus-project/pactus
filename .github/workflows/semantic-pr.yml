@@ -59,7 +59,6 @@ jobs:
             proto
             http
             jsonrpc
-            nanomsg
             zeromq
             windows
             linux

@@ -21,8 +21,6 @@ import (
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
-	"github.com/pactus-project/pactus/www/nanomsg"
-	"github.com/pactus-project/pactus/www/nanomsg/event"
 	"github.com/pkg/errors"
 )
 
@@ -38,7 +36,6 @@ type Node struct {
 	http       *http.Server
 	grpc       *grpc.Server
 	jsonrpc    *jsonrpc.Server
-	nanomsg    *nanomsg.Server
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config,
@@ -54,10 +51,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"network", chainType)
 
 	messageCh := make(chan message.Message, 500)
-	eventCh := make(chan event.Event, 500)
-	if !conf.Nanomsg.Enable {
-		eventCh = nil
-	}
 
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
@@ -66,7 +59,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	txPool := txpool.NewTxPool(conf.TxPool, store, messageCh)
 
-	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventCh)
+	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +87,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	grpcServer := grpc.NewServer(conf.GRPC, state, syn, net, consMgr, walletMgr)
 	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
 	jsonrpcServer := jsonrpc.NewServer(conf.JSONRPC)
-	nanomsgServer := nanomsg.NewServer(conf.Nanomsg, eventCh)
 
 	node := &Node{
 		config:     conf,
@@ -108,7 +100,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		http:       httpServer,
 		grpc:       grpcServer,
 		jsonrpc:    jsonrpcServer,
-		nanomsg:    nanomsgServer,
 	}
 
 	return node, nil
@@ -152,11 +143,6 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start JSON-RPC server")
 	}
 
-	err = n.nanomsg.StartServer()
-	if err != nil {
-		return errors.Wrap(err, "could not start Nanomsg server")
-	}
-
 	return nil
 }
 
@@ -175,7 +161,6 @@ func (n *Node) Stop() {
 	n.grpc.StopServer()
 	n.http.StopServer()
 	n.jsonrpc.StopServer()
-	n.nanomsg.StopServer()
 }
 
 // these methods are using by GUI.

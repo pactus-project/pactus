@@ -238,16 +238,6 @@
   # data, so enable only in secure environments with restricted access.
   enable_pprof = false
 
-# Nanomsg configuration.
-[nanomsg]
-
-  # `enable` indicates whether nanomsg service should be enabled or not.
-  # Default is `false`.
-  enable = false
-
-  # `listen` is the address for incoming connections to the nanomsg server.
-  listen = 'tcp://127.0.0.1:40899'
-
 # ZeroMQ configuration.
 [zeromq]
 

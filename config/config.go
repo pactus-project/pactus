@@ -19,7 +19,6 @@ import (
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
-	"github.com/pactus-project/pactus/www/nanomsg"
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/pelletier/go-toml/v2"
 )
@@ -47,7 +46,6 @@ type Config struct {
 	JSONRPC       *jsonrpc.Config   `toml:"jsonrpc"`
 	HTTP          *http.Config      `toml:"http"`
 	WalletManager *wallet.Config    `toml:"-"`
-	Nanomsg       *nanomsg.Config   `toml:"nanomsg"`
 	ZeroMq        *zmq.Config       `toml:"zeromq"`
 }
 
@@ -100,7 +98,6 @@ func defaultConfig() *Config {
 		GRPC:          grpc.DefaultConfig(),
 		JSONRPC:       jsonrpc.DefaultConfig(),
 		HTTP:          http.DefaultConfig(),
-		Nanomsg:       nanomsg.DefaultConfig(),
 		ZeroMq:        zmq.DefaultConfig(),
 		WalletManager: wallet.DefaultConfig(),
 	}
@@ -156,8 +153,6 @@ func DefaultConfigMainnet() *Config {
 	conf.HTTP.Enable = false
 	conf.HTTP.Listen = "127.0.0.1:80"
 	conf.HTTP.EnablePprof = false
-	conf.Nanomsg.Enable = false
-	conf.Nanomsg.Listen = "tcp://127.0.0.1:40899"
 
 	return conf
 }
@@ -192,8 +187,6 @@ func DefaultConfigTestnet() *Config {
 	conf.HTTP.Enable = false
 	conf.HTTP.Listen = "[::]:80"
 	conf.HTTP.EnablePprof = false
-	conf.Nanomsg.Enable = false
-	conf.Nanomsg.Listen = "tcp://[::]:40799"
 
 	return conf
 }
@@ -220,8 +213,6 @@ func DefaultConfigLocalnet() *Config {
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:0"
 	conf.HTTP.EnablePprof = true
-	conf.Nanomsg.Enable = true
-	conf.Nanomsg.Listen = "tcp://[::]:40799"
 	conf.ZeroMq.ZmqPubBlockInfo = "tcp://127.0.0.1:28332"
 	conf.ZeroMq.ZmqPubTxInfo = "tcp://127.0.0.1:28333"
 	conf.ZeroMq.ZmqPubRawBlock = "tcp://127.0.0.1:28334"
@@ -293,9 +284,6 @@ func (conf *Config) BasicCheck() error {
 		return err
 	}
 	if err := conf.Sync.BasicCheck(); err != nil {
-		return err
-	}
-	if err := conf.Nanomsg.BasicCheck(); err != nil {
 		return err
 	}
 	if err := conf.JSONRPC.BasicCheck(); err != nil {

@@ -94,16 +94,16 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
 	stateX, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
-		store.MockingStore(ts), txPool, nil)
+		store.MockingStore(ts), txPool)
 	require.NoError(t, err)
 	stateY, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexY]},
-		store.MockingStore(ts), txPool, nil)
+		store.MockingStore(ts), txPool)
 	require.NoError(t, err)
 	stateB, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexB]},
-		store.MockingStore(ts), txPool, nil)
+		store.MockingStore(ts), txPool)
 	require.NoError(t, err)
 	stateP, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexP]},
-		store.MockingStore(ts), txPool, nil)
+		store.MockingStore(ts), txPool)
 	require.NoError(t, err)
 
 	consMessages := make([]consMessage, 0)
@@ -451,7 +451,7 @@ func TestNotInCommittee(t *testing.T) {
 	valKey := td.RandValKey()
 	store := store.MockingStore(td.TestSuite)
 
-	state, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, store, td.txPool, nil)
+	state, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, store, td.txPool)
 	consInt := NewConsensus(testConfig(), state, valKey, valKey.Address(), make(chan message.Message, 100),
 		newConcreteMediator())
 	cons := consInt.(*consensus)
