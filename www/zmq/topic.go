@@ -1,5 +1,7 @@
 package zmq
 
+import "encoding/binary"
+
 type Topic int16
 
 const (
@@ -26,4 +28,11 @@ func (t Topic) String() string {
 	default:
 		return ""
 	}
+}
+
+func (t Topic) Bytes() []byte {
+	b := make([]byte, 2)
+	binary.BigEndian.PutUint16(b, uint16(t))
+
+	return b
 }
