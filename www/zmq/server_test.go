@@ -49,11 +49,9 @@ func (ts *testData) resetServer() {
 	ts.eventCh = nil
 }
 
-func (ts *testData) cleanup() func() {
-	return func() {
-		ts.server.Close()
-		ts.resetServer()
-	}
+func (ts *testData) cleanup() {
+	ts.server.Close()
+	ts.resetServer()
 }
 
 func TestServerWithDefaultConfig(t *testing.T) {
