@@ -13,7 +13,7 @@ import (
 
 func TestBlockInfoPublisher(t *testing.T) {
 	td := setup(t)
-	t.Cleanup(td.cleanup())
+	defer td.cleanup()
 
 	port := td.FindFreePort()
 	addr := fmt.Sprintf("tcp://localhost:%d", port)
