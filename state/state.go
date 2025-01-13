@@ -752,5 +752,8 @@ func (st *state) publishEvent(msg any) {
 		return
 	}
 
-	st.eventCh <- msg
+	select {
+	case st.eventCh <- msg:
+	default:
+	}
 }
