@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -22,73 +23,32 @@ func newUtilsServer(server *Server) *utilServer {
 	}
 }
 
-func (*utilServer) SignMessageWithPrivateKey(_ context.Context,
+func (u *utilServer) SignMessageWithPrivateKey(_ context.Context,
 	req *pactus.SignMessageWithPrivateKeyRequest,
 ) (*pactus.SignMessageWithPrivateKeyResponse, error) {
-	var sig string
+	prvKey, err := u.privateKeyFromString(req.PrivateKey)
 
-	maybeBLSPrivateKey := func(str string) bool {
-		return strings.Contains(strings.ToLower(str), "secret1p")
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	maybeEd25519PrivateKey := func(str string) bool {
-		return strings.Contains(strings.ToLower(str), "secret1r")
-	}
-	switch {
-	case maybeBLSPrivateKey(req.PrivateKey):
-		blsPrv, err := bls.PrivateKeyFromString(req.PrivateKey)
-		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, "invalid private key")
-		}
-		sig = blsPrv.Sign([]byte(req.Message)).String()
-	case maybeEd25519PrivateKey(req.PrivateKey):
-		ed25519Prv, err := ed25519.PrivateKeyFromString(req.PrivateKey)
-		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, "invalid private key")
-		}
-		sig = ed25519Prv.Sign([]byte(req.Message)).String()
-	default:
-		return nil, status.Error(codes.InvalidArgument, "invalid private key")
-	}
+	sig := prvKey.Sign([]byte(req.Message)).String()
 
 	return &pactus.SignMessageWithPrivateKeyResponse{
 		Signature: sig,
 	}, nil
 }
 
-func (*utilServer) VerifyMessage(_ context.Context,
+func (u *utilServer) VerifyMessage(_ context.Context,
 	req *pactus.VerifyMessageRequest,
 ) (*pactus.VerifyMessageResponse, error) {
-	blsPub, _ := bls.PublicKeyFromString(req.PublicKey)
 
-	if blsPub != nil {
-		sig, err := bls.SignatureFromString(req.Signature)
-		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, "signature is invalid")
-		}
-
-		if err = blsPub.Verify([]byte(req.Message), sig); err == nil {
-			return &pactus.VerifyMessageResponse{
-				IsValid: true,
-			}, nil
-		}
-
-		return &pactus.VerifyMessageResponse{
-			IsValid: false,
-		}, nil
-	}
-
-	ed25519Pub, err := ed25519.PublicKeyFromString(req.PublicKey)
+	pubKey, sig, err := u.publicKeyAndSigFromString(req.PublicKey, req.Signature)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "public key is invalid")
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	sig, err := ed25519.SignatureFromString(req.Signature)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "signature is invalid")
-	}
-
-	if err = ed25519Pub.Verify([]byte(req.Message), sig); err == nil {
+	if err = pubKey.Verify([]byte(req.Message), sig); err == nil {
 		return &pactus.VerifyMessageResponse{
 			IsValid: true,
 		}, nil
@@ -140,4 +100,70 @@ func (*utilServer) BLSSignatureAggregation(_ context.Context,
 	return &pactus.BLSSignatureAggregationResponse{
 		Signature: bls.SignatureAggregate(sigs...).String(),
 	}, nil
+}
+
+func (*utilServer) privateKeyFromString(prvStr string) (crypto.PrivateKey, error) {
+	maybeBLSPrivateKey := func(str string) bool {
+		return strings.Contains(strings.ToLower(str), "secret1p")
+	}
+
+	maybeEd25519PrivateKey := func(str string) bool {
+		return strings.Contains(strings.ToLower(str), "secret1r")
+	}
+
+	switch {
+	case maybeBLSPrivateKey(prvStr):
+		blsPrv, err := bls.PrivateKeyFromString(prvStr)
+		if err != nil {
+			return nil, status.Error(codes.InvalidArgument, "invalid private key")
+		}
+		return blsPrv, nil
+
+	case maybeEd25519PrivateKey(prvStr):
+		ed25519Prv, err := ed25519.PrivateKeyFromString(prvStr)
+		if err != nil {
+			return nil, status.Error(codes.InvalidArgument, "invalid private key")
+		}
+		return ed25519Prv, nil
+
+	default:
+		return nil, status.Error(codes.InvalidArgument, "invalid private key")
+	}
+}
+
+func (*utilServer) publicKeyAndSigFromString(pubStr, sigStr string) (crypto.PublicKey, crypto.Signature, error) {
+	maybeBLSPublicKey := func(str string) bool {
+		return strings.Contains(strings.ToLower(str), "public1p")
+	}
+
+	maybeEd25519PublicKey := func(str string) bool {
+		return strings.Contains(strings.ToLower(str), "public1r")
+	}
+
+	switch {
+	case maybeBLSPublicKey(pubStr):
+		blsPub, err := bls.PublicKeyFromString(pubStr)
+		if err != nil {
+			return nil, nil, status.Error(codes.InvalidArgument, "invalid public key")
+		}
+		sig, err := bls.SignatureFromString(sigStr)
+		if err != nil {
+			return nil, nil, status.Error(codes.InvalidArgument, "signature is invalid")
+		}
+		return blsPub, sig, nil
+
+	case maybeEd25519PublicKey(pubStr):
+		ed25519Pub, err := ed25519.PublicKeyFromString(pubStr)
+		if err != nil {
+			return nil, nil, status.Error(codes.InvalidArgument, "invalid public key")
+		}
+		sig, err := ed25519.SignatureFromString(sigStr)
+		if err != nil {
+			return nil, nil, status.Error(codes.InvalidArgument, "signature is invalid")
+		}
+		return ed25519Pub, sig, nil
+
+	default:
+		return nil, nil, status.Error(codes.InvalidArgument, "invalid public key")
+	}
 }
