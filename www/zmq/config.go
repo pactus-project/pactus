@@ -65,7 +65,7 @@ func (c *Config) BasicCheck() error {
 func validateTopicSocket(socket string) error {
 	addr, err := url.Parse(socket)
 	if err != nil {
-		return errors.New("failed to parse ZmqPub value: " + err.Error())
+		return errors.New("failed to parse URL: " + err.Error())
 	}
 
 	if addr.Scheme != "tcp" {

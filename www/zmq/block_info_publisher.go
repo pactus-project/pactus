@@ -7,7 +7,6 @@ import (
 )
 
 type blockInfoPub struct {
-	seqNo uint32
 	basePub
 }
 
@@ -15,6 +14,7 @@ func newBlockInfoPub(socket zmq4.Socket, logger *logger.SubLogger) Publisher {
 	return &blockInfoPub{
 		basePub: basePub{
 			topic:     BlockInfo,
+			seqNo:     0,
 			zmqSocket: socket,
 			logger:    logger,
 		},
@@ -22,15 +22,11 @@ func newBlockInfoPub(socket zmq4.Socket, logger *logger.SubLogger) Publisher {
 }
 
 func (b *blockInfoPub) onNewBlock(blk *block.Block) {
-	seq := b.seqNo + 1
-
-	rawMsg := makeTopicMsg(
-		b.topic,
+	rawMsg := b.makeTopicMsg(
 		blk.Header().ProposerAddress(),
 		blk.Header().UnixTime(),
 		uint16(len(blk.Transactions())),
 		blk.Height(),
-		seq,
 	)
 
 	message := zmq4.NewMsg(rawMsg)
@@ -41,8 +37,7 @@ func (b *blockInfoPub) onNewBlock(blk *block.Block) {
 
 	b.logger.Debug("zmq published message success",
 		"publisher", b.TopicName(),
-		"block_height", blk.Height(),
-	)
+		"block_height", blk.Height())
 
-	b.seqNo = seq
+	b.seqNo++
 }
