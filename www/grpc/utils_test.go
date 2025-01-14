@@ -54,7 +54,8 @@ func TestSignMessageWithED25519PrivateKey(t *testing.T) {
 	msg := "pactus"
 	prvStr := "SECRET1RYY62A96X25ZAL4DPL5Z63G83GCSFCCQ7K0CMQD3MFNLYK3A6R26QUUK3Y0"
 	invalidPrvStr := "INVSECRET1RYY62A96X25ZAL4DPL5Z63G83GCSFCCQ7K0CMQD3MFNLYK3A6R26QUUK3Y0"
-	expectedSig := "361aaa09c408bfcf7e79dd90c583eeeaefe7c732ca5643cfb2ea7a6d22105b874a412080525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305"
+	expectedSig := "361aaa09c408bfcf7e79dd90c583eeeaefe7c732ca5643cfb2ea7a6d22105b874a412080" +
+		"525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305"
 
 	t.Run("", func(t *testing.T) {
 		res, err := client.SignMessageWithPrivateKey(context.Background(),
@@ -127,8 +128,10 @@ func TestVerifyED25519Message(t *testing.T) {
 
 	msg := "pactus"
 	pubStr := "public1rvqxnpfph8tnc3ck55z85w285t5jetylmmktr9wlzs0zvx7kx500szxfudh"
-	sigStr := "361aaa09c408bfcf7e79dd90c583eeeaefe7c732ca5643cfb2ea7a6d22105b874a412080525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305"
-	invalidSigStr := "001aaa09c408bfcf7e79dd90c583eeeaefe7c732ca5643cfb2ea7a6d22105b874a412080525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305"
+	sigStr := "361aaa09c408bfcf7e79dd90c583eeeaefe7c732ca5643cfb2ea7a6d22105b874a41" +
+		"2080525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305"
+	invalidSigStr := "001aaa09c408bfcf7e79dd90c583eeeaefe7c732ca5643cfb2ea7a6d22105b" +
+		"874a412080525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305"
 
 	t.Run("valid message", func(t *testing.T) {
 		res, err := client.VerifyMessage(context.Background(),

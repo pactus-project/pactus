@@ -3,10 +3,10 @@ package grpc
 import (
 	"context"
 	"fmt"
-	"github.com/pactus-project/pactus/crypto/ed25519"
 	"strings"
 
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -61,23 +61,7 @@ func (*utilServer) VerifyMessage(_ context.Context,
 ) (*pactus.VerifyMessageResponse, error) {
 	blsPub, err := bls.PublicKeyFromString(req.PublicKey)
 
-	if err != nil {
-		ed25519Pub, err := ed25519.PublicKeyFromString(req.PublicKey)
-		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, "public key is invalid")
-		}
-
-		sig, err := ed25519.SignatureFromString(req.Signature)
-		if err != nil {
-			return nil, status.Error(codes.InvalidArgument, "signature is invalid")
-		}
-
-		if err = ed25519Pub.Verify([]byte(req.Message), sig); err == nil {
-			return &pactus.VerifyMessageResponse{
-				IsValid: true,
-			}, nil
-		}
-	} else {
+	if blsPub != nil {
 		sig, err := bls.SignatureFromString(req.Signature)
 		if err != nil {
 			return nil, status.Error(codes.InvalidArgument, "signature is invalid")
@@ -88,6 +72,26 @@ func (*utilServer) VerifyMessage(_ context.Context,
 				IsValid: true,
 			}, nil
 		}
+
+		return &pactus.VerifyMessageResponse{
+			IsValid: false,
+		}, nil
+	}
+
+	ed25519Pub, err := ed25519.PublicKeyFromString(req.PublicKey)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "public key is invalid")
+	}
+
+	sig, err := ed25519.SignatureFromString(req.Signature)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "signature is invalid")
+	}
+
+	if err = ed25519Pub.Verify([]byte(req.Message), sig); err == nil {
+		return &pactus.VerifyMessageResponse{
+			IsValid: true,
+		}, nil
 	}
 
 	return &pactus.VerifyMessageResponse{
