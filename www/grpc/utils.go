@@ -59,7 +59,7 @@ func (*utilServer) SignMessageWithPrivateKey(_ context.Context,
 func (*utilServer) VerifyMessage(_ context.Context,
 	req *pactus.VerifyMessageRequest,
 ) (*pactus.VerifyMessageResponse, error) {
-	blsPub, err := bls.PublicKeyFromString(req.PublicKey)
+	blsPub, _ := bls.PublicKeyFromString(req.PublicKey)
 
 	if blsPub != nil {
 		sig, err := bls.SignatureFromString(req.Signature)
