@@ -51,7 +51,7 @@ func TestBasicCheck(t *testing.T) {
 		{
 			name: "Empty host",
 			config: &Config{
-				ZmqPubBlockInfo: "tcp://:28332",
+				ZmqPubTxInfo: "tcp://:28332",
 			},
 			expectErr: true,
 		},

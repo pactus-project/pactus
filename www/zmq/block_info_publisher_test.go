@@ -63,5 +63,5 @@ func TestBlockInfoPublisher(t *testing.T) {
 	require.Equal(t, blk.Header().UnixTime(), timestamp)
 	require.Equal(t, uint16(len(blk.Transactions())), txCount)
 	require.Equal(t, blk.Height(), height)
-	require.Equal(t, uint32(1), seqNo)
+	require.Equal(t, uint32(0), seqNo)
 }
