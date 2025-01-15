@@ -2,9 +2,12 @@ package grpc
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -20,14 +23,13 @@ func newUtilsServer(server *Server) *utilServer {
 	}
 }
 
-func (*utilServer) SignMessageWithPrivateKey(_ context.Context,
+func (u *utilServer) SignMessageWithPrivateKey(_ context.Context,
 	req *pactus.SignMessageWithPrivateKeyRequest,
 ) (*pactus.SignMessageWithPrivateKeyResponse, error) {
-	prvKey, err := bls.PrivateKeyFromString(req.PrivateKey)
+	prvKey, err := u.privateKeyFromString(req.PrivateKey)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "invalid private key")
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-
 	sig := prvKey.Sign([]byte(req.Message)).String()
 
 	return &pactus.SignMessageWithPrivateKeyResponse{
@@ -35,20 +37,14 @@ func (*utilServer) SignMessageWithPrivateKey(_ context.Context,
 	}, nil
 }
 
-func (*utilServer) VerifyMessage(_ context.Context,
+func (u *utilServer) VerifyMessage(_ context.Context,
 	req *pactus.VerifyMessageRequest,
 ) (*pactus.VerifyMessageResponse, error) {
-	sig, err := bls.SignatureFromString(req.Signature)
+	pubKey, sig, err := u.publicKeyAndSigFromString(req.PublicKey, req.Signature)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "signature is invalid")
+		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-
-	pub, err := bls.PublicKeyFromString(req.PublicKey)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "public key is invalid")
-	}
-
-	if err := pub.Verify([]byte(req.Message), sig); err == nil {
+	if err = pubKey.Verify([]byte(req.Message), sig); err == nil {
 		return &pactus.VerifyMessageResponse{
 			IsValid: true,
 		}, nil
@@ -100,4 +96,42 @@ func (*utilServer) BLSSignatureAggregation(_ context.Context,
 	return &pactus.BLSSignatureAggregationResponse{
 		Signature: bls.SignatureAggregate(sigs...).String(),
 	}, nil
+}
+
+func (*utilServer) privateKeyFromString(prvStr string) (crypto.PrivateKey, error) {
+	blsPrv, err := bls.PrivateKeyFromString(prvStr)
+	if err == nil {
+		return blsPrv, nil
+	}
+
+	ed25519Prv, err := ed25519.PrivateKeyFromString(prvStr)
+	if err == nil {
+		return ed25519Prv, nil
+	}
+
+	return nil, errors.New("invalid Private Key")
+}
+
+func (*utilServer) publicKeyAndSigFromString(pubStr, sigStr string) (crypto.PublicKey, crypto.Signature, error) {
+	blsPub, err := bls.PublicKeyFromString(pubStr)
+	if err == nil {
+		blsSig, err := bls.SignatureFromString(sigStr)
+		if err != nil {
+			return nil, nil, errors.New("invalid BLS signature")
+		}
+
+		return blsPub, blsSig, nil
+	}
+
+	ed25519Pub, err := ed25519.PublicKeyFromString(pubStr)
+	if err == nil {
+		ed25519Sig, err := ed25519.SignatureFromString(sigStr)
+		if err != nil {
+			return nil, nil, errors.New("invalid Ed25519 signature")
+		}
+
+		return ed25519Pub, ed25519Sig, nil
+	}
+
+	return nil, nil, errors.New("invalid Public Key")
 }

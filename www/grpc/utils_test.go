@@ -46,6 +46,43 @@ func TestSignMessageWithPrivateKey(t *testing.T) {
 	td.StopServer()
 }
 
+func TestSignMessageWithED25519PrivateKey(t *testing.T) {
+	conf := testConfig()
+	td := setup(t, conf)
+	conn, client := td.utilClient(t)
+
+	msg := "pactus"
+	prvStr := "SECRET1RYY62A96X25ZAL4DPL5Z63G83GCSFCCQ7K0CMQD3MFNLYK3A6R26QUUK3Y0"
+	invalidPrvStr := "INVSECRET1RYY62A96X25ZAL4DPL5Z63G83GCSFCCQ7K0CMQD3MFNLYK3A6R26QUUK3Y0"
+	expectedSig := "361aaa09c408bfcf7e79dd90c583eeeaefe7c732ca5643cfb2ea7a6d22105b874a412080" +
+		"525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305"
+
+	t.Run("", func(t *testing.T) {
+		res, err := client.SignMessageWithPrivateKey(context.Background(),
+			&pactus.SignMessageWithPrivateKeyRequest{
+				Message:    msg,
+				PrivateKey: prvStr,
+			})
+
+		assert.Nil(t, err)
+		assert.Equal(t, expectedSig, res.Signature)
+	})
+
+	t.Run("", func(t *testing.T) {
+		res, err := client.SignMessageWithPrivateKey(context.Background(),
+			&pactus.SignMessageWithPrivateKeyRequest{
+				Message:    msg,
+				PrivateKey: invalidPrvStr,
+			})
+
+		assert.NotNil(t, err)
+		assert.Nil(t, res)
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}
+
 func TestVerifyMessage(t *testing.T) {
 	conf := testConfig()
 	td := setup(t, conf)
@@ -56,6 +93,45 @@ func TestVerifyMessage(t *testing.T) {
 		"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47a"
 	sigStr := "923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7"
 	invalidSigStr := "113d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3c9"
+
+	t.Run("valid message", func(t *testing.T) {
+		res, err := client.VerifyMessage(context.Background(),
+			&pactus.VerifyMessageRequest{
+				Message:   msg,
+				Signature: sigStr,
+				PublicKey: pubStr,
+			})
+		assert.Nil(t, err)
+		assert.True(t, res.IsValid)
+	})
+
+	t.Run("invalid message", func(t *testing.T) {
+		res, err := client.VerifyMessage(context.Background(),
+			&pactus.VerifyMessageRequest{
+				Message:   msg,
+				Signature: invalidSigStr,
+				PublicKey: pubStr,
+			})
+
+		assert.Nil(t, err)
+		assert.False(t, res.IsValid)
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}
+
+func TestVerifyED25519Message(t *testing.T) {
+	conf := testConfig()
+	td := setup(t, conf)
+	conn, client := td.utilClient(t)
+
+	msg := "pactus"
+	pubStr := "public1rvqxnpfph8tnc3ck55z85w285t5jetylmmktr9wlzs0zvx7kx500szxfudh"
+	sigStr := "361aaa09c408bfcf7e79dd90c583eeeaefe7c732ca5643cfb2ea7a6d22105b874a41" +
+		"2080525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305"
+	invalidSigStr := "001aaa09c408bfcf7e79dd90c583eeeaefe7c732ca5643cfb2ea7a6d22105b" +
+		"874a412080525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305"
 
 	t.Run("valid message", func(t *testing.T) {
 		res, err := client.VerifyMessage(context.Background(),
