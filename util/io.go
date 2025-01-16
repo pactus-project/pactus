@@ -207,16 +207,59 @@ func MoveDirectory(srcDir, dstDir string) error {
 	if PathExists(dstDir) {
 		return fmt.Errorf("destination directory %s already exists", dstDir)
 	}
-
 	// Get the parent directory of the destination directory
 	parentDir := filepath.Dir(dstDir)
 	if err := Mkdir(parentDir); err != nil {
 		return fmt.Errorf("failed to create parent directories for %s: %w", dstDir, err)
 	}
-
-	if err := os.Rename(srcDir, dstDir); err != nil {
+	if err := move(srcDir, dstDir); err != nil {
 		return fmt.Errorf("failed to move directory from %s to %s: %w", srcDir, dstDir, err)
 	}
+
+	return nil
+}
+
+// moves a directory from srcDir to dstDir, including all its contents
+// in case of moving from one volume to another we use moveCrossDevice.
+func move(source, destination string) error {
+	err := os.Rename(source, destination)
+	if err != nil && strings.Contains(err.Error(), "invalid cross-device link") {
+		return moveCrossDevice(source, destination)
+	}
+
+	return err
+}
+
+func moveCrossDevice(source, destination string) error {
+	src, err := os.Open(source)
+	if err != nil {
+		return fmt.Errorf("failed to open %s: %w", source, err)
+	}
+	defer func() {
+		_ = src.Close()
+	}()
+	dst, err := os.Create(destination)
+	if err != nil {
+		return fmt.Errorf("failed to create %s: %w", destination, err)
+	}
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		return fmt.Errorf("failed to copy %s to %s : %w", source, destination, err)
+	}
+	_ = dst.Close()
+	stat, err := os.Stat(source)
+	if err != nil {
+		_ = os.Remove(destination)
+
+		return fmt.Errorf("failed to stat for %s: %w", source, err)
+	}
+	err = os.Chmod(destination, stat.Mode())
+	if err != nil {
+		_ = os.Remove(destination)
+
+		return fmt.Errorf("chmod failed %s: %w", destination, err)
+	}
+	_ = os.Remove(source)
 
 	return nil
 }
