@@ -6,21 +6,21 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 )
 
-type blockInfoPub struct {
+type rawBlockPub struct {
 	basePub
 }
 
-func newBlockInfoPub(socket zmq4.Socket, logger *logger.SubLogger) Publisher {
-	return &blockInfoPub{
+func newRawBlockPub(socket zmq4.Socket, logger *logger.SubLogger) Publisher {
+	return &rawBlockPub{
 		basePub: basePub{
-			topic:     BlockInfo,
+			topic:     TopicRawBlock,
 			zmqSocket: socket,
 			logger:    logger,
 		},
 	}
 }
 
-func (*blockInfoPub) onNewBlock(_ *block.Block) {
+func (*rawBlockPub) onNewBlock(_ *block.Block) {
 	// TODO implement me
 	panic("implement me")
 }

@@ -7,7 +7,6 @@ import (
 
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/util/testsuite"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -19,60 +18,29 @@ type testData struct {
 	eventCh   chan any
 }
 
-func setup(t *testing.T) *testData {
+func setup(t *testing.T, conf *Config) *testData {
 	t.Helper()
 
 	ts := testsuite.NewTestSuite(t)
 	mockState := state.MockingState(ts)
+	eventCh := make(chan any)
+	server, err := New(context.TODO(), conf, eventCh)
+	require.NoError(t, err)
 
 	return &testData{
 		TestSuite: ts,
 		mockState: mockState,
+		server:    server,
+		eventCh:   eventCh,
 	}
 }
 
-func (ts *testData) initServer(ctx context.Context, conf *Config) error {
-	eventCh := make(chan any)
-	sv, err := New(ctx, conf, eventCh)
-	if err != nil {
-		return err
-	}
-
-	ts.server = sv
-	ts.eventCh = eventCh
-
-	return nil
-}
-
-func (ts *testData) resetServer() {
-	ts.server = nil
-	ts.eventCh = nil
-}
-
-func (ts *testData) cleanup() func() {
-	return func() {
-		ts.server.Close()
-		ts.resetServer()
-	}
-}
-
-func TestServerWithDefaultConfig(t *testing.T) {
-	suite := setup(t)
-
-	conf := DefaultConfig()
-
-	err := suite.initServer(context.TODO(), conf)
-	t.Cleanup(suite.cleanup())
-
-	assert.NoError(t, err)
-	require.NotNil(t, suite.server)
+func (ts *testData) closeServer() {
+	ts.server.Close()
 }
 
 func TestTopicsWithSameSocket(t *testing.T) {
-	suite := setup(t)
-	t.Cleanup(suite.cleanup())
-
-	port := suite.FindFreePort()
+	port := testsuite.FindFreePort()
 	addr := fmt.Sprintf("tcp://127.0.0.1:%d", port)
 
 	conf := DefaultConfig()
@@ -81,30 +49,34 @@ func TestTopicsWithSameSocket(t *testing.T) {
 	conf.ZmqPubRawBlock = addr
 	conf.ZmqPubRawTx = addr
 
-	err := suite.initServer(context.TODO(), conf)
-	require.NoError(t, err)
+	td := setup(t, conf)
+	defer td.closeServer()
 
-	require.Len(t, suite.server.publishers, 4)
+	require.Len(t, td.server.Publishers(), 4)
+	require.Len(t, td.server.sockets, 1)
 
-	expectedAddr := suite.server.publishers[0].Address()
+	expectedAddr := td.server.Publishers()[0].Address()
 
-	for _, pub := range suite.server.publishers {
+	for _, pub := range td.server.Publishers() {
 		require.Equal(t, expectedAddr, pub.Address(), "All publishers must have the same address")
+		require.Equal(t, conf.ZmqPubHWM, pub.HWM(), "All publishers must have the same HWM")
 	}
 }
 
 func TestTopicsWithDifferentSockets(t *testing.T) {
-	suite := setup(t)
-	t.Cleanup(suite.cleanup())
-
 	conf := DefaultConfig()
-	conf.ZmqPubBlockInfo = fmt.Sprintf("tcp://127.0.0.1:%d", suite.FindFreePort())
-	conf.ZmqPubTxInfo = fmt.Sprintf("tcp://127.0.0.1:%d", suite.FindFreePort())
-	conf.ZmqPubRawBlock = fmt.Sprintf("tcp://127.0.0.1:%d", suite.FindFreePort())
-	conf.ZmqPubRawTx = fmt.Sprintf("tcp://127.0.0.1:%d", suite.FindFreePort())
+	conf.ZmqPubBlockInfo = fmt.Sprintf("tcp://127.0.0.1:%d", testsuite.FindFreePort())
+	conf.ZmqPubTxInfo = fmt.Sprintf("tcp://127.0.0.1:%d", testsuite.FindFreePort())
+	conf.ZmqPubRawBlock = fmt.Sprintf("tcp://127.0.0.1:%d", testsuite.FindFreePort())
+	conf.ZmqPubRawTx = fmt.Sprintf("tcp://127.0.0.1:%d", testsuite.FindFreePort())
 
-	err := suite.initServer(context.TODO(), conf)
-	require.NoError(t, err)
+	td := setup(t, conf)
+	defer td.closeServer()
 
-	require.Len(t, suite.server.publishers, 4)
+	require.Len(t, td.server.Publishers(), 4)
+	require.Len(t, td.server.sockets, 4)
+
+	for _, pub := range td.server.Publishers() {
+		require.Equal(t, conf.ZmqPubHWM, pub.HWM(), "All publishers must have the same HWM")
+	}
 }

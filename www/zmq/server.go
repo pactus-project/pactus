@@ -17,7 +17,7 @@ type Server struct {
 }
 
 func New(ctx context.Context, conf *Config, eventCh <-chan any) (*Server, error) {
-	svr := &Server{
+	server := &Server{
 		eventCh:    eventCh,
 		logger:     logger.NewSubLogger("_zmq", nil),
 		publishers: make([]Publisher, 0),
@@ -26,9 +26,7 @@ func New(ctx context.Context, conf *Config, eventCh <-chan any) (*Server, error)
 	}
 
 	publisherOpts := []zmq4.Option{
-		zmq4.WithAutomaticReconnect(conf.ZmqAutomaticReconnect),
-		zmq4.WithDialerRetry(conf.ZmqDialerRetryTime),
-		zmq4.WithDialerMaxRetries(conf.ZmqDialerMaxRetries),
+		//
 	}
 
 	makePublisher := func(addr string, newPublisher func(socket zmq4.Socket, logger *logger.SubLogger) Publisher) error {
@@ -36,7 +34,7 @@ func New(ctx context.Context, conf *Config, eventCh <-chan any) (*Server, error)
 			return nil
 		}
 
-		socket, ok := svr.sockets[addr]
+		socket, ok := server.sockets[addr]
 		if !ok {
 			socket = zmq4.NewPub(ctx, publisherOpts...)
 
@@ -49,11 +47,11 @@ func New(ctx context.Context, conf *Config, eventCh <-chan any) (*Server, error)
 			}
 		}
 
-		pub := newPublisher(socket, svr.logger)
-		svr.publishers = append(svr.publishers, pub)
-		svr.sockets[addr] = socket
+		publisher := newPublisher(socket, server.logger)
+		server.publishers = append(server.publishers, publisher)
+		server.sockets[addr] = socket
 
-		svr.logger.Info("publisher initialized", "topic", pub.TopicName(), "socket", addr)
+		server.logger.Info("publisher initialized", "topic", publisher.TopicName(), "socket", addr)
 
 		return nil
 	}
@@ -74,17 +72,13 @@ func New(ctx context.Context, conf *Config, eventCh <-chan any) (*Server, error)
 		return nil, err
 	}
 
-	go svr.receivedEventLoop(ctx)
+	go server.receivedEventLoop(ctx)
 
-	return svr, nil
+	return server, nil
 }
 
 func (s *Server) Publishers() []Publisher {
 	return s.publishers
-}
-
-func (s *Server) HWM() int {
-	return s.config.ZmqPubHWM
 }
 
 func (s *Server) Close() {
@@ -113,7 +107,7 @@ func (s *Server) receivedEventLoop(ctx context.Context) {
 					pub.onNewBlock(ev)
 				}
 			default:
-				panic("invalid event type")
+				s.logger.Warn("invalid event type")
 			}
 		}
 	}
