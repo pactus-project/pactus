@@ -13,7 +13,7 @@ type rawBlockPub struct {
 func newRawBlockPub(socket zmq4.Socket, logger *logger.SubLogger) Publisher {
 	return &rawBlockPub{
 		basePub: basePub{
-			topic:     RawBlock,
+			topic:     TopicRawBlock,
 			zmqSocket: socket,
 			logger:    logger,
 		},

@@ -13,7 +13,7 @@ type blockInfoPub struct {
 func newBlockInfoPub(socket zmq4.Socket, logger *logger.SubLogger) Publisher {
 	return &blockInfoPub{
 		basePub: basePub{
-			topic:     BlockInfo,
+			topic:     TopicBlockInfo,
 			seqNo:     0,
 			zmqSocket: socket,
 			logger:    logger,

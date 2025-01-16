@@ -18,7 +18,7 @@ func TestDefaultConfig(t *testing.T) {
 }
 
 func TestBasicCheck(t *testing.T) {
-	testCases := []struct {
+	tests := []struct {
 		name      string
 		config    *Config
 		expectErr bool
@@ -69,10 +69,10 @@ func TestBasicCheck(t *testing.T) {
 		},
 	}
 
-	for _, tc := range testCases {
-		t.Run(tc.name, func(t *testing.T) {
-			err := tc.config.BasicCheck()
-			if tc.expectErr {
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.config.BasicCheck()
+			if tt.expectErr {
 				assert.Error(t, err, "BasicCheck should return an error")
 			} else {
 				assert.NoError(t, err, "BasicCheck should not return an error")

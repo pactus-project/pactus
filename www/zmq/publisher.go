@@ -12,6 +12,7 @@ import (
 type Publisher interface {
 	Address() string
 	TopicName() string
+	HWM() int
 
 	onNewBlock(blk *block.Block)
 }
@@ -29,6 +30,12 @@ func (b *basePub) Address() string {
 
 func (b *basePub) TopicName() string {
 	return b.topic.String()
+}
+
+func (b *basePub) HWM() int {
+	hwmOpt, _ := b.zmqSocket.GetOption(zmq4.OptionHWM)
+
+	return hwmOpt.(int)
 }
 
 // makeTopicMsg constructs a ZMQ message with a topic ID, message body, and sequence number.
