@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
-	"time"
 )
 
 type Config struct {
@@ -14,19 +13,15 @@ type Config struct {
 	ZmqPubRawBlock  string `toml:"zmqpubrawblock"`
 	ZmqPubRawTx     string `toml:"zmqpubrawtx"`
 	ZmqPubHWM       int    `toml:"zmqpubhwm"`
-
-	// Private config
-	ZmqAutomaticReconnect bool          `toml:"-"`
-	ZmqDialerRetryTime    time.Duration `toml:"-"`
-	ZmqDialerMaxRetries   int           `toml:"-"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		ZmqAutomaticReconnect: true,
-		ZmqDialerMaxRetries:   10,
-		ZmqDialerRetryTime:    250 * time.Millisecond,
-		ZmqPubHWM:             1000,
+		ZmqPubBlockInfo: "",
+		ZmqPubTxInfo:    "",
+		ZmqPubRawBlock:  "",
+		ZmqPubRawTx:     "",
+		ZmqPubHWM:       1000,
 	}
 }
 
