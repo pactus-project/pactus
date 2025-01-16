@@ -44,7 +44,7 @@ func (b *basePub) HWM() int {
 // - Message body (varies based on provided parts)
 // - Sequence number (4 Bytes).
 func (b *basePub) makeTopicMsg(parts ...any) []byte {
-	result := make([]byte, 0, 64)
+	result := make([]byte, 0)
 
 	// Append Topic ID to the message (2 Bytes)
 	result = append(result, b.topic.Bytes()...)
