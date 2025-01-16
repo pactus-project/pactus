@@ -20,7 +20,23 @@ func newTxInfoPub(socket zmq4.Socket, logger *logger.SubLogger) Publisher {
 	}
 }
 
-func (*txInfoPub) onNewBlock(_ *block.Block) {
-	// TODO implement me
-	panic("implement me")
+func (t *txInfoPub) onNewBlock(blk *block.Block) {
+	for _, txn := range blk.Transactions() {
+		rawMsg := t.makeTopicMsg(txn.ID().Bytes(), blk.Height())
+		message := zmq4.NewMsg(rawMsg)
+
+		if err := t.zmqSocket.Send(message); err != nil {
+			t.logger.Error("zmq publish message error", "err", err, "publisher", t.TopicName())
+
+			continue
+		}
+
+		t.logger.Debug("zmq published message success",
+			"publisher", t.TopicName(),
+			"block_height", blk.Height(),
+			"tx_hash", txn.ID().String(),
+		)
+
+		t.seqNo++
+	}
 }
