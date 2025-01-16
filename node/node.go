@@ -167,7 +167,6 @@ func (n *Node) Stop() {
 	// Wait for network to stop
 	time.Sleep(1 * time.Second)
 
-	close(n.eventCh)
 	n.consMgr.Stop()
 	n.sync.Stop()
 	n.state.Close()
@@ -176,6 +175,8 @@ func (n *Node) Stop() {
 	n.http.StopServer()
 	n.jsonrpc.StopServer()
 	n.zeromq.Close()
+
+	close(n.eventCh)
 }
 
 // these methods are using by GUI.
