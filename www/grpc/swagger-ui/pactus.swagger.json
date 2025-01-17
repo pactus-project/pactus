@@ -1857,6 +1857,16 @@
       },
       "description": "Response message containing the mnemonic for wallet recovery."
     },
+    "pactusDecodeRawTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "transaction": {
+          "$ref": "#/definitions/pactusTransactionInfo",
+          "description": "The decoded transaction."
+        }
+      },
+      "description": "Response message containing the decoded transaction."
+    },
     "pactusGetAccountResponse": {
       "type": "object",
       "properties": {

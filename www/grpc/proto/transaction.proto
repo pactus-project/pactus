@@ -34,6 +34,10 @@ service Transaction {
   // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
   rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest)
       returns (GetRawTransactionResponse);
+
+  // DecodeRawTransaction accepts raw transaction and returnes decoded transaction.
+  rpc DecodeRawTransaction(DecodeRawTransactionRequest)
+      returns (DecodeRawTransactionResponse);
 }
 
 // Request message for retrieving transaction details.
@@ -260,4 +264,18 @@ enum TransactionVerbosity {
   TRANSACTION_DATA = 0;
   // Request detailed transaction information.
   TRANSACTION_INFO = 1;
+}
+
+// Request message for decoding a raw transaction.
+message DecodeRawTransactionRequest
+{
+  // The raw transaction data.
+  string raw_transaction = 1;
+}
+
+// Response message containing the decoded transaction.
+message DecodeRawTransactionResponse
+{
+  // The decoded transaction.
+  TransactionInfo transaction = 1;
 }

@@ -236,6 +236,37 @@ public final class TransactionGrpc {
     return getGetRawWithdrawTransactionMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.DecodeRawTransactionRequest,
+      pactus.transaction.TransactionOuterClass.DecodeRawTransactionResponse> getDecodeRawTransactionMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "DecodeRawTransaction",
+      requestType = pactus.transaction.TransactionOuterClass.DecodeRawTransactionRequest.class,
+      responseType = pactus.transaction.TransactionOuterClass.DecodeRawTransactionResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.DecodeRawTransactionRequest,
+      pactus.transaction.TransactionOuterClass.DecodeRawTransactionResponse> getDecodeRawTransactionMethod() {
+    io.grpc.MethodDescriptor<pactus.transaction.TransactionOuterClass.DecodeRawTransactionRequest, pactus.transaction.TransactionOuterClass.DecodeRawTransactionResponse> getDecodeRawTransactionMethod;
+    if ((getDecodeRawTransactionMethod = TransactionGrpc.getDecodeRawTransactionMethod) == null) {
+      synchronized (TransactionGrpc.class) {
+        if ((getDecodeRawTransactionMethod = TransactionGrpc.getDecodeRawTransactionMethod) == null) {
+          TransactionGrpc.getDecodeRawTransactionMethod = getDecodeRawTransactionMethod =
+              io.grpc.MethodDescriptor.<pactus.transaction.TransactionOuterClass.DecodeRawTransactionRequest, pactus.transaction.TransactionOuterClass.DecodeRawTransactionResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "DecodeRawTransaction"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.transaction.TransactionOuterClass.DecodeRawTransactionRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.transaction.TransactionOuterClass.DecodeRawTransactionResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new TransactionMethodDescriptorSupplier("DecodeRawTransaction"))
+              .build();
+        }
+      }
+    }
+    return getDecodeRawTransactionMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -360,6 +391,16 @@ public final class TransactionGrpc {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetRawWithdrawTransactionMethod(), responseObserver);
     }
 
+    /**
+     * <pre>
+     * DecodeRawTransaction accepts raw transaction and returnes decoded transaction.
+     * </pre>
+     */
+    public void decodeRawTransaction(pactus.transaction.TransactionOuterClass.DecodeRawTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.DecodeRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDecodeRawTransactionMethod(), responseObserver);
+    }
+
     @java.lang.Override public final io.grpc.ServerServiceDefinition bindService() {
       return io.grpc.ServerServiceDefinition.builder(getServiceDescriptor())
           .addMethod(
@@ -411,6 +452,13 @@ public final class TransactionGrpc {
                 pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest,
                 pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>(
                   this, METHODID_GET_RAW_WITHDRAW_TRANSACTION)))
+          .addMethod(
+            getDecodeRawTransactionMethod(),
+            io.grpc.stub.ServerCalls.asyncUnaryCall(
+              new MethodHandlers<
+                pactus.transaction.TransactionOuterClass.DecodeRawTransactionRequest,
+                pactus.transaction.TransactionOuterClass.DecodeRawTransactionResponse>(
+                  this, METHODID_DECODE_RAW_TRANSACTION)))
           .build();
     }
   }
@@ -511,6 +559,17 @@ public final class TransactionGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetRawWithdrawTransactionMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * DecodeRawTransaction accepts raw transaction and returnes decoded transaction.
+     * </pre>
+     */
+    public void decodeRawTransaction(pactus.transaction.TransactionOuterClass.DecodeRawTransactionRequest request,
+        io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.DecodeRawTransactionResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getDecodeRawTransactionMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -601,6 +660,16 @@ public final class TransactionGrpc {
     public pactus.transaction.TransactionOuterClass.GetRawTransactionResponse getRawWithdrawTransaction(pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetRawWithdrawTransactionMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * DecodeRawTransaction accepts raw transaction and returnes decoded transaction.
+     * </pre>
+     */
+    public pactus.transaction.TransactionOuterClass.DecodeRawTransactionResponse decodeRawTransaction(pactus.transaction.TransactionOuterClass.DecodeRawTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getDecodeRawTransactionMethod(), getCallOptions(), request);
     }
   }
 
@@ -700,6 +769,17 @@ public final class TransactionGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetRawWithdrawTransactionMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * DecodeRawTransaction accepts raw transaction and returnes decoded transaction.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.transaction.TransactionOuterClass.DecodeRawTransactionResponse> decodeRawTransaction(
+        pactus.transaction.TransactionOuterClass.DecodeRawTransactionRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getDecodeRawTransactionMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_TRANSACTION = 0;
@@ -709,6 +789,7 @@ public final class TransactionGrpc {
   private static final int METHODID_GET_RAW_BOND_TRANSACTION = 4;
   private static final int METHODID_GET_RAW_UNBOND_TRANSACTION = 5;
   private static final int METHODID_GET_RAW_WITHDRAW_TRANSACTION = 6;
+  private static final int METHODID_DECODE_RAW_TRANSACTION = 7;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -754,6 +835,10 @@ public final class TransactionGrpc {
         case METHODID_GET_RAW_WITHDRAW_TRANSACTION:
           serviceImpl.getRawWithdrawTransaction((pactus.transaction.TransactionOuterClass.GetRawWithdrawTransactionRequest) request,
               (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.GetRawTransactionResponse>) responseObserver);
+          break;
+        case METHODID_DECODE_RAW_TRANSACTION:
+          serviceImpl.decodeRawTransaction((pactus.transaction.TransactionOuterClass.DecodeRawTransactionRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.transaction.TransactionOuterClass.DecodeRawTransactionResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -823,6 +908,7 @@ public final class TransactionGrpc {
               .addMethod(getGetRawBondTransactionMethod())
               .addMethod(getGetRawUnbondTransactionMethod())
               .addMethod(getGetRawWithdrawTransactionMethod())
+              .addMethod(getDecodeRawTransactionMethod())
               .build();
         }
       }

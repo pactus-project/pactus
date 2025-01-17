@@ -222,3 +222,15 @@ class TransactionInfo(_message.Message):
     public_key: str
     signature: str
     def __init__(self, id: _Optional[str] = ..., data: _Optional[str] = ..., version: _Optional[int] = ..., lock_time: _Optional[int] = ..., value: _Optional[int] = ..., fee: _Optional[int] = ..., payload_type: _Optional[_Union[PayloadType, str]] = ..., transfer: _Optional[_Union[PayloadTransfer, _Mapping]] = ..., bond: _Optional[_Union[PayloadBond, _Mapping]] = ..., sortition: _Optional[_Union[PayloadSortition, _Mapping]] = ..., unbond: _Optional[_Union[PayloadUnbond, _Mapping]] = ..., withdraw: _Optional[_Union[PayloadWithdraw, _Mapping]] = ..., memo: _Optional[str] = ..., public_key: _Optional[str] = ..., signature: _Optional[str] = ...) -> None: ...
+
+class DecodeRawTransactionRequest(_message.Message):
+    __slots__ = ("raw_transaction",)
+    RAW_TRANSACTION_FIELD_NUMBER: _ClassVar[int]
+    raw_transaction: str
+    def __init__(self, raw_transaction: _Optional[str] = ...) -> None: ...
+
+class DecodeRawTransactionResponse(_message.Message):
+    __slots__ = ("transaction",)
+    TRANSACTION_FIELD_NUMBER: _ClassVar[int]
+    transaction: TransactionInfo
+    def __init__(self, transaction: _Optional[_Union[TransactionInfo, _Mapping]] = ...) -> None: ...

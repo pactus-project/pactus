@@ -299,3 +299,34 @@ func TestCalculateFee(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()
 }
+
+func TestDecodeRawTransaction(t *testing.T) {
+	td := setup(t, nil)
+	conn, client := td.transactionClient(t)
+
+	t.Run("Should decode valid raw transaction", func(t *testing.T) {
+		trx := td.GenerateTestTransferTx()
+		data, _ := trx.Bytes()
+		res, err := client.DecodeRawTransaction(context.Background(),
+			&pactus.DecodeRawTransactionRequest{RawTransaction: hex.EncodeToString(data)})
+		assert.NoError(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, trx.ID().String(), res.Transaction.Id)
+		assert.Equal(t, trx.Fee().ToNanoPAC(), res.Transaction.Fee)
+		assert.Equal(t, trx.Memo(), res.Transaction.Memo)
+		assert.Equal(t, trx.Payload().Type(), payload.Type(res.Transaction.PayloadType))
+		assert.Equal(t, trx.LockTime(), res.Transaction.LockTime)
+		assert.Equal(t, trx.Signature().String(), res.Transaction.Signature)
+		assert.Equal(t, trx.PublicKey().String(), res.Transaction.PublicKey)
+	})
+
+	t.Run("Should fail to decode invalid raw transaction", func(t *testing.T) {
+		res, err := client.DecodeRawTransaction(context.Background(),
+			&pactus.DecodeRawTransactionRequest{RawTransaction: "invalid_raw_transaction"})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}
