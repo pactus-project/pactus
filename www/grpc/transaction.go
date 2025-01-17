@@ -316,6 +316,7 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 func (s *transactionServer) DecodeRawTransaction(_ context.Context,
 	req *pactus.DecodeRawTransactionRequest,
 ) (*pactus.DecodeRawTransactionResponse, error) {
+	_ = s
 	b, err := hex.DecodeString(req.RawTransaction)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "invalid raw transaction")
