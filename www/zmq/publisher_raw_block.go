@@ -41,7 +41,7 @@ func (r *rawBlockPub) onNewBlock(blk *block.Block) {
 		return
 	}
 
-	r.logger.Debug("zmq published message success",
+	r.logger.Debug("ZMQ published the message successfully",
 		"publisher", r.TopicName(),
 		"block_height", blk.Height())
 
