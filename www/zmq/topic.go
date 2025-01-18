@@ -42,5 +42,5 @@ func TopicFromBytes(b []byte) Topic {
 		return 0
 	}
 
-	return Topic(binary.BigEndian.Uint16(b[:2]))
+	return Topic(binary.BigEndian.Uint16(b))
 }
