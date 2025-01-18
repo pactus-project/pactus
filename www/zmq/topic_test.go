@@ -1,8 +1,9 @@
 package zmq
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestTopicFromBytes(t *testing.T) {
@@ -14,5 +15,4 @@ func TestTopicFromBytes(t *testing.T) {
 
 	topic = TopicFromBytes(invalidRawTopic)
 	require.Equal(t, 0, int(topic))
-
 }
