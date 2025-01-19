@@ -2643,21 +2643,22 @@ Message has no fields.
         <td class="fw-bold">zmq_publishers[].topic</td>
         <td> string</td>
         <td>
-        
+        The topic associated with the publisher.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">zmq_publishers[].address</td>
         <td> string</td>
         <td>
-        
+        The address of the publisher.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">zmq_publishers[].hwm</td>
         <td> int32</td>
         <td>
-        
+        The high-water mark (HWM) for the publisher, indicating the
+maximum number of messages to queue before dropping older ones.
         </td>
       </tr>
          </tbody>

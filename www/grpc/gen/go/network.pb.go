@@ -337,9 +337,13 @@ type ZMQPublisherInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Topic   string `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
+	// The topic associated with the publisher.
+	Topic string `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
+	// The address of the publisher.
 	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
-	Hwm     int32  `protobuf:"varint,3,opt,name=hwm,proto3" json:"hwm,omitempty"`
+	// The high-water mark (HWM) for the publisher, indicating the
+	// maximum number of messages to queue before dropping older ones.
+	Hwm int32 `protobuf:"varint,3,opt,name=hwm,proto3" json:"hwm,omitempty"`
 }
 
 func (x *ZMQPublisherInfo) Reset() {

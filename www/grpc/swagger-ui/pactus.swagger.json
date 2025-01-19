@@ -2845,14 +2845,17 @@
       "type": "object",
       "properties": {
         "topic": {
-          "type": "string"
+          "type": "string",
+          "description": "The topic associated with the publisher."
         },
         "address": {
-          "type": "string"
+          "type": "string",
+          "description": "The address of the publisher."
         },
         "hwm": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "description": "The high-water mark (HWM) for the publisher, indicating the\nmaximum number of messages to queue before dropping older ones."
         }
       }
     },

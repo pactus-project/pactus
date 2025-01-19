@@ -5265,11 +5265,19 @@ public final class NetworkOuterClass {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * The topic associated with the publisher.
+     * </pre>
+     *
      * <code>string topic = 1 [json_name = "topic"];</code>
      * @return The topic.
      */
     java.lang.String getTopic();
     /**
+     * <pre>
+     * The topic associated with the publisher.
+     * </pre>
+     *
      * <code>string topic = 1 [json_name = "topic"];</code>
      * @return The bytes for topic.
      */
@@ -5277,11 +5285,19 @@ public final class NetworkOuterClass {
         getTopicBytes();
 
     /**
+     * <pre>
+     * The address of the publisher.
+     * </pre>
+     *
      * <code>string address = 2 [json_name = "address"];</code>
      * @return The address.
      */
     java.lang.String getAddress();
     /**
+     * <pre>
+     * The address of the publisher.
+     * </pre>
+     *
      * <code>string address = 2 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -5289,6 +5305,11 @@ public final class NetworkOuterClass {
         getAddressBytes();
 
     /**
+     * <pre>
+     * The high-water mark (HWM) for the publisher, indicating the
+     * maximum number of messages to queue before dropping older ones.
+     * </pre>
+     *
      * <code>int32 hwm = 3 [json_name = "hwm"];</code>
      * @return The hwm.
      */
@@ -5339,6 +5360,10 @@ public final class NetworkOuterClass {
     public static final int TOPIC_FIELD_NUMBER = 1;
     private volatile java.lang.Object topic_;
     /**
+     * <pre>
+     * The topic associated with the publisher.
+     * </pre>
+     *
      * <code>string topic = 1 [json_name = "topic"];</code>
      * @return The topic.
      */
@@ -5356,6 +5381,10 @@ public final class NetworkOuterClass {
       }
     }
     /**
+     * <pre>
+     * The topic associated with the publisher.
+     * </pre>
+     *
      * <code>string topic = 1 [json_name = "topic"];</code>
      * @return The bytes for topic.
      */
@@ -5377,6 +5406,10 @@ public final class NetworkOuterClass {
     public static final int ADDRESS_FIELD_NUMBER = 2;
     private volatile java.lang.Object address_;
     /**
+     * <pre>
+     * The address of the publisher.
+     * </pre>
+     *
      * <code>string address = 2 [json_name = "address"];</code>
      * @return The address.
      */
@@ -5394,6 +5427,10 @@ public final class NetworkOuterClass {
       }
     }
     /**
+     * <pre>
+     * The address of the publisher.
+     * </pre>
+     *
      * <code>string address = 2 [json_name = "address"];</code>
      * @return The bytes for address.
      */
@@ -5415,6 +5452,11 @@ public final class NetworkOuterClass {
     public static final int HWM_FIELD_NUMBER = 3;
     private int hwm_;
     /**
+     * <pre>
+     * The high-water mark (HWM) for the publisher, indicating the
+     * maximum number of messages to queue before dropping older ones.
+     * </pre>
+     *
      * <code>int32 hwm = 3 [json_name = "hwm"];</code>
      * @return The hwm.
      */
@@ -5784,6 +5826,10 @@ public final class NetworkOuterClass {
 
       private java.lang.Object topic_ = "";
       /**
+       * <pre>
+       * The topic associated with the publisher.
+       * </pre>
+       *
        * <code>string topic = 1 [json_name = "topic"];</code>
        * @return The topic.
        */
@@ -5800,6 +5846,10 @@ public final class NetworkOuterClass {
         }
       }
       /**
+       * <pre>
+       * The topic associated with the publisher.
+       * </pre>
+       *
        * <code>string topic = 1 [json_name = "topic"];</code>
        * @return The bytes for topic.
        */
@@ -5817,6 +5867,10 @@ public final class NetworkOuterClass {
         }
       }
       /**
+       * <pre>
+       * The topic associated with the publisher.
+       * </pre>
+       *
        * <code>string topic = 1 [json_name = "topic"];</code>
        * @param value The topic to set.
        * @return This builder for chaining.
@@ -5832,6 +5886,10 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * The topic associated with the publisher.
+       * </pre>
+       *
        * <code>string topic = 1 [json_name = "topic"];</code>
        * @return This builder for chaining.
        */
@@ -5842,6 +5900,10 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * The topic associated with the publisher.
+       * </pre>
+       *
        * <code>string topic = 1 [json_name = "topic"];</code>
        * @param value The bytes for topic to set.
        * @return This builder for chaining.
@@ -5860,6 +5922,10 @@ public final class NetworkOuterClass {
 
       private java.lang.Object address_ = "";
       /**
+       * <pre>
+       * The address of the publisher.
+       * </pre>
+       *
        * <code>string address = 2 [json_name = "address"];</code>
        * @return The address.
        */
@@ -5876,6 +5942,10 @@ public final class NetworkOuterClass {
         }
       }
       /**
+       * <pre>
+       * The address of the publisher.
+       * </pre>
+       *
        * <code>string address = 2 [json_name = "address"];</code>
        * @return The bytes for address.
        */
@@ -5893,6 +5963,10 @@ public final class NetworkOuterClass {
         }
       }
       /**
+       * <pre>
+       * The address of the publisher.
+       * </pre>
+       *
        * <code>string address = 2 [json_name = "address"];</code>
        * @param value The address to set.
        * @return This builder for chaining.
@@ -5908,6 +5982,10 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * The address of the publisher.
+       * </pre>
+       *
        * <code>string address = 2 [json_name = "address"];</code>
        * @return This builder for chaining.
        */
@@ -5918,6 +5996,10 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * The address of the publisher.
+       * </pre>
+       *
        * <code>string address = 2 [json_name = "address"];</code>
        * @param value The bytes for address to set.
        * @return This builder for chaining.
@@ -5936,6 +6018,11 @@ public final class NetworkOuterClass {
 
       private int hwm_ ;
       /**
+       * <pre>
+       * The high-water mark (HWM) for the publisher, indicating the
+       * maximum number of messages to queue before dropping older ones.
+       * </pre>
+       *
        * <code>int32 hwm = 3 [json_name = "hwm"];</code>
        * @return The hwm.
        */
@@ -5944,6 +6031,11 @@ public final class NetworkOuterClass {
         return hwm_;
       }
       /**
+       * <pre>
+       * The high-water mark (HWM) for the publisher, indicating the
+       * maximum number of messages to queue before dropping older ones.
+       * </pre>
+       *
        * <code>int32 hwm = 3 [json_name = "hwm"];</code>
        * @param value The hwm to set.
        * @return This builder for chaining.
@@ -5955,6 +6047,11 @@ public final class NetworkOuterClass {
         return this;
       }
       /**
+       * <pre>
+       * The high-water mark (HWM) for the publisher, indicating the
+       * maximum number of messages to queue before dropping older ones.
+       * </pre>
+       *
        * <code>int32 hwm = 3 [json_name = "hwm"];</code>
        * @return This builder for chaining.
        */
