@@ -3,8 +3,6 @@ package http
 import (
 	"context"
 	"fmt"
-	"github.com/pactus-project/pactus/www/zmq"
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,7 +16,9 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/www/grpc"
+	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type testData struct {

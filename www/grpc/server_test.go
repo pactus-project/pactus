@@ -3,7 +3,6 @@ package grpc
 import (
 	"context"
 	"fmt"
-	"github.com/pactus-project/pactus/www/zmq"
 	"net"
 	"os"
 	"path/filepath"
@@ -19,6 +18,7 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
