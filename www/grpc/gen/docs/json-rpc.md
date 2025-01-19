@@ -2683,6 +2683,34 @@ Parameters has no fields.
         Number of outbound connections.
         </td>
       </tr>
+         <tr>
+    <td class="fw-bold">zmq_publishers</td>
+    <td>repeated object</td>
+    <td>
+    List of zeromq publishers
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">zmq_publishers[].topic</td>
+        <td> string</td>
+        <td>
+        
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">zmq_publishers[].address</td>
+        <td> string</td>
+        <td>
+        
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">zmq_publishers[].hwm</td>
+        <td> numeric</td>
+        <td>
+        
+        </td>
+      </tr>
          </tbody>
 </table>
 

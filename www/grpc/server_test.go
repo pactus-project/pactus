@@ -2,6 +2,8 @@ package grpc
 
 import (
 	"context"
+	"fmt"
+	"github.com/pactus-project/pactus/www/zmq"
 	"net"
 	"os"
 	"path/filepath"
@@ -79,10 +81,15 @@ func setup(t *testing.T, conf *Config) *testData {
 	mockWalletMgrConf.WalletsDir = conf.WalletsDir
 	mockWalletMgrConf.ChainType = mockState.Genesis().ChainType()
 
+	zmqServer, err := zmq.New(context.TODO(), &zmq.Config{
+		ZmqPubTxInfo: fmt.Sprintf("tcp://localhost:%d", testsuite.FindFreePort()),
+	}, nil)
+	require.NoError(t, err)
+
 	server := NewServer(
 		conf, mockState,
 		mockSync, mockNet,
-		mockConsMgr, wallet.NewWalletManager(mockWalletMgrConf),
+		mockConsMgr, wallet.NewWalletManager(mockWalletMgrConf), zmqServer,
 	)
 	err = server.startListening(listener)
 	assert.NoError(t, err)

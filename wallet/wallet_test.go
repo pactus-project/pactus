@@ -47,7 +47,7 @@ func setup(t *testing.T) *testData {
 	gRPCServer := grpc.NewServer(
 		grpcConf, mockState,
 		nil, nil,
-		nil, wallet.NewWalletManager(walletMgrConf),
+		nil, wallet.NewWalletManager(walletMgrConf), nil,
 	)
 
 	assert.NoError(t, gRPCServer.StartServer())

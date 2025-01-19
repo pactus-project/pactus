@@ -31,7 +31,7 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		s.logger.Warn("failed to get clock offset", "err", err)
 	}
 
-	return &pactus.GetNodeInfoResponse{
+	resp := &pactus.GetNodeInfoResponse{
 		Moniker:       s.sync.Moniker(),
 		Agent:         version.NodeAgent.String(),
 		PeerId:        hex.EncodeToString([]byte(s.sync.SelfID())),
@@ -47,7 +47,21 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 			InboundConnections:  uint64(s.net.NumInbound()),
 			OutboundConnections: uint64(s.net.NumOutbound()),
 		},
-	}, nil
+		ZmqPublishers: make([]*pactus.ZMQPublisherInfo, 0),
+	}
+
+	publishers := s.zmq.Publishers()
+	if len(publishers) > 0 {
+		for _, publisher := range publishers {
+			resp.ZmqPublishers = append(resp.ZmqPublishers, &pactus.ZMQPublisherInfo{
+				Topic:   publisher.TopicName(),
+				Address: publisher.Address(),
+				Hwm:     int32(publisher.HWM()),
+			})
+		}
+	}
+
+	return resp, nil
 }
 
 func (s *networkServer) GetNetworkInfo(_ context.Context,

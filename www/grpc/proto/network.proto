@@ -58,6 +58,14 @@ message GetNodeInfoResponse {
   double clock_offset = 13;
   // Information about the node's connections.
   ConnectionInfo connection_info = 14;
+  // List of zeromq publishers
+  repeated ZMQPublisherInfo zmq_publishers = 15;
+}
+
+message ZMQPublisherInfo {
+  string topic = 1;
+  string address = 2;
+  int32 hwm = 3;
 }
 
 // Information about a peer in the network.

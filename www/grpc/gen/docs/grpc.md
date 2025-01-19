@@ -2632,6 +2632,34 @@ Message has no fields.
         Number of outbound connections.
         </td>
       </tr>
+         <tr>
+    <td class="fw-bold">zmq_publishers</td>
+    <td>repeated ZMQPublisherInfo</td>
+    <td>
+    List of zeromq publishers
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">zmq_publishers[].topic</td>
+        <td> string</td>
+        <td>
+        
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">zmq_publishers[].address</td>
+        <td> string</td>
+        <td>
+        
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">zmq_publishers[].hwm</td>
+        <td> int32</td>
+        <td>
+        
+        </td>
+      </tr>
          </tbody>
 </table>
 
