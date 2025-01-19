@@ -53,11 +53,24 @@ const GetNodeInfoResponse$json = const {
     const {'1': 'protocols', '3': 9, '4': 3, '5': 9, '10': 'protocols'},
     const {'1': 'clock_offset', '3': 13, '4': 1, '5': 1, '10': 'clockOffset'},
     const {'1': 'connection_info', '3': 14, '4': 1, '5': 11, '6': '.pactus.ConnectionInfo', '10': 'connectionInfo'},
+    const {'1': 'zmq_publishers', '3': 15, '4': 3, '5': 11, '6': '.pactus.ZMQPublisherInfo', '10': 'zmqPublishers'},
   ],
 };
 
 /// Descriptor for `GetNodeInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAlSBnBlZXJJZBIdCgpzdGFydGVkX2F0GAQgASgEUglzdGFydGVkQXQSIgoMcmVhY2hhYmlsaXR5GAUgASgJUgxyZWFjaGFiaWxpdHkSGgoIc2VydmljZXMYBiABKAVSCHNlcnZpY2VzEiUKDnNlcnZpY2VzX25hbWVzGAcgASgJUg1zZXJ2aWNlc05hbWVzEh8KC2xvY2FsX2FkZHJzGAggAygJUgpsb2NhbEFkZHJzEhwKCXByb3RvY29scxgJIAMoCVIJcHJvdG9jb2xzEiEKDGNsb2NrX29mZnNldBgNIAEoAVILY2xvY2tPZmZzZXQSPwoPY29ubmVjdGlvbl9pbmZvGA4gASgLMhYucGFjdHVzLkNvbm5lY3Rpb25JbmZvUg5jb25uZWN0aW9uSW5mbw==');
+final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decode('ChNHZXROb2RlSW5mb1Jlc3BvbnNlEhgKB21vbmlrZXIYASABKAlSB21vbmlrZXISFAoFYWdlbnQYAiABKAlSBWFnZW50EhcKB3BlZXJfaWQYAyABKAlSBnBlZXJJZBIdCgpzdGFydGVkX2F0GAQgASgEUglzdGFydGVkQXQSIgoMcmVhY2hhYmlsaXR5GAUgASgJUgxyZWFjaGFiaWxpdHkSGgoIc2VydmljZXMYBiABKAVSCHNlcnZpY2VzEiUKDnNlcnZpY2VzX25hbWVzGAcgASgJUg1zZXJ2aWNlc05hbWVzEh8KC2xvY2FsX2FkZHJzGAggAygJUgpsb2NhbEFkZHJzEhwKCXByb3RvY29scxgJIAMoCVIJcHJvdG9jb2xzEiEKDGNsb2NrX29mZnNldBgNIAEoAVILY2xvY2tPZmZzZXQSPwoPY29ubmVjdGlvbl9pbmZvGA4gASgLMhYucGFjdHVzLkNvbm5lY3Rpb25JbmZvUg5jb25uZWN0aW9uSW5mbxI/Cg56bXFfcHVibGlzaGVycxgPIAMoCzIYLnBhY3R1cy5aTVFQdWJsaXNoZXJJbmZvUg16bXFQdWJsaXNoZXJz');
+@$core.Deprecated('Use zMQPublisherInfoDescriptor instead')
+const ZMQPublisherInfo$json = const {
+  '1': 'ZMQPublisherInfo',
+  '2': const [
+    const {'1': 'topic', '3': 1, '4': 1, '5': 9, '10': 'topic'},
+    const {'1': 'address', '3': 2, '4': 1, '5': 9, '10': 'address'},
+    const {'1': 'hwm', '3': 3, '4': 1, '5': 5, '10': 'hwm'},
+  ],
+};
+
+/// Descriptor for `ZMQPublisherInfo`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List zMQPublisherInfoDescriptor = $convert.base64Decode('ChBaTVFQdWJsaXNoZXJJbmZvEhQKBXRvcGljGAEgASgJUgV0b3BpYxIYCgdhZGRyZXNzGAIgASgJUgdhZGRyZXNzEhAKA2h3bRgDIAEoBVIDaHdt');
 @$core.Deprecated('Use peerInfoDescriptor instead')
 const PeerInfo$json = const {
   '1': 'PeerInfo',
@@ -162,6 +175,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> NetworkSer
   '.pactus.GetNodeInfoRequest': GetNodeInfoRequest$json,
   '.pactus.GetNodeInfoResponse': GetNodeInfoResponse$json,
   '.pactus.ConnectionInfo': ConnectionInfo$json,
+  '.pactus.ZMQPublisherInfo': ZMQPublisherInfo$json,
 };
 
 /// Descriptor for `Network`. Decode as a `google.protobuf.ServiceDescriptorProto`.

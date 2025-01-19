@@ -20,6 +20,7 @@ func TestNodeInfo(t *testing.T) {
 
 	assert.Equal(t, 200, w.Code)
 	assert.Contains(t, w.Body.String(), version.NodeAgent.String())
+	assert.Contains(t, w.Body.String(), "transaction_info") // For ZMQ
 
 	td.StopServers()
 }

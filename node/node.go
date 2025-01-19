@@ -95,7 +95,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	grpcServer := grpc.NewServer(conf.GRPC, state, syn, net, consMgr, walletMgr)
+	grpcServer := grpc.NewServer(conf.GRPC, state, syn, net, consMgr, walletMgr, zeromqServer)
 	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
 	jsonrpcServer := jsonrpc.NewServer(conf.JSONRPC)
 
