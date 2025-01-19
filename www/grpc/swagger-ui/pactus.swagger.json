@@ -2141,7 +2141,7 @@
             "type": "object",
             "$ref": "#/definitions/pactusZMQPublisherInfo"
           },
-          "title": "List of zeromq publishers"
+          "description": "List of active ZeroMQ publishers."
         }
       },
       "description": "Response message containing information about a specific node in the network."

@@ -2597,7 +2597,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * List of zeromq publishers
+     * List of active ZeroMQ publishers.
      * </pre>
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -2606,7 +2606,7 @@ public final class NetworkOuterClass {
         getZmqPublishersList();
     /**
      * <pre>
-     * List of zeromq publishers
+     * List of active ZeroMQ publishers.
      * </pre>
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -2614,7 +2614,7 @@ public final class NetworkOuterClass {
     pactus.network.NetworkOuterClass.ZMQPublisherInfo getZmqPublishers(int index);
     /**
      * <pre>
-     * List of zeromq publishers
+     * List of active ZeroMQ publishers.
      * </pre>
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -2622,7 +2622,7 @@ public final class NetworkOuterClass {
     int getZmqPublishersCount();
     /**
      * <pre>
-     * List of zeromq publishers
+     * List of active ZeroMQ publishers.
      * </pre>
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -2631,7 +2631,7 @@ public final class NetworkOuterClass {
         getZmqPublishersOrBuilderList();
     /**
      * <pre>
-     * List of zeromq publishers
+     * List of active ZeroMQ publishers.
      * </pre>
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -3110,7 +3110,7 @@ public final class NetworkOuterClass {
     private java.util.List<pactus.network.NetworkOuterClass.ZMQPublisherInfo> zmqPublishers_;
     /**
      * <pre>
-     * List of zeromq publishers
+     * List of active ZeroMQ publishers.
      * </pre>
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -3121,7 +3121,7 @@ public final class NetworkOuterClass {
     }
     /**
      * <pre>
-     * List of zeromq publishers
+     * List of active ZeroMQ publishers.
      * </pre>
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -3133,7 +3133,7 @@ public final class NetworkOuterClass {
     }
     /**
      * <pre>
-     * List of zeromq publishers
+     * List of active ZeroMQ publishers.
      * </pre>
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -3144,7 +3144,7 @@ public final class NetworkOuterClass {
     }
     /**
      * <pre>
-     * List of zeromq publishers
+     * List of active ZeroMQ publishers.
      * </pre>
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -3155,7 +3155,7 @@ public final class NetworkOuterClass {
     }
     /**
      * <pre>
-     * List of zeromq publishers
+     * List of active ZeroMQ publishers.
      * </pre>
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -4899,7 +4899,7 @@ public final class NetworkOuterClass {
 
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -4913,7 +4913,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -4927,7 +4927,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -4941,7 +4941,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -4962,7 +4962,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -4980,7 +4980,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -5000,7 +5000,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -5021,7 +5021,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -5039,7 +5039,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -5057,7 +5057,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -5076,7 +5076,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -5093,7 +5093,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -5110,7 +5110,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -5121,7 +5121,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -5135,7 +5135,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -5150,7 +5150,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -5161,7 +5161,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
@@ -5173,7 +5173,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * List of zeromq publishers
+       * List of active ZeroMQ publishers.
        * </pre>
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>

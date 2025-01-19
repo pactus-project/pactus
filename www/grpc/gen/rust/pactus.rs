@@ -868,7 +868,7 @@ pub struct GetNodeInfoResponse {
     /// Information about the node's connections.
     #[prost(message, optional, tag="14")]
     pub connection_info: ::core::option::Option<ConnectionInfo>,
-    /// List of zeromq publishers
+    /// List of active ZeroMQ publishers.
     #[prost(message, repeated, tag="15")]
     pub zmq_publishers: ::prost::alloc::vec::Vec<ZmqPublisherInfo>,
 }

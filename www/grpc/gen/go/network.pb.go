@@ -212,7 +212,7 @@ type GetNodeInfoResponse struct {
 	ClockOffset float64 `protobuf:"fixed64,13,opt,name=clock_offset,json=clockOffset,proto3" json:"clock_offset,omitempty"`
 	// Information about the node's connections.
 	ConnectionInfo *ConnectionInfo `protobuf:"bytes,14,opt,name=connection_info,json=connectionInfo,proto3" json:"connection_info,omitempty"`
-	// List of zeromq publishers
+	// List of active ZeroMQ publishers.
 	ZmqPublishers []*ZMQPublisherInfo `protobuf:"bytes,15,rep,name=zmq_publishers,json=zmqPublishers,proto3" json:"zmq_publishers,omitempty"`
 }
 

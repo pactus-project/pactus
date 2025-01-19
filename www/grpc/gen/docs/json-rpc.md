@@ -2687,7 +2687,7 @@ Parameters has no fields.
     <td class="fw-bold">zmq_publishers</td>
     <td>repeated object</td>
     <td>
-    List of zeromq publishers
+    List of active ZeroMQ publishers.
     </td>
   </tr>
      <tr>
