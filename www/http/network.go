@@ -111,7 +111,7 @@ func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 
 	tmk.addRowString("ZeroMQ Publishers", "---")
 	for i, p := range res.ZmqPublishers {
-		tmk.addRowString(fmt.Sprint(i), fmt.Sprintf("%s - %s - %d", p.Topic, p.Address, p.Hwm))
+		tmk.addRowString(fmt.Sprint(i), fmt.Sprintf("%s, %s, %d", p.Topic, p.Address, p.Hwm))
 	}
 
 	tmk.addRowString("Local Addresses", "---")
