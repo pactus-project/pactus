@@ -14,10 +14,10 @@ import (
 // During development, set the Meta field to "beta".
 var NodeVersion = Version{
 	Major: 1,
-	Minor: 7,
+	Minor: 8,
 	Patch: 0,
-	Meta:  "",
-	Alias: "Seoul",
+	Meta:  "beta",
+	Alias: "",
 }
 
 // Version defines the version of Pactus software.
