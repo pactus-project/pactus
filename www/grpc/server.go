@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"github.com/pactus-project/pactus/www/zmq"
 	"google.golang.org/grpc"
 )
 
@@ -26,12 +27,14 @@ type Server struct {
 	sync      sync.Synchronizer
 	consMgr   consensus.ManagerReader
 	walletMgr *wallet.Manager
+	zmq       *zmq.Server
 	logger    *logger.SubLogger
 }
 
 func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
 	network network.Network, consMgr consensus.ManagerReader,
 	walletMgr *wallet.Manager,
+	zmq *zmq.Server,
 ) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -44,6 +47,7 @@ func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
 		net:       network,
 		consMgr:   consMgr,
 		walletMgr: walletMgr,
+		zmq:       zmq,
 		logger:    logger.NewSubLogger("_grpc", nil),
 	}
 }

@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"os"
 	"path/filepath"
@@ -17,6 +18,7 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
@@ -79,10 +81,15 @@ func setup(t *testing.T, conf *Config) *testData {
 	mockWalletMgrConf.WalletsDir = conf.WalletsDir
 	mockWalletMgrConf.ChainType = mockState.Genesis().ChainType()
 
+	zmqServer, err := zmq.New(context.TODO(), &zmq.Config{
+		ZmqPubTxInfo: fmt.Sprintf("tcp://localhost:%d", testsuite.FindFreePort()),
+	}, nil)
+	require.NoError(t, err)
+
 	server := NewServer(
 		conf, mockState,
 		mockSync, mockNet,
-		mockConsMgr, wallet.NewWalletManager(mockWalletMgrConf),
+		mockConsMgr, wallet.NewWalletManager(mockWalletMgrConf), zmqServer,
 	)
 	err = server.startListening(listener)
 	assert.NoError(t, err)

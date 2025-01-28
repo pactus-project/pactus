@@ -185,6 +185,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ..pPS(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'protocols')
     ..a<$core.double>(13, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'clockOffset', $pb.PbFieldType.OD)
     ..aOM<ConnectionInfo>(14, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'connectionInfo', subBuilder: ConnectionInfo.create)
+    ..pc<ZMQPublisherInfo>(15, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'zmqPublishers', $pb.PbFieldType.PM, subBuilder: ZMQPublisherInfo.create)
     ..hasRequiredFields = false
   ;
 
@@ -201,6 +202,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     $core.Iterable<$core.String>? protocols,
     $core.double? clockOffset,
     ConnectionInfo? connectionInfo,
+    $core.Iterable<ZMQPublisherInfo>? zmqPublishers,
   }) {
     final _result = create();
     if (moniker != null) {
@@ -235,6 +237,9 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     }
     if (connectionInfo != null) {
       _result.connectionInfo = connectionInfo;
+    }
+    if (zmqPublishers != null) {
+      _result.zmqPublishers.addAll(zmqPublishers);
     }
     return _result;
   }
@@ -347,6 +352,84 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   void clearConnectionInfo() => clearField(14);
   @$pb.TagNumber(14)
   ConnectionInfo ensureConnectionInfo() => $_ensure(10);
+
+  @$pb.TagNumber(15)
+  $core.List<ZMQPublisherInfo> get zmqPublishers => $_getList(11);
+}
+
+class ZMQPublisherInfo extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ZMQPublisherInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'topic')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
+    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'hwm', $pb.PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
+
+  ZMQPublisherInfo._() : super();
+  factory ZMQPublisherInfo({
+    $core.String? topic,
+    $core.String? address,
+    $core.int? hwm,
+  }) {
+    final _result = create();
+    if (topic != null) {
+      _result.topic = topic;
+    }
+    if (address != null) {
+      _result.address = address;
+    }
+    if (hwm != null) {
+      _result.hwm = hwm;
+    }
+    return _result;
+  }
+  factory ZMQPublisherInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory ZMQPublisherInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  ZMQPublisherInfo clone() => ZMQPublisherInfo()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  ZMQPublisherInfo copyWith(void Function(ZMQPublisherInfo) updates) => super.copyWith((message) => updates(message as ZMQPublisherInfo)) as ZMQPublisherInfo; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static ZMQPublisherInfo create() => ZMQPublisherInfo._();
+  ZMQPublisherInfo createEmptyInstance() => create();
+  static $pb.PbList<ZMQPublisherInfo> createRepeated() => $pb.PbList<ZMQPublisherInfo>();
+  @$core.pragma('dart2js:noInline')
+  static ZMQPublisherInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ZMQPublisherInfo>(create);
+  static ZMQPublisherInfo? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get topic => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set topic($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasTopic() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearTopic() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $core.String get address => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set address($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasAddress() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAddress() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.int get hwm => $_getIZ(2);
+  @$pb.TagNumber(3)
+  set hwm($core.int v) { $_setSignedInt32(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasHwm() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearHwm() => clearField(3);
 }
 
 class PeerInfo extends $pb.GeneratedMessage {

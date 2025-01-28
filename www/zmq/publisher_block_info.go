@@ -33,9 +33,11 @@ func (b *blockInfoPub) onNewBlock(blk *block.Block) {
 
 	if err := b.zmqSocket.Send(message); err != nil {
 		b.logger.Error("zmq publish message error", "err", err, "publisher", b.TopicName())
+
+		return
 	}
 
-	b.logger.Debug("zmq published message success",
+	b.logger.Debug("ZMQ published the message successfully",
 		"publisher", b.TopicName(),
 		"block_height", blk.Height())
 

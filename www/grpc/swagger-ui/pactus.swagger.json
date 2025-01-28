@@ -2144,6 +2144,14 @@
         "connectionInfo": {
           "$ref": "#/definitions/pactusConnectionInfo",
           "description": "Information about the node's connections."
+        },
+        "zmqPublishers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusZMQPublisherInfo"
+          },
+          "description": "List of active ZeroMQ publishers."
         }
       },
       "description": "Response message containing information about a specific node in the network."
@@ -2842,6 +2850,24 @@
       ],
       "default": "VOTE_UNKNOWN",
       "description": "Enumeration for types of votes.\n\n - VOTE_UNKNOWN: Unknown vote type.\n - VOTE_PREPARE: Prepare vote type.\n - VOTE_PRECOMMIT: Precommit vote type.\n - VOTE_CHANGE_PROPOSER: Change proposer vote type."
+    },
+    "pactusZMQPublisherInfo": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "description": "The topic associated with the publisher."
+        },
+        "address": {
+          "type": "string",
+          "description": "The address of the publisher."
+        },
+        "hwm": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The high-water mark (HWM) for the publisher, indicating the\nmaximum number of messages to queue before dropping older ones."
+        }
+      }
     },
     "protobufAny": {
       "type": "object",

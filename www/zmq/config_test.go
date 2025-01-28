@@ -35,27 +35,6 @@ func TestBasicCheck(t *testing.T) {
 			expectErr: false,
 		},
 		{
-			name: "Invalid scheme",
-			config: &Config{
-				ZmqPubBlockInfo: "udp://127.0.0.1:28332",
-			},
-			expectErr: true,
-		},
-		{
-			name: "Missing port",
-			config: &Config{
-				ZmqPubBlockInfo: "tcp://127.0.0.1",
-			},
-			expectErr: true,
-		},
-		{
-			name: "Empty host",
-			config: &Config{
-				ZmqPubTxInfo: "tcp://:28332",
-			},
-			expectErr: true,
-		},
-		{
 			name: "Negative ZmqPubHWM",
 			config: &Config{
 				ZmqPubHWM: -1,

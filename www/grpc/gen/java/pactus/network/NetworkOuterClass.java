@@ -2594,6 +2594,50 @@ public final class NetworkOuterClass {
      * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
      */
     pactus.network.NetworkOuterClass.ConnectionInfoOrBuilder getConnectionInfoOrBuilder();
+
+    /**
+     * <pre>
+     * List of active ZeroMQ publishers.
+     * </pre>
+     *
+     * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+     */
+    java.util.List<pactus.network.NetworkOuterClass.ZMQPublisherInfo> 
+        getZmqPublishersList();
+    /**
+     * <pre>
+     * List of active ZeroMQ publishers.
+     * </pre>
+     *
+     * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+     */
+    pactus.network.NetworkOuterClass.ZMQPublisherInfo getZmqPublishers(int index);
+    /**
+     * <pre>
+     * List of active ZeroMQ publishers.
+     * </pre>
+     *
+     * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+     */
+    int getZmqPublishersCount();
+    /**
+     * <pre>
+     * List of active ZeroMQ publishers.
+     * </pre>
+     *
+     * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+     */
+    java.util.List<? extends pactus.network.NetworkOuterClass.ZMQPublisherInfoOrBuilder> 
+        getZmqPublishersOrBuilderList();
+    /**
+     * <pre>
+     * List of active ZeroMQ publishers.
+     * </pre>
+     *
+     * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+     */
+    pactus.network.NetworkOuterClass.ZMQPublisherInfoOrBuilder getZmqPublishersOrBuilder(
+        int index);
   }
   /**
    * <pre>
@@ -2619,6 +2663,7 @@ public final class NetworkOuterClass {
       servicesNames_ = "";
       localAddrs_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       protocols_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      zmqPublishers_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -3061,6 +3106,66 @@ public final class NetworkOuterClass {
       return getConnectionInfo();
     }
 
+    public static final int ZMQ_PUBLISHERS_FIELD_NUMBER = 15;
+    private java.util.List<pactus.network.NetworkOuterClass.ZMQPublisherInfo> zmqPublishers_;
+    /**
+     * <pre>
+     * List of active ZeroMQ publishers.
+     * </pre>
+     *
+     * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+     */
+    @java.lang.Override
+    public java.util.List<pactus.network.NetworkOuterClass.ZMQPublisherInfo> getZmqPublishersList() {
+      return zmqPublishers_;
+    }
+    /**
+     * <pre>
+     * List of active ZeroMQ publishers.
+     * </pre>
+     *
+     * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends pactus.network.NetworkOuterClass.ZMQPublisherInfoOrBuilder> 
+        getZmqPublishersOrBuilderList() {
+      return zmqPublishers_;
+    }
+    /**
+     * <pre>
+     * List of active ZeroMQ publishers.
+     * </pre>
+     *
+     * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+     */
+    @java.lang.Override
+    public int getZmqPublishersCount() {
+      return zmqPublishers_.size();
+    }
+    /**
+     * <pre>
+     * List of active ZeroMQ publishers.
+     * </pre>
+     *
+     * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+     */
+    @java.lang.Override
+    public pactus.network.NetworkOuterClass.ZMQPublisherInfo getZmqPublishers(int index) {
+      return zmqPublishers_.get(index);
+    }
+    /**
+     * <pre>
+     * List of active ZeroMQ publishers.
+     * </pre>
+     *
+     * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+     */
+    @java.lang.Override
+    public pactus.network.NetworkOuterClass.ZMQPublisherInfoOrBuilder getZmqPublishersOrBuilder(
+        int index) {
+      return zmqPublishers_.get(index);
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -3107,6 +3212,9 @@ public final class NetworkOuterClass {
       }
       if (connectionInfo_ != null) {
         output.writeMessage(14, getConnectionInfo());
+      }
+      for (int i = 0; i < zmqPublishers_.size(); i++) {
+        output.writeMessage(15, zmqPublishers_.get(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -3164,6 +3272,10 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(14, getConnectionInfo());
       }
+      for (int i = 0; i < zmqPublishers_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(15, zmqPublishers_.get(i));
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -3205,6 +3317,8 @@ public final class NetworkOuterClass {
         if (!getConnectionInfo()
             .equals(other.getConnectionInfo())) return false;
       }
+      if (!getZmqPublishersList()
+          .equals(other.getZmqPublishersList())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -3245,6 +3359,10 @@ public final class NetworkOuterClass {
       if (hasConnectionInfo()) {
         hash = (37 * hash) + CONNECTION_INFO_FIELD_NUMBER;
         hash = (53 * hash) + getConnectionInfo().hashCode();
+      }
+      if (getZmqPublishersCount() > 0) {
+        hash = (37 * hash) + ZMQ_PUBLISHERS_FIELD_NUMBER;
+        hash = (53 * hash) + getZmqPublishersList().hashCode();
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
@@ -3404,6 +3522,13 @@ public final class NetworkOuterClass {
           connectionInfo_ = null;
           connectionInfoBuilder_ = null;
         }
+        if (zmqPublishersBuilder_ == null) {
+          zmqPublishers_ = java.util.Collections.emptyList();
+        } else {
+          zmqPublishers_ = null;
+          zmqPublishersBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
 
@@ -3453,6 +3578,15 @@ public final class NetworkOuterClass {
           result.connectionInfo_ = connectionInfo_;
         } else {
           result.connectionInfo_ = connectionInfoBuilder_.build();
+        }
+        if (zmqPublishersBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0)) {
+            zmqPublishers_ = java.util.Collections.unmodifiableList(zmqPublishers_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.zmqPublishers_ = zmqPublishers_;
+        } else {
+          result.zmqPublishers_ = zmqPublishersBuilder_.build();
         }
         onBuilt();
         return result;
@@ -3554,6 +3688,32 @@ public final class NetworkOuterClass {
         if (other.hasConnectionInfo()) {
           mergeConnectionInfo(other.getConnectionInfo());
         }
+        if (zmqPublishersBuilder_ == null) {
+          if (!other.zmqPublishers_.isEmpty()) {
+            if (zmqPublishers_.isEmpty()) {
+              zmqPublishers_ = other.zmqPublishers_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureZmqPublishersIsMutable();
+              zmqPublishers_.addAll(other.zmqPublishers_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.zmqPublishers_.isEmpty()) {
+            if (zmqPublishersBuilder_.isEmpty()) {
+              zmqPublishersBuilder_.dispose();
+              zmqPublishersBuilder_ = null;
+              zmqPublishers_ = other.zmqPublishers_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              zmqPublishersBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getZmqPublishersFieldBuilder() : null;
+            } else {
+              zmqPublishersBuilder_.addAllMessages(other.zmqPublishers_);
+            }
+          }
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -3639,6 +3799,19 @@ public final class NetworkOuterClass {
 
                 break;
               } // case 114
+              case 122: {
+                pactus.network.NetworkOuterClass.ZMQPublisherInfo m =
+                    input.readMessage(
+                        pactus.network.NetworkOuterClass.ZMQPublisherInfo.parser(),
+                        extensionRegistry);
+                if (zmqPublishersBuilder_ == null) {
+                  ensureZmqPublishersIsMutable();
+                  zmqPublishers_.add(m);
+                } else {
+                  zmqPublishersBuilder_.addMessage(m);
+                }
+                break;
+              } // case 122
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -4711,6 +4884,318 @@ public final class NetworkOuterClass {
         }
         return connectionInfoBuilder_;
       }
+
+      private java.util.List<pactus.network.NetworkOuterClass.ZMQPublisherInfo> zmqPublishers_ =
+        java.util.Collections.emptyList();
+      private void ensureZmqPublishersIsMutable() {
+        if (!((bitField0_ & 0x00000004) != 0)) {
+          zmqPublishers_ = new java.util.ArrayList<pactus.network.NetworkOuterClass.ZMQPublisherInfo>(zmqPublishers_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          pactus.network.NetworkOuterClass.ZMQPublisherInfo, pactus.network.NetworkOuterClass.ZMQPublisherInfo.Builder, pactus.network.NetworkOuterClass.ZMQPublisherInfoOrBuilder> zmqPublishersBuilder_;
+
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public java.util.List<pactus.network.NetworkOuterClass.ZMQPublisherInfo> getZmqPublishersList() {
+        if (zmqPublishersBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(zmqPublishers_);
+        } else {
+          return zmqPublishersBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public int getZmqPublishersCount() {
+        if (zmqPublishersBuilder_ == null) {
+          return zmqPublishers_.size();
+        } else {
+          return zmqPublishersBuilder_.getCount();
+        }
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public pactus.network.NetworkOuterClass.ZMQPublisherInfo getZmqPublishers(int index) {
+        if (zmqPublishersBuilder_ == null) {
+          return zmqPublishers_.get(index);
+        } else {
+          return zmqPublishersBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public Builder setZmqPublishers(
+          int index, pactus.network.NetworkOuterClass.ZMQPublisherInfo value) {
+        if (zmqPublishersBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureZmqPublishersIsMutable();
+          zmqPublishers_.set(index, value);
+          onChanged();
+        } else {
+          zmqPublishersBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public Builder setZmqPublishers(
+          int index, pactus.network.NetworkOuterClass.ZMQPublisherInfo.Builder builderForValue) {
+        if (zmqPublishersBuilder_ == null) {
+          ensureZmqPublishersIsMutable();
+          zmqPublishers_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          zmqPublishersBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public Builder addZmqPublishers(pactus.network.NetworkOuterClass.ZMQPublisherInfo value) {
+        if (zmqPublishersBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureZmqPublishersIsMutable();
+          zmqPublishers_.add(value);
+          onChanged();
+        } else {
+          zmqPublishersBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public Builder addZmqPublishers(
+          int index, pactus.network.NetworkOuterClass.ZMQPublisherInfo value) {
+        if (zmqPublishersBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureZmqPublishersIsMutable();
+          zmqPublishers_.add(index, value);
+          onChanged();
+        } else {
+          zmqPublishersBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public Builder addZmqPublishers(
+          pactus.network.NetworkOuterClass.ZMQPublisherInfo.Builder builderForValue) {
+        if (zmqPublishersBuilder_ == null) {
+          ensureZmqPublishersIsMutable();
+          zmqPublishers_.add(builderForValue.build());
+          onChanged();
+        } else {
+          zmqPublishersBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public Builder addZmqPublishers(
+          int index, pactus.network.NetworkOuterClass.ZMQPublisherInfo.Builder builderForValue) {
+        if (zmqPublishersBuilder_ == null) {
+          ensureZmqPublishersIsMutable();
+          zmqPublishers_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          zmqPublishersBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public Builder addAllZmqPublishers(
+          java.lang.Iterable<? extends pactus.network.NetworkOuterClass.ZMQPublisherInfo> values) {
+        if (zmqPublishersBuilder_ == null) {
+          ensureZmqPublishersIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, zmqPublishers_);
+          onChanged();
+        } else {
+          zmqPublishersBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public Builder clearZmqPublishers() {
+        if (zmqPublishersBuilder_ == null) {
+          zmqPublishers_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          zmqPublishersBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public Builder removeZmqPublishers(int index) {
+        if (zmqPublishersBuilder_ == null) {
+          ensureZmqPublishersIsMutable();
+          zmqPublishers_.remove(index);
+          onChanged();
+        } else {
+          zmqPublishersBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public pactus.network.NetworkOuterClass.ZMQPublisherInfo.Builder getZmqPublishersBuilder(
+          int index) {
+        return getZmqPublishersFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public pactus.network.NetworkOuterClass.ZMQPublisherInfoOrBuilder getZmqPublishersOrBuilder(
+          int index) {
+        if (zmqPublishersBuilder_ == null) {
+          return zmqPublishers_.get(index);  } else {
+          return zmqPublishersBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public java.util.List<? extends pactus.network.NetworkOuterClass.ZMQPublisherInfoOrBuilder> 
+           getZmqPublishersOrBuilderList() {
+        if (zmqPublishersBuilder_ != null) {
+          return zmqPublishersBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(zmqPublishers_);
+        }
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public pactus.network.NetworkOuterClass.ZMQPublisherInfo.Builder addZmqPublishersBuilder() {
+        return getZmqPublishersFieldBuilder().addBuilder(
+            pactus.network.NetworkOuterClass.ZMQPublisherInfo.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public pactus.network.NetworkOuterClass.ZMQPublisherInfo.Builder addZmqPublishersBuilder(
+          int index) {
+        return getZmqPublishersFieldBuilder().addBuilder(
+            index, pactus.network.NetworkOuterClass.ZMQPublisherInfo.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * List of active ZeroMQ publishers.
+       * </pre>
+       *
+       * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
+       */
+      public java.util.List<pactus.network.NetworkOuterClass.ZMQPublisherInfo.Builder> 
+           getZmqPublishersBuilderList() {
+        return getZmqPublishersFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          pactus.network.NetworkOuterClass.ZMQPublisherInfo, pactus.network.NetworkOuterClass.ZMQPublisherInfo.Builder, pactus.network.NetworkOuterClass.ZMQPublisherInfoOrBuilder> 
+          getZmqPublishersFieldBuilder() {
+        if (zmqPublishersBuilder_ == null) {
+          zmqPublishersBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              pactus.network.NetworkOuterClass.ZMQPublisherInfo, pactus.network.NetworkOuterClass.ZMQPublisherInfo.Builder, pactus.network.NetworkOuterClass.ZMQPublisherInfoOrBuilder>(
+                  zmqPublishers_,
+                  ((bitField0_ & 0x00000004) != 0),
+                  getParentForChildren(),
+                  isClean());
+          zmqPublishers_ = null;
+        }
+        return zmqPublishersBuilder_;
+      }
       @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -4770,6 +5255,871 @@ public final class NetworkOuterClass {
 
     @java.lang.Override
     public pactus.network.NetworkOuterClass.GetNodeInfoResponse getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface ZMQPublisherInfoOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.ZMQPublisherInfo)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The topic associated with the publisher.
+     * </pre>
+     *
+     * <code>string topic = 1 [json_name = "topic"];</code>
+     * @return The topic.
+     */
+    java.lang.String getTopic();
+    /**
+     * <pre>
+     * The topic associated with the publisher.
+     * </pre>
+     *
+     * <code>string topic = 1 [json_name = "topic"];</code>
+     * @return The bytes for topic.
+     */
+    com.google.protobuf.ByteString
+        getTopicBytes();
+
+    /**
+     * <pre>
+     * The address of the publisher.
+     * </pre>
+     *
+     * <code>string address = 2 [json_name = "address"];</code>
+     * @return The address.
+     */
+    java.lang.String getAddress();
+    /**
+     * <pre>
+     * The address of the publisher.
+     * </pre>
+     *
+     * <code>string address = 2 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    com.google.protobuf.ByteString
+        getAddressBytes();
+
+    /**
+     * <pre>
+     * The high-water mark (HWM) for the publisher, indicating the
+     * maximum number of messages to queue before dropping older ones.
+     * </pre>
+     *
+     * <code>int32 hwm = 3 [json_name = "hwm"];</code>
+     * @return The hwm.
+     */
+    int getHwm();
+  }
+  /**
+   * Protobuf type {@code pactus.ZMQPublisherInfo}
+   */
+  public static final class ZMQPublisherInfo extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:pactus.ZMQPublisherInfo)
+      ZMQPublisherInfoOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use ZMQPublisherInfo.newBuilder() to construct.
+    private ZMQPublisherInfo(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ZMQPublisherInfo() {
+      topic_ = "";
+      address_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ZMQPublisherInfo();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.network.NetworkOuterClass.internal_static_pactus_ZMQPublisherInfo_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.network.NetworkOuterClass.internal_static_pactus_ZMQPublisherInfo_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.network.NetworkOuterClass.ZMQPublisherInfo.class, pactus.network.NetworkOuterClass.ZMQPublisherInfo.Builder.class);
+    }
+
+    public static final int TOPIC_FIELD_NUMBER = 1;
+    private volatile java.lang.Object topic_;
+    /**
+     * <pre>
+     * The topic associated with the publisher.
+     * </pre>
+     *
+     * <code>string topic = 1 [json_name = "topic"];</code>
+     * @return The topic.
+     */
+    @java.lang.Override
+    public java.lang.String getTopic() {
+      java.lang.Object ref = topic_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        topic_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The topic associated with the publisher.
+     * </pre>
+     *
+     * <code>string topic = 1 [json_name = "topic"];</code>
+     * @return The bytes for topic.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getTopicBytes() {
+      java.lang.Object ref = topic_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        topic_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int ADDRESS_FIELD_NUMBER = 2;
+    private volatile java.lang.Object address_;
+    /**
+     * <pre>
+     * The address of the publisher.
+     * </pre>
+     *
+     * <code>string address = 2 [json_name = "address"];</code>
+     * @return The address.
+     */
+    @java.lang.Override
+    public java.lang.String getAddress() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        address_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The address of the publisher.
+     * </pre>
+     *
+     * <code>string address = 2 [json_name = "address"];</code>
+     * @return The bytes for address.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getAddressBytes() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        address_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int HWM_FIELD_NUMBER = 3;
+    private int hwm_;
+    /**
+     * <pre>
+     * The high-water mark (HWM) for the publisher, indicating the
+     * maximum number of messages to queue before dropping older ones.
+     * </pre>
+     *
+     * <code>int32 hwm = 3 [json_name = "hwm"];</code>
+     * @return The hwm.
+     */
+    @java.lang.Override
+    public int getHwm() {
+      return hwm_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(topic_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, topic_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, address_);
+      }
+      if (hwm_ != 0) {
+        output.writeInt32(3, hwm_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(topic_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, topic_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(address_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, address_);
+      }
+      if (hwm_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(3, hwm_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.network.NetworkOuterClass.ZMQPublisherInfo)) {
+        return super.equals(obj);
+      }
+      pactus.network.NetworkOuterClass.ZMQPublisherInfo other = (pactus.network.NetworkOuterClass.ZMQPublisherInfo) obj;
+
+      if (!getTopic()
+          .equals(other.getTopic())) return false;
+      if (!getAddress()
+          .equals(other.getAddress())) return false;
+      if (getHwm()
+          != other.getHwm()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + TOPIC_FIELD_NUMBER;
+      hash = (53 * hash) + getTopic().hashCode();
+      hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getAddress().hashCode();
+      hash = (37 * hash) + HWM_FIELD_NUMBER;
+      hash = (53 * hash) + getHwm();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.network.NetworkOuterClass.ZMQPublisherInfo prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code pactus.ZMQPublisherInfo}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.ZMQPublisherInfo)
+        pactus.network.NetworkOuterClass.ZMQPublisherInfoOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.network.NetworkOuterClass.internal_static_pactus_ZMQPublisherInfo_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.network.NetworkOuterClass.internal_static_pactus_ZMQPublisherInfo_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.network.NetworkOuterClass.ZMQPublisherInfo.class, pactus.network.NetworkOuterClass.ZMQPublisherInfo.Builder.class);
+      }
+
+      // Construct using pactus.network.NetworkOuterClass.ZMQPublisherInfo.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        topic_ = "";
+
+        address_ = "";
+
+        hwm_ = 0;
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.network.NetworkOuterClass.internal_static_pactus_ZMQPublisherInfo_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.network.NetworkOuterClass.ZMQPublisherInfo getDefaultInstanceForType() {
+        return pactus.network.NetworkOuterClass.ZMQPublisherInfo.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.network.NetworkOuterClass.ZMQPublisherInfo build() {
+        pactus.network.NetworkOuterClass.ZMQPublisherInfo result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.network.NetworkOuterClass.ZMQPublisherInfo buildPartial() {
+        pactus.network.NetworkOuterClass.ZMQPublisherInfo result = new pactus.network.NetworkOuterClass.ZMQPublisherInfo(this);
+        result.topic_ = topic_;
+        result.address_ = address_;
+        result.hwm_ = hwm_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.network.NetworkOuterClass.ZMQPublisherInfo) {
+          return mergeFrom((pactus.network.NetworkOuterClass.ZMQPublisherInfo)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.network.NetworkOuterClass.ZMQPublisherInfo other) {
+        if (other == pactus.network.NetworkOuterClass.ZMQPublisherInfo.getDefaultInstance()) return this;
+        if (!other.getTopic().isEmpty()) {
+          topic_ = other.topic_;
+          onChanged();
+        }
+        if (!other.getAddress().isEmpty()) {
+          address_ = other.address_;
+          onChanged();
+        }
+        if (other.getHwm() != 0) {
+          setHwm(other.getHwm());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                topic_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 10
+              case 18: {
+                address_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 18
+              case 24: {
+                hwm_ = input.readInt32();
+
+                break;
+              } // case 24
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private java.lang.Object topic_ = "";
+      /**
+       * <pre>
+       * The topic associated with the publisher.
+       * </pre>
+       *
+       * <code>string topic = 1 [json_name = "topic"];</code>
+       * @return The topic.
+       */
+      public java.lang.String getTopic() {
+        java.lang.Object ref = topic_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          topic_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The topic associated with the publisher.
+       * </pre>
+       *
+       * <code>string topic = 1 [json_name = "topic"];</code>
+       * @return The bytes for topic.
+       */
+      public com.google.protobuf.ByteString
+          getTopicBytes() {
+        java.lang.Object ref = topic_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          topic_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The topic associated with the publisher.
+       * </pre>
+       *
+       * <code>string topic = 1 [json_name = "topic"];</code>
+       * @param value The topic to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTopic(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        topic_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The topic associated with the publisher.
+       * </pre>
+       *
+       * <code>string topic = 1 [json_name = "topic"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTopic() {
+        
+        topic_ = getDefaultInstance().getTopic();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The topic associated with the publisher.
+       * </pre>
+       *
+       * <code>string topic = 1 [json_name = "topic"];</code>
+       * @param value The bytes for topic to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTopicBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        topic_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object address_ = "";
+      /**
+       * <pre>
+       * The address of the publisher.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @return The address.
+       */
+      public java.lang.String getAddress() {
+        java.lang.Object ref = address_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          address_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The address of the publisher.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @return The bytes for address.
+       */
+      public com.google.protobuf.ByteString
+          getAddressBytes() {
+        java.lang.Object ref = address_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          address_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The address of the publisher.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @param value The address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddress(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        address_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The address of the publisher.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAddress() {
+        
+        address_ = getDefaultInstance().getAddress();
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The address of the publisher.
+       * </pre>
+       *
+       * <code>string address = 2 [json_name = "address"];</code>
+       * @param value The bytes for address to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        address_ = value;
+        onChanged();
+        return this;
+      }
+
+      private int hwm_ ;
+      /**
+       * <pre>
+       * The high-water mark (HWM) for the publisher, indicating the
+       * maximum number of messages to queue before dropping older ones.
+       * </pre>
+       *
+       * <code>int32 hwm = 3 [json_name = "hwm"];</code>
+       * @return The hwm.
+       */
+      @java.lang.Override
+      public int getHwm() {
+        return hwm_;
+      }
+      /**
+       * <pre>
+       * The high-water mark (HWM) for the publisher, indicating the
+       * maximum number of messages to queue before dropping older ones.
+       * </pre>
+       *
+       * <code>int32 hwm = 3 [json_name = "hwm"];</code>
+       * @param value The hwm to set.
+       * @return This builder for chaining.
+       */
+      public Builder setHwm(int value) {
+        
+        hwm_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The high-water mark (HWM) for the publisher, indicating the
+       * maximum number of messages to queue before dropping older ones.
+       * </pre>
+       *
+       * <code>int32 hwm = 3 [json_name = "hwm"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearHwm() {
+        
+        hwm_ = 0;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:pactus.ZMQPublisherInfo)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.ZMQPublisherInfo)
+    private static final pactus.network.NetworkOuterClass.ZMQPublisherInfo DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.network.NetworkOuterClass.ZMQPublisherInfo();
+    }
+
+    public static pactus.network.NetworkOuterClass.ZMQPublisherInfo getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ZMQPublisherInfo>
+        PARSER = new com.google.protobuf.AbstractParser<ZMQPublisherInfo>() {
+      @java.lang.Override
+      public ZMQPublisherInfo parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<ZMQPublisherInfo> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ZMQPublisherInfo> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.network.NetworkOuterClass.ZMQPublisherInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -11228,6 +12578,11 @@ pactus.network.NetworkOuterClass.CounterInfo defaultValue);
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_ZMQPublisherInfo_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_pactus_ZMQPublisherInfo_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_PeerInfo_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -11274,7 +12629,7 @@ pactus.network.NetworkOuterClass.CounterInfo defaultValue);
       "t\0229\n\017connected_peers\030\003 \003(\0132\020.pactus.Peer" +
       "InfoR\016connectedPeers\0223\n\013metric_info\030\004 \001(" +
       "\0132\022.pactus.MetricInfoR\nmetricInfo\"\024\n\022Get" +
-      "NodeInfoRequest\"\207\003\n\023GetNodeInfoResponse\022" +
+      "NodeInfoRequest\"\310\003\n\023GetNodeInfoResponse\022" +
       "\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002 \001(\t" +
       "R\005agent\022\027\n\007peer_id\030\003 \001(\tR\006peerId\022\035\n\nstar" +
       "ted_at\030\004 \001(\004R\tstartedAt\022\"\n\014reachability\030" +
@@ -11284,45 +12639,49 @@ pactus.network.NetworkOuterClass.CounterInfo defaultValue);
       "\034\n\tprotocols\030\t \003(\tR\tprotocols\022!\n\014clock_o" +
       "ffset\030\r \001(\001R\013clockOffset\022?\n\017connection_i" +
       "nfo\030\016 \001(\0132\026.pactus.ConnectionInfoR\016conne" +
-      "ctionInfo\"\302\004\n\010PeerInfo\022\026\n\006status\030\001 \001(\005R\006" +
-      "status\022\030\n\007moniker\030\002 \001(\tR\007moniker\022\024\n\005agen" +
-      "t\030\003 \001(\tR\005agent\022\027\n\007peer_id\030\004 \001(\tR\006peerId\022" +
-      "%\n\016consensus_keys\030\005 \003(\tR\rconsensusKeys\022/" +
-      "\n\023consensus_addresses\030\006 \003(\tR\022consensusAd" +
-      "dresses\022\032\n\010services\030\007 \001(\rR\010services\022&\n\017l" +
-      "ast_block_hash\030\010 \001(\tR\rlastBlockHash\022\026\n\006h" +
-      "eight\030\t \001(\rR\006height\022\033\n\tlast_sent\030\n \001(\003R\010" +
-      "lastSent\022#\n\rlast_received\030\013 \001(\003R\014lastRec" +
-      "eived\022\030\n\007address\030\014 \001(\tR\007address\022\034\n\tdirec" +
-      "tion\030\r \001(\tR\tdirection\022\034\n\tprotocols\030\016 \003(\t" +
-      "R\tprotocols\022%\n\016total_sessions\030\017 \001(\005R\rtot" +
-      "alSessions\022-\n\022completed_sessions\030\020 \001(\005R\021" +
-      "completedSessions\0223\n\013metric_info\030\021 \001(\0132\022" +
-      ".pactus.MetricInfoR\nmetricInfo\"\226\001\n\016Conne" +
-      "ctionInfo\022 \n\013connections\030\001 \001(\004R\013connecti" +
-      "ons\022/\n\023inbound_connections\030\002 \001(\004R\022inboun" +
-      "dConnections\0221\n\024outbound_connections\030\003 \001" +
-      "(\004R\023outboundConnections\"\373\003\n\nMetricInfo\0227" +
-      "\n\014TotalInvalid\030\001 \001(\0132\023.pactus.CounterInf" +
-      "oR\014TotalInvalid\0221\n\tTotalSent\030\002 \001(\0132\023.pac" +
-      "tus.CounterInfoR\tTotalSent\0229\n\rTotalRecei" +
-      "ved\030\003 \001(\0132\023.pactus.CounterInfoR\rTotalRec" +
-      "eived\022E\n\013MessageSent\030\004 \003(\0132#.pactus.Metr" +
-      "icInfo.MessageSentEntryR\013MessageSent\022Q\n\017" +
-      "MessageReceived\030\005 \003(\0132\'.pactus.MetricInf" +
-      "o.MessageReceivedEntryR\017MessageReceived\032" +
-      "S\n\020MessageSentEntry\022\020\n\003key\030\001 \001(\005R\003key\022)\n" +
+      "ctionInfo\022?\n\016zmq_publishers\030\017 \003(\0132\030.pact" +
+      "us.ZMQPublisherInfoR\rzmqPublishers\"T\n\020ZM" +
+      "QPublisherInfo\022\024\n\005topic\030\001 \001(\tR\005topic\022\030\n\007" +
+      "address\030\002 \001(\tR\007address\022\020\n\003hwm\030\003 \001(\005R\003hwm" +
+      "\"\302\004\n\010PeerInfo\022\026\n\006status\030\001 \001(\005R\006status\022\030\n" +
+      "\007moniker\030\002 \001(\tR\007moniker\022\024\n\005agent\030\003 \001(\tR\005" +
+      "agent\022\027\n\007peer_id\030\004 \001(\tR\006peerId\022%\n\016consen" +
+      "sus_keys\030\005 \003(\tR\rconsensusKeys\022/\n\023consens" +
+      "us_addresses\030\006 \003(\tR\022consensusAddresses\022\032" +
+      "\n\010services\030\007 \001(\rR\010services\022&\n\017last_block" +
+      "_hash\030\010 \001(\tR\rlastBlockHash\022\026\n\006height\030\t \001" +
+      "(\rR\006height\022\033\n\tlast_sent\030\n \001(\003R\010lastSent\022" +
+      "#\n\rlast_received\030\013 \001(\003R\014lastReceived\022\030\n\007" +
+      "address\030\014 \001(\tR\007address\022\034\n\tdirection\030\r \001(" +
+      "\tR\tdirection\022\034\n\tprotocols\030\016 \003(\tR\tprotoco" +
+      "ls\022%\n\016total_sessions\030\017 \001(\005R\rtotalSession" +
+      "s\022-\n\022completed_sessions\030\020 \001(\005R\021completed" +
+      "Sessions\0223\n\013metric_info\030\021 \001(\0132\022.pactus.M" +
+      "etricInfoR\nmetricInfo\"\226\001\n\016ConnectionInfo" +
+      "\022 \n\013connections\030\001 \001(\004R\013connections\022/\n\023in" +
+      "bound_connections\030\002 \001(\004R\022inboundConnecti" +
+      "ons\0221\n\024outbound_connections\030\003 \001(\004R\023outbo" +
+      "undConnections\"\373\003\n\nMetricInfo\0227\n\014TotalIn" +
+      "valid\030\001 \001(\0132\023.pactus.CounterInfoR\014TotalI" +
+      "nvalid\0221\n\tTotalSent\030\002 \001(\0132\023.pactus.Count" +
+      "erInfoR\tTotalSent\0229\n\rTotalReceived\030\003 \001(\013" +
+      "2\023.pactus.CounterInfoR\rTotalReceived\022E\n\013" +
+      "MessageSent\030\004 \003(\0132#.pactus.MetricInfo.Me" +
+      "ssageSentEntryR\013MessageSent\022Q\n\017MessageRe" +
+      "ceived\030\005 \003(\0132\'.pactus.MetricInfo.Message" +
+      "ReceivedEntryR\017MessageReceived\032S\n\020Messag" +
+      "eSentEntry\022\020\n\003key\030\001 \001(\005R\003key\022)\n\005value\030\002 " +
+      "\001(\0132\023.pactus.CounterInfoR\005value:\0028\001\032W\n\024M" +
+      "essageReceivedEntry\022\020\n\003key\030\001 \001(\005R\003key\022)\n" +
       "\005value\030\002 \001(\0132\023.pactus.CounterInfoR\005value" +
-      ":\0028\001\032W\n\024MessageReceivedEntry\022\020\n\003key\030\001 \001(" +
-      "\005R\003key\022)\n\005value\030\002 \001(\0132\023.pactus.CounterIn" +
-      "foR\005value:\0028\001\"=\n\013CounterInfo\022\024\n\005Bytes\030\001 " +
-      "\001(\004R\005Bytes\022\030\n\007Bundles\030\002 \001(\004R\007Bundles2\242\001\n" +
-      "\007Network\022O\n\016GetNetworkInfo\022\035.pactus.GetN" +
-      "etworkInfoRequest\032\036.pactus.GetNetworkInf" +
-      "oResponse\022F\n\013GetNodeInfo\022\032.pactus.GetNod" +
-      "eInfoRequest\032\033.pactus.GetNodeInfoRespons" +
-      "eBB\n\016pactus.networkZ0github.com/pactus-p" +
-      "roject/pactus/www/grpc/pactusb\006proto3"
+      ":\0028\001\"=\n\013CounterInfo\022\024\n\005Bytes\030\001 \001(\004R\005Byte" +
+      "s\022\030\n\007Bundles\030\002 \001(\004R\007Bundles2\242\001\n\007Network\022" +
+      "O\n\016GetNetworkInfo\022\035.pactus.GetNetworkInf" +
+      "oRequest\032\036.pactus.GetNetworkInfoResponse" +
+      "\022F\n\013GetNodeInfo\022\032.pactus.GetNodeInfoRequ" +
+      "est\032\033.pactus.GetNodeInfoResponseBB\n\016pact" +
+      "us.networkZ0github.com/pactus-project/pa" +
+      "ctus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -11351,21 +12710,27 @@ pactus.network.NetworkOuterClass.CounterInfo defaultValue);
     internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_GetNodeInfoResponse_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "LocalAddrs", "Protocols", "ClockOffset", "ConnectionInfo", });
-    internal_static_pactus_PeerInfo_descriptor =
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "LocalAddrs", "Protocols", "ClockOffset", "ConnectionInfo", "ZmqPublishers", });
+    internal_static_pactus_ZMQPublisherInfo_descriptor =
       getDescriptor().getMessageTypes().get(4);
+    internal_static_pactus_ZMQPublisherInfo_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_pactus_ZMQPublisherInfo_descriptor,
+        new java.lang.String[] { "Topic", "Address", "Hwm", });
+    internal_static_pactus_PeerInfo_descriptor =
+      getDescriptor().getMessageTypes().get(5);
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
         new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "ConsensusAddresses", "Services", "LastBlockHash", "Height", "LastSent", "LastReceived", "Address", "Direction", "Protocols", "TotalSessions", "CompletedSessions", "MetricInfo", });
     internal_static_pactus_ConnectionInfo_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_pactus_ConnectionInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_ConnectionInfo_descriptor,
         new java.lang.String[] { "Connections", "InboundConnections", "OutboundConnections", });
     internal_static_pactus_MetricInfo_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_pactus_MetricInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_MetricInfo_descriptor,
@@ -11383,7 +12748,7 @@ pactus.network.NetworkOuterClass.CounterInfo defaultValue);
         internal_static_pactus_MetricInfo_MessageReceivedEntry_descriptor,
         new java.lang.String[] { "Key", "Value", });
     internal_static_pactus_CounterInfo_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_pactus_CounterInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_pactus_CounterInfo_descriptor,

@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -15,7 +16,9 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/www/grpc"
+	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type testData struct {
@@ -65,10 +68,15 @@ func setup(t *testing.T) *testData {
 		ChainType:  mockState.Genesis().ChainType(),
 	}
 
+	zmqServer, err := zmq.New(context.TODO(), &zmq.Config{
+		ZmqPubTxInfo: fmt.Sprintf("tcp://localhost:%d", testsuite.FindFreePort()),
+	}, nil)
+	require.NoError(t, err)
+
 	gRPCServer := grpc.NewServer(
 		grpcConf, mockState,
 		mockSync, mockNet,
-		mockConsMgr, wallet.NewWalletManager(walletMgrConf),
+		mockConsMgr, wallet.NewWalletManager(walletMgrConf), zmqServer,
 	)
 	assert.NoError(t, gRPCServer.StartServer())
 

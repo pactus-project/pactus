@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.7.0](https://github.com/pactus-project/pactus/compare/v1.6.0...v1.7.0) (2025-01-23)
+
+### Feat
+
+- **zeromq**: add ZMQ Publishers to NodeInfo API ([#1674](https://github.com/pactus-project/pactus/pull/1674))
+- **zeromq**: add publisher raw tx ([#1672](https://github.com/pactus-project/pactus/pull/1672))
+- **zeromq**: add publisher raw block ([#1670](https://github.com/pactus-project/pactus/pull/1670))
+- **zeromq**: add publisher transaction info ([#1669](https://github.com/pactus-project/pactus/pull/1669))
+- **zeromq**: add block info publisher ([#1666](https://github.com/pactus-project/pactus/pull/1666))
+- **grpc**: support Ed25519 message signing and verification ([#1667](https://github.com/pactus-project/pactus/pull/1667))
+- **other**: add zeromq server with configuration ([#1660](https://github.com/pactus-project/pactus/pull/1660))
+- **cmd**: read password from file ([#1653](https://github.com/pactus-project/pactus/pull/1653))
+- **network**: evaluate propagate policy for gossip messages ([#1647](https://github.com/pactus-project/pactus/pull/1647))
+- **config**: add firewall module to logger config ([#1637](https://github.com/pactus-project/pactus/pull/1637))
+
+### Fix
+
+- **gtk**: panic on windows 11 and mac ([#1650](https://github.com/pactus-project/pactus/pull/1650))
+- **consensus**: refactor strong termination for change-proposer phase ([#1643](https://github.com/pactus-project/pactus/pull/1643))
+- **network**: restore default message queue size in PubSub module ([#1642](https://github.com/pactus-project/pactus/pull/1642))
+- **consensus**: refactor strong termination for change-proposer phase ([#1641](https://github.com/pactus-project/pactus/pull/1641))
+- **grpc**: define address for the aggregated public key ([#1608](https://github.com/pactus-project/pactus/pull/1608))
+- **gtk**: last block height icon ([#1611](https://github.com/pactus-project/pactus/pull/1611))
+- **crypto, state**: resolve panic on 32-bit OSes ([#1604](https://github.com/pactus-project/pactus/pull/1604))
+- **cmd**: parse withdraw fee using transaction options ([#1602](https://github.com/pactus-project/pactus/pull/1602))
+
 ## [1.6.0](https://github.com/pactus-project/pactus/compare/v1.5.0...v1.6.0) (2024-11-14)
 
 ### Feat

@@ -884,6 +884,23 @@ pub struct GetNodeInfoResponse {
     /// Information about the node's connections.
     #[prost(message, optional, tag="14")]
     pub connection_info: ::core::option::Option<ConnectionInfo>,
+    /// List of active ZeroMQ publishers.
+    #[prost(message, repeated, tag="15")]
+    pub zmq_publishers: ::prost::alloc::vec::Vec<ZmqPublisherInfo>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ZmqPublisherInfo {
+    /// The topic associated with the publisher.
+    #[prost(string, tag="1")]
+    pub topic: ::prost::alloc::string::String,
+    /// The address of the publisher.
+    #[prost(string, tag="2")]
+    pub address: ::prost::alloc::string::String,
+    /// The high-water mark (HWM) for the publisher, indicating the
+    /// maximum number of messages to queue before dropping older ones.
+    #[prost(int32, tag="3")]
+    pub hwm: i32,
 }
 /// Information about a peer in the network.
 #[allow(clippy::derive_partial_eq_without_eq)]

@@ -36,3 +36,11 @@ func (t Topic) Bytes() []byte {
 
 	return b
 }
+
+func TopicFromBytes(b []byte) Topic {
+	if len(b) < 2 {
+		return 0
+	}
+
+	return Topic(binary.BigEndian.Uint16(b))
+}

@@ -58,6 +58,20 @@ message GetNodeInfoResponse {
   double clock_offset = 13;
   // Information about the node's connections.
   ConnectionInfo connection_info = 14;
+  // List of active ZeroMQ publishers.
+  repeated ZMQPublisherInfo zmq_publishers = 15;
+}
+
+message ZMQPublisherInfo {
+  // The topic associated with the publisher.
+  string topic = 1;
+
+  // The address of the publisher.
+  string address = 2;
+
+  // The high-water mark (HWM) for the publisher, indicating the
+  // maximum number of messages to queue before dropping older ones.
+  int32 hwm = 3;
 }
 
 // Information about a peer in the network.
