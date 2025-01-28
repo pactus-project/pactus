@@ -370,5 +370,11 @@
         "email": "hi@dezh.tech",
         "website": "https://dezh.tech",
         "address": "/dns/pactus-bootstrap1.dezh.tech/tcp/21888/p2p/12D3KooWK1z7QAskVrQd98r98UMSPwTLr4out8B9NkQTrCdZPCZx"
+    },
+    {
+        "name": "korcano",
+        "email": "korcan@yaani.com",
+        "website": "",
+        "address": "/ip4/5.75.183.248/tcp/21888/p2p/12D3KooWNMfSbFx4RvakvBXrZrsqi9gdqzg6P9PWgpB3wT6uwV8t"
     }
 ]
