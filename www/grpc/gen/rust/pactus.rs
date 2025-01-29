@@ -289,6 +289,22 @@ pub mod transaction_info {
         Withdraw(super::PayloadWithdraw),
     }
 }
+/// Request message for decoding a raw transaction.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DecodeRawTransactionRequest {
+    /// The raw transaction data.
+    #[prost(string, tag="1")]
+    pub raw_transaction: ::prost::alloc::string::String,
+}
+/// Response message containing the decoded transaction.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DecodeRawTransactionResponse {
+    /// The decoded transaction.
+    #[prost(message, optional, tag="1")]
+    pub transaction: ::core::option::Option<TransactionInfo>,
+}
 /// Enumeration for different types of transaction payloads.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]

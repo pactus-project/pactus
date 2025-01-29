@@ -48,6 +48,28 @@ function deserialize_pactus_CalculateFeeResponse(buffer_arg) {
   return transaction_pb.CalculateFeeResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_DecodeRawTransactionRequest(arg) {
+  if (!(arg instanceof transaction_pb.DecodeRawTransactionRequest)) {
+    throw new Error('Expected argument of type pactus.DecodeRawTransactionRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_DecodeRawTransactionRequest(buffer_arg) {
+  return transaction_pb.DecodeRawTransactionRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_DecodeRawTransactionResponse(arg) {
+  if (!(arg instanceof transaction_pb.DecodeRawTransactionResponse)) {
+    throw new Error('Expected argument of type pactus.DecodeRawTransactionResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_DecodeRawTransactionResponse(buffer_arg) {
+  return transaction_pb.DecodeRawTransactionResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetRawBondTransactionRequest(arg) {
   if (!(arg instanceof transaction_pb.GetRawBondTransactionRequest)) {
     throw new Error('Expected argument of type pactus.GetRawBondTransactionRequest');
@@ -214,6 +236,18 @@ getRawWithdrawTransaction: {
     requestDeserialize: deserialize_pactus_GetRawWithdrawTransactionRequest,
     responseSerialize: serialize_pactus_GetRawTransactionResponse,
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
+  },
+  // DecodeRawTransaction accepts raw transaction and returnes decoded transaction.
+decodeRawTransaction: {
+    path: '/pactus.Transaction/DecodeRawTransaction',
+    requestStream: false,
+    responseStream: false,
+    requestType: transaction_pb.DecodeRawTransactionRequest,
+    responseType: transaction_pb.DecodeRawTransactionResponse,
+    requestSerialize: serialize_pactus_DecodeRawTransactionRequest,
+    requestDeserialize: deserialize_pactus_DecodeRawTransactionRequest,
+    responseSerialize: serialize_pactus_DecodeRawTransactionResponse,
+    responseDeserialize: deserialize_pactus_DecodeRawTransactionResponse,
   },
 };
 

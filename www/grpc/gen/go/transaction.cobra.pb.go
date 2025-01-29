@@ -27,6 +27,7 @@ func TransactionClientCommand(options ...client.Option) *cobra.Command {
 		_TransactionGetRawBondTransactionCommand(cfg),
 		_TransactionGetRawUnbondTransactionCommand(cfg),
 		_TransactionGetRawWithdrawTransactionCommand(cfg),
+		_TransactionDecodeRawTransactionCommand(cfg),
 	)
 	return cmd
 }
@@ -342,6 +343,48 @@ func _TransactionGetRawWithdrawTransactionCommand(cfg *client.Config) *cobra.Com
 	cmd.PersistentFlags().Int64Var(&req.Amount, cfg.FlagNamer("Amount"), 0, "The withdrawal amount in NanoPAC. Must be greater than 0.")
 	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.")
 	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "A memo string for the transaction.")
+
+	return cmd
+}
+
+func _TransactionDecodeRawTransactionCommand(cfg *client.Config) *cobra.Command {
+	req := &DecodeRawTransactionRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("DecodeRawTransaction"),
+		Short: "DecodeRawTransaction RPC client",
+		Long:  "DecodeRawTransaction accepts raw transaction and returnes decoded transaction.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "DecodeRawTransaction"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewTransactionClient(cc)
+				v := &DecodeRawTransactionRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.DecodeRawTransaction(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.RawTransaction, cfg.FlagNamer("RawTransaction"), "", "The raw transaction data.")
 
 	return cmd
 }

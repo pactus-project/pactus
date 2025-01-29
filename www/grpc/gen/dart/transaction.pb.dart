@@ -1505,6 +1505,102 @@ class TransactionInfo extends $pb.GeneratedMessage {
   PayloadWithdraw ensureWithdraw() => $_ensure(14);
 }
 
+class DecodeRawTransactionRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DecodeRawTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'rawTransaction')
+    ..hasRequiredFields = false
+  ;
+
+  DecodeRawTransactionRequest._() : super();
+  factory DecodeRawTransactionRequest({
+    $core.String? rawTransaction,
+  }) {
+    final _result = create();
+    if (rawTransaction != null) {
+      _result.rawTransaction = rawTransaction;
+    }
+    return _result;
+  }
+  factory DecodeRawTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DecodeRawTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DecodeRawTransactionRequest clone() => DecodeRawTransactionRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DecodeRawTransactionRequest copyWith(void Function(DecodeRawTransactionRequest) updates) => super.copyWith((message) => updates(message as DecodeRawTransactionRequest)) as DecodeRawTransactionRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static DecodeRawTransactionRequest create() => DecodeRawTransactionRequest._();
+  DecodeRawTransactionRequest createEmptyInstance() => create();
+  static $pb.PbList<DecodeRawTransactionRequest> createRepeated() => $pb.PbList<DecodeRawTransactionRequest>();
+  @$core.pragma('dart2js:noInline')
+  static DecodeRawTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DecodeRawTransactionRequest>(create);
+  static DecodeRawTransactionRequest? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.String get rawTransaction => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set rawTransaction($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasRawTransaction() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearRawTransaction() => clearField(1);
+}
+
+class DecodeRawTransactionResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'DecodeRawTransactionResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOM<TransactionInfo>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transaction', subBuilder: TransactionInfo.create)
+    ..hasRequiredFields = false
+  ;
+
+  DecodeRawTransactionResponse._() : super();
+  factory DecodeRawTransactionResponse({
+    TransactionInfo? transaction,
+  }) {
+    final _result = create();
+    if (transaction != null) {
+      _result.transaction = transaction;
+    }
+    return _result;
+  }
+  factory DecodeRawTransactionResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory DecodeRawTransactionResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  DecodeRawTransactionResponse clone() => DecodeRawTransactionResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  DecodeRawTransactionResponse copyWith(void Function(DecodeRawTransactionResponse) updates) => super.copyWith((message) => updates(message as DecodeRawTransactionResponse)) as DecodeRawTransactionResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static DecodeRawTransactionResponse create() => DecodeRawTransactionResponse._();
+  DecodeRawTransactionResponse createEmptyInstance() => create();
+  static $pb.PbList<DecodeRawTransactionResponse> createRepeated() => $pb.PbList<DecodeRawTransactionResponse>();
+  @$core.pragma('dart2js:noInline')
+  static DecodeRawTransactionResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DecodeRawTransactionResponse>(create);
+  static DecodeRawTransactionResponse? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  TransactionInfo get transaction => $_getN(0);
+  @$pb.TagNumber(1)
+  set transaction(TransactionInfo v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasTransaction() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearTransaction() => clearField(1);
+  @$pb.TagNumber(1)
+  TransactionInfo ensureTransaction() => $_ensure(0);
+}
+
 class TransactionApi {
   $pb.RpcClient _client;
   TransactionApi(this._client);
@@ -1536,6 +1632,10 @@ class TransactionApi {
   $async.Future<GetRawTransactionResponse> getRawWithdrawTransaction($pb.ClientContext? ctx, GetRawWithdrawTransactionRequest request) {
     var emptyResponse = GetRawTransactionResponse();
     return _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawWithdrawTransaction', request, emptyResponse);
+  }
+  $async.Future<DecodeRawTransactionResponse> decodeRawTransaction($pb.ClientContext? ctx, DecodeRawTransactionRequest request) {
+    var emptyResponse = DecodeRawTransactionResponse();
+    return _client.invoke<DecodeRawTransactionResponse>(ctx, 'Transaction', 'DecodeRawTransaction', request, emptyResponse);
   }
 }
 

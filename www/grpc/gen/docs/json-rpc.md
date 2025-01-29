@@ -95,6 +95,10 @@ curl --location 'http://localhost:8545/' \
           <a href="#pactus.transaction.get_raw_withdraw_transaction">
           <span class="rpc-badge"></span> pactus.transaction.get_raw_withdraw_transaction</a>
         </li>
+        <li>
+          <a href="#pactus.transaction.decode_raw_transaction">
+          <span class="rpc-badge"></span> pactus.transaction.decode_raw_transaction</a>
+        </li>
         </ul>
     </li>
     <li> Blockchain Service
@@ -930,6 +934,247 @@ height.
     </td>
   </tr>
      </tbody>
+</table>
+
+### pactus.transaction.decode_raw_transaction <span id="pactus.transaction.decode_raw_transaction" class="rpc-badge"></span>
+
+<p>DecodeRawTransaction accepts raw transaction and returnes decoded transaction.</p>
+
+<h4>Parameters</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">raw_transaction</td>
+    <td> string</td>
+    <td>
+    The raw transaction data.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">transaction</td>
+    <td> object</td>
+    <td>
+    The decoded transaction.
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">transaction.id</td>
+        <td> string</td>
+        <td>
+        The unique ID of the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.data</td>
+        <td> string</td>
+        <td>
+        The raw transaction data.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.version</td>
+        <td> numeric</td>
+        <td>
+        The version of the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.lock_time</td>
+        <td> numeric</td>
+        <td>
+        The lock time for the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.value</td>
+        <td> numeric</td>
+        <td>
+        The value of the transaction in NanoPAC.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.fee</td>
+        <td> numeric</td>
+        <td>
+        The fee for the transaction in NanoPAC.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.payload_type</td>
+        <td> numeric</td>
+        <td>
+        (Enum)The type of transaction payload.
+        <br>Available values:<ul>
+          <li>UNKNOWN = 0 (Unknown payload type.)</li>
+          <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
+          <li>BOND_PAYLOAD = 2 (Bond payload type.)</li>
+          <li>SORTITION_PAYLOAD = 3 (Sortition payload type.)</li>
+          <li>UNBOND_PAYLOAD = 4 (Unbond payload type.)</li>
+          <li>WITHDRAW_PAYLOAD = 5 (Withdraw payload type.)</li>
+          </ul>
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.transfer</td>
+        <td> object</td>
+        <td>
+        (OneOf)Transfer transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">transaction.transfer.sender</td>
+            <td> string</td>
+            <td>
+            The sender's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.transfer.receiver</td>
+            <td> string</td>
+            <td>
+            The receiver's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.transfer.amount</td>
+            <td> numeric</td>
+            <td>
+            The amount to be transferred in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">transaction.bond</td>
+        <td> object</td>
+        <td>
+        (OneOf)Bond transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">transaction.bond.sender</td>
+            <td> string</td>
+            <td>
+            The sender's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.bond.receiver</td>
+            <td> string</td>
+            <td>
+            The receiver's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.bond.stake</td>
+            <td> numeric</td>
+            <td>
+            The stake amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.bond.public_key</td>
+            <td> string</td>
+            <td>
+            The public key of the validator.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">transaction.sortition</td>
+        <td> object</td>
+        <td>
+        (OneOf)Sortition transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">transaction.sortition.address</td>
+            <td> string</td>
+            <td>
+            The validator address associated with the sortition proof.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.sortition.proof</td>
+            <td> string</td>
+            <td>
+            The proof for the sortition.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">transaction.unbond</td>
+        <td> object</td>
+        <td>
+        (OneOf)Unbond transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">transaction.unbond.validator</td>
+            <td> string</td>
+            <td>
+            The address of the validator to unbond from.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">transaction.withdraw</td>
+        <td> object</td>
+        <td>
+        (OneOf)Withdraw transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">transaction.withdraw.validator_address</td>
+            <td> string</td>
+            <td>
+            The address of the validator to withdraw from.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.withdraw.account_address</td>
+            <td> string</td>
+            <td>
+            The address of the account to withdraw to.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.withdraw.amount</td>
+            <td> numeric</td>
+            <td>
+            The withdrawal amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">transaction.memo</td>
+        <td> string</td>
+        <td>
+        A memo string for the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.public_key</td>
+        <td> string</td>
+        <td>
+        The public key associated with the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.signature</td>
+        <td> string</td>
+        <td>
+        The signature for the transaction.
+        </td>
+      </tr>
+         </tbody>
 </table>
 
 ## Blockchain Service
