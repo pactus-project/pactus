@@ -14,14 +14,14 @@ all: build test
 ### Tools needed for development
 devtools:
 	@echo "Installing devtools"
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.23
-	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.23
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.35
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5
-	go install github.com/NathanBaulch/protoc-gen-cobra@v1.2
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.63.4
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.26
+	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.26
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.4
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5.1
+	go install github.com/NathanBaulch/protoc-gen-cobra@v1.2.1
 	go install github.com/pactus-project/protoc-gen-doc/cmd/protoc-gen-doc@v0.0.0-20240815105130-84e89d0170e4
-	go install github.com/bufbuild/buf/cmd/buf@v1.47
+	go install github.com/bufbuild/buf/cmd/buf@v1.50
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.5
 
