@@ -217,7 +217,7 @@ func MoveDirectory(srcDir, dstDir string) error {
 	if err != nil {
 		// To prevent invalid cross-device link perform a manual copy
 		if err := copyDirectory(srcDir, dstDir); err != nil {
-			return fmt.Errorf("failed to copy directory from %s to %s: %w", srcDir, dstDir, err)
+			return fmt.Errorf("failed to move directory from %s to %s: %w", srcDir, dstDir, err)
 		}
 
 		// Remove source directory after successful copy
