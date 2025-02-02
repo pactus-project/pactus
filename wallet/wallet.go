@@ -548,3 +548,16 @@ func (w *Wallet) Info() *Info {
 		CreatedAt:  w.store.CreatedAt,
 	}
 }
+
+func (w *Wallet) Neuter() *Wallet {
+	clonedStore := w.store.Clone()
+	clonedStore.Vault = w.store.Vault.Neuter()
+
+	neuteredWallet := &Wallet{
+		store:      clonedStore,
+		path:       w.path + "_neutered",
+		grpcClient: w.grpcClient,
+	}
+
+	return neuteredWallet
+}
