@@ -8,7 +8,7 @@ import (
 func buildNeuterCmd(parentCmd *cobra.Command) {
 	neuterCmd := &cobra.Command{
 		Use:   "neuter",
-		Short: "convert full wallet to read-only wallet and can only be used to retrieve balances or stakes",
+		Short: "convert full wallet to neutered wallet and can only be used to retrieve balances or stakes",
 	}
 	parentCmd.AddCommand(neuterCmd)
 
