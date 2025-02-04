@@ -549,14 +549,14 @@ func (w *Wallet) Info() *Info {
 	}
 }
 
-func (w *Wallet) Neuter() *Wallet {
+// Neuter clones the wallet and neuters it and saves it at the given path.
+func (w *Wallet) Neuter(path string) *Wallet {
 	clonedStore := w.store.Clone()
 	clonedStore.Vault = w.store.Vault.Neuter()
 
 	neuteredWallet := &Wallet{
-		store:      clonedStore,
-		path:       w.path + "_neutered",
-		grpcClient: w.grpcClient,
+		store: clonedStore,
+		path:  path,
 	}
 
 	return neuteredWallet
