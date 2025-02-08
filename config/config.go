@@ -118,9 +118,6 @@ func DefaultConfigMainnet() *Config {
 		bootstrapAddrs = append(bootstrapAddrs, node.Address)
 	}
 
-	// The first item in the banned list is for testing.
-	// The address is: "pc1p8slveave2zm9tgj7q260fgrdfu2ph8n7ezxhtt"
-	// The associated private key: "SECRET1PP8SYQAH8JH8QLGEEX7L7T8WTU69K6T9AVSNMVCZ8DP6PPLWVYE3SVTHFR8"
 	bannedList := make([]string, 0)
 	if err := json.Unmarshal(bannedAddrBytes, &bannedList); err != nil {
 		panic(err)

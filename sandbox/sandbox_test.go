@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -397,5 +398,72 @@ func TestVerifyProof(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		assert.True(t, td.sbx.VerifyProof(validLockTime, validProof, validVal))
+	})
+}
+
+func TestIsBanned(t *testing.T) {
+	td := setup(t)
+
+	t.Run("Validator is in the banned list", func(t *testing.T) {
+		pub, prv := td.RandBLSKeyPair()
+		td.store.TestConfig.BannedAddrs[pub.ValidatorAddress()] = true
+		trx := td.GenerateTestSortitionTx(
+			testsuite.TransactionWithBLSSigner(prv))
+
+		assert.True(t, td.sbx.IsBanned(trx))
+	})
+
+	t.Run("Validator is not in the banned list", func(t *testing.T) {
+		trx := td.GenerateTestSortitionTx()
+
+		assert.False(t, td.sbx.IsBanned(trx))
+	})
+
+	t.Run("Xeggex account is in a frozen state", func(t *testing.T) {
+		t.Run("Attempt to transfer assets to another account should be rejected", func(t *testing.T) {
+			pub, prv := td.RandBLSKeyPair()
+			td.store.XeggexAccount().DepositAddrs = pub.AccountAddress()
+			trx := td.GenerateTestTransferTx(testsuite.TransactionWithBLSSigner(prv))
+
+			assert.True(t, td.sbx.IsBanned(trx))
+		})
+
+		t.Run("Attempt to transfer assets to the Watcher account but not the full balance", func(t *testing.T) {
+			pub, prv := td.RandBLSKeyPair()
+			td.store.XeggexAccount().DepositAddrs = pub.AccountAddress()
+			trx := td.GenerateTestTransferTx(
+				testsuite.TransactionWithBLSSigner(prv),
+				testsuite.TransactionWithReceiver(td.store.XeggexAccount().WatcherAddrs),
+			)
+
+			assert.True(t, td.sbx.IsBanned(trx))
+		})
+
+		t.Run("Attempt to transfer assets to the Watcher account with the full balance", func(t *testing.T) {
+			pub, prv := td.RandBLSKeyPair()
+			td.store.XeggexAccount().DepositAddrs = pub.AccountAddress()
+			trx := td.GenerateTestTransferTx(
+				testsuite.TransactionWithBLSSigner(prv),
+				testsuite.TransactionWithReceiver(td.store.XeggexAccount().WatcherAddrs),
+				testsuite.TransactionWithAmount(amount.Amount(500_000e9)),
+			)
+
+			assert.False(t, td.sbx.IsBanned(trx))
+		})
+	})
+
+	t.Run("Xeggex account is in an unfrozen state", func(t *testing.T) {
+		watcherPub, watcherPrv := td.RandBLSKeyPair()
+		xeggexPub, xeggexPrv := td.RandBLSKeyPair()
+
+		trx1 := td.GenerateTestTransferTx(testsuite.TransactionWithBLSSigner(watcherPrv))
+		blk, cert := td.GenerateTestBlock(td.RandHeight(), testsuite.BlockWithTransactions([]*tx.Tx{trx1}))
+		td.store.SaveBlock(blk, cert)
+
+		td.store.TestConfig.XeggexAccount.DepositAddrs = xeggexPub.AccountAddress()
+		td.store.TestConfig.XeggexAccount.WatcherAddrs = watcherPub.AccountAddress()
+
+		trx2 := td.GenerateTestTransferTx(testsuite.TransactionWithBLSSigner(xeggexPrv))
+		assert.False(t, td.sbx.IsBanned(trx2))
 	})
 }

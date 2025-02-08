@@ -513,3 +513,7 @@ func (s *store) pruneBlock(blockHeight uint32) (bool, error) {
 
 	return true, nil
 }
+
+func (s *store) XeggexAccount() *XeggexAccount {
+	return &s.config.XeggexAccount
+}

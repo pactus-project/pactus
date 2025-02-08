@@ -100,6 +100,7 @@ type Reader interface {
 	IsBanned(addr crypto.Address) bool
 	IsPruned() bool
 	PruningHeight() uint32
+	XeggexAccount() *XeggexAccount
 }
 
 type Store interface {
