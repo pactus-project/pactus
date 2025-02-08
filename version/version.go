@@ -15,9 +15,9 @@ import (
 var NodeVersion = Version{
 	Major: 1,
 	Minor: 7,
-	Patch: 0,
-	Meta:  "",
-	Alias: "Seoul",
+	Patch: 1,
+	Meta:  "beta",
+	Alias: "",
 }
 
 // Version defines the version of Pactus software.
