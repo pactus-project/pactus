@@ -308,12 +308,40 @@ func (sb *sandbox) AccumulatedFee() amount.Amount {
 	return sb.accumulatedFee
 }
 
-func (sb *sandbox) IsBanned(addr crypto.Address) bool {
+func (sb *sandbox) IsBanned(trx *tx.Tx) bool {
 	sb.lk.RLock()
 	defer sb.lk.RUnlock()
 
-	if sb.height > 820_000 {
-		return sb.store.IsBanned(addr)
+	if sb.banXeggexAccount(trx) {
+		return true
+	}
+
+	return sb.store.IsBanned(trx.Payload().Signer())
+}
+
+func (sb *sandbox) banXeggexAccount(trx *tx.Tx) bool {
+	signer := trx.Payload().Signer()
+	xeggexAcc := sb.store.XeggexAccount()
+	if signer == xeggexAcc.DepositAddrs {
+		if sb.store.HasPublicKey(xeggexAcc.WatcherAddrs) {
+			// Unfrozen state
+
+			return false
+		}
+
+		// Frozen state
+		receiver := *trx.Payload().Receiver()
+		if receiver == xeggexAcc.WatcherAddrs &&
+			trx.Payload().Value() >= xeggexAcc.Balance {
+			return false
+		}
+
+		trxBytes, _ := trx.Bytes()
+		logger.Warn("someone at Xeggex exchange is attempting to move the PAC deposit balance. "+
+			"Please report this incident to the Pactus team.",
+			"trx", trxBytes)
+
+		return true
 	}
 
 	return false

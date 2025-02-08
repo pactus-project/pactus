@@ -2,6 +2,7 @@ package state
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -139,12 +140,40 @@ func (st *state) tryLoadLastInfo() error {
 	if err != nil {
 		return err
 	}
-
 	st.committee = committeeInstance
+
+	err = st.checkXeggexState()
+	if err != nil {
+		return err
+	}
 
 	logger.Info("last state restored",
 		"last height", st.lastInfo.BlockHeight(),
 		"last block time", st.lastInfo.BlockTime())
+
+	return nil
+}
+
+// checkXeggexState checks the state of Xeggex account based on PIP-38.
+func (st *state) checkXeggexState() error {
+	xeggexAcc := st.store.XeggexAccount()
+	if st.lastInfo.BlockHeight() < xeggexAcc.FreezeHeight {
+		return nil
+	}
+
+	acc, _ := st.store.Account(st.store.XeggexAccount().DepositAddrs)
+	if acc.Hash() != xeggexAcc.AccountHash {
+		if st.store.HasPublicKey(xeggexAcc.WatcherAddrs) {
+			// Unfrozen state
+
+			return nil
+		}
+
+		watcherAcc, _ := st.store.Account(xeggexAcc.WatcherAddrs)
+		if watcherAcc == nil || watcherAcc.Balance() < xeggexAcc.Balance {
+			return errors.New("please re-sync your blockchain to remove the illegitimate Xeggex transaction")
+		}
+	}
 
 	return nil
 }

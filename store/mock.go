@@ -24,6 +24,7 @@ type MockStore struct {
 	Validators map[crypto.Address]*validator.Validator
 	LastCert   *certificate.BlockCertificate
 	LastHeight uint32
+	TestConfig *Config
 }
 
 func MockingStore(ts *testsuite.TestSuite) *MockStore {
@@ -32,6 +33,7 @@ func MockingStore(ts *testsuite.TestSuite) *MockStore {
 		Blocks:     make(map[uint32]*block.Block),
 		Accounts:   make(map[crypto.Address]*account.Account),
 		Validators: make(map[crypto.Address]*validator.Validator),
+		TestConfig: DefaultConfig(),
 	}
 }
 
@@ -291,8 +293,8 @@ func (m *MockStore) RandomTestVal() *validator.Validator {
 	panic("no validator in sandbox")
 }
 
-func (*MockStore) IsBanned(_ crypto.Address) bool {
-	return false
+func (m *MockStore) IsBanned(addr crypto.Address) bool {
+	return m.TestConfig.BannedAddrs[addr]
 }
 
 func (*MockStore) Prune(_ func(_ bool, _ uint32) bool) error {
@@ -305,4 +307,8 @@ func (*MockStore) IsPruned() bool {
 
 func (*MockStore) PruningHeight() uint32 {
 	return 0
+}
+
+func (m *MockStore) XeggexAccount() *XeggexAccount {
+	return &m.TestConfig.XeggexAccount
 }

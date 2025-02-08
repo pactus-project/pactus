@@ -24,7 +24,7 @@ func CheckAndExecute(trx *tx.Tx, sbx sandbox.Sandbox, strict bool) error {
 		return err
 	}
 
-	if sbx.IsBanned(trx.Payload().Signer()) {
+	if sbx.IsBanned(trx) {
 		return SignerBannedError{
 			addr: trx.Payload().Signer(),
 		}

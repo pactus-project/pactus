@@ -156,6 +156,6 @@ func (m *MockSandbox) AccumulatedFee() amount.Amount {
 	return m.ts.RandAmount()
 }
 
-func (*MockSandbox) IsBanned(crypto.Address) bool {
+func (*MockSandbox) IsBanned(*tx.Tx) bool {
 	return false
 }
