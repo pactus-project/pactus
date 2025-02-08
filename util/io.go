@@ -208,17 +208,70 @@ func MoveDirectory(srcDir, dstDir string) error {
 		return fmt.Errorf("destination directory %s already exists", dstDir)
 	}
 
-	// Get the parent directory of the destination directory
 	parentDir := filepath.Dir(dstDir)
 	if err := Mkdir(parentDir); err != nil {
 		return fmt.Errorf("failed to create parent directories for %s: %w", dstDir, err)
 	}
 
-	if err := os.Rename(srcDir, dstDir); err != nil {
-		return fmt.Errorf("failed to move directory from %s to %s: %w", srcDir, dstDir, err)
+	err := os.Rename(srcDir, dstDir)
+	if err != nil {
+		// To prevent invalid cross-device link perform a manual copy
+		if err := copyDirectory(srcDir, dstDir); err != nil {
+			return fmt.Errorf("failed to move directory from %s to %s: %w", srcDir, dstDir, err)
+		}
+
+		// Remove source directory after successful copy
+		if err := os.RemoveAll(srcDir); err != nil {
+			return fmt.Errorf("failed to remove source directory %s: %w", srcDir, err)
+		}
 	}
 
 	return nil
+}
+
+func copyDirectory(src, dst string) error {
+	return filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		relPath, err := filepath.Rel(src, path)
+		if err != nil {
+			return err
+		}
+		dstPath := filepath.Join(dst, relPath)
+
+		if info.IsDir() {
+			return os.MkdirAll(dstPath, info.Mode())
+		}
+
+		return copyFile(path, dstPath, info)
+	})
+}
+
+func copyFile(src, dst string, info os.FileInfo) error {
+	input, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = input.Close()
+	}()
+
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = out.Close()
+	}()
+
+	if _, err = io.Copy(out, input); err != nil {
+		return err
+	}
+
+	// Preserve file permissions
+	return os.Chmod(dst, info.Mode())
 }
 
 // SanitizeArchivePath mitigates the "Zip Slip" vulnerability by sanitizing archive file paths.

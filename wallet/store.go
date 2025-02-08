@@ -49,6 +49,21 @@ func (s *Store) ToBytes() ([]byte, error) {
 	return json.MarshalIndent(s, "  ", "  ")
 }
 
+func (s *Store) Clone() *Store {
+	clonedVault := *s.Vault // Assuming Vault has proper pointer handling internally
+	clonedHistory := s.History
+
+	return &Store{
+		Version:   s.Version,
+		UUID:      s.UUID,
+		CreatedAt: s.CreatedAt,
+		Network:   s.Network,
+		VaultCRC:  s.VaultCRC,
+		Vault:     &clonedVault,
+		History:   clonedHistory,
+	}
+}
+
 func (s *Store) ValidateCRC() error {
 	crc := s.calcVaultCRC()
 	if s.VaultCRC != crc {
