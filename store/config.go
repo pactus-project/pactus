@@ -55,7 +55,7 @@ func DefaultConfig() *Config {
 			WatcherAddrs: xeggexWatcherAddrs,
 			Balance:      xeggexBalance,
 			AccountHash:  xeggexAccountHash,
-			FreezeHeight: 3_164_119,
+			FreezeHeight: 3_164_120,
 		},
 	}
 }
