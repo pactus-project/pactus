@@ -428,7 +428,7 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 
 	err = st.checkXeggexState()
 	if err != nil {
-		st.logger.Warn("committing new block failed since it contains an illegitimate Xeggex transaction")
+		st.logger.Warn("failed to commit new block due to an illegitimate Xeggex transaction")
 
 		return err
 	}
