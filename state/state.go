@@ -157,14 +157,16 @@ func (st *state) tryLoadLastInfo() error {
 	return nil
 }
 
-// checkXeggexState checks the state of Xeggex account based on PIP-38.
+// checkXeggexState checks the state of the Xeggex account based on PIP-38.
+// NOTE: This is temporary code to prevent a potential fork on the Pactus blockchain
+// and can be safely removed in version v1.9.0.
 func (st *state) checkXeggexState() error {
 	xeggexAcc := st.store.XeggexAccount()
 	if st.lastInfo.BlockHeight() < xeggexAcc.FreezeHeight {
 		return nil
 	}
 
-	acc, _ := st.store.Account(st.store.XeggexAccount().DepositAddrs)
+	acc, _ := st.store.Account(xeggexAcc.DepositAddrs)
 	if acc.Hash() != xeggexAcc.AccountHash {
 		if st.store.HasPublicKey(xeggexAcc.WatcherAddrs) {
 			// Unfrozen state
