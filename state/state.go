@@ -144,6 +144,9 @@ func (st *state) tryLoadLastInfo() error {
 
 	err = st.checkXeggexState()
 	if err != nil {
+		st.logger.Warn("upgrade your node to the latest version and resync again to " +
+			"remove the illegitimate Xeggex transaction")
+
 		return err
 	}
 
@@ -171,7 +174,7 @@ func (st *state) checkXeggexState() error {
 
 		watcherAcc, _ := st.store.Account(xeggexAcc.WatcherAddrs)
 		if watcherAcc == nil || watcherAcc.Balance() < xeggexAcc.Balance {
-			return errors.New("please re-sync your blockchain to remove the illegitimate Xeggex transaction")
+			return errors.New("xeggex account has been modified")
 		}
 	}
 
@@ -420,6 +423,13 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 
 	err := st.validateCurCertificate(cert, blk.Hash())
 	if err != nil {
+		return err
+	}
+
+	err = st.checkXeggexState()
+	if err != nil {
+		st.logger.Warn("committing new block failed since it contains an illegitimate Xeggex transaction")
+
 		return err
 	}
 
