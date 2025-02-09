@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/pactus-project/pactus/compare/v1.7.0...v1.7.1) (2025-02-09)
+
+### Fix
+
+- **state**: check the xeggex account hash on committing new block  ([#1688](https://github.com/pactus-project/pactus/pull/1688))
+- **state, sandbox**: implement the PIP-38 ([#1687](https://github.com/pactus-project/pactus/pull/1687))
+
 ## [1.7.0](https://github.com/pactus-project/pactus/compare/v1.6.0...v1.7.0) (2025-01-23)
 
 ### Feat
