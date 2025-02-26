@@ -11,6 +11,7 @@ type cpDecideState struct {
 
 func (s *cpDecideState) enter() {
 	s.decide()
+	s.cpStrongTermination(s.round, s.cpRound)
 }
 
 func (s *cpDecideState) decide() {

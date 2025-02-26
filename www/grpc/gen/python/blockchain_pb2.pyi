@@ -18,14 +18,18 @@ class VoteType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     VOTE_UNKNOWN: _ClassVar[VoteType]
     VOTE_PREPARE: _ClassVar[VoteType]
     VOTE_PRECOMMIT: _ClassVar[VoteType]
-    VOTE_CHANGE_PROPOSER: _ClassVar[VoteType]
+    VOTE_CP_PRE_VOTE: _ClassVar[VoteType]
+    VOTE_CP_MAIN_VOTE: _ClassVar[VoteType]
+    VOTE_CP_DECIDED: _ClassVar[VoteType]
 BLOCK_DATA: BlockVerbosity
 BLOCK_INFO: BlockVerbosity
 BLOCK_TRANSACTIONS: BlockVerbosity
 VOTE_UNKNOWN: VoteType
 VOTE_PREPARE: VoteType
 VOTE_PRECOMMIT: VoteType
-VOTE_CHANGE_PROPOSER: VoteType
+VOTE_CP_PRE_VOTE: VoteType
+VOTE_CP_MAIN_VOTE: VoteType
+VOTE_CP_DECIDED: VoteType
 
 class GetAccountRequest(_message.Message):
     __slots__ = ("address",)

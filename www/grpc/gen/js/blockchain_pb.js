@@ -6040,7 +6040,9 @@ proto.pactus.VoteType = {
   VOTE_UNKNOWN: 0,
   VOTE_PREPARE: 1,
   VOTE_PRECOMMIT: 2,
-  VOTE_CHANGE_PROPOSER: 3
+  VOTE_CP_PRE_VOTE: 3,
+  VOTE_CP_MAIN_VOTE: 4,
+  VOTE_CP_DECIDED: 5
 };
 
 goog.object.extend(exports, proto.pactus);

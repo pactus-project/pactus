@@ -2846,10 +2846,12 @@
         "VOTE_UNKNOWN",
         "VOTE_PREPARE",
         "VOTE_PRECOMMIT",
-        "VOTE_CHANGE_PROPOSER"
+        "VOTE_CP_PRE_VOTE",
+        "VOTE_CP_MAIN_VOTE",
+        "VOTE_CP_DECIDED"
       ],
       "default": "VOTE_UNKNOWN",
-      "description": "Enumeration for types of votes.\n\n - VOTE_UNKNOWN: Unknown vote type.\n - VOTE_PREPARE: Prepare vote type.\n - VOTE_PRECOMMIT: Precommit vote type.\n - VOTE_CHANGE_PROPOSER: Change proposer vote type."
+      "description": "Enumeration for types of votes.\n\n - VOTE_UNKNOWN: Unknown vote type.\n - VOTE_PREPARE: Prepare vote type.\n - VOTE_PRECOMMIT: Precommit vote type.\n - VOTE_CP_PRE_VOTE: Change-proposer:pre-vote vote type.\n - VOTE_CP_MAIN_VOTE: change-proposer:main-vote vote type.\n - VOTE_CP_DECIDED: change-proposer:decided vote type."
     },
     "pactusZMQPublisherInfo": {
       "type": "object",
