@@ -1880,7 +1880,9 @@ committee.
               <li>VOTE_UNKNOWN = 0 (Unknown vote type.)</li>
               <li>VOTE_PREPARE = 1 (Prepare vote type.)</li>
               <li>VOTE_PRECOMMIT = 2 (Precommit vote type.)</li>
-              <li>VOTE_CHANGE_PROPOSER = 3 (Change proposer vote type.)</li>
+              <li>VOTE_CP_PRE_VOTE = 3 (Change-proposer:pre-vote vote type.)</li>
+              <li>VOTE_CP_MAIN_VOTE = 4 (change-proposer:main-vote vote type.)</li>
+              <li>VOTE_CP_DECIDED = 5 (change-proposer:decided vote type.)</li>
               </ul>
             </td>
           </tr>

@@ -11,6 +11,7 @@ type cpMainVoteState struct {
 
 func (s *cpMainVoteState) enter() {
 	s.decide()
+	s.cpStrongTermination(s.round, s.cpRound)
 }
 
 func (s *cpMainVoteState) decide() {
