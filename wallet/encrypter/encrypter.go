@@ -88,7 +88,7 @@ func NopeEncrypter() Encrypter {
 // DefaultEncrypter creates a new encrypter instance.
 // If no option sets it uses the default parameters.
 //
-// The default encrypter uses Argon2ID as password hasher and AES_256_CBC as
+// The default encrypter uses Argon2ID as password hasher and AES_256_CTR as
 // encryption algorithm.
 func DefaultEncrypter(opts ...Option) Encrypter {
 	argon2dParameters := &argon2dParameters{
