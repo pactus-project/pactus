@@ -18,10 +18,11 @@ import (
 )
 
 const (
-	Version1 = 1 // initial version
-	Version2 = 2 // supporting Ed25519
+	Version1 = 1 // Initial version
+	Version2 = 2 // Supporting Ed25519
+	Version3 = 3 // USe AEC-256-CBC for default encryption
 
-	VersionLatest = Version2
+	VersionLatest = Version3
 )
 
 type Store struct {
@@ -84,8 +85,8 @@ func (s *Store) UpgradeWallet(walletPath string) error {
 			return err
 		}
 
-	case Version2:
-		// Current version
+	case Version2,
+		Version3:
 		return nil
 
 	default:
