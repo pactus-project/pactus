@@ -91,7 +91,6 @@ func NopeEncrypter() Encrypter {
 // The default encrypter uses Argon2ID as password hasher and AES_256_CBC as
 // encryption algorithm.
 func DefaultEncrypter(opts ...Option) Encrypter {
-
 	argon2dParameters := &argon2dParameters{
 		iterations:  defaultIterations,
 		memory:      defaultMemory,
@@ -238,25 +237,25 @@ func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 		// Encrypter method
 		switch funcs[1] {
 		case nameFuncAES256CTR:
-			var iv, cipherKey []byte
+			var initVec, cipherKey []byte
 
 			switch keyLen {
 			case 0:
 				// This case supports legacy encryption methods where the same salt is reused as the IV.
 				cipherKey = derivedByte
-				iv = salt
+				initVec = salt
 
 			case 48:
 				// The first 32 bytes are used as the encryption key, and the last 16 bytes are used as the IV.
 				cipherKey = derivedByte[:32]
-				iv = derivedByte[32:]
+				initVec = derivedByte[32:]
 
 			default:
 				return "", ErrInvalidParam
 			}
 
 			enc := data[16 : len(data)-4]
-			text = string(aesCTRCrypt(enc, iv, cipherKey))
+			text = string(aesCTRCrypt(enc, initVec, cipherKey))
 
 			// MAC method
 			switch funcs[2] {
@@ -289,34 +288,6 @@ func aesCTRCrypt(message, initVec, cipherKey []byte) []byte {
 
 	stream := cipher.NewCTR(aesCipher, initVec)
 	stream.XORKeyStream(cipherMsg, message)
-
-	return cipherMsg
-}
-
-// aesCBCEncrypt encrypts/decrypts a message using AES-256-CBC and
-// returns the encoded/decoded bytes.
-func aesCBCEncrypt(message, initVec, cipherKey []byte) []byte {
-	// Generate the cipher message
-	cipherMsg := make([]byte, len(message))
-	aesCipher, err := aes.NewCipher(cipherKey)
-	exitOnErr(err)
-
-	stream := cipher.NewCBCEncrypter(aesCipher, initVec)
-	stream.CryptBlocks(cipherMsg, message)
-
-	return cipherMsg
-}
-
-// aesCBCDecrypt encrypts/decrypts a message using AES-256-CBC and
-// returns the encoded/decoded bytes.
-func aesCBCDecrypt(message, initVec, cipherKey []byte) []byte {
-	// Generate the cipher message
-	cipherMsg := make([]byte, len(message))
-	aesCipher, err := aes.NewCipher(cipherKey)
-	exitOnErr(err)
-
-	stream := cipher.NewCBCDecrypter(aesCipher, initVec)
-	stream.CryptBlocks(cipherMsg, message)
 
 	return cipherMsg
 }

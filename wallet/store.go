@@ -85,8 +85,7 @@ func (s *Store) UpgradeWallet(walletPath string) error {
 			return err
 		}
 
-	case Version2,
-		Version3:
+	case Version2, Version3:
 		return nil
 
 	default:

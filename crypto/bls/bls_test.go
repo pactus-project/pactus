@@ -2,7 +2,6 @@ package bls_test
 
 import (
 	"encoding/hex"
-	"fmt"
 	"testing"
 
 	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
@@ -41,11 +40,6 @@ func TestSignatureAggregate(t *testing.T) {
 		"ad747172697127cb08dda29a386e106eb24ab0edfbc044014c3bd7a5f583cc38b3a223ff2c1df9c0b4df110630e6946b")
 	sig1 := prv1.Sign(msg).(*bls.Signature)
 	sig2 := prv2.Sign(msg).(*bls.Signature)
-
-	fmt.Println(prv1.PublicKey().String())
-	fmt.Println(prv2.PublicKey().String())
-	agPub := bls.PublicKeyAggregate(prv1.PublicKeyNative(), prv2.PublicKeyNative())
-	fmt.Println(agPub.String())
 
 	assert.True(t, bls.SignatureAggregate(sig1, sig2).EqualsTo(agg))
 	assert.False(t, prv1.EqualsTo(prv2))

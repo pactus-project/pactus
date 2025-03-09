@@ -59,7 +59,6 @@ func TestParamsDefaultValue(t *testing.T) {
 	assert.Equal(t, uint64(24), p.GetUint64("not-exist", 24))
 	assert.Equal(t, uint32(24), p.GetUint32("not-exist", 24))
 	assert.Equal(t, uint8(24), p.GetUint8("not-exist", 24))
-
 }
 
 func TestParamsBytes(t *testing.T) {
@@ -88,7 +87,7 @@ func TestParamsString(t *testing.T) {
 	}{
 		{"k1", "foo"},
 		{"k2", "bar"},
-		{"k3", "bar"},
+		{"k3", ""},
 	}
 
 	p := params{}
