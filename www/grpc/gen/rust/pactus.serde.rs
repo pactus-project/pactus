@@ -12262,7 +12262,9 @@ impl serde::Serialize for VoteType {
             Self::VoteUnknown => "VOTE_UNKNOWN",
             Self::VotePrepare => "VOTE_PREPARE",
             Self::VotePrecommit => "VOTE_PRECOMMIT",
-            Self::VoteChangeProposer => "VOTE_CHANGE_PROPOSER",
+            Self::VoteCpPreVote => "VOTE_CP_PRE_VOTE",
+            Self::VoteCpMainVote => "VOTE_CP_MAIN_VOTE",
+            Self::VoteCpDecided => "VOTE_CP_DECIDED",
         };
         serializer.serialize_str(variant)
     }
@@ -12277,7 +12279,9 @@ impl<'de> serde::Deserialize<'de> for VoteType {
             "VOTE_UNKNOWN",
             "VOTE_PREPARE",
             "VOTE_PRECOMMIT",
-            "VOTE_CHANGE_PROPOSER",
+            "VOTE_CP_PRE_VOTE",
+            "VOTE_CP_MAIN_VOTE",
+            "VOTE_CP_DECIDED",
         ];
 
         struct GeneratedVisitor;
@@ -12323,7 +12327,9 @@ impl<'de> serde::Deserialize<'de> for VoteType {
                     "VOTE_UNKNOWN" => Ok(VoteType::VoteUnknown),
                     "VOTE_PREPARE" => Ok(VoteType::VotePrepare),
                     "VOTE_PRECOMMIT" => Ok(VoteType::VotePrecommit),
-                    "VOTE_CHANGE_PROPOSER" => Ok(VoteType::VoteChangeProposer),
+                    "VOTE_CP_PRE_VOTE" => Ok(VoteType::VoteCpPreVote),
+                    "VOTE_CP_MAIN_VOTE" => Ok(VoteType::VoteCpMainVote),
+                    "VOTE_CP_DECIDED" => Ok(VoteType::VoteCpDecided),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }

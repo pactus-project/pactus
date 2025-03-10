@@ -194,12 +194,28 @@ public final class BlockchainOuterClass {
     VOTE_PRECOMMIT(2),
     /**
      * <pre>
-     * Change proposer vote type.
+     * Change-proposer:pre-vote vote type.
      * </pre>
      *
-     * <code>VOTE_CHANGE_PROPOSER = 3;</code>
+     * <code>VOTE_CP_PRE_VOTE = 3;</code>
      */
-    VOTE_CHANGE_PROPOSER(3),
+    VOTE_CP_PRE_VOTE(3),
+    /**
+     * <pre>
+     * change-proposer:main-vote vote type.
+     * </pre>
+     *
+     * <code>VOTE_CP_MAIN_VOTE = 4;</code>
+     */
+    VOTE_CP_MAIN_VOTE(4),
+    /**
+     * <pre>
+     * change-proposer:decided vote type.
+     * </pre>
+     *
+     * <code>VOTE_CP_DECIDED = 5;</code>
+     */
+    VOTE_CP_DECIDED(5),
     UNRECOGNIZED(-1),
     ;
 
@@ -229,12 +245,28 @@ public final class BlockchainOuterClass {
     public static final int VOTE_PRECOMMIT_VALUE = 2;
     /**
      * <pre>
-     * Change proposer vote type.
+     * Change-proposer:pre-vote vote type.
      * </pre>
      *
-     * <code>VOTE_CHANGE_PROPOSER = 3;</code>
+     * <code>VOTE_CP_PRE_VOTE = 3;</code>
      */
-    public static final int VOTE_CHANGE_PROPOSER_VALUE = 3;
+    public static final int VOTE_CP_PRE_VOTE_VALUE = 3;
+    /**
+     * <pre>
+     * change-proposer:main-vote vote type.
+     * </pre>
+     *
+     * <code>VOTE_CP_MAIN_VOTE = 4;</code>
+     */
+    public static final int VOTE_CP_MAIN_VOTE_VALUE = 4;
+    /**
+     * <pre>
+     * change-proposer:decided vote type.
+     * </pre>
+     *
+     * <code>VOTE_CP_DECIDED = 5;</code>
+     */
+    public static final int VOTE_CP_DECIDED_VALUE = 5;
 
 
     public final int getNumber() {
@@ -264,7 +296,9 @@ public final class BlockchainOuterClass {
         case 0: return VOTE_UNKNOWN;
         case 1: return VOTE_PREPARE;
         case 2: return VOTE_PRECOMMIT;
-        case 3: return VOTE_CHANGE_PROPOSER;
+        case 3: return VOTE_CP_PRE_VOTE;
+        case 4: return VOTE_CP_MAIN_VOTE;
+        case 5: return VOTE_CP_DECIDED;
         default: return null;
       }
     }
@@ -24805,34 +24839,35 @@ public final class BlockchainOuterClass {
       "_data\030\003 \001(\tR\tblockData\022\034\n\tsignature\030\004 \001(" +
       "\tR\tsignature*H\n\016BlockVerbosity\022\016\n\nBLOCK_" +
       "DATA\020\000\022\016\n\nBLOCK_INFO\020\001\022\026\n\022BLOCK_TRANSACT" +
-      "IONS\020\002*\\\n\010VoteType\022\020\n\014VOTE_UNKNOWN\020\000\022\020\n\014" +
-      "VOTE_PREPARE\020\001\022\022\n\016VOTE_PRECOMMIT\020\002\022\030\n\024VO" +
-      "TE_CHANGE_PROPOSER\020\0032\213\007\n\nBlockchain\022=\n\010G" +
-      "etBlock\022\027.pactus.GetBlockRequest\032\030.pactu" +
-      "s.GetBlockResponse\022I\n\014GetBlockHash\022\033.pac" +
-      "tus.GetBlockHashRequest\032\034.pactus.GetBloc" +
-      "kHashResponse\022O\n\016GetBlockHeight\022\035.pactus" +
-      ".GetBlockHeightRequest\032\036.pactus.GetBlock" +
-      "HeightResponse\022X\n\021GetBlockchainInfo\022 .pa" +
-      "ctus.GetBlockchainInfoRequest\032!.pactus.G" +
-      "etBlockchainInfoResponse\022U\n\020GetConsensus" +
-      "Info\022\037.pactus.GetConsensusInfoRequest\032 ." +
-      "pactus.GetConsensusInfoResponse\022C\n\nGetAc" +
-      "count\022\031.pactus.GetAccountRequest\032\032.pactu" +
-      "s.GetAccountResponse\022I\n\014GetValidator\022\033.p" +
-      "actus.GetValidatorRequest\032\034.pactus.GetVa" +
-      "lidatorResponse\022Y\n\024GetValidatorByNumber\022" +
-      "#.pactus.GetValidatorByNumberRequest\032\034.p" +
-      "actus.GetValidatorResponse\022d\n\025GetValidat" +
-      "orAddresses\022$.pactus.GetValidatorAddress" +
-      "esRequest\032%.pactus.GetValidatorAddresses" +
-      "Response\022I\n\014GetPublicKey\022\033.pactus.GetPub" +
-      "licKeyRequest\032\034.pactus.GetPublicKeyRespo" +
-      "nse\022U\n\020GetTxPoolContent\022\037.pactus.GetTxPo" +
-      "olContentRequest\032 .pactus.GetTxPoolConte" +
-      "ntResponseBE\n\021pactus.blockchainZ0github." +
-      "com/pactus-project/pactus/www/grpc/pactu" +
-      "sb\006proto3"
+      "IONS\020\002*\204\001\n\010VoteType\022\020\n\014VOTE_UNKNOWN\020\000\022\020\n" +
+      "\014VOTE_PREPARE\020\001\022\022\n\016VOTE_PRECOMMIT\020\002\022\024\n\020V" +
+      "OTE_CP_PRE_VOTE\020\003\022\025\n\021VOTE_CP_MAIN_VOTE\020\004" +
+      "\022\023\n\017VOTE_CP_DECIDED\020\0052\213\007\n\nBlockchain\022=\n\010" +
+      "GetBlock\022\027.pactus.GetBlockRequest\032\030.pact" +
+      "us.GetBlockResponse\022I\n\014GetBlockHash\022\033.pa" +
+      "ctus.GetBlockHashRequest\032\034.pactus.GetBlo" +
+      "ckHashResponse\022O\n\016GetBlockHeight\022\035.pactu" +
+      "s.GetBlockHeightRequest\032\036.pactus.GetBloc" +
+      "kHeightResponse\022X\n\021GetBlockchainInfo\022 .p" +
+      "actus.GetBlockchainInfoRequest\032!.pactus." +
+      "GetBlockchainInfoResponse\022U\n\020GetConsensu" +
+      "sInfo\022\037.pactus.GetConsensusInfoRequest\032 " +
+      ".pactus.GetConsensusInfoResponse\022C\n\nGetA" +
+      "ccount\022\031.pactus.GetAccountRequest\032\032.pact" +
+      "us.GetAccountResponse\022I\n\014GetValidator\022\033." +
+      "pactus.GetValidatorRequest\032\034.pactus.GetV" +
+      "alidatorResponse\022Y\n\024GetValidatorByNumber" +
+      "\022#.pactus.GetValidatorByNumberRequest\032\034." +
+      "pactus.GetValidatorResponse\022d\n\025GetValida" +
+      "torAddresses\022$.pactus.GetValidatorAddres" +
+      "sesRequest\032%.pactus.GetValidatorAddresse" +
+      "sResponse\022I\n\014GetPublicKey\022\033.pactus.GetPu" +
+      "blicKeyRequest\032\034.pactus.GetPublicKeyResp" +
+      "onse\022U\n\020GetTxPoolContent\022\037.pactus.GetTxP" +
+      "oolContentRequest\032 .pactus.GetTxPoolCont" +
+      "entResponseBE\n\021pactus.blockchainZ0github" +
+      ".com/pactus-project/pactus/www/grpc/pact" +
+      "usb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

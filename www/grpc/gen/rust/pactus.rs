@@ -790,8 +790,12 @@ pub enum VoteType {
     VotePrepare = 1,
     /// Precommit vote type.
     VotePrecommit = 2,
-    /// Change proposer vote type.
-    VoteChangeProposer = 3,
+    /// Change-proposer:pre-vote vote type.
+    VoteCpPreVote = 3,
+    /// change-proposer:main-vote vote type.
+    VoteCpMainVote = 4,
+    /// change-proposer:decided vote type.
+    VoteCpDecided = 5,
 }
 impl VoteType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -803,7 +807,9 @@ impl VoteType {
             VoteType::VoteUnknown => "VOTE_UNKNOWN",
             VoteType::VotePrepare => "VOTE_PREPARE",
             VoteType::VotePrecommit => "VOTE_PRECOMMIT",
-            VoteType::VoteChangeProposer => "VOTE_CHANGE_PROPOSER",
+            VoteType::VoteCpPreVote => "VOTE_CP_PRE_VOTE",
+            VoteType::VoteCpMainVote => "VOTE_CP_MAIN_VOTE",
+            VoteType::VoteCpDecided => "VOTE_CP_DECIDED",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -812,7 +818,9 @@ impl VoteType {
             "VOTE_UNKNOWN" => Some(Self::VoteUnknown),
             "VOTE_PREPARE" => Some(Self::VotePrepare),
             "VOTE_PRECOMMIT" => Some(Self::VotePrecommit),
-            "VOTE_CHANGE_PROPOSER" => Some(Self::VoteChangeProposer),
+            "VOTE_CP_PRE_VOTE" => Some(Self::VoteCpPreVote),
+            "VOTE_CP_MAIN_VOTE" => Some(Self::VoteCpMainVote),
+            "VOTE_CP_DECIDED" => Some(Self::VoteCpDecided),
             _ => None,
         }
     }

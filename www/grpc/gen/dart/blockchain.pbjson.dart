@@ -29,12 +29,14 @@ const VoteType$json = const {
     const {'1': 'VOTE_UNKNOWN', '2': 0},
     const {'1': 'VOTE_PREPARE', '2': 1},
     const {'1': 'VOTE_PRECOMMIT', '2': 2},
-    const {'1': 'VOTE_CHANGE_PROPOSER', '2': 3},
+    const {'1': 'VOTE_CP_PRE_VOTE', '2': 3},
+    const {'1': 'VOTE_CP_MAIN_VOTE', '2': 4},
+    const {'1': 'VOTE_CP_DECIDED', '2': 5},
   ],
 };
 
 /// Descriptor for `VoteType`. Decode as a `google.protobuf.EnumDescriptorProto`.
-final $typed_data.Uint8List voteTypeDescriptor = $convert.base64Decode('CghWb3RlVHlwZRIQCgxWT1RFX1VOS05PV04QABIQCgxWT1RFX1BSRVBBUkUQARISCg5WT1RFX1BSRUNPTU1JVBACEhgKFFZPVEVfQ0hBTkdFX1BST1BPU0VSEAM=');
+final $typed_data.Uint8List voteTypeDescriptor = $convert.base64Decode('CghWb3RlVHlwZRIQCgxWT1RFX1VOS05PV04QABIQCgxWT1RFX1BSRVBBUkUQARISCg5WT1RFX1BSRUNPTU1JVBACEhQKEFZPVEVfQ1BfUFJFX1ZPVEUQAxIVChFWT1RFX0NQX01BSU5fVk9URRAEEhMKD1ZPVEVfQ1BfREVDSURFRBAF');
 @$core.Deprecated('Use getAccountRequestDescriptor instead')
 const GetAccountRequest$json = const {
   '1': 'GetAccountRequest',
