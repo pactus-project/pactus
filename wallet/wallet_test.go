@@ -97,7 +97,7 @@ func TestOpenWallet(t *testing.T) {
 		_, err := wallet.Open(td.wallet.Path(), true)
 		assert.ErrorIs(t, err, wallet.UnsupportedVersionError{
 			WalletVersion:    0,
-			SupportedVersion: 2,
+			SupportedVersion: wallet.VersionLatest,
 		})
 	})
 

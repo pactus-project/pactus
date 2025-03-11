@@ -37,16 +37,45 @@ func TestDefaultEncrypter(t *testing.T) {
 	assert.Equal(t, "3", enc.Params["iterations"])
 	assert.Equal(t, "4", enc.Params["memory"])
 	assert.Equal(t, "5", enc.Params["parallelism"])
+	assert.Equal(t, "48", enc.Params["keylen"])
 	assert.True(t, enc.IsEncrypted())
 }
 
-func TestEncrypter(t *testing.T) {
+func TestEncrypterV2(t *testing.T) {
 	enc := &Encrypter{
 		Method: "ARGON2ID-AES_256_CTR-MACV1",
 		Params: params{
 			nameParamIterations:  "1",
 			nameParamMemory:      "1",
 			nameParamParallelism: "1",
+		},
+	}
+
+	msg := "foo"
+
+	_, err := enc.Encrypt(msg, "")
+	assert.ErrorIs(t, err, ErrInvalidPassword)
+
+	password := "cowboy"
+	cipher, err := enc.Encrypt(msg, password)
+	assert.NoError(t, err)
+
+	dec, err := enc.Decrypt(cipher, password)
+	assert.NoError(t, err)
+	assert.Equal(t, msg, dec)
+
+	_, err = enc.Decrypt(cipher, "invalid-password")
+	assert.ErrorIs(t, err, ErrInvalidPassword)
+}
+
+func TestEncrypterV3(t *testing.T) {
+	enc := &Encrypter{
+		Method: "ARGON2ID-AES_256_CTR-MACV1",
+		Params: params{
+			nameParamIterations:  "1",
+			nameParamMemory:      "1",
+			nameParamParallelism: "1",
+			nameParamKeyLen:      "48",
 		},
 	}
 

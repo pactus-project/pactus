@@ -21,6 +21,7 @@ type argon2dParameters struct {
 	iterations  uint32
 	memory      uint32
 	parallelism uint8
+	keyLen      uint32
 }
 
 type Option func(p *argon2dParameters)
@@ -47,11 +48,20 @@ const (
 	nameParamIterations  = "iterations"
 	nameParamMemory      = "memory"
 	nameParamParallelism = "parallelism"
+	nameParamKeyLen      = "keylen"
 
 	nameFuncNope      = ""
 	nameFuncArgon2ID  = "ARGON2ID"
 	nameFuncAES256CTR = "AES_256_CTR"
+	nameFuncAES256CBC = "AES_256_CBC"
 	nameFuncMACv1     = "MACV1"
+
+	// Parameter Choice
+	// https://www.rfc-editor.org/rfc/rfc9106.html#section-4
+	defaultIterations  = 3
+	defaultMemory      = 65536 // 2 ^ 16
+	defaultParallelism = 4
+	defaultKeyLen      = 48
 )
 
 // ErrNotSupported describes an error in which the encrypted method is no
@@ -75,17 +85,17 @@ func NopeEncrypter() Encrypter {
 	}
 }
 
-// DefaultEncrypter creates a default encrypter instance.
+// DefaultEncrypter creates a new encrypter instance.
+// If no option sets it uses the default parameters.
 //
 // The default encrypter uses Argon2ID as password hasher and AES_256_CTR as
 // encryption algorithm.
 func DefaultEncrypter(opts ...Option) Encrypter {
-	// Parameter Choice
-	// https://www.rfc-editor.org/rfc/rfc9106.html#section-4
 	argon2dParameters := &argon2dParameters{
-		iterations:  uint32(3),
-		memory:      uint32(65536), // 2 ^ 16
-		parallelism: uint8(4),
+		iterations:  defaultIterations,
+		memory:      defaultMemory,
+		parallelism: defaultParallelism,
+		keyLen:      defaultKeyLen,
 	}
 	for _, opt := range opts {
 		opt(argon2dParameters)
@@ -98,6 +108,7 @@ func DefaultEncrypter(opts ...Option) Encrypter {
 	encParams.SetUint32(nameParamIterations, argon2dParameters.iterations)
 	encParams.SetUint32(nameParamMemory, argon2dParameters.memory)
 	encParams.SetUint8(nameParamParallelism, argon2dParameters.parallelism)
+	encParams.SetUint32(nameParamKeyLen, argon2dParameters.keyLen)
 
 	return Encrypter{
 		Method: method,
@@ -140,22 +151,23 @@ func (e *Encrypter) Encrypt(message, password string) (string, error) {
 			return "", err
 		}
 
-		iterations := e.Params.GetUint32(nameParamIterations)
-		memory := e.Params.GetUint32(nameParamMemory)
-		parallelism := e.Params.GetUint8(nameParamParallelism)
+		iterations := e.Params.GetUint32(nameParamIterations, defaultIterations)
+		memory := e.Params.GetUint32(nameParamMemory, defaultMemory)
+		parallelism := e.Params.GetUint8(nameParamParallelism, defaultParallelism)
+		keyLen := e.Params.GetUint32(nameParamKeyLen, defaultKeyLen)
 
 		// Argon2 currently has three modes:
 		// - data-dependent Argon2d,
 		// - data-independent Argon2i,
 		// - a mix of the two, Argon2id.
-		cipherKey := argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, 32)
+		derivedBytes := argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, keyLen)
 
 		// Encrypter method
 		switch funcs[1] {
 		case nameFuncAES256CTR:
-			// Using salt for Initialization Vector (IV)
-			iv := salt
-			cipher := aesCrypt([]byte(message), iv, cipherKey)
+			cipherKey := derivedBytes[:32]
+			iv := derivedBytes[32:]
+			cipher := aesCTRCrypt([]byte(message), iv, cipherKey)
 
 			// MAC method
 			switch funcs[2] {
@@ -215,18 +227,35 @@ func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 	case nameFuncArgon2ID:
 		salt := data[0:16]
 
-		iterations := e.Params.GetUint32(nameParamIterations)
-		memory := e.Params.GetUint32(nameParamMemory)
-		parallelism := e.Params.GetUint8(nameParamParallelism)
+		iterations := e.Params.GetUint32(nameParamIterations, defaultIterations)
+		memory := e.Params.GetUint32(nameParamMemory, defaultMemory)
+		parallelism := e.Params.GetUint8(nameParamParallelism, defaultParallelism)
+		keyLen := e.Params.GetUint32(nameParamKeyLen, defaultKeyLen)
 
-		cipherKey := argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, 32)
+		derivedByte := argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, keyLen)
 
 		// Encrypter method
 		switch funcs[1] {
 		case nameFuncAES256CTR:
-			iv := salt
+			var initVec, cipherKey []byte
+
+			switch keyLen {
+			case 0:
+				// This case supports legacy encryption methods where the same salt is reused as the IV.
+				cipherKey = derivedByte
+				initVec = salt
+
+			case 48:
+				// The first 32 bytes are used as the encryption key, and the last 16 bytes are used as the IV.
+				cipherKey = derivedByte[:32]
+				initVec = derivedByte[32:]
+
+			default:
+				return "", ErrInvalidParam
+			}
+
 			enc := data[16 : len(data)-4]
-			text = string(aesCrypt(enc, iv, cipherKey))
+			text = string(aesCTRCrypt(enc, initVec, cipherKey))
 
 			// MAC method
 			switch funcs[2] {
@@ -249,9 +278,9 @@ func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 	return text, nil
 }
 
-// aesCrypt encrypts/decrypts a message using AES-256-CTR and
+// aesCTRCrypt encrypts/decrypts a message using AES-256-CTR and
 // returns the encoded/decoded bytes.
-func aesCrypt(message, initVec, cipherKey []byte) []byte {
+func aesCTRCrypt(message, initVec, cipherKey []byte) []byte {
 	// Generate the cipher message
 	cipherMsg := make([]byte, len(message))
 	aesCipher, err := aes.NewCipher(cipherKey)

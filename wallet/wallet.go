@@ -109,7 +109,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType,
 	}
 
 	store := &Store{
-		Version:   Version2,
+		Version:   VersionLatest,
 		UUID:      uuid.New(),
 		CreatedAt: time.Now().Round(time.Second).UTC(),
 		Network:   chain,
