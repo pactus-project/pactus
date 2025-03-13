@@ -3,14 +3,19 @@ package encrypter
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNopeEncrypter(t *testing.T) {
+func TestNopeEncrypterParams(t *testing.T) {
 	enc := NopeEncrypter()
 	assert.Equal(t, "", enc.Method)
 	assert.Nil(t, enc.Params)
 	assert.False(t, enc.IsEncrypted())
+}
+
+func TestNopeEncrypter(t *testing.T) {
+	enc := NopeEncrypter()
 
 	msg := "foo"
 	_, err := enc.Encrypt(msg, "password")
@@ -26,7 +31,7 @@ func TestNopeEncrypter(t *testing.T) {
 	assert.Equal(t, msg, decipher)
 }
 
-func TestDefaultEncrypter(t *testing.T) {
+func TestDefaultEncrypterParams(t *testing.T) {
 	opts := []Option{
 		OptionIteration(3),
 		OptionMemory(4),
@@ -41,22 +46,25 @@ func TestDefaultEncrypter(t *testing.T) {
 	assert.True(t, enc.IsEncrypted())
 }
 
-func TestEncrypterV2(t *testing.T) {
+func TestDefaultEncrypter(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
 	enc := &Encrypter{
 		Method: "ARGON2ID-AES_256_CTR-MACV1",
 		Params: params{
 			nameParamIterations:  "1",
-			nameParamMemory:      "1",
+			nameParamMemory:      "8",
 			nameParamParallelism: "1",
+			nameParamKeyLen:      "48",
 		},
 	}
 
-	msg := "foo"
+	msg := ts.RandString(ts.RandIntNonZero(100))
+	password := ts.RandString(ts.RandIntNonZero(100))
 
 	_, err := enc.Encrypt(msg, "")
 	assert.ErrorIs(t, err, ErrInvalidPassword)
 
-	password := "cowboy"
 	cipher, err := enc.Encrypt(msg, password)
 	assert.NoError(t, err)
 
@@ -68,23 +76,94 @@ func TestEncrypterV2(t *testing.T) {
 	assert.ErrorIs(t, err, ErrInvalidPassword)
 }
 
-func TestEncrypterV3(t *testing.T) {
+func TestInvalidMethod(t *testing.T) {
+	tests := []struct {
+		method string
+	}{
+		{"XXX-AES_256_CTR-MACV1"},
+		{"ARGON2ID-XXX-MACV1"},
+		{"ARGON2ID-AES_256_CTR-XXX"},
+		{"XXX"},
+	}
+
+	for _, tt := range tests {
+		enc := &Encrypter{
+			Method: tt.method,
+			Params: params{
+				nameParamIterations:  "1",
+				nameParamMemory:      "8",
+				nameParamParallelism: "1",
+				nameParamKeyLen:      "48",
+			},
+		}
+
+		_, err := enc.Encrypt("foo", "password")
+		assert.ErrorIs(t, err, ErrMethodNotSupported)
+
+		_, err = enc.Decrypt("AJFPsGu6bDMJ5iuMWDJS/87xVs7r", "password")
+		assert.ErrorIs(t, err, ErrMethodNotSupported)
+	}
+}
+
+func TestInvalidDecrypt(t *testing.T) {
 	enc := &Encrypter{
 		Method: "ARGON2ID-AES_256_CTR-MACV1",
 		Params: params{
 			nameParamIterations:  "1",
-			nameParamMemory:      "1",
+			nameParamMemory:      "8",
+			nameParamParallelism: "1",
+			nameParamKeyLen:      "48",
+		},
+	}
+
+	_, err := enc.Decrypt("", "password")
+	assert.ErrorIs(t, err, ErrInvalidCipher)
+
+	_, err = enc.Decrypt("invalid-base64", "password")
+	assert.ErrorIs(t, err, ErrInvalidCipher)
+
+	enc.Params.SetUint32(nameParamKeyLen, 64)
+	_, err = enc.Decrypt("AJFPsGu6bDMJ5iuMWDJS/87xVs7r", "password")
+	assert.ErrorIs(t, err, ErrInvalidParam)
+}
+
+func TestEncrypterV2(t *testing.T) {
+	enc := &Encrypter{
+		Method: "ARGON2ID-AES_256_CTR-MACV1",
+		Params: params{
+			nameParamIterations:  "1",
+			nameParamMemory:      "8",
+			nameParamParallelism: "1",
+			nameParamKeyLen:      "32",
+		},
+	}
+
+	msg := "foo"
+	password := "cowboy"
+	cipher := "hU/nlRNmHhKXB1tv32Ekt4ctoP7GRLw="
+
+	dec, err := enc.Decrypt(cipher, password)
+	assert.NoError(t, err)
+	assert.Equal(t, msg, dec)
+}
+
+func TestAES256CBC(t *testing.T) {
+	enc := &Encrypter{
+		Method: "ARGON2ID-AES_256_CBC-MACV1",
+		Params: params{
+			nameParamIterations:  "1",
+			nameParamMemory:      "8",
 			nameParamParallelism: "1",
 			nameParamKeyLen:      "48",
 		},
 	}
 
 	msg := "foo"
+	password := "cowboy"
 
 	_, err := enc.Encrypt(msg, "")
 	assert.ErrorIs(t, err, ErrInvalidPassword)
 
-	password := "cowboy"
 	cipher, err := enc.Encrypt(msg, password)
 	assert.NoError(t, err)
 
