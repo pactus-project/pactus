@@ -127,26 +127,6 @@ func TestInvalidDecrypt(t *testing.T) {
 	assert.ErrorIs(t, err, ErrInvalidParam)
 }
 
-func TestEncrypterV2(t *testing.T) {
-	enc := &Encrypter{
-		Method: "ARGON2ID-AES_256_CTR-MACV1",
-		Params: params{
-			nameParamIterations:  "1",
-			nameParamMemory:      "8",
-			nameParamParallelism: "1",
-			nameParamKeyLen:      "32",
-		},
-	}
-
-	msg := "foo"
-	password := "cowboy"
-	cipher := "hU/nlRNmHhKXB1tv32Ekt4ctoP7GRLw="
-
-	dec, err := enc.Decrypt(cipher, password)
-	assert.NoError(t, err)
-	assert.Equal(t, msg, dec)
-}
-
 func TestAES256CBC(t *testing.T) {
 	enc := &Encrypter{
 		Method: "ARGON2ID-AES_256_CBC-MACV1",
@@ -173,4 +153,64 @@ func TestAES256CBC(t *testing.T) {
 
 	_, err = enc.Decrypt(cipher, "invalid-password")
 	assert.ErrorIs(t, err, ErrInvalidPassword)
+}
+
+func TestDecrypt(t *testing.T) {
+	msg := "foo"
+	password := "cowboy"
+
+	tests := []struct {
+		name   string
+		enc    Encrypter
+		cipher string
+	}{
+		{
+			name: "Legacy cipher with keylen 32",
+			enc: Encrypter{
+				Method: "ARGON2ID-AES_256_CTR-MACV1",
+				Params: params{
+					nameParamIterations:  "1",
+					nameParamMemory:      "8",
+					nameParamParallelism: "1",
+					nameParamKeyLen:      "32",
+				},
+			},
+			// 854fe79513661e1297075b6fdf6124b7 872da0 fec644bc
+			cipher: "hU/nlRNmHhKXB1tv32Ekt4ctoP7GRLw=",
+		},
+		{
+			name: "Stream Cipher with keylen 48",
+			enc: Encrypter{
+				Method: "ARGON2ID-AES_256_CTR-MACV1",
+				Params: params{
+					nameParamIterations:  "1",
+					nameParamMemory:      "8",
+					nameParamParallelism: "1",
+					nameParamKeyLen:      "48",
+				},
+			},
+			// f000c3271de35c14162b0ddceeac0492 b4da66 b04cae34
+			cipher: "8ADDJx3jXBQWKw3c7qwEkrTaZrBMrjQ=",
+		},
+		{
+			name: "Block Cipher with keylen 48",
+			enc: Encrypter{
+				Method: "ARGON2ID-AES_256_CBC-MACV1",
+				Params: params{
+					nameParamIterations:  "1",
+					nameParamMemory:      "8",
+					nameParamParallelism: "1",
+					nameParamKeyLen:      "48",
+				},
+			},
+			// b14b280a9e5f7907671a405b8b8c918a 639f113cef2b6d37e7d590678b5d5a45 b422f34e
+			cipher: "sUsoCp5feQdnGkBbi4yRimOfETzvK20359WQZ4tdWkW0IvNO",
+		},
+	}
+
+	for _, tt := range tests {
+		dec, err := tt.enc.Decrypt(tt.cipher, password)
+		assert.NoError(t, err)
+		assert.Equal(t, msg, dec)
+	}
 }

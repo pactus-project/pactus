@@ -44,10 +44,11 @@
       "params": {
         "iterations": "1",
         "memory": "8",
-        "parallelism": "1"
+        "parallelism": "1",
+        "keylen": "48"
       }
     },
-    "key_store": "ryienlpiRH10D2K7UJ5UphwRnLLoyB4+JAXNNXgMblqwGJO6vFi2gQmQAZGZlmC4oYsKyaPjfQhXoeJAeQN3a8gNgLbXERdwBGpEY7SDADLJmEwiL8g5kaofuysypt4e/pS+u5pPUXv/jsIUIbtSZZ2Zqp12udfHutvzaf5iWmr+XFVk7aTC2q3WlAlWvkacpGffjighAVY/lsZKPeRfOw==",
+    "key_store": "8I7PgF3AKMaoBz3QtBN2aVzFPG6YxX2fgSX3GZSY/4mxuYdht9Vi1DZcvr8Bk5ZcfU58l6L7cpRcDltwgBENikjku779qvsUWkMKRL5+ytibYO7a/XC6higRU4+RPYyYwMCh8hGXD3oYeZ7TDHrlOOxXh4Xol3GB0nl2PgBUbO7LbMRkZ8bCGVRDwEjx0ZjLe0Zs/KFtvTo9MAmbW3aEJA==",
     "purposes": {
       "purpose_bls": {
         "xpub_account": "xpublic1pqdwnqqyqsp2spqqpqqqgqgxj6mlduay8ase6hkefwa2lk2esz0gn2yu59tnk3w2tgnlfk5hleuqxpqdlt5q2f207qrwq9gasqscpckjv8hggc57n044gvml7u05cpzu8ra0zq2s3x3mak6xhtzga27tdx5pypnqxhlkf9aedptzcsd8l3q6m7ch6g4lphzsdv20fvc3dsu7mlj8kdy3n5fyllg07wecmpr8y6nsr95zlz",
