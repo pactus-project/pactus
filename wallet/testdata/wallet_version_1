@@ -11,37 +11,37 @@
       "pc1p4xuja689hg2434yhr32clhn97x6afw58qlrcyd": {
         "address": "pc1p4xuja689hg2434yhr32clhn97x6afw58qlrcyd",
         "public_key": "public1p3wmdecume03kehtcaks95jjyem2m7pev0da2yx7t0gws66nkgp7vaah5sdd5gv0s4d34y0nqxch0cqq7fnsy9v46kum7e46gx9dua4sss7ne57m5c776h0e9dt0dw8hv24uushps9arv0zk8dc2xe0k7pgk588tf",
-        "label": "Imported Validator Address 1",
+        "label": "Imported Validator Address",
         "path": "m/65535'/21888'/1'/0'"
+      },
+      "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns": {
+        "address": "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns",
+        "public_key": "public1p3wmdecume03kehtcaks95jjyem2m7pev0da2yx7t0gws66nkgp7vaah5sdd5gv0s4d34y0nqxch0cqq7fnsy9v46kum7e46gx9dua4sss7ne57m5c776h0e9dt0dw8hv24uushps9arv0zk8dc2xe0k7pgk588tf",
+        "label": "Imported BLS Account Address 1",
+        "path": "m/65535'/21888'/2'/0'"
       },
       "pc1pjneygutecly9gtandrdt8j36v8g4fl42k4y5xp": {
         "address": "pc1pjneygutecly9gtandrdt8j36v8g4fl42k4y5xp",
         "public_key": "",
-        "label": "test-2",
+        "label": "Validator Address",
         "path": "m/12381'/21888'/1'/0"
       },
       "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf": {
         "address": "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf",
         "public_key": "",
-        "label": "test-1",
+        "label": "BLS Account Address",
         "path": "m/12381'/21888'/2'/0"
-      },
-      "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns": {
-        "address": "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns",
-        "public_key": "public1p3wmdecume03kehtcaks95jjyem2m7pev0da2yx7t0gws66nkgp7vaah5sdd5gv0s4d34y0nqxch0cqq7fnsy9v46kum7e46gx9dua4sss7ne57m5c776h0e9dt0dw8hv24uushps9arv0zk8dc2xe0k7pgk588tf",
-        "label": "Imported Reward Address 1",
-        "path": "m/65535'/21888'/2'/0'"
       }
     },
     "encrypter": {
       "method": "ARGON2ID-AES_256_CTR-MACV1",
       "params": {
-        "iterations": "3",
-        "memory": "65536",
-        "parallelism": "4"
+        "iterations": "1",
+        "memory": "8",
+        "parallelism": "1"
       }
     },
-    "key_store": "hlkOogftrz0kU1xqwIF4Vgj5/fuo+6FNSUWK+cVD20Fvrp1KUUNQTDex9F5SC/EMJfoJhwH5ofMek+j9bDYJL53BX5wO3w/ASqm/+j23cm6VJ40IMh+q74OX3pNOTMvSd9ZDYO0aPEA4rnKLyBMHX2L82r0DaAfLQ8zNV+ngx+SUCBPy+cpvzyoHdvYDlwf1YdSjjrbBfLaXa53Odg38Zgp9eieJb3gcq51jtM5GOOpXb1YR9jByYBb/7cn75/1WoEkojRCcylK/+/SYdCnGhsXbpVPu4/70LaPKDa+JNBytq1Kg",
+    "key_store": "/ccHYYuAAwurC8s6ZUFJAcqcwKAedRztvt6QAZ4Wj5xR5j2AwjIMutl4fYNhi4B0Pux39iQTiL5LKSl/Dh73Vn8z5M5b/juHVywYcLshki0jEzio4dakAdw3kYr1b8rTrOSLAHQhbD5RBpQNCck489LDvEzyuRfeIBTCaUj2UTDJqKUOYHFwFjUJVLqDrsTDGkm3BjzmuW5t6rUEV6PvrwH2s8dv7bFz5yHBbVovUhTJnEEK/jgH7OsojW6TH91sz8lDzyjtRGW8ZKr1sHglcfUjSOSN/OY/Pd8+Fnq2l4bMR8ZP",
     "purposes": {
       "purpose_bls": {
         "xpub_account": "xpublic1pqdwnqqyqsp2spqqpqqqgqgxj6mlduay8ase6hkefwa2lk2esz0gn2yu59tnk3w2tgnlfk5hleuqxpqdlt5q2f207qrwq9gasqscpckjv8hggc57n044gvml7u05cpzu8ra0zq2s3x3mak6xhtzga27tdx5pypnqxhlkf9aedptzcsd8l3q6m7ch6g4lphzsdv20fvc3dsu7mlj8kdy3n5fyllg07wecmpr8y6nsr95zlz",

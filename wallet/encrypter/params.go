@@ -31,18 +31,18 @@ func (p params) SetString(key, val string) {
 	p[key] = val
 }
 
-func (p params) GetUint8(key string, defaultValue uint64) uint8 {
-	return uint8(p.GetUint64(key, defaultValue))
+func (p params) GetUint8(key string) uint8 {
+	return uint8(p.GetUint64(key))
 }
 
-func (p params) GetUint32(key string, defaultValue uint64) uint32 {
-	return uint32(p.GetUint64(key, defaultValue))
+func (p params) GetUint32(key string) uint32 {
+	return uint32(p.GetUint64(key))
 }
 
-func (p params) GetUint64(key string, defaultValue uint64) uint64 {
+func (p params) GetUint64(key string) uint64 {
 	val, err := strconv.ParseUint(p[key], 10, 64)
 	if err != nil {
-		return defaultValue
+		return 0
 	}
 
 	return val
@@ -50,7 +50,9 @@ func (p params) GetUint64(key string, defaultValue uint64) uint64 {
 
 func (p params) GetBytes(key string) []byte {
 	val, err := base64.StdEncoding.DecodeString(p[key])
-	exitOnErr(err)
+	if err != nil {
+		return []byte{}
+	}
 
 	return val
 }

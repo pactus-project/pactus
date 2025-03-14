@@ -59,7 +59,7 @@ func setup(t *testing.T) *testData {
 	// Set encryption options to minimal values for faster test execution.
 	opts := []encrypter.Option{
 		encrypter.OptionIteration(1),
-		encrypter.OptionMemory(1),
+		encrypter.OptionMemory(8),
 		encrypter.OptionParallelism(1),
 	}
 
