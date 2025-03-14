@@ -80,17 +80,13 @@ func TestUpgradeWallet(t *testing.T) {
 
 		password := "password"
 
-		mnemonic, err := wlt.Mnemonic(password)
-		require.NoError(t, err)
-		assert.Equal(t, "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus", mnemonic)
-
 		err = wlt.UpdatePassword(password, password)
 		require.NoError(t, err)
 		assert.Equal(t, "ARGON2ID-AES_256_CTR-MACV1", wlt.store.Vault.Encrypter.Method)
 		assert.Equal(t, uint32(48), wlt.store.Vault.Encrypter.Params.GetUint32("keylen"))
 
-		mnemonic, err = wlt.Mnemonic(password)
+		addrInfo, err := wlt.NewEd25519AccountAddress("", password)
 		require.NoError(t, err)
-		assert.Equal(t, "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus", mnemonic)
+		assert.Equal(t, "pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94", addrInfo.Address)
 	})
 }
