@@ -304,19 +304,19 @@ func (td *testData) addVote(cons *consensus, v *vote.Vote, valID int) *vote.Vote
 
 func (*testData) newHeightTimeout(cons *consensus) {
 	cons.lk.Lock()
-	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetNewHeight})
+	cons.currentState.onTimeout(&ticker{time.Hour, cons.height, cons.round, tickerTargetNewHeight})
 	cons.lk.Unlock()
 }
 
 func (*testData) queryProposalTimeout(cons *consensus) {
 	cons.lk.Lock()
-	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetQueryProposal})
+	cons.currentState.onTimeout(&ticker{time.Hour, cons.height, cons.round, tickerTargetQueryProposal})
 	cons.lk.Unlock()
 }
 
 func (*testData) changeProposerTimeout(cons *consensus) {
 	cons.lk.Lock()
-	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetChangeProposer})
+	cons.currentState.onTimeout(&ticker{time.Hour, cons.height, cons.round, tickerTargetChangeProposer})
 	cons.lk.Unlock()
 }
 
