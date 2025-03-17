@@ -107,7 +107,7 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 	}
 }
 
-// buildBondTxCmd builds a command for create, sign and publish a `Unbond` transaction.
+// buildUnbondTxCmd builds a command for create, sign and publish a `Unbond` transaction.
 func buildUnbondTxCmd(parentCmd *cobra.Command) {
 	unbondCmd := &cobra.Command{
 		Use:   "unbond [flags] <ADDRESS>",

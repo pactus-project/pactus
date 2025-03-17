@@ -133,7 +133,7 @@ func (td *testData) makeValidUnbondTx(options ...func(tm *testsuite.TransactionM
 	return trx
 }
 
-// makeValidUnbondTx makes a valid Withdraw transaction for testing purpose.
+// makeValidWithdrawTx makes a valid Withdraw transaction for testing purpose.
 // Ensure that the signer key is set through the options.
 func (td *testData) makeValidWithdrawTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
 	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
