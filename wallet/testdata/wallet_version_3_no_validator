@@ -1,0 +1,39 @@
+{
+  "version": 3,
+  "uuid": "44156117-268a-49f0-a906-400659b7a051",
+  "created_at": "2024-08-27T16:45:08Z",
+  "network": 0,
+  "crc": 261496310,
+  "vault": {
+    "type": 1,
+    "coin_type": 21888,
+    "addresses": {
+      "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3": {
+        "address": "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3",
+        "public_key": "public1rd5p573yq3j5wkvnasslqa7ne5vw87qcj5a0wlwxcj2t2xlaca9lstzm8u5",
+        "label": "Ed25519 Account Address",
+        "path": "m/44'/21888'/3'/0'"
+      }
+    },
+    "encrypter": {
+      "method": "ARGON2ID-AES_256_CTR-MACV1",
+      "params": {
+        "iterations": "1",
+        "memory": "8",
+        "parallelism": "1",
+        "keylen": "48"
+      }
+    },
+    "key_store": "aLEdVCpZOJmZZz067JTxWivw/41sWooR+E2iM46WYjskjFTE3VviPzc9SQ6gba5g+8CWWcw1q1YT9x1XAg/QAt2Rd7zR2FKL+ACwCbmZ/H+lLPDBt3nlvOkD2qkxi2rjjLpbAtf2UjKrW2b3+/KxSJGuG5GPIqPvPonqHhSWrF1j0nnKqm+btD1gaeJ5IRLchi27BNorMR4qvETMeV7YjkvZlrEFdNffqpWee+o4+bnr33MwysXm4hZU1c4/zzMIODAyxsMRgbrfTDfdQ19c0yjYmDGAPDpAqNAvMmDL07nGKR2f",
+    "purposes": {
+      "purpose_bip44": {
+        "next_ed25519_index": 1
+      }
+    }
+  },
+  "history": {
+    "transactions": null,
+    "activities": null,
+    "pendings": null
+  }
+}
