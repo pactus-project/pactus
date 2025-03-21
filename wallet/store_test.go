@@ -33,6 +33,12 @@ func TestSupportedWallets(t *testing.T) {
 		// TODO: use public method to check version, like Wallet.Info()
 		assert.Equal(t, VersionLatest, wlt.store.Version)
 		assert.Equal(t, tt.addressCount, wlt.AddressCount())
+
+		mnemonic, err := wlt.Mnemonic("password")
+		require.NoError(t, err)
+		//nolint:dupword // duplicated seed phrase words
+		assert.Equal(t,
+			"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus", mnemonic)
 	}
 }
 
