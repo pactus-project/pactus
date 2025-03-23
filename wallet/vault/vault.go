@@ -430,7 +430,7 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 	if err != nil {
 		return nil, err
 	}
-	mnemonicSeed := bip39.NewSeed(keyStore.MasterNode.Mnemonic, "")
+	seed := bip39.NewSeed(keyStore.MasterNode.Mnemonic, "")
 
 	keys := make([]crypto.PrivateKey, len(addrs))
 	for i, addr := range addrs {
@@ -450,13 +450,13 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 
 		switch hdPath.Purpose() {
 		case _H(PurposeBLS12381):
-			prvKey, err := v.deriveBLSPrivateKey(mnemonicSeed, hdPath)
+			prvKey, err := v.deriveBLSPrivateKey(seed, hdPath)
 			if err != nil {
 				return nil, err
 			}
 			keys[i] = prvKey
 		case _H(PurposeBIP44):
-			prvKey, err := v.deriveEd25519PrivateKey(mnemonicSeed, hdPath)
+			prvKey, err := v.deriveEd25519PrivateKey(seed, hdPath)
 			if err != nil {
 				return nil, err
 			}
