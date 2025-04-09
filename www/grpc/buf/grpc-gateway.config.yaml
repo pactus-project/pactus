@@ -120,7 +120,7 @@ http:
       get: "/pactus/Utils/verify_message"
 
     - selector: pactus.Utils.PublicKeyAggregation
-      get: "/pactus/Utils/bls_public_key_aggregation"
+      get: "/pactus/Utils/public_key_aggregation"
 
     - selector: pactus.Utils.SignatureAggregation
-      get: "/pactus/Utils/bls_signature_aggregation"
+      get: "/pactus/Utils/signature_aggregation"

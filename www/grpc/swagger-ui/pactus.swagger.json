@@ -41,7 +41,7 @@
     "application/json"
   ],
   "paths": {
-    "/pactus/Utils/bls_public_key_aggregation": {
+    "/pactus/Utils/public_key_aggregation": {
       "get": {
         "summary": "PublicKeyAggregation aggregates multiple BLS public keys into a single key.",
         "operationId": "Utils_PublicKeyAggregation",
@@ -63,42 +63,6 @@
           {
             "name": "publicKeys",
             "description": "List of BLS public keys to be aggregated.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          }
-        ],
-        "tags": [
-          "Utils"
-        ]
-      }
-    },
-    "/pactus/Utils/bls_signature_aggregation": {
-      "get": {
-        "summary": "SignatureAggregation aggregates multiple BLS signatures into a single signature.",
-        "operationId": "Utils_SignatureAggregation",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusSignatureAggregationResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "signatures",
-            "description": "List of BLS signatures to be aggregated.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -145,6 +109,42 @@
             "in": "query",
             "required": false,
             "type": "string"
+          }
+        ],
+        "tags": [
+          "Utils"
+        ]
+      }
+    },
+    "/pactus/Utils/signature_aggregation": {
+      "get": {
+        "summary": "SignatureAggregation aggregates multiple BLS signatures into a single signature.",
+        "operationId": "Utils_SignatureAggregation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSignatureAggregationResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "signatures",
+            "description": "List of BLS signatures to be aggregated.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [

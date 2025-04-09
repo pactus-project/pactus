@@ -13,6 +13,6 @@ func buildVersionCmd(parentCmd *cobra.Command) {
 	}
 	parentCmd.AddCommand(versionCmd)
 	versionCmd.Run = func(c *cobra.Command, _ []string) {
-		c.Printf("Pactus version: %s\n", version.NodeVersion.StringWithAlias())
+		c.Printf("Pactus version: %s\n", version.NodeVersion().StringWithAlias())
 	}
 }

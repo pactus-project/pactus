@@ -219,7 +219,7 @@ func RegisterUtilsHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Utils/PublicKeyAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/bls_public_key_aggregation"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Utils/PublicKeyAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/public_key_aggregation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -239,7 +239,7 @@ func RegisterUtilsHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Utils/SignatureAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/bls_signature_aggregation"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Utils/SignatureAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/signature_aggregation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -331,7 +331,7 @@ func RegisterUtilsHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Utils/PublicKeyAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/bls_public_key_aggregation"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Utils/PublicKeyAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/public_key_aggregation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -348,7 +348,7 @@ func RegisterUtilsHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Utils/SignatureAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/bls_signature_aggregation"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Utils/SignatureAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/signature_aggregation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -367,8 +367,8 @@ func RegisterUtilsHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 var (
 	pattern_Utils_SignMessageWithPrivateKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "sign_message_with_private_key"}, ""))
 	pattern_Utils_VerifyMessage_0             = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "verify_message"}, ""))
-	pattern_Utils_PublicKeyAggregation_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "bls_public_key_aggregation"}, ""))
-	pattern_Utils_SignatureAggregation_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "bls_signature_aggregation"}, ""))
+	pattern_Utils_PublicKeyAggregation_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "public_key_aggregation"}, ""))
+	pattern_Utils_SignatureAggregation_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "signature_aggregation"}, ""))
 )
 
 var (
