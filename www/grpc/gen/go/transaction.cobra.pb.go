@@ -11,28 +11,28 @@ import (
 	proto "google.golang.org/protobuf/proto"
 )
 
-func TransactionServiceClientCommand(options ...client.Option) *cobra.Command {
+func TransactionClientCommand(options ...client.Option) *cobra.Command {
 	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("TransactionService"),
-		Short: "TransactionService service client",
+		Use:   cfg.CommandNamer("Transaction"),
+		Short: "Transaction service client",
 		Long:  "Transaction service defines various RPC methods for interacting with\n transactions.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
-		_TransactionServiceGetTransactionCommand(cfg),
-		_TransactionServiceCalculateFeeCommand(cfg),
-		_TransactionServiceBroadcastTransactionCommand(cfg),
-		_TransactionServiceGetRawTransferTransactionCommand(cfg),
-		_TransactionServiceGetRawBondTransactionCommand(cfg),
-		_TransactionServiceGetRawUnbondTransactionCommand(cfg),
-		_TransactionServiceGetRawWithdrawTransactionCommand(cfg),
-		_TransactionServiceDecodeRawTransactionCommand(cfg),
+		_TransactionGetTransactionCommand(cfg),
+		_TransactionCalculateFeeCommand(cfg),
+		_TransactionBroadcastTransactionCommand(cfg),
+		_TransactionGetRawTransferTransactionCommand(cfg),
+		_TransactionGetRawBondTransactionCommand(cfg),
+		_TransactionGetRawUnbondTransactionCommand(cfg),
+		_TransactionGetRawWithdrawTransactionCommand(cfg),
+		_TransactionDecodeRawTransactionCommand(cfg),
 	)
 	return cmd
 }
 
-func _TransactionServiceGetTransactionCommand(cfg *client.Config) *cobra.Command {
+func _TransactionGetTransactionCommand(cfg *client.Config) *cobra.Command {
 	req := &GetTransactionRequest{}
 
 	cmd := &cobra.Command{
@@ -41,15 +41,15 @@ func _TransactionServiceGetTransactionCommand(cfg *client.Config) *cobra.Command
 		Long:  "GetTransaction retrieves transaction details based on the provided request\n parameters.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService", "GetTransaction"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "GetTransaction"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewTransactionServiceClient(cc)
+				cli := NewTransactionClient(cc)
 				v := &GetTransactionRequest{}
 
 				if err := in(v); err != nil {
@@ -75,7 +75,7 @@ func _TransactionServiceGetTransactionCommand(cfg *client.Config) *cobra.Command
 	return cmd
 }
 
-func _TransactionServiceCalculateFeeCommand(cfg *client.Config) *cobra.Command {
+func _TransactionCalculateFeeCommand(cfg *client.Config) *cobra.Command {
 	req := &CalculateFeeRequest{}
 
 	cmd := &cobra.Command{
@@ -84,15 +84,15 @@ func _TransactionServiceCalculateFeeCommand(cfg *client.Config) *cobra.Command {
 		Long:  "CalculateFee calculates the transaction fee based on the specified amount\n and payload type.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService", "CalculateFee"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "CalculateFee"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewTransactionServiceClient(cc)
+				cli := NewTransactionClient(cc)
 				v := &CalculateFeeRequest{}
 
 				if err := in(v); err != nil {
@@ -119,7 +119,7 @@ func _TransactionServiceCalculateFeeCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _TransactionServiceBroadcastTransactionCommand(cfg *client.Config) *cobra.Command {
+func _TransactionBroadcastTransactionCommand(cfg *client.Config) *cobra.Command {
 	req := &BroadcastTransactionRequest{}
 
 	cmd := &cobra.Command{
@@ -128,15 +128,15 @@ func _TransactionServiceBroadcastTransactionCommand(cfg *client.Config) *cobra.C
 		Long:  "BroadcastTransaction broadcasts a signed transaction to the network.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService", "BroadcastTransaction"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "BroadcastTransaction"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewTransactionServiceClient(cc)
+				cli := NewTransactionClient(cc)
 				v := &BroadcastTransactionRequest{}
 
 				if err := in(v); err != nil {
@@ -161,7 +161,7 @@ func _TransactionServiceBroadcastTransactionCommand(cfg *client.Config) *cobra.C
 	return cmd
 }
 
-func _TransactionServiceGetRawTransferTransactionCommand(cfg *client.Config) *cobra.Command {
+func _TransactionGetRawTransferTransactionCommand(cfg *client.Config) *cobra.Command {
 	req := &GetRawTransferTransactionRequest{}
 
 	cmd := &cobra.Command{
@@ -170,15 +170,15 @@ func _TransactionServiceGetRawTransferTransactionCommand(cfg *client.Config) *co
 		Long:  "GetRawTransferTransaction retrieves raw details of a transfer transaction.\n buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\n buf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService", "GetRawTransferTransaction"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "GetRawTransferTransaction"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewTransactionServiceClient(cc)
+				cli := NewTransactionClient(cc)
 				v := &GetRawTransferTransactionRequest{}
 
 				if err := in(v); err != nil {
@@ -208,7 +208,7 @@ func _TransactionServiceGetRawTransferTransactionCommand(cfg *client.Config) *co
 	return cmd
 }
 
-func _TransactionServiceGetRawBondTransactionCommand(cfg *client.Config) *cobra.Command {
+func _TransactionGetRawBondTransactionCommand(cfg *client.Config) *cobra.Command {
 	req := &GetRawBondTransactionRequest{}
 
 	cmd := &cobra.Command{
@@ -217,15 +217,15 @@ func _TransactionServiceGetRawBondTransactionCommand(cfg *client.Config) *cobra.
 		Long:  "GetRawBondTransaction retrieves raw details of a bond transaction.\n buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\n buf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService", "GetRawBondTransaction"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "GetRawBondTransaction"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewTransactionServiceClient(cc)
+				cli := NewTransactionClient(cc)
 				v := &GetRawBondTransactionRequest{}
 
 				if err := in(v); err != nil {
@@ -256,7 +256,7 @@ func _TransactionServiceGetRawBondTransactionCommand(cfg *client.Config) *cobra.
 	return cmd
 }
 
-func _TransactionServiceGetRawUnbondTransactionCommand(cfg *client.Config) *cobra.Command {
+func _TransactionGetRawUnbondTransactionCommand(cfg *client.Config) *cobra.Command {
 	req := &GetRawUnbondTransactionRequest{}
 
 	cmd := &cobra.Command{
@@ -265,15 +265,15 @@ func _TransactionServiceGetRawUnbondTransactionCommand(cfg *client.Config) *cobr
 		Long:  "GetRawUnbondTransaction retrieves raw details of an unbond transaction.\n buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\n buf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService", "GetRawUnbondTransaction"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "GetRawUnbondTransaction"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewTransactionServiceClient(cc)
+				cli := NewTransactionClient(cc)
 				v := &GetRawUnbondTransactionRequest{}
 
 				if err := in(v); err != nil {
@@ -300,7 +300,7 @@ func _TransactionServiceGetRawUnbondTransactionCommand(cfg *client.Config) *cobr
 	return cmd
 }
 
-func _TransactionServiceGetRawWithdrawTransactionCommand(cfg *client.Config) *cobra.Command {
+func _TransactionGetRawWithdrawTransactionCommand(cfg *client.Config) *cobra.Command {
 	req := &GetRawWithdrawTransactionRequest{}
 
 	cmd := &cobra.Command{
@@ -309,15 +309,15 @@ func _TransactionServiceGetRawWithdrawTransactionCommand(cfg *client.Config) *co
 		Long:  "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.\n buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\n buf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService", "GetRawWithdrawTransaction"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "GetRawWithdrawTransaction"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewTransactionServiceClient(cc)
+				cli := NewTransactionClient(cc)
 				v := &GetRawWithdrawTransactionRequest{}
 
 				if err := in(v); err != nil {
@@ -347,7 +347,7 @@ func _TransactionServiceGetRawWithdrawTransactionCommand(cfg *client.Config) *co
 	return cmd
 }
 
-func _TransactionServiceDecodeRawTransactionCommand(cfg *client.Config) *cobra.Command {
+func _TransactionDecodeRawTransactionCommand(cfg *client.Config) *cobra.Command {
 	req := &DecodeRawTransactionRequest{}
 
 	cmd := &cobra.Command{
@@ -356,15 +356,15 @@ func _TransactionServiceDecodeRawTransactionCommand(cfg *client.Config) *cobra.C
 		Long:  "DecodeRawTransaction accepts raw transaction and returns decoded transaction.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "TransactionService", "DecodeRawTransaction"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction", "DecodeRawTransaction"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewTransactionServiceClient(cc)
+				cli := NewTransactionClient(cc)
 				v := &DecodeRawTransactionRequest{}
 
 				if err := in(v); err != nil {

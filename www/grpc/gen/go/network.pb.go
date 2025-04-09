@@ -851,8 +851,8 @@ const file_network_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\v2\x13.pactus.CounterInfoR\x05value:\x028\x01\"=\n" +
 	"\vCounterInfo\x12\x14\n" +
 	"\x05bytes\x18\x01 \x01(\x04R\x05bytes\x12\x18\n" +
-	"\abundles\x18\x02 \x01(\x04R\abundles2\xa9\x01\n" +
-	"\x0eNetworkService\x12O\n" +
+	"\abundles\x18\x02 \x01(\x04R\abundles2\xa2\x01\n" +
+	"\aNetwork\x12O\n" +
 	"\x0eGetNetworkInfo\x12\x1d.pactus.GetNetworkInfoRequest\x1a\x1e.pactus.GetNetworkInfoResponse\x12F\n" +
 	"\vGetNodeInfo\x12\x1a.pactus.GetNodeInfoRequest\x1a\x1b.pactus.GetNodeInfoResponseB:\n" +
 	"\x06pactusZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3"
@@ -896,10 +896,10 @@ var file_network_proto_depIdxs = []int32{
 	10, // 9: pactus.MetricInfo.message_received:type_name -> pactus.MetricInfo.MessageReceivedEntry
 	8,  // 10: pactus.MetricInfo.MessageSentEntry.value:type_name -> pactus.CounterInfo
 	8,  // 11: pactus.MetricInfo.MessageReceivedEntry.value:type_name -> pactus.CounterInfo
-	0,  // 12: pactus.NetworkService.GetNetworkInfo:input_type -> pactus.GetNetworkInfoRequest
-	2,  // 13: pactus.NetworkService.GetNodeInfo:input_type -> pactus.GetNodeInfoRequest
-	1,  // 14: pactus.NetworkService.GetNetworkInfo:output_type -> pactus.GetNetworkInfoResponse
-	3,  // 15: pactus.NetworkService.GetNodeInfo:output_type -> pactus.GetNodeInfoResponse
+	0,  // 12: pactus.Network.GetNetworkInfo:input_type -> pactus.GetNetworkInfoRequest
+	2,  // 13: pactus.Network.GetNodeInfo:input_type -> pactus.GetNodeInfoRequest
+	1,  // 14: pactus.Network.GetNetworkInfo:output_type -> pactus.GetNetworkInfoResponse
+	3,  // 15: pactus.Network.GetNodeInfo:output_type -> pactus.GetNodeInfoResponse
 	14, // [14:16] is the sub-list for method output_type
 	12, // [12:14] is the sub-list for method input_type
 	12, // [12:12] is the sub-list for extension type_name

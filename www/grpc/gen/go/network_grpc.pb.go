@@ -19,145 +19,145 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	NetworkService_GetNetworkInfo_FullMethodName = "/pactus.NetworkService/GetNetworkInfo"
-	NetworkService_GetNodeInfo_FullMethodName    = "/pactus.NetworkService/GetNodeInfo"
+	Network_GetNetworkInfo_FullMethodName = "/pactus.Network/GetNetworkInfo"
+	Network_GetNodeInfo_FullMethodName    = "/pactus.Network/GetNodeInfo"
 )
 
-// NetworkServiceClient is the client API for NetworkService service.
+// NetworkClient is the client API for Network service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// NetworkService provides RPCs for retrieving information about the network.
-type NetworkServiceClient interface {
+// Network service provides RPCs for retrieving information about the network.
+type NetworkClient interface {
 	// GetNetworkInfo retrieves information about the overall network.
 	GetNetworkInfo(ctx context.Context, in *GetNetworkInfoRequest, opts ...grpc.CallOption) (*GetNetworkInfoResponse, error)
 	// GetNodeInfo retrieves information about a specific node in the network.
 	GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest, opts ...grpc.CallOption) (*GetNodeInfoResponse, error)
 }
 
-type networkServiceClient struct {
+type networkClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewNetworkServiceClient(cc grpc.ClientConnInterface) NetworkServiceClient {
-	return &networkServiceClient{cc}
+func NewNetworkClient(cc grpc.ClientConnInterface) NetworkClient {
+	return &networkClient{cc}
 }
 
-func (c *networkServiceClient) GetNetworkInfo(ctx context.Context, in *GetNetworkInfoRequest, opts ...grpc.CallOption) (*GetNetworkInfoResponse, error) {
+func (c *networkClient) GetNetworkInfo(ctx context.Context, in *GetNetworkInfoRequest, opts ...grpc.CallOption) (*GetNetworkInfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetNetworkInfoResponse)
-	err := c.cc.Invoke(ctx, NetworkService_GetNetworkInfo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Network_GetNetworkInfo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *networkServiceClient) GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest, opts ...grpc.CallOption) (*GetNodeInfoResponse, error) {
+func (c *networkClient) GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest, opts ...grpc.CallOption) (*GetNodeInfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetNodeInfoResponse)
-	err := c.cc.Invoke(ctx, NetworkService_GetNodeInfo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Network_GetNodeInfo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// NetworkServiceServer is the server API for NetworkService service.
-// All implementations should embed UnimplementedNetworkServiceServer
+// NetworkServer is the server API for Network service.
+// All implementations should embed UnimplementedNetworkServer
 // for forward compatibility.
 //
-// NetworkService provides RPCs for retrieving information about the network.
-type NetworkServiceServer interface {
+// Network service provides RPCs for retrieving information about the network.
+type NetworkServer interface {
 	// GetNetworkInfo retrieves information about the overall network.
 	GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error)
 	// GetNodeInfo retrieves information about a specific node in the network.
 	GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error)
 }
 
-// UnimplementedNetworkServiceServer should be embedded to have
+// UnimplementedNetworkServer should be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedNetworkServiceServer struct{}
+type UnimplementedNetworkServer struct{}
 
-func (UnimplementedNetworkServiceServer) GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error) {
+func (UnimplementedNetworkServer) GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNetworkInfo not implemented")
 }
-func (UnimplementedNetworkServiceServer) GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error) {
+func (UnimplementedNetworkServer) GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNodeInfo not implemented")
 }
-func (UnimplementedNetworkServiceServer) testEmbeddedByValue() {}
+func (UnimplementedNetworkServer) testEmbeddedByValue() {}
 
-// UnsafeNetworkServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to NetworkServiceServer will
+// UnsafeNetworkServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to NetworkServer will
 // result in compilation errors.
-type UnsafeNetworkServiceServer interface {
-	mustEmbedUnimplementedNetworkServiceServer()
+type UnsafeNetworkServer interface {
+	mustEmbedUnimplementedNetworkServer()
 }
 
-func RegisterNetworkServiceServer(s grpc.ServiceRegistrar, srv NetworkServiceServer) {
-	// If the following call pancis, it indicates UnimplementedNetworkServiceServer was
+func RegisterNetworkServer(s grpc.ServiceRegistrar, srv NetworkServer) {
+	// If the following call pancis, it indicates UnimplementedNetworkServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&NetworkService_ServiceDesc, srv)
+	s.RegisterService(&Network_ServiceDesc, srv)
 }
 
-func _NetworkService_GetNetworkInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Network_GetNetworkInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetNetworkInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NetworkServiceServer).GetNetworkInfo(ctx, in)
+		return srv.(NetworkServer).GetNetworkInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NetworkService_GetNetworkInfo_FullMethodName,
+		FullMethod: Network_GetNetworkInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NetworkServiceServer).GetNetworkInfo(ctx, req.(*GetNetworkInfoRequest))
+		return srv.(NetworkServer).GetNetworkInfo(ctx, req.(*GetNetworkInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NetworkService_GetNodeInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Network_GetNodeInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetNodeInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NetworkServiceServer).GetNodeInfo(ctx, in)
+		return srv.(NetworkServer).GetNodeInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NetworkService_GetNodeInfo_FullMethodName,
+		FullMethod: Network_GetNodeInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NetworkServiceServer).GetNodeInfo(ctx, req.(*GetNodeInfoRequest))
+		return srv.(NetworkServer).GetNodeInfo(ctx, req.(*GetNodeInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// NetworkService_ServiceDesc is the grpc.ServiceDesc for NetworkService service.
+// Network_ServiceDesc is the grpc.ServiceDesc for Network service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var NetworkService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pactus.NetworkService",
-	HandlerType: (*NetworkServiceServer)(nil),
+var Network_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pactus.Network",
+	HandlerType: (*NetworkServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetNetworkInfo",
-			Handler:    _NetworkService_GetNetworkInfo_Handler,
+			Handler:    _Network_GetNetworkInfo_Handler,
 		},
 		{
 			MethodName: "GetNodeInfo",
-			Handler:    _NetworkService_GetNodeInfo_Handler,
+			Handler:    _Network_GetNodeInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

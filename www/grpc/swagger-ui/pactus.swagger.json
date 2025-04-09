@@ -15,19 +15,19 @@
   },
   "tags": [
     {
-      "name": "TransactionService"
+      "name": "Transaction"
     },
     {
-      "name": "BlockchainService"
+      "name": "Blockchain"
     },
     {
-      "name": "NetworkService"
+      "name": "Network"
     },
     {
-      "name": "UtilsService"
+      "name": "Utils"
     },
     {
-      "name": "WalletService"
+      "name": "Wallet"
     }
   ],
   "schemes": [
@@ -44,7 +44,7 @@
     "/pactus/Utils/bls_public_key_aggregation": {
       "get": {
         "summary": "PublicKeyAggregation aggregates multiple BLS public keys into a single key.",
-        "operationId": "UtilsService_PublicKeyAggregation",
+        "operationId": "Utils_PublicKeyAggregation",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -73,14 +73,14 @@
           }
         ],
         "tags": [
-          "UtilsService"
+          "Utils"
         ]
       }
     },
     "/pactus/Utils/bls_signature_aggregation": {
       "get": {
         "summary": "SignatureAggregation aggregates multiple BLS signatures into a single signature.",
-        "operationId": "UtilsService_SignatureAggregation",
+        "operationId": "Utils_SignatureAggregation",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -109,14 +109,14 @@
           }
         ],
         "tags": [
-          "UtilsService"
+          "Utils"
         ]
       }
     },
     "/pactus/Utils/sign_message_with_private_key": {
       "get": {
         "summary": "SignMessageWithPrivateKey signs a message with the provided private key.",
-        "operationId": "UtilsService_SignMessageWithPrivateKey",
+        "operationId": "Utils_SignMessageWithPrivateKey",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -148,14 +148,14 @@
           }
         ],
         "tags": [
-          "UtilsService"
+          "Utils"
         ]
       }
     },
     "/pactus/Utils/verify_message": {
       "get": {
         "summary": "VerifyMessage verifies a signature against the public key and message.",
-        "operationId": "UtilsService_VerifyMessage",
+        "operationId": "Utils_VerifyMessage",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -194,14 +194,14 @@
           }
         ],
         "tags": [
-          "UtilsService"
+          "Utils"
         ]
       }
     },
     "/pactus/blockchain/get_account": {
       "get": {
         "summary": "GetAccount retrieves information about an account based on the provided address.",
-        "operationId": "BlockchainService_GetAccount",
+        "operationId": "Blockchain_GetAccount",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -226,14 +226,14 @@
           }
         ],
         "tags": [
-          "BlockchainService"
+          "Blockchain"
         ]
       }
     },
     "/pactus/blockchain/get_block": {
       "get": {
         "summary": "GetBlock retrieves information about a block based on the provided request parameters.",
-        "operationId": "BlockchainService_GetBlock",
+        "operationId": "Blockchain_GetBlock",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -272,14 +272,14 @@
           }
         ],
         "tags": [
-          "BlockchainService"
+          "Blockchain"
         ]
       }
     },
     "/pactus/blockchain/get_block_hash": {
       "get": {
         "summary": "GetBlockHash retrieves the hash of a block at the specified height.",
-        "operationId": "BlockchainService_GetBlockHash",
+        "operationId": "Blockchain_GetBlockHash",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -305,14 +305,14 @@
           }
         ],
         "tags": [
-          "BlockchainService"
+          "Blockchain"
         ]
       }
     },
     "/pactus/blockchain/get_block_height": {
       "get": {
         "summary": "GetBlockHeight retrieves the height of a block with the specified hash.",
-        "operationId": "BlockchainService_GetBlockHeight",
+        "operationId": "Blockchain_GetBlockHeight",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -337,14 +337,14 @@
           }
         ],
         "tags": [
-          "BlockchainService"
+          "Blockchain"
         ]
       }
     },
     "/pactus/blockchain/get_blockchain_info": {
       "get": {
         "summary": "GetBlockchainInfo retrieves general information about the blockchain.",
-        "operationId": "BlockchainService_GetBlockchainInfo",
+        "operationId": "Blockchain_GetBlockchainInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -360,14 +360,14 @@
           }
         },
         "tags": [
-          "BlockchainService"
+          "Blockchain"
         ]
       }
     },
     "/pactus/blockchain/get_consensus_info": {
       "get": {
         "summary": "GetConsensusInfo retrieves information about the consensus instances.",
-        "operationId": "BlockchainService_GetConsensusInfo",
+        "operationId": "Blockchain_GetConsensusInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -383,14 +383,14 @@
           }
         },
         "tags": [
-          "BlockchainService"
+          "Blockchain"
         ]
       }
     },
     "/pactus/blockchain/get_public_key": {
       "get": {
         "summary": "GetPublicKey retrieves the public key of an account based on the provided address.",
-        "operationId": "BlockchainService_GetPublicKey",
+        "operationId": "Blockchain_GetPublicKey",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -415,14 +415,14 @@
           }
         ],
         "tags": [
-          "BlockchainService"
+          "Blockchain"
         ]
       }
     },
     "/pactus/blockchain/get_txpool_content": {
       "get": {
         "summary": "GetTxPoolContent retrieves current transactions in the transaction pool.",
-        "operationId": "BlockchainService_GetTxPoolContent",
+        "operationId": "Blockchain_GetTxPoolContent",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -456,14 +456,14 @@
           }
         ],
         "tags": [
-          "BlockchainService"
+          "Blockchain"
         ]
       }
     },
     "/pactus/blockchain/get_validator": {
       "get": {
         "summary": "GetValidator retrieves information about a validator based on the provided address.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\nbuf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
-        "operationId": "BlockchainService_GetValidator",
+        "operationId": "Blockchain_GetValidator",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -488,14 +488,14 @@
           }
         ],
         "tags": [
-          "BlockchainService"
+          "Blockchain"
         ]
       }
     },
     "/pactus/blockchain/get_validator_by_number": {
       "get": {
         "summary": "GetValidatorByNumber retrieves information about a validator based on the provided number.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\nbuf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
-        "operationId": "BlockchainService_GetValidatorByNumber",
+        "operationId": "Blockchain_GetValidatorByNumber",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -521,14 +521,14 @@
           }
         ],
         "tags": [
-          "BlockchainService"
+          "Blockchain"
         ]
       }
     },
     "/pactus/network/get_network_info": {
       "get": {
         "summary": "GetNetworkInfo retrieves information about the overall network.",
-        "operationId": "NetworkService_GetNetworkInfo",
+        "operationId": "Network_GetNetworkInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -553,14 +553,14 @@
           }
         ],
         "tags": [
-          "NetworkService"
+          "Network"
         ]
       }
     },
     "/pactus/network/get_node_info": {
       "get": {
         "summary": "GetNodeInfo retrieves information about a specific node in the network.",
-        "operationId": "NetworkService_GetNodeInfo",
+        "operationId": "Network_GetNodeInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -576,14 +576,14 @@
           }
         },
         "tags": [
-          "NetworkService"
+          "Network"
         ]
       }
     },
     "/pactus/transaction/broadcast_transaction": {
       "put": {
         "summary": "BroadcastTransaction broadcasts a signed transaction to the network.",
-        "operationId": "TransactionService_BroadcastTransaction",
+        "operationId": "Transaction_BroadcastTransaction",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -608,14 +608,14 @@
           }
         ],
         "tags": [
-          "TransactionService"
+          "Transaction"
         ]
       }
     },
     "/pactus/transaction/calculate_fee": {
       "get": {
         "summary": "CalculateFee calculates the transaction fee based on the specified amount\nand payload type.",
-        "operationId": "TransactionService_CalculateFee",
+        "operationId": "Transaction_CalculateFee",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -664,14 +664,14 @@
           }
         ],
         "tags": [
-          "TransactionService"
+          "Transaction"
         ]
       }
     },
     "/pactus/transaction/get_raw_bond_transaction": {
       "get": {
         "summary": "GetRawBondTransaction retrieves raw details of a bond transaction.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\nbuf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
-        "operationId": "TransactionService_GetRawBondTransaction",
+        "operationId": "Transaction_GetRawBondTransaction",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -741,14 +741,14 @@
           }
         ],
         "tags": [
-          "TransactionService"
+          "Transaction"
         ]
       }
     },
     "/pactus/transaction/get_raw_transfer_transaction": {
       "get": {
         "summary": "GetRawTransferTransaction retrieves raw details of a transfer transaction.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\nbuf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
-        "operationId": "TransactionService_GetRawTransferTransaction",
+        "operationId": "Transaction_GetRawTransferTransaction",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -811,14 +811,14 @@
           }
         ],
         "tags": [
-          "TransactionService"
+          "Transaction"
         ]
       }
     },
     "/pactus/transaction/get_raw_unbond_transaction": {
       "get": {
         "summary": "GetRawUnbondTransaction retrieves raw details of an unbond transaction.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\nbuf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
-        "operationId": "TransactionService_GetRawUnbondTransaction",
+        "operationId": "Transaction_GetRawUnbondTransaction",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -858,14 +858,14 @@
           }
         ],
         "tags": [
-          "TransactionService"
+          "Transaction"
         ]
       }
     },
     "/pactus/transaction/get_raw_withdraw_transaction": {
       "get": {
         "summary": "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\nbuf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
-        "operationId": "TransactionService_GetRawWithdrawTransaction",
+        "operationId": "Transaction_GetRawWithdrawTransaction",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -928,14 +928,14 @@
           }
         ],
         "tags": [
-          "TransactionService"
+          "Transaction"
         ]
       }
     },
     "/pactus/transaction/get_transaction": {
       "get": {
         "summary": "GetTransaction retrieves transaction details based on the provided request\nparameters.",
-        "operationId": "TransactionService_GetTransaction",
+        "operationId": "Transaction_GetTransaction",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -972,14 +972,14 @@
           }
         ],
         "tags": [
-          "TransactionService"
+          "Transaction"
         ]
       }
     },
     "/pactus/wallet/create_wallet": {
       "get": {
         "summary": "CreateWallet creates a new wallet with the specified parameters.",
-        "operationId": "WalletService_CreateWallet",
+        "operationId": "Wallet_CreateWallet",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1011,14 +1011,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/get_address_history": {
       "get": {
         "summary": "GetAddressHistory retrieves the transaction history of an address.",
-        "operationId": "WalletService_GetAddressHistory",
+        "operationId": "Wallet_GetAddressHistory",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1050,14 +1050,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/get_address_info": {
       "get": {
         "summary": "GetAddressInfo returns detailed information about a specific address.",
-        "operationId": "WalletService_GetAddressInfo",
+        "operationId": "Wallet_GetAddressInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1089,14 +1089,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/get_new_address": {
       "get": {
         "summary": "GetNewAddress generates a new address for the specified wallet.",
-        "operationId": "WalletService_GetNewAddress",
+        "operationId": "Wallet_GetNewAddress",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1149,14 +1149,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/get_total_balance": {
       "get": {
         "summary": "GetTotalBalance returns the total available balance of the wallet.",
-        "operationId": "WalletService_GetTotalBalance",
+        "operationId": "Wallet_GetTotalBalance",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1181,14 +1181,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/get_total_stake": {
       "get": {
         "summary": "GetTotalStake returns the total stake amount in the wallet.",
-        "operationId": "WalletService_GetTotalStake",
+        "operationId": "Wallet_GetTotalStake",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1213,14 +1213,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/get_validator_address": {
       "get": {
         "summary": "GetValidatorAddress retrieves the validator address associated with a public key.",
-        "operationId": "WalletService_GetValidatorAddress",
+        "operationId": "Wallet_GetValidatorAddress",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1245,14 +1245,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/get_wallet_info": {
       "get": {
         "summary": "GetWalletInfo returns detailed information about a specific wallet.",
-        "operationId": "WalletService_GetWalletInfo",
+        "operationId": "Wallet_GetWalletInfo",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1277,14 +1277,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/list_address": {
       "get": {
         "summary": "ListAddress returns all addresses in the specified wallet.",
-        "operationId": "WalletService_ListAddress",
+        "operationId": "Wallet_ListAddress",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1309,14 +1309,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/list_wallet": {
       "get": {
         "summary": "ListWallet returns list of all available wallets.",
-        "operationId": "WalletService_ListWallet",
+        "operationId": "Wallet_ListWallet",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1332,14 +1332,14 @@
           }
         },
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/load_wallet": {
       "get": {
         "summary": "LoadWallet loads an existing wallet with the given name.",
-        "operationId": "WalletService_LoadWallet",
+        "operationId": "Wallet_LoadWallet",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1364,14 +1364,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/restore_wallet": {
       "get": {
         "summary": "RestoreWallet restores an existing wallet with the given mnemonic.",
-        "operationId": "WalletService_RestoreWallet",
+        "operationId": "Wallet_RestoreWallet",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1410,14 +1410,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/set_address_label": {
       "patch": {
         "summary": "SetAddressLabel sets or updates the label for a given address.",
-        "operationId": "WalletService_SetAddressLabel",
+        "operationId": "Wallet_SetAddressLabel",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1463,14 +1463,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/sign_message": {
       "get": {
         "summary": "SignMessage signs an arbitrary message using a wallet's private key.",
-        "operationId": "WalletService_SignMessage",
+        "operationId": "Wallet_SignMessage",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1516,14 +1516,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/sign_raw_transaction": {
       "get": {
         "summary": "SignRawTransaction signs a raw transaction for a specified wallet.",
-        "operationId": "WalletService_SignRawTransaction",
+        "operationId": "Wallet_SignRawTransaction",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1562,14 +1562,14 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     },
     "/pactus/wallet/unload_wallet": {
       "get": {
         "summary": "UnloadWallet unloads a currently loaded wallet with the specified name.",
-        "operationId": "WalletService_UnloadWallet",
+        "operationId": "Wallet_UnloadWallet",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -1594,7 +1594,7 @@
           }
         ],
         "tags": [
-          "WalletService"
+          "Wallet"
         ]
       }
     }

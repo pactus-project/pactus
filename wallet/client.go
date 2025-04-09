@@ -23,8 +23,8 @@ type grpcClient struct {
 	servers           []string
 	conn              *grpc.ClientConn
 	timeout           time.Duration
-	blockchainClient  pactus.BlockchainServiceClient
-	transactionClient pactus.TransactionServiceClient
+	blockchainClient  pactus.BlockchainClient
+	transactionClient pactus.TransactionClient
 }
 
 func newGrpcClient(timeout time.Duration, servers []string) *grpcClient {
@@ -60,8 +60,8 @@ func (c *grpcClient) connect() error {
 			continue
 		}
 
-		blockchainClient := pactus.NewBlockchainServiceClient(conn)
-		transactionClient := pactus.NewTransactionServiceClient(conn)
+		blockchainClient := pactus.NewBlockchainClient(conn)
+		transactionClient := pactus.NewTransactionClient(conn)
 
 		// Check if client is responding
 		_, err = blockchainClient.GetBlockchainInfo(c.ctx,

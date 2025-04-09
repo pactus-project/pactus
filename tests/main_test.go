@@ -32,9 +32,9 @@ var (
 	tGRPCAddress = "127.0.0.1:1337"
 	tGenDoc      *genesis.Genesis
 	tGRPC        *grpc.ClientConn
-	tBlockchain  pactus.BlockchainServiceClient
-	tTransaction pactus.TransactionServiceClient
-	tNetwork     pactus.NetworkServiceClient
+	tBlockchain  pactus.BlockchainClient
+	tTransaction pactus.TransactionClient
+	tNetwork     pactus.NetworkClient
 	tCtx         context.Context
 )
 
@@ -170,9 +170,9 @@ func TestMain(m *testing.M) {
 	}
 
 	tGRPC = conn
-	tBlockchain = pactus.NewBlockchainServiceClient(conn)
-	tTransaction = pactus.NewTransactionServiceClient(conn)
-	tNetwork = pactus.NewNetworkServiceClient(conn)
+	tBlockchain = pactus.NewBlockchainClient(conn)
+	tTransaction = pactus.NewTransactionClient(conn)
+	tNetwork = pactus.NewNetworkClient(conn)
 
 	// Wait for some blocks
 	fmt.Println("Waiting to commit some blocks...")

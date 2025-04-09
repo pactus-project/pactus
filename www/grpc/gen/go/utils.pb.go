@@ -455,8 +455,8 @@ const file_utils_proto_rawDesc = "" +
 	"signatures\x18\x01 \x03(\tR\n" +
 	"signatures\"<\n" +
 	"\x1cSignatureAggregationResponse\x12\x1c\n" +
-	"\tsignature\x18\x01 \x01(\tR\tsignature2\x94\x03\n" +
-	"\fUtilsService\x12p\n" +
+	"\tsignature\x18\x01 \x01(\tR\tsignature2\x8d\x03\n" +
+	"\x05Utils\x12p\n" +
 	"\x19SignMessageWithPrivateKey\x12(.pactus.SignMessageWithPrivateKeyRequest\x1a).pactus.SignMessageWithPrivateKeyResponse\x12L\n" +
 	"\rVerifyMessage\x12\x1c.pactus.VerifyMessageRequest\x1a\x1d.pactus.VerifyMessageResponse\x12a\n" +
 	"\x14PublicKeyAggregation\x12#.pactus.PublicKeyAggregationRequest\x1a$.pactus.PublicKeyAggregationResponse\x12a\n" +
@@ -487,14 +487,14 @@ var file_utils_proto_goTypes = []any{
 	(*SignatureAggregationResponse)(nil),      // 7: pactus.SignatureAggregationResponse
 }
 var file_utils_proto_depIdxs = []int32{
-	0, // 0: pactus.UtilsService.SignMessageWithPrivateKey:input_type -> pactus.SignMessageWithPrivateKeyRequest
-	2, // 1: pactus.UtilsService.VerifyMessage:input_type -> pactus.VerifyMessageRequest
-	4, // 2: pactus.UtilsService.PublicKeyAggregation:input_type -> pactus.PublicKeyAggregationRequest
-	6, // 3: pactus.UtilsService.SignatureAggregation:input_type -> pactus.SignatureAggregationRequest
-	1, // 4: pactus.UtilsService.SignMessageWithPrivateKey:output_type -> pactus.SignMessageWithPrivateKeyResponse
-	3, // 5: pactus.UtilsService.VerifyMessage:output_type -> pactus.VerifyMessageResponse
-	5, // 6: pactus.UtilsService.PublicKeyAggregation:output_type -> pactus.PublicKeyAggregationResponse
-	7, // 7: pactus.UtilsService.SignatureAggregation:output_type -> pactus.SignatureAggregationResponse
+	0, // 0: pactus.Utils.SignMessageWithPrivateKey:input_type -> pactus.SignMessageWithPrivateKeyRequest
+	2, // 1: pactus.Utils.VerifyMessage:input_type -> pactus.VerifyMessageRequest
+	4, // 2: pactus.Utils.PublicKeyAggregation:input_type -> pactus.PublicKeyAggregationRequest
+	6, // 3: pactus.Utils.SignatureAggregation:input_type -> pactus.SignatureAggregationRequest
+	1, // 4: pactus.Utils.SignMessageWithPrivateKey:output_type -> pactus.SignMessageWithPrivateKeyResponse
+	3, // 5: pactus.Utils.VerifyMessage:output_type -> pactus.VerifyMessageResponse
+	5, // 6: pactus.Utils.PublicKeyAggregation:output_type -> pactus.PublicKeyAggregationResponse
+	7, // 7: pactus.Utils.SignatureAggregation:output_type -> pactus.SignatureAggregationResponse
 	4, // [4:8] is the sub-list for method output_type
 	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

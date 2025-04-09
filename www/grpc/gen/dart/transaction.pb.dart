@@ -1752,51 +1752,51 @@ class DecodeRawTransactionResponse extends $pb.GeneratedMessage {
 
 /// Transaction service defines various RPC methods for interacting with
 /// transactions.
-class TransactionServiceApi {
+class TransactionApi {
   $pb.RpcClient _client;
-  TransactionServiceApi(this._client);
+  TransactionApi(this._client);
 
   /// GetTransaction retrieves transaction details based on the provided request
   /// parameters.
   $async.Future<GetTransactionResponse> getTransaction($pb.ClientContext? ctx, GetTransactionRequest request) =>
-    _client.invoke<GetTransactionResponse>(ctx, 'TransactionService', 'GetTransaction', request, GetTransactionResponse())
+    _client.invoke<GetTransactionResponse>(ctx, 'Transaction', 'GetTransaction', request, GetTransactionResponse())
   ;
   /// CalculateFee calculates the transaction fee based on the specified amount
   /// and payload type.
   $async.Future<CalculateFeeResponse> calculateFee($pb.ClientContext? ctx, CalculateFeeRequest request) =>
-    _client.invoke<CalculateFeeResponse>(ctx, 'TransactionService', 'CalculateFee', request, CalculateFeeResponse())
+    _client.invoke<CalculateFeeResponse>(ctx, 'Transaction', 'CalculateFee', request, CalculateFeeResponse())
   ;
   /// BroadcastTransaction broadcasts a signed transaction to the network.
   $async.Future<BroadcastTransactionResponse> broadcastTransaction($pb.ClientContext? ctx, BroadcastTransactionRequest request) =>
-    _client.invoke<BroadcastTransactionResponse>(ctx, 'TransactionService', 'BroadcastTransaction', request, BroadcastTransactionResponse())
+    _client.invoke<BroadcastTransactionResponse>(ctx, 'Transaction', 'BroadcastTransaction', request, BroadcastTransactionResponse())
   ;
   /// GetRawTransferTransaction retrieves raw details of a transfer transaction.
   /// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   /// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   $async.Future<GetRawTransactionResponse> getRawTransferTransaction($pb.ClientContext? ctx, GetRawTransferTransactionRequest request) =>
-    _client.invoke<GetRawTransactionResponse>(ctx, 'TransactionService', 'GetRawTransferTransaction', request, GetRawTransactionResponse())
+    _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawTransferTransaction', request, GetRawTransactionResponse())
   ;
   /// GetRawBondTransaction retrieves raw details of a bond transaction.
   /// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   /// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   $async.Future<GetRawTransactionResponse> getRawBondTransaction($pb.ClientContext? ctx, GetRawBondTransactionRequest request) =>
-    _client.invoke<GetRawTransactionResponse>(ctx, 'TransactionService', 'GetRawBondTransaction', request, GetRawTransactionResponse())
+    _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawBondTransaction', request, GetRawTransactionResponse())
   ;
   /// GetRawUnbondTransaction retrieves raw details of an unbond transaction.
   /// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   /// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   $async.Future<GetRawTransactionResponse> getRawUnbondTransaction($pb.ClientContext? ctx, GetRawUnbondTransactionRequest request) =>
-    _client.invoke<GetRawTransactionResponse>(ctx, 'TransactionService', 'GetRawUnbondTransaction', request, GetRawTransactionResponse())
+    _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawUnbondTransaction', request, GetRawTransactionResponse())
   ;
   /// GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
   /// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   /// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   $async.Future<GetRawTransactionResponse> getRawWithdrawTransaction($pb.ClientContext? ctx, GetRawWithdrawTransactionRequest request) =>
-    _client.invoke<GetRawTransactionResponse>(ctx, 'TransactionService', 'GetRawWithdrawTransaction', request, GetRawTransactionResponse())
+    _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawWithdrawTransaction', request, GetRawTransactionResponse())
   ;
   /// DecodeRawTransaction accepts raw transaction and returns decoded transaction.
   $async.Future<DecodeRawTransactionResponse> decodeRawTransaction($pb.ClientContext? ctx, DecodeRawTransactionRequest request) =>
-    _client.invoke<DecodeRawTransactionResponse>(ctx, 'TransactionService', 'DecodeRawTransaction', request, DecodeRawTransactionResponse())
+    _client.invoke<DecodeRawTransactionResponse>(ctx, 'Transaction', 'DecodeRawTransaction', request, DecodeRawTransactionResponse())
   ;
 }
 

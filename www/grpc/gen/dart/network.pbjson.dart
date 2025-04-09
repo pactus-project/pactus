@@ -215,7 +215,7 @@ final $typed_data.Uint8List counterInfoDescriptor = $convert.base64Decode(
     'VuZGxlcw==');
 
 const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = {
-  '1': 'NetworkService',
+  '1': 'Network',
   '2': [
     {'1': 'GetNetworkInfo', '2': '.pactus.GetNetworkInfoRequest', '3': '.pactus.GetNetworkInfoResponse'},
     {'1': 'GetNodeInfo', '2': '.pactus.GetNodeInfoRequest', '3': '.pactus.GetNodeInfoResponse'},
@@ -237,10 +237,9 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> NetworkSer
   '.pactus.ZMQPublisherInfo': ZMQPublisherInfo$json,
 };
 
-/// Descriptor for `NetworkService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
+/// Descriptor for `Network`. Decode as a `google.protobuf.ServiceDescriptorProto`.
 final $typed_data.Uint8List networkServiceDescriptor = $convert.base64Decode(
-    'Cg5OZXR3b3JrU2VydmljZRJPCg5HZXROZXR3b3JrSW5mbxIdLnBhY3R1cy5HZXROZXR3b3JrSW'
-    '5mb1JlcXVlc3QaHi5wYWN0dXMuR2V0TmV0d29ya0luZm9SZXNwb25zZRJGCgtHZXROb2RlSW5m'
-    'bxIaLnBhY3R1cy5HZXROb2RlSW5mb1JlcXVlc3QaGy5wYWN0dXMuR2V0Tm9kZUluZm9SZXNwb2'
-    '5zZQ==');
+    'CgdOZXR3b3JrEk8KDkdldE5ldHdvcmtJbmZvEh0ucGFjdHVzLkdldE5ldHdvcmtJbmZvUmVxdW'
+    'VzdBoeLnBhY3R1cy5HZXROZXR3b3JrSW5mb1Jlc3BvbnNlEkYKC0dldE5vZGVJbmZvEhoucGFj'
+    'dHVzLkdldE5vZGVJbmZvUmVxdWVzdBobLnBhY3R1cy5HZXROb2RlSW5mb1Jlc3BvbnNl');
 

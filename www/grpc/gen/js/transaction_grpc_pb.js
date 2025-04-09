@@ -150,11 +150,11 @@ function deserialize_pactus_GetTransactionResponse(buffer_arg) {
 
 // Transaction service defines various RPC methods for interacting with
 // transactions.
-var TransactionServiceService = exports.TransactionServiceService = {
+var TransactionService = exports.TransactionService = {
   // GetTransaction retrieves transaction details based on the provided request
 // parameters.
 getTransaction: {
-    path: '/pactus.TransactionService/GetTransaction',
+    path: '/pactus.Transaction/GetTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.GetTransactionRequest,
@@ -167,7 +167,7 @@ getTransaction: {
   // CalculateFee calculates the transaction fee based on the specified amount
 // and payload type.
 calculateFee: {
-    path: '/pactus.TransactionService/CalculateFee',
+    path: '/pactus.Transaction/CalculateFee',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.CalculateFeeRequest,
@@ -179,7 +179,7 @@ calculateFee: {
   },
   // BroadcastTransaction broadcasts a signed transaction to the network.
 broadcastTransaction: {
-    path: '/pactus.TransactionService/BroadcastTransaction',
+    path: '/pactus.Transaction/BroadcastTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.BroadcastTransactionRequest,
@@ -193,7 +193,7 @@ broadcastTransaction: {
 // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getRawTransferTransaction: {
-    path: '/pactus.TransactionService/GetRawTransferTransaction',
+    path: '/pactus.Transaction/GetRawTransferTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.GetRawTransferTransactionRequest,
@@ -207,7 +207,7 @@ getRawTransferTransaction: {
 // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getRawBondTransaction: {
-    path: '/pactus.TransactionService/GetRawBondTransaction',
+    path: '/pactus.Transaction/GetRawBondTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.GetRawBondTransactionRequest,
@@ -221,7 +221,7 @@ getRawBondTransaction: {
 // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getRawUnbondTransaction: {
-    path: '/pactus.TransactionService/GetRawUnbondTransaction',
+    path: '/pactus.Transaction/GetRawUnbondTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.GetRawUnbondTransactionRequest,
@@ -235,7 +235,7 @@ getRawUnbondTransaction: {
 // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getRawWithdrawTransaction: {
-    path: '/pactus.TransactionService/GetRawWithdrawTransaction',
+    path: '/pactus.Transaction/GetRawWithdrawTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.GetRawWithdrawTransactionRequest,
@@ -247,7 +247,7 @@ getRawWithdrawTransaction: {
   },
   // DecodeRawTransaction accepts raw transaction and returns decoded transaction.
 decodeRawTransaction: {
-    path: '/pactus.TransactionService/DecodeRawTransaction',
+    path: '/pactus.Transaction/DecodeRawTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.DecodeRawTransactionRequest,
@@ -259,4 +259,4 @@ decodeRawTransaction: {
   },
 };
 
-exports.TransactionServiceClient = grpc.makeGenericClientConstructor(TransactionServiceService, 'TransactionService');
+exports.TransactionClient = grpc.makeGenericClientConstructor(TransactionService, 'Transaction');

@@ -482,25 +482,25 @@ class SignatureAggregationResponse extends $pb.GeneratedMessage {
 
 /// Utils service defines RPC methods for utility functions such as message
 /// signing, verification, and etc.
-class UtilsServiceApi {
+class UtilsApi {
   $pb.RpcClient _client;
-  UtilsServiceApi(this._client);
+  UtilsApi(this._client);
 
   /// SignMessageWithPrivateKey signs a message with the provided private key.
   $async.Future<SignMessageWithPrivateKeyResponse> signMessageWithPrivateKey($pb.ClientContext? ctx, SignMessageWithPrivateKeyRequest request) =>
-    _client.invoke<SignMessageWithPrivateKeyResponse>(ctx, 'UtilsService', 'SignMessageWithPrivateKey', request, SignMessageWithPrivateKeyResponse())
+    _client.invoke<SignMessageWithPrivateKeyResponse>(ctx, 'Utils', 'SignMessageWithPrivateKey', request, SignMessageWithPrivateKeyResponse())
   ;
   /// VerifyMessage verifies a signature against the public key and message.
   $async.Future<VerifyMessageResponse> verifyMessage($pb.ClientContext? ctx, VerifyMessageRequest request) =>
-    _client.invoke<VerifyMessageResponse>(ctx, 'UtilsService', 'VerifyMessage', request, VerifyMessageResponse())
+    _client.invoke<VerifyMessageResponse>(ctx, 'Utils', 'VerifyMessage', request, VerifyMessageResponse())
   ;
   /// PublicKeyAggregation aggregates multiple BLS public keys into a single key.
   $async.Future<PublicKeyAggregationResponse> publicKeyAggregation($pb.ClientContext? ctx, PublicKeyAggregationRequest request) =>
-    _client.invoke<PublicKeyAggregationResponse>(ctx, 'UtilsService', 'PublicKeyAggregation', request, PublicKeyAggregationResponse())
+    _client.invoke<PublicKeyAggregationResponse>(ctx, 'Utils', 'PublicKeyAggregation', request, PublicKeyAggregationResponse())
   ;
   /// SignatureAggregation aggregates multiple BLS signatures into a single signature.
   $async.Future<SignatureAggregationResponse> signatureAggregation($pb.ClientContext? ctx, SignatureAggregationRequest request) =>
-    _client.invoke<SignatureAggregationResponse>(ctx, 'UtilsService', 'SignatureAggregation', request, SignatureAggregationResponse())
+    _client.invoke<SignatureAggregationResponse>(ctx, 'Utils', 'SignatureAggregation', request, SignatureAggregationResponse())
   ;
 }
 

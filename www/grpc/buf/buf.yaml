@@ -15,7 +15,8 @@ modules:
         - RPC_NO_CLIENT_STREAMING
         - RPC_NO_SERVER_STREAMING
 
-      # except:
-      #   - PACKAGE_DIRECTORY_MATCH
-      #   - PACKAGE_VERSION_SUFFIX
+      except:
+        - PACKAGE_DIRECTORY_MATCH
+        - PACKAGE_VERSION_SUFFIX
+        - SERVICE_SUFFIX
       disallow_comment_ignores: false

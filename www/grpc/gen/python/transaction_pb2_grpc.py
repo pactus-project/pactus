@@ -5,7 +5,7 @@ import grpc
 import transaction_pb2 as transaction__pb2
 
 
-class TransactionServiceStub(object):
+class TransactionStub(object):
     """Transaction service defines various RPC methods for interacting with
     transactions.
     """
@@ -17,48 +17,48 @@ class TransactionServiceStub(object):
             channel: A grpc.Channel.
         """
         self.GetTransaction = channel.unary_unary(
-                '/pactus.TransactionService/GetTransaction',
+                '/pactus.Transaction/GetTransaction',
                 request_serializer=transaction__pb2.GetTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.GetTransactionResponse.FromString,
                 _registered_method=True)
         self.CalculateFee = channel.unary_unary(
-                '/pactus.TransactionService/CalculateFee',
+                '/pactus.Transaction/CalculateFee',
                 request_serializer=transaction__pb2.CalculateFeeRequest.SerializeToString,
                 response_deserializer=transaction__pb2.CalculateFeeResponse.FromString,
                 _registered_method=True)
         self.BroadcastTransaction = channel.unary_unary(
-                '/pactus.TransactionService/BroadcastTransaction',
+                '/pactus.Transaction/BroadcastTransaction',
                 request_serializer=transaction__pb2.BroadcastTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.BroadcastTransactionResponse.FromString,
                 _registered_method=True)
         self.GetRawTransferTransaction = channel.unary_unary(
-                '/pactus.TransactionService/GetRawTransferTransaction',
+                '/pactus.Transaction/GetRawTransferTransaction',
                 request_serializer=transaction__pb2.GetRawTransferTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.GetRawTransactionResponse.FromString,
                 _registered_method=True)
         self.GetRawBondTransaction = channel.unary_unary(
-                '/pactus.TransactionService/GetRawBondTransaction',
+                '/pactus.Transaction/GetRawBondTransaction',
                 request_serializer=transaction__pb2.GetRawBondTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.GetRawTransactionResponse.FromString,
                 _registered_method=True)
         self.GetRawUnbondTransaction = channel.unary_unary(
-                '/pactus.TransactionService/GetRawUnbondTransaction',
+                '/pactus.Transaction/GetRawUnbondTransaction',
                 request_serializer=transaction__pb2.GetRawUnbondTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.GetRawTransactionResponse.FromString,
                 _registered_method=True)
         self.GetRawWithdrawTransaction = channel.unary_unary(
-                '/pactus.TransactionService/GetRawWithdrawTransaction',
+                '/pactus.Transaction/GetRawWithdrawTransaction',
                 request_serializer=transaction__pb2.GetRawWithdrawTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.GetRawTransactionResponse.FromString,
                 _registered_method=True)
         self.DecodeRawTransaction = channel.unary_unary(
-                '/pactus.TransactionService/DecodeRawTransaction',
+                '/pactus.Transaction/DecodeRawTransaction',
                 request_serializer=transaction__pb2.DecodeRawTransactionRequest.SerializeToString,
                 response_deserializer=transaction__pb2.DecodeRawTransactionResponse.FromString,
                 _registered_method=True)
 
 
-class TransactionServiceServicer(object):
+class TransactionServicer(object):
     """Transaction service defines various RPC methods for interacting with
     transactions.
     """
@@ -130,7 +130,7 @@ class TransactionServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_TransactionServiceServicer_to_server(servicer, server):
+def add_TransactionServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetTransaction': grpc.unary_unary_rpc_method_handler(
                     servicer.GetTransaction,
@@ -174,13 +174,13 @@ def add_TransactionServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'pactus.TransactionService', rpc_method_handlers)
+            'pactus.Transaction', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('pactus.TransactionService', rpc_method_handlers)
+    server.add_registered_method_handlers('pactus.Transaction', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class TransactionService(object):
+class Transaction(object):
     """Transaction service defines various RPC methods for interacting with
     transactions.
     """
@@ -199,7 +199,7 @@ class TransactionService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.TransactionService/GetTransaction',
+            '/pactus.Transaction/GetTransaction',
             transaction__pb2.GetTransactionRequest.SerializeToString,
             transaction__pb2.GetTransactionResponse.FromString,
             options,
@@ -226,7 +226,7 @@ class TransactionService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.TransactionService/CalculateFee',
+            '/pactus.Transaction/CalculateFee',
             transaction__pb2.CalculateFeeRequest.SerializeToString,
             transaction__pb2.CalculateFeeResponse.FromString,
             options,
@@ -253,7 +253,7 @@ class TransactionService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.TransactionService/BroadcastTransaction',
+            '/pactus.Transaction/BroadcastTransaction',
             transaction__pb2.BroadcastTransactionRequest.SerializeToString,
             transaction__pb2.BroadcastTransactionResponse.FromString,
             options,
@@ -280,7 +280,7 @@ class TransactionService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.TransactionService/GetRawTransferTransaction',
+            '/pactus.Transaction/GetRawTransferTransaction',
             transaction__pb2.GetRawTransferTransactionRequest.SerializeToString,
             transaction__pb2.GetRawTransactionResponse.FromString,
             options,
@@ -307,7 +307,7 @@ class TransactionService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.TransactionService/GetRawBondTransaction',
+            '/pactus.Transaction/GetRawBondTransaction',
             transaction__pb2.GetRawBondTransactionRequest.SerializeToString,
             transaction__pb2.GetRawTransactionResponse.FromString,
             options,
@@ -334,7 +334,7 @@ class TransactionService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.TransactionService/GetRawUnbondTransaction',
+            '/pactus.Transaction/GetRawUnbondTransaction',
             transaction__pb2.GetRawUnbondTransactionRequest.SerializeToString,
             transaction__pb2.GetRawTransactionResponse.FromString,
             options,
@@ -361,7 +361,7 @@ class TransactionService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.TransactionService/GetRawWithdrawTransaction',
+            '/pactus.Transaction/GetRawWithdrawTransaction',
             transaction__pb2.GetRawWithdrawTransactionRequest.SerializeToString,
             transaction__pb2.GetRawTransactionResponse.FromString,
             options,
@@ -388,7 +388,7 @@ class TransactionService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.TransactionService/DecodeRawTransaction',
+            '/pactus.Transaction/DecodeRawTransaction',
             transaction__pb2.DecodeRawTransactionRequest.SerializeToString,
             transaction__pb2.DecodeRawTransactionResponse.FromString,
             options,

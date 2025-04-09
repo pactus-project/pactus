@@ -7,7 +7,7 @@ option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus";
 
 // Blockchain service defines RPC methods for interacting with the blockchain.
-service BlockchainService {
+service Blockchain {
   // GetBlock retrieves information about a block based on the provided request parameters.
   rpc GetBlock(GetBlockRequest) returns (GetBlockResponse);
 

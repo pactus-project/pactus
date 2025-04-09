@@ -6,7 +6,7 @@ option java_package = "pactus";
 
 // Transaction service defines various RPC methods for interacting with
 // transactions.
-service TransactionService {
+service Transaction {
   // GetTransaction retrieves transaction details based on the provided request
   // parameters.
   rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);

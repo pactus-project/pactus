@@ -115,7 +115,7 @@ func (td *testData) bufDialer(context.Context, string) (net.Conn, error) {
 	return td.listener.Dial()
 }
 
-func (td *testData) blockchainClient(t *testing.T) (*grpc.ClientConn, pactus.BlockchainServiceClient) {
+func (td *testData) blockchainClient(t *testing.T) (*grpc.ClientConn, pactus.BlockchainClient) {
 	t.Helper()
 
 	conn, err := grpc.NewClient("passthrough://bufnet",
@@ -123,10 +123,10 @@ func (td *testData) blockchainClient(t *testing.T) (*grpc.ClientConn, pactus.Blo
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	assert.NoError(t, err)
 
-	return conn, pactus.NewBlockchainServiceClient(conn)
+	return conn, pactus.NewBlockchainClient(conn)
 }
 
-func (td *testData) networkClient(t *testing.T) (*grpc.ClientConn, pactus.NetworkServiceClient) {
+func (td *testData) networkClient(t *testing.T) (*grpc.ClientConn, pactus.NetworkClient) {
 	t.Helper()
 
 	conn, err := grpc.NewClient("passthrough://bufnet",
@@ -134,10 +134,10 @@ func (td *testData) networkClient(t *testing.T) (*grpc.ClientConn, pactus.Networ
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	assert.NoError(t, err)
 
-	return conn, pactus.NewNetworkServiceClient(conn)
+	return conn, pactus.NewNetworkClient(conn)
 }
 
-func (td *testData) transactionClient(t *testing.T) (*grpc.ClientConn, pactus.TransactionServiceClient) {
+func (td *testData) transactionClient(t *testing.T) (*grpc.ClientConn, pactus.TransactionClient) {
 	t.Helper()
 
 	conn, err := grpc.NewClient("passthrough://bufnet",
@@ -145,10 +145,10 @@ func (td *testData) transactionClient(t *testing.T) (*grpc.ClientConn, pactus.Tr
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	assert.NoError(t, err)
 
-	return conn, pactus.NewTransactionServiceClient(conn)
+	return conn, pactus.NewTransactionClient(conn)
 }
 
-func (td *testData) walletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletServiceClient) {
+func (td *testData) walletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletClient) {
 	t.Helper()
 
 	conn, err := grpc.NewClient("passthrough://bufnet",
@@ -156,10 +156,10 @@ func (td *testData) walletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletS
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	assert.NoError(t, err)
 
-	return conn, pactus.NewWalletServiceClient(conn)
+	return conn, pactus.NewWalletClient(conn)
 }
 
-func (td *testData) utilClient(t *testing.T) (*grpc.ClientConn, pactus.UtilsServiceClient) {
+func (td *testData) utilClient(t *testing.T) (*grpc.ClientConn, pactus.UtilsClient) {
 	t.Helper()
 
 	conn, err := grpc.NewClient("passthrough://bufnet",
@@ -167,5 +167,5 @@ func (td *testData) utilClient(t *testing.T) (*grpc.ClientConn, pactus.UtilsServ
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	assert.NoError(t, err)
 
-	return conn, pactus.NewUtilsServiceClient(conn)
+	return conn, pactus.NewUtilsClient(conn)
 }

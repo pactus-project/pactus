@@ -121,7 +121,7 @@ final $typed_data.Uint8List signatureAggregationResponseDescriptor = $convert.ba
     'F0dXJl');
 
 const $core.Map<$core.String, $core.dynamic> UtilsServiceBase$json = {
-  '1': 'UtilsService',
+  '1': 'Utils',
   '2': [
     {'1': 'SignMessageWithPrivateKey', '2': '.pactus.SignMessageWithPrivateKeyRequest', '3': '.pactus.SignMessageWithPrivateKeyResponse'},
     {'1': 'VerifyMessage', '2': '.pactus.VerifyMessageRequest', '3': '.pactus.VerifyMessageResponse'},
@@ -142,14 +142,14 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> UtilsServi
   '.pactus.SignatureAggregationResponse': SignatureAggregationResponse$json,
 };
 
-/// Descriptor for `UtilsService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
+/// Descriptor for `Utils`. Decode as a `google.protobuf.ServiceDescriptorProto`.
 final $typed_data.Uint8List utilsServiceDescriptor = $convert.base64Decode(
-    'CgxVdGlsc1NlcnZpY2UScAoZU2lnbk1lc3NhZ2VXaXRoUHJpdmF0ZUtleRIoLnBhY3R1cy5TaW'
-    'duTWVzc2FnZVdpdGhQcml2YXRlS2V5UmVxdWVzdBopLnBhY3R1cy5TaWduTWVzc2FnZVdpdGhQ'
-    'cml2YXRlS2V5UmVzcG9uc2USTAoNVmVyaWZ5TWVzc2FnZRIcLnBhY3R1cy5WZXJpZnlNZXNzYW'
-    'dlUmVxdWVzdBodLnBhY3R1cy5WZXJpZnlNZXNzYWdlUmVzcG9uc2USYQoUUHVibGljS2V5QWdn'
-    'cmVnYXRpb24SIy5wYWN0dXMuUHVibGljS2V5QWdncmVnYXRpb25SZXF1ZXN0GiQucGFjdHVzLl'
-    'B1YmxpY0tleUFnZ3JlZ2F0aW9uUmVzcG9uc2USYQoUU2lnbmF0dXJlQWdncmVnYXRpb24SIy5w'
-    'YWN0dXMuU2lnbmF0dXJlQWdncmVnYXRpb25SZXF1ZXN0GiQucGFjdHVzLlNpZ25hdHVyZUFnZ3'
-    'JlZ2F0aW9uUmVzcG9uc2U=');
+    'CgVVdGlscxJwChlTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5EigucGFjdHVzLlNpZ25NZXNzYW'
+    'dlV2l0aFByaXZhdGVLZXlSZXF1ZXN0GikucGFjdHVzLlNpZ25NZXNzYWdlV2l0aFByaXZhdGVL'
+    'ZXlSZXNwb25zZRJMCg1WZXJpZnlNZXNzYWdlEhwucGFjdHVzLlZlcmlmeU1lc3NhZ2VSZXF1ZX'
+    'N0Gh0ucGFjdHVzLlZlcmlmeU1lc3NhZ2VSZXNwb25zZRJhChRQdWJsaWNLZXlBZ2dyZWdhdGlv'
+    'bhIjLnBhY3R1cy5QdWJsaWNLZXlBZ2dyZWdhdGlvblJlcXVlc3QaJC5wYWN0dXMuUHVibGljS2'
+    'V5QWdncmVnYXRpb25SZXNwb25zZRJhChRTaWduYXR1cmVBZ2dyZWdhdGlvbhIjLnBhY3R1cy5T'
+    'aWduYXR1cmVBZ2dyZWdhdGlvblJlcXVlc3QaJC5wYWN0dXMuU2lnbmF0dXJlQWdncmVnYXRpb2'
+    '5SZXNwb25zZQ==');
 

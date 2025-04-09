@@ -2136,57 +2136,57 @@ class ProposalInfo extends $pb.GeneratedMessage {
 }
 
 /// Blockchain service defines RPC methods for interacting with the blockchain.
-class BlockchainServiceApi {
+class BlockchainApi {
   $pb.RpcClient _client;
-  BlockchainServiceApi(this._client);
+  BlockchainApi(this._client);
 
   /// GetBlock retrieves information about a block based on the provided request parameters.
   $async.Future<GetBlockResponse> getBlock($pb.ClientContext? ctx, GetBlockRequest request) =>
-    _client.invoke<GetBlockResponse>(ctx, 'BlockchainService', 'GetBlock', request, GetBlockResponse())
+    _client.invoke<GetBlockResponse>(ctx, 'Blockchain', 'GetBlock', request, GetBlockResponse())
   ;
   /// GetBlockHash retrieves the hash of a block at the specified height.
   $async.Future<GetBlockHashResponse> getBlockHash($pb.ClientContext? ctx, GetBlockHashRequest request) =>
-    _client.invoke<GetBlockHashResponse>(ctx, 'BlockchainService', 'GetBlockHash', request, GetBlockHashResponse())
+    _client.invoke<GetBlockHashResponse>(ctx, 'Blockchain', 'GetBlockHash', request, GetBlockHashResponse())
   ;
   /// GetBlockHeight retrieves the height of a block with the specified hash.
   $async.Future<GetBlockHeightResponse> getBlockHeight($pb.ClientContext? ctx, GetBlockHeightRequest request) =>
-    _client.invoke<GetBlockHeightResponse>(ctx, 'BlockchainService', 'GetBlockHeight', request, GetBlockHeightResponse())
+    _client.invoke<GetBlockHeightResponse>(ctx, 'Blockchain', 'GetBlockHeight', request, GetBlockHeightResponse())
   ;
   /// GetBlockchainInfo retrieves general information about the blockchain.
   $async.Future<GetBlockchainInfoResponse> getBlockchainInfo($pb.ClientContext? ctx, GetBlockchainInfoRequest request) =>
-    _client.invoke<GetBlockchainInfoResponse>(ctx, 'BlockchainService', 'GetBlockchainInfo', request, GetBlockchainInfoResponse())
+    _client.invoke<GetBlockchainInfoResponse>(ctx, 'Blockchain', 'GetBlockchainInfo', request, GetBlockchainInfoResponse())
   ;
   /// GetConsensusInfo retrieves information about the consensus instances.
   $async.Future<GetConsensusInfoResponse> getConsensusInfo($pb.ClientContext? ctx, GetConsensusInfoRequest request) =>
-    _client.invoke<GetConsensusInfoResponse>(ctx, 'BlockchainService', 'GetConsensusInfo', request, GetConsensusInfoResponse())
+    _client.invoke<GetConsensusInfoResponse>(ctx, 'Blockchain', 'GetConsensusInfo', request, GetConsensusInfoResponse())
   ;
   /// GetAccount retrieves information about an account based on the provided address.
   $async.Future<GetAccountResponse> getAccount($pb.ClientContext? ctx, GetAccountRequest request) =>
-    _client.invoke<GetAccountResponse>(ctx, 'BlockchainService', 'GetAccount', request, GetAccountResponse())
+    _client.invoke<GetAccountResponse>(ctx, 'Blockchain', 'GetAccount', request, GetAccountResponse())
   ;
   /// GetValidator retrieves information about a validator based on the provided address.
   /// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   /// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   $async.Future<GetValidatorResponse> getValidator($pb.ClientContext? ctx, GetValidatorRequest request) =>
-    _client.invoke<GetValidatorResponse>(ctx, 'BlockchainService', 'GetValidator', request, GetValidatorResponse())
+    _client.invoke<GetValidatorResponse>(ctx, 'Blockchain', 'GetValidator', request, GetValidatorResponse())
   ;
   /// GetValidatorByNumber retrieves information about a validator based on the provided number.
   /// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   /// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   $async.Future<GetValidatorResponse> getValidatorByNumber($pb.ClientContext? ctx, GetValidatorByNumberRequest request) =>
-    _client.invoke<GetValidatorResponse>(ctx, 'BlockchainService', 'GetValidatorByNumber', request, GetValidatorResponse())
+    _client.invoke<GetValidatorResponse>(ctx, 'Blockchain', 'GetValidatorByNumber', request, GetValidatorResponse())
   ;
   /// GetValidatorAddresses retrieves a list of all validator addresses.
   $async.Future<GetValidatorAddressesResponse> getValidatorAddresses($pb.ClientContext? ctx, GetValidatorAddressesRequest request) =>
-    _client.invoke<GetValidatorAddressesResponse>(ctx, 'BlockchainService', 'GetValidatorAddresses', request, GetValidatorAddressesResponse())
+    _client.invoke<GetValidatorAddressesResponse>(ctx, 'Blockchain', 'GetValidatorAddresses', request, GetValidatorAddressesResponse())
   ;
   /// GetPublicKey retrieves the public key of an account based on the provided address.
   $async.Future<GetPublicKeyResponse> getPublicKey($pb.ClientContext? ctx, GetPublicKeyRequest request) =>
-    _client.invoke<GetPublicKeyResponse>(ctx, 'BlockchainService', 'GetPublicKey', request, GetPublicKeyResponse())
+    _client.invoke<GetPublicKeyResponse>(ctx, 'Blockchain', 'GetPublicKey', request, GetPublicKeyResponse())
   ;
   /// GetTxPoolContent retrieves current transactions in the transaction pool.
   $async.Future<GetTxPoolContentResponse> getTxPoolContent($pb.ClientContext? ctx, GetTxPoolContentRequest request) =>
-    _client.invoke<GetTxPoolContentResponse>(ctx, 'BlockchainService', 'GetTxPoolContent', request, GetTxPoolContentResponse())
+    _client.invoke<GetTxPoolContentResponse>(ctx, 'Blockchain', 'GetTxPoolContent', request, GetTxPoolContentResponse())
   ;
 }
 

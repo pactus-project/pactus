@@ -52,23 +52,23 @@ func (s *Server) startGateway(grpcAddr string) error {
 	}
 
 	gwMux := runtime.NewServeMux()
-	err = pactus.RegisterBlockchainServiceHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterBlockchainHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
 	}
-	err = pactus.RegisterTransactionServiceHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterTransactionHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
 	}
-	err = pactus.RegisterNetworkServiceHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterNetworkHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
 	}
-	err = pactus.RegisterWalletServiceHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterWalletHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
 	}
-	err = pactus.RegisterUtilsServiceHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterUtilsHandler(s.ctx, gwMux, conn)
 	if err != nil {
 		return err
 	}

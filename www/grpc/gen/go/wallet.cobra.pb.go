@@ -11,36 +11,36 @@ import (
 	proto "google.golang.org/protobuf/proto"
 )
 
-func WalletServiceClientCommand(options ...client.Option) *cobra.Command {
+func WalletClientCommand(options ...client.Option) *cobra.Command {
 	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("WalletService"),
-		Short: "WalletService service client",
-		Long:  "WalletService provides RPC methods for wallet management operations.",
+		Use:   cfg.CommandNamer("Wallet"),
+		Short: "Wallet service client",
+		Long:  "Wallet service provides RPC methods for wallet management operations.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
-		_WalletServiceCreateWalletCommand(cfg),
-		_WalletServiceRestoreWalletCommand(cfg),
-		_WalletServiceLoadWalletCommand(cfg),
-		_WalletServiceUnloadWalletCommand(cfg),
-		_WalletServiceGetTotalBalanceCommand(cfg),
-		_WalletServiceSignRawTransactionCommand(cfg),
-		_WalletServiceGetValidatorAddressCommand(cfg),
-		_WalletServiceGetNewAddressCommand(cfg),
-		_WalletServiceGetAddressHistoryCommand(cfg),
-		_WalletServiceSignMessageCommand(cfg),
-		_WalletServiceGetTotalStakeCommand(cfg),
-		_WalletServiceGetAddressInfoCommand(cfg),
-		_WalletServiceSetAddressLabelCommand(cfg),
-		_WalletServiceListWalletCommand(cfg),
-		_WalletServiceGetWalletInfoCommand(cfg),
-		_WalletServiceListAddressCommand(cfg),
+		_WalletCreateWalletCommand(cfg),
+		_WalletRestoreWalletCommand(cfg),
+		_WalletLoadWalletCommand(cfg),
+		_WalletUnloadWalletCommand(cfg),
+		_WalletGetTotalBalanceCommand(cfg),
+		_WalletSignRawTransactionCommand(cfg),
+		_WalletGetValidatorAddressCommand(cfg),
+		_WalletGetNewAddressCommand(cfg),
+		_WalletGetAddressHistoryCommand(cfg),
+		_WalletSignMessageCommand(cfg),
+		_WalletGetTotalStakeCommand(cfg),
+		_WalletGetAddressInfoCommand(cfg),
+		_WalletSetAddressLabelCommand(cfg),
+		_WalletListWalletCommand(cfg),
+		_WalletGetWalletInfoCommand(cfg),
+		_WalletListAddressCommand(cfg),
 	)
 	return cmd
 }
 
-func _WalletServiceCreateWalletCommand(cfg *client.Config) *cobra.Command {
+func _WalletCreateWalletCommand(cfg *client.Config) *cobra.Command {
 	req := &CreateWalletRequest{}
 
 	cmd := &cobra.Command{
@@ -49,15 +49,15 @@ func _WalletServiceCreateWalletCommand(cfg *client.Config) *cobra.Command {
 		Long:  "CreateWallet creates a new wallet with the specified parameters.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "CreateWallet"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "CreateWallet"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &CreateWalletRequest{}
 
 				if err := in(v); err != nil {
@@ -83,7 +83,7 @@ func _WalletServiceCreateWalletCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceRestoreWalletCommand(cfg *client.Config) *cobra.Command {
+func _WalletRestoreWalletCommand(cfg *client.Config) *cobra.Command {
 	req := &RestoreWalletRequest{}
 
 	cmd := &cobra.Command{
@@ -92,15 +92,15 @@ func _WalletServiceRestoreWalletCommand(cfg *client.Config) *cobra.Command {
 		Long:  "RestoreWallet restores an existing wallet with the given mnemonic.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "RestoreWallet"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "RestoreWallet"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &RestoreWalletRequest{}
 
 				if err := in(v); err != nil {
@@ -127,7 +127,7 @@ func _WalletServiceRestoreWalletCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceLoadWalletCommand(cfg *client.Config) *cobra.Command {
+func _WalletLoadWalletCommand(cfg *client.Config) *cobra.Command {
 	req := &LoadWalletRequest{}
 
 	cmd := &cobra.Command{
@@ -136,15 +136,15 @@ func _WalletServiceLoadWalletCommand(cfg *client.Config) *cobra.Command {
 		Long:  "LoadWallet loads an existing wallet with the given name.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "LoadWallet"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "LoadWallet"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &LoadWalletRequest{}
 
 				if err := in(v); err != nil {
@@ -169,7 +169,7 @@ func _WalletServiceLoadWalletCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceUnloadWalletCommand(cfg *client.Config) *cobra.Command {
+func _WalletUnloadWalletCommand(cfg *client.Config) *cobra.Command {
 	req := &UnloadWalletRequest{}
 
 	cmd := &cobra.Command{
@@ -178,15 +178,15 @@ func _WalletServiceUnloadWalletCommand(cfg *client.Config) *cobra.Command {
 		Long:  "UnloadWallet unloads a currently loaded wallet with the specified name.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "UnloadWallet"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "UnloadWallet"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &UnloadWalletRequest{}
 
 				if err := in(v); err != nil {
@@ -211,7 +211,7 @@ func _WalletServiceUnloadWalletCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceGetTotalBalanceCommand(cfg *client.Config) *cobra.Command {
+func _WalletGetTotalBalanceCommand(cfg *client.Config) *cobra.Command {
 	req := &GetTotalBalanceRequest{}
 
 	cmd := &cobra.Command{
@@ -220,15 +220,15 @@ func _WalletServiceGetTotalBalanceCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetTotalBalance returns the total available balance of the wallet.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "GetTotalBalance"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "GetTotalBalance"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &GetTotalBalanceRequest{}
 
 				if err := in(v); err != nil {
@@ -253,7 +253,7 @@ func _WalletServiceGetTotalBalanceCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceSignRawTransactionCommand(cfg *client.Config) *cobra.Command {
+func _WalletSignRawTransactionCommand(cfg *client.Config) *cobra.Command {
 	req := &SignRawTransactionRequest{}
 
 	cmd := &cobra.Command{
@@ -262,15 +262,15 @@ func _WalletServiceSignRawTransactionCommand(cfg *client.Config) *cobra.Command 
 		Long:  "SignRawTransaction signs a raw transaction for a specified wallet.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "SignRawTransaction"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "SignRawTransaction"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &SignRawTransactionRequest{}
 
 				if err := in(v); err != nil {
@@ -297,7 +297,7 @@ func _WalletServiceSignRawTransactionCommand(cfg *client.Config) *cobra.Command 
 	return cmd
 }
 
-func _WalletServiceGetValidatorAddressCommand(cfg *client.Config) *cobra.Command {
+func _WalletGetValidatorAddressCommand(cfg *client.Config) *cobra.Command {
 	req := &GetValidatorAddressRequest{}
 
 	cmd := &cobra.Command{
@@ -306,15 +306,15 @@ func _WalletServiceGetValidatorAddressCommand(cfg *client.Config) *cobra.Command
 		Long:  "GetValidatorAddress retrieves the validator address associated with a public key.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "GetValidatorAddress"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "GetValidatorAddress"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &GetValidatorAddressRequest{}
 
 				if err := in(v); err != nil {
@@ -339,7 +339,7 @@ func _WalletServiceGetValidatorAddressCommand(cfg *client.Config) *cobra.Command
 	return cmd
 }
 
-func _WalletServiceGetNewAddressCommand(cfg *client.Config) *cobra.Command {
+func _WalletGetNewAddressCommand(cfg *client.Config) *cobra.Command {
 	req := &GetNewAddressRequest{}
 
 	cmd := &cobra.Command{
@@ -348,15 +348,15 @@ func _WalletServiceGetNewAddressCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetNewAddress generates a new address for the specified wallet.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "GetNewAddress"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "GetNewAddress"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &GetNewAddressRequest{}
 
 				if err := in(v); err != nil {
@@ -384,7 +384,7 @@ func _WalletServiceGetNewAddressCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceGetAddressHistoryCommand(cfg *client.Config) *cobra.Command {
+func _WalletGetAddressHistoryCommand(cfg *client.Config) *cobra.Command {
 	req := &GetAddressHistoryRequest{}
 
 	cmd := &cobra.Command{
@@ -393,15 +393,15 @@ func _WalletServiceGetAddressHistoryCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetAddressHistory retrieves the transaction history of an address.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "GetAddressHistory"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "GetAddressHistory"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &GetAddressHistoryRequest{}
 
 				if err := in(v); err != nil {
@@ -427,7 +427,7 @@ func _WalletServiceGetAddressHistoryCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceSignMessageCommand(cfg *client.Config) *cobra.Command {
+func _WalletSignMessageCommand(cfg *client.Config) *cobra.Command {
 	req := &SignMessageRequest{}
 
 	cmd := &cobra.Command{
@@ -436,15 +436,15 @@ func _WalletServiceSignMessageCommand(cfg *client.Config) *cobra.Command {
 		Long:  "SignMessage signs an arbitrary message using a wallet's private key.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "SignMessage"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "SignMessage"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &SignMessageRequest{}
 
 				if err := in(v); err != nil {
@@ -472,7 +472,7 @@ func _WalletServiceSignMessageCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceGetTotalStakeCommand(cfg *client.Config) *cobra.Command {
+func _WalletGetTotalStakeCommand(cfg *client.Config) *cobra.Command {
 	req := &GetTotalStakeRequest{}
 
 	cmd := &cobra.Command{
@@ -481,15 +481,15 @@ func _WalletServiceGetTotalStakeCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetTotalStake returns the total stake amount in the wallet.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "GetTotalStake"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "GetTotalStake"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &GetTotalStakeRequest{}
 
 				if err := in(v); err != nil {
@@ -514,7 +514,7 @@ func _WalletServiceGetTotalStakeCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceGetAddressInfoCommand(cfg *client.Config) *cobra.Command {
+func _WalletGetAddressInfoCommand(cfg *client.Config) *cobra.Command {
 	req := &GetAddressInfoRequest{}
 
 	cmd := &cobra.Command{
@@ -523,15 +523,15 @@ func _WalletServiceGetAddressInfoCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetAddressInfo returns detailed information about a specific address.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "GetAddressInfo"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "GetAddressInfo"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &GetAddressInfoRequest{}
 
 				if err := in(v); err != nil {
@@ -557,7 +557,7 @@ func _WalletServiceGetAddressInfoCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceSetAddressLabelCommand(cfg *client.Config) *cobra.Command {
+func _WalletSetAddressLabelCommand(cfg *client.Config) *cobra.Command {
 	req := &SetAddressLabelRequest{}
 
 	cmd := &cobra.Command{
@@ -566,15 +566,15 @@ func _WalletServiceSetAddressLabelCommand(cfg *client.Config) *cobra.Command {
 		Long:  "SetAddressLabel sets or updates the label for a given address.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "SetAddressLabel"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "SetAddressLabel"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &SetAddressLabelRequest{}
 
 				if err := in(v); err != nil {
@@ -602,7 +602,7 @@ func _WalletServiceSetAddressLabelCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceListWalletCommand(cfg *client.Config) *cobra.Command {
+func _WalletListWalletCommand(cfg *client.Config) *cobra.Command {
 	req := &ListWalletRequest{}
 
 	cmd := &cobra.Command{
@@ -611,15 +611,15 @@ func _WalletServiceListWalletCommand(cfg *client.Config) *cobra.Command {
 		Long:  "ListWallet returns list of all available wallets.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "ListWallet"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "ListWallet"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &ListWalletRequest{}
 
 				if err := in(v); err != nil {
@@ -642,7 +642,7 @@ func _WalletServiceListWalletCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceGetWalletInfoCommand(cfg *client.Config) *cobra.Command {
+func _WalletGetWalletInfoCommand(cfg *client.Config) *cobra.Command {
 	req := &GetWalletInfoRequest{}
 
 	cmd := &cobra.Command{
@@ -651,15 +651,15 @@ func _WalletServiceGetWalletInfoCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetWalletInfo returns detailed information about a specific wallet.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "GetWalletInfo"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "GetWalletInfo"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &GetWalletInfoRequest{}
 
 				if err := in(v); err != nil {
@@ -684,7 +684,7 @@ func _WalletServiceGetWalletInfoCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletServiceListAddressCommand(cfg *client.Config) *cobra.Command {
+func _WalletListAddressCommand(cfg *client.Config) *cobra.Command {
 	req := &ListAddressRequest{}
 
 	cmd := &cobra.Command{
@@ -693,15 +693,15 @@ func _WalletServiceListAddressCommand(cfg *client.Config) *cobra.Command {
 		Long:  "ListAddress returns all addresses in the specified wallet.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "WalletService", "ListAddress"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "ListAddress"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletServiceClient(cc)
+				cli := NewWalletClient(cc)
 				v := &ListAddressRequest{}
 
 				if err := in(v); err != nil {

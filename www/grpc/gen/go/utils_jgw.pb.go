@@ -17,30 +17,30 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type UtilsServiceJsonRPC struct {
-	client UtilsServiceClient
+type UtilsJsonRPC struct {
+	client UtilsClient
 }
 
-type paramsAndHeadersUtilsService struct {
+type paramsAndHeadersUtils struct {
 	Headers metadata.MD     `json:"headers,omitempty"`
 	Params  json.RawMessage `json:"params"`
 }
 
-// RegisterUtilsServiceJsonRPC register the grpc client UtilsService for json-rpc.
+// RegisterUtilsJsonRPC register the grpc client Utils for json-rpc.
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterUtilsServiceJsonRPC(conn *grpc.ClientConn) *UtilsServiceJsonRPC {
-	return &UtilsServiceJsonRPC{
-		client: NewUtilsServiceClient(conn),
+func RegisterUtilsJsonRPC(conn *grpc.ClientConn) *UtilsJsonRPC {
+	return &UtilsJsonRPC{
+		client: NewUtilsClient(conn),
 	}
 }
 
-func (s *UtilsServiceJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
+func (s *UtilsJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (any, error){
 
-		"pactus.utils_service.sign_message_with_private_key": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.utils.sign_message_with_private_key": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(SignMessageWithPrivateKeyRequest)
 
-			var jrpcData paramsAndHeadersUtilsService
+			var jrpcData paramsAndHeadersUtils
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -54,10 +54,10 @@ func (s *UtilsServiceJsonRPC) Methods() map[string]func(ctx context.Context, mes
 			return s.client.SignMessageWithPrivateKey(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.utils_service.verify_message": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.utils.verify_message": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(VerifyMessageRequest)
 
-			var jrpcData paramsAndHeadersUtilsService
+			var jrpcData paramsAndHeadersUtils
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -71,10 +71,10 @@ func (s *UtilsServiceJsonRPC) Methods() map[string]func(ctx context.Context, mes
 			return s.client.VerifyMessage(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.utils_service.public_key_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.utils.public_key_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(PublicKeyAggregationRequest)
 
-			var jrpcData paramsAndHeadersUtilsService
+			var jrpcData paramsAndHeadersUtils
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -88,10 +88,10 @@ func (s *UtilsServiceJsonRPC) Methods() map[string]func(ctx context.Context, mes
 			return s.client.PublicKeyAggregation(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.utils_service.signature_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.utils.signature_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(SignatureAggregationRequest)
 
-			var jrpcData paramsAndHeadersUtilsService
+			var jrpcData paramsAndHeadersUtils
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err

@@ -5,7 +5,7 @@ import grpc
 import blockchain_pb2 as blockchain__pb2
 
 
-class BlockchainServiceStub(object):
+class BlockchainStub(object):
     """Blockchain service defines RPC methods for interacting with the blockchain.
     """
 
@@ -16,63 +16,63 @@ class BlockchainServiceStub(object):
             channel: A grpc.Channel.
         """
         self.GetBlock = channel.unary_unary(
-                '/pactus.BlockchainService/GetBlock',
+                '/pactus.Blockchain/GetBlock',
                 request_serializer=blockchain__pb2.GetBlockRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetBlockResponse.FromString,
                 _registered_method=True)
         self.GetBlockHash = channel.unary_unary(
-                '/pactus.BlockchainService/GetBlockHash',
+                '/pactus.Blockchain/GetBlockHash',
                 request_serializer=blockchain__pb2.GetBlockHashRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetBlockHashResponse.FromString,
                 _registered_method=True)
         self.GetBlockHeight = channel.unary_unary(
-                '/pactus.BlockchainService/GetBlockHeight',
+                '/pactus.Blockchain/GetBlockHeight',
                 request_serializer=blockchain__pb2.GetBlockHeightRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetBlockHeightResponse.FromString,
                 _registered_method=True)
         self.GetBlockchainInfo = channel.unary_unary(
-                '/pactus.BlockchainService/GetBlockchainInfo',
+                '/pactus.Blockchain/GetBlockchainInfo',
                 request_serializer=blockchain__pb2.GetBlockchainInfoRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetBlockchainInfoResponse.FromString,
                 _registered_method=True)
         self.GetConsensusInfo = channel.unary_unary(
-                '/pactus.BlockchainService/GetConsensusInfo',
+                '/pactus.Blockchain/GetConsensusInfo',
                 request_serializer=blockchain__pb2.GetConsensusInfoRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetConsensusInfoResponse.FromString,
                 _registered_method=True)
         self.GetAccount = channel.unary_unary(
-                '/pactus.BlockchainService/GetAccount',
+                '/pactus.Blockchain/GetAccount',
                 request_serializer=blockchain__pb2.GetAccountRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetAccountResponse.FromString,
                 _registered_method=True)
         self.GetValidator = channel.unary_unary(
-                '/pactus.BlockchainService/GetValidator',
+                '/pactus.Blockchain/GetValidator',
                 request_serializer=blockchain__pb2.GetValidatorRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetValidatorResponse.FromString,
                 _registered_method=True)
         self.GetValidatorByNumber = channel.unary_unary(
-                '/pactus.BlockchainService/GetValidatorByNumber',
+                '/pactus.Blockchain/GetValidatorByNumber',
                 request_serializer=blockchain__pb2.GetValidatorByNumberRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetValidatorResponse.FromString,
                 _registered_method=True)
         self.GetValidatorAddresses = channel.unary_unary(
-                '/pactus.BlockchainService/GetValidatorAddresses',
+                '/pactus.Blockchain/GetValidatorAddresses',
                 request_serializer=blockchain__pb2.GetValidatorAddressesRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetValidatorAddressesResponse.FromString,
                 _registered_method=True)
         self.GetPublicKey = channel.unary_unary(
-                '/pactus.BlockchainService/GetPublicKey',
+                '/pactus.Blockchain/GetPublicKey',
                 request_serializer=blockchain__pb2.GetPublicKeyRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetPublicKeyResponse.FromString,
                 _registered_method=True)
         self.GetTxPoolContent = channel.unary_unary(
-                '/pactus.BlockchainService/GetTxPoolContent',
+                '/pactus.Blockchain/GetTxPoolContent',
                 request_serializer=blockchain__pb2.GetTxPoolContentRequest.SerializeToString,
                 response_deserializer=blockchain__pb2.GetTxPoolContentResponse.FromString,
                 _registered_method=True)
 
 
-class BlockchainServiceServicer(object):
+class BlockchainServicer(object):
     """Blockchain service defines RPC methods for interacting with the blockchain.
     """
 
@@ -158,7 +158,7 @@ class BlockchainServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_BlockchainServiceServicer_to_server(servicer, server):
+def add_BlockchainServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetBlock': grpc.unary_unary_rpc_method_handler(
                     servicer.GetBlock,
@@ -217,13 +217,13 @@ def add_BlockchainServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'pactus.BlockchainService', rpc_method_handlers)
+            'pactus.Blockchain', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('pactus.BlockchainService', rpc_method_handlers)
+    server.add_registered_method_handlers('pactus.Blockchain', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class BlockchainService(object):
+class Blockchain(object):
     """Blockchain service defines RPC methods for interacting with the blockchain.
     """
 
@@ -241,7 +241,7 @@ class BlockchainService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.BlockchainService/GetBlock',
+            '/pactus.Blockchain/GetBlock',
             blockchain__pb2.GetBlockRequest.SerializeToString,
             blockchain__pb2.GetBlockResponse.FromString,
             options,
@@ -268,7 +268,7 @@ class BlockchainService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.BlockchainService/GetBlockHash',
+            '/pactus.Blockchain/GetBlockHash',
             blockchain__pb2.GetBlockHashRequest.SerializeToString,
             blockchain__pb2.GetBlockHashResponse.FromString,
             options,
@@ -295,7 +295,7 @@ class BlockchainService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.BlockchainService/GetBlockHeight',
+            '/pactus.Blockchain/GetBlockHeight',
             blockchain__pb2.GetBlockHeightRequest.SerializeToString,
             blockchain__pb2.GetBlockHeightResponse.FromString,
             options,
@@ -322,7 +322,7 @@ class BlockchainService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.BlockchainService/GetBlockchainInfo',
+            '/pactus.Blockchain/GetBlockchainInfo',
             blockchain__pb2.GetBlockchainInfoRequest.SerializeToString,
             blockchain__pb2.GetBlockchainInfoResponse.FromString,
             options,
@@ -349,7 +349,7 @@ class BlockchainService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.BlockchainService/GetConsensusInfo',
+            '/pactus.Blockchain/GetConsensusInfo',
             blockchain__pb2.GetConsensusInfoRequest.SerializeToString,
             blockchain__pb2.GetConsensusInfoResponse.FromString,
             options,
@@ -376,7 +376,7 @@ class BlockchainService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.BlockchainService/GetAccount',
+            '/pactus.Blockchain/GetAccount',
             blockchain__pb2.GetAccountRequest.SerializeToString,
             blockchain__pb2.GetAccountResponse.FromString,
             options,
@@ -403,7 +403,7 @@ class BlockchainService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.BlockchainService/GetValidator',
+            '/pactus.Blockchain/GetValidator',
             blockchain__pb2.GetValidatorRequest.SerializeToString,
             blockchain__pb2.GetValidatorResponse.FromString,
             options,
@@ -430,7 +430,7 @@ class BlockchainService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.BlockchainService/GetValidatorByNumber',
+            '/pactus.Blockchain/GetValidatorByNumber',
             blockchain__pb2.GetValidatorByNumberRequest.SerializeToString,
             blockchain__pb2.GetValidatorResponse.FromString,
             options,
@@ -457,7 +457,7 @@ class BlockchainService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.BlockchainService/GetValidatorAddresses',
+            '/pactus.Blockchain/GetValidatorAddresses',
             blockchain__pb2.GetValidatorAddressesRequest.SerializeToString,
             blockchain__pb2.GetValidatorAddressesResponse.FromString,
             options,
@@ -484,7 +484,7 @@ class BlockchainService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.BlockchainService/GetPublicKey',
+            '/pactus.Blockchain/GetPublicKey',
             blockchain__pb2.GetPublicKeyRequest.SerializeToString,
             blockchain__pb2.GetPublicKeyResponse.FromString,
             options,
@@ -511,7 +511,7 @@ class BlockchainService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.BlockchainService/GetTxPoolContent',
+            '/pactus.Blockchain/GetTxPoolContent',
             blockchain__pb2.GetTxPoolContentRequest.SerializeToString,
             blockchain__pb2.GetTxPoolContentResponse.FromString,
             options,

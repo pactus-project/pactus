@@ -35,9 +35,9 @@ var (
 	_ = metadata.Join
 )
 
-var filter_TransactionService_GetTransaction_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+var filter_Transaction_GetTransaction_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_TransactionService_GetTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Transaction_GetTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetTransactionRequest
 		metadata runtime.ServerMetadata
@@ -46,14 +46,14 @@ func request_TransactionService_GetTransaction_0(ctx context.Context, marshaler 
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_GetTransaction_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_GetTransaction_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := client.GetTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
 
-func local_request_TransactionService_GetTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Transaction_GetTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetTransactionRequest
 		metadata runtime.ServerMetadata
@@ -61,16 +61,16 @@ func local_request_TransactionService_GetTransaction_0(ctx context.Context, mars
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_GetTransaction_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_GetTransaction_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := server.GetTransaction(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-var filter_TransactionService_CalculateFee_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+var filter_Transaction_CalculateFee_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_TransactionService_CalculateFee_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Transaction_CalculateFee_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq CalculateFeeRequest
 		metadata runtime.ServerMetadata
@@ -79,14 +79,14 @@ func request_TransactionService_CalculateFee_0(ctx context.Context, marshaler ru
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_CalculateFee_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_CalculateFee_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := client.CalculateFee(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
 
-func local_request_TransactionService_CalculateFee_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Transaction_CalculateFee_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq CalculateFeeRequest
 		metadata runtime.ServerMetadata
@@ -94,16 +94,16 @@ func local_request_TransactionService_CalculateFee_0(ctx context.Context, marsha
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_CalculateFee_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_CalculateFee_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := server.CalculateFee(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-var filter_TransactionService_BroadcastTransaction_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+var filter_Transaction_BroadcastTransaction_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_TransactionService_BroadcastTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Transaction_BroadcastTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq BroadcastTransactionRequest
 		metadata runtime.ServerMetadata
@@ -112,14 +112,14 @@ func request_TransactionService_BroadcastTransaction_0(ctx context.Context, mars
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_BroadcastTransaction_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_BroadcastTransaction_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := client.BroadcastTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
 
-func local_request_TransactionService_BroadcastTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Transaction_BroadcastTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq BroadcastTransactionRequest
 		metadata runtime.ServerMetadata
@@ -127,16 +127,16 @@ func local_request_TransactionService_BroadcastTransaction_0(ctx context.Context
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_BroadcastTransaction_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_BroadcastTransaction_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := server.BroadcastTransaction(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-var filter_TransactionService_GetRawTransferTransaction_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+var filter_Transaction_GetRawTransferTransaction_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_TransactionService_GetRawTransferTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Transaction_GetRawTransferTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetRawTransferTransactionRequest
 		metadata runtime.ServerMetadata
@@ -145,14 +145,14 @@ func request_TransactionService_GetRawTransferTransaction_0(ctx context.Context,
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_GetRawTransferTransaction_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_GetRawTransferTransaction_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := client.GetRawTransferTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
 
-func local_request_TransactionService_GetRawTransferTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Transaction_GetRawTransferTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetRawTransferTransactionRequest
 		metadata runtime.ServerMetadata
@@ -160,16 +160,16 @@ func local_request_TransactionService_GetRawTransferTransaction_0(ctx context.Co
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_GetRawTransferTransaction_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_GetRawTransferTransaction_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := server.GetRawTransferTransaction(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-var filter_TransactionService_GetRawBondTransaction_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+var filter_Transaction_GetRawBondTransaction_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_TransactionService_GetRawBondTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Transaction_GetRawBondTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetRawBondTransactionRequest
 		metadata runtime.ServerMetadata
@@ -178,14 +178,14 @@ func request_TransactionService_GetRawBondTransaction_0(ctx context.Context, mar
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_GetRawBondTransaction_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_GetRawBondTransaction_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := client.GetRawBondTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
 
-func local_request_TransactionService_GetRawBondTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Transaction_GetRawBondTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetRawBondTransactionRequest
 		metadata runtime.ServerMetadata
@@ -193,16 +193,16 @@ func local_request_TransactionService_GetRawBondTransaction_0(ctx context.Contex
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_GetRawBondTransaction_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_GetRawBondTransaction_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := server.GetRawBondTransaction(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-var filter_TransactionService_GetRawUnbondTransaction_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+var filter_Transaction_GetRawUnbondTransaction_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_TransactionService_GetRawUnbondTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Transaction_GetRawUnbondTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetRawUnbondTransactionRequest
 		metadata runtime.ServerMetadata
@@ -211,14 +211,14 @@ func request_TransactionService_GetRawUnbondTransaction_0(ctx context.Context, m
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_GetRawUnbondTransaction_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_GetRawUnbondTransaction_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := client.GetRawUnbondTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
 
-func local_request_TransactionService_GetRawUnbondTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Transaction_GetRawUnbondTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetRawUnbondTransactionRequest
 		metadata runtime.ServerMetadata
@@ -226,16 +226,16 @@ func local_request_TransactionService_GetRawUnbondTransaction_0(ctx context.Cont
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_GetRawUnbondTransaction_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_GetRawUnbondTransaction_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := server.GetRawUnbondTransaction(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-var filter_TransactionService_GetRawWithdrawTransaction_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+var filter_Transaction_GetRawWithdrawTransaction_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_TransactionService_GetRawWithdrawTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_Transaction_GetRawWithdrawTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetRawWithdrawTransactionRequest
 		metadata runtime.ServerMetadata
@@ -244,14 +244,14 @@ func request_TransactionService_GetRawWithdrawTransaction_0(ctx context.Context,
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_GetRawWithdrawTransaction_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_GetRawWithdrawTransaction_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := client.GetRawWithdrawTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
 
-func local_request_TransactionService_GetRawWithdrawTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func local_request_Transaction_GetRawWithdrawTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq GetRawWithdrawTransactionRequest
 		metadata runtime.ServerMetadata
@@ -259,166 +259,166 @@ func local_request_TransactionService_GetRawWithdrawTransaction_0(ctx context.Co
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TransactionService_GetRawWithdrawTransaction_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Transaction_GetRawWithdrawTransaction_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 	msg, err := server.GetRawWithdrawTransaction(ctx, &protoReq)
 	return msg, metadata, err
 }
 
-// RegisterTransactionServiceHandlerServer registers the http handlers for service TransactionService to "mux".
-// UnaryRPC     :call TransactionServiceServer directly.
+// RegisterTransactionHandlerServer registers the http handlers for service Transaction to "mux".
+// UnaryRPC     :call TransactionServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
-// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterTransactionServiceHandlerFromEndpoint instead.
+// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterTransactionHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterTransactionServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server TransactionServiceServer) error {
-	mux.Handle(http.MethodGet, pattern_TransactionService_GetTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux, server TransactionServer) error {
+	mux.Handle(http.MethodGet, pattern_Transaction_GetTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.TransactionService/GetTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_transaction"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_TransactionService_GetTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Transaction_GetTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_GetTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_GetTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_TransactionService_CalculateFee_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Transaction_CalculateFee_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.TransactionService/CalculateFee", runtime.WithHTTPPathPattern("/pactus/transaction/calculate_fee"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/CalculateFee", runtime.WithHTTPPathPattern("/pactus/transaction/calculate_fee"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_TransactionService_CalculateFee_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Transaction_CalculateFee_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_CalculateFee_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_CalculateFee_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodPut, pattern_TransactionService_BroadcastTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPut, pattern_Transaction_BroadcastTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.TransactionService/BroadcastTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/broadcast_transaction"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/BroadcastTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/broadcast_transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_TransactionService_BroadcastTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Transaction_BroadcastTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_BroadcastTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_BroadcastTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_TransactionService_GetRawTransferTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Transaction_GetRawTransferTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.TransactionService/GetRawTransferTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_transfer_transaction"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawTransferTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_transfer_transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_TransactionService_GetRawTransferTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Transaction_GetRawTransferTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_GetRawTransferTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_GetRawTransferTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_TransactionService_GetRawBondTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Transaction_GetRawBondTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.TransactionService/GetRawBondTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_bond_transaction"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawBondTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_bond_transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_TransactionService_GetRawBondTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Transaction_GetRawBondTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_GetRawBondTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_GetRawBondTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_TransactionService_GetRawUnbondTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Transaction_GetRawUnbondTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.TransactionService/GetRawUnbondTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_unbond_transaction"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawUnbondTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_unbond_transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_TransactionService_GetRawUnbondTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Transaction_GetRawUnbondTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_GetRawUnbondTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_GetRawUnbondTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_TransactionService_GetRawWithdrawTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Transaction_GetRawWithdrawTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.TransactionService/GetRawWithdrawTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_withdraw_transaction"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawWithdrawTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_withdraw_transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_TransactionService_GetRawWithdrawTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_Transaction_GetRawWithdrawTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_GetRawWithdrawTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_GetRawWithdrawTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
 }
 
-// RegisterTransactionServiceHandlerFromEndpoint is same as RegisterTransactionServiceHandler but
+// RegisterTransactionHandlerFromEndpoint is same as RegisterTransactionHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterTransactionServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+func RegisterTransactionHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
 	conn, err := grpc.NewClient(endpoint, opts...)
 	if err != nil {
 		return err
@@ -437,159 +437,159 @@ func RegisterTransactionServiceHandlerFromEndpoint(ctx context.Context, mux *run
 			}
 		}()
 	}()
-	return RegisterTransactionServiceHandler(ctx, mux, conn)
+	return RegisterTransactionHandler(ctx, mux, conn)
 }
 
-// RegisterTransactionServiceHandler registers the http handlers for service TransactionService to "mux".
+// RegisterTransactionHandler registers the http handlers for service Transaction to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterTransactionServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterTransactionServiceHandlerClient(ctx, mux, NewTransactionServiceClient(conn))
+func RegisterTransactionHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterTransactionHandlerClient(ctx, mux, NewTransactionClient(conn))
 }
 
-// RegisterTransactionServiceHandlerClient registers the http handlers for service TransactionService
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "TransactionServiceClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "TransactionServiceClient"
+// RegisterTransactionHandlerClient registers the http handlers for service Transaction
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "TransactionClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "TransactionClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "TransactionServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterTransactionServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client TransactionServiceClient) error {
-	mux.Handle(http.MethodGet, pattern_TransactionService_GetTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+// "TransactionClient" to call the correct interceptors. This client ignores the HTTP middlewares.
+func RegisterTransactionHandlerClient(ctx context.Context, mux *runtime.ServeMux, client TransactionClient) error {
+	mux.Handle(http.MethodGet, pattern_Transaction_GetTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.TransactionService/GetTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_transaction"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_TransactionService_GetTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Transaction_GetTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_GetTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_GetTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_TransactionService_CalculateFee_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Transaction_CalculateFee_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.TransactionService/CalculateFee", runtime.WithHTTPPathPattern("/pactus/transaction/calculate_fee"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/CalculateFee", runtime.WithHTTPPathPattern("/pactus/transaction/calculate_fee"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_TransactionService_CalculateFee_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Transaction_CalculateFee_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_CalculateFee_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_CalculateFee_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodPut, pattern_TransactionService_BroadcastTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodPut, pattern_Transaction_BroadcastTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.TransactionService/BroadcastTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/broadcast_transaction"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/BroadcastTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/broadcast_transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_TransactionService_BroadcastTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Transaction_BroadcastTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_BroadcastTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_BroadcastTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_TransactionService_GetRawTransferTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Transaction_GetRawTransferTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.TransactionService/GetRawTransferTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_transfer_transaction"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawTransferTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_transfer_transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_TransactionService_GetRawTransferTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Transaction_GetRawTransferTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_GetRawTransferTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_GetRawTransferTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_TransactionService_GetRawBondTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Transaction_GetRawBondTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.TransactionService/GetRawBondTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_bond_transaction"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawBondTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_bond_transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_TransactionService_GetRawBondTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Transaction_GetRawBondTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_GetRawBondTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_GetRawBondTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_TransactionService_GetRawUnbondTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Transaction_GetRawUnbondTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.TransactionService/GetRawUnbondTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_unbond_transaction"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawUnbondTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_unbond_transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_TransactionService_GetRawUnbondTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Transaction_GetRawUnbondTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_GetRawUnbondTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_GetRawUnbondTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-	mux.Handle(http.MethodGet, pattern_TransactionService_GetRawWithdrawTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_Transaction_GetRawWithdrawTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.TransactionService/GetRawWithdrawTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_withdraw_transaction"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawWithdrawTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_withdraw_transaction"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_TransactionService_GetRawWithdrawTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Transaction_GetRawWithdrawTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		forward_TransactionService_GetRawWithdrawTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Transaction_GetRawWithdrawTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 	return nil
 }
 
 var (
-	pattern_TransactionService_GetTransaction_0            = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_transaction"}, ""))
-	pattern_TransactionService_CalculateFee_0              = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "calculate_fee"}, ""))
-	pattern_TransactionService_BroadcastTransaction_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "broadcast_transaction"}, ""))
-	pattern_TransactionService_GetRawTransferTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_transfer_transaction"}, ""))
-	pattern_TransactionService_GetRawBondTransaction_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_bond_transaction"}, ""))
-	pattern_TransactionService_GetRawUnbondTransaction_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_unbond_transaction"}, ""))
-	pattern_TransactionService_GetRawWithdrawTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_withdraw_transaction"}, ""))
+	pattern_Transaction_GetTransaction_0            = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_transaction"}, ""))
+	pattern_Transaction_CalculateFee_0              = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "calculate_fee"}, ""))
+	pattern_Transaction_BroadcastTransaction_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "broadcast_transaction"}, ""))
+	pattern_Transaction_GetRawTransferTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_transfer_transaction"}, ""))
+	pattern_Transaction_GetRawBondTransaction_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_bond_transaction"}, ""))
+	pattern_Transaction_GetRawUnbondTransaction_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_unbond_transaction"}, ""))
+	pattern_Transaction_GetRawWithdrawTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_withdraw_transaction"}, ""))
 )
 
 var (
-	forward_TransactionService_GetTransaction_0            = runtime.ForwardResponseMessage
-	forward_TransactionService_CalculateFee_0              = runtime.ForwardResponseMessage
-	forward_TransactionService_BroadcastTransaction_0      = runtime.ForwardResponseMessage
-	forward_TransactionService_GetRawTransferTransaction_0 = runtime.ForwardResponseMessage
-	forward_TransactionService_GetRawBondTransaction_0     = runtime.ForwardResponseMessage
-	forward_TransactionService_GetRawUnbondTransaction_0   = runtime.ForwardResponseMessage
-	forward_TransactionService_GetRawWithdrawTransaction_0 = runtime.ForwardResponseMessage
+	forward_Transaction_GetTransaction_0            = runtime.ForwardResponseMessage
+	forward_Transaction_CalculateFee_0              = runtime.ForwardResponseMessage
+	forward_Transaction_BroadcastTransaction_0      = runtime.ForwardResponseMessage
+	forward_Transaction_GetRawTransferTransaction_0 = runtime.ForwardResponseMessage
+	forward_Transaction_GetRawBondTransaction_0     = runtime.ForwardResponseMessage
+	forward_Transaction_GetRawUnbondTransaction_0   = runtime.ForwardResponseMessage
+	forward_Transaction_GetRawWithdrawTransaction_0 = runtime.ForwardResponseMessage
 )

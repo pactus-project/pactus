@@ -2290,74 +2290,74 @@ class ListAddressResponse extends $pb.GeneratedMessage {
   $pb.PbList<AddressInfo> get data => $_getList(1);
 }
 
-/// WalletService provides RPC methods for wallet management operations.
-class WalletServiceApi {
+/// Wallet service provides RPC methods for wallet management operations.
+class WalletApi {
   $pb.RpcClient _client;
-  WalletServiceApi(this._client);
+  WalletApi(this._client);
 
   /// CreateWallet creates a new wallet with the specified parameters.
   $async.Future<CreateWalletResponse> createWallet($pb.ClientContext? ctx, CreateWalletRequest request) =>
-    _client.invoke<CreateWalletResponse>(ctx, 'WalletService', 'CreateWallet', request, CreateWalletResponse())
+    _client.invoke<CreateWalletResponse>(ctx, 'Wallet', 'CreateWallet', request, CreateWalletResponse())
   ;
   /// RestoreWallet restores an existing wallet with the given mnemonic.
   $async.Future<RestoreWalletResponse> restoreWallet($pb.ClientContext? ctx, RestoreWalletRequest request) =>
-    _client.invoke<RestoreWalletResponse>(ctx, 'WalletService', 'RestoreWallet', request, RestoreWalletResponse())
+    _client.invoke<RestoreWalletResponse>(ctx, 'Wallet', 'RestoreWallet', request, RestoreWalletResponse())
   ;
   /// LoadWallet loads an existing wallet with the given name.
   $async.Future<LoadWalletResponse> loadWallet($pb.ClientContext? ctx, LoadWalletRequest request) =>
-    _client.invoke<LoadWalletResponse>(ctx, 'WalletService', 'LoadWallet', request, LoadWalletResponse())
+    _client.invoke<LoadWalletResponse>(ctx, 'Wallet', 'LoadWallet', request, LoadWalletResponse())
   ;
   /// UnloadWallet unloads a currently loaded wallet with the specified name.
   $async.Future<UnloadWalletResponse> unloadWallet($pb.ClientContext? ctx, UnloadWalletRequest request) =>
-    _client.invoke<UnloadWalletResponse>(ctx, 'WalletService', 'UnloadWallet', request, UnloadWalletResponse())
+    _client.invoke<UnloadWalletResponse>(ctx, 'Wallet', 'UnloadWallet', request, UnloadWalletResponse())
   ;
   /// GetTotalBalance returns the total available balance of the wallet.
   $async.Future<GetTotalBalanceResponse> getTotalBalance($pb.ClientContext? ctx, GetTotalBalanceRequest request) =>
-    _client.invoke<GetTotalBalanceResponse>(ctx, 'WalletService', 'GetTotalBalance', request, GetTotalBalanceResponse())
+    _client.invoke<GetTotalBalanceResponse>(ctx, 'Wallet', 'GetTotalBalance', request, GetTotalBalanceResponse())
   ;
   /// SignRawTransaction signs a raw transaction for a specified wallet.
   $async.Future<SignRawTransactionResponse> signRawTransaction($pb.ClientContext? ctx, SignRawTransactionRequest request) =>
-    _client.invoke<SignRawTransactionResponse>(ctx, 'WalletService', 'SignRawTransaction', request, SignRawTransactionResponse())
+    _client.invoke<SignRawTransactionResponse>(ctx, 'Wallet', 'SignRawTransaction', request, SignRawTransactionResponse())
   ;
   /// GetValidatorAddress retrieves the validator address associated with a public key.
   $async.Future<GetValidatorAddressResponse> getValidatorAddress($pb.ClientContext? ctx, GetValidatorAddressRequest request) =>
-    _client.invoke<GetValidatorAddressResponse>(ctx, 'WalletService', 'GetValidatorAddress', request, GetValidatorAddressResponse())
+    _client.invoke<GetValidatorAddressResponse>(ctx, 'Wallet', 'GetValidatorAddress', request, GetValidatorAddressResponse())
   ;
   /// GetNewAddress generates a new address for the specified wallet.
   $async.Future<GetNewAddressResponse> getNewAddress($pb.ClientContext? ctx, GetNewAddressRequest request) =>
-    _client.invoke<GetNewAddressResponse>(ctx, 'WalletService', 'GetNewAddress', request, GetNewAddressResponse())
+    _client.invoke<GetNewAddressResponse>(ctx, 'Wallet', 'GetNewAddress', request, GetNewAddressResponse())
   ;
   /// GetAddressHistory retrieves the transaction history of an address.
   $async.Future<GetAddressHistoryResponse> getAddressHistory($pb.ClientContext? ctx, GetAddressHistoryRequest request) =>
-    _client.invoke<GetAddressHistoryResponse>(ctx, 'WalletService', 'GetAddressHistory', request, GetAddressHistoryResponse())
+    _client.invoke<GetAddressHistoryResponse>(ctx, 'Wallet', 'GetAddressHistory', request, GetAddressHistoryResponse())
   ;
   /// SignMessage signs an arbitrary message using a wallet's private key.
   $async.Future<SignMessageResponse> signMessage($pb.ClientContext? ctx, SignMessageRequest request) =>
-    _client.invoke<SignMessageResponse>(ctx, 'WalletService', 'SignMessage', request, SignMessageResponse())
+    _client.invoke<SignMessageResponse>(ctx, 'Wallet', 'SignMessage', request, SignMessageResponse())
   ;
   /// GetTotalStake returns the total stake amount in the wallet.
   $async.Future<GetTotalStakeResponse> getTotalStake($pb.ClientContext? ctx, GetTotalStakeRequest request) =>
-    _client.invoke<GetTotalStakeResponse>(ctx, 'WalletService', 'GetTotalStake', request, GetTotalStakeResponse())
+    _client.invoke<GetTotalStakeResponse>(ctx, 'Wallet', 'GetTotalStake', request, GetTotalStakeResponse())
   ;
   /// GetAddressInfo returns detailed information about a specific address.
   $async.Future<GetAddressInfoResponse> getAddressInfo($pb.ClientContext? ctx, GetAddressInfoRequest request) =>
-    _client.invoke<GetAddressInfoResponse>(ctx, 'WalletService', 'GetAddressInfo', request, GetAddressInfoResponse())
+    _client.invoke<GetAddressInfoResponse>(ctx, 'Wallet', 'GetAddressInfo', request, GetAddressInfoResponse())
   ;
   /// SetAddressLabel sets or updates the label for a given address.
   $async.Future<SetAddressLabelResponse> setAddressLabel($pb.ClientContext? ctx, SetAddressLabelRequest request) =>
-    _client.invoke<SetAddressLabelResponse>(ctx, 'WalletService', 'SetAddressLabel', request, SetAddressLabelResponse())
+    _client.invoke<SetAddressLabelResponse>(ctx, 'Wallet', 'SetAddressLabel', request, SetAddressLabelResponse())
   ;
   /// ListWallet returns list of all available wallets.
   $async.Future<ListWalletResponse> listWallet($pb.ClientContext? ctx, ListWalletRequest request) =>
-    _client.invoke<ListWalletResponse>(ctx, 'WalletService', 'ListWallet', request, ListWalletResponse())
+    _client.invoke<ListWalletResponse>(ctx, 'Wallet', 'ListWallet', request, ListWalletResponse())
   ;
   /// GetWalletInfo returns detailed information about a specific wallet.
   $async.Future<GetWalletInfoResponse> getWalletInfo($pb.ClientContext? ctx, GetWalletInfoRequest request) =>
-    _client.invoke<GetWalletInfoResponse>(ctx, 'WalletService', 'GetWalletInfo', request, GetWalletInfoResponse())
+    _client.invoke<GetWalletInfoResponse>(ctx, 'Wallet', 'GetWalletInfo', request, GetWalletInfoResponse())
   ;
   /// ListAddress returns all addresses in the specified wallet.
   $async.Future<ListAddressResponse> listAddress($pb.ClientContext? ctx, ListAddressRequest request) =>
-    _client.invoke<ListAddressResponse>(ctx, 'WalletService', 'ListAddress', request, ListAddressResponse())
+    _client.invoke<ListAddressResponse>(ctx, 'Wallet', 'ListAddress', request, ListAddressResponse())
   ;
 }
 

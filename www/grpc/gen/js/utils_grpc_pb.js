@@ -95,10 +95,10 @@ function deserialize_pactus_VerifyMessageResponse(buffer_arg) {
 
 // Utils service defines RPC methods for utility functions such as message
 // signing, verification, and etc.
-var UtilsServiceService = exports.UtilsServiceService = {
+var UtilsService = exports.UtilsService = {
   // SignMessageWithPrivateKey signs a message with the provided private key.
 signMessageWithPrivateKey: {
-    path: '/pactus.UtilsService/SignMessageWithPrivateKey',
+    path: '/pactus.Utils/SignMessageWithPrivateKey',
     requestStream: false,
     responseStream: false,
     requestType: utils_pb.SignMessageWithPrivateKeyRequest,
@@ -110,7 +110,7 @@ signMessageWithPrivateKey: {
   },
   // VerifyMessage verifies a signature against the public key and message.
 verifyMessage: {
-    path: '/pactus.UtilsService/VerifyMessage',
+    path: '/pactus.Utils/VerifyMessage',
     requestStream: false,
     responseStream: false,
     requestType: utils_pb.VerifyMessageRequest,
@@ -122,7 +122,7 @@ verifyMessage: {
   },
   // PublicKeyAggregation aggregates multiple BLS public keys into a single key.
 publicKeyAggregation: {
-    path: '/pactus.UtilsService/PublicKeyAggregation',
+    path: '/pactus.Utils/PublicKeyAggregation',
     requestStream: false,
     responseStream: false,
     requestType: utils_pb.PublicKeyAggregationRequest,
@@ -134,7 +134,7 @@ publicKeyAggregation: {
   },
   // SignatureAggregation aggregates multiple BLS signatures into a single signature.
 signatureAggregation: {
-    path: '/pactus.UtilsService/SignatureAggregation',
+    path: '/pactus.Utils/SignatureAggregation',
     requestStream: false,
     responseStream: false,
     requestType: utils_pb.SignatureAggregationRequest,
@@ -146,4 +146,4 @@ signatureAggregation: {
   },
 };
 
-exports.UtilsServiceClient = grpc.makeGenericClientConstructor(UtilsServiceService, 'UtilsService');
+exports.UtilsClient = grpc.makeGenericClientConstructor(UtilsService, 'Utils');

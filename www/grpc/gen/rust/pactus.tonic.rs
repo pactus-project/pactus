@@ -1,14 +1,14 @@
 // @generated
 /// Generated client implementations.
-pub mod transaction_service_client {
+pub mod transaction_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct TransactionServiceClient<T> {
+    pub struct TransactionClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl TransactionServiceClient<tonic::transport::Channel> {
+    impl TransactionClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -19,7 +19,7 @@ pub mod transaction_service_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> TransactionServiceClient<T>
+    impl<T> TransactionClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -37,7 +37,7 @@ pub mod transaction_service_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> TransactionServiceClient<InterceptedService<T, F>>
+        ) -> TransactionClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -51,7 +51,7 @@ pub mod transaction_service_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            TransactionServiceClient::new(InterceptedService::new(inner, interceptor))
+            TransactionClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -102,11 +102,11 @@ pub mod transaction_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.TransactionService/GetTransaction",
+                "/pactus.Transaction/GetTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.TransactionService", "GetTransaction"));
+                .insert(GrpcMethod::new("pactus.Transaction", "GetTransaction"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn calculate_fee(
@@ -127,11 +127,11 @@ pub mod transaction_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.TransactionService/CalculateFee",
+                "/pactus.Transaction/CalculateFee",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.TransactionService", "CalculateFee"));
+                .insert(GrpcMethod::new("pactus.Transaction", "CalculateFee"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn broadcast_transaction(
@@ -152,13 +152,11 @@ pub mod transaction_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.TransactionService/BroadcastTransaction",
+                "/pactus.Transaction/BroadcastTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("pactus.TransactionService", "BroadcastTransaction"),
-                );
+                .insert(GrpcMethod::new("pactus.Transaction", "BroadcastTransaction"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_raw_transfer_transaction(
@@ -179,15 +177,12 @@ pub mod transaction_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.TransactionService/GetRawTransferTransaction",
+                "/pactus.Transaction/GetRawTransferTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
-                    GrpcMethod::new(
-                        "pactus.TransactionService",
-                        "GetRawTransferTransaction",
-                    ),
+                    GrpcMethod::new("pactus.Transaction", "GetRawTransferTransaction"),
                 );
             self.inner.unary(req, path, codec).await
         }
@@ -209,13 +204,11 @@ pub mod transaction_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.TransactionService/GetRawBondTransaction",
+                "/pactus.Transaction/GetRawBondTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("pactus.TransactionService", "GetRawBondTransaction"),
-                );
+                .insert(GrpcMethod::new("pactus.Transaction", "GetRawBondTransaction"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_raw_unbond_transaction(
@@ -236,15 +229,12 @@ pub mod transaction_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.TransactionService/GetRawUnbondTransaction",
+                "/pactus.Transaction/GetRawUnbondTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
-                    GrpcMethod::new(
-                        "pactus.TransactionService",
-                        "GetRawUnbondTransaction",
-                    ),
+                    GrpcMethod::new("pactus.Transaction", "GetRawUnbondTransaction"),
                 );
             self.inner.unary(req, path, codec).await
         }
@@ -266,15 +256,12 @@ pub mod transaction_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.TransactionService/GetRawWithdrawTransaction",
+                "/pactus.Transaction/GetRawWithdrawTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
-                    GrpcMethod::new(
-                        "pactus.TransactionService",
-                        "GetRawWithdrawTransaction",
-                    ),
+                    GrpcMethod::new("pactus.Transaction", "GetRawWithdrawTransaction"),
                 );
             self.inner.unary(req, path, codec).await
         }
@@ -296,24 +283,22 @@ pub mod transaction_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.TransactionService/DecodeRawTransaction",
+                "/pactus.Transaction/DecodeRawTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("pactus.TransactionService", "DecodeRawTransaction"),
-                );
+                .insert(GrpcMethod::new("pactus.Transaction", "DecodeRawTransaction"));
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod transaction_service_server {
+pub mod transaction_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with TransactionServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with TransactionServer.
     #[async_trait]
-    pub trait TransactionService: Send + Sync + 'static {
+    pub trait Transaction: Send + Sync + 'static {
         async fn get_transaction(
             &self,
             request: tonic::Request<super::GetTransactionRequest>,
@@ -372,14 +357,14 @@ pub mod transaction_service_server {
         >;
     }
     #[derive(Debug)]
-    pub struct TransactionServiceServer<T: TransactionService> {
+    pub struct TransactionServer<T: Transaction> {
         inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    impl<T: TransactionService> TransactionServiceServer<T> {
+    impl<T: Transaction> TransactionServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -430,9 +415,9 @@ pub mod transaction_service_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for TransactionServiceServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for TransactionServer<T>
     where
-        T: TransactionService,
+        T: Transaction,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -447,11 +432,11 @@ pub mod transaction_service_server {
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             match req.uri().path() {
-                "/pactus.TransactionService/GetTransaction" => {
+                "/pactus.Transaction/GetTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct GetTransactionSvc<T: TransactionService>(pub Arc<T>);
+                    struct GetTransactionSvc<T: Transaction>(pub Arc<T>);
                     impl<
-                        T: TransactionService,
+                        T: Transaction,
                     > tonic::server::UnaryService<super::GetTransactionRequest>
                     for GetTransactionSvc<T> {
                         type Response = super::GetTransactionResponse;
@@ -465,8 +450,7 @@ pub mod transaction_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as TransactionService>::get_transaction(&inner, request)
-                                    .await
+                                <T as Transaction>::get_transaction(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -493,11 +477,11 @@ pub mod transaction_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.TransactionService/CalculateFee" => {
+                "/pactus.Transaction/CalculateFee" => {
                     #[allow(non_camel_case_types)]
-                    struct CalculateFeeSvc<T: TransactionService>(pub Arc<T>);
+                    struct CalculateFeeSvc<T: Transaction>(pub Arc<T>);
                     impl<
-                        T: TransactionService,
+                        T: Transaction,
                     > tonic::server::UnaryService<super::CalculateFeeRequest>
                     for CalculateFeeSvc<T> {
                         type Response = super::CalculateFeeResponse;
@@ -511,8 +495,7 @@ pub mod transaction_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as TransactionService>::calculate_fee(&inner, request)
-                                    .await
+                                <T as Transaction>::calculate_fee(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -539,11 +522,11 @@ pub mod transaction_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.TransactionService/BroadcastTransaction" => {
+                "/pactus.Transaction/BroadcastTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct BroadcastTransactionSvc<T: TransactionService>(pub Arc<T>);
+                    struct BroadcastTransactionSvc<T: Transaction>(pub Arc<T>);
                     impl<
-                        T: TransactionService,
+                        T: Transaction,
                     > tonic::server::UnaryService<super::BroadcastTransactionRequest>
                     for BroadcastTransactionSvc<T> {
                         type Response = super::BroadcastTransactionResponse;
@@ -557,10 +540,7 @@ pub mod transaction_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as TransactionService>::broadcast_transaction(
-                                        &inner,
-                                        request,
-                                    )
+                                <T as Transaction>::broadcast_transaction(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -588,13 +568,11 @@ pub mod transaction_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.TransactionService/GetRawTransferTransaction" => {
+                "/pactus.Transaction/GetRawTransferTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct GetRawTransferTransactionSvc<T: TransactionService>(
-                        pub Arc<T>,
-                    );
+                    struct GetRawTransferTransactionSvc<T: Transaction>(pub Arc<T>);
                     impl<
-                        T: TransactionService,
+                        T: Transaction,
                     > tonic::server::UnaryService<
                         super::GetRawTransferTransactionRequest,
                     > for GetRawTransferTransactionSvc<T> {
@@ -611,7 +589,7 @@ pub mod transaction_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as TransactionService>::get_raw_transfer_transaction(
+                                <T as Transaction>::get_raw_transfer_transaction(
                                         &inner,
                                         request,
                                     )
@@ -642,11 +620,11 @@ pub mod transaction_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.TransactionService/GetRawBondTransaction" => {
+                "/pactus.Transaction/GetRawBondTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct GetRawBondTransactionSvc<T: TransactionService>(pub Arc<T>);
+                    struct GetRawBondTransactionSvc<T: Transaction>(pub Arc<T>);
                     impl<
-                        T: TransactionService,
+                        T: Transaction,
                     > tonic::server::UnaryService<super::GetRawBondTransactionRequest>
                     for GetRawBondTransactionSvc<T> {
                         type Response = super::GetRawTransactionResponse;
@@ -660,7 +638,7 @@ pub mod transaction_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as TransactionService>::get_raw_bond_transaction(
+                                <T as Transaction>::get_raw_bond_transaction(
                                         &inner,
                                         request,
                                     )
@@ -691,11 +669,11 @@ pub mod transaction_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.TransactionService/GetRawUnbondTransaction" => {
+                "/pactus.Transaction/GetRawUnbondTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct GetRawUnbondTransactionSvc<T: TransactionService>(pub Arc<T>);
+                    struct GetRawUnbondTransactionSvc<T: Transaction>(pub Arc<T>);
                     impl<
-                        T: TransactionService,
+                        T: Transaction,
                     > tonic::server::UnaryService<super::GetRawUnbondTransactionRequest>
                     for GetRawUnbondTransactionSvc<T> {
                         type Response = super::GetRawTransactionResponse;
@@ -711,7 +689,7 @@ pub mod transaction_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as TransactionService>::get_raw_unbond_transaction(
+                                <T as Transaction>::get_raw_unbond_transaction(
                                         &inner,
                                         request,
                                     )
@@ -742,13 +720,11 @@ pub mod transaction_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.TransactionService/GetRawWithdrawTransaction" => {
+                "/pactus.Transaction/GetRawWithdrawTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct GetRawWithdrawTransactionSvc<T: TransactionService>(
-                        pub Arc<T>,
-                    );
+                    struct GetRawWithdrawTransactionSvc<T: Transaction>(pub Arc<T>);
                     impl<
-                        T: TransactionService,
+                        T: Transaction,
                     > tonic::server::UnaryService<
                         super::GetRawWithdrawTransactionRequest,
                     > for GetRawWithdrawTransactionSvc<T> {
@@ -765,7 +741,7 @@ pub mod transaction_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as TransactionService>::get_raw_withdraw_transaction(
+                                <T as Transaction>::get_raw_withdraw_transaction(
                                         &inner,
                                         request,
                                     )
@@ -796,11 +772,11 @@ pub mod transaction_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.TransactionService/DecodeRawTransaction" => {
+                "/pactus.Transaction/DecodeRawTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct DecodeRawTransactionSvc<T: TransactionService>(pub Arc<T>);
+                    struct DecodeRawTransactionSvc<T: Transaction>(pub Arc<T>);
                     impl<
-                        T: TransactionService,
+                        T: Transaction,
                     > tonic::server::UnaryService<super::DecodeRawTransactionRequest>
                     for DecodeRawTransactionSvc<T> {
                         type Response = super::DecodeRawTransactionResponse;
@@ -814,10 +790,7 @@ pub mod transaction_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as TransactionService>::decode_raw_transaction(
-                                        &inner,
-                                        request,
-                                    )
+                                <T as Transaction>::decode_raw_transaction(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -863,7 +836,7 @@ pub mod transaction_service_server {
             }
         }
     }
-    impl<T: TransactionService> Clone for TransactionServiceServer<T> {
+    impl<T: Transaction> Clone for TransactionServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -875,21 +848,20 @@ pub mod transaction_service_server {
             }
         }
     }
-    impl<T: TransactionService> tonic::server::NamedService
-    for TransactionServiceServer<T> {
-        const NAME: &'static str = "pactus.TransactionService";
+    impl<T: Transaction> tonic::server::NamedService for TransactionServer<T> {
+        const NAME: &'static str = "pactus.Transaction";
     }
 }
 /// Generated client implementations.
-pub mod blockchain_service_client {
+pub mod blockchain_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct BlockchainServiceClient<T> {
+    pub struct BlockchainClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl BlockchainServiceClient<tonic::transport::Channel> {
+    impl BlockchainClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -900,7 +872,7 @@ pub mod blockchain_service_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> BlockchainServiceClient<T>
+    impl<T> BlockchainClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -918,7 +890,7 @@ pub mod blockchain_service_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> BlockchainServiceClient<InterceptedService<T, F>>
+        ) -> BlockchainClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -932,7 +904,7 @@ pub mod blockchain_service_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            BlockchainServiceClient::new(InterceptedService::new(inner, interceptor))
+            BlockchainClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -983,11 +955,11 @@ pub mod blockchain_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.BlockchainService/GetBlock",
+                "/pactus.Blockchain/GetBlock",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.BlockchainService", "GetBlock"));
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetBlock"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_block_hash(
@@ -1008,11 +980,11 @@ pub mod blockchain_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.BlockchainService/GetBlockHash",
+                "/pactus.Blockchain/GetBlockHash",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.BlockchainService", "GetBlockHash"));
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetBlockHash"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_block_height(
@@ -1033,11 +1005,11 @@ pub mod blockchain_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.BlockchainService/GetBlockHeight",
+                "/pactus.Blockchain/GetBlockHeight",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.BlockchainService", "GetBlockHeight"));
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetBlockHeight"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_blockchain_info(
@@ -1058,13 +1030,11 @@ pub mod blockchain_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.BlockchainService/GetBlockchainInfo",
+                "/pactus.Blockchain/GetBlockchainInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("pactus.BlockchainService", "GetBlockchainInfo"),
-                );
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetBlockchainInfo"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_consensus_info(
@@ -1085,11 +1055,11 @@ pub mod blockchain_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.BlockchainService/GetConsensusInfo",
+                "/pactus.Blockchain/GetConsensusInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.BlockchainService", "GetConsensusInfo"));
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetConsensusInfo"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_account(
@@ -1110,11 +1080,11 @@ pub mod blockchain_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.BlockchainService/GetAccount",
+                "/pactus.Blockchain/GetAccount",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.BlockchainService", "GetAccount"));
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetAccount"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_validator(
@@ -1135,11 +1105,11 @@ pub mod blockchain_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.BlockchainService/GetValidator",
+                "/pactus.Blockchain/GetValidator",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.BlockchainService", "GetValidator"));
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetValidator"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_validator_by_number(
@@ -1160,13 +1130,11 @@ pub mod blockchain_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.BlockchainService/GetValidatorByNumber",
+                "/pactus.Blockchain/GetValidatorByNumber",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("pactus.BlockchainService", "GetValidatorByNumber"),
-                );
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetValidatorByNumber"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_validator_addresses(
@@ -1187,13 +1155,11 @@ pub mod blockchain_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.BlockchainService/GetValidatorAddresses",
+                "/pactus.Blockchain/GetValidatorAddresses",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("pactus.BlockchainService", "GetValidatorAddresses"),
-                );
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetValidatorAddresses"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_public_key(
@@ -1214,11 +1180,11 @@ pub mod blockchain_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.BlockchainService/GetPublicKey",
+                "/pactus.Blockchain/GetPublicKey",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.BlockchainService", "GetPublicKey"));
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetPublicKey"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_tx_pool_content(
@@ -1239,22 +1205,22 @@ pub mod blockchain_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.BlockchainService/GetTxPoolContent",
+                "/pactus.Blockchain/GetTxPoolContent",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.BlockchainService", "GetTxPoolContent"));
+                .insert(GrpcMethod::new("pactus.Blockchain", "GetTxPoolContent"));
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod blockchain_service_server {
+pub mod blockchain_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with BlockchainServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with BlockchainServer.
     #[async_trait]
-    pub trait BlockchainService: Send + Sync + 'static {
+    pub trait Blockchain: Send + Sync + 'static {
         async fn get_block(
             &self,
             request: tonic::Request<super::GetBlockRequest>,
@@ -1334,14 +1300,14 @@ pub mod blockchain_service_server {
         >;
     }
     #[derive(Debug)]
-    pub struct BlockchainServiceServer<T: BlockchainService> {
+    pub struct BlockchainServer<T: Blockchain> {
         inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    impl<T: BlockchainService> BlockchainServiceServer<T> {
+    impl<T: Blockchain> BlockchainServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -1392,9 +1358,9 @@ pub mod blockchain_service_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for BlockchainServiceServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for BlockchainServer<T>
     where
-        T: BlockchainService,
+        T: Blockchain,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -1409,11 +1375,11 @@ pub mod blockchain_service_server {
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             match req.uri().path() {
-                "/pactus.BlockchainService/GetBlock" => {
+                "/pactus.Blockchain/GetBlock" => {
                     #[allow(non_camel_case_types)]
-                    struct GetBlockSvc<T: BlockchainService>(pub Arc<T>);
+                    struct GetBlockSvc<T: Blockchain>(pub Arc<T>);
                     impl<
-                        T: BlockchainService,
+                        T: Blockchain,
                     > tonic::server::UnaryService<super::GetBlockRequest>
                     for GetBlockSvc<T> {
                         type Response = super::GetBlockResponse;
@@ -1427,7 +1393,7 @@ pub mod blockchain_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as BlockchainService>::get_block(&inner, request).await
+                                <T as Blockchain>::get_block(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1454,11 +1420,11 @@ pub mod blockchain_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.BlockchainService/GetBlockHash" => {
+                "/pactus.Blockchain/GetBlockHash" => {
                     #[allow(non_camel_case_types)]
-                    struct GetBlockHashSvc<T: BlockchainService>(pub Arc<T>);
+                    struct GetBlockHashSvc<T: Blockchain>(pub Arc<T>);
                     impl<
-                        T: BlockchainService,
+                        T: Blockchain,
                     > tonic::server::UnaryService<super::GetBlockHashRequest>
                     for GetBlockHashSvc<T> {
                         type Response = super::GetBlockHashResponse;
@@ -1472,8 +1438,7 @@ pub mod blockchain_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as BlockchainService>::get_block_hash(&inner, request)
-                                    .await
+                                <T as Blockchain>::get_block_hash(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1500,11 +1465,11 @@ pub mod blockchain_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.BlockchainService/GetBlockHeight" => {
+                "/pactus.Blockchain/GetBlockHeight" => {
                     #[allow(non_camel_case_types)]
-                    struct GetBlockHeightSvc<T: BlockchainService>(pub Arc<T>);
+                    struct GetBlockHeightSvc<T: Blockchain>(pub Arc<T>);
                     impl<
-                        T: BlockchainService,
+                        T: Blockchain,
                     > tonic::server::UnaryService<super::GetBlockHeightRequest>
                     for GetBlockHeightSvc<T> {
                         type Response = super::GetBlockHeightResponse;
@@ -1518,8 +1483,7 @@ pub mod blockchain_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as BlockchainService>::get_block_height(&inner, request)
-                                    .await
+                                <T as Blockchain>::get_block_height(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1546,11 +1510,11 @@ pub mod blockchain_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.BlockchainService/GetBlockchainInfo" => {
+                "/pactus.Blockchain/GetBlockchainInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetBlockchainInfoSvc<T: BlockchainService>(pub Arc<T>);
+                    struct GetBlockchainInfoSvc<T: Blockchain>(pub Arc<T>);
                     impl<
-                        T: BlockchainService,
+                        T: Blockchain,
                     > tonic::server::UnaryService<super::GetBlockchainInfoRequest>
                     for GetBlockchainInfoSvc<T> {
                         type Response = super::GetBlockchainInfoResponse;
@@ -1564,10 +1528,7 @@ pub mod blockchain_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as BlockchainService>::get_blockchain_info(
-                                        &inner,
-                                        request,
-                                    )
+                                <T as Blockchain>::get_blockchain_info(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -1595,11 +1556,11 @@ pub mod blockchain_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.BlockchainService/GetConsensusInfo" => {
+                "/pactus.Blockchain/GetConsensusInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetConsensusInfoSvc<T: BlockchainService>(pub Arc<T>);
+                    struct GetConsensusInfoSvc<T: Blockchain>(pub Arc<T>);
                     impl<
-                        T: BlockchainService,
+                        T: Blockchain,
                     > tonic::server::UnaryService<super::GetConsensusInfoRequest>
                     for GetConsensusInfoSvc<T> {
                         type Response = super::GetConsensusInfoResponse;
@@ -1613,11 +1574,7 @@ pub mod blockchain_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as BlockchainService>::get_consensus_info(
-                                        &inner,
-                                        request,
-                                    )
-                                    .await
+                                <T as Blockchain>::get_consensus_info(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1644,11 +1601,11 @@ pub mod blockchain_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.BlockchainService/GetAccount" => {
+                "/pactus.Blockchain/GetAccount" => {
                     #[allow(non_camel_case_types)]
-                    struct GetAccountSvc<T: BlockchainService>(pub Arc<T>);
+                    struct GetAccountSvc<T: Blockchain>(pub Arc<T>);
                     impl<
-                        T: BlockchainService,
+                        T: Blockchain,
                     > tonic::server::UnaryService<super::GetAccountRequest>
                     for GetAccountSvc<T> {
                         type Response = super::GetAccountResponse;
@@ -1662,7 +1619,7 @@ pub mod blockchain_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as BlockchainService>::get_account(&inner, request).await
+                                <T as Blockchain>::get_account(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1689,11 +1646,11 @@ pub mod blockchain_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.BlockchainService/GetValidator" => {
+                "/pactus.Blockchain/GetValidator" => {
                     #[allow(non_camel_case_types)]
-                    struct GetValidatorSvc<T: BlockchainService>(pub Arc<T>);
+                    struct GetValidatorSvc<T: Blockchain>(pub Arc<T>);
                     impl<
-                        T: BlockchainService,
+                        T: Blockchain,
                     > tonic::server::UnaryService<super::GetValidatorRequest>
                     for GetValidatorSvc<T> {
                         type Response = super::GetValidatorResponse;
@@ -1707,8 +1664,7 @@ pub mod blockchain_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as BlockchainService>::get_validator(&inner, request)
-                                    .await
+                                <T as Blockchain>::get_validator(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1735,11 +1691,11 @@ pub mod blockchain_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.BlockchainService/GetValidatorByNumber" => {
+                "/pactus.Blockchain/GetValidatorByNumber" => {
                     #[allow(non_camel_case_types)]
-                    struct GetValidatorByNumberSvc<T: BlockchainService>(pub Arc<T>);
+                    struct GetValidatorByNumberSvc<T: Blockchain>(pub Arc<T>);
                     impl<
-                        T: BlockchainService,
+                        T: Blockchain,
                     > tonic::server::UnaryService<super::GetValidatorByNumberRequest>
                     for GetValidatorByNumberSvc<T> {
                         type Response = super::GetValidatorResponse;
@@ -1753,10 +1709,7 @@ pub mod blockchain_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as BlockchainService>::get_validator_by_number(
-                                        &inner,
-                                        request,
-                                    )
+                                <T as Blockchain>::get_validator_by_number(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -1784,11 +1737,11 @@ pub mod blockchain_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.BlockchainService/GetValidatorAddresses" => {
+                "/pactus.Blockchain/GetValidatorAddresses" => {
                     #[allow(non_camel_case_types)]
-                    struct GetValidatorAddressesSvc<T: BlockchainService>(pub Arc<T>);
+                    struct GetValidatorAddressesSvc<T: Blockchain>(pub Arc<T>);
                     impl<
-                        T: BlockchainService,
+                        T: Blockchain,
                     > tonic::server::UnaryService<super::GetValidatorAddressesRequest>
                     for GetValidatorAddressesSvc<T> {
                         type Response = super::GetValidatorAddressesResponse;
@@ -1802,10 +1755,7 @@ pub mod blockchain_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as BlockchainService>::get_validator_addresses(
-                                        &inner,
-                                        request,
-                                    )
+                                <T as Blockchain>::get_validator_addresses(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -1833,11 +1783,11 @@ pub mod blockchain_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.BlockchainService/GetPublicKey" => {
+                "/pactus.Blockchain/GetPublicKey" => {
                     #[allow(non_camel_case_types)]
-                    struct GetPublicKeySvc<T: BlockchainService>(pub Arc<T>);
+                    struct GetPublicKeySvc<T: Blockchain>(pub Arc<T>);
                     impl<
-                        T: BlockchainService,
+                        T: Blockchain,
                     > tonic::server::UnaryService<super::GetPublicKeyRequest>
                     for GetPublicKeySvc<T> {
                         type Response = super::GetPublicKeyResponse;
@@ -1851,8 +1801,7 @@ pub mod blockchain_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as BlockchainService>::get_public_key(&inner, request)
-                                    .await
+                                <T as Blockchain>::get_public_key(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1879,11 +1828,11 @@ pub mod blockchain_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.BlockchainService/GetTxPoolContent" => {
+                "/pactus.Blockchain/GetTxPoolContent" => {
                     #[allow(non_camel_case_types)]
-                    struct GetTxPoolContentSvc<T: BlockchainService>(pub Arc<T>);
+                    struct GetTxPoolContentSvc<T: Blockchain>(pub Arc<T>);
                     impl<
-                        T: BlockchainService,
+                        T: Blockchain,
                     > tonic::server::UnaryService<super::GetTxPoolContentRequest>
                     for GetTxPoolContentSvc<T> {
                         type Response = super::GetTxPoolContentResponse;
@@ -1897,10 +1846,7 @@ pub mod blockchain_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as BlockchainService>::get_tx_pool_content(
-                                        &inner,
-                                        request,
-                                    )
+                                <T as Blockchain>::get_tx_pool_content(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -1946,7 +1892,7 @@ pub mod blockchain_service_server {
             }
         }
     }
-    impl<T: BlockchainService> Clone for BlockchainServiceServer<T> {
+    impl<T: Blockchain> Clone for BlockchainServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -1958,21 +1904,20 @@ pub mod blockchain_service_server {
             }
         }
     }
-    impl<T: BlockchainService> tonic::server::NamedService
-    for BlockchainServiceServer<T> {
-        const NAME: &'static str = "pactus.BlockchainService";
+    impl<T: Blockchain> tonic::server::NamedService for BlockchainServer<T> {
+        const NAME: &'static str = "pactus.Blockchain";
     }
 }
 /// Generated client implementations.
-pub mod network_service_client {
+pub mod network_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct NetworkServiceClient<T> {
+    pub struct NetworkClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl NetworkServiceClient<tonic::transport::Channel> {
+    impl NetworkClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -1983,7 +1928,7 @@ pub mod network_service_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> NetworkServiceClient<T>
+    impl<T> NetworkClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -2001,7 +1946,7 @@ pub mod network_service_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> NetworkServiceClient<InterceptedService<T, F>>
+        ) -> NetworkClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -2015,7 +1960,7 @@ pub mod network_service_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            NetworkServiceClient::new(InterceptedService::new(inner, interceptor))
+            NetworkClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -2066,11 +2011,11 @@ pub mod network_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.NetworkService/GetNetworkInfo",
+                "/pactus.Network/GetNetworkInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.NetworkService", "GetNetworkInfo"));
+                .insert(GrpcMethod::new("pactus.Network", "GetNetworkInfo"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_node_info(
@@ -2091,22 +2036,22 @@ pub mod network_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.NetworkService/GetNodeInfo",
+                "/pactus.Network/GetNodeInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.NetworkService", "GetNodeInfo"));
+                .insert(GrpcMethod::new("pactus.Network", "GetNodeInfo"));
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod network_service_server {
+pub mod network_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with NetworkServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with NetworkServer.
     #[async_trait]
-    pub trait NetworkService: Send + Sync + 'static {
+    pub trait Network: Send + Sync + 'static {
         async fn get_network_info(
             &self,
             request: tonic::Request<super::GetNetworkInfoRequest>,
@@ -2123,14 +2068,14 @@ pub mod network_service_server {
         >;
     }
     #[derive(Debug)]
-    pub struct NetworkServiceServer<T: NetworkService> {
+    pub struct NetworkServer<T: Network> {
         inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    impl<T: NetworkService> NetworkServiceServer<T> {
+    impl<T: Network> NetworkServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -2181,9 +2126,9 @@ pub mod network_service_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for NetworkServiceServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for NetworkServer<T>
     where
-        T: NetworkService,
+        T: Network,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -2198,11 +2143,11 @@ pub mod network_service_server {
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             match req.uri().path() {
-                "/pactus.NetworkService/GetNetworkInfo" => {
+                "/pactus.Network/GetNetworkInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetNetworkInfoSvc<T: NetworkService>(pub Arc<T>);
+                    struct GetNetworkInfoSvc<T: Network>(pub Arc<T>);
                     impl<
-                        T: NetworkService,
+                        T: Network,
                     > tonic::server::UnaryService<super::GetNetworkInfoRequest>
                     for GetNetworkInfoSvc<T> {
                         type Response = super::GetNetworkInfoResponse;
@@ -2216,8 +2161,7 @@ pub mod network_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as NetworkService>::get_network_info(&inner, request)
-                                    .await
+                                <T as Network>::get_network_info(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2244,11 +2188,11 @@ pub mod network_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.NetworkService/GetNodeInfo" => {
+                "/pactus.Network/GetNodeInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetNodeInfoSvc<T: NetworkService>(pub Arc<T>);
+                    struct GetNodeInfoSvc<T: Network>(pub Arc<T>);
                     impl<
-                        T: NetworkService,
+                        T: Network,
                     > tonic::server::UnaryService<super::GetNodeInfoRequest>
                     for GetNodeInfoSvc<T> {
                         type Response = super::GetNodeInfoResponse;
@@ -2262,7 +2206,7 @@ pub mod network_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as NetworkService>::get_node_info(&inner, request).await
+                                <T as Network>::get_node_info(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2307,7 +2251,7 @@ pub mod network_service_server {
             }
         }
     }
-    impl<T: NetworkService> Clone for NetworkServiceServer<T> {
+    impl<T: Network> Clone for NetworkServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -2319,20 +2263,20 @@ pub mod network_service_server {
             }
         }
     }
-    impl<T: NetworkService> tonic::server::NamedService for NetworkServiceServer<T> {
-        const NAME: &'static str = "pactus.NetworkService";
+    impl<T: Network> tonic::server::NamedService for NetworkServer<T> {
+        const NAME: &'static str = "pactus.Network";
     }
 }
 /// Generated client implementations.
-pub mod utils_service_client {
+pub mod utils_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct UtilsServiceClient<T> {
+    pub struct UtilsClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl UtilsServiceClient<tonic::transport::Channel> {
+    impl UtilsClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -2343,7 +2287,7 @@ pub mod utils_service_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> UtilsServiceClient<T>
+    impl<T> UtilsClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -2361,7 +2305,7 @@ pub mod utils_service_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> UtilsServiceClient<InterceptedService<T, F>>
+        ) -> UtilsClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -2375,7 +2319,7 @@ pub mod utils_service_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            UtilsServiceClient::new(InterceptedService::new(inner, interceptor))
+            UtilsClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -2426,13 +2370,11 @@ pub mod utils_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.UtilsService/SignMessageWithPrivateKey",
+                "/pactus.Utils/SignMessageWithPrivateKey",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("pactus.UtilsService", "SignMessageWithPrivateKey"),
-                );
+                .insert(GrpcMethod::new("pactus.Utils", "SignMessageWithPrivateKey"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn verify_message(
@@ -2453,11 +2395,11 @@ pub mod utils_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.UtilsService/VerifyMessage",
+                "/pactus.Utils/VerifyMessage",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.UtilsService", "VerifyMessage"));
+                .insert(GrpcMethod::new("pactus.Utils", "VerifyMessage"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn public_key_aggregation(
@@ -2478,11 +2420,11 @@ pub mod utils_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.UtilsService/PublicKeyAggregation",
+                "/pactus.Utils/PublicKeyAggregation",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.UtilsService", "PublicKeyAggregation"));
+                .insert(GrpcMethod::new("pactus.Utils", "PublicKeyAggregation"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn signature_aggregation(
@@ -2503,22 +2445,22 @@ pub mod utils_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.UtilsService/SignatureAggregation",
+                "/pactus.Utils/SignatureAggregation",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.UtilsService", "SignatureAggregation"));
+                .insert(GrpcMethod::new("pactus.Utils", "SignatureAggregation"));
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod utils_service_server {
+pub mod utils_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with UtilsServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with UtilsServer.
     #[async_trait]
-    pub trait UtilsService: Send + Sync + 'static {
+    pub trait Utils: Send + Sync + 'static {
         async fn sign_message_with_private_key(
             &self,
             request: tonic::Request<super::SignMessageWithPrivateKeyRequest>,
@@ -2549,14 +2491,14 @@ pub mod utils_service_server {
         >;
     }
     #[derive(Debug)]
-    pub struct UtilsServiceServer<T: UtilsService> {
+    pub struct UtilsServer<T: Utils> {
         inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    impl<T: UtilsService> UtilsServiceServer<T> {
+    impl<T: Utils> UtilsServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -2607,9 +2549,9 @@ pub mod utils_service_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for UtilsServiceServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for UtilsServer<T>
     where
-        T: UtilsService,
+        T: Utils,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -2624,11 +2566,11 @@ pub mod utils_service_server {
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             match req.uri().path() {
-                "/pactus.UtilsService/SignMessageWithPrivateKey" => {
+                "/pactus.Utils/SignMessageWithPrivateKey" => {
                     #[allow(non_camel_case_types)]
-                    struct SignMessageWithPrivateKeySvc<T: UtilsService>(pub Arc<T>);
+                    struct SignMessageWithPrivateKeySvc<T: Utils>(pub Arc<T>);
                     impl<
-                        T: UtilsService,
+                        T: Utils,
                     > tonic::server::UnaryService<
                         super::SignMessageWithPrivateKeyRequest,
                     > for SignMessageWithPrivateKeySvc<T> {
@@ -2645,10 +2587,7 @@ pub mod utils_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as UtilsService>::sign_message_with_private_key(
-                                        &inner,
-                                        request,
-                                    )
+                                <T as Utils>::sign_message_with_private_key(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -2676,11 +2615,11 @@ pub mod utils_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.UtilsService/VerifyMessage" => {
+                "/pactus.Utils/VerifyMessage" => {
                     #[allow(non_camel_case_types)]
-                    struct VerifyMessageSvc<T: UtilsService>(pub Arc<T>);
+                    struct VerifyMessageSvc<T: Utils>(pub Arc<T>);
                     impl<
-                        T: UtilsService,
+                        T: Utils,
                     > tonic::server::UnaryService<super::VerifyMessageRequest>
                     for VerifyMessageSvc<T> {
                         type Response = super::VerifyMessageResponse;
@@ -2694,7 +2633,7 @@ pub mod utils_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as UtilsService>::verify_message(&inner, request).await
+                                <T as Utils>::verify_message(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2721,11 +2660,11 @@ pub mod utils_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.UtilsService/PublicKeyAggregation" => {
+                "/pactus.Utils/PublicKeyAggregation" => {
                     #[allow(non_camel_case_types)]
-                    struct PublicKeyAggregationSvc<T: UtilsService>(pub Arc<T>);
+                    struct PublicKeyAggregationSvc<T: Utils>(pub Arc<T>);
                     impl<
-                        T: UtilsService,
+                        T: Utils,
                     > tonic::server::UnaryService<super::PublicKeyAggregationRequest>
                     for PublicKeyAggregationSvc<T> {
                         type Response = super::PublicKeyAggregationResponse;
@@ -2739,8 +2678,7 @@ pub mod utils_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as UtilsService>::public_key_aggregation(&inner, request)
-                                    .await
+                                <T as Utils>::public_key_aggregation(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2767,11 +2705,11 @@ pub mod utils_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.UtilsService/SignatureAggregation" => {
+                "/pactus.Utils/SignatureAggregation" => {
                     #[allow(non_camel_case_types)]
-                    struct SignatureAggregationSvc<T: UtilsService>(pub Arc<T>);
+                    struct SignatureAggregationSvc<T: Utils>(pub Arc<T>);
                     impl<
-                        T: UtilsService,
+                        T: Utils,
                     > tonic::server::UnaryService<super::SignatureAggregationRequest>
                     for SignatureAggregationSvc<T> {
                         type Response = super::SignatureAggregationResponse;
@@ -2785,8 +2723,7 @@ pub mod utils_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as UtilsService>::signature_aggregation(&inner, request)
-                                    .await
+                                <T as Utils>::signature_aggregation(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2831,7 +2768,7 @@ pub mod utils_service_server {
             }
         }
     }
-    impl<T: UtilsService> Clone for UtilsServiceServer<T> {
+    impl<T: Utils> Clone for UtilsServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -2843,20 +2780,20 @@ pub mod utils_service_server {
             }
         }
     }
-    impl<T: UtilsService> tonic::server::NamedService for UtilsServiceServer<T> {
-        const NAME: &'static str = "pactus.UtilsService";
+    impl<T: Utils> tonic::server::NamedService for UtilsServer<T> {
+        const NAME: &'static str = "pactus.Utils";
     }
 }
 /// Generated client implementations.
-pub mod wallet_service_client {
+pub mod wallet_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct WalletServiceClient<T> {
+    pub struct WalletClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl WalletServiceClient<tonic::transport::Channel> {
+    impl WalletClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -2867,7 +2804,7 @@ pub mod wallet_service_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> WalletServiceClient<T>
+    impl<T> WalletClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -2885,7 +2822,7 @@ pub mod wallet_service_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> WalletServiceClient<InterceptedService<T, F>>
+        ) -> WalletClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -2899,7 +2836,7 @@ pub mod wallet_service_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            WalletServiceClient::new(InterceptedService::new(inner, interceptor))
+            WalletClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -2950,11 +2887,11 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/CreateWallet",
+                "/pactus.Wallet/CreateWallet",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "CreateWallet"));
+                .insert(GrpcMethod::new("pactus.Wallet", "CreateWallet"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn restore_wallet(
@@ -2975,11 +2912,11 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/RestoreWallet",
+                "/pactus.Wallet/RestoreWallet",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "RestoreWallet"));
+                .insert(GrpcMethod::new("pactus.Wallet", "RestoreWallet"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn load_wallet(
@@ -2999,12 +2936,9 @@ pub mod wallet_service_client {
                     )
                 })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/LoadWallet",
-            );
+            let path = http::uri::PathAndQuery::from_static("/pactus.Wallet/LoadWallet");
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "LoadWallet"));
+            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "LoadWallet"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn unload_wallet(
@@ -3025,11 +2959,11 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/UnloadWallet",
+                "/pactus.Wallet/UnloadWallet",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "UnloadWallet"));
+                .insert(GrpcMethod::new("pactus.Wallet", "UnloadWallet"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_total_balance(
@@ -3050,11 +2984,11 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/GetTotalBalance",
+                "/pactus.Wallet/GetTotalBalance",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "GetTotalBalance"));
+                .insert(GrpcMethod::new("pactus.Wallet", "GetTotalBalance"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn sign_raw_transaction(
@@ -3075,11 +3009,11 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/SignRawTransaction",
+                "/pactus.Wallet/SignRawTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "SignRawTransaction"));
+                .insert(GrpcMethod::new("pactus.Wallet", "SignRawTransaction"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_validator_address(
@@ -3100,11 +3034,11 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/GetValidatorAddress",
+                "/pactus.Wallet/GetValidatorAddress",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "GetValidatorAddress"));
+                .insert(GrpcMethod::new("pactus.Wallet", "GetValidatorAddress"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_new_address(
@@ -3125,11 +3059,11 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/GetNewAddress",
+                "/pactus.Wallet/GetNewAddress",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "GetNewAddress"));
+                .insert(GrpcMethod::new("pactus.Wallet", "GetNewAddress"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_address_history(
@@ -3150,11 +3084,11 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/GetAddressHistory",
+                "/pactus.Wallet/GetAddressHistory",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "GetAddressHistory"));
+                .insert(GrpcMethod::new("pactus.Wallet", "GetAddressHistory"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn sign_message(
@@ -3175,11 +3109,10 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/SignMessage",
+                "/pactus.Wallet/SignMessage",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "SignMessage"));
+            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "SignMessage"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_total_stake(
@@ -3200,11 +3133,11 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/GetTotalStake",
+                "/pactus.Wallet/GetTotalStake",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "GetTotalStake"));
+                .insert(GrpcMethod::new("pactus.Wallet", "GetTotalStake"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_address_info(
@@ -3225,11 +3158,11 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/GetAddressInfo",
+                "/pactus.Wallet/GetAddressInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "GetAddressInfo"));
+                .insert(GrpcMethod::new("pactus.Wallet", "GetAddressInfo"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn set_address_label(
@@ -3250,11 +3183,11 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/SetAddressLabel",
+                "/pactus.Wallet/SetAddressLabel",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "SetAddressLabel"));
+                .insert(GrpcMethod::new("pactus.Wallet", "SetAddressLabel"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn list_wallet(
@@ -3274,12 +3207,9 @@ pub mod wallet_service_client {
                     )
                 })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/ListWallet",
-            );
+            let path = http::uri::PathAndQuery::from_static("/pactus.Wallet/ListWallet");
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "ListWallet"));
+            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "ListWallet"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_wallet_info(
@@ -3300,11 +3230,11 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/GetWalletInfo",
+                "/pactus.Wallet/GetWalletInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "GetWalletInfo"));
+                .insert(GrpcMethod::new("pactus.Wallet", "GetWalletInfo"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn list_address(
@@ -3325,22 +3255,21 @@ pub mod wallet_service_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.WalletService/ListAddress",
+                "/pactus.Wallet/ListAddress",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.WalletService", "ListAddress"));
+            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "ListAddress"));
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod wallet_service_server {
+pub mod wallet_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with WalletServiceServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with WalletServer.
     #[async_trait]
-    pub trait WalletService: Send + Sync + 'static {
+    pub trait Wallet: Send + Sync + 'static {
         async fn create_wallet(
             &self,
             request: tonic::Request<super::CreateWalletRequest>,
@@ -3455,14 +3384,14 @@ pub mod wallet_service_server {
         >;
     }
     #[derive(Debug)]
-    pub struct WalletServiceServer<T: WalletService> {
+    pub struct WalletServer<T: Wallet> {
         inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    impl<T: WalletService> WalletServiceServer<T> {
+    impl<T: Wallet> WalletServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -3513,9 +3442,9 @@ pub mod wallet_service_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for WalletServiceServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for WalletServer<T>
     where
-        T: WalletService,
+        T: Wallet,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -3530,11 +3459,11 @@ pub mod wallet_service_server {
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             match req.uri().path() {
-                "/pactus.WalletService/CreateWallet" => {
+                "/pactus.Wallet/CreateWallet" => {
                     #[allow(non_camel_case_types)]
-                    struct CreateWalletSvc<T: WalletService>(pub Arc<T>);
+                    struct CreateWalletSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::CreateWalletRequest>
                     for CreateWalletSvc<T> {
                         type Response = super::CreateWalletResponse;
@@ -3548,7 +3477,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::create_wallet(&inner, request).await
+                                <T as Wallet>::create_wallet(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3575,11 +3504,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/RestoreWallet" => {
+                "/pactus.Wallet/RestoreWallet" => {
                     #[allow(non_camel_case_types)]
-                    struct RestoreWalletSvc<T: WalletService>(pub Arc<T>);
+                    struct RestoreWalletSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::RestoreWalletRequest>
                     for RestoreWalletSvc<T> {
                         type Response = super::RestoreWalletResponse;
@@ -3593,7 +3522,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::restore_wallet(&inner, request).await
+                                <T as Wallet>::restore_wallet(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3620,12 +3549,10 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/LoadWallet" => {
+                "/pactus.Wallet/LoadWallet" => {
                     #[allow(non_camel_case_types)]
-                    struct LoadWalletSvc<T: WalletService>(pub Arc<T>);
-                    impl<
-                        T: WalletService,
-                    > tonic::server::UnaryService<super::LoadWalletRequest>
+                    struct LoadWalletSvc<T: Wallet>(pub Arc<T>);
+                    impl<T: Wallet> tonic::server::UnaryService<super::LoadWalletRequest>
                     for LoadWalletSvc<T> {
                         type Response = super::LoadWalletResponse;
                         type Future = BoxFuture<
@@ -3638,7 +3565,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::load_wallet(&inner, request).await
+                                <T as Wallet>::load_wallet(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3665,11 +3592,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/UnloadWallet" => {
+                "/pactus.Wallet/UnloadWallet" => {
                     #[allow(non_camel_case_types)]
-                    struct UnloadWalletSvc<T: WalletService>(pub Arc<T>);
+                    struct UnloadWalletSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::UnloadWalletRequest>
                     for UnloadWalletSvc<T> {
                         type Response = super::UnloadWalletResponse;
@@ -3683,7 +3610,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::unload_wallet(&inner, request).await
+                                <T as Wallet>::unload_wallet(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3710,11 +3637,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/GetTotalBalance" => {
+                "/pactus.Wallet/GetTotalBalance" => {
                     #[allow(non_camel_case_types)]
-                    struct GetTotalBalanceSvc<T: WalletService>(pub Arc<T>);
+                    struct GetTotalBalanceSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::GetTotalBalanceRequest>
                     for GetTotalBalanceSvc<T> {
                         type Response = super::GetTotalBalanceResponse;
@@ -3728,8 +3655,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::get_total_balance(&inner, request)
-                                    .await
+                                <T as Wallet>::get_total_balance(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3756,11 +3682,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/SignRawTransaction" => {
+                "/pactus.Wallet/SignRawTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct SignRawTransactionSvc<T: WalletService>(pub Arc<T>);
+                    struct SignRawTransactionSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::SignRawTransactionRequest>
                     for SignRawTransactionSvc<T> {
                         type Response = super::SignRawTransactionResponse;
@@ -3774,8 +3700,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::sign_raw_transaction(&inner, request)
-                                    .await
+                                <T as Wallet>::sign_raw_transaction(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3802,11 +3727,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/GetValidatorAddress" => {
+                "/pactus.Wallet/GetValidatorAddress" => {
                     #[allow(non_camel_case_types)]
-                    struct GetValidatorAddressSvc<T: WalletService>(pub Arc<T>);
+                    struct GetValidatorAddressSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::GetValidatorAddressRequest>
                     for GetValidatorAddressSvc<T> {
                         type Response = super::GetValidatorAddressResponse;
@@ -3820,8 +3745,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::get_validator_address(&inner, request)
-                                    .await
+                                <T as Wallet>::get_validator_address(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3848,11 +3772,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/GetNewAddress" => {
+                "/pactus.Wallet/GetNewAddress" => {
                     #[allow(non_camel_case_types)]
-                    struct GetNewAddressSvc<T: WalletService>(pub Arc<T>);
+                    struct GetNewAddressSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::GetNewAddressRequest>
                     for GetNewAddressSvc<T> {
                         type Response = super::GetNewAddressResponse;
@@ -3866,7 +3790,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::get_new_address(&inner, request).await
+                                <T as Wallet>::get_new_address(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3893,11 +3817,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/GetAddressHistory" => {
+                "/pactus.Wallet/GetAddressHistory" => {
                     #[allow(non_camel_case_types)]
-                    struct GetAddressHistorySvc<T: WalletService>(pub Arc<T>);
+                    struct GetAddressHistorySvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::GetAddressHistoryRequest>
                     for GetAddressHistorySvc<T> {
                         type Response = super::GetAddressHistoryResponse;
@@ -3911,8 +3835,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::get_address_history(&inner, request)
-                                    .await
+                                <T as Wallet>::get_address_history(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3939,11 +3862,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/SignMessage" => {
+                "/pactus.Wallet/SignMessage" => {
                     #[allow(non_camel_case_types)]
-                    struct SignMessageSvc<T: WalletService>(pub Arc<T>);
+                    struct SignMessageSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::SignMessageRequest>
                     for SignMessageSvc<T> {
                         type Response = super::SignMessageResponse;
@@ -3957,7 +3880,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::sign_message(&inner, request).await
+                                <T as Wallet>::sign_message(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3984,11 +3907,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/GetTotalStake" => {
+                "/pactus.Wallet/GetTotalStake" => {
                     #[allow(non_camel_case_types)]
-                    struct GetTotalStakeSvc<T: WalletService>(pub Arc<T>);
+                    struct GetTotalStakeSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::GetTotalStakeRequest>
                     for GetTotalStakeSvc<T> {
                         type Response = super::GetTotalStakeResponse;
@@ -4002,7 +3925,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::get_total_stake(&inner, request).await
+                                <T as Wallet>::get_total_stake(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -4029,11 +3952,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/GetAddressInfo" => {
+                "/pactus.Wallet/GetAddressInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetAddressInfoSvc<T: WalletService>(pub Arc<T>);
+                    struct GetAddressInfoSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::GetAddressInfoRequest>
                     for GetAddressInfoSvc<T> {
                         type Response = super::GetAddressInfoResponse;
@@ -4047,8 +3970,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::get_address_info(&inner, request)
-                                    .await
+                                <T as Wallet>::get_address_info(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -4075,11 +3997,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/SetAddressLabel" => {
+                "/pactus.Wallet/SetAddressLabel" => {
                     #[allow(non_camel_case_types)]
-                    struct SetAddressLabelSvc<T: WalletService>(pub Arc<T>);
+                    struct SetAddressLabelSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::SetAddressLabelRequest>
                     for SetAddressLabelSvc<T> {
                         type Response = super::SetAddressLabelResponse;
@@ -4093,8 +4015,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::set_address_label(&inner, request)
-                                    .await
+                                <T as Wallet>::set_address_label(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -4121,12 +4042,10 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/ListWallet" => {
+                "/pactus.Wallet/ListWallet" => {
                     #[allow(non_camel_case_types)]
-                    struct ListWalletSvc<T: WalletService>(pub Arc<T>);
-                    impl<
-                        T: WalletService,
-                    > tonic::server::UnaryService<super::ListWalletRequest>
+                    struct ListWalletSvc<T: Wallet>(pub Arc<T>);
+                    impl<T: Wallet> tonic::server::UnaryService<super::ListWalletRequest>
                     for ListWalletSvc<T> {
                         type Response = super::ListWalletResponse;
                         type Future = BoxFuture<
@@ -4139,7 +4058,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::list_wallet(&inner, request).await
+                                <T as Wallet>::list_wallet(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -4166,11 +4085,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/GetWalletInfo" => {
+                "/pactus.Wallet/GetWalletInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetWalletInfoSvc<T: WalletService>(pub Arc<T>);
+                    struct GetWalletInfoSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::GetWalletInfoRequest>
                     for GetWalletInfoSvc<T> {
                         type Response = super::GetWalletInfoResponse;
@@ -4184,7 +4103,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::get_wallet_info(&inner, request).await
+                                <T as Wallet>::get_wallet_info(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -4211,11 +4130,11 @@ pub mod wallet_service_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.WalletService/ListAddress" => {
+                "/pactus.Wallet/ListAddress" => {
                     #[allow(non_camel_case_types)]
-                    struct ListAddressSvc<T: WalletService>(pub Arc<T>);
+                    struct ListAddressSvc<T: Wallet>(pub Arc<T>);
                     impl<
-                        T: WalletService,
+                        T: Wallet,
                     > tonic::server::UnaryService<super::ListAddressRequest>
                     for ListAddressSvc<T> {
                         type Response = super::ListAddressResponse;
@@ -4229,7 +4148,7 @@ pub mod wallet_service_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as WalletService>::list_address(&inner, request).await
+                                <T as Wallet>::list_address(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -4274,7 +4193,7 @@ pub mod wallet_service_server {
             }
         }
     }
-    impl<T: WalletService> Clone for WalletServiceServer<T> {
+    impl<T: Wallet> Clone for WalletServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -4286,7 +4205,7 @@ pub mod wallet_service_server {
             }
         }
     }
-    impl<T: WalletService> tonic::server::NamedService for WalletServiceServer<T> {
-        const NAME: &'static str = "pactus.WalletService";
+    impl<T: Wallet> tonic::server::NamedService for WalletServer<T> {
+        const NAME: &'static str = "pactus.Wallet";
     }
 }

@@ -14,186 +14,186 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 
 <div id="toc-container">
   <ul class="">
-  <li> TransactionService Service
+  <li> Transaction Service
       <ul>
         <li>
-          <a href="#pactus.TransactionService.GetTransaction">
+          <a href="#pactus.Transaction.GetTransaction">
           <span class="rpc-badge"></span> GetTransaction</a>
         </li>
         <li>
-          <a href="#pactus.TransactionService.CalculateFee">
+          <a href="#pactus.Transaction.CalculateFee">
           <span class="rpc-badge"></span> CalculateFee</a>
         </li>
         <li>
-          <a href="#pactus.TransactionService.BroadcastTransaction">
+          <a href="#pactus.Transaction.BroadcastTransaction">
           <span class="rpc-badge"></span> BroadcastTransaction</a>
         </li>
         <li>
-          <a href="#pactus.TransactionService.GetRawTransferTransaction">
+          <a href="#pactus.Transaction.GetRawTransferTransaction">
           <span class="rpc-badge"></span> GetRawTransferTransaction</a>
         </li>
         <li>
-          <a href="#pactus.TransactionService.GetRawBondTransaction">
+          <a href="#pactus.Transaction.GetRawBondTransaction">
           <span class="rpc-badge"></span> GetRawBondTransaction</a>
         </li>
         <li>
-          <a href="#pactus.TransactionService.GetRawUnbondTransaction">
+          <a href="#pactus.Transaction.GetRawUnbondTransaction">
           <span class="rpc-badge"></span> GetRawUnbondTransaction</a>
         </li>
         <li>
-          <a href="#pactus.TransactionService.GetRawWithdrawTransaction">
+          <a href="#pactus.Transaction.GetRawWithdrawTransaction">
           <span class="rpc-badge"></span> GetRawWithdrawTransaction</a>
         </li>
         <li>
-          <a href="#pactus.TransactionService.DecodeRawTransaction">
+          <a href="#pactus.Transaction.DecodeRawTransaction">
           <span class="rpc-badge"></span> DecodeRawTransaction</a>
         </li>
         </ul>
     </li>
-    <li> BlockchainService Service
+    <li> Blockchain Service
       <ul>
         <li>
-          <a href="#pactus.BlockchainService.GetBlock">
+          <a href="#pactus.Blockchain.GetBlock">
           <span class="rpc-badge"></span> GetBlock</a>
         </li>
         <li>
-          <a href="#pactus.BlockchainService.GetBlockHash">
+          <a href="#pactus.Blockchain.GetBlockHash">
           <span class="rpc-badge"></span> GetBlockHash</a>
         </li>
         <li>
-          <a href="#pactus.BlockchainService.GetBlockHeight">
+          <a href="#pactus.Blockchain.GetBlockHeight">
           <span class="rpc-badge"></span> GetBlockHeight</a>
         </li>
         <li>
-          <a href="#pactus.BlockchainService.GetBlockchainInfo">
+          <a href="#pactus.Blockchain.GetBlockchainInfo">
           <span class="rpc-badge"></span> GetBlockchainInfo</a>
         </li>
         <li>
-          <a href="#pactus.BlockchainService.GetConsensusInfo">
+          <a href="#pactus.Blockchain.GetConsensusInfo">
           <span class="rpc-badge"></span> GetConsensusInfo</a>
         </li>
         <li>
-          <a href="#pactus.BlockchainService.GetAccount">
+          <a href="#pactus.Blockchain.GetAccount">
           <span class="rpc-badge"></span> GetAccount</a>
         </li>
         <li>
-          <a href="#pactus.BlockchainService.GetValidator">
+          <a href="#pactus.Blockchain.GetValidator">
           <span class="rpc-badge"></span> GetValidator</a>
         </li>
         <li>
-          <a href="#pactus.BlockchainService.GetValidatorByNumber">
+          <a href="#pactus.Blockchain.GetValidatorByNumber">
           <span class="rpc-badge"></span> GetValidatorByNumber</a>
         </li>
         <li>
-          <a href="#pactus.BlockchainService.GetValidatorAddresses">
+          <a href="#pactus.Blockchain.GetValidatorAddresses">
           <span class="rpc-badge"></span> GetValidatorAddresses</a>
         </li>
         <li>
-          <a href="#pactus.BlockchainService.GetPublicKey">
+          <a href="#pactus.Blockchain.GetPublicKey">
           <span class="rpc-badge"></span> GetPublicKey</a>
         </li>
         <li>
-          <a href="#pactus.BlockchainService.GetTxPoolContent">
+          <a href="#pactus.Blockchain.GetTxPoolContent">
           <span class="rpc-badge"></span> GetTxPoolContent</a>
         </li>
         </ul>
     </li>
-    <li> NetworkService Service
+    <li> Network Service
       <ul>
         <li>
-          <a href="#pactus.NetworkService.GetNetworkInfo">
+          <a href="#pactus.Network.GetNetworkInfo">
           <span class="rpc-badge"></span> GetNetworkInfo</a>
         </li>
         <li>
-          <a href="#pactus.NetworkService.GetNodeInfo">
+          <a href="#pactus.Network.GetNodeInfo">
           <span class="rpc-badge"></span> GetNodeInfo</a>
         </li>
         </ul>
     </li>
-    <li> UtilsService Service
+    <li> Utils Service
       <ul>
         <li>
-          <a href="#pactus.UtilsService.SignMessageWithPrivateKey">
+          <a href="#pactus.Utils.SignMessageWithPrivateKey">
           <span class="rpc-badge"></span> SignMessageWithPrivateKey</a>
         </li>
         <li>
-          <a href="#pactus.UtilsService.VerifyMessage">
+          <a href="#pactus.Utils.VerifyMessage">
           <span class="rpc-badge"></span> VerifyMessage</a>
         </li>
         <li>
-          <a href="#pactus.UtilsService.PublicKeyAggregation">
+          <a href="#pactus.Utils.PublicKeyAggregation">
           <span class="rpc-badge"></span> PublicKeyAggregation</a>
         </li>
         <li>
-          <a href="#pactus.UtilsService.SignatureAggregation">
+          <a href="#pactus.Utils.SignatureAggregation">
           <span class="rpc-badge"></span> SignatureAggregation</a>
         </li>
         </ul>
     </li>
-    <li> WalletService Service
+    <li> Wallet Service
       <ul>
         <li>
-          <a href="#pactus.WalletService.CreateWallet">
+          <a href="#pactus.Wallet.CreateWallet">
           <span class="rpc-badge"></span> CreateWallet</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.RestoreWallet">
+          <a href="#pactus.Wallet.RestoreWallet">
           <span class="rpc-badge"></span> RestoreWallet</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.LoadWallet">
+          <a href="#pactus.Wallet.LoadWallet">
           <span class="rpc-badge"></span> LoadWallet</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.UnloadWallet">
+          <a href="#pactus.Wallet.UnloadWallet">
           <span class="rpc-badge"></span> UnloadWallet</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.GetTotalBalance">
+          <a href="#pactus.Wallet.GetTotalBalance">
           <span class="rpc-badge"></span> GetTotalBalance</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.SignRawTransaction">
+          <a href="#pactus.Wallet.SignRawTransaction">
           <span class="rpc-badge"></span> SignRawTransaction</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.GetValidatorAddress">
+          <a href="#pactus.Wallet.GetValidatorAddress">
           <span class="rpc-badge"></span> GetValidatorAddress</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.GetNewAddress">
+          <a href="#pactus.Wallet.GetNewAddress">
           <span class="rpc-badge"></span> GetNewAddress</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.GetAddressHistory">
+          <a href="#pactus.Wallet.GetAddressHistory">
           <span class="rpc-badge"></span> GetAddressHistory</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.SignMessage">
+          <a href="#pactus.Wallet.SignMessage">
           <span class="rpc-badge"></span> SignMessage</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.GetTotalStake">
+          <a href="#pactus.Wallet.GetTotalStake">
           <span class="rpc-badge"></span> GetTotalStake</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.GetAddressInfo">
+          <a href="#pactus.Wallet.GetAddressInfo">
           <span class="rpc-badge"></span> GetAddressInfo</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.SetAddressLabel">
+          <a href="#pactus.Wallet.SetAddressLabel">
           <span class="rpc-badge"></span> SetAddressLabel</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.ListWallet">
+          <a href="#pactus.Wallet.ListWallet">
           <span class="rpc-badge"></span> ListWallet</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.GetWalletInfo">
+          <a href="#pactus.Wallet.GetWalletInfo">
           <span class="rpc-badge"></span> GetWalletInfo</a>
         </li>
         <li>
-          <a href="#pactus.WalletService.ListAddress">
+          <a href="#pactus.Wallet.ListAddress">
           <span class="rpc-badge"></span> ListAddress</a>
         </li>
         </ul>
@@ -203,12 +203,12 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 
 <div class="api-doc">
 
-## TransactionService Service
+## Transaction Service
 
 <p>Transaction service defines various RPC methods for interacting with
 transactions.</p>
 
-### GetTransaction <span id="pactus.TransactionService.GetTransaction" class="rpc-badge"></span>
+### GetTransaction <span id="pactus.Transaction.GetTransaction" class="rpc-badge"></span>
 
 <p>GetTransaction retrieves transaction details based on the provided request
 parameters.</p>
@@ -476,7 +476,7 @@ buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX)</li>
          </tbody>
 </table>
 
-### CalculateFee <span id="pactus.TransactionService.CalculateFee" class="rpc-badge"></span>
+### CalculateFee <span id="pactus.Transaction.CalculateFee" class="rpc-badge"></span>
 
 <p>CalculateFee calculates the transaction fee based on the specified amount
 and payload type.</p>
@@ -543,7 +543,7 @@ and payload type.</p>
      </tbody>
 </table>
 
-### BroadcastTransaction <span id="pactus.TransactionService.BroadcastTransaction" class="rpc-badge"></span>
+### BroadcastTransaction <span id="pactus.Transaction.BroadcastTransaction" class="rpc-badge"></span>
 
 <p>BroadcastTransaction broadcasts a signed transaction to the network.</p>
 
@@ -580,7 +580,7 @@ and payload type.</p>
      </tbody>
 </table>
 
-### GetRawTransferTransaction <span id="pactus.TransactionService.GetRawTransferTransaction" class="rpc-badge"></span>
+### GetRawTransferTransaction <span id="pactus.Transaction.GetRawTransferTransaction" class="rpc-badge"></span>
 
 <p>GetRawTransferTransaction retrieves raw details of a transfer transaction.
 buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -661,7 +661,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
      </tbody>
 </table>
 
-### GetRawBondTransaction <span id="pactus.TransactionService.GetRawBondTransaction" class="rpc-badge"></span>
+### GetRawBondTransaction <span id="pactus.Transaction.GetRawBondTransaction" class="rpc-badge"></span>
 
 <p>GetRawBondTransaction retrieves raw details of a bond transaction.
 buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -749,7 +749,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
      </tbody>
 </table>
 
-### GetRawUnbondTransaction <span id="pactus.TransactionService.GetRawUnbondTransaction" class="rpc-badge"></span>
+### GetRawUnbondTransaction <span id="pactus.Transaction.GetRawUnbondTransaction" class="rpc-badge"></span>
 
 <p>GetRawUnbondTransaction retrieves raw details of an unbond transaction.
 buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -809,7 +809,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
      </tbody>
 </table>
 
-### GetRawWithdrawTransaction <span id="pactus.TransactionService.GetRawWithdrawTransaction" class="rpc-badge"></span>
+### GetRawWithdrawTransaction <span id="pactus.Transaction.GetRawWithdrawTransaction" class="rpc-badge"></span>
 
 <p>GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
 buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -890,7 +890,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
      </tbody>
 </table>
 
-### DecodeRawTransaction <span id="pactus.TransactionService.DecodeRawTransaction" class="rpc-badge"></span>
+### DecodeRawTransaction <span id="pactus.Transaction.DecodeRawTransaction" class="rpc-badge"></span>
 
 <p>DecodeRawTransaction accepts raw transaction and returns decoded transaction.</p>
 
@@ -1131,11 +1131,11 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
          </tbody>
 </table>
 
-## BlockchainService Service
+## Blockchain Service
 
 <p>Blockchain service defines RPC methods for interacting with the blockchain.</p>
 
-### GetBlock <span id="pactus.BlockchainService.GetBlock" class="rpc-badge"></span>
+### GetBlock <span id="pactus.Blockchain.GetBlock" class="rpc-badge"></span>
 
 <p>GetBlock retrieves information about a block based on the provided request parameters.</p>
 
@@ -1502,7 +1502,7 @@ BLOCK_TRANSACTIONS.
          </tbody>
 </table>
 
-### GetBlockHash <span id="pactus.BlockchainService.GetBlockHash" class="rpc-badge"></span>
+### GetBlockHash <span id="pactus.Blockchain.GetBlockHash" class="rpc-badge"></span>
 
 <p>GetBlockHash retrieves the hash of a block at the specified height.</p>
 
@@ -1539,7 +1539,7 @@ BLOCK_TRANSACTIONS.
      </tbody>
 </table>
 
-### GetBlockHeight <span id="pactus.BlockchainService.GetBlockHeight" class="rpc-badge"></span>
+### GetBlockHeight <span id="pactus.Blockchain.GetBlockHeight" class="rpc-badge"></span>
 
 <p>GetBlockHeight retrieves the height of a block with the specified hash.</p>
 
@@ -1576,7 +1576,7 @@ BLOCK_TRANSACTIONS.
      </tbody>
 </table>
 
-### GetBlockchainInfo <span id="pactus.BlockchainService.GetBlockchainInfo" class="rpc-badge"></span>
+### GetBlockchainInfo <span id="pactus.Blockchain.GetBlockchainInfo" class="rpc-badge"></span>
 
 <p>GetBlockchainInfo retrieves general information about the blockchain.</p>
 
@@ -1733,7 +1733,7 @@ Message has no fields.
      </tbody>
 </table>
 
-### GetConsensusInfo <span id="pactus.BlockchainService.GetConsensusInfo" class="rpc-badge"></span>
+### GetConsensusInfo <span id="pactus.Blockchain.GetConsensusInfo" class="rpc-badge"></span>
 
 <p>GetConsensusInfo retrieves information about the consensus instances.</p>
 
@@ -1877,7 +1877,7 @@ Message has no fields.
           </tbody>
 </table>
 
-### GetAccount <span id="pactus.BlockchainService.GetAccount" class="rpc-badge"></span>
+### GetAccount <span id="pactus.Blockchain.GetAccount" class="rpc-badge"></span>
 
 <p>GetAccount retrieves information about an account based on the provided address.</p>
 
@@ -1949,7 +1949,7 @@ Message has no fields.
          </tbody>
 </table>
 
-### GetValidator <span id="pactus.BlockchainService.GetValidator" class="rpc-badge"></span>
+### GetValidator <span id="pactus.Blockchain.GetValidator" class="rpc-badge"></span>
 
 <p>GetValidator retrieves information about a validator based on the provided address.
 buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -2058,7 +2058,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
          </tbody>
 </table>
 
-### GetValidatorByNumber <span id="pactus.BlockchainService.GetValidatorByNumber" class="rpc-badge"></span>
+### GetValidatorByNumber <span id="pactus.Blockchain.GetValidatorByNumber" class="rpc-badge"></span>
 
 <p>GetValidatorByNumber retrieves information about a validator based on the provided number.
 buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -2167,7 +2167,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
          </tbody>
 </table>
 
-### GetValidatorAddresses <span id="pactus.BlockchainService.GetValidatorAddresses" class="rpc-badge"></span>
+### GetValidatorAddresses <span id="pactus.Blockchain.GetValidatorAddresses" class="rpc-badge"></span>
 
 <p>GetValidatorAddresses retrieves a list of all validator addresses.</p>
 
@@ -2191,7 +2191,7 @@ Message has no fields.
      </tbody>
 </table>
 
-### GetPublicKey <span id="pactus.BlockchainService.GetPublicKey" class="rpc-badge"></span>
+### GetPublicKey <span id="pactus.Blockchain.GetPublicKey" class="rpc-badge"></span>
 
 <p>GetPublicKey retrieves the public key of an account based on the provided address.</p>
 
@@ -2228,7 +2228,7 @@ Message has no fields.
      </tbody>
 </table>
 
-### GetTxPoolContent <span id="pactus.BlockchainService.GetTxPoolContent" class="rpc-badge"></span>
+### GetTxPoolContent <span id="pactus.Blockchain.GetTxPoolContent" class="rpc-badge"></span>
 
 <p>GetTxPoolContent retrieves current transactions in the transaction pool.</p>
 
@@ -2477,11 +2477,11 @@ Message has no fields.
          </tbody>
 </table>
 
-## NetworkService Service
+## Network Service
 
-<p>NetworkService provides RPCs for retrieving information about the network.</p>
+<p>Network service provides RPCs for retrieving information about the network.</p>
 
-### GetNetworkInfo <span id="pactus.NetworkService.GetNetworkInfo" class="rpc-badge"></span>
+### GetNetworkInfo <span id="pactus.Network.GetNetworkInfo" class="rpc-badge"></span>
 
 <p>GetNetworkInfo retrieves information about the overall network.</p>
 
@@ -2770,7 +2770,7 @@ Message has no fields.
          </tbody>
 </table>
 
-### GetNodeInfo <span id="pactus.NetworkService.GetNodeInfo" class="rpc-badge"></span>
+### GetNodeInfo <span id="pactus.Network.GetNodeInfo" class="rpc-badge"></span>
 
 <p>GetNodeInfo retrieves information about a specific node in the network.</p>
 
@@ -2914,12 +2914,12 @@ maximum number of messages to queue before dropping older ones.
          </tbody>
 </table>
 
-## UtilsService Service
+## Utils Service
 
 <p>Utils service defines RPC methods for utility functions such as message
 signing, verification, and etc.</p>
 
-### SignMessageWithPrivateKey <span id="pactus.UtilsService.SignMessageWithPrivateKey" class="rpc-badge"></span>
+### SignMessageWithPrivateKey <span id="pactus.Utils.SignMessageWithPrivateKey" class="rpc-badge"></span>
 
 <p>SignMessageWithPrivateKey signs a message with the provided private key.</p>
 
@@ -2963,7 +2963,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### VerifyMessage <span id="pactus.UtilsService.VerifyMessage" class="rpc-badge"></span>
+### VerifyMessage <span id="pactus.Utils.VerifyMessage" class="rpc-badge"></span>
 
 <p>VerifyMessage verifies a signature against the public key and message.</p>
 
@@ -3014,7 +3014,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### PublicKeyAggregation <span id="pactus.UtilsService.PublicKeyAggregation" class="rpc-badge"></span>
+### PublicKeyAggregation <span id="pactus.Utils.PublicKeyAggregation" class="rpc-badge"></span>
 
 <p>PublicKeyAggregation aggregates multiple BLS public keys into a single key.</p>
 
@@ -3058,7 +3058,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### SignatureAggregation <span id="pactus.UtilsService.SignatureAggregation" class="rpc-badge"></span>
+### SignatureAggregation <span id="pactus.Utils.SignatureAggregation" class="rpc-badge"></span>
 
 <p>SignatureAggregation aggregates multiple BLS signatures into a single signature.</p>
 
@@ -3095,11 +3095,11 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-## WalletService Service
+## Wallet Service
 
-<p>WalletService provides RPC methods for wallet management operations.</p>
+<p>Wallet service provides RPC methods for wallet management operations.</p>
 
-### CreateWallet <span id="pactus.WalletService.CreateWallet" class="rpc-badge"></span>
+### CreateWallet <span id="pactus.Wallet.CreateWallet" class="rpc-badge"></span>
 
 <p>CreateWallet creates a new wallet with the specified parameters.</p>
 
@@ -3143,7 +3143,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### RestoreWallet <span id="pactus.WalletService.RestoreWallet" class="rpc-badge"></span>
+### RestoreWallet <span id="pactus.Wallet.RestoreWallet" class="rpc-badge"></span>
 
 <p>RestoreWallet restores an existing wallet with the given mnemonic.</p>
 
@@ -3194,7 +3194,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### LoadWallet <span id="pactus.WalletService.LoadWallet" class="rpc-badge"></span>
+### LoadWallet <span id="pactus.Wallet.LoadWallet" class="rpc-badge"></span>
 
 <p>LoadWallet loads an existing wallet with the given name.</p>
 
@@ -3231,7 +3231,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### UnloadWallet <span id="pactus.WalletService.UnloadWallet" class="rpc-badge"></span>
+### UnloadWallet <span id="pactus.Wallet.UnloadWallet" class="rpc-badge"></span>
 
 <p>UnloadWallet unloads a currently loaded wallet with the specified name.</p>
 
@@ -3268,7 +3268,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### GetTotalBalance <span id="pactus.WalletService.GetTotalBalance" class="rpc-badge"></span>
+### GetTotalBalance <span id="pactus.Wallet.GetTotalBalance" class="rpc-badge"></span>
 
 <p>GetTotalBalance returns the total available balance of the wallet.</p>
 
@@ -3312,7 +3312,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### SignRawTransaction <span id="pactus.WalletService.SignRawTransaction" class="rpc-badge"></span>
+### SignRawTransaction <span id="pactus.Wallet.SignRawTransaction" class="rpc-badge"></span>
 
 <p>SignRawTransaction signs a raw transaction for a specified wallet.</p>
 
@@ -3370,7 +3370,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### GetValidatorAddress <span id="pactus.WalletService.GetValidatorAddress" class="rpc-badge"></span>
+### GetValidatorAddress <span id="pactus.Wallet.GetValidatorAddress" class="rpc-badge"></span>
 
 <p>GetValidatorAddress retrieves the validator address associated with a public key.</p>
 
@@ -3407,7 +3407,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### GetNewAddress <span id="pactus.WalletService.GetNewAddress" class="rpc-badge"></span>
+### GetNewAddress <span id="pactus.Wallet.GetNewAddress" class="rpc-badge"></span>
 
 <p>GetNewAddress generates a new address for the specified wallet.</p>
 
@@ -3509,7 +3509,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
          </tbody>
 </table>
 
-### GetAddressHistory <span id="pactus.WalletService.GetAddressHistory" class="rpc-badge"></span>
+### GetAddressHistory <span id="pactus.Wallet.GetAddressHistory" class="rpc-badge"></span>
 
 <p>GetAddressHistory retrieves the transaction history of an address.</p>
 
@@ -3588,7 +3588,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
          </tbody>
 </table>
 
-### SignMessage <span id="pactus.WalletService.SignMessage" class="rpc-badge"></span>
+### SignMessage <span id="pactus.Wallet.SignMessage" class="rpc-badge"></span>
 
 <p>SignMessage signs an arbitrary message using a wallet's private key.</p>
 
@@ -3646,7 +3646,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
      </tbody>
 </table>
 
-### GetTotalStake <span id="pactus.WalletService.GetTotalStake" class="rpc-badge"></span>
+### GetTotalStake <span id="pactus.Wallet.GetTotalStake" class="rpc-badge"></span>
 
 <p>GetTotalStake returns the total stake amount in the wallet.</p>
 
@@ -3690,7 +3690,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
      </tbody>
 </table>
 
-### GetAddressInfo <span id="pactus.WalletService.GetAddressInfo" class="rpc-badge"></span>
+### GetAddressInfo <span id="pactus.Wallet.GetAddressInfo" class="rpc-badge"></span>
 
 <p>GetAddressInfo returns detailed information about a specific address.</p>
 
@@ -3762,7 +3762,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
      </tbody>
 </table>
 
-### SetAddressLabel <span id="pactus.WalletService.SetAddressLabel" class="rpc-badge"></span>
+### SetAddressLabel <span id="pactus.Wallet.SetAddressLabel" class="rpc-badge"></span>
 
 <p>SetAddressLabel sets or updates the label for a given address.</p>
 
@@ -3813,7 +3813,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
   </tbody>
 </table>
 
-### ListWallet <span id="pactus.WalletService.ListWallet" class="rpc-badge"></span>
+### ListWallet <span id="pactus.Wallet.ListWallet" class="rpc-badge"></span>
 
 <p>ListWallet returns list of all available wallets.</p>
 
@@ -3837,7 +3837,7 @@ Message has no fields.
      </tbody>
 </table>
 
-### GetWalletInfo <span id="pactus.WalletService.GetWalletInfo" class="rpc-badge"></span>
+### GetWalletInfo <span id="pactus.Wallet.GetWalletInfo" class="rpc-badge"></span>
 
 <p>GetWalletInfo returns detailed information about a specific wallet.</p>
 
@@ -3909,7 +3909,7 @@ Message has no fields.
      </tbody>
 </table>
 
-### ListAddress <span id="pactus.WalletService.ListAddress" class="rpc-badge"></span>
+### ListAddress <span id="pactus.Wallet.ListAddress" class="rpc-badge"></span>
 
 <p>ListAddress returns all addresses in the specified wallet.</p>
 

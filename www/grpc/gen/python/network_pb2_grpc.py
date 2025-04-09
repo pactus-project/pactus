@@ -5,8 +5,8 @@ import grpc
 import network_pb2 as network__pb2
 
 
-class NetworkServiceStub(object):
-    """NetworkService provides RPCs for retrieving information about the network.
+class NetworkStub(object):
+    """Network service provides RPCs for retrieving information about the network.
     """
 
     def __init__(self, channel):
@@ -16,19 +16,19 @@ class NetworkServiceStub(object):
             channel: A grpc.Channel.
         """
         self.GetNetworkInfo = channel.unary_unary(
-                '/pactus.NetworkService/GetNetworkInfo',
+                '/pactus.Network/GetNetworkInfo',
                 request_serializer=network__pb2.GetNetworkInfoRequest.SerializeToString,
                 response_deserializer=network__pb2.GetNetworkInfoResponse.FromString,
                 _registered_method=True)
         self.GetNodeInfo = channel.unary_unary(
-                '/pactus.NetworkService/GetNodeInfo',
+                '/pactus.Network/GetNodeInfo',
                 request_serializer=network__pb2.GetNodeInfoRequest.SerializeToString,
                 response_deserializer=network__pb2.GetNodeInfoResponse.FromString,
                 _registered_method=True)
 
 
-class NetworkServiceServicer(object):
-    """NetworkService provides RPCs for retrieving information about the network.
+class NetworkServicer(object):
+    """Network service provides RPCs for retrieving information about the network.
     """
 
     def GetNetworkInfo(self, request, context):
@@ -46,7 +46,7 @@ class NetworkServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_NetworkServiceServicer_to_server(servicer, server):
+def add_NetworkServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetNetworkInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNetworkInfo,
@@ -60,14 +60,14 @@ def add_NetworkServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'pactus.NetworkService', rpc_method_handlers)
+            'pactus.Network', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('pactus.NetworkService', rpc_method_handlers)
+    server.add_registered_method_handlers('pactus.Network', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class NetworkService(object):
-    """NetworkService provides RPCs for retrieving information about the network.
+class Network(object):
+    """Network service provides RPCs for retrieving information about the network.
     """
 
     @staticmethod
@@ -84,7 +84,7 @@ class NetworkService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.NetworkService/GetNetworkInfo',
+            '/pactus.Network/GetNetworkInfo',
             network__pb2.GetNetworkInfoRequest.SerializeToString,
             network__pb2.GetNetworkInfoResponse.FromString,
             options,
@@ -111,7 +111,7 @@ class NetworkService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.NetworkService/GetNodeInfo',
+            '/pactus.Network/GetNodeInfo',
             network__pb2.GetNodeInfoRequest.SerializeToString,
             network__pb2.GetNodeInfoResponse.FromString,
             options,

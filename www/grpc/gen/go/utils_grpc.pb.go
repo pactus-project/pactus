@@ -19,19 +19,19 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UtilsService_SignMessageWithPrivateKey_FullMethodName = "/pactus.UtilsService/SignMessageWithPrivateKey"
-	UtilsService_VerifyMessage_FullMethodName             = "/pactus.UtilsService/VerifyMessage"
-	UtilsService_PublicKeyAggregation_FullMethodName      = "/pactus.UtilsService/PublicKeyAggregation"
-	UtilsService_SignatureAggregation_FullMethodName      = "/pactus.UtilsService/SignatureAggregation"
+	Utils_SignMessageWithPrivateKey_FullMethodName = "/pactus.Utils/SignMessageWithPrivateKey"
+	Utils_VerifyMessage_FullMethodName             = "/pactus.Utils/VerifyMessage"
+	Utils_PublicKeyAggregation_FullMethodName      = "/pactus.Utils/PublicKeyAggregation"
+	Utils_SignatureAggregation_FullMethodName      = "/pactus.Utils/SignatureAggregation"
 )
 
-// UtilsServiceClient is the client API for UtilsService service.
+// UtilsClient is the client API for Utils service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // Utils service defines RPC methods for utility functions such as message
 // signing, verification, and etc.
-type UtilsServiceClient interface {
+type UtilsClient interface {
 	// SignMessageWithPrivateKey signs a message with the provided private key.
 	SignMessageWithPrivateKey(ctx context.Context, in *SignMessageWithPrivateKeyRequest, opts ...grpc.CallOption) (*SignMessageWithPrivateKeyResponse, error)
 	// VerifyMessage verifies a signature against the public key and message.
@@ -42,61 +42,61 @@ type UtilsServiceClient interface {
 	SignatureAggregation(ctx context.Context, in *SignatureAggregationRequest, opts ...grpc.CallOption) (*SignatureAggregationResponse, error)
 }
 
-type utilsServiceClient struct {
+type utilsClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUtilsServiceClient(cc grpc.ClientConnInterface) UtilsServiceClient {
-	return &utilsServiceClient{cc}
+func NewUtilsClient(cc grpc.ClientConnInterface) UtilsClient {
+	return &utilsClient{cc}
 }
 
-func (c *utilsServiceClient) SignMessageWithPrivateKey(ctx context.Context, in *SignMessageWithPrivateKeyRequest, opts ...grpc.CallOption) (*SignMessageWithPrivateKeyResponse, error) {
+func (c *utilsClient) SignMessageWithPrivateKey(ctx context.Context, in *SignMessageWithPrivateKeyRequest, opts ...grpc.CallOption) (*SignMessageWithPrivateKeyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SignMessageWithPrivateKeyResponse)
-	err := c.cc.Invoke(ctx, UtilsService_SignMessageWithPrivateKey_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Utils_SignMessageWithPrivateKey_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *utilsServiceClient) VerifyMessage(ctx context.Context, in *VerifyMessageRequest, opts ...grpc.CallOption) (*VerifyMessageResponse, error) {
+func (c *utilsClient) VerifyMessage(ctx context.Context, in *VerifyMessageRequest, opts ...grpc.CallOption) (*VerifyMessageResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(VerifyMessageResponse)
-	err := c.cc.Invoke(ctx, UtilsService_VerifyMessage_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Utils_VerifyMessage_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *utilsServiceClient) PublicKeyAggregation(ctx context.Context, in *PublicKeyAggregationRequest, opts ...grpc.CallOption) (*PublicKeyAggregationResponse, error) {
+func (c *utilsClient) PublicKeyAggregation(ctx context.Context, in *PublicKeyAggregationRequest, opts ...grpc.CallOption) (*PublicKeyAggregationResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(PublicKeyAggregationResponse)
-	err := c.cc.Invoke(ctx, UtilsService_PublicKeyAggregation_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Utils_PublicKeyAggregation_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *utilsServiceClient) SignatureAggregation(ctx context.Context, in *SignatureAggregationRequest, opts ...grpc.CallOption) (*SignatureAggregationResponse, error) {
+func (c *utilsClient) SignatureAggregation(ctx context.Context, in *SignatureAggregationRequest, opts ...grpc.CallOption) (*SignatureAggregationResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(SignatureAggregationResponse)
-	err := c.cc.Invoke(ctx, UtilsService_SignatureAggregation_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Utils_SignatureAggregation_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UtilsServiceServer is the server API for UtilsService service.
-// All implementations should embed UnimplementedUtilsServiceServer
+// UtilsServer is the server API for Utils service.
+// All implementations should embed UnimplementedUtilsServer
 // for forward compatibility.
 //
 // Utils service defines RPC methods for utility functions such as message
 // signing, verification, and etc.
-type UtilsServiceServer interface {
+type UtilsServer interface {
 	// SignMessageWithPrivateKey signs a message with the provided private key.
 	SignMessageWithPrivateKey(context.Context, *SignMessageWithPrivateKeyRequest) (*SignMessageWithPrivateKeyResponse, error)
 	// VerifyMessage verifies a signature against the public key and message.
@@ -107,139 +107,139 @@ type UtilsServiceServer interface {
 	SignatureAggregation(context.Context, *SignatureAggregationRequest) (*SignatureAggregationResponse, error)
 }
 
-// UnimplementedUtilsServiceServer should be embedded to have
+// UnimplementedUtilsServer should be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedUtilsServiceServer struct{}
+type UnimplementedUtilsServer struct{}
 
-func (UnimplementedUtilsServiceServer) SignMessageWithPrivateKey(context.Context, *SignMessageWithPrivateKeyRequest) (*SignMessageWithPrivateKeyResponse, error) {
+func (UnimplementedUtilsServer) SignMessageWithPrivateKey(context.Context, *SignMessageWithPrivateKeyRequest) (*SignMessageWithPrivateKeyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignMessageWithPrivateKey not implemented")
 }
-func (UnimplementedUtilsServiceServer) VerifyMessage(context.Context, *VerifyMessageRequest) (*VerifyMessageResponse, error) {
+func (UnimplementedUtilsServer) VerifyMessage(context.Context, *VerifyMessageRequest) (*VerifyMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyMessage not implemented")
 }
-func (UnimplementedUtilsServiceServer) PublicKeyAggregation(context.Context, *PublicKeyAggregationRequest) (*PublicKeyAggregationResponse, error) {
+func (UnimplementedUtilsServer) PublicKeyAggregation(context.Context, *PublicKeyAggregationRequest) (*PublicKeyAggregationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PublicKeyAggregation not implemented")
 }
-func (UnimplementedUtilsServiceServer) SignatureAggregation(context.Context, *SignatureAggregationRequest) (*SignatureAggregationResponse, error) {
+func (UnimplementedUtilsServer) SignatureAggregation(context.Context, *SignatureAggregationRequest) (*SignatureAggregationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignatureAggregation not implemented")
 }
-func (UnimplementedUtilsServiceServer) testEmbeddedByValue() {}
+func (UnimplementedUtilsServer) testEmbeddedByValue() {}
 
-// UnsafeUtilsServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UtilsServiceServer will
+// UnsafeUtilsServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UtilsServer will
 // result in compilation errors.
-type UnsafeUtilsServiceServer interface {
-	mustEmbedUnimplementedUtilsServiceServer()
+type UnsafeUtilsServer interface {
+	mustEmbedUnimplementedUtilsServer()
 }
 
-func RegisterUtilsServiceServer(s grpc.ServiceRegistrar, srv UtilsServiceServer) {
-	// If the following call pancis, it indicates UnimplementedUtilsServiceServer was
+func RegisterUtilsServer(s grpc.ServiceRegistrar, srv UtilsServer) {
+	// If the following call pancis, it indicates UnimplementedUtilsServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&UtilsService_ServiceDesc, srv)
+	s.RegisterService(&Utils_ServiceDesc, srv)
 }
 
-func _UtilsService_SignMessageWithPrivateKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Utils_SignMessageWithPrivateKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SignMessageWithPrivateKeyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UtilsServiceServer).SignMessageWithPrivateKey(ctx, in)
+		return srv.(UtilsServer).SignMessageWithPrivateKey(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UtilsService_SignMessageWithPrivateKey_FullMethodName,
+		FullMethod: Utils_SignMessageWithPrivateKey_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UtilsServiceServer).SignMessageWithPrivateKey(ctx, req.(*SignMessageWithPrivateKeyRequest))
+		return srv.(UtilsServer).SignMessageWithPrivateKey(ctx, req.(*SignMessageWithPrivateKeyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UtilsService_VerifyMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Utils_VerifyMessage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VerifyMessageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UtilsServiceServer).VerifyMessage(ctx, in)
+		return srv.(UtilsServer).VerifyMessage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UtilsService_VerifyMessage_FullMethodName,
+		FullMethod: Utils_VerifyMessage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UtilsServiceServer).VerifyMessage(ctx, req.(*VerifyMessageRequest))
+		return srv.(UtilsServer).VerifyMessage(ctx, req.(*VerifyMessageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UtilsService_PublicKeyAggregation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Utils_PublicKeyAggregation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PublicKeyAggregationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UtilsServiceServer).PublicKeyAggregation(ctx, in)
+		return srv.(UtilsServer).PublicKeyAggregation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UtilsService_PublicKeyAggregation_FullMethodName,
+		FullMethod: Utils_PublicKeyAggregation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UtilsServiceServer).PublicKeyAggregation(ctx, req.(*PublicKeyAggregationRequest))
+		return srv.(UtilsServer).PublicKeyAggregation(ctx, req.(*PublicKeyAggregationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UtilsService_SignatureAggregation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Utils_SignatureAggregation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SignatureAggregationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UtilsServiceServer).SignatureAggregation(ctx, in)
+		return srv.(UtilsServer).SignatureAggregation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UtilsService_SignatureAggregation_FullMethodName,
+		FullMethod: Utils_SignatureAggregation_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UtilsServiceServer).SignatureAggregation(ctx, req.(*SignatureAggregationRequest))
+		return srv.(UtilsServer).SignatureAggregation(ctx, req.(*SignatureAggregationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// UtilsService_ServiceDesc is the grpc.ServiceDesc for UtilsService service.
+// Utils_ServiceDesc is the grpc.ServiceDesc for Utils service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UtilsService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pactus.UtilsService",
-	HandlerType: (*UtilsServiceServer)(nil),
+var Utils_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pactus.Utils",
+	HandlerType: (*UtilsServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "SignMessageWithPrivateKey",
-			Handler:    _UtilsService_SignMessageWithPrivateKey_Handler,
+			Handler:    _Utils_SignMessageWithPrivateKey_Handler,
 		},
 		{
 			MethodName: "VerifyMessage",
-			Handler:    _UtilsService_VerifyMessage_Handler,
+			Handler:    _Utils_VerifyMessage_Handler,
 		},
 		{
 			MethodName: "PublicKeyAggregation",
-			Handler:    _UtilsService_PublicKeyAggregation_Handler,
+			Handler:    _Utils_PublicKeyAggregation_Handler,
 		},
 		{
 			MethodName: "SignatureAggregation",
-			Handler:    _UtilsService_SignatureAggregation_Handler,
+			Handler:    _Utils_SignatureAggregation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

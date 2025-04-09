@@ -1981,8 +1981,9 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x13VOTE_TYPE_PRECOMMIT\x10\x02\x12\x19\n" +
 	"\x15VOTE_TYPE_CP_PRE_VOTE\x10\x03\x12\x1a\n" +
 	"\x16VOTE_TYPE_CP_MAIN_VOTE\x10\x04\x12\x18\n" +
-	"\x14VOTE_TYPE_CP_DECIDED\x10\x052\x92\a\n" +
-	"\x11BlockchainService\x12=\n" +
+	"\x14VOTE_TYPE_CP_DECIDED\x10\x052\x8b\a\n" +
+	"\n" +
+	"Blockchain\x12=\n" +
 	"\bGetBlock\x12\x17.pactus.GetBlockRequest\x1a\x18.pactus.GetBlockResponse\x12I\n" +
 	"\fGetBlockHash\x12\x1b.pactus.GetBlockHashRequest\x1a\x1c.pactus.GetBlockHashResponse\x12O\n" +
 	"\x0eGetBlockHeight\x12\x1d.pactus.GetBlockHeightRequest\x1a\x1e.pactus.GetBlockHeightResponse\x12X\n" +
@@ -2059,28 +2060,28 @@ var file_blockchain_proto_depIdxs = []int32{
 	30, // 10: pactus.GetTxPoolContentResponse.txs:type_name -> pactus.TransactionInfo
 	1,  // 11: pactus.VoteInfo.type:type_name -> pactus.VoteType
 	27, // 12: pactus.ConsensusInfo.votes:type_name -> pactus.VoteInfo
-	11, // 13: pactus.BlockchainService.GetBlock:input_type -> pactus.GetBlockRequest
-	13, // 14: pactus.BlockchainService.GetBlockHash:input_type -> pactus.GetBlockHashRequest
-	15, // 15: pactus.BlockchainService.GetBlockHeight:input_type -> pactus.GetBlockHeightRequest
-	17, // 16: pactus.BlockchainService.GetBlockchainInfo:input_type -> pactus.GetBlockchainInfoRequest
-	19, // 17: pactus.BlockchainService.GetConsensusInfo:input_type -> pactus.GetConsensusInfoRequest
-	2,  // 18: pactus.BlockchainService.GetAccount:input_type -> pactus.GetAccountRequest
-	6,  // 19: pactus.BlockchainService.GetValidator:input_type -> pactus.GetValidatorRequest
-	7,  // 20: pactus.BlockchainService.GetValidatorByNumber:input_type -> pactus.GetValidatorByNumberRequest
-	4,  // 21: pactus.BlockchainService.GetValidatorAddresses:input_type -> pactus.GetValidatorAddressesRequest
-	9,  // 22: pactus.BlockchainService.GetPublicKey:input_type -> pactus.GetPublicKeyRequest
-	21, // 23: pactus.BlockchainService.GetTxPoolContent:input_type -> pactus.GetTxPoolContentRequest
-	12, // 24: pactus.BlockchainService.GetBlock:output_type -> pactus.GetBlockResponse
-	14, // 25: pactus.BlockchainService.GetBlockHash:output_type -> pactus.GetBlockHashResponse
-	16, // 26: pactus.BlockchainService.GetBlockHeight:output_type -> pactus.GetBlockHeightResponse
-	18, // 27: pactus.BlockchainService.GetBlockchainInfo:output_type -> pactus.GetBlockchainInfoResponse
-	20, // 28: pactus.BlockchainService.GetConsensusInfo:output_type -> pactus.GetConsensusInfoResponse
-	3,  // 29: pactus.BlockchainService.GetAccount:output_type -> pactus.GetAccountResponse
-	8,  // 30: pactus.BlockchainService.GetValidator:output_type -> pactus.GetValidatorResponse
-	8,  // 31: pactus.BlockchainService.GetValidatorByNumber:output_type -> pactus.GetValidatorResponse
-	5,  // 32: pactus.BlockchainService.GetValidatorAddresses:output_type -> pactus.GetValidatorAddressesResponse
-	10, // 33: pactus.BlockchainService.GetPublicKey:output_type -> pactus.GetPublicKeyResponse
-	22, // 34: pactus.BlockchainService.GetTxPoolContent:output_type -> pactus.GetTxPoolContentResponse
+	11, // 13: pactus.Blockchain.GetBlock:input_type -> pactus.GetBlockRequest
+	13, // 14: pactus.Blockchain.GetBlockHash:input_type -> pactus.GetBlockHashRequest
+	15, // 15: pactus.Blockchain.GetBlockHeight:input_type -> pactus.GetBlockHeightRequest
+	17, // 16: pactus.Blockchain.GetBlockchainInfo:input_type -> pactus.GetBlockchainInfoRequest
+	19, // 17: pactus.Blockchain.GetConsensusInfo:input_type -> pactus.GetConsensusInfoRequest
+	2,  // 18: pactus.Blockchain.GetAccount:input_type -> pactus.GetAccountRequest
+	6,  // 19: pactus.Blockchain.GetValidator:input_type -> pactus.GetValidatorRequest
+	7,  // 20: pactus.Blockchain.GetValidatorByNumber:input_type -> pactus.GetValidatorByNumberRequest
+	4,  // 21: pactus.Blockchain.GetValidatorAddresses:input_type -> pactus.GetValidatorAddressesRequest
+	9,  // 22: pactus.Blockchain.GetPublicKey:input_type -> pactus.GetPublicKeyRequest
+	21, // 23: pactus.Blockchain.GetTxPoolContent:input_type -> pactus.GetTxPoolContentRequest
+	12, // 24: pactus.Blockchain.GetBlock:output_type -> pactus.GetBlockResponse
+	14, // 25: pactus.Blockchain.GetBlockHash:output_type -> pactus.GetBlockHashResponse
+	16, // 26: pactus.Blockchain.GetBlockHeight:output_type -> pactus.GetBlockHeightResponse
+	18, // 27: pactus.Blockchain.GetBlockchainInfo:output_type -> pactus.GetBlockchainInfoResponse
+	20, // 28: pactus.Blockchain.GetConsensusInfo:output_type -> pactus.GetConsensusInfoResponse
+	3,  // 29: pactus.Blockchain.GetAccount:output_type -> pactus.GetAccountResponse
+	8,  // 30: pactus.Blockchain.GetValidator:output_type -> pactus.GetValidatorResponse
+	8,  // 31: pactus.Blockchain.GetValidatorByNumber:output_type -> pactus.GetValidatorResponse
+	5,  // 32: pactus.Blockchain.GetValidatorAddresses:output_type -> pactus.GetValidatorAddressesResponse
+	10, // 33: pactus.Blockchain.GetPublicKey:output_type -> pactus.GetPublicKeyResponse
+	22, // 34: pactus.Blockchain.GetTxPoolContent:output_type -> pactus.GetTxPoolContentResponse
 	24, // [24:35] is the sub-list for method output_type
 	13, // [13:24] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name

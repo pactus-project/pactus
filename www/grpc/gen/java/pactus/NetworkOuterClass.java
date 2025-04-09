@@ -5,8 +5,8 @@
 
 package pactus;
 
-public final class Network {
-  private Network() {}
+public final class NetworkOuterClass {
+  private NetworkOuterClass() {}
   static {
     com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
       com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
@@ -14,7 +14,7 @@ public final class Network {
       /* minor= */ 30,
       /* patch= */ 2,
       /* suffix= */ "",
-      Network.class.getName());
+      NetworkOuterClass.class.getName());
   }
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
@@ -69,15 +69,15 @@ public final class Network {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Network.internal_static_pactus_GetNetworkInfoRequest_descriptor;
+      return pactus.NetworkOuterClass.internal_static_pactus_GetNetworkInfoRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Network.internal_static_pactus_GetNetworkInfoRequest_fieldAccessorTable
+      return pactus.NetworkOuterClass.internal_static_pactus_GetNetworkInfoRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Network.GetNetworkInfoRequest.class, pactus.Network.GetNetworkInfoRequest.Builder.class);
+              pactus.NetworkOuterClass.GetNetworkInfoRequest.class, pactus.NetworkOuterClass.GetNetworkInfoRequest.Builder.class);
     }
 
     public static final int ONLY_CONNECTED_FIELD_NUMBER = 1;
@@ -135,10 +135,10 @@ public final class Network {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Network.GetNetworkInfoRequest)) {
+      if (!(obj instanceof pactus.NetworkOuterClass.GetNetworkInfoRequest)) {
         return super.equals(obj);
       }
-      pactus.Network.GetNetworkInfoRequest other = (pactus.Network.GetNetworkInfoRequest) obj;
+      pactus.NetworkOuterClass.GetNetworkInfoRequest other = (pactus.NetworkOuterClass.GetNetworkInfoRequest) obj;
 
       if (getOnlyConnected()
           != other.getOnlyConnected()) return false;
@@ -161,44 +161,44 @@ public final class Network {
       return hash;
     }
 
-    public static pactus.Network.GetNetworkInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.GetNetworkInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.GetNetworkInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.GetNetworkInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.GetNetworkInfoRequest parseFrom(byte[] data)
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.GetNetworkInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.GetNetworkInfoRequest parseFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.GetNetworkInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -206,26 +206,26 @@ public final class Network {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Network.GetNetworkInfoRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Network.GetNetworkInfoRequest parseDelimitedFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Network.GetNetworkInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.GetNetworkInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -238,7 +238,7 @@ public final class Network {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Network.GetNetworkInfoRequest prototype) {
+    public static Builder newBuilder(pactus.NetworkOuterClass.GetNetworkInfoRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -263,21 +263,21 @@ public final class Network {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetNetworkInfoRequest)
-        pactus.Network.GetNetworkInfoRequestOrBuilder {
+        pactus.NetworkOuterClass.GetNetworkInfoRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Network.internal_static_pactus_GetNetworkInfoRequest_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_GetNetworkInfoRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Network.internal_static_pactus_GetNetworkInfoRequest_fieldAccessorTable
+        return pactus.NetworkOuterClass.internal_static_pactus_GetNetworkInfoRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Network.GetNetworkInfoRequest.class, pactus.Network.GetNetworkInfoRequest.Builder.class);
+                pactus.NetworkOuterClass.GetNetworkInfoRequest.class, pactus.NetworkOuterClass.GetNetworkInfoRequest.Builder.class);
       }
 
-      // Construct using pactus.Network.GetNetworkInfoRequest.newBuilder()
+      // Construct using pactus.NetworkOuterClass.GetNetworkInfoRequest.newBuilder()
       private Builder() {
 
       }
@@ -298,17 +298,17 @@ public final class Network {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Network.internal_static_pactus_GetNetworkInfoRequest_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_GetNetworkInfoRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Network.GetNetworkInfoRequest getDefaultInstanceForType() {
-        return pactus.Network.GetNetworkInfoRequest.getDefaultInstance();
+      public pactus.NetworkOuterClass.GetNetworkInfoRequest getDefaultInstanceForType() {
+        return pactus.NetworkOuterClass.GetNetworkInfoRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Network.GetNetworkInfoRequest build() {
-        pactus.Network.GetNetworkInfoRequest result = buildPartial();
+      public pactus.NetworkOuterClass.GetNetworkInfoRequest build() {
+        pactus.NetworkOuterClass.GetNetworkInfoRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -316,14 +316,14 @@ public final class Network {
       }
 
       @java.lang.Override
-      public pactus.Network.GetNetworkInfoRequest buildPartial() {
-        pactus.Network.GetNetworkInfoRequest result = new pactus.Network.GetNetworkInfoRequest(this);
+      public pactus.NetworkOuterClass.GetNetworkInfoRequest buildPartial() {
+        pactus.NetworkOuterClass.GetNetworkInfoRequest result = new pactus.NetworkOuterClass.GetNetworkInfoRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Network.GetNetworkInfoRequest result) {
+      private void buildPartial0(pactus.NetworkOuterClass.GetNetworkInfoRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.onlyConnected_ = onlyConnected_;
@@ -332,16 +332,16 @@ public final class Network {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Network.GetNetworkInfoRequest) {
-          return mergeFrom((pactus.Network.GetNetworkInfoRequest)other);
+        if (other instanceof pactus.NetworkOuterClass.GetNetworkInfoRequest) {
+          return mergeFrom((pactus.NetworkOuterClass.GetNetworkInfoRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Network.GetNetworkInfoRequest other) {
-        if (other == pactus.Network.GetNetworkInfoRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.NetworkOuterClass.GetNetworkInfoRequest other) {
+        if (other == pactus.NetworkOuterClass.GetNetworkInfoRequest.getDefaultInstance()) return this;
         if (other.getOnlyConnected() != false) {
           setOnlyConnected(other.getOnlyConnected());
         }
@@ -441,12 +441,12 @@ public final class Network {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetNetworkInfoRequest)
-    private static final pactus.Network.GetNetworkInfoRequest DEFAULT_INSTANCE;
+    private static final pactus.NetworkOuterClass.GetNetworkInfoRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Network.GetNetworkInfoRequest();
+      DEFAULT_INSTANCE = new pactus.NetworkOuterClass.GetNetworkInfoRequest();
     }
 
-    public static pactus.Network.GetNetworkInfoRequest getDefaultInstance() {
+    public static pactus.NetworkOuterClass.GetNetworkInfoRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -482,7 +482,7 @@ public final class Network {
     }
 
     @java.lang.Override
-    public pactus.Network.GetNetworkInfoRequest getDefaultInstanceForType() {
+    public pactus.NetworkOuterClass.GetNetworkInfoRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -529,7 +529,7 @@ public final class Network {
      *
      * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
      */
-    java.util.List<pactus.Network.PeerInfo> 
+    java.util.List<pactus.NetworkOuterClass.PeerInfo> 
         getConnectedPeers3List();
     /**
      * <pre>
@@ -538,7 +538,7 @@ public final class Network {
      *
      * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
      */
-    pactus.Network.PeerInfo getConnectedPeers3(int index);
+    pactus.NetworkOuterClass.PeerInfo getConnectedPeers3(int index);
     /**
      * <pre>
      * List of connected peers.
@@ -554,7 +554,7 @@ public final class Network {
      *
      * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
      */
-    java.util.List<? extends pactus.Network.PeerInfoOrBuilder> 
+    java.util.List<? extends pactus.NetworkOuterClass.PeerInfoOrBuilder> 
         getConnectedPeers3OrBuilderList();
     /**
      * <pre>
@@ -563,7 +563,7 @@ public final class Network {
      *
      * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
      */
-    pactus.Network.PeerInfoOrBuilder getConnectedPeers3OrBuilder(
+    pactus.NetworkOuterClass.PeerInfoOrBuilder getConnectedPeers3OrBuilder(
         int index);
 
     /**
@@ -583,7 +583,7 @@ public final class Network {
      * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
      * @return The metricInfo.
      */
-    pactus.Network.MetricInfo getMetricInfo();
+    pactus.NetworkOuterClass.MetricInfo getMetricInfo();
     /**
      * <pre>
      * Metrics related to node activity.
@@ -591,7 +591,7 @@ public final class Network {
      *
      * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
      */
-    pactus.Network.MetricInfoOrBuilder getMetricInfoOrBuilder();
+    pactus.NetworkOuterClass.MetricInfoOrBuilder getMetricInfoOrBuilder();
   }
   /**
    * <pre>
@@ -625,15 +625,15 @@ public final class Network {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Network.internal_static_pactus_GetNetworkInfoResponse_descriptor;
+      return pactus.NetworkOuterClass.internal_static_pactus_GetNetworkInfoResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Network.internal_static_pactus_GetNetworkInfoResponse_fieldAccessorTable
+      return pactus.NetworkOuterClass.internal_static_pactus_GetNetworkInfoResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Network.GetNetworkInfoResponse.class, pactus.Network.GetNetworkInfoResponse.Builder.class);
+              pactus.NetworkOuterClass.GetNetworkInfoResponse.class, pactus.NetworkOuterClass.GetNetworkInfoResponse.Builder.class);
     }
 
     private int bitField0_;
@@ -703,7 +703,7 @@ public final class Network {
 
     public static final int CONNECTED_PEERS_FIELD_NUMBER = 3;
     @SuppressWarnings("serial")
-    private java.util.List<pactus.Network.PeerInfo> connectedPeers3_;
+    private java.util.List<pactus.NetworkOuterClass.PeerInfo> connectedPeers3_;
     // An alternative name is used for field "connected_peers" because:
     //     both repeated field "connected_peers" and singular field "connected_peers_count" generate the method "getConnectedPeersCount()"
     /**
@@ -714,7 +714,7 @@ public final class Network {
      * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
      */
     @java.lang.Override
-    public java.util.List<pactus.Network.PeerInfo> getConnectedPeers3List() {
+    public java.util.List<pactus.NetworkOuterClass.PeerInfo> getConnectedPeers3List() {
       return connectedPeers3_;
     }
     /**
@@ -725,7 +725,7 @@ public final class Network {
      * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
      */
     @java.lang.Override
-    public java.util.List<? extends pactus.Network.PeerInfoOrBuilder> 
+    public java.util.List<? extends pactus.NetworkOuterClass.PeerInfoOrBuilder> 
         getConnectedPeers3OrBuilderList() {
       return connectedPeers3_;
     }
@@ -748,7 +748,7 @@ public final class Network {
      * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
      */
     @java.lang.Override
-    public pactus.Network.PeerInfo getConnectedPeers3(int index) {
+    public pactus.NetworkOuterClass.PeerInfo getConnectedPeers3(int index) {
       return connectedPeers3_.get(index);
     }
     /**
@@ -759,13 +759,13 @@ public final class Network {
      * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
      */
     @java.lang.Override
-    public pactus.Network.PeerInfoOrBuilder getConnectedPeers3OrBuilder(
+    public pactus.NetworkOuterClass.PeerInfoOrBuilder getConnectedPeers3OrBuilder(
         int index) {
       return connectedPeers3_.get(index);
     }
 
     public static final int METRIC_INFO_FIELD_NUMBER = 4;
-    private pactus.Network.MetricInfo metricInfo_;
+    private pactus.NetworkOuterClass.MetricInfo metricInfo_;
     /**
      * <pre>
      * Metrics related to node activity.
@@ -787,8 +787,8 @@ public final class Network {
      * @return The metricInfo.
      */
     @java.lang.Override
-    public pactus.Network.MetricInfo getMetricInfo() {
-      return metricInfo_ == null ? pactus.Network.MetricInfo.getDefaultInstance() : metricInfo_;
+    public pactus.NetworkOuterClass.MetricInfo getMetricInfo() {
+      return metricInfo_ == null ? pactus.NetworkOuterClass.MetricInfo.getDefaultInstance() : metricInfo_;
     }
     /**
      * <pre>
@@ -798,8 +798,8 @@ public final class Network {
      * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
      */
     @java.lang.Override
-    public pactus.Network.MetricInfoOrBuilder getMetricInfoOrBuilder() {
-      return metricInfo_ == null ? pactus.Network.MetricInfo.getDefaultInstance() : metricInfo_;
+    public pactus.NetworkOuterClass.MetricInfoOrBuilder getMetricInfoOrBuilder() {
+      return metricInfo_ == null ? pactus.NetworkOuterClass.MetricInfo.getDefaultInstance() : metricInfo_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -862,10 +862,10 @@ public final class Network {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Network.GetNetworkInfoResponse)) {
+      if (!(obj instanceof pactus.NetworkOuterClass.GetNetworkInfoResponse)) {
         return super.equals(obj);
       }
-      pactus.Network.GetNetworkInfoResponse other = (pactus.Network.GetNetworkInfoResponse) obj;
+      pactus.NetworkOuterClass.GetNetworkInfoResponse other = (pactus.NetworkOuterClass.GetNetworkInfoResponse) obj;
 
       if (!getNetworkName()
           .equals(other.getNetworkName())) return false;
@@ -906,44 +906,44 @@ public final class Network {
       return hash;
     }
 
-    public static pactus.Network.GetNetworkInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.GetNetworkInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.GetNetworkInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.GetNetworkInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.GetNetworkInfoResponse parseFrom(byte[] data)
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.GetNetworkInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.GetNetworkInfoResponse parseFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.GetNetworkInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -951,26 +951,26 @@ public final class Network {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Network.GetNetworkInfoResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Network.GetNetworkInfoResponse parseDelimitedFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Network.GetNetworkInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.GetNetworkInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -983,7 +983,7 @@ public final class Network {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Network.GetNetworkInfoResponse prototype) {
+    public static Builder newBuilder(pactus.NetworkOuterClass.GetNetworkInfoResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1008,21 +1008,21 @@ public final class Network {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetNetworkInfoResponse)
-        pactus.Network.GetNetworkInfoResponseOrBuilder {
+        pactus.NetworkOuterClass.GetNetworkInfoResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Network.internal_static_pactus_GetNetworkInfoResponse_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_GetNetworkInfoResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Network.internal_static_pactus_GetNetworkInfoResponse_fieldAccessorTable
+        return pactus.NetworkOuterClass.internal_static_pactus_GetNetworkInfoResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Network.GetNetworkInfoResponse.class, pactus.Network.GetNetworkInfoResponse.Builder.class);
+                pactus.NetworkOuterClass.GetNetworkInfoResponse.class, pactus.NetworkOuterClass.GetNetworkInfoResponse.Builder.class);
       }
 
-      // Construct using pactus.Network.GetNetworkInfoResponse.newBuilder()
+      // Construct using pactus.NetworkOuterClass.GetNetworkInfoResponse.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1063,17 +1063,17 @@ public final class Network {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Network.internal_static_pactus_GetNetworkInfoResponse_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_GetNetworkInfoResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Network.GetNetworkInfoResponse getDefaultInstanceForType() {
-        return pactus.Network.GetNetworkInfoResponse.getDefaultInstance();
+      public pactus.NetworkOuterClass.GetNetworkInfoResponse getDefaultInstanceForType() {
+        return pactus.NetworkOuterClass.GetNetworkInfoResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Network.GetNetworkInfoResponse build() {
-        pactus.Network.GetNetworkInfoResponse result = buildPartial();
+      public pactus.NetworkOuterClass.GetNetworkInfoResponse build() {
+        pactus.NetworkOuterClass.GetNetworkInfoResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1081,15 +1081,15 @@ public final class Network {
       }
 
       @java.lang.Override
-      public pactus.Network.GetNetworkInfoResponse buildPartial() {
-        pactus.Network.GetNetworkInfoResponse result = new pactus.Network.GetNetworkInfoResponse(this);
+      public pactus.NetworkOuterClass.GetNetworkInfoResponse buildPartial() {
+        pactus.NetworkOuterClass.GetNetworkInfoResponse result = new pactus.NetworkOuterClass.GetNetworkInfoResponse(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(pactus.Network.GetNetworkInfoResponse result) {
+      private void buildPartialRepeatedFields(pactus.NetworkOuterClass.GetNetworkInfoResponse result) {
         if (connectedPeers3Builder_ == null) {
           if (((bitField0_ & 0x00000004) != 0)) {
             connectedPeers3_ = java.util.Collections.unmodifiableList(connectedPeers3_);
@@ -1101,7 +1101,7 @@ public final class Network {
         }
       }
 
-      private void buildPartial0(pactus.Network.GetNetworkInfoResponse result) {
+      private void buildPartial0(pactus.NetworkOuterClass.GetNetworkInfoResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.networkName_ = networkName_;
@@ -1121,16 +1121,16 @@ public final class Network {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Network.GetNetworkInfoResponse) {
-          return mergeFrom((pactus.Network.GetNetworkInfoResponse)other);
+        if (other instanceof pactus.NetworkOuterClass.GetNetworkInfoResponse) {
+          return mergeFrom((pactus.NetworkOuterClass.GetNetworkInfoResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Network.GetNetworkInfoResponse other) {
-        if (other == pactus.Network.GetNetworkInfoResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.NetworkOuterClass.GetNetworkInfoResponse other) {
+        if (other == pactus.NetworkOuterClass.GetNetworkInfoResponse.getDefaultInstance()) return this;
         if (!other.getNetworkName().isEmpty()) {
           networkName_ = other.networkName_;
           bitField0_ |= 0x00000001;
@@ -1205,9 +1205,9 @@ public final class Network {
                 break;
               } // case 16
               case 26: {
-                pactus.Network.PeerInfo m =
+                pactus.NetworkOuterClass.PeerInfo m =
                     input.readMessage(
-                        pactus.Network.PeerInfo.parser(),
+                        pactus.NetworkOuterClass.PeerInfo.parser(),
                         extensionRegistry);
                 if (connectedPeers3Builder_ == null) {
                   ensureConnectedPeers3IsMutable();
@@ -1377,17 +1377,17 @@ public final class Network {
         return this;
       }
 
-      private java.util.List<pactus.Network.PeerInfo> connectedPeers3_ =
+      private java.util.List<pactus.NetworkOuterClass.PeerInfo> connectedPeers3_ =
         java.util.Collections.emptyList();
       private void ensureConnectedPeers3IsMutable() {
         if (!((bitField0_ & 0x00000004) != 0)) {
-          connectedPeers3_ = new java.util.ArrayList<pactus.Network.PeerInfo>(connectedPeers3_);
+          connectedPeers3_ = new java.util.ArrayList<pactus.NetworkOuterClass.PeerInfo>(connectedPeers3_);
           bitField0_ |= 0x00000004;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Network.PeerInfo, pactus.Network.PeerInfo.Builder, pactus.Network.PeerInfoOrBuilder> connectedPeers3Builder_;
+          pactus.NetworkOuterClass.PeerInfo, pactus.NetworkOuterClass.PeerInfo.Builder, pactus.NetworkOuterClass.PeerInfoOrBuilder> connectedPeers3Builder_;
 
       /**
        * <pre>
@@ -1396,7 +1396,7 @@ public final class Network {
        *
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
-      public java.util.List<pactus.Network.PeerInfo> getConnectedPeers3List() {
+      public java.util.List<pactus.NetworkOuterClass.PeerInfo> getConnectedPeers3List() {
         if (connectedPeers3Builder_ == null) {
           return java.util.Collections.unmodifiableList(connectedPeers3_);
         } else {
@@ -1424,7 +1424,7 @@ public final class Network {
        *
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
-      public pactus.Network.PeerInfo getConnectedPeers3(int index) {
+      public pactus.NetworkOuterClass.PeerInfo getConnectedPeers3(int index) {
         if (connectedPeers3Builder_ == null) {
           return connectedPeers3_.get(index);
         } else {
@@ -1439,7 +1439,7 @@ public final class Network {
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
       public Builder setConnectedPeers3(
-          int index, pactus.Network.PeerInfo value) {
+          int index, pactus.NetworkOuterClass.PeerInfo value) {
         if (connectedPeers3Builder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1460,7 +1460,7 @@ public final class Network {
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
       public Builder setConnectedPeers3(
-          int index, pactus.Network.PeerInfo.Builder builderForValue) {
+          int index, pactus.NetworkOuterClass.PeerInfo.Builder builderForValue) {
         if (connectedPeers3Builder_ == null) {
           ensureConnectedPeers3IsMutable();
           connectedPeers3_.set(index, builderForValue.build());
@@ -1477,7 +1477,7 @@ public final class Network {
        *
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
-      public Builder addConnectedPeers3(pactus.Network.PeerInfo value) {
+      public Builder addConnectedPeers3(pactus.NetworkOuterClass.PeerInfo value) {
         if (connectedPeers3Builder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1498,7 +1498,7 @@ public final class Network {
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
       public Builder addConnectedPeers3(
-          int index, pactus.Network.PeerInfo value) {
+          int index, pactus.NetworkOuterClass.PeerInfo value) {
         if (connectedPeers3Builder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1519,7 +1519,7 @@ public final class Network {
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
       public Builder addConnectedPeers3(
-          pactus.Network.PeerInfo.Builder builderForValue) {
+          pactus.NetworkOuterClass.PeerInfo.Builder builderForValue) {
         if (connectedPeers3Builder_ == null) {
           ensureConnectedPeers3IsMutable();
           connectedPeers3_.add(builderForValue.build());
@@ -1537,7 +1537,7 @@ public final class Network {
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
       public Builder addConnectedPeers3(
-          int index, pactus.Network.PeerInfo.Builder builderForValue) {
+          int index, pactus.NetworkOuterClass.PeerInfo.Builder builderForValue) {
         if (connectedPeers3Builder_ == null) {
           ensureConnectedPeers3IsMutable();
           connectedPeers3_.add(index, builderForValue.build());
@@ -1555,7 +1555,7 @@ public final class Network {
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
       public Builder addAllConnectedPeers3(
-          java.lang.Iterable<? extends pactus.Network.PeerInfo> values) {
+          java.lang.Iterable<? extends pactus.NetworkOuterClass.PeerInfo> values) {
         if (connectedPeers3Builder_ == null) {
           ensureConnectedPeers3IsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -1607,7 +1607,7 @@ public final class Network {
        *
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
-      public pactus.Network.PeerInfo.Builder getConnectedPeers3Builder(
+      public pactus.NetworkOuterClass.PeerInfo.Builder getConnectedPeers3Builder(
           int index) {
         return internalGetConnectedPeers3FieldBuilder().getBuilder(index);
       }
@@ -1618,7 +1618,7 @@ public final class Network {
        *
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
-      public pactus.Network.PeerInfoOrBuilder getConnectedPeers3OrBuilder(
+      public pactus.NetworkOuterClass.PeerInfoOrBuilder getConnectedPeers3OrBuilder(
           int index) {
         if (connectedPeers3Builder_ == null) {
           return connectedPeers3_.get(index);  } else {
@@ -1632,7 +1632,7 @@ public final class Network {
        *
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
-      public java.util.List<? extends pactus.Network.PeerInfoOrBuilder> 
+      public java.util.List<? extends pactus.NetworkOuterClass.PeerInfoOrBuilder> 
            getConnectedPeers3OrBuilderList() {
         if (connectedPeers3Builder_ != null) {
           return connectedPeers3Builder_.getMessageOrBuilderList();
@@ -1647,9 +1647,9 @@ public final class Network {
        *
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
-      public pactus.Network.PeerInfo.Builder addConnectedPeers3Builder() {
+      public pactus.NetworkOuterClass.PeerInfo.Builder addConnectedPeers3Builder() {
         return internalGetConnectedPeers3FieldBuilder().addBuilder(
-            pactus.Network.PeerInfo.getDefaultInstance());
+            pactus.NetworkOuterClass.PeerInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -1658,10 +1658,10 @@ public final class Network {
        *
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
-      public pactus.Network.PeerInfo.Builder addConnectedPeers3Builder(
+      public pactus.NetworkOuterClass.PeerInfo.Builder addConnectedPeers3Builder(
           int index) {
         return internalGetConnectedPeers3FieldBuilder().addBuilder(
-            index, pactus.Network.PeerInfo.getDefaultInstance());
+            index, pactus.NetworkOuterClass.PeerInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -1670,16 +1670,16 @@ public final class Network {
        *
        * <code>repeated .pactus.PeerInfo connected_peers = 3 [json_name = "connectedPeers"];</code>
        */
-      public java.util.List<pactus.Network.PeerInfo.Builder> 
+      public java.util.List<pactus.NetworkOuterClass.PeerInfo.Builder> 
            getConnectedPeers3BuilderList() {
         return internalGetConnectedPeers3FieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Network.PeerInfo, pactus.Network.PeerInfo.Builder, pactus.Network.PeerInfoOrBuilder> 
+          pactus.NetworkOuterClass.PeerInfo, pactus.NetworkOuterClass.PeerInfo.Builder, pactus.NetworkOuterClass.PeerInfoOrBuilder> 
           internalGetConnectedPeers3FieldBuilder() {
         if (connectedPeers3Builder_ == null) {
           connectedPeers3Builder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              pactus.Network.PeerInfo, pactus.Network.PeerInfo.Builder, pactus.Network.PeerInfoOrBuilder>(
+              pactus.NetworkOuterClass.PeerInfo, pactus.NetworkOuterClass.PeerInfo.Builder, pactus.NetworkOuterClass.PeerInfoOrBuilder>(
                   connectedPeers3_,
                   ((bitField0_ & 0x00000004) != 0),
                   getParentForChildren(),
@@ -1689,9 +1689,9 @@ public final class Network {
         return connectedPeers3Builder_;
       }
 
-      private pactus.Network.MetricInfo metricInfo_;
+      private pactus.NetworkOuterClass.MetricInfo metricInfo_;
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Network.MetricInfo, pactus.Network.MetricInfo.Builder, pactus.Network.MetricInfoOrBuilder> metricInfoBuilder_;
+          pactus.NetworkOuterClass.MetricInfo, pactus.NetworkOuterClass.MetricInfo.Builder, pactus.NetworkOuterClass.MetricInfoOrBuilder> metricInfoBuilder_;
       /**
        * <pre>
        * Metrics related to node activity.
@@ -1711,9 +1711,9 @@ public final class Network {
        * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        * @return The metricInfo.
        */
-      public pactus.Network.MetricInfo getMetricInfo() {
+      public pactus.NetworkOuterClass.MetricInfo getMetricInfo() {
         if (metricInfoBuilder_ == null) {
-          return metricInfo_ == null ? pactus.Network.MetricInfo.getDefaultInstance() : metricInfo_;
+          return metricInfo_ == null ? pactus.NetworkOuterClass.MetricInfo.getDefaultInstance() : metricInfo_;
         } else {
           return metricInfoBuilder_.getMessage();
         }
@@ -1725,7 +1725,7 @@ public final class Network {
        *
        * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
-      public Builder setMetricInfo(pactus.Network.MetricInfo value) {
+      public Builder setMetricInfo(pactus.NetworkOuterClass.MetricInfo value) {
         if (metricInfoBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1746,7 +1746,7 @@ public final class Network {
        * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
       public Builder setMetricInfo(
-          pactus.Network.MetricInfo.Builder builderForValue) {
+          pactus.NetworkOuterClass.MetricInfo.Builder builderForValue) {
         if (metricInfoBuilder_ == null) {
           metricInfo_ = builderForValue.build();
         } else {
@@ -1763,11 +1763,11 @@ public final class Network {
        *
        * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
-      public Builder mergeMetricInfo(pactus.Network.MetricInfo value) {
+      public Builder mergeMetricInfo(pactus.NetworkOuterClass.MetricInfo value) {
         if (metricInfoBuilder_ == null) {
           if (((bitField0_ & 0x00000008) != 0) &&
             metricInfo_ != null &&
-            metricInfo_ != pactus.Network.MetricInfo.getDefaultInstance()) {
+            metricInfo_ != pactus.NetworkOuterClass.MetricInfo.getDefaultInstance()) {
             getMetricInfoBuilder().mergeFrom(value);
           } else {
             metricInfo_ = value;
@@ -1805,7 +1805,7 @@ public final class Network {
        *
        * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
-      public pactus.Network.MetricInfo.Builder getMetricInfoBuilder() {
+      public pactus.NetworkOuterClass.MetricInfo.Builder getMetricInfoBuilder() {
         bitField0_ |= 0x00000008;
         onChanged();
         return internalGetMetricInfoFieldBuilder().getBuilder();
@@ -1817,12 +1817,12 @@ public final class Network {
        *
        * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
-      public pactus.Network.MetricInfoOrBuilder getMetricInfoOrBuilder() {
+      public pactus.NetworkOuterClass.MetricInfoOrBuilder getMetricInfoOrBuilder() {
         if (metricInfoBuilder_ != null) {
           return metricInfoBuilder_.getMessageOrBuilder();
         } else {
           return metricInfo_ == null ?
-              pactus.Network.MetricInfo.getDefaultInstance() : metricInfo_;
+              pactus.NetworkOuterClass.MetricInfo.getDefaultInstance() : metricInfo_;
         }
       }
       /**
@@ -1833,11 +1833,11 @@ public final class Network {
        * <code>.pactus.MetricInfo metric_info = 4 [json_name = "metricInfo"];</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Network.MetricInfo, pactus.Network.MetricInfo.Builder, pactus.Network.MetricInfoOrBuilder> 
+          pactus.NetworkOuterClass.MetricInfo, pactus.NetworkOuterClass.MetricInfo.Builder, pactus.NetworkOuterClass.MetricInfoOrBuilder> 
           internalGetMetricInfoFieldBuilder() {
         if (metricInfoBuilder_ == null) {
           metricInfoBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              pactus.Network.MetricInfo, pactus.Network.MetricInfo.Builder, pactus.Network.MetricInfoOrBuilder>(
+              pactus.NetworkOuterClass.MetricInfo, pactus.NetworkOuterClass.MetricInfo.Builder, pactus.NetworkOuterClass.MetricInfoOrBuilder>(
                   getMetricInfo(),
                   getParentForChildren(),
                   isClean());
@@ -1850,12 +1850,12 @@ public final class Network {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetNetworkInfoResponse)
-    private static final pactus.Network.GetNetworkInfoResponse DEFAULT_INSTANCE;
+    private static final pactus.NetworkOuterClass.GetNetworkInfoResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Network.GetNetworkInfoResponse();
+      DEFAULT_INSTANCE = new pactus.NetworkOuterClass.GetNetworkInfoResponse();
     }
 
-    public static pactus.Network.GetNetworkInfoResponse getDefaultInstance() {
+    public static pactus.NetworkOuterClass.GetNetworkInfoResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1891,7 +1891,7 @@ public final class Network {
     }
 
     @java.lang.Override
-    public pactus.Network.GetNetworkInfoResponse getDefaultInstanceForType() {
+    public pactus.NetworkOuterClass.GetNetworkInfoResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1931,15 +1931,15 @@ public final class Network {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Network.internal_static_pactus_GetNodeInfoRequest_descriptor;
+      return pactus.NetworkOuterClass.internal_static_pactus_GetNodeInfoRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Network.internal_static_pactus_GetNodeInfoRequest_fieldAccessorTable
+      return pactus.NetworkOuterClass.internal_static_pactus_GetNodeInfoRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Network.GetNodeInfoRequest.class, pactus.Network.GetNodeInfoRequest.Builder.class);
+              pactus.NetworkOuterClass.GetNodeInfoRequest.class, pactus.NetworkOuterClass.GetNodeInfoRequest.Builder.class);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -1975,10 +1975,10 @@ public final class Network {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Network.GetNodeInfoRequest)) {
+      if (!(obj instanceof pactus.NetworkOuterClass.GetNodeInfoRequest)) {
         return super.equals(obj);
       }
-      pactus.Network.GetNodeInfoRequest other = (pactus.Network.GetNodeInfoRequest) obj;
+      pactus.NetworkOuterClass.GetNodeInfoRequest other = (pactus.NetworkOuterClass.GetNodeInfoRequest) obj;
 
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
@@ -1996,44 +1996,44 @@ public final class Network {
       return hash;
     }
 
-    public static pactus.Network.GetNodeInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.GetNodeInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.GetNodeInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.GetNodeInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.GetNodeInfoRequest parseFrom(byte[] data)
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.GetNodeInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.GetNodeInfoRequest parseFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.GetNodeInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2041,26 +2041,26 @@ public final class Network {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Network.GetNodeInfoRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Network.GetNodeInfoRequest parseDelimitedFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Network.GetNodeInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.GetNodeInfoRequest parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2073,7 +2073,7 @@ public final class Network {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Network.GetNodeInfoRequest prototype) {
+    public static Builder newBuilder(pactus.NetworkOuterClass.GetNodeInfoRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -2098,21 +2098,21 @@ public final class Network {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetNodeInfoRequest)
-        pactus.Network.GetNodeInfoRequestOrBuilder {
+        pactus.NetworkOuterClass.GetNodeInfoRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Network.internal_static_pactus_GetNodeInfoRequest_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_GetNodeInfoRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Network.internal_static_pactus_GetNodeInfoRequest_fieldAccessorTable
+        return pactus.NetworkOuterClass.internal_static_pactus_GetNodeInfoRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Network.GetNodeInfoRequest.class, pactus.Network.GetNodeInfoRequest.Builder.class);
+                pactus.NetworkOuterClass.GetNodeInfoRequest.class, pactus.NetworkOuterClass.GetNodeInfoRequest.Builder.class);
       }
 
-      // Construct using pactus.Network.GetNodeInfoRequest.newBuilder()
+      // Construct using pactus.NetworkOuterClass.GetNodeInfoRequest.newBuilder()
       private Builder() {
 
       }
@@ -2131,17 +2131,17 @@ public final class Network {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Network.internal_static_pactus_GetNodeInfoRequest_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_GetNodeInfoRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Network.GetNodeInfoRequest getDefaultInstanceForType() {
-        return pactus.Network.GetNodeInfoRequest.getDefaultInstance();
+      public pactus.NetworkOuterClass.GetNodeInfoRequest getDefaultInstanceForType() {
+        return pactus.NetworkOuterClass.GetNodeInfoRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Network.GetNodeInfoRequest build() {
-        pactus.Network.GetNodeInfoRequest result = buildPartial();
+      public pactus.NetworkOuterClass.GetNodeInfoRequest build() {
+        pactus.NetworkOuterClass.GetNodeInfoRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -2149,24 +2149,24 @@ public final class Network {
       }
 
       @java.lang.Override
-      public pactus.Network.GetNodeInfoRequest buildPartial() {
-        pactus.Network.GetNodeInfoRequest result = new pactus.Network.GetNodeInfoRequest(this);
+      public pactus.NetworkOuterClass.GetNodeInfoRequest buildPartial() {
+        pactus.NetworkOuterClass.GetNodeInfoRequest result = new pactus.NetworkOuterClass.GetNodeInfoRequest(this);
         onBuilt();
         return result;
       }
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Network.GetNodeInfoRequest) {
-          return mergeFrom((pactus.Network.GetNodeInfoRequest)other);
+        if (other instanceof pactus.NetworkOuterClass.GetNodeInfoRequest) {
+          return mergeFrom((pactus.NetworkOuterClass.GetNodeInfoRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Network.GetNodeInfoRequest other) {
-        if (other == pactus.Network.GetNodeInfoRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.NetworkOuterClass.GetNodeInfoRequest other) {
+        if (other == pactus.NetworkOuterClass.GetNodeInfoRequest.getDefaultInstance()) return this;
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -2213,12 +2213,12 @@ public final class Network {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetNodeInfoRequest)
-    private static final pactus.Network.GetNodeInfoRequest DEFAULT_INSTANCE;
+    private static final pactus.NetworkOuterClass.GetNodeInfoRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Network.GetNodeInfoRequest();
+      DEFAULT_INSTANCE = new pactus.NetworkOuterClass.GetNodeInfoRequest();
     }
 
-    public static pactus.Network.GetNodeInfoRequest getDefaultInstance() {
+    public static pactus.NetworkOuterClass.GetNodeInfoRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2254,7 +2254,7 @@ public final class Network {
     }
 
     @java.lang.Override
-    public pactus.Network.GetNodeInfoRequest getDefaultInstanceForType() {
+    public pactus.NetworkOuterClass.GetNodeInfoRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2493,7 +2493,7 @@ public final class Network {
      * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
      * @return The connectionInfo.
      */
-    pactus.Network.ConnectionInfo getConnectionInfo();
+    pactus.NetworkOuterClass.ConnectionInfo getConnectionInfo();
     /**
      * <pre>
      * Information about the node's connections.
@@ -2501,7 +2501,7 @@ public final class Network {
      *
      * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
      */
-    pactus.Network.ConnectionInfoOrBuilder getConnectionInfoOrBuilder();
+    pactus.NetworkOuterClass.ConnectionInfoOrBuilder getConnectionInfoOrBuilder();
 
     /**
      * <pre>
@@ -2510,7 +2510,7 @@ public final class Network {
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
      */
-    java.util.List<pactus.Network.ZMQPublisherInfo> 
+    java.util.List<pactus.NetworkOuterClass.ZMQPublisherInfo> 
         getZmqPublishersList();
     /**
      * <pre>
@@ -2519,7 +2519,7 @@ public final class Network {
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
      */
-    pactus.Network.ZMQPublisherInfo getZmqPublishers(int index);
+    pactus.NetworkOuterClass.ZMQPublisherInfo getZmqPublishers(int index);
     /**
      * <pre>
      * List of active ZeroMQ publishers.
@@ -2535,7 +2535,7 @@ public final class Network {
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
      */
-    java.util.List<? extends pactus.Network.ZMQPublisherInfoOrBuilder> 
+    java.util.List<? extends pactus.NetworkOuterClass.ZMQPublisherInfoOrBuilder> 
         getZmqPublishersOrBuilderList();
     /**
      * <pre>
@@ -2544,7 +2544,7 @@ public final class Network {
      *
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
      */
-    pactus.Network.ZMQPublisherInfoOrBuilder getZmqPublishersOrBuilder(
+    pactus.NetworkOuterClass.ZMQPublisherInfoOrBuilder getZmqPublishersOrBuilder(
         int index);
   }
   /**
@@ -2587,15 +2587,15 @@ public final class Network {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Network.internal_static_pactus_GetNodeInfoResponse_descriptor;
+      return pactus.NetworkOuterClass.internal_static_pactus_GetNodeInfoResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Network.internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable
+      return pactus.NetworkOuterClass.internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Network.GetNodeInfoResponse.class, pactus.Network.GetNodeInfoResponse.Builder.class);
+              pactus.NetworkOuterClass.GetNodeInfoResponse.class, pactus.NetworkOuterClass.GetNodeInfoResponse.Builder.class);
     }
 
     private int bitField0_;
@@ -2986,7 +2986,7 @@ public final class Network {
     }
 
     public static final int CONNECTION_INFO_FIELD_NUMBER = 14;
-    private pactus.Network.ConnectionInfo connectionInfo_;
+    private pactus.NetworkOuterClass.ConnectionInfo connectionInfo_;
     /**
      * <pre>
      * Information about the node's connections.
@@ -3008,8 +3008,8 @@ public final class Network {
      * @return The connectionInfo.
      */
     @java.lang.Override
-    public pactus.Network.ConnectionInfo getConnectionInfo() {
-      return connectionInfo_ == null ? pactus.Network.ConnectionInfo.getDefaultInstance() : connectionInfo_;
+    public pactus.NetworkOuterClass.ConnectionInfo getConnectionInfo() {
+      return connectionInfo_ == null ? pactus.NetworkOuterClass.ConnectionInfo.getDefaultInstance() : connectionInfo_;
     }
     /**
      * <pre>
@@ -3019,13 +3019,13 @@ public final class Network {
      * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
      */
     @java.lang.Override
-    public pactus.Network.ConnectionInfoOrBuilder getConnectionInfoOrBuilder() {
-      return connectionInfo_ == null ? pactus.Network.ConnectionInfo.getDefaultInstance() : connectionInfo_;
+    public pactus.NetworkOuterClass.ConnectionInfoOrBuilder getConnectionInfoOrBuilder() {
+      return connectionInfo_ == null ? pactus.NetworkOuterClass.ConnectionInfo.getDefaultInstance() : connectionInfo_;
     }
 
     public static final int ZMQ_PUBLISHERS_FIELD_NUMBER = 15;
     @SuppressWarnings("serial")
-    private java.util.List<pactus.Network.ZMQPublisherInfo> zmqPublishers_;
+    private java.util.List<pactus.NetworkOuterClass.ZMQPublisherInfo> zmqPublishers_;
     /**
      * <pre>
      * List of active ZeroMQ publishers.
@@ -3034,7 +3034,7 @@ public final class Network {
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
      */
     @java.lang.Override
-    public java.util.List<pactus.Network.ZMQPublisherInfo> getZmqPublishersList() {
+    public java.util.List<pactus.NetworkOuterClass.ZMQPublisherInfo> getZmqPublishersList() {
       return zmqPublishers_;
     }
     /**
@@ -3045,7 +3045,7 @@ public final class Network {
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
      */
     @java.lang.Override
-    public java.util.List<? extends pactus.Network.ZMQPublisherInfoOrBuilder> 
+    public java.util.List<? extends pactus.NetworkOuterClass.ZMQPublisherInfoOrBuilder> 
         getZmqPublishersOrBuilderList() {
       return zmqPublishers_;
     }
@@ -3068,7 +3068,7 @@ public final class Network {
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
      */
     @java.lang.Override
-    public pactus.Network.ZMQPublisherInfo getZmqPublishers(int index) {
+    public pactus.NetworkOuterClass.ZMQPublisherInfo getZmqPublishers(int index) {
       return zmqPublishers_.get(index);
     }
     /**
@@ -3079,7 +3079,7 @@ public final class Network {
      * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
      */
     @java.lang.Override
-    public pactus.Network.ZMQPublisherInfoOrBuilder getZmqPublishersOrBuilder(
+    public pactus.NetworkOuterClass.ZMQPublisherInfoOrBuilder getZmqPublishersOrBuilder(
         int index) {
       return zmqPublishers_.get(index);
     }
@@ -3204,10 +3204,10 @@ public final class Network {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Network.GetNodeInfoResponse)) {
+      if (!(obj instanceof pactus.NetworkOuterClass.GetNodeInfoResponse)) {
         return super.equals(obj);
       }
-      pactus.Network.GetNodeInfoResponse other = (pactus.Network.GetNodeInfoResponse) obj;
+      pactus.NetworkOuterClass.GetNodeInfoResponse other = (pactus.NetworkOuterClass.GetNodeInfoResponse) obj;
 
       if (!getMoniker()
           .equals(other.getMoniker())) return false;
@@ -3287,44 +3287,44 @@ public final class Network {
       return hash;
     }
 
-    public static pactus.Network.GetNodeInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.GetNodeInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.GetNodeInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.GetNodeInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.GetNodeInfoResponse parseFrom(byte[] data)
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.GetNodeInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.GetNodeInfoResponse parseFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.GetNodeInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3332,26 +3332,26 @@ public final class Network {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Network.GetNodeInfoResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Network.GetNodeInfoResponse parseDelimitedFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Network.GetNodeInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.GetNodeInfoResponse parseFrom(
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3364,7 +3364,7 @@ public final class Network {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Network.GetNodeInfoResponse prototype) {
+    public static Builder newBuilder(pactus.NetworkOuterClass.GetNodeInfoResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -3389,21 +3389,21 @@ public final class Network {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetNodeInfoResponse)
-        pactus.Network.GetNodeInfoResponseOrBuilder {
+        pactus.NetworkOuterClass.GetNodeInfoResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Network.internal_static_pactus_GetNodeInfoResponse_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_GetNodeInfoResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Network.internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable
+        return pactus.NetworkOuterClass.internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Network.GetNodeInfoResponse.class, pactus.Network.GetNodeInfoResponse.Builder.class);
+                pactus.NetworkOuterClass.GetNodeInfoResponse.class, pactus.NetworkOuterClass.GetNodeInfoResponse.Builder.class);
       }
 
-      // Construct using pactus.Network.GetNodeInfoResponse.newBuilder()
+      // Construct using pactus.NetworkOuterClass.GetNodeInfoResponse.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -3454,17 +3454,17 @@ public final class Network {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Network.internal_static_pactus_GetNodeInfoResponse_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_GetNodeInfoResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Network.GetNodeInfoResponse getDefaultInstanceForType() {
-        return pactus.Network.GetNodeInfoResponse.getDefaultInstance();
+      public pactus.NetworkOuterClass.GetNodeInfoResponse getDefaultInstanceForType() {
+        return pactus.NetworkOuterClass.GetNodeInfoResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Network.GetNodeInfoResponse build() {
-        pactus.Network.GetNodeInfoResponse result = buildPartial();
+      public pactus.NetworkOuterClass.GetNodeInfoResponse build() {
+        pactus.NetworkOuterClass.GetNodeInfoResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -3472,15 +3472,15 @@ public final class Network {
       }
 
       @java.lang.Override
-      public pactus.Network.GetNodeInfoResponse buildPartial() {
-        pactus.Network.GetNodeInfoResponse result = new pactus.Network.GetNodeInfoResponse(this);
+      public pactus.NetworkOuterClass.GetNodeInfoResponse buildPartial() {
+        pactus.NetworkOuterClass.GetNodeInfoResponse result = new pactus.NetworkOuterClass.GetNodeInfoResponse(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(pactus.Network.GetNodeInfoResponse result) {
+      private void buildPartialRepeatedFields(pactus.NetworkOuterClass.GetNodeInfoResponse result) {
         if (zmqPublishersBuilder_ == null) {
           if (((bitField0_ & 0x00000800) != 0)) {
             zmqPublishers_ = java.util.Collections.unmodifiableList(zmqPublishers_);
@@ -3492,7 +3492,7 @@ public final class Network {
         }
       }
 
-      private void buildPartial0(pactus.Network.GetNodeInfoResponse result) {
+      private void buildPartial0(pactus.NetworkOuterClass.GetNodeInfoResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.moniker_ = moniker_;
@@ -3538,16 +3538,16 @@ public final class Network {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Network.GetNodeInfoResponse) {
-          return mergeFrom((pactus.Network.GetNodeInfoResponse)other);
+        if (other instanceof pactus.NetworkOuterClass.GetNodeInfoResponse) {
+          return mergeFrom((pactus.NetworkOuterClass.GetNodeInfoResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Network.GetNodeInfoResponse other) {
-        if (other == pactus.Network.GetNodeInfoResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.NetworkOuterClass.GetNodeInfoResponse other) {
+        if (other == pactus.NetworkOuterClass.GetNodeInfoResponse.getDefaultInstance()) return this;
         if (!other.getMoniker().isEmpty()) {
           moniker_ = other.moniker_;
           bitField0_ |= 0x00000001;
@@ -3717,9 +3717,9 @@ public final class Network {
                 break;
               } // case 114
               case 122: {
-                pactus.Network.ZMQPublisherInfo m =
+                pactus.NetworkOuterClass.ZMQPublisherInfo m =
                     input.readMessage(
-                        pactus.Network.ZMQPublisherInfo.parser(),
+                        pactus.NetworkOuterClass.ZMQPublisherInfo.parser(),
                         extensionRegistry);
                 if (zmqPublishersBuilder_ == null) {
                   ensureZmqPublishersIsMutable();
@@ -4632,9 +4632,9 @@ public final class Network {
         return this;
       }
 
-      private pactus.Network.ConnectionInfo connectionInfo_;
+      private pactus.NetworkOuterClass.ConnectionInfo connectionInfo_;
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Network.ConnectionInfo, pactus.Network.ConnectionInfo.Builder, pactus.Network.ConnectionInfoOrBuilder> connectionInfoBuilder_;
+          pactus.NetworkOuterClass.ConnectionInfo, pactus.NetworkOuterClass.ConnectionInfo.Builder, pactus.NetworkOuterClass.ConnectionInfoOrBuilder> connectionInfoBuilder_;
       /**
        * <pre>
        * Information about the node's connections.
@@ -4654,9 +4654,9 @@ public final class Network {
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        * @return The connectionInfo.
        */
-      public pactus.Network.ConnectionInfo getConnectionInfo() {
+      public pactus.NetworkOuterClass.ConnectionInfo getConnectionInfo() {
         if (connectionInfoBuilder_ == null) {
-          return connectionInfo_ == null ? pactus.Network.ConnectionInfo.getDefaultInstance() : connectionInfo_;
+          return connectionInfo_ == null ? pactus.NetworkOuterClass.ConnectionInfo.getDefaultInstance() : connectionInfo_;
         } else {
           return connectionInfoBuilder_.getMessage();
         }
@@ -4668,7 +4668,7 @@ public final class Network {
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
-      public Builder setConnectionInfo(pactus.Network.ConnectionInfo value) {
+      public Builder setConnectionInfo(pactus.NetworkOuterClass.ConnectionInfo value) {
         if (connectionInfoBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -4689,7 +4689,7 @@ public final class Network {
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
       public Builder setConnectionInfo(
-          pactus.Network.ConnectionInfo.Builder builderForValue) {
+          pactus.NetworkOuterClass.ConnectionInfo.Builder builderForValue) {
         if (connectionInfoBuilder_ == null) {
           connectionInfo_ = builderForValue.build();
         } else {
@@ -4706,11 +4706,11 @@ public final class Network {
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
-      public Builder mergeConnectionInfo(pactus.Network.ConnectionInfo value) {
+      public Builder mergeConnectionInfo(pactus.NetworkOuterClass.ConnectionInfo value) {
         if (connectionInfoBuilder_ == null) {
           if (((bitField0_ & 0x00000400) != 0) &&
             connectionInfo_ != null &&
-            connectionInfo_ != pactus.Network.ConnectionInfo.getDefaultInstance()) {
+            connectionInfo_ != pactus.NetworkOuterClass.ConnectionInfo.getDefaultInstance()) {
             getConnectionInfoBuilder().mergeFrom(value);
           } else {
             connectionInfo_ = value;
@@ -4748,7 +4748,7 @@ public final class Network {
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
-      public pactus.Network.ConnectionInfo.Builder getConnectionInfoBuilder() {
+      public pactus.NetworkOuterClass.ConnectionInfo.Builder getConnectionInfoBuilder() {
         bitField0_ |= 0x00000400;
         onChanged();
         return internalGetConnectionInfoFieldBuilder().getBuilder();
@@ -4760,12 +4760,12 @@ public final class Network {
        *
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
-      public pactus.Network.ConnectionInfoOrBuilder getConnectionInfoOrBuilder() {
+      public pactus.NetworkOuterClass.ConnectionInfoOrBuilder getConnectionInfoOrBuilder() {
         if (connectionInfoBuilder_ != null) {
           return connectionInfoBuilder_.getMessageOrBuilder();
         } else {
           return connectionInfo_ == null ?
-              pactus.Network.ConnectionInfo.getDefaultInstance() : connectionInfo_;
+              pactus.NetworkOuterClass.ConnectionInfo.getDefaultInstance() : connectionInfo_;
         }
       }
       /**
@@ -4776,11 +4776,11 @@ public final class Network {
        * <code>.pactus.ConnectionInfo connection_info = 14 [json_name = "connectionInfo"];</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Network.ConnectionInfo, pactus.Network.ConnectionInfo.Builder, pactus.Network.ConnectionInfoOrBuilder> 
+          pactus.NetworkOuterClass.ConnectionInfo, pactus.NetworkOuterClass.ConnectionInfo.Builder, pactus.NetworkOuterClass.ConnectionInfoOrBuilder> 
           internalGetConnectionInfoFieldBuilder() {
         if (connectionInfoBuilder_ == null) {
           connectionInfoBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              pactus.Network.ConnectionInfo, pactus.Network.ConnectionInfo.Builder, pactus.Network.ConnectionInfoOrBuilder>(
+              pactus.NetworkOuterClass.ConnectionInfo, pactus.NetworkOuterClass.ConnectionInfo.Builder, pactus.NetworkOuterClass.ConnectionInfoOrBuilder>(
                   getConnectionInfo(),
                   getParentForChildren(),
                   isClean());
@@ -4789,17 +4789,17 @@ public final class Network {
         return connectionInfoBuilder_;
       }
 
-      private java.util.List<pactus.Network.ZMQPublisherInfo> zmqPublishers_ =
+      private java.util.List<pactus.NetworkOuterClass.ZMQPublisherInfo> zmqPublishers_ =
         java.util.Collections.emptyList();
       private void ensureZmqPublishersIsMutable() {
         if (!((bitField0_ & 0x00000800) != 0)) {
-          zmqPublishers_ = new java.util.ArrayList<pactus.Network.ZMQPublisherInfo>(zmqPublishers_);
+          zmqPublishers_ = new java.util.ArrayList<pactus.NetworkOuterClass.ZMQPublisherInfo>(zmqPublishers_);
           bitField0_ |= 0x00000800;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Network.ZMQPublisherInfo, pactus.Network.ZMQPublisherInfo.Builder, pactus.Network.ZMQPublisherInfoOrBuilder> zmqPublishersBuilder_;
+          pactus.NetworkOuterClass.ZMQPublisherInfo, pactus.NetworkOuterClass.ZMQPublisherInfo.Builder, pactus.NetworkOuterClass.ZMQPublisherInfoOrBuilder> zmqPublishersBuilder_;
 
       /**
        * <pre>
@@ -4808,7 +4808,7 @@ public final class Network {
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
-      public java.util.List<pactus.Network.ZMQPublisherInfo> getZmqPublishersList() {
+      public java.util.List<pactus.NetworkOuterClass.ZMQPublisherInfo> getZmqPublishersList() {
         if (zmqPublishersBuilder_ == null) {
           return java.util.Collections.unmodifiableList(zmqPublishers_);
         } else {
@@ -4836,7 +4836,7 @@ public final class Network {
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
-      public pactus.Network.ZMQPublisherInfo getZmqPublishers(int index) {
+      public pactus.NetworkOuterClass.ZMQPublisherInfo getZmqPublishers(int index) {
         if (zmqPublishersBuilder_ == null) {
           return zmqPublishers_.get(index);
         } else {
@@ -4851,7 +4851,7 @@ public final class Network {
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
       public Builder setZmqPublishers(
-          int index, pactus.Network.ZMQPublisherInfo value) {
+          int index, pactus.NetworkOuterClass.ZMQPublisherInfo value) {
         if (zmqPublishersBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -4872,7 +4872,7 @@ public final class Network {
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
       public Builder setZmqPublishers(
-          int index, pactus.Network.ZMQPublisherInfo.Builder builderForValue) {
+          int index, pactus.NetworkOuterClass.ZMQPublisherInfo.Builder builderForValue) {
         if (zmqPublishersBuilder_ == null) {
           ensureZmqPublishersIsMutable();
           zmqPublishers_.set(index, builderForValue.build());
@@ -4889,7 +4889,7 @@ public final class Network {
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
-      public Builder addZmqPublishers(pactus.Network.ZMQPublisherInfo value) {
+      public Builder addZmqPublishers(pactus.NetworkOuterClass.ZMQPublisherInfo value) {
         if (zmqPublishersBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -4910,7 +4910,7 @@ public final class Network {
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
       public Builder addZmqPublishers(
-          int index, pactus.Network.ZMQPublisherInfo value) {
+          int index, pactus.NetworkOuterClass.ZMQPublisherInfo value) {
         if (zmqPublishersBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -4931,7 +4931,7 @@ public final class Network {
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
       public Builder addZmqPublishers(
-          pactus.Network.ZMQPublisherInfo.Builder builderForValue) {
+          pactus.NetworkOuterClass.ZMQPublisherInfo.Builder builderForValue) {
         if (zmqPublishersBuilder_ == null) {
           ensureZmqPublishersIsMutable();
           zmqPublishers_.add(builderForValue.build());
@@ -4949,7 +4949,7 @@ public final class Network {
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
       public Builder addZmqPublishers(
-          int index, pactus.Network.ZMQPublisherInfo.Builder builderForValue) {
+          int index, pactus.NetworkOuterClass.ZMQPublisherInfo.Builder builderForValue) {
         if (zmqPublishersBuilder_ == null) {
           ensureZmqPublishersIsMutable();
           zmqPublishers_.add(index, builderForValue.build());
@@ -4967,7 +4967,7 @@ public final class Network {
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
       public Builder addAllZmqPublishers(
-          java.lang.Iterable<? extends pactus.Network.ZMQPublisherInfo> values) {
+          java.lang.Iterable<? extends pactus.NetworkOuterClass.ZMQPublisherInfo> values) {
         if (zmqPublishersBuilder_ == null) {
           ensureZmqPublishersIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -5019,7 +5019,7 @@ public final class Network {
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
-      public pactus.Network.ZMQPublisherInfo.Builder getZmqPublishersBuilder(
+      public pactus.NetworkOuterClass.ZMQPublisherInfo.Builder getZmqPublishersBuilder(
           int index) {
         return internalGetZmqPublishersFieldBuilder().getBuilder(index);
       }
@@ -5030,7 +5030,7 @@ public final class Network {
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
-      public pactus.Network.ZMQPublisherInfoOrBuilder getZmqPublishersOrBuilder(
+      public pactus.NetworkOuterClass.ZMQPublisherInfoOrBuilder getZmqPublishersOrBuilder(
           int index) {
         if (zmqPublishersBuilder_ == null) {
           return zmqPublishers_.get(index);  } else {
@@ -5044,7 +5044,7 @@ public final class Network {
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
-      public java.util.List<? extends pactus.Network.ZMQPublisherInfoOrBuilder> 
+      public java.util.List<? extends pactus.NetworkOuterClass.ZMQPublisherInfoOrBuilder> 
            getZmqPublishersOrBuilderList() {
         if (zmqPublishersBuilder_ != null) {
           return zmqPublishersBuilder_.getMessageOrBuilderList();
@@ -5059,9 +5059,9 @@ public final class Network {
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
-      public pactus.Network.ZMQPublisherInfo.Builder addZmqPublishersBuilder() {
+      public pactus.NetworkOuterClass.ZMQPublisherInfo.Builder addZmqPublishersBuilder() {
         return internalGetZmqPublishersFieldBuilder().addBuilder(
-            pactus.Network.ZMQPublisherInfo.getDefaultInstance());
+            pactus.NetworkOuterClass.ZMQPublisherInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -5070,10 +5070,10 @@ public final class Network {
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
-      public pactus.Network.ZMQPublisherInfo.Builder addZmqPublishersBuilder(
+      public pactus.NetworkOuterClass.ZMQPublisherInfo.Builder addZmqPublishersBuilder(
           int index) {
         return internalGetZmqPublishersFieldBuilder().addBuilder(
-            index, pactus.Network.ZMQPublisherInfo.getDefaultInstance());
+            index, pactus.NetworkOuterClass.ZMQPublisherInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -5082,16 +5082,16 @@ public final class Network {
        *
        * <code>repeated .pactus.ZMQPublisherInfo zmq_publishers = 15 [json_name = "zmqPublishers"];</code>
        */
-      public java.util.List<pactus.Network.ZMQPublisherInfo.Builder> 
+      public java.util.List<pactus.NetworkOuterClass.ZMQPublisherInfo.Builder> 
            getZmqPublishersBuilderList() {
         return internalGetZmqPublishersFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Network.ZMQPublisherInfo, pactus.Network.ZMQPublisherInfo.Builder, pactus.Network.ZMQPublisherInfoOrBuilder> 
+          pactus.NetworkOuterClass.ZMQPublisherInfo, pactus.NetworkOuterClass.ZMQPublisherInfo.Builder, pactus.NetworkOuterClass.ZMQPublisherInfoOrBuilder> 
           internalGetZmqPublishersFieldBuilder() {
         if (zmqPublishersBuilder_ == null) {
           zmqPublishersBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              pactus.Network.ZMQPublisherInfo, pactus.Network.ZMQPublisherInfo.Builder, pactus.Network.ZMQPublisherInfoOrBuilder>(
+              pactus.NetworkOuterClass.ZMQPublisherInfo, pactus.NetworkOuterClass.ZMQPublisherInfo.Builder, pactus.NetworkOuterClass.ZMQPublisherInfoOrBuilder>(
                   zmqPublishers_,
                   ((bitField0_ & 0x00000800) != 0),
                   getParentForChildren(),
@@ -5105,12 +5105,12 @@ public final class Network {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetNodeInfoResponse)
-    private static final pactus.Network.GetNodeInfoResponse DEFAULT_INSTANCE;
+    private static final pactus.NetworkOuterClass.GetNodeInfoResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Network.GetNodeInfoResponse();
+      DEFAULT_INSTANCE = new pactus.NetworkOuterClass.GetNodeInfoResponse();
     }
 
-    public static pactus.Network.GetNodeInfoResponse getDefaultInstance() {
+    public static pactus.NetworkOuterClass.GetNodeInfoResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -5146,7 +5146,7 @@ public final class Network {
     }
 
     @java.lang.Override
-    public pactus.Network.GetNodeInfoResponse getDefaultInstanceForType() {
+    public pactus.NetworkOuterClass.GetNodeInfoResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -5239,15 +5239,15 @@ public final class Network {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Network.internal_static_pactus_ZMQPublisherInfo_descriptor;
+      return pactus.NetworkOuterClass.internal_static_pactus_ZMQPublisherInfo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Network.internal_static_pactus_ZMQPublisherInfo_fieldAccessorTable
+      return pactus.NetworkOuterClass.internal_static_pactus_ZMQPublisherInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Network.ZMQPublisherInfo.class, pactus.Network.ZMQPublisherInfo.Builder.class);
+              pactus.NetworkOuterClass.ZMQPublisherInfo.class, pactus.NetworkOuterClass.ZMQPublisherInfo.Builder.class);
     }
 
     public static final int TOPIC_FIELD_NUMBER = 1;
@@ -5412,10 +5412,10 @@ public final class Network {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Network.ZMQPublisherInfo)) {
+      if (!(obj instanceof pactus.NetworkOuterClass.ZMQPublisherInfo)) {
         return super.equals(obj);
       }
-      pactus.Network.ZMQPublisherInfo other = (pactus.Network.ZMQPublisherInfo) obj;
+      pactus.NetworkOuterClass.ZMQPublisherInfo other = (pactus.NetworkOuterClass.ZMQPublisherInfo) obj;
 
       if (!getTopic()
           .equals(other.getTopic())) return false;
@@ -5445,44 +5445,44 @@ public final class Network {
       return hash;
     }
 
-    public static pactus.Network.ZMQPublisherInfo parseFrom(
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.ZMQPublisherInfo parseFrom(
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.ZMQPublisherInfo parseFrom(
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.ZMQPublisherInfo parseFrom(
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.ZMQPublisherInfo parseFrom(byte[] data)
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.ZMQPublisherInfo parseFrom(
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.ZMQPublisherInfo parseFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.ZMQPublisherInfo parseFrom(
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -5490,26 +5490,26 @@ public final class Network {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Network.ZMQPublisherInfo parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Network.ZMQPublisherInfo parseDelimitedFrom(
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Network.ZMQPublisherInfo parseFrom(
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.ZMQPublisherInfo parseFrom(
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -5522,7 +5522,7 @@ public final class Network {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Network.ZMQPublisherInfo prototype) {
+    public static Builder newBuilder(pactus.NetworkOuterClass.ZMQPublisherInfo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -5547,21 +5547,21 @@ public final class Network {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.ZMQPublisherInfo)
-        pactus.Network.ZMQPublisherInfoOrBuilder {
+        pactus.NetworkOuterClass.ZMQPublisherInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Network.internal_static_pactus_ZMQPublisherInfo_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_ZMQPublisherInfo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Network.internal_static_pactus_ZMQPublisherInfo_fieldAccessorTable
+        return pactus.NetworkOuterClass.internal_static_pactus_ZMQPublisherInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Network.ZMQPublisherInfo.class, pactus.Network.ZMQPublisherInfo.Builder.class);
+                pactus.NetworkOuterClass.ZMQPublisherInfo.class, pactus.NetworkOuterClass.ZMQPublisherInfo.Builder.class);
       }
 
-      // Construct using pactus.Network.ZMQPublisherInfo.newBuilder()
+      // Construct using pactus.NetworkOuterClass.ZMQPublisherInfo.newBuilder()
       private Builder() {
 
       }
@@ -5584,17 +5584,17 @@ public final class Network {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Network.internal_static_pactus_ZMQPublisherInfo_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_ZMQPublisherInfo_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Network.ZMQPublisherInfo getDefaultInstanceForType() {
-        return pactus.Network.ZMQPublisherInfo.getDefaultInstance();
+      public pactus.NetworkOuterClass.ZMQPublisherInfo getDefaultInstanceForType() {
+        return pactus.NetworkOuterClass.ZMQPublisherInfo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Network.ZMQPublisherInfo build() {
-        pactus.Network.ZMQPublisherInfo result = buildPartial();
+      public pactus.NetworkOuterClass.ZMQPublisherInfo build() {
+        pactus.NetworkOuterClass.ZMQPublisherInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -5602,14 +5602,14 @@ public final class Network {
       }
 
       @java.lang.Override
-      public pactus.Network.ZMQPublisherInfo buildPartial() {
-        pactus.Network.ZMQPublisherInfo result = new pactus.Network.ZMQPublisherInfo(this);
+      public pactus.NetworkOuterClass.ZMQPublisherInfo buildPartial() {
+        pactus.NetworkOuterClass.ZMQPublisherInfo result = new pactus.NetworkOuterClass.ZMQPublisherInfo(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Network.ZMQPublisherInfo result) {
+      private void buildPartial0(pactus.NetworkOuterClass.ZMQPublisherInfo result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.topic_ = topic_;
@@ -5624,16 +5624,16 @@ public final class Network {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Network.ZMQPublisherInfo) {
-          return mergeFrom((pactus.Network.ZMQPublisherInfo)other);
+        if (other instanceof pactus.NetworkOuterClass.ZMQPublisherInfo) {
+          return mergeFrom((pactus.NetworkOuterClass.ZMQPublisherInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Network.ZMQPublisherInfo other) {
-        if (other == pactus.Network.ZMQPublisherInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.NetworkOuterClass.ZMQPublisherInfo other) {
+        if (other == pactus.NetworkOuterClass.ZMQPublisherInfo.getDefaultInstance()) return this;
         if (!other.getTopic().isEmpty()) {
           topic_ = other.topic_;
           bitField0_ |= 0x00000001;
@@ -5940,12 +5940,12 @@ public final class Network {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.ZMQPublisherInfo)
-    private static final pactus.Network.ZMQPublisherInfo DEFAULT_INSTANCE;
+    private static final pactus.NetworkOuterClass.ZMQPublisherInfo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Network.ZMQPublisherInfo();
+      DEFAULT_INSTANCE = new pactus.NetworkOuterClass.ZMQPublisherInfo();
     }
 
-    public static pactus.Network.ZMQPublisherInfo getDefaultInstance() {
+    public static pactus.NetworkOuterClass.ZMQPublisherInfo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -5981,7 +5981,7 @@ public final class Network {
     }
 
     @java.lang.Override
-    public pactus.Network.ZMQPublisherInfo getDefaultInstanceForType() {
+    public pactus.NetworkOuterClass.ZMQPublisherInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -6321,7 +6321,7 @@ public final class Network {
      * <code>.pactus.MetricInfo metric_info = 17 [json_name = "metricInfo"];</code>
      * @return The metricInfo.
      */
-    pactus.Network.MetricInfo getMetricInfo();
+    pactus.NetworkOuterClass.MetricInfo getMetricInfo();
     /**
      * <pre>
      * Metrics related to peer activity.
@@ -6329,7 +6329,7 @@ public final class Network {
      *
      * <code>.pactus.MetricInfo metric_info = 17 [json_name = "metricInfo"];</code>
      */
-    pactus.Network.MetricInfoOrBuilder getMetricInfoOrBuilder();
+    pactus.NetworkOuterClass.MetricInfoOrBuilder getMetricInfoOrBuilder();
   }
   /**
    * <pre>
@@ -6373,15 +6373,15 @@ public final class Network {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Network.internal_static_pactus_PeerInfo_descriptor;
+      return pactus.NetworkOuterClass.internal_static_pactus_PeerInfo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Network.internal_static_pactus_PeerInfo_fieldAccessorTable
+      return pactus.NetworkOuterClass.internal_static_pactus_PeerInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Network.PeerInfo.class, pactus.Network.PeerInfo.Builder.class);
+              pactus.NetworkOuterClass.PeerInfo.class, pactus.NetworkOuterClass.PeerInfo.Builder.class);
     }
 
     private int bitField0_;
@@ -6932,7 +6932,7 @@ public final class Network {
     }
 
     public static final int METRIC_INFO_FIELD_NUMBER = 17;
-    private pactus.Network.MetricInfo metricInfo_;
+    private pactus.NetworkOuterClass.MetricInfo metricInfo_;
     /**
      * <pre>
      * Metrics related to peer activity.
@@ -6954,8 +6954,8 @@ public final class Network {
      * @return The metricInfo.
      */
     @java.lang.Override
-    public pactus.Network.MetricInfo getMetricInfo() {
-      return metricInfo_ == null ? pactus.Network.MetricInfo.getDefaultInstance() : metricInfo_;
+    public pactus.NetworkOuterClass.MetricInfo getMetricInfo() {
+      return metricInfo_ == null ? pactus.NetworkOuterClass.MetricInfo.getDefaultInstance() : metricInfo_;
     }
     /**
      * <pre>
@@ -6965,8 +6965,8 @@ public final class Network {
      * <code>.pactus.MetricInfo metric_info = 17 [json_name = "metricInfo"];</code>
      */
     @java.lang.Override
-    public pactus.Network.MetricInfoOrBuilder getMetricInfoOrBuilder() {
-      return metricInfo_ == null ? pactus.Network.MetricInfo.getDefaultInstance() : metricInfo_;
+    public pactus.NetworkOuterClass.MetricInfoOrBuilder getMetricInfoOrBuilder() {
+      return metricInfo_ == null ? pactus.NetworkOuterClass.MetricInfo.getDefaultInstance() : metricInfo_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -7127,10 +7127,10 @@ public final class Network {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Network.PeerInfo)) {
+      if (!(obj instanceof pactus.NetworkOuterClass.PeerInfo)) {
         return super.equals(obj);
       }
-      pactus.Network.PeerInfo other = (pactus.Network.PeerInfo) obj;
+      pactus.NetworkOuterClass.PeerInfo other = (pactus.NetworkOuterClass.PeerInfo) obj;
 
       if (getStatus()
           != other.getStatus()) return false;
@@ -7229,44 +7229,44 @@ public final class Network {
       return hash;
     }
 
-    public static pactus.Network.PeerInfo parseFrom(
+    public static pactus.NetworkOuterClass.PeerInfo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.PeerInfo parseFrom(
+    public static pactus.NetworkOuterClass.PeerInfo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.PeerInfo parseFrom(
+    public static pactus.NetworkOuterClass.PeerInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.PeerInfo parseFrom(
+    public static pactus.NetworkOuterClass.PeerInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.PeerInfo parseFrom(byte[] data)
+    public static pactus.NetworkOuterClass.PeerInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.PeerInfo parseFrom(
+    public static pactus.NetworkOuterClass.PeerInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.PeerInfo parseFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.PeerInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.PeerInfo parseFrom(
+    public static pactus.NetworkOuterClass.PeerInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -7274,26 +7274,26 @@ public final class Network {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Network.PeerInfo parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.PeerInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Network.PeerInfo parseDelimitedFrom(
+    public static pactus.NetworkOuterClass.PeerInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Network.PeerInfo parseFrom(
+    public static pactus.NetworkOuterClass.PeerInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.PeerInfo parseFrom(
+    public static pactus.NetworkOuterClass.PeerInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -7306,7 +7306,7 @@ public final class Network {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Network.PeerInfo prototype) {
+    public static Builder newBuilder(pactus.NetworkOuterClass.PeerInfo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -7331,21 +7331,21 @@ public final class Network {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.PeerInfo)
-        pactus.Network.PeerInfoOrBuilder {
+        pactus.NetworkOuterClass.PeerInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Network.internal_static_pactus_PeerInfo_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_PeerInfo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Network.internal_static_pactus_PeerInfo_fieldAccessorTable
+        return pactus.NetworkOuterClass.internal_static_pactus_PeerInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Network.PeerInfo.class, pactus.Network.PeerInfo.Builder.class);
+                pactus.NetworkOuterClass.PeerInfo.class, pactus.NetworkOuterClass.PeerInfo.Builder.class);
       }
 
-      // Construct using pactus.Network.PeerInfo.newBuilder()
+      // Construct using pactus.NetworkOuterClass.PeerInfo.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -7395,17 +7395,17 @@ public final class Network {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Network.internal_static_pactus_PeerInfo_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_PeerInfo_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Network.PeerInfo getDefaultInstanceForType() {
-        return pactus.Network.PeerInfo.getDefaultInstance();
+      public pactus.NetworkOuterClass.PeerInfo getDefaultInstanceForType() {
+        return pactus.NetworkOuterClass.PeerInfo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Network.PeerInfo build() {
-        pactus.Network.PeerInfo result = buildPartial();
+      public pactus.NetworkOuterClass.PeerInfo build() {
+        pactus.NetworkOuterClass.PeerInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -7413,14 +7413,14 @@ public final class Network {
       }
 
       @java.lang.Override
-      public pactus.Network.PeerInfo buildPartial() {
-        pactus.Network.PeerInfo result = new pactus.Network.PeerInfo(this);
+      public pactus.NetworkOuterClass.PeerInfo buildPartial() {
+        pactus.NetworkOuterClass.PeerInfo result = new pactus.NetworkOuterClass.PeerInfo(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Network.PeerInfo result) {
+      private void buildPartial0(pactus.NetworkOuterClass.PeerInfo result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.status_ = status_;
@@ -7485,16 +7485,16 @@ public final class Network {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Network.PeerInfo) {
-          return mergeFrom((pactus.Network.PeerInfo)other);
+        if (other instanceof pactus.NetworkOuterClass.PeerInfo) {
+          return mergeFrom((pactus.NetworkOuterClass.PeerInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Network.PeerInfo other) {
-        if (other == pactus.Network.PeerInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.NetworkOuterClass.PeerInfo other) {
+        if (other == pactus.NetworkOuterClass.PeerInfo.getDefaultInstance()) return this;
         if (other.getStatus() != 0) {
           setStatus(other.getStatus());
         }
@@ -9013,9 +9013,9 @@ public final class Network {
         return this;
       }
 
-      private pactus.Network.MetricInfo metricInfo_;
+      private pactus.NetworkOuterClass.MetricInfo metricInfo_;
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Network.MetricInfo, pactus.Network.MetricInfo.Builder, pactus.Network.MetricInfoOrBuilder> metricInfoBuilder_;
+          pactus.NetworkOuterClass.MetricInfo, pactus.NetworkOuterClass.MetricInfo.Builder, pactus.NetworkOuterClass.MetricInfoOrBuilder> metricInfoBuilder_;
       /**
        * <pre>
        * Metrics related to peer activity.
@@ -9035,9 +9035,9 @@ public final class Network {
        * <code>.pactus.MetricInfo metric_info = 17 [json_name = "metricInfo"];</code>
        * @return The metricInfo.
        */
-      public pactus.Network.MetricInfo getMetricInfo() {
+      public pactus.NetworkOuterClass.MetricInfo getMetricInfo() {
         if (metricInfoBuilder_ == null) {
-          return metricInfo_ == null ? pactus.Network.MetricInfo.getDefaultInstance() : metricInfo_;
+          return metricInfo_ == null ? pactus.NetworkOuterClass.MetricInfo.getDefaultInstance() : metricInfo_;
         } else {
           return metricInfoBuilder_.getMessage();
         }
@@ -9049,7 +9049,7 @@ public final class Network {
        *
        * <code>.pactus.MetricInfo metric_info = 17 [json_name = "metricInfo"];</code>
        */
-      public Builder setMetricInfo(pactus.Network.MetricInfo value) {
+      public Builder setMetricInfo(pactus.NetworkOuterClass.MetricInfo value) {
         if (metricInfoBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -9070,7 +9070,7 @@ public final class Network {
        * <code>.pactus.MetricInfo metric_info = 17 [json_name = "metricInfo"];</code>
        */
       public Builder setMetricInfo(
-          pactus.Network.MetricInfo.Builder builderForValue) {
+          pactus.NetworkOuterClass.MetricInfo.Builder builderForValue) {
         if (metricInfoBuilder_ == null) {
           metricInfo_ = builderForValue.build();
         } else {
@@ -9087,11 +9087,11 @@ public final class Network {
        *
        * <code>.pactus.MetricInfo metric_info = 17 [json_name = "metricInfo"];</code>
        */
-      public Builder mergeMetricInfo(pactus.Network.MetricInfo value) {
+      public Builder mergeMetricInfo(pactus.NetworkOuterClass.MetricInfo value) {
         if (metricInfoBuilder_ == null) {
           if (((bitField0_ & 0x00010000) != 0) &&
             metricInfo_ != null &&
-            metricInfo_ != pactus.Network.MetricInfo.getDefaultInstance()) {
+            metricInfo_ != pactus.NetworkOuterClass.MetricInfo.getDefaultInstance()) {
             getMetricInfoBuilder().mergeFrom(value);
           } else {
             metricInfo_ = value;
@@ -9129,7 +9129,7 @@ public final class Network {
        *
        * <code>.pactus.MetricInfo metric_info = 17 [json_name = "metricInfo"];</code>
        */
-      public pactus.Network.MetricInfo.Builder getMetricInfoBuilder() {
+      public pactus.NetworkOuterClass.MetricInfo.Builder getMetricInfoBuilder() {
         bitField0_ |= 0x00010000;
         onChanged();
         return internalGetMetricInfoFieldBuilder().getBuilder();
@@ -9141,12 +9141,12 @@ public final class Network {
        *
        * <code>.pactus.MetricInfo metric_info = 17 [json_name = "metricInfo"];</code>
        */
-      public pactus.Network.MetricInfoOrBuilder getMetricInfoOrBuilder() {
+      public pactus.NetworkOuterClass.MetricInfoOrBuilder getMetricInfoOrBuilder() {
         if (metricInfoBuilder_ != null) {
           return metricInfoBuilder_.getMessageOrBuilder();
         } else {
           return metricInfo_ == null ?
-              pactus.Network.MetricInfo.getDefaultInstance() : metricInfo_;
+              pactus.NetworkOuterClass.MetricInfo.getDefaultInstance() : metricInfo_;
         }
       }
       /**
@@ -9157,11 +9157,11 @@ public final class Network {
        * <code>.pactus.MetricInfo metric_info = 17 [json_name = "metricInfo"];</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Network.MetricInfo, pactus.Network.MetricInfo.Builder, pactus.Network.MetricInfoOrBuilder> 
+          pactus.NetworkOuterClass.MetricInfo, pactus.NetworkOuterClass.MetricInfo.Builder, pactus.NetworkOuterClass.MetricInfoOrBuilder> 
           internalGetMetricInfoFieldBuilder() {
         if (metricInfoBuilder_ == null) {
           metricInfoBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              pactus.Network.MetricInfo, pactus.Network.MetricInfo.Builder, pactus.Network.MetricInfoOrBuilder>(
+              pactus.NetworkOuterClass.MetricInfo, pactus.NetworkOuterClass.MetricInfo.Builder, pactus.NetworkOuterClass.MetricInfoOrBuilder>(
                   getMetricInfo(),
                   getParentForChildren(),
                   isClean());
@@ -9174,12 +9174,12 @@ public final class Network {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.PeerInfo)
-    private static final pactus.Network.PeerInfo DEFAULT_INSTANCE;
+    private static final pactus.NetworkOuterClass.PeerInfo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Network.PeerInfo();
+      DEFAULT_INSTANCE = new pactus.NetworkOuterClass.PeerInfo();
     }
 
-    public static pactus.Network.PeerInfo getDefaultInstance() {
+    public static pactus.NetworkOuterClass.PeerInfo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9215,7 +9215,7 @@ public final class Network {
     }
 
     @java.lang.Override
-    public pactus.Network.PeerInfo getDefaultInstanceForType() {
+    public pactus.NetworkOuterClass.PeerInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9285,15 +9285,15 @@ public final class Network {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Network.internal_static_pactus_ConnectionInfo_descriptor;
+      return pactus.NetworkOuterClass.internal_static_pactus_ConnectionInfo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Network.internal_static_pactus_ConnectionInfo_fieldAccessorTable
+      return pactus.NetworkOuterClass.internal_static_pactus_ConnectionInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Network.ConnectionInfo.class, pactus.Network.ConnectionInfo.Builder.class);
+              pactus.NetworkOuterClass.ConnectionInfo.class, pactus.NetworkOuterClass.ConnectionInfo.Builder.class);
     }
 
     public static final int CONNECTIONS_FIELD_NUMBER = 1;
@@ -9395,10 +9395,10 @@ public final class Network {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Network.ConnectionInfo)) {
+      if (!(obj instanceof pactus.NetworkOuterClass.ConnectionInfo)) {
         return super.equals(obj);
       }
-      pactus.Network.ConnectionInfo other = (pactus.Network.ConnectionInfo) obj;
+      pactus.NetworkOuterClass.ConnectionInfo other = (pactus.NetworkOuterClass.ConnectionInfo) obj;
 
       if (getConnections()
           != other.getConnections()) return false;
@@ -9431,44 +9431,44 @@ public final class Network {
       return hash;
     }
 
-    public static pactus.Network.ConnectionInfo parseFrom(
+    public static pactus.NetworkOuterClass.ConnectionInfo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.ConnectionInfo parseFrom(
+    public static pactus.NetworkOuterClass.ConnectionInfo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.ConnectionInfo parseFrom(
+    public static pactus.NetworkOuterClass.ConnectionInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.ConnectionInfo parseFrom(
+    public static pactus.NetworkOuterClass.ConnectionInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.ConnectionInfo parseFrom(byte[] data)
+    public static pactus.NetworkOuterClass.ConnectionInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.ConnectionInfo parseFrom(
+    public static pactus.NetworkOuterClass.ConnectionInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.ConnectionInfo parseFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.ConnectionInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.ConnectionInfo parseFrom(
+    public static pactus.NetworkOuterClass.ConnectionInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -9476,26 +9476,26 @@ public final class Network {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Network.ConnectionInfo parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.ConnectionInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Network.ConnectionInfo parseDelimitedFrom(
+    public static pactus.NetworkOuterClass.ConnectionInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Network.ConnectionInfo parseFrom(
+    public static pactus.NetworkOuterClass.ConnectionInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.ConnectionInfo parseFrom(
+    public static pactus.NetworkOuterClass.ConnectionInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -9508,7 +9508,7 @@ public final class Network {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Network.ConnectionInfo prototype) {
+    public static Builder newBuilder(pactus.NetworkOuterClass.ConnectionInfo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -9533,21 +9533,21 @@ public final class Network {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.ConnectionInfo)
-        pactus.Network.ConnectionInfoOrBuilder {
+        pactus.NetworkOuterClass.ConnectionInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Network.internal_static_pactus_ConnectionInfo_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_ConnectionInfo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Network.internal_static_pactus_ConnectionInfo_fieldAccessorTable
+        return pactus.NetworkOuterClass.internal_static_pactus_ConnectionInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Network.ConnectionInfo.class, pactus.Network.ConnectionInfo.Builder.class);
+                pactus.NetworkOuterClass.ConnectionInfo.class, pactus.NetworkOuterClass.ConnectionInfo.Builder.class);
       }
 
-      // Construct using pactus.Network.ConnectionInfo.newBuilder()
+      // Construct using pactus.NetworkOuterClass.ConnectionInfo.newBuilder()
       private Builder() {
 
       }
@@ -9570,17 +9570,17 @@ public final class Network {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Network.internal_static_pactus_ConnectionInfo_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_ConnectionInfo_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Network.ConnectionInfo getDefaultInstanceForType() {
-        return pactus.Network.ConnectionInfo.getDefaultInstance();
+      public pactus.NetworkOuterClass.ConnectionInfo getDefaultInstanceForType() {
+        return pactus.NetworkOuterClass.ConnectionInfo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Network.ConnectionInfo build() {
-        pactus.Network.ConnectionInfo result = buildPartial();
+      public pactus.NetworkOuterClass.ConnectionInfo build() {
+        pactus.NetworkOuterClass.ConnectionInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -9588,14 +9588,14 @@ public final class Network {
       }
 
       @java.lang.Override
-      public pactus.Network.ConnectionInfo buildPartial() {
-        pactus.Network.ConnectionInfo result = new pactus.Network.ConnectionInfo(this);
+      public pactus.NetworkOuterClass.ConnectionInfo buildPartial() {
+        pactus.NetworkOuterClass.ConnectionInfo result = new pactus.NetworkOuterClass.ConnectionInfo(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Network.ConnectionInfo result) {
+      private void buildPartial0(pactus.NetworkOuterClass.ConnectionInfo result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.connections_ = connections_;
@@ -9610,16 +9610,16 @@ public final class Network {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Network.ConnectionInfo) {
-          return mergeFrom((pactus.Network.ConnectionInfo)other);
+        if (other instanceof pactus.NetworkOuterClass.ConnectionInfo) {
+          return mergeFrom((pactus.NetworkOuterClass.ConnectionInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Network.ConnectionInfo other) {
-        if (other == pactus.Network.ConnectionInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.NetworkOuterClass.ConnectionInfo other) {
+        if (other == pactus.NetworkOuterClass.ConnectionInfo.getDefaultInstance()) return this;
         if (other.getConnections() != 0L) {
           setConnections(other.getConnections());
         }
@@ -9823,12 +9823,12 @@ public final class Network {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.ConnectionInfo)
-    private static final pactus.Network.ConnectionInfo DEFAULT_INSTANCE;
+    private static final pactus.NetworkOuterClass.ConnectionInfo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Network.ConnectionInfo();
+      DEFAULT_INSTANCE = new pactus.NetworkOuterClass.ConnectionInfo();
     }
 
-    public static pactus.Network.ConnectionInfo getDefaultInstance() {
+    public static pactus.NetworkOuterClass.ConnectionInfo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9864,7 +9864,7 @@ public final class Network {
     }
 
     @java.lang.Override
-    public pactus.Network.ConnectionInfo getDefaultInstanceForType() {
+    public pactus.NetworkOuterClass.ConnectionInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9891,7 +9891,7 @@ public final class Network {
      * <code>.pactus.CounterInfo total_invalid = 1 [json_name = "totalInvalid"];</code>
      * @return The totalInvalid.
      */
-    pactus.Network.CounterInfo getTotalInvalid();
+    pactus.NetworkOuterClass.CounterInfo getTotalInvalid();
     /**
      * <pre>
      * Total number of invalid bundles.
@@ -9899,7 +9899,7 @@ public final class Network {
      *
      * <code>.pactus.CounterInfo total_invalid = 1 [json_name = "totalInvalid"];</code>
      */
-    pactus.Network.CounterInfoOrBuilder getTotalInvalidOrBuilder();
+    pactus.NetworkOuterClass.CounterInfoOrBuilder getTotalInvalidOrBuilder();
 
     /**
      * <pre>
@@ -9918,7 +9918,7 @@ public final class Network {
      * <code>.pactus.CounterInfo total_sent = 2 [json_name = "totalSent"];</code>
      * @return The totalSent.
      */
-    pactus.Network.CounterInfo getTotalSent();
+    pactus.NetworkOuterClass.CounterInfo getTotalSent();
     /**
      * <pre>
      * Total number of bundles sent.
@@ -9926,7 +9926,7 @@ public final class Network {
      *
      * <code>.pactus.CounterInfo total_sent = 2 [json_name = "totalSent"];</code>
      */
-    pactus.Network.CounterInfoOrBuilder getTotalSentOrBuilder();
+    pactus.NetworkOuterClass.CounterInfoOrBuilder getTotalSentOrBuilder();
 
     /**
      * <pre>
@@ -9945,7 +9945,7 @@ public final class Network {
      * <code>.pactus.CounterInfo total_received = 3 [json_name = "totalReceived"];</code>
      * @return The totalReceived.
      */
-    pactus.Network.CounterInfo getTotalReceived();
+    pactus.NetworkOuterClass.CounterInfo getTotalReceived();
     /**
      * <pre>
      * Total number of bundles received.
@@ -9953,7 +9953,7 @@ public final class Network {
      *
      * <code>.pactus.CounterInfo total_received = 3 [json_name = "totalReceived"];</code>
      */
-    pactus.Network.CounterInfoOrBuilder getTotalReceivedOrBuilder();
+    pactus.NetworkOuterClass.CounterInfoOrBuilder getTotalReceivedOrBuilder();
 
     /**
      * <pre>
@@ -9976,7 +9976,7 @@ public final class Network {
      * Use {@link #getMessageSentMap()} instead.
      */
     @java.lang.Deprecated
-    java.util.Map<java.lang.Integer, pactus.Network.CounterInfo>
+    java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>
     getMessageSent();
     /**
      * <pre>
@@ -9985,7 +9985,7 @@ public final class Network {
      *
      * <code>map&lt;int32, .pactus.CounterInfo&gt; message_sent = 4 [json_name = "messageSent"];</code>
      */
-    java.util.Map<java.lang.Integer, pactus.Network.CounterInfo>
+    java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>
     getMessageSentMap();
     /**
      * <pre>
@@ -9995,10 +9995,10 @@ public final class Network {
      * <code>map&lt;int32, .pactus.CounterInfo&gt; message_sent = 4 [json_name = "messageSent"];</code>
      */
     /* nullable */
-pactus.Network.CounterInfo getMessageSentOrDefault(
+pactus.NetworkOuterClass.CounterInfo getMessageSentOrDefault(
         int key,
         /* nullable */
-pactus.Network.CounterInfo defaultValue);
+pactus.NetworkOuterClass.CounterInfo defaultValue);
     /**
      * <pre>
      * Number of sent bundles categorized by message type.
@@ -10006,7 +10006,7 @@ pactus.Network.CounterInfo defaultValue);
      *
      * <code>map&lt;int32, .pactus.CounterInfo&gt; message_sent = 4 [json_name = "messageSent"];</code>
      */
-    pactus.Network.CounterInfo getMessageSentOrThrow(
+    pactus.NetworkOuterClass.CounterInfo getMessageSentOrThrow(
         int key);
 
     /**
@@ -10030,7 +10030,7 @@ pactus.Network.CounterInfo defaultValue);
      * Use {@link #getMessageReceivedMap()} instead.
      */
     @java.lang.Deprecated
-    java.util.Map<java.lang.Integer, pactus.Network.CounterInfo>
+    java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>
     getMessageReceived();
     /**
      * <pre>
@@ -10039,7 +10039,7 @@ pactus.Network.CounterInfo defaultValue);
      *
      * <code>map&lt;int32, .pactus.CounterInfo&gt; message_received = 5 [json_name = "messageReceived"];</code>
      */
-    java.util.Map<java.lang.Integer, pactus.Network.CounterInfo>
+    java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>
     getMessageReceivedMap();
     /**
      * <pre>
@@ -10049,10 +10049,10 @@ pactus.Network.CounterInfo defaultValue);
      * <code>map&lt;int32, .pactus.CounterInfo&gt; message_received = 5 [json_name = "messageReceived"];</code>
      */
     /* nullable */
-pactus.Network.CounterInfo getMessageReceivedOrDefault(
+pactus.NetworkOuterClass.CounterInfo getMessageReceivedOrDefault(
         int key,
         /* nullable */
-pactus.Network.CounterInfo defaultValue);
+pactus.NetworkOuterClass.CounterInfo defaultValue);
     /**
      * <pre>
      * Number of received bundles categorized by message type.
@@ -10060,7 +10060,7 @@ pactus.Network.CounterInfo defaultValue);
      *
      * <code>map&lt;int32, .pactus.CounterInfo&gt; message_received = 5 [json_name = "messageReceived"];</code>
      */
-    pactus.Network.CounterInfo getMessageReceivedOrThrow(
+    pactus.NetworkOuterClass.CounterInfo getMessageReceivedOrThrow(
         int key);
   }
   /**
@@ -10093,7 +10093,7 @@ pactus.Network.CounterInfo defaultValue);
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Network.internal_static_pactus_MetricInfo_descriptor;
+      return pactus.NetworkOuterClass.internal_static_pactus_MetricInfo_descriptor;
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -10113,14 +10113,14 @@ pactus.Network.CounterInfo defaultValue);
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Network.internal_static_pactus_MetricInfo_fieldAccessorTable
+      return pactus.NetworkOuterClass.internal_static_pactus_MetricInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Network.MetricInfo.class, pactus.Network.MetricInfo.Builder.class);
+              pactus.NetworkOuterClass.MetricInfo.class, pactus.NetworkOuterClass.MetricInfo.Builder.class);
     }
 
     private int bitField0_;
     public static final int TOTAL_INVALID_FIELD_NUMBER = 1;
-    private pactus.Network.CounterInfo totalInvalid_;
+    private pactus.NetworkOuterClass.CounterInfo totalInvalid_;
     /**
      * <pre>
      * Total number of invalid bundles.
@@ -10142,8 +10142,8 @@ pactus.Network.CounterInfo defaultValue);
      * @return The totalInvalid.
      */
     @java.lang.Override
-    public pactus.Network.CounterInfo getTotalInvalid() {
-      return totalInvalid_ == null ? pactus.Network.CounterInfo.getDefaultInstance() : totalInvalid_;
+    public pactus.NetworkOuterClass.CounterInfo getTotalInvalid() {
+      return totalInvalid_ == null ? pactus.NetworkOuterClass.CounterInfo.getDefaultInstance() : totalInvalid_;
     }
     /**
      * <pre>
@@ -10153,12 +10153,12 @@ pactus.Network.CounterInfo defaultValue);
      * <code>.pactus.CounterInfo total_invalid = 1 [json_name = "totalInvalid"];</code>
      */
     @java.lang.Override
-    public pactus.Network.CounterInfoOrBuilder getTotalInvalidOrBuilder() {
-      return totalInvalid_ == null ? pactus.Network.CounterInfo.getDefaultInstance() : totalInvalid_;
+    public pactus.NetworkOuterClass.CounterInfoOrBuilder getTotalInvalidOrBuilder() {
+      return totalInvalid_ == null ? pactus.NetworkOuterClass.CounterInfo.getDefaultInstance() : totalInvalid_;
     }
 
     public static final int TOTAL_SENT_FIELD_NUMBER = 2;
-    private pactus.Network.CounterInfo totalSent_;
+    private pactus.NetworkOuterClass.CounterInfo totalSent_;
     /**
      * <pre>
      * Total number of bundles sent.
@@ -10180,8 +10180,8 @@ pactus.Network.CounterInfo defaultValue);
      * @return The totalSent.
      */
     @java.lang.Override
-    public pactus.Network.CounterInfo getTotalSent() {
-      return totalSent_ == null ? pactus.Network.CounterInfo.getDefaultInstance() : totalSent_;
+    public pactus.NetworkOuterClass.CounterInfo getTotalSent() {
+      return totalSent_ == null ? pactus.NetworkOuterClass.CounterInfo.getDefaultInstance() : totalSent_;
     }
     /**
      * <pre>
@@ -10191,12 +10191,12 @@ pactus.Network.CounterInfo defaultValue);
      * <code>.pactus.CounterInfo total_sent = 2 [json_name = "totalSent"];</code>
      */
     @java.lang.Override
-    public pactus.Network.CounterInfoOrBuilder getTotalSentOrBuilder() {
-      return totalSent_ == null ? pactus.Network.CounterInfo.getDefaultInstance() : totalSent_;
+    public pactus.NetworkOuterClass.CounterInfoOrBuilder getTotalSentOrBuilder() {
+      return totalSent_ == null ? pactus.NetworkOuterClass.CounterInfo.getDefaultInstance() : totalSent_;
     }
 
     public static final int TOTAL_RECEIVED_FIELD_NUMBER = 3;
-    private pactus.Network.CounterInfo totalReceived_;
+    private pactus.NetworkOuterClass.CounterInfo totalReceived_;
     /**
      * <pre>
      * Total number of bundles received.
@@ -10218,8 +10218,8 @@ pactus.Network.CounterInfo defaultValue);
      * @return The totalReceived.
      */
     @java.lang.Override
-    public pactus.Network.CounterInfo getTotalReceived() {
-      return totalReceived_ == null ? pactus.Network.CounterInfo.getDefaultInstance() : totalReceived_;
+    public pactus.NetworkOuterClass.CounterInfo getTotalReceived() {
+      return totalReceived_ == null ? pactus.NetworkOuterClass.CounterInfo.getDefaultInstance() : totalReceived_;
     }
     /**
      * <pre>
@@ -10229,26 +10229,26 @@ pactus.Network.CounterInfo defaultValue);
      * <code>.pactus.CounterInfo total_received = 3 [json_name = "totalReceived"];</code>
      */
     @java.lang.Override
-    public pactus.Network.CounterInfoOrBuilder getTotalReceivedOrBuilder() {
-      return totalReceived_ == null ? pactus.Network.CounterInfo.getDefaultInstance() : totalReceived_;
+    public pactus.NetworkOuterClass.CounterInfoOrBuilder getTotalReceivedOrBuilder() {
+      return totalReceived_ == null ? pactus.NetworkOuterClass.CounterInfo.getDefaultInstance() : totalReceived_;
     }
 
     public static final int MESSAGE_SENT_FIELD_NUMBER = 4;
     private static final class MessageSentDefaultEntryHolder {
       static final com.google.protobuf.MapEntry<
-          java.lang.Integer, pactus.Network.CounterInfo> defaultEntry =
+          java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> defaultEntry =
               com.google.protobuf.MapEntry
-              .<java.lang.Integer, pactus.Network.CounterInfo>newDefaultInstance(
-                  pactus.Network.internal_static_pactus_MetricInfo_MessageSentEntry_descriptor, 
+              .<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>newDefaultInstance(
+                  pactus.NetworkOuterClass.internal_static_pactus_MetricInfo_MessageSentEntry_descriptor, 
                   com.google.protobuf.WireFormat.FieldType.INT32,
                   0,
                   com.google.protobuf.WireFormat.FieldType.MESSAGE,
-                  pactus.Network.CounterInfo.getDefaultInstance());
+                  pactus.NetworkOuterClass.CounterInfo.getDefaultInstance());
     }
     @SuppressWarnings("serial")
     private com.google.protobuf.MapField<
-        java.lang.Integer, pactus.Network.CounterInfo> messageSent_;
-    private com.google.protobuf.MapField<java.lang.Integer, pactus.Network.CounterInfo>
+        java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> messageSent_;
+    private com.google.protobuf.MapField<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>
     internalGetMessageSent() {
       if (messageSent_ == null) {
         return com.google.protobuf.MapField.emptyMapField(
@@ -10277,7 +10277,7 @@ pactus.Network.CounterInfo defaultValue);
      */
     @java.lang.Override
     @java.lang.Deprecated
-    public java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> getMessageSent() {
+    public java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> getMessageSent() {
       return getMessageSentMap();
     }
     /**
@@ -10288,7 +10288,7 @@ pactus.Network.CounterInfo defaultValue);
      * <code>map&lt;int32, .pactus.CounterInfo&gt; message_sent = 4 [json_name = "messageSent"];</code>
      */
     @java.lang.Override
-    public java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> getMessageSentMap() {
+    public java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> getMessageSentMap() {
       return internalGetMessageSent().getMap();
     }
     /**
@@ -10300,12 +10300,12 @@ pactus.Network.CounterInfo defaultValue);
      */
     @java.lang.Override
     public /* nullable */
-pactus.Network.CounterInfo getMessageSentOrDefault(
+pactus.NetworkOuterClass.CounterInfo getMessageSentOrDefault(
         int key,
         /* nullable */
-pactus.Network.CounterInfo defaultValue) {
+pactus.NetworkOuterClass.CounterInfo defaultValue) {
 
-      java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> map =
+      java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> map =
           internalGetMessageSent().getMap();
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
@@ -10317,10 +10317,10 @@ pactus.Network.CounterInfo defaultValue) {
      * <code>map&lt;int32, .pactus.CounterInfo&gt; message_sent = 4 [json_name = "messageSent"];</code>
      */
     @java.lang.Override
-    public pactus.Network.CounterInfo getMessageSentOrThrow(
+    public pactus.NetworkOuterClass.CounterInfo getMessageSentOrThrow(
         int key) {
 
-      java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> map =
+      java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> map =
           internalGetMessageSent().getMap();
       if (!map.containsKey(key)) {
         throw new java.lang.IllegalArgumentException();
@@ -10331,19 +10331,19 @@ pactus.Network.CounterInfo defaultValue) {
     public static final int MESSAGE_RECEIVED_FIELD_NUMBER = 5;
     private static final class MessageReceivedDefaultEntryHolder {
       static final com.google.protobuf.MapEntry<
-          java.lang.Integer, pactus.Network.CounterInfo> defaultEntry =
+          java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> defaultEntry =
               com.google.protobuf.MapEntry
-              .<java.lang.Integer, pactus.Network.CounterInfo>newDefaultInstance(
-                  pactus.Network.internal_static_pactus_MetricInfo_MessageReceivedEntry_descriptor, 
+              .<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>newDefaultInstance(
+                  pactus.NetworkOuterClass.internal_static_pactus_MetricInfo_MessageReceivedEntry_descriptor, 
                   com.google.protobuf.WireFormat.FieldType.INT32,
                   0,
                   com.google.protobuf.WireFormat.FieldType.MESSAGE,
-                  pactus.Network.CounterInfo.getDefaultInstance());
+                  pactus.NetworkOuterClass.CounterInfo.getDefaultInstance());
     }
     @SuppressWarnings("serial")
     private com.google.protobuf.MapField<
-        java.lang.Integer, pactus.Network.CounterInfo> messageReceived_;
-    private com.google.protobuf.MapField<java.lang.Integer, pactus.Network.CounterInfo>
+        java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> messageReceived_;
+    private com.google.protobuf.MapField<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>
     internalGetMessageReceived() {
       if (messageReceived_ == null) {
         return com.google.protobuf.MapField.emptyMapField(
@@ -10372,7 +10372,7 @@ pactus.Network.CounterInfo defaultValue) {
      */
     @java.lang.Override
     @java.lang.Deprecated
-    public java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> getMessageReceived() {
+    public java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> getMessageReceived() {
       return getMessageReceivedMap();
     }
     /**
@@ -10383,7 +10383,7 @@ pactus.Network.CounterInfo defaultValue) {
      * <code>map&lt;int32, .pactus.CounterInfo&gt; message_received = 5 [json_name = "messageReceived"];</code>
      */
     @java.lang.Override
-    public java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> getMessageReceivedMap() {
+    public java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> getMessageReceivedMap() {
       return internalGetMessageReceived().getMap();
     }
     /**
@@ -10395,12 +10395,12 @@ pactus.Network.CounterInfo defaultValue) {
      */
     @java.lang.Override
     public /* nullable */
-pactus.Network.CounterInfo getMessageReceivedOrDefault(
+pactus.NetworkOuterClass.CounterInfo getMessageReceivedOrDefault(
         int key,
         /* nullable */
-pactus.Network.CounterInfo defaultValue) {
+pactus.NetworkOuterClass.CounterInfo defaultValue) {
 
-      java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> map =
+      java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> map =
           internalGetMessageReceived().getMap();
       return map.containsKey(key) ? map.get(key) : defaultValue;
     }
@@ -10412,10 +10412,10 @@ pactus.Network.CounterInfo defaultValue) {
      * <code>map&lt;int32, .pactus.CounterInfo&gt; message_received = 5 [json_name = "messageReceived"];</code>
      */
     @java.lang.Override
-    public pactus.Network.CounterInfo getMessageReceivedOrThrow(
+    public pactus.NetworkOuterClass.CounterInfo getMessageReceivedOrThrow(
         int key) {
 
-      java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> map =
+      java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> map =
           internalGetMessageReceived().getMap();
       if (!map.containsKey(key)) {
         throw new java.lang.IllegalArgumentException();
@@ -10479,9 +10479,9 @@ pactus.Network.CounterInfo defaultValue) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(3, getTotalReceived());
       }
-      for (java.util.Map.Entry<java.lang.Integer, pactus.Network.CounterInfo> entry
+      for (java.util.Map.Entry<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> entry
            : internalGetMessageSent().getMap().entrySet()) {
-        com.google.protobuf.MapEntry<java.lang.Integer, pactus.Network.CounterInfo>
+        com.google.protobuf.MapEntry<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>
         messageSent__ = MessageSentDefaultEntryHolder.defaultEntry.newBuilderForType()
             .setKey(entry.getKey())
             .setValue(entry.getValue())
@@ -10489,9 +10489,9 @@ pactus.Network.CounterInfo defaultValue) {
         size += com.google.protobuf.CodedOutputStream
             .computeMessageSize(4, messageSent__);
       }
-      for (java.util.Map.Entry<java.lang.Integer, pactus.Network.CounterInfo> entry
+      for (java.util.Map.Entry<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> entry
            : internalGetMessageReceived().getMap().entrySet()) {
-        com.google.protobuf.MapEntry<java.lang.Integer, pactus.Network.CounterInfo>
+        com.google.protobuf.MapEntry<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>
         messageReceived__ = MessageReceivedDefaultEntryHolder.defaultEntry.newBuilderForType()
             .setKey(entry.getKey())
             .setValue(entry.getValue())
@@ -10509,10 +10509,10 @@ pactus.Network.CounterInfo defaultValue) {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Network.MetricInfo)) {
+      if (!(obj instanceof pactus.NetworkOuterClass.MetricInfo)) {
         return super.equals(obj);
       }
-      pactus.Network.MetricInfo other = (pactus.Network.MetricInfo) obj;
+      pactus.NetworkOuterClass.MetricInfo other = (pactus.NetworkOuterClass.MetricInfo) obj;
 
       if (hasTotalInvalid() != other.hasTotalInvalid()) return false;
       if (hasTotalInvalid()) {
@@ -10569,44 +10569,44 @@ pactus.Network.CounterInfo defaultValue) {
       return hash;
     }
 
-    public static pactus.Network.MetricInfo parseFrom(
+    public static pactus.NetworkOuterClass.MetricInfo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.MetricInfo parseFrom(
+    public static pactus.NetworkOuterClass.MetricInfo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.MetricInfo parseFrom(
+    public static pactus.NetworkOuterClass.MetricInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.MetricInfo parseFrom(
+    public static pactus.NetworkOuterClass.MetricInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.MetricInfo parseFrom(byte[] data)
+    public static pactus.NetworkOuterClass.MetricInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.MetricInfo parseFrom(
+    public static pactus.NetworkOuterClass.MetricInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.MetricInfo parseFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.MetricInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.MetricInfo parseFrom(
+    public static pactus.NetworkOuterClass.MetricInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -10614,26 +10614,26 @@ pactus.Network.CounterInfo defaultValue) {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Network.MetricInfo parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.MetricInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Network.MetricInfo parseDelimitedFrom(
+    public static pactus.NetworkOuterClass.MetricInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Network.MetricInfo parseFrom(
+    public static pactus.NetworkOuterClass.MetricInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.MetricInfo parseFrom(
+    public static pactus.NetworkOuterClass.MetricInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -10646,7 +10646,7 @@ pactus.Network.CounterInfo defaultValue) {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Network.MetricInfo prototype) {
+    public static Builder newBuilder(pactus.NetworkOuterClass.MetricInfo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -10671,10 +10671,10 @@ pactus.Network.CounterInfo defaultValue) {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.MetricInfo)
-        pactus.Network.MetricInfoOrBuilder {
+        pactus.NetworkOuterClass.MetricInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Network.internal_static_pactus_MetricInfo_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_MetricInfo_descriptor;
       }
 
       @SuppressWarnings({"rawtypes"})
@@ -10706,12 +10706,12 @@ pactus.Network.CounterInfo defaultValue) {
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Network.internal_static_pactus_MetricInfo_fieldAccessorTable
+        return pactus.NetworkOuterClass.internal_static_pactus_MetricInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Network.MetricInfo.class, pactus.Network.MetricInfo.Builder.class);
+                pactus.NetworkOuterClass.MetricInfo.class, pactus.NetworkOuterClass.MetricInfo.Builder.class);
       }
 
-      // Construct using pactus.Network.MetricInfo.newBuilder()
+      // Construct using pactus.NetworkOuterClass.MetricInfo.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -10756,17 +10756,17 @@ pactus.Network.CounterInfo defaultValue) {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Network.internal_static_pactus_MetricInfo_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_MetricInfo_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Network.MetricInfo getDefaultInstanceForType() {
-        return pactus.Network.MetricInfo.getDefaultInstance();
+      public pactus.NetworkOuterClass.MetricInfo getDefaultInstanceForType() {
+        return pactus.NetworkOuterClass.MetricInfo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Network.MetricInfo build() {
-        pactus.Network.MetricInfo result = buildPartial();
+      public pactus.NetworkOuterClass.MetricInfo build() {
+        pactus.NetworkOuterClass.MetricInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -10774,14 +10774,14 @@ pactus.Network.CounterInfo defaultValue) {
       }
 
       @java.lang.Override
-      public pactus.Network.MetricInfo buildPartial() {
-        pactus.Network.MetricInfo result = new pactus.Network.MetricInfo(this);
+      public pactus.NetworkOuterClass.MetricInfo buildPartial() {
+        pactus.NetworkOuterClass.MetricInfo result = new pactus.NetworkOuterClass.MetricInfo(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Network.MetricInfo result) {
+      private void buildPartial0(pactus.NetworkOuterClass.MetricInfo result) {
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) != 0)) {
@@ -10813,16 +10813,16 @@ pactus.Network.CounterInfo defaultValue) {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Network.MetricInfo) {
-          return mergeFrom((pactus.Network.MetricInfo)other);
+        if (other instanceof pactus.NetworkOuterClass.MetricInfo) {
+          return mergeFrom((pactus.NetworkOuterClass.MetricInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Network.MetricInfo other) {
-        if (other == pactus.Network.MetricInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.NetworkOuterClass.MetricInfo other) {
+        if (other == pactus.NetworkOuterClass.MetricInfo.getDefaultInstance()) return this;
         if (other.hasTotalInvalid()) {
           mergeTotalInvalid(other.getTotalInvalid());
         }
@@ -10886,7 +10886,7 @@ pactus.Network.CounterInfo defaultValue) {
                 break;
               } // case 26
               case 34: {
-                com.google.protobuf.MapEntry<java.lang.Integer, pactus.Network.CounterInfo>
+                com.google.protobuf.MapEntry<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>
                 messageSent__ = input.readMessage(
                     MessageSentDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
                 internalGetMutableMessageSent().ensureBuilderMap().put(
@@ -10895,7 +10895,7 @@ pactus.Network.CounterInfo defaultValue) {
                 break;
               } // case 34
               case 42: {
-                com.google.protobuf.MapEntry<java.lang.Integer, pactus.Network.CounterInfo>
+                com.google.protobuf.MapEntry<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>
                 messageReceived__ = input.readMessage(
                     MessageReceivedDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
                 internalGetMutableMessageReceived().ensureBuilderMap().put(
@@ -10920,9 +10920,9 @@ pactus.Network.CounterInfo defaultValue) {
       }
       private int bitField0_;
 
-      private pactus.Network.CounterInfo totalInvalid_;
+      private pactus.NetworkOuterClass.CounterInfo totalInvalid_;
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder, pactus.Network.CounterInfoOrBuilder> totalInvalidBuilder_;
+          pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder, pactus.NetworkOuterClass.CounterInfoOrBuilder> totalInvalidBuilder_;
       /**
        * <pre>
        * Total number of invalid bundles.
@@ -10942,9 +10942,9 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>.pactus.CounterInfo total_invalid = 1 [json_name = "totalInvalid"];</code>
        * @return The totalInvalid.
        */
-      public pactus.Network.CounterInfo getTotalInvalid() {
+      public pactus.NetworkOuterClass.CounterInfo getTotalInvalid() {
         if (totalInvalidBuilder_ == null) {
-          return totalInvalid_ == null ? pactus.Network.CounterInfo.getDefaultInstance() : totalInvalid_;
+          return totalInvalid_ == null ? pactus.NetworkOuterClass.CounterInfo.getDefaultInstance() : totalInvalid_;
         } else {
           return totalInvalidBuilder_.getMessage();
         }
@@ -10956,7 +10956,7 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>.pactus.CounterInfo total_invalid = 1 [json_name = "totalInvalid"];</code>
        */
-      public Builder setTotalInvalid(pactus.Network.CounterInfo value) {
+      public Builder setTotalInvalid(pactus.NetworkOuterClass.CounterInfo value) {
         if (totalInvalidBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -10977,7 +10977,7 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>.pactus.CounterInfo total_invalid = 1 [json_name = "totalInvalid"];</code>
        */
       public Builder setTotalInvalid(
-          pactus.Network.CounterInfo.Builder builderForValue) {
+          pactus.NetworkOuterClass.CounterInfo.Builder builderForValue) {
         if (totalInvalidBuilder_ == null) {
           totalInvalid_ = builderForValue.build();
         } else {
@@ -10994,11 +10994,11 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>.pactus.CounterInfo total_invalid = 1 [json_name = "totalInvalid"];</code>
        */
-      public Builder mergeTotalInvalid(pactus.Network.CounterInfo value) {
+      public Builder mergeTotalInvalid(pactus.NetworkOuterClass.CounterInfo value) {
         if (totalInvalidBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0) &&
             totalInvalid_ != null &&
-            totalInvalid_ != pactus.Network.CounterInfo.getDefaultInstance()) {
+            totalInvalid_ != pactus.NetworkOuterClass.CounterInfo.getDefaultInstance()) {
             getTotalInvalidBuilder().mergeFrom(value);
           } else {
             totalInvalid_ = value;
@@ -11036,7 +11036,7 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>.pactus.CounterInfo total_invalid = 1 [json_name = "totalInvalid"];</code>
        */
-      public pactus.Network.CounterInfo.Builder getTotalInvalidBuilder() {
+      public pactus.NetworkOuterClass.CounterInfo.Builder getTotalInvalidBuilder() {
         bitField0_ |= 0x00000001;
         onChanged();
         return internalGetTotalInvalidFieldBuilder().getBuilder();
@@ -11048,12 +11048,12 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>.pactus.CounterInfo total_invalid = 1 [json_name = "totalInvalid"];</code>
        */
-      public pactus.Network.CounterInfoOrBuilder getTotalInvalidOrBuilder() {
+      public pactus.NetworkOuterClass.CounterInfoOrBuilder getTotalInvalidOrBuilder() {
         if (totalInvalidBuilder_ != null) {
           return totalInvalidBuilder_.getMessageOrBuilder();
         } else {
           return totalInvalid_ == null ?
-              pactus.Network.CounterInfo.getDefaultInstance() : totalInvalid_;
+              pactus.NetworkOuterClass.CounterInfo.getDefaultInstance() : totalInvalid_;
         }
       }
       /**
@@ -11064,11 +11064,11 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>.pactus.CounterInfo total_invalid = 1 [json_name = "totalInvalid"];</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder, pactus.Network.CounterInfoOrBuilder> 
+          pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder, pactus.NetworkOuterClass.CounterInfoOrBuilder> 
           internalGetTotalInvalidFieldBuilder() {
         if (totalInvalidBuilder_ == null) {
           totalInvalidBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder, pactus.Network.CounterInfoOrBuilder>(
+              pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder, pactus.NetworkOuterClass.CounterInfoOrBuilder>(
                   getTotalInvalid(),
                   getParentForChildren(),
                   isClean());
@@ -11077,9 +11077,9 @@ pactus.Network.CounterInfo defaultValue) {
         return totalInvalidBuilder_;
       }
 
-      private pactus.Network.CounterInfo totalSent_;
+      private pactus.NetworkOuterClass.CounterInfo totalSent_;
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder, pactus.Network.CounterInfoOrBuilder> totalSentBuilder_;
+          pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder, pactus.NetworkOuterClass.CounterInfoOrBuilder> totalSentBuilder_;
       /**
        * <pre>
        * Total number of bundles sent.
@@ -11099,9 +11099,9 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>.pactus.CounterInfo total_sent = 2 [json_name = "totalSent"];</code>
        * @return The totalSent.
        */
-      public pactus.Network.CounterInfo getTotalSent() {
+      public pactus.NetworkOuterClass.CounterInfo getTotalSent() {
         if (totalSentBuilder_ == null) {
-          return totalSent_ == null ? pactus.Network.CounterInfo.getDefaultInstance() : totalSent_;
+          return totalSent_ == null ? pactus.NetworkOuterClass.CounterInfo.getDefaultInstance() : totalSent_;
         } else {
           return totalSentBuilder_.getMessage();
         }
@@ -11113,7 +11113,7 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>.pactus.CounterInfo total_sent = 2 [json_name = "totalSent"];</code>
        */
-      public Builder setTotalSent(pactus.Network.CounterInfo value) {
+      public Builder setTotalSent(pactus.NetworkOuterClass.CounterInfo value) {
         if (totalSentBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -11134,7 +11134,7 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>.pactus.CounterInfo total_sent = 2 [json_name = "totalSent"];</code>
        */
       public Builder setTotalSent(
-          pactus.Network.CounterInfo.Builder builderForValue) {
+          pactus.NetworkOuterClass.CounterInfo.Builder builderForValue) {
         if (totalSentBuilder_ == null) {
           totalSent_ = builderForValue.build();
         } else {
@@ -11151,11 +11151,11 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>.pactus.CounterInfo total_sent = 2 [json_name = "totalSent"];</code>
        */
-      public Builder mergeTotalSent(pactus.Network.CounterInfo value) {
+      public Builder mergeTotalSent(pactus.NetworkOuterClass.CounterInfo value) {
         if (totalSentBuilder_ == null) {
           if (((bitField0_ & 0x00000002) != 0) &&
             totalSent_ != null &&
-            totalSent_ != pactus.Network.CounterInfo.getDefaultInstance()) {
+            totalSent_ != pactus.NetworkOuterClass.CounterInfo.getDefaultInstance()) {
             getTotalSentBuilder().mergeFrom(value);
           } else {
             totalSent_ = value;
@@ -11193,7 +11193,7 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>.pactus.CounterInfo total_sent = 2 [json_name = "totalSent"];</code>
        */
-      public pactus.Network.CounterInfo.Builder getTotalSentBuilder() {
+      public pactus.NetworkOuterClass.CounterInfo.Builder getTotalSentBuilder() {
         bitField0_ |= 0x00000002;
         onChanged();
         return internalGetTotalSentFieldBuilder().getBuilder();
@@ -11205,12 +11205,12 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>.pactus.CounterInfo total_sent = 2 [json_name = "totalSent"];</code>
        */
-      public pactus.Network.CounterInfoOrBuilder getTotalSentOrBuilder() {
+      public pactus.NetworkOuterClass.CounterInfoOrBuilder getTotalSentOrBuilder() {
         if (totalSentBuilder_ != null) {
           return totalSentBuilder_.getMessageOrBuilder();
         } else {
           return totalSent_ == null ?
-              pactus.Network.CounterInfo.getDefaultInstance() : totalSent_;
+              pactus.NetworkOuterClass.CounterInfo.getDefaultInstance() : totalSent_;
         }
       }
       /**
@@ -11221,11 +11221,11 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>.pactus.CounterInfo total_sent = 2 [json_name = "totalSent"];</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder, pactus.Network.CounterInfoOrBuilder> 
+          pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder, pactus.NetworkOuterClass.CounterInfoOrBuilder> 
           internalGetTotalSentFieldBuilder() {
         if (totalSentBuilder_ == null) {
           totalSentBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder, pactus.Network.CounterInfoOrBuilder>(
+              pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder, pactus.NetworkOuterClass.CounterInfoOrBuilder>(
                   getTotalSent(),
                   getParentForChildren(),
                   isClean());
@@ -11234,9 +11234,9 @@ pactus.Network.CounterInfo defaultValue) {
         return totalSentBuilder_;
       }
 
-      private pactus.Network.CounterInfo totalReceived_;
+      private pactus.NetworkOuterClass.CounterInfo totalReceived_;
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder, pactus.Network.CounterInfoOrBuilder> totalReceivedBuilder_;
+          pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder, pactus.NetworkOuterClass.CounterInfoOrBuilder> totalReceivedBuilder_;
       /**
        * <pre>
        * Total number of bundles received.
@@ -11256,9 +11256,9 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>.pactus.CounterInfo total_received = 3 [json_name = "totalReceived"];</code>
        * @return The totalReceived.
        */
-      public pactus.Network.CounterInfo getTotalReceived() {
+      public pactus.NetworkOuterClass.CounterInfo getTotalReceived() {
         if (totalReceivedBuilder_ == null) {
-          return totalReceived_ == null ? pactus.Network.CounterInfo.getDefaultInstance() : totalReceived_;
+          return totalReceived_ == null ? pactus.NetworkOuterClass.CounterInfo.getDefaultInstance() : totalReceived_;
         } else {
           return totalReceivedBuilder_.getMessage();
         }
@@ -11270,7 +11270,7 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>.pactus.CounterInfo total_received = 3 [json_name = "totalReceived"];</code>
        */
-      public Builder setTotalReceived(pactus.Network.CounterInfo value) {
+      public Builder setTotalReceived(pactus.NetworkOuterClass.CounterInfo value) {
         if (totalReceivedBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -11291,7 +11291,7 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>.pactus.CounterInfo total_received = 3 [json_name = "totalReceived"];</code>
        */
       public Builder setTotalReceived(
-          pactus.Network.CounterInfo.Builder builderForValue) {
+          pactus.NetworkOuterClass.CounterInfo.Builder builderForValue) {
         if (totalReceivedBuilder_ == null) {
           totalReceived_ = builderForValue.build();
         } else {
@@ -11308,11 +11308,11 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>.pactus.CounterInfo total_received = 3 [json_name = "totalReceived"];</code>
        */
-      public Builder mergeTotalReceived(pactus.Network.CounterInfo value) {
+      public Builder mergeTotalReceived(pactus.NetworkOuterClass.CounterInfo value) {
         if (totalReceivedBuilder_ == null) {
           if (((bitField0_ & 0x00000004) != 0) &&
             totalReceived_ != null &&
-            totalReceived_ != pactus.Network.CounterInfo.getDefaultInstance()) {
+            totalReceived_ != pactus.NetworkOuterClass.CounterInfo.getDefaultInstance()) {
             getTotalReceivedBuilder().mergeFrom(value);
           } else {
             totalReceived_ = value;
@@ -11350,7 +11350,7 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>.pactus.CounterInfo total_received = 3 [json_name = "totalReceived"];</code>
        */
-      public pactus.Network.CounterInfo.Builder getTotalReceivedBuilder() {
+      public pactus.NetworkOuterClass.CounterInfo.Builder getTotalReceivedBuilder() {
         bitField0_ |= 0x00000004;
         onChanged();
         return internalGetTotalReceivedFieldBuilder().getBuilder();
@@ -11362,12 +11362,12 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>.pactus.CounterInfo total_received = 3 [json_name = "totalReceived"];</code>
        */
-      public pactus.Network.CounterInfoOrBuilder getTotalReceivedOrBuilder() {
+      public pactus.NetworkOuterClass.CounterInfoOrBuilder getTotalReceivedOrBuilder() {
         if (totalReceivedBuilder_ != null) {
           return totalReceivedBuilder_.getMessageOrBuilder();
         } else {
           return totalReceived_ == null ?
-              pactus.Network.CounterInfo.getDefaultInstance() : totalReceived_;
+              pactus.NetworkOuterClass.CounterInfo.getDefaultInstance() : totalReceived_;
         }
       }
       /**
@@ -11378,11 +11378,11 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>.pactus.CounterInfo total_received = 3 [json_name = "totalReceived"];</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder, pactus.Network.CounterInfoOrBuilder> 
+          pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder, pactus.NetworkOuterClass.CounterInfoOrBuilder> 
           internalGetTotalReceivedFieldBuilder() {
         if (totalReceivedBuilder_ == null) {
           totalReceivedBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder, pactus.Network.CounterInfoOrBuilder>(
+              pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder, pactus.NetworkOuterClass.CounterInfoOrBuilder>(
                   getTotalReceived(),
                   getParentForChildren(),
                   isClean());
@@ -11391,30 +11391,30 @@ pactus.Network.CounterInfo defaultValue) {
         return totalReceivedBuilder_;
       }
 
-      private static final class MessageSentConverter implements com.google.protobuf.MapFieldBuilder.Converter<java.lang.Integer, pactus.Network.CounterInfoOrBuilder, pactus.Network.CounterInfo> {
+      private static final class MessageSentConverter implements com.google.protobuf.MapFieldBuilder.Converter<java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder, pactus.NetworkOuterClass.CounterInfo> {
         @java.lang.Override
-        public pactus.Network.CounterInfo build(pactus.Network.CounterInfoOrBuilder val) {
-          if (val instanceof pactus.Network.CounterInfo) { return (pactus.Network.CounterInfo) val; }
-          return ((pactus.Network.CounterInfo.Builder) val).build();
+        public pactus.NetworkOuterClass.CounterInfo build(pactus.NetworkOuterClass.CounterInfoOrBuilder val) {
+          if (val instanceof pactus.NetworkOuterClass.CounterInfo) { return (pactus.NetworkOuterClass.CounterInfo) val; }
+          return ((pactus.NetworkOuterClass.CounterInfo.Builder) val).build();
         }
 
         @java.lang.Override
-        public com.google.protobuf.MapEntry<java.lang.Integer, pactus.Network.CounterInfo> defaultEntry() {
+        public com.google.protobuf.MapEntry<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> defaultEntry() {
           return MessageSentDefaultEntryHolder.defaultEntry;
         }
       };
       private static final MessageSentConverter messageSentConverter = new MessageSentConverter();
 
       private com.google.protobuf.MapFieldBuilder<
-          java.lang.Integer, pactus.Network.CounterInfoOrBuilder, pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder> messageSent_;
-      private com.google.protobuf.MapFieldBuilder<java.lang.Integer, pactus.Network.CounterInfoOrBuilder, pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder>
+          java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder, pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder> messageSent_;
+      private com.google.protobuf.MapFieldBuilder<java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder, pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder>
           internalGetMessageSent() {
         if (messageSent_ == null) {
           return new com.google.protobuf.MapFieldBuilder<>(messageSentConverter);
         }
         return messageSent_;
       }
-      private com.google.protobuf.MapFieldBuilder<java.lang.Integer, pactus.Network.CounterInfoOrBuilder, pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder>
+      private com.google.protobuf.MapFieldBuilder<java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder, pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder>
           internalGetMutableMessageSent() {
         if (messageSent_ == null) {
           messageSent_ = new com.google.protobuf.MapFieldBuilder<>(messageSentConverter);
@@ -11444,7 +11444,7 @@ pactus.Network.CounterInfo defaultValue) {
        */
       @java.lang.Override
       @java.lang.Deprecated
-      public java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> getMessageSent() {
+      public java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> getMessageSent() {
         return getMessageSentMap();
       }
       /**
@@ -11455,7 +11455,7 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>map&lt;int32, .pactus.CounterInfo&gt; message_sent = 4 [json_name = "messageSent"];</code>
        */
       @java.lang.Override
-      public java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> getMessageSentMap() {
+      public java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> getMessageSentMap() {
         return internalGetMessageSent().getImmutableMap();
       }
       /**
@@ -11467,12 +11467,12 @@ pactus.Network.CounterInfo defaultValue) {
        */
       @java.lang.Override
       public /* nullable */
-pactus.Network.CounterInfo getMessageSentOrDefault(
+pactus.NetworkOuterClass.CounterInfo getMessageSentOrDefault(
           int key,
           /* nullable */
-pactus.Network.CounterInfo defaultValue) {
+pactus.NetworkOuterClass.CounterInfo defaultValue) {
 
-        java.util.Map<java.lang.Integer, pactus.Network.CounterInfoOrBuilder> map = internalGetMutableMessageSent().ensureBuilderMap();
+        java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder> map = internalGetMutableMessageSent().ensureBuilderMap();
         return map.containsKey(key) ? messageSentConverter.build(map.get(key)) : defaultValue;
       }
       /**
@@ -11483,10 +11483,10 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>map&lt;int32, .pactus.CounterInfo&gt; message_sent = 4 [json_name = "messageSent"];</code>
        */
       @java.lang.Override
-      public pactus.Network.CounterInfo getMessageSentOrThrow(
+      public pactus.NetworkOuterClass.CounterInfo getMessageSentOrThrow(
           int key) {
 
-        java.util.Map<java.lang.Integer, pactus.Network.CounterInfoOrBuilder> map = internalGetMutableMessageSent().ensureBuilderMap();
+        java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder> map = internalGetMutableMessageSent().ensureBuilderMap();
         if (!map.containsKey(key)) {
           throw new java.lang.IllegalArgumentException();
         }
@@ -11515,7 +11515,7 @@ pactus.Network.CounterInfo defaultValue) {
        * Use alternate mutation accessors instead.
        */
       @java.lang.Deprecated
-      public java.util.Map<java.lang.Integer, pactus.Network.CounterInfo>
+      public java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>
           getMutableMessageSent() {
         bitField0_ |= 0x00000008;
         return internalGetMutableMessageSent().ensureMessageMap();
@@ -11529,7 +11529,7 @@ pactus.Network.CounterInfo defaultValue) {
        */
       public Builder putMessageSent(
           int key,
-          pactus.Network.CounterInfo value) {
+          pactus.NetworkOuterClass.CounterInfo value) {
 
         if (value == null) { throw new NullPointerException("map value"); }
         internalGetMutableMessageSent().ensureBuilderMap()
@@ -11545,8 +11545,8 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>map&lt;int32, .pactus.CounterInfo&gt; message_sent = 4 [json_name = "messageSent"];</code>
        */
       public Builder putAllMessageSent(
-          java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> values) {
-        for (java.util.Map.Entry<java.lang.Integer, pactus.Network.CounterInfo> e : values.entrySet()) {
+          java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> values) {
+        for (java.util.Map.Entry<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> e : values.entrySet()) {
           if (e.getKey() == null || e.getValue() == null) {
             throw new NullPointerException();
           }
@@ -11563,45 +11563,45 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>map&lt;int32, .pactus.CounterInfo&gt; message_sent = 4 [json_name = "messageSent"];</code>
        */
-      public pactus.Network.CounterInfo.Builder putMessageSentBuilderIfAbsent(
+      public pactus.NetworkOuterClass.CounterInfo.Builder putMessageSentBuilderIfAbsent(
           int key) {
-        java.util.Map<java.lang.Integer, pactus.Network.CounterInfoOrBuilder> builderMap = internalGetMutableMessageSent().ensureBuilderMap();
-        pactus.Network.CounterInfoOrBuilder entry = builderMap.get(key);
+        java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder> builderMap = internalGetMutableMessageSent().ensureBuilderMap();
+        pactus.NetworkOuterClass.CounterInfoOrBuilder entry = builderMap.get(key);
         if (entry == null) {
-          entry = pactus.Network.CounterInfo.newBuilder();
+          entry = pactus.NetworkOuterClass.CounterInfo.newBuilder();
           builderMap.put(key, entry);
         }
-        if (entry instanceof pactus.Network.CounterInfo) {
-          entry = ((pactus.Network.CounterInfo) entry).toBuilder();
+        if (entry instanceof pactus.NetworkOuterClass.CounterInfo) {
+          entry = ((pactus.NetworkOuterClass.CounterInfo) entry).toBuilder();
           builderMap.put(key, entry);
         }
-        return (pactus.Network.CounterInfo.Builder) entry;
+        return (pactus.NetworkOuterClass.CounterInfo.Builder) entry;
       }
 
-      private static final class MessageReceivedConverter implements com.google.protobuf.MapFieldBuilder.Converter<java.lang.Integer, pactus.Network.CounterInfoOrBuilder, pactus.Network.CounterInfo> {
+      private static final class MessageReceivedConverter implements com.google.protobuf.MapFieldBuilder.Converter<java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder, pactus.NetworkOuterClass.CounterInfo> {
         @java.lang.Override
-        public pactus.Network.CounterInfo build(pactus.Network.CounterInfoOrBuilder val) {
-          if (val instanceof pactus.Network.CounterInfo) { return (pactus.Network.CounterInfo) val; }
-          return ((pactus.Network.CounterInfo.Builder) val).build();
+        public pactus.NetworkOuterClass.CounterInfo build(pactus.NetworkOuterClass.CounterInfoOrBuilder val) {
+          if (val instanceof pactus.NetworkOuterClass.CounterInfo) { return (pactus.NetworkOuterClass.CounterInfo) val; }
+          return ((pactus.NetworkOuterClass.CounterInfo.Builder) val).build();
         }
 
         @java.lang.Override
-        public com.google.protobuf.MapEntry<java.lang.Integer, pactus.Network.CounterInfo> defaultEntry() {
+        public com.google.protobuf.MapEntry<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> defaultEntry() {
           return MessageReceivedDefaultEntryHolder.defaultEntry;
         }
       };
       private static final MessageReceivedConverter messageReceivedConverter = new MessageReceivedConverter();
 
       private com.google.protobuf.MapFieldBuilder<
-          java.lang.Integer, pactus.Network.CounterInfoOrBuilder, pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder> messageReceived_;
-      private com.google.protobuf.MapFieldBuilder<java.lang.Integer, pactus.Network.CounterInfoOrBuilder, pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder>
+          java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder, pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder> messageReceived_;
+      private com.google.protobuf.MapFieldBuilder<java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder, pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder>
           internalGetMessageReceived() {
         if (messageReceived_ == null) {
           return new com.google.protobuf.MapFieldBuilder<>(messageReceivedConverter);
         }
         return messageReceived_;
       }
-      private com.google.protobuf.MapFieldBuilder<java.lang.Integer, pactus.Network.CounterInfoOrBuilder, pactus.Network.CounterInfo, pactus.Network.CounterInfo.Builder>
+      private com.google.protobuf.MapFieldBuilder<java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder, pactus.NetworkOuterClass.CounterInfo, pactus.NetworkOuterClass.CounterInfo.Builder>
           internalGetMutableMessageReceived() {
         if (messageReceived_ == null) {
           messageReceived_ = new com.google.protobuf.MapFieldBuilder<>(messageReceivedConverter);
@@ -11631,7 +11631,7 @@ pactus.Network.CounterInfo defaultValue) {
        */
       @java.lang.Override
       @java.lang.Deprecated
-      public java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> getMessageReceived() {
+      public java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> getMessageReceived() {
         return getMessageReceivedMap();
       }
       /**
@@ -11642,7 +11642,7 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>map&lt;int32, .pactus.CounterInfo&gt; message_received = 5 [json_name = "messageReceived"];</code>
        */
       @java.lang.Override
-      public java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> getMessageReceivedMap() {
+      public java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> getMessageReceivedMap() {
         return internalGetMessageReceived().getImmutableMap();
       }
       /**
@@ -11654,12 +11654,12 @@ pactus.Network.CounterInfo defaultValue) {
        */
       @java.lang.Override
       public /* nullable */
-pactus.Network.CounterInfo getMessageReceivedOrDefault(
+pactus.NetworkOuterClass.CounterInfo getMessageReceivedOrDefault(
           int key,
           /* nullable */
-pactus.Network.CounterInfo defaultValue) {
+pactus.NetworkOuterClass.CounterInfo defaultValue) {
 
-        java.util.Map<java.lang.Integer, pactus.Network.CounterInfoOrBuilder> map = internalGetMutableMessageReceived().ensureBuilderMap();
+        java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder> map = internalGetMutableMessageReceived().ensureBuilderMap();
         return map.containsKey(key) ? messageReceivedConverter.build(map.get(key)) : defaultValue;
       }
       /**
@@ -11670,10 +11670,10 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>map&lt;int32, .pactus.CounterInfo&gt; message_received = 5 [json_name = "messageReceived"];</code>
        */
       @java.lang.Override
-      public pactus.Network.CounterInfo getMessageReceivedOrThrow(
+      public pactus.NetworkOuterClass.CounterInfo getMessageReceivedOrThrow(
           int key) {
 
-        java.util.Map<java.lang.Integer, pactus.Network.CounterInfoOrBuilder> map = internalGetMutableMessageReceived().ensureBuilderMap();
+        java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder> map = internalGetMutableMessageReceived().ensureBuilderMap();
         if (!map.containsKey(key)) {
           throw new java.lang.IllegalArgumentException();
         }
@@ -11702,7 +11702,7 @@ pactus.Network.CounterInfo defaultValue) {
        * Use alternate mutation accessors instead.
        */
       @java.lang.Deprecated
-      public java.util.Map<java.lang.Integer, pactus.Network.CounterInfo>
+      public java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo>
           getMutableMessageReceived() {
         bitField0_ |= 0x00000010;
         return internalGetMutableMessageReceived().ensureMessageMap();
@@ -11716,7 +11716,7 @@ pactus.Network.CounterInfo defaultValue) {
        */
       public Builder putMessageReceived(
           int key,
-          pactus.Network.CounterInfo value) {
+          pactus.NetworkOuterClass.CounterInfo value) {
 
         if (value == null) { throw new NullPointerException("map value"); }
         internalGetMutableMessageReceived().ensureBuilderMap()
@@ -11732,8 +11732,8 @@ pactus.Network.CounterInfo defaultValue) {
        * <code>map&lt;int32, .pactus.CounterInfo&gt; message_received = 5 [json_name = "messageReceived"];</code>
        */
       public Builder putAllMessageReceived(
-          java.util.Map<java.lang.Integer, pactus.Network.CounterInfo> values) {
-        for (java.util.Map.Entry<java.lang.Integer, pactus.Network.CounterInfo> e : values.entrySet()) {
+          java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> values) {
+        for (java.util.Map.Entry<java.lang.Integer, pactus.NetworkOuterClass.CounterInfo> e : values.entrySet()) {
           if (e.getKey() == null || e.getValue() == null) {
             throw new NullPointerException();
           }
@@ -11750,31 +11750,31 @@ pactus.Network.CounterInfo defaultValue) {
        *
        * <code>map&lt;int32, .pactus.CounterInfo&gt; message_received = 5 [json_name = "messageReceived"];</code>
        */
-      public pactus.Network.CounterInfo.Builder putMessageReceivedBuilderIfAbsent(
+      public pactus.NetworkOuterClass.CounterInfo.Builder putMessageReceivedBuilderIfAbsent(
           int key) {
-        java.util.Map<java.lang.Integer, pactus.Network.CounterInfoOrBuilder> builderMap = internalGetMutableMessageReceived().ensureBuilderMap();
-        pactus.Network.CounterInfoOrBuilder entry = builderMap.get(key);
+        java.util.Map<java.lang.Integer, pactus.NetworkOuterClass.CounterInfoOrBuilder> builderMap = internalGetMutableMessageReceived().ensureBuilderMap();
+        pactus.NetworkOuterClass.CounterInfoOrBuilder entry = builderMap.get(key);
         if (entry == null) {
-          entry = pactus.Network.CounterInfo.newBuilder();
+          entry = pactus.NetworkOuterClass.CounterInfo.newBuilder();
           builderMap.put(key, entry);
         }
-        if (entry instanceof pactus.Network.CounterInfo) {
-          entry = ((pactus.Network.CounterInfo) entry).toBuilder();
+        if (entry instanceof pactus.NetworkOuterClass.CounterInfo) {
+          entry = ((pactus.NetworkOuterClass.CounterInfo) entry).toBuilder();
           builderMap.put(key, entry);
         }
-        return (pactus.Network.CounterInfo.Builder) entry;
+        return (pactus.NetworkOuterClass.CounterInfo.Builder) entry;
       }
 
       // @@protoc_insertion_point(builder_scope:pactus.MetricInfo)
     }
 
     // @@protoc_insertion_point(class_scope:pactus.MetricInfo)
-    private static final pactus.Network.MetricInfo DEFAULT_INSTANCE;
+    private static final pactus.NetworkOuterClass.MetricInfo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Network.MetricInfo();
+      DEFAULT_INSTANCE = new pactus.NetworkOuterClass.MetricInfo();
     }
 
-    public static pactus.Network.MetricInfo getDefaultInstance() {
+    public static pactus.NetworkOuterClass.MetricInfo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -11810,7 +11810,7 @@ pactus.Network.CounterInfo defaultValue) {
     }
 
     @java.lang.Override
-    public pactus.Network.MetricInfo getDefaultInstanceForType() {
+    public pactus.NetworkOuterClass.MetricInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -11870,15 +11870,15 @@ pactus.Network.CounterInfo defaultValue) {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Network.internal_static_pactus_CounterInfo_descriptor;
+      return pactus.NetworkOuterClass.internal_static_pactus_CounterInfo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Network.internal_static_pactus_CounterInfo_fieldAccessorTable
+      return pactus.NetworkOuterClass.internal_static_pactus_CounterInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Network.CounterInfo.class, pactus.Network.CounterInfo.Builder.class);
+              pactus.NetworkOuterClass.CounterInfo.class, pactus.NetworkOuterClass.CounterInfo.Builder.class);
     }
 
     public static final int BYTES_FIELD_NUMBER = 1;
@@ -11958,10 +11958,10 @@ pactus.Network.CounterInfo defaultValue) {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Network.CounterInfo)) {
+      if (!(obj instanceof pactus.NetworkOuterClass.CounterInfo)) {
         return super.equals(obj);
       }
-      pactus.Network.CounterInfo other = (pactus.Network.CounterInfo) obj;
+      pactus.NetworkOuterClass.CounterInfo other = (pactus.NetworkOuterClass.CounterInfo) obj;
 
       if (getBytes()
           != other.getBytes()) return false;
@@ -11989,44 +11989,44 @@ pactus.Network.CounterInfo defaultValue) {
       return hash;
     }
 
-    public static pactus.Network.CounterInfo parseFrom(
+    public static pactus.NetworkOuterClass.CounterInfo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.CounterInfo parseFrom(
+    public static pactus.NetworkOuterClass.CounterInfo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.CounterInfo parseFrom(
+    public static pactus.NetworkOuterClass.CounterInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.CounterInfo parseFrom(
+    public static pactus.NetworkOuterClass.CounterInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.CounterInfo parseFrom(byte[] data)
+    public static pactus.NetworkOuterClass.CounterInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Network.CounterInfo parseFrom(
+    public static pactus.NetworkOuterClass.CounterInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Network.CounterInfo parseFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.CounterInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.CounterInfo parseFrom(
+    public static pactus.NetworkOuterClass.CounterInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -12034,26 +12034,26 @@ pactus.Network.CounterInfo defaultValue) {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Network.CounterInfo parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.NetworkOuterClass.CounterInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Network.CounterInfo parseDelimitedFrom(
+    public static pactus.NetworkOuterClass.CounterInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Network.CounterInfo parseFrom(
+    public static pactus.NetworkOuterClass.CounterInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Network.CounterInfo parseFrom(
+    public static pactus.NetworkOuterClass.CounterInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -12066,7 +12066,7 @@ pactus.Network.CounterInfo defaultValue) {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Network.CounterInfo prototype) {
+    public static Builder newBuilder(pactus.NetworkOuterClass.CounterInfo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -12091,21 +12091,21 @@ pactus.Network.CounterInfo defaultValue) {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.CounterInfo)
-        pactus.Network.CounterInfoOrBuilder {
+        pactus.NetworkOuterClass.CounterInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Network.internal_static_pactus_CounterInfo_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_CounterInfo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Network.internal_static_pactus_CounterInfo_fieldAccessorTable
+        return pactus.NetworkOuterClass.internal_static_pactus_CounterInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Network.CounterInfo.class, pactus.Network.CounterInfo.Builder.class);
+                pactus.NetworkOuterClass.CounterInfo.class, pactus.NetworkOuterClass.CounterInfo.Builder.class);
       }
 
-      // Construct using pactus.Network.CounterInfo.newBuilder()
+      // Construct using pactus.NetworkOuterClass.CounterInfo.newBuilder()
       private Builder() {
 
       }
@@ -12127,17 +12127,17 @@ pactus.Network.CounterInfo defaultValue) {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Network.internal_static_pactus_CounterInfo_descriptor;
+        return pactus.NetworkOuterClass.internal_static_pactus_CounterInfo_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Network.CounterInfo getDefaultInstanceForType() {
-        return pactus.Network.CounterInfo.getDefaultInstance();
+      public pactus.NetworkOuterClass.CounterInfo getDefaultInstanceForType() {
+        return pactus.NetworkOuterClass.CounterInfo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Network.CounterInfo build() {
-        pactus.Network.CounterInfo result = buildPartial();
+      public pactus.NetworkOuterClass.CounterInfo build() {
+        pactus.NetworkOuterClass.CounterInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -12145,14 +12145,14 @@ pactus.Network.CounterInfo defaultValue) {
       }
 
       @java.lang.Override
-      public pactus.Network.CounterInfo buildPartial() {
-        pactus.Network.CounterInfo result = new pactus.Network.CounterInfo(this);
+      public pactus.NetworkOuterClass.CounterInfo buildPartial() {
+        pactus.NetworkOuterClass.CounterInfo result = new pactus.NetworkOuterClass.CounterInfo(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Network.CounterInfo result) {
+      private void buildPartial0(pactus.NetworkOuterClass.CounterInfo result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.bytes_ = bytes_;
@@ -12164,16 +12164,16 @@ pactus.Network.CounterInfo defaultValue) {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Network.CounterInfo) {
-          return mergeFrom((pactus.Network.CounterInfo)other);
+        if (other instanceof pactus.NetworkOuterClass.CounterInfo) {
+          return mergeFrom((pactus.NetworkOuterClass.CounterInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Network.CounterInfo other) {
-        if (other == pactus.Network.CounterInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.NetworkOuterClass.CounterInfo other) {
+        if (other == pactus.NetworkOuterClass.CounterInfo.getDefaultInstance()) return this;
         if (other.getBytes() != 0L) {
           setBytes(other.getBytes());
         }
@@ -12325,12 +12325,12 @@ pactus.Network.CounterInfo defaultValue) {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.CounterInfo)
-    private static final pactus.Network.CounterInfo DEFAULT_INSTANCE;
+    private static final pactus.NetworkOuterClass.CounterInfo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Network.CounterInfo();
+      DEFAULT_INSTANCE = new pactus.NetworkOuterClass.CounterInfo();
     }
 
-    public static pactus.Network.CounterInfo getDefaultInstance() {
+    public static pactus.NetworkOuterClass.CounterInfo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -12366,7 +12366,7 @@ pactus.Network.CounterInfo defaultValue) {
     }
 
     @java.lang.Override
-    public pactus.Network.CounterInfo getDefaultInstanceForType() {
+    public pactus.NetworkOuterClass.CounterInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -12490,13 +12490,13 @@ pactus.Network.CounterInfo defaultValue) {
       "\032W\n\024MessageReceivedEntry\022\020\n\003key\030\001 \001(\005R\003k" +
       "ey\022)\n\005value\030\002 \001(\0132\023.pactus.CounterInfoR\005" +
       "value:\0028\001\"=\n\013CounterInfo\022\024\n\005bytes\030\001 \001(\004R" +
-      "\005bytes\022\030\n\007bundles\030\002 \001(\004R\007bundles2\251\001\n\016Net" +
-      "workService\022O\n\016GetNetworkInfo\022\035.pactus.G" +
-      "etNetworkInfoRequest\032\036.pactus.GetNetwork" +
-      "InfoResponse\022F\n\013GetNodeInfo\022\032.pactus.Get" +
-      "NodeInfoRequest\032\033.pactus.GetNodeInfoResp" +
-      "onseB:\n\006pactusZ0github.com/pactus-projec" +
-      "t/pactus/www/grpc/pactusb\006proto3"
+      "\005bytes\022\030\n\007bundles\030\002 \001(\004R\007bundles2\242\001\n\007Net" +
+      "work\022O\n\016GetNetworkInfo\022\035.pactus.GetNetwo" +
+      "rkInfoRequest\032\036.pactus.GetNetworkInfoRes" +
+      "ponse\022F\n\013GetNodeInfo\022\032.pactus.GetNodeInf" +
+      "oRequest\032\033.pactus.GetNodeInfoResponseB:\n" +
+      "\006pactusZ0github.com/pactus-project/pactu" +
+      "s/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

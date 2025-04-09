@@ -30,9 +30,9 @@ type Server struct {
 	grpcClient  *grpc.ClientConn
 	enableAuth  bool
 	httpServer  *http.Server
-	blockchain  pactus.BlockchainServiceClient
-	transaction pactus.TransactionServiceClient
-	network     pactus.NetworkServiceClient
+	blockchain  pactus.BlockchainClient
+	transaction pactus.TransactionClient
+	network     pactus.NetworkClient
 	listener    net.Listener
 	logger      *logger.SubLogger
 }
@@ -74,9 +74,9 @@ func (s *Server) StartServer(grpcServer string) error {
 	}
 
 	s.grpcClient = conn
-	s.blockchain = pactus.NewBlockchainServiceClient(conn)
-	s.transaction = pactus.NewTransactionServiceClient(conn)
-	s.network = pactus.NewNetworkServiceClient(conn)
+	s.blockchain = pactus.NewBlockchainClient(conn)
+	s.transaction = pactus.NewTransactionClient(conn)
+	s.network = pactus.NewNetworkClient(conn)
 
 	s.router = mux.NewRouter()
 	s.router.HandleFunc("/", s.RootHandler)

@@ -5,7 +5,7 @@ import grpc
 import utils_pb2 as utils__pb2
 
 
-class UtilsServiceStub(object):
+class UtilsStub(object):
     """Utils service defines RPC methods for utility functions such as message
     signing, verification, and etc.
     """
@@ -17,28 +17,28 @@ class UtilsServiceStub(object):
             channel: A grpc.Channel.
         """
         self.SignMessageWithPrivateKey = channel.unary_unary(
-                '/pactus.UtilsService/SignMessageWithPrivateKey',
+                '/pactus.Utils/SignMessageWithPrivateKey',
                 request_serializer=utils__pb2.SignMessageWithPrivateKeyRequest.SerializeToString,
                 response_deserializer=utils__pb2.SignMessageWithPrivateKeyResponse.FromString,
                 _registered_method=True)
         self.VerifyMessage = channel.unary_unary(
-                '/pactus.UtilsService/VerifyMessage',
+                '/pactus.Utils/VerifyMessage',
                 request_serializer=utils__pb2.VerifyMessageRequest.SerializeToString,
                 response_deserializer=utils__pb2.VerifyMessageResponse.FromString,
                 _registered_method=True)
         self.PublicKeyAggregation = channel.unary_unary(
-                '/pactus.UtilsService/PublicKeyAggregation',
+                '/pactus.Utils/PublicKeyAggregation',
                 request_serializer=utils__pb2.PublicKeyAggregationRequest.SerializeToString,
                 response_deserializer=utils__pb2.PublicKeyAggregationResponse.FromString,
                 _registered_method=True)
         self.SignatureAggregation = channel.unary_unary(
-                '/pactus.UtilsService/SignatureAggregation',
+                '/pactus.Utils/SignatureAggregation',
                 request_serializer=utils__pb2.SignatureAggregationRequest.SerializeToString,
                 response_deserializer=utils__pb2.SignatureAggregationResponse.FromString,
                 _registered_method=True)
 
 
-class UtilsServiceServicer(object):
+class UtilsServicer(object):
     """Utils service defines RPC methods for utility functions such as message
     signing, verification, and etc.
     """
@@ -72,7 +72,7 @@ class UtilsServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_UtilsServiceServicer_to_server(servicer, server):
+def add_UtilsServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'SignMessageWithPrivateKey': grpc.unary_unary_rpc_method_handler(
                     servicer.SignMessageWithPrivateKey,
@@ -96,13 +96,13 @@ def add_UtilsServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'pactus.UtilsService', rpc_method_handlers)
+            'pactus.Utils', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('pactus.UtilsService', rpc_method_handlers)
+    server.add_registered_method_handlers('pactus.Utils', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class UtilsService(object):
+class Utils(object):
     """Utils service defines RPC methods for utility functions such as message
     signing, verification, and etc.
     """
@@ -121,7 +121,7 @@ class UtilsService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.UtilsService/SignMessageWithPrivateKey',
+            '/pactus.Utils/SignMessageWithPrivateKey',
             utils__pb2.SignMessageWithPrivateKeyRequest.SerializeToString,
             utils__pb2.SignMessageWithPrivateKeyResponse.FromString,
             options,
@@ -148,7 +148,7 @@ class UtilsService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.UtilsService/VerifyMessage',
+            '/pactus.Utils/VerifyMessage',
             utils__pb2.VerifyMessageRequest.SerializeToString,
             utils__pb2.VerifyMessageResponse.FromString,
             options,
@@ -175,7 +175,7 @@ class UtilsService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.UtilsService/PublicKeyAggregation',
+            '/pactus.Utils/PublicKeyAggregation',
             utils__pb2.PublicKeyAggregationRequest.SerializeToString,
             utils__pb2.PublicKeyAggregationResponse.FromString,
             options,
@@ -202,7 +202,7 @@ class UtilsService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.UtilsService/SignatureAggregation',
+            '/pactus.Utils/SignatureAggregation',
             utils__pb2.SignatureAggregationRequest.SerializeToString,
             utils__pb2.SignatureAggregationResponse.FromString,
             options,

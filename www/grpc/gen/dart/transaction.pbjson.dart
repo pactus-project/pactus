@@ -363,7 +363,7 @@ final $typed_data.Uint8List decodeRawTransactionResponseDescriptor = $convert.ba
     'FjdHVzLlRyYW5zYWN0aW9uSW5mb1ILdHJhbnNhY3Rpb24=');
 
 const $core.Map<$core.String, $core.dynamic> TransactionServiceBase$json = {
-  '1': 'TransactionService',
+  '1': 'Transaction',
   '2': [
     {'1': 'GetTransaction', '2': '.pactus.GetTransactionRequest', '3': '.pactus.GetTransactionResponse'},
     {'1': 'CalculateFee', '2': '.pactus.CalculateFeeRequest', '3': '.pactus.CalculateFeeResponse'},
@@ -399,21 +399,21 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Transactio
   '.pactus.DecodeRawTransactionResponse': DecodeRawTransactionResponse$json,
 };
 
-/// Descriptor for `TransactionService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
+/// Descriptor for `Transaction`. Decode as a `google.protobuf.ServiceDescriptorProto`.
 final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode(
-    'ChJUcmFuc2FjdGlvblNlcnZpY2USTwoOR2V0VHJhbnNhY3Rpb24SHS5wYWN0dXMuR2V0VHJhbn'
-    'NhY3Rpb25SZXF1ZXN0Gh4ucGFjdHVzLkdldFRyYW5zYWN0aW9uUmVzcG9uc2USSQoMQ2FsY3Vs'
-    'YXRlRmVlEhsucGFjdHVzLkNhbGN1bGF0ZUZlZVJlcXVlc3QaHC5wYWN0dXMuQ2FsY3VsYXRlRm'
-    'VlUmVzcG9uc2USYQoUQnJvYWRjYXN0VHJhbnNhY3Rpb24SIy5wYWN0dXMuQnJvYWRjYXN0VHJh'
-    'bnNhY3Rpb25SZXF1ZXN0GiQucGFjdHVzLkJyb2FkY2FzdFRyYW5zYWN0aW9uUmVzcG9uc2USaA'
-    'oZR2V0UmF3VHJhbnNmZXJUcmFuc2FjdGlvbhIoLnBhY3R1cy5HZXRSYXdUcmFuc2ZlclRyYW5z'
-    'YWN0aW9uUmVxdWVzdBohLnBhY3R1cy5HZXRSYXdUcmFuc2FjdGlvblJlc3BvbnNlEmAKFUdldF'
-    'Jhd0JvbmRUcmFuc2FjdGlvbhIkLnBhY3R1cy5HZXRSYXdCb25kVHJhbnNhY3Rpb25SZXF1ZXN0'
-    'GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2USZAoXR2V0UmF3VW5ib25kVHJhbn'
-    'NhY3Rpb24SJi5wYWN0dXMuR2V0UmF3VW5ib25kVHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVz'
-    'LkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2USaAoZR2V0UmF3V2l0aGRyYXdUcmFuc2FjdGlvbh'
-    'IoLnBhY3R1cy5HZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uUmVxdWVzdBohLnBhY3R1cy5HZXRS'
-    'YXdUcmFuc2FjdGlvblJlc3BvbnNlEmEKFERlY29kZVJhd1RyYW5zYWN0aW9uEiMucGFjdHVzLk'
-    'RlY29kZVJhd1RyYW5zYWN0aW9uUmVxdWVzdBokLnBhY3R1cy5EZWNvZGVSYXdUcmFuc2FjdGlv'
-    'blJlc3BvbnNl');
+    'CgtUcmFuc2FjdGlvbhJPCg5HZXRUcmFuc2FjdGlvbhIdLnBhY3R1cy5HZXRUcmFuc2FjdGlvbl'
+    'JlcXVlc3QaHi5wYWN0dXMuR2V0VHJhbnNhY3Rpb25SZXNwb25zZRJJCgxDYWxjdWxhdGVGZWUS'
+    'Gy5wYWN0dXMuQ2FsY3VsYXRlRmVlUmVxdWVzdBocLnBhY3R1cy5DYWxjdWxhdGVGZWVSZXNwb2'
+    '5zZRJhChRCcm9hZGNhc3RUcmFuc2FjdGlvbhIjLnBhY3R1cy5Ccm9hZGNhc3RUcmFuc2FjdGlv'
+    'blJlcXVlc3QaJC5wYWN0dXMuQnJvYWRjYXN0VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYX'
+    'dUcmFuc2ZlclRyYW5zYWN0aW9uEigucGFjdHVzLkdldFJhd1RyYW5zZmVyVHJhbnNhY3Rpb25S'
+    'ZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5zYWN0aW9uUmVzcG9uc2USYAoVR2V0UmF3Qm9uZF'
+    'RyYW5zYWN0aW9uEiQucGFjdHVzLkdldFJhd0JvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0'
+    'dXMuR2V0UmF3VHJhbnNhY3Rpb25SZXNwb25zZRJkChdHZXRSYXdVbmJvbmRUcmFuc2FjdGlvbh'
+    'ImLnBhY3R1cy5HZXRSYXdVbmJvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3'
+    'VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uEigucGFjdH'
+    'VzLkdldFJhd1dpdGhkcmF3VHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5z'
+    'YWN0aW9uUmVzcG9uc2USYQoURGVjb2RlUmF3VHJhbnNhY3Rpb24SIy5wYWN0dXMuRGVjb2RlUm'
+    'F3VHJhbnNhY3Rpb25SZXF1ZXN0GiQucGFjdHVzLkRlY29kZVJhd1RyYW5zYWN0aW9uUmVzcG9u'
+    'c2U=');
 

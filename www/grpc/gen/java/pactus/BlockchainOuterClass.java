@@ -5,8 +5,8 @@
 
 package pactus;
 
-public final class Blockchain {
-  private Blockchain() {}
+public final class BlockchainOuterClass {
+  private BlockchainOuterClass() {}
   static {
     com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
       com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
@@ -14,7 +14,7 @@ public final class Blockchain {
       /* minor= */ 30,
       /* patch= */ 2,
       /* suffix= */ "",
-      Blockchain.class.getName());
+      BlockchainOuterClass.class.getName());
   }
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
@@ -155,7 +155,7 @@ public final class Blockchain {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return pactus.Blockchain.getDescriptor().getEnumTypes().get(0);
+      return pactus.BlockchainOuterClass.getDescriptor().getEnumTypes().get(0);
     }
 
     private static final BlockVerbosity[] VALUES = values();
@@ -360,7 +360,7 @@ public final class Blockchain {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return pactus.Blockchain.getDescriptor().getEnumTypes().get(1);
+      return pactus.BlockchainOuterClass.getDescriptor().getEnumTypes().get(1);
     }
 
     private static final VoteType[] VALUES = values();
@@ -441,15 +441,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetAccountRequest_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetAccountRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetAccountRequest_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetAccountRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetAccountRequest.class, pactus.Blockchain.GetAccountRequest.Builder.class);
+              pactus.BlockchainOuterClass.GetAccountRequest.class, pactus.BlockchainOuterClass.GetAccountRequest.Builder.class);
     }
 
     public static final int ADDRESS_FIELD_NUMBER = 1;
@@ -538,10 +538,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetAccountRequest)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetAccountRequest)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetAccountRequest other = (pactus.Blockchain.GetAccountRequest) obj;
+      pactus.BlockchainOuterClass.GetAccountRequest other = (pactus.BlockchainOuterClass.GetAccountRequest) obj;
 
       if (!getAddress()
           .equals(other.getAddress())) return false;
@@ -563,44 +563,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetAccountRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetAccountRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetAccountRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetAccountRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetAccountRequest parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetAccountRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetAccountRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetAccountRequest parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetAccountRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetAccountRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -608,26 +608,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetAccountRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetAccountRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetAccountRequest parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetAccountRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetAccountRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetAccountRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -640,7 +640,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetAccountRequest prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetAccountRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -665,21 +665,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetAccountRequest)
-        pactus.Blockchain.GetAccountRequestOrBuilder {
+        pactus.BlockchainOuterClass.GetAccountRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetAccountRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetAccountRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetAccountRequest_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetAccountRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetAccountRequest.class, pactus.Blockchain.GetAccountRequest.Builder.class);
+                pactus.BlockchainOuterClass.GetAccountRequest.class, pactus.BlockchainOuterClass.GetAccountRequest.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetAccountRequest.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetAccountRequest.newBuilder()
       private Builder() {
 
       }
@@ -700,17 +700,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetAccountRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetAccountRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetAccountRequest getDefaultInstanceForType() {
-        return pactus.Blockchain.GetAccountRequest.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetAccountRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetAccountRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetAccountRequest build() {
-        pactus.Blockchain.GetAccountRequest result = buildPartial();
+      public pactus.BlockchainOuterClass.GetAccountRequest build() {
+        pactus.BlockchainOuterClass.GetAccountRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -718,14 +718,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetAccountRequest buildPartial() {
-        pactus.Blockchain.GetAccountRequest result = new pactus.Blockchain.GetAccountRequest(this);
+      public pactus.BlockchainOuterClass.GetAccountRequest buildPartial() {
+        pactus.BlockchainOuterClass.GetAccountRequest result = new pactus.BlockchainOuterClass.GetAccountRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetAccountRequest result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetAccountRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.address_ = address_;
@@ -734,16 +734,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetAccountRequest) {
-          return mergeFrom((pactus.Blockchain.GetAccountRequest)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetAccountRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetAccountRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetAccountRequest other) {
-        if (other == pactus.Blockchain.GetAccountRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetAccountRequest other) {
+        if (other == pactus.BlockchainOuterClass.GetAccountRequest.getDefaultInstance()) return this;
         if (!other.getAddress().isEmpty()) {
           address_ = other.address_;
           bitField0_ |= 0x00000001;
@@ -893,12 +893,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetAccountRequest)
-    private static final pactus.Blockchain.GetAccountRequest DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetAccountRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetAccountRequest();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetAccountRequest();
     }
 
-    public static pactus.Blockchain.GetAccountRequest getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetAccountRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -934,7 +934,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetAccountRequest getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetAccountRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -961,7 +961,7 @@ public final class Blockchain {
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
      * @return The account.
      */
-    pactus.Blockchain.AccountInfo getAccount();
+    pactus.BlockchainOuterClass.AccountInfo getAccount();
     /**
      * <pre>
      * Detailed information about the account.
@@ -969,7 +969,7 @@ public final class Blockchain {
      *
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
      */
-    pactus.Blockchain.AccountInfoOrBuilder getAccountOrBuilder();
+    pactus.BlockchainOuterClass.AccountInfoOrBuilder getAccountOrBuilder();
   }
   /**
    * <pre>
@@ -1001,20 +1001,20 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetAccountResponse_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetAccountResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetAccountResponse_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetAccountResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetAccountResponse.class, pactus.Blockchain.GetAccountResponse.Builder.class);
+              pactus.BlockchainOuterClass.GetAccountResponse.class, pactus.BlockchainOuterClass.GetAccountResponse.Builder.class);
     }
 
     private int bitField0_;
     public static final int ACCOUNT_FIELD_NUMBER = 1;
-    private pactus.Blockchain.AccountInfo account_;
+    private pactus.BlockchainOuterClass.AccountInfo account_;
     /**
      * <pre>
      * Detailed information about the account.
@@ -1036,8 +1036,8 @@ public final class Blockchain {
      * @return The account.
      */
     @java.lang.Override
-    public pactus.Blockchain.AccountInfo getAccount() {
-      return account_ == null ? pactus.Blockchain.AccountInfo.getDefaultInstance() : account_;
+    public pactus.BlockchainOuterClass.AccountInfo getAccount() {
+      return account_ == null ? pactus.BlockchainOuterClass.AccountInfo.getDefaultInstance() : account_;
     }
     /**
      * <pre>
@@ -1047,8 +1047,8 @@ public final class Blockchain {
      * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
      */
     @java.lang.Override
-    public pactus.Blockchain.AccountInfoOrBuilder getAccountOrBuilder() {
-      return account_ == null ? pactus.Blockchain.AccountInfo.getDefaultInstance() : account_;
+    public pactus.BlockchainOuterClass.AccountInfoOrBuilder getAccountOrBuilder() {
+      return account_ == null ? pactus.BlockchainOuterClass.AccountInfo.getDefaultInstance() : account_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -1091,10 +1091,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetAccountResponse)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetAccountResponse)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetAccountResponse other = (pactus.Blockchain.GetAccountResponse) obj;
+      pactus.BlockchainOuterClass.GetAccountResponse other = (pactus.BlockchainOuterClass.GetAccountResponse) obj;
 
       if (hasAccount() != other.hasAccount()) return false;
       if (hasAccount()) {
@@ -1121,44 +1121,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetAccountResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetAccountResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetAccountResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetAccountResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetAccountResponse parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetAccountResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetAccountResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetAccountResponse parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetAccountResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetAccountResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1166,26 +1166,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetAccountResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetAccountResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetAccountResponse parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetAccountResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetAccountResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetAccountResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetAccountResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1198,7 +1198,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetAccountResponse prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetAccountResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1223,21 +1223,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetAccountResponse)
-        pactus.Blockchain.GetAccountResponseOrBuilder {
+        pactus.BlockchainOuterClass.GetAccountResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetAccountResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetAccountResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetAccountResponse_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetAccountResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetAccountResponse.class, pactus.Blockchain.GetAccountResponse.Builder.class);
+                pactus.BlockchainOuterClass.GetAccountResponse.class, pactus.BlockchainOuterClass.GetAccountResponse.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetAccountResponse.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetAccountResponse.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1268,17 +1268,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetAccountResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetAccountResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetAccountResponse getDefaultInstanceForType() {
-        return pactus.Blockchain.GetAccountResponse.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetAccountResponse getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetAccountResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetAccountResponse build() {
-        pactus.Blockchain.GetAccountResponse result = buildPartial();
+      public pactus.BlockchainOuterClass.GetAccountResponse build() {
+        pactus.BlockchainOuterClass.GetAccountResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1286,14 +1286,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetAccountResponse buildPartial() {
-        pactus.Blockchain.GetAccountResponse result = new pactus.Blockchain.GetAccountResponse(this);
+      public pactus.BlockchainOuterClass.GetAccountResponse buildPartial() {
+        pactus.BlockchainOuterClass.GetAccountResponse result = new pactus.BlockchainOuterClass.GetAccountResponse(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetAccountResponse result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetAccountResponse result) {
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) != 0)) {
@@ -1307,16 +1307,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetAccountResponse) {
-          return mergeFrom((pactus.Blockchain.GetAccountResponse)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetAccountResponse) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetAccountResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetAccountResponse other) {
-        if (other == pactus.Blockchain.GetAccountResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetAccountResponse other) {
+        if (other == pactus.BlockchainOuterClass.GetAccountResponse.getDefaultInstance()) return this;
         if (other.hasAccount()) {
           mergeAccount(other.getAccount());
         }
@@ -1370,9 +1370,9 @@ public final class Blockchain {
       }
       private int bitField0_;
 
-      private pactus.Blockchain.AccountInfo account_;
+      private pactus.BlockchainOuterClass.AccountInfo account_;
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Blockchain.AccountInfo, pactus.Blockchain.AccountInfo.Builder, pactus.Blockchain.AccountInfoOrBuilder> accountBuilder_;
+          pactus.BlockchainOuterClass.AccountInfo, pactus.BlockchainOuterClass.AccountInfo.Builder, pactus.BlockchainOuterClass.AccountInfoOrBuilder> accountBuilder_;
       /**
        * <pre>
        * Detailed information about the account.
@@ -1392,9 +1392,9 @@ public final class Blockchain {
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        * @return The account.
        */
-      public pactus.Blockchain.AccountInfo getAccount() {
+      public pactus.BlockchainOuterClass.AccountInfo getAccount() {
         if (accountBuilder_ == null) {
-          return account_ == null ? pactus.Blockchain.AccountInfo.getDefaultInstance() : account_;
+          return account_ == null ? pactus.BlockchainOuterClass.AccountInfo.getDefaultInstance() : account_;
         } else {
           return accountBuilder_.getMessage();
         }
@@ -1406,7 +1406,7 @@ public final class Blockchain {
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
-      public Builder setAccount(pactus.Blockchain.AccountInfo value) {
+      public Builder setAccount(pactus.BlockchainOuterClass.AccountInfo value) {
         if (accountBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -1427,7 +1427,7 @@ public final class Blockchain {
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
       public Builder setAccount(
-          pactus.Blockchain.AccountInfo.Builder builderForValue) {
+          pactus.BlockchainOuterClass.AccountInfo.Builder builderForValue) {
         if (accountBuilder_ == null) {
           account_ = builderForValue.build();
         } else {
@@ -1444,11 +1444,11 @@ public final class Blockchain {
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
-      public Builder mergeAccount(pactus.Blockchain.AccountInfo value) {
+      public Builder mergeAccount(pactus.BlockchainOuterClass.AccountInfo value) {
         if (accountBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0) &&
             account_ != null &&
-            account_ != pactus.Blockchain.AccountInfo.getDefaultInstance()) {
+            account_ != pactus.BlockchainOuterClass.AccountInfo.getDefaultInstance()) {
             getAccountBuilder().mergeFrom(value);
           } else {
             account_ = value;
@@ -1486,7 +1486,7 @@ public final class Blockchain {
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
-      public pactus.Blockchain.AccountInfo.Builder getAccountBuilder() {
+      public pactus.BlockchainOuterClass.AccountInfo.Builder getAccountBuilder() {
         bitField0_ |= 0x00000001;
         onChanged();
         return internalGetAccountFieldBuilder().getBuilder();
@@ -1498,12 +1498,12 @@ public final class Blockchain {
        *
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
-      public pactus.Blockchain.AccountInfoOrBuilder getAccountOrBuilder() {
+      public pactus.BlockchainOuterClass.AccountInfoOrBuilder getAccountOrBuilder() {
         if (accountBuilder_ != null) {
           return accountBuilder_.getMessageOrBuilder();
         } else {
           return account_ == null ?
-              pactus.Blockchain.AccountInfo.getDefaultInstance() : account_;
+              pactus.BlockchainOuterClass.AccountInfo.getDefaultInstance() : account_;
         }
       }
       /**
@@ -1514,11 +1514,11 @@ public final class Blockchain {
        * <code>.pactus.AccountInfo account = 1 [json_name = "account"];</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Blockchain.AccountInfo, pactus.Blockchain.AccountInfo.Builder, pactus.Blockchain.AccountInfoOrBuilder> 
+          pactus.BlockchainOuterClass.AccountInfo, pactus.BlockchainOuterClass.AccountInfo.Builder, pactus.BlockchainOuterClass.AccountInfoOrBuilder> 
           internalGetAccountFieldBuilder() {
         if (accountBuilder_ == null) {
           accountBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              pactus.Blockchain.AccountInfo, pactus.Blockchain.AccountInfo.Builder, pactus.Blockchain.AccountInfoOrBuilder>(
+              pactus.BlockchainOuterClass.AccountInfo, pactus.BlockchainOuterClass.AccountInfo.Builder, pactus.BlockchainOuterClass.AccountInfoOrBuilder>(
                   getAccount(),
                   getParentForChildren(),
                   isClean());
@@ -1531,12 +1531,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetAccountResponse)
-    private static final pactus.Blockchain.GetAccountResponse DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetAccountResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetAccountResponse();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetAccountResponse();
     }
 
-    public static pactus.Blockchain.GetAccountResponse getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetAccountResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1572,7 +1572,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetAccountResponse getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetAccountResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1612,15 +1612,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetValidatorAddressesRequest_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetValidatorAddressesRequest_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetValidatorAddressesRequest.class, pactus.Blockchain.GetValidatorAddressesRequest.Builder.class);
+              pactus.BlockchainOuterClass.GetValidatorAddressesRequest.class, pactus.BlockchainOuterClass.GetValidatorAddressesRequest.Builder.class);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -1656,10 +1656,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetValidatorAddressesRequest)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetValidatorAddressesRequest)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetValidatorAddressesRequest other = (pactus.Blockchain.GetValidatorAddressesRequest) obj;
+      pactus.BlockchainOuterClass.GetValidatorAddressesRequest other = (pactus.BlockchainOuterClass.GetValidatorAddressesRequest) obj;
 
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
@@ -1677,44 +1677,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetValidatorAddressesRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorAddressesRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorAddressesRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorAddressesRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorAddressesRequest parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorAddressesRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorAddressesRequest parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetValidatorAddressesRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1722,26 +1722,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetValidatorAddressesRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetValidatorAddressesRequest parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorAddressesRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetValidatorAddressesRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1754,7 +1754,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetValidatorAddressesRequest prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetValidatorAddressesRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1779,21 +1779,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetValidatorAddressesRequest)
-        pactus.Blockchain.GetValidatorAddressesRequestOrBuilder {
+        pactus.BlockchainOuterClass.GetValidatorAddressesRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorAddressesRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorAddressesRequest_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetValidatorAddressesRequest.class, pactus.Blockchain.GetValidatorAddressesRequest.Builder.class);
+                pactus.BlockchainOuterClass.GetValidatorAddressesRequest.class, pactus.BlockchainOuterClass.GetValidatorAddressesRequest.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetValidatorAddressesRequest.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetValidatorAddressesRequest.newBuilder()
       private Builder() {
 
       }
@@ -1812,17 +1812,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorAddressesRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorAddressesRequest getDefaultInstanceForType() {
-        return pactus.Blockchain.GetValidatorAddressesRequest.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetValidatorAddressesRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetValidatorAddressesRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorAddressesRequest build() {
-        pactus.Blockchain.GetValidatorAddressesRequest result = buildPartial();
+      public pactus.BlockchainOuterClass.GetValidatorAddressesRequest build() {
+        pactus.BlockchainOuterClass.GetValidatorAddressesRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1830,24 +1830,24 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorAddressesRequest buildPartial() {
-        pactus.Blockchain.GetValidatorAddressesRequest result = new pactus.Blockchain.GetValidatorAddressesRequest(this);
+      public pactus.BlockchainOuterClass.GetValidatorAddressesRequest buildPartial() {
+        pactus.BlockchainOuterClass.GetValidatorAddressesRequest result = new pactus.BlockchainOuterClass.GetValidatorAddressesRequest(this);
         onBuilt();
         return result;
       }
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetValidatorAddressesRequest) {
-          return mergeFrom((pactus.Blockchain.GetValidatorAddressesRequest)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetValidatorAddressesRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetValidatorAddressesRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetValidatorAddressesRequest other) {
-        if (other == pactus.Blockchain.GetValidatorAddressesRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetValidatorAddressesRequest other) {
+        if (other == pactus.BlockchainOuterClass.GetValidatorAddressesRequest.getDefaultInstance()) return this;
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -1894,12 +1894,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetValidatorAddressesRequest)
-    private static final pactus.Blockchain.GetValidatorAddressesRequest DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetValidatorAddressesRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetValidatorAddressesRequest();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetValidatorAddressesRequest();
     }
 
-    public static pactus.Blockchain.GetValidatorAddressesRequest getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1935,7 +1935,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetValidatorAddressesRequest getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetValidatorAddressesRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2018,15 +2018,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetValidatorAddressesResponse_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetValidatorAddressesResponse_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetValidatorAddressesResponse.class, pactus.Blockchain.GetValidatorAddressesResponse.Builder.class);
+              pactus.BlockchainOuterClass.GetValidatorAddressesResponse.class, pactus.BlockchainOuterClass.GetValidatorAddressesResponse.Builder.class);
     }
 
     public static final int ADDRESSES_FIELD_NUMBER = 1;
@@ -2126,10 +2126,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetValidatorAddressesResponse)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetValidatorAddressesResponse)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetValidatorAddressesResponse other = (pactus.Blockchain.GetValidatorAddressesResponse) obj;
+      pactus.BlockchainOuterClass.GetValidatorAddressesResponse other = (pactus.BlockchainOuterClass.GetValidatorAddressesResponse) obj;
 
       if (!getAddressesList()
           .equals(other.getAddressesList())) return false;
@@ -2153,44 +2153,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetValidatorAddressesResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorAddressesResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorAddressesResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorAddressesResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorAddressesResponse parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorAddressesResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorAddressesResponse parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetValidatorAddressesResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2198,26 +2198,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetValidatorAddressesResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetValidatorAddressesResponse parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorAddressesResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetValidatorAddressesResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2230,7 +2230,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetValidatorAddressesResponse prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetValidatorAddressesResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -2255,21 +2255,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetValidatorAddressesResponse)
-        pactus.Blockchain.GetValidatorAddressesResponseOrBuilder {
+        pactus.BlockchainOuterClass.GetValidatorAddressesResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorAddressesResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorAddressesResponse_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetValidatorAddressesResponse.class, pactus.Blockchain.GetValidatorAddressesResponse.Builder.class);
+                pactus.BlockchainOuterClass.GetValidatorAddressesResponse.class, pactus.BlockchainOuterClass.GetValidatorAddressesResponse.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetValidatorAddressesResponse.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetValidatorAddressesResponse.newBuilder()
       private Builder() {
 
       }
@@ -2291,17 +2291,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorAddressesResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorAddressesResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorAddressesResponse getDefaultInstanceForType() {
-        return pactus.Blockchain.GetValidatorAddressesResponse.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetValidatorAddressesResponse getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetValidatorAddressesResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorAddressesResponse build() {
-        pactus.Blockchain.GetValidatorAddressesResponse result = buildPartial();
+      public pactus.BlockchainOuterClass.GetValidatorAddressesResponse build() {
+        pactus.BlockchainOuterClass.GetValidatorAddressesResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -2309,14 +2309,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorAddressesResponse buildPartial() {
-        pactus.Blockchain.GetValidatorAddressesResponse result = new pactus.Blockchain.GetValidatorAddressesResponse(this);
+      public pactus.BlockchainOuterClass.GetValidatorAddressesResponse buildPartial() {
+        pactus.BlockchainOuterClass.GetValidatorAddressesResponse result = new pactus.BlockchainOuterClass.GetValidatorAddressesResponse(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetValidatorAddressesResponse result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetValidatorAddressesResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           addresses_.makeImmutable();
@@ -2326,16 +2326,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetValidatorAddressesResponse) {
-          return mergeFrom((pactus.Blockchain.GetValidatorAddressesResponse)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetValidatorAddressesResponse) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetValidatorAddressesResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetValidatorAddressesResponse other) {
-        if (other == pactus.Blockchain.GetValidatorAddressesResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetValidatorAddressesResponse other) {
+        if (other == pactus.BlockchainOuterClass.GetValidatorAddressesResponse.getDefaultInstance()) return this;
         if (!other.addresses_.isEmpty()) {
           if (addresses_.isEmpty()) {
             addresses_ = other.addresses_;
@@ -2546,12 +2546,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetValidatorAddressesResponse)
-    private static final pactus.Blockchain.GetValidatorAddressesResponse DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetValidatorAddressesResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetValidatorAddressesResponse();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetValidatorAddressesResponse();
     }
 
-    public static pactus.Blockchain.GetValidatorAddressesResponse getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetValidatorAddressesResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2587,7 +2587,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetValidatorAddressesResponse getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetValidatorAddressesResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2648,15 +2648,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetValidatorRequest_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetValidatorRequest_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetValidatorRequest.class, pactus.Blockchain.GetValidatorRequest.Builder.class);
+              pactus.BlockchainOuterClass.GetValidatorRequest.class, pactus.BlockchainOuterClass.GetValidatorRequest.Builder.class);
     }
 
     public static final int ADDRESS_FIELD_NUMBER = 1;
@@ -2745,10 +2745,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetValidatorRequest)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetValidatorRequest)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetValidatorRequest other = (pactus.Blockchain.GetValidatorRequest) obj;
+      pactus.BlockchainOuterClass.GetValidatorRequest other = (pactus.BlockchainOuterClass.GetValidatorRequest) obj;
 
       if (!getAddress()
           .equals(other.getAddress())) return false;
@@ -2770,44 +2770,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetValidatorRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorRequest parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetValidatorRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorRequest parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetValidatorRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetValidatorRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2815,26 +2815,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetValidatorRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetValidatorRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetValidatorRequest parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetValidatorRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2847,7 +2847,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetValidatorRequest prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetValidatorRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -2872,21 +2872,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetValidatorRequest)
-        pactus.Blockchain.GetValidatorRequestOrBuilder {
+        pactus.BlockchainOuterClass.GetValidatorRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorRequest_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetValidatorRequest.class, pactus.Blockchain.GetValidatorRequest.Builder.class);
+                pactus.BlockchainOuterClass.GetValidatorRequest.class, pactus.BlockchainOuterClass.GetValidatorRequest.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetValidatorRequest.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetValidatorRequest.newBuilder()
       private Builder() {
 
       }
@@ -2907,17 +2907,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorRequest getDefaultInstanceForType() {
-        return pactus.Blockchain.GetValidatorRequest.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetValidatorRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetValidatorRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorRequest build() {
-        pactus.Blockchain.GetValidatorRequest result = buildPartial();
+      public pactus.BlockchainOuterClass.GetValidatorRequest build() {
+        pactus.BlockchainOuterClass.GetValidatorRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -2925,14 +2925,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorRequest buildPartial() {
-        pactus.Blockchain.GetValidatorRequest result = new pactus.Blockchain.GetValidatorRequest(this);
+      public pactus.BlockchainOuterClass.GetValidatorRequest buildPartial() {
+        pactus.BlockchainOuterClass.GetValidatorRequest result = new pactus.BlockchainOuterClass.GetValidatorRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetValidatorRequest result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetValidatorRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.address_ = address_;
@@ -2941,16 +2941,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetValidatorRequest) {
-          return mergeFrom((pactus.Blockchain.GetValidatorRequest)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetValidatorRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetValidatorRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetValidatorRequest other) {
-        if (other == pactus.Blockchain.GetValidatorRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetValidatorRequest other) {
+        if (other == pactus.BlockchainOuterClass.GetValidatorRequest.getDefaultInstance()) return this;
         if (!other.getAddress().isEmpty()) {
           address_ = other.address_;
           bitField0_ |= 0x00000001;
@@ -3100,12 +3100,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetValidatorRequest)
-    private static final pactus.Blockchain.GetValidatorRequest DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetValidatorRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetValidatorRequest();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetValidatorRequest();
     }
 
-    public static pactus.Blockchain.GetValidatorRequest getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetValidatorRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3141,7 +3141,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetValidatorRequest getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetValidatorRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3191,15 +3191,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetValidatorByNumberRequest_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorByNumberRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetValidatorByNumberRequest_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorByNumberRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetValidatorByNumberRequest.class, pactus.Blockchain.GetValidatorByNumberRequest.Builder.class);
+              pactus.BlockchainOuterClass.GetValidatorByNumberRequest.class, pactus.BlockchainOuterClass.GetValidatorByNumberRequest.Builder.class);
     }
 
     public static final int NUMBER_FIELD_NUMBER = 1;
@@ -3257,10 +3257,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetValidatorByNumberRequest)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetValidatorByNumberRequest)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetValidatorByNumberRequest other = (pactus.Blockchain.GetValidatorByNumberRequest) obj;
+      pactus.BlockchainOuterClass.GetValidatorByNumberRequest other = (pactus.BlockchainOuterClass.GetValidatorByNumberRequest) obj;
 
       if (getNumber()
           != other.getNumber()) return false;
@@ -3282,44 +3282,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetValidatorByNumberRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorByNumberRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorByNumberRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorByNumberRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorByNumberRequest parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorByNumberRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorByNumberRequest parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetValidatorByNumberRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3327,26 +3327,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetValidatorByNumberRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetValidatorByNumberRequest parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorByNumberRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetValidatorByNumberRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3359,7 +3359,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetValidatorByNumberRequest prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetValidatorByNumberRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -3384,21 +3384,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetValidatorByNumberRequest)
-        pactus.Blockchain.GetValidatorByNumberRequestOrBuilder {
+        pactus.BlockchainOuterClass.GetValidatorByNumberRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorByNumberRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorByNumberRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorByNumberRequest_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorByNumberRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetValidatorByNumberRequest.class, pactus.Blockchain.GetValidatorByNumberRequest.Builder.class);
+                pactus.BlockchainOuterClass.GetValidatorByNumberRequest.class, pactus.BlockchainOuterClass.GetValidatorByNumberRequest.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetValidatorByNumberRequest.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetValidatorByNumberRequest.newBuilder()
       private Builder() {
 
       }
@@ -3419,17 +3419,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorByNumberRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorByNumberRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorByNumberRequest getDefaultInstanceForType() {
-        return pactus.Blockchain.GetValidatorByNumberRequest.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetValidatorByNumberRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetValidatorByNumberRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorByNumberRequest build() {
-        pactus.Blockchain.GetValidatorByNumberRequest result = buildPartial();
+      public pactus.BlockchainOuterClass.GetValidatorByNumberRequest build() {
+        pactus.BlockchainOuterClass.GetValidatorByNumberRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -3437,14 +3437,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorByNumberRequest buildPartial() {
-        pactus.Blockchain.GetValidatorByNumberRequest result = new pactus.Blockchain.GetValidatorByNumberRequest(this);
+      public pactus.BlockchainOuterClass.GetValidatorByNumberRequest buildPartial() {
+        pactus.BlockchainOuterClass.GetValidatorByNumberRequest result = new pactus.BlockchainOuterClass.GetValidatorByNumberRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetValidatorByNumberRequest result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetValidatorByNumberRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.number_ = number_;
@@ -3453,16 +3453,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetValidatorByNumberRequest) {
-          return mergeFrom((pactus.Blockchain.GetValidatorByNumberRequest)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetValidatorByNumberRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetValidatorByNumberRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetValidatorByNumberRequest other) {
-        if (other == pactus.Blockchain.GetValidatorByNumberRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetValidatorByNumberRequest other) {
+        if (other == pactus.BlockchainOuterClass.GetValidatorByNumberRequest.getDefaultInstance()) return this;
         if (other.getNumber() != 0) {
           setNumber(other.getNumber());
         }
@@ -3562,12 +3562,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetValidatorByNumberRequest)
-    private static final pactus.Blockchain.GetValidatorByNumberRequest DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetValidatorByNumberRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetValidatorByNumberRequest();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetValidatorByNumberRequest();
     }
 
-    public static pactus.Blockchain.GetValidatorByNumberRequest getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetValidatorByNumberRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3603,7 +3603,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetValidatorByNumberRequest getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetValidatorByNumberRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3630,7 +3630,7 @@ public final class Blockchain {
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
      * @return The validator.
      */
-    pactus.Blockchain.ValidatorInfo getValidator();
+    pactus.BlockchainOuterClass.ValidatorInfo getValidator();
     /**
      * <pre>
      * Detailed information about the validator.
@@ -3638,7 +3638,7 @@ public final class Blockchain {
      *
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
      */
-    pactus.Blockchain.ValidatorInfoOrBuilder getValidatorOrBuilder();
+    pactus.BlockchainOuterClass.ValidatorInfoOrBuilder getValidatorOrBuilder();
   }
   /**
    * <pre>
@@ -3670,20 +3670,20 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetValidatorResponse_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetValidatorResponse_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetValidatorResponse.class, pactus.Blockchain.GetValidatorResponse.Builder.class);
+              pactus.BlockchainOuterClass.GetValidatorResponse.class, pactus.BlockchainOuterClass.GetValidatorResponse.Builder.class);
     }
 
     private int bitField0_;
     public static final int VALIDATOR_FIELD_NUMBER = 1;
-    private pactus.Blockchain.ValidatorInfo validator_;
+    private pactus.BlockchainOuterClass.ValidatorInfo validator_;
     /**
      * <pre>
      * Detailed information about the validator.
@@ -3705,8 +3705,8 @@ public final class Blockchain {
      * @return The validator.
      */
     @java.lang.Override
-    public pactus.Blockchain.ValidatorInfo getValidator() {
-      return validator_ == null ? pactus.Blockchain.ValidatorInfo.getDefaultInstance() : validator_;
+    public pactus.BlockchainOuterClass.ValidatorInfo getValidator() {
+      return validator_ == null ? pactus.BlockchainOuterClass.ValidatorInfo.getDefaultInstance() : validator_;
     }
     /**
      * <pre>
@@ -3716,8 +3716,8 @@ public final class Blockchain {
      * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
      */
     @java.lang.Override
-    public pactus.Blockchain.ValidatorInfoOrBuilder getValidatorOrBuilder() {
-      return validator_ == null ? pactus.Blockchain.ValidatorInfo.getDefaultInstance() : validator_;
+    public pactus.BlockchainOuterClass.ValidatorInfoOrBuilder getValidatorOrBuilder() {
+      return validator_ == null ? pactus.BlockchainOuterClass.ValidatorInfo.getDefaultInstance() : validator_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -3760,10 +3760,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetValidatorResponse)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetValidatorResponse)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetValidatorResponse other = (pactus.Blockchain.GetValidatorResponse) obj;
+      pactus.BlockchainOuterClass.GetValidatorResponse other = (pactus.BlockchainOuterClass.GetValidatorResponse) obj;
 
       if (hasValidator() != other.hasValidator()) return false;
       if (hasValidator()) {
@@ -3790,44 +3790,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetValidatorResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorResponse parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetValidatorResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetValidatorResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorResponse parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetValidatorResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetValidatorResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3835,26 +3835,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetValidatorResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetValidatorResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetValidatorResponse parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetValidatorResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetValidatorResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetValidatorResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3867,7 +3867,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetValidatorResponse prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetValidatorResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -3892,21 +3892,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetValidatorResponse)
-        pactus.Blockchain.GetValidatorResponseOrBuilder {
+        pactus.BlockchainOuterClass.GetValidatorResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorResponse_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetValidatorResponse.class, pactus.Blockchain.GetValidatorResponse.Builder.class);
+                pactus.BlockchainOuterClass.GetValidatorResponse.class, pactus.BlockchainOuterClass.GetValidatorResponse.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetValidatorResponse.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetValidatorResponse.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -3937,17 +3937,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetValidatorResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetValidatorResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorResponse getDefaultInstanceForType() {
-        return pactus.Blockchain.GetValidatorResponse.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetValidatorResponse getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetValidatorResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorResponse build() {
-        pactus.Blockchain.GetValidatorResponse result = buildPartial();
+      public pactus.BlockchainOuterClass.GetValidatorResponse build() {
+        pactus.BlockchainOuterClass.GetValidatorResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -3955,14 +3955,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetValidatorResponse buildPartial() {
-        pactus.Blockchain.GetValidatorResponse result = new pactus.Blockchain.GetValidatorResponse(this);
+      public pactus.BlockchainOuterClass.GetValidatorResponse buildPartial() {
+        pactus.BlockchainOuterClass.GetValidatorResponse result = new pactus.BlockchainOuterClass.GetValidatorResponse(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetValidatorResponse result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetValidatorResponse result) {
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) != 0)) {
@@ -3976,16 +3976,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetValidatorResponse) {
-          return mergeFrom((pactus.Blockchain.GetValidatorResponse)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetValidatorResponse) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetValidatorResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetValidatorResponse other) {
-        if (other == pactus.Blockchain.GetValidatorResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetValidatorResponse other) {
+        if (other == pactus.BlockchainOuterClass.GetValidatorResponse.getDefaultInstance()) return this;
         if (other.hasValidator()) {
           mergeValidator(other.getValidator());
         }
@@ -4039,9 +4039,9 @@ public final class Blockchain {
       }
       private int bitField0_;
 
-      private pactus.Blockchain.ValidatorInfo validator_;
+      private pactus.BlockchainOuterClass.ValidatorInfo validator_;
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Blockchain.ValidatorInfo, pactus.Blockchain.ValidatorInfo.Builder, pactus.Blockchain.ValidatorInfoOrBuilder> validatorBuilder_;
+          pactus.BlockchainOuterClass.ValidatorInfo, pactus.BlockchainOuterClass.ValidatorInfo.Builder, pactus.BlockchainOuterClass.ValidatorInfoOrBuilder> validatorBuilder_;
       /**
        * <pre>
        * Detailed information about the validator.
@@ -4061,9 +4061,9 @@ public final class Blockchain {
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        * @return The validator.
        */
-      public pactus.Blockchain.ValidatorInfo getValidator() {
+      public pactus.BlockchainOuterClass.ValidatorInfo getValidator() {
         if (validatorBuilder_ == null) {
-          return validator_ == null ? pactus.Blockchain.ValidatorInfo.getDefaultInstance() : validator_;
+          return validator_ == null ? pactus.BlockchainOuterClass.ValidatorInfo.getDefaultInstance() : validator_;
         } else {
           return validatorBuilder_.getMessage();
         }
@@ -4075,7 +4075,7 @@ public final class Blockchain {
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
-      public Builder setValidator(pactus.Blockchain.ValidatorInfo value) {
+      public Builder setValidator(pactus.BlockchainOuterClass.ValidatorInfo value) {
         if (validatorBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -4096,7 +4096,7 @@ public final class Blockchain {
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
       public Builder setValidator(
-          pactus.Blockchain.ValidatorInfo.Builder builderForValue) {
+          pactus.BlockchainOuterClass.ValidatorInfo.Builder builderForValue) {
         if (validatorBuilder_ == null) {
           validator_ = builderForValue.build();
         } else {
@@ -4113,11 +4113,11 @@ public final class Blockchain {
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
-      public Builder mergeValidator(pactus.Blockchain.ValidatorInfo value) {
+      public Builder mergeValidator(pactus.BlockchainOuterClass.ValidatorInfo value) {
         if (validatorBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0) &&
             validator_ != null &&
-            validator_ != pactus.Blockchain.ValidatorInfo.getDefaultInstance()) {
+            validator_ != pactus.BlockchainOuterClass.ValidatorInfo.getDefaultInstance()) {
             getValidatorBuilder().mergeFrom(value);
           } else {
             validator_ = value;
@@ -4155,7 +4155,7 @@ public final class Blockchain {
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
-      public pactus.Blockchain.ValidatorInfo.Builder getValidatorBuilder() {
+      public pactus.BlockchainOuterClass.ValidatorInfo.Builder getValidatorBuilder() {
         bitField0_ |= 0x00000001;
         onChanged();
         return internalGetValidatorFieldBuilder().getBuilder();
@@ -4167,12 +4167,12 @@ public final class Blockchain {
        *
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
-      public pactus.Blockchain.ValidatorInfoOrBuilder getValidatorOrBuilder() {
+      public pactus.BlockchainOuterClass.ValidatorInfoOrBuilder getValidatorOrBuilder() {
         if (validatorBuilder_ != null) {
           return validatorBuilder_.getMessageOrBuilder();
         } else {
           return validator_ == null ?
-              pactus.Blockchain.ValidatorInfo.getDefaultInstance() : validator_;
+              pactus.BlockchainOuterClass.ValidatorInfo.getDefaultInstance() : validator_;
         }
       }
       /**
@@ -4183,11 +4183,11 @@ public final class Blockchain {
        * <code>.pactus.ValidatorInfo validator = 1 [json_name = "validator"];</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Blockchain.ValidatorInfo, pactus.Blockchain.ValidatorInfo.Builder, pactus.Blockchain.ValidatorInfoOrBuilder> 
+          pactus.BlockchainOuterClass.ValidatorInfo, pactus.BlockchainOuterClass.ValidatorInfo.Builder, pactus.BlockchainOuterClass.ValidatorInfoOrBuilder> 
           internalGetValidatorFieldBuilder() {
         if (validatorBuilder_ == null) {
           validatorBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              pactus.Blockchain.ValidatorInfo, pactus.Blockchain.ValidatorInfo.Builder, pactus.Blockchain.ValidatorInfoOrBuilder>(
+              pactus.BlockchainOuterClass.ValidatorInfo, pactus.BlockchainOuterClass.ValidatorInfo.Builder, pactus.BlockchainOuterClass.ValidatorInfoOrBuilder>(
                   getValidator(),
                   getParentForChildren(),
                   isClean());
@@ -4200,12 +4200,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetValidatorResponse)
-    private static final pactus.Blockchain.GetValidatorResponse DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetValidatorResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetValidatorResponse();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetValidatorResponse();
     }
 
-    public static pactus.Blockchain.GetValidatorResponse getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetValidatorResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -4241,7 +4241,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetValidatorResponse getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetValidatorResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -4302,15 +4302,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetPublicKeyRequest_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetPublicKeyRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetPublicKeyRequest_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetPublicKeyRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetPublicKeyRequest.class, pactus.Blockchain.GetPublicKeyRequest.Builder.class);
+              pactus.BlockchainOuterClass.GetPublicKeyRequest.class, pactus.BlockchainOuterClass.GetPublicKeyRequest.Builder.class);
     }
 
     public static final int ADDRESS_FIELD_NUMBER = 1;
@@ -4399,10 +4399,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetPublicKeyRequest)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetPublicKeyRequest)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetPublicKeyRequest other = (pactus.Blockchain.GetPublicKeyRequest) obj;
+      pactus.BlockchainOuterClass.GetPublicKeyRequest other = (pactus.BlockchainOuterClass.GetPublicKeyRequest) obj;
 
       if (!getAddress()
           .equals(other.getAddress())) return false;
@@ -4424,44 +4424,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetPublicKeyRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetPublicKeyRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetPublicKeyRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetPublicKeyRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetPublicKeyRequest parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetPublicKeyRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetPublicKeyRequest parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetPublicKeyRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -4469,26 +4469,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetPublicKeyRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetPublicKeyRequest parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetPublicKeyRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetPublicKeyRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -4501,7 +4501,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetPublicKeyRequest prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetPublicKeyRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -4526,21 +4526,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetPublicKeyRequest)
-        pactus.Blockchain.GetPublicKeyRequestOrBuilder {
+        pactus.BlockchainOuterClass.GetPublicKeyRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetPublicKeyRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetPublicKeyRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetPublicKeyRequest_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetPublicKeyRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetPublicKeyRequest.class, pactus.Blockchain.GetPublicKeyRequest.Builder.class);
+                pactus.BlockchainOuterClass.GetPublicKeyRequest.class, pactus.BlockchainOuterClass.GetPublicKeyRequest.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetPublicKeyRequest.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetPublicKeyRequest.newBuilder()
       private Builder() {
 
       }
@@ -4561,17 +4561,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetPublicKeyRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetPublicKeyRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetPublicKeyRequest getDefaultInstanceForType() {
-        return pactus.Blockchain.GetPublicKeyRequest.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetPublicKeyRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetPublicKeyRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetPublicKeyRequest build() {
-        pactus.Blockchain.GetPublicKeyRequest result = buildPartial();
+      public pactus.BlockchainOuterClass.GetPublicKeyRequest build() {
+        pactus.BlockchainOuterClass.GetPublicKeyRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -4579,14 +4579,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetPublicKeyRequest buildPartial() {
-        pactus.Blockchain.GetPublicKeyRequest result = new pactus.Blockchain.GetPublicKeyRequest(this);
+      public pactus.BlockchainOuterClass.GetPublicKeyRequest buildPartial() {
+        pactus.BlockchainOuterClass.GetPublicKeyRequest result = new pactus.BlockchainOuterClass.GetPublicKeyRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetPublicKeyRequest result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetPublicKeyRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.address_ = address_;
@@ -4595,16 +4595,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetPublicKeyRequest) {
-          return mergeFrom((pactus.Blockchain.GetPublicKeyRequest)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetPublicKeyRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetPublicKeyRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetPublicKeyRequest other) {
-        if (other == pactus.Blockchain.GetPublicKeyRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetPublicKeyRequest other) {
+        if (other == pactus.BlockchainOuterClass.GetPublicKeyRequest.getDefaultInstance()) return this;
         if (!other.getAddress().isEmpty()) {
           address_ = other.address_;
           bitField0_ |= 0x00000001;
@@ -4754,12 +4754,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetPublicKeyRequest)
-    private static final pactus.Blockchain.GetPublicKeyRequest DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetPublicKeyRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetPublicKeyRequest();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetPublicKeyRequest();
     }
 
-    public static pactus.Blockchain.GetPublicKeyRequest getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetPublicKeyRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -4795,7 +4795,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetPublicKeyRequest getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetPublicKeyRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -4856,15 +4856,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetPublicKeyResponse_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetPublicKeyResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetPublicKeyResponse_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetPublicKeyResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetPublicKeyResponse.class, pactus.Blockchain.GetPublicKeyResponse.Builder.class);
+              pactus.BlockchainOuterClass.GetPublicKeyResponse.class, pactus.BlockchainOuterClass.GetPublicKeyResponse.Builder.class);
     }
 
     public static final int PUBLIC_KEY_FIELD_NUMBER = 1;
@@ -4953,10 +4953,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetPublicKeyResponse)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetPublicKeyResponse)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetPublicKeyResponse other = (pactus.Blockchain.GetPublicKeyResponse) obj;
+      pactus.BlockchainOuterClass.GetPublicKeyResponse other = (pactus.BlockchainOuterClass.GetPublicKeyResponse) obj;
 
       if (!getPublicKey()
           .equals(other.getPublicKey())) return false;
@@ -4978,44 +4978,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetPublicKeyResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetPublicKeyResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetPublicKeyResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetPublicKeyResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetPublicKeyResponse parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetPublicKeyResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetPublicKeyResponse parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetPublicKeyResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -5023,26 +5023,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetPublicKeyResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetPublicKeyResponse parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetPublicKeyResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetPublicKeyResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -5055,7 +5055,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetPublicKeyResponse prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetPublicKeyResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -5080,21 +5080,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetPublicKeyResponse)
-        pactus.Blockchain.GetPublicKeyResponseOrBuilder {
+        pactus.BlockchainOuterClass.GetPublicKeyResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetPublicKeyResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetPublicKeyResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetPublicKeyResponse_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetPublicKeyResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetPublicKeyResponse.class, pactus.Blockchain.GetPublicKeyResponse.Builder.class);
+                pactus.BlockchainOuterClass.GetPublicKeyResponse.class, pactus.BlockchainOuterClass.GetPublicKeyResponse.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetPublicKeyResponse.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetPublicKeyResponse.newBuilder()
       private Builder() {
 
       }
@@ -5115,17 +5115,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetPublicKeyResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetPublicKeyResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetPublicKeyResponse getDefaultInstanceForType() {
-        return pactus.Blockchain.GetPublicKeyResponse.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetPublicKeyResponse getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetPublicKeyResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetPublicKeyResponse build() {
-        pactus.Blockchain.GetPublicKeyResponse result = buildPartial();
+      public pactus.BlockchainOuterClass.GetPublicKeyResponse build() {
+        pactus.BlockchainOuterClass.GetPublicKeyResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -5133,14 +5133,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetPublicKeyResponse buildPartial() {
-        pactus.Blockchain.GetPublicKeyResponse result = new pactus.Blockchain.GetPublicKeyResponse(this);
+      public pactus.BlockchainOuterClass.GetPublicKeyResponse buildPartial() {
+        pactus.BlockchainOuterClass.GetPublicKeyResponse result = new pactus.BlockchainOuterClass.GetPublicKeyResponse(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetPublicKeyResponse result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetPublicKeyResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.publicKey_ = publicKey_;
@@ -5149,16 +5149,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetPublicKeyResponse) {
-          return mergeFrom((pactus.Blockchain.GetPublicKeyResponse)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetPublicKeyResponse) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetPublicKeyResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetPublicKeyResponse other) {
-        if (other == pactus.Blockchain.GetPublicKeyResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetPublicKeyResponse other) {
+        if (other == pactus.BlockchainOuterClass.GetPublicKeyResponse.getDefaultInstance()) return this;
         if (!other.getPublicKey().isEmpty()) {
           publicKey_ = other.publicKey_;
           bitField0_ |= 0x00000001;
@@ -5308,12 +5308,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetPublicKeyResponse)
-    private static final pactus.Blockchain.GetPublicKeyResponse DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetPublicKeyResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetPublicKeyResponse();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetPublicKeyResponse();
     }
 
-    public static pactus.Blockchain.GetPublicKeyResponse getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetPublicKeyResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -5349,7 +5349,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetPublicKeyResponse getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetPublicKeyResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -5386,7 +5386,7 @@ public final class Blockchain {
      * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
      * @return The verbosity.
      */
-    pactus.Blockchain.BlockVerbosity getVerbosity();
+    pactus.BlockchainOuterClass.BlockVerbosity getVerbosity();
   }
   /**
    * <pre>
@@ -5419,15 +5419,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockRequest_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockRequest_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetBlockRequest.class, pactus.Blockchain.GetBlockRequest.Builder.class);
+              pactus.BlockchainOuterClass.GetBlockRequest.class, pactus.BlockchainOuterClass.GetBlockRequest.Builder.class);
     }
 
     public static final int HEIGHT_FIELD_NUMBER = 1;
@@ -5466,9 +5466,9 @@ public final class Blockchain {
      * <code>.pactus.BlockVerbosity verbosity = 2 [json_name = "verbosity"];</code>
      * @return The verbosity.
      */
-    @java.lang.Override public pactus.Blockchain.BlockVerbosity getVerbosity() {
-      pactus.Blockchain.BlockVerbosity result = pactus.Blockchain.BlockVerbosity.forNumber(verbosity_);
-      return result == null ? pactus.Blockchain.BlockVerbosity.UNRECOGNIZED : result;
+    @java.lang.Override public pactus.BlockchainOuterClass.BlockVerbosity getVerbosity() {
+      pactus.BlockchainOuterClass.BlockVerbosity result = pactus.BlockchainOuterClass.BlockVerbosity.forNumber(verbosity_);
+      return result == null ? pactus.BlockchainOuterClass.BlockVerbosity.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -5488,7 +5488,7 @@ public final class Blockchain {
       if (height_ != 0) {
         output.writeUInt32(1, height_);
       }
-      if (verbosity_ != pactus.Blockchain.BlockVerbosity.BLOCK_VERBOSITY_DATA.getNumber()) {
+      if (verbosity_ != pactus.BlockchainOuterClass.BlockVerbosity.BLOCK_VERBOSITY_DATA.getNumber()) {
         output.writeEnum(2, verbosity_);
       }
       getUnknownFields().writeTo(output);
@@ -5504,7 +5504,7 @@ public final class Blockchain {
         size += com.google.protobuf.CodedOutputStream
           .computeUInt32Size(1, height_);
       }
-      if (verbosity_ != pactus.Blockchain.BlockVerbosity.BLOCK_VERBOSITY_DATA.getNumber()) {
+      if (verbosity_ != pactus.BlockchainOuterClass.BlockVerbosity.BLOCK_VERBOSITY_DATA.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(2, verbosity_);
       }
@@ -5518,10 +5518,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetBlockRequest)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetBlockRequest)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetBlockRequest other = (pactus.Blockchain.GetBlockRequest) obj;
+      pactus.BlockchainOuterClass.GetBlockRequest other = (pactus.BlockchainOuterClass.GetBlockRequest) obj;
 
       if (getHeight()
           != other.getHeight()) return false;
@@ -5546,44 +5546,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetBlockRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockRequest parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetBlockRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockRequest parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -5591,26 +5591,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetBlockRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetBlockRequest parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetBlockRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -5623,7 +5623,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetBlockRequest prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetBlockRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -5648,21 +5648,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetBlockRequest)
-        pactus.Blockchain.GetBlockRequestOrBuilder {
+        pactus.BlockchainOuterClass.GetBlockRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockRequest_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetBlockRequest.class, pactus.Blockchain.GetBlockRequest.Builder.class);
+                pactus.BlockchainOuterClass.GetBlockRequest.class, pactus.BlockchainOuterClass.GetBlockRequest.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetBlockRequest.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetBlockRequest.newBuilder()
       private Builder() {
 
       }
@@ -5684,17 +5684,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockRequest getDefaultInstanceForType() {
-        return pactus.Blockchain.GetBlockRequest.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetBlockRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetBlockRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockRequest build() {
-        pactus.Blockchain.GetBlockRequest result = buildPartial();
+      public pactus.BlockchainOuterClass.GetBlockRequest build() {
+        pactus.BlockchainOuterClass.GetBlockRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -5702,14 +5702,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockRequest buildPartial() {
-        pactus.Blockchain.GetBlockRequest result = new pactus.Blockchain.GetBlockRequest(this);
+      public pactus.BlockchainOuterClass.GetBlockRequest buildPartial() {
+        pactus.BlockchainOuterClass.GetBlockRequest result = new pactus.BlockchainOuterClass.GetBlockRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetBlockRequest result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetBlockRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.height_ = height_;
@@ -5721,16 +5721,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetBlockRequest) {
-          return mergeFrom((pactus.Blockchain.GetBlockRequest)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetBlockRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetBlockRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetBlockRequest other) {
-        if (other == pactus.Blockchain.GetBlockRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetBlockRequest other) {
+        if (other == pactus.BlockchainOuterClass.GetBlockRequest.getDefaultInstance()) return this;
         if (other.getHeight() != 0) {
           setHeight(other.getHeight());
         }
@@ -5870,9 +5870,9 @@ public final class Blockchain {
        * @return The verbosity.
        */
       @java.lang.Override
-      public pactus.Blockchain.BlockVerbosity getVerbosity() {
-        pactus.Blockchain.BlockVerbosity result = pactus.Blockchain.BlockVerbosity.forNumber(verbosity_);
-        return result == null ? pactus.Blockchain.BlockVerbosity.UNRECOGNIZED : result;
+      public pactus.BlockchainOuterClass.BlockVerbosity getVerbosity() {
+        pactus.BlockchainOuterClass.BlockVerbosity result = pactus.BlockchainOuterClass.BlockVerbosity.forNumber(verbosity_);
+        return result == null ? pactus.BlockchainOuterClass.BlockVerbosity.UNRECOGNIZED : result;
       }
       /**
        * <pre>
@@ -5883,7 +5883,7 @@ public final class Blockchain {
        * @param value The verbosity to set.
        * @return This builder for chaining.
        */
-      public Builder setVerbosity(pactus.Blockchain.BlockVerbosity value) {
+      public Builder setVerbosity(pactus.BlockchainOuterClass.BlockVerbosity value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -5911,12 +5911,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetBlockRequest)
-    private static final pactus.Blockchain.GetBlockRequest DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetBlockRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetBlockRequest();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetBlockRequest();
     }
 
-    public static pactus.Blockchain.GetBlockRequest getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetBlockRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -5952,7 +5952,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetBlockRequest getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetBlockRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -6039,7 +6039,7 @@ public final class Blockchain {
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
      * @return The header.
      */
-    pactus.Blockchain.BlockHeaderInfo getHeader();
+    pactus.BlockchainOuterClass.BlockHeaderInfo getHeader();
     /**
      * <pre>
      * Header information of the block.
@@ -6047,7 +6047,7 @@ public final class Blockchain {
      *
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
      */
-    pactus.Blockchain.BlockHeaderInfoOrBuilder getHeaderOrBuilder();
+    pactus.BlockchainOuterClass.BlockHeaderInfoOrBuilder getHeaderOrBuilder();
 
     /**
      * <pre>
@@ -6066,7 +6066,7 @@ public final class Blockchain {
      * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
      * @return The prevCert.
      */
-    pactus.Blockchain.CertificateInfo getPrevCert();
+    pactus.BlockchainOuterClass.CertificateInfo getPrevCert();
     /**
      * <pre>
      * Certificate information of the previous block.
@@ -6074,7 +6074,7 @@ public final class Blockchain {
      *
      * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
      */
-    pactus.Blockchain.CertificateInfoOrBuilder getPrevCertOrBuilder();
+    pactus.BlockchainOuterClass.CertificateInfoOrBuilder getPrevCertOrBuilder();
 
     /**
      * <pre>
@@ -6084,7 +6084,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
-    java.util.List<pactus.Transaction.TransactionInfo> 
+    java.util.List<pactus.TransactionOuterClass.TransactionInfo> 
         getTxsList();
     /**
      * <pre>
@@ -6094,7 +6094,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
-    pactus.Transaction.TransactionInfo getTxs(int index);
+    pactus.TransactionOuterClass.TransactionInfo getTxs(int index);
     /**
      * <pre>
      * List of transactions in the block, available when verbosity level is set to
@@ -6112,7 +6112,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
-    java.util.List<? extends pactus.Transaction.TransactionInfoOrBuilder> 
+    java.util.List<? extends pactus.TransactionOuterClass.TransactionInfoOrBuilder> 
         getTxsOrBuilderList();
     /**
      * <pre>
@@ -6122,7 +6122,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
-    pactus.Transaction.TransactionInfoOrBuilder getTxsOrBuilder(
+    pactus.TransactionOuterClass.TransactionInfoOrBuilder getTxsOrBuilder(
         int index);
   }
   /**
@@ -6158,15 +6158,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockResponse_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockResponse_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetBlockResponse.class, pactus.Blockchain.GetBlockResponse.Builder.class);
+              pactus.BlockchainOuterClass.GetBlockResponse.class, pactus.BlockchainOuterClass.GetBlockResponse.Builder.class);
     }
 
     private int bitField0_;
@@ -6295,7 +6295,7 @@ public final class Blockchain {
     }
 
     public static final int HEADER_FIELD_NUMBER = 5;
-    private pactus.Blockchain.BlockHeaderInfo header_;
+    private pactus.BlockchainOuterClass.BlockHeaderInfo header_;
     /**
      * <pre>
      * Header information of the block.
@@ -6317,8 +6317,8 @@ public final class Blockchain {
      * @return The header.
      */
     @java.lang.Override
-    public pactus.Blockchain.BlockHeaderInfo getHeader() {
-      return header_ == null ? pactus.Blockchain.BlockHeaderInfo.getDefaultInstance() : header_;
+    public pactus.BlockchainOuterClass.BlockHeaderInfo getHeader() {
+      return header_ == null ? pactus.BlockchainOuterClass.BlockHeaderInfo.getDefaultInstance() : header_;
     }
     /**
      * <pre>
@@ -6328,12 +6328,12 @@ public final class Blockchain {
      * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
      */
     @java.lang.Override
-    public pactus.Blockchain.BlockHeaderInfoOrBuilder getHeaderOrBuilder() {
-      return header_ == null ? pactus.Blockchain.BlockHeaderInfo.getDefaultInstance() : header_;
+    public pactus.BlockchainOuterClass.BlockHeaderInfoOrBuilder getHeaderOrBuilder() {
+      return header_ == null ? pactus.BlockchainOuterClass.BlockHeaderInfo.getDefaultInstance() : header_;
     }
 
     public static final int PREV_CERT_FIELD_NUMBER = 6;
-    private pactus.Blockchain.CertificateInfo prevCert_;
+    private pactus.BlockchainOuterClass.CertificateInfo prevCert_;
     /**
      * <pre>
      * Certificate information of the previous block.
@@ -6355,8 +6355,8 @@ public final class Blockchain {
      * @return The prevCert.
      */
     @java.lang.Override
-    public pactus.Blockchain.CertificateInfo getPrevCert() {
-      return prevCert_ == null ? pactus.Blockchain.CertificateInfo.getDefaultInstance() : prevCert_;
+    public pactus.BlockchainOuterClass.CertificateInfo getPrevCert() {
+      return prevCert_ == null ? pactus.BlockchainOuterClass.CertificateInfo.getDefaultInstance() : prevCert_;
     }
     /**
      * <pre>
@@ -6366,13 +6366,13 @@ public final class Blockchain {
      * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
      */
     @java.lang.Override
-    public pactus.Blockchain.CertificateInfoOrBuilder getPrevCertOrBuilder() {
-      return prevCert_ == null ? pactus.Blockchain.CertificateInfo.getDefaultInstance() : prevCert_;
+    public pactus.BlockchainOuterClass.CertificateInfoOrBuilder getPrevCertOrBuilder() {
+      return prevCert_ == null ? pactus.BlockchainOuterClass.CertificateInfo.getDefaultInstance() : prevCert_;
     }
 
     public static final int TXS_FIELD_NUMBER = 7;
     @SuppressWarnings("serial")
-    private java.util.List<pactus.Transaction.TransactionInfo> txs_;
+    private java.util.List<pactus.TransactionOuterClass.TransactionInfo> txs_;
     /**
      * <pre>
      * List of transactions in the block, available when verbosity level is set to
@@ -6382,7 +6382,7 @@ public final class Blockchain {
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     @java.lang.Override
-    public java.util.List<pactus.Transaction.TransactionInfo> getTxsList() {
+    public java.util.List<pactus.TransactionOuterClass.TransactionInfo> getTxsList() {
       return txs_;
     }
     /**
@@ -6394,7 +6394,7 @@ public final class Blockchain {
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     @java.lang.Override
-    public java.util.List<? extends pactus.Transaction.TransactionInfoOrBuilder> 
+    public java.util.List<? extends pactus.TransactionOuterClass.TransactionInfoOrBuilder> 
         getTxsOrBuilderList() {
       return txs_;
     }
@@ -6419,7 +6419,7 @@ public final class Blockchain {
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     @java.lang.Override
-    public pactus.Transaction.TransactionInfo getTxs(int index) {
+    public pactus.TransactionOuterClass.TransactionInfo getTxs(int index) {
       return txs_.get(index);
     }
     /**
@@ -6431,7 +6431,7 @@ public final class Blockchain {
      * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
      */
     @java.lang.Override
-    public pactus.Transaction.TransactionInfoOrBuilder getTxsOrBuilder(
+    public pactus.TransactionOuterClass.TransactionInfoOrBuilder getTxsOrBuilder(
         int index) {
       return txs_.get(index);
     }
@@ -6516,10 +6516,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetBlockResponse)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetBlockResponse)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetBlockResponse other = (pactus.Blockchain.GetBlockResponse) obj;
+      pactus.BlockchainOuterClass.GetBlockResponse other = (pactus.BlockchainOuterClass.GetBlockResponse) obj;
 
       if (getHeight()
           != other.getHeight()) return false;
@@ -6577,44 +6577,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetBlockResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockResponse parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetBlockResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockResponse parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -6622,26 +6622,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetBlockResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetBlockResponse parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetBlockResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -6654,7 +6654,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetBlockResponse prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetBlockResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -6679,21 +6679,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetBlockResponse)
-        pactus.Blockchain.GetBlockResponseOrBuilder {
+        pactus.BlockchainOuterClass.GetBlockResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockResponse_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetBlockResponse.class, pactus.Blockchain.GetBlockResponse.Builder.class);
+                pactus.BlockchainOuterClass.GetBlockResponse.class, pactus.BlockchainOuterClass.GetBlockResponse.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetBlockResponse.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetBlockResponse.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -6742,17 +6742,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockResponse getDefaultInstanceForType() {
-        return pactus.Blockchain.GetBlockResponse.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetBlockResponse getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetBlockResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockResponse build() {
-        pactus.Blockchain.GetBlockResponse result = buildPartial();
+      public pactus.BlockchainOuterClass.GetBlockResponse build() {
+        pactus.BlockchainOuterClass.GetBlockResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -6760,15 +6760,15 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockResponse buildPartial() {
-        pactus.Blockchain.GetBlockResponse result = new pactus.Blockchain.GetBlockResponse(this);
+      public pactus.BlockchainOuterClass.GetBlockResponse buildPartial() {
+        pactus.BlockchainOuterClass.GetBlockResponse result = new pactus.BlockchainOuterClass.GetBlockResponse(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(pactus.Blockchain.GetBlockResponse result) {
+      private void buildPartialRepeatedFields(pactus.BlockchainOuterClass.GetBlockResponse result) {
         if (txsBuilder_ == null) {
           if (((bitField0_ & 0x00000040) != 0)) {
             txs_ = java.util.Collections.unmodifiableList(txs_);
@@ -6780,7 +6780,7 @@ public final class Blockchain {
         }
       }
 
-      private void buildPartial0(pactus.Blockchain.GetBlockResponse result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetBlockResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.height_ = height_;
@@ -6812,16 +6812,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetBlockResponse) {
-          return mergeFrom((pactus.Blockchain.GetBlockResponse)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetBlockResponse) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetBlockResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetBlockResponse other) {
-        if (other == pactus.Blockchain.GetBlockResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetBlockResponse other) {
+        if (other == pactus.BlockchainOuterClass.GetBlockResponse.getDefaultInstance()) return this;
         if (other.getHeight() != 0) {
           setHeight(other.getHeight());
         }
@@ -6931,9 +6931,9 @@ public final class Blockchain {
                 break;
               } // case 50
               case 58: {
-                pactus.Transaction.TransactionInfo m =
+                pactus.TransactionOuterClass.TransactionInfo m =
                     input.readMessage(
-                        pactus.Transaction.TransactionInfo.parser(),
+                        pactus.TransactionOuterClass.TransactionInfo.parser(),
                         extensionRegistry);
                 if (txsBuilder_ == null) {
                   ensureTxsIsMutable();
@@ -7232,9 +7232,9 @@ public final class Blockchain {
         return this;
       }
 
-      private pactus.Blockchain.BlockHeaderInfo header_;
+      private pactus.BlockchainOuterClass.BlockHeaderInfo header_;
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Blockchain.BlockHeaderInfo, pactus.Blockchain.BlockHeaderInfo.Builder, pactus.Blockchain.BlockHeaderInfoOrBuilder> headerBuilder_;
+          pactus.BlockchainOuterClass.BlockHeaderInfo, pactus.BlockchainOuterClass.BlockHeaderInfo.Builder, pactus.BlockchainOuterClass.BlockHeaderInfoOrBuilder> headerBuilder_;
       /**
        * <pre>
        * Header information of the block.
@@ -7254,9 +7254,9 @@ public final class Blockchain {
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        * @return The header.
        */
-      public pactus.Blockchain.BlockHeaderInfo getHeader() {
+      public pactus.BlockchainOuterClass.BlockHeaderInfo getHeader() {
         if (headerBuilder_ == null) {
-          return header_ == null ? pactus.Blockchain.BlockHeaderInfo.getDefaultInstance() : header_;
+          return header_ == null ? pactus.BlockchainOuterClass.BlockHeaderInfo.getDefaultInstance() : header_;
         } else {
           return headerBuilder_.getMessage();
         }
@@ -7268,7 +7268,7 @@ public final class Blockchain {
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
-      public Builder setHeader(pactus.Blockchain.BlockHeaderInfo value) {
+      public Builder setHeader(pactus.BlockchainOuterClass.BlockHeaderInfo value) {
         if (headerBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -7289,7 +7289,7 @@ public final class Blockchain {
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
       public Builder setHeader(
-          pactus.Blockchain.BlockHeaderInfo.Builder builderForValue) {
+          pactus.BlockchainOuterClass.BlockHeaderInfo.Builder builderForValue) {
         if (headerBuilder_ == null) {
           header_ = builderForValue.build();
         } else {
@@ -7306,11 +7306,11 @@ public final class Blockchain {
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
-      public Builder mergeHeader(pactus.Blockchain.BlockHeaderInfo value) {
+      public Builder mergeHeader(pactus.BlockchainOuterClass.BlockHeaderInfo value) {
         if (headerBuilder_ == null) {
           if (((bitField0_ & 0x00000010) != 0) &&
             header_ != null &&
-            header_ != pactus.Blockchain.BlockHeaderInfo.getDefaultInstance()) {
+            header_ != pactus.BlockchainOuterClass.BlockHeaderInfo.getDefaultInstance()) {
             getHeaderBuilder().mergeFrom(value);
           } else {
             header_ = value;
@@ -7348,7 +7348,7 @@ public final class Blockchain {
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
-      public pactus.Blockchain.BlockHeaderInfo.Builder getHeaderBuilder() {
+      public pactus.BlockchainOuterClass.BlockHeaderInfo.Builder getHeaderBuilder() {
         bitField0_ |= 0x00000010;
         onChanged();
         return internalGetHeaderFieldBuilder().getBuilder();
@@ -7360,12 +7360,12 @@ public final class Blockchain {
        *
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
-      public pactus.Blockchain.BlockHeaderInfoOrBuilder getHeaderOrBuilder() {
+      public pactus.BlockchainOuterClass.BlockHeaderInfoOrBuilder getHeaderOrBuilder() {
         if (headerBuilder_ != null) {
           return headerBuilder_.getMessageOrBuilder();
         } else {
           return header_ == null ?
-              pactus.Blockchain.BlockHeaderInfo.getDefaultInstance() : header_;
+              pactus.BlockchainOuterClass.BlockHeaderInfo.getDefaultInstance() : header_;
         }
       }
       /**
@@ -7376,11 +7376,11 @@ public final class Blockchain {
        * <code>.pactus.BlockHeaderInfo header = 5 [json_name = "header"];</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Blockchain.BlockHeaderInfo, pactus.Blockchain.BlockHeaderInfo.Builder, pactus.Blockchain.BlockHeaderInfoOrBuilder> 
+          pactus.BlockchainOuterClass.BlockHeaderInfo, pactus.BlockchainOuterClass.BlockHeaderInfo.Builder, pactus.BlockchainOuterClass.BlockHeaderInfoOrBuilder> 
           internalGetHeaderFieldBuilder() {
         if (headerBuilder_ == null) {
           headerBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              pactus.Blockchain.BlockHeaderInfo, pactus.Blockchain.BlockHeaderInfo.Builder, pactus.Blockchain.BlockHeaderInfoOrBuilder>(
+              pactus.BlockchainOuterClass.BlockHeaderInfo, pactus.BlockchainOuterClass.BlockHeaderInfo.Builder, pactus.BlockchainOuterClass.BlockHeaderInfoOrBuilder>(
                   getHeader(),
                   getParentForChildren(),
                   isClean());
@@ -7389,9 +7389,9 @@ public final class Blockchain {
         return headerBuilder_;
       }
 
-      private pactus.Blockchain.CertificateInfo prevCert_;
+      private pactus.BlockchainOuterClass.CertificateInfo prevCert_;
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Blockchain.CertificateInfo, pactus.Blockchain.CertificateInfo.Builder, pactus.Blockchain.CertificateInfoOrBuilder> prevCertBuilder_;
+          pactus.BlockchainOuterClass.CertificateInfo, pactus.BlockchainOuterClass.CertificateInfo.Builder, pactus.BlockchainOuterClass.CertificateInfoOrBuilder> prevCertBuilder_;
       /**
        * <pre>
        * Certificate information of the previous block.
@@ -7411,9 +7411,9 @@ public final class Blockchain {
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        * @return The prevCert.
        */
-      public pactus.Blockchain.CertificateInfo getPrevCert() {
+      public pactus.BlockchainOuterClass.CertificateInfo getPrevCert() {
         if (prevCertBuilder_ == null) {
-          return prevCert_ == null ? pactus.Blockchain.CertificateInfo.getDefaultInstance() : prevCert_;
+          return prevCert_ == null ? pactus.BlockchainOuterClass.CertificateInfo.getDefaultInstance() : prevCert_;
         } else {
           return prevCertBuilder_.getMessage();
         }
@@ -7425,7 +7425,7 @@ public final class Blockchain {
        *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
-      public Builder setPrevCert(pactus.Blockchain.CertificateInfo value) {
+      public Builder setPrevCert(pactus.BlockchainOuterClass.CertificateInfo value) {
         if (prevCertBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -7446,7 +7446,7 @@ public final class Blockchain {
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
       public Builder setPrevCert(
-          pactus.Blockchain.CertificateInfo.Builder builderForValue) {
+          pactus.BlockchainOuterClass.CertificateInfo.Builder builderForValue) {
         if (prevCertBuilder_ == null) {
           prevCert_ = builderForValue.build();
         } else {
@@ -7463,11 +7463,11 @@ public final class Blockchain {
        *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
-      public Builder mergePrevCert(pactus.Blockchain.CertificateInfo value) {
+      public Builder mergePrevCert(pactus.BlockchainOuterClass.CertificateInfo value) {
         if (prevCertBuilder_ == null) {
           if (((bitField0_ & 0x00000020) != 0) &&
             prevCert_ != null &&
-            prevCert_ != pactus.Blockchain.CertificateInfo.getDefaultInstance()) {
+            prevCert_ != pactus.BlockchainOuterClass.CertificateInfo.getDefaultInstance()) {
             getPrevCertBuilder().mergeFrom(value);
           } else {
             prevCert_ = value;
@@ -7505,7 +7505,7 @@ public final class Blockchain {
        *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
-      public pactus.Blockchain.CertificateInfo.Builder getPrevCertBuilder() {
+      public pactus.BlockchainOuterClass.CertificateInfo.Builder getPrevCertBuilder() {
         bitField0_ |= 0x00000020;
         onChanged();
         return internalGetPrevCertFieldBuilder().getBuilder();
@@ -7517,12 +7517,12 @@ public final class Blockchain {
        *
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
-      public pactus.Blockchain.CertificateInfoOrBuilder getPrevCertOrBuilder() {
+      public pactus.BlockchainOuterClass.CertificateInfoOrBuilder getPrevCertOrBuilder() {
         if (prevCertBuilder_ != null) {
           return prevCertBuilder_.getMessageOrBuilder();
         } else {
           return prevCert_ == null ?
-              pactus.Blockchain.CertificateInfo.getDefaultInstance() : prevCert_;
+              pactus.BlockchainOuterClass.CertificateInfo.getDefaultInstance() : prevCert_;
         }
       }
       /**
@@ -7533,11 +7533,11 @@ public final class Blockchain {
        * <code>.pactus.CertificateInfo prev_cert = 6 [json_name = "prevCert"];</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Blockchain.CertificateInfo, pactus.Blockchain.CertificateInfo.Builder, pactus.Blockchain.CertificateInfoOrBuilder> 
+          pactus.BlockchainOuterClass.CertificateInfo, pactus.BlockchainOuterClass.CertificateInfo.Builder, pactus.BlockchainOuterClass.CertificateInfoOrBuilder> 
           internalGetPrevCertFieldBuilder() {
         if (prevCertBuilder_ == null) {
           prevCertBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              pactus.Blockchain.CertificateInfo, pactus.Blockchain.CertificateInfo.Builder, pactus.Blockchain.CertificateInfoOrBuilder>(
+              pactus.BlockchainOuterClass.CertificateInfo, pactus.BlockchainOuterClass.CertificateInfo.Builder, pactus.BlockchainOuterClass.CertificateInfoOrBuilder>(
                   getPrevCert(),
                   getParentForChildren(),
                   isClean());
@@ -7546,17 +7546,17 @@ public final class Blockchain {
         return prevCertBuilder_;
       }
 
-      private java.util.List<pactus.Transaction.TransactionInfo> txs_ =
+      private java.util.List<pactus.TransactionOuterClass.TransactionInfo> txs_ =
         java.util.Collections.emptyList();
       private void ensureTxsIsMutable() {
         if (!((bitField0_ & 0x00000040) != 0)) {
-          txs_ = new java.util.ArrayList<pactus.Transaction.TransactionInfo>(txs_);
+          txs_ = new java.util.ArrayList<pactus.TransactionOuterClass.TransactionInfo>(txs_);
           bitField0_ |= 0x00000040;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Transaction.TransactionInfo, pactus.Transaction.TransactionInfo.Builder, pactus.Transaction.TransactionInfoOrBuilder> txsBuilder_;
+          pactus.TransactionOuterClass.TransactionInfo, pactus.TransactionOuterClass.TransactionInfo.Builder, pactus.TransactionOuterClass.TransactionInfoOrBuilder> txsBuilder_;
 
       /**
        * <pre>
@@ -7566,7 +7566,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
-      public java.util.List<pactus.Transaction.TransactionInfo> getTxsList() {
+      public java.util.List<pactus.TransactionOuterClass.TransactionInfo> getTxsList() {
         if (txsBuilder_ == null) {
           return java.util.Collections.unmodifiableList(txs_);
         } else {
@@ -7596,7 +7596,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
-      public pactus.Transaction.TransactionInfo getTxs(int index) {
+      public pactus.TransactionOuterClass.TransactionInfo getTxs(int index) {
         if (txsBuilder_ == null) {
           return txs_.get(index);
         } else {
@@ -7612,7 +7612,7 @@ public final class Blockchain {
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder setTxs(
-          int index, pactus.Transaction.TransactionInfo value) {
+          int index, pactus.TransactionOuterClass.TransactionInfo value) {
         if (txsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -7634,7 +7634,7 @@ public final class Blockchain {
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder setTxs(
-          int index, pactus.Transaction.TransactionInfo.Builder builderForValue) {
+          int index, pactus.TransactionOuterClass.TransactionInfo.Builder builderForValue) {
         if (txsBuilder_ == null) {
           ensureTxsIsMutable();
           txs_.set(index, builderForValue.build());
@@ -7652,7 +7652,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
-      public Builder addTxs(pactus.Transaction.TransactionInfo value) {
+      public Builder addTxs(pactus.TransactionOuterClass.TransactionInfo value) {
         if (txsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -7674,7 +7674,7 @@ public final class Blockchain {
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder addTxs(
-          int index, pactus.Transaction.TransactionInfo value) {
+          int index, pactus.TransactionOuterClass.TransactionInfo value) {
         if (txsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -7696,7 +7696,7 @@ public final class Blockchain {
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder addTxs(
-          pactus.Transaction.TransactionInfo.Builder builderForValue) {
+          pactus.TransactionOuterClass.TransactionInfo.Builder builderForValue) {
         if (txsBuilder_ == null) {
           ensureTxsIsMutable();
           txs_.add(builderForValue.build());
@@ -7715,7 +7715,7 @@ public final class Blockchain {
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder addTxs(
-          int index, pactus.Transaction.TransactionInfo.Builder builderForValue) {
+          int index, pactus.TransactionOuterClass.TransactionInfo.Builder builderForValue) {
         if (txsBuilder_ == null) {
           ensureTxsIsMutable();
           txs_.add(index, builderForValue.build());
@@ -7734,7 +7734,7 @@ public final class Blockchain {
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
       public Builder addAllTxs(
-          java.lang.Iterable<? extends pactus.Transaction.TransactionInfo> values) {
+          java.lang.Iterable<? extends pactus.TransactionOuterClass.TransactionInfo> values) {
         if (txsBuilder_ == null) {
           ensureTxsIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -7789,7 +7789,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
-      public pactus.Transaction.TransactionInfo.Builder getTxsBuilder(
+      public pactus.TransactionOuterClass.TransactionInfo.Builder getTxsBuilder(
           int index) {
         return internalGetTxsFieldBuilder().getBuilder(index);
       }
@@ -7801,7 +7801,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
-      public pactus.Transaction.TransactionInfoOrBuilder getTxsOrBuilder(
+      public pactus.TransactionOuterClass.TransactionInfoOrBuilder getTxsOrBuilder(
           int index) {
         if (txsBuilder_ == null) {
           return txs_.get(index);  } else {
@@ -7816,7 +7816,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
-      public java.util.List<? extends pactus.Transaction.TransactionInfoOrBuilder> 
+      public java.util.List<? extends pactus.TransactionOuterClass.TransactionInfoOrBuilder> 
            getTxsOrBuilderList() {
         if (txsBuilder_ != null) {
           return txsBuilder_.getMessageOrBuilderList();
@@ -7832,9 +7832,9 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
-      public pactus.Transaction.TransactionInfo.Builder addTxsBuilder() {
+      public pactus.TransactionOuterClass.TransactionInfo.Builder addTxsBuilder() {
         return internalGetTxsFieldBuilder().addBuilder(
-            pactus.Transaction.TransactionInfo.getDefaultInstance());
+            pactus.TransactionOuterClass.TransactionInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -7844,10 +7844,10 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
-      public pactus.Transaction.TransactionInfo.Builder addTxsBuilder(
+      public pactus.TransactionOuterClass.TransactionInfo.Builder addTxsBuilder(
           int index) {
         return internalGetTxsFieldBuilder().addBuilder(
-            index, pactus.Transaction.TransactionInfo.getDefaultInstance());
+            index, pactus.TransactionOuterClass.TransactionInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -7857,16 +7857,16 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 7 [json_name = "txs"];</code>
        */
-      public java.util.List<pactus.Transaction.TransactionInfo.Builder> 
+      public java.util.List<pactus.TransactionOuterClass.TransactionInfo.Builder> 
            getTxsBuilderList() {
         return internalGetTxsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Transaction.TransactionInfo, pactus.Transaction.TransactionInfo.Builder, pactus.Transaction.TransactionInfoOrBuilder> 
+          pactus.TransactionOuterClass.TransactionInfo, pactus.TransactionOuterClass.TransactionInfo.Builder, pactus.TransactionOuterClass.TransactionInfoOrBuilder> 
           internalGetTxsFieldBuilder() {
         if (txsBuilder_ == null) {
           txsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              pactus.Transaction.TransactionInfo, pactus.Transaction.TransactionInfo.Builder, pactus.Transaction.TransactionInfoOrBuilder>(
+              pactus.TransactionOuterClass.TransactionInfo, pactus.TransactionOuterClass.TransactionInfo.Builder, pactus.TransactionOuterClass.TransactionInfoOrBuilder>(
                   txs_,
                   ((bitField0_ & 0x00000040) != 0),
                   getParentForChildren(),
@@ -7880,12 +7880,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetBlockResponse)
-    private static final pactus.Blockchain.GetBlockResponse DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetBlockResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetBlockResponse();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetBlockResponse();
     }
 
-    public static pactus.Blockchain.GetBlockResponse getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetBlockResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -7921,7 +7921,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetBlockResponse getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetBlockResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -7971,15 +7971,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockHashRequest_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHashRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockHashRequest_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHashRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetBlockHashRequest.class, pactus.Blockchain.GetBlockHashRequest.Builder.class);
+              pactus.BlockchainOuterClass.GetBlockHashRequest.class, pactus.BlockchainOuterClass.GetBlockHashRequest.Builder.class);
     }
 
     public static final int HEIGHT_FIELD_NUMBER = 1;
@@ -8037,10 +8037,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetBlockHashRequest)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetBlockHashRequest)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetBlockHashRequest other = (pactus.Blockchain.GetBlockHashRequest) obj;
+      pactus.BlockchainOuterClass.GetBlockHashRequest other = (pactus.BlockchainOuterClass.GetBlockHashRequest) obj;
 
       if (getHeight()
           != other.getHeight()) return false;
@@ -8062,44 +8062,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetBlockHashRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockHashRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHashRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockHashRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHashRequest parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockHashRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHashRequest parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockHashRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -8107,26 +8107,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetBlockHashRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetBlockHashRequest parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHashRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockHashRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -8139,7 +8139,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetBlockHashRequest prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetBlockHashRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -8164,21 +8164,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetBlockHashRequest)
-        pactus.Blockchain.GetBlockHashRequestOrBuilder {
+        pactus.BlockchainOuterClass.GetBlockHashRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockHashRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHashRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockHashRequest_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHashRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetBlockHashRequest.class, pactus.Blockchain.GetBlockHashRequest.Builder.class);
+                pactus.BlockchainOuterClass.GetBlockHashRequest.class, pactus.BlockchainOuterClass.GetBlockHashRequest.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetBlockHashRequest.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetBlockHashRequest.newBuilder()
       private Builder() {
 
       }
@@ -8199,17 +8199,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockHashRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHashRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockHashRequest getDefaultInstanceForType() {
-        return pactus.Blockchain.GetBlockHashRequest.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetBlockHashRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetBlockHashRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockHashRequest build() {
-        pactus.Blockchain.GetBlockHashRequest result = buildPartial();
+      public pactus.BlockchainOuterClass.GetBlockHashRequest build() {
+        pactus.BlockchainOuterClass.GetBlockHashRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -8217,14 +8217,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockHashRequest buildPartial() {
-        pactus.Blockchain.GetBlockHashRequest result = new pactus.Blockchain.GetBlockHashRequest(this);
+      public pactus.BlockchainOuterClass.GetBlockHashRequest buildPartial() {
+        pactus.BlockchainOuterClass.GetBlockHashRequest result = new pactus.BlockchainOuterClass.GetBlockHashRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetBlockHashRequest result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetBlockHashRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.height_ = height_;
@@ -8233,16 +8233,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetBlockHashRequest) {
-          return mergeFrom((pactus.Blockchain.GetBlockHashRequest)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetBlockHashRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetBlockHashRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetBlockHashRequest other) {
-        if (other == pactus.Blockchain.GetBlockHashRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetBlockHashRequest other) {
+        if (other == pactus.BlockchainOuterClass.GetBlockHashRequest.getDefaultInstance()) return this;
         if (other.getHeight() != 0) {
           setHeight(other.getHeight());
         }
@@ -8342,12 +8342,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetBlockHashRequest)
-    private static final pactus.Blockchain.GetBlockHashRequest DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetBlockHashRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetBlockHashRequest();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetBlockHashRequest();
     }
 
-    public static pactus.Blockchain.GetBlockHashRequest getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetBlockHashRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -8383,7 +8383,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetBlockHashRequest getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetBlockHashRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -8444,15 +8444,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockHashResponse_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHashResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockHashResponse_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHashResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetBlockHashResponse.class, pactus.Blockchain.GetBlockHashResponse.Builder.class);
+              pactus.BlockchainOuterClass.GetBlockHashResponse.class, pactus.BlockchainOuterClass.GetBlockHashResponse.Builder.class);
     }
 
     public static final int HASH_FIELD_NUMBER = 1;
@@ -8541,10 +8541,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetBlockHashResponse)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetBlockHashResponse)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetBlockHashResponse other = (pactus.Blockchain.GetBlockHashResponse) obj;
+      pactus.BlockchainOuterClass.GetBlockHashResponse other = (pactus.BlockchainOuterClass.GetBlockHashResponse) obj;
 
       if (!getHash()
           .equals(other.getHash())) return false;
@@ -8566,44 +8566,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetBlockHashResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockHashResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHashResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockHashResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHashResponse parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockHashResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHashResponse parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockHashResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -8611,26 +8611,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetBlockHashResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetBlockHashResponse parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHashResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockHashResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -8643,7 +8643,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetBlockHashResponse prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetBlockHashResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -8668,21 +8668,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetBlockHashResponse)
-        pactus.Blockchain.GetBlockHashResponseOrBuilder {
+        pactus.BlockchainOuterClass.GetBlockHashResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockHashResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHashResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockHashResponse_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHashResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetBlockHashResponse.class, pactus.Blockchain.GetBlockHashResponse.Builder.class);
+                pactus.BlockchainOuterClass.GetBlockHashResponse.class, pactus.BlockchainOuterClass.GetBlockHashResponse.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetBlockHashResponse.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetBlockHashResponse.newBuilder()
       private Builder() {
 
       }
@@ -8703,17 +8703,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockHashResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHashResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockHashResponse getDefaultInstanceForType() {
-        return pactus.Blockchain.GetBlockHashResponse.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetBlockHashResponse getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetBlockHashResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockHashResponse build() {
-        pactus.Blockchain.GetBlockHashResponse result = buildPartial();
+      public pactus.BlockchainOuterClass.GetBlockHashResponse build() {
+        pactus.BlockchainOuterClass.GetBlockHashResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -8721,14 +8721,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockHashResponse buildPartial() {
-        pactus.Blockchain.GetBlockHashResponse result = new pactus.Blockchain.GetBlockHashResponse(this);
+      public pactus.BlockchainOuterClass.GetBlockHashResponse buildPartial() {
+        pactus.BlockchainOuterClass.GetBlockHashResponse result = new pactus.BlockchainOuterClass.GetBlockHashResponse(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetBlockHashResponse result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetBlockHashResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.hash_ = hash_;
@@ -8737,16 +8737,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetBlockHashResponse) {
-          return mergeFrom((pactus.Blockchain.GetBlockHashResponse)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetBlockHashResponse) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetBlockHashResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetBlockHashResponse other) {
-        if (other == pactus.Blockchain.GetBlockHashResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetBlockHashResponse other) {
+        if (other == pactus.BlockchainOuterClass.GetBlockHashResponse.getDefaultInstance()) return this;
         if (!other.getHash().isEmpty()) {
           hash_ = other.hash_;
           bitField0_ |= 0x00000001;
@@ -8896,12 +8896,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetBlockHashResponse)
-    private static final pactus.Blockchain.GetBlockHashResponse DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetBlockHashResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetBlockHashResponse();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetBlockHashResponse();
     }
 
-    public static pactus.Blockchain.GetBlockHashResponse getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetBlockHashResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -8937,7 +8937,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetBlockHashResponse getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetBlockHashResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -8998,15 +8998,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockHeightRequest_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHeightRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockHeightRequest_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHeightRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetBlockHeightRequest.class, pactus.Blockchain.GetBlockHeightRequest.Builder.class);
+              pactus.BlockchainOuterClass.GetBlockHeightRequest.class, pactus.BlockchainOuterClass.GetBlockHeightRequest.Builder.class);
     }
 
     public static final int HASH_FIELD_NUMBER = 1;
@@ -9095,10 +9095,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetBlockHeightRequest)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetBlockHeightRequest)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetBlockHeightRequest other = (pactus.Blockchain.GetBlockHeightRequest) obj;
+      pactus.BlockchainOuterClass.GetBlockHeightRequest other = (pactus.BlockchainOuterClass.GetBlockHeightRequest) obj;
 
       if (!getHash()
           .equals(other.getHash())) return false;
@@ -9120,44 +9120,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetBlockHeightRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockHeightRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHeightRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockHeightRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHeightRequest parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockHeightRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHeightRequest parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockHeightRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -9165,26 +9165,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetBlockHeightRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetBlockHeightRequest parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHeightRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockHeightRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -9197,7 +9197,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetBlockHeightRequest prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetBlockHeightRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -9222,21 +9222,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetBlockHeightRequest)
-        pactus.Blockchain.GetBlockHeightRequestOrBuilder {
+        pactus.BlockchainOuterClass.GetBlockHeightRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockHeightRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHeightRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockHeightRequest_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHeightRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetBlockHeightRequest.class, pactus.Blockchain.GetBlockHeightRequest.Builder.class);
+                pactus.BlockchainOuterClass.GetBlockHeightRequest.class, pactus.BlockchainOuterClass.GetBlockHeightRequest.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetBlockHeightRequest.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetBlockHeightRequest.newBuilder()
       private Builder() {
 
       }
@@ -9257,17 +9257,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockHeightRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHeightRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockHeightRequest getDefaultInstanceForType() {
-        return pactus.Blockchain.GetBlockHeightRequest.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetBlockHeightRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetBlockHeightRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockHeightRequest build() {
-        pactus.Blockchain.GetBlockHeightRequest result = buildPartial();
+      public pactus.BlockchainOuterClass.GetBlockHeightRequest build() {
+        pactus.BlockchainOuterClass.GetBlockHeightRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -9275,14 +9275,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockHeightRequest buildPartial() {
-        pactus.Blockchain.GetBlockHeightRequest result = new pactus.Blockchain.GetBlockHeightRequest(this);
+      public pactus.BlockchainOuterClass.GetBlockHeightRequest buildPartial() {
+        pactus.BlockchainOuterClass.GetBlockHeightRequest result = new pactus.BlockchainOuterClass.GetBlockHeightRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetBlockHeightRequest result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetBlockHeightRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.hash_ = hash_;
@@ -9291,16 +9291,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetBlockHeightRequest) {
-          return mergeFrom((pactus.Blockchain.GetBlockHeightRequest)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetBlockHeightRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetBlockHeightRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetBlockHeightRequest other) {
-        if (other == pactus.Blockchain.GetBlockHeightRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetBlockHeightRequest other) {
+        if (other == pactus.BlockchainOuterClass.GetBlockHeightRequest.getDefaultInstance()) return this;
         if (!other.getHash().isEmpty()) {
           hash_ = other.hash_;
           bitField0_ |= 0x00000001;
@@ -9450,12 +9450,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetBlockHeightRequest)
-    private static final pactus.Blockchain.GetBlockHeightRequest DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetBlockHeightRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetBlockHeightRequest();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetBlockHeightRequest();
     }
 
-    public static pactus.Blockchain.GetBlockHeightRequest getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetBlockHeightRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9491,7 +9491,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetBlockHeightRequest getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetBlockHeightRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9541,15 +9541,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockHeightResponse_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHeightResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockHeightResponse_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHeightResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetBlockHeightResponse.class, pactus.Blockchain.GetBlockHeightResponse.Builder.class);
+              pactus.BlockchainOuterClass.GetBlockHeightResponse.class, pactus.BlockchainOuterClass.GetBlockHeightResponse.Builder.class);
     }
 
     public static final int HEIGHT_FIELD_NUMBER = 1;
@@ -9607,10 +9607,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetBlockHeightResponse)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetBlockHeightResponse)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetBlockHeightResponse other = (pactus.Blockchain.GetBlockHeightResponse) obj;
+      pactus.BlockchainOuterClass.GetBlockHeightResponse other = (pactus.BlockchainOuterClass.GetBlockHeightResponse) obj;
 
       if (getHeight()
           != other.getHeight()) return false;
@@ -9632,44 +9632,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetBlockHeightResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockHeightResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHeightResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockHeightResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHeightResponse parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockHeightResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHeightResponse parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockHeightResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -9677,26 +9677,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetBlockHeightResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetBlockHeightResponse parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockHeightResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockHeightResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -9709,7 +9709,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetBlockHeightResponse prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetBlockHeightResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -9734,21 +9734,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetBlockHeightResponse)
-        pactus.Blockchain.GetBlockHeightResponseOrBuilder {
+        pactus.BlockchainOuterClass.GetBlockHeightResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockHeightResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHeightResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockHeightResponse_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHeightResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetBlockHeightResponse.class, pactus.Blockchain.GetBlockHeightResponse.Builder.class);
+                pactus.BlockchainOuterClass.GetBlockHeightResponse.class, pactus.BlockchainOuterClass.GetBlockHeightResponse.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetBlockHeightResponse.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetBlockHeightResponse.newBuilder()
       private Builder() {
 
       }
@@ -9769,17 +9769,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockHeightResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockHeightResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockHeightResponse getDefaultInstanceForType() {
-        return pactus.Blockchain.GetBlockHeightResponse.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetBlockHeightResponse getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetBlockHeightResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockHeightResponse build() {
-        pactus.Blockchain.GetBlockHeightResponse result = buildPartial();
+      public pactus.BlockchainOuterClass.GetBlockHeightResponse build() {
+        pactus.BlockchainOuterClass.GetBlockHeightResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -9787,14 +9787,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockHeightResponse buildPartial() {
-        pactus.Blockchain.GetBlockHeightResponse result = new pactus.Blockchain.GetBlockHeightResponse(this);
+      public pactus.BlockchainOuterClass.GetBlockHeightResponse buildPartial() {
+        pactus.BlockchainOuterClass.GetBlockHeightResponse result = new pactus.BlockchainOuterClass.GetBlockHeightResponse(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetBlockHeightResponse result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetBlockHeightResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.height_ = height_;
@@ -9803,16 +9803,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetBlockHeightResponse) {
-          return mergeFrom((pactus.Blockchain.GetBlockHeightResponse)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetBlockHeightResponse) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetBlockHeightResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetBlockHeightResponse other) {
-        if (other == pactus.Blockchain.GetBlockHeightResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetBlockHeightResponse other) {
+        if (other == pactus.BlockchainOuterClass.GetBlockHeightResponse.getDefaultInstance()) return this;
         if (other.getHeight() != 0) {
           setHeight(other.getHeight());
         }
@@ -9912,12 +9912,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetBlockHeightResponse)
-    private static final pactus.Blockchain.GetBlockHeightResponse DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetBlockHeightResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetBlockHeightResponse();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetBlockHeightResponse();
     }
 
-    public static pactus.Blockchain.GetBlockHeightResponse getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetBlockHeightResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9953,7 +9953,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetBlockHeightResponse getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetBlockHeightResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -9993,15 +9993,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockchainInfoRequest_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockchainInfoRequest_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetBlockchainInfoRequest.class, pactus.Blockchain.GetBlockchainInfoRequest.Builder.class);
+              pactus.BlockchainOuterClass.GetBlockchainInfoRequest.class, pactus.BlockchainOuterClass.GetBlockchainInfoRequest.Builder.class);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -10037,10 +10037,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetBlockchainInfoRequest)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetBlockchainInfoRequest)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetBlockchainInfoRequest other = (pactus.Blockchain.GetBlockchainInfoRequest) obj;
+      pactus.BlockchainOuterClass.GetBlockchainInfoRequest other = (pactus.BlockchainOuterClass.GetBlockchainInfoRequest) obj;
 
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
@@ -10058,44 +10058,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetBlockchainInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockchainInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockchainInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockchainInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockchainInfoRequest parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockchainInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockchainInfoRequest parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockchainInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -10103,26 +10103,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetBlockchainInfoRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetBlockchainInfoRequest parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockchainInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockchainInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -10135,7 +10135,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetBlockchainInfoRequest prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetBlockchainInfoRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -10160,21 +10160,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetBlockchainInfoRequest)
-        pactus.Blockchain.GetBlockchainInfoRequestOrBuilder {
+        pactus.BlockchainOuterClass.GetBlockchainInfoRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockchainInfoRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockchainInfoRequest_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetBlockchainInfoRequest.class, pactus.Blockchain.GetBlockchainInfoRequest.Builder.class);
+                pactus.BlockchainOuterClass.GetBlockchainInfoRequest.class, pactus.BlockchainOuterClass.GetBlockchainInfoRequest.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetBlockchainInfoRequest.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetBlockchainInfoRequest.newBuilder()
       private Builder() {
 
       }
@@ -10193,17 +10193,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockchainInfoRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockchainInfoRequest getDefaultInstanceForType() {
-        return pactus.Blockchain.GetBlockchainInfoRequest.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetBlockchainInfoRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetBlockchainInfoRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockchainInfoRequest build() {
-        pactus.Blockchain.GetBlockchainInfoRequest result = buildPartial();
+      public pactus.BlockchainOuterClass.GetBlockchainInfoRequest build() {
+        pactus.BlockchainOuterClass.GetBlockchainInfoRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -10211,24 +10211,24 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockchainInfoRequest buildPartial() {
-        pactus.Blockchain.GetBlockchainInfoRequest result = new pactus.Blockchain.GetBlockchainInfoRequest(this);
+      public pactus.BlockchainOuterClass.GetBlockchainInfoRequest buildPartial() {
+        pactus.BlockchainOuterClass.GetBlockchainInfoRequest result = new pactus.BlockchainOuterClass.GetBlockchainInfoRequest(this);
         onBuilt();
         return result;
       }
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetBlockchainInfoRequest) {
-          return mergeFrom((pactus.Blockchain.GetBlockchainInfoRequest)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetBlockchainInfoRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetBlockchainInfoRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetBlockchainInfoRequest other) {
-        if (other == pactus.Blockchain.GetBlockchainInfoRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetBlockchainInfoRequest other) {
+        if (other == pactus.BlockchainOuterClass.GetBlockchainInfoRequest.getDefaultInstance()) return this;
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -10275,12 +10275,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetBlockchainInfoRequest)
-    private static final pactus.Blockchain.GetBlockchainInfoRequest DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetBlockchainInfoRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetBlockchainInfoRequest();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetBlockchainInfoRequest();
     }
 
-    public static pactus.Blockchain.GetBlockchainInfoRequest getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -10316,7 +10316,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetBlockchainInfoRequest getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetBlockchainInfoRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -10403,7 +10403,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
-    java.util.List<pactus.Blockchain.ValidatorInfo> 
+    java.util.List<pactus.BlockchainOuterClass.ValidatorInfo> 
         getCommitteeValidatorsList();
     /**
      * <pre>
@@ -10412,7 +10412,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
-    pactus.Blockchain.ValidatorInfo getCommitteeValidators(int index);
+    pactus.BlockchainOuterClass.ValidatorInfo getCommitteeValidators(int index);
     /**
      * <pre>
      * List of committee validators.
@@ -10428,7 +10428,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
-    java.util.List<? extends pactus.Blockchain.ValidatorInfoOrBuilder> 
+    java.util.List<? extends pactus.BlockchainOuterClass.ValidatorInfoOrBuilder> 
         getCommitteeValidatorsOrBuilderList();
     /**
      * <pre>
@@ -10437,7 +10437,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
-    pactus.Blockchain.ValidatorInfoOrBuilder getCommitteeValidatorsOrBuilder(
+    pactus.BlockchainOuterClass.ValidatorInfoOrBuilder getCommitteeValidatorsOrBuilder(
         int index);
 
     /**
@@ -10502,15 +10502,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockchainInfoResponse_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetBlockchainInfoResponse.class, pactus.Blockchain.GetBlockchainInfoResponse.Builder.class);
+              pactus.BlockchainOuterClass.GetBlockchainInfoResponse.class, pactus.BlockchainOuterClass.GetBlockchainInfoResponse.Builder.class);
     }
 
     public static final int LAST_BLOCK_HEIGHT_FIELD_NUMBER = 1;
@@ -10637,7 +10637,7 @@ public final class Blockchain {
 
     public static final int COMMITTEE_VALIDATORS_FIELD_NUMBER = 7;
     @SuppressWarnings("serial")
-    private java.util.List<pactus.Blockchain.ValidatorInfo> committeeValidators_;
+    private java.util.List<pactus.BlockchainOuterClass.ValidatorInfo> committeeValidators_;
     /**
      * <pre>
      * List of committee validators.
@@ -10646,7 +10646,7 @@ public final class Blockchain {
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
-    public java.util.List<pactus.Blockchain.ValidatorInfo> getCommitteeValidatorsList() {
+    public java.util.List<pactus.BlockchainOuterClass.ValidatorInfo> getCommitteeValidatorsList() {
       return committeeValidators_;
     }
     /**
@@ -10657,7 +10657,7 @@ public final class Blockchain {
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
-    public java.util.List<? extends pactus.Blockchain.ValidatorInfoOrBuilder> 
+    public java.util.List<? extends pactus.BlockchainOuterClass.ValidatorInfoOrBuilder> 
         getCommitteeValidatorsOrBuilderList() {
       return committeeValidators_;
     }
@@ -10680,7 +10680,7 @@ public final class Blockchain {
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
-    public pactus.Blockchain.ValidatorInfo getCommitteeValidators(int index) {
+    public pactus.BlockchainOuterClass.ValidatorInfo getCommitteeValidators(int index) {
       return committeeValidators_.get(index);
     }
     /**
@@ -10691,7 +10691,7 @@ public final class Blockchain {
      * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
      */
     @java.lang.Override
-    public pactus.Blockchain.ValidatorInfoOrBuilder getCommitteeValidatorsOrBuilder(
+    public pactus.BlockchainOuterClass.ValidatorInfoOrBuilder getCommitteeValidatorsOrBuilder(
         int index) {
       return committeeValidators_.get(index);
     }
@@ -10843,10 +10843,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetBlockchainInfoResponse)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetBlockchainInfoResponse)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetBlockchainInfoResponse other = (pactus.Blockchain.GetBlockchainInfoResponse) obj;
+      pactus.BlockchainOuterClass.GetBlockchainInfoResponse other = (pactus.BlockchainOuterClass.GetBlockchainInfoResponse) obj;
 
       if (getLastBlockHeight()
           != other.getLastBlockHeight()) return false;
@@ -10910,44 +10910,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetBlockchainInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockchainInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockchainInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockchainInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockchainInfoResponse parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetBlockchainInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockchainInfoResponse parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockchainInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -10955,26 +10955,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetBlockchainInfoResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetBlockchainInfoResponse parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetBlockchainInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetBlockchainInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -10987,7 +10987,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetBlockchainInfoResponse prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetBlockchainInfoResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -11012,21 +11012,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetBlockchainInfoResponse)
-        pactus.Blockchain.GetBlockchainInfoResponseOrBuilder {
+        pactus.BlockchainOuterClass.GetBlockchainInfoResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockchainInfoResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetBlockchainInfoResponse.class, pactus.Blockchain.GetBlockchainInfoResponse.Builder.class);
+                pactus.BlockchainOuterClass.GetBlockchainInfoResponse.class, pactus.BlockchainOuterClass.GetBlockchainInfoResponse.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetBlockchainInfoResponse.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetBlockchainInfoResponse.newBuilder()
       private Builder() {
 
       }
@@ -11062,17 +11062,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetBlockchainInfoResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockchainInfoResponse getDefaultInstanceForType() {
-        return pactus.Blockchain.GetBlockchainInfoResponse.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetBlockchainInfoResponse getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetBlockchainInfoResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockchainInfoResponse build() {
-        pactus.Blockchain.GetBlockchainInfoResponse result = buildPartial();
+      public pactus.BlockchainOuterClass.GetBlockchainInfoResponse build() {
+        pactus.BlockchainOuterClass.GetBlockchainInfoResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -11080,15 +11080,15 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetBlockchainInfoResponse buildPartial() {
-        pactus.Blockchain.GetBlockchainInfoResponse result = new pactus.Blockchain.GetBlockchainInfoResponse(this);
+      public pactus.BlockchainOuterClass.GetBlockchainInfoResponse buildPartial() {
+        pactus.BlockchainOuterClass.GetBlockchainInfoResponse result = new pactus.BlockchainOuterClass.GetBlockchainInfoResponse(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(pactus.Blockchain.GetBlockchainInfoResponse result) {
+      private void buildPartialRepeatedFields(pactus.BlockchainOuterClass.GetBlockchainInfoResponse result) {
         if (committeeValidatorsBuilder_ == null) {
           if (((bitField0_ & 0x00000040) != 0)) {
             committeeValidators_ = java.util.Collections.unmodifiableList(committeeValidators_);
@@ -11100,7 +11100,7 @@ public final class Blockchain {
         }
       }
 
-      private void buildPartial0(pactus.Blockchain.GetBlockchainInfoResponse result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetBlockchainInfoResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.lastBlockHeight_ = lastBlockHeight_;
@@ -11133,16 +11133,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetBlockchainInfoResponse) {
-          return mergeFrom((pactus.Blockchain.GetBlockchainInfoResponse)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetBlockchainInfoResponse) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetBlockchainInfoResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetBlockchainInfoResponse other) {
-        if (other == pactus.Blockchain.GetBlockchainInfoResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetBlockchainInfoResponse other) {
+        if (other == pactus.BlockchainOuterClass.GetBlockchainInfoResponse.getDefaultInstance()) return this;
         if (other.getLastBlockHeight() != 0) {
           setLastBlockHeight(other.getLastBlockHeight());
         }
@@ -11255,9 +11255,9 @@ public final class Blockchain {
                 break;
               } // case 48
               case 58: {
-                pactus.Blockchain.ValidatorInfo m =
+                pactus.BlockchainOuterClass.ValidatorInfo m =
                     input.readMessage(
-                        pactus.Blockchain.ValidatorInfo.parser(),
+                        pactus.BlockchainOuterClass.ValidatorInfo.parser(),
                         extensionRegistry);
                 if (committeeValidatorsBuilder_ == null) {
                   ensureCommitteeValidatorsIsMutable();
@@ -11611,17 +11611,17 @@ public final class Blockchain {
         return this;
       }
 
-      private java.util.List<pactus.Blockchain.ValidatorInfo> committeeValidators_ =
+      private java.util.List<pactus.BlockchainOuterClass.ValidatorInfo> committeeValidators_ =
         java.util.Collections.emptyList();
       private void ensureCommitteeValidatorsIsMutable() {
         if (!((bitField0_ & 0x00000040) != 0)) {
-          committeeValidators_ = new java.util.ArrayList<pactus.Blockchain.ValidatorInfo>(committeeValidators_);
+          committeeValidators_ = new java.util.ArrayList<pactus.BlockchainOuterClass.ValidatorInfo>(committeeValidators_);
           bitField0_ |= 0x00000040;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Blockchain.ValidatorInfo, pactus.Blockchain.ValidatorInfo.Builder, pactus.Blockchain.ValidatorInfoOrBuilder> committeeValidatorsBuilder_;
+          pactus.BlockchainOuterClass.ValidatorInfo, pactus.BlockchainOuterClass.ValidatorInfo.Builder, pactus.BlockchainOuterClass.ValidatorInfoOrBuilder> committeeValidatorsBuilder_;
 
       /**
        * <pre>
@@ -11630,7 +11630,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
-      public java.util.List<pactus.Blockchain.ValidatorInfo> getCommitteeValidatorsList() {
+      public java.util.List<pactus.BlockchainOuterClass.ValidatorInfo> getCommitteeValidatorsList() {
         if (committeeValidatorsBuilder_ == null) {
           return java.util.Collections.unmodifiableList(committeeValidators_);
         } else {
@@ -11658,7 +11658,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
-      public pactus.Blockchain.ValidatorInfo getCommitteeValidators(int index) {
+      public pactus.BlockchainOuterClass.ValidatorInfo getCommitteeValidators(int index) {
         if (committeeValidatorsBuilder_ == null) {
           return committeeValidators_.get(index);
         } else {
@@ -11673,7 +11673,7 @@ public final class Blockchain {
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder setCommitteeValidators(
-          int index, pactus.Blockchain.ValidatorInfo value) {
+          int index, pactus.BlockchainOuterClass.ValidatorInfo value) {
         if (committeeValidatorsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -11694,7 +11694,7 @@ public final class Blockchain {
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder setCommitteeValidators(
-          int index, pactus.Blockchain.ValidatorInfo.Builder builderForValue) {
+          int index, pactus.BlockchainOuterClass.ValidatorInfo.Builder builderForValue) {
         if (committeeValidatorsBuilder_ == null) {
           ensureCommitteeValidatorsIsMutable();
           committeeValidators_.set(index, builderForValue.build());
@@ -11711,7 +11711,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
-      public Builder addCommitteeValidators(pactus.Blockchain.ValidatorInfo value) {
+      public Builder addCommitteeValidators(pactus.BlockchainOuterClass.ValidatorInfo value) {
         if (committeeValidatorsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -11732,7 +11732,7 @@ public final class Blockchain {
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder addCommitteeValidators(
-          int index, pactus.Blockchain.ValidatorInfo value) {
+          int index, pactus.BlockchainOuterClass.ValidatorInfo value) {
         if (committeeValidatorsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -11753,7 +11753,7 @@ public final class Blockchain {
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder addCommitteeValidators(
-          pactus.Blockchain.ValidatorInfo.Builder builderForValue) {
+          pactus.BlockchainOuterClass.ValidatorInfo.Builder builderForValue) {
         if (committeeValidatorsBuilder_ == null) {
           ensureCommitteeValidatorsIsMutable();
           committeeValidators_.add(builderForValue.build());
@@ -11771,7 +11771,7 @@ public final class Blockchain {
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder addCommitteeValidators(
-          int index, pactus.Blockchain.ValidatorInfo.Builder builderForValue) {
+          int index, pactus.BlockchainOuterClass.ValidatorInfo.Builder builderForValue) {
         if (committeeValidatorsBuilder_ == null) {
           ensureCommitteeValidatorsIsMutable();
           committeeValidators_.add(index, builderForValue.build());
@@ -11789,7 +11789,7 @@ public final class Blockchain {
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
       public Builder addAllCommitteeValidators(
-          java.lang.Iterable<? extends pactus.Blockchain.ValidatorInfo> values) {
+          java.lang.Iterable<? extends pactus.BlockchainOuterClass.ValidatorInfo> values) {
         if (committeeValidatorsBuilder_ == null) {
           ensureCommitteeValidatorsIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -11841,7 +11841,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
-      public pactus.Blockchain.ValidatorInfo.Builder getCommitteeValidatorsBuilder(
+      public pactus.BlockchainOuterClass.ValidatorInfo.Builder getCommitteeValidatorsBuilder(
           int index) {
         return internalGetCommitteeValidatorsFieldBuilder().getBuilder(index);
       }
@@ -11852,7 +11852,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
-      public pactus.Blockchain.ValidatorInfoOrBuilder getCommitteeValidatorsOrBuilder(
+      public pactus.BlockchainOuterClass.ValidatorInfoOrBuilder getCommitteeValidatorsOrBuilder(
           int index) {
         if (committeeValidatorsBuilder_ == null) {
           return committeeValidators_.get(index);  } else {
@@ -11866,7 +11866,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
-      public java.util.List<? extends pactus.Blockchain.ValidatorInfoOrBuilder> 
+      public java.util.List<? extends pactus.BlockchainOuterClass.ValidatorInfoOrBuilder> 
            getCommitteeValidatorsOrBuilderList() {
         if (committeeValidatorsBuilder_ != null) {
           return committeeValidatorsBuilder_.getMessageOrBuilderList();
@@ -11881,9 +11881,9 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
-      public pactus.Blockchain.ValidatorInfo.Builder addCommitteeValidatorsBuilder() {
+      public pactus.BlockchainOuterClass.ValidatorInfo.Builder addCommitteeValidatorsBuilder() {
         return internalGetCommitteeValidatorsFieldBuilder().addBuilder(
-            pactus.Blockchain.ValidatorInfo.getDefaultInstance());
+            pactus.BlockchainOuterClass.ValidatorInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -11892,10 +11892,10 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
-      public pactus.Blockchain.ValidatorInfo.Builder addCommitteeValidatorsBuilder(
+      public pactus.BlockchainOuterClass.ValidatorInfo.Builder addCommitteeValidatorsBuilder(
           int index) {
         return internalGetCommitteeValidatorsFieldBuilder().addBuilder(
-            index, pactus.Blockchain.ValidatorInfo.getDefaultInstance());
+            index, pactus.BlockchainOuterClass.ValidatorInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -11904,16 +11904,16 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ValidatorInfo committee_validators = 7 [json_name = "committeeValidators"];</code>
        */
-      public java.util.List<pactus.Blockchain.ValidatorInfo.Builder> 
+      public java.util.List<pactus.BlockchainOuterClass.ValidatorInfo.Builder> 
            getCommitteeValidatorsBuilderList() {
         return internalGetCommitteeValidatorsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Blockchain.ValidatorInfo, pactus.Blockchain.ValidatorInfo.Builder, pactus.Blockchain.ValidatorInfoOrBuilder> 
+          pactus.BlockchainOuterClass.ValidatorInfo, pactus.BlockchainOuterClass.ValidatorInfo.Builder, pactus.BlockchainOuterClass.ValidatorInfoOrBuilder> 
           internalGetCommitteeValidatorsFieldBuilder() {
         if (committeeValidatorsBuilder_ == null) {
           committeeValidatorsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              pactus.Blockchain.ValidatorInfo, pactus.Blockchain.ValidatorInfo.Builder, pactus.Blockchain.ValidatorInfoOrBuilder>(
+              pactus.BlockchainOuterClass.ValidatorInfo, pactus.BlockchainOuterClass.ValidatorInfo.Builder, pactus.BlockchainOuterClass.ValidatorInfoOrBuilder>(
                   committeeValidators_,
                   ((bitField0_ & 0x00000040) != 0),
                   getParentForChildren(),
@@ -12059,12 +12059,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetBlockchainInfoResponse)
-    private static final pactus.Blockchain.GetBlockchainInfoResponse DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetBlockchainInfoResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetBlockchainInfoResponse();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetBlockchainInfoResponse();
     }
 
-    public static pactus.Blockchain.GetBlockchainInfoResponse getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetBlockchainInfoResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -12100,7 +12100,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetBlockchainInfoResponse getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetBlockchainInfoResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -12140,15 +12140,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetConsensusInfoRequest_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetConsensusInfoRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetConsensusInfoRequest_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetConsensusInfoRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetConsensusInfoRequest.class, pactus.Blockchain.GetConsensusInfoRequest.Builder.class);
+              pactus.BlockchainOuterClass.GetConsensusInfoRequest.class, pactus.BlockchainOuterClass.GetConsensusInfoRequest.Builder.class);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -12184,10 +12184,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetConsensusInfoRequest)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetConsensusInfoRequest)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetConsensusInfoRequest other = (pactus.Blockchain.GetConsensusInfoRequest) obj;
+      pactus.BlockchainOuterClass.GetConsensusInfoRequest other = (pactus.BlockchainOuterClass.GetConsensusInfoRequest) obj;
 
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
@@ -12205,44 +12205,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetConsensusInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetConsensusInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetConsensusInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetConsensusInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetConsensusInfoRequest parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetConsensusInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetConsensusInfoRequest parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetConsensusInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -12250,26 +12250,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetConsensusInfoRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetConsensusInfoRequest parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetConsensusInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetConsensusInfoRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -12282,7 +12282,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetConsensusInfoRequest prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetConsensusInfoRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -12307,21 +12307,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetConsensusInfoRequest)
-        pactus.Blockchain.GetConsensusInfoRequestOrBuilder {
+        pactus.BlockchainOuterClass.GetConsensusInfoRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetConsensusInfoRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetConsensusInfoRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetConsensusInfoRequest_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetConsensusInfoRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetConsensusInfoRequest.class, pactus.Blockchain.GetConsensusInfoRequest.Builder.class);
+                pactus.BlockchainOuterClass.GetConsensusInfoRequest.class, pactus.BlockchainOuterClass.GetConsensusInfoRequest.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetConsensusInfoRequest.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetConsensusInfoRequest.newBuilder()
       private Builder() {
 
       }
@@ -12340,17 +12340,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetConsensusInfoRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetConsensusInfoRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetConsensusInfoRequest getDefaultInstanceForType() {
-        return pactus.Blockchain.GetConsensusInfoRequest.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetConsensusInfoRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetConsensusInfoRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetConsensusInfoRequest build() {
-        pactus.Blockchain.GetConsensusInfoRequest result = buildPartial();
+      public pactus.BlockchainOuterClass.GetConsensusInfoRequest build() {
+        pactus.BlockchainOuterClass.GetConsensusInfoRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -12358,24 +12358,24 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetConsensusInfoRequest buildPartial() {
-        pactus.Blockchain.GetConsensusInfoRequest result = new pactus.Blockchain.GetConsensusInfoRequest(this);
+      public pactus.BlockchainOuterClass.GetConsensusInfoRequest buildPartial() {
+        pactus.BlockchainOuterClass.GetConsensusInfoRequest result = new pactus.BlockchainOuterClass.GetConsensusInfoRequest(this);
         onBuilt();
         return result;
       }
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetConsensusInfoRequest) {
-          return mergeFrom((pactus.Blockchain.GetConsensusInfoRequest)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetConsensusInfoRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetConsensusInfoRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetConsensusInfoRequest other) {
-        if (other == pactus.Blockchain.GetConsensusInfoRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetConsensusInfoRequest other) {
+        if (other == pactus.BlockchainOuterClass.GetConsensusInfoRequest.getDefaultInstance()) return this;
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -12422,12 +12422,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetConsensusInfoRequest)
-    private static final pactus.Blockchain.GetConsensusInfoRequest DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetConsensusInfoRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetConsensusInfoRequest();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetConsensusInfoRequest();
     }
 
-    public static pactus.Blockchain.GetConsensusInfoRequest getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetConsensusInfoRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -12463,7 +12463,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetConsensusInfoRequest getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetConsensusInfoRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -12490,7 +12490,7 @@ public final class Blockchain {
      * <code>.pactus.ProposalInfo proposal = 1 [json_name = "proposal"];</code>
      * @return The proposal.
      */
-    pactus.Blockchain.ProposalInfo getProposal();
+    pactus.BlockchainOuterClass.ProposalInfo getProposal();
     /**
      * <pre>
      * The proposal of the consensus info.
@@ -12498,7 +12498,7 @@ public final class Blockchain {
      *
      * <code>.pactus.ProposalInfo proposal = 1 [json_name = "proposal"];</code>
      */
-    pactus.Blockchain.ProposalInfoOrBuilder getProposalOrBuilder();
+    pactus.BlockchainOuterClass.ProposalInfoOrBuilder getProposalOrBuilder();
 
     /**
      * <pre>
@@ -12507,7 +12507,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
      */
-    java.util.List<pactus.Blockchain.ConsensusInfo> 
+    java.util.List<pactus.BlockchainOuterClass.ConsensusInfo> 
         getInstancesList();
     /**
      * <pre>
@@ -12516,7 +12516,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
      */
-    pactus.Blockchain.ConsensusInfo getInstances(int index);
+    pactus.BlockchainOuterClass.ConsensusInfo getInstances(int index);
     /**
      * <pre>
      * List of consensus instances.
@@ -12532,7 +12532,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
      */
-    java.util.List<? extends pactus.Blockchain.ConsensusInfoOrBuilder> 
+    java.util.List<? extends pactus.BlockchainOuterClass.ConsensusInfoOrBuilder> 
         getInstancesOrBuilderList();
     /**
      * <pre>
@@ -12541,7 +12541,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
      */
-    pactus.Blockchain.ConsensusInfoOrBuilder getInstancesOrBuilder(
+    pactus.BlockchainOuterClass.ConsensusInfoOrBuilder getInstancesOrBuilder(
         int index);
   }
   /**
@@ -12575,20 +12575,20 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetConsensusInfoResponse_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetConsensusInfoResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetConsensusInfoResponse_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetConsensusInfoResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetConsensusInfoResponse.class, pactus.Blockchain.GetConsensusInfoResponse.Builder.class);
+              pactus.BlockchainOuterClass.GetConsensusInfoResponse.class, pactus.BlockchainOuterClass.GetConsensusInfoResponse.Builder.class);
     }
 
     private int bitField0_;
     public static final int PROPOSAL_FIELD_NUMBER = 1;
-    private pactus.Blockchain.ProposalInfo proposal_;
+    private pactus.BlockchainOuterClass.ProposalInfo proposal_;
     /**
      * <pre>
      * The proposal of the consensus info.
@@ -12610,8 +12610,8 @@ public final class Blockchain {
      * @return The proposal.
      */
     @java.lang.Override
-    public pactus.Blockchain.ProposalInfo getProposal() {
-      return proposal_ == null ? pactus.Blockchain.ProposalInfo.getDefaultInstance() : proposal_;
+    public pactus.BlockchainOuterClass.ProposalInfo getProposal() {
+      return proposal_ == null ? pactus.BlockchainOuterClass.ProposalInfo.getDefaultInstance() : proposal_;
     }
     /**
      * <pre>
@@ -12621,13 +12621,13 @@ public final class Blockchain {
      * <code>.pactus.ProposalInfo proposal = 1 [json_name = "proposal"];</code>
      */
     @java.lang.Override
-    public pactus.Blockchain.ProposalInfoOrBuilder getProposalOrBuilder() {
-      return proposal_ == null ? pactus.Blockchain.ProposalInfo.getDefaultInstance() : proposal_;
+    public pactus.BlockchainOuterClass.ProposalInfoOrBuilder getProposalOrBuilder() {
+      return proposal_ == null ? pactus.BlockchainOuterClass.ProposalInfo.getDefaultInstance() : proposal_;
     }
 
     public static final int INSTANCES_FIELD_NUMBER = 2;
     @SuppressWarnings("serial")
-    private java.util.List<pactus.Blockchain.ConsensusInfo> instances_;
+    private java.util.List<pactus.BlockchainOuterClass.ConsensusInfo> instances_;
     /**
      * <pre>
      * List of consensus instances.
@@ -12636,7 +12636,7 @@ public final class Blockchain {
      * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
      */
     @java.lang.Override
-    public java.util.List<pactus.Blockchain.ConsensusInfo> getInstancesList() {
+    public java.util.List<pactus.BlockchainOuterClass.ConsensusInfo> getInstancesList() {
       return instances_;
     }
     /**
@@ -12647,7 +12647,7 @@ public final class Blockchain {
      * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
      */
     @java.lang.Override
-    public java.util.List<? extends pactus.Blockchain.ConsensusInfoOrBuilder> 
+    public java.util.List<? extends pactus.BlockchainOuterClass.ConsensusInfoOrBuilder> 
         getInstancesOrBuilderList() {
       return instances_;
     }
@@ -12670,7 +12670,7 @@ public final class Blockchain {
      * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
      */
     @java.lang.Override
-    public pactus.Blockchain.ConsensusInfo getInstances(int index) {
+    public pactus.BlockchainOuterClass.ConsensusInfo getInstances(int index) {
       return instances_.get(index);
     }
     /**
@@ -12681,7 +12681,7 @@ public final class Blockchain {
      * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
      */
     @java.lang.Override
-    public pactus.Blockchain.ConsensusInfoOrBuilder getInstancesOrBuilder(
+    public pactus.BlockchainOuterClass.ConsensusInfoOrBuilder getInstancesOrBuilder(
         int index) {
       return instances_.get(index);
     }
@@ -12733,10 +12733,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetConsensusInfoResponse)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetConsensusInfoResponse)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetConsensusInfoResponse other = (pactus.Blockchain.GetConsensusInfoResponse) obj;
+      pactus.BlockchainOuterClass.GetConsensusInfoResponse other = (pactus.BlockchainOuterClass.GetConsensusInfoResponse) obj;
 
       if (hasProposal() != other.hasProposal()) return false;
       if (hasProposal()) {
@@ -12769,44 +12769,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetConsensusInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetConsensusInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetConsensusInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetConsensusInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetConsensusInfoResponse parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetConsensusInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetConsensusInfoResponse parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetConsensusInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -12814,26 +12814,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetConsensusInfoResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetConsensusInfoResponse parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetConsensusInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetConsensusInfoResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -12846,7 +12846,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetConsensusInfoResponse prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetConsensusInfoResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -12871,21 +12871,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetConsensusInfoResponse)
-        pactus.Blockchain.GetConsensusInfoResponseOrBuilder {
+        pactus.BlockchainOuterClass.GetConsensusInfoResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetConsensusInfoResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetConsensusInfoResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetConsensusInfoResponse_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetConsensusInfoResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetConsensusInfoResponse.class, pactus.Blockchain.GetConsensusInfoResponse.Builder.class);
+                pactus.BlockchainOuterClass.GetConsensusInfoResponse.class, pactus.BlockchainOuterClass.GetConsensusInfoResponse.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetConsensusInfoResponse.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetConsensusInfoResponse.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -12924,17 +12924,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetConsensusInfoResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetConsensusInfoResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetConsensusInfoResponse getDefaultInstanceForType() {
-        return pactus.Blockchain.GetConsensusInfoResponse.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetConsensusInfoResponse getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetConsensusInfoResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetConsensusInfoResponse build() {
-        pactus.Blockchain.GetConsensusInfoResponse result = buildPartial();
+      public pactus.BlockchainOuterClass.GetConsensusInfoResponse build() {
+        pactus.BlockchainOuterClass.GetConsensusInfoResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -12942,15 +12942,15 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetConsensusInfoResponse buildPartial() {
-        pactus.Blockchain.GetConsensusInfoResponse result = new pactus.Blockchain.GetConsensusInfoResponse(this);
+      public pactus.BlockchainOuterClass.GetConsensusInfoResponse buildPartial() {
+        pactus.BlockchainOuterClass.GetConsensusInfoResponse result = new pactus.BlockchainOuterClass.GetConsensusInfoResponse(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(pactus.Blockchain.GetConsensusInfoResponse result) {
+      private void buildPartialRepeatedFields(pactus.BlockchainOuterClass.GetConsensusInfoResponse result) {
         if (instancesBuilder_ == null) {
           if (((bitField0_ & 0x00000002) != 0)) {
             instances_ = java.util.Collections.unmodifiableList(instances_);
@@ -12962,7 +12962,7 @@ public final class Blockchain {
         }
       }
 
-      private void buildPartial0(pactus.Blockchain.GetConsensusInfoResponse result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetConsensusInfoResponse result) {
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) != 0)) {
@@ -12976,16 +12976,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetConsensusInfoResponse) {
-          return mergeFrom((pactus.Blockchain.GetConsensusInfoResponse)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetConsensusInfoResponse) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetConsensusInfoResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetConsensusInfoResponse other) {
-        if (other == pactus.Blockchain.GetConsensusInfoResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetConsensusInfoResponse other) {
+        if (other == pactus.BlockchainOuterClass.GetConsensusInfoResponse.getDefaultInstance()) return this;
         if (other.hasProposal()) {
           mergeProposal(other.getProposal());
         }
@@ -13049,9 +13049,9 @@ public final class Blockchain {
                 break;
               } // case 10
               case 18: {
-                pactus.Blockchain.ConsensusInfo m =
+                pactus.BlockchainOuterClass.ConsensusInfo m =
                     input.readMessage(
-                        pactus.Blockchain.ConsensusInfo.parser(),
+                        pactus.BlockchainOuterClass.ConsensusInfo.parser(),
                         extensionRegistry);
                 if (instancesBuilder_ == null) {
                   ensureInstancesIsMutable();
@@ -13078,9 +13078,9 @@ public final class Blockchain {
       }
       private int bitField0_;
 
-      private pactus.Blockchain.ProposalInfo proposal_;
+      private pactus.BlockchainOuterClass.ProposalInfo proposal_;
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Blockchain.ProposalInfo, pactus.Blockchain.ProposalInfo.Builder, pactus.Blockchain.ProposalInfoOrBuilder> proposalBuilder_;
+          pactus.BlockchainOuterClass.ProposalInfo, pactus.BlockchainOuterClass.ProposalInfo.Builder, pactus.BlockchainOuterClass.ProposalInfoOrBuilder> proposalBuilder_;
       /**
        * <pre>
        * The proposal of the consensus info.
@@ -13100,9 +13100,9 @@ public final class Blockchain {
        * <code>.pactus.ProposalInfo proposal = 1 [json_name = "proposal"];</code>
        * @return The proposal.
        */
-      public pactus.Blockchain.ProposalInfo getProposal() {
+      public pactus.BlockchainOuterClass.ProposalInfo getProposal() {
         if (proposalBuilder_ == null) {
-          return proposal_ == null ? pactus.Blockchain.ProposalInfo.getDefaultInstance() : proposal_;
+          return proposal_ == null ? pactus.BlockchainOuterClass.ProposalInfo.getDefaultInstance() : proposal_;
         } else {
           return proposalBuilder_.getMessage();
         }
@@ -13114,7 +13114,7 @@ public final class Blockchain {
        *
        * <code>.pactus.ProposalInfo proposal = 1 [json_name = "proposal"];</code>
        */
-      public Builder setProposal(pactus.Blockchain.ProposalInfo value) {
+      public Builder setProposal(pactus.BlockchainOuterClass.ProposalInfo value) {
         if (proposalBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -13135,7 +13135,7 @@ public final class Blockchain {
        * <code>.pactus.ProposalInfo proposal = 1 [json_name = "proposal"];</code>
        */
       public Builder setProposal(
-          pactus.Blockchain.ProposalInfo.Builder builderForValue) {
+          pactus.BlockchainOuterClass.ProposalInfo.Builder builderForValue) {
         if (proposalBuilder_ == null) {
           proposal_ = builderForValue.build();
         } else {
@@ -13152,11 +13152,11 @@ public final class Blockchain {
        *
        * <code>.pactus.ProposalInfo proposal = 1 [json_name = "proposal"];</code>
        */
-      public Builder mergeProposal(pactus.Blockchain.ProposalInfo value) {
+      public Builder mergeProposal(pactus.BlockchainOuterClass.ProposalInfo value) {
         if (proposalBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0) &&
             proposal_ != null &&
-            proposal_ != pactus.Blockchain.ProposalInfo.getDefaultInstance()) {
+            proposal_ != pactus.BlockchainOuterClass.ProposalInfo.getDefaultInstance()) {
             getProposalBuilder().mergeFrom(value);
           } else {
             proposal_ = value;
@@ -13194,7 +13194,7 @@ public final class Blockchain {
        *
        * <code>.pactus.ProposalInfo proposal = 1 [json_name = "proposal"];</code>
        */
-      public pactus.Blockchain.ProposalInfo.Builder getProposalBuilder() {
+      public pactus.BlockchainOuterClass.ProposalInfo.Builder getProposalBuilder() {
         bitField0_ |= 0x00000001;
         onChanged();
         return internalGetProposalFieldBuilder().getBuilder();
@@ -13206,12 +13206,12 @@ public final class Blockchain {
        *
        * <code>.pactus.ProposalInfo proposal = 1 [json_name = "proposal"];</code>
        */
-      public pactus.Blockchain.ProposalInfoOrBuilder getProposalOrBuilder() {
+      public pactus.BlockchainOuterClass.ProposalInfoOrBuilder getProposalOrBuilder() {
         if (proposalBuilder_ != null) {
           return proposalBuilder_.getMessageOrBuilder();
         } else {
           return proposal_ == null ?
-              pactus.Blockchain.ProposalInfo.getDefaultInstance() : proposal_;
+              pactus.BlockchainOuterClass.ProposalInfo.getDefaultInstance() : proposal_;
         }
       }
       /**
@@ -13222,11 +13222,11 @@ public final class Blockchain {
        * <code>.pactus.ProposalInfo proposal = 1 [json_name = "proposal"];</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          pactus.Blockchain.ProposalInfo, pactus.Blockchain.ProposalInfo.Builder, pactus.Blockchain.ProposalInfoOrBuilder> 
+          pactus.BlockchainOuterClass.ProposalInfo, pactus.BlockchainOuterClass.ProposalInfo.Builder, pactus.BlockchainOuterClass.ProposalInfoOrBuilder> 
           internalGetProposalFieldBuilder() {
         if (proposalBuilder_ == null) {
           proposalBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              pactus.Blockchain.ProposalInfo, pactus.Blockchain.ProposalInfo.Builder, pactus.Blockchain.ProposalInfoOrBuilder>(
+              pactus.BlockchainOuterClass.ProposalInfo, pactus.BlockchainOuterClass.ProposalInfo.Builder, pactus.BlockchainOuterClass.ProposalInfoOrBuilder>(
                   getProposal(),
                   getParentForChildren(),
                   isClean());
@@ -13235,17 +13235,17 @@ public final class Blockchain {
         return proposalBuilder_;
       }
 
-      private java.util.List<pactus.Blockchain.ConsensusInfo> instances_ =
+      private java.util.List<pactus.BlockchainOuterClass.ConsensusInfo> instances_ =
         java.util.Collections.emptyList();
       private void ensureInstancesIsMutable() {
         if (!((bitField0_ & 0x00000002) != 0)) {
-          instances_ = new java.util.ArrayList<pactus.Blockchain.ConsensusInfo>(instances_);
+          instances_ = new java.util.ArrayList<pactus.BlockchainOuterClass.ConsensusInfo>(instances_);
           bitField0_ |= 0x00000002;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Blockchain.ConsensusInfo, pactus.Blockchain.ConsensusInfo.Builder, pactus.Blockchain.ConsensusInfoOrBuilder> instancesBuilder_;
+          pactus.BlockchainOuterClass.ConsensusInfo, pactus.BlockchainOuterClass.ConsensusInfo.Builder, pactus.BlockchainOuterClass.ConsensusInfoOrBuilder> instancesBuilder_;
 
       /**
        * <pre>
@@ -13254,7 +13254,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
-      public java.util.List<pactus.Blockchain.ConsensusInfo> getInstancesList() {
+      public java.util.List<pactus.BlockchainOuterClass.ConsensusInfo> getInstancesList() {
         if (instancesBuilder_ == null) {
           return java.util.Collections.unmodifiableList(instances_);
         } else {
@@ -13282,7 +13282,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
-      public pactus.Blockchain.ConsensusInfo getInstances(int index) {
+      public pactus.BlockchainOuterClass.ConsensusInfo getInstances(int index) {
         if (instancesBuilder_ == null) {
           return instances_.get(index);
         } else {
@@ -13297,7 +13297,7 @@ public final class Blockchain {
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
       public Builder setInstances(
-          int index, pactus.Blockchain.ConsensusInfo value) {
+          int index, pactus.BlockchainOuterClass.ConsensusInfo value) {
         if (instancesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -13318,7 +13318,7 @@ public final class Blockchain {
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
       public Builder setInstances(
-          int index, pactus.Blockchain.ConsensusInfo.Builder builderForValue) {
+          int index, pactus.BlockchainOuterClass.ConsensusInfo.Builder builderForValue) {
         if (instancesBuilder_ == null) {
           ensureInstancesIsMutable();
           instances_.set(index, builderForValue.build());
@@ -13335,7 +13335,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
-      public Builder addInstances(pactus.Blockchain.ConsensusInfo value) {
+      public Builder addInstances(pactus.BlockchainOuterClass.ConsensusInfo value) {
         if (instancesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -13356,7 +13356,7 @@ public final class Blockchain {
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
       public Builder addInstances(
-          int index, pactus.Blockchain.ConsensusInfo value) {
+          int index, pactus.BlockchainOuterClass.ConsensusInfo value) {
         if (instancesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -13377,7 +13377,7 @@ public final class Blockchain {
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
       public Builder addInstances(
-          pactus.Blockchain.ConsensusInfo.Builder builderForValue) {
+          pactus.BlockchainOuterClass.ConsensusInfo.Builder builderForValue) {
         if (instancesBuilder_ == null) {
           ensureInstancesIsMutable();
           instances_.add(builderForValue.build());
@@ -13395,7 +13395,7 @@ public final class Blockchain {
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
       public Builder addInstances(
-          int index, pactus.Blockchain.ConsensusInfo.Builder builderForValue) {
+          int index, pactus.BlockchainOuterClass.ConsensusInfo.Builder builderForValue) {
         if (instancesBuilder_ == null) {
           ensureInstancesIsMutable();
           instances_.add(index, builderForValue.build());
@@ -13413,7 +13413,7 @@ public final class Blockchain {
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
       public Builder addAllInstances(
-          java.lang.Iterable<? extends pactus.Blockchain.ConsensusInfo> values) {
+          java.lang.Iterable<? extends pactus.BlockchainOuterClass.ConsensusInfo> values) {
         if (instancesBuilder_ == null) {
           ensureInstancesIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -13465,7 +13465,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
-      public pactus.Blockchain.ConsensusInfo.Builder getInstancesBuilder(
+      public pactus.BlockchainOuterClass.ConsensusInfo.Builder getInstancesBuilder(
           int index) {
         return internalGetInstancesFieldBuilder().getBuilder(index);
       }
@@ -13476,7 +13476,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
-      public pactus.Blockchain.ConsensusInfoOrBuilder getInstancesOrBuilder(
+      public pactus.BlockchainOuterClass.ConsensusInfoOrBuilder getInstancesOrBuilder(
           int index) {
         if (instancesBuilder_ == null) {
           return instances_.get(index);  } else {
@@ -13490,7 +13490,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
-      public java.util.List<? extends pactus.Blockchain.ConsensusInfoOrBuilder> 
+      public java.util.List<? extends pactus.BlockchainOuterClass.ConsensusInfoOrBuilder> 
            getInstancesOrBuilderList() {
         if (instancesBuilder_ != null) {
           return instancesBuilder_.getMessageOrBuilderList();
@@ -13505,9 +13505,9 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
-      public pactus.Blockchain.ConsensusInfo.Builder addInstancesBuilder() {
+      public pactus.BlockchainOuterClass.ConsensusInfo.Builder addInstancesBuilder() {
         return internalGetInstancesFieldBuilder().addBuilder(
-            pactus.Blockchain.ConsensusInfo.getDefaultInstance());
+            pactus.BlockchainOuterClass.ConsensusInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -13516,10 +13516,10 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
-      public pactus.Blockchain.ConsensusInfo.Builder addInstancesBuilder(
+      public pactus.BlockchainOuterClass.ConsensusInfo.Builder addInstancesBuilder(
           int index) {
         return internalGetInstancesFieldBuilder().addBuilder(
-            index, pactus.Blockchain.ConsensusInfo.getDefaultInstance());
+            index, pactus.BlockchainOuterClass.ConsensusInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -13528,16 +13528,16 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.ConsensusInfo instances = 2 [json_name = "instances"];</code>
        */
-      public java.util.List<pactus.Blockchain.ConsensusInfo.Builder> 
+      public java.util.List<pactus.BlockchainOuterClass.ConsensusInfo.Builder> 
            getInstancesBuilderList() {
         return internalGetInstancesFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Blockchain.ConsensusInfo, pactus.Blockchain.ConsensusInfo.Builder, pactus.Blockchain.ConsensusInfoOrBuilder> 
+          pactus.BlockchainOuterClass.ConsensusInfo, pactus.BlockchainOuterClass.ConsensusInfo.Builder, pactus.BlockchainOuterClass.ConsensusInfoOrBuilder> 
           internalGetInstancesFieldBuilder() {
         if (instancesBuilder_ == null) {
           instancesBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              pactus.Blockchain.ConsensusInfo, pactus.Blockchain.ConsensusInfo.Builder, pactus.Blockchain.ConsensusInfoOrBuilder>(
+              pactus.BlockchainOuterClass.ConsensusInfo, pactus.BlockchainOuterClass.ConsensusInfo.Builder, pactus.BlockchainOuterClass.ConsensusInfoOrBuilder>(
                   instances_,
                   ((bitField0_ & 0x00000002) != 0),
                   getParentForChildren(),
@@ -13551,12 +13551,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetConsensusInfoResponse)
-    private static final pactus.Blockchain.GetConsensusInfoResponse DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetConsensusInfoResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetConsensusInfoResponse();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetConsensusInfoResponse();
     }
 
-    public static pactus.Blockchain.GetConsensusInfoResponse getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetConsensusInfoResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -13592,7 +13592,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetConsensusInfoResponse getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetConsensusInfoResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -13619,7 +13619,7 @@ public final class Blockchain {
      * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
      * @return The payloadType.
      */
-    pactus.Transaction.PayloadType getPayloadType();
+    pactus.TransactionOuterClass.PayloadType getPayloadType();
   }
   /**
    * <pre>
@@ -13652,15 +13652,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetTxPoolContentRequest_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetTxPoolContentRequest_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetTxPoolContentRequest.class, pactus.Blockchain.GetTxPoolContentRequest.Builder.class);
+              pactus.BlockchainOuterClass.GetTxPoolContentRequest.class, pactus.BlockchainOuterClass.GetTxPoolContentRequest.Builder.class);
     }
 
     public static final int PAYLOAD_TYPE_FIELD_NUMBER = 1;
@@ -13684,9 +13684,9 @@ public final class Blockchain {
      * <code>.pactus.PayloadType payload_type = 1 [json_name = "payloadType"];</code>
      * @return The payloadType.
      */
-    @java.lang.Override public pactus.Transaction.PayloadType getPayloadType() {
-      pactus.Transaction.PayloadType result = pactus.Transaction.PayloadType.forNumber(payloadType_);
-      return result == null ? pactus.Transaction.PayloadType.UNRECOGNIZED : result;
+    @java.lang.Override public pactus.TransactionOuterClass.PayloadType getPayloadType() {
+      pactus.TransactionOuterClass.PayloadType result = pactus.TransactionOuterClass.PayloadType.forNumber(payloadType_);
+      return result == null ? pactus.TransactionOuterClass.PayloadType.UNRECOGNIZED : result;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -13703,7 +13703,7 @@ public final class Blockchain {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (payloadType_ != pactus.Transaction.PayloadType.PAYLOAD_TYPE_UNSPECIFIED.getNumber()) {
+      if (payloadType_ != pactus.TransactionOuterClass.PayloadType.PAYLOAD_TYPE_UNSPECIFIED.getNumber()) {
         output.writeEnum(1, payloadType_);
       }
       getUnknownFields().writeTo(output);
@@ -13715,7 +13715,7 @@ public final class Blockchain {
       if (size != -1) return size;
 
       size = 0;
-      if (payloadType_ != pactus.Transaction.PayloadType.PAYLOAD_TYPE_UNSPECIFIED.getNumber()) {
+      if (payloadType_ != pactus.TransactionOuterClass.PayloadType.PAYLOAD_TYPE_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, payloadType_);
       }
@@ -13729,10 +13729,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetTxPoolContentRequest)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetTxPoolContentRequest)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetTxPoolContentRequest other = (pactus.Blockchain.GetTxPoolContentRequest) obj;
+      pactus.BlockchainOuterClass.GetTxPoolContentRequest other = (pactus.BlockchainOuterClass.GetTxPoolContentRequest) obj;
 
       if (payloadType_ != other.payloadType_) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -13753,44 +13753,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetTxPoolContentRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetTxPoolContentRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetTxPoolContentRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetTxPoolContentRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetTxPoolContentRequest parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetTxPoolContentRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetTxPoolContentRequest parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetTxPoolContentRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -13798,26 +13798,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetTxPoolContentRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetTxPoolContentRequest parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetTxPoolContentRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetTxPoolContentRequest parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -13830,7 +13830,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetTxPoolContentRequest prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetTxPoolContentRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -13855,21 +13855,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetTxPoolContentRequest)
-        pactus.Blockchain.GetTxPoolContentRequestOrBuilder {
+        pactus.BlockchainOuterClass.GetTxPoolContentRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetTxPoolContentRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetTxPoolContentRequest_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetTxPoolContentRequest.class, pactus.Blockchain.GetTxPoolContentRequest.Builder.class);
+                pactus.BlockchainOuterClass.GetTxPoolContentRequest.class, pactus.BlockchainOuterClass.GetTxPoolContentRequest.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetTxPoolContentRequest.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetTxPoolContentRequest.newBuilder()
       private Builder() {
 
       }
@@ -13890,17 +13890,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetTxPoolContentRequest_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetTxPoolContentRequest getDefaultInstanceForType() {
-        return pactus.Blockchain.GetTxPoolContentRequest.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetTxPoolContentRequest getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetTxPoolContentRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetTxPoolContentRequest build() {
-        pactus.Blockchain.GetTxPoolContentRequest result = buildPartial();
+      public pactus.BlockchainOuterClass.GetTxPoolContentRequest build() {
+        pactus.BlockchainOuterClass.GetTxPoolContentRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -13908,14 +13908,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetTxPoolContentRequest buildPartial() {
-        pactus.Blockchain.GetTxPoolContentRequest result = new pactus.Blockchain.GetTxPoolContentRequest(this);
+      public pactus.BlockchainOuterClass.GetTxPoolContentRequest buildPartial() {
+        pactus.BlockchainOuterClass.GetTxPoolContentRequest result = new pactus.BlockchainOuterClass.GetTxPoolContentRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.GetTxPoolContentRequest result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetTxPoolContentRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.payloadType_ = payloadType_;
@@ -13924,16 +13924,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetTxPoolContentRequest) {
-          return mergeFrom((pactus.Blockchain.GetTxPoolContentRequest)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetTxPoolContentRequest) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetTxPoolContentRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetTxPoolContentRequest other) {
-        if (other == pactus.Blockchain.GetTxPoolContentRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetTxPoolContentRequest other) {
+        if (other == pactus.BlockchainOuterClass.GetTxPoolContentRequest.getDefaultInstance()) return this;
         if (other.payloadType_ != 0) {
           setPayloadTypeValue(other.getPayloadTypeValue());
         }
@@ -14021,9 +14021,9 @@ public final class Blockchain {
        * @return The payloadType.
        */
       @java.lang.Override
-      public pactus.Transaction.PayloadType getPayloadType() {
-        pactus.Transaction.PayloadType result = pactus.Transaction.PayloadType.forNumber(payloadType_);
-        return result == null ? pactus.Transaction.PayloadType.UNRECOGNIZED : result;
+      public pactus.TransactionOuterClass.PayloadType getPayloadType() {
+        pactus.TransactionOuterClass.PayloadType result = pactus.TransactionOuterClass.PayloadType.forNumber(payloadType_);
+        return result == null ? pactus.TransactionOuterClass.PayloadType.UNRECOGNIZED : result;
       }
       /**
        * <pre>
@@ -14034,7 +14034,7 @@ public final class Blockchain {
        * @param value The payloadType to set.
        * @return This builder for chaining.
        */
-      public Builder setPayloadType(pactus.Transaction.PayloadType value) {
+      public Builder setPayloadType(pactus.TransactionOuterClass.PayloadType value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -14062,12 +14062,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetTxPoolContentRequest)
-    private static final pactus.Blockchain.GetTxPoolContentRequest DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetTxPoolContentRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetTxPoolContentRequest();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetTxPoolContentRequest();
     }
 
-    public static pactus.Blockchain.GetTxPoolContentRequest getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetTxPoolContentRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -14103,7 +14103,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetTxPoolContentRequest getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetTxPoolContentRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -14120,7 +14120,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
      */
-    java.util.List<pactus.Transaction.TransactionInfo> 
+    java.util.List<pactus.TransactionOuterClass.TransactionInfo> 
         getTxsList();
     /**
      * <pre>
@@ -14129,7 +14129,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
      */
-    pactus.Transaction.TransactionInfo getTxs(int index);
+    pactus.TransactionOuterClass.TransactionInfo getTxs(int index);
     /**
      * <pre>
      * List of transactions currently in the pool.
@@ -14145,7 +14145,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
      */
-    java.util.List<? extends pactus.Transaction.TransactionInfoOrBuilder> 
+    java.util.List<? extends pactus.TransactionOuterClass.TransactionInfoOrBuilder> 
         getTxsOrBuilderList();
     /**
      * <pre>
@@ -14154,7 +14154,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
      */
-    pactus.Transaction.TransactionInfoOrBuilder getTxsOrBuilder(
+    pactus.TransactionOuterClass.TransactionInfoOrBuilder getTxsOrBuilder(
         int index);
   }
   /**
@@ -14188,20 +14188,20 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_GetTxPoolContentResponse_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_GetTxPoolContentResponse_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.GetTxPoolContentResponse.class, pactus.Blockchain.GetTxPoolContentResponse.Builder.class);
+              pactus.BlockchainOuterClass.GetTxPoolContentResponse.class, pactus.BlockchainOuterClass.GetTxPoolContentResponse.Builder.class);
     }
 
     public static final int TXS_FIELD_NUMBER = 1;
     @SuppressWarnings("serial")
-    private java.util.List<pactus.Transaction.TransactionInfo> txs_;
+    private java.util.List<pactus.TransactionOuterClass.TransactionInfo> txs_;
     /**
      * <pre>
      * List of transactions currently in the pool.
@@ -14210,7 +14210,7 @@ public final class Blockchain {
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
      */
     @java.lang.Override
-    public java.util.List<pactus.Transaction.TransactionInfo> getTxsList() {
+    public java.util.List<pactus.TransactionOuterClass.TransactionInfo> getTxsList() {
       return txs_;
     }
     /**
@@ -14221,7 +14221,7 @@ public final class Blockchain {
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
      */
     @java.lang.Override
-    public java.util.List<? extends pactus.Transaction.TransactionInfoOrBuilder> 
+    public java.util.List<? extends pactus.TransactionOuterClass.TransactionInfoOrBuilder> 
         getTxsOrBuilderList() {
       return txs_;
     }
@@ -14244,7 +14244,7 @@ public final class Blockchain {
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
      */
     @java.lang.Override
-    public pactus.Transaction.TransactionInfo getTxs(int index) {
+    public pactus.TransactionOuterClass.TransactionInfo getTxs(int index) {
       return txs_.get(index);
     }
     /**
@@ -14255,7 +14255,7 @@ public final class Blockchain {
      * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
      */
     @java.lang.Override
-    public pactus.Transaction.TransactionInfoOrBuilder getTxsOrBuilder(
+    public pactus.TransactionOuterClass.TransactionInfoOrBuilder getTxsOrBuilder(
         int index) {
       return txs_.get(index);
     }
@@ -14300,10 +14300,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.GetTxPoolContentResponse)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.GetTxPoolContentResponse)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.GetTxPoolContentResponse other = (pactus.Blockchain.GetTxPoolContentResponse) obj;
+      pactus.BlockchainOuterClass.GetTxPoolContentResponse other = (pactus.BlockchainOuterClass.GetTxPoolContentResponse) obj;
 
       if (!getTxsList()
           .equals(other.getTxsList())) return false;
@@ -14327,44 +14327,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.GetTxPoolContentResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetTxPoolContentResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetTxPoolContentResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetTxPoolContentResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetTxPoolContentResponse parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.GetTxPoolContentResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.GetTxPoolContentResponse parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetTxPoolContentResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -14372,26 +14372,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.GetTxPoolContentResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.GetTxPoolContentResponse parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.GetTxPoolContentResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.GetTxPoolContentResponse parseFrom(
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -14404,7 +14404,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.GetTxPoolContentResponse prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.GetTxPoolContentResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -14429,21 +14429,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.GetTxPoolContentResponse)
-        pactus.Blockchain.GetTxPoolContentResponseOrBuilder {
+        pactus.BlockchainOuterClass.GetTxPoolContentResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_GetTxPoolContentResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_GetTxPoolContentResponse_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.GetTxPoolContentResponse.class, pactus.Blockchain.GetTxPoolContentResponse.Builder.class);
+                pactus.BlockchainOuterClass.GetTxPoolContentResponse.class, pactus.BlockchainOuterClass.GetTxPoolContentResponse.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.GetTxPoolContentResponse.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.GetTxPoolContentResponse.newBuilder()
       private Builder() {
 
       }
@@ -14470,17 +14470,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_GetTxPoolContentResponse_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_GetTxPoolContentResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetTxPoolContentResponse getDefaultInstanceForType() {
-        return pactus.Blockchain.GetTxPoolContentResponse.getDefaultInstance();
+      public pactus.BlockchainOuterClass.GetTxPoolContentResponse getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.GetTxPoolContentResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetTxPoolContentResponse build() {
-        pactus.Blockchain.GetTxPoolContentResponse result = buildPartial();
+      public pactus.BlockchainOuterClass.GetTxPoolContentResponse build() {
+        pactus.BlockchainOuterClass.GetTxPoolContentResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -14488,15 +14488,15 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.GetTxPoolContentResponse buildPartial() {
-        pactus.Blockchain.GetTxPoolContentResponse result = new pactus.Blockchain.GetTxPoolContentResponse(this);
+      public pactus.BlockchainOuterClass.GetTxPoolContentResponse buildPartial() {
+        pactus.BlockchainOuterClass.GetTxPoolContentResponse result = new pactus.BlockchainOuterClass.GetTxPoolContentResponse(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(pactus.Blockchain.GetTxPoolContentResponse result) {
+      private void buildPartialRepeatedFields(pactus.BlockchainOuterClass.GetTxPoolContentResponse result) {
         if (txsBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
             txs_ = java.util.Collections.unmodifiableList(txs_);
@@ -14508,22 +14508,22 @@ public final class Blockchain {
         }
       }
 
-      private void buildPartial0(pactus.Blockchain.GetTxPoolContentResponse result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.GetTxPoolContentResponse result) {
         int from_bitField0_ = bitField0_;
       }
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.GetTxPoolContentResponse) {
-          return mergeFrom((pactus.Blockchain.GetTxPoolContentResponse)other);
+        if (other instanceof pactus.BlockchainOuterClass.GetTxPoolContentResponse) {
+          return mergeFrom((pactus.BlockchainOuterClass.GetTxPoolContentResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.GetTxPoolContentResponse other) {
-        if (other == pactus.Blockchain.GetTxPoolContentResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.GetTxPoolContentResponse other) {
+        if (other == pactus.BlockchainOuterClass.GetTxPoolContentResponse.getDefaultInstance()) return this;
         if (txsBuilder_ == null) {
           if (!other.txs_.isEmpty()) {
             if (txs_.isEmpty()) {
@@ -14577,9 +14577,9 @@ public final class Blockchain {
                 done = true;
                 break;
               case 10: {
-                pactus.Transaction.TransactionInfo m =
+                pactus.TransactionOuterClass.TransactionInfo m =
                     input.readMessage(
-                        pactus.Transaction.TransactionInfo.parser(),
+                        pactus.TransactionOuterClass.TransactionInfo.parser(),
                         extensionRegistry);
                 if (txsBuilder_ == null) {
                   ensureTxsIsMutable();
@@ -14606,17 +14606,17 @@ public final class Blockchain {
       }
       private int bitField0_;
 
-      private java.util.List<pactus.Transaction.TransactionInfo> txs_ =
+      private java.util.List<pactus.TransactionOuterClass.TransactionInfo> txs_ =
         java.util.Collections.emptyList();
       private void ensureTxsIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          txs_ = new java.util.ArrayList<pactus.Transaction.TransactionInfo>(txs_);
+          txs_ = new java.util.ArrayList<pactus.TransactionOuterClass.TransactionInfo>(txs_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Transaction.TransactionInfo, pactus.Transaction.TransactionInfo.Builder, pactus.Transaction.TransactionInfoOrBuilder> txsBuilder_;
+          pactus.TransactionOuterClass.TransactionInfo, pactus.TransactionOuterClass.TransactionInfo.Builder, pactus.TransactionOuterClass.TransactionInfoOrBuilder> txsBuilder_;
 
       /**
        * <pre>
@@ -14625,7 +14625,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
-      public java.util.List<pactus.Transaction.TransactionInfo> getTxsList() {
+      public java.util.List<pactus.TransactionOuterClass.TransactionInfo> getTxsList() {
         if (txsBuilder_ == null) {
           return java.util.Collections.unmodifiableList(txs_);
         } else {
@@ -14653,7 +14653,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
-      public pactus.Transaction.TransactionInfo getTxs(int index) {
+      public pactus.TransactionOuterClass.TransactionInfo getTxs(int index) {
         if (txsBuilder_ == null) {
           return txs_.get(index);
         } else {
@@ -14668,7 +14668,7 @@ public final class Blockchain {
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
       public Builder setTxs(
-          int index, pactus.Transaction.TransactionInfo value) {
+          int index, pactus.TransactionOuterClass.TransactionInfo value) {
         if (txsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -14689,7 +14689,7 @@ public final class Blockchain {
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
       public Builder setTxs(
-          int index, pactus.Transaction.TransactionInfo.Builder builderForValue) {
+          int index, pactus.TransactionOuterClass.TransactionInfo.Builder builderForValue) {
         if (txsBuilder_ == null) {
           ensureTxsIsMutable();
           txs_.set(index, builderForValue.build());
@@ -14706,7 +14706,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
-      public Builder addTxs(pactus.Transaction.TransactionInfo value) {
+      public Builder addTxs(pactus.TransactionOuterClass.TransactionInfo value) {
         if (txsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -14727,7 +14727,7 @@ public final class Blockchain {
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
       public Builder addTxs(
-          int index, pactus.Transaction.TransactionInfo value) {
+          int index, pactus.TransactionOuterClass.TransactionInfo value) {
         if (txsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -14748,7 +14748,7 @@ public final class Blockchain {
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
       public Builder addTxs(
-          pactus.Transaction.TransactionInfo.Builder builderForValue) {
+          pactus.TransactionOuterClass.TransactionInfo.Builder builderForValue) {
         if (txsBuilder_ == null) {
           ensureTxsIsMutable();
           txs_.add(builderForValue.build());
@@ -14766,7 +14766,7 @@ public final class Blockchain {
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
       public Builder addTxs(
-          int index, pactus.Transaction.TransactionInfo.Builder builderForValue) {
+          int index, pactus.TransactionOuterClass.TransactionInfo.Builder builderForValue) {
         if (txsBuilder_ == null) {
           ensureTxsIsMutable();
           txs_.add(index, builderForValue.build());
@@ -14784,7 +14784,7 @@ public final class Blockchain {
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
       public Builder addAllTxs(
-          java.lang.Iterable<? extends pactus.Transaction.TransactionInfo> values) {
+          java.lang.Iterable<? extends pactus.TransactionOuterClass.TransactionInfo> values) {
         if (txsBuilder_ == null) {
           ensureTxsIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -14836,7 +14836,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
-      public pactus.Transaction.TransactionInfo.Builder getTxsBuilder(
+      public pactus.TransactionOuterClass.TransactionInfo.Builder getTxsBuilder(
           int index) {
         return internalGetTxsFieldBuilder().getBuilder(index);
       }
@@ -14847,7 +14847,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
-      public pactus.Transaction.TransactionInfoOrBuilder getTxsOrBuilder(
+      public pactus.TransactionOuterClass.TransactionInfoOrBuilder getTxsOrBuilder(
           int index) {
         if (txsBuilder_ == null) {
           return txs_.get(index);  } else {
@@ -14861,7 +14861,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
-      public java.util.List<? extends pactus.Transaction.TransactionInfoOrBuilder> 
+      public java.util.List<? extends pactus.TransactionOuterClass.TransactionInfoOrBuilder> 
            getTxsOrBuilderList() {
         if (txsBuilder_ != null) {
           return txsBuilder_.getMessageOrBuilderList();
@@ -14876,9 +14876,9 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
-      public pactus.Transaction.TransactionInfo.Builder addTxsBuilder() {
+      public pactus.TransactionOuterClass.TransactionInfo.Builder addTxsBuilder() {
         return internalGetTxsFieldBuilder().addBuilder(
-            pactus.Transaction.TransactionInfo.getDefaultInstance());
+            pactus.TransactionOuterClass.TransactionInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -14887,10 +14887,10 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
-      public pactus.Transaction.TransactionInfo.Builder addTxsBuilder(
+      public pactus.TransactionOuterClass.TransactionInfo.Builder addTxsBuilder(
           int index) {
         return internalGetTxsFieldBuilder().addBuilder(
-            index, pactus.Transaction.TransactionInfo.getDefaultInstance());
+            index, pactus.TransactionOuterClass.TransactionInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -14899,16 +14899,16 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.TransactionInfo txs = 1 [json_name = "txs"];</code>
        */
-      public java.util.List<pactus.Transaction.TransactionInfo.Builder> 
+      public java.util.List<pactus.TransactionOuterClass.TransactionInfo.Builder> 
            getTxsBuilderList() {
         return internalGetTxsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Transaction.TransactionInfo, pactus.Transaction.TransactionInfo.Builder, pactus.Transaction.TransactionInfoOrBuilder> 
+          pactus.TransactionOuterClass.TransactionInfo, pactus.TransactionOuterClass.TransactionInfo.Builder, pactus.TransactionOuterClass.TransactionInfoOrBuilder> 
           internalGetTxsFieldBuilder() {
         if (txsBuilder_ == null) {
           txsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              pactus.Transaction.TransactionInfo, pactus.Transaction.TransactionInfo.Builder, pactus.Transaction.TransactionInfoOrBuilder>(
+              pactus.TransactionOuterClass.TransactionInfo, pactus.TransactionOuterClass.TransactionInfo.Builder, pactus.TransactionOuterClass.TransactionInfoOrBuilder>(
                   txs_,
                   ((bitField0_ & 0x00000001) != 0),
                   getParentForChildren(),
@@ -14922,12 +14922,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.GetTxPoolContentResponse)
-    private static final pactus.Blockchain.GetTxPoolContentResponse DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.GetTxPoolContentResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.GetTxPoolContentResponse();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.GetTxPoolContentResponse();
     }
 
-    public static pactus.Blockchain.GetTxPoolContentResponse getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.GetTxPoolContentResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -14963,7 +14963,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.GetTxPoolContentResponse getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.GetTxPoolContentResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -15147,15 +15147,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_ValidatorInfo_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_ValidatorInfo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_ValidatorInfo_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_ValidatorInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.ValidatorInfo.class, pactus.Blockchain.ValidatorInfo.Builder.class);
+              pactus.BlockchainOuterClass.ValidatorInfo.class, pactus.BlockchainOuterClass.ValidatorInfo.Builder.class);
     }
 
     public static final int HASH_FIELD_NUMBER = 1;
@@ -15535,10 +15535,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.ValidatorInfo)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.ValidatorInfo)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.ValidatorInfo other = (pactus.Blockchain.ValidatorInfo) obj;
+      pactus.BlockchainOuterClass.ValidatorInfo other = (pactus.BlockchainOuterClass.ValidatorInfo) obj;
 
       if (!getHash()
           .equals(other.getHash())) return false;
@@ -15599,44 +15599,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.ValidatorInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ValidatorInfo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.ValidatorInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ValidatorInfo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.ValidatorInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ValidatorInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.ValidatorInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ValidatorInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.ValidatorInfo parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.ValidatorInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.ValidatorInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ValidatorInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.ValidatorInfo parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.ValidatorInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.ValidatorInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ValidatorInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -15644,26 +15644,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.ValidatorInfo parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.ValidatorInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.ValidatorInfo parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.ValidatorInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.ValidatorInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ValidatorInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.ValidatorInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ValidatorInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -15676,7 +15676,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.ValidatorInfo prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.ValidatorInfo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -15701,21 +15701,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.ValidatorInfo)
-        pactus.Blockchain.ValidatorInfoOrBuilder {
+        pactus.BlockchainOuterClass.ValidatorInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_ValidatorInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_ValidatorInfo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_ValidatorInfo_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_ValidatorInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.ValidatorInfo.class, pactus.Blockchain.ValidatorInfo.Builder.class);
+                pactus.BlockchainOuterClass.ValidatorInfo.class, pactus.BlockchainOuterClass.ValidatorInfo.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.ValidatorInfo.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.ValidatorInfo.newBuilder()
       private Builder() {
 
       }
@@ -15745,17 +15745,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_ValidatorInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_ValidatorInfo_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.ValidatorInfo getDefaultInstanceForType() {
-        return pactus.Blockchain.ValidatorInfo.getDefaultInstance();
+      public pactus.BlockchainOuterClass.ValidatorInfo getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.ValidatorInfo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.ValidatorInfo build() {
-        pactus.Blockchain.ValidatorInfo result = buildPartial();
+      public pactus.BlockchainOuterClass.ValidatorInfo build() {
+        pactus.BlockchainOuterClass.ValidatorInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -15763,14 +15763,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.ValidatorInfo buildPartial() {
-        pactus.Blockchain.ValidatorInfo result = new pactus.Blockchain.ValidatorInfo(this);
+      public pactus.BlockchainOuterClass.ValidatorInfo buildPartial() {
+        pactus.BlockchainOuterClass.ValidatorInfo result = new pactus.BlockchainOuterClass.ValidatorInfo(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.ValidatorInfo result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.ValidatorInfo result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.hash_ = hash_;
@@ -15806,16 +15806,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.ValidatorInfo) {
-          return mergeFrom((pactus.Blockchain.ValidatorInfo)other);
+        if (other instanceof pactus.BlockchainOuterClass.ValidatorInfo) {
+          return mergeFrom((pactus.BlockchainOuterClass.ValidatorInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.ValidatorInfo other) {
-        if (other == pactus.Blockchain.ValidatorInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.ValidatorInfo other) {
+        if (other == pactus.BlockchainOuterClass.ValidatorInfo.getDefaultInstance()) return this;
         if (!other.getHash().isEmpty()) {
           hash_ = other.hash_;
           bitField0_ |= 0x00000001;
@@ -16583,12 +16583,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.ValidatorInfo)
-    private static final pactus.Blockchain.ValidatorInfo DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.ValidatorInfo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.ValidatorInfo();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.ValidatorInfo();
     }
 
-    public static pactus.Blockchain.ValidatorInfo getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.ValidatorInfo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -16624,7 +16624,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.ValidatorInfo getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.ValidatorInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -16747,15 +16747,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_AccountInfo_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_AccountInfo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_AccountInfo_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_AccountInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.AccountInfo.class, pactus.Blockchain.AccountInfo.Builder.class);
+              pactus.BlockchainOuterClass.AccountInfo.class, pactus.BlockchainOuterClass.AccountInfo.Builder.class);
     }
 
     public static final int HASH_FIELD_NUMBER = 1;
@@ -16994,10 +16994,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.AccountInfo)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.AccountInfo)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.AccountInfo other = (pactus.Blockchain.AccountInfo) obj;
+      pactus.BlockchainOuterClass.AccountInfo other = (pactus.BlockchainOuterClass.AccountInfo) obj;
 
       if (!getHash()
           .equals(other.getHash())) return false;
@@ -17036,44 +17036,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.AccountInfo parseFrom(
+    public static pactus.BlockchainOuterClass.AccountInfo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.AccountInfo parseFrom(
+    public static pactus.BlockchainOuterClass.AccountInfo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.AccountInfo parseFrom(
+    public static pactus.BlockchainOuterClass.AccountInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.AccountInfo parseFrom(
+    public static pactus.BlockchainOuterClass.AccountInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.AccountInfo parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.AccountInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.AccountInfo parseFrom(
+    public static pactus.BlockchainOuterClass.AccountInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.AccountInfo parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.AccountInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.AccountInfo parseFrom(
+    public static pactus.BlockchainOuterClass.AccountInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -17081,26 +17081,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.AccountInfo parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.AccountInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.AccountInfo parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.AccountInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.AccountInfo parseFrom(
+    public static pactus.BlockchainOuterClass.AccountInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.AccountInfo parseFrom(
+    public static pactus.BlockchainOuterClass.AccountInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -17113,7 +17113,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.AccountInfo prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.AccountInfo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -17138,21 +17138,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.AccountInfo)
-        pactus.Blockchain.AccountInfoOrBuilder {
+        pactus.BlockchainOuterClass.AccountInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_AccountInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_AccountInfo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_AccountInfo_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_AccountInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.AccountInfo.class, pactus.Blockchain.AccountInfo.Builder.class);
+                pactus.BlockchainOuterClass.AccountInfo.class, pactus.BlockchainOuterClass.AccountInfo.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.AccountInfo.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.AccountInfo.newBuilder()
       private Builder() {
 
       }
@@ -17177,17 +17177,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_AccountInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_AccountInfo_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.AccountInfo getDefaultInstanceForType() {
-        return pactus.Blockchain.AccountInfo.getDefaultInstance();
+      public pactus.BlockchainOuterClass.AccountInfo getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.AccountInfo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.AccountInfo build() {
-        pactus.Blockchain.AccountInfo result = buildPartial();
+      public pactus.BlockchainOuterClass.AccountInfo build() {
+        pactus.BlockchainOuterClass.AccountInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -17195,14 +17195,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.AccountInfo buildPartial() {
-        pactus.Blockchain.AccountInfo result = new pactus.Blockchain.AccountInfo(this);
+      public pactus.BlockchainOuterClass.AccountInfo buildPartial() {
+        pactus.BlockchainOuterClass.AccountInfo result = new pactus.BlockchainOuterClass.AccountInfo(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.AccountInfo result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.AccountInfo result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.hash_ = hash_;
@@ -17223,16 +17223,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.AccountInfo) {
-          return mergeFrom((pactus.Blockchain.AccountInfo)other);
+        if (other instanceof pactus.BlockchainOuterClass.AccountInfo) {
+          return mergeFrom((pactus.BlockchainOuterClass.AccountInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.AccountInfo other) {
-        if (other == pactus.Blockchain.AccountInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.AccountInfo other) {
+        if (other == pactus.BlockchainOuterClass.AccountInfo.getDefaultInstance()) return this;
         if (!other.getHash().isEmpty()) {
           hash_ = other.hash_;
           bitField0_ |= 0x00000001;
@@ -17690,12 +17690,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.AccountInfo)
-    private static final pactus.Blockchain.AccountInfo DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.AccountInfo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.AccountInfo();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.AccountInfo();
     }
 
-    public static pactus.Blockchain.AccountInfo getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.AccountInfo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -17731,7 +17731,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.AccountInfo getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.AccountInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -17865,15 +17865,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_BlockHeaderInfo_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_BlockHeaderInfo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_BlockHeaderInfo_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_BlockHeaderInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.BlockHeaderInfo.class, pactus.Blockchain.BlockHeaderInfo.Builder.class);
+              pactus.BlockchainOuterClass.BlockHeaderInfo.class, pactus.BlockchainOuterClass.BlockHeaderInfo.Builder.class);
     }
 
     public static final int VERSION_FIELD_NUMBER = 1;
@@ -18143,10 +18143,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.BlockHeaderInfo)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.BlockHeaderInfo)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.BlockHeaderInfo other = (pactus.Blockchain.BlockHeaderInfo) obj;
+      pactus.BlockchainOuterClass.BlockHeaderInfo other = (pactus.BlockchainOuterClass.BlockHeaderInfo) obj;
 
       if (getVersion()
           != other.getVersion()) return false;
@@ -18184,44 +18184,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.BlockHeaderInfo parseFrom(
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.BlockHeaderInfo parseFrom(
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.BlockHeaderInfo parseFrom(
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.BlockHeaderInfo parseFrom(
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.BlockHeaderInfo parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.BlockHeaderInfo parseFrom(
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.BlockHeaderInfo parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.BlockHeaderInfo parseFrom(
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -18229,26 +18229,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.BlockHeaderInfo parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.BlockHeaderInfo parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.BlockHeaderInfo parseFrom(
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.BlockHeaderInfo parseFrom(
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -18261,7 +18261,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.BlockHeaderInfo prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.BlockHeaderInfo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -18286,21 +18286,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.BlockHeaderInfo)
-        pactus.Blockchain.BlockHeaderInfoOrBuilder {
+        pactus.BlockchainOuterClass.BlockHeaderInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_BlockHeaderInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_BlockHeaderInfo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_BlockHeaderInfo_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_BlockHeaderInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.BlockHeaderInfo.class, pactus.Blockchain.BlockHeaderInfo.Builder.class);
+                pactus.BlockchainOuterClass.BlockHeaderInfo.class, pactus.BlockchainOuterClass.BlockHeaderInfo.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.BlockHeaderInfo.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.BlockHeaderInfo.newBuilder()
       private Builder() {
 
       }
@@ -18325,17 +18325,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_BlockHeaderInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_BlockHeaderInfo_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.BlockHeaderInfo getDefaultInstanceForType() {
-        return pactus.Blockchain.BlockHeaderInfo.getDefaultInstance();
+      public pactus.BlockchainOuterClass.BlockHeaderInfo getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.BlockHeaderInfo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.BlockHeaderInfo build() {
-        pactus.Blockchain.BlockHeaderInfo result = buildPartial();
+      public pactus.BlockchainOuterClass.BlockHeaderInfo build() {
+        pactus.BlockchainOuterClass.BlockHeaderInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -18343,14 +18343,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.BlockHeaderInfo buildPartial() {
-        pactus.Blockchain.BlockHeaderInfo result = new pactus.Blockchain.BlockHeaderInfo(this);
+      public pactus.BlockchainOuterClass.BlockHeaderInfo buildPartial() {
+        pactus.BlockchainOuterClass.BlockHeaderInfo result = new pactus.BlockchainOuterClass.BlockHeaderInfo(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.BlockHeaderInfo result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.BlockHeaderInfo result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.version_ = version_;
@@ -18371,16 +18371,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.BlockHeaderInfo) {
-          return mergeFrom((pactus.Blockchain.BlockHeaderInfo)other);
+        if (other instanceof pactus.BlockchainOuterClass.BlockHeaderInfo) {
+          return mergeFrom((pactus.BlockchainOuterClass.BlockHeaderInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.BlockHeaderInfo other) {
-        if (other == pactus.Blockchain.BlockHeaderInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.BlockHeaderInfo other) {
+        if (other == pactus.BlockchainOuterClass.BlockHeaderInfo.getDefaultInstance()) return this;
         if (other.getVersion() != 0) {
           setVersion(other.getVersion());
         }
@@ -18888,12 +18888,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.BlockHeaderInfo)
-    private static final pactus.Blockchain.BlockHeaderInfo DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.BlockHeaderInfo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.BlockHeaderInfo();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.BlockHeaderInfo();
     }
 
-    public static pactus.Blockchain.BlockHeaderInfo getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.BlockHeaderInfo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -18929,7 +18929,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.BlockHeaderInfo getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.BlockHeaderInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -19081,15 +19081,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_CertificateInfo_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_CertificateInfo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_CertificateInfo_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_CertificateInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.CertificateInfo.class, pactus.Blockchain.CertificateInfo.Builder.class);
+              pactus.BlockchainOuterClass.CertificateInfo.class, pactus.BlockchainOuterClass.CertificateInfo.Builder.class);
     }
 
     public static final int HASH_FIELD_NUMBER = 1;
@@ -19380,10 +19380,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.CertificateInfo)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.CertificateInfo)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.CertificateInfo other = (pactus.Blockchain.CertificateInfo) obj;
+      pactus.BlockchainOuterClass.CertificateInfo other = (pactus.BlockchainOuterClass.CertificateInfo) obj;
 
       if (!getHash()
           .equals(other.getHash())) return false;
@@ -19425,44 +19425,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.CertificateInfo parseFrom(
+    public static pactus.BlockchainOuterClass.CertificateInfo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.CertificateInfo parseFrom(
+    public static pactus.BlockchainOuterClass.CertificateInfo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.CertificateInfo parseFrom(
+    public static pactus.BlockchainOuterClass.CertificateInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.CertificateInfo parseFrom(
+    public static pactus.BlockchainOuterClass.CertificateInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.CertificateInfo parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.CertificateInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.CertificateInfo parseFrom(
+    public static pactus.BlockchainOuterClass.CertificateInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.CertificateInfo parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.CertificateInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.CertificateInfo parseFrom(
+    public static pactus.BlockchainOuterClass.CertificateInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -19470,26 +19470,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.CertificateInfo parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.CertificateInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.CertificateInfo parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.CertificateInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.CertificateInfo parseFrom(
+    public static pactus.BlockchainOuterClass.CertificateInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.CertificateInfo parseFrom(
+    public static pactus.BlockchainOuterClass.CertificateInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -19502,7 +19502,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.CertificateInfo prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.CertificateInfo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -19527,21 +19527,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.CertificateInfo)
-        pactus.Blockchain.CertificateInfoOrBuilder {
+        pactus.BlockchainOuterClass.CertificateInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_CertificateInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_CertificateInfo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_CertificateInfo_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_CertificateInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.CertificateInfo.class, pactus.Blockchain.CertificateInfo.Builder.class);
+                pactus.BlockchainOuterClass.CertificateInfo.class, pactus.BlockchainOuterClass.CertificateInfo.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.CertificateInfo.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.CertificateInfo.newBuilder()
       private Builder() {
 
       }
@@ -19566,17 +19566,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_CertificateInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_CertificateInfo_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.CertificateInfo getDefaultInstanceForType() {
-        return pactus.Blockchain.CertificateInfo.getDefaultInstance();
+      public pactus.BlockchainOuterClass.CertificateInfo getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.CertificateInfo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.CertificateInfo build() {
-        pactus.Blockchain.CertificateInfo result = buildPartial();
+      public pactus.BlockchainOuterClass.CertificateInfo build() {
+        pactus.BlockchainOuterClass.CertificateInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -19584,14 +19584,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.CertificateInfo buildPartial() {
-        pactus.Blockchain.CertificateInfo result = new pactus.Blockchain.CertificateInfo(this);
+      public pactus.BlockchainOuterClass.CertificateInfo buildPartial() {
+        pactus.BlockchainOuterClass.CertificateInfo result = new pactus.BlockchainOuterClass.CertificateInfo(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.CertificateInfo result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.CertificateInfo result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.hash_ = hash_;
@@ -19614,16 +19614,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.CertificateInfo) {
-          return mergeFrom((pactus.Blockchain.CertificateInfo)other);
+        if (other instanceof pactus.BlockchainOuterClass.CertificateInfo) {
+          return mergeFrom((pactus.BlockchainOuterClass.CertificateInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.CertificateInfo other) {
-        if (other == pactus.Blockchain.CertificateInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.CertificateInfo other) {
+        if (other == pactus.BlockchainOuterClass.CertificateInfo.getDefaultInstance()) return this;
         if (!other.getHash().isEmpty()) {
           hash_ = other.hash_;
           bitField0_ |= 0x00000001;
@@ -20205,12 +20205,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.CertificateInfo)
-    private static final pactus.Blockchain.CertificateInfo DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.CertificateInfo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.CertificateInfo();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.CertificateInfo();
     }
 
-    public static pactus.Blockchain.CertificateInfo getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.CertificateInfo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -20246,7 +20246,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.CertificateInfo getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.CertificateInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -20273,7 +20273,7 @@ public final class Blockchain {
      * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
      * @return The type.
      */
-    pactus.Blockchain.VoteType getType();
+    pactus.BlockchainOuterClass.VoteType getType();
 
     /**
      * <pre>
@@ -20378,15 +20378,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_VoteInfo_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_VoteInfo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_VoteInfo_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_VoteInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.VoteInfo.class, pactus.Blockchain.VoteInfo.Builder.class);
+              pactus.BlockchainOuterClass.VoteInfo.class, pactus.BlockchainOuterClass.VoteInfo.Builder.class);
     }
 
     public static final int TYPE_FIELD_NUMBER = 1;
@@ -20410,9 +20410,9 @@ public final class Blockchain {
      * <code>.pactus.VoteType type = 1 [json_name = "type"];</code>
      * @return The type.
      */
-    @java.lang.Override public pactus.Blockchain.VoteType getType() {
-      pactus.Blockchain.VoteType result = pactus.Blockchain.VoteType.forNumber(type_);
-      return result == null ? pactus.Blockchain.VoteType.UNRECOGNIZED : result;
+    @java.lang.Override public pactus.BlockchainOuterClass.VoteType getType() {
+      pactus.BlockchainOuterClass.VoteType result = pactus.BlockchainOuterClass.VoteType.forNumber(type_);
+      return result == null ? pactus.BlockchainOuterClass.VoteType.UNRECOGNIZED : result;
     }
 
     public static final int VOTER_FIELD_NUMBER = 2;
@@ -20568,7 +20568,7 @@ public final class Blockchain {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (type_ != pactus.Blockchain.VoteType.VOTE_TYPE_UNSPECIFIED.getNumber()) {
+      if (type_ != pactus.BlockchainOuterClass.VoteType.VOTE_TYPE_UNSPECIFIED.getNumber()) {
         output.writeEnum(1, type_);
       }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(voter_)) {
@@ -20595,7 +20595,7 @@ public final class Blockchain {
       if (size != -1) return size;
 
       size = 0;
-      if (type_ != pactus.Blockchain.VoteType.VOTE_TYPE_UNSPECIFIED.getNumber()) {
+      if (type_ != pactus.BlockchainOuterClass.VoteType.VOTE_TYPE_UNSPECIFIED.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, type_);
       }
@@ -20627,10 +20627,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.VoteInfo)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.VoteInfo)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.VoteInfo other = (pactus.Blockchain.VoteInfo) obj;
+      pactus.BlockchainOuterClass.VoteInfo other = (pactus.BlockchainOuterClass.VoteInfo) obj;
 
       if (type_ != other.type_) return false;
       if (!getVoter()
@@ -20671,44 +20671,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.VoteInfo parseFrom(
+    public static pactus.BlockchainOuterClass.VoteInfo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.VoteInfo parseFrom(
+    public static pactus.BlockchainOuterClass.VoteInfo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.VoteInfo parseFrom(
+    public static pactus.BlockchainOuterClass.VoteInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.VoteInfo parseFrom(
+    public static pactus.BlockchainOuterClass.VoteInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.VoteInfo parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.VoteInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.VoteInfo parseFrom(
+    public static pactus.BlockchainOuterClass.VoteInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.VoteInfo parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.VoteInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.VoteInfo parseFrom(
+    public static pactus.BlockchainOuterClass.VoteInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -20716,26 +20716,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.VoteInfo parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.VoteInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.VoteInfo parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.VoteInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.VoteInfo parseFrom(
+    public static pactus.BlockchainOuterClass.VoteInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.VoteInfo parseFrom(
+    public static pactus.BlockchainOuterClass.VoteInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -20748,7 +20748,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.VoteInfo prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.VoteInfo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -20773,21 +20773,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.VoteInfo)
-        pactus.Blockchain.VoteInfoOrBuilder {
+        pactus.BlockchainOuterClass.VoteInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_VoteInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_VoteInfo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_VoteInfo_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_VoteInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.VoteInfo.class, pactus.Blockchain.VoteInfo.Builder.class);
+                pactus.BlockchainOuterClass.VoteInfo.class, pactus.BlockchainOuterClass.VoteInfo.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.VoteInfo.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.VoteInfo.newBuilder()
       private Builder() {
 
       }
@@ -20813,17 +20813,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_VoteInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_VoteInfo_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.VoteInfo getDefaultInstanceForType() {
-        return pactus.Blockchain.VoteInfo.getDefaultInstance();
+      public pactus.BlockchainOuterClass.VoteInfo getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.VoteInfo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.VoteInfo build() {
-        pactus.Blockchain.VoteInfo result = buildPartial();
+      public pactus.BlockchainOuterClass.VoteInfo build() {
+        pactus.BlockchainOuterClass.VoteInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -20831,14 +20831,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.VoteInfo buildPartial() {
-        pactus.Blockchain.VoteInfo result = new pactus.Blockchain.VoteInfo(this);
+      public pactus.BlockchainOuterClass.VoteInfo buildPartial() {
+        pactus.BlockchainOuterClass.VoteInfo result = new pactus.BlockchainOuterClass.VoteInfo(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.VoteInfo result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.VoteInfo result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.type_ = type_;
@@ -20862,16 +20862,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.VoteInfo) {
-          return mergeFrom((pactus.Blockchain.VoteInfo)other);
+        if (other instanceof pactus.BlockchainOuterClass.VoteInfo) {
+          return mergeFrom((pactus.BlockchainOuterClass.VoteInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.VoteInfo other) {
-        if (other == pactus.Blockchain.VoteInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.VoteInfo other) {
+        if (other == pactus.BlockchainOuterClass.VoteInfo.getDefaultInstance()) return this;
         if (other.type_ != 0) {
           setTypeValue(other.getTypeValue());
         }
@@ -21003,9 +21003,9 @@ public final class Blockchain {
        * @return The type.
        */
       @java.lang.Override
-      public pactus.Blockchain.VoteType getType() {
-        pactus.Blockchain.VoteType result = pactus.Blockchain.VoteType.forNumber(type_);
-        return result == null ? pactus.Blockchain.VoteType.UNRECOGNIZED : result;
+      public pactus.BlockchainOuterClass.VoteType getType() {
+        pactus.BlockchainOuterClass.VoteType result = pactus.BlockchainOuterClass.VoteType.forNumber(type_);
+        return result == null ? pactus.BlockchainOuterClass.VoteType.UNRECOGNIZED : result;
       }
       /**
        * <pre>
@@ -21016,7 +21016,7 @@ public final class Blockchain {
        * @param value The type to set.
        * @return This builder for chaining.
        */
-      public Builder setType(pactus.Blockchain.VoteType value) {
+      public Builder setType(pactus.BlockchainOuterClass.VoteType value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -21360,12 +21360,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.VoteInfo)
-    private static final pactus.Blockchain.VoteInfo DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.VoteInfo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.VoteInfo();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.VoteInfo();
     }
 
-    public static pactus.Blockchain.VoteInfo getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.VoteInfo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -21401,7 +21401,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.VoteInfo getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.VoteInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -21468,7 +21468,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
-    java.util.List<pactus.Blockchain.VoteInfo> 
+    java.util.List<pactus.BlockchainOuterClass.VoteInfo> 
         getVotesList();
     /**
      * <pre>
@@ -21477,7 +21477,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
-    pactus.Blockchain.VoteInfo getVotes(int index);
+    pactus.BlockchainOuterClass.VoteInfo getVotes(int index);
     /**
      * <pre>
      * List of votes in the consensus instance.
@@ -21493,7 +21493,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
-    java.util.List<? extends pactus.Blockchain.VoteInfoOrBuilder> 
+    java.util.List<? extends pactus.BlockchainOuterClass.VoteInfoOrBuilder> 
         getVotesOrBuilderList();
     /**
      * <pre>
@@ -21502,7 +21502,7 @@ public final class Blockchain {
      *
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
-    pactus.Blockchain.VoteInfoOrBuilder getVotesOrBuilder(
+    pactus.BlockchainOuterClass.VoteInfoOrBuilder getVotesOrBuilder(
         int index);
   }
   /**
@@ -21537,15 +21537,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_ConsensusInfo_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_ConsensusInfo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_ConsensusInfo_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_ConsensusInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.ConsensusInfo.class, pactus.Blockchain.ConsensusInfo.Builder.class);
+              pactus.BlockchainOuterClass.ConsensusInfo.class, pactus.BlockchainOuterClass.ConsensusInfo.Builder.class);
     }
 
     public static final int ADDRESS_FIELD_NUMBER = 1;
@@ -21642,7 +21642,7 @@ public final class Blockchain {
 
     public static final int VOTES_FIELD_NUMBER = 5;
     @SuppressWarnings("serial")
-    private java.util.List<pactus.Blockchain.VoteInfo> votes_;
+    private java.util.List<pactus.BlockchainOuterClass.VoteInfo> votes_;
     /**
      * <pre>
      * List of votes in the consensus instance.
@@ -21651,7 +21651,7 @@ public final class Blockchain {
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     @java.lang.Override
-    public java.util.List<pactus.Blockchain.VoteInfo> getVotesList() {
+    public java.util.List<pactus.BlockchainOuterClass.VoteInfo> getVotesList() {
       return votes_;
     }
     /**
@@ -21662,7 +21662,7 @@ public final class Blockchain {
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     @java.lang.Override
-    public java.util.List<? extends pactus.Blockchain.VoteInfoOrBuilder> 
+    public java.util.List<? extends pactus.BlockchainOuterClass.VoteInfoOrBuilder> 
         getVotesOrBuilderList() {
       return votes_;
     }
@@ -21685,7 +21685,7 @@ public final class Blockchain {
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     @java.lang.Override
-    public pactus.Blockchain.VoteInfo getVotes(int index) {
+    public pactus.BlockchainOuterClass.VoteInfo getVotes(int index) {
       return votes_.get(index);
     }
     /**
@@ -21696,7 +21696,7 @@ public final class Blockchain {
      * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
      */
     @java.lang.Override
-    public pactus.Blockchain.VoteInfoOrBuilder getVotesOrBuilder(
+    public pactus.BlockchainOuterClass.VoteInfoOrBuilder getVotesOrBuilder(
         int index) {
       return votes_.get(index);
     }
@@ -21768,10 +21768,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.ConsensusInfo)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.ConsensusInfo)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.ConsensusInfo other = (pactus.Blockchain.ConsensusInfo) obj;
+      pactus.BlockchainOuterClass.ConsensusInfo other = (pactus.BlockchainOuterClass.ConsensusInfo) obj;
 
       if (!getAddress()
           .equals(other.getAddress())) return false;
@@ -21812,44 +21812,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.ConsensusInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ConsensusInfo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.ConsensusInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ConsensusInfo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.ConsensusInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ConsensusInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.ConsensusInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ConsensusInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.ConsensusInfo parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.ConsensusInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.ConsensusInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ConsensusInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.ConsensusInfo parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.ConsensusInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.ConsensusInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ConsensusInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -21857,26 +21857,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.ConsensusInfo parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.ConsensusInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.ConsensusInfo parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.ConsensusInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.ConsensusInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ConsensusInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.ConsensusInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ConsensusInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -21889,7 +21889,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.ConsensusInfo prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.ConsensusInfo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -21914,21 +21914,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.ConsensusInfo)
-        pactus.Blockchain.ConsensusInfoOrBuilder {
+        pactus.BlockchainOuterClass.ConsensusInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_ConsensusInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_ConsensusInfo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_ConsensusInfo_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_ConsensusInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.ConsensusInfo.class, pactus.Blockchain.ConsensusInfo.Builder.class);
+                pactus.BlockchainOuterClass.ConsensusInfo.class, pactus.BlockchainOuterClass.ConsensusInfo.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.ConsensusInfo.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.ConsensusInfo.newBuilder()
       private Builder() {
 
       }
@@ -21959,17 +21959,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_ConsensusInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_ConsensusInfo_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.ConsensusInfo getDefaultInstanceForType() {
-        return pactus.Blockchain.ConsensusInfo.getDefaultInstance();
+      public pactus.BlockchainOuterClass.ConsensusInfo getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.ConsensusInfo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.ConsensusInfo build() {
-        pactus.Blockchain.ConsensusInfo result = buildPartial();
+      public pactus.BlockchainOuterClass.ConsensusInfo build() {
+        pactus.BlockchainOuterClass.ConsensusInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -21977,15 +21977,15 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.ConsensusInfo buildPartial() {
-        pactus.Blockchain.ConsensusInfo result = new pactus.Blockchain.ConsensusInfo(this);
+      public pactus.BlockchainOuterClass.ConsensusInfo buildPartial() {
+        pactus.BlockchainOuterClass.ConsensusInfo result = new pactus.BlockchainOuterClass.ConsensusInfo(this);
         buildPartialRepeatedFields(result);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartialRepeatedFields(pactus.Blockchain.ConsensusInfo result) {
+      private void buildPartialRepeatedFields(pactus.BlockchainOuterClass.ConsensusInfo result) {
         if (votesBuilder_ == null) {
           if (((bitField0_ & 0x00000010) != 0)) {
             votes_ = java.util.Collections.unmodifiableList(votes_);
@@ -21997,7 +21997,7 @@ public final class Blockchain {
         }
       }
 
-      private void buildPartial0(pactus.Blockchain.ConsensusInfo result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.ConsensusInfo result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.address_ = address_;
@@ -22015,16 +22015,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.ConsensusInfo) {
-          return mergeFrom((pactus.Blockchain.ConsensusInfo)other);
+        if (other instanceof pactus.BlockchainOuterClass.ConsensusInfo) {
+          return mergeFrom((pactus.BlockchainOuterClass.ConsensusInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.ConsensusInfo other) {
-        if (other == pactus.Blockchain.ConsensusInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.ConsensusInfo other) {
+        if (other == pactus.BlockchainOuterClass.ConsensusInfo.getDefaultInstance()) return this;
         if (!other.getAddress().isEmpty()) {
           address_ = other.address_;
           bitField0_ |= 0x00000001;
@@ -22112,9 +22112,9 @@ public final class Blockchain {
                 break;
               } // case 32
               case 42: {
-                pactus.Blockchain.VoteInfo m =
+                pactus.BlockchainOuterClass.VoteInfo m =
                     input.readMessage(
-                        pactus.Blockchain.VoteInfo.parser(),
+                        pactus.BlockchainOuterClass.VoteInfo.parser(),
                         extensionRegistry);
                 if (votesBuilder_ == null) {
                   ensureVotesIsMutable();
@@ -22365,17 +22365,17 @@ public final class Blockchain {
         return this;
       }
 
-      private java.util.List<pactus.Blockchain.VoteInfo> votes_ =
+      private java.util.List<pactus.BlockchainOuterClass.VoteInfo> votes_ =
         java.util.Collections.emptyList();
       private void ensureVotesIsMutable() {
         if (!((bitField0_ & 0x00000010) != 0)) {
-          votes_ = new java.util.ArrayList<pactus.Blockchain.VoteInfo>(votes_);
+          votes_ = new java.util.ArrayList<pactus.BlockchainOuterClass.VoteInfo>(votes_);
           bitField0_ |= 0x00000010;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Blockchain.VoteInfo, pactus.Blockchain.VoteInfo.Builder, pactus.Blockchain.VoteInfoOrBuilder> votesBuilder_;
+          pactus.BlockchainOuterClass.VoteInfo, pactus.BlockchainOuterClass.VoteInfo.Builder, pactus.BlockchainOuterClass.VoteInfoOrBuilder> votesBuilder_;
 
       /**
        * <pre>
@@ -22384,7 +22384,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
-      public java.util.List<pactus.Blockchain.VoteInfo> getVotesList() {
+      public java.util.List<pactus.BlockchainOuterClass.VoteInfo> getVotesList() {
         if (votesBuilder_ == null) {
           return java.util.Collections.unmodifiableList(votes_);
         } else {
@@ -22412,7 +22412,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
-      public pactus.Blockchain.VoteInfo getVotes(int index) {
+      public pactus.BlockchainOuterClass.VoteInfo getVotes(int index) {
         if (votesBuilder_ == null) {
           return votes_.get(index);
         } else {
@@ -22427,7 +22427,7 @@ public final class Blockchain {
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder setVotes(
-          int index, pactus.Blockchain.VoteInfo value) {
+          int index, pactus.BlockchainOuterClass.VoteInfo value) {
         if (votesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -22448,7 +22448,7 @@ public final class Blockchain {
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder setVotes(
-          int index, pactus.Blockchain.VoteInfo.Builder builderForValue) {
+          int index, pactus.BlockchainOuterClass.VoteInfo.Builder builderForValue) {
         if (votesBuilder_ == null) {
           ensureVotesIsMutable();
           votes_.set(index, builderForValue.build());
@@ -22465,7 +22465,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
-      public Builder addVotes(pactus.Blockchain.VoteInfo value) {
+      public Builder addVotes(pactus.BlockchainOuterClass.VoteInfo value) {
         if (votesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -22486,7 +22486,7 @@ public final class Blockchain {
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder addVotes(
-          int index, pactus.Blockchain.VoteInfo value) {
+          int index, pactus.BlockchainOuterClass.VoteInfo value) {
         if (votesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -22507,7 +22507,7 @@ public final class Blockchain {
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder addVotes(
-          pactus.Blockchain.VoteInfo.Builder builderForValue) {
+          pactus.BlockchainOuterClass.VoteInfo.Builder builderForValue) {
         if (votesBuilder_ == null) {
           ensureVotesIsMutable();
           votes_.add(builderForValue.build());
@@ -22525,7 +22525,7 @@ public final class Blockchain {
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder addVotes(
-          int index, pactus.Blockchain.VoteInfo.Builder builderForValue) {
+          int index, pactus.BlockchainOuterClass.VoteInfo.Builder builderForValue) {
         if (votesBuilder_ == null) {
           ensureVotesIsMutable();
           votes_.add(index, builderForValue.build());
@@ -22543,7 +22543,7 @@ public final class Blockchain {
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
       public Builder addAllVotes(
-          java.lang.Iterable<? extends pactus.Blockchain.VoteInfo> values) {
+          java.lang.Iterable<? extends pactus.BlockchainOuterClass.VoteInfo> values) {
         if (votesBuilder_ == null) {
           ensureVotesIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -22595,7 +22595,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
-      public pactus.Blockchain.VoteInfo.Builder getVotesBuilder(
+      public pactus.BlockchainOuterClass.VoteInfo.Builder getVotesBuilder(
           int index) {
         return internalGetVotesFieldBuilder().getBuilder(index);
       }
@@ -22606,7 +22606,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
-      public pactus.Blockchain.VoteInfoOrBuilder getVotesOrBuilder(
+      public pactus.BlockchainOuterClass.VoteInfoOrBuilder getVotesOrBuilder(
           int index) {
         if (votesBuilder_ == null) {
           return votes_.get(index);  } else {
@@ -22620,7 +22620,7 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
-      public java.util.List<? extends pactus.Blockchain.VoteInfoOrBuilder> 
+      public java.util.List<? extends pactus.BlockchainOuterClass.VoteInfoOrBuilder> 
            getVotesOrBuilderList() {
         if (votesBuilder_ != null) {
           return votesBuilder_.getMessageOrBuilderList();
@@ -22635,9 +22635,9 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
-      public pactus.Blockchain.VoteInfo.Builder addVotesBuilder() {
+      public pactus.BlockchainOuterClass.VoteInfo.Builder addVotesBuilder() {
         return internalGetVotesFieldBuilder().addBuilder(
-            pactus.Blockchain.VoteInfo.getDefaultInstance());
+            pactus.BlockchainOuterClass.VoteInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -22646,10 +22646,10 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
-      public pactus.Blockchain.VoteInfo.Builder addVotesBuilder(
+      public pactus.BlockchainOuterClass.VoteInfo.Builder addVotesBuilder(
           int index) {
         return internalGetVotesFieldBuilder().addBuilder(
-            index, pactus.Blockchain.VoteInfo.getDefaultInstance());
+            index, pactus.BlockchainOuterClass.VoteInfo.getDefaultInstance());
       }
       /**
        * <pre>
@@ -22658,16 +22658,16 @@ public final class Blockchain {
        *
        * <code>repeated .pactus.VoteInfo votes = 5 [json_name = "votes"];</code>
        */
-      public java.util.List<pactus.Blockchain.VoteInfo.Builder> 
+      public java.util.List<pactus.BlockchainOuterClass.VoteInfo.Builder> 
            getVotesBuilderList() {
         return internalGetVotesFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          pactus.Blockchain.VoteInfo, pactus.Blockchain.VoteInfo.Builder, pactus.Blockchain.VoteInfoOrBuilder> 
+          pactus.BlockchainOuterClass.VoteInfo, pactus.BlockchainOuterClass.VoteInfo.Builder, pactus.BlockchainOuterClass.VoteInfoOrBuilder> 
           internalGetVotesFieldBuilder() {
         if (votesBuilder_ == null) {
           votesBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              pactus.Blockchain.VoteInfo, pactus.Blockchain.VoteInfo.Builder, pactus.Blockchain.VoteInfoOrBuilder>(
+              pactus.BlockchainOuterClass.VoteInfo, pactus.BlockchainOuterClass.VoteInfo.Builder, pactus.BlockchainOuterClass.VoteInfoOrBuilder>(
                   votes_,
                   ((bitField0_ & 0x00000010) != 0),
                   getParentForChildren(),
@@ -22681,12 +22681,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.ConsensusInfo)
-    private static final pactus.Blockchain.ConsensusInfo DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.ConsensusInfo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.ConsensusInfo();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.ConsensusInfo();
     }
 
-    public static pactus.Blockchain.ConsensusInfo getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.ConsensusInfo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -22722,7 +22722,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.ConsensusInfo getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.ConsensusInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -22824,15 +22824,15 @@ public final class Blockchain {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Blockchain.internal_static_pactus_ProposalInfo_descriptor;
+      return pactus.BlockchainOuterClass.internal_static_pactus_ProposalInfo_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Blockchain.internal_static_pactus_ProposalInfo_fieldAccessorTable
+      return pactus.BlockchainOuterClass.internal_static_pactus_ProposalInfo_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Blockchain.ProposalInfo.class, pactus.Blockchain.ProposalInfo.Builder.class);
+              pactus.BlockchainOuterClass.ProposalInfo.class, pactus.BlockchainOuterClass.ProposalInfo.Builder.class);
     }
 
     public static final int HEIGHT_FIELD_NUMBER = 1;
@@ -23018,10 +23018,10 @@ public final class Blockchain {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Blockchain.ProposalInfo)) {
+      if (!(obj instanceof pactus.BlockchainOuterClass.ProposalInfo)) {
         return super.equals(obj);
       }
-      pactus.Blockchain.ProposalInfo other = (pactus.Blockchain.ProposalInfo) obj;
+      pactus.BlockchainOuterClass.ProposalInfo other = (pactus.BlockchainOuterClass.ProposalInfo) obj;
 
       if (getHeight()
           != other.getHeight()) return false;
@@ -23055,44 +23055,44 @@ public final class Blockchain {
       return hash;
     }
 
-    public static pactus.Blockchain.ProposalInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ProposalInfo parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.ProposalInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ProposalInfo parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.ProposalInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ProposalInfo parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.ProposalInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ProposalInfo parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.ProposalInfo parseFrom(byte[] data)
+    public static pactus.BlockchainOuterClass.ProposalInfo parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Blockchain.ProposalInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ProposalInfo parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Blockchain.ProposalInfo parseFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.ProposalInfo parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.ProposalInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ProposalInfo parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -23100,26 +23100,26 @@ public final class Blockchain {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Blockchain.ProposalInfo parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.BlockchainOuterClass.ProposalInfo parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Blockchain.ProposalInfo parseDelimitedFrom(
+    public static pactus.BlockchainOuterClass.ProposalInfo parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Blockchain.ProposalInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ProposalInfo parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Blockchain.ProposalInfo parseFrom(
+    public static pactus.BlockchainOuterClass.ProposalInfo parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -23132,7 +23132,7 @@ public final class Blockchain {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Blockchain.ProposalInfo prototype) {
+    public static Builder newBuilder(pactus.BlockchainOuterClass.ProposalInfo prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -23157,21 +23157,21 @@ public final class Blockchain {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.ProposalInfo)
-        pactus.Blockchain.ProposalInfoOrBuilder {
+        pactus.BlockchainOuterClass.ProposalInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Blockchain.internal_static_pactus_ProposalInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_ProposalInfo_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Blockchain.internal_static_pactus_ProposalInfo_fieldAccessorTable
+        return pactus.BlockchainOuterClass.internal_static_pactus_ProposalInfo_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Blockchain.ProposalInfo.class, pactus.Blockchain.ProposalInfo.Builder.class);
+                pactus.BlockchainOuterClass.ProposalInfo.class, pactus.BlockchainOuterClass.ProposalInfo.Builder.class);
       }
 
-      // Construct using pactus.Blockchain.ProposalInfo.newBuilder()
+      // Construct using pactus.BlockchainOuterClass.ProposalInfo.newBuilder()
       private Builder() {
 
       }
@@ -23195,17 +23195,17 @@ public final class Blockchain {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Blockchain.internal_static_pactus_ProposalInfo_descriptor;
+        return pactus.BlockchainOuterClass.internal_static_pactus_ProposalInfo_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Blockchain.ProposalInfo getDefaultInstanceForType() {
-        return pactus.Blockchain.ProposalInfo.getDefaultInstance();
+      public pactus.BlockchainOuterClass.ProposalInfo getDefaultInstanceForType() {
+        return pactus.BlockchainOuterClass.ProposalInfo.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Blockchain.ProposalInfo build() {
-        pactus.Blockchain.ProposalInfo result = buildPartial();
+      public pactus.BlockchainOuterClass.ProposalInfo build() {
+        pactus.BlockchainOuterClass.ProposalInfo result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -23213,14 +23213,14 @@ public final class Blockchain {
       }
 
       @java.lang.Override
-      public pactus.Blockchain.ProposalInfo buildPartial() {
-        pactus.Blockchain.ProposalInfo result = new pactus.Blockchain.ProposalInfo(this);
+      public pactus.BlockchainOuterClass.ProposalInfo buildPartial() {
+        pactus.BlockchainOuterClass.ProposalInfo result = new pactus.BlockchainOuterClass.ProposalInfo(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Blockchain.ProposalInfo result) {
+      private void buildPartial0(pactus.BlockchainOuterClass.ProposalInfo result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.height_ = height_;
@@ -23238,16 +23238,16 @@ public final class Blockchain {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Blockchain.ProposalInfo) {
-          return mergeFrom((pactus.Blockchain.ProposalInfo)other);
+        if (other instanceof pactus.BlockchainOuterClass.ProposalInfo) {
+          return mergeFrom((pactus.BlockchainOuterClass.ProposalInfo)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Blockchain.ProposalInfo other) {
-        if (other == pactus.Blockchain.ProposalInfo.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.BlockchainOuterClass.ProposalInfo other) {
+        if (other == pactus.BlockchainOuterClass.ProposalInfo.getDefaultInstance()) return this;
         if (other.getHeight() != 0) {
           setHeight(other.getHeight());
         }
@@ -23603,12 +23603,12 @@ public final class Blockchain {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.ProposalInfo)
-    private static final pactus.Blockchain.ProposalInfo DEFAULT_INSTANCE;
+    private static final pactus.BlockchainOuterClass.ProposalInfo DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Blockchain.ProposalInfo();
+      DEFAULT_INSTANCE = new pactus.BlockchainOuterClass.ProposalInfo();
     }
 
-    public static pactus.Blockchain.ProposalInfo getDefaultInstance() {
+    public static pactus.BlockchainOuterClass.ProposalInfo getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -23644,7 +23644,7 @@ public final class Blockchain {
     }
 
     @java.lang.Override
-    public pactus.Blockchain.ProposalInfo getDefaultInstanceForType() {
+    public pactus.BlockchainOuterClass.ProposalInfo getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -23885,36 +23885,36 @@ public final class Blockchain {
       "VOTE_TYPE_PREPARE\020\001\022\027\n\023VOTE_TYPE_PRECOMM" +
       "IT\020\002\022\031\n\025VOTE_TYPE_CP_PRE_VOTE\020\003\022\032\n\026VOTE_" +
       "TYPE_CP_MAIN_VOTE\020\004\022\030\n\024VOTE_TYPE_CP_DECI" +
-      "DED\020\0052\222\007\n\021BlockchainService\022=\n\010GetBlock\022" +
-      "\027.pactus.GetBlockRequest\032\030.pactus.GetBlo" +
-      "ckResponse\022I\n\014GetBlockHash\022\033.pactus.GetB" +
-      "lockHashRequest\032\034.pactus.GetBlockHashRes" +
-      "ponse\022O\n\016GetBlockHeight\022\035.pactus.GetBloc" +
-      "kHeightRequest\032\036.pactus.GetBlockHeightRe" +
-      "sponse\022X\n\021GetBlockchainInfo\022 .pactus.Get" +
-      "BlockchainInfoRequest\032!.pactus.GetBlockc" +
-      "hainInfoResponse\022U\n\020GetConsensusInfo\022\037.p" +
-      "actus.GetConsensusInfoRequest\032 .pactus.G" +
-      "etConsensusInfoResponse\022C\n\nGetAccount\022\031." +
-      "pactus.GetAccountRequest\032\032.pactus.GetAcc" +
-      "ountResponse\022I\n\014GetValidator\022\033.pactus.Ge" +
-      "tValidatorRequest\032\034.pactus.GetValidatorR" +
-      "esponse\022Y\n\024GetValidatorByNumber\022#.pactus" +
-      ".GetValidatorByNumberRequest\032\034.pactus.Ge" +
-      "tValidatorResponse\022d\n\025GetValidatorAddres" +
-      "ses\022$.pactus.GetValidatorAddressesReques" +
-      "t\032%.pactus.GetValidatorAddressesResponse" +
-      "\022I\n\014GetPublicKey\022\033.pactus.GetPublicKeyRe" +
-      "quest\032\034.pactus.GetPublicKeyResponse\022U\n\020G" +
-      "etTxPoolContent\022\037.pactus.GetTxPoolConten" +
-      "tRequest\032 .pactus.GetTxPoolContentRespon" +
-      "seB:\n\006pactusZ0github.com/pactus-project/" +
-      "pactus/www/grpc/pactusb\006proto3"
+      "DED\020\0052\213\007\n\nBlockchain\022=\n\010GetBlock\022\027.pactu" +
+      "s.GetBlockRequest\032\030.pactus.GetBlockRespo" +
+      "nse\022I\n\014GetBlockHash\022\033.pactus.GetBlockHas" +
+      "hRequest\032\034.pactus.GetBlockHashResponse\022O" +
+      "\n\016GetBlockHeight\022\035.pactus.GetBlockHeight" +
+      "Request\032\036.pactus.GetBlockHeightResponse\022" +
+      "X\n\021GetBlockchainInfo\022 .pactus.GetBlockch" +
+      "ainInfoRequest\032!.pactus.GetBlockchainInf" +
+      "oResponse\022U\n\020GetConsensusInfo\022\037.pactus.G" +
+      "etConsensusInfoRequest\032 .pactus.GetConse" +
+      "nsusInfoResponse\022C\n\nGetAccount\022\031.pactus." +
+      "GetAccountRequest\032\032.pactus.GetAccountRes" +
+      "ponse\022I\n\014GetValidator\022\033.pactus.GetValida" +
+      "torRequest\032\034.pactus.GetValidatorResponse" +
+      "\022Y\n\024GetValidatorByNumber\022#.pactus.GetVal" +
+      "idatorByNumberRequest\032\034.pactus.GetValida" +
+      "torResponse\022d\n\025GetValidatorAddresses\022$.p" +
+      "actus.GetValidatorAddressesRequest\032%.pac" +
+      "tus.GetValidatorAddressesResponse\022I\n\014Get" +
+      "PublicKey\022\033.pactus.GetPublicKeyRequest\032\034" +
+      ".pactus.GetPublicKeyResponse\022U\n\020GetTxPoo" +
+      "lContent\022\037.pactus.GetTxPoolContentReques" +
+      "t\032 .pactus.GetTxPoolContentResponseB:\n\006p" +
+      "actusZ0github.com/pactus-project/pactus/" +
+      "www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          pactus.Transaction.getDescriptor(),
+          pactus.TransactionOuterClass.getDescriptor(),
         });
     internal_static_pactus_GetAccountRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -24085,7 +24085,7 @@ public final class Blockchain {
         internal_static_pactus_ProposalInfo_descriptor,
         new java.lang.String[] { "Height", "Round", "BlockData", "Signature", });
     descriptor.resolveAllFeaturesImmutable();
-    pactus.Transaction.getDescriptor();
+    pactus.TransactionOuterClass.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

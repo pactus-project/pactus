@@ -5,8 +5,8 @@
 
 package pactus;
 
-public final class Utils {
-  private Utils() {}
+public final class UtilsOuterClass {
+  private UtilsOuterClass() {}
   static {
     com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
       com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
@@ -14,7 +14,7 @@ public final class Utils {
       /* minor= */ 30,
       /* patch= */ 2,
       /* suffix= */ "",
-      Utils.class.getName());
+      UtilsOuterClass.class.getName());
   }
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
@@ -101,15 +101,15 @@ public final class Utils {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Utils.internal_static_pactus_SignMessageWithPrivateKeyRequest_descriptor;
+      return pactus.UtilsOuterClass.internal_static_pactus_SignMessageWithPrivateKeyRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Utils.internal_static_pactus_SignMessageWithPrivateKeyRequest_fieldAccessorTable
+      return pactus.UtilsOuterClass.internal_static_pactus_SignMessageWithPrivateKeyRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Utils.SignMessageWithPrivateKeyRequest.class, pactus.Utils.SignMessageWithPrivateKeyRequest.Builder.class);
+              pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest.class, pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest.Builder.class);
     }
 
     public static final int PRIVATE_KEY_FIELD_NUMBER = 1;
@@ -251,10 +251,10 @@ public final class Utils {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Utils.SignMessageWithPrivateKeyRequest)) {
+      if (!(obj instanceof pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest)) {
         return super.equals(obj);
       }
-      pactus.Utils.SignMessageWithPrivateKeyRequest other = (pactus.Utils.SignMessageWithPrivateKeyRequest) obj;
+      pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest other = (pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest) obj;
 
       if (!getPrivateKey()
           .equals(other.getPrivateKey())) return false;
@@ -280,44 +280,44 @@ public final class Utils {
       return hash;
     }
 
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest parseFrom(byte[] data)
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest parseFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -325,26 +325,26 @@ public final class Utils {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest parseDelimitedFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -357,7 +357,7 @@ public final class Utils {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Utils.SignMessageWithPrivateKeyRequest prototype) {
+    public static Builder newBuilder(pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -382,21 +382,21 @@ public final class Utils {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.SignMessageWithPrivateKeyRequest)
-        pactus.Utils.SignMessageWithPrivateKeyRequestOrBuilder {
+        pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Utils.internal_static_pactus_SignMessageWithPrivateKeyRequest_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_SignMessageWithPrivateKeyRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Utils.internal_static_pactus_SignMessageWithPrivateKeyRequest_fieldAccessorTable
+        return pactus.UtilsOuterClass.internal_static_pactus_SignMessageWithPrivateKeyRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Utils.SignMessageWithPrivateKeyRequest.class, pactus.Utils.SignMessageWithPrivateKeyRequest.Builder.class);
+                pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest.class, pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest.Builder.class);
       }
 
-      // Construct using pactus.Utils.SignMessageWithPrivateKeyRequest.newBuilder()
+      // Construct using pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest.newBuilder()
       private Builder() {
 
       }
@@ -418,17 +418,17 @@ public final class Utils {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Utils.internal_static_pactus_SignMessageWithPrivateKeyRequest_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_SignMessageWithPrivateKeyRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Utils.SignMessageWithPrivateKeyRequest getDefaultInstanceForType() {
-        return pactus.Utils.SignMessageWithPrivateKeyRequest.getDefaultInstance();
+      public pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest getDefaultInstanceForType() {
+        return pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Utils.SignMessageWithPrivateKeyRequest build() {
-        pactus.Utils.SignMessageWithPrivateKeyRequest result = buildPartial();
+      public pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest build() {
+        pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -436,14 +436,14 @@ public final class Utils {
       }
 
       @java.lang.Override
-      public pactus.Utils.SignMessageWithPrivateKeyRequest buildPartial() {
-        pactus.Utils.SignMessageWithPrivateKeyRequest result = new pactus.Utils.SignMessageWithPrivateKeyRequest(this);
+      public pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest buildPartial() {
+        pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest result = new pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Utils.SignMessageWithPrivateKeyRequest result) {
+      private void buildPartial0(pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.privateKey_ = privateKey_;
@@ -455,16 +455,16 @@ public final class Utils {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Utils.SignMessageWithPrivateKeyRequest) {
-          return mergeFrom((pactus.Utils.SignMessageWithPrivateKeyRequest)other);
+        if (other instanceof pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest) {
+          return mergeFrom((pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Utils.SignMessageWithPrivateKeyRequest other) {
-        if (other == pactus.Utils.SignMessageWithPrivateKeyRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest other) {
+        if (other == pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest.getDefaultInstance()) return this;
         if (!other.getPrivateKey().isEmpty()) {
           privateKey_ = other.privateKey_;
           bitField0_ |= 0x00000001;
@@ -716,12 +716,12 @@ public final class Utils {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.SignMessageWithPrivateKeyRequest)
-    private static final pactus.Utils.SignMessageWithPrivateKeyRequest DEFAULT_INSTANCE;
+    private static final pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Utils.SignMessageWithPrivateKeyRequest();
+      DEFAULT_INSTANCE = new pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest();
     }
 
-    public static pactus.Utils.SignMessageWithPrivateKeyRequest getDefaultInstance() {
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -757,7 +757,7 @@ public final class Utils {
     }
 
     @java.lang.Override
-    public pactus.Utils.SignMessageWithPrivateKeyRequest getDefaultInstanceForType() {
+    public pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -818,15 +818,15 @@ public final class Utils {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Utils.internal_static_pactus_SignMessageWithPrivateKeyResponse_descriptor;
+      return pactus.UtilsOuterClass.internal_static_pactus_SignMessageWithPrivateKeyResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Utils.internal_static_pactus_SignMessageWithPrivateKeyResponse_fieldAccessorTable
+      return pactus.UtilsOuterClass.internal_static_pactus_SignMessageWithPrivateKeyResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Utils.SignMessageWithPrivateKeyResponse.class, pactus.Utils.SignMessageWithPrivateKeyResponse.Builder.class);
+              pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse.class, pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse.Builder.class);
     }
 
     public static final int SIGNATURE_FIELD_NUMBER = 1;
@@ -915,10 +915,10 @@ public final class Utils {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Utils.SignMessageWithPrivateKeyResponse)) {
+      if (!(obj instanceof pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse)) {
         return super.equals(obj);
       }
-      pactus.Utils.SignMessageWithPrivateKeyResponse other = (pactus.Utils.SignMessageWithPrivateKeyResponse) obj;
+      pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse other = (pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse) obj;
 
       if (!getSignature()
           .equals(other.getSignature())) return false;
@@ -940,44 +940,44 @@ public final class Utils {
       return hash;
     }
 
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse parseFrom(byte[] data)
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse parseFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -985,26 +985,26 @@ public final class Utils {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse parseDelimitedFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1017,7 +1017,7 @@ public final class Utils {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Utils.SignMessageWithPrivateKeyResponse prototype) {
+    public static Builder newBuilder(pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1042,21 +1042,21 @@ public final class Utils {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.SignMessageWithPrivateKeyResponse)
-        pactus.Utils.SignMessageWithPrivateKeyResponseOrBuilder {
+        pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Utils.internal_static_pactus_SignMessageWithPrivateKeyResponse_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_SignMessageWithPrivateKeyResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Utils.internal_static_pactus_SignMessageWithPrivateKeyResponse_fieldAccessorTable
+        return pactus.UtilsOuterClass.internal_static_pactus_SignMessageWithPrivateKeyResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Utils.SignMessageWithPrivateKeyResponse.class, pactus.Utils.SignMessageWithPrivateKeyResponse.Builder.class);
+                pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse.class, pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse.Builder.class);
       }
 
-      // Construct using pactus.Utils.SignMessageWithPrivateKeyResponse.newBuilder()
+      // Construct using pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse.newBuilder()
       private Builder() {
 
       }
@@ -1077,17 +1077,17 @@ public final class Utils {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Utils.internal_static_pactus_SignMessageWithPrivateKeyResponse_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_SignMessageWithPrivateKeyResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Utils.SignMessageWithPrivateKeyResponse getDefaultInstanceForType() {
-        return pactus.Utils.SignMessageWithPrivateKeyResponse.getDefaultInstance();
+      public pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse getDefaultInstanceForType() {
+        return pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Utils.SignMessageWithPrivateKeyResponse build() {
-        pactus.Utils.SignMessageWithPrivateKeyResponse result = buildPartial();
+      public pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse build() {
+        pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1095,14 +1095,14 @@ public final class Utils {
       }
 
       @java.lang.Override
-      public pactus.Utils.SignMessageWithPrivateKeyResponse buildPartial() {
-        pactus.Utils.SignMessageWithPrivateKeyResponse result = new pactus.Utils.SignMessageWithPrivateKeyResponse(this);
+      public pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse buildPartial() {
+        pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse result = new pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Utils.SignMessageWithPrivateKeyResponse result) {
+      private void buildPartial0(pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.signature_ = signature_;
@@ -1111,16 +1111,16 @@ public final class Utils {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Utils.SignMessageWithPrivateKeyResponse) {
-          return mergeFrom((pactus.Utils.SignMessageWithPrivateKeyResponse)other);
+        if (other instanceof pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse) {
+          return mergeFrom((pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Utils.SignMessageWithPrivateKeyResponse other) {
-        if (other == pactus.Utils.SignMessageWithPrivateKeyResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse other) {
+        if (other == pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse.getDefaultInstance()) return this;
         if (!other.getSignature().isEmpty()) {
           signature_ = other.signature_;
           bitField0_ |= 0x00000001;
@@ -1270,12 +1270,12 @@ public final class Utils {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.SignMessageWithPrivateKeyResponse)
-    private static final pactus.Utils.SignMessageWithPrivateKeyResponse DEFAULT_INSTANCE;
+    private static final pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Utils.SignMessageWithPrivateKeyResponse();
+      DEFAULT_INSTANCE = new pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse();
     }
 
-    public static pactus.Utils.SignMessageWithPrivateKeyResponse getDefaultInstance() {
+    public static pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1311,7 +1311,7 @@ public final class Utils {
     }
 
     @java.lang.Override
-    public pactus.Utils.SignMessageWithPrivateKeyResponse getDefaultInstanceForType() {
+    public pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1414,15 +1414,15 @@ public final class Utils {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Utils.internal_static_pactus_VerifyMessageRequest_descriptor;
+      return pactus.UtilsOuterClass.internal_static_pactus_VerifyMessageRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Utils.internal_static_pactus_VerifyMessageRequest_fieldAccessorTable
+      return pactus.UtilsOuterClass.internal_static_pactus_VerifyMessageRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Utils.VerifyMessageRequest.class, pactus.Utils.VerifyMessageRequest.Builder.class);
+              pactus.UtilsOuterClass.VerifyMessageRequest.class, pactus.UtilsOuterClass.VerifyMessageRequest.Builder.class);
     }
 
     public static final int MESSAGE_FIELD_NUMBER = 1;
@@ -1617,10 +1617,10 @@ public final class Utils {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Utils.VerifyMessageRequest)) {
+      if (!(obj instanceof pactus.UtilsOuterClass.VerifyMessageRequest)) {
         return super.equals(obj);
       }
-      pactus.Utils.VerifyMessageRequest other = (pactus.Utils.VerifyMessageRequest) obj;
+      pactus.UtilsOuterClass.VerifyMessageRequest other = (pactus.UtilsOuterClass.VerifyMessageRequest) obj;
 
       if (!getMessage()
           .equals(other.getMessage())) return false;
@@ -1650,44 +1650,44 @@ public final class Utils {
       return hash;
     }
 
-    public static pactus.Utils.VerifyMessageRequest parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.VerifyMessageRequest parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.VerifyMessageRequest parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.VerifyMessageRequest parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.VerifyMessageRequest parseFrom(byte[] data)
+    public static pactus.UtilsOuterClass.VerifyMessageRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.VerifyMessageRequest parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.VerifyMessageRequest parseFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.VerifyMessageRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.VerifyMessageRequest parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1695,26 +1695,26 @@ public final class Utils {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Utils.VerifyMessageRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.VerifyMessageRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Utils.VerifyMessageRequest parseDelimitedFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Utils.VerifyMessageRequest parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.VerifyMessageRequest parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1727,7 +1727,7 @@ public final class Utils {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Utils.VerifyMessageRequest prototype) {
+    public static Builder newBuilder(pactus.UtilsOuterClass.VerifyMessageRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1752,21 +1752,21 @@ public final class Utils {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.VerifyMessageRequest)
-        pactus.Utils.VerifyMessageRequestOrBuilder {
+        pactus.UtilsOuterClass.VerifyMessageRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Utils.internal_static_pactus_VerifyMessageRequest_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_VerifyMessageRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Utils.internal_static_pactus_VerifyMessageRequest_fieldAccessorTable
+        return pactus.UtilsOuterClass.internal_static_pactus_VerifyMessageRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Utils.VerifyMessageRequest.class, pactus.Utils.VerifyMessageRequest.Builder.class);
+                pactus.UtilsOuterClass.VerifyMessageRequest.class, pactus.UtilsOuterClass.VerifyMessageRequest.Builder.class);
       }
 
-      // Construct using pactus.Utils.VerifyMessageRequest.newBuilder()
+      // Construct using pactus.UtilsOuterClass.VerifyMessageRequest.newBuilder()
       private Builder() {
 
       }
@@ -1789,17 +1789,17 @@ public final class Utils {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Utils.internal_static_pactus_VerifyMessageRequest_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_VerifyMessageRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Utils.VerifyMessageRequest getDefaultInstanceForType() {
-        return pactus.Utils.VerifyMessageRequest.getDefaultInstance();
+      public pactus.UtilsOuterClass.VerifyMessageRequest getDefaultInstanceForType() {
+        return pactus.UtilsOuterClass.VerifyMessageRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Utils.VerifyMessageRequest build() {
-        pactus.Utils.VerifyMessageRequest result = buildPartial();
+      public pactus.UtilsOuterClass.VerifyMessageRequest build() {
+        pactus.UtilsOuterClass.VerifyMessageRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1807,14 +1807,14 @@ public final class Utils {
       }
 
       @java.lang.Override
-      public pactus.Utils.VerifyMessageRequest buildPartial() {
-        pactus.Utils.VerifyMessageRequest result = new pactus.Utils.VerifyMessageRequest(this);
+      public pactus.UtilsOuterClass.VerifyMessageRequest buildPartial() {
+        pactus.UtilsOuterClass.VerifyMessageRequest result = new pactus.UtilsOuterClass.VerifyMessageRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Utils.VerifyMessageRequest result) {
+      private void buildPartial0(pactus.UtilsOuterClass.VerifyMessageRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.message_ = message_;
@@ -1829,16 +1829,16 @@ public final class Utils {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Utils.VerifyMessageRequest) {
-          return mergeFrom((pactus.Utils.VerifyMessageRequest)other);
+        if (other instanceof pactus.UtilsOuterClass.VerifyMessageRequest) {
+          return mergeFrom((pactus.UtilsOuterClass.VerifyMessageRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Utils.VerifyMessageRequest other) {
-        if (other == pactus.Utils.VerifyMessageRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.UtilsOuterClass.VerifyMessageRequest other) {
+        if (other == pactus.UtilsOuterClass.VerifyMessageRequest.getDefaultInstance()) return this;
         if (!other.getMessage().isEmpty()) {
           message_ = other.message_;
           bitField0_ |= 0x00000001;
@@ -2192,12 +2192,12 @@ public final class Utils {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.VerifyMessageRequest)
-    private static final pactus.Utils.VerifyMessageRequest DEFAULT_INSTANCE;
+    private static final pactus.UtilsOuterClass.VerifyMessageRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Utils.VerifyMessageRequest();
+      DEFAULT_INSTANCE = new pactus.UtilsOuterClass.VerifyMessageRequest();
     }
 
-    public static pactus.Utils.VerifyMessageRequest getDefaultInstance() {
+    public static pactus.UtilsOuterClass.VerifyMessageRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2233,7 +2233,7 @@ public final class Utils {
     }
 
     @java.lang.Override
-    public pactus.Utils.VerifyMessageRequest getDefaultInstanceForType() {
+    public pactus.UtilsOuterClass.VerifyMessageRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2283,15 +2283,15 @@ public final class Utils {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Utils.internal_static_pactus_VerifyMessageResponse_descriptor;
+      return pactus.UtilsOuterClass.internal_static_pactus_VerifyMessageResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Utils.internal_static_pactus_VerifyMessageResponse_fieldAccessorTable
+      return pactus.UtilsOuterClass.internal_static_pactus_VerifyMessageResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Utils.VerifyMessageResponse.class, pactus.Utils.VerifyMessageResponse.Builder.class);
+              pactus.UtilsOuterClass.VerifyMessageResponse.class, pactus.UtilsOuterClass.VerifyMessageResponse.Builder.class);
     }
 
     public static final int IS_VALID_FIELD_NUMBER = 1;
@@ -2349,10 +2349,10 @@ public final class Utils {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Utils.VerifyMessageResponse)) {
+      if (!(obj instanceof pactus.UtilsOuterClass.VerifyMessageResponse)) {
         return super.equals(obj);
       }
-      pactus.Utils.VerifyMessageResponse other = (pactus.Utils.VerifyMessageResponse) obj;
+      pactus.UtilsOuterClass.VerifyMessageResponse other = (pactus.UtilsOuterClass.VerifyMessageResponse) obj;
 
       if (getIsValid()
           != other.getIsValid()) return false;
@@ -2375,44 +2375,44 @@ public final class Utils {
       return hash;
     }
 
-    public static pactus.Utils.VerifyMessageResponse parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.VerifyMessageResponse parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.VerifyMessageResponse parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.VerifyMessageResponse parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.VerifyMessageResponse parseFrom(byte[] data)
+    public static pactus.UtilsOuterClass.VerifyMessageResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.VerifyMessageResponse parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.VerifyMessageResponse parseFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.VerifyMessageResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.VerifyMessageResponse parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2420,26 +2420,26 @@ public final class Utils {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Utils.VerifyMessageResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.VerifyMessageResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Utils.VerifyMessageResponse parseDelimitedFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Utils.VerifyMessageResponse parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.VerifyMessageResponse parseFrom(
+    public static pactus.UtilsOuterClass.VerifyMessageResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2452,7 +2452,7 @@ public final class Utils {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Utils.VerifyMessageResponse prototype) {
+    public static Builder newBuilder(pactus.UtilsOuterClass.VerifyMessageResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -2477,21 +2477,21 @@ public final class Utils {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.VerifyMessageResponse)
-        pactus.Utils.VerifyMessageResponseOrBuilder {
+        pactus.UtilsOuterClass.VerifyMessageResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Utils.internal_static_pactus_VerifyMessageResponse_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_VerifyMessageResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Utils.internal_static_pactus_VerifyMessageResponse_fieldAccessorTable
+        return pactus.UtilsOuterClass.internal_static_pactus_VerifyMessageResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Utils.VerifyMessageResponse.class, pactus.Utils.VerifyMessageResponse.Builder.class);
+                pactus.UtilsOuterClass.VerifyMessageResponse.class, pactus.UtilsOuterClass.VerifyMessageResponse.Builder.class);
       }
 
-      // Construct using pactus.Utils.VerifyMessageResponse.newBuilder()
+      // Construct using pactus.UtilsOuterClass.VerifyMessageResponse.newBuilder()
       private Builder() {
 
       }
@@ -2512,17 +2512,17 @@ public final class Utils {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Utils.internal_static_pactus_VerifyMessageResponse_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_VerifyMessageResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Utils.VerifyMessageResponse getDefaultInstanceForType() {
-        return pactus.Utils.VerifyMessageResponse.getDefaultInstance();
+      public pactus.UtilsOuterClass.VerifyMessageResponse getDefaultInstanceForType() {
+        return pactus.UtilsOuterClass.VerifyMessageResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Utils.VerifyMessageResponse build() {
-        pactus.Utils.VerifyMessageResponse result = buildPartial();
+      public pactus.UtilsOuterClass.VerifyMessageResponse build() {
+        pactus.UtilsOuterClass.VerifyMessageResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -2530,14 +2530,14 @@ public final class Utils {
       }
 
       @java.lang.Override
-      public pactus.Utils.VerifyMessageResponse buildPartial() {
-        pactus.Utils.VerifyMessageResponse result = new pactus.Utils.VerifyMessageResponse(this);
+      public pactus.UtilsOuterClass.VerifyMessageResponse buildPartial() {
+        pactus.UtilsOuterClass.VerifyMessageResponse result = new pactus.UtilsOuterClass.VerifyMessageResponse(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Utils.VerifyMessageResponse result) {
+      private void buildPartial0(pactus.UtilsOuterClass.VerifyMessageResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.isValid_ = isValid_;
@@ -2546,16 +2546,16 @@ public final class Utils {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Utils.VerifyMessageResponse) {
-          return mergeFrom((pactus.Utils.VerifyMessageResponse)other);
+        if (other instanceof pactus.UtilsOuterClass.VerifyMessageResponse) {
+          return mergeFrom((pactus.UtilsOuterClass.VerifyMessageResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Utils.VerifyMessageResponse other) {
-        if (other == pactus.Utils.VerifyMessageResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.UtilsOuterClass.VerifyMessageResponse other) {
+        if (other == pactus.UtilsOuterClass.VerifyMessageResponse.getDefaultInstance()) return this;
         if (other.getIsValid() != false) {
           setIsValid(other.getIsValid());
         }
@@ -2655,12 +2655,12 @@ public final class Utils {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.VerifyMessageResponse)
-    private static final pactus.Utils.VerifyMessageResponse DEFAULT_INSTANCE;
+    private static final pactus.UtilsOuterClass.VerifyMessageResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Utils.VerifyMessageResponse();
+      DEFAULT_INSTANCE = new pactus.UtilsOuterClass.VerifyMessageResponse();
     }
 
-    public static pactus.Utils.VerifyMessageResponse getDefaultInstance() {
+    public static pactus.UtilsOuterClass.VerifyMessageResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2696,7 +2696,7 @@ public final class Utils {
     }
 
     @java.lang.Override
-    public pactus.Utils.VerifyMessageResponse getDefaultInstanceForType() {
+    public pactus.UtilsOuterClass.VerifyMessageResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2779,15 +2779,15 @@ public final class Utils {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Utils.internal_static_pactus_PublicKeyAggregationRequest_descriptor;
+      return pactus.UtilsOuterClass.internal_static_pactus_PublicKeyAggregationRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Utils.internal_static_pactus_PublicKeyAggregationRequest_fieldAccessorTable
+      return pactus.UtilsOuterClass.internal_static_pactus_PublicKeyAggregationRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Utils.PublicKeyAggregationRequest.class, pactus.Utils.PublicKeyAggregationRequest.Builder.class);
+              pactus.UtilsOuterClass.PublicKeyAggregationRequest.class, pactus.UtilsOuterClass.PublicKeyAggregationRequest.Builder.class);
     }
 
     public static final int PUBLIC_KEYS_FIELD_NUMBER = 1;
@@ -2887,10 +2887,10 @@ public final class Utils {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Utils.PublicKeyAggregationRequest)) {
+      if (!(obj instanceof pactus.UtilsOuterClass.PublicKeyAggregationRequest)) {
         return super.equals(obj);
       }
-      pactus.Utils.PublicKeyAggregationRequest other = (pactus.Utils.PublicKeyAggregationRequest) obj;
+      pactus.UtilsOuterClass.PublicKeyAggregationRequest other = (pactus.UtilsOuterClass.PublicKeyAggregationRequest) obj;
 
       if (!getPublicKeysList()
           .equals(other.getPublicKeysList())) return false;
@@ -2914,44 +2914,44 @@ public final class Utils {
       return hash;
     }
 
-    public static pactus.Utils.PublicKeyAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.PublicKeyAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.PublicKeyAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.PublicKeyAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.PublicKeyAggregationRequest parseFrom(byte[] data)
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.PublicKeyAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.PublicKeyAggregationRequest parseFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.PublicKeyAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2959,26 +2959,26 @@ public final class Utils {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Utils.PublicKeyAggregationRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Utils.PublicKeyAggregationRequest parseDelimitedFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Utils.PublicKeyAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.PublicKeyAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2991,7 +2991,7 @@ public final class Utils {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Utils.PublicKeyAggregationRequest prototype) {
+    public static Builder newBuilder(pactus.UtilsOuterClass.PublicKeyAggregationRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -3016,21 +3016,21 @@ public final class Utils {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.PublicKeyAggregationRequest)
-        pactus.Utils.PublicKeyAggregationRequestOrBuilder {
+        pactus.UtilsOuterClass.PublicKeyAggregationRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Utils.internal_static_pactus_PublicKeyAggregationRequest_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_PublicKeyAggregationRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Utils.internal_static_pactus_PublicKeyAggregationRequest_fieldAccessorTable
+        return pactus.UtilsOuterClass.internal_static_pactus_PublicKeyAggregationRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Utils.PublicKeyAggregationRequest.class, pactus.Utils.PublicKeyAggregationRequest.Builder.class);
+                pactus.UtilsOuterClass.PublicKeyAggregationRequest.class, pactus.UtilsOuterClass.PublicKeyAggregationRequest.Builder.class);
       }
 
-      // Construct using pactus.Utils.PublicKeyAggregationRequest.newBuilder()
+      // Construct using pactus.UtilsOuterClass.PublicKeyAggregationRequest.newBuilder()
       private Builder() {
 
       }
@@ -3052,17 +3052,17 @@ public final class Utils {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Utils.internal_static_pactus_PublicKeyAggregationRequest_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_PublicKeyAggregationRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Utils.PublicKeyAggregationRequest getDefaultInstanceForType() {
-        return pactus.Utils.PublicKeyAggregationRequest.getDefaultInstance();
+      public pactus.UtilsOuterClass.PublicKeyAggregationRequest getDefaultInstanceForType() {
+        return pactus.UtilsOuterClass.PublicKeyAggregationRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Utils.PublicKeyAggregationRequest build() {
-        pactus.Utils.PublicKeyAggregationRequest result = buildPartial();
+      public pactus.UtilsOuterClass.PublicKeyAggregationRequest build() {
+        pactus.UtilsOuterClass.PublicKeyAggregationRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -3070,14 +3070,14 @@ public final class Utils {
       }
 
       @java.lang.Override
-      public pactus.Utils.PublicKeyAggregationRequest buildPartial() {
-        pactus.Utils.PublicKeyAggregationRequest result = new pactus.Utils.PublicKeyAggregationRequest(this);
+      public pactus.UtilsOuterClass.PublicKeyAggregationRequest buildPartial() {
+        pactus.UtilsOuterClass.PublicKeyAggregationRequest result = new pactus.UtilsOuterClass.PublicKeyAggregationRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Utils.PublicKeyAggregationRequest result) {
+      private void buildPartial0(pactus.UtilsOuterClass.PublicKeyAggregationRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           publicKeys_.makeImmutable();
@@ -3087,16 +3087,16 @@ public final class Utils {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Utils.PublicKeyAggregationRequest) {
-          return mergeFrom((pactus.Utils.PublicKeyAggregationRequest)other);
+        if (other instanceof pactus.UtilsOuterClass.PublicKeyAggregationRequest) {
+          return mergeFrom((pactus.UtilsOuterClass.PublicKeyAggregationRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Utils.PublicKeyAggregationRequest other) {
-        if (other == pactus.Utils.PublicKeyAggregationRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.UtilsOuterClass.PublicKeyAggregationRequest other) {
+        if (other == pactus.UtilsOuterClass.PublicKeyAggregationRequest.getDefaultInstance()) return this;
         if (!other.publicKeys_.isEmpty()) {
           if (publicKeys_.isEmpty()) {
             publicKeys_ = other.publicKeys_;
@@ -3307,12 +3307,12 @@ public final class Utils {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.PublicKeyAggregationRequest)
-    private static final pactus.Utils.PublicKeyAggregationRequest DEFAULT_INSTANCE;
+    private static final pactus.UtilsOuterClass.PublicKeyAggregationRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Utils.PublicKeyAggregationRequest();
+      DEFAULT_INSTANCE = new pactus.UtilsOuterClass.PublicKeyAggregationRequest();
     }
 
-    public static pactus.Utils.PublicKeyAggregationRequest getDefaultInstance() {
+    public static pactus.UtilsOuterClass.PublicKeyAggregationRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3348,7 +3348,7 @@ public final class Utils {
     }
 
     @java.lang.Override
-    public pactus.Utils.PublicKeyAggregationRequest getDefaultInstanceForType() {
+    public pactus.UtilsOuterClass.PublicKeyAggregationRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3430,15 +3430,15 @@ public final class Utils {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Utils.internal_static_pactus_PublicKeyAggregationResponse_descriptor;
+      return pactus.UtilsOuterClass.internal_static_pactus_PublicKeyAggregationResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Utils.internal_static_pactus_PublicKeyAggregationResponse_fieldAccessorTable
+      return pactus.UtilsOuterClass.internal_static_pactus_PublicKeyAggregationResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Utils.PublicKeyAggregationResponse.class, pactus.Utils.PublicKeyAggregationResponse.Builder.class);
+              pactus.UtilsOuterClass.PublicKeyAggregationResponse.class, pactus.UtilsOuterClass.PublicKeyAggregationResponse.Builder.class);
     }
 
     public static final int PUBLIC_KEY_FIELD_NUMBER = 1;
@@ -3580,10 +3580,10 @@ public final class Utils {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Utils.PublicKeyAggregationResponse)) {
+      if (!(obj instanceof pactus.UtilsOuterClass.PublicKeyAggregationResponse)) {
         return super.equals(obj);
       }
-      pactus.Utils.PublicKeyAggregationResponse other = (pactus.Utils.PublicKeyAggregationResponse) obj;
+      pactus.UtilsOuterClass.PublicKeyAggregationResponse other = (pactus.UtilsOuterClass.PublicKeyAggregationResponse) obj;
 
       if (!getPublicKey()
           .equals(other.getPublicKey())) return false;
@@ -3609,44 +3609,44 @@ public final class Utils {
       return hash;
     }
 
-    public static pactus.Utils.PublicKeyAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.PublicKeyAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.PublicKeyAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.PublicKeyAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.PublicKeyAggregationResponse parseFrom(byte[] data)
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.PublicKeyAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.PublicKeyAggregationResponse parseFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.PublicKeyAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3654,26 +3654,26 @@ public final class Utils {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Utils.PublicKeyAggregationResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Utils.PublicKeyAggregationResponse parseDelimitedFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Utils.PublicKeyAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.PublicKeyAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3686,7 +3686,7 @@ public final class Utils {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Utils.PublicKeyAggregationResponse prototype) {
+    public static Builder newBuilder(pactus.UtilsOuterClass.PublicKeyAggregationResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -3711,21 +3711,21 @@ public final class Utils {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.PublicKeyAggregationResponse)
-        pactus.Utils.PublicKeyAggregationResponseOrBuilder {
+        pactus.UtilsOuterClass.PublicKeyAggregationResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Utils.internal_static_pactus_PublicKeyAggregationResponse_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_PublicKeyAggregationResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Utils.internal_static_pactus_PublicKeyAggregationResponse_fieldAccessorTable
+        return pactus.UtilsOuterClass.internal_static_pactus_PublicKeyAggregationResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Utils.PublicKeyAggregationResponse.class, pactus.Utils.PublicKeyAggregationResponse.Builder.class);
+                pactus.UtilsOuterClass.PublicKeyAggregationResponse.class, pactus.UtilsOuterClass.PublicKeyAggregationResponse.Builder.class);
       }
 
-      // Construct using pactus.Utils.PublicKeyAggregationResponse.newBuilder()
+      // Construct using pactus.UtilsOuterClass.PublicKeyAggregationResponse.newBuilder()
       private Builder() {
 
       }
@@ -3747,17 +3747,17 @@ public final class Utils {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Utils.internal_static_pactus_PublicKeyAggregationResponse_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_PublicKeyAggregationResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Utils.PublicKeyAggregationResponse getDefaultInstanceForType() {
-        return pactus.Utils.PublicKeyAggregationResponse.getDefaultInstance();
+      public pactus.UtilsOuterClass.PublicKeyAggregationResponse getDefaultInstanceForType() {
+        return pactus.UtilsOuterClass.PublicKeyAggregationResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Utils.PublicKeyAggregationResponse build() {
-        pactus.Utils.PublicKeyAggregationResponse result = buildPartial();
+      public pactus.UtilsOuterClass.PublicKeyAggregationResponse build() {
+        pactus.UtilsOuterClass.PublicKeyAggregationResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -3765,14 +3765,14 @@ public final class Utils {
       }
 
       @java.lang.Override
-      public pactus.Utils.PublicKeyAggregationResponse buildPartial() {
-        pactus.Utils.PublicKeyAggregationResponse result = new pactus.Utils.PublicKeyAggregationResponse(this);
+      public pactus.UtilsOuterClass.PublicKeyAggregationResponse buildPartial() {
+        pactus.UtilsOuterClass.PublicKeyAggregationResponse result = new pactus.UtilsOuterClass.PublicKeyAggregationResponse(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Utils.PublicKeyAggregationResponse result) {
+      private void buildPartial0(pactus.UtilsOuterClass.PublicKeyAggregationResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.publicKey_ = publicKey_;
@@ -3784,16 +3784,16 @@ public final class Utils {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Utils.PublicKeyAggregationResponse) {
-          return mergeFrom((pactus.Utils.PublicKeyAggregationResponse)other);
+        if (other instanceof pactus.UtilsOuterClass.PublicKeyAggregationResponse) {
+          return mergeFrom((pactus.UtilsOuterClass.PublicKeyAggregationResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Utils.PublicKeyAggregationResponse other) {
-        if (other == pactus.Utils.PublicKeyAggregationResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.UtilsOuterClass.PublicKeyAggregationResponse other) {
+        if (other == pactus.UtilsOuterClass.PublicKeyAggregationResponse.getDefaultInstance()) return this;
         if (!other.getPublicKey().isEmpty()) {
           publicKey_ = other.publicKey_;
           bitField0_ |= 0x00000001;
@@ -4045,12 +4045,12 @@ public final class Utils {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.PublicKeyAggregationResponse)
-    private static final pactus.Utils.PublicKeyAggregationResponse DEFAULT_INSTANCE;
+    private static final pactus.UtilsOuterClass.PublicKeyAggregationResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Utils.PublicKeyAggregationResponse();
+      DEFAULT_INSTANCE = new pactus.UtilsOuterClass.PublicKeyAggregationResponse();
     }
 
-    public static pactus.Utils.PublicKeyAggregationResponse getDefaultInstance() {
+    public static pactus.UtilsOuterClass.PublicKeyAggregationResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -4086,7 +4086,7 @@ public final class Utils {
     }
 
     @java.lang.Override
-    public pactus.Utils.PublicKeyAggregationResponse getDefaultInstanceForType() {
+    public pactus.UtilsOuterClass.PublicKeyAggregationResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -4169,15 +4169,15 @@ public final class Utils {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Utils.internal_static_pactus_SignatureAggregationRequest_descriptor;
+      return pactus.UtilsOuterClass.internal_static_pactus_SignatureAggregationRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Utils.internal_static_pactus_SignatureAggregationRequest_fieldAccessorTable
+      return pactus.UtilsOuterClass.internal_static_pactus_SignatureAggregationRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Utils.SignatureAggregationRequest.class, pactus.Utils.SignatureAggregationRequest.Builder.class);
+              pactus.UtilsOuterClass.SignatureAggregationRequest.class, pactus.UtilsOuterClass.SignatureAggregationRequest.Builder.class);
     }
 
     public static final int SIGNATURES_FIELD_NUMBER = 1;
@@ -4277,10 +4277,10 @@ public final class Utils {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Utils.SignatureAggregationRequest)) {
+      if (!(obj instanceof pactus.UtilsOuterClass.SignatureAggregationRequest)) {
         return super.equals(obj);
       }
-      pactus.Utils.SignatureAggregationRequest other = (pactus.Utils.SignatureAggregationRequest) obj;
+      pactus.UtilsOuterClass.SignatureAggregationRequest other = (pactus.UtilsOuterClass.SignatureAggregationRequest) obj;
 
       if (!getSignaturesList()
           .equals(other.getSignaturesList())) return false;
@@ -4304,44 +4304,44 @@ public final class Utils {
       return hash;
     }
 
-    public static pactus.Utils.SignatureAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.SignatureAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.SignatureAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.SignatureAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.SignatureAggregationRequest parseFrom(byte[] data)
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.SignatureAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.SignatureAggregationRequest parseFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.SignatureAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -4349,26 +4349,26 @@ public final class Utils {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Utils.SignatureAggregationRequest parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Utils.SignatureAggregationRequest parseDelimitedFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Utils.SignatureAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.SignatureAggregationRequest parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -4381,7 +4381,7 @@ public final class Utils {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Utils.SignatureAggregationRequest prototype) {
+    public static Builder newBuilder(pactus.UtilsOuterClass.SignatureAggregationRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -4406,21 +4406,21 @@ public final class Utils {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.SignatureAggregationRequest)
-        pactus.Utils.SignatureAggregationRequestOrBuilder {
+        pactus.UtilsOuterClass.SignatureAggregationRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Utils.internal_static_pactus_SignatureAggregationRequest_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_SignatureAggregationRequest_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Utils.internal_static_pactus_SignatureAggregationRequest_fieldAccessorTable
+        return pactus.UtilsOuterClass.internal_static_pactus_SignatureAggregationRequest_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Utils.SignatureAggregationRequest.class, pactus.Utils.SignatureAggregationRequest.Builder.class);
+                pactus.UtilsOuterClass.SignatureAggregationRequest.class, pactus.UtilsOuterClass.SignatureAggregationRequest.Builder.class);
       }
 
-      // Construct using pactus.Utils.SignatureAggregationRequest.newBuilder()
+      // Construct using pactus.UtilsOuterClass.SignatureAggregationRequest.newBuilder()
       private Builder() {
 
       }
@@ -4442,17 +4442,17 @@ public final class Utils {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Utils.internal_static_pactus_SignatureAggregationRequest_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_SignatureAggregationRequest_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Utils.SignatureAggregationRequest getDefaultInstanceForType() {
-        return pactus.Utils.SignatureAggregationRequest.getDefaultInstance();
+      public pactus.UtilsOuterClass.SignatureAggregationRequest getDefaultInstanceForType() {
+        return pactus.UtilsOuterClass.SignatureAggregationRequest.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Utils.SignatureAggregationRequest build() {
-        pactus.Utils.SignatureAggregationRequest result = buildPartial();
+      public pactus.UtilsOuterClass.SignatureAggregationRequest build() {
+        pactus.UtilsOuterClass.SignatureAggregationRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -4460,14 +4460,14 @@ public final class Utils {
       }
 
       @java.lang.Override
-      public pactus.Utils.SignatureAggregationRequest buildPartial() {
-        pactus.Utils.SignatureAggregationRequest result = new pactus.Utils.SignatureAggregationRequest(this);
+      public pactus.UtilsOuterClass.SignatureAggregationRequest buildPartial() {
+        pactus.UtilsOuterClass.SignatureAggregationRequest result = new pactus.UtilsOuterClass.SignatureAggregationRequest(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Utils.SignatureAggregationRequest result) {
+      private void buildPartial0(pactus.UtilsOuterClass.SignatureAggregationRequest result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           signatures_.makeImmutable();
@@ -4477,16 +4477,16 @@ public final class Utils {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Utils.SignatureAggregationRequest) {
-          return mergeFrom((pactus.Utils.SignatureAggregationRequest)other);
+        if (other instanceof pactus.UtilsOuterClass.SignatureAggregationRequest) {
+          return mergeFrom((pactus.UtilsOuterClass.SignatureAggregationRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Utils.SignatureAggregationRequest other) {
-        if (other == pactus.Utils.SignatureAggregationRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.UtilsOuterClass.SignatureAggregationRequest other) {
+        if (other == pactus.UtilsOuterClass.SignatureAggregationRequest.getDefaultInstance()) return this;
         if (!other.signatures_.isEmpty()) {
           if (signatures_.isEmpty()) {
             signatures_ = other.signatures_;
@@ -4697,12 +4697,12 @@ public final class Utils {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.SignatureAggregationRequest)
-    private static final pactus.Utils.SignatureAggregationRequest DEFAULT_INSTANCE;
+    private static final pactus.UtilsOuterClass.SignatureAggregationRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Utils.SignatureAggregationRequest();
+      DEFAULT_INSTANCE = new pactus.UtilsOuterClass.SignatureAggregationRequest();
     }
 
-    public static pactus.Utils.SignatureAggregationRequest getDefaultInstance() {
+    public static pactus.UtilsOuterClass.SignatureAggregationRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -4738,7 +4738,7 @@ public final class Utils {
     }
 
     @java.lang.Override
-    public pactus.Utils.SignatureAggregationRequest getDefaultInstanceForType() {
+    public pactus.UtilsOuterClass.SignatureAggregationRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -4799,15 +4799,15 @@ public final class Utils {
 
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return pactus.Utils.internal_static_pactus_SignatureAggregationResponse_descriptor;
+      return pactus.UtilsOuterClass.internal_static_pactus_SignatureAggregationResponse_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return pactus.Utils.internal_static_pactus_SignatureAggregationResponse_fieldAccessorTable
+      return pactus.UtilsOuterClass.internal_static_pactus_SignatureAggregationResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              pactus.Utils.SignatureAggregationResponse.class, pactus.Utils.SignatureAggregationResponse.Builder.class);
+              pactus.UtilsOuterClass.SignatureAggregationResponse.class, pactus.UtilsOuterClass.SignatureAggregationResponse.Builder.class);
     }
 
     public static final int SIGNATURE_FIELD_NUMBER = 1;
@@ -4896,10 +4896,10 @@ public final class Utils {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof pactus.Utils.SignatureAggregationResponse)) {
+      if (!(obj instanceof pactus.UtilsOuterClass.SignatureAggregationResponse)) {
         return super.equals(obj);
       }
-      pactus.Utils.SignatureAggregationResponse other = (pactus.Utils.SignatureAggregationResponse) obj;
+      pactus.UtilsOuterClass.SignatureAggregationResponse other = (pactus.UtilsOuterClass.SignatureAggregationResponse) obj;
 
       if (!getSignature()
           .equals(other.getSignature())) return false;
@@ -4921,44 +4921,44 @@ public final class Utils {
       return hash;
     }
 
-    public static pactus.Utils.SignatureAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.SignatureAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.SignatureAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.SignatureAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.SignatureAggregationResponse parseFrom(byte[] data)
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static pactus.Utils.SignatureAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static pactus.Utils.SignatureAggregationResponse parseFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.SignatureAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -4966,26 +4966,26 @@ public final class Utils {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
-    public static pactus.Utils.SignatureAggregationResponse parseDelimitedFrom(java.io.InputStream input)
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static pactus.Utils.SignatureAggregationResponse parseDelimitedFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static pactus.Utils.SignatureAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessage
           .parseWithIOException(PARSER, input);
     }
-    public static pactus.Utils.SignatureAggregationResponse parseFrom(
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -4998,7 +4998,7 @@ public final class Utils {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(pactus.Utils.SignatureAggregationResponse prototype) {
+    public static Builder newBuilder(pactus.UtilsOuterClass.SignatureAggregationResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -5023,21 +5023,21 @@ public final class Utils {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:pactus.SignatureAggregationResponse)
-        pactus.Utils.SignatureAggregationResponseOrBuilder {
+        pactus.UtilsOuterClass.SignatureAggregationResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return pactus.Utils.internal_static_pactus_SignatureAggregationResponse_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_SignatureAggregationResponse_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return pactus.Utils.internal_static_pactus_SignatureAggregationResponse_fieldAccessorTable
+        return pactus.UtilsOuterClass.internal_static_pactus_SignatureAggregationResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                pactus.Utils.SignatureAggregationResponse.class, pactus.Utils.SignatureAggregationResponse.Builder.class);
+                pactus.UtilsOuterClass.SignatureAggregationResponse.class, pactus.UtilsOuterClass.SignatureAggregationResponse.Builder.class);
       }
 
-      // Construct using pactus.Utils.SignatureAggregationResponse.newBuilder()
+      // Construct using pactus.UtilsOuterClass.SignatureAggregationResponse.newBuilder()
       private Builder() {
 
       }
@@ -5058,17 +5058,17 @@ public final class Utils {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return pactus.Utils.internal_static_pactus_SignatureAggregationResponse_descriptor;
+        return pactus.UtilsOuterClass.internal_static_pactus_SignatureAggregationResponse_descriptor;
       }
 
       @java.lang.Override
-      public pactus.Utils.SignatureAggregationResponse getDefaultInstanceForType() {
-        return pactus.Utils.SignatureAggregationResponse.getDefaultInstance();
+      public pactus.UtilsOuterClass.SignatureAggregationResponse getDefaultInstanceForType() {
+        return pactus.UtilsOuterClass.SignatureAggregationResponse.getDefaultInstance();
       }
 
       @java.lang.Override
-      public pactus.Utils.SignatureAggregationResponse build() {
-        pactus.Utils.SignatureAggregationResponse result = buildPartial();
+      public pactus.UtilsOuterClass.SignatureAggregationResponse build() {
+        pactus.UtilsOuterClass.SignatureAggregationResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -5076,14 +5076,14 @@ public final class Utils {
       }
 
       @java.lang.Override
-      public pactus.Utils.SignatureAggregationResponse buildPartial() {
-        pactus.Utils.SignatureAggregationResponse result = new pactus.Utils.SignatureAggregationResponse(this);
+      public pactus.UtilsOuterClass.SignatureAggregationResponse buildPartial() {
+        pactus.UtilsOuterClass.SignatureAggregationResponse result = new pactus.UtilsOuterClass.SignatureAggregationResponse(this);
         if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
       }
 
-      private void buildPartial0(pactus.Utils.SignatureAggregationResponse result) {
+      private void buildPartial0(pactus.UtilsOuterClass.SignatureAggregationResponse result) {
         int from_bitField0_ = bitField0_;
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.signature_ = signature_;
@@ -5092,16 +5092,16 @@ public final class Utils {
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof pactus.Utils.SignatureAggregationResponse) {
-          return mergeFrom((pactus.Utils.SignatureAggregationResponse)other);
+        if (other instanceof pactus.UtilsOuterClass.SignatureAggregationResponse) {
+          return mergeFrom((pactus.UtilsOuterClass.SignatureAggregationResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(pactus.Utils.SignatureAggregationResponse other) {
-        if (other == pactus.Utils.SignatureAggregationResponse.getDefaultInstance()) return this;
+      public Builder mergeFrom(pactus.UtilsOuterClass.SignatureAggregationResponse other) {
+        if (other == pactus.UtilsOuterClass.SignatureAggregationResponse.getDefaultInstance()) return this;
         if (!other.getSignature().isEmpty()) {
           signature_ = other.signature_;
           bitField0_ |= 0x00000001;
@@ -5251,12 +5251,12 @@ public final class Utils {
     }
 
     // @@protoc_insertion_point(class_scope:pactus.SignatureAggregationResponse)
-    private static final pactus.Utils.SignatureAggregationResponse DEFAULT_INSTANCE;
+    private static final pactus.UtilsOuterClass.SignatureAggregationResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new pactus.Utils.SignatureAggregationResponse();
+      DEFAULT_INSTANCE = new pactus.UtilsOuterClass.SignatureAggregationResponse();
     }
 
-    public static pactus.Utils.SignatureAggregationResponse getDefaultInstance() {
+    public static pactus.UtilsOuterClass.SignatureAggregationResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -5292,7 +5292,7 @@ public final class Utils {
     }
 
     @java.lang.Override
-    public pactus.Utils.SignatureAggregationResponse getDefaultInstanceForType() {
+    public pactus.UtilsOuterClass.SignatureAggregationResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -5362,19 +5362,19 @@ public final class Utils {
       "ress\030\002 \001(\tR\007address\"=\n\033SignatureAggregat" +
       "ionRequest\022\036\n\nsignatures\030\001 \003(\tR\nsignatur" +
       "es\"<\n\034SignatureAggregationResponse\022\034\n\tsi" +
-      "gnature\030\001 \001(\tR\tsignature2\224\003\n\014UtilsServic" +
-      "e\022p\n\031SignMessageWithPrivateKey\022(.pactus." +
-      "SignMessageWithPrivateKeyRequest\032).pactu" +
-      "s.SignMessageWithPrivateKeyResponse\022L\n\rV" +
-      "erifyMessage\022\034.pactus.VerifyMessageReque" +
-      "st\032\035.pactus.VerifyMessageResponse\022a\n\024Pub" +
-      "licKeyAggregation\022#.pactus.PublicKeyAggr" +
-      "egationRequest\032$.pactus.PublicKeyAggrega" +
-      "tionResponse\022a\n\024SignatureAggregation\022#.p" +
-      "actus.SignatureAggregationRequest\032$.pact" +
-      "us.SignatureAggregationResponseB:\n\006pactu" +
-      "sZ0github.com/pactus-project/pactus/www/" +
-      "grpc/pactusb\006proto3"
+      "gnature\030\001 \001(\tR\tsignature2\215\003\n\005Utils\022p\n\031Si" +
+      "gnMessageWithPrivateKey\022(.pactus.SignMes" +
+      "sageWithPrivateKeyRequest\032).pactus.SignM" +
+      "essageWithPrivateKeyResponse\022L\n\rVerifyMe" +
+      "ssage\022\034.pactus.VerifyMessageRequest\032\035.pa" +
+      "ctus.VerifyMessageResponse\022a\n\024PublicKeyA" +
+      "ggregation\022#.pactus.PublicKeyAggregation" +
+      "Request\032$.pactus.PublicKeyAggregationRes" +
+      "ponse\022a\n\024SignatureAggregation\022#.pactus.S" +
+      "ignatureAggregationRequest\032$.pactus.Sign" +
+      "atureAggregationResponseB:\n\006pactusZ0gith" +
+      "ub.com/pactus-project/pactus/www/grpc/pa" +
+      "ctusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

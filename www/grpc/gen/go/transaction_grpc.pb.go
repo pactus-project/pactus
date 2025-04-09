@@ -19,23 +19,23 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TransactionService_GetTransaction_FullMethodName            = "/pactus.TransactionService/GetTransaction"
-	TransactionService_CalculateFee_FullMethodName              = "/pactus.TransactionService/CalculateFee"
-	TransactionService_BroadcastTransaction_FullMethodName      = "/pactus.TransactionService/BroadcastTransaction"
-	TransactionService_GetRawTransferTransaction_FullMethodName = "/pactus.TransactionService/GetRawTransferTransaction"
-	TransactionService_GetRawBondTransaction_FullMethodName     = "/pactus.TransactionService/GetRawBondTransaction"
-	TransactionService_GetRawUnbondTransaction_FullMethodName   = "/pactus.TransactionService/GetRawUnbondTransaction"
-	TransactionService_GetRawWithdrawTransaction_FullMethodName = "/pactus.TransactionService/GetRawWithdrawTransaction"
-	TransactionService_DecodeRawTransaction_FullMethodName      = "/pactus.TransactionService/DecodeRawTransaction"
+	Transaction_GetTransaction_FullMethodName            = "/pactus.Transaction/GetTransaction"
+	Transaction_CalculateFee_FullMethodName              = "/pactus.Transaction/CalculateFee"
+	Transaction_BroadcastTransaction_FullMethodName      = "/pactus.Transaction/BroadcastTransaction"
+	Transaction_GetRawTransferTransaction_FullMethodName = "/pactus.Transaction/GetRawTransferTransaction"
+	Transaction_GetRawBondTransaction_FullMethodName     = "/pactus.Transaction/GetRawBondTransaction"
+	Transaction_GetRawUnbondTransaction_FullMethodName   = "/pactus.Transaction/GetRawUnbondTransaction"
+	Transaction_GetRawWithdrawTransaction_FullMethodName = "/pactus.Transaction/GetRawWithdrawTransaction"
+	Transaction_DecodeRawTransaction_FullMethodName      = "/pactus.Transaction/DecodeRawTransaction"
 )
 
-// TransactionServiceClient is the client API for TransactionService service.
+// TransactionClient is the client API for Transaction service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // Transaction service defines various RPC methods for interacting with
 // transactions.
-type TransactionServiceClient interface {
+type TransactionClient interface {
 	// GetTransaction retrieves transaction details based on the provided request
 	// parameters.
 	GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error)
@@ -64,101 +64,101 @@ type TransactionServiceClient interface {
 	DecodeRawTransaction(ctx context.Context, in *DecodeRawTransactionRequest, opts ...grpc.CallOption) (*DecodeRawTransactionResponse, error)
 }
 
-type transactionServiceClient struct {
+type transactionClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTransactionServiceClient(cc grpc.ClientConnInterface) TransactionServiceClient {
-	return &transactionServiceClient{cc}
+func NewTransactionClient(cc grpc.ClientConnInterface) TransactionClient {
+	return &transactionClient{cc}
 }
 
-func (c *transactionServiceClient) GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error) {
+func (c *transactionClient) GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTransactionResponse)
-	err := c.cc.Invoke(ctx, TransactionService_GetTransaction_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Transaction_GetTransaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *transactionServiceClient) CalculateFee(ctx context.Context, in *CalculateFeeRequest, opts ...grpc.CallOption) (*CalculateFeeResponse, error) {
+func (c *transactionClient) CalculateFee(ctx context.Context, in *CalculateFeeRequest, opts ...grpc.CallOption) (*CalculateFeeResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CalculateFeeResponse)
-	err := c.cc.Invoke(ctx, TransactionService_CalculateFee_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Transaction_CalculateFee_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *transactionServiceClient) BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error) {
+func (c *transactionClient) BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(BroadcastTransactionResponse)
-	err := c.cc.Invoke(ctx, TransactionService_BroadcastTransaction_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Transaction_BroadcastTransaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *transactionServiceClient) GetRawTransferTransaction(ctx context.Context, in *GetRawTransferTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
+func (c *transactionClient) GetRawTransferTransaction(ctx context.Context, in *GetRawTransferTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRawTransactionResponse)
-	err := c.cc.Invoke(ctx, TransactionService_GetRawTransferTransaction_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Transaction_GetRawTransferTransaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *transactionServiceClient) GetRawBondTransaction(ctx context.Context, in *GetRawBondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
+func (c *transactionClient) GetRawBondTransaction(ctx context.Context, in *GetRawBondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRawTransactionResponse)
-	err := c.cc.Invoke(ctx, TransactionService_GetRawBondTransaction_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Transaction_GetRawBondTransaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *transactionServiceClient) GetRawUnbondTransaction(ctx context.Context, in *GetRawUnbondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
+func (c *transactionClient) GetRawUnbondTransaction(ctx context.Context, in *GetRawUnbondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRawTransactionResponse)
-	err := c.cc.Invoke(ctx, TransactionService_GetRawUnbondTransaction_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Transaction_GetRawUnbondTransaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *transactionServiceClient) GetRawWithdrawTransaction(ctx context.Context, in *GetRawWithdrawTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
+func (c *transactionClient) GetRawWithdrawTransaction(ctx context.Context, in *GetRawWithdrawTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRawTransactionResponse)
-	err := c.cc.Invoke(ctx, TransactionService_GetRawWithdrawTransaction_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Transaction_GetRawWithdrawTransaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *transactionServiceClient) DecodeRawTransaction(ctx context.Context, in *DecodeRawTransactionRequest, opts ...grpc.CallOption) (*DecodeRawTransactionResponse, error) {
+func (c *transactionClient) DecodeRawTransaction(ctx context.Context, in *DecodeRawTransactionRequest, opts ...grpc.CallOption) (*DecodeRawTransactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DecodeRawTransactionResponse)
-	err := c.cc.Invoke(ctx, TransactionService_DecodeRawTransaction_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Transaction_DecodeRawTransaction_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// TransactionServiceServer is the server API for TransactionService service.
-// All implementations should embed UnimplementedTransactionServiceServer
+// TransactionServer is the server API for Transaction service.
+// All implementations should embed UnimplementedTransactionServer
 // for forward compatibility.
 //
 // Transaction service defines various RPC methods for interacting with
 // transactions.
-type TransactionServiceServer interface {
+type TransactionServer interface {
 	// GetTransaction retrieves transaction details based on the provided request
 	// parameters.
 	GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
@@ -187,239 +187,239 @@ type TransactionServiceServer interface {
 	DecodeRawTransaction(context.Context, *DecodeRawTransactionRequest) (*DecodeRawTransactionResponse, error)
 }
 
-// UnimplementedTransactionServiceServer should be embedded to have
+// UnimplementedTransactionServer should be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedTransactionServiceServer struct{}
+type UnimplementedTransactionServer struct{}
 
-func (UnimplementedTransactionServiceServer) GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error) {
+func (UnimplementedTransactionServer) GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTransaction not implemented")
 }
-func (UnimplementedTransactionServiceServer) CalculateFee(context.Context, *CalculateFeeRequest) (*CalculateFeeResponse, error) {
+func (UnimplementedTransactionServer) CalculateFee(context.Context, *CalculateFeeRequest) (*CalculateFeeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CalculateFee not implemented")
 }
-func (UnimplementedTransactionServiceServer) BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error) {
+func (UnimplementedTransactionServer) BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BroadcastTransaction not implemented")
 }
-func (UnimplementedTransactionServiceServer) GetRawTransferTransaction(context.Context, *GetRawTransferTransactionRequest) (*GetRawTransactionResponse, error) {
+func (UnimplementedTransactionServer) GetRawTransferTransaction(context.Context, *GetRawTransferTransactionRequest) (*GetRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRawTransferTransaction not implemented")
 }
-func (UnimplementedTransactionServiceServer) GetRawBondTransaction(context.Context, *GetRawBondTransactionRequest) (*GetRawTransactionResponse, error) {
+func (UnimplementedTransactionServer) GetRawBondTransaction(context.Context, *GetRawBondTransactionRequest) (*GetRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRawBondTransaction not implemented")
 }
-func (UnimplementedTransactionServiceServer) GetRawUnbondTransaction(context.Context, *GetRawUnbondTransactionRequest) (*GetRawTransactionResponse, error) {
+func (UnimplementedTransactionServer) GetRawUnbondTransaction(context.Context, *GetRawUnbondTransactionRequest) (*GetRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRawUnbondTransaction not implemented")
 }
-func (UnimplementedTransactionServiceServer) GetRawWithdrawTransaction(context.Context, *GetRawWithdrawTransactionRequest) (*GetRawTransactionResponse, error) {
+func (UnimplementedTransactionServer) GetRawWithdrawTransaction(context.Context, *GetRawWithdrawTransactionRequest) (*GetRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRawWithdrawTransaction not implemented")
 }
-func (UnimplementedTransactionServiceServer) DecodeRawTransaction(context.Context, *DecodeRawTransactionRequest) (*DecodeRawTransactionResponse, error) {
+func (UnimplementedTransactionServer) DecodeRawTransaction(context.Context, *DecodeRawTransactionRequest) (*DecodeRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DecodeRawTransaction not implemented")
 }
-func (UnimplementedTransactionServiceServer) testEmbeddedByValue() {}
+func (UnimplementedTransactionServer) testEmbeddedByValue() {}
 
-// UnsafeTransactionServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TransactionServiceServer will
+// UnsafeTransactionServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TransactionServer will
 // result in compilation errors.
-type UnsafeTransactionServiceServer interface {
-	mustEmbedUnimplementedTransactionServiceServer()
+type UnsafeTransactionServer interface {
+	mustEmbedUnimplementedTransactionServer()
 }
 
-func RegisterTransactionServiceServer(s grpc.ServiceRegistrar, srv TransactionServiceServer) {
-	// If the following call pancis, it indicates UnimplementedTransactionServiceServer was
+func RegisterTransactionServer(s grpc.ServiceRegistrar, srv TransactionServer) {
+	// If the following call pancis, it indicates UnimplementedTransactionServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&TransactionService_ServiceDesc, srv)
+	s.RegisterService(&Transaction_ServiceDesc, srv)
 }
 
-func _TransactionService_GetTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Transaction_GetTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServiceServer).GetTransaction(ctx, in)
+		return srv.(TransactionServer).GetTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TransactionService_GetTransaction_FullMethodName,
+		FullMethod: Transaction_GetTransaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).GetTransaction(ctx, req.(*GetTransactionRequest))
+		return srv.(TransactionServer).GetTransaction(ctx, req.(*GetTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TransactionService_CalculateFee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Transaction_CalculateFee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CalculateFeeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServiceServer).CalculateFee(ctx, in)
+		return srv.(TransactionServer).CalculateFee(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TransactionService_CalculateFee_FullMethodName,
+		FullMethod: Transaction_CalculateFee_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).CalculateFee(ctx, req.(*CalculateFeeRequest))
+		return srv.(TransactionServer).CalculateFee(ctx, req.(*CalculateFeeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TransactionService_BroadcastTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Transaction_BroadcastTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BroadcastTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServiceServer).BroadcastTransaction(ctx, in)
+		return srv.(TransactionServer).BroadcastTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TransactionService_BroadcastTransaction_FullMethodName,
+		FullMethod: Transaction_BroadcastTransaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).BroadcastTransaction(ctx, req.(*BroadcastTransactionRequest))
+		return srv.(TransactionServer).BroadcastTransaction(ctx, req.(*BroadcastTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TransactionService_GetRawTransferTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Transaction_GetRawTransferTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRawTransferTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServiceServer).GetRawTransferTransaction(ctx, in)
+		return srv.(TransactionServer).GetRawTransferTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TransactionService_GetRawTransferTransaction_FullMethodName,
+		FullMethod: Transaction_GetRawTransferTransaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).GetRawTransferTransaction(ctx, req.(*GetRawTransferTransactionRequest))
+		return srv.(TransactionServer).GetRawTransferTransaction(ctx, req.(*GetRawTransferTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TransactionService_GetRawBondTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Transaction_GetRawBondTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRawBondTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServiceServer).GetRawBondTransaction(ctx, in)
+		return srv.(TransactionServer).GetRawBondTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TransactionService_GetRawBondTransaction_FullMethodName,
+		FullMethod: Transaction_GetRawBondTransaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).GetRawBondTransaction(ctx, req.(*GetRawBondTransactionRequest))
+		return srv.(TransactionServer).GetRawBondTransaction(ctx, req.(*GetRawBondTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TransactionService_GetRawUnbondTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Transaction_GetRawUnbondTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRawUnbondTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServiceServer).GetRawUnbondTransaction(ctx, in)
+		return srv.(TransactionServer).GetRawUnbondTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TransactionService_GetRawUnbondTransaction_FullMethodName,
+		FullMethod: Transaction_GetRawUnbondTransaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).GetRawUnbondTransaction(ctx, req.(*GetRawUnbondTransactionRequest))
+		return srv.(TransactionServer).GetRawUnbondTransaction(ctx, req.(*GetRawUnbondTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TransactionService_GetRawWithdrawTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Transaction_GetRawWithdrawTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetRawWithdrawTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServiceServer).GetRawWithdrawTransaction(ctx, in)
+		return srv.(TransactionServer).GetRawWithdrawTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TransactionService_GetRawWithdrawTransaction_FullMethodName,
+		FullMethod: Transaction_GetRawWithdrawTransaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).GetRawWithdrawTransaction(ctx, req.(*GetRawWithdrawTransactionRequest))
+		return srv.(TransactionServer).GetRawWithdrawTransaction(ctx, req.(*GetRawWithdrawTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TransactionService_DecodeRawTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Transaction_DecodeRawTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DecodeRawTransactionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServiceServer).DecodeRawTransaction(ctx, in)
+		return srv.(TransactionServer).DecodeRawTransaction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TransactionService_DecodeRawTransaction_FullMethodName,
+		FullMethod: Transaction_DecodeRawTransaction_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).DecodeRawTransaction(ctx, req.(*DecodeRawTransactionRequest))
+		return srv.(TransactionServer).DecodeRawTransaction(ctx, req.(*DecodeRawTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// TransactionService_ServiceDesc is the grpc.ServiceDesc for TransactionService service.
+// Transaction_ServiceDesc is the grpc.ServiceDesc for Transaction service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var TransactionService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pactus.TransactionService",
-	HandlerType: (*TransactionServiceServer)(nil),
+var Transaction_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pactus.Transaction",
+	HandlerType: (*TransactionServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetTransaction",
-			Handler:    _TransactionService_GetTransaction_Handler,
+			Handler:    _Transaction_GetTransaction_Handler,
 		},
 		{
 			MethodName: "CalculateFee",
-			Handler:    _TransactionService_CalculateFee_Handler,
+			Handler:    _Transaction_CalculateFee_Handler,
 		},
 		{
 			MethodName: "BroadcastTransaction",
-			Handler:    _TransactionService_BroadcastTransaction_Handler,
+			Handler:    _Transaction_BroadcastTransaction_Handler,
 		},
 		{
 			MethodName: "GetRawTransferTransaction",
-			Handler:    _TransactionService_GetRawTransferTransaction_Handler,
+			Handler:    _Transaction_GetRawTransferTransaction_Handler,
 		},
 		{
 			MethodName: "GetRawBondTransaction",
-			Handler:    _TransactionService_GetRawBondTransaction_Handler,
+			Handler:    _Transaction_GetRawBondTransaction_Handler,
 		},
 		{
 			MethodName: "GetRawUnbondTransaction",
-			Handler:    _TransactionService_GetRawUnbondTransaction_Handler,
+			Handler:    _Transaction_GetRawUnbondTransaction_Handler,
 		},
 		{
 			MethodName: "GetRawWithdrawTransaction",
-			Handler:    _TransactionService_GetRawWithdrawTransaction_Handler,
+			Handler:    _Transaction_GetRawWithdrawTransaction_Handler,
 		},
 		{
 			MethodName: "DecodeRawTransaction",
-			Handler:    _TransactionService_DecodeRawTransaction_Handler,
+			Handler:    _Transaction_DecodeRawTransaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

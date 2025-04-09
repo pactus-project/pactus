@@ -5,8 +5,8 @@ import grpc
 import wallet_pb2 as wallet__pb2
 
 
-class WalletServiceStub(object):
-    """WalletService provides RPC methods for wallet management operations.
+class WalletStub(object):
+    """Wallet service provides RPC methods for wallet management operations.
     """
 
     def __init__(self, channel):
@@ -16,89 +16,89 @@ class WalletServiceStub(object):
             channel: A grpc.Channel.
         """
         self.CreateWallet = channel.unary_unary(
-                '/pactus.WalletService/CreateWallet',
+                '/pactus.Wallet/CreateWallet',
                 request_serializer=wallet__pb2.CreateWalletRequest.SerializeToString,
                 response_deserializer=wallet__pb2.CreateWalletResponse.FromString,
                 _registered_method=True)
         self.RestoreWallet = channel.unary_unary(
-                '/pactus.WalletService/RestoreWallet',
+                '/pactus.Wallet/RestoreWallet',
                 request_serializer=wallet__pb2.RestoreWalletRequest.SerializeToString,
                 response_deserializer=wallet__pb2.RestoreWalletResponse.FromString,
                 _registered_method=True)
         self.LoadWallet = channel.unary_unary(
-                '/pactus.WalletService/LoadWallet',
+                '/pactus.Wallet/LoadWallet',
                 request_serializer=wallet__pb2.LoadWalletRequest.SerializeToString,
                 response_deserializer=wallet__pb2.LoadWalletResponse.FromString,
                 _registered_method=True)
         self.UnloadWallet = channel.unary_unary(
-                '/pactus.WalletService/UnloadWallet',
+                '/pactus.Wallet/UnloadWallet',
                 request_serializer=wallet__pb2.UnloadWalletRequest.SerializeToString,
                 response_deserializer=wallet__pb2.UnloadWalletResponse.FromString,
                 _registered_method=True)
         self.GetTotalBalance = channel.unary_unary(
-                '/pactus.WalletService/GetTotalBalance',
+                '/pactus.Wallet/GetTotalBalance',
                 request_serializer=wallet__pb2.GetTotalBalanceRequest.SerializeToString,
                 response_deserializer=wallet__pb2.GetTotalBalanceResponse.FromString,
                 _registered_method=True)
         self.SignRawTransaction = channel.unary_unary(
-                '/pactus.WalletService/SignRawTransaction',
+                '/pactus.Wallet/SignRawTransaction',
                 request_serializer=wallet__pb2.SignRawTransactionRequest.SerializeToString,
                 response_deserializer=wallet__pb2.SignRawTransactionResponse.FromString,
                 _registered_method=True)
         self.GetValidatorAddress = channel.unary_unary(
-                '/pactus.WalletService/GetValidatorAddress',
+                '/pactus.Wallet/GetValidatorAddress',
                 request_serializer=wallet__pb2.GetValidatorAddressRequest.SerializeToString,
                 response_deserializer=wallet__pb2.GetValidatorAddressResponse.FromString,
                 _registered_method=True)
         self.GetNewAddress = channel.unary_unary(
-                '/pactus.WalletService/GetNewAddress',
+                '/pactus.Wallet/GetNewAddress',
                 request_serializer=wallet__pb2.GetNewAddressRequest.SerializeToString,
                 response_deserializer=wallet__pb2.GetNewAddressResponse.FromString,
                 _registered_method=True)
         self.GetAddressHistory = channel.unary_unary(
-                '/pactus.WalletService/GetAddressHistory',
+                '/pactus.Wallet/GetAddressHistory',
                 request_serializer=wallet__pb2.GetAddressHistoryRequest.SerializeToString,
                 response_deserializer=wallet__pb2.GetAddressHistoryResponse.FromString,
                 _registered_method=True)
         self.SignMessage = channel.unary_unary(
-                '/pactus.WalletService/SignMessage',
+                '/pactus.Wallet/SignMessage',
                 request_serializer=wallet__pb2.SignMessageRequest.SerializeToString,
                 response_deserializer=wallet__pb2.SignMessageResponse.FromString,
                 _registered_method=True)
         self.GetTotalStake = channel.unary_unary(
-                '/pactus.WalletService/GetTotalStake',
+                '/pactus.Wallet/GetTotalStake',
                 request_serializer=wallet__pb2.GetTotalStakeRequest.SerializeToString,
                 response_deserializer=wallet__pb2.GetTotalStakeResponse.FromString,
                 _registered_method=True)
         self.GetAddressInfo = channel.unary_unary(
-                '/pactus.WalletService/GetAddressInfo',
+                '/pactus.Wallet/GetAddressInfo',
                 request_serializer=wallet__pb2.GetAddressInfoRequest.SerializeToString,
                 response_deserializer=wallet__pb2.GetAddressInfoResponse.FromString,
                 _registered_method=True)
         self.SetAddressLabel = channel.unary_unary(
-                '/pactus.WalletService/SetAddressLabel',
+                '/pactus.Wallet/SetAddressLabel',
                 request_serializer=wallet__pb2.SetAddressLabelRequest.SerializeToString,
                 response_deserializer=wallet__pb2.SetAddressLabelResponse.FromString,
                 _registered_method=True)
         self.ListWallet = channel.unary_unary(
-                '/pactus.WalletService/ListWallet',
+                '/pactus.Wallet/ListWallet',
                 request_serializer=wallet__pb2.ListWalletRequest.SerializeToString,
                 response_deserializer=wallet__pb2.ListWalletResponse.FromString,
                 _registered_method=True)
         self.GetWalletInfo = channel.unary_unary(
-                '/pactus.WalletService/GetWalletInfo',
+                '/pactus.Wallet/GetWalletInfo',
                 request_serializer=wallet__pb2.GetWalletInfoRequest.SerializeToString,
                 response_deserializer=wallet__pb2.GetWalletInfoResponse.FromString,
                 _registered_method=True)
         self.ListAddress = channel.unary_unary(
-                '/pactus.WalletService/ListAddress',
+                '/pactus.Wallet/ListAddress',
                 request_serializer=wallet__pb2.ListAddressRequest.SerializeToString,
                 response_deserializer=wallet__pb2.ListAddressResponse.FromString,
                 _registered_method=True)
 
 
-class WalletServiceServicer(object):
-    """WalletService provides RPC methods for wallet management operations.
+class WalletServicer(object):
+    """Wallet service provides RPC methods for wallet management operations.
     """
 
     def CreateWallet(self, request, context):
@@ -214,7 +214,7 @@ class WalletServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_WalletServiceServicer_to_server(servicer, server):
+def add_WalletServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'CreateWallet': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateWallet,
@@ -298,14 +298,14 @@ def add_WalletServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'pactus.WalletService', rpc_method_handlers)
+            'pactus.Wallet', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('pactus.WalletService', rpc_method_handlers)
+    server.add_registered_method_handlers('pactus.Wallet', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class WalletService(object):
-    """WalletService provides RPC methods for wallet management operations.
+class Wallet(object):
+    """Wallet service provides RPC methods for wallet management operations.
     """
 
     @staticmethod
@@ -322,7 +322,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/CreateWallet',
+            '/pactus.Wallet/CreateWallet',
             wallet__pb2.CreateWalletRequest.SerializeToString,
             wallet__pb2.CreateWalletResponse.FromString,
             options,
@@ -349,7 +349,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/RestoreWallet',
+            '/pactus.Wallet/RestoreWallet',
             wallet__pb2.RestoreWalletRequest.SerializeToString,
             wallet__pb2.RestoreWalletResponse.FromString,
             options,
@@ -376,7 +376,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/LoadWallet',
+            '/pactus.Wallet/LoadWallet',
             wallet__pb2.LoadWalletRequest.SerializeToString,
             wallet__pb2.LoadWalletResponse.FromString,
             options,
@@ -403,7 +403,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/UnloadWallet',
+            '/pactus.Wallet/UnloadWallet',
             wallet__pb2.UnloadWalletRequest.SerializeToString,
             wallet__pb2.UnloadWalletResponse.FromString,
             options,
@@ -430,7 +430,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/GetTotalBalance',
+            '/pactus.Wallet/GetTotalBalance',
             wallet__pb2.GetTotalBalanceRequest.SerializeToString,
             wallet__pb2.GetTotalBalanceResponse.FromString,
             options,
@@ -457,7 +457,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/SignRawTransaction',
+            '/pactus.Wallet/SignRawTransaction',
             wallet__pb2.SignRawTransactionRequest.SerializeToString,
             wallet__pb2.SignRawTransactionResponse.FromString,
             options,
@@ -484,7 +484,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/GetValidatorAddress',
+            '/pactus.Wallet/GetValidatorAddress',
             wallet__pb2.GetValidatorAddressRequest.SerializeToString,
             wallet__pb2.GetValidatorAddressResponse.FromString,
             options,
@@ -511,7 +511,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/GetNewAddress',
+            '/pactus.Wallet/GetNewAddress',
             wallet__pb2.GetNewAddressRequest.SerializeToString,
             wallet__pb2.GetNewAddressResponse.FromString,
             options,
@@ -538,7 +538,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/GetAddressHistory',
+            '/pactus.Wallet/GetAddressHistory',
             wallet__pb2.GetAddressHistoryRequest.SerializeToString,
             wallet__pb2.GetAddressHistoryResponse.FromString,
             options,
@@ -565,7 +565,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/SignMessage',
+            '/pactus.Wallet/SignMessage',
             wallet__pb2.SignMessageRequest.SerializeToString,
             wallet__pb2.SignMessageResponse.FromString,
             options,
@@ -592,7 +592,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/GetTotalStake',
+            '/pactus.Wallet/GetTotalStake',
             wallet__pb2.GetTotalStakeRequest.SerializeToString,
             wallet__pb2.GetTotalStakeResponse.FromString,
             options,
@@ -619,7 +619,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/GetAddressInfo',
+            '/pactus.Wallet/GetAddressInfo',
             wallet__pb2.GetAddressInfoRequest.SerializeToString,
             wallet__pb2.GetAddressInfoResponse.FromString,
             options,
@@ -646,7 +646,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/SetAddressLabel',
+            '/pactus.Wallet/SetAddressLabel',
             wallet__pb2.SetAddressLabelRequest.SerializeToString,
             wallet__pb2.SetAddressLabelResponse.FromString,
             options,
@@ -673,7 +673,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/ListWallet',
+            '/pactus.Wallet/ListWallet',
             wallet__pb2.ListWalletRequest.SerializeToString,
             wallet__pb2.ListWalletResponse.FromString,
             options,
@@ -700,7 +700,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/GetWalletInfo',
+            '/pactus.Wallet/GetWalletInfo',
             wallet__pb2.GetWalletInfoRequest.SerializeToString,
             wallet__pb2.GetWalletInfoResponse.FromString,
             options,
@@ -727,7 +727,7 @@ class WalletService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.WalletService/ListAddress',
+            '/pactus.Wallet/ListAddress',
             wallet__pb2.ListAddressRequest.SerializeToString,
             wallet__pb2.ListAddressResponse.FromString,
             options,

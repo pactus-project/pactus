@@ -65,187 +65,187 @@ curl --location 'http://localhost:8545/' \
 
 <div id="toc-container">
   <ul class="">
-  <li> TransactionService Service
+  <li> Transaction Service
       <ul>
         <li>
-          <a href="#pactus.transaction_service.get_transaction">
-          <span class="rpc-badge"></span> pactus.transaction_service.get_transaction</a>
+          <a href="#pactus.transaction.get_transaction">
+          <span class="rpc-badge"></span> pactus.transaction.get_transaction</a>
         </li>
         <li>
-          <a href="#pactus.transaction_service.calculate_fee">
-          <span class="rpc-badge"></span> pactus.transaction_service.calculate_fee</a>
+          <a href="#pactus.transaction.calculate_fee">
+          <span class="rpc-badge"></span> pactus.transaction.calculate_fee</a>
         </li>
         <li>
-          <a href="#pactus.transaction_service.broadcast_transaction">
-          <span class="rpc-badge"></span> pactus.transaction_service.broadcast_transaction</a>
+          <a href="#pactus.transaction.broadcast_transaction">
+          <span class="rpc-badge"></span> pactus.transaction.broadcast_transaction</a>
         </li>
         <li>
-          <a href="#pactus.transaction_service.get_raw_transfer_transaction">
-          <span class="rpc-badge"></span> pactus.transaction_service.get_raw_transfer_transaction</a>
+          <a href="#pactus.transaction.get_raw_transfer_transaction">
+          <span class="rpc-badge"></span> pactus.transaction.get_raw_transfer_transaction</a>
         </li>
         <li>
-          <a href="#pactus.transaction_service.get_raw_bond_transaction">
-          <span class="rpc-badge"></span> pactus.transaction_service.get_raw_bond_transaction</a>
+          <a href="#pactus.transaction.get_raw_bond_transaction">
+          <span class="rpc-badge"></span> pactus.transaction.get_raw_bond_transaction</a>
         </li>
         <li>
-          <a href="#pactus.transaction_service.get_raw_unbond_transaction">
-          <span class="rpc-badge"></span> pactus.transaction_service.get_raw_unbond_transaction</a>
+          <a href="#pactus.transaction.get_raw_unbond_transaction">
+          <span class="rpc-badge"></span> pactus.transaction.get_raw_unbond_transaction</a>
         </li>
         <li>
-          <a href="#pactus.transaction_service.get_raw_withdraw_transaction">
-          <span class="rpc-badge"></span> pactus.transaction_service.get_raw_withdraw_transaction</a>
+          <a href="#pactus.transaction.get_raw_withdraw_transaction">
+          <span class="rpc-badge"></span> pactus.transaction.get_raw_withdraw_transaction</a>
         </li>
         <li>
-          <a href="#pactus.transaction_service.decode_raw_transaction">
-          <span class="rpc-badge"></span> pactus.transaction_service.decode_raw_transaction</a>
+          <a href="#pactus.transaction.decode_raw_transaction">
+          <span class="rpc-badge"></span> pactus.transaction.decode_raw_transaction</a>
         </li>
         </ul>
     </li>
-    <li> BlockchainService Service
+    <li> Blockchain Service
       <ul>
         <li>
-          <a href="#pactus.blockchain_service.get_block">
-          <span class="rpc-badge"></span> pactus.blockchain_service.get_block</a>
+          <a href="#pactus.blockchain.get_block">
+          <span class="rpc-badge"></span> pactus.blockchain.get_block</a>
         </li>
         <li>
-          <a href="#pactus.blockchain_service.get_block_hash">
-          <span class="rpc-badge"></span> pactus.blockchain_service.get_block_hash</a>
+          <a href="#pactus.blockchain.get_block_hash">
+          <span class="rpc-badge"></span> pactus.blockchain.get_block_hash</a>
         </li>
         <li>
-          <a href="#pactus.blockchain_service.get_block_height">
-          <span class="rpc-badge"></span> pactus.blockchain_service.get_block_height</a>
+          <a href="#pactus.blockchain.get_block_height">
+          <span class="rpc-badge"></span> pactus.blockchain.get_block_height</a>
         </li>
         <li>
-          <a href="#pactus.blockchain_service.get_blockchain_info">
-          <span class="rpc-badge"></span> pactus.blockchain_service.get_blockchain_info</a>
+          <a href="#pactus.blockchain.get_blockchain_info">
+          <span class="rpc-badge"></span> pactus.blockchain.get_blockchain_info</a>
         </li>
         <li>
-          <a href="#pactus.blockchain_service.get_consensus_info">
-          <span class="rpc-badge"></span> pactus.blockchain_service.get_consensus_info</a>
+          <a href="#pactus.blockchain.get_consensus_info">
+          <span class="rpc-badge"></span> pactus.blockchain.get_consensus_info</a>
         </li>
         <li>
-          <a href="#pactus.blockchain_service.get_account">
-          <span class="rpc-badge"></span> pactus.blockchain_service.get_account</a>
+          <a href="#pactus.blockchain.get_account">
+          <span class="rpc-badge"></span> pactus.blockchain.get_account</a>
         </li>
         <li>
-          <a href="#pactus.blockchain_service.get_validator">
-          <span class="rpc-badge"></span> pactus.blockchain_service.get_validator</a>
+          <a href="#pactus.blockchain.get_validator">
+          <span class="rpc-badge"></span> pactus.blockchain.get_validator</a>
         </li>
         <li>
-          <a href="#pactus.blockchain_service.get_validator_by_number">
-          <span class="rpc-badge"></span> pactus.blockchain_service.get_validator_by_number</a>
+          <a href="#pactus.blockchain.get_validator_by_number">
+          <span class="rpc-badge"></span> pactus.blockchain.get_validator_by_number</a>
         </li>
         <li>
-          <a href="#pactus.blockchain_service.get_validator_addresses">
-          <span class="rpc-badge"></span> pactus.blockchain_service.get_validator_addresses</a>
+          <a href="#pactus.blockchain.get_validator_addresses">
+          <span class="rpc-badge"></span> pactus.blockchain.get_validator_addresses</a>
         </li>
         <li>
-          <a href="#pactus.blockchain_service.get_public_key">
-          <span class="rpc-badge"></span> pactus.blockchain_service.get_public_key</a>
+          <a href="#pactus.blockchain.get_public_key">
+          <span class="rpc-badge"></span> pactus.blockchain.get_public_key</a>
         </li>
         <li>
-          <a href="#pactus.blockchain_service.get_tx_pool_content">
-          <span class="rpc-badge"></span> pactus.blockchain_service.get_tx_pool_content</a>
+          <a href="#pactus.blockchain.get_tx_pool_content">
+          <span class="rpc-badge"></span> pactus.blockchain.get_tx_pool_content</a>
         </li>
         </ul>
     </li>
-    <li> NetworkService Service
+    <li> Network Service
       <ul>
         <li>
-          <a href="#pactus.network_service.get_network_info">
-          <span class="rpc-badge"></span> pactus.network_service.get_network_info</a>
+          <a href="#pactus.network.get_network_info">
+          <span class="rpc-badge"></span> pactus.network.get_network_info</a>
         </li>
         <li>
-          <a href="#pactus.network_service.get_node_info">
-          <span class="rpc-badge"></span> pactus.network_service.get_node_info</a>
+          <a href="#pactus.network.get_node_info">
+          <span class="rpc-badge"></span> pactus.network.get_node_info</a>
         </li>
         </ul>
     </li>
-    <li> UtilsService Service
+    <li> Utils Service
       <ul>
         <li>
-          <a href="#pactus.utils_service.sign_message_with_private_key">
-          <span class="rpc-badge"></span> pactus.utils_service.sign_message_with_private_key</a>
+          <a href="#pactus.utils.sign_message_with_private_key">
+          <span class="rpc-badge"></span> pactus.utils.sign_message_with_private_key</a>
         </li>
         <li>
-          <a href="#pactus.utils_service.verify_message">
-          <span class="rpc-badge"></span> pactus.utils_service.verify_message</a>
+          <a href="#pactus.utils.verify_message">
+          <span class="rpc-badge"></span> pactus.utils.verify_message</a>
         </li>
         <li>
-          <a href="#pactus.utils_service.public_key_aggregation">
-          <span class="rpc-badge"></span> pactus.utils_service.public_key_aggregation</a>
+          <a href="#pactus.utils.public_key_aggregation">
+          <span class="rpc-badge"></span> pactus.utils.public_key_aggregation</a>
         </li>
         <li>
-          <a href="#pactus.utils_service.signature_aggregation">
-          <span class="rpc-badge"></span> pactus.utils_service.signature_aggregation</a>
+          <a href="#pactus.utils.signature_aggregation">
+          <span class="rpc-badge"></span> pactus.utils.signature_aggregation</a>
         </li>
         </ul>
     </li>
-    <li> WalletService Service
+    <li> Wallet Service
       <ul>
         <li>
-          <a href="#pactus.wallet_service.create_wallet">
-          <span class="rpc-badge"></span> pactus.wallet_service.create_wallet</a>
+          <a href="#pactus.wallet.create_wallet">
+          <span class="rpc-badge"></span> pactus.wallet.create_wallet</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.restore_wallet">
-          <span class="rpc-badge"></span> pactus.wallet_service.restore_wallet</a>
+          <a href="#pactus.wallet.restore_wallet">
+          <span class="rpc-badge"></span> pactus.wallet.restore_wallet</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.load_wallet">
-          <span class="rpc-badge"></span> pactus.wallet_service.load_wallet</a>
+          <a href="#pactus.wallet.load_wallet">
+          <span class="rpc-badge"></span> pactus.wallet.load_wallet</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.unload_wallet">
-          <span class="rpc-badge"></span> pactus.wallet_service.unload_wallet</a>
+          <a href="#pactus.wallet.unload_wallet">
+          <span class="rpc-badge"></span> pactus.wallet.unload_wallet</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.get_total_balance">
-          <span class="rpc-badge"></span> pactus.wallet_service.get_total_balance</a>
+          <a href="#pactus.wallet.get_total_balance">
+          <span class="rpc-badge"></span> pactus.wallet.get_total_balance</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.sign_raw_transaction">
-          <span class="rpc-badge"></span> pactus.wallet_service.sign_raw_transaction</a>
+          <a href="#pactus.wallet.sign_raw_transaction">
+          <span class="rpc-badge"></span> pactus.wallet.sign_raw_transaction</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.get_validator_address">
-          <span class="rpc-badge"></span> pactus.wallet_service.get_validator_address</a>
+          <a href="#pactus.wallet.get_validator_address">
+          <span class="rpc-badge"></span> pactus.wallet.get_validator_address</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.get_new_address">
-          <span class="rpc-badge"></span> pactus.wallet_service.get_new_address</a>
+          <a href="#pactus.wallet.get_new_address">
+          <span class="rpc-badge"></span> pactus.wallet.get_new_address</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.get_address_history">
-          <span class="rpc-badge"></span> pactus.wallet_service.get_address_history</a>
+          <a href="#pactus.wallet.get_address_history">
+          <span class="rpc-badge"></span> pactus.wallet.get_address_history</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.sign_message">
-          <span class="rpc-badge"></span> pactus.wallet_service.sign_message</a>
+          <a href="#pactus.wallet.sign_message">
+          <span class="rpc-badge"></span> pactus.wallet.sign_message</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.get_total_stake">
-          <span class="rpc-badge"></span> pactus.wallet_service.get_total_stake</a>
+          <a href="#pactus.wallet.get_total_stake">
+          <span class="rpc-badge"></span> pactus.wallet.get_total_stake</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.get_address_info">
-          <span class="rpc-badge"></span> pactus.wallet_service.get_address_info</a>
+          <a href="#pactus.wallet.get_address_info">
+          <span class="rpc-badge"></span> pactus.wallet.get_address_info</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.set_address_label">
-          <span class="rpc-badge"></span> pactus.wallet_service.set_address_label</a>
+          <a href="#pactus.wallet.set_address_label">
+          <span class="rpc-badge"></span> pactus.wallet.set_address_label</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.list_wallet">
-          <span class="rpc-badge"></span> pactus.wallet_service.list_wallet</a>
+          <a href="#pactus.wallet.list_wallet">
+          <span class="rpc-badge"></span> pactus.wallet.list_wallet</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.get_wallet_info">
-          <span class="rpc-badge"></span> pactus.wallet_service.get_wallet_info</a>
+          <a href="#pactus.wallet.get_wallet_info">
+          <span class="rpc-badge"></span> pactus.wallet.get_wallet_info</a>
         </li>
         <li>
-          <a href="#pactus.wallet_service.list_address">
-          <span class="rpc-badge"></span> pactus.wallet_service.list_address</a>
+          <a href="#pactus.wallet.list_address">
+          <span class="rpc-badge"></span> pactus.wallet.list_address</a>
         </li>
         </ul>
     </li>
@@ -254,12 +254,12 @@ curl --location 'http://localhost:8545/' \
 
 <div class="api-doc">
 
-## TransactionService Service
+## Transaction Service
 
 <p>Transaction service defines various RPC methods for interacting with
 transactions.</p>
 
-### pactus.transaction_service.get_transaction <span id="pactus.transaction_service.get_transaction" class="rpc-badge"></span>
+### pactus.transaction.get_transaction <span id="pactus.transaction.get_transaction" class="rpc-badge"></span>
 
 <p>GetTransaction retrieves transaction details based on the provided request
 parameters.</p>
@@ -527,7 +527,7 @@ buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX)</li>
          </tbody>
 </table>
 
-### pactus.transaction_service.calculate_fee <span id="pactus.transaction_service.calculate_fee" class="rpc-badge"></span>
+### pactus.transaction.calculate_fee <span id="pactus.transaction.calculate_fee" class="rpc-badge"></span>
 
 <p>CalculateFee calculates the transaction fee based on the specified amount
 and payload type.</p>
@@ -594,7 +594,7 @@ and payload type.</p>
      </tbody>
 </table>
 
-### pactus.transaction_service.broadcast_transaction <span id="pactus.transaction_service.broadcast_transaction" class="rpc-badge"></span>
+### pactus.transaction.broadcast_transaction <span id="pactus.transaction.broadcast_transaction" class="rpc-badge"></span>
 
 <p>BroadcastTransaction broadcasts a signed transaction to the network.</p>
 
@@ -631,7 +631,7 @@ and payload type.</p>
      </tbody>
 </table>
 
-### pactus.transaction_service.get_raw_transfer_transaction <span id="pactus.transaction_service.get_raw_transfer_transaction" class="rpc-badge"></span>
+### pactus.transaction.get_raw_transfer_transaction <span id="pactus.transaction.get_raw_transfer_transaction" class="rpc-badge"></span>
 
 <p>GetRawTransferTransaction retrieves raw details of a transfer transaction.
 buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -712,7 +712,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
      </tbody>
 </table>
 
-### pactus.transaction_service.get_raw_bond_transaction <span id="pactus.transaction_service.get_raw_bond_transaction" class="rpc-badge"></span>
+### pactus.transaction.get_raw_bond_transaction <span id="pactus.transaction.get_raw_bond_transaction" class="rpc-badge"></span>
 
 <p>GetRawBondTransaction retrieves raw details of a bond transaction.
 buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -800,7 +800,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
      </tbody>
 </table>
 
-### pactus.transaction_service.get_raw_unbond_transaction <span id="pactus.transaction_service.get_raw_unbond_transaction" class="rpc-badge"></span>
+### pactus.transaction.get_raw_unbond_transaction <span id="pactus.transaction.get_raw_unbond_transaction" class="rpc-badge"></span>
 
 <p>GetRawUnbondTransaction retrieves raw details of an unbond transaction.
 buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -860,7 +860,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
      </tbody>
 </table>
 
-### pactus.transaction_service.get_raw_withdraw_transaction <span id="pactus.transaction_service.get_raw_withdraw_transaction" class="rpc-badge"></span>
+### pactus.transaction.get_raw_withdraw_transaction <span id="pactus.transaction.get_raw_withdraw_transaction" class="rpc-badge"></span>
 
 <p>GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
 buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -941,7 +941,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
      </tbody>
 </table>
 
-### pactus.transaction_service.decode_raw_transaction <span id="pactus.transaction_service.decode_raw_transaction" class="rpc-badge"></span>
+### pactus.transaction.decode_raw_transaction <span id="pactus.transaction.decode_raw_transaction" class="rpc-badge"></span>
 
 <p>DecodeRawTransaction accepts raw transaction and returns decoded transaction.</p>
 
@@ -1182,11 +1182,11 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
          </tbody>
 </table>
 
-## BlockchainService Service
+## Blockchain Service
 
 <p>Blockchain service defines RPC methods for interacting with the blockchain.</p>
 
-### pactus.blockchain_service.get_block <span id="pactus.blockchain_service.get_block" class="rpc-badge"></span>
+### pactus.blockchain.get_block <span id="pactus.blockchain.get_block" class="rpc-badge"></span>
 
 <p>GetBlock retrieves information about a block based on the provided request parameters.</p>
 
@@ -1553,7 +1553,7 @@ BLOCK_TRANSACTIONS.
          </tbody>
 </table>
 
-### pactus.blockchain_service.get_block_hash <span id="pactus.blockchain_service.get_block_hash" class="rpc-badge"></span>
+### pactus.blockchain.get_block_hash <span id="pactus.blockchain.get_block_hash" class="rpc-badge"></span>
 
 <p>GetBlockHash retrieves the hash of a block at the specified height.</p>
 
@@ -1590,7 +1590,7 @@ BLOCK_TRANSACTIONS.
      </tbody>
 </table>
 
-### pactus.blockchain_service.get_block_height <span id="pactus.blockchain_service.get_block_height" class="rpc-badge"></span>
+### pactus.blockchain.get_block_height <span id="pactus.blockchain.get_block_height" class="rpc-badge"></span>
 
 <p>GetBlockHeight retrieves the height of a block with the specified hash.</p>
 
@@ -1627,7 +1627,7 @@ BLOCK_TRANSACTIONS.
      </tbody>
 </table>
 
-### pactus.blockchain_service.get_blockchain_info <span id="pactus.blockchain_service.get_blockchain_info" class="rpc-badge"></span>
+### pactus.blockchain.get_blockchain_info <span id="pactus.blockchain.get_blockchain_info" class="rpc-badge"></span>
 
 <p>GetBlockchainInfo retrieves general information about the blockchain.</p>
 
@@ -1784,7 +1784,7 @@ Parameters has no fields.
      </tbody>
 </table>
 
-### pactus.blockchain_service.get_consensus_info <span id="pactus.blockchain_service.get_consensus_info" class="rpc-badge"></span>
+### pactus.blockchain.get_consensus_info <span id="pactus.blockchain.get_consensus_info" class="rpc-badge"></span>
 
 <p>GetConsensusInfo retrieves information about the consensus instances.</p>
 
@@ -1928,7 +1928,7 @@ Parameters has no fields.
           </tbody>
 </table>
 
-### pactus.blockchain_service.get_account <span id="pactus.blockchain_service.get_account" class="rpc-badge"></span>
+### pactus.blockchain.get_account <span id="pactus.blockchain.get_account" class="rpc-badge"></span>
 
 <p>GetAccount retrieves information about an account based on the provided address.</p>
 
@@ -2000,7 +2000,7 @@ Parameters has no fields.
          </tbody>
 </table>
 
-### pactus.blockchain_service.get_validator <span id="pactus.blockchain_service.get_validator" class="rpc-badge"></span>
+### pactus.blockchain.get_validator <span id="pactus.blockchain.get_validator" class="rpc-badge"></span>
 
 <p>GetValidator retrieves information about a validator based on the provided address.
 buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -2109,7 +2109,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
          </tbody>
 </table>
 
-### pactus.blockchain_service.get_validator_by_number <span id="pactus.blockchain_service.get_validator_by_number" class="rpc-badge"></span>
+### pactus.blockchain.get_validator_by_number <span id="pactus.blockchain.get_validator_by_number" class="rpc-badge"></span>
 
 <p>GetValidatorByNumber retrieves information about a validator based on the provided number.
 buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
@@ -2218,7 +2218,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
          </tbody>
 </table>
 
-### pactus.blockchain_service.get_validator_addresses <span id="pactus.blockchain_service.get_validator_addresses" class="rpc-badge"></span>
+### pactus.blockchain.get_validator_addresses <span id="pactus.blockchain.get_validator_addresses" class="rpc-badge"></span>
 
 <p>GetValidatorAddresses retrieves a list of all validator addresses.</p>
 
@@ -2242,7 +2242,7 @@ Parameters has no fields.
      </tbody>
 </table>
 
-### pactus.blockchain_service.get_public_key <span id="pactus.blockchain_service.get_public_key" class="rpc-badge"></span>
+### pactus.blockchain.get_public_key <span id="pactus.blockchain.get_public_key" class="rpc-badge"></span>
 
 <p>GetPublicKey retrieves the public key of an account based on the provided address.</p>
 
@@ -2279,7 +2279,7 @@ Parameters has no fields.
      </tbody>
 </table>
 
-### pactus.blockchain_service.get_tx_pool_content <span id="pactus.blockchain_service.get_tx_pool_content" class="rpc-badge"></span>
+### pactus.blockchain.get_tx_pool_content <span id="pactus.blockchain.get_tx_pool_content" class="rpc-badge"></span>
 
 <p>GetTxPoolContent retrieves current transactions in the transaction pool.</p>
 
@@ -2528,11 +2528,11 @@ Parameters has no fields.
          </tbody>
 </table>
 
-## NetworkService Service
+## Network Service
 
-<p>NetworkService provides RPCs for retrieving information about the network.</p>
+<p>Network service provides RPCs for retrieving information about the network.</p>
 
-### pactus.network_service.get_network_info <span id="pactus.network_service.get_network_info" class="rpc-badge"></span>
+### pactus.network.get_network_info <span id="pactus.network.get_network_info" class="rpc-badge"></span>
 
 <p>GetNetworkInfo retrieves information about the overall network.</p>
 
@@ -2821,7 +2821,7 @@ Parameters has no fields.
          </tbody>
 </table>
 
-### pactus.network_service.get_node_info <span id="pactus.network_service.get_node_info" class="rpc-badge"></span>
+### pactus.network.get_node_info <span id="pactus.network.get_node_info" class="rpc-badge"></span>
 
 <p>GetNodeInfo retrieves information about a specific node in the network.</p>
 
@@ -2965,12 +2965,12 @@ maximum number of messages to queue before dropping older ones.
          </tbody>
 </table>
 
-## UtilsService Service
+## Utils Service
 
 <p>Utils service defines RPC methods for utility functions such as message
 signing, verification, and etc.</p>
 
-### pactus.utils_service.sign_message_with_private_key <span id="pactus.utils_service.sign_message_with_private_key" class="rpc-badge"></span>
+### pactus.utils.sign_message_with_private_key <span id="pactus.utils.sign_message_with_private_key" class="rpc-badge"></span>
 
 <p>SignMessageWithPrivateKey signs a message with the provided private key.</p>
 
@@ -3014,7 +3014,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### pactus.utils_service.verify_message <span id="pactus.utils_service.verify_message" class="rpc-badge"></span>
+### pactus.utils.verify_message <span id="pactus.utils.verify_message" class="rpc-badge"></span>
 
 <p>VerifyMessage verifies a signature against the public key and message.</p>
 
@@ -3065,7 +3065,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### pactus.utils_service.public_key_aggregation <span id="pactus.utils_service.public_key_aggregation" class="rpc-badge"></span>
+### pactus.utils.public_key_aggregation <span id="pactus.utils.public_key_aggregation" class="rpc-badge"></span>
 
 <p>PublicKeyAggregation aggregates multiple BLS public keys into a single key.</p>
 
@@ -3109,7 +3109,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### pactus.utils_service.signature_aggregation <span id="pactus.utils_service.signature_aggregation" class="rpc-badge"></span>
+### pactus.utils.signature_aggregation <span id="pactus.utils.signature_aggregation" class="rpc-badge"></span>
 
 <p>SignatureAggregation aggregates multiple BLS signatures into a single signature.</p>
 
@@ -3146,11 +3146,11 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-## WalletService Service
+## Wallet Service
 
-<p>WalletService provides RPC methods for wallet management operations.</p>
+<p>Wallet service provides RPC methods for wallet management operations.</p>
 
-### pactus.wallet_service.create_wallet <span id="pactus.wallet_service.create_wallet" class="rpc-badge"></span>
+### pactus.wallet.create_wallet <span id="pactus.wallet.create_wallet" class="rpc-badge"></span>
 
 <p>CreateWallet creates a new wallet with the specified parameters.</p>
 
@@ -3194,7 +3194,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### pactus.wallet_service.restore_wallet <span id="pactus.wallet_service.restore_wallet" class="rpc-badge"></span>
+### pactus.wallet.restore_wallet <span id="pactus.wallet.restore_wallet" class="rpc-badge"></span>
 
 <p>RestoreWallet restores an existing wallet with the given mnemonic.</p>
 
@@ -3245,7 +3245,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### pactus.wallet_service.load_wallet <span id="pactus.wallet_service.load_wallet" class="rpc-badge"></span>
+### pactus.wallet.load_wallet <span id="pactus.wallet.load_wallet" class="rpc-badge"></span>
 
 <p>LoadWallet loads an existing wallet with the given name.</p>
 
@@ -3282,7 +3282,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### pactus.wallet_service.unload_wallet <span id="pactus.wallet_service.unload_wallet" class="rpc-badge"></span>
+### pactus.wallet.unload_wallet <span id="pactus.wallet.unload_wallet" class="rpc-badge"></span>
 
 <p>UnloadWallet unloads a currently loaded wallet with the specified name.</p>
 
@@ -3319,7 +3319,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### pactus.wallet_service.get_total_balance <span id="pactus.wallet_service.get_total_balance" class="rpc-badge"></span>
+### pactus.wallet.get_total_balance <span id="pactus.wallet.get_total_balance" class="rpc-badge"></span>
 
 <p>GetTotalBalance returns the total available balance of the wallet.</p>
 
@@ -3363,7 +3363,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### pactus.wallet_service.sign_raw_transaction <span id="pactus.wallet_service.sign_raw_transaction" class="rpc-badge"></span>
+### pactus.wallet.sign_raw_transaction <span id="pactus.wallet.sign_raw_transaction" class="rpc-badge"></span>
 
 <p>SignRawTransaction signs a raw transaction for a specified wallet.</p>
 
@@ -3421,7 +3421,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### pactus.wallet_service.get_validator_address <span id="pactus.wallet_service.get_validator_address" class="rpc-badge"></span>
+### pactus.wallet.get_validator_address <span id="pactus.wallet.get_validator_address" class="rpc-badge"></span>
 
 <p>GetValidatorAddress retrieves the validator address associated with a public key.</p>
 
@@ -3458,7 +3458,7 @@ signing, verification, and etc.</p>
      </tbody>
 </table>
 
-### pactus.wallet_service.get_new_address <span id="pactus.wallet_service.get_new_address" class="rpc-badge"></span>
+### pactus.wallet.get_new_address <span id="pactus.wallet.get_new_address" class="rpc-badge"></span>
 
 <p>GetNewAddress generates a new address for the specified wallet.</p>
 
@@ -3560,7 +3560,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
          </tbody>
 </table>
 
-### pactus.wallet_service.get_address_history <span id="pactus.wallet_service.get_address_history" class="rpc-badge"></span>
+### pactus.wallet.get_address_history <span id="pactus.wallet.get_address_history" class="rpc-badge"></span>
 
 <p>GetAddressHistory retrieves the transaction history of an address.</p>
 
@@ -3639,7 +3639,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
          </tbody>
 </table>
 
-### pactus.wallet_service.sign_message <span id="pactus.wallet_service.sign_message" class="rpc-badge"></span>
+### pactus.wallet.sign_message <span id="pactus.wallet.sign_message" class="rpc-badge"></span>
 
 <p>SignMessage signs an arbitrary message using a wallet's private key.</p>
 
@@ -3697,7 +3697,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
      </tbody>
 </table>
 
-### pactus.wallet_service.get_total_stake <span id="pactus.wallet_service.get_total_stake" class="rpc-badge"></span>
+### pactus.wallet.get_total_stake <span id="pactus.wallet.get_total_stake" class="rpc-badge"></span>
 
 <p>GetTotalStake returns the total stake amount in the wallet.</p>
 
@@ -3741,7 +3741,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
      </tbody>
 </table>
 
-### pactus.wallet_service.get_address_info <span id="pactus.wallet_service.get_address_info" class="rpc-badge"></span>
+### pactus.wallet.get_address_info <span id="pactus.wallet.get_address_info" class="rpc-badge"></span>
 
 <p>GetAddressInfo returns detailed information about a specific address.</p>
 
@@ -3813,7 +3813,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
      </tbody>
 </table>
 
-### pactus.wallet_service.set_address_label <span id="pactus.wallet_service.set_address_label" class="rpc-badge"></span>
+### pactus.wallet.set_address_label <span id="pactus.wallet.set_address_label" class="rpc-badge"></span>
 
 <p>SetAddressLabel sets or updates the label for a given address.</p>
 
@@ -3864,7 +3864,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
   </tbody>
 </table>
 
-### pactus.wallet_service.list_wallet <span id="pactus.wallet_service.list_wallet" class="rpc-badge"></span>
+### pactus.wallet.list_wallet <span id="pactus.wallet.list_wallet" class="rpc-badge"></span>
 
 <p>ListWallet returns list of all available wallets.</p>
 
@@ -3888,7 +3888,7 @@ Parameters has no fields.
      </tbody>
 </table>
 
-### pactus.wallet_service.get_wallet_info <span id="pactus.wallet_service.get_wallet_info" class="rpc-badge"></span>
+### pactus.wallet.get_wallet_info <span id="pactus.wallet.get_wallet_info" class="rpc-badge"></span>
 
 <p>GetWalletInfo returns detailed information about a specific wallet.</p>
 
@@ -3960,7 +3960,7 @@ Parameters has no fields.
      </tbody>
 </table>
 
-### pactus.wallet_service.list_address <span id="pactus.wallet_service.list_address" class="rpc-badge"></span>
+### pactus.wallet.list_address <span id="pactus.wallet.list_address" class="rpc-badge"></span>
 
 <p>ListAddress returns all addresses in the specified wallet.</p>
 

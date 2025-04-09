@@ -4,8 +4,8 @@ package pactus;
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus";
 
-// NetworkService provides RPCs for retrieving information about the network.
-service NetworkService {
+// Network service provides RPCs for retrieving information about the network.
+service Network {
   // GetNetworkInfo retrieves information about the overall network.
   rpc GetNetworkInfo(GetNetworkInfoRequest) returns (GetNetworkInfoResponse);
 

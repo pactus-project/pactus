@@ -468,7 +468,7 @@ final $typed_data.Uint8List proposalInfoDescriptor = $convert.base64Decode(
     'CXNpZ25hdHVyZQ==');
 
 const $core.Map<$core.String, $core.dynamic> BlockchainServiceBase$json = {
-  '1': 'BlockchainService',
+  '1': 'Blockchain',
   '2': [
     {'1': 'GetBlock', '2': '.pactus.GetBlockRequest', '3': '.pactus.GetBlockResponse'},
     {'1': 'GetBlockHash', '2': '.pactus.GetBlockHashRequest', '3': '.pactus.GetBlockHashResponse'},
@@ -522,23 +522,23 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Blockchain
   '.pactus.GetTxPoolContentResponse': GetTxPoolContentResponse$json,
 };
 
-/// Descriptor for `BlockchainService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
+/// Descriptor for `Blockchain`. Decode as a `google.protobuf.ServiceDescriptorProto`.
 final $typed_data.Uint8List blockchainServiceDescriptor = $convert.base64Decode(
-    'ChFCbG9ja2NoYWluU2VydmljZRI9CghHZXRCbG9jaxIXLnBhY3R1cy5HZXRCbG9ja1JlcXVlc3'
-    'QaGC5wYWN0dXMuR2V0QmxvY2tSZXNwb25zZRJJCgxHZXRCbG9ja0hhc2gSGy5wYWN0dXMuR2V0'
-    'QmxvY2tIYXNoUmVxdWVzdBocLnBhY3R1cy5HZXRCbG9ja0hhc2hSZXNwb25zZRJPCg5HZXRCbG'
-    '9ja0hlaWdodBIdLnBhY3R1cy5HZXRCbG9ja0hlaWdodFJlcXVlc3QaHi5wYWN0dXMuR2V0Qmxv'
-    'Y2tIZWlnaHRSZXNwb25zZRJYChFHZXRCbG9ja2NoYWluSW5mbxIgLnBhY3R1cy5HZXRCbG9ja2'
-    'NoYWluSW5mb1JlcXVlc3QaIS5wYWN0dXMuR2V0QmxvY2tjaGFpbkluZm9SZXNwb25zZRJVChBH'
-    'ZXRDb25zZW5zdXNJbmZvEh8ucGFjdHVzLkdldENvbnNlbnN1c0luZm9SZXF1ZXN0GiAucGFjdH'
-    'VzLkdldENvbnNlbnN1c0luZm9SZXNwb25zZRJDCgpHZXRBY2NvdW50EhkucGFjdHVzLkdldEFj'
-    'Y291bnRSZXF1ZXN0GhoucGFjdHVzLkdldEFjY291bnRSZXNwb25zZRJJCgxHZXRWYWxpZGF0b3'
-    'ISGy5wYWN0dXMuR2V0VmFsaWRhdG9yUmVxdWVzdBocLnBhY3R1cy5HZXRWYWxpZGF0b3JSZXNw'
-    'b25zZRJZChRHZXRWYWxpZGF0b3JCeU51bWJlchIjLnBhY3R1cy5HZXRWYWxpZGF0b3JCeU51bW'
-    'JlclJlcXVlc3QaHC5wYWN0dXMuR2V0VmFsaWRhdG9yUmVzcG9uc2USZAoVR2V0VmFsaWRhdG9y'
-    'QWRkcmVzc2VzEiQucGFjdHVzLkdldFZhbGlkYXRvckFkZHJlc3Nlc1JlcXVlc3QaJS5wYWN0dX'
-    'MuR2V0VmFsaWRhdG9yQWRkcmVzc2VzUmVzcG9uc2USSQoMR2V0UHVibGljS2V5EhsucGFjdHVz'
-    'LkdldFB1YmxpY0tleVJlcXVlc3QaHC5wYWN0dXMuR2V0UHVibGljS2V5UmVzcG9uc2USVQoQR2'
-    'V0VHhQb29sQ29udGVudBIfLnBhY3R1cy5HZXRUeFBvb2xDb250ZW50UmVxdWVzdBogLnBhY3R1'
-    'cy5HZXRUeFBvb2xDb250ZW50UmVzcG9uc2U=');
+    'CgpCbG9ja2NoYWluEj0KCEdldEJsb2NrEhcucGFjdHVzLkdldEJsb2NrUmVxdWVzdBoYLnBhY3'
+    'R1cy5HZXRCbG9ja1Jlc3BvbnNlEkkKDEdldEJsb2NrSGFzaBIbLnBhY3R1cy5HZXRCbG9ja0hh'
+    'c2hSZXF1ZXN0GhwucGFjdHVzLkdldEJsb2NrSGFzaFJlc3BvbnNlEk8KDkdldEJsb2NrSGVpZ2'
+    'h0Eh0ucGFjdHVzLkdldEJsb2NrSGVpZ2h0UmVxdWVzdBoeLnBhY3R1cy5HZXRCbG9ja0hlaWdo'
+    'dFJlc3BvbnNlElgKEUdldEJsb2NrY2hhaW5JbmZvEiAucGFjdHVzLkdldEJsb2NrY2hhaW5Jbm'
+    'ZvUmVxdWVzdBohLnBhY3R1cy5HZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlElUKEEdldENvbnNl'
+    'bnN1c0luZm8SHy5wYWN0dXMuR2V0Q29uc2Vuc3VzSW5mb1JlcXVlc3QaIC5wYWN0dXMuR2V0Q2'
+    '9uc2Vuc3VzSW5mb1Jlc3BvbnNlEkMKCkdldEFjY291bnQSGS5wYWN0dXMuR2V0QWNjb3VudFJl'
+    'cXVlc3QaGi5wYWN0dXMuR2V0QWNjb3VudFJlc3BvbnNlEkkKDEdldFZhbGlkYXRvchIbLnBhY3'
+    'R1cy5HZXRWYWxpZGF0b3JSZXF1ZXN0GhwucGFjdHVzLkdldFZhbGlkYXRvclJlc3BvbnNlElkK'
+    'FEdldFZhbGlkYXRvckJ5TnVtYmVyEiMucGFjdHVzLkdldFZhbGlkYXRvckJ5TnVtYmVyUmVxdW'
+    'VzdBocLnBhY3R1cy5HZXRWYWxpZGF0b3JSZXNwb25zZRJkChVHZXRWYWxpZGF0b3JBZGRyZXNz'
+    'ZXMSJC5wYWN0dXMuR2V0VmFsaWRhdG9yQWRkcmVzc2VzUmVxdWVzdBolLnBhY3R1cy5HZXRWYW'
+    'xpZGF0b3JBZGRyZXNzZXNSZXNwb25zZRJJCgxHZXRQdWJsaWNLZXkSGy5wYWN0dXMuR2V0UHVi'
+    'bGljS2V5UmVxdWVzdBocLnBhY3R1cy5HZXRQdWJsaWNLZXlSZXNwb25zZRJVChBHZXRUeFBvb2'
+    'xDb250ZW50Eh8ucGFjdHVzLkdldFR4UG9vbENvbnRlbnRSZXF1ZXN0GiAucGFjdHVzLkdldFR4'
+    'UG9vbENvbnRlbnRSZXNwb25zZQ==');
 

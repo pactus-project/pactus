@@ -17,30 +17,30 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type NetworkServiceJsonRPC struct {
-	client NetworkServiceClient
+type NetworkJsonRPC struct {
+	client NetworkClient
 }
 
-type paramsAndHeadersNetworkService struct {
+type paramsAndHeadersNetwork struct {
 	Headers metadata.MD     `json:"headers,omitempty"`
 	Params  json.RawMessage `json:"params"`
 }
 
-// RegisterNetworkServiceJsonRPC register the grpc client NetworkService for json-rpc.
+// RegisterNetworkJsonRPC register the grpc client Network for json-rpc.
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterNetworkServiceJsonRPC(conn *grpc.ClientConn) *NetworkServiceJsonRPC {
-	return &NetworkServiceJsonRPC{
-		client: NewNetworkServiceClient(conn),
+func RegisterNetworkJsonRPC(conn *grpc.ClientConn) *NetworkJsonRPC {
+	return &NetworkJsonRPC{
+		client: NewNetworkClient(conn),
 	}
 }
 
-func (s *NetworkServiceJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
+func (s *NetworkJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (any, error){
 
-		"pactus.network_service.get_network_info": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.network.get_network_info": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetNetworkInfoRequest)
 
-			var jrpcData paramsAndHeadersNetworkService
+			var jrpcData paramsAndHeadersNetwork
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -54,10 +54,10 @@ func (s *NetworkServiceJsonRPC) Methods() map[string]func(ctx context.Context, m
 			return s.client.GetNetworkInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.network_service.get_node_info": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.network.get_node_info": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetNodeInfoRequest)
 
-			var jrpcData paramsAndHeadersNetworkService
+			var jrpcData paramsAndHeadersNetwork
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err

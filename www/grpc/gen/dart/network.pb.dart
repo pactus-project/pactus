@@ -1010,18 +1010,18 @@ class CounterInfo extends $pb.GeneratedMessage {
   void clearBundles() => $_clearField(2);
 }
 
-/// NetworkService provides RPCs for retrieving information about the network.
-class NetworkServiceApi {
+/// Network service provides RPCs for retrieving information about the network.
+class NetworkApi {
   $pb.RpcClient _client;
-  NetworkServiceApi(this._client);
+  NetworkApi(this._client);
 
   /// GetNetworkInfo retrieves information about the overall network.
   $async.Future<GetNetworkInfoResponse> getNetworkInfo($pb.ClientContext? ctx, GetNetworkInfoRequest request) =>
-    _client.invoke<GetNetworkInfoResponse>(ctx, 'NetworkService', 'GetNetworkInfo', request, GetNetworkInfoResponse())
+    _client.invoke<GetNetworkInfoResponse>(ctx, 'Network', 'GetNetworkInfo', request, GetNetworkInfoResponse())
   ;
   /// GetNodeInfo retrieves information about a specific node in the network.
   $async.Future<GetNodeInfoResponse> getNodeInfo($pb.ClientContext? ctx, GetNodeInfoRequest request) =>
-    _client.invoke<GetNodeInfoResponse>(ctx, 'NetworkService', 'GetNodeInfo', request, GetNodeInfoResponse())
+    _client.invoke<GetNodeInfoResponse>(ctx, 'Network', 'GetNodeInfo', request, GetNodeInfoResponse())
   ;
 }
 

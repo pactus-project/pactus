@@ -1595,8 +1595,8 @@ const file_transaction_proto_rawDesc = "" +
 	"\x15PAYLOAD_TYPE_WITHDRAW\x10\x05*V\n" +
 	"\x14TransactionVerbosity\x12\x1e\n" +
 	"\x1aTRANSACTION_VERBOSITY_DATA\x10\x00\x12\x1e\n" +
-	"\x1aTRANSACTION_VERBOSITY_INFO\x10\x012\x92\x06\n" +
-	"\x12TransactionService\x12O\n" +
+	"\x1aTRANSACTION_VERBOSITY_INFO\x10\x012\x8b\x06\n" +
+	"\vTransaction\x12O\n" +
 	"\x0eGetTransaction\x12\x1d.pactus.GetTransactionRequest\x1a\x1e.pactus.GetTransactionResponse\x12I\n" +
 	"\fCalculateFee\x12\x1b.pactus.CalculateFeeRequest\x1a\x1c.pactus.CalculateFeeResponse\x12a\n" +
 	"\x14BroadcastTransaction\x12#.pactus.BroadcastTransactionRequest\x1a$.pactus.BroadcastTransactionResponse\x12h\n" +
@@ -1655,22 +1655,22 @@ var file_transaction_proto_depIdxs = []int32{
 	16, // 7: pactus.TransactionInfo.unbond:type_name -> pactus.PayloadUnbond
 	17, // 8: pactus.TransactionInfo.withdraw:type_name -> pactus.PayloadWithdraw
 	18, // 9: pactus.DecodeRawTransactionResponse.transaction:type_name -> pactus.TransactionInfo
-	2,  // 10: pactus.TransactionService.GetTransaction:input_type -> pactus.GetTransactionRequest
-	4,  // 11: pactus.TransactionService.CalculateFee:input_type -> pactus.CalculateFeeRequest
-	6,  // 12: pactus.TransactionService.BroadcastTransaction:input_type -> pactus.BroadcastTransactionRequest
-	8,  // 13: pactus.TransactionService.GetRawTransferTransaction:input_type -> pactus.GetRawTransferTransactionRequest
-	9,  // 14: pactus.TransactionService.GetRawBondTransaction:input_type -> pactus.GetRawBondTransactionRequest
-	10, // 15: pactus.TransactionService.GetRawUnbondTransaction:input_type -> pactus.GetRawUnbondTransactionRequest
-	11, // 16: pactus.TransactionService.GetRawWithdrawTransaction:input_type -> pactus.GetRawWithdrawTransactionRequest
-	19, // 17: pactus.TransactionService.DecodeRawTransaction:input_type -> pactus.DecodeRawTransactionRequest
-	3,  // 18: pactus.TransactionService.GetTransaction:output_type -> pactus.GetTransactionResponse
-	5,  // 19: pactus.TransactionService.CalculateFee:output_type -> pactus.CalculateFeeResponse
-	7,  // 20: pactus.TransactionService.BroadcastTransaction:output_type -> pactus.BroadcastTransactionResponse
-	12, // 21: pactus.TransactionService.GetRawTransferTransaction:output_type -> pactus.GetRawTransactionResponse
-	12, // 22: pactus.TransactionService.GetRawBondTransaction:output_type -> pactus.GetRawTransactionResponse
-	12, // 23: pactus.TransactionService.GetRawUnbondTransaction:output_type -> pactus.GetRawTransactionResponse
-	12, // 24: pactus.TransactionService.GetRawWithdrawTransaction:output_type -> pactus.GetRawTransactionResponse
-	20, // 25: pactus.TransactionService.DecodeRawTransaction:output_type -> pactus.DecodeRawTransactionResponse
+	2,  // 10: pactus.Transaction.GetTransaction:input_type -> pactus.GetTransactionRequest
+	4,  // 11: pactus.Transaction.CalculateFee:input_type -> pactus.CalculateFeeRequest
+	6,  // 12: pactus.Transaction.BroadcastTransaction:input_type -> pactus.BroadcastTransactionRequest
+	8,  // 13: pactus.Transaction.GetRawTransferTransaction:input_type -> pactus.GetRawTransferTransactionRequest
+	9,  // 14: pactus.Transaction.GetRawBondTransaction:input_type -> pactus.GetRawBondTransactionRequest
+	10, // 15: pactus.Transaction.GetRawUnbondTransaction:input_type -> pactus.GetRawUnbondTransactionRequest
+	11, // 16: pactus.Transaction.GetRawWithdrawTransaction:input_type -> pactus.GetRawWithdrawTransactionRequest
+	19, // 17: pactus.Transaction.DecodeRawTransaction:input_type -> pactus.DecodeRawTransactionRequest
+	3,  // 18: pactus.Transaction.GetTransaction:output_type -> pactus.GetTransactionResponse
+	5,  // 19: pactus.Transaction.CalculateFee:output_type -> pactus.CalculateFeeResponse
+	7,  // 20: pactus.Transaction.BroadcastTransaction:output_type -> pactus.BroadcastTransactionResponse
+	12, // 21: pactus.Transaction.GetRawTransferTransaction:output_type -> pactus.GetRawTransactionResponse
+	12, // 22: pactus.Transaction.GetRawBondTransaction:output_type -> pactus.GetRawTransactionResponse
+	12, // 23: pactus.Transaction.GetRawUnbondTransaction:output_type -> pactus.GetRawTransactionResponse
+	12, // 24: pactus.Transaction.GetRawWithdrawTransaction:output_type -> pactus.GetRawTransactionResponse
+	20, // 25: pactus.Transaction.DecodeRawTransaction:output_type -> pactus.DecodeRawTransactionResponse
 	18, // [18:26] is the sub-list for method output_type
 	10, // [10:18] is the sub-list for method input_type
 	10, // [10:10] is the sub-list for extension type_name
