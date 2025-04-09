@@ -3,7 +3,6 @@
 'use strict';
 var grpc = require('grpc');
 var wallet_pb = require('./wallet_pb.js');
-var transaction_pb = require('./transaction_pb.js');
 
 function serialize_pactus_CreateWalletRequest(arg) {
   if (!(arg instanceof wallet_pb.CreateWalletRequest)) {
@@ -269,26 +268,26 @@ function deserialize_pactus_RestoreWalletResponse(buffer_arg) {
   return wallet_pb.RestoreWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_SetLabelRequest(arg) {
-  if (!(arg instanceof wallet_pb.SetLabelRequest)) {
-    throw new Error('Expected argument of type pactus.SetLabelRequest');
+function serialize_pactus_SetAddressLabelRequest(arg) {
+  if (!(arg instanceof wallet_pb.SetAddressLabelRequest)) {
+    throw new Error('Expected argument of type pactus.SetAddressLabelRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_SetLabelRequest(buffer_arg) {
-  return wallet_pb.SetLabelRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_SetAddressLabelRequest(buffer_arg) {
+  return wallet_pb.SetAddressLabelRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_SetLabelResponse(arg) {
-  if (!(arg instanceof wallet_pb.SetLabelResponse)) {
-    throw new Error('Expected argument of type pactus.SetLabelResponse');
+function serialize_pactus_SetAddressLabelResponse(arg) {
+  if (!(arg instanceof wallet_pb.SetAddressLabelResponse)) {
+    throw new Error('Expected argument of type pactus.SetAddressLabelResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_SetLabelResponse(buffer_arg) {
-  return wallet_pb.SetLabelResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_SetAddressLabelResponse(buffer_arg) {
+  return wallet_pb.SetAddressLabelResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_pactus_SignMessageRequest(arg) {
@@ -358,11 +357,11 @@ function deserialize_pactus_UnloadWalletResponse(buffer_arg) {
 }
 
 
-// Define the Wallet service with various RPC methods for wallet management.
-var WalletService = exports.WalletService = {
+// WalletService provides RPC methods for wallet management operations.
+var WalletServiceService = exports.WalletServiceService = {
   // CreateWallet creates a new wallet with the specified parameters.
 createWallet: {
-    path: '/pactus.Wallet/CreateWallet',
+    path: '/pactus.WalletService/CreateWallet',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.CreateWalletRequest,
@@ -374,7 +373,7 @@ createWallet: {
   },
   // RestoreWallet restores an existing wallet with the given mnemonic.
 restoreWallet: {
-    path: '/pactus.Wallet/RestoreWallet',
+    path: '/pactus.WalletService/RestoreWallet',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.RestoreWalletRequest,
@@ -386,7 +385,7 @@ restoreWallet: {
   },
   // LoadWallet loads an existing wallet with the given name.
 loadWallet: {
-    path: '/pactus.Wallet/LoadWallet',
+    path: '/pactus.WalletService/LoadWallet',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.LoadWalletRequest,
@@ -398,7 +397,7 @@ loadWallet: {
   },
   // UnloadWallet unloads a currently loaded wallet with the specified name.
 unloadWallet: {
-    path: '/pactus.Wallet/UnloadWallet',
+    path: '/pactus.WalletService/UnloadWallet',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.UnloadWalletRequest,
@@ -410,7 +409,7 @@ unloadWallet: {
   },
   // GetTotalBalance returns the total available balance of the wallet.
 getTotalBalance: {
-    path: '/pactus.Wallet/GetTotalBalance',
+    path: '/pactus.WalletService/GetTotalBalance',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.GetTotalBalanceRequest,
@@ -422,7 +421,7 @@ getTotalBalance: {
   },
   // SignRawTransaction signs a raw transaction for a specified wallet.
 signRawTransaction: {
-    path: '/pactus.Wallet/SignRawTransaction',
+    path: '/pactus.WalletService/SignRawTransaction',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.SignRawTransactionRequest,
@@ -432,10 +431,9 @@ signRawTransaction: {
     responseSerialize: serialize_pactus_SignRawTransactionResponse,
     responseDeserialize: deserialize_pactus_SignRawTransactionResponse,
   },
-  // GetValidatorAddress retrieves the validator address associated with a
-// public key.
+  // GetValidatorAddress retrieves the validator address associated with a public key.
 getValidatorAddress: {
-    path: '/pactus.Wallet/GetValidatorAddress',
+    path: '/pactus.WalletService/GetValidatorAddress',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.GetValidatorAddressRequest,
@@ -447,7 +445,7 @@ getValidatorAddress: {
   },
   // GetNewAddress generates a new address for the specified wallet.
 getNewAddress: {
-    path: '/pactus.Wallet/GetNewAddress',
+    path: '/pactus.WalletService/GetNewAddress',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.GetNewAddressRequest,
@@ -459,7 +457,7 @@ getNewAddress: {
   },
   // GetAddressHistory retrieves the transaction history of an address.
 getAddressHistory: {
-    path: '/pactus.Wallet/GetAddressHistory',
+    path: '/pactus.WalletService/GetAddressHistory',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.GetAddressHistoryRequest,
@@ -469,9 +467,9 @@ getAddressHistory: {
     responseSerialize: serialize_pactus_GetAddressHistoryResponse,
     responseDeserialize: deserialize_pactus_GetAddressHistoryResponse,
   },
-  // SignMessage signs an arbitrary message.
+  // SignMessage signs an arbitrary message using a wallet's private key.
 signMessage: {
-    path: '/pactus.Wallet/SignMessage',
+    path: '/pactus.WalletService/SignMessage',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.SignMessageRequest,
@@ -481,9 +479,9 @@ signMessage: {
     responseSerialize: serialize_pactus_SignMessageResponse,
     responseDeserialize: deserialize_pactus_SignMessageResponse,
   },
-  // GetTotalStake return total stake of wallet.
+  // GetTotalStake returns the total stake amount in the wallet.
 getTotalStake: {
-    path: '/pactus.Wallet/GetTotalStake',
+    path: '/pactus.WalletService/GetTotalStake',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.GetTotalStakeRequest,
@@ -493,9 +491,9 @@ getTotalStake: {
     responseSerialize: serialize_pactus_GetTotalStakeResponse,
     responseDeserialize: deserialize_pactus_GetTotalStakeResponse,
   },
-  // GetAddressInfo return address information.
+  // GetAddressInfo returns detailed information about a specific address.
 getAddressInfo: {
-    path: '/pactus.Wallet/GetAddressInfo',
+    path: '/pactus.WalletService/GetAddressInfo',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.GetAddressInfoRequest,
@@ -505,21 +503,21 @@ getAddressInfo: {
     responseSerialize: serialize_pactus_GetAddressInfoResponse,
     responseDeserialize: deserialize_pactus_GetAddressInfoResponse,
   },
-  // SetAddressLabel set label for given address.
+  // SetAddressLabel sets or updates the label for a given address.
 setAddressLabel: {
-    path: '/pactus.Wallet/SetAddressLabel',
+    path: '/pactus.WalletService/SetAddressLabel',
     requestStream: false,
     responseStream: false,
-    requestType: wallet_pb.SetLabelRequest,
-    responseType: wallet_pb.SetLabelResponse,
-    requestSerialize: serialize_pactus_SetLabelRequest,
-    requestDeserialize: deserialize_pactus_SetLabelRequest,
-    responseSerialize: serialize_pactus_SetLabelResponse,
-    responseDeserialize: deserialize_pactus_SetLabelResponse,
+    requestType: wallet_pb.SetAddressLabelRequest,
+    responseType: wallet_pb.SetAddressLabelResponse,
+    requestSerialize: serialize_pactus_SetAddressLabelRequest,
+    requestDeserialize: deserialize_pactus_SetAddressLabelRequest,
+    responseSerialize: serialize_pactus_SetAddressLabelResponse,
+    responseDeserialize: deserialize_pactus_SetAddressLabelResponse,
   },
-  // ListWallet return list wallet name.
+  // ListWallet returns list of all available wallets.
 listWallet: {
-    path: '/pactus.Wallet/ListWallet',
+    path: '/pactus.WalletService/ListWallet',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.ListWalletRequest,
@@ -529,9 +527,9 @@ listWallet: {
     responseSerialize: serialize_pactus_ListWalletResponse,
     responseDeserialize: deserialize_pactus_ListWalletResponse,
   },
-  // GetWalletInfo return wallet information.
+  // GetWalletInfo returns detailed information about a specific wallet.
 getWalletInfo: {
-    path: '/pactus.Wallet/GetWalletInfo',
+    path: '/pactus.WalletService/GetWalletInfo',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.GetWalletInfoRequest,
@@ -541,9 +539,9 @@ getWalletInfo: {
     responseSerialize: serialize_pactus_GetWalletInfoResponse,
     responseDeserialize: deserialize_pactus_GetWalletInfoResponse,
   },
-  // ListAddress return list address in wallet.
+  // ListAddress returns all addresses in the specified wallet.
 listAddress: {
-    path: '/pactus.Wallet/ListAddress',
+    path: '/pactus.WalletService/ListAddress',
     requestStream: false,
     responseStream: false,
     requestType: wallet_pb.ListAddressRequest,
@@ -555,4 +553,4 @@ listAddress: {
   },
 };
 
-exports.WalletClient = grpc.makeGenericClientConstructor(WalletService);
+exports.WalletServiceClient = grpc.makeGenericClientConstructor(WalletServiceService, 'WalletService');

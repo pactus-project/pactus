@@ -1,14 +1,14 @@
 // @generated
 /// Generated client implementations.
-pub mod transaction_client {
+pub mod transaction_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct TransactionClient<T> {
+    pub struct TransactionServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl TransactionClient<tonic::transport::Channel> {
+    impl TransactionServiceClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -19,7 +19,7 @@ pub mod transaction_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> TransactionClient<T>
+    impl<T> TransactionServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -37,7 +37,7 @@ pub mod transaction_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> TransactionClient<InterceptedService<T, F>>
+        ) -> TransactionServiceClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -51,7 +51,7 @@ pub mod transaction_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            TransactionClient::new(InterceptedService::new(inner, interceptor))
+            TransactionServiceClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -102,11 +102,11 @@ pub mod transaction_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Transaction/GetTransaction",
+                "/pactus.TransactionService/GetTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Transaction", "GetTransaction"));
+                .insert(GrpcMethod::new("pactus.TransactionService", "GetTransaction"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn calculate_fee(
@@ -127,11 +127,11 @@ pub mod transaction_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Transaction/CalculateFee",
+                "/pactus.TransactionService/CalculateFee",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Transaction", "CalculateFee"));
+                .insert(GrpcMethod::new("pactus.TransactionService", "CalculateFee"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn broadcast_transaction(
@@ -152,11 +152,13 @@ pub mod transaction_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Transaction/BroadcastTransaction",
+                "/pactus.TransactionService/BroadcastTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Transaction", "BroadcastTransaction"));
+                .insert(
+                    GrpcMethod::new("pactus.TransactionService", "BroadcastTransaction"),
+                );
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_raw_transfer_transaction(
@@ -177,12 +179,15 @@ pub mod transaction_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Transaction/GetRawTransferTransaction",
+                "/pactus.TransactionService/GetRawTransferTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
-                    GrpcMethod::new("pactus.Transaction", "GetRawTransferTransaction"),
+                    GrpcMethod::new(
+                        "pactus.TransactionService",
+                        "GetRawTransferTransaction",
+                    ),
                 );
             self.inner.unary(req, path, codec).await
         }
@@ -204,11 +209,13 @@ pub mod transaction_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Transaction/GetRawBondTransaction",
+                "/pactus.TransactionService/GetRawBondTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Transaction", "GetRawBondTransaction"));
+                .insert(
+                    GrpcMethod::new("pactus.TransactionService", "GetRawBondTransaction"),
+                );
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_raw_unbond_transaction(
@@ -229,12 +236,15 @@ pub mod transaction_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Transaction/GetRawUnbondTransaction",
+                "/pactus.TransactionService/GetRawUnbondTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
-                    GrpcMethod::new("pactus.Transaction", "GetRawUnbondTransaction"),
+                    GrpcMethod::new(
+                        "pactus.TransactionService",
+                        "GetRawUnbondTransaction",
+                    ),
                 );
             self.inner.unary(req, path, codec).await
         }
@@ -256,12 +266,15 @@ pub mod transaction_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Transaction/GetRawWithdrawTransaction",
+                "/pactus.TransactionService/GetRawWithdrawTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(
-                    GrpcMethod::new("pactus.Transaction", "GetRawWithdrawTransaction"),
+                    GrpcMethod::new(
+                        "pactus.TransactionService",
+                        "GetRawWithdrawTransaction",
+                    ),
                 );
             self.inner.unary(req, path, codec).await
         }
@@ -283,22 +296,24 @@ pub mod transaction_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Transaction/DecodeRawTransaction",
+                "/pactus.TransactionService/DecodeRawTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Transaction", "DecodeRawTransaction"));
+                .insert(
+                    GrpcMethod::new("pactus.TransactionService", "DecodeRawTransaction"),
+                );
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod transaction_server {
+pub mod transaction_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with TransactionServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with TransactionServiceServer.
     #[async_trait]
-    pub trait Transaction: Send + Sync + 'static {
+    pub trait TransactionService: Send + Sync + 'static {
         async fn get_transaction(
             &self,
             request: tonic::Request<super::GetTransactionRequest>,
@@ -357,20 +372,18 @@ pub mod transaction_server {
         >;
     }
     #[derive(Debug)]
-    pub struct TransactionServer<T: Transaction> {
-        inner: _Inner<T>,
+    pub struct TransactionServiceServer<T: TransactionService> {
+        inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    struct _Inner<T>(Arc<T>);
-    impl<T: Transaction> TransactionServer<T> {
+    impl<T: TransactionService> TransactionServiceServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
         pub fn from_arc(inner: Arc<T>) -> Self {
-            let inner = _Inner(inner);
             Self {
                 inner,
                 accept_compression_encodings: Default::default(),
@@ -417,9 +430,9 @@ pub mod transaction_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for TransactionServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for TransactionServiceServer<T>
     where
-        T: Transaction,
+        T: TransactionService,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -433,13 +446,12 @@ pub mod transaction_server {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
-            let inner = self.inner.clone();
             match req.uri().path() {
-                "/pactus.Transaction/GetTransaction" => {
+                "/pactus.TransactionService/GetTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct GetTransactionSvc<T: Transaction>(pub Arc<T>);
+                    struct GetTransactionSvc<T: TransactionService>(pub Arc<T>);
                     impl<
-                        T: Transaction,
+                        T: TransactionService,
                     > tonic::server::UnaryService<super::GetTransactionRequest>
                     for GetTransactionSvc<T> {
                         type Response = super::GetTransactionResponse;
@@ -453,7 +465,8 @@ pub mod transaction_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_transaction(request).await
+                                <T as TransactionService>::get_transaction(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -464,7 +477,6 @@ pub mod transaction_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetTransactionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -481,11 +493,11 @@ pub mod transaction_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Transaction/CalculateFee" => {
+                "/pactus.TransactionService/CalculateFee" => {
                     #[allow(non_camel_case_types)]
-                    struct CalculateFeeSvc<T: Transaction>(pub Arc<T>);
+                    struct CalculateFeeSvc<T: TransactionService>(pub Arc<T>);
                     impl<
-                        T: Transaction,
+                        T: TransactionService,
                     > tonic::server::UnaryService<super::CalculateFeeRequest>
                     for CalculateFeeSvc<T> {
                         type Response = super::CalculateFeeResponse;
@@ -499,7 +511,8 @@ pub mod transaction_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).calculate_fee(request).await
+                                <T as TransactionService>::calculate_fee(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -510,7 +523,6 @@ pub mod transaction_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = CalculateFeeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -527,11 +539,11 @@ pub mod transaction_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Transaction/BroadcastTransaction" => {
+                "/pactus.TransactionService/BroadcastTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct BroadcastTransactionSvc<T: Transaction>(pub Arc<T>);
+                    struct BroadcastTransactionSvc<T: TransactionService>(pub Arc<T>);
                     impl<
-                        T: Transaction,
+                        T: TransactionService,
                     > tonic::server::UnaryService<super::BroadcastTransactionRequest>
                     for BroadcastTransactionSvc<T> {
                         type Response = super::BroadcastTransactionResponse;
@@ -545,7 +557,11 @@ pub mod transaction_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).broadcast_transaction(request).await
+                                <T as TransactionService>::broadcast_transaction(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -556,7 +572,6 @@ pub mod transaction_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = BroadcastTransactionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -573,11 +588,13 @@ pub mod transaction_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Transaction/GetRawTransferTransaction" => {
+                "/pactus.TransactionService/GetRawTransferTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct GetRawTransferTransactionSvc<T: Transaction>(pub Arc<T>);
+                    struct GetRawTransferTransactionSvc<T: TransactionService>(
+                        pub Arc<T>,
+                    );
                     impl<
-                        T: Transaction,
+                        T: TransactionService,
                     > tonic::server::UnaryService<
                         super::GetRawTransferTransactionRequest,
                     > for GetRawTransferTransactionSvc<T> {
@@ -594,7 +611,11 @@ pub mod transaction_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_raw_transfer_transaction(request).await
+                                <T as TransactionService>::get_raw_transfer_transaction(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -605,7 +626,6 @@ pub mod transaction_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetRawTransferTransactionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -622,11 +642,11 @@ pub mod transaction_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Transaction/GetRawBondTransaction" => {
+                "/pactus.TransactionService/GetRawBondTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct GetRawBondTransactionSvc<T: Transaction>(pub Arc<T>);
+                    struct GetRawBondTransactionSvc<T: TransactionService>(pub Arc<T>);
                     impl<
-                        T: Transaction,
+                        T: TransactionService,
                     > tonic::server::UnaryService<super::GetRawBondTransactionRequest>
                     for GetRawBondTransactionSvc<T> {
                         type Response = super::GetRawTransactionResponse;
@@ -640,7 +660,11 @@ pub mod transaction_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_raw_bond_transaction(request).await
+                                <T as TransactionService>::get_raw_bond_transaction(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -651,7 +675,6 @@ pub mod transaction_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetRawBondTransactionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -668,11 +691,11 @@ pub mod transaction_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Transaction/GetRawUnbondTransaction" => {
+                "/pactus.TransactionService/GetRawUnbondTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct GetRawUnbondTransactionSvc<T: Transaction>(pub Arc<T>);
+                    struct GetRawUnbondTransactionSvc<T: TransactionService>(pub Arc<T>);
                     impl<
-                        T: Transaction,
+                        T: TransactionService,
                     > tonic::server::UnaryService<super::GetRawUnbondTransactionRequest>
                     for GetRawUnbondTransactionSvc<T> {
                         type Response = super::GetRawTransactionResponse;
@@ -688,7 +711,11 @@ pub mod transaction_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_raw_unbond_transaction(request).await
+                                <T as TransactionService>::get_raw_unbond_transaction(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -699,7 +726,6 @@ pub mod transaction_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetRawUnbondTransactionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -716,11 +742,13 @@ pub mod transaction_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Transaction/GetRawWithdrawTransaction" => {
+                "/pactus.TransactionService/GetRawWithdrawTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct GetRawWithdrawTransactionSvc<T: Transaction>(pub Arc<T>);
+                    struct GetRawWithdrawTransactionSvc<T: TransactionService>(
+                        pub Arc<T>,
+                    );
                     impl<
-                        T: Transaction,
+                        T: TransactionService,
                     > tonic::server::UnaryService<
                         super::GetRawWithdrawTransactionRequest,
                     > for GetRawWithdrawTransactionSvc<T> {
@@ -737,7 +765,11 @@ pub mod transaction_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_raw_withdraw_transaction(request).await
+                                <T as TransactionService>::get_raw_withdraw_transaction(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -748,7 +780,6 @@ pub mod transaction_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetRawWithdrawTransactionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -765,11 +796,11 @@ pub mod transaction_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Transaction/DecodeRawTransaction" => {
+                "/pactus.TransactionService/DecodeRawTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct DecodeRawTransactionSvc<T: Transaction>(pub Arc<T>);
+                    struct DecodeRawTransactionSvc<T: TransactionService>(pub Arc<T>);
                     impl<
-                        T: Transaction,
+                        T: TransactionService,
                     > tonic::server::UnaryService<super::DecodeRawTransactionRequest>
                     for DecodeRawTransactionSvc<T> {
                         type Response = super::DecodeRawTransactionResponse;
@@ -783,7 +814,11 @@ pub mod transaction_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).decode_raw_transaction(request).await
+                                <T as TransactionService>::decode_raw_transaction(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -794,7 +829,6 @@ pub mod transaction_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = DecodeRawTransactionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -816,8 +850,11 @@ pub mod transaction_server {
                         Ok(
                             http::Response::builder()
                                 .status(200)
-                                .header("grpc-status", "12")
-                                .header("content-type", "application/grpc")
+                                .header("grpc-status", tonic::Code::Unimplemented as i32)
+                                .header(
+                                    http::header::CONTENT_TYPE,
+                                    tonic::metadata::GRPC_CONTENT_TYPE,
+                                )
                                 .body(empty_body())
                                 .unwrap(),
                         )
@@ -826,7 +863,7 @@ pub mod transaction_server {
             }
         }
     }
-    impl<T: Transaction> Clone for TransactionServer<T> {
+    impl<T: TransactionService> Clone for TransactionServiceServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -838,30 +875,21 @@ pub mod transaction_server {
             }
         }
     }
-    impl<T: Transaction> Clone for _Inner<T> {
-        fn clone(&self) -> Self {
-            Self(Arc::clone(&self.0))
-        }
-    }
-    impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "{:?}", self.0)
-        }
-    }
-    impl<T: Transaction> tonic::server::NamedService for TransactionServer<T> {
-        const NAME: &'static str = "pactus.Transaction";
+    impl<T: TransactionService> tonic::server::NamedService
+    for TransactionServiceServer<T> {
+        const NAME: &'static str = "pactus.TransactionService";
     }
 }
 /// Generated client implementations.
-pub mod blockchain_client {
+pub mod blockchain_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct BlockchainClient<T> {
+    pub struct BlockchainServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl BlockchainClient<tonic::transport::Channel> {
+    impl BlockchainServiceClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -872,7 +900,7 @@ pub mod blockchain_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> BlockchainClient<T>
+    impl<T> BlockchainServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -890,7 +918,7 @@ pub mod blockchain_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> BlockchainClient<InterceptedService<T, F>>
+        ) -> BlockchainServiceClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -904,7 +932,7 @@ pub mod blockchain_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            BlockchainClient::new(InterceptedService::new(inner, interceptor))
+            BlockchainServiceClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -955,11 +983,11 @@ pub mod blockchain_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Blockchain/GetBlock",
+                "/pactus.BlockchainService/GetBlock",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Blockchain", "GetBlock"));
+                .insert(GrpcMethod::new("pactus.BlockchainService", "GetBlock"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_block_hash(
@@ -980,11 +1008,11 @@ pub mod blockchain_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Blockchain/GetBlockHash",
+                "/pactus.BlockchainService/GetBlockHash",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Blockchain", "GetBlockHash"));
+                .insert(GrpcMethod::new("pactus.BlockchainService", "GetBlockHash"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_block_height(
@@ -1005,11 +1033,11 @@ pub mod blockchain_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Blockchain/GetBlockHeight",
+                "/pactus.BlockchainService/GetBlockHeight",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Blockchain", "GetBlockHeight"));
+                .insert(GrpcMethod::new("pactus.BlockchainService", "GetBlockHeight"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_blockchain_info(
@@ -1030,11 +1058,13 @@ pub mod blockchain_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Blockchain/GetBlockchainInfo",
+                "/pactus.BlockchainService/GetBlockchainInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Blockchain", "GetBlockchainInfo"));
+                .insert(
+                    GrpcMethod::new("pactus.BlockchainService", "GetBlockchainInfo"),
+                );
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_consensus_info(
@@ -1055,11 +1085,11 @@ pub mod blockchain_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Blockchain/GetConsensusInfo",
+                "/pactus.BlockchainService/GetConsensusInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Blockchain", "GetConsensusInfo"));
+                .insert(GrpcMethod::new("pactus.BlockchainService", "GetConsensusInfo"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_account(
@@ -1080,11 +1110,11 @@ pub mod blockchain_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Blockchain/GetAccount",
+                "/pactus.BlockchainService/GetAccount",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Blockchain", "GetAccount"));
+                .insert(GrpcMethod::new("pactus.BlockchainService", "GetAccount"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_validator(
@@ -1105,11 +1135,11 @@ pub mod blockchain_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Blockchain/GetValidator",
+                "/pactus.BlockchainService/GetValidator",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Blockchain", "GetValidator"));
+                .insert(GrpcMethod::new("pactus.BlockchainService", "GetValidator"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_validator_by_number(
@@ -1130,11 +1160,13 @@ pub mod blockchain_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Blockchain/GetValidatorByNumber",
+                "/pactus.BlockchainService/GetValidatorByNumber",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Blockchain", "GetValidatorByNumber"));
+                .insert(
+                    GrpcMethod::new("pactus.BlockchainService", "GetValidatorByNumber"),
+                );
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_validator_addresses(
@@ -1155,11 +1187,13 @@ pub mod blockchain_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Blockchain/GetValidatorAddresses",
+                "/pactus.BlockchainService/GetValidatorAddresses",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Blockchain", "GetValidatorAddresses"));
+                .insert(
+                    GrpcMethod::new("pactus.BlockchainService", "GetValidatorAddresses"),
+                );
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_public_key(
@@ -1180,11 +1214,11 @@ pub mod blockchain_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Blockchain/GetPublicKey",
+                "/pactus.BlockchainService/GetPublicKey",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Blockchain", "GetPublicKey"));
+                .insert(GrpcMethod::new("pactus.BlockchainService", "GetPublicKey"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_tx_pool_content(
@@ -1205,22 +1239,22 @@ pub mod blockchain_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Blockchain/GetTxPoolContent",
+                "/pactus.BlockchainService/GetTxPoolContent",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Blockchain", "GetTxPoolContent"));
+                .insert(GrpcMethod::new("pactus.BlockchainService", "GetTxPoolContent"));
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod blockchain_server {
+pub mod blockchain_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with BlockchainServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with BlockchainServiceServer.
     #[async_trait]
-    pub trait Blockchain: Send + Sync + 'static {
+    pub trait BlockchainService: Send + Sync + 'static {
         async fn get_block(
             &self,
             request: tonic::Request<super::GetBlockRequest>,
@@ -1300,20 +1334,18 @@ pub mod blockchain_server {
         >;
     }
     #[derive(Debug)]
-    pub struct BlockchainServer<T: Blockchain> {
-        inner: _Inner<T>,
+    pub struct BlockchainServiceServer<T: BlockchainService> {
+        inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    struct _Inner<T>(Arc<T>);
-    impl<T: Blockchain> BlockchainServer<T> {
+    impl<T: BlockchainService> BlockchainServiceServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
         pub fn from_arc(inner: Arc<T>) -> Self {
-            let inner = _Inner(inner);
             Self {
                 inner,
                 accept_compression_encodings: Default::default(),
@@ -1360,9 +1392,9 @@ pub mod blockchain_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for BlockchainServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for BlockchainServiceServer<T>
     where
-        T: Blockchain,
+        T: BlockchainService,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -1376,13 +1408,12 @@ pub mod blockchain_server {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
-            let inner = self.inner.clone();
             match req.uri().path() {
-                "/pactus.Blockchain/GetBlock" => {
+                "/pactus.BlockchainService/GetBlock" => {
                     #[allow(non_camel_case_types)]
-                    struct GetBlockSvc<T: Blockchain>(pub Arc<T>);
+                    struct GetBlockSvc<T: BlockchainService>(pub Arc<T>);
                     impl<
-                        T: Blockchain,
+                        T: BlockchainService,
                     > tonic::server::UnaryService<super::GetBlockRequest>
                     for GetBlockSvc<T> {
                         type Response = super::GetBlockResponse;
@@ -1395,7 +1426,9 @@ pub mod blockchain_server {
                             request: tonic::Request<super::GetBlockRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_block(request).await };
+                            let fut = async move {
+                                <T as BlockchainService>::get_block(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -1405,7 +1438,6 @@ pub mod blockchain_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetBlockSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -1422,11 +1454,11 @@ pub mod blockchain_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Blockchain/GetBlockHash" => {
+                "/pactus.BlockchainService/GetBlockHash" => {
                     #[allow(non_camel_case_types)]
-                    struct GetBlockHashSvc<T: Blockchain>(pub Arc<T>);
+                    struct GetBlockHashSvc<T: BlockchainService>(pub Arc<T>);
                     impl<
-                        T: Blockchain,
+                        T: BlockchainService,
                     > tonic::server::UnaryService<super::GetBlockHashRequest>
                     for GetBlockHashSvc<T> {
                         type Response = super::GetBlockHashResponse;
@@ -1440,7 +1472,8 @@ pub mod blockchain_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_block_hash(request).await
+                                <T as BlockchainService>::get_block_hash(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -1451,7 +1484,6 @@ pub mod blockchain_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetBlockHashSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -1468,11 +1500,11 @@ pub mod blockchain_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Blockchain/GetBlockHeight" => {
+                "/pactus.BlockchainService/GetBlockHeight" => {
                     #[allow(non_camel_case_types)]
-                    struct GetBlockHeightSvc<T: Blockchain>(pub Arc<T>);
+                    struct GetBlockHeightSvc<T: BlockchainService>(pub Arc<T>);
                     impl<
-                        T: Blockchain,
+                        T: BlockchainService,
                     > tonic::server::UnaryService<super::GetBlockHeightRequest>
                     for GetBlockHeightSvc<T> {
                         type Response = super::GetBlockHeightResponse;
@@ -1486,7 +1518,8 @@ pub mod blockchain_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_block_height(request).await
+                                <T as BlockchainService>::get_block_height(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -1497,7 +1530,6 @@ pub mod blockchain_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetBlockHeightSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -1514,11 +1546,11 @@ pub mod blockchain_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Blockchain/GetBlockchainInfo" => {
+                "/pactus.BlockchainService/GetBlockchainInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetBlockchainInfoSvc<T: Blockchain>(pub Arc<T>);
+                    struct GetBlockchainInfoSvc<T: BlockchainService>(pub Arc<T>);
                     impl<
-                        T: Blockchain,
+                        T: BlockchainService,
                     > tonic::server::UnaryService<super::GetBlockchainInfoRequest>
                     for GetBlockchainInfoSvc<T> {
                         type Response = super::GetBlockchainInfoResponse;
@@ -1532,7 +1564,11 @@ pub mod blockchain_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_blockchain_info(request).await
+                                <T as BlockchainService>::get_blockchain_info(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -1543,7 +1579,6 @@ pub mod blockchain_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetBlockchainInfoSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -1560,11 +1595,11 @@ pub mod blockchain_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Blockchain/GetConsensusInfo" => {
+                "/pactus.BlockchainService/GetConsensusInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetConsensusInfoSvc<T: Blockchain>(pub Arc<T>);
+                    struct GetConsensusInfoSvc<T: BlockchainService>(pub Arc<T>);
                     impl<
-                        T: Blockchain,
+                        T: BlockchainService,
                     > tonic::server::UnaryService<super::GetConsensusInfoRequest>
                     for GetConsensusInfoSvc<T> {
                         type Response = super::GetConsensusInfoResponse;
@@ -1578,7 +1613,11 @@ pub mod blockchain_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_consensus_info(request).await
+                                <T as BlockchainService>::get_consensus_info(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -1589,7 +1628,6 @@ pub mod blockchain_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetConsensusInfoSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -1606,11 +1644,11 @@ pub mod blockchain_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Blockchain/GetAccount" => {
+                "/pactus.BlockchainService/GetAccount" => {
                     #[allow(non_camel_case_types)]
-                    struct GetAccountSvc<T: Blockchain>(pub Arc<T>);
+                    struct GetAccountSvc<T: BlockchainService>(pub Arc<T>);
                     impl<
-                        T: Blockchain,
+                        T: BlockchainService,
                     > tonic::server::UnaryService<super::GetAccountRequest>
                     for GetAccountSvc<T> {
                         type Response = super::GetAccountResponse;
@@ -1623,7 +1661,9 @@ pub mod blockchain_server {
                             request: tonic::Request<super::GetAccountRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).get_account(request).await };
+                            let fut = async move {
+                                <T as BlockchainService>::get_account(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -1633,7 +1673,6 @@ pub mod blockchain_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetAccountSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -1650,11 +1689,11 @@ pub mod blockchain_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Blockchain/GetValidator" => {
+                "/pactus.BlockchainService/GetValidator" => {
                     #[allow(non_camel_case_types)]
-                    struct GetValidatorSvc<T: Blockchain>(pub Arc<T>);
+                    struct GetValidatorSvc<T: BlockchainService>(pub Arc<T>);
                     impl<
-                        T: Blockchain,
+                        T: BlockchainService,
                     > tonic::server::UnaryService<super::GetValidatorRequest>
                     for GetValidatorSvc<T> {
                         type Response = super::GetValidatorResponse;
@@ -1668,7 +1707,8 @@ pub mod blockchain_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_validator(request).await
+                                <T as BlockchainService>::get_validator(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -1679,7 +1719,6 @@ pub mod blockchain_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetValidatorSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -1696,11 +1735,11 @@ pub mod blockchain_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Blockchain/GetValidatorByNumber" => {
+                "/pactus.BlockchainService/GetValidatorByNumber" => {
                     #[allow(non_camel_case_types)]
-                    struct GetValidatorByNumberSvc<T: Blockchain>(pub Arc<T>);
+                    struct GetValidatorByNumberSvc<T: BlockchainService>(pub Arc<T>);
                     impl<
-                        T: Blockchain,
+                        T: BlockchainService,
                     > tonic::server::UnaryService<super::GetValidatorByNumberRequest>
                     for GetValidatorByNumberSvc<T> {
                         type Response = super::GetValidatorResponse;
@@ -1714,7 +1753,11 @@ pub mod blockchain_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_validator_by_number(request).await
+                                <T as BlockchainService>::get_validator_by_number(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -1725,7 +1768,6 @@ pub mod blockchain_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetValidatorByNumberSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -1742,11 +1784,11 @@ pub mod blockchain_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Blockchain/GetValidatorAddresses" => {
+                "/pactus.BlockchainService/GetValidatorAddresses" => {
                     #[allow(non_camel_case_types)]
-                    struct GetValidatorAddressesSvc<T: Blockchain>(pub Arc<T>);
+                    struct GetValidatorAddressesSvc<T: BlockchainService>(pub Arc<T>);
                     impl<
-                        T: Blockchain,
+                        T: BlockchainService,
                     > tonic::server::UnaryService<super::GetValidatorAddressesRequest>
                     for GetValidatorAddressesSvc<T> {
                         type Response = super::GetValidatorAddressesResponse;
@@ -1760,7 +1802,11 @@ pub mod blockchain_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_validator_addresses(request).await
+                                <T as BlockchainService>::get_validator_addresses(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -1771,7 +1817,6 @@ pub mod blockchain_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetValidatorAddressesSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -1788,11 +1833,11 @@ pub mod blockchain_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Blockchain/GetPublicKey" => {
+                "/pactus.BlockchainService/GetPublicKey" => {
                     #[allow(non_camel_case_types)]
-                    struct GetPublicKeySvc<T: Blockchain>(pub Arc<T>);
+                    struct GetPublicKeySvc<T: BlockchainService>(pub Arc<T>);
                     impl<
-                        T: Blockchain,
+                        T: BlockchainService,
                     > tonic::server::UnaryService<super::GetPublicKeyRequest>
                     for GetPublicKeySvc<T> {
                         type Response = super::GetPublicKeyResponse;
@@ -1806,7 +1851,8 @@ pub mod blockchain_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_public_key(request).await
+                                <T as BlockchainService>::get_public_key(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -1817,7 +1863,6 @@ pub mod blockchain_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetPublicKeySvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -1834,11 +1879,11 @@ pub mod blockchain_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Blockchain/GetTxPoolContent" => {
+                "/pactus.BlockchainService/GetTxPoolContent" => {
                     #[allow(non_camel_case_types)]
-                    struct GetTxPoolContentSvc<T: Blockchain>(pub Arc<T>);
+                    struct GetTxPoolContentSvc<T: BlockchainService>(pub Arc<T>);
                     impl<
-                        T: Blockchain,
+                        T: BlockchainService,
                     > tonic::server::UnaryService<super::GetTxPoolContentRequest>
                     for GetTxPoolContentSvc<T> {
                         type Response = super::GetTxPoolContentResponse;
@@ -1852,7 +1897,11 @@ pub mod blockchain_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_tx_pool_content(request).await
+                                <T as BlockchainService>::get_tx_pool_content(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -1863,7 +1912,6 @@ pub mod blockchain_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetTxPoolContentSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -1885,8 +1933,11 @@ pub mod blockchain_server {
                         Ok(
                             http::Response::builder()
                                 .status(200)
-                                .header("grpc-status", "12")
-                                .header("content-type", "application/grpc")
+                                .header("grpc-status", tonic::Code::Unimplemented as i32)
+                                .header(
+                                    http::header::CONTENT_TYPE,
+                                    tonic::metadata::GRPC_CONTENT_TYPE,
+                                )
                                 .body(empty_body())
                                 .unwrap(),
                         )
@@ -1895,7 +1946,7 @@ pub mod blockchain_server {
             }
         }
     }
-    impl<T: Blockchain> Clone for BlockchainServer<T> {
+    impl<T: BlockchainService> Clone for BlockchainServiceServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -1907,30 +1958,21 @@ pub mod blockchain_server {
             }
         }
     }
-    impl<T: Blockchain> Clone for _Inner<T> {
-        fn clone(&self) -> Self {
-            Self(Arc::clone(&self.0))
-        }
-    }
-    impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "{:?}", self.0)
-        }
-    }
-    impl<T: Blockchain> tonic::server::NamedService for BlockchainServer<T> {
-        const NAME: &'static str = "pactus.Blockchain";
+    impl<T: BlockchainService> tonic::server::NamedService
+    for BlockchainServiceServer<T> {
+        const NAME: &'static str = "pactus.BlockchainService";
     }
 }
 /// Generated client implementations.
-pub mod network_client {
+pub mod network_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct NetworkClient<T> {
+    pub struct NetworkServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl NetworkClient<tonic::transport::Channel> {
+    impl NetworkServiceClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -1941,7 +1983,7 @@ pub mod network_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> NetworkClient<T>
+    impl<T> NetworkServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -1959,7 +2001,7 @@ pub mod network_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> NetworkClient<InterceptedService<T, F>>
+        ) -> NetworkServiceClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -1973,7 +2015,7 @@ pub mod network_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            NetworkClient::new(InterceptedService::new(inner, interceptor))
+            NetworkServiceClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -2024,11 +2066,11 @@ pub mod network_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Network/GetNetworkInfo",
+                "/pactus.NetworkService/GetNetworkInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Network", "GetNetworkInfo"));
+                .insert(GrpcMethod::new("pactus.NetworkService", "GetNetworkInfo"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_node_info(
@@ -2049,22 +2091,22 @@ pub mod network_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Network/GetNodeInfo",
+                "/pactus.NetworkService/GetNodeInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Network", "GetNodeInfo"));
+                .insert(GrpcMethod::new("pactus.NetworkService", "GetNodeInfo"));
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod network_server {
+pub mod network_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with NetworkServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with NetworkServiceServer.
     #[async_trait]
-    pub trait Network: Send + Sync + 'static {
+    pub trait NetworkService: Send + Sync + 'static {
         async fn get_network_info(
             &self,
             request: tonic::Request<super::GetNetworkInfoRequest>,
@@ -2081,20 +2123,18 @@ pub mod network_server {
         >;
     }
     #[derive(Debug)]
-    pub struct NetworkServer<T: Network> {
-        inner: _Inner<T>,
+    pub struct NetworkServiceServer<T: NetworkService> {
+        inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    struct _Inner<T>(Arc<T>);
-    impl<T: Network> NetworkServer<T> {
+    impl<T: NetworkService> NetworkServiceServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
         pub fn from_arc(inner: Arc<T>) -> Self {
-            let inner = _Inner(inner);
             Self {
                 inner,
                 accept_compression_encodings: Default::default(),
@@ -2141,9 +2181,9 @@ pub mod network_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for NetworkServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for NetworkServiceServer<T>
     where
-        T: Network,
+        T: NetworkService,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -2157,13 +2197,12 @@ pub mod network_server {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
-            let inner = self.inner.clone();
             match req.uri().path() {
-                "/pactus.Network/GetNetworkInfo" => {
+                "/pactus.NetworkService/GetNetworkInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetNetworkInfoSvc<T: Network>(pub Arc<T>);
+                    struct GetNetworkInfoSvc<T: NetworkService>(pub Arc<T>);
                     impl<
-                        T: Network,
+                        T: NetworkService,
                     > tonic::server::UnaryService<super::GetNetworkInfoRequest>
                     for GetNetworkInfoSvc<T> {
                         type Response = super::GetNetworkInfoResponse;
@@ -2177,7 +2216,8 @@ pub mod network_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_network_info(request).await
+                                <T as NetworkService>::get_network_info(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -2188,7 +2228,6 @@ pub mod network_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetNetworkInfoSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -2205,11 +2244,11 @@ pub mod network_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Network/GetNodeInfo" => {
+                "/pactus.NetworkService/GetNodeInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetNodeInfoSvc<T: Network>(pub Arc<T>);
+                    struct GetNodeInfoSvc<T: NetworkService>(pub Arc<T>);
                     impl<
-                        T: Network,
+                        T: NetworkService,
                     > tonic::server::UnaryService<super::GetNodeInfoRequest>
                     for GetNodeInfoSvc<T> {
                         type Response = super::GetNodeInfoResponse;
@@ -2223,7 +2262,7 @@ pub mod network_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_node_info(request).await
+                                <T as NetworkService>::get_node_info(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2234,7 +2273,6 @@ pub mod network_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetNodeInfoSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -2256,8 +2294,11 @@ pub mod network_server {
                         Ok(
                             http::Response::builder()
                                 .status(200)
-                                .header("grpc-status", "12")
-                                .header("content-type", "application/grpc")
+                                .header("grpc-status", tonic::Code::Unimplemented as i32)
+                                .header(
+                                    http::header::CONTENT_TYPE,
+                                    tonic::metadata::GRPC_CONTENT_TYPE,
+                                )
                                 .body(empty_body())
                                 .unwrap(),
                         )
@@ -2266,7 +2307,7 @@ pub mod network_server {
             }
         }
     }
-    impl<T: Network> Clone for NetworkServer<T> {
+    impl<T: NetworkService> Clone for NetworkServiceServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -2278,30 +2319,20 @@ pub mod network_server {
             }
         }
     }
-    impl<T: Network> Clone for _Inner<T> {
-        fn clone(&self) -> Self {
-            Self(Arc::clone(&self.0))
-        }
-    }
-    impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "{:?}", self.0)
-        }
-    }
-    impl<T: Network> tonic::server::NamedService for NetworkServer<T> {
-        const NAME: &'static str = "pactus.Network";
+    impl<T: NetworkService> tonic::server::NamedService for NetworkServiceServer<T> {
+        const NAME: &'static str = "pactus.NetworkService";
     }
 }
 /// Generated client implementations.
-pub mod utils_client {
+pub mod utils_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct UtilsClient<T> {
+    pub struct UtilsServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl UtilsClient<tonic::transport::Channel> {
+    impl UtilsServiceClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -2312,7 +2343,7 @@ pub mod utils_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> UtilsClient<T>
+    impl<T> UtilsServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -2330,7 +2361,7 @@ pub mod utils_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> UtilsClient<InterceptedService<T, F>>
+        ) -> UtilsServiceClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -2344,7 +2375,7 @@ pub mod utils_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            UtilsClient::new(InterceptedService::new(inner, interceptor))
+            UtilsServiceClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -2395,11 +2426,13 @@ pub mod utils_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Utils/SignMessageWithPrivateKey",
+                "/pactus.UtilsService/SignMessageWithPrivateKey",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Utils", "SignMessageWithPrivateKey"));
+                .insert(
+                    GrpcMethod::new("pactus.UtilsService", "SignMessageWithPrivateKey"),
+                );
             self.inner.unary(req, path, codec).await
         }
         pub async fn verify_message(
@@ -2420,18 +2453,18 @@ pub mod utils_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Utils/VerifyMessage",
+                "/pactus.UtilsService/VerifyMessage",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Utils", "VerifyMessage"));
+                .insert(GrpcMethod::new("pactus.UtilsService", "VerifyMessage"));
             self.inner.unary(req, path, codec).await
         }
-        pub async fn bls_public_key_aggregation(
+        pub async fn public_key_aggregation(
             &mut self,
-            request: impl tonic::IntoRequest<super::BlsPublicKeyAggregationRequest>,
+            request: impl tonic::IntoRequest<super::PublicKeyAggregationRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::BlsPublicKeyAggregationResponse>,
+            tonic::Response<super::PublicKeyAggregationResponse>,
             tonic::Status,
         > {
             self.inner
@@ -2445,18 +2478,18 @@ pub mod utils_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Utils/BLSPublicKeyAggregation",
+                "/pactus.UtilsService/PublicKeyAggregation",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Utils", "BLSPublicKeyAggregation"));
+                .insert(GrpcMethod::new("pactus.UtilsService", "PublicKeyAggregation"));
             self.inner.unary(req, path, codec).await
         }
-        pub async fn bls_signature_aggregation(
+        pub async fn signature_aggregation(
             &mut self,
-            request: impl tonic::IntoRequest<super::BlsSignatureAggregationRequest>,
+            request: impl tonic::IntoRequest<super::SignatureAggregationRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::BlsSignatureAggregationResponse>,
+            tonic::Response<super::SignatureAggregationResponse>,
             tonic::Status,
         > {
             self.inner
@@ -2470,22 +2503,22 @@ pub mod utils_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Utils/BLSSignatureAggregation",
+                "/pactus.UtilsService/SignatureAggregation",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Utils", "BLSSignatureAggregation"));
+                .insert(GrpcMethod::new("pactus.UtilsService", "SignatureAggregation"));
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod utils_server {
+pub mod utils_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with UtilsServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with UtilsServiceServer.
     #[async_trait]
-    pub trait Utils: Send + Sync + 'static {
+    pub trait UtilsService: Send + Sync + 'static {
         async fn sign_message_with_private_key(
             &self,
             request: tonic::Request<super::SignMessageWithPrivateKeyRequest>,
@@ -2500,36 +2533,34 @@ pub mod utils_server {
             tonic::Response<super::VerifyMessageResponse>,
             tonic::Status,
         >;
-        async fn bls_public_key_aggregation(
+        async fn public_key_aggregation(
             &self,
-            request: tonic::Request<super::BlsPublicKeyAggregationRequest>,
+            request: tonic::Request<super::PublicKeyAggregationRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::BlsPublicKeyAggregationResponse>,
+            tonic::Response<super::PublicKeyAggregationResponse>,
             tonic::Status,
         >;
-        async fn bls_signature_aggregation(
+        async fn signature_aggregation(
             &self,
-            request: tonic::Request<super::BlsSignatureAggregationRequest>,
+            request: tonic::Request<super::SignatureAggregationRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::BlsSignatureAggregationResponse>,
+            tonic::Response<super::SignatureAggregationResponse>,
             tonic::Status,
         >;
     }
     #[derive(Debug)]
-    pub struct UtilsServer<T: Utils> {
-        inner: _Inner<T>,
+    pub struct UtilsServiceServer<T: UtilsService> {
+        inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    struct _Inner<T>(Arc<T>);
-    impl<T: Utils> UtilsServer<T> {
+    impl<T: UtilsService> UtilsServiceServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
         pub fn from_arc(inner: Arc<T>) -> Self {
-            let inner = _Inner(inner);
             Self {
                 inner,
                 accept_compression_encodings: Default::default(),
@@ -2576,9 +2607,9 @@ pub mod utils_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for UtilsServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for UtilsServiceServer<T>
     where
-        T: Utils,
+        T: UtilsService,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -2592,13 +2623,12 @@ pub mod utils_server {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
-            let inner = self.inner.clone();
             match req.uri().path() {
-                "/pactus.Utils/SignMessageWithPrivateKey" => {
+                "/pactus.UtilsService/SignMessageWithPrivateKey" => {
                     #[allow(non_camel_case_types)]
-                    struct SignMessageWithPrivateKeySvc<T: Utils>(pub Arc<T>);
+                    struct SignMessageWithPrivateKeySvc<T: UtilsService>(pub Arc<T>);
                     impl<
-                        T: Utils,
+                        T: UtilsService,
                     > tonic::server::UnaryService<
                         super::SignMessageWithPrivateKeyRequest,
                     > for SignMessageWithPrivateKeySvc<T> {
@@ -2615,7 +2645,11 @@ pub mod utils_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).sign_message_with_private_key(request).await
+                                <T as UtilsService>::sign_message_with_private_key(
+                                        &inner,
+                                        request,
+                                    )
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -2626,7 +2660,6 @@ pub mod utils_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = SignMessageWithPrivateKeySvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -2643,11 +2676,11 @@ pub mod utils_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Utils/VerifyMessage" => {
+                "/pactus.UtilsService/VerifyMessage" => {
                     #[allow(non_camel_case_types)]
-                    struct VerifyMessageSvc<T: Utils>(pub Arc<T>);
+                    struct VerifyMessageSvc<T: UtilsService>(pub Arc<T>);
                     impl<
-                        T: Utils,
+                        T: UtilsService,
                     > tonic::server::UnaryService<super::VerifyMessageRequest>
                     for VerifyMessageSvc<T> {
                         type Response = super::VerifyMessageResponse;
@@ -2661,7 +2694,7 @@ pub mod utils_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).verify_message(request).await
+                                <T as UtilsService>::verify_message(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2672,7 +2705,6 @@ pub mod utils_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = VerifyMessageSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -2689,27 +2721,26 @@ pub mod utils_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Utils/BLSPublicKeyAggregation" => {
+                "/pactus.UtilsService/PublicKeyAggregation" => {
                     #[allow(non_camel_case_types)]
-                    struct BLSPublicKeyAggregationSvc<T: Utils>(pub Arc<T>);
+                    struct PublicKeyAggregationSvc<T: UtilsService>(pub Arc<T>);
                     impl<
-                        T: Utils,
-                    > tonic::server::UnaryService<super::BlsPublicKeyAggregationRequest>
-                    for BLSPublicKeyAggregationSvc<T> {
-                        type Response = super::BlsPublicKeyAggregationResponse;
+                        T: UtilsService,
+                    > tonic::server::UnaryService<super::PublicKeyAggregationRequest>
+                    for PublicKeyAggregationSvc<T> {
+                        type Response = super::PublicKeyAggregationResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<
-                                super::BlsPublicKeyAggregationRequest,
-                            >,
+                            request: tonic::Request<super::PublicKeyAggregationRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).bls_public_key_aggregation(request).await
+                                <T as UtilsService>::public_key_aggregation(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -2720,8 +2751,7 @@ pub mod utils_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
-                        let method = BLSPublicKeyAggregationSvc(inner);
+                        let method = PublicKeyAggregationSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -2737,27 +2767,26 @@ pub mod utils_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Utils/BLSSignatureAggregation" => {
+                "/pactus.UtilsService/SignatureAggregation" => {
                     #[allow(non_camel_case_types)]
-                    struct BLSSignatureAggregationSvc<T: Utils>(pub Arc<T>);
+                    struct SignatureAggregationSvc<T: UtilsService>(pub Arc<T>);
                     impl<
-                        T: Utils,
-                    > tonic::server::UnaryService<super::BlsSignatureAggregationRequest>
-                    for BLSSignatureAggregationSvc<T> {
-                        type Response = super::BlsSignatureAggregationResponse;
+                        T: UtilsService,
+                    > tonic::server::UnaryService<super::SignatureAggregationRequest>
+                    for SignatureAggregationSvc<T> {
+                        type Response = super::SignatureAggregationResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<
-                                super::BlsSignatureAggregationRequest,
-                            >,
+                            request: tonic::Request<super::SignatureAggregationRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).bls_signature_aggregation(request).await
+                                <T as UtilsService>::signature_aggregation(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -2768,8 +2797,7 @@ pub mod utils_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
-                        let method = BLSSignatureAggregationSvc(inner);
+                        let method = SignatureAggregationSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -2790,8 +2818,11 @@ pub mod utils_server {
                         Ok(
                             http::Response::builder()
                                 .status(200)
-                                .header("grpc-status", "12")
-                                .header("content-type", "application/grpc")
+                                .header("grpc-status", tonic::Code::Unimplemented as i32)
+                                .header(
+                                    http::header::CONTENT_TYPE,
+                                    tonic::metadata::GRPC_CONTENT_TYPE,
+                                )
                                 .body(empty_body())
                                 .unwrap(),
                         )
@@ -2800,7 +2831,7 @@ pub mod utils_server {
             }
         }
     }
-    impl<T: Utils> Clone for UtilsServer<T> {
+    impl<T: UtilsService> Clone for UtilsServiceServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -2812,30 +2843,20 @@ pub mod utils_server {
             }
         }
     }
-    impl<T: Utils> Clone for _Inner<T> {
-        fn clone(&self) -> Self {
-            Self(Arc::clone(&self.0))
-        }
-    }
-    impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "{:?}", self.0)
-        }
-    }
-    impl<T: Utils> tonic::server::NamedService for UtilsServer<T> {
-        const NAME: &'static str = "pactus.Utils";
+    impl<T: UtilsService> tonic::server::NamedService for UtilsServiceServer<T> {
+        const NAME: &'static str = "pactus.UtilsService";
     }
 }
 /// Generated client implementations.
-pub mod wallet_client {
+pub mod wallet_service_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct WalletClient<T> {
+    pub struct WalletServiceClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl WalletClient<tonic::transport::Channel> {
+    impl WalletServiceClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -2846,7 +2867,7 @@ pub mod wallet_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> WalletClient<T>
+    impl<T> WalletServiceClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -2864,7 +2885,7 @@ pub mod wallet_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> WalletClient<InterceptedService<T, F>>
+        ) -> WalletServiceClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -2878,7 +2899,7 @@ pub mod wallet_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            WalletClient::new(InterceptedService::new(inner, interceptor))
+            WalletServiceClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -2929,11 +2950,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/CreateWallet",
+                "/pactus.WalletService/CreateWallet",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "CreateWallet"));
+                .insert(GrpcMethod::new("pactus.WalletService", "CreateWallet"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn restore_wallet(
@@ -2954,11 +2975,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/RestoreWallet",
+                "/pactus.WalletService/RestoreWallet",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "RestoreWallet"));
+                .insert(GrpcMethod::new("pactus.WalletService", "RestoreWallet"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn load_wallet(
@@ -2978,9 +2999,12 @@ pub mod wallet_client {
                     )
                 })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/pactus.Wallet/LoadWallet");
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.WalletService/LoadWallet",
+            );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "LoadWallet"));
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.WalletService", "LoadWallet"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn unload_wallet(
@@ -3001,11 +3025,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/UnloadWallet",
+                "/pactus.WalletService/UnloadWallet",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "UnloadWallet"));
+                .insert(GrpcMethod::new("pactus.WalletService", "UnloadWallet"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_total_balance(
@@ -3026,11 +3050,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/GetTotalBalance",
+                "/pactus.WalletService/GetTotalBalance",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "GetTotalBalance"));
+                .insert(GrpcMethod::new("pactus.WalletService", "GetTotalBalance"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn sign_raw_transaction(
@@ -3051,11 +3075,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/SignRawTransaction",
+                "/pactus.WalletService/SignRawTransaction",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "SignRawTransaction"));
+                .insert(GrpcMethod::new("pactus.WalletService", "SignRawTransaction"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_validator_address(
@@ -3076,11 +3100,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/GetValidatorAddress",
+                "/pactus.WalletService/GetValidatorAddress",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "GetValidatorAddress"));
+                .insert(GrpcMethod::new("pactus.WalletService", "GetValidatorAddress"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_new_address(
@@ -3101,11 +3125,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/GetNewAddress",
+                "/pactus.WalletService/GetNewAddress",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "GetNewAddress"));
+                .insert(GrpcMethod::new("pactus.WalletService", "GetNewAddress"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_address_history(
@@ -3126,11 +3150,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/GetAddressHistory",
+                "/pactus.WalletService/GetAddressHistory",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "GetAddressHistory"));
+                .insert(GrpcMethod::new("pactus.WalletService", "GetAddressHistory"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn sign_message(
@@ -3151,10 +3175,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/SignMessage",
+                "/pactus.WalletService/SignMessage",
             );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "SignMessage"));
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.WalletService", "SignMessage"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_total_stake(
@@ -3175,11 +3200,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/GetTotalStake",
+                "/pactus.WalletService/GetTotalStake",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "GetTotalStake"));
+                .insert(GrpcMethod::new("pactus.WalletService", "GetTotalStake"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_address_info(
@@ -3200,18 +3225,18 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/GetAddressInfo",
+                "/pactus.WalletService/GetAddressInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "GetAddressInfo"));
+                .insert(GrpcMethod::new("pactus.WalletService", "GetAddressInfo"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn set_address_label(
             &mut self,
-            request: impl tonic::IntoRequest<super::SetLabelRequest>,
+            request: impl tonic::IntoRequest<super::SetAddressLabelRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::SetLabelResponse>,
+            tonic::Response<super::SetAddressLabelResponse>,
             tonic::Status,
         > {
             self.inner
@@ -3225,11 +3250,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/SetAddressLabel",
+                "/pactus.WalletService/SetAddressLabel",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "SetAddressLabel"));
+                .insert(GrpcMethod::new("pactus.WalletService", "SetAddressLabel"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn list_wallet(
@@ -3249,9 +3274,12 @@ pub mod wallet_client {
                     )
                 })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/pactus.Wallet/ListWallet");
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.WalletService/ListWallet",
+            );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "ListWallet"));
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.WalletService", "ListWallet"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_wallet_info(
@@ -3272,11 +3300,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/GetWalletInfo",
+                "/pactus.WalletService/GetWalletInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("pactus.Wallet", "GetWalletInfo"));
+                .insert(GrpcMethod::new("pactus.WalletService", "GetWalletInfo"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn list_address(
@@ -3297,21 +3325,22 @@ pub mod wallet_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/ListAddress",
+                "/pactus.WalletService/ListAddress",
             );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "ListAddress"));
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.WalletService", "ListAddress"));
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod wallet_server {
+pub mod wallet_service_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with WalletServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with WalletServiceServer.
     #[async_trait]
-    pub trait Wallet: Send + Sync + 'static {
+    pub trait WalletService: Send + Sync + 'static {
         async fn create_wallet(
             &self,
             request: tonic::Request<super::CreateWalletRequest>,
@@ -3398,9 +3427,9 @@ pub mod wallet_server {
         >;
         async fn set_address_label(
             &self,
-            request: tonic::Request<super::SetLabelRequest>,
+            request: tonic::Request<super::SetAddressLabelRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::SetLabelResponse>,
+            tonic::Response<super::SetAddressLabelResponse>,
             tonic::Status,
         >;
         async fn list_wallet(
@@ -3426,20 +3455,18 @@ pub mod wallet_server {
         >;
     }
     #[derive(Debug)]
-    pub struct WalletServer<T: Wallet> {
-        inner: _Inner<T>,
+    pub struct WalletServiceServer<T: WalletService> {
+        inner: Arc<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
         max_decoding_message_size: Option<usize>,
         max_encoding_message_size: Option<usize>,
     }
-    struct _Inner<T>(Arc<T>);
-    impl<T: Wallet> WalletServer<T> {
+    impl<T: WalletService> WalletServiceServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
         pub fn from_arc(inner: Arc<T>) -> Self {
-            let inner = _Inner(inner);
             Self {
                 inner,
                 accept_compression_encodings: Default::default(),
@@ -3486,9 +3513,9 @@ pub mod wallet_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for WalletServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for WalletServiceServer<T>
     where
-        T: Wallet,
+        T: WalletService,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -3502,13 +3529,12 @@ pub mod wallet_server {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
-            let inner = self.inner.clone();
             match req.uri().path() {
-                "/pactus.Wallet/CreateWallet" => {
+                "/pactus.WalletService/CreateWallet" => {
                     #[allow(non_camel_case_types)]
-                    struct CreateWalletSvc<T: Wallet>(pub Arc<T>);
+                    struct CreateWalletSvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::CreateWalletRequest>
                     for CreateWalletSvc<T> {
                         type Response = super::CreateWalletResponse;
@@ -3522,7 +3548,7 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).create_wallet(request).await
+                                <T as WalletService>::create_wallet(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3533,7 +3559,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = CreateWalletSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -3550,11 +3575,11 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/RestoreWallet" => {
+                "/pactus.WalletService/RestoreWallet" => {
                     #[allow(non_camel_case_types)]
-                    struct RestoreWalletSvc<T: Wallet>(pub Arc<T>);
+                    struct RestoreWalletSvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::RestoreWalletRequest>
                     for RestoreWalletSvc<T> {
                         type Response = super::RestoreWalletResponse;
@@ -3568,7 +3593,7 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).restore_wallet(request).await
+                                <T as WalletService>::restore_wallet(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3579,7 +3604,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = RestoreWalletSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -3596,10 +3620,12 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/LoadWallet" => {
+                "/pactus.WalletService/LoadWallet" => {
                     #[allow(non_camel_case_types)]
-                    struct LoadWalletSvc<T: Wallet>(pub Arc<T>);
-                    impl<T: Wallet> tonic::server::UnaryService<super::LoadWalletRequest>
+                    struct LoadWalletSvc<T: WalletService>(pub Arc<T>);
+                    impl<
+                        T: WalletService,
+                    > tonic::server::UnaryService<super::LoadWalletRequest>
                     for LoadWalletSvc<T> {
                         type Response = super::LoadWalletResponse;
                         type Future = BoxFuture<
@@ -3611,7 +3637,9 @@ pub mod wallet_server {
                             request: tonic::Request<super::LoadWalletRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).load_wallet(request).await };
+                            let fut = async move {
+                                <T as WalletService>::load_wallet(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -3621,7 +3649,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = LoadWalletSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -3638,11 +3665,11 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/UnloadWallet" => {
+                "/pactus.WalletService/UnloadWallet" => {
                     #[allow(non_camel_case_types)]
-                    struct UnloadWalletSvc<T: Wallet>(pub Arc<T>);
+                    struct UnloadWalletSvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::UnloadWalletRequest>
                     for UnloadWalletSvc<T> {
                         type Response = super::UnloadWalletResponse;
@@ -3656,7 +3683,7 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).unload_wallet(request).await
+                                <T as WalletService>::unload_wallet(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3667,7 +3694,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = UnloadWalletSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -3684,11 +3710,11 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/GetTotalBalance" => {
+                "/pactus.WalletService/GetTotalBalance" => {
                     #[allow(non_camel_case_types)]
-                    struct GetTotalBalanceSvc<T: Wallet>(pub Arc<T>);
+                    struct GetTotalBalanceSvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::GetTotalBalanceRequest>
                     for GetTotalBalanceSvc<T> {
                         type Response = super::GetTotalBalanceResponse;
@@ -3702,7 +3728,8 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_total_balance(request).await
+                                <T as WalletService>::get_total_balance(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -3713,7 +3740,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetTotalBalanceSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -3730,11 +3756,11 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/SignRawTransaction" => {
+                "/pactus.WalletService/SignRawTransaction" => {
                     #[allow(non_camel_case_types)]
-                    struct SignRawTransactionSvc<T: Wallet>(pub Arc<T>);
+                    struct SignRawTransactionSvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::SignRawTransactionRequest>
                     for SignRawTransactionSvc<T> {
                         type Response = super::SignRawTransactionResponse;
@@ -3748,7 +3774,8 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).sign_raw_transaction(request).await
+                                <T as WalletService>::sign_raw_transaction(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -3759,7 +3786,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = SignRawTransactionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -3776,11 +3802,11 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/GetValidatorAddress" => {
+                "/pactus.WalletService/GetValidatorAddress" => {
                     #[allow(non_camel_case_types)]
-                    struct GetValidatorAddressSvc<T: Wallet>(pub Arc<T>);
+                    struct GetValidatorAddressSvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::GetValidatorAddressRequest>
                     for GetValidatorAddressSvc<T> {
                         type Response = super::GetValidatorAddressResponse;
@@ -3794,7 +3820,8 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_validator_address(request).await
+                                <T as WalletService>::get_validator_address(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -3805,7 +3832,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetValidatorAddressSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -3822,11 +3848,11 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/GetNewAddress" => {
+                "/pactus.WalletService/GetNewAddress" => {
                     #[allow(non_camel_case_types)]
-                    struct GetNewAddressSvc<T: Wallet>(pub Arc<T>);
+                    struct GetNewAddressSvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::GetNewAddressRequest>
                     for GetNewAddressSvc<T> {
                         type Response = super::GetNewAddressResponse;
@@ -3840,7 +3866,7 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_new_address(request).await
+                                <T as WalletService>::get_new_address(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3851,7 +3877,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetNewAddressSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -3868,11 +3893,11 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/GetAddressHistory" => {
+                "/pactus.WalletService/GetAddressHistory" => {
                     #[allow(non_camel_case_types)]
-                    struct GetAddressHistorySvc<T: Wallet>(pub Arc<T>);
+                    struct GetAddressHistorySvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::GetAddressHistoryRequest>
                     for GetAddressHistorySvc<T> {
                         type Response = super::GetAddressHistoryResponse;
@@ -3886,7 +3911,8 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_address_history(request).await
+                                <T as WalletService>::get_address_history(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -3897,7 +3923,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetAddressHistorySvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -3914,11 +3939,11 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/SignMessage" => {
+                "/pactus.WalletService/SignMessage" => {
                     #[allow(non_camel_case_types)]
-                    struct SignMessageSvc<T: Wallet>(pub Arc<T>);
+                    struct SignMessageSvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::SignMessageRequest>
                     for SignMessageSvc<T> {
                         type Response = super::SignMessageResponse;
@@ -3932,7 +3957,7 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).sign_message(request).await
+                                <T as WalletService>::sign_message(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3943,7 +3968,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = SignMessageSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -3960,11 +3984,11 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/GetTotalStake" => {
+                "/pactus.WalletService/GetTotalStake" => {
                     #[allow(non_camel_case_types)]
-                    struct GetTotalStakeSvc<T: Wallet>(pub Arc<T>);
+                    struct GetTotalStakeSvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::GetTotalStakeRequest>
                     for GetTotalStakeSvc<T> {
                         type Response = super::GetTotalStakeResponse;
@@ -3978,7 +4002,7 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_total_stake(request).await
+                                <T as WalletService>::get_total_stake(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -3989,7 +4013,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetTotalStakeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -4006,11 +4029,11 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/GetAddressInfo" => {
+                "/pactus.WalletService/GetAddressInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetAddressInfoSvc<T: Wallet>(pub Arc<T>);
+                    struct GetAddressInfoSvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::GetAddressInfoRequest>
                     for GetAddressInfoSvc<T> {
                         type Response = super::GetAddressInfoResponse;
@@ -4024,7 +4047,8 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_address_info(request).await
+                                <T as WalletService>::get_address_info(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -4035,7 +4059,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetAddressInfoSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -4052,23 +4075,26 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/SetAddressLabel" => {
+                "/pactus.WalletService/SetAddressLabel" => {
                     #[allow(non_camel_case_types)]
-                    struct SetAddressLabelSvc<T: Wallet>(pub Arc<T>);
-                    impl<T: Wallet> tonic::server::UnaryService<super::SetLabelRequest>
+                    struct SetAddressLabelSvc<T: WalletService>(pub Arc<T>);
+                    impl<
+                        T: WalletService,
+                    > tonic::server::UnaryService<super::SetAddressLabelRequest>
                     for SetAddressLabelSvc<T> {
-                        type Response = super::SetLabelResponse;
+                        type Response = super::SetAddressLabelResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::SetLabelRequest>,
+                            request: tonic::Request<super::SetAddressLabelRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).set_address_label(request).await
+                                <T as WalletService>::set_address_label(&inner, request)
+                                    .await
                             };
                             Box::pin(fut)
                         }
@@ -4079,7 +4105,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = SetAddressLabelSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -4096,10 +4121,12 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/ListWallet" => {
+                "/pactus.WalletService/ListWallet" => {
                     #[allow(non_camel_case_types)]
-                    struct ListWalletSvc<T: Wallet>(pub Arc<T>);
-                    impl<T: Wallet> tonic::server::UnaryService<super::ListWalletRequest>
+                    struct ListWalletSvc<T: WalletService>(pub Arc<T>);
+                    impl<
+                        T: WalletService,
+                    > tonic::server::UnaryService<super::ListWalletRequest>
                     for ListWalletSvc<T> {
                         type Response = super::ListWalletResponse;
                         type Future = BoxFuture<
@@ -4111,7 +4138,9 @@ pub mod wallet_server {
                             request: tonic::Request<super::ListWalletRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move { (*inner).list_wallet(request).await };
+                            let fut = async move {
+                                <T as WalletService>::list_wallet(&inner, request).await
+                            };
                             Box::pin(fut)
                         }
                     }
@@ -4121,7 +4150,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = ListWalletSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -4138,11 +4166,11 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/GetWalletInfo" => {
+                "/pactus.WalletService/GetWalletInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetWalletInfoSvc<T: Wallet>(pub Arc<T>);
+                    struct GetWalletInfoSvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::GetWalletInfoRequest>
                     for GetWalletInfoSvc<T> {
                         type Response = super::GetWalletInfoResponse;
@@ -4156,7 +4184,7 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).get_wallet_info(request).await
+                                <T as WalletService>::get_wallet_info(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -4167,7 +4195,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = GetWalletInfoSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -4184,11 +4211,11 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/ListAddress" => {
+                "/pactus.WalletService/ListAddress" => {
                     #[allow(non_camel_case_types)]
-                    struct ListAddressSvc<T: Wallet>(pub Arc<T>);
+                    struct ListAddressSvc<T: WalletService>(pub Arc<T>);
                     impl<
-                        T: Wallet,
+                        T: WalletService,
                     > tonic::server::UnaryService<super::ListAddressRequest>
                     for ListAddressSvc<T> {
                         type Response = super::ListAddressResponse;
@@ -4202,7 +4229,7 @@ pub mod wallet_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).list_address(request).await
+                                <T as WalletService>::list_address(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -4213,7 +4240,6 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let inner = inner.0;
                         let method = ListAddressSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
@@ -4235,8 +4261,11 @@ pub mod wallet_server {
                         Ok(
                             http::Response::builder()
                                 .status(200)
-                                .header("grpc-status", "12")
-                                .header("content-type", "application/grpc")
+                                .header("grpc-status", tonic::Code::Unimplemented as i32)
+                                .header(
+                                    http::header::CONTENT_TYPE,
+                                    tonic::metadata::GRPC_CONTENT_TYPE,
+                                )
                                 .body(empty_body())
                                 .unwrap(),
                         )
@@ -4245,7 +4274,7 @@ pub mod wallet_server {
             }
         }
     }
-    impl<T: Wallet> Clone for WalletServer<T> {
+    impl<T: WalletService> Clone for WalletServiceServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -4257,17 +4286,7 @@ pub mod wallet_server {
             }
         }
     }
-    impl<T: Wallet> Clone for _Inner<T> {
-        fn clone(&self) -> Self {
-            Self(Arc::clone(&self.0))
-        }
-    }
-    impl<T: std::fmt::Debug> std::fmt::Debug for _Inner<T> {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-            write!(f, "{:?}", self.0)
-        }
-    }
-    impl<T: Wallet> tonic::server::NamedService for WalletServer<T> {
-        const NAME: &'static str = "pactus.Wallet";
+    impl<T: WalletService> tonic::server::NamedService for WalletServiceServer<T> {
+        const NAME: &'static str = "pactus.WalletService";
     }
 }

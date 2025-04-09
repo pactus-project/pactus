@@ -1,118 +1,155 @@
-///
+//
 //  Generated code. Do not modify.
 //  source: utils.proto
 //
-// @dart = 2.12
-// ignore_for_file: annotate_overrides,camel_case_types,constant_identifier_names,deprecated_member_use_from_same_package,directives_ordering,library_prefixes,non_constant_identifier_names,prefer_final_fields,return_of_invalid_type,unnecessary_const,unnecessary_import,unnecessary_this,unused_import,unused_shown_name
+// @dart = 3.3
 
-import 'dart:core' as $core;
+// ignore_for_file: annotate_overrides, camel_case_types, comment_references
+// ignore_for_file: constant_identifier_names, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_final_fields
+// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+
 import 'dart:convert' as $convert;
+import 'dart:core' as $core;
 import 'dart:typed_data' as $typed_data;
+
 @$core.Deprecated('Use signMessageWithPrivateKeyRequestDescriptor instead')
-const SignMessageWithPrivateKeyRequest$json = const {
+const SignMessageWithPrivateKeyRequest$json = {
   '1': 'SignMessageWithPrivateKeyRequest',
-  '2': const [
-    const {'1': 'private_key', '3': 1, '4': 1, '5': 9, '10': 'privateKey'},
-    const {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
+  '2': [
+    {'1': 'private_key', '3': 1, '4': 1, '5': 9, '10': 'privateKey'},
+    {'1': 'message', '3': 2, '4': 1, '5': 9, '10': 'message'},
   ],
 };
 
 /// Descriptor for `SignMessageWithPrivateKeyRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signMessageWithPrivateKeyRequestDescriptor = $convert.base64Decode('CiBTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5UmVxdWVzdBIfCgtwcml2YXRlX2tleRgBIAEoCVIKcHJpdmF0ZUtleRIYCgdtZXNzYWdlGAIgASgJUgdtZXNzYWdl');
+final $typed_data.Uint8List signMessageWithPrivateKeyRequestDescriptor = $convert.base64Decode(
+    'CiBTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5UmVxdWVzdBIfCgtwcml2YXRlX2tleRgBIAEoCV'
+    'IKcHJpdmF0ZUtleRIYCgdtZXNzYWdlGAIgASgJUgdtZXNzYWdl');
+
 @$core.Deprecated('Use signMessageWithPrivateKeyResponseDescriptor instead')
-const SignMessageWithPrivateKeyResponse$json = const {
+const SignMessageWithPrivateKeyResponse$json = {
   '1': 'SignMessageWithPrivateKeyResponse',
-  '2': const [
-    const {'1': 'signature', '3': 1, '4': 1, '5': 9, '10': 'signature'},
+  '2': [
+    {'1': 'signature', '3': 1, '4': 1, '5': 9, '10': 'signature'},
   ],
 };
 
 /// Descriptor for `SignMessageWithPrivateKeyResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signMessageWithPrivateKeyResponseDescriptor = $convert.base64Decode('CiFTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5UmVzcG9uc2USHAoJc2lnbmF0dXJlGAEgASgJUglzaWduYXR1cmU=');
+final $typed_data.Uint8List signMessageWithPrivateKeyResponseDescriptor = $convert.base64Decode(
+    'CiFTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5UmVzcG9uc2USHAoJc2lnbmF0dXJlGAEgASgJUg'
+    'lzaWduYXR1cmU=');
+
 @$core.Deprecated('Use verifyMessageRequestDescriptor instead')
-const VerifyMessageRequest$json = const {
+const VerifyMessageRequest$json = {
   '1': 'VerifyMessageRequest',
-  '2': const [
-    const {'1': 'message', '3': 1, '4': 1, '5': 9, '10': 'message'},
-    const {'1': 'signature', '3': 2, '4': 1, '5': 9, '10': 'signature'},
-    const {'1': 'public_key', '3': 3, '4': 1, '5': 9, '10': 'publicKey'},
+  '2': [
+    {'1': 'message', '3': 1, '4': 1, '5': 9, '10': 'message'},
+    {'1': 'signature', '3': 2, '4': 1, '5': 9, '10': 'signature'},
+    {'1': 'public_key', '3': 3, '4': 1, '5': 9, '10': 'publicKey'},
   ],
 };
 
 /// Descriptor for `VerifyMessageRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List verifyMessageRequestDescriptor = $convert.base64Decode('ChRWZXJpZnlNZXNzYWdlUmVxdWVzdBIYCgdtZXNzYWdlGAEgASgJUgdtZXNzYWdlEhwKCXNpZ25hdHVyZRgCIAEoCVIJc2lnbmF0dXJlEh0KCnB1YmxpY19rZXkYAyABKAlSCXB1YmxpY0tleQ==');
+final $typed_data.Uint8List verifyMessageRequestDescriptor = $convert.base64Decode(
+    'ChRWZXJpZnlNZXNzYWdlUmVxdWVzdBIYCgdtZXNzYWdlGAEgASgJUgdtZXNzYWdlEhwKCXNpZ2'
+    '5hdHVyZRgCIAEoCVIJc2lnbmF0dXJlEh0KCnB1YmxpY19rZXkYAyABKAlSCXB1YmxpY0tleQ==');
+
 @$core.Deprecated('Use verifyMessageResponseDescriptor instead')
-const VerifyMessageResponse$json = const {
+const VerifyMessageResponse$json = {
   '1': 'VerifyMessageResponse',
-  '2': const [
-    const {'1': 'is_valid', '3': 1, '4': 1, '5': 8, '10': 'isValid'},
+  '2': [
+    {'1': 'is_valid', '3': 1, '4': 1, '5': 8, '10': 'isValid'},
   ],
 };
 
 /// Descriptor for `VerifyMessageResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List verifyMessageResponseDescriptor = $convert.base64Decode('ChVWZXJpZnlNZXNzYWdlUmVzcG9uc2USGQoIaXNfdmFsaWQYASABKAhSB2lzVmFsaWQ=');
-@$core.Deprecated('Use bLSPublicKeyAggregationRequestDescriptor instead')
-const BLSPublicKeyAggregationRequest$json = const {
-  '1': 'BLSPublicKeyAggregationRequest',
-  '2': const [
-    const {'1': 'public_keys', '3': 1, '4': 3, '5': 9, '10': 'publicKeys'},
+final $typed_data.Uint8List verifyMessageResponseDescriptor = $convert.base64Decode(
+    'ChVWZXJpZnlNZXNzYWdlUmVzcG9uc2USGQoIaXNfdmFsaWQYASABKAhSB2lzVmFsaWQ=');
+
+@$core.Deprecated('Use publicKeyAggregationRequestDescriptor instead')
+const PublicKeyAggregationRequest$json = {
+  '1': 'PublicKeyAggregationRequest',
+  '2': [
+    {'1': 'public_keys', '3': 1, '4': 3, '5': 9, '10': 'publicKeys'},
   ],
 };
 
-/// Descriptor for `BLSPublicKeyAggregationRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List bLSPublicKeyAggregationRequestDescriptor = $convert.base64Decode('Ch5CTFNQdWJsaWNLZXlBZ2dyZWdhdGlvblJlcXVlc3QSHwoLcHVibGljX2tleXMYASADKAlSCnB1YmxpY0tleXM=');
-@$core.Deprecated('Use bLSPublicKeyAggregationResponseDescriptor instead')
-const BLSPublicKeyAggregationResponse$json = const {
-  '1': 'BLSPublicKeyAggregationResponse',
-  '2': const [
-    const {'1': 'public_key', '3': 1, '4': 1, '5': 9, '10': 'publicKey'},
-    const {'1': 'address', '3': 2, '4': 1, '5': 9, '10': 'address'},
+/// Descriptor for `PublicKeyAggregationRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List publicKeyAggregationRequestDescriptor = $convert.base64Decode(
+    'ChtQdWJsaWNLZXlBZ2dyZWdhdGlvblJlcXVlc3QSHwoLcHVibGljX2tleXMYASADKAlSCnB1Ym'
+    'xpY0tleXM=');
+
+@$core.Deprecated('Use publicKeyAggregationResponseDescriptor instead')
+const PublicKeyAggregationResponse$json = {
+  '1': 'PublicKeyAggregationResponse',
+  '2': [
+    {'1': 'public_key', '3': 1, '4': 1, '5': 9, '10': 'publicKey'},
+    {'1': 'address', '3': 2, '4': 1, '5': 9, '10': 'address'},
   ],
 };
 
-/// Descriptor for `BLSPublicKeyAggregationResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List bLSPublicKeyAggregationResponseDescriptor = $convert.base64Decode('Ch9CTFNQdWJsaWNLZXlBZ2dyZWdhdGlvblJlc3BvbnNlEh0KCnB1YmxpY19rZXkYASABKAlSCXB1YmxpY0tleRIYCgdhZGRyZXNzGAIgASgJUgdhZGRyZXNz');
-@$core.Deprecated('Use bLSSignatureAggregationRequestDescriptor instead')
-const BLSSignatureAggregationRequest$json = const {
-  '1': 'BLSSignatureAggregationRequest',
-  '2': const [
-    const {'1': 'signatures', '3': 1, '4': 3, '5': 9, '10': 'signatures'},
+/// Descriptor for `PublicKeyAggregationResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List publicKeyAggregationResponseDescriptor = $convert.base64Decode(
+    'ChxQdWJsaWNLZXlBZ2dyZWdhdGlvblJlc3BvbnNlEh0KCnB1YmxpY19rZXkYASABKAlSCXB1Ym'
+    'xpY0tleRIYCgdhZGRyZXNzGAIgASgJUgdhZGRyZXNz');
+
+@$core.Deprecated('Use signatureAggregationRequestDescriptor instead')
+const SignatureAggregationRequest$json = {
+  '1': 'SignatureAggregationRequest',
+  '2': [
+    {'1': 'signatures', '3': 1, '4': 3, '5': 9, '10': 'signatures'},
   ],
 };
 
-/// Descriptor for `BLSSignatureAggregationRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List bLSSignatureAggregationRequestDescriptor = $convert.base64Decode('Ch5CTFNTaWduYXR1cmVBZ2dyZWdhdGlvblJlcXVlc3QSHgoKc2lnbmF0dXJlcxgBIAMoCVIKc2lnbmF0dXJlcw==');
-@$core.Deprecated('Use bLSSignatureAggregationResponseDescriptor instead')
-const BLSSignatureAggregationResponse$json = const {
-  '1': 'BLSSignatureAggregationResponse',
-  '2': const [
-    const {'1': 'signature', '3': 1, '4': 1, '5': 9, '10': 'signature'},
+/// Descriptor for `SignatureAggregationRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List signatureAggregationRequestDescriptor = $convert.base64Decode(
+    'ChtTaWduYXR1cmVBZ2dyZWdhdGlvblJlcXVlc3QSHgoKc2lnbmF0dXJlcxgBIAMoCVIKc2lnbm'
+    'F0dXJlcw==');
+
+@$core.Deprecated('Use signatureAggregationResponseDescriptor instead')
+const SignatureAggregationResponse$json = {
+  '1': 'SignatureAggregationResponse',
+  '2': [
+    {'1': 'signature', '3': 1, '4': 1, '5': 9, '10': 'signature'},
   ],
 };
 
-/// Descriptor for `BLSSignatureAggregationResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List bLSSignatureAggregationResponseDescriptor = $convert.base64Decode('Ch9CTFNTaWduYXR1cmVBZ2dyZWdhdGlvblJlc3BvbnNlEhwKCXNpZ25hdHVyZRgBIAEoCVIJc2lnbmF0dXJl');
-const $core.Map<$core.String, $core.dynamic> UtilsServiceBase$json = const {
-  '1': 'Utils',
-  '2': const [
-    const {'1': 'SignMessageWithPrivateKey', '2': '.pactus.SignMessageWithPrivateKeyRequest', '3': '.pactus.SignMessageWithPrivateKeyResponse'},
-    const {'1': 'VerifyMessage', '2': '.pactus.VerifyMessageRequest', '3': '.pactus.VerifyMessageResponse'},
-    const {'1': 'BLSPublicKeyAggregation', '2': '.pactus.BLSPublicKeyAggregationRequest', '3': '.pactus.BLSPublicKeyAggregationResponse'},
-    const {'1': 'BLSSignatureAggregation', '2': '.pactus.BLSSignatureAggregationRequest', '3': '.pactus.BLSSignatureAggregationResponse'},
+/// Descriptor for `SignatureAggregationResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List signatureAggregationResponseDescriptor = $convert.base64Decode(
+    'ChxTaWduYXR1cmVBZ2dyZWdhdGlvblJlc3BvbnNlEhwKCXNpZ25hdHVyZRgBIAEoCVIJc2lnbm'
+    'F0dXJl');
+
+const $core.Map<$core.String, $core.dynamic> UtilsServiceBase$json = {
+  '1': 'UtilsService',
+  '2': [
+    {'1': 'SignMessageWithPrivateKey', '2': '.pactus.SignMessageWithPrivateKeyRequest', '3': '.pactus.SignMessageWithPrivateKeyResponse'},
+    {'1': 'VerifyMessage', '2': '.pactus.VerifyMessageRequest', '3': '.pactus.VerifyMessageResponse'},
+    {'1': 'PublicKeyAggregation', '2': '.pactus.PublicKeyAggregationRequest', '3': '.pactus.PublicKeyAggregationResponse'},
+    {'1': 'SignatureAggregation', '2': '.pactus.SignatureAggregationRequest', '3': '.pactus.SignatureAggregationResponse'},
   ],
 };
 
 @$core.Deprecated('Use utilsServiceDescriptor instead')
-const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> UtilsServiceBase$messageJson = const {
+const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> UtilsServiceBase$messageJson = {
   '.pactus.SignMessageWithPrivateKeyRequest': SignMessageWithPrivateKeyRequest$json,
   '.pactus.SignMessageWithPrivateKeyResponse': SignMessageWithPrivateKeyResponse$json,
   '.pactus.VerifyMessageRequest': VerifyMessageRequest$json,
   '.pactus.VerifyMessageResponse': VerifyMessageResponse$json,
-  '.pactus.BLSPublicKeyAggregationRequest': BLSPublicKeyAggregationRequest$json,
-  '.pactus.BLSPublicKeyAggregationResponse': BLSPublicKeyAggregationResponse$json,
-  '.pactus.BLSSignatureAggregationRequest': BLSSignatureAggregationRequest$json,
-  '.pactus.BLSSignatureAggregationResponse': BLSSignatureAggregationResponse$json,
+  '.pactus.PublicKeyAggregationRequest': PublicKeyAggregationRequest$json,
+  '.pactus.PublicKeyAggregationResponse': PublicKeyAggregationResponse$json,
+  '.pactus.SignatureAggregationRequest': SignatureAggregationRequest$json,
+  '.pactus.SignatureAggregationResponse': SignatureAggregationResponse$json,
 };
 
-/// Descriptor for `Utils`. Decode as a `google.protobuf.ServiceDescriptorProto`.
-final $typed_data.Uint8List utilsServiceDescriptor = $convert.base64Decode('CgVVdGlscxJwChlTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5EigucGFjdHVzLlNpZ25NZXNzYWdlV2l0aFByaXZhdGVLZXlSZXF1ZXN0GikucGFjdHVzLlNpZ25NZXNzYWdlV2l0aFByaXZhdGVLZXlSZXNwb25zZRJMCg1WZXJpZnlNZXNzYWdlEhwucGFjdHVzLlZlcmlmeU1lc3NhZ2VSZXF1ZXN0Gh0ucGFjdHVzLlZlcmlmeU1lc3NhZ2VSZXNwb25zZRJqChdCTFNQdWJsaWNLZXlBZ2dyZWdhdGlvbhImLnBhY3R1cy5CTFNQdWJsaWNLZXlBZ2dyZWdhdGlvblJlcXVlc3QaJy5wYWN0dXMuQkxTUHVibGljS2V5QWdncmVnYXRpb25SZXNwb25zZRJqChdCTFNTaWduYXR1cmVBZ2dyZWdhdGlvbhImLnBhY3R1cy5CTFNTaWduYXR1cmVBZ2dyZWdhdGlvblJlcXVlc3QaJy5wYWN0dXMuQkxTU2lnbmF0dXJlQWdncmVnYXRpb25SZXNwb25zZQ==');
+/// Descriptor for `UtilsService`. Decode as a `google.protobuf.ServiceDescriptorProto`.
+final $typed_data.Uint8List utilsServiceDescriptor = $convert.base64Decode(
+    'CgxVdGlsc1NlcnZpY2UScAoZU2lnbk1lc3NhZ2VXaXRoUHJpdmF0ZUtleRIoLnBhY3R1cy5TaW'
+    'duTWVzc2FnZVdpdGhQcml2YXRlS2V5UmVxdWVzdBopLnBhY3R1cy5TaWduTWVzc2FnZVdpdGhQ'
+    'cml2YXRlS2V5UmVzcG9uc2USTAoNVmVyaWZ5TWVzc2FnZRIcLnBhY3R1cy5WZXJpZnlNZXNzYW'
+    'dlUmVxdWVzdBodLnBhY3R1cy5WZXJpZnlNZXNzYWdlUmVzcG9uc2USYQoUUHVibGljS2V5QWdn'
+    'cmVnYXRpb24SIy5wYWN0dXMuUHVibGljS2V5QWdncmVnYXRpb25SZXF1ZXN0GiQucGFjdHVzLl'
+    'B1YmxpY0tleUFnZ3JlZ2F0aW9uUmVzcG9uc2USYQoUU2lnbmF0dXJlQWdncmVnYXRpb24SIy5w'
+    'YWN0dXMuU2lnbmF0dXJlQWdncmVnYXRpb25SZXF1ZXN0GiQucGFjdHVzLlNpZ25hdHVyZUFnZ3'
+    'JlZ2F0aW9uUmVzcG9uc2U=');
+

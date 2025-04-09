@@ -11,48 +11,48 @@ import (
 	proto "google.golang.org/protobuf/proto"
 )
 
-func BlockchainClientCommand(options ...client.Option) *cobra.Command {
+func BlockchainServiceClientCommand(options ...client.Option) *cobra.Command {
 	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("Blockchain"),
-		Short: "Blockchain service client",
+		Use:   cfg.CommandNamer("BlockchainService"),
+		Short: "BlockchainService service client",
 		Long:  "Blockchain service defines RPC methods for interacting with the blockchain.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
-		_BlockchainGetBlockCommand(cfg),
-		_BlockchainGetBlockHashCommand(cfg),
-		_BlockchainGetBlockHeightCommand(cfg),
-		_BlockchainGetBlockchainInfoCommand(cfg),
-		_BlockchainGetConsensusInfoCommand(cfg),
-		_BlockchainGetAccountCommand(cfg),
-		_BlockchainGetValidatorCommand(cfg),
-		_BlockchainGetValidatorByNumberCommand(cfg),
-		_BlockchainGetValidatorAddressesCommand(cfg),
-		_BlockchainGetPublicKeyCommand(cfg),
-		_BlockchainGetTxPoolContentCommand(cfg),
+		_BlockchainServiceGetBlockCommand(cfg),
+		_BlockchainServiceGetBlockHashCommand(cfg),
+		_BlockchainServiceGetBlockHeightCommand(cfg),
+		_BlockchainServiceGetBlockchainInfoCommand(cfg),
+		_BlockchainServiceGetConsensusInfoCommand(cfg),
+		_BlockchainServiceGetAccountCommand(cfg),
+		_BlockchainServiceGetValidatorCommand(cfg),
+		_BlockchainServiceGetValidatorByNumberCommand(cfg),
+		_BlockchainServiceGetValidatorAddressesCommand(cfg),
+		_BlockchainServiceGetPublicKeyCommand(cfg),
+		_BlockchainServiceGetTxPoolContentCommand(cfg),
 	)
 	return cmd
 }
 
-func _BlockchainGetBlockCommand(cfg *client.Config) *cobra.Command {
+func _BlockchainServiceGetBlockCommand(cfg *client.Config) *cobra.Command {
 	req := &GetBlockRequest{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetBlock"),
 		Short: "GetBlock RPC client",
-		Long:  "GetBlock retrieves information about a block based on the provided request\n parameters.",
+		Long:  "GetBlock retrieves information about a block based on the provided request parameters.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetBlock"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService", "GetBlock"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewBlockchainClient(cc)
+				cli := NewBlockchainServiceClient(cc)
 				v := &GetBlockRequest{}
 
 				if err := in(v); err != nil {
@@ -78,7 +78,7 @@ func _BlockchainGetBlockCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _BlockchainGetBlockHashCommand(cfg *client.Config) *cobra.Command {
+func _BlockchainServiceGetBlockHashCommand(cfg *client.Config) *cobra.Command {
 	req := &GetBlockHashRequest{}
 
 	cmd := &cobra.Command{
@@ -87,15 +87,15 @@ func _BlockchainGetBlockHashCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetBlockHash retrieves the hash of a block at the specified height.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetBlockHash"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService", "GetBlockHash"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewBlockchainClient(cc)
+				cli := NewBlockchainServiceClient(cc)
 				v := &GetBlockHashRequest{}
 
 				if err := in(v); err != nil {
@@ -120,7 +120,7 @@ func _BlockchainGetBlockHashCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _BlockchainGetBlockHeightCommand(cfg *client.Config) *cobra.Command {
+func _BlockchainServiceGetBlockHeightCommand(cfg *client.Config) *cobra.Command {
 	req := &GetBlockHeightRequest{}
 
 	cmd := &cobra.Command{
@@ -129,15 +129,15 @@ func _BlockchainGetBlockHeightCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetBlockHeight retrieves the height of a block with the specified hash.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetBlockHeight"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService", "GetBlockHeight"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewBlockchainClient(cc)
+				cli := NewBlockchainServiceClient(cc)
 				v := &GetBlockHeightRequest{}
 
 				if err := in(v); err != nil {
@@ -162,7 +162,7 @@ func _BlockchainGetBlockHeightCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _BlockchainGetBlockchainInfoCommand(cfg *client.Config) *cobra.Command {
+func _BlockchainServiceGetBlockchainInfoCommand(cfg *client.Config) *cobra.Command {
 	req := &GetBlockchainInfoRequest{}
 
 	cmd := &cobra.Command{
@@ -171,15 +171,15 @@ func _BlockchainGetBlockchainInfoCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetBlockchainInfo retrieves general information about the blockchain.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetBlockchainInfo"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService", "GetBlockchainInfo"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewBlockchainClient(cc)
+				cli := NewBlockchainServiceClient(cc)
 				v := &GetBlockchainInfoRequest{}
 
 				if err := in(v); err != nil {
@@ -202,7 +202,7 @@ func _BlockchainGetBlockchainInfoCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _BlockchainGetConsensusInfoCommand(cfg *client.Config) *cobra.Command {
+func _BlockchainServiceGetConsensusInfoCommand(cfg *client.Config) *cobra.Command {
 	req := &GetConsensusInfoRequest{}
 
 	cmd := &cobra.Command{
@@ -211,15 +211,15 @@ func _BlockchainGetConsensusInfoCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetConsensusInfo retrieves information about the consensus instances.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetConsensusInfo"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService", "GetConsensusInfo"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewBlockchainClient(cc)
+				cli := NewBlockchainServiceClient(cc)
 				v := &GetConsensusInfoRequest{}
 
 				if err := in(v); err != nil {
@@ -242,24 +242,24 @@ func _BlockchainGetConsensusInfoCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _BlockchainGetAccountCommand(cfg *client.Config) *cobra.Command {
+func _BlockchainServiceGetAccountCommand(cfg *client.Config) *cobra.Command {
 	req := &GetAccountRequest{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetAccount"),
 		Short: "GetAccount RPC client",
-		Long:  "GetAccount retrieves information about an account based on the provided\n address.",
+		Long:  "GetAccount retrieves information about an account based on the provided address.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetAccount"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService", "GetAccount"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewBlockchainClient(cc)
+				cli := NewBlockchainServiceClient(cc)
 				v := &GetAccountRequest{}
 
 				if err := in(v); err != nil {
@@ -284,24 +284,24 @@ func _BlockchainGetAccountCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _BlockchainGetValidatorCommand(cfg *client.Config) *cobra.Command {
+func _BlockchainServiceGetValidatorCommand(cfg *client.Config) *cobra.Command {
 	req := &GetValidatorRequest{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetValidator"),
 		Short: "GetValidator RPC client",
-		Long:  "GetValidator retrieves information about a validator based on the provided\n address.",
+		Long:  "GetValidator retrieves information about a validator based on the provided address.\n buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\n buf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetValidator"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService", "GetValidator"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewBlockchainClient(cc)
+				cli := NewBlockchainServiceClient(cc)
 				v := &GetValidatorRequest{}
 
 				if err := in(v); err != nil {
@@ -326,24 +326,24 @@ func _BlockchainGetValidatorCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _BlockchainGetValidatorByNumberCommand(cfg *client.Config) *cobra.Command {
+func _BlockchainServiceGetValidatorByNumberCommand(cfg *client.Config) *cobra.Command {
 	req := &GetValidatorByNumberRequest{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetValidatorByNumber"),
 		Short: "GetValidatorByNumber RPC client",
-		Long:  "GetValidatorByNumber retrieves information about a validator based on the\n provided number.",
+		Long:  "GetValidatorByNumber retrieves information about a validator based on the provided number.\n buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\n buf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetValidatorByNumber"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService", "GetValidatorByNumber"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewBlockchainClient(cc)
+				cli := NewBlockchainServiceClient(cc)
 				v := &GetValidatorByNumberRequest{}
 
 				if err := in(v); err != nil {
@@ -368,7 +368,7 @@ func _BlockchainGetValidatorByNumberCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _BlockchainGetValidatorAddressesCommand(cfg *client.Config) *cobra.Command {
+func _BlockchainServiceGetValidatorAddressesCommand(cfg *client.Config) *cobra.Command {
 	req := &GetValidatorAddressesRequest{}
 
 	cmd := &cobra.Command{
@@ -377,15 +377,15 @@ func _BlockchainGetValidatorAddressesCommand(cfg *client.Config) *cobra.Command 
 		Long:  "GetValidatorAddresses retrieves a list of all validator addresses.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetValidatorAddresses"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService", "GetValidatorAddresses"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewBlockchainClient(cc)
+				cli := NewBlockchainServiceClient(cc)
 				v := &GetValidatorAddressesRequest{}
 
 				if err := in(v); err != nil {
@@ -408,24 +408,24 @@ func _BlockchainGetValidatorAddressesCommand(cfg *client.Config) *cobra.Command 
 	return cmd
 }
 
-func _BlockchainGetPublicKeyCommand(cfg *client.Config) *cobra.Command {
+func _BlockchainServiceGetPublicKeyCommand(cfg *client.Config) *cobra.Command {
 	req := &GetPublicKeyRequest{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetPublicKey"),
 		Short: "GetPublicKey RPC client",
-		Long:  "GetPublicKey retrieves the public key of an account based on the provided\n address.",
+		Long:  "GetPublicKey retrieves the public key of an account based on the provided address.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetPublicKey"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService", "GetPublicKey"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewBlockchainClient(cc)
+				cli := NewBlockchainServiceClient(cc)
 				v := &GetPublicKeyRequest{}
 
 				if err := in(v); err != nil {
@@ -450,7 +450,7 @@ func _BlockchainGetPublicKeyCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _BlockchainGetTxPoolContentCommand(cfg *client.Config) *cobra.Command {
+func _BlockchainServiceGetTxPoolContentCommand(cfg *client.Config) *cobra.Command {
 	req := &GetTxPoolContentRequest{}
 
 	cmd := &cobra.Command{
@@ -459,15 +459,15 @@ func _BlockchainGetTxPoolContentCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetTxPoolContent retrieves current transactions in the transaction pool.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain", "GetTxPoolContent"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "BlockchainService", "GetTxPoolContent"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewBlockchainClient(cc)
+				cli := NewBlockchainServiceClient(cc)
 				v := &GetTxPoolContentRequest{}
 
 				if err := in(v); err != nil {
@@ -487,7 +487,7 @@ func _BlockchainGetTxPoolContentCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	flag.EnumVar(cmd.PersistentFlags(), &req.PayloadType, cfg.FlagNamer("PayloadType"), "The type of transactions to retrieve from the transaction pool. 0 means all\n types.")
+	flag.EnumVar(cmd.PersistentFlags(), &req.PayloadType, cfg.FlagNamer("PayloadType"), "The type of transactions to retrieve from the transaction pool. 0 means all types.")
 
 	return cmd
 }

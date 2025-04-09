@@ -20,7 +20,7 @@ func TestGetBlock(t *testing.T) {
 	t.Run("Should return nil for non existing block ", func(t *testing.T) {
 		res, err := client.GetBlock(context.Background(),
 			&pactus.GetBlockRequest{
-				Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_DATA,
+				Height: height + 1, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_DATA,
 			})
 
 		assert.Error(t, err)
@@ -29,7 +29,7 @@ func TestGetBlock(t *testing.T) {
 
 	t.Run("Should return an existing block data (verbosity: 0)", func(t *testing.T) {
 		res, err := client.GetBlock(context.Background(),
-			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_DATA})
+			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_DATA})
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
@@ -42,7 +42,7 @@ func TestGetBlock(t *testing.T) {
 
 	t.Run("Should return object with (verbosity: 1)", func(t *testing.T) {
 		res, err := client.GetBlock(context.Background(),
-			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_INFO})
+			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_INFO})
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
@@ -66,7 +66,7 @@ func TestGetBlock(t *testing.T) {
 
 	t.Run("Should return object with (verbosity: 2)", func(t *testing.T) {
 		res, err := client.GetBlock(context.Background(),
-			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS})
+			&pactus.GetBlockRequest{Height: height, Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_TRANSACTIONS})
 
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
@@ -364,8 +364,8 @@ func TestConsensusInfo(t *testing.T) {
 		assert.Equal(t, consHeight, res.Instances[0].Height)
 		assert.Equal(t, int32(consRound), res.Instances[0].Round)
 		assert.Len(t, res.Instances[0].Votes, 2)
-		assert.Equal(t, pactus.VoteType_VOTE_PREPARE, res.Instances[0].Votes[0].Type)
-		assert.Equal(t, pactus.VoteType_VOTE_PRECOMMIT, res.Instances[0].Votes[1].Type)
+		assert.Equal(t, pactus.VoteType_VOTE_TYPE_PREPARE, res.Instances[0].Votes[0].Type)
+		assert.Equal(t, pactus.VoteType_VOTE_TYPE_PRECOMMIT, res.Instances[0].Votes[1].Type)
 
 		assert.False(t, res.Instances[1].Active)
 		assert.Equal(t, consHeight, res.Instances[1].Height)
@@ -395,7 +395,7 @@ func TestGetTxPoolContent(t *testing.T) {
 
 	t.Run("Should return all transactions", func(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
-			PayloadType: pactus.PayloadType_UNKNOWN,
+			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_UNSPECIFIED,
 		}
 		resp, err := client.GetTxPoolContent(context.Background(), in)
 
@@ -407,7 +407,7 @@ func TestGetTxPoolContent(t *testing.T) {
 
 	t.Run("Should return all Bond transactions", func(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
-			PayloadType: pactus.PayloadType_BOND_PAYLOAD,
+			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_BOND,
 		}
 		resp, err := client.GetTxPoolContent(context.Background(), in)
 
@@ -416,13 +416,13 @@ func TestGetTxPoolContent(t *testing.T) {
 		assert.Greater(t, len(resp.Txs), 0)
 
 		for _, tx := range resp.Txs {
-			assert.Equal(t, pactus.PayloadType_BOND_PAYLOAD, tx.PayloadType)
+			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_BOND, tx.PayloadType)
 		}
 	})
 
 	t.Run("Should return all Transfer transactions", func(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
-			PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
 		}
 		resp, err := client.GetTxPoolContent(context.Background(), in)
 
@@ -431,13 +431,13 @@ func TestGetTxPoolContent(t *testing.T) {
 		assert.Greater(t, len(resp.Txs), 0)
 
 		for _, tx := range resp.Txs {
-			assert.Equal(t, pactus.PayloadType_TRANSFER_PAYLOAD, tx.PayloadType)
+			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_TRANSFER, tx.PayloadType)
 		}
 	})
 
 	t.Run("Should return all Unbond transactions", func(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
-			PayloadType: pactus.PayloadType_UNBOND_PAYLOAD,
+			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_UNBOND,
 		}
 		resp, err := client.GetTxPoolContent(context.Background(), in)
 
@@ -446,13 +446,13 @@ func TestGetTxPoolContent(t *testing.T) {
 		assert.Greater(t, len(resp.Txs), 0)
 
 		for _, tx := range resp.Txs {
-			assert.Equal(t, pactus.PayloadType_UNBOND_PAYLOAD, tx.PayloadType)
+			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_UNBOND, tx.PayloadType)
 		}
 	})
 
 	t.Run("Should return all Sortition transactions", func(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
-			PayloadType: pactus.PayloadType_SORTITION_PAYLOAD,
+			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_SORTITION,
 		}
 		resp, err := client.GetTxPoolContent(context.Background(), in)
 
@@ -461,13 +461,13 @@ func TestGetTxPoolContent(t *testing.T) {
 		assert.Greater(t, len(resp.Txs), 0)
 
 		for _, tx := range resp.Txs {
-			assert.Equal(t, pactus.PayloadType_SORTITION_PAYLOAD, tx.PayloadType)
+			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_SORTITION, tx.PayloadType)
 		}
 	})
 
 	t.Run("Should return all Withdraw transactions", func(t *testing.T) {
 		in := &pactus.GetTxPoolContentRequest{
-			PayloadType: pactus.PayloadType_WITHDRAW_PAYLOAD,
+			PayloadType: pactus.PayloadType_PAYLOAD_TYPE_WITHDRAW,
 		}
 		resp, err := client.GetTxPoolContent(context.Background(), in)
 
@@ -476,7 +476,7 @@ func TestGetTxPoolContent(t *testing.T) {
 		assert.Greater(t, len(resp.Txs), 0)
 
 		for _, tx := range resp.Txs {
-			assert.Equal(t, pactus.PayloadType_WITHDRAW_PAYLOAD, tx.PayloadType)
+			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_WITHDRAW, tx.PayloadType)
 		}
 	})
 

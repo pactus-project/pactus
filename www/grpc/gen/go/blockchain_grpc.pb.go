@@ -19,27 +19,26 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Blockchain_GetBlock_FullMethodName              = "/pactus.Blockchain/GetBlock"
-	Blockchain_GetBlockHash_FullMethodName          = "/pactus.Blockchain/GetBlockHash"
-	Blockchain_GetBlockHeight_FullMethodName        = "/pactus.Blockchain/GetBlockHeight"
-	Blockchain_GetBlockchainInfo_FullMethodName     = "/pactus.Blockchain/GetBlockchainInfo"
-	Blockchain_GetConsensusInfo_FullMethodName      = "/pactus.Blockchain/GetConsensusInfo"
-	Blockchain_GetAccount_FullMethodName            = "/pactus.Blockchain/GetAccount"
-	Blockchain_GetValidator_FullMethodName          = "/pactus.Blockchain/GetValidator"
-	Blockchain_GetValidatorByNumber_FullMethodName  = "/pactus.Blockchain/GetValidatorByNumber"
-	Blockchain_GetValidatorAddresses_FullMethodName = "/pactus.Blockchain/GetValidatorAddresses"
-	Blockchain_GetPublicKey_FullMethodName          = "/pactus.Blockchain/GetPublicKey"
-	Blockchain_GetTxPoolContent_FullMethodName      = "/pactus.Blockchain/GetTxPoolContent"
+	BlockchainService_GetBlock_FullMethodName              = "/pactus.BlockchainService/GetBlock"
+	BlockchainService_GetBlockHash_FullMethodName          = "/pactus.BlockchainService/GetBlockHash"
+	BlockchainService_GetBlockHeight_FullMethodName        = "/pactus.BlockchainService/GetBlockHeight"
+	BlockchainService_GetBlockchainInfo_FullMethodName     = "/pactus.BlockchainService/GetBlockchainInfo"
+	BlockchainService_GetConsensusInfo_FullMethodName      = "/pactus.BlockchainService/GetConsensusInfo"
+	BlockchainService_GetAccount_FullMethodName            = "/pactus.BlockchainService/GetAccount"
+	BlockchainService_GetValidator_FullMethodName          = "/pactus.BlockchainService/GetValidator"
+	BlockchainService_GetValidatorByNumber_FullMethodName  = "/pactus.BlockchainService/GetValidatorByNumber"
+	BlockchainService_GetValidatorAddresses_FullMethodName = "/pactus.BlockchainService/GetValidatorAddresses"
+	BlockchainService_GetPublicKey_FullMethodName          = "/pactus.BlockchainService/GetPublicKey"
+	BlockchainService_GetTxPoolContent_FullMethodName      = "/pactus.BlockchainService/GetTxPoolContent"
 )
 
-// BlockchainClient is the client API for Blockchain service.
+// BlockchainServiceClient is the client API for BlockchainService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // Blockchain service defines RPC methods for interacting with the blockchain.
-type BlockchainClient interface {
-	// GetBlock retrieves information about a block based on the provided request
-	// parameters.
+type BlockchainServiceClient interface {
+	// GetBlock retrieves information about a block based on the provided request parameters.
 	GetBlock(ctx context.Context, in *GetBlockRequest, opts ...grpc.CallOption) (*GetBlockResponse, error)
 	// GetBlockHash retrieves the hash of a block at the specified height.
 	GetBlockHash(ctx context.Context, in *GetBlockHashRequest, opts ...grpc.CallOption) (*GetBlockHashResponse, error)
@@ -49,150 +48,149 @@ type BlockchainClient interface {
 	GetBlockchainInfo(ctx context.Context, in *GetBlockchainInfoRequest, opts ...grpc.CallOption) (*GetBlockchainInfoResponse, error)
 	// GetConsensusInfo retrieves information about the consensus instances.
 	GetConsensusInfo(ctx context.Context, in *GetConsensusInfoRequest, opts ...grpc.CallOption) (*GetConsensusInfoResponse, error)
-	// GetAccount retrieves information about an account based on the provided
-	// address.
+	// GetAccount retrieves information about an account based on the provided address.
 	GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error)
-	// GetValidator retrieves information about a validator based on the provided
-	// address.
+	// GetValidator retrieves information about a validator based on the provided address.
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetValidator(ctx context.Context, in *GetValidatorRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error)
-	// GetValidatorByNumber retrieves information about a validator based on the
-	// provided number.
+	// GetValidatorByNumber retrieves information about a validator based on the provided number.
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetValidatorByNumber(ctx context.Context, in *GetValidatorByNumberRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error)
 	// GetValidatorAddresses retrieves a list of all validator addresses.
 	GetValidatorAddresses(ctx context.Context, in *GetValidatorAddressesRequest, opts ...grpc.CallOption) (*GetValidatorAddressesResponse, error)
-	// GetPublicKey retrieves the public key of an account based on the provided
-	// address.
+	// GetPublicKey retrieves the public key of an account based on the provided address.
 	GetPublicKey(ctx context.Context, in *GetPublicKeyRequest, opts ...grpc.CallOption) (*GetPublicKeyResponse, error)
 	// GetTxPoolContent retrieves current transactions in the transaction pool.
 	GetTxPoolContent(ctx context.Context, in *GetTxPoolContentRequest, opts ...grpc.CallOption) (*GetTxPoolContentResponse, error)
 }
 
-type blockchainClient struct {
+type blockchainServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewBlockchainClient(cc grpc.ClientConnInterface) BlockchainClient {
-	return &blockchainClient{cc}
+func NewBlockchainServiceClient(cc grpc.ClientConnInterface) BlockchainServiceClient {
+	return &blockchainServiceClient{cc}
 }
 
-func (c *blockchainClient) GetBlock(ctx context.Context, in *GetBlockRequest, opts ...grpc.CallOption) (*GetBlockResponse, error) {
+func (c *blockchainServiceClient) GetBlock(ctx context.Context, in *GetBlockRequest, opts ...grpc.CallOption) (*GetBlockResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetBlockResponse)
-	err := c.cc.Invoke(ctx, Blockchain_GetBlock_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BlockchainService_GetBlock_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockchainClient) GetBlockHash(ctx context.Context, in *GetBlockHashRequest, opts ...grpc.CallOption) (*GetBlockHashResponse, error) {
+func (c *blockchainServiceClient) GetBlockHash(ctx context.Context, in *GetBlockHashRequest, opts ...grpc.CallOption) (*GetBlockHashResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetBlockHashResponse)
-	err := c.cc.Invoke(ctx, Blockchain_GetBlockHash_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BlockchainService_GetBlockHash_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockchainClient) GetBlockHeight(ctx context.Context, in *GetBlockHeightRequest, opts ...grpc.CallOption) (*GetBlockHeightResponse, error) {
+func (c *blockchainServiceClient) GetBlockHeight(ctx context.Context, in *GetBlockHeightRequest, opts ...grpc.CallOption) (*GetBlockHeightResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetBlockHeightResponse)
-	err := c.cc.Invoke(ctx, Blockchain_GetBlockHeight_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BlockchainService_GetBlockHeight_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockchainClient) GetBlockchainInfo(ctx context.Context, in *GetBlockchainInfoRequest, opts ...grpc.CallOption) (*GetBlockchainInfoResponse, error) {
+func (c *blockchainServiceClient) GetBlockchainInfo(ctx context.Context, in *GetBlockchainInfoRequest, opts ...grpc.CallOption) (*GetBlockchainInfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetBlockchainInfoResponse)
-	err := c.cc.Invoke(ctx, Blockchain_GetBlockchainInfo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BlockchainService_GetBlockchainInfo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockchainClient) GetConsensusInfo(ctx context.Context, in *GetConsensusInfoRequest, opts ...grpc.CallOption) (*GetConsensusInfoResponse, error) {
+func (c *blockchainServiceClient) GetConsensusInfo(ctx context.Context, in *GetConsensusInfoRequest, opts ...grpc.CallOption) (*GetConsensusInfoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetConsensusInfoResponse)
-	err := c.cc.Invoke(ctx, Blockchain_GetConsensusInfo_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BlockchainService_GetConsensusInfo_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockchainClient) GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error) {
+func (c *blockchainServiceClient) GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetAccountResponse)
-	err := c.cc.Invoke(ctx, Blockchain_GetAccount_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BlockchainService_GetAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockchainClient) GetValidator(ctx context.Context, in *GetValidatorRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error) {
+func (c *blockchainServiceClient) GetValidator(ctx context.Context, in *GetValidatorRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetValidatorResponse)
-	err := c.cc.Invoke(ctx, Blockchain_GetValidator_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BlockchainService_GetValidator_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockchainClient) GetValidatorByNumber(ctx context.Context, in *GetValidatorByNumberRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error) {
+func (c *blockchainServiceClient) GetValidatorByNumber(ctx context.Context, in *GetValidatorByNumberRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetValidatorResponse)
-	err := c.cc.Invoke(ctx, Blockchain_GetValidatorByNumber_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BlockchainService_GetValidatorByNumber_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockchainClient) GetValidatorAddresses(ctx context.Context, in *GetValidatorAddressesRequest, opts ...grpc.CallOption) (*GetValidatorAddressesResponse, error) {
+func (c *blockchainServiceClient) GetValidatorAddresses(ctx context.Context, in *GetValidatorAddressesRequest, opts ...grpc.CallOption) (*GetValidatorAddressesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetValidatorAddressesResponse)
-	err := c.cc.Invoke(ctx, Blockchain_GetValidatorAddresses_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BlockchainService_GetValidatorAddresses_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockchainClient) GetPublicKey(ctx context.Context, in *GetPublicKeyRequest, opts ...grpc.CallOption) (*GetPublicKeyResponse, error) {
+func (c *blockchainServiceClient) GetPublicKey(ctx context.Context, in *GetPublicKeyRequest, opts ...grpc.CallOption) (*GetPublicKeyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPublicKeyResponse)
-	err := c.cc.Invoke(ctx, Blockchain_GetPublicKey_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BlockchainService_GetPublicKey_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *blockchainClient) GetTxPoolContent(ctx context.Context, in *GetTxPoolContentRequest, opts ...grpc.CallOption) (*GetTxPoolContentResponse, error) {
+func (c *blockchainServiceClient) GetTxPoolContent(ctx context.Context, in *GetTxPoolContentRequest, opts ...grpc.CallOption) (*GetTxPoolContentResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetTxPoolContentResponse)
-	err := c.cc.Invoke(ctx, Blockchain_GetTxPoolContent_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, BlockchainService_GetTxPoolContent_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// BlockchainServer is the server API for Blockchain service.
-// All implementations should embed UnimplementedBlockchainServer
+// BlockchainServiceServer is the server API for BlockchainService service.
+// All implementations should embed UnimplementedBlockchainServiceServer
 // for forward compatibility.
 //
 // Blockchain service defines RPC methods for interacting with the blockchain.
-type BlockchainServer interface {
-	// GetBlock retrieves information about a block based on the provided request
-	// parameters.
+type BlockchainServiceServer interface {
+	// GetBlock retrieves information about a block based on the provided request parameters.
 	GetBlock(context.Context, *GetBlockRequest) (*GetBlockResponse, error)
 	// GetBlockHash retrieves the hash of a block at the specified height.
 	GetBlockHash(context.Context, *GetBlockHashRequest) (*GetBlockHashResponse, error)
@@ -202,332 +200,332 @@ type BlockchainServer interface {
 	GetBlockchainInfo(context.Context, *GetBlockchainInfoRequest) (*GetBlockchainInfoResponse, error)
 	// GetConsensusInfo retrieves information about the consensus instances.
 	GetConsensusInfo(context.Context, *GetConsensusInfoRequest) (*GetConsensusInfoResponse, error)
-	// GetAccount retrieves information about an account based on the provided
-	// address.
+	// GetAccount retrieves information about an account based on the provided address.
 	GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error)
-	// GetValidator retrieves information about a validator based on the provided
-	// address.
+	// GetValidator retrieves information about a validator based on the provided address.
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetValidator(context.Context, *GetValidatorRequest) (*GetValidatorResponse, error)
-	// GetValidatorByNumber retrieves information about a validator based on the
-	// provided number.
+	// GetValidatorByNumber retrieves information about a validator based on the provided number.
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetValidatorByNumber(context.Context, *GetValidatorByNumberRequest) (*GetValidatorResponse, error)
 	// GetValidatorAddresses retrieves a list of all validator addresses.
 	GetValidatorAddresses(context.Context, *GetValidatorAddressesRequest) (*GetValidatorAddressesResponse, error)
-	// GetPublicKey retrieves the public key of an account based on the provided
-	// address.
+	// GetPublicKey retrieves the public key of an account based on the provided address.
 	GetPublicKey(context.Context, *GetPublicKeyRequest) (*GetPublicKeyResponse, error)
 	// GetTxPoolContent retrieves current transactions in the transaction pool.
 	GetTxPoolContent(context.Context, *GetTxPoolContentRequest) (*GetTxPoolContentResponse, error)
 }
 
-// UnimplementedBlockchainServer should be embedded to have
+// UnimplementedBlockchainServiceServer should be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedBlockchainServer struct{}
+type UnimplementedBlockchainServiceServer struct{}
 
-func (UnimplementedBlockchainServer) GetBlock(context.Context, *GetBlockRequest) (*GetBlockResponse, error) {
+func (UnimplementedBlockchainServiceServer) GetBlock(context.Context, *GetBlockRequest) (*GetBlockResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlock not implemented")
 }
-func (UnimplementedBlockchainServer) GetBlockHash(context.Context, *GetBlockHashRequest) (*GetBlockHashResponse, error) {
+func (UnimplementedBlockchainServiceServer) GetBlockHash(context.Context, *GetBlockHashRequest) (*GetBlockHashResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlockHash not implemented")
 }
-func (UnimplementedBlockchainServer) GetBlockHeight(context.Context, *GetBlockHeightRequest) (*GetBlockHeightResponse, error) {
+func (UnimplementedBlockchainServiceServer) GetBlockHeight(context.Context, *GetBlockHeightRequest) (*GetBlockHeightResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlockHeight not implemented")
 }
-func (UnimplementedBlockchainServer) GetBlockchainInfo(context.Context, *GetBlockchainInfoRequest) (*GetBlockchainInfoResponse, error) {
+func (UnimplementedBlockchainServiceServer) GetBlockchainInfo(context.Context, *GetBlockchainInfoRequest) (*GetBlockchainInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlockchainInfo not implemented")
 }
-func (UnimplementedBlockchainServer) GetConsensusInfo(context.Context, *GetConsensusInfoRequest) (*GetConsensusInfoResponse, error) {
+func (UnimplementedBlockchainServiceServer) GetConsensusInfo(context.Context, *GetConsensusInfoRequest) (*GetConsensusInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetConsensusInfo not implemented")
 }
-func (UnimplementedBlockchainServer) GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error) {
+func (UnimplementedBlockchainServiceServer) GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccount not implemented")
 }
-func (UnimplementedBlockchainServer) GetValidator(context.Context, *GetValidatorRequest) (*GetValidatorResponse, error) {
+func (UnimplementedBlockchainServiceServer) GetValidator(context.Context, *GetValidatorRequest) (*GetValidatorResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetValidator not implemented")
 }
-func (UnimplementedBlockchainServer) GetValidatorByNumber(context.Context, *GetValidatorByNumberRequest) (*GetValidatorResponse, error) {
+func (UnimplementedBlockchainServiceServer) GetValidatorByNumber(context.Context, *GetValidatorByNumberRequest) (*GetValidatorResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetValidatorByNumber not implemented")
 }
-func (UnimplementedBlockchainServer) GetValidatorAddresses(context.Context, *GetValidatorAddressesRequest) (*GetValidatorAddressesResponse, error) {
+func (UnimplementedBlockchainServiceServer) GetValidatorAddresses(context.Context, *GetValidatorAddressesRequest) (*GetValidatorAddressesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetValidatorAddresses not implemented")
 }
-func (UnimplementedBlockchainServer) GetPublicKey(context.Context, *GetPublicKeyRequest) (*GetPublicKeyResponse, error) {
+func (UnimplementedBlockchainServiceServer) GetPublicKey(context.Context, *GetPublicKeyRequest) (*GetPublicKeyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPublicKey not implemented")
 }
-func (UnimplementedBlockchainServer) GetTxPoolContent(context.Context, *GetTxPoolContentRequest) (*GetTxPoolContentResponse, error) {
+func (UnimplementedBlockchainServiceServer) GetTxPoolContent(context.Context, *GetTxPoolContentRequest) (*GetTxPoolContentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTxPoolContent not implemented")
 }
-func (UnimplementedBlockchainServer) testEmbeddedByValue() {}
+func (UnimplementedBlockchainServiceServer) testEmbeddedByValue() {}
 
-// UnsafeBlockchainServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to BlockchainServer will
+// UnsafeBlockchainServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to BlockchainServiceServer will
 // result in compilation errors.
-type UnsafeBlockchainServer interface {
-	mustEmbedUnimplementedBlockchainServer()
+type UnsafeBlockchainServiceServer interface {
+	mustEmbedUnimplementedBlockchainServiceServer()
 }
 
-func RegisterBlockchainServer(s grpc.ServiceRegistrar, srv BlockchainServer) {
-	// If the following call pancis, it indicates UnimplementedBlockchainServer was
+func RegisterBlockchainServiceServer(s grpc.ServiceRegistrar, srv BlockchainServiceServer) {
+	// If the following call pancis, it indicates UnimplementedBlockchainServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Blockchain_ServiceDesc, srv)
+	s.RegisterService(&BlockchainService_ServiceDesc, srv)
 }
 
-func _Blockchain_GetBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BlockchainService_GetBlock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetBlockRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockchainServer).GetBlock(ctx, in)
+		return srv.(BlockchainServiceServer).GetBlock(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Blockchain_GetBlock_FullMethodName,
+		FullMethod: BlockchainService_GetBlock_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockchainServer).GetBlock(ctx, req.(*GetBlockRequest))
+		return srv.(BlockchainServiceServer).GetBlock(ctx, req.(*GetBlockRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Blockchain_GetBlockHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BlockchainService_GetBlockHash_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetBlockHashRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockchainServer).GetBlockHash(ctx, in)
+		return srv.(BlockchainServiceServer).GetBlockHash(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Blockchain_GetBlockHash_FullMethodName,
+		FullMethod: BlockchainService_GetBlockHash_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockchainServer).GetBlockHash(ctx, req.(*GetBlockHashRequest))
+		return srv.(BlockchainServiceServer).GetBlockHash(ctx, req.(*GetBlockHashRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Blockchain_GetBlockHeight_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BlockchainService_GetBlockHeight_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetBlockHeightRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockchainServer).GetBlockHeight(ctx, in)
+		return srv.(BlockchainServiceServer).GetBlockHeight(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Blockchain_GetBlockHeight_FullMethodName,
+		FullMethod: BlockchainService_GetBlockHeight_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockchainServer).GetBlockHeight(ctx, req.(*GetBlockHeightRequest))
+		return srv.(BlockchainServiceServer).GetBlockHeight(ctx, req.(*GetBlockHeightRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Blockchain_GetBlockchainInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BlockchainService_GetBlockchainInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetBlockchainInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockchainServer).GetBlockchainInfo(ctx, in)
+		return srv.(BlockchainServiceServer).GetBlockchainInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Blockchain_GetBlockchainInfo_FullMethodName,
+		FullMethod: BlockchainService_GetBlockchainInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockchainServer).GetBlockchainInfo(ctx, req.(*GetBlockchainInfoRequest))
+		return srv.(BlockchainServiceServer).GetBlockchainInfo(ctx, req.(*GetBlockchainInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Blockchain_GetConsensusInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BlockchainService_GetConsensusInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetConsensusInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockchainServer).GetConsensusInfo(ctx, in)
+		return srv.(BlockchainServiceServer).GetConsensusInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Blockchain_GetConsensusInfo_FullMethodName,
+		FullMethod: BlockchainService_GetConsensusInfo_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockchainServer).GetConsensusInfo(ctx, req.(*GetConsensusInfoRequest))
+		return srv.(BlockchainServiceServer).GetConsensusInfo(ctx, req.(*GetConsensusInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Blockchain_GetAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BlockchainService_GetAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAccountRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockchainServer).GetAccount(ctx, in)
+		return srv.(BlockchainServiceServer).GetAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Blockchain_GetAccount_FullMethodName,
+		FullMethod: BlockchainService_GetAccount_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockchainServer).GetAccount(ctx, req.(*GetAccountRequest))
+		return srv.(BlockchainServiceServer).GetAccount(ctx, req.(*GetAccountRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Blockchain_GetValidator_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BlockchainService_GetValidator_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetValidatorRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockchainServer).GetValidator(ctx, in)
+		return srv.(BlockchainServiceServer).GetValidator(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Blockchain_GetValidator_FullMethodName,
+		FullMethod: BlockchainService_GetValidator_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockchainServer).GetValidator(ctx, req.(*GetValidatorRequest))
+		return srv.(BlockchainServiceServer).GetValidator(ctx, req.(*GetValidatorRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Blockchain_GetValidatorByNumber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BlockchainService_GetValidatorByNumber_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetValidatorByNumberRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockchainServer).GetValidatorByNumber(ctx, in)
+		return srv.(BlockchainServiceServer).GetValidatorByNumber(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Blockchain_GetValidatorByNumber_FullMethodName,
+		FullMethod: BlockchainService_GetValidatorByNumber_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockchainServer).GetValidatorByNumber(ctx, req.(*GetValidatorByNumberRequest))
+		return srv.(BlockchainServiceServer).GetValidatorByNumber(ctx, req.(*GetValidatorByNumberRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Blockchain_GetValidatorAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BlockchainService_GetValidatorAddresses_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetValidatorAddressesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockchainServer).GetValidatorAddresses(ctx, in)
+		return srv.(BlockchainServiceServer).GetValidatorAddresses(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Blockchain_GetValidatorAddresses_FullMethodName,
+		FullMethod: BlockchainService_GetValidatorAddresses_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockchainServer).GetValidatorAddresses(ctx, req.(*GetValidatorAddressesRequest))
+		return srv.(BlockchainServiceServer).GetValidatorAddresses(ctx, req.(*GetValidatorAddressesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Blockchain_GetPublicKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BlockchainService_GetPublicKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetPublicKeyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockchainServer).GetPublicKey(ctx, in)
+		return srv.(BlockchainServiceServer).GetPublicKey(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Blockchain_GetPublicKey_FullMethodName,
+		FullMethod: BlockchainService_GetPublicKey_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockchainServer).GetPublicKey(ctx, req.(*GetPublicKeyRequest))
+		return srv.(BlockchainServiceServer).GetPublicKey(ctx, req.(*GetPublicKeyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Blockchain_GetTxPoolContent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _BlockchainService_GetTxPoolContent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetTxPoolContentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(BlockchainServer).GetTxPoolContent(ctx, in)
+		return srv.(BlockchainServiceServer).GetTxPoolContent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Blockchain_GetTxPoolContent_FullMethodName,
+		FullMethod: BlockchainService_GetTxPoolContent_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlockchainServer).GetTxPoolContent(ctx, req.(*GetTxPoolContentRequest))
+		return srv.(BlockchainServiceServer).GetTxPoolContent(ctx, req.(*GetTxPoolContentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Blockchain_ServiceDesc is the grpc.ServiceDesc for Blockchain service.
+// BlockchainService_ServiceDesc is the grpc.ServiceDesc for BlockchainService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Blockchain_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pactus.Blockchain",
-	HandlerType: (*BlockchainServer)(nil),
+var BlockchainService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pactus.BlockchainService",
+	HandlerType: (*BlockchainServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetBlock",
-			Handler:    _Blockchain_GetBlock_Handler,
+			Handler:    _BlockchainService_GetBlock_Handler,
 		},
 		{
 			MethodName: "GetBlockHash",
-			Handler:    _Blockchain_GetBlockHash_Handler,
+			Handler:    _BlockchainService_GetBlockHash_Handler,
 		},
 		{
 			MethodName: "GetBlockHeight",
-			Handler:    _Blockchain_GetBlockHeight_Handler,
+			Handler:    _BlockchainService_GetBlockHeight_Handler,
 		},
 		{
 			MethodName: "GetBlockchainInfo",
-			Handler:    _Blockchain_GetBlockchainInfo_Handler,
+			Handler:    _BlockchainService_GetBlockchainInfo_Handler,
 		},
 		{
 			MethodName: "GetConsensusInfo",
-			Handler:    _Blockchain_GetConsensusInfo_Handler,
+			Handler:    _BlockchainService_GetConsensusInfo_Handler,
 		},
 		{
 			MethodName: "GetAccount",
-			Handler:    _Blockchain_GetAccount_Handler,
+			Handler:    _BlockchainService_GetAccount_Handler,
 		},
 		{
 			MethodName: "GetValidator",
-			Handler:    _Blockchain_GetValidator_Handler,
+			Handler:    _BlockchainService_GetValidator_Handler,
 		},
 		{
 			MethodName: "GetValidatorByNumber",
-			Handler:    _Blockchain_GetValidatorByNumber_Handler,
+			Handler:    _BlockchainService_GetValidatorByNumber_Handler,
 		},
 		{
 			MethodName: "GetValidatorAddresses",
-			Handler:    _Blockchain_GetValidatorAddresses_Handler,
+			Handler:    _BlockchainService_GetValidatorAddresses_Handler,
 		},
 		{
 			MethodName: "GetPublicKey",
-			Handler:    _Blockchain_GetPublicKey_Handler,
+			Handler:    _BlockchainService_GetPublicKey_Handler,
 		},
 		{
 			MethodName: "GetTxPoolContent",
-			Handler:    _Blockchain_GetTxPoolContent_Handler,
+			Handler:    _BlockchainService_GetTxPoolContent_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

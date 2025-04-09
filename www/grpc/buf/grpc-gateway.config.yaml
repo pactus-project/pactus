@@ -4,123 +4,123 @@ config_version: 3
 http:
   rules:
     # Blockchain APIs
-    - selector: pactus.Blockchain.GetBlock
+    - selector: pactus.BlockchainService.GetBlock
       get: "/pactus/blockchain/get_block"
 
-    - selector: pactus.Blockchain.GetBlockHash
+    - selector: pactus.BlockchainService.GetBlockHash
       get: "/pactus/blockchain/get_block_hash"
 
-    - selector: pactus.Blockchain.GetBlockHeight
+    - selector: pactus.BlockchainService.GetBlockHeight
       get: "/pactus/blockchain/get_block_height"
 
-    - selector: pactus.Blockchain.GetAccount
+    - selector: pactus.BlockchainService.GetAccount
       get: "/pactus/blockchain/get_account"
 
-    - selector: pactus.Blockchain.GetValidator
+    - selector: pactus.BlockchainService.GetValidator
       get: "/pactus/blockchain/get_validator"
 
-    - selector: pactus.Blockchain.GetValidatorByNumber
+    - selector: pactus.BlockchainService.GetValidatorByNumber
       get: "/pactus/blockchain/get_validator_by_number"
 
-    - selector: pactus.Blockchain.GetBlockchainInfo
+    - selector: pactus.BlockchainService.GetBlockchainInfo
       get: "/pactus/blockchain/get_blockchain_info"
 
-    - selector: pactus.Blockchain.GetConsensusInfo
+    - selector: pactus.BlockchainService.GetConsensusInfo
       get: "/pactus/blockchain/get_consensus_info"
 
-    - selector: pactus.Blockchain.GetPublicKey
+    - selector: pactus.BlockchainService.GetPublicKey
       get: "/pactus/blockchain/get_public_key"
 
-    - selector: pactus.Blockchain.GetTxPoolContent
+    - selector: pactus.BlockchainService.GetTxPoolContent
       get: "/pactus/blockchain/get_txpool_content"
 
     # Transaction APIs
-    - selector: pactus.Transaction.GetTransaction
+    - selector: pactus.TransactionService.GetTransaction
       get: "/pactus/transaction/get_transaction"
 
-    - selector: pactus.Transaction.BroadcastTransaction
+    - selector: pactus.TransactionService.BroadcastTransaction
       put: "/pactus/transaction/broadcast_transaction"
 
-    - selector: pactus.Transaction.CalculateFee
+    - selector: pactus.TransactionService.CalculateFee
       get: "/pactus/transaction/calculate_fee"
 
-    - selector: pactus.Transaction.GetRawTransferTransaction
+    - selector: pactus.TransactionService.GetRawTransferTransaction
       get: "/pactus/transaction/get_raw_transfer_transaction"
 
-    - selector: pactus.Transaction.GetRawBondTransaction
+    - selector: pactus.TransactionService.GetRawBondTransaction
       get: "/pactus/transaction/get_raw_bond_transaction"
 
-    - selector: pactus.Transaction.GetRawUnbondTransaction
+    - selector: pactus.TransactionService.GetRawUnbondTransaction
       get: "/pactus/transaction/get_raw_unbond_transaction"
 
-    - selector: pactus.Transaction.GetRawWithdrawTransaction
+    - selector: pactus.TransactionService.GetRawWithdrawTransaction
       get: "/pactus/transaction/get_raw_withdraw_transaction"
 
     # Network APIs
-    - selector: pactus.Network.GetNetworkInfo
+    - selector: pactus.NetworkService.GetNetworkInfo
       get: "/pactus/network/get_network_info"
 
-    - selector: pactus.Network.GetNodeInfo
+    - selector: pactus.NetworkService.GetNodeInfo
       get: "/pactus/network/get_node_info"
 
     # Wallet APIs
-    - selector: pactus.Wallet.GetValidatorAddress
+    - selector: pactus.WalletService.GetValidatorAddress
       get: "/pactus/wallet/get_validator_address"
 
-    - selector: pactus.Wallet.CreateWallet
+    - selector: pactus.WalletService.CreateWallet
       get: "/pactus/wallet/create_wallet"
 
-    - selector: pactus.Wallet.RestoreWallet
+    - selector: pactus.WalletService.RestoreWallet
       get: "/pactus/wallet/restore_wallet"
 
-    - selector: pactus.Wallet.LoadWallet
+    - selector: pactus.WalletService.LoadWallet
       get: "/pactus/wallet/load_wallet"
 
-    - selector: pactus.Wallet.UnloadWallet
+    - selector: pactus.WalletService.UnloadWallet
       get: "/pactus/wallet/unload_wallet"
 
-    - selector: pactus.Wallet.SignRawTransaction
+    - selector: pactus.WalletService.SignRawTransaction
       get: "/pactus/wallet/sign_raw_transaction"
 
-    - selector: pactus.Wallet.GetNewAddress
+    - selector: pactus.WalletService.GetNewAddress
       get: "/pactus/wallet/get_new_address"
 
-    - selector: pactus.Wallet.GetTotalBalance
+    - selector: pactus.WalletService.GetTotalBalance
       get: "/pactus/wallet/get_total_balance"
 
-    - selector: pactus.Wallet.SignMessage
+    - selector: pactus.WalletService.SignMessage
       get: "/pactus/wallet/sign_message"
 
-    - selector: pactus.Wallet.GetTotalStake
+    - selector: pactus.WalletService.GetTotalStake
       get: "/pactus/wallet/get_total_stake"
 
-    - selector: pactus.Wallet.GetAddressInfo
+    - selector: pactus.WalletService.GetAddressInfo
       get: "/pactus/wallet/get_address_info"
 
-    - selector: pactus.Wallet.GetAddressHistory
+    - selector: pactus.WalletService.GetAddressHistory
       get: "/pactus/wallet/get_address_history"
 
-    - selector: pactus.Wallet.SetAddressLabel
+    - selector: pactus.WalletService.SetAddressLabel
       patch: "/pactus/wallet/set_address_label"
 
-    - selector: pactus.Wallet.ListWallet
+    - selector: pactus.WalletService.ListWallet
       get: "/pactus/wallet/list_wallet"
 
-    - selector: pactus.Wallet.GetWalletInfo
+    - selector: pactus.WalletService.GetWalletInfo
       get: "/pactus/wallet/get_wallet_info"
 
-    - selector: pactus.Wallet.ListAddress
+    - selector: pactus.WalletService.ListAddress
       get: "/pactus/wallet/list_address"
 
     # Util APIs
-    - selector: pactus.Utils.SignMessageWithPrivateKey
+    - selector: pactus.UtilsService.SignMessageWithPrivateKey
       get: "/pactus/Utils/sign_message_with_private_key"
 
-    - selector: pactus.Utils.VerifyMessage
+    - selector: pactus.UtilsService.VerifyMessage
       get: "/pactus/Utils/verify_message"
 
-    - selector: pactus.Utils.BLSPublicKeyAggregation
+    - selector: pactus.UtilsService.PublicKeyAggregation
       get: "/pactus/Utils/bls_public_key_aggregation"
 
-    - selector: pactus.Utils.BLSSignatureAggregation
+    - selector: pactus.UtilsService.SignatureAggregation
       get: "/pactus/Utils/bls_signature_aggregation"

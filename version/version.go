@@ -1,33 +1,39 @@
 package version
 
 import (
+	_ "embed"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 )
 
+//go:embed version.json
+var versionData []byte
+
 // NodeVersion represents the current version of the node software.
 // It should be updated with each new release, adjusting the Major, Minor, or Patch version numbers as necessary.
 // When a major release occurs, the Meta field should be cleared (set to an empty string).
 // For release candidates, set the Meta field to "rc1", "rc2", and so on.
 // During development, set the Meta field to "beta".
-var NodeVersion = Version{
-	Major: 1,
-	Minor: 8,
-	Patch: 0,
-	Meta:  "beta",
-	Alias: "",
+var NodeVersion Version
+
+// Initialize the version from the embedded version.json.
+func init() {
+	if err := json.Unmarshal(versionData, &NodeVersion); err != nil {
+		panic(err)
+	}
 }
 
 // Version defines the version of Pactus software.
 // It follows the semantic versioning 2.0.0 spec (http://semver.org/).
 type Version struct {
-	Major uint   // Major version number
-	Minor uint   // Minor version number
-	Patch uint   // Patch version number
-	Meta  string // Metadata for version (e.g., "beta", "rc1")
-	Alias string // Alias for version (e.g., "London")
+	Major uint   `json:"major"` // Major version number
+	Minor uint   `json:"minor"` // Minor version number
+	Patch uint   `json:"patch"` // Patch version number
+	Meta  string `json:"meta"`  // Metadata for version (e.g., "beta", "rc1")
+	Alias string `json:"alias"` // Alias for version (e.g., "London")
 }
 
 // ParseVersion parses a version string into a Version struct.

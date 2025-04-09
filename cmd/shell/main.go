@@ -83,10 +83,11 @@ func main() {
 		return cobra
 	}
 
-	rootCmd.AddCommand(changeDefaultParameters(pb.BlockchainClientCommand()))
-	rootCmd.AddCommand(changeDefaultParameters(pb.NetworkClientCommand()))
-	rootCmd.AddCommand(changeDefaultParameters(pb.TransactionClientCommand()))
-	rootCmd.AddCommand(changeDefaultParameters(pb.WalletClientCommand()))
+	rootCmd.AddCommand(changeDefaultParameters(pb.BlockchainServiceClientCommand()))
+	rootCmd.AddCommand(changeDefaultParameters(pb.NetworkServiceClientCommand()))
+	rootCmd.AddCommand(changeDefaultParameters(pb.TransactionServiceClientCommand()))
+	rootCmd.AddCommand(changeDefaultParameters(pb.WalletServiceClientCommand()))
+	rootCmd.AddCommand(changeDefaultParameters(pb.UtilsServiceClientCommand()))
 	rootCmd.AddCommand(clearScreen())
 	rootCmd.AddCommand(shell)
 

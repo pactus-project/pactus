@@ -5,9 +5,9 @@ import grpc
 import utils_pb2 as utils__pb2
 
 
-class UtilsStub(object):
+class UtilsServiceStub(object):
     """Utils service defines RPC methods for utility functions such as message
-    signing and verification.
+    signing, verification, and etc.
     """
 
     def __init__(self, channel):
@@ -17,62 +17,62 @@ class UtilsStub(object):
             channel: A grpc.Channel.
         """
         self.SignMessageWithPrivateKey = channel.unary_unary(
-                '/pactus.Utils/SignMessageWithPrivateKey',
+                '/pactus.UtilsService/SignMessageWithPrivateKey',
                 request_serializer=utils__pb2.SignMessageWithPrivateKeyRequest.SerializeToString,
                 response_deserializer=utils__pb2.SignMessageWithPrivateKeyResponse.FromString,
-                )
+                _registered_method=True)
         self.VerifyMessage = channel.unary_unary(
-                '/pactus.Utils/VerifyMessage',
+                '/pactus.UtilsService/VerifyMessage',
                 request_serializer=utils__pb2.VerifyMessageRequest.SerializeToString,
                 response_deserializer=utils__pb2.VerifyMessageResponse.FromString,
-                )
-        self.BLSPublicKeyAggregation = channel.unary_unary(
-                '/pactus.Utils/BLSPublicKeyAggregation',
-                request_serializer=utils__pb2.BLSPublicKeyAggregationRequest.SerializeToString,
-                response_deserializer=utils__pb2.BLSPublicKeyAggregationResponse.FromString,
-                )
-        self.BLSSignatureAggregation = channel.unary_unary(
-                '/pactus.Utils/BLSSignatureAggregation',
-                request_serializer=utils__pb2.BLSSignatureAggregationRequest.SerializeToString,
-                response_deserializer=utils__pb2.BLSSignatureAggregationResponse.FromString,
-                )
+                _registered_method=True)
+        self.PublicKeyAggregation = channel.unary_unary(
+                '/pactus.UtilsService/PublicKeyAggregation',
+                request_serializer=utils__pb2.PublicKeyAggregationRequest.SerializeToString,
+                response_deserializer=utils__pb2.PublicKeyAggregationResponse.FromString,
+                _registered_method=True)
+        self.SignatureAggregation = channel.unary_unary(
+                '/pactus.UtilsService/SignatureAggregation',
+                request_serializer=utils__pb2.SignatureAggregationRequest.SerializeToString,
+                response_deserializer=utils__pb2.SignatureAggregationResponse.FromString,
+                _registered_method=True)
 
 
-class UtilsServicer(object):
+class UtilsServiceServicer(object):
     """Utils service defines RPC methods for utility functions such as message
-    signing and verification.
+    signing, verification, and etc.
     """
 
     def SignMessageWithPrivateKey(self, request, context):
-        """SignMessageWithPrivateKey signs message with provided private key.
+        """SignMessageWithPrivateKey signs a message with the provided private key.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def VerifyMessage(self, request, context):
-        """VerifyMessage verifies signature with public key and message.
+        """VerifyMessage verifies a signature against the public key and message.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def BLSPublicKeyAggregation(self, request, context):
-        """BLSPublicKeyAggregation aggregates bls public keys.
+    def PublicKeyAggregation(self, request, context):
+        """PublicKeyAggregation aggregates multiple BLS public keys into a single key.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def BLSSignatureAggregation(self, request, context):
-        """BLSSignatureAggregation aggregates bls signatures.
+    def SignatureAggregation(self, request, context):
+        """SignatureAggregation aggregates multiple BLS signatures into a single signature.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
 
-def add_UtilsServicer_to_server(servicer, server):
+def add_UtilsServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'SignMessageWithPrivateKey': grpc.unary_unary_rpc_method_handler(
                     servicer.SignMessageWithPrivateKey,
@@ -84,26 +84,27 @@ def add_UtilsServicer_to_server(servicer, server):
                     request_deserializer=utils__pb2.VerifyMessageRequest.FromString,
                     response_serializer=utils__pb2.VerifyMessageResponse.SerializeToString,
             ),
-            'BLSPublicKeyAggregation': grpc.unary_unary_rpc_method_handler(
-                    servicer.BLSPublicKeyAggregation,
-                    request_deserializer=utils__pb2.BLSPublicKeyAggregationRequest.FromString,
-                    response_serializer=utils__pb2.BLSPublicKeyAggregationResponse.SerializeToString,
+            'PublicKeyAggregation': grpc.unary_unary_rpc_method_handler(
+                    servicer.PublicKeyAggregation,
+                    request_deserializer=utils__pb2.PublicKeyAggregationRequest.FromString,
+                    response_serializer=utils__pb2.PublicKeyAggregationResponse.SerializeToString,
             ),
-            'BLSSignatureAggregation': grpc.unary_unary_rpc_method_handler(
-                    servicer.BLSSignatureAggregation,
-                    request_deserializer=utils__pb2.BLSSignatureAggregationRequest.FromString,
-                    response_serializer=utils__pb2.BLSSignatureAggregationResponse.SerializeToString,
+            'SignatureAggregation': grpc.unary_unary_rpc_method_handler(
+                    servicer.SignatureAggregation,
+                    request_deserializer=utils__pb2.SignatureAggregationRequest.FromString,
+                    response_serializer=utils__pb2.SignatureAggregationResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'pactus.Utils', rpc_method_handlers)
+            'pactus.UtilsService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('pactus.UtilsService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class Utils(object):
+class UtilsService(object):
     """Utils service defines RPC methods for utility functions such as message
-    signing and verification.
+    signing, verification, and etc.
     """
 
     @staticmethod
@@ -117,11 +118,21 @@ class Utils(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Utils/SignMessageWithPrivateKey',
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.UtilsService/SignMessageWithPrivateKey',
             utils__pb2.SignMessageWithPrivateKeyRequest.SerializeToString,
             utils__pb2.SignMessageWithPrivateKeyResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
     def VerifyMessage(request,
@@ -134,14 +145,24 @@ class Utils(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Utils/VerifyMessage',
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.UtilsService/VerifyMessage',
             utils__pb2.VerifyMessageRequest.SerializeToString,
             utils__pb2.VerifyMessageResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
-    def BLSPublicKeyAggregation(request,
+    def PublicKeyAggregation(request,
             target,
             options=(),
             channel_credentials=None,
@@ -151,14 +172,24 @@ class Utils(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Utils/BLSPublicKeyAggregation',
-            utils__pb2.BLSPublicKeyAggregationRequest.SerializeToString,
-            utils__pb2.BLSPublicKeyAggregationResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.UtilsService/PublicKeyAggregation',
+            utils__pb2.PublicKeyAggregationRequest.SerializeToString,
+            utils__pb2.PublicKeyAggregationResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
-    def BLSSignatureAggregation(request,
+    def SignatureAggregation(request,
             target,
             options=(),
             channel_credentials=None,
@@ -168,8 +199,18 @@ class Utils(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Utils/BLSSignatureAggregation',
-            utils__pb2.BLSSignatureAggregationRequest.SerializeToString,
-            utils__pb2.BLSSignatureAggregationResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.UtilsService/SignatureAggregation',
+            utils__pb2.SignatureAggregationRequest.SerializeToString,
+            utils__pb2.SignatureAggregationResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)

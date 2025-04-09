@@ -1,15 +1,14 @@
 syntax = "proto3";
 package pactus;
 
-option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
-option java_package = "pactus.blockchain";
-
 import "transaction.proto";
 
+option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
+option java_package = "pactus";
+
 // Blockchain service defines RPC methods for interacting with the blockchain.
-service Blockchain {
-  // GetBlock retrieves information about a block based on the provided request
-  // parameters.
+service BlockchainService {
+  // GetBlock retrieves information about a block based on the provided request parameters.
   rpc GetBlock(GetBlockRequest) returns (GetBlockResponse);
 
   // GetBlockHash retrieves the hash of a block at the specified height.
@@ -19,91 +18,86 @@ service Blockchain {
   rpc GetBlockHeight(GetBlockHeightRequest) returns (GetBlockHeightResponse);
 
   // GetBlockchainInfo retrieves general information about the blockchain.
-  rpc GetBlockchainInfo(GetBlockchainInfoRequest)
-      returns (GetBlockchainInfoResponse);
+  rpc GetBlockchainInfo(GetBlockchainInfoRequest) returns (GetBlockchainInfoResponse);
 
   // GetConsensusInfo retrieves information about the consensus instances.
-  rpc GetConsensusInfo(GetConsensusInfoRequest)
-      returns (GetConsensusInfoResponse);
+  rpc GetConsensusInfo(GetConsensusInfoRequest) returns (GetConsensusInfoResponse);
 
-  // GetAccount retrieves information about an account based on the provided
-  // address.
+  // GetAccount retrieves information about an account based on the provided address.
   rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
 
-  // GetValidator retrieves information about a validator based on the provided
-  // address.
+  // GetValidator retrieves information about a validator based on the provided address.
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   rpc GetValidator(GetValidatorRequest) returns (GetValidatorResponse);
 
-  // GetValidatorByNumber retrieves information about a validator based on the
-  // provided number.
-  rpc GetValidatorByNumber(GetValidatorByNumberRequest)
-      returns (GetValidatorResponse);
+  // GetValidatorByNumber retrieves information about a validator based on the provided number.
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc GetValidatorByNumber(GetValidatorByNumberRequest) returns (GetValidatorResponse);
 
   // GetValidatorAddresses retrieves a list of all validator addresses.
-  rpc GetValidatorAddresses(GetValidatorAddressesRequest)
-      returns (GetValidatorAddressesResponse);
+  rpc GetValidatorAddresses(GetValidatorAddressesRequest) returns (GetValidatorAddressesResponse);
 
-  // GetPublicKey retrieves the public key of an account based on the provided
-  // address.
+  // GetPublicKey retrieves the public key of an account based on the provided address.
   rpc GetPublicKey(GetPublicKeyRequest) returns (GetPublicKeyResponse);
 
   // GetTxPoolContent retrieves current transactions in the transaction pool.
-  rpc GetTxPoolContent(GetTxPoolContentRequest)
-      returns (GetTxPoolContentResponse);
+  rpc GetTxPoolContent(GetTxPoolContentRequest) returns (GetTxPoolContentResponse);
 }
 
-// Message to request account information based on an address.
+// Request message for retrieving account information.
 message GetAccountRequest {
   // The address of the account to retrieve information for.
   string address = 1;
 }
 
-// Message containing the response with account information.
+// Response message contains account information.
 message GetAccountResponse {
   // Detailed information about the account.
   AccountInfo account = 1;
 }
 
-// Message to request validator addresses.
+// Request message for retrieving validator addresses.
 message GetValidatorAddressesRequest {}
 
-// Message containing the response with a list of validator addresses.
+// Response message contains list of validator addresses.
 message GetValidatorAddressesResponse {
   // List of validator addresses.
   repeated string addresses = 1;
 }
 
-// Message to request validator information based on an address.
+// Request message for retrieving validator information by address.
 message GetValidatorRequest {
   // The address of the validator to retrieve information for.
   string address = 1;
 }
 
-// Message to request validator information based on a validator number.
+// Request message for retrieving validator information by number.
 message GetValidatorByNumberRequest {
   // The unique number of the validator to retrieve information for.
   int32 number = 1;
 }
 
-// Message containing the response with validator information.
+// Response message contains validator information.
 message GetValidatorResponse {
   // Detailed information about the validator.
   ValidatorInfo validator = 1;
 }
 
-// Message to request public key based on an address.
+// Request message for retrieving public key by address.
 message GetPublicKeyRequest {
   // The address for which to retrieve the public key.
   string address = 1;
 }
 
-// Message containing the response with the public key.
+// Response message contains public key information.
 message GetPublicKeyResponse {
   // The public key associated with the provided address.
   string public_key = 1;
 }
 
-// Message to request block information based on height and verbosity level.
+// Request message for retrieving block information based on height and verbosity level.
 message GetBlockRequest {
   // The height of the block to retrieve.
   uint32 height = 1;
@@ -111,7 +105,7 @@ message GetBlockRequest {
   BlockVerbosity verbosity = 2;
 }
 
-// Message containing the response with block information.
+// Response message contains block information.
 message GetBlockResponse {
   // The height of the block.
   uint32 height = 1;
@@ -130,34 +124,34 @@ message GetBlockResponse {
   repeated TransactionInfo txs = 7;
 }
 
-// Message to request block hash based on height.
+// Request message for retrieving block hash by height.
 message GetBlockHashRequest {
   // The height of the block to retrieve the hash for.
   uint32 height = 1;
 }
 
-// Message containing the response with the block hash.
+// Response message contains block hash.
 message GetBlockHashResponse {
   // The hash of the block.
   string hash = 1;
 }
 
-// Message to request block height based on hash.
+// Request message for retrieving block height by hash.
 message GetBlockHeightRequest {
   // The hash of the block to retrieve the height for.
   string hash = 1;
 }
 
-// Message containing the response with the block height.
+// Response message contains block height.
 message GetBlockHeightResponse {
   // The height of the block.
   uint32 height = 1;
 }
 
-// Message to request general information about the blockchain.
+// Request message for retrieving blockchain information.
 message GetBlockchainInfoRequest {}
 
-// Message containing the response with general blockchain information.
+// Response message contains general blockchain information.
 message GetBlockchainInfoResponse {
   // The height of the last block in the blockchain.
   uint32 last_block_height = 1;
@@ -181,10 +175,10 @@ message GetBlockchainInfoResponse {
   int64 last_block_time = 10;
 }
 
-// Message to request consensus information.
+// Request message for retrieving consensus information.
 message GetConsensusInfoRequest {}
 
-// Message containing the response with consensus information.
+// Response message contains consensus information.
 message GetConsensusInfoResponse {
   // The proposal of the consensus info.
   ProposalInfo proposal = 1;
@@ -192,20 +186,19 @@ message GetConsensusInfoResponse {
   repeated ConsensusInfo instances = 2;
 }
 
-// Request message to retrieve transactions in the transaction pool.
+// Request message for retrieving transactions in the transaction pool.
 message GetTxPoolContentRequest {
-  // The type of transactions to retrieve from the transaction pool. 0 means all
-  // types.
+  // The type of transactions to retrieve from the transaction pool. 0 means all types.
   PayloadType payload_type = 1;
 }
 
-// Response message containing transactions in the transaction pool.
+// Response message contains transactions in the transaction pool.
 message GetTxPoolContentResponse {
   // List of transactions currently in the pool.
   repeated TransactionInfo txs = 1;
 }
 
-// Message containing information about a validator.
+// Message contains information about a validator.
 message ValidatorInfo {
   // The hash of the validator.
   string hash = 1;
@@ -229,7 +222,7 @@ message ValidatorInfo {
   double availability_score = 10;
 }
 
-// Message containing information about an account.
+// Message contains information about an account.
 message AccountInfo {
   // The hash of the account.
   string hash = 1;
@@ -243,7 +236,7 @@ message AccountInfo {
   string address = 5;
 }
 
-// Message containing information about the header of a block.
+// Message contains information about the header of a block.
 message BlockHeaderInfo {
   // The version of the block.
   int32 version = 1;
@@ -257,7 +250,7 @@ message BlockHeaderInfo {
   string proposer_address = 5;
 }
 
-// Message containing information about a certificate.
+// Message contains information about a certificate.
 message CertificateInfo {
   // The hash of the certificate.
   string hash = 1;
@@ -271,7 +264,7 @@ message CertificateInfo {
   string signature = 5;
 }
 
-// Message containing information about a vote.
+// Message contains information about a vote.
 message VoteInfo {
   // The type of the vote.
   VoteType type = 1;
@@ -287,12 +280,11 @@ message VoteInfo {
   int32 cp_value = 6;
 }
 
-// Message containing information about a consensus instance.
+// Message contains information about a consensus instance.
 message ConsensusInfo {
   // The address of the consensus instance.
   string address = 1;
-  // Indicates whether the consensus instance is active and part of the
-  // committee.
+  // Indicates whether the consensus instance is active and part of the committee.
   bool active = 2;
   // The height of the consensus instance.
   uint32 height = 3;
@@ -302,7 +294,7 @@ message ConsensusInfo {
   repeated VoteInfo votes = 5;
 }
 
-// Message containing information about a proposal.
+// Message contains information about a proposal.
 message ProposalInfo {
   // The height of the proposal.
   uint32 height = 1;
@@ -317,25 +309,26 @@ message ProposalInfo {
 // Enumeration for verbosity levels when requesting block information.
 enum BlockVerbosity {
   // Request only block data.
-  BLOCK_DATA = 0;
+  // buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
+  BLOCK_VERBOSITY_DATA = 0;
   // Request block information and transaction IDs.
-  BLOCK_INFO = 1;
+  BLOCK_VERBOSITY_INFO = 1;
   // Request block information and detailed transaction data.
-  BLOCK_TRANSACTIONS = 2;
+  BLOCK_VERBOSITY_TRANSACTIONS = 2;
 }
 
 // Enumeration for types of votes.
 enum VoteType {
-  // Unknown vote type.
-  VOTE_UNKNOWN = 0;
+  // Unspecified vote type.
+  VOTE_TYPE_UNSPECIFIED = 0;
   // Prepare vote type.
-  VOTE_PREPARE = 1;
+  VOTE_TYPE_PREPARE = 1;
   // Precommit vote type.
-  VOTE_PRECOMMIT = 2;
+  VOTE_TYPE_PRECOMMIT = 2;
   // Change-proposer:pre-vote vote type.
-  VOTE_CP_PRE_VOTE = 3;
-  // change-proposer:main-vote vote type.
-  VOTE_CP_MAIN_VOTE = 4;
-  // change-proposer:decided vote type.
-  VOTE_CP_DECIDED = 5;
+  VOTE_TYPE_CP_PRE_VOTE = 3;
+  // Change-proposer:main-vote vote type.
+  VOTE_TYPE_CP_MAIN_VOTE = 4;
+  // Change-proposer:decided vote type.
+  VOTE_TYPE_CP_DECIDED = 5;
 }

@@ -17,30 +17,30 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type TransactionJsonRPC struct {
-	client TransactionClient
+type TransactionServiceJsonRPC struct {
+	client TransactionServiceClient
 }
 
-type paramsAndHeadersTransaction struct {
+type paramsAndHeadersTransactionService struct {
 	Headers metadata.MD     `json:"headers,omitempty"`
 	Params  json.RawMessage `json:"params"`
 }
 
-// RegisterTransactionJsonRPC register the grpc client Transaction for json-rpc.
+// RegisterTransactionServiceJsonRPC register the grpc client TransactionService for json-rpc.
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterTransactionJsonRPC(conn *grpc.ClientConn) *TransactionJsonRPC {
-	return &TransactionJsonRPC{
-		client: NewTransactionClient(conn),
+func RegisterTransactionServiceJsonRPC(conn *grpc.ClientConn) *TransactionServiceJsonRPC {
+	return &TransactionServiceJsonRPC{
+		client: NewTransactionServiceClient(conn),
 	}
 }
 
-func (s *TransactionJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
+func (s *TransactionServiceJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (any, error){
 
-		"pactus.transaction.get_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.transaction_service.get_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetTransactionRequest)
 
-			var jrpcData paramsAndHeadersTransaction
+			var jrpcData paramsAndHeadersTransactionService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -54,10 +54,10 @@ func (s *TransactionJsonRPC) Methods() map[string]func(ctx context.Context, mess
 			return s.client.GetTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.transaction.calculate_fee": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.transaction_service.calculate_fee": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(CalculateFeeRequest)
 
-			var jrpcData paramsAndHeadersTransaction
+			var jrpcData paramsAndHeadersTransactionService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -71,10 +71,10 @@ func (s *TransactionJsonRPC) Methods() map[string]func(ctx context.Context, mess
 			return s.client.CalculateFee(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.transaction.broadcast_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.transaction_service.broadcast_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(BroadcastTransactionRequest)
 
-			var jrpcData paramsAndHeadersTransaction
+			var jrpcData paramsAndHeadersTransactionService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -88,10 +88,10 @@ func (s *TransactionJsonRPC) Methods() map[string]func(ctx context.Context, mess
 			return s.client.BroadcastTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.transaction.get_raw_transfer_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.transaction_service.get_raw_transfer_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetRawTransferTransactionRequest)
 
-			var jrpcData paramsAndHeadersTransaction
+			var jrpcData paramsAndHeadersTransactionService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -105,10 +105,10 @@ func (s *TransactionJsonRPC) Methods() map[string]func(ctx context.Context, mess
 			return s.client.GetRawTransferTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.transaction.get_raw_bond_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.transaction_service.get_raw_bond_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetRawBondTransactionRequest)
 
-			var jrpcData paramsAndHeadersTransaction
+			var jrpcData paramsAndHeadersTransactionService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -122,10 +122,10 @@ func (s *TransactionJsonRPC) Methods() map[string]func(ctx context.Context, mess
 			return s.client.GetRawBondTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.transaction.get_raw_unbond_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.transaction_service.get_raw_unbond_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetRawUnbondTransactionRequest)
 
-			var jrpcData paramsAndHeadersTransaction
+			var jrpcData paramsAndHeadersTransactionService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -139,10 +139,10 @@ func (s *TransactionJsonRPC) Methods() map[string]func(ctx context.Context, mess
 			return s.client.GetRawUnbondTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.transaction.get_raw_withdraw_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.transaction_service.get_raw_withdraw_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(GetRawWithdrawTransactionRequest)
 
-			var jrpcData paramsAndHeadersTransaction
+			var jrpcData paramsAndHeadersTransactionService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -156,10 +156,10 @@ func (s *TransactionJsonRPC) Methods() map[string]func(ctx context.Context, mess
 			return s.client.GetRawWithdrawTransaction(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.transaction.decode_raw_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.transaction_service.decode_raw_transaction": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(DecodeRawTransactionRequest)
 
-			var jrpcData paramsAndHeadersTransaction
+			var jrpcData paramsAndHeadersTransactionService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err

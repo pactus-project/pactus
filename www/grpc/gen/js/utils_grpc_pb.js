@@ -4,48 +4,26 @@
 var grpc = require('grpc');
 var utils_pb = require('./utils_pb.js');
 
-function serialize_pactus_BLSPublicKeyAggregationRequest(arg) {
-  if (!(arg instanceof utils_pb.BLSPublicKeyAggregationRequest)) {
-    throw new Error('Expected argument of type pactus.BLSPublicKeyAggregationRequest');
+function serialize_pactus_PublicKeyAggregationRequest(arg) {
+  if (!(arg instanceof utils_pb.PublicKeyAggregationRequest)) {
+    throw new Error('Expected argument of type pactus.PublicKeyAggregationRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_BLSPublicKeyAggregationRequest(buffer_arg) {
-  return utils_pb.BLSPublicKeyAggregationRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_PublicKeyAggregationRequest(buffer_arg) {
+  return utils_pb.PublicKeyAggregationRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_BLSPublicKeyAggregationResponse(arg) {
-  if (!(arg instanceof utils_pb.BLSPublicKeyAggregationResponse)) {
-    throw new Error('Expected argument of type pactus.BLSPublicKeyAggregationResponse');
+function serialize_pactus_PublicKeyAggregationResponse(arg) {
+  if (!(arg instanceof utils_pb.PublicKeyAggregationResponse)) {
+    throw new Error('Expected argument of type pactus.PublicKeyAggregationResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_BLSPublicKeyAggregationResponse(buffer_arg) {
-  return utils_pb.BLSPublicKeyAggregationResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_pactus_BLSSignatureAggregationRequest(arg) {
-  if (!(arg instanceof utils_pb.BLSSignatureAggregationRequest)) {
-    throw new Error('Expected argument of type pactus.BLSSignatureAggregationRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_BLSSignatureAggregationRequest(buffer_arg) {
-  return utils_pb.BLSSignatureAggregationRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_pactus_BLSSignatureAggregationResponse(arg) {
-  if (!(arg instanceof utils_pb.BLSSignatureAggregationResponse)) {
-    throw new Error('Expected argument of type pactus.BLSSignatureAggregationResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_BLSSignatureAggregationResponse(buffer_arg) {
-  return utils_pb.BLSSignatureAggregationResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_PublicKeyAggregationResponse(buffer_arg) {
+  return utils_pb.PublicKeyAggregationResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_pactus_SignMessageWithPrivateKeyRequest(arg) {
@@ -68,6 +46,28 @@ function serialize_pactus_SignMessageWithPrivateKeyResponse(arg) {
 
 function deserialize_pactus_SignMessageWithPrivateKeyResponse(buffer_arg) {
   return utils_pb.SignMessageWithPrivateKeyResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_SignatureAggregationRequest(arg) {
+  if (!(arg instanceof utils_pb.SignatureAggregationRequest)) {
+    throw new Error('Expected argument of type pactus.SignatureAggregationRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_SignatureAggregationRequest(buffer_arg) {
+  return utils_pb.SignatureAggregationRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_SignatureAggregationResponse(arg) {
+  if (!(arg instanceof utils_pb.SignatureAggregationResponse)) {
+    throw new Error('Expected argument of type pactus.SignatureAggregationResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_SignatureAggregationResponse(buffer_arg) {
+  return utils_pb.SignatureAggregationResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_pactus_VerifyMessageRequest(arg) {
@@ -94,11 +94,11 @@ function deserialize_pactus_VerifyMessageResponse(buffer_arg) {
 
 
 // Utils service defines RPC methods for utility functions such as message
-// signing and verification.
-var UtilsService = exports.UtilsService = {
-  // SignMessageWithPrivateKey signs message with provided private key.
+// signing, verification, and etc.
+var UtilsServiceService = exports.UtilsServiceService = {
+  // SignMessageWithPrivateKey signs a message with the provided private key.
 signMessageWithPrivateKey: {
-    path: '/pactus.Utils/SignMessageWithPrivateKey',
+    path: '/pactus.UtilsService/SignMessageWithPrivateKey',
     requestStream: false,
     responseStream: false,
     requestType: utils_pb.SignMessageWithPrivateKeyRequest,
@@ -108,9 +108,9 @@ signMessageWithPrivateKey: {
     responseSerialize: serialize_pactus_SignMessageWithPrivateKeyResponse,
     responseDeserialize: deserialize_pactus_SignMessageWithPrivateKeyResponse,
   },
-  // VerifyMessage verifies signature with public key and message.
+  // VerifyMessage verifies a signature against the public key and message.
 verifyMessage: {
-    path: '/pactus.Utils/VerifyMessage',
+    path: '/pactus.UtilsService/VerifyMessage',
     requestStream: false,
     responseStream: false,
     requestType: utils_pb.VerifyMessageRequest,
@@ -120,30 +120,30 @@ verifyMessage: {
     responseSerialize: serialize_pactus_VerifyMessageResponse,
     responseDeserialize: deserialize_pactus_VerifyMessageResponse,
   },
-  // BLSPublicKeyAggregation aggregates bls public keys.
-bLSPublicKeyAggregation: {
-    path: '/pactus.Utils/BLSPublicKeyAggregation',
+  // PublicKeyAggregation aggregates multiple BLS public keys into a single key.
+publicKeyAggregation: {
+    path: '/pactus.UtilsService/PublicKeyAggregation',
     requestStream: false,
     responseStream: false,
-    requestType: utils_pb.BLSPublicKeyAggregationRequest,
-    responseType: utils_pb.BLSPublicKeyAggregationResponse,
-    requestSerialize: serialize_pactus_BLSPublicKeyAggregationRequest,
-    requestDeserialize: deserialize_pactus_BLSPublicKeyAggregationRequest,
-    responseSerialize: serialize_pactus_BLSPublicKeyAggregationResponse,
-    responseDeserialize: deserialize_pactus_BLSPublicKeyAggregationResponse,
+    requestType: utils_pb.PublicKeyAggregationRequest,
+    responseType: utils_pb.PublicKeyAggregationResponse,
+    requestSerialize: serialize_pactus_PublicKeyAggregationRequest,
+    requestDeserialize: deserialize_pactus_PublicKeyAggregationRequest,
+    responseSerialize: serialize_pactus_PublicKeyAggregationResponse,
+    responseDeserialize: deserialize_pactus_PublicKeyAggregationResponse,
   },
-  // BLSSignatureAggregation aggregates bls signatures.
-bLSSignatureAggregation: {
-    path: '/pactus.Utils/BLSSignatureAggregation',
+  // SignatureAggregation aggregates multiple BLS signatures into a single signature.
+signatureAggregation: {
+    path: '/pactus.UtilsService/SignatureAggregation',
     requestStream: false,
     responseStream: false,
-    requestType: utils_pb.BLSSignatureAggregationRequest,
-    responseType: utils_pb.BLSSignatureAggregationResponse,
-    requestSerialize: serialize_pactus_BLSSignatureAggregationRequest,
-    requestDeserialize: deserialize_pactus_BLSSignatureAggregationRequest,
-    responseSerialize: serialize_pactus_BLSSignatureAggregationResponse,
-    responseDeserialize: deserialize_pactus_BLSSignatureAggregationResponse,
+    requestType: utils_pb.SignatureAggregationRequest,
+    responseType: utils_pb.SignatureAggregationResponse,
+    requestSerialize: serialize_pactus_SignatureAggregationRequest,
+    requestDeserialize: deserialize_pactus_SignatureAggregationRequest,
+    responseSerialize: serialize_pactus_SignatureAggregationResponse,
+    responseDeserialize: deserialize_pactus_SignatureAggregationResponse,
   },
 };
 
-exports.UtilsClient = grpc.makeGenericClientConstructor(UtilsService);
+exports.UtilsServiceClient = grpc.makeGenericClientConstructor(UtilsServiceService, 'UtilsService');

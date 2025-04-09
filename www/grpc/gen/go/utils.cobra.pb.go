@@ -11,41 +11,41 @@ import (
 	proto "google.golang.org/protobuf/proto"
 )
 
-func UtilsClientCommand(options ...client.Option) *cobra.Command {
+func UtilsServiceClientCommand(options ...client.Option) *cobra.Command {
 	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("Utils"),
-		Short: "Utils service client",
-		Long:  "Utils service defines RPC methods for utility functions such as message\n signing and verification.",
+		Use:   cfg.CommandNamer("UtilsService"),
+		Short: "UtilsService service client",
+		Long:  "Utils service defines RPC methods for utility functions such as message\n signing, verification, and etc.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
-		_UtilsSignMessageWithPrivateKeyCommand(cfg),
-		_UtilsVerifyMessageCommand(cfg),
-		_UtilsBLSPublicKeyAggregationCommand(cfg),
-		_UtilsBLSSignatureAggregationCommand(cfg),
+		_UtilsServiceSignMessageWithPrivateKeyCommand(cfg),
+		_UtilsServiceVerifyMessageCommand(cfg),
+		_UtilsServicePublicKeyAggregationCommand(cfg),
+		_UtilsServiceSignatureAggregationCommand(cfg),
 	)
 	return cmd
 }
 
-func _UtilsSignMessageWithPrivateKeyCommand(cfg *client.Config) *cobra.Command {
+func _UtilsServiceSignMessageWithPrivateKeyCommand(cfg *client.Config) *cobra.Command {
 	req := &SignMessageWithPrivateKeyRequest{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("SignMessageWithPrivateKey"),
 		Short: "SignMessageWithPrivateKey RPC client",
-		Long:  "SignMessageWithPrivateKey signs message with provided private key.",
+		Long:  "SignMessageWithPrivateKey signs a message with the provided private key.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "UtilsService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils", "SignMessageWithPrivateKey"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "UtilsService", "SignMessageWithPrivateKey"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewUtilsClient(cc)
+				cli := NewUtilsServiceClient(cc)
 				v := &SignMessageWithPrivateKeyRequest{}
 
 				if err := in(v); err != nil {
@@ -66,29 +66,29 @@ func _UtilsSignMessageWithPrivateKeyCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&req.PrivateKey, cfg.FlagNamer("PrivateKey"), "", "The private key to sign the message.")
-	cmd.PersistentFlags().StringVar(&req.Message, cfg.FlagNamer("Message"), "", "The message to sign.")
+	cmd.PersistentFlags().StringVar(&req.Message, cfg.FlagNamer("Message"), "", "The message content to be signed.")
 
 	return cmd
 }
 
-func _UtilsVerifyMessageCommand(cfg *client.Config) *cobra.Command {
+func _UtilsServiceVerifyMessageCommand(cfg *client.Config) *cobra.Command {
 	req := &VerifyMessageRequest{}
 
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("VerifyMessage"),
 		Short: "VerifyMessage RPC client",
-		Long:  "VerifyMessage verifies signature with public key and message.",
+		Long:  "VerifyMessage verifies a signature against the public key and message.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "UtilsService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils", "VerifyMessage"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "UtilsService", "VerifyMessage"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewUtilsClient(cc)
+				cli := NewUtilsServiceClient(cc)
 				v := &VerifyMessageRequest{}
 
 				if err := in(v); err != nil {
@@ -108,39 +108,39 @@ func _UtilsVerifyMessageCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringVar(&req.Message, cfg.FlagNamer("Message"), "", "The signed message.")
-	cmd.PersistentFlags().StringVar(&req.Signature, cfg.FlagNamer("Signature"), "", "The signature of the message.")
+	cmd.PersistentFlags().StringVar(&req.Message, cfg.FlagNamer("Message"), "", "The original message content that was signed.")
+	cmd.PersistentFlags().StringVar(&req.Signature, cfg.FlagNamer("Signature"), "", "The signature to verify in hexadecimal format.")
 	cmd.PersistentFlags().StringVar(&req.PublicKey, cfg.FlagNamer("PublicKey"), "", "The public key of the signer.")
 
 	return cmd
 }
 
-func _UtilsBLSPublicKeyAggregationCommand(cfg *client.Config) *cobra.Command {
-	req := &BLSPublicKeyAggregationRequest{}
+func _UtilsServicePublicKeyAggregationCommand(cfg *client.Config) *cobra.Command {
+	req := &PublicKeyAggregationRequest{}
 
 	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("BLSPublicKeyAggregation"),
-		Short: "BLSPublicKeyAggregation RPC client",
-		Long:  "BLSPublicKeyAggregation aggregates bls public keys.",
+		Use:   cfg.CommandNamer("PublicKeyAggregation"),
+		Short: "PublicKeyAggregation RPC client",
+		Long:  "PublicKeyAggregation aggregates multiple BLS public keys into a single key.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "UtilsService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils", "BLSPublicKeyAggregation"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "UtilsService", "PublicKeyAggregation"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewUtilsClient(cc)
-				v := &BLSPublicKeyAggregationRequest{}
+				cli := NewUtilsServiceClient(cc)
+				v := &PublicKeyAggregationRequest{}
 
 				if err := in(v); err != nil {
 					return err
 				}
 				proto.Merge(v, req)
 
-				res, err := cli.BLSPublicKeyAggregation(cmd.Context(), v)
+				res, err := cli.PublicKeyAggregation(cmd.Context(), v)
 
 				if err != nil {
 					return err
@@ -152,37 +152,37 @@ func _UtilsBLSPublicKeyAggregationCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringSliceVar(&req.PublicKeys, cfg.FlagNamer("PublicKeys"), nil, "The public keys to aggregate.")
+	cmd.PersistentFlags().StringSliceVar(&req.PublicKeys, cfg.FlagNamer("PublicKeys"), nil, "List of BLS public keys to be aggregated.")
 
 	return cmd
 }
 
-func _UtilsBLSSignatureAggregationCommand(cfg *client.Config) *cobra.Command {
-	req := &BLSSignatureAggregationRequest{}
+func _UtilsServiceSignatureAggregationCommand(cfg *client.Config) *cobra.Command {
+	req := &SignatureAggregationRequest{}
 
 	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("BLSSignatureAggregation"),
-		Short: "BLSSignatureAggregation RPC client",
-		Long:  "BLSSignatureAggregation aggregates bls signatures.",
+		Use:   cfg.CommandNamer("SignatureAggregation"),
+		Short: "SignatureAggregation RPC client",
+		Long:  "SignatureAggregation aggregates multiple BLS signatures into a single signature.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "UtilsService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils", "BLSSignatureAggregation"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "UtilsService", "SignatureAggregation"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewUtilsClient(cc)
-				v := &BLSSignatureAggregationRequest{}
+				cli := NewUtilsServiceClient(cc)
+				v := &SignatureAggregationRequest{}
 
 				if err := in(v); err != nil {
 					return err
 				}
 				proto.Merge(v, req)
 
-				res, err := cli.BLSSignatureAggregation(cmd.Context(), v)
+				res, err := cli.SignatureAggregation(cmd.Context(), v)
 
 				if err != nil {
 					return err
@@ -194,7 +194,7 @@ func _UtilsBLSSignatureAggregationCommand(cfg *client.Config) *cobra.Command {
 		},
 	}
 
-	cmd.PersistentFlags().StringSliceVar(&req.Signatures, cfg.FlagNamer("Signatures"), nil, "The signatures to aggregate.")
+	cmd.PersistentFlags().StringSliceVar(&req.Signatures, cfg.FlagNamer("Signatures"), nil, "List of BLS signatures to be aggregated.")
 
 	return cmd
 }

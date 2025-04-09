@@ -5,8 +5,8 @@ import grpc
 import network_pb2 as network__pb2
 
 
-class NetworkStub(object):
-    """Network service provides RPCs for retrieving information about the network.
+class NetworkServiceStub(object):
+    """NetworkService provides RPCs for retrieving information about the network.
     """
 
     def __init__(self, channel):
@@ -16,19 +16,19 @@ class NetworkStub(object):
             channel: A grpc.Channel.
         """
         self.GetNetworkInfo = channel.unary_unary(
-                '/pactus.Network/GetNetworkInfo',
+                '/pactus.NetworkService/GetNetworkInfo',
                 request_serializer=network__pb2.GetNetworkInfoRequest.SerializeToString,
                 response_deserializer=network__pb2.GetNetworkInfoResponse.FromString,
-                )
+                _registered_method=True)
         self.GetNodeInfo = channel.unary_unary(
-                '/pactus.Network/GetNodeInfo',
+                '/pactus.NetworkService/GetNodeInfo',
                 request_serializer=network__pb2.GetNodeInfoRequest.SerializeToString,
                 response_deserializer=network__pb2.GetNodeInfoResponse.FromString,
-                )
+                _registered_method=True)
 
 
-class NetworkServicer(object):
-    """Network service provides RPCs for retrieving information about the network.
+class NetworkServiceServicer(object):
+    """NetworkService provides RPCs for retrieving information about the network.
     """
 
     def GetNetworkInfo(self, request, context):
@@ -46,7 +46,7 @@ class NetworkServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_NetworkServicer_to_server(servicer, server):
+def add_NetworkServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetNetworkInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetNetworkInfo,
@@ -60,13 +60,14 @@ def add_NetworkServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'pactus.Network', rpc_method_handlers)
+            'pactus.NetworkService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('pactus.NetworkService', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class Network(object):
-    """Network service provides RPCs for retrieving information about the network.
+class NetworkService(object):
+    """NetworkService provides RPCs for retrieving information about the network.
     """
 
     @staticmethod
@@ -80,11 +81,21 @@ class Network(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Network/GetNetworkInfo',
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.NetworkService/GetNetworkInfo',
             network__pb2.GetNetworkInfoRequest.SerializeToString,
             network__pb2.GetNetworkInfoResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
     def GetNodeInfo(request,
@@ -97,8 +108,18 @@ class Network(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Network/GetNodeInfo',
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.NetworkService/GetNodeInfo',
             network__pb2.GetNodeInfoRequest.SerializeToString,
             network__pb2.GetNodeInfoResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)

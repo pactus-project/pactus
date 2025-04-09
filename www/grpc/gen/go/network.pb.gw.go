@@ -10,6 +10,7 @@ package pactus
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 
@@ -24,130 +25,121 @@ import (
 )
 
 // Suppress "imported and not used" errors
-var _ codes.Code
-var _ io.Reader
-var _ status.Status
-var _ = runtime.String
-var _ = utilities.NewDoubleArray
-var _ = metadata.Join
-
 var (
-	filter_Network_GetNetworkInfo_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	_ codes.Code
+	_ io.Reader
+	_ status.Status
+	_ = errors.New
+	_ = runtime.String
+	_ = utilities.NewDoubleArray
+	_ = metadata.Join
 )
 
-func request_Network_GetNetworkInfo_0(ctx context.Context, marshaler runtime.Marshaler, client NetworkClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetNetworkInfoRequest
-	var metadata runtime.ServerMetadata
+var filter_NetworkService_GetNetworkInfo_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
+func request_NetworkService_GetNetworkInfo_0(ctx context.Context, marshaler runtime.Marshaler, client NetworkServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetNetworkInfoRequest
+		metadata runtime.ServerMetadata
+	)
+	io.Copy(io.Discard, req.Body)
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Network_GetNetworkInfo_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_NetworkService_GetNetworkInfo_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-
 	msg, err := client.GetNetworkInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
-
 }
 
-func local_request_Network_GetNetworkInfo_0(ctx context.Context, marshaler runtime.Marshaler, server NetworkServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetNetworkInfoRequest
-	var metadata runtime.ServerMetadata
-
+func local_request_NetworkService_GetNetworkInfo_0(ctx context.Context, marshaler runtime.Marshaler, server NetworkServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetNetworkInfoRequest
+		metadata runtime.ServerMetadata
+	)
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Network_GetNetworkInfo_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_NetworkService_GetNetworkInfo_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-
 	msg, err := server.GetNetworkInfo(ctx, &protoReq)
 	return msg, metadata, err
-
 }
 
-func request_Network_GetNodeInfo_0(ctx context.Context, marshaler runtime.Marshaler, client NetworkClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetNodeInfoRequest
-	var metadata runtime.ServerMetadata
-
+func request_NetworkService_GetNodeInfo_0(ctx context.Context, marshaler runtime.Marshaler, client NetworkServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetNodeInfoRequest
+		metadata runtime.ServerMetadata
+	)
+	io.Copy(io.Discard, req.Body)
 	msg, err := client.GetNodeInfo(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
-
 }
 
-func local_request_Network_GetNodeInfo_0(ctx context.Context, marshaler runtime.Marshaler, server NetworkServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetNodeInfoRequest
-	var metadata runtime.ServerMetadata
-
+func local_request_NetworkService_GetNodeInfo_0(ctx context.Context, marshaler runtime.Marshaler, server NetworkServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetNodeInfoRequest
+		metadata runtime.ServerMetadata
+	)
 	msg, err := server.GetNodeInfo(ctx, &protoReq)
 	return msg, metadata, err
-
 }
 
-// RegisterNetworkHandlerServer registers the http handlers for service Network to "mux".
-// UnaryRPC     :call NetworkServer directly.
+// RegisterNetworkServiceHandlerServer registers the http handlers for service NetworkService to "mux".
+// UnaryRPC     :call NetworkServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
-// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterNetworkHandlerFromEndpoint instead.
+// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterNetworkServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterNetworkHandlerServer(ctx context.Context, mux *runtime.ServeMux, server NetworkServer) error {
-
-	mux.Handle("GET", pattern_Network_GetNetworkInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+func RegisterNetworkServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server NetworkServiceServer) error {
+	mux.Handle(http.MethodGet, pattern_NetworkService_GetNetworkInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Network/GetNetworkInfo", runtime.WithHTTPPathPattern("/pactus/network/get_network_info"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.NetworkService/GetNetworkInfo", runtime.WithHTTPPathPattern("/pactus/network/get_network_info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Network_GetNetworkInfo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_NetworkService_GetNetworkInfo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-
-		forward_Network_GetNetworkInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
+		forward_NetworkService_GetNetworkInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-
-	mux.Handle("GET", pattern_Network_GetNodeInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_NetworkService_GetNodeInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Network/GetNodeInfo", runtime.WithHTTPPathPattern("/pactus/network/get_node_info"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.NetworkService/GetNodeInfo", runtime.WithHTTPPathPattern("/pactus/network/get_node_info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Network_GetNodeInfo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_NetworkService_GetNodeInfo_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-
-		forward_Network_GetNodeInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
+		forward_NetworkService_GetNodeInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
 }
 
-// RegisterNetworkHandlerFromEndpoint is same as RegisterNetworkHandler but
+// RegisterNetworkServiceHandlerFromEndpoint is same as RegisterNetworkServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterNetworkHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+func RegisterNetworkServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
 	conn, err := grpc.NewClient(endpoint, opts...)
 	if err != nil {
 		return err
@@ -166,78 +158,64 @@ func RegisterNetworkHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeM
 			}
 		}()
 	}()
-
-	return RegisterNetworkHandler(ctx, mux, conn)
+	return RegisterNetworkServiceHandler(ctx, mux, conn)
 }
 
-// RegisterNetworkHandler registers the http handlers for service Network to "mux".
+// RegisterNetworkServiceHandler registers the http handlers for service NetworkService to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterNetworkHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterNetworkHandlerClient(ctx, mux, NewNetworkClient(conn))
+func RegisterNetworkServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterNetworkServiceHandlerClient(ctx, mux, NewNetworkServiceClient(conn))
 }
 
-// RegisterNetworkHandlerClient registers the http handlers for service Network
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "NetworkClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "NetworkClient"
+// RegisterNetworkServiceHandlerClient registers the http handlers for service NetworkService
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "NetworkServiceClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "NetworkServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "NetworkClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterNetworkHandlerClient(ctx context.Context, mux *runtime.ServeMux, client NetworkClient) error {
-
-	mux.Handle("GET", pattern_Network_GetNetworkInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+// "NetworkServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
+func RegisterNetworkServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client NetworkServiceClient) error {
+	mux.Handle(http.MethodGet, pattern_NetworkService_GetNetworkInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Network/GetNetworkInfo", runtime.WithHTTPPathPattern("/pactus/network/get_network_info"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.NetworkService/GetNetworkInfo", runtime.WithHTTPPathPattern("/pactus/network/get_network_info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Network_GetNetworkInfo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_NetworkService_GetNetworkInfo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-
-		forward_Network_GetNetworkInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
+		forward_NetworkService_GetNetworkInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-
-	mux.Handle("GET", pattern_Network_GetNodeInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_NetworkService_GetNodeInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Network/GetNodeInfo", runtime.WithHTTPPathPattern("/pactus/network/get_node_info"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.NetworkService/GetNodeInfo", runtime.WithHTTPPathPattern("/pactus/network/get_node_info"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Network_GetNodeInfo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_NetworkService_GetNodeInfo_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-
-		forward_Network_GetNodeInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
+		forward_NetworkService_GetNodeInfo_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-
 	return nil
 }
 
 var (
-	pattern_Network_GetNetworkInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "network", "get_network_info"}, ""))
-
-	pattern_Network_GetNodeInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "network", "get_node_info"}, ""))
+	pattern_NetworkService_GetNetworkInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "network", "get_network_info"}, ""))
+	pattern_NetworkService_GetNodeInfo_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "network", "get_node_info"}, ""))
 )
 
 var (
-	forward_Network_GetNetworkInfo_0 = runtime.ForwardResponseMessage
-
-	forward_Network_GetNodeInfo_0 = runtime.ForwardResponseMessage
+	forward_NetworkService_GetNetworkInfo_0 = runtime.ForwardResponseMessage
+	forward_NetworkService_GetNodeInfo_0    = runtime.ForwardResponseMessage
 )

@@ -81,7 +81,7 @@ func (s *Server) blockByHeight(ctx context.Context, w http.ResponseWriter, block
 	res, err := s.blockchain.GetBlock(ctx,
 		&pactus.GetBlockRequest{
 			Height:    blockHeight,
-			Verbosity: pactus.BlockVerbosity_BLOCK_TRANSACTIONS,
+			Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_TRANSACTIONS,
 		},
 	)
 	if err != nil {

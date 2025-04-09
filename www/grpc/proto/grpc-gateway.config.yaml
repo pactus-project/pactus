@@ -1,0 +1,126 @@
+type: google.api.Service
+config_version: 3
+
+http:
+  rules:
+    # Blockchain APIs
+    - selector: pactus.Blockchain.GetBlock
+      get: "/pactus/blockchain/get_block"
+
+    - selector: pactus.Blockchain.GetBlockHash
+      get: "/pactus/blockchain/get_block_hash"
+
+    - selector: pactus.Blockchain.GetBlockHeight
+      get: "/pactus/blockchain/get_block_height"
+
+    - selector: pactus.Blockchain.GetAccount
+      get: "/pactus/blockchain/get_account"
+
+    - selector: pactus.Blockchain.GetValidator
+      get: "/pactus/blockchain/get_validator"
+
+    - selector: pactus.Blockchain.GetValidatorByNumber
+      get: "/pactus/blockchain/get_validator_by_number"
+
+    - selector: pactus.Blockchain.GetBlockchainInfo
+      get: "/pactus/blockchain/get_blockchain_info"
+
+    - selector: pactus.Blockchain.GetConsensusInfo
+      get: "/pactus/blockchain/get_consensus_info"
+
+    - selector: pactus.Blockchain.GetPublicKey
+      get: "/pactus/blockchain/get_public_key"
+
+    - selector: pactus.Blockchain.GetTxPoolContent
+      get: "/pactus/blockchain/get_txpool_content"
+
+    # Transaction APIs
+    - selector: pactus.Transaction.GetTransaction
+      get: "/pactus/transaction/get_transaction"
+
+    - selector: pactus.Transaction.BroadcastTransaction
+      put: "/pactus/transaction/broadcast_transaction"
+
+    - selector: pactus.Transaction.CalculateFee
+      get: "/pactus/transaction/calculate_fee"
+
+    - selector: pactus.Transaction.GetRawTransferTransaction
+      get: "/pactus/transaction/get_raw_transfer_transaction"
+
+    - selector: pactus.Transaction.GetRawBondTransaction
+      get: "/pactus/transaction/get_raw_bond_transaction"
+
+    - selector: pactus.Transaction.GetRawUnbondTransaction
+      get: "/pactus/transaction/get_raw_unbond_transaction"
+
+    - selector: pactus.Transaction.GetRawWithdrawTransaction
+      get: "/pactus/transaction/get_raw_withdraw_transaction"
+
+    # Network APIs
+    - selector: pactus.Network.GetNetworkInfo
+      get: "/pactus/network/get_network_info"
+
+    - selector: pactus.Network.GetNodeInfo
+      get: "/pactus/network/get_node_info"
+
+    # Wallet APIs
+    - selector: pactus.Wallet.GetValidatorAddress
+      get: "/pactus/wallet/get_validator_address"
+
+    - selector: pactus.Wallet.CreateWallet
+      get: "/pactus/wallet/create_wallet"
+
+    - selector: pactus.Wallet.RestoreWallet
+      get: "/pactus/wallet/restore_wallet"
+
+    - selector: pactus.Wallet.LoadWallet
+      get: "/pactus/wallet/load_wallet"
+
+    - selector: pactus.Wallet.UnloadWallet
+      get: "/pactus/wallet/unload_wallet"
+
+    - selector: pactus.Wallet.SignRawTransaction
+      get: "/pactus/wallet/sign_raw_transaction"
+
+    - selector: pactus.Wallet.GetNewAddress
+      get: "/pactus/wallet/get_new_address"
+
+    - selector: pactus.Wallet.GetTotalBalance
+      get: "/pactus/wallet/get_total_balance"
+
+    - selector: pactus.Wallet.SignMessage
+      get: "/pactus/wallet/sign_message"
+
+    - selector: pactus.Wallet.GetTotalStake
+      get: "/pactus/wallet/get_total_stake"
+
+    - selector: pactus.Wallet.GetAddressInfo
+      get: "/pactus/wallet/get_address_info"
+
+    - selector: pactus.Wallet.GetAddressHistory
+      get: "/pactus/wallet/get_address_history"
+
+    - selector: pactus.Wallet.SetAddressLabel
+      patch: "/pactus/wallet/set_address_label"
+
+    - selector: pactus.Wallet.ListWallet
+      get: "/pactus/wallet/list_wallet"
+
+    - selector: pactus.Wallet.GetWalletInfo
+      get: "/pactus/wallet/get_wallet_info"
+
+    - selector: pactus.Wallet.ListAddress
+      get: "/pactus/wallet/list_address"
+
+    # Util APIs
+    - selector: pactus.Utils.SignMessageWithPrivateKey
+      get: "/pactus/Utils/sign_message_with_private_key"
+
+    - selector: pactus.Utils.VerifyMessage
+      get: "/pactus/Utils/verify_message"
+
+    - selector: pactus.Utils.BLSPublicKeyAggregation
+      get: "/pactus/Utils/bls_public_key_aggregation"
+
+    - selector: pactus.Utils.BLSSignatureAggregation
+      get: "/pactus/Utils/bls_signature_aggregation"

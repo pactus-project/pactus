@@ -150,11 +150,11 @@ function deserialize_pactus_GetTransactionResponse(buffer_arg) {
 
 // Transaction service defines various RPC methods for interacting with
 // transactions.
-var TransactionService = exports.TransactionService = {
+var TransactionServiceService = exports.TransactionServiceService = {
   // GetTransaction retrieves transaction details based on the provided request
 // parameters.
 getTransaction: {
-    path: '/pactus.Transaction/GetTransaction',
+    path: '/pactus.TransactionService/GetTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.GetTransactionRequest,
@@ -167,7 +167,7 @@ getTransaction: {
   // CalculateFee calculates the transaction fee based on the specified amount
 // and payload type.
 calculateFee: {
-    path: '/pactus.Transaction/CalculateFee',
+    path: '/pactus.TransactionService/CalculateFee',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.CalculateFeeRequest,
@@ -179,7 +179,7 @@ calculateFee: {
   },
   // BroadcastTransaction broadcasts a signed transaction to the network.
 broadcastTransaction: {
-    path: '/pactus.Transaction/BroadcastTransaction',
+    path: '/pactus.TransactionService/BroadcastTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.BroadcastTransactionRequest,
@@ -190,8 +190,10 @@ broadcastTransaction: {
     responseDeserialize: deserialize_pactus_BroadcastTransactionResponse,
   },
   // GetRawTransferTransaction retrieves raw details of a transfer transaction.
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getRawTransferTransaction: {
-    path: '/pactus.Transaction/GetRawTransferTransaction',
+    path: '/pactus.TransactionService/GetRawTransferTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.GetRawTransferTransactionRequest,
@@ -202,8 +204,10 @@ getRawTransferTransaction: {
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
   // GetRawBondTransaction retrieves raw details of a bond transaction.
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getRawBondTransaction: {
-    path: '/pactus.Transaction/GetRawBondTransaction',
+    path: '/pactus.TransactionService/GetRawBondTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.GetRawBondTransactionRequest,
@@ -214,8 +218,10 @@ getRawBondTransaction: {
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
   // GetRawUnbondTransaction retrieves raw details of an unbond transaction.
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getRawUnbondTransaction: {
-    path: '/pactus.Transaction/GetRawUnbondTransaction',
+    path: '/pactus.TransactionService/GetRawUnbondTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.GetRawUnbondTransactionRequest,
@@ -226,8 +232,10 @@ getRawUnbondTransaction: {
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
   // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getRawWithdrawTransaction: {
-    path: '/pactus.Transaction/GetRawWithdrawTransaction',
+    path: '/pactus.TransactionService/GetRawWithdrawTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.GetRawWithdrawTransactionRequest,
@@ -237,9 +245,9 @@ getRawWithdrawTransaction: {
     responseSerialize: serialize_pactus_GetRawTransactionResponse,
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
-  // DecodeRawTransaction accepts raw transaction and returnes decoded transaction.
+  // DecodeRawTransaction accepts raw transaction and returns decoded transaction.
 decodeRawTransaction: {
-    path: '/pactus.Transaction/DecodeRawTransaction',
+    path: '/pactus.TransactionService/DecodeRawTransaction',
     requestStream: false,
     responseStream: false,
     requestType: transaction_pb.DecodeRawTransactionRequest,
@@ -251,4 +259,4 @@ decodeRawTransaction: {
   },
 };
 
-exports.TransactionClient = grpc.makeGenericClientConstructor(TransactionService);
+exports.TransactionServiceClient = grpc.makeGenericClientConstructor(TransactionServiceService, 'TransactionService');

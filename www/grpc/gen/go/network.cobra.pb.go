@@ -11,22 +11,22 @@ import (
 	proto "google.golang.org/protobuf/proto"
 )
 
-func NetworkClientCommand(options ...client.Option) *cobra.Command {
+func NetworkServiceClientCommand(options ...client.Option) *cobra.Command {
 	cfg := client.NewConfig(options...)
 	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("Network"),
-		Short: "Network service client",
-		Long:  "Network service provides RPCs for retrieving information about the network.",
+		Use:   cfg.CommandNamer("NetworkService"),
+		Short: "NetworkService service client",
+		Long:  "NetworkService provides RPCs for retrieving information about the network.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
-		_NetworkGetNetworkInfoCommand(cfg),
-		_NetworkGetNodeInfoCommand(cfg),
+		_NetworkServiceGetNetworkInfoCommand(cfg),
+		_NetworkServiceGetNodeInfoCommand(cfg),
 	)
 	return cmd
 }
 
-func _NetworkGetNetworkInfoCommand(cfg *client.Config) *cobra.Command {
+func _NetworkServiceGetNetworkInfoCommand(cfg *client.Config) *cobra.Command {
 	req := &GetNetworkInfoRequest{}
 
 	cmd := &cobra.Command{
@@ -35,15 +35,15 @@ func _NetworkGetNetworkInfoCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetNetworkInfo retrieves information about the overall network.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Network"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "NetworkService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Network", "GetNetworkInfo"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "NetworkService", "GetNetworkInfo"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewNetworkClient(cc)
+				cli := NewNetworkServiceClient(cc)
 				v := &GetNetworkInfoRequest{}
 
 				if err := in(v); err != nil {
@@ -68,7 +68,7 @@ func _NetworkGetNetworkInfoCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _NetworkGetNodeInfoCommand(cfg *client.Config) *cobra.Command {
+func _NetworkServiceGetNodeInfoCommand(cfg *client.Config) *cobra.Command {
 	req := &GetNodeInfoRequest{}
 
 	cmd := &cobra.Command{
@@ -77,15 +77,15 @@ func _NetworkGetNodeInfoCommand(cfg *client.Config) *cobra.Command {
 		Long:  "GetNodeInfo retrieves information about a specific node in the network.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Network"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "NetworkService"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Network", "GetNodeInfo"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "NetworkService", "GetNodeInfo"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewNetworkClient(cc)
+				cli := NewNetworkServiceClient(cc)
 				v := &GetNodeInfoRequest{}
 
 				if err := in(v); err != nil {

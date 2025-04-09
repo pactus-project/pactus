@@ -49,11 +49,11 @@ function deserialize_pactus_GetNodeInfoResponse(buffer_arg) {
 }
 
 
-// Network service provides RPCs for retrieving information about the network.
-var NetworkService = exports.NetworkService = {
+// NetworkService provides RPCs for retrieving information about the network.
+var NetworkServiceService = exports.NetworkServiceService = {
   // GetNetworkInfo retrieves information about the overall network.
 getNetworkInfo: {
-    path: '/pactus.Network/GetNetworkInfo',
+    path: '/pactus.NetworkService/GetNetworkInfo',
     requestStream: false,
     responseStream: false,
     requestType: network_pb.GetNetworkInfoRequest,
@@ -65,7 +65,7 @@ getNetworkInfo: {
   },
   // GetNodeInfo retrieves information about a specific node in the network.
 getNodeInfo: {
-    path: '/pactus.Network/GetNodeInfo',
+    path: '/pactus.NetworkService/GetNodeInfo',
     requestStream: false,
     responseStream: false,
     requestType: network_pb.GetNodeInfoRequest,
@@ -77,4 +77,4 @@ getNodeInfo: {
   },
 };
 
-exports.NetworkClient = grpc.makeGenericClientConstructor(NetworkService);
+exports.NetworkServiceClient = grpc.makeGenericClientConstructor(NetworkServiceService, 'NetworkService');

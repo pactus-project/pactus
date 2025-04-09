@@ -10,6 +10,7 @@ package pactus
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 
@@ -24,270 +25,241 @@ import (
 )
 
 // Suppress "imported and not used" errors
-var _ codes.Code
-var _ io.Reader
-var _ status.Status
-var _ = runtime.String
-var _ = utilities.NewDoubleArray
-var _ = metadata.Join
-
 var (
-	filter_Utils_SignMessageWithPrivateKey_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	_ codes.Code
+	_ io.Reader
+	_ status.Status
+	_ = errors.New
+	_ = runtime.String
+	_ = utilities.NewDoubleArray
+	_ = metadata.Join
 )
 
-func request_Utils_SignMessageWithPrivateKey_0(ctx context.Context, marshaler runtime.Marshaler, client UtilsClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq SignMessageWithPrivateKeyRequest
-	var metadata runtime.ServerMetadata
+var filter_UtilsService_SignMessageWithPrivateKey_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
+func request_UtilsService_SignMessageWithPrivateKey_0(ctx context.Context, marshaler runtime.Marshaler, client UtilsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq SignMessageWithPrivateKeyRequest
+		metadata runtime.ServerMetadata
+	)
+	io.Copy(io.Discard, req.Body)
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Utils_SignMessageWithPrivateKey_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_UtilsService_SignMessageWithPrivateKey_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-
 	msg, err := client.SignMessageWithPrivateKey(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
-
 }
 
-func local_request_Utils_SignMessageWithPrivateKey_0(ctx context.Context, marshaler runtime.Marshaler, server UtilsServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq SignMessageWithPrivateKeyRequest
-	var metadata runtime.ServerMetadata
-
+func local_request_UtilsService_SignMessageWithPrivateKey_0(ctx context.Context, marshaler runtime.Marshaler, server UtilsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq SignMessageWithPrivateKeyRequest
+		metadata runtime.ServerMetadata
+	)
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Utils_SignMessageWithPrivateKey_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_UtilsService_SignMessageWithPrivateKey_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-
 	msg, err := server.SignMessageWithPrivateKey(ctx, &protoReq)
 	return msg, metadata, err
-
 }
 
-var (
-	filter_Utils_VerifyMessage_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-)
+var filter_UtilsService_VerifyMessage_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_Utils_VerifyMessage_0(ctx context.Context, marshaler runtime.Marshaler, client UtilsClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq VerifyMessageRequest
-	var metadata runtime.ServerMetadata
-
+func request_UtilsService_VerifyMessage_0(ctx context.Context, marshaler runtime.Marshaler, client UtilsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq VerifyMessageRequest
+		metadata runtime.ServerMetadata
+	)
+	io.Copy(io.Discard, req.Body)
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Utils_VerifyMessage_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_UtilsService_VerifyMessage_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-
 	msg, err := client.VerifyMessage(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
-
 }
 
-func local_request_Utils_VerifyMessage_0(ctx context.Context, marshaler runtime.Marshaler, server UtilsServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq VerifyMessageRequest
-	var metadata runtime.ServerMetadata
-
+func local_request_UtilsService_VerifyMessage_0(ctx context.Context, marshaler runtime.Marshaler, server UtilsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq VerifyMessageRequest
+		metadata runtime.ServerMetadata
+	)
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Utils_VerifyMessage_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_UtilsService_VerifyMessage_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-
 	msg, err := server.VerifyMessage(ctx, &protoReq)
 	return msg, metadata, err
-
 }
 
-var (
-	filter_Utils_BLSPublicKeyAggregation_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-)
+var filter_UtilsService_PublicKeyAggregation_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_Utils_BLSPublicKeyAggregation_0(ctx context.Context, marshaler runtime.Marshaler, client UtilsClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq BLSPublicKeyAggregationRequest
-	var metadata runtime.ServerMetadata
-
+func request_UtilsService_PublicKeyAggregation_0(ctx context.Context, marshaler runtime.Marshaler, client UtilsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq PublicKeyAggregationRequest
+		metadata runtime.ServerMetadata
+	)
+	io.Copy(io.Discard, req.Body)
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Utils_BLSPublicKeyAggregation_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_UtilsService_PublicKeyAggregation_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-
-	msg, err := client.BLSPublicKeyAggregation(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.PublicKeyAggregation(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
-
 }
 
-func local_request_Utils_BLSPublicKeyAggregation_0(ctx context.Context, marshaler runtime.Marshaler, server UtilsServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq BLSPublicKeyAggregationRequest
-	var metadata runtime.ServerMetadata
-
+func local_request_UtilsService_PublicKeyAggregation_0(ctx context.Context, marshaler runtime.Marshaler, server UtilsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq PublicKeyAggregationRequest
+		metadata runtime.ServerMetadata
+	)
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Utils_BLSPublicKeyAggregation_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_UtilsService_PublicKeyAggregation_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-
-	msg, err := server.BLSPublicKeyAggregation(ctx, &protoReq)
+	msg, err := server.PublicKeyAggregation(ctx, &protoReq)
 	return msg, metadata, err
-
 }
 
-var (
-	filter_Utils_BLSSignatureAggregation_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-)
+var filter_UtilsService_SignatureAggregation_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 
-func request_Utils_BLSSignatureAggregation_0(ctx context.Context, marshaler runtime.Marshaler, client UtilsClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq BLSSignatureAggregationRequest
-	var metadata runtime.ServerMetadata
-
+func request_UtilsService_SignatureAggregation_0(ctx context.Context, marshaler runtime.Marshaler, client UtilsServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq SignatureAggregationRequest
+		metadata runtime.ServerMetadata
+	)
+	io.Copy(io.Discard, req.Body)
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Utils_BLSSignatureAggregation_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_UtilsService_SignatureAggregation_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-
-	msg, err := client.BLSSignatureAggregation(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.SignatureAggregation(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
-
 }
 
-func local_request_Utils_BLSSignatureAggregation_0(ctx context.Context, marshaler runtime.Marshaler, server UtilsServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq BLSSignatureAggregationRequest
-	var metadata runtime.ServerMetadata
-
+func local_request_UtilsService_SignatureAggregation_0(ctx context.Context, marshaler runtime.Marshaler, server UtilsServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq SignatureAggregationRequest
+		metadata runtime.ServerMetadata
+	)
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_Utils_BLSSignatureAggregation_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_UtilsService_SignatureAggregation_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-
-	msg, err := server.BLSSignatureAggregation(ctx, &protoReq)
+	msg, err := server.SignatureAggregation(ctx, &protoReq)
 	return msg, metadata, err
-
 }
 
-// RegisterUtilsHandlerServer registers the http handlers for service Utils to "mux".
-// UnaryRPC     :call UtilsServer directly.
+// RegisterUtilsServiceHandlerServer registers the http handlers for service UtilsService to "mux".
+// UnaryRPC     :call UtilsServiceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
-// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterUtilsHandlerFromEndpoint instead.
+// Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterUtilsServiceHandlerFromEndpoint instead.
 // GRPC interceptors will not work for this type of registration. To use interceptors, you must use the "runtime.WithMiddlewares" option in the "runtime.NewServeMux" call.
-func RegisterUtilsHandlerServer(ctx context.Context, mux *runtime.ServeMux, server UtilsServer) error {
-
-	mux.Handle("GET", pattern_Utils_SignMessageWithPrivateKey_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+func RegisterUtilsServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux, server UtilsServiceServer) error {
+	mux.Handle(http.MethodGet, pattern_UtilsService_SignMessageWithPrivateKey_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Utils/SignMessageWithPrivateKey", runtime.WithHTTPPathPattern("/pactus/Utils/sign_message_with_private_key"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.UtilsService/SignMessageWithPrivateKey", runtime.WithHTTPPathPattern("/pactus/Utils/sign_message_with_private_key"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Utils_SignMessageWithPrivateKey_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_UtilsService_SignMessageWithPrivateKey_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-
-		forward_Utils_SignMessageWithPrivateKey_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
+		forward_UtilsService_SignMessageWithPrivateKey_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-
-	mux.Handle("GET", pattern_Utils_VerifyMessage_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_UtilsService_VerifyMessage_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Utils/VerifyMessage", runtime.WithHTTPPathPattern("/pactus/Utils/verify_message"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.UtilsService/VerifyMessage", runtime.WithHTTPPathPattern("/pactus/Utils/verify_message"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Utils_VerifyMessage_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_UtilsService_VerifyMessage_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-
-		forward_Utils_VerifyMessage_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
+		forward_UtilsService_VerifyMessage_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-
-	mux.Handle("GET", pattern_Utils_BLSPublicKeyAggregation_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_UtilsService_PublicKeyAggregation_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Utils/BLSPublicKeyAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/bls_public_key_aggregation"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.UtilsService/PublicKeyAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/bls_public_key_aggregation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Utils_BLSPublicKeyAggregation_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_UtilsService_PublicKeyAggregation_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-
-		forward_Utils_BLSPublicKeyAggregation_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
+		forward_UtilsService_PublicKeyAggregation_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-
-	mux.Handle("GET", pattern_Utils_BLSSignatureAggregation_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_UtilsService_SignatureAggregation_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Utils/BLSSignatureAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/bls_signature_aggregation"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.UtilsService/SignatureAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/bls_signature_aggregation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_Utils_BLSSignatureAggregation_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_UtilsService_SignatureAggregation_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-
-		forward_Utils_BLSSignatureAggregation_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
+		forward_UtilsService_SignatureAggregation_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
 }
 
-// RegisterUtilsHandlerFromEndpoint is same as RegisterUtilsHandler but
+// RegisterUtilsServiceHandlerFromEndpoint is same as RegisterUtilsServiceHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
-func RegisterUtilsHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
+func RegisterUtilsServiceHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
 	conn, err := grpc.NewClient(endpoint, opts...)
 	if err != nil {
 		return err
@@ -306,130 +278,102 @@ func RegisterUtilsHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux
 			}
 		}()
 	}()
-
-	return RegisterUtilsHandler(ctx, mux, conn)
+	return RegisterUtilsServiceHandler(ctx, mux, conn)
 }
 
-// RegisterUtilsHandler registers the http handlers for service Utils to "mux".
+// RegisterUtilsServiceHandler registers the http handlers for service UtilsService to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterUtilsHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
-	return RegisterUtilsHandlerClient(ctx, mux, NewUtilsClient(conn))
+func RegisterUtilsServiceHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
+	return RegisterUtilsServiceHandlerClient(ctx, mux, NewUtilsServiceClient(conn))
 }
 
-// RegisterUtilsHandlerClient registers the http handlers for service Utils
-// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "UtilsClient".
-// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "UtilsClient"
+// RegisterUtilsServiceHandlerClient registers the http handlers for service UtilsService
+// to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "UtilsServiceClient".
+// Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "UtilsServiceClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
-// "UtilsClient" to call the correct interceptors. This client ignores the HTTP middlewares.
-func RegisterUtilsHandlerClient(ctx context.Context, mux *runtime.ServeMux, client UtilsClient) error {
-
-	mux.Handle("GET", pattern_Utils_SignMessageWithPrivateKey_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+// "UtilsServiceClient" to call the correct interceptors. This client ignores the HTTP middlewares.
+func RegisterUtilsServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux, client UtilsServiceClient) error {
+	mux.Handle(http.MethodGet, pattern_UtilsService_SignMessageWithPrivateKey_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Utils/SignMessageWithPrivateKey", runtime.WithHTTPPathPattern("/pactus/Utils/sign_message_with_private_key"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.UtilsService/SignMessageWithPrivateKey", runtime.WithHTTPPathPattern("/pactus/Utils/sign_message_with_private_key"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Utils_SignMessageWithPrivateKey_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_UtilsService_SignMessageWithPrivateKey_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-
-		forward_Utils_SignMessageWithPrivateKey_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
+		forward_UtilsService_SignMessageWithPrivateKey_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-
-	mux.Handle("GET", pattern_Utils_VerifyMessage_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_UtilsService_VerifyMessage_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Utils/VerifyMessage", runtime.WithHTTPPathPattern("/pactus/Utils/verify_message"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.UtilsService/VerifyMessage", runtime.WithHTTPPathPattern("/pactus/Utils/verify_message"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Utils_VerifyMessage_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_UtilsService_VerifyMessage_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-
-		forward_Utils_VerifyMessage_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
+		forward_UtilsService_VerifyMessage_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-
-	mux.Handle("GET", pattern_Utils_BLSPublicKeyAggregation_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_UtilsService_PublicKeyAggregation_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Utils/BLSPublicKeyAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/bls_public_key_aggregation"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.UtilsService/PublicKeyAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/bls_public_key_aggregation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Utils_BLSPublicKeyAggregation_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_UtilsService_PublicKeyAggregation_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-
-		forward_Utils_BLSPublicKeyAggregation_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
+		forward_UtilsService_PublicKeyAggregation_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-
-	mux.Handle("GET", pattern_Utils_BLSSignatureAggregation_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle(http.MethodGet, pattern_UtilsService_SignatureAggregation_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		var err error
-		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/pactus.Utils/BLSSignatureAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/bls_signature_aggregation"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.UtilsService/SignatureAggregation", runtime.WithHTTPPathPattern("/pactus/Utils/bls_signature_aggregation"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Utils_BLSSignatureAggregation_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_UtilsService_SignatureAggregation_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
-
-		forward_Utils_BLSSignatureAggregation_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
+		forward_UtilsService_SignatureAggregation_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
-
 	return nil
 }
 
 var (
-	pattern_Utils_SignMessageWithPrivateKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "sign_message_with_private_key"}, ""))
-
-	pattern_Utils_VerifyMessage_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "verify_message"}, ""))
-
-	pattern_Utils_BLSPublicKeyAggregation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "bls_public_key_aggregation"}, ""))
-
-	pattern_Utils_BLSSignatureAggregation_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "bls_signature_aggregation"}, ""))
+	pattern_UtilsService_SignMessageWithPrivateKey_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "sign_message_with_private_key"}, ""))
+	pattern_UtilsService_VerifyMessage_0             = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "verify_message"}, ""))
+	pattern_UtilsService_PublicKeyAggregation_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "bls_public_key_aggregation"}, ""))
+	pattern_UtilsService_SignatureAggregation_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "Utils", "bls_signature_aggregation"}, ""))
 )
 
 var (
-	forward_Utils_SignMessageWithPrivateKey_0 = runtime.ForwardResponseMessage
-
-	forward_Utils_VerifyMessage_0 = runtime.ForwardResponseMessage
-
-	forward_Utils_BLSPublicKeyAggregation_0 = runtime.ForwardResponseMessage
-
-	forward_Utils_BLSSignatureAggregation_0 = runtime.ForwardResponseMessage
+	forward_UtilsService_SignMessageWithPrivateKey_0 = runtime.ForwardResponseMessage
+	forward_UtilsService_VerifyMessage_0             = runtime.ForwardResponseMessage
+	forward_UtilsService_PublicKeyAggregation_0      = runtime.ForwardResponseMessage
+	forward_UtilsService_SignatureAggregation_0      = runtime.ForwardResponseMessage
 )

@@ -238,11 +238,10 @@ function deserialize_pactus_GetValidatorResponse(buffer_arg) {
 
 
 // Blockchain service defines RPC methods for interacting with the blockchain.
-var BlockchainService = exports.BlockchainService = {
-  // GetBlock retrieves information about a block based on the provided request
-// parameters.
+var BlockchainServiceService = exports.BlockchainServiceService = {
+  // GetBlock retrieves information about a block based on the provided request parameters.
 getBlock: {
-    path: '/pactus.Blockchain/GetBlock',
+    path: '/pactus.BlockchainService/GetBlock',
     requestStream: false,
     responseStream: false,
     requestType: blockchain_pb.GetBlockRequest,
@@ -254,7 +253,7 @@ getBlock: {
   },
   // GetBlockHash retrieves the hash of a block at the specified height.
 getBlockHash: {
-    path: '/pactus.Blockchain/GetBlockHash',
+    path: '/pactus.BlockchainService/GetBlockHash',
     requestStream: false,
     responseStream: false,
     requestType: blockchain_pb.GetBlockHashRequest,
@@ -266,7 +265,7 @@ getBlockHash: {
   },
   // GetBlockHeight retrieves the height of a block with the specified hash.
 getBlockHeight: {
-    path: '/pactus.Blockchain/GetBlockHeight',
+    path: '/pactus.BlockchainService/GetBlockHeight',
     requestStream: false,
     responseStream: false,
     requestType: blockchain_pb.GetBlockHeightRequest,
@@ -278,7 +277,7 @@ getBlockHeight: {
   },
   // GetBlockchainInfo retrieves general information about the blockchain.
 getBlockchainInfo: {
-    path: '/pactus.Blockchain/GetBlockchainInfo',
+    path: '/pactus.BlockchainService/GetBlockchainInfo',
     requestStream: false,
     responseStream: false,
     requestType: blockchain_pb.GetBlockchainInfoRequest,
@@ -290,7 +289,7 @@ getBlockchainInfo: {
   },
   // GetConsensusInfo retrieves information about the consensus instances.
 getConsensusInfo: {
-    path: '/pactus.Blockchain/GetConsensusInfo',
+    path: '/pactus.BlockchainService/GetConsensusInfo',
     requestStream: false,
     responseStream: false,
     requestType: blockchain_pb.GetConsensusInfoRequest,
@@ -300,10 +299,9 @@ getConsensusInfo: {
     responseSerialize: serialize_pactus_GetConsensusInfoResponse,
     responseDeserialize: deserialize_pactus_GetConsensusInfoResponse,
   },
-  // GetAccount retrieves information about an account based on the provided
-// address.
+  // GetAccount retrieves information about an account based on the provided address.
 getAccount: {
-    path: '/pactus.Blockchain/GetAccount',
+    path: '/pactus.BlockchainService/GetAccount',
     requestStream: false,
     responseStream: false,
     requestType: blockchain_pb.GetAccountRequest,
@@ -313,10 +311,11 @@ getAccount: {
     responseSerialize: serialize_pactus_GetAccountResponse,
     responseDeserialize: deserialize_pactus_GetAccountResponse,
   },
-  // GetValidator retrieves information about a validator based on the provided
-// address.
+  // GetValidator retrieves information about a validator based on the provided address.
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getValidator: {
-    path: '/pactus.Blockchain/GetValidator',
+    path: '/pactus.BlockchainService/GetValidator',
     requestStream: false,
     responseStream: false,
     requestType: blockchain_pb.GetValidatorRequest,
@@ -326,10 +325,11 @@ getValidator: {
     responseSerialize: serialize_pactus_GetValidatorResponse,
     responseDeserialize: deserialize_pactus_GetValidatorResponse,
   },
-  // GetValidatorByNumber retrieves information about a validator based on the
-// provided number.
+  // GetValidatorByNumber retrieves information about a validator based on the provided number.
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getValidatorByNumber: {
-    path: '/pactus.Blockchain/GetValidatorByNumber',
+    path: '/pactus.BlockchainService/GetValidatorByNumber',
     requestStream: false,
     responseStream: false,
     requestType: blockchain_pb.GetValidatorByNumberRequest,
@@ -341,7 +341,7 @@ getValidatorByNumber: {
   },
   // GetValidatorAddresses retrieves a list of all validator addresses.
 getValidatorAddresses: {
-    path: '/pactus.Blockchain/GetValidatorAddresses',
+    path: '/pactus.BlockchainService/GetValidatorAddresses',
     requestStream: false,
     responseStream: false,
     requestType: blockchain_pb.GetValidatorAddressesRequest,
@@ -351,10 +351,9 @@ getValidatorAddresses: {
     responseSerialize: serialize_pactus_GetValidatorAddressesResponse,
     responseDeserialize: deserialize_pactus_GetValidatorAddressesResponse,
   },
-  // GetPublicKey retrieves the public key of an account based on the provided
-// address.
+  // GetPublicKey retrieves the public key of an account based on the provided address.
 getPublicKey: {
-    path: '/pactus.Blockchain/GetPublicKey',
+    path: '/pactus.BlockchainService/GetPublicKey',
     requestStream: false,
     responseStream: false,
     requestType: blockchain_pb.GetPublicKeyRequest,
@@ -366,7 +365,7 @@ getPublicKey: {
   },
   // GetTxPoolContent retrieves current transactions in the transaction pool.
 getTxPoolContent: {
-    path: '/pactus.Blockchain/GetTxPoolContent',
+    path: '/pactus.BlockchainService/GetTxPoolContent',
     requestStream: false,
     responseStream: false,
     requestType: blockchain_pb.GetTxPoolContentRequest,
@@ -378,4 +377,4 @@ getTxPoolContent: {
   },
 };
 
-exports.BlockchainClient = grpc.makeGenericClientConstructor(BlockchainService);
+exports.BlockchainServiceClient = grpc.makeGenericClientConstructor(BlockchainServiceService, 'BlockchainService');

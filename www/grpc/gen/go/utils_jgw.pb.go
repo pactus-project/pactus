@@ -17,30 +17,30 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type UtilsJsonRPC struct {
-	client UtilsClient
+type UtilsServiceJsonRPC struct {
+	client UtilsServiceClient
 }
 
-type paramsAndHeadersUtils struct {
+type paramsAndHeadersUtilsService struct {
 	Headers metadata.MD     `json:"headers,omitempty"`
 	Params  json.RawMessage `json:"params"`
 }
 
-// RegisterUtilsJsonRPC register the grpc client Utils for json-rpc.
+// RegisterUtilsServiceJsonRPC register the grpc client UtilsService for json-rpc.
 // The handlers forward requests to the grpc endpoint over "conn".
-func RegisterUtilsJsonRPC(conn *grpc.ClientConn) *UtilsJsonRPC {
-	return &UtilsJsonRPC{
-		client: NewUtilsClient(conn),
+func RegisterUtilsServiceJsonRPC(conn *grpc.ClientConn) *UtilsServiceJsonRPC {
+	return &UtilsServiceJsonRPC{
+		client: NewUtilsServiceClient(conn),
 	}
 }
 
-func (s *UtilsJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
+func (s *UtilsServiceJsonRPC) Methods() map[string]func(ctx context.Context, message json.RawMessage) (any, error) {
 	return map[string]func(ctx context.Context, params json.RawMessage) (any, error){
 
-		"pactus.utils.sign_message_with_private_key": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.utils_service.sign_message_with_private_key": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(SignMessageWithPrivateKeyRequest)
 
-			var jrpcData paramsAndHeadersUtils
+			var jrpcData paramsAndHeadersUtilsService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -54,10 +54,10 @@ func (s *UtilsJsonRPC) Methods() map[string]func(ctx context.Context, message js
 			return s.client.SignMessageWithPrivateKey(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.utils.verify_message": func(ctx context.Context, data json.RawMessage) (any, error) {
+		"pactus.utils_service.verify_message": func(ctx context.Context, data json.RawMessage) (any, error) {
 			req := new(VerifyMessageRequest)
 
-			var jrpcData paramsAndHeadersUtils
+			var jrpcData paramsAndHeadersUtilsService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -71,10 +71,10 @@ func (s *UtilsJsonRPC) Methods() map[string]func(ctx context.Context, message js
 			return s.client.VerifyMessage(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.utils.b_l_s_public_key_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
-			req := new(BLSPublicKeyAggregationRequest)
+		"pactus.utils_service.public_key_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(PublicKeyAggregationRequest)
 
-			var jrpcData paramsAndHeadersUtils
+			var jrpcData paramsAndHeadersUtilsService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -85,13 +85,13 @@ func (s *UtilsJsonRPC) Methods() map[string]func(ctx context.Context, message js
 				return nil, err
 			}
 
-			return s.client.BLSPublicKeyAggregation(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+			return s.client.PublicKeyAggregation(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.utils.b_l_s_signature_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
-			req := new(BLSSignatureAggregationRequest)
+		"pactus.utils_service.signature_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(SignatureAggregationRequest)
 
-			var jrpcData paramsAndHeadersUtils
+			var jrpcData paramsAndHeadersUtilsService
 
 			if err := json.Unmarshal(data, &jrpcData); err != nil {
 				return nil, err
@@ -102,7 +102,7 @@ func (s *UtilsJsonRPC) Methods() map[string]func(ctx context.Context, message js
 				return nil, err
 			}
 
-			return s.client.BLSSignatureAggregation(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+			return s.client.SignatureAggregation(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 	}
 }
