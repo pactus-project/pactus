@@ -312,7 +312,7 @@ curl --location 'http://localhost:8545/' \
   </tr>
      <tr>
     <td class="fw-bold">transaction</td>
-    <td> object</td>
+    <td> object (TransactionInfo)</td>
     <td>
     Detailed information about the transaction.
     </td>
@@ -376,7 +376,7 @@ curl --location 'http://localhost:8545/' \
       </tr>
          <tr>
         <td class="fw-bold">transaction.transfer</td>
-        <td> object</td>
+        <td> object (PayloadTransfer)</td>
         <td>
         (OneOf)Transfer transaction payload.
         </td>
@@ -404,7 +404,7 @@ curl --location 'http://localhost:8545/' \
           </tr>
           <tr>
         <td class="fw-bold">transaction.bond</td>
-        <td> object</td>
+        <td> object (PayloadBond)</td>
         <td>
         (OneOf)Bond transaction payload.
         </td>
@@ -439,7 +439,7 @@ curl --location 'http://localhost:8545/' \
           </tr>
           <tr>
         <td class="fw-bold">transaction.sortition</td>
-        <td> object</td>
+        <td> object (PayloadSortition)</td>
         <td>
         (OneOf)Sortition transaction payload.
         </td>
@@ -460,7 +460,7 @@ curl --location 'http://localhost:8545/' \
           </tr>
           <tr>
         <td class="fw-bold">transaction.unbond</td>
-        <td> object</td>
+        <td> object (PayloadUnbond)</td>
         <td>
         (OneOf)Unbond transaction payload.
         </td>
@@ -474,7 +474,7 @@ curl --location 'http://localhost:8545/' \
           </tr>
           <tr>
         <td class="fw-bold">transaction.withdraw</td>
-        <td> object</td>
+        <td> object (PayloadWithdraw)</td>
         <td>
         (OneOf)Withdraw transaction payload.
         </td>
@@ -958,7 +958,7 @@ curl --location 'http://localhost:8545/' \
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">transaction</td>
-    <td> object</td>
+    <td> object (TransactionInfo)</td>
     <td>
     The decoded transaction information.
     </td>
@@ -1022,7 +1022,7 @@ curl --location 'http://localhost:8545/' \
       </tr>
          <tr>
         <td class="fw-bold">transaction.transfer</td>
-        <td> object</td>
+        <td> object (PayloadTransfer)</td>
         <td>
         (OneOf)Transfer transaction payload.
         </td>
@@ -1050,7 +1050,7 @@ curl --location 'http://localhost:8545/' \
           </tr>
           <tr>
         <td class="fw-bold">transaction.bond</td>
-        <td> object</td>
+        <td> object (PayloadBond)</td>
         <td>
         (OneOf)Bond transaction payload.
         </td>
@@ -1085,7 +1085,7 @@ curl --location 'http://localhost:8545/' \
           </tr>
           <tr>
         <td class="fw-bold">transaction.sortition</td>
-        <td> object</td>
+        <td> object (PayloadSortition)</td>
         <td>
         (OneOf)Sortition transaction payload.
         </td>
@@ -1106,7 +1106,7 @@ curl --location 'http://localhost:8545/' \
           </tr>
           <tr>
         <td class="fw-bold">transaction.unbond</td>
-        <td> object</td>
+        <td> object (PayloadUnbond)</td>
         <td>
         (OneOf)Unbond transaction payload.
         </td>
@@ -1120,7 +1120,7 @@ curl --location 'http://localhost:8545/' \
           </tr>
           <tr>
         <td class="fw-bold">transaction.withdraw</td>
-        <td> object</td>
+        <td> object (PayloadWithdraw)</td>
         <td>
         (OneOf)Withdraw transaction payload.
         </td>
@@ -1243,7 +1243,7 @@ curl --location 'http://localhost:8545/' \
   </tr>
      <tr>
     <td class="fw-bold">header</td>
-    <td> object</td>
+    <td> object (BlockHeaderInfo)</td>
     <td>
     Header information of the block.
     </td>
@@ -1285,7 +1285,7 @@ curl --location 'http://localhost:8545/' \
       </tr>
          <tr>
     <td class="fw-bold">prev_cert</td>
-    <td> object</td>
+    <td> object (CertificateInfo)</td>
     <td>
     Certificate information of the previous block.
     </td>
@@ -1327,7 +1327,7 @@ curl --location 'http://localhost:8545/' \
       </tr>
          <tr>
     <td class="fw-bold">txs</td>
-    <td>repeated object</td>
+    <td>repeated object (TransactionInfo)</td>
     <td>
     List of transactions in the block, available when verbosity level is set to
 BLOCK_TRANSACTIONS.
@@ -1392,7 +1392,7 @@ BLOCK_TRANSACTIONS.
       </tr>
          <tr>
         <td class="fw-bold">txs[].transfer</td>
-        <td> object</td>
+        <td> object (PayloadTransfer)</td>
         <td>
         (OneOf)Transfer transaction payload.
         </td>
@@ -1420,7 +1420,7 @@ BLOCK_TRANSACTIONS.
           </tr>
           <tr>
         <td class="fw-bold">txs[].bond</td>
-        <td> object</td>
+        <td> object (PayloadBond)</td>
         <td>
         (OneOf)Bond transaction payload.
         </td>
@@ -1455,7 +1455,7 @@ BLOCK_TRANSACTIONS.
           </tr>
           <tr>
         <td class="fw-bold">txs[].sortition</td>
-        <td> object</td>
+        <td> object (PayloadSortition)</td>
         <td>
         (OneOf)Sortition transaction payload.
         </td>
@@ -1476,7 +1476,7 @@ BLOCK_TRANSACTIONS.
           </tr>
           <tr>
         <td class="fw-bold">txs[].unbond</td>
-        <td> object</td>
+        <td> object (PayloadUnbond)</td>
         <td>
         (OneOf)Unbond transaction payload.
         </td>
@@ -1490,7 +1490,7 @@ BLOCK_TRANSACTIONS.
           </tr>
           <tr>
         <td class="fw-bold">txs[].withdraw</td>
-        <td> object</td>
+        <td> object (PayloadWithdraw)</td>
         <td>
         (OneOf)Withdraw transaction payload.
         </td>
@@ -1672,7 +1672,7 @@ Parameters has no fields.
   </tr>
      <tr>
     <td class="fw-bold">committee_validators</td>
-    <td>repeated object</td>
+    <td>repeated object (ValidatorInfo)</td>
     <td>
     List of committee validators.
     </td>
@@ -1787,7 +1787,7 @@ Parameters has no fields.
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">proposal</td>
-    <td> object</td>
+    <td> object (ProposalInfo)</td>
     <td>
     The proposal of the consensus info.
     </td>
@@ -1822,7 +1822,7 @@ Parameters has no fields.
       </tr>
          <tr>
     <td class="fw-bold">instances</td>
-    <td>repeated object</td>
+    <td>repeated object (ConsensusInfo)</td>
     <td>
     List of consensus instances.
     </td>
@@ -1857,7 +1857,7 @@ Parameters has no fields.
       </tr>
          <tr>
         <td class="fw-bold">instances[].votes</td>
-        <td>repeated object</td>
+        <td>repeated object (VoteInfo)</td>
         <td>
         List of votes in the consensus instance.
         </td>
@@ -1944,7 +1944,7 @@ Parameters has no fields.
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">account</td>
-    <td> object</td>
+    <td> object (AccountInfo)</td>
     <td>
     Detailed information about the account.
     </td>
@@ -2016,7 +2016,7 @@ Parameters has no fields.
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">validator</td>
-    <td> object</td>
+    <td> object (ValidatorInfo)</td>
     <td>
     Detailed information about the validator.
     </td>
@@ -2123,7 +2123,7 @@ Parameters has no fields.
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">validator</td>
-    <td> object</td>
+    <td> object (ValidatorInfo)</td>
     <td>
     Detailed information about the validator.
     </td>
@@ -2299,7 +2299,7 @@ Parameters has no fields.
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">txs</td>
-    <td>repeated object</td>
+    <td>repeated object (TransactionInfo)</td>
     <td>
     List of transactions currently in the pool.
     </td>
@@ -2363,7 +2363,7 @@ Parameters has no fields.
       </tr>
          <tr>
         <td class="fw-bold">txs[].transfer</td>
-        <td> object</td>
+        <td> object (PayloadTransfer)</td>
         <td>
         (OneOf)Transfer transaction payload.
         </td>
@@ -2391,7 +2391,7 @@ Parameters has no fields.
           </tr>
           <tr>
         <td class="fw-bold">txs[].bond</td>
-        <td> object</td>
+        <td> object (PayloadBond)</td>
         <td>
         (OneOf)Bond transaction payload.
         </td>
@@ -2426,7 +2426,7 @@ Parameters has no fields.
           </tr>
           <tr>
         <td class="fw-bold">txs[].sortition</td>
-        <td> object</td>
+        <td> object (PayloadSortition)</td>
         <td>
         (OneOf)Sortition transaction payload.
         </td>
@@ -2447,7 +2447,7 @@ Parameters has no fields.
           </tr>
           <tr>
         <td class="fw-bold">txs[].unbond</td>
-        <td> object</td>
+        <td> object (PayloadUnbond)</td>
         <td>
         (OneOf)Unbond transaction payload.
         </td>
@@ -2461,7 +2461,7 @@ Parameters has no fields.
           </tr>
           <tr>
         <td class="fw-bold">txs[].withdraw</td>
-        <td> object</td>
+        <td> object (PayloadWithdraw)</td>
         <td>
         (OneOf)Withdraw transaction payload.
         </td>
@@ -2558,7 +2558,7 @@ Parameters has no fields.
   </tr>
      <tr>
     <td class="fw-bold">connected_peers</td>
-    <td>repeated object</td>
+    <td>repeated object (PeerInfo)</td>
     <td>
     List of connected peers.
     </td>
@@ -2677,56 +2677,56 @@ Parameters has no fields.
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].metric_info</td>
-        <td> object</td>
+        <td> object (MetricInfo)</td>
         <td>
         Metrics related to peer activity.
         </td>
       </tr>
          <tr>
             <td class="fw-bold">connected_peers[].metric_info.total_invalid</td>
-            <td> object</td>
+            <td> object (CounterInfo)</td>
             <td>
             Total number of invalid bundles.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">connected_peers[].metric_info.total_sent</td>
-            <td> object</td>
+            <td> object (CounterInfo)</td>
             <td>
             Total number of bundles sent.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">connected_peers[].metric_info.total_received</td>
-            <td> object</td>
+            <td> object (CounterInfo)</td>
             <td>
             Total number of bundles received.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">connected_peers[].metric_info.message_sent</td>
-            <td> object</td>
+            <td> map&lt;int32, CounterInfo&gt;</td>
             <td>
             Number of sent bundles categorized by message type.
             </td>
           </tr>
           <tr>
             <td class="fw-bold">connected_peers[].metric_info.message_received</td>
-            <td> object</td>
+            <td> map&lt;int32, CounterInfo&gt;</td>
             <td>
             Number of received bundles categorized by message type.
             </td>
           </tr>
           <tr>
     <td class="fw-bold">metric_info</td>
-    <td> object</td>
+    <td> object (MetricInfo)</td>
     <td>
     Metrics related to node activity.
     </td>
   </tr>
      <tr>
         <td class="fw-bold">metric_info.total_invalid</td>
-        <td> object</td>
+        <td> object (CounterInfo)</td>
         <td>
         Total number of invalid bundles.
         </td>
@@ -2747,7 +2747,7 @@ Parameters has no fields.
           </tr>
           <tr>
         <td class="fw-bold">metric_info.total_sent</td>
-        <td> object</td>
+        <td> object (CounterInfo)</td>
         <td>
         Total number of bundles sent.
         </td>
@@ -2768,7 +2768,7 @@ Parameters has no fields.
           </tr>
           <tr>
         <td class="fw-bold">metric_info.total_received</td>
-        <td> object</td>
+        <td> object (CounterInfo)</td>
         <td>
         Total number of bundles received.
         </td>
@@ -2789,14 +2789,14 @@ Parameters has no fields.
           </tr>
           <tr>
         <td class="fw-bold">metric_info.message_sent</td>
-        <td> object</td>
+        <td> map&lt;int32, CounterInfo&gt;</td>
         <td>
         Number of sent bundles categorized by message type.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">metric_info.message_received</td>
-        <td> object</td>
+        <td> map&lt;int32, CounterInfo&gt;</td>
         <td>
         Number of received bundles categorized by message type.
         </td>
@@ -2890,7 +2890,7 @@ Parameters has no fields.
   </tr>
      <tr>
     <td class="fw-bold">connection_info</td>
-    <td> object</td>
+    <td> object (ConnectionInfo)</td>
     <td>
     Information about the node's connections.
     </td>
@@ -2918,7 +2918,7 @@ Parameters has no fields.
       </tr>
          <tr>
     <td class="fw-bold">zmq_publishers</td>
-    <td>repeated object</td>
+    <td>repeated object (ZMQPublisherInfo)</td>
     <td>
     List of active ZeroMQ publishers.
     </td>
@@ -3506,7 +3506,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
   </tr>
      <tr>
     <td class="fw-bold">address_info</td>
-    <td> object</td>
+    <td> object (AddressInfo)</td>
     <td>
     Detailed information about the new address.
     </td>
@@ -3578,7 +3578,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
   <tbody class="table-group-divider">
   <tr>
     <td class="fw-bold">history_info</td>
-    <td>repeated object</td>
+    <td>repeated object (HistoryInfo)</td>
     <td>
     List of all historical transactions associated with the address.
     </td>
@@ -3978,7 +3978,7 @@ Parameters has no fields.
   </tr>
      <tr>
     <td class="fw-bold">data</td>
-    <td>repeated object</td>
+    <td>repeated object (AddressInfo)</td>
     <td>
     ist of all addresses in the wallet with their details.
     </td>

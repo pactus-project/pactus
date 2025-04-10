@@ -34,7 +34,7 @@ git log
 git push --set-upstream origin ${BASE_BRANCH}
 ```
 
-Update the patch version inside the [version.go](../version/version.go),
+Update the patch version inside the [version.json](../version/version.json),
 clear Alias and set "beta" to the Meta.
 
 Create a new PR against the patch branch:

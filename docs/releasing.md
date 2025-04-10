@@ -50,7 +50,7 @@ TAG_MSG="Version ${CUR_VER}"
 
 ## 5. Update the Version
 
-clear Meta and set Alias in [version.go](../version/version.go).
+clear Meta and set Alias in [version.json](../version/version.json).
 
 ## 6. Update Changelog
 
@@ -106,7 +106,7 @@ Pushing the tag will automatically create a release tag and build the binaries.
 
 ## 10. Bump the Version
 
-- Update the version inside [version.go](../version/version.go) and add `beta` to the `meta` field.
+Update the version inside [version.json](../version/version.json), add `beta` to the `meta` field, and:
 - If this is a **major release**, update the versions inside this document in step 3 and
 update the versions inside the [patching](./patching.md) in step 2.
 - If this is a **patch release**, update the versions inside the [patching](./patching.md) in step 2.

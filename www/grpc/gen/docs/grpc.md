@@ -3977,14 +3977,12 @@ Message has no fields.
         <td>f64</td>
         <td>double</td>
         <td>float</td>
-        <td>double</td>
       </tr>
       <tr id="float">
         <td class="fw-bold">float</td>
         <td>float32</td>
         <td>float</td>
         <td>f32</td>
-        <td>float</td>
         <td>float</td>
         <td>float</td>
       </tr>
@@ -3995,7 +3993,6 @@ Message has no fields.
         <td>i32</td>
         <td>int</td>
         <td>int</td>
-        <td>int</td>
       </tr>
       <tr id="int64">
         <td class="fw-bold">int64</td>
@@ -4004,7 +4001,6 @@ Message has no fields.
         <td>i64</td>
         <td>long</td>
         <td>int/long</td>
-        <td>long</td>
       </tr>
       <tr id="uint32">
         <td class="fw-bold">uint32</td>
@@ -4013,7 +4009,6 @@ Message has no fields.
         <td>u32</td>
         <td>int</td>
         <td>int/long</td>
-        <td>uint</td>
       </tr>
       <tr id="uint64">
         <td class="fw-bold">uint64</td>
@@ -4022,14 +4017,12 @@ Message has no fields.
         <td>u64</td>
         <td>long</td>
         <td>int/long</td>
-        <td>ulong</td>
       </tr>
       <tr id="sint32">
         <td class="fw-bold">sint32</td>
         <td>int32</td>
         <td>int32</td>
         <td>i32</td>
-        <td>int</td>
         <td>int</td>
         <td>int</td>
       </tr>
@@ -4040,7 +4033,6 @@ Message has no fields.
         <td>i64</td>
         <td>long</td>
         <td>int/long</td>
-        <td>long</td>
       </tr>
       <tr id="fixed32">
         <td class="fw-bold">fixed32</td>
@@ -4049,7 +4041,6 @@ Message has no fields.
         <td>u64</td>
         <td>int</td>
         <td>int</td>
-        <td>uint</td>
       </tr>
       <tr id="fixed64">
         <td class="fw-bold">fixed64</td>
@@ -4058,14 +4049,12 @@ Message has no fields.
         <td>u64</td>
         <td>long</td>
         <td>int/long</td>
-        <td>ulong</td>
       </tr>
       <tr id="sfixed32">
         <td class="fw-bold">sfixed32</td>
         <td>int32</td>
         <td>int32</td>
         <td>i32</td>
-        <td>int</td>
         <td>int</td>
         <td>int</td>
       </tr>
@@ -4076,7 +4065,6 @@ Message has no fields.
         <td>i64</td>
         <td>long</td>
         <td>int/long</td>
-        <td>long</td>
       </tr>
       <tr id="bool">
         <td class="fw-bold">bool</td>
@@ -4085,7 +4073,6 @@ Message has no fields.
         <td>bool</td>
         <td>boolean</td>
         <td>boolean</td>
-        <td>bool</td>
       </tr>
       <tr id="string">
         <td class="fw-bold">string</td>
@@ -4094,7 +4081,6 @@ Message has no fields.
         <td>String</td>
         <td>String</td>
         <td>str/unicode</td>
-        <td>string</td>
       </tr>
       <tr id="bytes">
         <td class="fw-bold">bytes</td>
@@ -4103,7 +4089,6 @@ Message has no fields.
         <td>Vec<u8></td>
         <td>ByteString</td>
         <td>str</td>
-        <td>ByteString</td>
       </tr>
   </tbody>
 </table>
