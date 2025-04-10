@@ -6,7 +6,7 @@ openapiOptions:
       option:
         info:
           title: Pactus APIs
-          version: "1.8.0-beta"
+          version: "2.0"
           description: |
             Each node in the Pactus network can be configured to use the [gRPC](https://grpc.io/) protocol for communication.
             Here you can find the list of all gRPC methods and messages.

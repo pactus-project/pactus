@@ -28,7 +28,6 @@ build:
 	go build -o ./build/pactus-wallet$(EXE) ./cmd/wallet
 	go build -o ./build/pactus-shell$(EXE)  ./cmd/shell
 
-
 build_race:
 	go build -race -o ./build/pactus-daemon$(EXE) ./cmd/daemon
 	go build -race -o ./build/pactus-wallet$(EXE) ./cmd/wallet
@@ -58,8 +57,6 @@ docker:
 # This target works only on Unix-like terminals.
 proto:
 	rm -rf www/grpc/gen
-	rm www/grpc/buf/openapi.config.yaml
-	cp www/grpc/buf/openapi.config.yaml.tmpl www/grpc/buf/openapi.config.yaml
 	sed -i 's/{{ VERSION }}/$(VERSION)/g' www/grpc/buf/openapi.config.yaml
 	cd www/grpc && buf generate --template ./buf/buf.gen.yaml --config ./buf/buf.yaml ./proto
 
