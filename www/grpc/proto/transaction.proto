@@ -16,7 +16,7 @@ service Transaction {
   rpc BroadcastTransaction(BroadcastTransactionRequest) returns (BroadcastTransactionResponse);
 
   // GetRawTransferTransaction retrieves raw details of a transfer transaction.
-    rpc GetRawTransferTransaction(GetRawTransferTransactionRequest) returns (GetRawTransactionResponse);
+  rpc GetRawTransferTransaction(GetRawTransferTransactionRequest) returns (GetRawTransactionResponse);
 
   // GetRawBondTransaction retrieves raw details of a bond transaction.
   rpc GetRawBondTransaction(GetRawBondTransactionRequest) returns (GetRawTransactionResponse);
