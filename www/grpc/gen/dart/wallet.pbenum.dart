@@ -17,7 +17,6 @@ import 'package:protobuf/protobuf.dart' as $pb;
 class AddressType extends $pb.ProtobufEnum {
   /// Treasury address type.
   /// Should not be used to generate new addresses.
-  /// buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
   static const AddressType ADDRESS_TYPE_TREASURY = AddressType._(0, _omitEnumNames ? '' : 'ADDRESS_TYPE_TREASURY');
   /// Validator address type used for validator nodes.
   static const AddressType ADDRESS_TYPE_VALIDATOR = AddressType._(1, _omitEnumNames ? '' : 'ADDRESS_TYPE_VALIDATOR');

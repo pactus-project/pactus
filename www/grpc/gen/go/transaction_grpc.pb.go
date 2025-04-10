@@ -33,32 +33,21 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Transaction service defines various RPC methods for interacting with
-// transactions.
+// Transaction service defines various RPC methods for interacting with transactions.
 type TransactionClient interface {
-	// GetTransaction retrieves transaction details based on the provided request
-	// parameters.
+	// GetTransaction retrieves transaction details based on the provided request parameters.
 	GetTransaction(ctx context.Context, in *GetTransactionRequest, opts ...grpc.CallOption) (*GetTransactionResponse, error)
-	// CalculateFee calculates the transaction fee based on the specified amount
-	// and payload type.
+	// CalculateFee calculates the transaction fee based on the specified amount and payload type.
 	CalculateFee(ctx context.Context, in *CalculateFeeRequest, opts ...grpc.CallOption) (*CalculateFeeResponse, error)
 	// BroadcastTransaction broadcasts a signed transaction to the network.
 	BroadcastTransaction(ctx context.Context, in *BroadcastTransactionRequest, opts ...grpc.CallOption) (*BroadcastTransactionResponse, error)
 	// GetRawTransferTransaction retrieves raw details of a transfer transaction.
-	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetRawTransferTransaction(ctx context.Context, in *GetRawTransferTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// GetRawBondTransaction retrieves raw details of a bond transaction.
-	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetRawBondTransaction(ctx context.Context, in *GetRawBondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetRawUnbondTransaction(ctx context.Context, in *GetRawUnbondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetRawWithdrawTransaction(ctx context.Context, in *GetRawWithdrawTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// DecodeRawTransaction accepts raw transaction and returns decoded transaction.
 	DecodeRawTransaction(ctx context.Context, in *DecodeRawTransactionRequest, opts ...grpc.CallOption) (*DecodeRawTransactionResponse, error)
@@ -156,32 +145,21 @@ func (c *transactionClient) DecodeRawTransaction(ctx context.Context, in *Decode
 // All implementations should embed UnimplementedTransactionServer
 // for forward compatibility.
 //
-// Transaction service defines various RPC methods for interacting with
-// transactions.
+// Transaction service defines various RPC methods for interacting with transactions.
 type TransactionServer interface {
-	// GetTransaction retrieves transaction details based on the provided request
-	// parameters.
+	// GetTransaction retrieves transaction details based on the provided request parameters.
 	GetTransaction(context.Context, *GetTransactionRequest) (*GetTransactionResponse, error)
-	// CalculateFee calculates the transaction fee based on the specified amount
-	// and payload type.
+	// CalculateFee calculates the transaction fee based on the specified amount and payload type.
 	CalculateFee(context.Context, *CalculateFeeRequest) (*CalculateFeeResponse, error)
 	// BroadcastTransaction broadcasts a signed transaction to the network.
 	BroadcastTransaction(context.Context, *BroadcastTransactionRequest) (*BroadcastTransactionResponse, error)
 	// GetRawTransferTransaction retrieves raw details of a transfer transaction.
-	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetRawTransferTransaction(context.Context, *GetRawTransferTransactionRequest) (*GetRawTransactionResponse, error)
 	// GetRawBondTransaction retrieves raw details of a bond transaction.
-	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetRawBondTransaction(context.Context, *GetRawBondTransactionRequest) (*GetRawTransactionResponse, error)
 	// GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetRawUnbondTransaction(context.Context, *GetRawUnbondTransactionRequest) (*GetRawTransactionResponse, error)
 	// GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetRawWithdrawTransaction(context.Context, *GetRawWithdrawTransactionRequest) (*GetRawTransactionResponse, error)
 	// DecodeRawTransaction accepts raw transaction and returns decoded transaction.
 	DecodeRawTransaction(context.Context, *DecodeRawTransactionRequest) (*DecodeRawTransactionResponse, error)

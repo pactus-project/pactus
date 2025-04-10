@@ -259,7 +259,7 @@
           },
           {
             "name": "verbosity",
-            "description": "The verbosity level for block information.\n\n - BLOCK_VERBOSITY_DATA: Request only block data.\nbuf:lint:ignore ENUM_ZERO_VALUE_SUFFIX\n - BLOCK_VERBOSITY_INFO: Request block information and transaction IDs.\n - BLOCK_VERBOSITY_TRANSACTIONS: Request block information and detailed transaction data.",
+            "description": "The verbosity level for block information.\n\n - BLOCK_VERBOSITY_DATA: Request only block data.\n - BLOCK_VERBOSITY_INFO: Request block information and transaction IDs.\n - BLOCK_VERBOSITY_TRANSACTIONS: Request block information and detailed transaction data.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -462,7 +462,7 @@
     },
     "/pactus/blockchain/get_validator": {
       "get": {
-        "summary": "GetValidator retrieves information about a validator based on the provided address.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\nbuf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
+        "summary": "GetValidator retrieves information about a validator based on the provided address.",
         "operationId": "Blockchain_GetValidator",
         "responses": {
           "200": {
@@ -494,7 +494,7 @@
     },
     "/pactus/blockchain/get_validator_by_number": {
       "get": {
-        "summary": "GetValidatorByNumber retrieves information about a validator based on the provided number.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\nbuf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
+        "summary": "GetValidatorByNumber retrieves information about a validator based on the provided number.",
         "operationId": "Blockchain_GetValidatorByNumber",
         "responses": {
           "200": {
@@ -614,7 +614,7 @@
     },
     "/pactus/transaction/calculate_fee": {
       "get": {
-        "summary": "CalculateFee calculates the transaction fee based on the specified amount\nand payload type.",
+        "summary": "CalculateFee calculates the transaction fee based on the specified amount and payload type.",
         "operationId": "Transaction_CalculateFee",
         "responses": {
           "200": {
@@ -670,7 +670,7 @@
     },
     "/pactus/transaction/get_raw_bond_transaction": {
       "get": {
-        "summary": "GetRawBondTransaction retrieves raw details of a bond transaction.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\nbuf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
+        "summary": "GetRawBondTransaction retrieves raw details of a bond transaction.",
         "operationId": "Transaction_GetRawBondTransaction",
         "responses": {
           "200": {
@@ -747,7 +747,7 @@
     },
     "/pactus/transaction/get_raw_transfer_transaction": {
       "get": {
-        "summary": "GetRawTransferTransaction retrieves raw details of a transfer transaction.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\nbuf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
+        "summary": "GetRawTransferTransaction retrieves raw details of a transfer transaction.",
         "operationId": "Transaction_GetRawTransferTransaction",
         "responses": {
           "200": {
@@ -817,7 +817,7 @@
     },
     "/pactus/transaction/get_raw_unbond_transaction": {
       "get": {
-        "summary": "GetRawUnbondTransaction retrieves raw details of an unbond transaction.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\nbuf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
+        "summary": "GetRawUnbondTransaction retrieves raw details of an unbond transaction.",
         "operationId": "Transaction_GetRawUnbondTransaction",
         "responses": {
           "200": {
@@ -864,7 +864,7 @@
     },
     "/pactus/transaction/get_raw_withdraw_transaction": {
       "get": {
-        "summary": "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\nbuf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
+        "summary": "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.",
         "operationId": "Transaction_GetRawWithdrawTransaction",
         "responses": {
           "200": {
@@ -934,7 +934,7 @@
     },
     "/pactus/transaction/get_transaction": {
       "get": {
-        "summary": "GetTransaction retrieves transaction details based on the provided request\nparameters.",
+        "summary": "GetTransaction retrieves transaction details based on the provided request parameters.",
         "operationId": "Transaction_GetTransaction",
         "responses": {
           "200": {
@@ -960,7 +960,7 @@
           },
           {
             "name": "verbosity",
-            "description": "The verbosity level for transaction details.\n\n - TRANSACTION_VERBOSITY_DATA: Request transaction data only.\nbuf:lint:ignore ENUM_ZERO_VALUE_SUFFIX\n - TRANSACTION_VERBOSITY_INFO: Request detailed transaction information.",
+            "description": "The verbosity level for transaction details.\n\n - TRANSACTION_VERBOSITY_DATA: Request transaction data only.\n - TRANSACTION_VERBOSITY_INFO: Request detailed transaction information.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -1121,7 +1121,7 @@
           },
           {
             "name": "addressType",
-            "description": "The type of address to generate.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\nbuf:lint:ignore ENUM_ZERO_VALUE_SUFFIX\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password.",
+            "description": "The type of address to generate.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -1659,7 +1659,7 @@
         "ADDRESS_TYPE_ED25519_ACCOUNT"
       ],
       "default": "ADDRESS_TYPE_TREASURY",
-      "description": "AddressType defines different types of blockchain addresses.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\nbuf:lint:ignore ENUM_ZERO_VALUE_SUFFIX\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password."
+      "description": "AddressType defines different types of blockchain addresses.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password."
     },
     "pactusBlockHeaderInfo": {
       "type": "object",
@@ -1696,7 +1696,7 @@
         "BLOCK_VERBOSITY_TRANSACTIONS"
       ],
       "default": "BLOCK_VERBOSITY_DATA",
-      "description": "Enumeration for verbosity levels when requesting block information.\n\n - BLOCK_VERBOSITY_DATA: Request only block data.\nbuf:lint:ignore ENUM_ZERO_VALUE_SUFFIX\n - BLOCK_VERBOSITY_INFO: Request block information and transaction IDs.\n - BLOCK_VERBOSITY_TRANSACTIONS: Request block information and detailed transaction data."
+      "description": "Enumeration for verbosity levels when requesting block information.\n\n - BLOCK_VERBOSITY_DATA: Request only block data.\n - BLOCK_VERBOSITY_INFO: Request block information and transaction IDs.\n - BLOCK_VERBOSITY_TRANSACTIONS: Request block information and detailed transaction data."
     },
     "pactusBroadcastTransactionResponse": {
       "type": "object",
@@ -2164,7 +2164,7 @@
           "description": "The unique ID of the transaction."
         }
       },
-      "title": "Response message contains raw transaction data.\nbuf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE"
+      "description": "Response message contains raw transaction data."
     },
     "pactusGetTotalBalanceResponse": {
       "type": "object",
@@ -2504,7 +2504,7 @@
         },
         "moniker": {
           "type": "string",
-          "title": "Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,"
+          "description": "Moniker or Human-Readable name of the peer."
         },
         "agent": {
           "type": "string",
@@ -2512,7 +2512,7 @@
         },
         "peerId": {
           "type": "string",
-          "description": "Peer ID of the peer."
+          "description": "Peer ID of the peer in P2P network."
         },
         "consensusKeys": {
           "type": "array",
@@ -2757,7 +2757,7 @@
         "TRANSACTION_VERBOSITY_INFO"
       ],
       "default": "TRANSACTION_VERBOSITY_DATA",
-      "description": "Enumeration for verbosity levels when requesting transaction details.\n\n - TRANSACTION_VERBOSITY_DATA: Request transaction data only.\nbuf:lint:ignore ENUM_ZERO_VALUE_SUFFIX\n - TRANSACTION_VERBOSITY_INFO: Request detailed transaction information."
+      "description": "Enumeration for verbosity levels when requesting transaction details.\n\n - TRANSACTION_VERBOSITY_DATA: Request transaction data only.\n - TRANSACTION_VERBOSITY_INFO: Request detailed transaction information."
     },
     "pactusUnloadWalletResponse": {
       "type": "object",

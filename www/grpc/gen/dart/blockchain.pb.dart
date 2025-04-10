@@ -2165,14 +2165,10 @@ class BlockchainApi {
     _client.invoke<GetAccountResponse>(ctx, 'Blockchain', 'GetAccount', request, GetAccountResponse())
   ;
   /// GetValidator retrieves information about a validator based on the provided address.
-  /// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-  /// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   $async.Future<GetValidatorResponse> getValidator($pb.ClientContext? ctx, GetValidatorRequest request) =>
     _client.invoke<GetValidatorResponse>(ctx, 'Blockchain', 'GetValidator', request, GetValidatorResponse())
   ;
   /// GetValidatorByNumber retrieves information about a validator based on the provided number.
-  /// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-  /// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   $async.Future<GetValidatorResponse> getValidatorByNumber($pb.ClientContext? ctx, GetValidatorByNumberRequest request) =>
     _client.invoke<GetValidatorResponse>(ctx, 'Blockchain', 'GetValidatorByNumber', request, GetValidatorResponse())
   ;

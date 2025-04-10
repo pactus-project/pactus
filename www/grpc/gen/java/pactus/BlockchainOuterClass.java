@@ -37,7 +37,6 @@ public final class BlockchainOuterClass {
     /**
      * <pre>
      * Request only block data.
-     * buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
      * </pre>
      *
      * <code>BLOCK_VERBOSITY_DATA = 0;</code>
@@ -74,7 +73,6 @@ public final class BlockchainOuterClass {
     /**
      * <pre>
      * Request only block data.
-     * buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
      * </pre>
      *
      * <code>BLOCK_VERBOSITY_DATA = 0;</code>

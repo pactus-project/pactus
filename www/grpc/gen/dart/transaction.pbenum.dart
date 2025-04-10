@@ -46,7 +46,6 @@ class PayloadType extends $pb.ProtobufEnum {
 /// Enumeration for verbosity levels when requesting transaction details.
 class TransactionVerbosity extends $pb.ProtobufEnum {
   /// Request transaction data only.
-  /// buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
   static const TransactionVerbosity TRANSACTION_VERBOSITY_DATA = TransactionVerbosity._(0, _omitEnumNames ? '' : 'TRANSACTION_VERBOSITY_DATA');
   /// Request detailed transaction information.
   static const TransactionVerbosity TRANSACTION_VERBOSITY_INFO = TransactionVerbosity._(1, _omitEnumNames ? '' : 'TRANSACTION_VERBOSITY_INFO');

@@ -16,7 +16,7 @@ devtools:
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.26
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.26
 	go install github.com/NathanBaulch/protoc-gen-cobra@v1.2.1
-	go install github.com/pactus-project/protoc-gen-doc/cmd/protoc-gen-doc@v0.0.0-20240815105130-84e89d0170e4
+	go install github.com/pactus-project/protoc-gen-doc/cmd/protoc-gen-doc@v0.0.0-20250409192940-bd0d0e44bd0e
 	go install github.com/bufbuild/buf/cmd/buf@v1.50
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.5

@@ -19,4 +19,7 @@ modules:
         - PACKAGE_DIRECTORY_MATCH
         - PACKAGE_VERSION_SUFFIX
         - SERVICE_SUFFIX
+        - RPC_REQUEST_RESPONSE_UNIQUE
+        - RPC_RESPONSE_STANDARD_NAME
+        - ENUM_ZERO_VALUE_SUFFIX
       disallow_comment_ignores: false

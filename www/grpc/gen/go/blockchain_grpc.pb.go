@@ -51,12 +51,8 @@ type BlockchainClient interface {
 	// GetAccount retrieves information about an account based on the provided address.
 	GetAccount(ctx context.Context, in *GetAccountRequest, opts ...grpc.CallOption) (*GetAccountResponse, error)
 	// GetValidator retrieves information about a validator based on the provided address.
-	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetValidator(ctx context.Context, in *GetValidatorRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error)
 	// GetValidatorByNumber retrieves information about a validator based on the provided number.
-	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetValidatorByNumber(ctx context.Context, in *GetValidatorByNumberRequest, opts ...grpc.CallOption) (*GetValidatorResponse, error)
 	// GetValidatorAddresses retrieves a list of all validator addresses.
 	GetValidatorAddresses(ctx context.Context, in *GetValidatorAddressesRequest, opts ...grpc.CallOption) (*GetValidatorAddressesResponse, error)
@@ -203,12 +199,8 @@ type BlockchainServer interface {
 	// GetAccount retrieves information about an account based on the provided address.
 	GetAccount(context.Context, *GetAccountRequest) (*GetAccountResponse, error)
 	// GetValidator retrieves information about a validator based on the provided address.
-	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetValidator(context.Context, *GetValidatorRequest) (*GetValidatorResponse, error)
 	// GetValidatorByNumber retrieves information about a validator based on the provided number.
-	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	GetValidatorByNumber(context.Context, *GetValidatorByNumberRequest) (*GetValidatorResponse, error)
 	// GetValidatorAddresses retrieves a list of all validator addresses.
 	GetValidatorAddresses(context.Context, *GetValidatorAddressesRequest) (*GetValidatorAddressesResponse, error)

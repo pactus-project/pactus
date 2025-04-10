@@ -16,7 +16,6 @@ import 'package:protobuf/protobuf.dart' as $pb;
 /// Enumeration for verbosity levels when requesting block information.
 class BlockVerbosity extends $pb.ProtobufEnum {
   /// Request only block data.
-  /// buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
   static const BlockVerbosity BLOCK_VERBOSITY_DATA = BlockVerbosity._(0, _omitEnumNames ? '' : 'BLOCK_VERBOSITY_DATA');
   /// Request block information and transaction IDs.
   static const BlockVerbosity BLOCK_VERBOSITY_INFO = BlockVerbosity._(1, _omitEnumNames ? '' : 'BLOCK_VERBOSITY_INFO');

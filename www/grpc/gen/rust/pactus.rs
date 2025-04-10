@@ -153,7 +153,6 @@ pub struct GetRawWithdrawTransactionRequest {
     pub memo: ::prost::alloc::string::String,
 }
 /// Response message contains raw transaction data.
-/// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetRawTransactionResponse {
@@ -355,7 +354,6 @@ impl PayloadType {
 #[repr(i32)]
 pub enum TransactionVerbosity {
     /// Request transaction data only.
-    /// buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
     Data = 0,
     /// Request detailed transaction information.
     Info = 1,
@@ -751,7 +749,6 @@ pub struct ProposalInfo {
 #[repr(i32)]
 pub enum BlockVerbosity {
     /// Request only block data.
-    /// buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
     Data = 0,
     /// Request block information and transaction IDs.
     Info = 1,
@@ -918,13 +915,13 @@ pub struct PeerInfo {
     /// Current status of the peer (e.g., connected, disconnected).
     #[prost(int32, tag="1")]
     pub status: i32,
-    /// Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+    /// Moniker or Human-Readable name of the peer.
     #[prost(string, tag="2")]
     pub moniker: ::prost::alloc::string::String,
     /// Version and agent details of the peer.
     #[prost(string, tag="3")]
     pub agent: ::prost::alloc::string::String,
-    /// Peer ID of the peer.
+    /// Peer ID of the peer in P2P network.
     #[prost(string, tag="4")]
     pub peer_id: ::prost::alloc::string::String,
     /// List of consensus keys used by the peer.
@@ -1471,7 +1468,6 @@ pub struct ListAddressResponse {
 pub enum AddressType {
     /// Treasury address type.
     /// Should not be used to generate new addresses.
-    /// buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
     Treasury = 0,
     /// Validator address type used for validator nodes.
     Validator = 1,

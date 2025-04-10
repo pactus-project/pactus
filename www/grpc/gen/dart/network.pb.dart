@@ -610,7 +610,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearStatus() => $_clearField(1);
 
-  /// Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+  /// Moniker or Human-Readable name of the peer.
   @$pb.TagNumber(2)
   $core.String get moniker => $_getSZ(1);
   @$pb.TagNumber(2)
@@ -630,7 +630,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(3)
   void clearAgent() => $_clearField(3);
 
-  /// Peer ID of the peer.
+  /// Peer ID of the peer in P2P network.
   @$pb.TagNumber(4)
   $core.String get peerId => $_getSZ(3);
   @$pb.TagNumber(4)

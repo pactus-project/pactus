@@ -488,8 +488,6 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidator retrieves information about a validator based on the provided address.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     default void getValidator(pactus.BlockchainOuterClass.GetValidatorRequest request,
@@ -500,8 +498,6 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidatorByNumber retrieves information about a validator based on the provided number.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     default void getValidatorByNumber(pactus.BlockchainOuterClass.GetValidatorByNumberRequest request,
@@ -642,8 +638,6 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidator retrieves information about a validator based on the provided address.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public void getValidator(pactus.BlockchainOuterClass.GetValidatorRequest request,
@@ -655,8 +649,6 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidatorByNumber retrieves information about a validator based on the provided number.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public void getValidatorByNumber(pactus.BlockchainOuterClass.GetValidatorByNumberRequest request,
@@ -781,8 +773,6 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidator retrieves information about a validator based on the provided address.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public pactus.BlockchainOuterClass.GetValidatorResponse getValidator(pactus.BlockchainOuterClass.GetValidatorRequest request) {
@@ -793,8 +783,6 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidatorByNumber retrieves information about a validator based on the provided number.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public pactus.BlockchainOuterClass.GetValidatorResponse getValidatorByNumber(pactus.BlockchainOuterClass.GetValidatorByNumberRequest request) {
@@ -915,8 +903,6 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidator retrieves information about a validator based on the provided address.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public pactus.BlockchainOuterClass.GetValidatorResponse getValidator(pactus.BlockchainOuterClass.GetValidatorRequest request) {
@@ -927,8 +913,6 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidatorByNumber retrieves information about a validator based on the provided number.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public pactus.BlockchainOuterClass.GetValidatorResponse getValidatorByNumber(pactus.BlockchainOuterClass.GetValidatorByNumberRequest request) {
@@ -1055,8 +1039,6 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidator retrieves information about a validator based on the provided address.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.BlockchainOuterClass.GetValidatorResponse> getValidator(
@@ -1068,8 +1050,6 @@ public final class BlockchainGrpc {
     /**
      * <pre>
      * GetValidatorByNumber retrieves information about a validator based on the provided number.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.BlockchainOuterClass.GetValidatorResponse> getValidatorByNumber(

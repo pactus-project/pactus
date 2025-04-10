@@ -26,7 +26,6 @@ type BlockVerbosity int32
 
 const (
 	// Request only block data.
-	// buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
 	BlockVerbosity_BLOCK_VERBOSITY_DATA BlockVerbosity = 0
 	// Request block information and transaction IDs.
 	BlockVerbosity_BLOCK_VERBOSITY_INFO BlockVerbosity = 1

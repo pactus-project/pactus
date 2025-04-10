@@ -77,11 +77,11 @@ message ZMQPublisherInfo {
 message PeerInfo {
   // Current status of the peer (e.g., connected, disconnected).
   int32 status = 1;
-  // Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+  // Moniker or Human-Readable name of the peer.
   string moniker = 2;
   // Version and agent details of the peer.
   string agent = 3;
-  // Peer ID of the peer.
+  // Peer ID of the peer in P2P network.
   string peer_id = 4;
   // List of consensus keys used by the peer.
   repeated string consensus_keys = 5;

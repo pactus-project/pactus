@@ -59,7 +59,6 @@ service Wallet {
 enum AddressType {
   // Treasury address type.
   // Should not be used to generate new addresses.
-  // buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
   ADDRESS_TYPE_TREASURY = 0;
   // Validator address type used for validator nodes.
   ADDRESS_TYPE_VALIDATOR = 1;

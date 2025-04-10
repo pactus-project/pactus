@@ -6003,7 +6003,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+     * Moniker or Human-Readable name of the peer.
      * </pre>
      *
      * <code>string moniker = 2 [json_name = "moniker"];</code>
@@ -6012,7 +6012,7 @@ public final class NetworkOuterClass {
     java.lang.String getMoniker();
     /**
      * <pre>
-     * Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+     * Moniker or Human-Readable name of the peer.
      * </pre>
      *
      * <code>string moniker = 2 [json_name = "moniker"];</code>
@@ -6043,7 +6043,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Peer ID of the peer.
+     * Peer ID of the peer in P2P network.
      * </pre>
      *
      * <code>string peer_id = 4 [json_name = "peerId"];</code>
@@ -6052,7 +6052,7 @@ public final class NetworkOuterClass {
     java.lang.String getPeerId();
     /**
      * <pre>
-     * Peer ID of the peer.
+     * Peer ID of the peer in P2P network.
      * </pre>
      *
      * <code>string peer_id = 4 [json_name = "peerId"];</code>
@@ -6405,7 +6405,7 @@ public final class NetworkOuterClass {
     private volatile java.lang.Object moniker_ = "";
     /**
      * <pre>
-     * Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+     * Moniker or Human-Readable name of the peer.
      * </pre>
      *
      * <code>string moniker = 2 [json_name = "moniker"];</code>
@@ -6426,7 +6426,7 @@ public final class NetworkOuterClass {
     }
     /**
      * <pre>
-     * Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+     * Moniker or Human-Readable name of the peer.
      * </pre>
      *
      * <code>string moniker = 2 [json_name = "moniker"];</code>
@@ -6499,7 +6499,7 @@ public final class NetworkOuterClass {
     private volatile java.lang.Object peerId_ = "";
     /**
      * <pre>
-     * Peer ID of the peer.
+     * Peer ID of the peer in P2P network.
      * </pre>
      *
      * <code>string peer_id = 4 [json_name = "peerId"];</code>
@@ -6520,7 +6520,7 @@ public final class NetworkOuterClass {
     }
     /**
      * <pre>
-     * Peer ID of the peer.
+     * Peer ID of the peer in P2P network.
      * </pre>
      *
      * <code>string peer_id = 4 [json_name = "peerId"];</code>
@@ -7759,7 +7759,7 @@ public final class NetworkOuterClass {
       private java.lang.Object moniker_ = "";
       /**
        * <pre>
-       * Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+       * Moniker or Human-Readable name of the peer.
        * </pre>
        *
        * <code>string moniker = 2 [json_name = "moniker"];</code>
@@ -7779,7 +7779,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+       * Moniker or Human-Readable name of the peer.
        * </pre>
        *
        * <code>string moniker = 2 [json_name = "moniker"];</code>
@@ -7800,7 +7800,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+       * Moniker or Human-Readable name of the peer.
        * </pre>
        *
        * <code>string moniker = 2 [json_name = "moniker"];</code>
@@ -7817,7 +7817,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+       * Moniker or Human-Readable name of the peer.
        * </pre>
        *
        * <code>string moniker = 2 [json_name = "moniker"];</code>
@@ -7831,7 +7831,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+       * Moniker or Human-Readable name of the peer.
        * </pre>
        *
        * <code>string moniker = 2 [json_name = "moniker"];</code>
@@ -7943,7 +7943,7 @@ public final class NetworkOuterClass {
       private java.lang.Object peerId_ = "";
       /**
        * <pre>
-       * Peer ID of the peer.
+       * Peer ID of the peer in P2P network.
        * </pre>
        *
        * <code>string peer_id = 4 [json_name = "peerId"];</code>
@@ -7963,7 +7963,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Peer ID of the peer.
+       * Peer ID of the peer in P2P network.
        * </pre>
        *
        * <code>string peer_id = 4 [json_name = "peerId"];</code>
@@ -7984,7 +7984,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Peer ID of the peer.
+       * Peer ID of the peer in P2P network.
        * </pre>
        *
        * <code>string peer_id = 4 [json_name = "peerId"];</code>
@@ -8001,7 +8001,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Peer ID of the peer.
+       * Peer ID of the peer in P2P network.
        * </pre>
        *
        * <code>string peer_id = 4 [json_name = "peerId"];</code>
@@ -8015,7 +8015,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Peer ID of the peer.
+       * Peer ID of the peer in P2P network.
        * </pre>
        *
        * <code>string peer_id = 4 [json_name = "peerId"];</code>

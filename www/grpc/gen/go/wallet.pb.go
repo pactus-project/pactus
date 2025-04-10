@@ -27,7 +27,6 @@ type AddressType int32
 const (
 	// Treasury address type.
 	// Should not be used to generate new addresses.
-	// buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
 	AddressType_ADDRESS_TYPE_TREASURY AddressType = 0
 	// Validator address type used for validator nodes.
 	AddressType_ADDRESS_TYPE_VALIDATOR AddressType = 1

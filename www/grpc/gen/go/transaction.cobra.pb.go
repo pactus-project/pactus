@@ -16,7 +16,7 @@ func TransactionClientCommand(options ...client.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("Transaction"),
 		Short: "Transaction service client",
-		Long:  "Transaction service defines various RPC methods for interacting with\n transactions.",
+		Long:  "Transaction service defines various RPC methods for interacting with transactions.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(
@@ -38,7 +38,7 @@ func _TransactionGetTransactionCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetTransaction"),
 		Short: "GetTransaction RPC client",
-		Long:  "GetTransaction retrieves transaction details based on the provided request\n parameters.",
+		Long:  "GetTransaction retrieves transaction details based on the provided request parameters.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -81,7 +81,7 @@ func _TransactionCalculateFeeCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("CalculateFee"),
 		Short: "CalculateFee RPC client",
-		Long:  "CalculateFee calculates the transaction fee based on the specified amount\n and payload type.",
+		Long:  "CalculateFee calculates the transaction fee based on the specified amount and payload type.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -167,7 +167,7 @@ func _TransactionGetRawTransferTransactionCommand(cfg *client.Config) *cobra.Com
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetRawTransferTransaction"),
 		Short: "GetRawTransferTransaction RPC client",
-		Long:  "GetRawTransferTransaction retrieves raw details of a transfer transaction.\n buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\n buf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
+		Long:  "GetRawTransferTransaction retrieves raw details of a transfer transaction.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -214,7 +214,7 @@ func _TransactionGetRawBondTransactionCommand(cfg *client.Config) *cobra.Command
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetRawBondTransaction"),
 		Short: "GetRawBondTransaction RPC client",
-		Long:  "GetRawBondTransaction retrieves raw details of a bond transaction.\n buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\n buf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
+		Long:  "GetRawBondTransaction retrieves raw details of a bond transaction.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -262,7 +262,7 @@ func _TransactionGetRawUnbondTransactionCommand(cfg *client.Config) *cobra.Comma
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetRawUnbondTransaction"),
 		Short: "GetRawUnbondTransaction RPC client",
-		Long:  "GetRawUnbondTransaction retrieves raw details of an unbond transaction.\n buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\n buf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
+		Long:  "GetRawUnbondTransaction retrieves raw details of an unbond transaction.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {
@@ -306,7 +306,7 @@ func _TransactionGetRawWithdrawTransactionCommand(cfg *client.Config) *cobra.Com
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetRawWithdrawTransaction"),
 		Short: "GetRawWithdrawTransaction RPC client",
-		Long:  "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.\n buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\n buf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
+		Long:  "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Transaction"); err != nil {

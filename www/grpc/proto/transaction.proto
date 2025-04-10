@@ -4,38 +4,27 @@ package pactus;
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus";
 
-// Transaction service defines various RPC methods for interacting with
-// transactions.
+// Transaction service defines various RPC methods for interacting with transactions.
 service Transaction {
-  // GetTransaction retrieves transaction details based on the provided request
-  // parameters.
+  // GetTransaction retrieves transaction details based on the provided request parameters.
   rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
 
-  // CalculateFee calculates the transaction fee based on the specified amount
-  // and payload type.
+  // CalculateFee calculates the transaction fee based on the specified amount and payload type.
   rpc CalculateFee(CalculateFeeRequest) returns (CalculateFeeResponse);
 
   // BroadcastTransaction broadcasts a signed transaction to the network.
   rpc BroadcastTransaction(BroadcastTransactionRequest) returns (BroadcastTransactionResponse);
 
   // GetRawTransferTransaction retrieves raw details of a transfer transaction.
-  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
-  rpc GetRawTransferTransaction(GetRawTransferTransactionRequest) returns (GetRawTransactionResponse);
+    rpc GetRawTransferTransaction(GetRawTransferTransactionRequest) returns (GetRawTransactionResponse);
 
   // GetRawBondTransaction retrieves raw details of a bond transaction.
-  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   rpc GetRawBondTransaction(GetRawBondTransactionRequest) returns (GetRawTransactionResponse);
 
   // GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   rpc GetRawUnbondTransaction(GetRawUnbondTransactionRequest) returns (GetRawTransactionResponse);
 
   // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest) returns (GetRawTransactionResponse);
 
   // DecodeRawTransaction accepts raw transaction and returns decoded transaction.
@@ -151,7 +140,6 @@ message GetRawWithdrawTransactionRequest {
 }
 
 // Response message contains raw transaction data.
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 message GetRawTransactionResponse {
   // The raw transaction data in hexadecimal format.
   string raw_transaction = 1;
@@ -261,7 +249,6 @@ enum PayloadType {
 // Enumeration for verbosity levels when requesting transaction details.
 enum TransactionVerbosity {
   // Request transaction data only.
-  // buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
   TRANSACTION_VERBOSITY_DATA = 0;
   // Request detailed transaction information.
   TRANSACTION_VERBOSITY_INFO = 1;

@@ -4,8 +4,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 
 /**
  * <pre>
- * Transaction service defines various RPC methods for interacting with
- * transactions.
+ * Transaction service defines various RPC methods for interacting with transactions.
  * </pre>
  */
 @javax.annotation.Generated(
@@ -328,16 +327,14 @@ public final class TransactionGrpc {
 
   /**
    * <pre>
-   * Transaction service defines various RPC methods for interacting with
-   * transactions.
+   * Transaction service defines various RPC methods for interacting with transactions.
    * </pre>
    */
   public interface AsyncService {
 
     /**
      * <pre>
-     * GetTransaction retrieves transaction details based on the provided request
-     * parameters.
+     * GetTransaction retrieves transaction details based on the provided request parameters.
      * </pre>
      */
     default void getTransaction(pactus.TransactionOuterClass.GetTransactionRequest request,
@@ -347,8 +344,7 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount
-     * and payload type.
+     * CalculateFee calculates the transaction fee based on the specified amount and payload type.
      * </pre>
      */
     default void calculateFee(pactus.TransactionOuterClass.CalculateFeeRequest request,
@@ -369,8 +365,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawTransferTransaction retrieves raw details of a transfer transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     default void getRawTransferTransaction(pactus.TransactionOuterClass.GetRawTransferTransactionRequest request,
@@ -381,8 +375,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawBondTransaction retrieves raw details of a bond transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     default void getRawBondTransaction(pactus.TransactionOuterClass.GetRawBondTransactionRequest request,
@@ -393,8 +385,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     default void getRawUnbondTransaction(pactus.TransactionOuterClass.GetRawUnbondTransactionRequest request,
@@ -405,8 +395,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     default void getRawWithdrawTransaction(pactus.TransactionOuterClass.GetRawWithdrawTransactionRequest request,
@@ -428,8 +416,7 @@ public final class TransactionGrpc {
   /**
    * Base class for the server implementation of the service Transaction.
    * <pre>
-   * Transaction service defines various RPC methods for interacting with
-   * transactions.
+   * Transaction service defines various RPC methods for interacting with transactions.
    * </pre>
    */
   public static abstract class TransactionImplBase
@@ -443,8 +430,7 @@ public final class TransactionGrpc {
   /**
    * A stub to allow clients to do asynchronous rpc calls to service Transaction.
    * <pre>
-   * Transaction service defines various RPC methods for interacting with
-   * transactions.
+   * Transaction service defines various RPC methods for interacting with transactions.
    * </pre>
    */
   public static final class TransactionStub
@@ -462,8 +448,7 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * GetTransaction retrieves transaction details based on the provided request
-     * parameters.
+     * GetTransaction retrieves transaction details based on the provided request parameters.
      * </pre>
      */
     public void getTransaction(pactus.TransactionOuterClass.GetTransactionRequest request,
@@ -474,8 +459,7 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount
-     * and payload type.
+     * CalculateFee calculates the transaction fee based on the specified amount and payload type.
      * </pre>
      */
     public void calculateFee(pactus.TransactionOuterClass.CalculateFeeRequest request,
@@ -498,8 +482,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawTransferTransaction retrieves raw details of a transfer transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public void getRawTransferTransaction(pactus.TransactionOuterClass.GetRawTransferTransactionRequest request,
@@ -511,8 +493,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawBondTransaction retrieves raw details of a bond transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public void getRawBondTransaction(pactus.TransactionOuterClass.GetRawBondTransactionRequest request,
@@ -524,8 +504,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public void getRawUnbondTransaction(pactus.TransactionOuterClass.GetRawUnbondTransactionRequest request,
@@ -537,8 +515,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public void getRawWithdrawTransaction(pactus.TransactionOuterClass.GetRawWithdrawTransactionRequest request,
@@ -562,8 +538,7 @@ public final class TransactionGrpc {
   /**
    * A stub to allow clients to do synchronous rpc calls to service Transaction.
    * <pre>
-   * Transaction service defines various RPC methods for interacting with
-   * transactions.
+   * Transaction service defines various RPC methods for interacting with transactions.
    * </pre>
    */
   public static final class TransactionBlockingV2Stub
@@ -581,8 +556,7 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * GetTransaction retrieves transaction details based on the provided request
-     * parameters.
+     * GetTransaction retrieves transaction details based on the provided request parameters.
      * </pre>
      */
     public pactus.TransactionOuterClass.GetTransactionResponse getTransaction(pactus.TransactionOuterClass.GetTransactionRequest request) {
@@ -592,8 +566,7 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount
-     * and payload type.
+     * CalculateFee calculates the transaction fee based on the specified amount and payload type.
      * </pre>
      */
     public pactus.TransactionOuterClass.CalculateFeeResponse calculateFee(pactus.TransactionOuterClass.CalculateFeeRequest request) {
@@ -614,8 +587,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawTransferTransaction retrieves raw details of a transfer transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public pactus.TransactionOuterClass.GetRawTransactionResponse getRawTransferTransaction(pactus.TransactionOuterClass.GetRawTransferTransactionRequest request) {
@@ -626,8 +597,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawBondTransaction retrieves raw details of a bond transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public pactus.TransactionOuterClass.GetRawTransactionResponse getRawBondTransaction(pactus.TransactionOuterClass.GetRawBondTransactionRequest request) {
@@ -638,8 +607,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public pactus.TransactionOuterClass.GetRawTransactionResponse getRawUnbondTransaction(pactus.TransactionOuterClass.GetRawUnbondTransactionRequest request) {
@@ -650,8 +617,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public pactus.TransactionOuterClass.GetRawTransactionResponse getRawWithdrawTransaction(pactus.TransactionOuterClass.GetRawWithdrawTransactionRequest request) {
@@ -673,8 +638,7 @@ public final class TransactionGrpc {
   /**
    * A stub to allow clients to do limited synchronous rpc calls to service Transaction.
    * <pre>
-   * Transaction service defines various RPC methods for interacting with
-   * transactions.
+   * Transaction service defines various RPC methods for interacting with transactions.
    * </pre>
    */
   public static final class TransactionBlockingStub
@@ -692,8 +656,7 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * GetTransaction retrieves transaction details based on the provided request
-     * parameters.
+     * GetTransaction retrieves transaction details based on the provided request parameters.
      * </pre>
      */
     public pactus.TransactionOuterClass.GetTransactionResponse getTransaction(pactus.TransactionOuterClass.GetTransactionRequest request) {
@@ -703,8 +666,7 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount
-     * and payload type.
+     * CalculateFee calculates the transaction fee based on the specified amount and payload type.
      * </pre>
      */
     public pactus.TransactionOuterClass.CalculateFeeResponse calculateFee(pactus.TransactionOuterClass.CalculateFeeRequest request) {
@@ -725,8 +687,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawTransferTransaction retrieves raw details of a transfer transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public pactus.TransactionOuterClass.GetRawTransactionResponse getRawTransferTransaction(pactus.TransactionOuterClass.GetRawTransferTransactionRequest request) {
@@ -737,8 +697,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawBondTransaction retrieves raw details of a bond transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public pactus.TransactionOuterClass.GetRawTransactionResponse getRawBondTransaction(pactus.TransactionOuterClass.GetRawBondTransactionRequest request) {
@@ -749,8 +707,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public pactus.TransactionOuterClass.GetRawTransactionResponse getRawUnbondTransaction(pactus.TransactionOuterClass.GetRawUnbondTransactionRequest request) {
@@ -761,8 +717,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public pactus.TransactionOuterClass.GetRawTransactionResponse getRawWithdrawTransaction(pactus.TransactionOuterClass.GetRawWithdrawTransactionRequest request) {
@@ -784,8 +738,7 @@ public final class TransactionGrpc {
   /**
    * A stub to allow clients to do ListenableFuture-style rpc calls to service Transaction.
    * <pre>
-   * Transaction service defines various RPC methods for interacting with
-   * transactions.
+   * Transaction service defines various RPC methods for interacting with transactions.
    * </pre>
    */
   public static final class TransactionFutureStub
@@ -803,8 +756,7 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * GetTransaction retrieves transaction details based on the provided request
-     * parameters.
+     * GetTransaction retrieves transaction details based on the provided request parameters.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.TransactionOuterClass.GetTransactionResponse> getTransaction(
@@ -815,8 +767,7 @@ public final class TransactionGrpc {
 
     /**
      * <pre>
-     * CalculateFee calculates the transaction fee based on the specified amount
-     * and payload type.
+     * CalculateFee calculates the transaction fee based on the specified amount and payload type.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.TransactionOuterClass.CalculateFeeResponse> calculateFee(
@@ -839,8 +790,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawTransferTransaction retrieves raw details of a transfer transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.TransactionOuterClass.GetRawTransactionResponse> getRawTransferTransaction(
@@ -852,8 +801,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawBondTransaction retrieves raw details of a bond transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.TransactionOuterClass.GetRawTransactionResponse> getRawBondTransaction(
@@ -865,8 +812,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.TransactionOuterClass.GetRawTransactionResponse> getRawUnbondTransaction(
@@ -878,8 +823,6 @@ public final class TransactionGrpc {
     /**
      * <pre>
      * GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.TransactionOuterClass.GetRawTransactionResponse> getRawWithdrawTransaction(

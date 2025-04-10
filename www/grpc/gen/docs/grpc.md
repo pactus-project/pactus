@@ -205,13 +205,11 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 
 ## Transaction Service
 
-<p>Transaction service defines various RPC methods for interacting with
-transactions.</p>
+<p>Transaction service defines various RPC methods for interacting with transactions.</p>
 
 ### GetTransaction <span id="pactus.Transaction.GetTransaction" class="rpc-badge"></span>
 
-<p>GetTransaction retrieves transaction details based on the provided request
-parameters.</p>
+<p>GetTransaction retrieves transaction details based on the provided request parameters.</p>
 
 <h4>GetTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -233,8 +231,7 @@ parameters.</p>
     <td>
     (Enum)The verbosity level for transaction details.
     <br>Available values:<ul>
-      <li>TRANSACTION_VERBOSITY_DATA = 0 (Request transaction data only.
-buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX)</li>
+      <li>TRANSACTION_VERBOSITY_DATA = 0 (Request transaction data only.)</li>
       <li>TRANSACTION_VERBOSITY_INFO = 1 (Request detailed transaction information.)</li>
       </ul>
     </td>
@@ -478,8 +475,7 @@ buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX)</li>
 
 ### CalculateFee <span id="pactus.Transaction.CalculateFee" class="rpc-badge"></span>
 
-<p>CalculateFee calculates the transaction fee based on the specified amount
-and payload type.</p>
+<p>CalculateFee calculates the transaction fee based on the specified amount and payload type.</p>
 
 <h4>CalculateFeeRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -582,9 +578,7 @@ and payload type.</p>
 
 ### GetRawTransferTransaction <span id="pactus.Transaction.GetRawTransferTransaction" class="rpc-badge"></span>
 
-<p>GetRawTransferTransaction retrieves raw details of a transfer transaction.
-buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
+<p>GetRawTransferTransaction retrieves raw details of a transfer transaction.</p>
 
 <h4>GetRawTransferTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -663,9 +657,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
 
 ### GetRawBondTransaction <span id="pactus.Transaction.GetRawBondTransaction" class="rpc-badge"></span>
 
-<p>GetRawBondTransaction retrieves raw details of a bond transaction.
-buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
+<p>GetRawBondTransaction retrieves raw details of a bond transaction.</p>
 
 <h4>GetRawBondTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -751,9 +743,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
 
 ### GetRawUnbondTransaction <span id="pactus.Transaction.GetRawUnbondTransaction" class="rpc-badge"></span>
 
-<p>GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
+<p>GetRawUnbondTransaction retrieves raw details of an unbond transaction.</p>
 
 <h4>GetRawUnbondTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -811,9 +801,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
 
 ### GetRawWithdrawTransaction <span id="pactus.Transaction.GetRawWithdrawTransaction" class="rpc-badge"></span>
 
-<p>GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
+<p>GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.</p>
 
 <h4>GetRawWithdrawTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -1159,8 +1147,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
     <td>
     (Enum)The verbosity level for block information.
     <br>Available values:<ul>
-      <li>BLOCK_VERBOSITY_DATA = 0 (Request only block data.
-buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX)</li>
+      <li>BLOCK_VERBOSITY_DATA = 0 (Request only block data.)</li>
       <li>BLOCK_VERBOSITY_INFO = 1 (Request block information and transaction IDs.)</li>
       <li>BLOCK_VERBOSITY_TRANSACTIONS = 2 (Request block information and detailed transaction data.)</li>
       </ul>
@@ -1951,9 +1938,7 @@ Message has no fields.
 
 ### GetValidator <span id="pactus.Blockchain.GetValidator" class="rpc-badge"></span>
 
-<p>GetValidator retrieves information about a validator based on the provided address.
-buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
+<p>GetValidator retrieves information about a validator based on the provided address.</p>
 
 <h4>GetValidatorRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2060,9 +2045,7 @@ buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
 
 ### GetValidatorByNumber <span id="pactus.Blockchain.GetValidatorByNumber" class="rpc-badge"></span>
 
-<p>GetValidatorByNumber retrieves information about a validator based on the provided number.
-buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-buf:lint:ignore RPC_RESPONSE_STANDARD_NAME</p>
+<p>GetValidatorByNumber retrieves information about a validator based on the provided number.</p>
 
 <h4>GetValidatorByNumberRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2540,7 +2523,7 @@ Message has no fields.
         <td class="fw-bold">connected_peers[].moniker</td>
         <td> string</td>
         <td>
-        Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+        Moniker or Human-Readable name of the peer.
         </td>
       </tr>
          <tr>
@@ -2554,7 +2537,7 @@ Message has no fields.
         <td class="fw-bold">connected_peers[].peer_id</td>
         <td> string</td>
         <td>
-        Peer ID of the peer.
+        Peer ID of the peer in P2P network.
         </td>
       </tr>
          <tr>
@@ -3432,8 +3415,7 @@ signing, verification, and etc.</p>
     (Enum)The type of address to generate.
     <br>Available values:<ul>
       <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
-Should not be used to generate new addresses.
-buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX)</li>
+Should not be used to generate new addresses.)</li>
       <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
       <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
       <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.

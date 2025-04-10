@@ -38,7 +38,6 @@ public final class WalletOuterClass {
      * <pre>
      * Treasury address type.
      * Should not be used to generate new addresses.
-     * buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
      * </pre>
      *
      * <code>ADDRESS_TYPE_TREASURY = 0;</code>
@@ -85,7 +84,6 @@ public final class WalletOuterClass {
      * <pre>
      * Treasury address type.
      * Should not be used to generate new addresses.
-     * buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
      * </pre>
      *
      * <code>ADDRESS_TYPE_TREASURY = 0;</code>

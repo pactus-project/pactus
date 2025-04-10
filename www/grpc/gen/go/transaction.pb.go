@@ -91,7 +91,6 @@ type TransactionVerbosity int32
 
 const (
 	// Request transaction data only.
-	// buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
 	TransactionVerbosity_TRANSACTION_VERBOSITY_DATA TransactionVerbosity = 0
 	// Request detailed transaction information.
 	TransactionVerbosity_TRANSACTION_VERBOSITY_INFO TransactionVerbosity = 1
@@ -813,7 +812,6 @@ func (x *GetRawWithdrawTransactionRequest) GetMemo() string {
 }
 
 // Response message contains raw transaction data.
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 type GetRawTransactionResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The raw transaction data in hexadecimal format.

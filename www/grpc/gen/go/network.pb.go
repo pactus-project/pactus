@@ -392,11 +392,11 @@ type PeerInfo struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Current status of the peer (e.g., connected, disconnected).
 	Status int32 `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
-	// Moniker of the peer. // Moniker is a human-readable name or identifier for the node/peer,
+	// Moniker or Human-Readable name of the peer.
 	Moniker string `protobuf:"bytes,2,opt,name=moniker,proto3" json:"moniker,omitempty"`
 	// Version and agent details of the peer.
 	Agent string `protobuf:"bytes,3,opt,name=agent,proto3" json:"agent,omitempty"`
-	// Peer ID of the peer.
+	// Peer ID of the peer in P2P network.
 	PeerId string `protobuf:"bytes,4,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`
 	// List of consensus keys used by the peer.
 	ConsensusKeys []string `protobuf:"bytes,5,rep,name=consensus_keys,json=consensusKeys,proto3" json:"consensus_keys,omitempty"`

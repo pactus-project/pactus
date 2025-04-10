@@ -3,7 +3,7 @@ title: JSON-RPC API Reference
 weight: 2
 ---
 
-Each node in the Pactus network can be configured to use the 
+Each node in the Pactus network can be configured to use the
 [JSON-RPC](https://www.jsonrpc.org/specification) protocol for communication.
 Here, you can find the list of all JSON-RPC methods and messages.
 
@@ -68,11 +68,11 @@ curl --location 'http://localhost:8545/' \
   {{range .Files}}{{- print "" -}}
     {{range .Services}}{{- print "" -}}
     <li> {{.Name}} Service
-      <ul>{{$service_name := .JSONName}}
+      <ul>{{$service_name := .SnakeName}}
         {{range .Methods}}{{- print "" -}}
         <li>
-          <a href="#{{.JSONName}}">
-          <span class="rpc-badge"></span> {{.JSONName}}</a>
+          <a href="#{{.SnakeName}}">
+          <span class="rpc-badge"></span> {{.SnakeName}}</a>
         </li>
         {{end}}{{- print "" -}}
       </ul>
@@ -90,7 +90,7 @@ curl --location 'http://localhost:8545/' \
 {{p .Description}}
 {{$service_name := .FullName}}{{range .Methods}}{{- print "\n" -}}
 
-### {{.JSONName}} <span id="{{.JSONName}}" class="rpc-badge"></span>
+### {{.SnakeName}} <span id="{{.SnakeName}}" class="rpc-badge"></span>
 
 {{p .Description}}
 
@@ -105,7 +105,7 @@ curl --location 'http://localhost:8545/' \
   <tbody class="table-group-divider">
   {{range .Fields}}{{- print "" -}}
   <tr>
-    <td class="fw-bold">{{.JSONName}}</td>
+    <td class="fw-bold">{{.SnakeName}}</td>
     <td>{{.Label}} {{.JSONType}}</td>
     <td>
     {{if .IsEnum}}(Enum){{end}}{{- print "" -}}

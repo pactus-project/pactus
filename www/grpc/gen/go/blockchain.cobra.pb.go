@@ -290,7 +290,7 @@ func _BlockchainGetValidatorCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetValidator"),
 		Short: "GetValidator RPC client",
-		Long:  "GetValidator retrieves information about a validator based on the provided address.\n buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\n buf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
+		Long:  "GetValidator retrieves information about a validator based on the provided address.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {
@@ -332,7 +332,7 @@ func _BlockchainGetValidatorByNumberCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("GetValidatorByNumber"),
 		Short: "GetValidatorByNumber RPC client",
-		Long:  "GetValidatorByNumber retrieves information about a validator based on the provided number.\n buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE\n buf:lint:ignore RPC_RESPONSE_STANDARD_NAME",
+		Long:  "GetValidatorByNumber retrieves information about a validator based on the provided number.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Blockchain"); err != nil {

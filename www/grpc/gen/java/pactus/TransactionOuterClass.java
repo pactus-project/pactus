@@ -242,7 +242,6 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Request transaction data only.
-     * buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
      * </pre>
      *
      * <code>TRANSACTION_VERBOSITY_DATA = 0;</code>
@@ -271,7 +270,6 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Request transaction data only.
-     * buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
      * </pre>
      *
      * <code>TRANSACTION_VERBOSITY_DATA = 0;</code>
@@ -8908,7 +8906,6 @@ public final class TransactionOuterClass {
   /**
    * <pre>
    * Response message contains raw transaction data.
-   * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
    * </pre>
    *
    * Protobuf type {@code pactus.GetRawTransactionResponse}
@@ -9212,7 +9209,6 @@ public final class TransactionOuterClass {
     /**
      * <pre>
      * Response message contains raw transaction data.
-     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
      * </pre>
      *
      * Protobuf type {@code pactus.GetRawTransactionResponse}

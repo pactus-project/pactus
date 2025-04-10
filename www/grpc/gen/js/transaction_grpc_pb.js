@@ -148,11 +148,9 @@ function deserialize_pactus_GetTransactionResponse(buffer_arg) {
 }
 
 
-// Transaction service defines various RPC methods for interacting with
-// transactions.
+// Transaction service defines various RPC methods for interacting with transactions.
 var TransactionService = exports.TransactionService = {
-  // GetTransaction retrieves transaction details based on the provided request
-// parameters.
+  // GetTransaction retrieves transaction details based on the provided request parameters.
 getTransaction: {
     path: '/pactus.Transaction/GetTransaction',
     requestStream: false,
@@ -164,8 +162,7 @@ getTransaction: {
     responseSerialize: serialize_pactus_GetTransactionResponse,
     responseDeserialize: deserialize_pactus_GetTransactionResponse,
   },
-  // CalculateFee calculates the transaction fee based on the specified amount
-// and payload type.
+  // CalculateFee calculates the transaction fee based on the specified amount and payload type.
 calculateFee: {
     path: '/pactus.Transaction/CalculateFee',
     requestStream: false,
@@ -190,8 +187,6 @@ broadcastTransaction: {
     responseDeserialize: deserialize_pactus_BroadcastTransactionResponse,
   },
   // GetRawTransferTransaction retrieves raw details of a transfer transaction.
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getRawTransferTransaction: {
     path: '/pactus.Transaction/GetRawTransferTransaction',
     requestStream: false,
@@ -204,8 +199,6 @@ getRawTransferTransaction: {
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
   // GetRawBondTransaction retrieves raw details of a bond transaction.
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getRawBondTransaction: {
     path: '/pactus.Transaction/GetRawBondTransaction',
     requestStream: false,
@@ -218,8 +211,6 @@ getRawBondTransaction: {
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
   // GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getRawUnbondTransaction: {
     path: '/pactus.Transaction/GetRawUnbondTransaction',
     requestStream: false,
@@ -232,8 +223,6 @@ getRawUnbondTransaction: {
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
   // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 getRawWithdrawTransaction: {
     path: '/pactus.Transaction/GetRawWithdrawTransaction',
     requestStream: false,

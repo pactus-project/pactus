@@ -27,13 +27,9 @@ service Blockchain {
   rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
 
   // GetValidator retrieves information about a validator based on the provided address.
-  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   rpc GetValidator(GetValidatorRequest) returns (GetValidatorResponse);
 
   // GetValidatorByNumber retrieves information about a validator based on the provided number.
-  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   rpc GetValidatorByNumber(GetValidatorByNumberRequest) returns (GetValidatorResponse);
 
   // GetValidatorAddresses retrieves a list of all validator addresses.
@@ -309,7 +305,6 @@ message ProposalInfo {
 // Enumeration for verbosity levels when requesting block information.
 enum BlockVerbosity {
   // Request only block data.
-  // buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
   BLOCK_VERBOSITY_DATA = 0;
   // Request block information and transaction IDs.
   BLOCK_VERBOSITY_INFO = 1;
