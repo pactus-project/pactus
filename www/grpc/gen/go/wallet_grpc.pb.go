@@ -4,8 +4,6 @@
 // - protoc             (unknown)
 // source: wallet.proto
 
-// Define the package and Go package path for the generated code.
-
 package pactus
 
 import (
@@ -43,7 +41,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// Define the Wallet service with various RPC methods for wallet management.
+// Wallet service provides RPC methods for wallet management operations.
 type WalletClient interface {
 	// CreateWallet creates a new wallet with the specified parameters.
 	CreateWallet(ctx context.Context, in *CreateWalletRequest, opts ...grpc.CallOption) (*CreateWalletResponse, error)
@@ -57,26 +55,25 @@ type WalletClient interface {
 	GetTotalBalance(ctx context.Context, in *GetTotalBalanceRequest, opts ...grpc.CallOption) (*GetTotalBalanceResponse, error)
 	// SignRawTransaction signs a raw transaction for a specified wallet.
 	SignRawTransaction(ctx context.Context, in *SignRawTransactionRequest, opts ...grpc.CallOption) (*SignRawTransactionResponse, error)
-	// GetValidatorAddress retrieves the validator address associated with a
-	// public key.
+	// GetValidatorAddress retrieves the validator address associated with a public key.
 	GetValidatorAddress(ctx context.Context, in *GetValidatorAddressRequest, opts ...grpc.CallOption) (*GetValidatorAddressResponse, error)
 	// GetNewAddress generates a new address for the specified wallet.
 	GetNewAddress(ctx context.Context, in *GetNewAddressRequest, opts ...grpc.CallOption) (*GetNewAddressResponse, error)
 	// GetAddressHistory retrieves the transaction history of an address.
 	GetAddressHistory(ctx context.Context, in *GetAddressHistoryRequest, opts ...grpc.CallOption) (*GetAddressHistoryResponse, error)
-	// SignMessage signs an arbitrary message.
+	// SignMessage signs an arbitrary message using a wallet's private key.
 	SignMessage(ctx context.Context, in *SignMessageRequest, opts ...grpc.CallOption) (*SignMessageResponse, error)
-	// GetTotalStake return total stake of wallet.
+	// GetTotalStake returns the total stake amount in the wallet.
 	GetTotalStake(ctx context.Context, in *GetTotalStakeRequest, opts ...grpc.CallOption) (*GetTotalStakeResponse, error)
-	// GetAddressInfo return address information.
+	// GetAddressInfo returns detailed information about a specific address.
 	GetAddressInfo(ctx context.Context, in *GetAddressInfoRequest, opts ...grpc.CallOption) (*GetAddressInfoResponse, error)
-	// SetAddressLabel set label for given address.
-	SetAddressLabel(ctx context.Context, in *SetLabelRequest, opts ...grpc.CallOption) (*SetLabelResponse, error)
-	// ListWallet return list wallet name.
+	// SetAddressLabel sets or updates the label for a given address.
+	SetAddressLabel(ctx context.Context, in *SetAddressLabelRequest, opts ...grpc.CallOption) (*SetAddressLabelResponse, error)
+	// ListWallet returns list of all available wallets.
 	ListWallet(ctx context.Context, in *ListWalletRequest, opts ...grpc.CallOption) (*ListWalletResponse, error)
-	// GetWalletInfo return wallet information.
+	// GetWalletInfo returns detailed information about a specific wallet.
 	GetWalletInfo(ctx context.Context, in *GetWalletInfoRequest, opts ...grpc.CallOption) (*GetWalletInfoResponse, error)
-	// ListAddress return list address in wallet.
+	// ListAddress returns all addresses in the specified wallet.
 	ListAddress(ctx context.Context, in *ListAddressRequest, opts ...grpc.CallOption) (*ListAddressResponse, error)
 }
 
@@ -208,9 +205,9 @@ func (c *walletClient) GetAddressInfo(ctx context.Context, in *GetAddressInfoReq
 	return out, nil
 }
 
-func (c *walletClient) SetAddressLabel(ctx context.Context, in *SetLabelRequest, opts ...grpc.CallOption) (*SetLabelResponse, error) {
+func (c *walletClient) SetAddressLabel(ctx context.Context, in *SetAddressLabelRequest, opts ...grpc.CallOption) (*SetAddressLabelResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SetLabelResponse)
+	out := new(SetAddressLabelResponse)
 	err := c.cc.Invoke(ctx, Wallet_SetAddressLabel_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -252,7 +249,7 @@ func (c *walletClient) ListAddress(ctx context.Context, in *ListAddressRequest, 
 // All implementations should embed UnimplementedWalletServer
 // for forward compatibility.
 //
-// Define the Wallet service with various RPC methods for wallet management.
+// Wallet service provides RPC methods for wallet management operations.
 type WalletServer interface {
 	// CreateWallet creates a new wallet with the specified parameters.
 	CreateWallet(context.Context, *CreateWalletRequest) (*CreateWalletResponse, error)
@@ -266,26 +263,25 @@ type WalletServer interface {
 	GetTotalBalance(context.Context, *GetTotalBalanceRequest) (*GetTotalBalanceResponse, error)
 	// SignRawTransaction signs a raw transaction for a specified wallet.
 	SignRawTransaction(context.Context, *SignRawTransactionRequest) (*SignRawTransactionResponse, error)
-	// GetValidatorAddress retrieves the validator address associated with a
-	// public key.
+	// GetValidatorAddress retrieves the validator address associated with a public key.
 	GetValidatorAddress(context.Context, *GetValidatorAddressRequest) (*GetValidatorAddressResponse, error)
 	// GetNewAddress generates a new address for the specified wallet.
 	GetNewAddress(context.Context, *GetNewAddressRequest) (*GetNewAddressResponse, error)
 	// GetAddressHistory retrieves the transaction history of an address.
 	GetAddressHistory(context.Context, *GetAddressHistoryRequest) (*GetAddressHistoryResponse, error)
-	// SignMessage signs an arbitrary message.
+	// SignMessage signs an arbitrary message using a wallet's private key.
 	SignMessage(context.Context, *SignMessageRequest) (*SignMessageResponse, error)
-	// GetTotalStake return total stake of wallet.
+	// GetTotalStake returns the total stake amount in the wallet.
 	GetTotalStake(context.Context, *GetTotalStakeRequest) (*GetTotalStakeResponse, error)
-	// GetAddressInfo return address information.
+	// GetAddressInfo returns detailed information about a specific address.
 	GetAddressInfo(context.Context, *GetAddressInfoRequest) (*GetAddressInfoResponse, error)
-	// SetAddressLabel set label for given address.
-	SetAddressLabel(context.Context, *SetLabelRequest) (*SetLabelResponse, error)
-	// ListWallet return list wallet name.
+	// SetAddressLabel sets or updates the label for a given address.
+	SetAddressLabel(context.Context, *SetAddressLabelRequest) (*SetAddressLabelResponse, error)
+	// ListWallet returns list of all available wallets.
 	ListWallet(context.Context, *ListWalletRequest) (*ListWalletResponse, error)
-	// GetWalletInfo return wallet information.
+	// GetWalletInfo returns detailed information about a specific wallet.
 	GetWalletInfo(context.Context, *GetWalletInfoRequest) (*GetWalletInfoResponse, error)
-	// ListAddress return list address in wallet.
+	// ListAddress returns all addresses in the specified wallet.
 	ListAddress(context.Context, *ListAddressRequest) (*ListAddressResponse, error)
 }
 
@@ -332,7 +328,7 @@ func (UnimplementedWalletServer) GetTotalStake(context.Context, *GetTotalStakeRe
 func (UnimplementedWalletServer) GetAddressInfo(context.Context, *GetAddressInfoRequest) (*GetAddressInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAddressInfo not implemented")
 }
-func (UnimplementedWalletServer) SetAddressLabel(context.Context, *SetLabelRequest) (*SetLabelResponse, error) {
+func (UnimplementedWalletServer) SetAddressLabel(context.Context, *SetAddressLabelRequest) (*SetAddressLabelResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetAddressLabel not implemented")
 }
 func (UnimplementedWalletServer) ListWallet(context.Context, *ListWalletRequest) (*ListWalletResponse, error) {
@@ -581,7 +577,7 @@ func _Wallet_GetAddressInfo_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _Wallet_SetAddressLabel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetLabelRequest)
+	in := new(SetAddressLabelRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -593,7 +589,7 @@ func _Wallet_SetAddressLabel_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: Wallet_SetAddressLabel_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WalletServer).SetAddressLabel(ctx, req.(*SetLabelRequest))
+		return srv.(WalletServer).SetAddressLabel(ctx, req.(*SetAddressLabelRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -1,60 +1,68 @@
-version: v1
+version: v2
 plugins:
-  - name: go
-    out: ../gen/go
+  - local: protoc-gen-cobra
+    out: ./gen/go
     opt: paths=source_relative
-  - name: cobra
-    out: ../gen/go
+  - local: protoc-gen-doc
+    out: ./gen/docs
+    opt: ./buf/grpc.md.tmpl,grpc.md
+  - local: protoc-gen-doc
+    out: ./gen/docs
+    opt: ./buf/json-rpc.md.tmpl,json-rpc.md
+  - local: protoc-gen-jrpc-gateway
+    out: ./gen/go
+  - local: protoc-gen-grpc-gateway
+    out: ./gen/go
     opt:
       - paths=source_relative
-  - name: doc
-    out: ../gen/docs
+      - grpc_api_configuration=./buf/grpc-gateway.config.yaml
+  - local: protoc-gen-openapiv2
+    out: ./swagger-ui
     opt:
-      - ./grpc-md.tmpl,grpc.md
-  - name: doc
-    out: ../gen/docs
-    opt: ./json-rpc-md.tmpl,json-rpc.md
-  - name: go-grpc
-    out: ../gen/go
+      - grpc_api_configuration=./buf/grpc-gateway.config.yaml,allow_merge=true,merge_file_name=pactus
+      - openapi_configuration=./buf/openapi.config.yaml
+    # https://buf.build/protocolbuffers/go
+  - remote: buf.build/protocolbuffers/go:v1.36.6
+    out: ./gen/go
+    opt: paths=source_relative
+    # https://buf.build/grpc/go
+  - remote: buf.build/grpc/go:v1.5.1
+    out: ./gen/go
     opt: paths=source_relative,require_unimplemented_servers=false
-  - name: grpc-gateway
-    out: ../gen/go
-    opt:
-      - paths=source_relative
-      - grpc_api_configuration=grpc-gateway.config.yaml
-  - name: openapiv2
-    out: ../swagger-ui
-    opt:
-      - grpc_api_configuration=grpc-gateway.config.yaml,allow_merge=true,merge_file_name=pactus
-      - openapi_configuration=openapi.config.yaml
-  - name: jrpc-gateway
-    out: ../gen/go
-  - plugin: buf.build/protocolbuffers/js:v3.21.2
-    out: ../gen/js
+    # https://buf.build/protocolbuffers/js
+  - remote: buf.build/protocolbuffers/js:v3.21.4
+    out: ./gen/js
     opt:
       - import_style=commonjs
       - binary
-  - plugin: buf.build/grpc/node:v1.11.3
-    out: ../gen/js
-    opt:
-      - import_style=commonjs
-  - plugin: buf.build/protocolbuffers/dart:v20.0.1
-    out: ../gen/dart
-  - plugin: buf.build/protocolbuffers/java:v21.8
-    out: ../gen/java
-  - plugin: buf.build/grpc/java:v1.50.2
-    out: ../gen/java
-  - plugin: buf.build/protocolbuffers/python:v21.8
-    out: ../gen/python
-  - plugin: buf.build/grpc/python:v1.50.0
-    out: ../gen/python
-  - plugin: buf.build/protocolbuffers/pyi:v27.2
-    out: ../gen/python
-  # Rust code gen:
-  # https://github.com/neoeinstein/protoc-gen-prost?tab=readme-ov-file#example-bufgenyaml
-  - plugin: buf.build/community/neoeinstein-prost:v0.2.3
-    out: ../gen/rust
-  - plugin: buf.build/community/neoeinstein-prost-serde:v0.2.3
-    out: ../gen/rust
-  - plugin: buf.build/community/neoeinstein-tonic:v0.3.0
-    out: ../gen/rust
+    # https://buf.build/grpc/node
+  - remote: buf.build/grpc/node:v1.13.0
+    out: ./gen/js
+    opt: import_style=commonjs
+    # https://buf.build/protocolbuffers/dart
+  - remote: buf.build/protocolbuffers/dart:v22.0.1
+    out: ./gen/dart
+    # https://buf.build/protocolbuffers/java
+  - remote: buf.build/protocolbuffers/java:v30.2
+    out: ./gen/java
+    # https://buf.build/grpc/java
+  - remote: buf.build/grpc/java:v1.71.0
+    out: ./gen/java
+    # https://buf.build/protocolbuffers/python
+  - remote: buf.build/protocolbuffers/python:v30.2
+    out: ./gen/python
+    # https://buf.build/grpc/python
+  - remote: buf.build/grpc/python:v1.71.0
+    out: ./gen/python
+    # https://buf.build/protocolbuffers/pyi
+  - remote: buf.build/protocolbuffers/pyi:v30.2
+    out: ./gen/python
+    # https://buf.build/community/neoeinstein-prost
+  - remote: buf.build/community/neoeinstein-prost:v0.4.0
+    out: ./gen/rust
+    # https://buf.build/community/neoeinstein-prost-serde
+  - remote: buf.build/community/neoeinstein-prost-serde:v0.3.1
+    out: ./gen/rust
+    # https://buf.build/community/neoeinstein-tonic
+  - remote: buf.build/community/neoeinstein-tonic:v0.4.1
+    out: ./gen/rust

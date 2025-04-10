@@ -30,7 +30,7 @@ func TestGetTransaction(t *testing.T) {
 		res, err := client.GetTransaction(context.Background(),
 			&pactus.GetTransactionRequest{
 				Id:        textTrx.ID().String(),
-				Verbosity: pactus.TransactionVerbosity_TRANSACTION_DATA,
+				Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_DATA,
 			})
 
 		assert.NoError(t, err)
@@ -50,7 +50,7 @@ func TestGetTransaction(t *testing.T) {
 		res, err := client.GetTransaction(context.Background(),
 			&pactus.GetTransactionRequest{
 				Id:        textTrx.ID().String(),
-				Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
+				Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_INFO,
 			})
 		pld := res.Transaction.Payload.(*pactus.TransactionInfo_Bond)
 
@@ -260,7 +260,7 @@ func TestCalculateFee(t *testing.T) {
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
 				Amount:      amt.ToNanoPAC(),
-				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
 				FixedAmount: false,
 			})
 		assert.NoError(t, err)
@@ -274,7 +274,7 @@ func TestCalculateFee(t *testing.T) {
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
 				Amount:      100e9,
-				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
 				FixedAmount: true,
 			})
 		assert.NoError(t, err)
@@ -288,7 +288,7 @@ func TestCalculateFee(t *testing.T) {
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
 				Amount:      amt.ToNanoPAC(),
-				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
 				FixedAmount: true,
 			})
 		assert.NoError(t, err)

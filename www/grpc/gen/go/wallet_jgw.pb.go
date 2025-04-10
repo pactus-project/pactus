@@ -242,7 +242,7 @@ func (s *WalletJsonRPC) Methods() map[string]func(ctx context.Context, message j
 		},
 
 		"pactus.wallet.set_address_label": func(ctx context.Context, data json.RawMessage) (any, error) {
-			req := new(SetLabelRequest)
+			req := new(SetAddressLabelRequest)
 
 			var jrpcData paramsAndHeadersWallet
 

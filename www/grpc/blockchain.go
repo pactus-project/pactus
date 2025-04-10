@@ -139,11 +139,11 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 	}
 
 	switch req.Verbosity {
-	case pactus.BlockVerbosity_BLOCK_DATA:
+	case pactus.BlockVerbosity_BLOCK_VERBOSITY_DATA:
 		res.Data = hex.EncodeToString(cBlk.Data)
 
-	case pactus.BlockVerbosity_BLOCK_INFO,
-		pactus.BlockVerbosity_BLOCK_TRANSACTIONS:
+	case pactus.BlockVerbosity_BLOCK_VERBOSITY_INFO,
+		pactus.BlockVerbosity_BLOCK_VERBOSITY_TRANSACTIONS:
 		block, err := cBlk.ToBlock()
 		if err != nil {
 			return nil, status.Error(codes.Internal, err.Error())
@@ -180,7 +180,7 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 
 		trxs := make([]*pactus.TransactionInfo, 0, block.Transactions().Len())
 		for _, trx := range block.Transactions() {
-			if req.Verbosity == pactus.BlockVerbosity_BLOCK_INFO {
+			if req.Verbosity == pactus.BlockVerbosity_BLOCK_VERBOSITY_INFO {
 				data, _ := trx.Bytes()
 				trxs = append(trxs, &pactus.TransactionInfo{
 					Id:   trx.ID().String(),
@@ -282,7 +282,8 @@ func (s *blockchainServer) GetTxPoolContent(_ context.Context,
 	result := make([]*pactus.TransactionInfo, 0)
 
 	for _, t := range s.state.AllPendingTxs() {
-		if req.PayloadType == pactus.PayloadType_UNKNOWN || req.PayloadType == pactus.PayloadType(t.Payload().Type()) {
+		if req.PayloadType == pactus.PayloadType_PAYLOAD_TYPE_UNSPECIFIED ||
+			req.PayloadType == pactus.PayloadType(t.Payload().Type()) {
 			result = append(result, transactionToProto(t))
 		}
 	}

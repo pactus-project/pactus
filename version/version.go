@@ -1,33 +1,44 @@
 package version
 
 import (
+	_ "embed"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 )
 
-// NodeVersion represents the current version of the node software.
-// It should be updated with each new release, adjusting the Major, Minor, or Patch version numbers as necessary.
-// When a major release occurs, the Meta field should be cleared (set to an empty string).
-// For release candidates, set the Meta field to "rc1", "rc2", and so on.
-// During development, set the Meta field to "beta".
-var NodeVersion = Version{
-	Major: 1,
-	Minor: 8,
-	Patch: 0,
-	Meta:  "beta",
-	Alias: "",
+//go:embed version.json
+var versionData []byte
+
+// Version defines the version of the Pactus software.
+// It follows the Semantic Versioning 2.0.0 spec: http://semver.org/.
+//
+// Update this struct with each new release by adjusting the Major, Minor, or Patch numbers.
+// For major releases, clear the Meta field (set to an empty string).
+// Use the Meta field to indicate pre-release stages, such as "rc1", "rc2", or "beta" during development.
+type Version struct {
+	Major uint   `json:"major"` // Major version number
+	Minor uint   `json:"minor"` // Minor version number
+	Patch uint   `json:"patch"` // Patch version number
+	Meta  string `json:"meta"`  // Metadata for version (e.g., "beta", "rc1")
+	Alias string `json:"alias"` // Alias for version (e.g., "London")
 }
 
-// Version defines the version of Pactus software.
-// It follows the semantic versioning 2.0.0 spec (http://semver.org/).
-type Version struct {
-	Major uint   // Major version number
-	Minor uint   // Minor version number
-	Patch uint   // Patch version number
-	Meta  string // Metadata for version (e.g., "beta", "rc1")
-	Alias string // Alias for version (e.g., "London")
+var nodeVersion *Version
+
+// NodeVersion represents the current version of the node software.
+func NodeVersion() Version {
+	if nodeVersion == nil {
+		// Initialize the version from the embedded version.json.
+		nodeVersion = new(Version)
+		if err := json.Unmarshal(versionData, nodeVersion); err != nil {
+			panic(err)
+		}
+	}
+
+	return *nodeVersion
 }
 
 // ParseVersion parses a version string into a Version struct.
@@ -89,12 +100,12 @@ func (v Version) StringWithAlias() string {
 
 // String returns a string representation of the Version object.
 func (v Version) String() string {
-	version := fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
+	ver := fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
 	if v.Meta != "" {
-		version = fmt.Sprintf("%s-%s", version, v.Meta)
+		ver = fmt.Sprintf("%s-%s", ver, v.Meta)
 	}
 
-	return version
+	return ver
 }
 
 // Compare compares the current version (v) with another version (other)
@@ -123,3 +134,5 @@ func compareInt(a, b uint) int {
 
 	return 0
 }
+
+var _ = NodeVersion()

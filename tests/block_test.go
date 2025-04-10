@@ -37,7 +37,7 @@ func getBlockAt(height uint32) *pactus.GetBlockResponse {
 		res, err := tBlockchain.GetBlock(tCtx,
 			&pactus.GetBlockRequest{
 				Height:    height,
-				Verbosity: pactus.BlockVerbosity_BLOCK_INFO,
+				Verbosity: pactus.BlockVerbosity_BLOCK_VERBOSITY_INFO,
 			},
 		)
 		if err != nil {

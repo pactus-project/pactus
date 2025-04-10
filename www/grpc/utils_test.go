@@ -173,8 +173,8 @@ func TestBLSPublicKeyAggregation(t *testing.T) {
 	invalidPub := "invalidpub"
 
 	t.Run("zero public keys", func(t *testing.T) {
-		res, err := client.BLSPublicKeyAggregation(context.Background(),
-			&pactus.BLSPublicKeyAggregationRequest{
+		res, err := client.PublicKeyAggregation(context.Background(),
+			&pactus.PublicKeyAggregationRequest{
 				PublicKeys: []string{},
 			})
 
@@ -183,8 +183,8 @@ func TestBLSPublicKeyAggregation(t *testing.T) {
 	})
 
 	t.Run("only one public key", func(t *testing.T) {
-		res, err := client.BLSPublicKeyAggregation(context.Background(),
-			&pactus.BLSPublicKeyAggregationRequest{
+		res, err := client.PublicKeyAggregation(context.Background(),
+			&pactus.PublicKeyAggregationRequest{
 				PublicKeys: []string{pub1.String()},
 			})
 
@@ -193,8 +193,8 @@ func TestBLSPublicKeyAggregation(t *testing.T) {
 	})
 
 	t.Run("invalid public key", func(t *testing.T) {
-		res, err := client.BLSPublicKeyAggregation(context.Background(),
-			&pactus.BLSPublicKeyAggregationRequest{
+		res, err := client.PublicKeyAggregation(context.Background(),
+			&pactus.PublicKeyAggregationRequest{
 				PublicKeys: []string{pub1.String(), pub2.String(), invalidPub, pub3.String()},
 			})
 
@@ -203,8 +203,8 @@ func TestBLSPublicKeyAggregation(t *testing.T) {
 	})
 
 	t.Run("valid public keys", func(t *testing.T) {
-		res, err := client.BLSPublicKeyAggregation(context.Background(),
-			&pactus.BLSPublicKeyAggregationRequest{
+		res, err := client.PublicKeyAggregation(context.Background(),
+			&pactus.PublicKeyAggregationRequest{
 				PublicKeys: []string{pub1.String(), pub2.String(), pub3.String()},
 			})
 
@@ -229,8 +229,8 @@ func TestBLSSignatureAggregation(t *testing.T) {
 	invalidSig := "invalidsig"
 
 	t.Run("zero signatures", func(t *testing.T) {
-		res, err := client.BLSSignatureAggregation(context.Background(),
-			&pactus.BLSSignatureAggregationRequest{
+		res, err := client.SignatureAggregation(context.Background(),
+			&pactus.SignatureAggregationRequest{
 				Signatures: []string{},
 			})
 
@@ -239,8 +239,8 @@ func TestBLSSignatureAggregation(t *testing.T) {
 	})
 
 	t.Run("only one signature", func(t *testing.T) {
-		res, err := client.BLSSignatureAggregation(context.Background(),
-			&pactus.BLSSignatureAggregationRequest{
+		res, err := client.SignatureAggregation(context.Background(),
+			&pactus.SignatureAggregationRequest{
 				Signatures: []string{sig1.String()},
 			})
 
@@ -249,8 +249,8 @@ func TestBLSSignatureAggregation(t *testing.T) {
 	})
 
 	t.Run("invalid signature", func(t *testing.T) {
-		res, err := client.BLSSignatureAggregation(context.Background(),
-			&pactus.BLSSignatureAggregationRequest{
+		res, err := client.SignatureAggregation(context.Background(),
+			&pactus.SignatureAggregationRequest{
 				Signatures: []string{sig1.String(), sig2.String(), invalidSig, sig3.String()},
 			})
 
@@ -259,8 +259,8 @@ func TestBLSSignatureAggregation(t *testing.T) {
 	})
 
 	t.Run("valid signatures", func(t *testing.T) {
-		res, err := client.BLSSignatureAggregation(context.Background(),
-			&pactus.BLSSignatureAggregationRequest{
+		res, err := client.SignatureAggregation(context.Background(),
+			&pactus.SignatureAggregationRequest{
 				Signatures: []string{sig1.String(), sig2.String(), sig3.String()},
 			})
 

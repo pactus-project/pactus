@@ -2,42 +2,33 @@ syntax = "proto3";
 package pactus;
 
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
-option java_package = "pactus.transaction";
+option java_package = "pactus";
 
-// Transaction service defines various RPC methods for interacting with
-// transactions.
+// Transaction service defines various RPC methods for interacting with transactions.
 service Transaction {
-  // GetTransaction retrieves transaction details based on the provided request
-  // parameters.
+  // GetTransaction retrieves transaction details based on the provided request parameters.
   rpc GetTransaction(GetTransactionRequest) returns (GetTransactionResponse);
 
-  // CalculateFee calculates the transaction fee based on the specified amount
-  // and payload type.
+  // CalculateFee calculates the transaction fee based on the specified amount and payload type.
   rpc CalculateFee(CalculateFeeRequest) returns (CalculateFeeResponse);
 
   // BroadcastTransaction broadcasts a signed transaction to the network.
-  rpc BroadcastTransaction(BroadcastTransactionRequest)
-      returns (BroadcastTransactionResponse);
+  rpc BroadcastTransaction(BroadcastTransactionRequest) returns (BroadcastTransactionResponse);
 
   // GetRawTransferTransaction retrieves raw details of a transfer transaction.
-  rpc GetRawTransferTransaction(GetRawTransferTransactionRequest)
-      returns (GetRawTransactionResponse);
+  rpc GetRawTransferTransaction(GetRawTransferTransactionRequest) returns (GetRawTransactionResponse);
 
   // GetRawBondTransaction retrieves raw details of a bond transaction.
-  rpc GetRawBondTransaction(GetRawBondTransactionRequest)
-      returns (GetRawTransactionResponse);
+  rpc GetRawBondTransaction(GetRawBondTransactionRequest) returns (GetRawTransactionResponse);
 
   // GetRawUnbondTransaction retrieves raw details of an unbond transaction.
-  rpc GetRawUnbondTransaction(GetRawUnbondTransactionRequest)
-      returns (GetRawTransactionResponse);
+  rpc GetRawUnbondTransaction(GetRawUnbondTransactionRequest) returns (GetRawTransactionResponse);
 
   // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
-  rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest)
-      returns (GetRawTransactionResponse);
+  rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest) returns (GetRawTransactionResponse);
 
-  // DecodeRawTransaction accepts raw transaction and returnes decoded transaction.
-  rpc DecodeRawTransaction(DecodeRawTransactionRequest)
-      returns (DecodeRawTransactionResponse);
+  // DecodeRawTransaction accepts raw transaction and returns decoded transaction.
+  rpc DecodeRawTransaction(DecodeRawTransactionRequest) returns (DecodeRawTransactionResponse);
 }
 
 // Request message for retrieving transaction details.
@@ -48,7 +39,7 @@ message GetTransactionRequest {
   TransactionVerbosity verbosity = 2;
 }
 
-// Response message containing details of a transaction.
+// Response message contains details of a transaction.
 message GetTransactionResponse {
   // The height of the block containing the transaction.
   uint32 block_height = 1;
@@ -68,7 +59,7 @@ message CalculateFeeRequest {
   bool fixed_amount = 3;
 }
 
-// Response message containing the calculated transaction fee.
+// Response message contains the calculated transaction fee.
 message CalculateFeeResponse {
   // The calculated amount in NanoPAC.
   int64 amount = 1;
@@ -76,13 +67,13 @@ message CalculateFeeResponse {
   int64 fee = 2;
 }
 
-// Request message for broadcasting a signed transaction.
+// Request message for broadcasting a signed transaction to the network.
 message BroadcastTransactionRequest {
   // The signed raw transaction data to be broadcasted.
   string signed_raw_transaction = 1;
 }
 
-// Response message containing the ID of the broadcasted transaction.
+// Response message contains the ID of the broadcasted transaction.
 message BroadcastTransactionResponse {
   // The unique ID of the broadcasted transaction.
   string id = 1;
@@ -90,8 +81,7 @@ message BroadcastTransactionResponse {
 
 // Request message for retrieving raw details of a transfer transaction.
 message GetRawTransferTransactionRequest {
-  // The lock time for the transaction. If not set, defaults to the last block
-  // height.
+  // The lock time for the transaction. If not set, defaults to the last block height.
   uint32 lock_time = 1;
   // The sender's account address.
   string sender = 2;
@@ -107,8 +97,7 @@ message GetRawTransferTransactionRequest {
 
 // Request message for retrieving raw details of a bond transaction.
 message GetRawBondTransactionRequest {
-  // The lock time for the transaction. If not set, defaults to the last block
-  // height.
+  // The lock time for the transaction. If not set, defaults to the last block height.
   uint32 lock_time = 1;
   // The sender's account address.
   string sender = 2;
@@ -126,8 +115,7 @@ message GetRawBondTransactionRequest {
 
 // Request message for retrieving raw details of an unbond transaction.
 message GetRawUnbondTransactionRequest {
-  // The lock time for the transaction. If not set, defaults to the last block
-  // height.
+  // The lock time for the transaction. If not set, defaults to the last block height.
   uint32 lock_time = 1;
   // The address of the validator to unbond from.
   string validator_address = 3;
@@ -137,8 +125,7 @@ message GetRawUnbondTransactionRequest {
 
 // Request message for retrieving raw details of a withdraw transaction.
 message GetRawWithdrawTransactionRequest {
-  // The lock time for the transaction. If not set, defaults to the last block
-  // height.
+  // The lock time for the transaction. If not set, defaults to the last block height.
   uint32 lock_time = 1;
   // The address of the validator to withdraw from.
   string validator_address = 2;
@@ -152,9 +139,9 @@ message GetRawWithdrawTransactionRequest {
   string memo = 6;
 }
 
-// Response message containing raw transaction data.
+// Response message contains raw transaction data.
 message GetRawTransactionResponse {
-  // The raw transaction data.
+  // The raw transaction data in hexadecimal format.
   string raw_transaction = 1;
   // The unique ID of the transaction.
   string id = 2;
@@ -210,7 +197,7 @@ message PayloadWithdraw {
 message TransactionInfo {
   // The unique ID of the transaction.
   string id = 1;
-  // The raw transaction data.
+  // The raw transaction data in hexadecimal format.
   string data = 2;
   // The version of the transaction.
   int32 version = 3;
@@ -222,6 +209,7 @@ message TransactionInfo {
   int64 fee = 6;
   // The type of transaction payload.
   PayloadType payload_type = 7;
+  // Transaction payload.
   oneof payload {
     // Transfer transaction payload.
     PayloadTransfer transfer = 30;
@@ -233,7 +221,7 @@ message TransactionInfo {
     PayloadUnbond unbond = 33;
     // Withdraw transaction payload.
     PayloadWithdraw withdraw = 34;
-  };
+  }
   // A memo string for the transaction.
   string memo = 8;
   // The public key associated with the transaction.
@@ -244,38 +232,36 @@ message TransactionInfo {
 
 // Enumeration for different types of transaction payloads.
 enum PayloadType {
-  // Unknown payload type.
-  UNKNOWN = 0;
+  // Unspecified payload type.
+  PAYLOAD_TYPE_UNSPECIFIED = 0;
   // Transfer payload type.
-  TRANSFER_PAYLOAD = 1;
+  PAYLOAD_TYPE_TRANSFER = 1;
   // Bond payload type.
-  BOND_PAYLOAD = 2;
+  PAYLOAD_TYPE_BOND = 2;
   // Sortition payload type.
-  SORTITION_PAYLOAD = 3;
+  PAYLOAD_TYPE_SORTITION = 3;
   // Unbond payload type.
-  UNBOND_PAYLOAD = 4;
+  PAYLOAD_TYPE_UNBOND = 4;
   // Withdraw payload type.
-  WITHDRAW_PAYLOAD = 5;
+  PAYLOAD_TYPE_WITHDRAW = 5;
 }
 
 // Enumeration for verbosity levels when requesting transaction details.
 enum TransactionVerbosity {
   // Request transaction data only.
-  TRANSACTION_DATA = 0;
+  TRANSACTION_VERBOSITY_DATA = 0;
   // Request detailed transaction information.
-  TRANSACTION_INFO = 1;
+  TRANSACTION_VERBOSITY_INFO = 1;
 }
 
 // Request message for decoding a raw transaction.
-message DecodeRawTransactionRequest
-{
-  // The raw transaction data.
+message DecodeRawTransactionRequest {
+  // The raw transaction data in hexadecimal format.
   string raw_transaction = 1;
 }
 
-// Response message containing the decoded transaction.
-message DecodeRawTransactionResponse
-{
-  // The decoded transaction.
+// Response message contains the decoded transaction.
+message DecodeRawTransactionResponse {
+  // The decoded transaction information.
   TransactionInfo transaction = 1;
 }

@@ -77,4 +77,4 @@ getNodeInfo: {
   },
 };
 
-exports.NetworkClient = grpc.makeGenericClientConstructor(NetworkService);
+exports.NetworkClient = grpc.makeGenericClientConstructor(NetworkService, 'Network');

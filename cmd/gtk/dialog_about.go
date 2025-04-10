@@ -32,7 +32,7 @@ func aboutDialog() *gtk.AboutDialog {
 		dlg.SetLogo(pxLogo)
 	}
 
-	dlg.SetVersion(version.NodeVersion.StringWithAlias())
+	dlg.SetVersion(version.NodeVersion().StringWithAlias())
 
 	return dlg
 }

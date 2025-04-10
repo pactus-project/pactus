@@ -474,8 +474,8 @@ proto.pactus.GetTransactionRequest.prototype.toObject = function(opt_includeInst
  */
 proto.pactus.GetTransactionRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    verbosity: jspb.Message.getFieldWithDefault(msg, 2, 0)
+id: jspb.Message.getFieldWithDefault(msg, 1, ""),
+verbosity: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -634,9 +634,9 @@ proto.pactus.GetTransactionResponse.prototype.toObject = function(opt_includeIns
  */
 proto.pactus.GetTransactionResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    blockHeight: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    blockTime: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    transaction: (f = msg.getTransaction()) && proto.pactus.TransactionInfo.toObject(includeInstance, f)
+blockHeight: jspb.Message.getFieldWithDefault(msg, 1, 0),
+blockTime: jspb.Message.getFieldWithDefault(msg, 2, 0),
+transaction: (f = msg.getTransaction()) && proto.pactus.TransactionInfo.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -845,9 +845,9 @@ proto.pactus.CalculateFeeRequest.prototype.toObject = function(opt_includeInstan
  */
 proto.pactus.CalculateFeeRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    amount: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    payloadType: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    fixedAmount: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
+amount: jspb.Message.getFieldWithDefault(msg, 1, 0),
+payloadType: jspb.Message.getFieldWithDefault(msg, 2, 0),
+fixedAmount: jspb.Message.getBooleanFieldWithDefault(msg, 3, false)
   };
 
   if (includeInstance) {
@@ -1035,8 +1035,8 @@ proto.pactus.CalculateFeeResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.pactus.CalculateFeeResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    amount: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    fee: jspb.Message.getFieldWithDefault(msg, 2, 0)
+amount: jspb.Message.getFieldWithDefault(msg, 1, 0),
+fee: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -1195,7 +1195,7 @@ proto.pactus.BroadcastTransactionRequest.prototype.toObject = function(opt_inclu
  */
 proto.pactus.BroadcastTransactionRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    signedRawTransaction: jspb.Message.getFieldWithDefault(msg, 1, "")
+signedRawTransaction: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -1325,7 +1325,7 @@ proto.pactus.BroadcastTransactionResponse.prototype.toObject = function(opt_incl
  */
 proto.pactus.BroadcastTransactionResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, "")
+id: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -1455,12 +1455,12 @@ proto.pactus.GetRawTransferTransactionRequest.prototype.toObject = function(opt_
  */
 proto.pactus.GetRawTransferTransactionRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    lockTime: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    sender: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    receiver: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    amount: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    fee: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    memo: jspb.Message.getFieldWithDefault(msg, 6, "")
+lockTime: jspb.Message.getFieldWithDefault(msg, 1, 0),
+sender: jspb.Message.getFieldWithDefault(msg, 2, ""),
+receiver: jspb.Message.getFieldWithDefault(msg, 3, ""),
+amount: jspb.Message.getFieldWithDefault(msg, 4, 0),
+fee: jspb.Message.getFieldWithDefault(msg, 5, 0),
+memo: jspb.Message.getFieldWithDefault(msg, 6, "")
   };
 
   if (includeInstance) {
@@ -1735,13 +1735,13 @@ proto.pactus.GetRawBondTransactionRequest.prototype.toObject = function(opt_incl
  */
 proto.pactus.GetRawBondTransactionRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    lockTime: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    sender: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    receiver: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    stake: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    publicKey: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    fee: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    memo: jspb.Message.getFieldWithDefault(msg, 7, "")
+lockTime: jspb.Message.getFieldWithDefault(msg, 1, 0),
+sender: jspb.Message.getFieldWithDefault(msg, 2, ""),
+receiver: jspb.Message.getFieldWithDefault(msg, 3, ""),
+stake: jspb.Message.getFieldWithDefault(msg, 4, 0),
+publicKey: jspb.Message.getFieldWithDefault(msg, 5, ""),
+fee: jspb.Message.getFieldWithDefault(msg, 6, 0),
+memo: jspb.Message.getFieldWithDefault(msg, 7, "")
   };
 
   if (includeInstance) {
@@ -2045,9 +2045,9 @@ proto.pactus.GetRawUnbondTransactionRequest.prototype.toObject = function(opt_in
  */
 proto.pactus.GetRawUnbondTransactionRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    lockTime: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    validatorAddress: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    memo: jspb.Message.getFieldWithDefault(msg, 4, "")
+lockTime: jspb.Message.getFieldWithDefault(msg, 1, 0),
+validatorAddress: jspb.Message.getFieldWithDefault(msg, 3, ""),
+memo: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -2235,12 +2235,12 @@ proto.pactus.GetRawWithdrawTransactionRequest.prototype.toObject = function(opt_
  */
 proto.pactus.GetRawWithdrawTransactionRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    lockTime: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    validatorAddress: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    accountAddress: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    amount: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    fee: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    memo: jspb.Message.getFieldWithDefault(msg, 6, "")
+lockTime: jspb.Message.getFieldWithDefault(msg, 1, 0),
+validatorAddress: jspb.Message.getFieldWithDefault(msg, 2, ""),
+accountAddress: jspb.Message.getFieldWithDefault(msg, 3, ""),
+amount: jspb.Message.getFieldWithDefault(msg, 4, 0),
+fee: jspb.Message.getFieldWithDefault(msg, 5, 0),
+memo: jspb.Message.getFieldWithDefault(msg, 6, "")
   };
 
   if (includeInstance) {
@@ -2515,8 +2515,8 @@ proto.pactus.GetRawTransactionResponse.prototype.toObject = function(opt_include
  */
 proto.pactus.GetRawTransactionResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    rawTransaction: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    id: jspb.Message.getFieldWithDefault(msg, 2, "")
+rawTransaction: jspb.Message.getFieldWithDefault(msg, 1, ""),
+id: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -2675,9 +2675,9 @@ proto.pactus.PayloadTransfer.prototype.toObject = function(opt_includeInstance) 
  */
 proto.pactus.PayloadTransfer.toObject = function(includeInstance, msg) {
   var f, obj = {
-    sender: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    receiver: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    amount: jspb.Message.getFieldWithDefault(msg, 3, 0)
+sender: jspb.Message.getFieldWithDefault(msg, 1, ""),
+receiver: jspb.Message.getFieldWithDefault(msg, 2, ""),
+amount: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -2865,10 +2865,10 @@ proto.pactus.PayloadBond.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.PayloadBond.toObject = function(includeInstance, msg) {
   var f, obj = {
-    sender: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    receiver: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    stake: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    publicKey: jspb.Message.getFieldWithDefault(msg, 4, "")
+sender: jspb.Message.getFieldWithDefault(msg, 1, ""),
+receiver: jspb.Message.getFieldWithDefault(msg, 2, ""),
+stake: jspb.Message.getFieldWithDefault(msg, 3, 0),
+publicKey: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -3085,8 +3085,8 @@ proto.pactus.PayloadSortition.prototype.toObject = function(opt_includeInstance)
  */
 proto.pactus.PayloadSortition.toObject = function(includeInstance, msg) {
   var f, obj = {
-    address: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    proof: jspb.Message.getFieldWithDefault(msg, 2, "")
+address: jspb.Message.getFieldWithDefault(msg, 1, ""),
+proof: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -3245,7 +3245,7 @@ proto.pactus.PayloadUnbond.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.PayloadUnbond.toObject = function(includeInstance, msg) {
   var f, obj = {
-    validator: jspb.Message.getFieldWithDefault(msg, 1, "")
+validator: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -3375,9 +3375,9 @@ proto.pactus.PayloadWithdraw.prototype.toObject = function(opt_includeInstance) 
  */
 proto.pactus.PayloadWithdraw.toObject = function(includeInstance, msg) {
   var f, obj = {
-    validatorAddress: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    accountAddress: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    amount: jspb.Message.getFieldWithDefault(msg, 3, 0)
+validatorAddress: jspb.Message.getFieldWithDefault(msg, 1, ""),
+accountAddress: jspb.Message.getFieldWithDefault(msg, 2, ""),
+amount: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -3594,21 +3594,21 @@ proto.pactus.TransactionInfo.prototype.toObject = function(opt_includeInstance) 
  */
 proto.pactus.TransactionInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    id: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    data: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    version: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    lockTime: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    value: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    fee: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    payloadType: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    transfer: (f = msg.getTransfer()) && proto.pactus.PayloadTransfer.toObject(includeInstance, f),
-    bond: (f = msg.getBond()) && proto.pactus.PayloadBond.toObject(includeInstance, f),
-    sortition: (f = msg.getSortition()) && proto.pactus.PayloadSortition.toObject(includeInstance, f),
-    unbond: (f = msg.getUnbond()) && proto.pactus.PayloadUnbond.toObject(includeInstance, f),
-    withdraw: (f = msg.getWithdraw()) && proto.pactus.PayloadWithdraw.toObject(includeInstance, f),
-    memo: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    publicKey: jspb.Message.getFieldWithDefault(msg, 9, ""),
-    signature: jspb.Message.getFieldWithDefault(msg, 10, "")
+id: jspb.Message.getFieldWithDefault(msg, 1, ""),
+data: jspb.Message.getFieldWithDefault(msg, 2, ""),
+version: jspb.Message.getFieldWithDefault(msg, 3, 0),
+lockTime: jspb.Message.getFieldWithDefault(msg, 4, 0),
+value: jspb.Message.getFieldWithDefault(msg, 5, 0),
+fee: jspb.Message.getFieldWithDefault(msg, 6, 0),
+payloadType: jspb.Message.getFieldWithDefault(msg, 7, 0),
+transfer: (f = msg.getTransfer()) && proto.pactus.PayloadTransfer.toObject(includeInstance, f),
+bond: (f = msg.getBond()) && proto.pactus.PayloadBond.toObject(includeInstance, f),
+sortition: (f = msg.getSortition()) && proto.pactus.PayloadSortition.toObject(includeInstance, f),
+unbond: (f = msg.getUnbond()) && proto.pactus.PayloadUnbond.toObject(includeInstance, f),
+withdraw: (f = msg.getWithdraw()) && proto.pactus.PayloadWithdraw.toObject(includeInstance, f),
+memo: jspb.Message.getFieldWithDefault(msg, 8, ""),
+publicKey: jspb.Message.getFieldWithDefault(msg, 9, ""),
+signature: jspb.Message.getFieldWithDefault(msg, 10, "")
   };
 
   if (includeInstance) {
@@ -4249,7 +4249,7 @@ proto.pactus.DecodeRawTransactionRequest.prototype.toObject = function(opt_inclu
  */
 proto.pactus.DecodeRawTransactionRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    rawTransaction: jspb.Message.getFieldWithDefault(msg, 1, "")
+rawTransaction: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -4379,7 +4379,7 @@ proto.pactus.DecodeRawTransactionResponse.prototype.toObject = function(opt_incl
  */
 proto.pactus.DecodeRawTransactionResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    transaction: (f = msg.getTransaction()) && proto.pactus.TransactionInfo.toObject(includeInstance, f)
+transaction: (f = msg.getTransaction()) && proto.pactus.TransactionInfo.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -4502,20 +4502,20 @@ proto.pactus.DecodeRawTransactionResponse.prototype.hasTransaction = function() 
  * @enum {number}
  */
 proto.pactus.PayloadType = {
-  UNKNOWN: 0,
-  TRANSFER_PAYLOAD: 1,
-  BOND_PAYLOAD: 2,
-  SORTITION_PAYLOAD: 3,
-  UNBOND_PAYLOAD: 4,
-  WITHDRAW_PAYLOAD: 5
+  PAYLOAD_TYPE_UNSPECIFIED: 0,
+  PAYLOAD_TYPE_TRANSFER: 1,
+  PAYLOAD_TYPE_BOND: 2,
+  PAYLOAD_TYPE_SORTITION: 3,
+  PAYLOAD_TYPE_UNBOND: 4,
+  PAYLOAD_TYPE_WITHDRAW: 5
 };
 
 /**
  * @enum {number}
  */
 proto.pactus.TransactionVerbosity = {
-  TRANSACTION_DATA: 0,
-  TRANSACTION_INFO: 1
+  TRANSACTION_VERBOSITY_DATA: 0,
+  TRANSACTION_VERBOSITY_INFO: 1
 };
 
 goog.object.extend(exports, proto.pactus);

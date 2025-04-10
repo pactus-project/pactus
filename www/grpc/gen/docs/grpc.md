@@ -121,12 +121,12 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
           <span class="rpc-badge"></span> VerifyMessage</a>
         </li>
         <li>
-          <a href="#pactus.Utils.BLSPublicKeyAggregation">
-          <span class="rpc-badge"></span> BLSPublicKeyAggregation</a>
+          <a href="#pactus.Utils.PublicKeyAggregation">
+          <span class="rpc-badge"></span> PublicKeyAggregation</a>
         </li>
         <li>
-          <a href="#pactus.Utils.BLSSignatureAggregation">
-          <span class="rpc-badge"></span> BLSSignatureAggregation</a>
+          <a href="#pactus.Utils.SignatureAggregation">
+          <span class="rpc-badge"></span> SignatureAggregation</a>
         </li>
         </ul>
     </li>
@@ -205,13 +205,11 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 
 ## Transaction Service
 
-<p>Transaction service defines various RPC methods for interacting with
-transactions.</p>
+<p>Transaction service defines various RPC methods for interacting with transactions.</p>
 
 ### GetTransaction <span id="pactus.Transaction.GetTransaction" class="rpc-badge"></span>
 
-<p>GetTransaction retrieves transaction details based on the provided request
-parameters.</p>
+<p>GetTransaction retrieves transaction details based on the provided request parameters.</p>
 
 <h4>GetTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -233,8 +231,8 @@ parameters.</p>
     <td>
     (Enum)The verbosity level for transaction details.
     <br>Available values:<ul>
-      <li>TRANSACTION_DATA = 0 (Request transaction data only.)</li>
-      <li>TRANSACTION_INFO = 1 (Request detailed transaction information.)</li>
+      <li>TRANSACTION_VERBOSITY_DATA = 0 (Request transaction data only.)</li>
+      <li>TRANSACTION_VERBOSITY_INFO = 1 (Request detailed transaction information.)</li>
       </ul>
     </td>
   </tr>
@@ -279,7 +277,7 @@ parameters.</p>
         <td class="fw-bold">transaction.data</td>
         <td> string</td>
         <td>
-        The raw transaction data.
+        The raw transaction data in hexadecimal format.
         </td>
       </tr>
          <tr>
@@ -316,12 +314,12 @@ parameters.</p>
         <td>
         (Enum)The type of transaction payload.
         <br>Available values:<ul>
-          <li>UNKNOWN = 0 (Unknown payload type.)</li>
-          <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
-          <li>BOND_PAYLOAD = 2 (Bond payload type.)</li>
-          <li>SORTITION_PAYLOAD = 3 (Sortition payload type.)</li>
-          <li>UNBOND_PAYLOAD = 4 (Unbond payload type.)</li>
-          <li>WITHDRAW_PAYLOAD = 5 (Withdraw payload type.)</li>
+          <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+          <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+          <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+          <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+          <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+          <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
           </ul>
         </td>
       </tr>
@@ -477,8 +475,7 @@ parameters.</p>
 
 ### CalculateFee <span id="pactus.Transaction.CalculateFee" class="rpc-badge"></span>
 
-<p>CalculateFee calculates the transaction fee based on the specified amount
-and payload type.</p>
+<p>CalculateFee calculates the transaction fee based on the specified amount and payload type.</p>
 
 <h4>CalculateFeeRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -500,12 +497,12 @@ and payload type.</p>
     <td>
     (Enum)The type of transaction payload.
     <br>Available values:<ul>
-      <li>UNKNOWN = 0 (Unknown payload type.)</li>
-      <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
-      <li>BOND_PAYLOAD = 2 (Bond payload type.)</li>
-      <li>SORTITION_PAYLOAD = 3 (Sortition payload type.)</li>
-      <li>UNBOND_PAYLOAD = 4 (Unbond payload type.)</li>
-      <li>WITHDRAW_PAYLOAD = 5 (Withdraw payload type.)</li>
+      <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+      <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+      <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+      <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+      <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
       </ul>
     </td>
   </tr>
@@ -594,8 +591,7 @@ and payload type.</p>
     <td class="fw-bold">lock_time</td>
     <td> uint32</td>
     <td>
-    The lock time for the transaction. If not set, defaults to the last block
-height.
+    The lock time for the transaction. If not set, defaults to the last block height.
     </td>
   </tr>
   <tr>
@@ -646,7 +642,7 @@ height.
     <td class="fw-bold">raw_transaction</td>
     <td> string</td>
     <td>
-    The raw transaction data.
+    The raw transaction data in hexadecimal format.
     </td>
   </tr>
      <tr>
@@ -674,8 +670,7 @@ height.
     <td class="fw-bold">lock_time</td>
     <td> uint32</td>
     <td>
-    The lock time for the transaction. If not set, defaults to the last block
-height.
+    The lock time for the transaction. If not set, defaults to the last block height.
     </td>
   </tr>
   <tr>
@@ -733,7 +728,7 @@ height.
     <td class="fw-bold">raw_transaction</td>
     <td> string</td>
     <td>
-    The raw transaction data.
+    The raw transaction data in hexadecimal format.
     </td>
   </tr>
      <tr>
@@ -761,8 +756,7 @@ height.
     <td class="fw-bold">lock_time</td>
     <td> uint32</td>
     <td>
-    The lock time for the transaction. If not set, defaults to the last block
-height.
+    The lock time for the transaction. If not set, defaults to the last block height.
     </td>
   </tr>
   <tr>
@@ -792,7 +786,7 @@ height.
     <td class="fw-bold">raw_transaction</td>
     <td> string</td>
     <td>
-    The raw transaction data.
+    The raw transaction data in hexadecimal format.
     </td>
   </tr>
      <tr>
@@ -820,8 +814,7 @@ height.
     <td class="fw-bold">lock_time</td>
     <td> uint32</td>
     <td>
-    The lock time for the transaction. If not set, defaults to the last block
-height.
+    The lock time for the transaction. If not set, defaults to the last block height.
     </td>
   </tr>
   <tr>
@@ -872,7 +865,7 @@ height.
     <td class="fw-bold">raw_transaction</td>
     <td> string</td>
     <td>
-    The raw transaction data.
+    The raw transaction data in hexadecimal format.
     </td>
   </tr>
      <tr>
@@ -887,7 +880,7 @@ height.
 
 ### DecodeRawTransaction <span id="pactus.Transaction.DecodeRawTransaction" class="rpc-badge"></span>
 
-<p>DecodeRawTransaction accepts raw transaction and returnes decoded transaction.</p>
+<p>DecodeRawTransaction accepts raw transaction and returns decoded transaction.</p>
 
 <h4>DecodeRawTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -900,7 +893,7 @@ height.
     <td class="fw-bold">raw_transaction</td>
     <td> string</td>
     <td>
-    The raw transaction data.
+    The raw transaction data in hexadecimal format.
     </td>
   </tr>
   </tbody>
@@ -916,7 +909,7 @@ height.
     <td class="fw-bold">transaction</td>
     <td> TransactionInfo</td>
     <td>
-    The decoded transaction.
+    The decoded transaction information.
     </td>
   </tr>
      <tr>
@@ -930,7 +923,7 @@ height.
         <td class="fw-bold">transaction.data</td>
         <td> string</td>
         <td>
-        The raw transaction data.
+        The raw transaction data in hexadecimal format.
         </td>
       </tr>
          <tr>
@@ -967,12 +960,12 @@ height.
         <td>
         (Enum)The type of transaction payload.
         <br>Available values:<ul>
-          <li>UNKNOWN = 0 (Unknown payload type.)</li>
-          <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
-          <li>BOND_PAYLOAD = 2 (Bond payload type.)</li>
-          <li>SORTITION_PAYLOAD = 3 (Sortition payload type.)</li>
-          <li>UNBOND_PAYLOAD = 4 (Unbond payload type.)</li>
-          <li>WITHDRAW_PAYLOAD = 5 (Withdraw payload type.)</li>
+          <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+          <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+          <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+          <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+          <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+          <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
           </ul>
         </td>
       </tr>
@@ -1132,8 +1125,7 @@ height.
 
 ### GetBlock <span id="pactus.Blockchain.GetBlock" class="rpc-badge"></span>
 
-<p>GetBlock retrieves information about a block based on the provided request
-parameters.</p>
+<p>GetBlock retrieves information about a block based on the provided request parameters.</p>
 
 <h4>GetBlockRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -1155,9 +1147,9 @@ parameters.</p>
     <td>
     (Enum)The verbosity level for block information.
     <br>Available values:<ul>
-      <li>BLOCK_DATA = 0 (Request only block data.)</li>
-      <li>BLOCK_INFO = 1 (Request block information and transaction IDs.)</li>
-      <li>BLOCK_TRANSACTIONS = 2 (Request block information and detailed transaction data.)</li>
+      <li>BLOCK_VERBOSITY_DATA = 0 (Request only block data.)</li>
+      <li>BLOCK_VERBOSITY_INFO = 1 (Request block information and transaction IDs.)</li>
+      <li>BLOCK_VERBOSITY_TRANSACTIONS = 2 (Request block information and detailed transaction data.)</li>
       </ul>
     </td>
   </tr>
@@ -1301,7 +1293,7 @@ BLOCK_TRANSACTIONS.
         <td class="fw-bold">txs[].data</td>
         <td> string</td>
         <td>
-        The raw transaction data.
+        The raw transaction data in hexadecimal format.
         </td>
       </tr>
          <tr>
@@ -1338,12 +1330,12 @@ BLOCK_TRANSACTIONS.
         <td>
         (Enum)The type of transaction payload.
         <br>Available values:<ul>
-          <li>UNKNOWN = 0 (Unknown payload type.)</li>
-          <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
-          <li>BOND_PAYLOAD = 2 (Bond payload type.)</li>
-          <li>SORTITION_PAYLOAD = 3 (Sortition payload type.)</li>
-          <li>UNBOND_PAYLOAD = 4 (Unbond payload type.)</li>
-          <li>WITHDRAW_PAYLOAD = 5 (Withdraw payload type.)</li>
+          <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+          <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+          <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+          <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+          <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+          <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
           </ul>
         </td>
       </tr>
@@ -1795,8 +1787,7 @@ Message has no fields.
         <td class="fw-bold">instances[].active</td>
         <td> bool</td>
         <td>
-        Indicates whether the consensus instance is active and part of the
-committee.
+        Indicates whether the consensus instance is active and part of the committee.
         </td>
       </tr>
          <tr>
@@ -1826,12 +1817,12 @@ committee.
             <td>
             (Enum)The type of the vote.
             <br>Available values:<ul>
-              <li>VOTE_UNKNOWN = 0 (Unknown vote type.)</li>
-              <li>VOTE_PREPARE = 1 (Prepare vote type.)</li>
-              <li>VOTE_PRECOMMIT = 2 (Precommit vote type.)</li>
-              <li>VOTE_CP_PRE_VOTE = 3 (Change-proposer:pre-vote vote type.)</li>
-              <li>VOTE_CP_MAIN_VOTE = 4 (change-proposer:main-vote vote type.)</li>
-              <li>VOTE_CP_DECIDED = 5 (change-proposer:decided vote type.)</li>
+              <li>VOTE_TYPE_UNSPECIFIED = 0 (Unspecified vote type.)</li>
+              <li>VOTE_TYPE_PREPARE = 1 (Prepare vote type.)</li>
+              <li>VOTE_TYPE_PRECOMMIT = 2 (Precommit vote type.)</li>
+              <li>VOTE_TYPE_CP_PRE_VOTE = 3 (Change-proposer:pre-vote vote type.)</li>
+              <li>VOTE_TYPE_CP_MAIN_VOTE = 4 (Change-proposer:main-vote vote type.)</li>
+              <li>VOTE_TYPE_CP_DECIDED = 5 (Change-proposer:decided vote type.)</li>
               </ul>
             </td>
           </tr>
@@ -1875,8 +1866,7 @@ committee.
 
 ### GetAccount <span id="pactus.Blockchain.GetAccount" class="rpc-badge"></span>
 
-<p>GetAccount retrieves information about an account based on the provided
-address.</p>
+<p>GetAccount retrieves information about an account based on the provided address.</p>
 
 <h4>GetAccountRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -1948,8 +1938,7 @@ address.</p>
 
 ### GetValidator <span id="pactus.Blockchain.GetValidator" class="rpc-badge"></span>
 
-<p>GetValidator retrieves information about a validator based on the provided
-address.</p>
+<p>GetValidator retrieves information about a validator based on the provided address.</p>
 
 <h4>GetValidatorRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2056,8 +2045,7 @@ address.</p>
 
 ### GetValidatorByNumber <span id="pactus.Blockchain.GetValidatorByNumber" class="rpc-badge"></span>
 
-<p>GetValidatorByNumber retrieves information about a validator based on the
-provided number.</p>
+<p>GetValidatorByNumber retrieves information about a validator based on the provided number.</p>
 
 <h4>GetValidatorByNumberRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2188,8 +2176,7 @@ Message has no fields.
 
 ### GetPublicKey <span id="pactus.Blockchain.GetPublicKey" class="rpc-badge"></span>
 
-<p>GetPublicKey retrieves the public key of an account based on the provided
-address.</p>
+<p>GetPublicKey retrieves the public key of an account based on the provided address.</p>
 
 <h4>GetPublicKeyRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2239,15 +2226,14 @@ address.</p>
     <td class="fw-bold">payload_type</td>
     <td> PayloadType</td>
     <td>
-    (Enum)The type of transactions to retrieve from the transaction pool. 0 means all
-types.
+    (Enum)The type of transactions to retrieve from the transaction pool. 0 means all types.
     <br>Available values:<ul>
-      <li>UNKNOWN = 0 (Unknown payload type.)</li>
-      <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
-      <li>BOND_PAYLOAD = 2 (Bond payload type.)</li>
-      <li>SORTITION_PAYLOAD = 3 (Sortition payload type.)</li>
-      <li>UNBOND_PAYLOAD = 4 (Unbond payload type.)</li>
-      <li>WITHDRAW_PAYLOAD = 5 (Withdraw payload type.)</li>
+      <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+      <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+      <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+      <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+      <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+      <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
       </ul>
     </td>
   </tr>
@@ -2278,7 +2264,7 @@ types.
         <td class="fw-bold">txs[].data</td>
         <td> string</td>
         <td>
-        The raw transaction data.
+        The raw transaction data in hexadecimal format.
         </td>
       </tr>
          <tr>
@@ -2315,12 +2301,12 @@ types.
         <td>
         (Enum)The type of transaction payload.
         <br>Available values:<ul>
-          <li>UNKNOWN = 0 (Unknown payload type.)</li>
-          <li>TRANSFER_PAYLOAD = 1 (Transfer payload type.)</li>
-          <li>BOND_PAYLOAD = 2 (Bond payload type.)</li>
-          <li>SORTITION_PAYLOAD = 3 (Sortition payload type.)</li>
-          <li>UNBOND_PAYLOAD = 4 (Unbond payload type.)</li>
-          <li>WITHDRAW_PAYLOAD = 5 (Withdraw payload type.)</li>
+          <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+          <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+          <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+          <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+          <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+          <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
           </ul>
         </td>
       </tr>
@@ -2537,7 +2523,7 @@ types.
         <td class="fw-bold">connected_peers[].moniker</td>
         <td> string</td>
         <td>
-        Moniker of the peer.
+        Moniker or Human-Readable name of the peer.
         </td>
       </tr>
          <tr>
@@ -2551,7 +2537,7 @@ types.
         <td class="fw-bold">connected_peers[].peer_id</td>
         <td> string</td>
         <td>
-        Peer ID of the peer.
+        Peer ID of the peer in P2P network.
         </td>
       </tr>
          <tr>
@@ -2646,35 +2632,35 @@ types.
         </td>
       </tr>
          <tr>
-            <td class="fw-bold">connected_peers[].metric_info.TotalInvalid</td>
+            <td class="fw-bold">connected_peers[].metric_info.total_invalid</td>
             <td> CounterInfo</td>
             <td>
             Total number of invalid bundles.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">connected_peers[].metric_info.TotalSent</td>
+            <td class="fw-bold">connected_peers[].metric_info.total_sent</td>
             <td> CounterInfo</td>
             <td>
             Total number of bundles sent.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">connected_peers[].metric_info.TotalReceived</td>
+            <td class="fw-bold">connected_peers[].metric_info.total_received</td>
             <td> CounterInfo</td>
             <td>
             Total number of bundles received.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">connected_peers[].metric_info.MessageSent</td>
+            <td class="fw-bold">connected_peers[].metric_info.message_sent</td>
             <td> map&lt;int32, CounterInfo&gt;</td>
             <td>
             Number of sent bundles categorized by message type.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">connected_peers[].metric_info.MessageReceived</td>
+            <td class="fw-bold">connected_peers[].metric_info.message_received</td>
             <td> map&lt;int32, CounterInfo&gt;</td>
             <td>
             Number of received bundles categorized by message type.
@@ -2688,77 +2674,77 @@ types.
     </td>
   </tr>
      <tr>
-        <td class="fw-bold">metric_info.TotalInvalid</td>
+        <td class="fw-bold">metric_info.total_invalid</td>
         <td> CounterInfo</td>
         <td>
         Total number of invalid bundles.
         </td>
       </tr>
          <tr>
-            <td class="fw-bold">metric_info.TotalInvalid.Bytes</td>
+            <td class="fw-bold">metric_info.total_invalid.bytes</td>
             <td> uint64</td>
             <td>
             Total number of bytes.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">metric_info.TotalInvalid.Bundles</td>
+            <td class="fw-bold">metric_info.total_invalid.bundles</td>
             <td> uint64</td>
             <td>
             Total number of bundles.
             </td>
           </tr>
           <tr>
-        <td class="fw-bold">metric_info.TotalSent</td>
+        <td class="fw-bold">metric_info.total_sent</td>
         <td> CounterInfo</td>
         <td>
         Total number of bundles sent.
         </td>
       </tr>
          <tr>
-            <td class="fw-bold">metric_info.TotalSent.Bytes</td>
+            <td class="fw-bold">metric_info.total_sent.bytes</td>
             <td> uint64</td>
             <td>
             Total number of bytes.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">metric_info.TotalSent.Bundles</td>
+            <td class="fw-bold">metric_info.total_sent.bundles</td>
             <td> uint64</td>
             <td>
             Total number of bundles.
             </td>
           </tr>
           <tr>
-        <td class="fw-bold">metric_info.TotalReceived</td>
+        <td class="fw-bold">metric_info.total_received</td>
         <td> CounterInfo</td>
         <td>
         Total number of bundles received.
         </td>
       </tr>
          <tr>
-            <td class="fw-bold">metric_info.TotalReceived.Bytes</td>
+            <td class="fw-bold">metric_info.total_received.bytes</td>
             <td> uint64</td>
             <td>
             Total number of bytes.
             </td>
           </tr>
           <tr>
-            <td class="fw-bold">metric_info.TotalReceived.Bundles</td>
+            <td class="fw-bold">metric_info.total_received.bundles</td>
             <td> uint64</td>
             <td>
             Total number of bundles.
             </td>
           </tr>
           <tr>
-        <td class="fw-bold">metric_info.MessageSent</td>
+        <td class="fw-bold">metric_info.message_sent</td>
         <td> map&lt;int32, CounterInfo&gt;</td>
         <td>
         Number of sent bundles categorized by message type.
         </td>
       </tr>
          <tr>
-        <td class="fw-bold">metric_info.MessageReceived</td>
+        <td class="fw-bold">metric_info.message_received</td>
         <td> map&lt;int32, CounterInfo&gt;</td>
         <td>
         Number of received bundles categorized by message type.
@@ -2785,7 +2771,7 @@ Message has no fields.
     <td class="fw-bold">moniker</td>
     <td> string</td>
     <td>
-    Moniker of the node.
+    Moniker or Human-readable name identifying this node in the network.
     </td>
   </tr>
      <tr>
@@ -2914,11 +2900,11 @@ maximum number of messages to queue before dropping older ones.
 ## Utils Service
 
 <p>Utils service defines RPC methods for utility functions such as message
-signing and verification.</p>
+signing, verification, and etc.</p>
 
 ### SignMessageWithPrivateKey <span id="pactus.Utils.SignMessageWithPrivateKey" class="rpc-badge"></span>
 
-<p>SignMessageWithPrivateKey signs message with provided private key.</p>
+<p>SignMessageWithPrivateKey signs a message with the provided private key.</p>
 
 <h4>SignMessageWithPrivateKeyRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2938,7 +2924,7 @@ signing and verification.</p>
     <td class="fw-bold">message</td>
     <td> string</td>
     <td>
-    The message to sign.
+    The message content to be signed.
     </td>
   </tr>
   </tbody>
@@ -2954,7 +2940,7 @@ signing and verification.</p>
     <td class="fw-bold">signature</td>
     <td> string</td>
     <td>
-    The signature of the message.
+    The resulting signature in hexadecimal format.
     </td>
   </tr>
      </tbody>
@@ -2962,7 +2948,7 @@ signing and verification.</p>
 
 ### VerifyMessage <span id="pactus.Utils.VerifyMessage" class="rpc-badge"></span>
 
-<p>VerifyMessage verifies signature with public key and message.</p>
+<p>VerifyMessage verifies a signature against the public key and message.</p>
 
 <h4>VerifyMessageRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -2975,14 +2961,14 @@ signing and verification.</p>
     <td class="fw-bold">message</td>
     <td> string</td>
     <td>
-    The signed message.
+    The original message content that was signed.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">signature</td>
     <td> string</td>
     <td>
-    The signature of the message.
+    The signature to verify in hexadecimal format.
     </td>
   </tr>
   <tr>
@@ -3005,17 +2991,17 @@ signing and verification.</p>
     <td class="fw-bold">is_valid</td>
     <td> bool</td>
     <td>
-    Indicates if the signature is valid (true) or not (false).
+    Boolean indicating whether the signature is valid for the given message and public key.
     </td>
   </tr>
      </tbody>
 </table>
 
-### BLSPublicKeyAggregation <span id="pactus.Utils.BLSPublicKeyAggregation" class="rpc-badge"></span>
+### PublicKeyAggregation <span id="pactus.Utils.PublicKeyAggregation" class="rpc-badge"></span>
 
-<p>BLSPublicKeyAggregation aggregates bls public keys.</p>
+<p>PublicKeyAggregation aggregates multiple BLS public keys into a single key.</p>
 
-<h4>BLSPublicKeyAggregationRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<h4>PublicKeyAggregationRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -3026,12 +3012,12 @@ signing and verification.</p>
     <td class="fw-bold">public_keys</td>
     <td>repeated string</td>
     <td>
-    The public keys to aggregate.
+    List of BLS public keys to be aggregated.
     </td>
   </tr>
   </tbody>
 </table>
-  <h4>BLSPublicKeyAggregationResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+  <h4>PublicKeyAggregationResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -3042,24 +3028,24 @@ signing and verification.</p>
     <td class="fw-bold">public_key</td>
     <td> string</td>
     <td>
-    The aggregated public key.
+    The aggregated BLS public key.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">address</td>
     <td> string</td>
     <td>
-    The aggregated public key account address.
+    The blockchain address derived from the aggregated public key.
     </td>
   </tr>
      </tbody>
 </table>
 
-### BLSSignatureAggregation <span id="pactus.Utils.BLSSignatureAggregation" class="rpc-badge"></span>
+### SignatureAggregation <span id="pactus.Utils.SignatureAggregation" class="rpc-badge"></span>
 
-<p>BLSSignatureAggregation aggregates bls signatures.</p>
+<p>SignatureAggregation aggregates multiple BLS signatures into a single signature.</p>
 
-<h4>BLSSignatureAggregationRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<h4>SignatureAggregationRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -3070,12 +3056,12 @@ signing and verification.</p>
     <td class="fw-bold">signatures</td>
     <td>repeated string</td>
     <td>
-    The signatures to aggregate.
+    List of BLS signatures to be aggregated.
     </td>
   </tr>
   </tbody>
 </table>
-  <h4>BLSSignatureAggregationResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+  <h4>SignatureAggregationResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -3086,7 +3072,7 @@ signing and verification.</p>
     <td class="fw-bold">signature</td>
     <td> string</td>
     <td>
-    The aggregated signature.
+    The aggregated BLS signature in hexadecimal format.
     </td>
   </tr>
      </tbody>
@@ -3094,7 +3080,7 @@ signing and verification.</p>
 
 ## Wallet Service
 
-<p>Define the Wallet service with various RPC methods for wallet management.</p>
+<p>Wallet service provides RPC methods for wallet management operations.</p>
 
 ### CreateWallet <span id="pactus.Wallet.CreateWallet" class="rpc-badge"></span>
 
@@ -3111,14 +3097,14 @@ signing and verification.</p>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the new wallet.
+    The name for the new wallet.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">password</td>
     <td> string</td>
     <td>
-    The password for securing the wallet.
+    Password to secure the new wallet.
     </td>
   </tr>
   </tbody>
@@ -3134,7 +3120,7 @@ signing and verification.</p>
     <td class="fw-bold">mnemonic</td>
     <td> string</td>
     <td>
-    The mnemonic for wallet recovery.
+    The mnemonic (seed phrase) for wallet recovery.
     </td>
   </tr>
      </tbody>
@@ -3155,21 +3141,21 @@ signing and verification.</p>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet to restore.
+    The name for the restored wallet.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">mnemonic</td>
     <td> string</td>
     <td>
-    The mnemonic for wallet recovery.
+    The mnemonic (seed phrase) for wallet recovery.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">password</td>
     <td> string</td>
     <td>
-    The password for securing the wallet.
+    Password to secure the restored wallet.
     </td>
   </tr>
   </tbody>
@@ -3296,7 +3282,7 @@ signing and verification.</p>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet.
+    The name of the queried wallet.
     </td>
   </tr>
      <tr>
@@ -3338,7 +3324,7 @@ signing and verification.</p>
     <td class="fw-bold">password</td>
     <td> string</td>
     <td>
-    The password for unlocking the wallet for signing.
+    Wallet password required for signing.
     </td>
   </tr>
   </tbody>
@@ -3369,8 +3355,7 @@ signing and verification.</p>
 
 ### GetValidatorAddress <span id="pactus.Wallet.GetValidatorAddress" class="rpc-badge"></span>
 
-<p>GetValidatorAddress retrieves the validator address associated with a
-public key.</p>
+<p>GetValidatorAddress retrieves the validator address associated with a public key.</p>
 
 <h4>GetValidatorAddressRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -3383,7 +3368,7 @@ public key.</p>
     <td class="fw-bold">public_key</td>
     <td> string</td>
     <td>
-    The public key for which the validator address is requested.
+    The public key of the validator.
     </td>
   </tr>
   </tbody>
@@ -3431,7 +3416,7 @@ public key.</p>
     <br>Available values:<ul>
       <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
 Should not be used to generate new addresses.)</li>
-      <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type.)</li>
+      <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
       <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
       <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.
 Note: Generating a new Ed25519 address requires the wallet password.)</li>
@@ -3449,7 +3434,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <td class="fw-bold">password</td>
     <td> string</td>
     <td>
-    Password for the new address. It's required when address_type is ADDRESS_TYPE_ED25519_ACCOUNT.
+    Password for the new address. It's required when address_type is Ed25519 type.
     </td>
   </tr>
   </tbody>
@@ -3465,14 +3450,14 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet from which the address is generated.
+    The name of the wallet where address was generated.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">address_info</td>
     <td> AddressInfo</td>
     <td>
-    Information about the newly generated address.
+    Detailed information about the new address.
     </td>
   </tr>
      <tr>
@@ -3493,14 +3478,14 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td class="fw-bold">address_info.label</td>
         <td> string</td>
         <td>
-        A label associated with the address.
+        A human-readable label associated with the address.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">address_info.path</td>
         <td> string</td>
         <td>
-        The Hierarchical Deterministic path of the address within the wallet.
+        The Hierarchical Deterministic (HD) path of the address within the wallet.
         </td>
       </tr>
          </tbody>
@@ -3521,14 +3506,14 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet.
+    The name of the wallet containing the address.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">address</td>
     <td> string</td>
     <td>
-    The address to retrieve the transaction history for.
+    The address to retrieve history for.
     </td>
   </tr>
   </tbody>
@@ -3544,42 +3529,42 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <td class="fw-bold">history_info</td>
     <td>repeated HistoryInfo</td>
     <td>
-    Array of history information for the address.
+    List of all historical transactions associated with the address.
     </td>
   </tr>
      <tr>
         <td class="fw-bold">history_info[].transaction_id</td>
         <td> string</td>
         <td>
-        The transaction ID hash.
+        The transaction ID in hexadecimal format.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">history_info[].time</td>
         <td> uint32</td>
         <td>
-        The timestamp of the transaction.
+        Unix timestamp of when the transaction was confirmed.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">history_info[].payload_type</td>
         <td> string</td>
         <td>
-        The payload type of the transaction.
+        The type of transaction payload.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">history_info[].description</td>
         <td> string</td>
         <td>
-        A description of the transaction.
+        Human-readable description of the transaction.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">history_info[].amount</td>
         <td> int64</td>
         <td>
-        The amount involved in the transaction.
+        The transaction amount in NanoPAC.
         </td>
       </tr>
          </tbody>
@@ -3587,7 +3572,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 
 ### SignMessage <span id="pactus.Wallet.SignMessage" class="rpc-badge"></span>
 
-<p>SignMessage signs an arbitrary message.</p>
+<p>SignMessage signs an arbitrary message using a wallet's private key.</p>
 
 <h4>SignMessageRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -3600,21 +3585,21 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet.
+    The name of the wallet to sign with.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">password</td>
     <td> string</td>
     <td>
-    The password for unlocking the wallet for signing.
+    Wallet password required for signing.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">address</td>
     <td> string</td>
     <td>
-    The account address associated with the private key.
+    The address whose private key should be used for signing the message.
     </td>
   </tr>
   <tr>
@@ -3637,7 +3622,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <td class="fw-bold">signature</td>
     <td> string</td>
     <td>
-    Signature of the message.
+    The signature in hexadecimal format.
     </td>
   </tr>
      </tbody>
@@ -3645,7 +3630,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 
 ### GetTotalStake <span id="pactus.Wallet.GetTotalStake" class="rpc-badge"></span>
 
-<p>GetTotalStake return total stake of wallet.</p>
+<p>GetTotalStake returns the total stake amount in the wallet.</p>
 
 <h4>GetTotalStakeRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -3658,7 +3643,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet.
+    The name of the wallet to get the total stake.
     </td>
   </tr>
   </tbody>
@@ -3671,17 +3656,17 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
   </thead>
   <tbody class="table-group-divider">
   <tr>
-    <td class="fw-bold">total_stake</td>
-    <td> int64</td>
-    <td>
-    
-    </td>
-  </tr>
-     <tr>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    
+    The name of the queried wallet.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">total_stake</td>
+    <td> int64</td>
+    <td>
+    The total stake amount in NanoPAC.
     </td>
   </tr>
      </tbody>
@@ -3689,7 +3674,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 
 ### GetAddressInfo <span id="pactus.Wallet.GetAddressInfo" class="rpc-badge"></span>
 
-<p>GetAddressInfo return address information.</p>
+<p>GetAddressInfo returns detailed information about a specific address.</p>
 
 <h4>GetAddressInfoRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -3702,14 +3687,14 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet to generate a new address.
+    The name of the wallet containing the address.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">address</td>
     <td> string</td>
     <td>
-    
+    The address to query.
     </td>
   </tr>
   </tbody>
@@ -3722,38 +3707,38 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
   </thead>
   <tbody class="table-group-divider">
   <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet containing the address.
+    </td>
+  </tr>
+     <tr>
     <td class="fw-bold">address</td>
     <td> string</td>
     <td>
-    
+    The queried address.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">label</td>
     <td> string</td>
     <td>
-    
+    The address label.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">public_key</td>
     <td> string</td>
     <td>
-    
+    The public key of the address.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">path</td>
     <td> string</td>
     <td>
-    
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    
+    The Hierarchical Deterministic (HD) path of the address.
     </td>
   </tr>
      </tbody>
@@ -3761,9 +3746,9 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 
 ### SetAddressLabel <span id="pactus.Wallet.SetAddressLabel" class="rpc-badge"></span>
 
-<p>SetAddressLabel set label for given address.</p>
+<p>SetAddressLabel sets or updates the label for a given address.</p>
 
-<h4>SetLabelRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<h4>SetAddressLabelRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -3774,33 +3759,33 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    The name of the wallet to generate a new address.
+    The name of the wallet containing the address.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">password</td>
     <td> string</td>
     <td>
-    The password for unlocking the wallet for signing.
+    Wallet password required for modification.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">address</td>
     <td> string</td>
     <td>
-    
+    The address to label.
     </td>
   </tr>
   <tr>
     <td class="fw-bold">label</td>
     <td> string</td>
     <td>
-    
+    The new label for the address.
     </td>
   </tr>
   </tbody>
 </table>
-  <h4>SetLabelResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+  <h4>SetAddressLabelResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -3812,7 +3797,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 
 ### ListWallet <span id="pactus.Wallet.ListWallet" class="rpc-badge"></span>
 
-<p>ListWallet return list wallet name.</p>
+<p>ListWallet returns list of all available wallets.</p>
 
 <h4>ListWalletRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -3828,7 +3813,7 @@ Message has no fields.
     <td class="fw-bold">wallets</td>
     <td>repeated string</td>
     <td>
-    
+    Array of wallet names.
     </td>
   </tr>
      </tbody>
@@ -3836,7 +3821,7 @@ Message has no fields.
 
 ### GetWalletInfo <span id="pactus.Wallet.GetWalletInfo" class="rpc-badge"></span>
 
-<p>GetWalletInfo return wallet information.</p>
+<p>GetWalletInfo returns detailed information about a specific wallet.</p>
 
 <h4>GetWalletInfoRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -3849,7 +3834,7 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    
+    The name of the wallet to query.
     </td>
   </tr>
   </tbody>
@@ -3865,42 +3850,42 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    
+    The name of the wallet to query.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">version</td>
     <td> int64</td>
     <td>
-    
+    The wallet format version.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">network</td>
     <td> string</td>
     <td>
-    
+    The network the wallet is connected to (e.g., mainnet, testnet).
     </td>
   </tr>
      <tr>
     <td class="fw-bold">encrypted</td>
     <td> bool</td>
     <td>
-    
+    Indicates if the wallet is encrypted.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">uuid</td>
     <td> string</td>
     <td>
-    
+    A unique identifier of the wallet.
     </td>
   </tr>
      <tr>
     <td class="fw-bold">created_at</td>
     <td> int64</td>
     <td>
-    
+    Unix timestamp of wallet creation.
     </td>
   </tr>
      </tbody>
@@ -3908,7 +3893,7 @@ Message has no fields.
 
 ### ListAddress <span id="pactus.Wallet.ListAddress" class="rpc-badge"></span>
 
-<p>ListAddress return list address in wallet.</p>
+<p>ListAddress returns all addresses in the specified wallet.</p>
 
 <h4>ListAddressRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -3921,7 +3906,7 @@ Message has no fields.
     <td class="fw-bold">wallet_name</td>
     <td> string</td>
     <td>
-    
+    The name of the queried wallet.
     </td>
   </tr>
   </tbody>
@@ -3934,10 +3919,17 @@ Message has no fields.
   </thead>
   <tbody class="table-group-divider">
   <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the queried wallet.
+    </td>
+  </tr>
+     <tr>
     <td class="fw-bold">data</td>
     <td>repeated AddressInfo</td>
     <td>
-    
+    ist of all addresses in the wallet with their details.
     </td>
   </tr>
      <tr>
@@ -3958,14 +3950,14 @@ Message has no fields.
         <td class="fw-bold">data[].label</td>
         <td> string</td>
         <td>
-        A label associated with the address.
+        A human-readable label associated with the address.
         </td>
       </tr>
          <tr>
         <td class="fw-bold">data[].path</td>
         <td> string</td>
         <td>
-        The Hierarchical Deterministic path of the address within the wallet.
+        The Hierarchical Deterministic (HD) path of the address within the wallet.
         </td>
       </tr>
          </tbody>
@@ -3985,14 +3977,12 @@ Message has no fields.
         <td>f64</td>
         <td>double</td>
         <td>float</td>
-        <td>double</td>
       </tr>
       <tr id="float">
         <td class="fw-bold">float</td>
         <td>float32</td>
         <td>float</td>
         <td>f32</td>
-        <td>float</td>
         <td>float</td>
         <td>float</td>
       </tr>
@@ -4003,7 +3993,6 @@ Message has no fields.
         <td>i32</td>
         <td>int</td>
         <td>int</td>
-        <td>int</td>
       </tr>
       <tr id="int64">
         <td class="fw-bold">int64</td>
@@ -4012,7 +4001,6 @@ Message has no fields.
         <td>i64</td>
         <td>long</td>
         <td>int/long</td>
-        <td>long</td>
       </tr>
       <tr id="uint32">
         <td class="fw-bold">uint32</td>
@@ -4021,7 +4009,6 @@ Message has no fields.
         <td>u32</td>
         <td>int</td>
         <td>int/long</td>
-        <td>uint</td>
       </tr>
       <tr id="uint64">
         <td class="fw-bold">uint64</td>
@@ -4030,14 +4017,12 @@ Message has no fields.
         <td>u64</td>
         <td>long</td>
         <td>int/long</td>
-        <td>ulong</td>
       </tr>
       <tr id="sint32">
         <td class="fw-bold">sint32</td>
         <td>int32</td>
         <td>int32</td>
         <td>i32</td>
-        <td>int</td>
         <td>int</td>
         <td>int</td>
       </tr>
@@ -4048,7 +4033,6 @@ Message has no fields.
         <td>i64</td>
         <td>long</td>
         <td>int/long</td>
-        <td>long</td>
       </tr>
       <tr id="fixed32">
         <td class="fw-bold">fixed32</td>
@@ -4057,7 +4041,6 @@ Message has no fields.
         <td>u64</td>
         <td>int</td>
         <td>int</td>
-        <td>uint</td>
       </tr>
       <tr id="fixed64">
         <td class="fw-bold">fixed64</td>
@@ -4066,14 +4049,12 @@ Message has no fields.
         <td>u64</td>
         <td>long</td>
         <td>int/long</td>
-        <td>ulong</td>
       </tr>
       <tr id="sfixed32">
         <td class="fw-bold">sfixed32</td>
         <td>int32</td>
         <td>int32</td>
         <td>i32</td>
-        <td>int</td>
         <td>int</td>
         <td>int</td>
       </tr>
@@ -4084,7 +4065,6 @@ Message has no fields.
         <td>i64</td>
         <td>long</td>
         <td>int/long</td>
-        <td>long</td>
       </tr>
       <tr id="bool">
         <td class="fw-bold">bool</td>
@@ -4093,7 +4073,6 @@ Message has no fields.
         <td>bool</td>
         <td>boolean</td>
         <td>boolean</td>
-        <td>bool</td>
       </tr>
       <tr id="string">
         <td class="fw-bold">string</td>
@@ -4102,7 +4081,6 @@ Message has no fields.
         <td>String</td>
         <td>String</td>
         <td>str/unicode</td>
-        <td>string</td>
       </tr>
       <tr id="bytes">
         <td class="fw-bold">bytes</td>
@@ -4111,7 +4089,6 @@ Message has no fields.
         <td>Vec<u8></td>
         <td>ByteString</td>
         <td>str</td>
-        <td>ByteString</td>
       </tr>
   </tbody>
 </table>

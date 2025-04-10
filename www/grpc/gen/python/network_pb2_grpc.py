@@ -19,12 +19,12 @@ class NetworkStub(object):
                 '/pactus.Network/GetNetworkInfo',
                 request_serializer=network__pb2.GetNetworkInfoRequest.SerializeToString,
                 response_deserializer=network__pb2.GetNetworkInfoResponse.FromString,
-                )
+                _registered_method=True)
         self.GetNodeInfo = channel.unary_unary(
                 '/pactus.Network/GetNodeInfo',
                 request_serializer=network__pb2.GetNodeInfoRequest.SerializeToString,
                 response_deserializer=network__pb2.GetNodeInfoResponse.FromString,
-                )
+                _registered_method=True)
 
 
 class NetworkServicer(object):
@@ -62,6 +62,7 @@ def add_NetworkServicer_to_server(servicer, server):
     generic_handler = grpc.method_handlers_generic_handler(
             'pactus.Network', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('pactus.Network', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
@@ -80,11 +81,21 @@ class Network(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Network/GetNetworkInfo',
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Network/GetNetworkInfo',
             network__pb2.GetNetworkInfoRequest.SerializeToString,
             network__pb2.GetNetworkInfoResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
     def GetNodeInfo(request,
@@ -97,8 +108,18 @@ class Network(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/pactus.Network/GetNodeInfo',
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Network/GetNodeInfo',
             network__pb2.GetNodeInfoRequest.SerializeToString,
             network__pb2.GetNodeInfoResponse.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)

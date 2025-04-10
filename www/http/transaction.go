@@ -16,7 +16,7 @@ func (s *Server) GetTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	res, err := s.transaction.GetTransaction(ctx,
 		&pactus.GetTransactionRequest{
 			Id:        vars["id"],
-			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
+			Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_INFO,
 		},
 	)
 	if err != nil {
@@ -42,34 +42,34 @@ func txToTable(tmk *tableMaker, trx *pactus.TransactionInfo) {
 	tmk.addRowString("Payload type", trx.PayloadType.String())
 
 	switch trx.PayloadType {
-	case pactus.PayloadType_TRANSFER_PAYLOAD:
+	case pactus.PayloadType_PAYLOAD_TYPE_TRANSFER:
 		pld := trx.Payload.(*pactus.TransactionInfo_Transfer).Transfer
 		tmk.addRowAccAddress("Sender", pld.Sender)
 		tmk.addRowAccAddress("Receiver", pld.Receiver)
 		tmk.addRowAmount("Amount", amount.Amount(pld.Amount))
 
-	case pactus.PayloadType_BOND_PAYLOAD:
+	case pactus.PayloadType_PAYLOAD_TYPE_BOND:
 		pld := trx.Payload.(*pactus.TransactionInfo_Bond).Bond
 		tmk.addRowAccAddress("Sender", pld.Sender)
 		tmk.addRowValAddress("Receiver", pld.Receiver)
 		tmk.addRowAmount("Stake", amount.Amount(pld.Stake))
 
-	case pactus.PayloadType_SORTITION_PAYLOAD:
+	case pactus.PayloadType_PAYLOAD_TYPE_SORTITION:
 		pld := trx.Payload.(*pactus.TransactionInfo_Sortition).Sortition
 		tmk.addRowValAddress("Address", pld.Address)
 		tmk.addRowString("Proof", pld.Proof)
 
-	case pactus.PayloadType_UNBOND_PAYLOAD:
+	case pactus.PayloadType_PAYLOAD_TYPE_UNBOND:
 		pld := trx.Payload.(*pactus.TransactionInfo_Unbond).Unbond
 		tmk.addRowValAddress("Validator", pld.Validator)
 
-	case pactus.PayloadType_WITHDRAW_PAYLOAD:
+	case pactus.PayloadType_PAYLOAD_TYPE_WITHDRAW:
 		pld := trx.Payload.(*pactus.TransactionInfo_Withdraw).Withdraw
 		tmk.addRowValAddress("Sender", pld.ValidatorAddress)
 		tmk.addRowAccAddress("Receiver", pld.AccountAddress)
 		tmk.addRowAmount("Amount", amount.Amount(pld.Amount))
 
-	case pactus.PayloadType_UNKNOWN:
+	case pactus.PayloadType_PAYLOAD_TYPE_UNSPECIFIED:
 		tmk.addRowValAddress("error", "unknown payload type")
 	}
 	if trx.PublicKey != "" {
