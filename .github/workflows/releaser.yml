@@ -8,6 +8,7 @@ on:
 jobs:
   ########################################
   build-cli:
+    needs: testing
     runs-on: ubuntu-latest
 
     # Defining outputs for jobs
@@ -53,6 +54,7 @@ jobs:
 
   ########################################
   build-gui-linux:
+    needs: [testing, gui]
     runs-on: ubuntu-latest
 
     outputs:
@@ -95,6 +97,7 @@ jobs:
 
   ########################################
   build-gui-macos:
+    needs: [testing, gui]
     runs-on: macos-13
     env:
       LIB_HOME: /usr/local
@@ -136,6 +139,7 @@ jobs:
 
   ########################################
   build-gui-macos-arm:
+    needs: [testing, gui]
     runs-on: macos-14
     env:
       # In M1 `/usr/local` moved to `/opt/homebrew`.
@@ -180,6 +184,7 @@ jobs:
 
   ########################################
   build-gui-windows:
+    needs: [testing, gui]
     runs-on: windows-latest
 
     outputs:
