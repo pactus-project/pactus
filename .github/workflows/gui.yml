@@ -14,6 +14,8 @@ jobs:
         shell: ${{ matrix.shell }}
     strategy:
       matrix:
+        # Default values for `defaults.run.shell`
+        # https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions#defaultsrunshell
         include:
           - name: ubuntu-latest
             shell: "bash -e {0}"
