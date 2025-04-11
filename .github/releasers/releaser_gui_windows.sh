@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Set –e is used within the Bash to stop execution instantly as a query exits
-# while having a non-zero status.
 set -e
 
 ROOT_DIR="$(pwd)"

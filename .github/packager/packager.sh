@@ -27,3 +27,10 @@ cp -R ${GEN_DIR}/js/* ${PACKAGE_DIR}/js/
 cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/js/
 cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/js/
 replace_in_place "s/{{ VERSION }}/$VERSION/g" "${PACKAGE_DIR}/js/package.json"
+
+echo "== Building pactus-grpc package for Python"
+cp -R ${ROOT_DIR}/.github/packager/python ${PACKAGE_DIR}/python
+cp ${GEN_DIR}/python/* ${PACKAGE_DIR}/python/pactus_grpc
+cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/python/
+cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/python/
+replace_in_place "s/{{ VERSION }}/$VERSION/g" ${PACKAGE_DIR}/python/setup.py
