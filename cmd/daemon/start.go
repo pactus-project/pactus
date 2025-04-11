@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
@@ -28,6 +29,23 @@ func buildStartCmd(parentCmd *cobra.Command) {
 
 	passwordFromFileOpt := startCmd.Flags().String("password-from-file", "",
 		"the file containing the wallet password")
+
+	gRPCOpt := startCmd.Flags().String("grpc", "",
+		"enable gRPC transport, example: localhost:50051")
+
+	gRPCWalletOpt := startCmd.Flags().Bool("grpc-wallet", false, "enable gRPC wallet service")
+
+	zmqBlockInfoOpt := startCmd.Flags().String("zmq-block-info", "",
+		"enable zeromq block info publisher, example: tcp://127.0.0.1:28332")
+
+	zmqTxInfoOpt := startCmd.Flags().String("zmq-tx-info", "",
+		"enable zeromq transaction info publisher, example: tcp://127.0.0.1:28332")
+
+	zmqRawBlockOpt := startCmd.Flags().String("zmq-raw-block", "",
+		"enable zeromq raw block publisher, example: tcp://127.0.0.1:28332")
+
+	zmqRawTxOpt := startCmd.Flags().String("zmq-raw-tx", "",
+		"enable zeromq raw transaction publisher, example: tcp://127.0.0.1:28332")
 
 	startCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
@@ -68,8 +86,17 @@ func buildStartCmd(parentCmd *cobra.Command) {
 
 			return password, true
 		}
+
+		confModifiers := []config.Modifier{
+			config.EnableGRPCTransport(*gRPCOpt, *gRPCWalletOpt),
+			config.EnableZMQBlockInfoPub(*zmqBlockInfoOpt),
+			config.EnableZMQTxInfoPub(*zmqTxInfoOpt),
+			config.EnableZMQRawBlockPub(*zmqRawBlockOpt),
+			config.EnableZMQRawTxPub(*zmqRawTxOpt),
+		}
+
 		node, _, err := cmd.StartNode(
-			workingDir, passwordFetcher)
+			workingDir, passwordFetcher, confModifiers...)
 		cmd.FatalErrorCheck(err)
 
 		cmd.TrapSignal(func() {
