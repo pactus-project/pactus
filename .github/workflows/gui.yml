@@ -26,7 +26,7 @@ jobs:
               ~/go/pkg/mod
               ~/Library/Caches/go-build
           - name: windows-latest
-            shell: msys2 {0}
+            shell: "msys2 {0}"
             cache-path: |
               ~/go/pkg/mod
               ~/.cache/go-build
