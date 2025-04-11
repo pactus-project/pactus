@@ -5,6 +5,12 @@ ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
 endif
 
+# Handle sed differences between macOS and Linux
+ifeq ($(shell uname),Darwin)
+  SED_CMD = sed -i ''
+else
+  SED_CMD = sed -i
+endif
 
 all: build test
 
@@ -57,7 +63,7 @@ docker:
 # This target works only on Unix-like terminals.
 proto:
 	rm -rf www/grpc/gen
-	sed -i 's/{{ VERSION }}/$(VERSION)/g' www/grpc/buf/openapi.config.yaml
+	$(SED_CMD) 's/{{ VERSION }}/$(VERSION)/g' www/grpc/buf/openapi.config.yaml
 	cd www/grpc && buf generate --template ./buf/buf.gen.yaml --config ./buf/buf.yaml ./proto
 
 proto-check:

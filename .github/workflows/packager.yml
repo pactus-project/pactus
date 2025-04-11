@@ -1,0 +1,55 @@
+name: Packager
+
+on:
+  workflow_run:
+    workflows: [Releaser]
+    types: [completed]
+
+jobs:
+  packager:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+
+      - name: Create Packages
+        run: bash ./.github/packager/packager.sh
+
+      - name: Upload packages directory
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: packages
+
+  publish-npm:
+    name: Publish JavaScript 📦 to npm
+    needs: packager
+    runs-on: ubuntu-latest
+
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/pactus-grpc
+    permissions:
+      id-token: write # IMPORTANT: mandatory for trusted publishing
+
+    steps:
+      - name: Download JavaScript Package
+        uses: actions/download-artifact@v4
+        with:
+          name: packages
+          pattern: js/*
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish to npm
+        run: npm publish --access public
+        working-directory: js
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
