@@ -2,8 +2,8 @@ name: Packager
 
 on:
   workflow_run:
-    workflows: [Releaser]
-    types: [completed]
+    workflows: ["Releaser"]
+    types: ["completed"]
 
 jobs:
   packager:

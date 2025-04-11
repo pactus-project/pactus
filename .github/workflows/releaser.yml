@@ -2,8 +2,7 @@ name: Releaser
 
 on:
   push:
-    tags:
-      - v*
+    tags: ["v*"]
 
 jobs:
   ########################################
