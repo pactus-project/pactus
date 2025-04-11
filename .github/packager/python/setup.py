@@ -10,7 +10,8 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/pactus-project/pactus",
     license="MIT",
-    packages=["pactus_grpc"],
+    packages=find_packages(),
+    keywords=["pactus", "blockchain", "grpc"],
     install_requires=[
         "grpcio",
         "protobuf",
