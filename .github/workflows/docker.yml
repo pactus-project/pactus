@@ -2,10 +2,8 @@ name: Building Docker and Push to DockerHub
 
 on:
   push:
-    tags:
-      - v*
-    branches:
-      - main
+    tags: ["v*"]
+    branches: ["main"]
 
 env:
   REGISTRY_IMAGE: pactus/pactus

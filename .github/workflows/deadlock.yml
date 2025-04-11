@@ -1,9 +1,8 @@
-name: Deadlock and data race detection
+name: Deadlock and Data Race Detection
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: ["main"]
 
 jobs:
   data-race:
