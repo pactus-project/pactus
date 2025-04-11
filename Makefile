@@ -57,7 +57,7 @@ docker:
 # This target works only on Unix-like terminals.
 proto:
 	rm -rf www/grpc/gen
-	sed -i 's/{{ VERSION }}/$(VERSION)/g' www/grpc/buf/openapi.config.yaml
+	sed -i '' 's/{{ VERSION }}/$(VERSION)/g' www/grpc/buf/openapi.config.yaml
 	cd www/grpc && buf generate --template ./buf/buf.gen.yaml --config ./buf/buf.yaml ./proto
 
 proto-check:
