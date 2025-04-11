@@ -16,12 +16,12 @@ jobs:
       matrix:
         include:
           - name: ubuntu-latest
-            shell: ""
+            shell: "bash -e {0}"
             cache-path: |
               ~/go/pkg/mod
               ~/.cache/go-build
           - name: macos-latest
-            shell: ""
+            shell: "bash -e {0}"
             cache-path: |
               ~/go/pkg/mod
               ~/Library/Caches/go-build
