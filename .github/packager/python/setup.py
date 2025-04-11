@@ -9,14 +9,16 @@ setup(
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/pactus-project/pactus",
-    packages=find_packages(),
+    license="MIT",
+    packages=["pactus_grpc"],
     install_requires=[
         "grpcio",
         "protobuf",
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
-        "License :: OSI Approved :: MIT License",
+        "Intended Audience :: Developers",
+        "Topic :: Software Development :: Build Tools",
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.6",
