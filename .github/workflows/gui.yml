@@ -8,10 +8,10 @@ on:
 
 jobs:
   build-gui:
-    runs-on: ${{ matrix.os.name }}
+    runs-on: ${{ matrix.name }}
     defaults:
       run:
-        shell: ${{ matrix.os.shell }}
+        shell: ${{ matrix.shell }}
     strategy:
       matrix:
         include:
@@ -41,10 +41,10 @@ jobs:
 
       - uses: actions/cache@v4
         with:
-          path: ${{ matrix.os.cache-path }}
-          key: ${{ matrix.os.name }}-go-${{ hashFiles('**/go.sum') }}
+          path: ${{ matrix.cache-path }}
+          key: ${{ matrix.name }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ matrix.os.name }}-go-
+            ${{ matrix.name }}-go-
 
       - name: Install Dependencies (Linux)
         if: runner.os == 'Linux' && steps.cache.outputs.cache-hit != 'true'
