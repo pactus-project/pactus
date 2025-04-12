@@ -8,6 +8,8 @@ package encoding
 
 import (
 	"bytes"
+	"crypto/rand"
+	"encoding/binary"
 	"io"
 	"reflect"
 	"strings"
@@ -17,7 +19,6 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/exp/rand"
 )
 
 // TestElementEncoding tests encode and decode for various element types.  This
@@ -387,9 +388,12 @@ func TestVarIntError(t *testing.T) {
 }
 
 func TestVarIntRandom(t *testing.T) {
-	randInt1 := uint64(rand.Int63())
+	var randInt1 uint64
+	err := binary.Read(rand.Reader, binary.LittleEndian, &randInt1)
+	require.NoError(t, err)
+
 	var wBuf bytes.Buffer
-	err := WriteVarInt(&wBuf, randInt1)
+	err = WriteVarInt(&wBuf, randInt1)
 	require.NoError(t, err)
 
 	rBuf := bytes.NewReader(wBuf.Bytes())
