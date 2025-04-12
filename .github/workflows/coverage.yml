@@ -1,31 +1,30 @@
-name: Reporting test coverage
+name: Reporting Test Coverage
+permissions:
+  contents: read
 
 on:
   push:
-    branches:
-      - main
-
+    branches: ["main"]
   pull_request:
-    branches:
-      - main
+    branches: ["main"]
 
 jobs:
   coverage:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.23.4'
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.5"
 
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Test with coverage
-      run: go test -gcflags=-l -coverprofile=coverage.txt -covermode=atomic ./...
+      - name: Test with coverage
+        run: go test -gcflags=-l -coverprofile=coverage.txt -covermode=atomic ./...
 
-    - name: Upload coverage report
-      uses: codecov/codecov-action@v5
-      env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v5
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

@@ -1,9 +1,7 @@
-
 ## Description
 
-Briefly describe the changes introduced by this pull request.
+> A clear description of what the pull request does.
 
-## Related issue(s)
+## Related Issue
 
-If this Pull Request is related to an issue, mention it here.
-- Fixes #(issue number)
+Fixes # (issue)
