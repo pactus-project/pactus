@@ -1,4 +1,7 @@
 name: Releaser
+permissions:
+  # https://github.com/softprops/action-gh-release?tab=readme-ov-file#permissions
+  contents: write
 
 on:
   push:

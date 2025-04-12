@@ -1,4 +1,6 @@
 name: Semantic PR
+permissions:
+  pull-requests: read
 
 on:
   pull_request_target:
@@ -7,9 +9,6 @@ on:
       - edited
       - synchronize
       - reopened
-
-permissions:
-  pull-requests: read
 
 jobs:
   main:

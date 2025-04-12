@@ -1,4 +1,6 @@
 name: Lint and Format Check
+permissions:
+  contents: read
 
 on:
   push:

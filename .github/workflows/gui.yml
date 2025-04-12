@@ -1,4 +1,6 @@
 name: Build and Test GUI
+permissions:
+  contents: read
 
 on:
   push:
@@ -19,47 +21,32 @@ jobs:
         include:
           - name: ubuntu-latest
             shell: "bash -e {0}"
-            cache-path: |
-              ~/go/pkg/mod
-              ~/.cache/go-build
           - name: macos-latest
             shell: "bash -e {0}"
-            cache-path: |
-              ~/go/pkg/mod
-              ~/Library/Caches/go-build
           - name: windows-latest
             shell: "msys2 {0}"
-            cache-path: |
-              ~/go/pkg/mod
-              ~/.cache/go-build
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Go
+      - name: Setup Go for macOS and Linux
+        if: runner.os != 'Windows'
         uses: actions/setup-go@v5
         with:
           go-version: "1.23.5"
 
-      - uses: actions/cache@v4
-        with:
-          path: ${{ matrix.cache-path }}
-          key: ${{ matrix.name }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ matrix.name }}-go-
-
       - name: Install Dependencies (Linux)
-        if: runner.os == 'Linux' && steps.cache.outputs.cache-hit != 'true'
+        if: runner.os == 'Linux'
         run: |
           sudo apt update
           sudo apt install -y libgtk-3-dev libcairo2-dev libglib2.0-dev
 
       - name: Install Dependencies (macOS)
-        if: runner.os == 'macOS' && steps.cache.outputs.cache-hit != 'true'
+        if: runner.os == 'macOS'
         run: brew install gtk+3
 
       - name: Setup MSYS2 and Dependencies (Windows)
-        if: runner.os == 'Windows' && steps.cache.outputs.cache-hit != 'true'
+        if: runner.os == 'Windows'
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -74,9 +61,30 @@ jobs:
             mingw-w64-x86_64-pkg-config
 
       - name: Patch pkgconfig (Windows)
-        if: runner.os == 'Windows' && steps.cache.outputs.cache-hit != 'true'
+        if: runner.os == 'Windows'
         run: |
           sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
+
+      #######################################################
+      ## Caching Go modules and GTK dependencies
+
+      - name: Get Go environment
+        id: go-env
+        run: |
+          echo "cache=$(go env GOCACHE)" >> $GITHUB_ENV
+          echo "modcache=$(go env GOMODCACHE)" >> $GITHUB_ENV
+          echo "lintcache=$HOME/.cache/golangci-lint" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.cache }}
+            ${{ env.modcache }}
+            ${{ env.lintcache }}
+          key: ${{ matrix.name }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ matrix.name }}-go-
+      #######################################################
 
       - name: Install and Cache GTK
         if: steps.cache.outputs.cache-hit != 'true'

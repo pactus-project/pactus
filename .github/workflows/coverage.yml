@@ -1,4 +1,6 @@
 name: Reporting Test Coverage
+permissions:
+  contents: read
 
 on:
   push:

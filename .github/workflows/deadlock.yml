@@ -1,4 +1,6 @@
 name: Deadlock and Data Race Detection
+permissions:
+  contents: read
 
 on:
   pull_request:
