@@ -14,9 +14,9 @@ Create environment variables for the patch version, which will be used in subseq
 Keep your terminal open for further steps.
 
 ```bash
-PRV_VER="1.7.1"
-CUR_VER="1.7.2"
-NEXT_VER="1.7.3"
+PRV_VER="1.7.2"
+CUR_VER="1.7.3"
+NEXT_VER="1.7.4"
 BASE_BRANCH="1.7.x"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
@@ -41,9 +41,9 @@ Create a new PR against the patch branch:
 
 ```bash
 git checkout -b bumping_${CUR_VER}
-git commit -a -m "chore: bumping version to ${CUR_VER}"
+git commit -a -m "chore(version): bumping version to ${CUR_VER}"
 git push origin HEAD
-gh pr create --title "chore: bumping version to ${CUR_VER}" --body "Bumping version to ${CUR_VER}" --base ${BASE_BRANCH}
+gh pr create --title "chore(version): bumping version to ${CUR_VER}" --body "Bumping version to ${CUR_VER}" --base ${BASE_BRANCH}
 ```
 
 As an example check this [Pull Request](https://github.com/pactus-project/pactus/pull/1367).
