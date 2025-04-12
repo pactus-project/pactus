@@ -17,9 +17,15 @@ PACKAGE_DIR="${ROOT_DIR}/packages"
 GEN_DIR="${ROOT_DIR}/www/grpc/gen"
 VERSION="$(echo `git -C ${ROOT_DIR} describe --abbrev=0 --tags` | sed 's/^.//')" # "v1.2.3" -> "1.2.3"
 
+if [[ -z "$VERSION" ]]; then
+  echo "❌ Error: Version tag not found."
+  exit 1
+fi
+
+echo "Packing Version:" ${VERSION}
+
 rm -rf ${PACKAGE_DIR}
 mkdir -p ${PACKAGE_DIR}
-
 
 echo "== Building pactus-grpc package for JavaScript"
 cp -R ${ROOT_DIR}/.github/packager/js ${PACKAGE_DIR}/js

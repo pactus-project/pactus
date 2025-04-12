@@ -11,12 +11,14 @@ on:
 jobs:
   packager:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      contains(github.event.workflow_run.head_branch, 'refs/tags/')
 
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-tags: true
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Create Packages
         run: bash ./.github/packager/packager.sh
