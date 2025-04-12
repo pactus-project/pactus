@@ -1,13 +1,12 @@
-name: Lint and format check
+name: Lint and Format Check
+permissions:
+  contents: read
 
 on:
   push:
-    branches:
-      - main
-
+    branches: ["main"]
   pull_request:
-    branches:
-      - main
+    branches: ["main"]
 
 jobs:
   linting:
