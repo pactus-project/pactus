@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.2](https://github.com/pactus-project/pactus/compare/v1.7.1...v1.7.2) (2025-04-12)
+
+### Feat
+
+- **other**: add packager ([#1738](https://github.com/pactus-project/pactus/pull/1738))
+
 ## [1.7.1](https://github.com/pactus-project/pactus/compare/v1.7.0...v1.7.1) (2025-02-09)
 
 ### Fix
