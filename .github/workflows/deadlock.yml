@@ -1,31 +1,32 @@
-name: Deadlock and data race detection
+name: Deadlock and Data Race Detection
+permissions:
+  contents: read
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: ["main"]
 
 jobs:
   data-race:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.23.4'
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.5"
 
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Test with data race detection
-      run: make test_race
+      - name: Test with data race detection
+        run: make test_race
 
-    - name: Replace sync.RWMutex with deadlock.RWMutex
-      run: find . -type f -name "*.go" -not -path '*/\.*' -exec sed -i -- 's/\t"sync"/\tsync "github.com\/sasha-s\/go-deadlock"/g' {} +
+      - name: Replace sync.RWMutex with deadlock.RWMutex
+        run: find . -type f -name "*.go" -not -path '*/\.*' -exec sed -i -- 's/\t"sync"/\tsync "github.com\/sasha-s\/go-deadlock"/g' {} +
 
-    - name: Adding go-deadlock package
-      run: go get github.com/sasha-s/go-deadlock
+      - name: Adding go-deadlock package
+        run: go get github.com/sasha-s/go-deadlock
 
-    - name: Test with deadlock detection
-      run: make test
+      - name: Test with deadlock detection
+        run: make test

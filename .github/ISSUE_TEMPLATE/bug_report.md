@@ -1,8 +1,11 @@
 ---
 name: Bug report
 about: If you find an issue, please let us know.
-title: ''
-labels: ''
+title: '[BUG]: '
+labels: '["bug"]'
+type: 'Bug'
+assignees: ''
+
 ---
 
 <!--
@@ -18,7 +21,12 @@ Your additional work here is greatly appreciated and will help us respond as qui
 
 ### How To Reproduce
 
-> Detail the steps taken to reproduce this error, and whether this issue can be reproduced consistently or if it is intermittent.
+> Detail the steps taken to reproduce this error, and
+> whether this issue can be reproduced consistently or if it is intermittent.
+
+1. Step 1
+2. Step 2
+3. Step 3
 
 ### What Happened
 
@@ -30,7 +38,7 @@ Your additional work here is greatly appreciated and will help us respond as qui
 
 ### Extra
 
-> any extra information you think is relevant to issue
+> Any extra information you think is relevant to issue
 
 ### Environment
 
