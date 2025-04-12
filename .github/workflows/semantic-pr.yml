@@ -68,5 +68,3 @@ jobs:
           subjectPattern: ^(?![A-Z]).+[^.]$
           subjectPatternError: |
             The subject "{subject}" cannot start with an uppercase character or end with a period.
-
-
