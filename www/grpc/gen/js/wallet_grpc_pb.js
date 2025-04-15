@@ -1,7 +1,7 @@
 // GENERATED CODE -- DO NOT EDIT!
 
 'use strict';
-var grpc = require('grpc');
+var grpc = require('@grpc/grpc-js');
 var wallet_pb = require('./wallet_pb.js');
 
 function serialize_pactus_CreateWalletRequest(arg) {
