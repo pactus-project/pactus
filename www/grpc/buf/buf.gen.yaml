@@ -38,6 +38,7 @@ plugins:
     out: ../gen/js
     opt:
       - import_style=commonjs
+      - grpc_js
   - plugin: buf.build/protocolbuffers/dart:v20.0.1
     out: ../gen/dart
   - plugin: buf.build/protocolbuffers/java:v21.8
