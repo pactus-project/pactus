@@ -226,7 +226,7 @@
   # `origins` specifies the allowed CORS origins for the JSON-RPC server.
   # This is used to control which domains can make requests to the JSON-RPC API from a browser.
   # Only the specified origins will be allowed. If not set or left empty, CORS is disabled by default.
-  # Example: origins = ["example.com", "localhost:8545"]
+  # Example: origins = ["wallet.pactus.org"]
   origins = []
 
 # `http` configuration.
