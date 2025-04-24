@@ -150,6 +150,7 @@ func DefaultConfigMainnet() *Config {
 	conf.GRPC.Gateway.Listen = "127.0.0.1:8080"
 	conf.JSONRPC.Enable = false
 	conf.JSONRPC.Listen = "127.0.0.1:8545"
+	conf.JSONRPC.Origins = []string{}
 	conf.HTTP.Enable = false
 	conf.HTTP.Listen = "127.0.0.1:80"
 	conf.HTTP.EnablePprof = false
@@ -184,6 +185,7 @@ func DefaultConfigTestnet() *Config {
 	conf.GRPC.Gateway.Listen = "[::]:8080"
 	conf.JSONRPC.Enable = false
 	conf.JSONRPC.Listen = "127.0.0.1:8545"
+	conf.JSONRPC.Origins = []string{}
 	conf.HTTP.Enable = false
 	conf.HTTP.Listen = "[::]:80"
 	conf.HTTP.EnablePprof = false
@@ -210,6 +212,7 @@ func DefaultConfigLocalnet() *Config {
 	conf.GRPC.Gateway.Listen = "[::]:8080"
 	conf.JSONRPC.Enable = true
 	conf.JSONRPC.Listen = "127.0.0.1:8545"
+	conf.JSONRPC.Origins = []string{"*"}
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "[::]:0"
 	conf.HTTP.EnablePprof = true

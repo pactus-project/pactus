@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pacviewer/jrpc-gateway/jrpc"
+	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -60,7 +61,17 @@ func (s *Server) StartServer(grpcServer string) error {
 	walletService := pactus.RegisterWalletJsonRPC(grpcConn)
 	utilsService := pactus.RegisterUtilsJsonRPC(grpcConn)
 
-	server := jrpc.NewServer()
+	opts := make([]jrpc.Option, 0)
+	if len(s.config.Origins) > 0 {
+		opts = append(opts, jrpc.WithCorsOrigins(&cors.Options{
+			AllowedOrigins:   s.config.Origins,
+			AllowedMethods:   []string{"POST"},
+			AllowedHeaders:   []string{"*"},
+			AllowCredentials: true,
+		}))
+	}
+
+	server := jrpc.NewServer(opts...)
 	server.RegisterServices(blockchainService, networkService, transactionService, walletService, utilsService)
 
 	listener, err := net.Listen("tcp", s.config.Listen)
