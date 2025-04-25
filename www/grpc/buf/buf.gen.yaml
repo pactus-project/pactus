@@ -39,6 +39,11 @@ plugins:
     opt:
       - import_style=commonjs
       - grpc_js
+  - plugin: buf.build/grpc/web:v1.5.0
+    out: ../gen/js
+    opt:
+      - import_style=commonjs
+      - mode=grpcweb
   - plugin: buf.build/protocolbuffers/dart:v20.0.1
     out: ../gen/dart
   - plugin: buf.build/protocolbuffers/java:v21.8
