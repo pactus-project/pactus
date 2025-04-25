@@ -41,7 +41,7 @@ Update the buf plugins in [buf.gen.yaml](../www/grpc/buf/buf.gen.yaml) to their 
 
 ### Packager Dependencies
 
-When updating Buf dependencies, ensure that the **Runtime dependencies** align with the dependencies
+When updating Buf plugins, ensure that the **Runtime dependencies** align with the dependencies
 defined in the packages within the [packager](../.github/packager/) folder.
 
 ## Example Pull Request
