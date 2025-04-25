@@ -27,10 +27,11 @@ require (
 	github.com/libp2p/go-libp2p-pubsub v0.12.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/multiformats/go-multiaddr v0.14.0
-	github.com/pacviewer/jrpc-gateway v0.5.1
+	github.com/pacviewer/jrpc-gateway v0.6.0
 	github.com/pelletier/go-toml/v2 v2.2.3
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.20.5
+	github.com/rs/cors v1.11.1
 	github.com/rs/zerolog v1.33.0
 	github.com/schollz/progressbar/v3 v3.18.0
 	github.com/spf13/cobra v1.8.1
