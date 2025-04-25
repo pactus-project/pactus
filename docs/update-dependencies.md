@@ -39,6 +39,11 @@ You can find the latest versions by searching for the action name on GitHub.
 We use [buf](https://buf.build/explore) to generate code from proto files.
 Update the buf plugins in [buf.gen.yaml](../www/grpc/buf/buf.gen.yaml) to their latest versions.
 
+### Packager Dependencies
+
+When updating Buf dependencies, ensure that the **Runtime dependencies** align with the dependencies
+defined in the packages within the [packager](../.github/packager/) folder.
+
 ## Example Pull Request
 
 For reference, see this example pull request for updates and commit format:
