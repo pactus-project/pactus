@@ -2,34 +2,25 @@
   "name": "pactus-grpc",
   "version": "{{ VERSION }}",
   "description": "Pactus gRPC client for JavaScript",
+  "author": "Pactus Development Team",
+  "license": "MIT",
+  "homepage": "https://github.com/pactus-project/pactus#readme",
   "main": "index.js",
-  "types": "index.d.ts",
-  "files": [
-    "**/*.js",
-    "**/*.d.ts",
-    "LICENSE",
-    "README.md"
-  ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pactus-project/pactus.git"
   },
-  "keywords": [
-    "pactus",
-    "grpc",
-    "blockchain"
-  ],
-  "author": "Pactus Developers",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/pactus-project/pactus/issues"
   },
-  "homepage": "https://github.com/pactus-project/pactus#readme",
+  "keywords": [
+    "pactus",
+    "blockchain",
+    "grpc"
+  ],
   "dependencies": {
-    "@grpc/grpc-js": "^1.8.0",
-    "google-protobuf": "^3.21.0"
+    "@grpc/grpc-js": "^1.12",
+    "grpc-web": "^1.5",
+    "google-protobuf": "^3.21"
   }
-} 
+}
