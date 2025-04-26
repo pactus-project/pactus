@@ -1,6 +1,7 @@
 package network
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -25,7 +26,7 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 	t.Helper()
 
 	log := logger.NewSubLogger("_network", nil)
-	net, err := makeNetwork(conf, log, opts)
+	net, err := makeNetwork(context.TODO(), conf, log, opts)
 	require.NoError(t, err)
 
 	log.SetObj(testsuite.NewOverrideStringer(
@@ -107,7 +108,7 @@ func readData(t *testing.T, r io.ReadCloser, length int) []byte {
 }
 
 func TestStoppingNetwork(t *testing.T) {
-	net, err := NewNetwork(testConfig())
+	net, err := NewNetwork(context.TODO(), testConfig())
 	assert.NoError(t, err)
 
 	assert.NoError(t, net.Start())
@@ -418,7 +419,7 @@ func TestNetwork(t *testing.T) {
 
 func TestHostAddrs(t *testing.T) {
 	conf := testConfig()
-	net, err := NewNetwork(conf)
+	net, err := NewNetwork(context.TODO(), conf)
 	assert.NoError(t, err)
 
 	addrs := net.HostAddrs()
@@ -428,7 +429,7 @@ func TestHostAddrs(t *testing.T) {
 
 func TestNetworkName(t *testing.T) {
 	conf := testConfig()
-	net, err := NewNetwork(conf)
+	net, err := NewNetwork(context.TODO(), conf)
 	assert.NoError(t, err)
 
 	assert.Equal(t, conf.NetworkName, net.Name())

@@ -1,6 +1,7 @@
 package ntp
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -34,7 +35,7 @@ func setup(t *testing.T) *testData {
 		WithQuerier(querier),
 	}
 
-	checker := NewNtpChecker(opts...)
+	checker := NewNtpChecker(context.TODO(), opts...)
 
 	td := &testData{
 		checker: checker,

@@ -29,6 +29,7 @@ func DefaultConfig() *Config {
 	conf.Levels["_grpc"] = "info"
 	conf.Levels["_nonomsg"] = "info"
 	conf.Levels["_jsonrpc"] = "info"
+	conf.Levels["_rest"] = "info"
 	conf.Levels["_zmq"] = "info"
 	conf.Levels["_firewall"] = "warn"
 

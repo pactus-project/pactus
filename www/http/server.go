@@ -24,16 +24,15 @@ import (
 
 type Server struct {
 	ctx         context.Context
-	cancel      context.CancelFunc
 	config      *Config
-	router      *mux.Router
-	grpcClient  *grpc.ClientConn
-	enableAuth  bool
-	httpServer  *http.Server
+	listener    net.Listener
+	server      *http.Server
+	grpcConn    *grpc.ClientConn
 	blockchain  pactus.BlockchainClient
 	transaction pactus.TransactionClient
 	network     pactus.NetworkClient
-	listener    net.Listener
+	router      *mux.Router
+	enableAuth  bool
 	logger      *logger.SubLogger
 }
 
@@ -43,12 +42,9 @@ func init() {
 	http.DefaultServeMux = http.NewServeMux()
 }
 
-func NewServer(conf *Config, enableAuth bool) *Server {
-	ctx, cancel := context.WithCancel(context.Background())
-
+func NewServer(ctx context.Context, conf *Config, enableAuth bool) *Server {
 	return &Server{
 		ctx:        ctx,
-		cancel:     cancel,
 		config:     conf,
 		enableAuth: enableAuth,
 		logger:     logger.NewSubLogger("_http", nil),
@@ -65,7 +61,7 @@ func (s *Server) StartServer(grpcServer string) error {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithUnaryInterceptor(ret.UnaryClientInterceptor()),
 	)
-	conn, err := grpc.NewClient(
+	grpcConn, err := grpc.NewClient(
 		grpcServer,
 		dialOpts...,
 	)
@@ -73,10 +69,10 @@ func (s *Server) StartServer(grpcServer string) error {
 		return fmt.Errorf("failed to dial server: %w", err)
 	}
 
-	s.grpcClient = conn
-	s.blockchain = pactus.NewBlockchainClient(conn)
-	s.transaction = pactus.NewTransactionClient(conn)
-	s.network = pactus.NewNetworkClient(conn)
+	s.grpcConn = grpcConn
+	s.blockchain = pactus.NewBlockchainClient(grpcConn)
+	s.transaction = pactus.NewTransactionClient(grpcConn)
+	s.network = pactus.NewNetworkClient(grpcConn)
 
 	s.router = mux.NewRouter()
 	s.router.HandleFunc("/", s.RootHandler)
@@ -114,26 +110,17 @@ func (s *Server) StartServer(grpcServer string) error {
 		return err
 	}
 
-	s.logger.Info("http started listening", "address", listener.Addr().String())
 	s.listener = listener
-
-	s.httpServer = &http.Server{
+	s.server = &http.Server{
 		Addr:              listener.Addr().String(),
 		ReadHeaderTimeout: 3 * time.Second,
 	}
 
 	go func() {
-		for {
-			select {
-			case <-s.ctx.Done():
-				return
-
-			default:
-				err := s.httpServer.Serve(listener)
-				if err != nil {
-					s.logger.Error("error on a connection", "error", err)
-				}
-			}
+		s.logger.Info("HTTP server start listening", "address", listener.Addr())
+		err := s.server.Serve(listener)
+		if err != nil {
+			s.logger.Error("error on a connection", "error", err)
 		}
 	}()
 
@@ -141,17 +128,14 @@ func (s *Server) StartServer(grpcServer string) error {
 }
 
 func (s *Server) StopServer() {
-	s.cancel()
-	s.logger.Debug("context closed", "reason", s.ctx.Err())
-
-	if s.httpServer != nil {
-		_ = s.httpServer.Shutdown(s.ctx)
-		_ = s.httpServer.Close()
+	if s.server != nil {
+		_ = s.server.Shutdown(s.ctx)
+		_ = s.server.Close()
 		_ = s.listener.Close()
 	}
 
-	if s.grpcClient != nil {
-		_ = s.grpcClient.Close()
+	if s.grpcConn != nil {
+		_ = s.grpcConn.Close()
 	}
 }
 

@@ -22,11 +22,14 @@ import (
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
+	"github.com/pactus-project/pactus/www/rest"
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/pkg/errors"
 )
 
 type Node struct {
+	ctx        context.Context
+	cancel     func()
 	genesisDoc *genesis.Genesis
 	config     *config.Config
 	state      state.Facade
@@ -38,6 +41,7 @@ type Node struct {
 	http       *http.Server
 	grpc       *grpc.Server
 	jsonrpc    *jsonrpc.Server
+	rest       *rest.Server
 	zeromq     *zmq.Server
 	eventCh    chan any
 }
@@ -45,6 +49,8 @@ type Node struct {
 func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	valKeys []*bls.ValidatorKey, rewardAddrs []crypto.Address,
 ) (*Node, error) {
+	ctx, cancel := context.WithCancel(context.Background())
+
 	// Initialize the logger
 	logger.InitGlobalLogger(conf.Logger)
 
@@ -59,6 +65,8 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 
@@ -66,11 +74,15 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventCh)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 
-	net, err := network.NewNetwork(conf.Network)
+	net, err := network.NewNetwork(ctx, conf.Network)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 
@@ -80,8 +92,10 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	if !store.IsPruned() {
 		conf.Sync.Services.Append(service.FullNode)
 	}
-	syn, err := sync.NewSynchronizer(conf.Sync, valKeys, state, consMgr, net, messageCh)
+	syn, err := sync.NewSynchronizer(ctx, conf.Sync, valKeys, state, consMgr, net, messageCh)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 
@@ -92,14 +106,19 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	zeromqServer, err := zmq.New(context.TODO(), conf.ZeroMq, eventCh)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 
-	grpcServer := grpc.NewServer(conf.GRPC, state, syn, net, consMgr, walletMgr, zeromqServer)
-	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
-	jsonrpcServer := jsonrpc.NewServer(conf.JSONRPC)
+	grpcServer := grpc.NewServer(ctx, conf.GRPC, state, syn, net, consMgr, walletMgr, zeromqServer.Publishers())
+	httpServer := http.NewServer(ctx, conf.HTTP, enableHTTPAuth)
+	restServer := rest.NewServer(ctx, conf.Rest)
+	jsonrpcServer := jsonrpc.NewServer(ctx, conf.JSONRPC)
 
 	node := &Node{
+		ctx:        ctx,
+		cancel:     cancel,
 		config:     conf,
 		genesisDoc: genDoc,
 		network:    net,
@@ -111,6 +130,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		http:       httpServer,
 		grpc:       grpcServer,
 		jsonrpc:    jsonrpcServer,
+		rest:       restServer,
 		zeromq:     zeromqServer,
 		eventCh:    eventCh,
 	}
@@ -156,11 +176,20 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start JSON-RPC server")
 	}
 
+	err = n.rest.StartServer(n.grpc.Address())
+	if err != nil {
+		return errors.Wrap(err, "could not start JSON-RPC server")
+	}
+
 	return nil
 }
 
 func (n *Node) Stop() {
 	logger.Info("stopping Node")
+	n.cancel()
+
+	// Wait for one second
+	time.Sleep(1 * time.Second)
 
 	n.network.Stop()
 
@@ -174,6 +203,7 @@ func (n *Node) Stop() {
 	n.grpc.StopServer()
 	n.http.StopServer()
 	n.jsonrpc.StopServer()
+	n.rest.StopServer()
 	n.zeromq.Close()
 
 	close(n.eventCh)

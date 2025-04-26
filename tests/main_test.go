@@ -26,16 +26,15 @@ import (
 )
 
 var (
-	tValKeys     [][]*bls.ValidatorKey
-	tConfigs     []*config.Config
-	tNodes       []*node.Node
-	tGRPCAddress = "127.0.0.1:1337"
-	tGenDoc      *genesis.Genesis
-	tGRPC        *grpc.ClientConn
-	tBlockchain  pactus.BlockchainClient
-	tTransaction pactus.TransactionClient
-	tNetwork     pactus.NetworkClient
-	tCtx         context.Context
+	tValKeys           [][]*bls.ValidatorKey
+	tConfigs           []*config.Config
+	tNodes             []*node.Node
+	tGRPCAddress       = "127.0.0.1:1337"
+	tGenDoc            *genesis.Genesis
+	tBlockchainClient  pactus.BlockchainClient
+	tTransactionClient pactus.TransactionClient
+	tNetwork           pactus.NetworkClient
+	tCtx               context.Context
 )
 
 const (
@@ -161,7 +160,7 @@ func TestMain(m *testing.M) {
 	time.Sleep(10 * time.Second)
 
 	tCtx = context.Background()
-	conn, err := grpc.NewClient(
+	grpcConn, err := grpc.NewClient(
 		tGRPCAddress,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -169,10 +168,9 @@ func TestMain(m *testing.M) {
 		panic(fmt.Errorf("failed to dial server: %w", err))
 	}
 
-	tGRPC = conn
-	tBlockchain = pactus.NewBlockchainClient(conn)
-	tTransaction = pactus.NewTransactionClient(conn)
-	tNetwork = pactus.NewNetworkClient(conn)
+	tBlockchainClient = pactus.NewBlockchainClient(grpcConn)
+	tTransactionClient = pactus.NewTransactionClient(grpcConn)
+	tNetwork = pactus.NewNetworkClient(grpcConn)
 
 	// Wait for some blocks
 	fmt.Println("Waiting to commit some blocks...")

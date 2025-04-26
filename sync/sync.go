@@ -34,7 +34,6 @@ import (
 
 type synchronizer struct {
 	ctx         context.Context
-	cancel      context.CancelFunc
 	config      *Config
 	valKeys     []*bls.ValidatorKey
 	state       state.Facade
@@ -51,6 +50,7 @@ type synchronizer struct {
 }
 
 func NewSynchronizer(
+	ctx context.Context,
 	conf *Config,
 	valKeys []*bls.ValidatorKey,
 	state state.Facade,
@@ -58,10 +58,8 @@ func NewSynchronizer(
 	network network.Network,
 	broadcastCh <-chan message.Message,
 ) (Synchronizer, error) {
-	ctx, cancel := context.WithCancel(context.Background())
 	sync := &synchronizer{
 		ctx:         ctx,
-		cancel:      cancel,
 		config:      conf,
 		valKeys:     valKeys,
 		state:       state,
@@ -69,7 +67,7 @@ func NewSynchronizer(
 		network:     network,
 		broadcastCh: broadcastCh,
 		networkCh:   network.EventChannel(),
-		ntp:         ntp.NewNtpChecker(),
+		ntp:         ntp.NewNtpChecker(ctx),
 	}
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout())
@@ -127,7 +125,6 @@ func (sync *synchronizer) Start() error {
 }
 
 func (sync *synchronizer) Stop() {
-	sync.cancel()
 	sync.ntp.Stop()
 
 	sync.logger.Debug("context closed", "reason", sync.ctx.Err())

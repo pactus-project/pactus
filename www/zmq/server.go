@@ -9,6 +9,7 @@ import (
 )
 
 type Server struct {
+	ctx        context.Context
 	sockets    map[string]zmq4.Socket
 	publishers []Publisher
 	config     *Config
@@ -18,6 +19,7 @@ type Server struct {
 
 func New(ctx context.Context, conf *Config, eventCh <-chan any) (*Server, error) {
 	server := &Server{
+		ctx:        ctx,
 		eventCh:    eventCh,
 		logger:     logger.NewSubLogger("_zmq", nil),
 		publishers: make([]Publisher, 0),
@@ -72,7 +74,7 @@ func New(ctx context.Context, conf *Config, eventCh <-chan any) (*Server, error)
 		return nil, err
 	}
 
-	go server.receivedEventLoop(ctx)
+	go server.receivedEventLoop()
 
 	return server, nil
 }
@@ -89,10 +91,10 @@ func (s *Server) Close() {
 	}
 }
 
-func (s *Server) receivedEventLoop(ctx context.Context) {
+func (s *Server) receivedEventLoop() {
 	for {
 		select {
-		case <-ctx.Done():
+		case <-s.ctx.Done():
 			return
 		case event, ok := <-s.eventCh:
 			if !ok {

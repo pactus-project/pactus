@@ -2,6 +2,7 @@ package sync
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -70,12 +71,8 @@ func setup(t *testing.T, config *Config) *testData {
 	broadcastCh := make(chan message.Message, 1000)
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
 
-	syncInst, err := NewSynchronizer(config,
-		valKeys,
-		mockState,
-		consMgr,
-		mockNetwork,
-		broadcastCh,
+	syncInst, err := NewSynchronizer(context.TODO(), config, valKeys,
+		mockState, consMgr, mockNetwork, broadcastCh,
 	)
 	assert.NoError(t, err)
 	sync := syncInst.(*synchronizer)

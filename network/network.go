@@ -30,7 +30,6 @@ var _ Network = &network{}
 
 type network struct {
 	ctx          context.Context
-	cancel       context.CancelFunc
 	config       *Config
 	host         lp2phost.Host
 	mdns         *mdnsService
@@ -78,13 +77,15 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 	return key, nil
 }
 
-func NewNetwork(conf *Config) (Network, error) {
+func NewNetwork(ctx context.Context, conf *Config) (Network, error) {
 	log := logger.NewSubLogger("_network", nil)
 
-	return makeNetwork(conf, log, []lp2p.Option{})
+	return makeNetwork(ctx, conf, log, []lp2p.Option{})
 }
 
-func makeNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*network, error) {
+func makeNetwork(ctx context.Context, conf *Config,
+	log *logger.SubLogger, opts []lp2p.Option,
+) (*network, error) {
 	self := new(network)
 
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)
@@ -233,10 +234,7 @@ func makeNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netw
 		return nil, LibP2PError{Err: err}
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-
 	self.ctx = ctx
-	self.cancel = cancel
 	self.config = conf
 	self.logger = log
 	self.host = host
@@ -342,9 +340,6 @@ func (n *network) Start() error {
 }
 
 func (n *network) Stop() {
-	n.cancel()
-	n.logger.Debug("context closed", "reason", n.ctx.Err())
-
 	if n.mdns != nil {
 		n.mdns.Stop()
 	}

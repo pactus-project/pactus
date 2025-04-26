@@ -46,11 +46,11 @@ func TestDefaultConfig(t *testing.T) {
 	assert.Zero(t, conf.Network.DefaultPort)
 
 	assert.False(t, conf.GRPC.Enable)
-	assert.False(t, conf.GRPC.Gateway.Enable)
+	assert.False(t, conf.Rest.Enable)
 	assert.False(t, conf.HTTP.Enable)
 
 	assert.Zero(t, conf.GRPC.Listen)
-	assert.Zero(t, conf.GRPC.Gateway.Listen)
+	assert.Zero(t, conf.Rest.Listen)
 	assert.Zero(t, conf.HTTP.Listen)
 }
 
@@ -63,11 +63,11 @@ func TestMainnetConfig(t *testing.T) {
 	assert.Equal(t, 21888, conf.Network.DefaultPort)
 
 	assert.True(t, conf.GRPC.Enable)
-	assert.False(t, conf.GRPC.Gateway.Enable)
+	assert.False(t, conf.Rest.Enable)
 	assert.False(t, conf.HTTP.Enable)
 
 	assert.Equal(t, "127.0.0.1:50051", conf.GRPC.Listen)
-	assert.Equal(t, "127.0.0.1:8080", conf.GRPC.Gateway.Listen)
+	assert.Equal(t, "127.0.0.1:8080", conf.Rest.Listen)
 	assert.Equal(t, "127.0.0.1:80", conf.HTTP.Listen)
 }
 
@@ -80,11 +80,11 @@ func TestTestnetConfig(t *testing.T) {
 	assert.Equal(t, 21777, conf.Network.DefaultPort)
 
 	assert.True(t, conf.GRPC.Enable)
-	assert.True(t, conf.GRPC.Gateway.Enable)
+	assert.True(t, conf.Rest.Enable)
 	assert.False(t, conf.HTTP.Enable)
 
 	assert.Equal(t, "[::]:50052", conf.GRPC.Listen)
-	assert.Equal(t, "[::]:8080", conf.GRPC.Gateway.Listen)
+	assert.Equal(t, "[::]:8080", conf.Rest.Listen)
 	assert.Equal(t, "[::]:80", conf.HTTP.Listen)
 }
 
@@ -97,11 +97,11 @@ func TestLocalnetConfig(t *testing.T) {
 	assert.Equal(t, 0, conf.Network.DefaultPort)
 
 	assert.True(t, conf.GRPC.Enable)
-	assert.True(t, conf.GRPC.Gateway.Enable)
+	assert.True(t, conf.Rest.Enable)
 	assert.True(t, conf.HTTP.Enable)
 
 	assert.Equal(t, "[::]:50052", conf.GRPC.Listen)
-	assert.Equal(t, "[::]:8080", conf.GRPC.Gateway.Listen)
+	assert.Equal(t, "[::]:8080", conf.Rest.Listen)
 	assert.Equal(t, "[::]:0", conf.HTTP.Listen)
 }
 

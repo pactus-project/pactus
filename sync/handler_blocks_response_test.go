@@ -1,6 +1,7 @@
 package sync
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -177,23 +178,13 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
 
-	sync1, err := NewSynchronizer(configAlice,
-		valKeyAlice,
-		stateAlice,
-		consMgrAlice,
-		networkAlice,
-		internalMessageCh,
-	)
+	sync1, err := NewSynchronizer(context.TODO(),
+		configAlice, valKeyAlice, stateAlice, consMgrAlice, networkAlice, internalMessageCh)
 	assert.NoError(t, err)
 	syncAlice := sync1.(*synchronizer)
 
-	sync2, err := NewSynchronizer(configBob,
-		valKeyBob,
-		stateBob,
-		consMgrBob,
-		networkBob,
-		internalMessageCh,
-	)
+	sync2, err := NewSynchronizer(context.TODO(),
+		configBob, valKeyBob, stateBob, consMgrBob, networkBob, internalMessageCh)
 	assert.NoError(t, err)
 	syncBob := sync2.(*synchronizer)
 
