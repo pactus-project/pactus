@@ -93,7 +93,7 @@ func (s *Server) StartServer(grpcAddr string) error {
 		return err
 	}
 
-	gwServer := &http.Server{
+	server := &http.Server{
 		Addr:              s.config.Listen,
 		ReadHeaderTimeout: 3 * time.Second,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -107,18 +107,19 @@ func (s *Server) StartServer(grpcAddr string) error {
 	}
 
 	if s.config.EnableCORS {
-		gwServer.Handler = allowCORS(gwServer.Handler)
+		server.Handler = allowCORS(server.Handler)
 	}
 
 	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}
+	s.server = server
 	s.listener = listener
 
 	go func() {
-		s.logger.Info("Rest-API server started listening", "address", listener.Addr().String())
-		if err := gwServer.Serve(listener); err != nil {
+		s.logger.Info("Rest-API server start listening", "address", listener.Addr().String())
+		if err := server.Serve(listener); err != nil {
 			s.logger.Error("error on grpc-gateway serve", "error", err)
 		}
 	}()

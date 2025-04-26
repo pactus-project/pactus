@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-zeromq/zmq4"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -13,14 +14,14 @@ type Server struct {
 	sockets    map[string]zmq4.Socket
 	publishers []Publisher
 	config     *Config
-	eventCh    <-chan any
+	eventPipe  flume.Pipeline[any]
 	logger     *logger.SubLogger
 }
 
-func New(ctx context.Context, conf *Config, eventCh <-chan any) (*Server, error) {
+func New(ctx context.Context, conf *Config, eventPipe flume.Pipeline[any]) (*Server, error) {
 	server := &Server{
 		ctx:        ctx,
-		eventCh:    eventCh,
+		eventPipe:  eventPipe,
 		logger:     logger.NewSubLogger("_zmq", nil),
 		publishers: make([]Publisher, 0),
 		sockets:    make(map[string]zmq4.Socket),
@@ -74,7 +75,7 @@ func New(ctx context.Context, conf *Config, eventCh <-chan any) (*Server, error)
 		return nil, err
 	}
 
-	go server.receivedEventLoop()
+	server.eventPipe.RegisterReceiver(server.publishEvent)
 
 	return server, nil
 }
@@ -91,26 +92,13 @@ func (s *Server) Close() {
 	}
 }
 
-func (s *Server) receivedEventLoop() {
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
-		case event, ok := <-s.eventCh:
-			if !ok {
-				s.logger.Warn("event channel closed")
-
-				return
-			}
-
-			switch ev := event.(type) {
-			case *block.Block:
-				for _, pub := range s.publishers {
-					pub.onNewBlock(ev)
-				}
-			default:
-				s.logger.Warn("invalid event type")
-			}
+func (s *Server) publishEvent(event any) {
+	switch evt := event.(type) {
+	case *block.Block:
+		for _, pub := range s.publishers {
+			pub.onNewBlock(evt)
 		}
+	default:
+		s.logger.Warn("invalid event type")
 	}
 }

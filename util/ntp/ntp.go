@@ -1,7 +1,6 @@
 package ntp
 
 import (
-	"context"
 	"math"
 	"sync"
 	"time"
@@ -34,12 +33,12 @@ var _pools = []string{
 type Checker struct {
 	lk sync.RWMutex
 
-	ctx       context.Context
 	querier   Querier
 	offset    time.Duration
 	interval  time.Duration
 	threshold time.Duration
 	ticker    *time.Ticker
+	closed    chan bool
 }
 
 // CheckerOption defines the type for functions that configure a Checker.
@@ -71,17 +70,17 @@ func WithThreshold(threshold time.Duration) CheckerOption {
 
 // NewNtpChecker creates a new Checker with the provided options.
 // If no options are provided, it uses default values for interval and threshold.
-func NewNtpChecker(ctx context.Context, opts ...CheckerOption) *Checker {
+func NewNtpChecker(opts ...CheckerOption) *Checker {
 	defaultInterval := time.Minute
 	defaultThreshold := time.Second
 
 	// Initialize the checker with default values.
 	checker := &Checker{
-		ctx:       ctx,
 		interval:  defaultInterval,
 		threshold: defaultThreshold,
 		querier:   RemoteQuerier{},
 		ticker:    time.NewTicker(defaultInterval),
+		closed:    make(chan bool),
 	}
 
 	// Apply provided options to override default values.
@@ -95,7 +94,7 @@ func NewNtpChecker(ctx context.Context, opts ...CheckerOption) *Checker {
 func (c *Checker) Start() {
 	for {
 		select {
-		case <-c.ctx.Done():
+		case <-c.closed:
 			return
 
 		case <-c.ticker.C:
@@ -115,6 +114,7 @@ func (c *Checker) Start() {
 }
 
 func (c *Checker) Stop() {
+	c.closed <- true
 	c.ticker.Stop()
 }
 

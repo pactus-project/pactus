@@ -16,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/txpool"
+	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
@@ -29,7 +30,8 @@ import (
 
 type Node struct {
 	ctx        context.Context
-	cancel     func()
+	cancel     context.CancelFunc
+	flume      *flume.Flume
 	genesisDoc *genesis.Genesis
 	config     *config.Config
 	state      state.Facade
@@ -43,7 +45,6 @@ type Node struct {
 	jsonrpc    *jsonrpc.Server
 	rest       *rest.Server
 	zeromq     *zmq.Server
-	eventCh    chan any
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config,
@@ -60,8 +61,10 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"version", version.NodeVersion().StringWithAlias(),
 		"network", chainType)
 
-	messageCh := make(chan message.Message, 500)
-	eventCh := make(chan any)
+	flumeInst := flume.New(ctx)
+	broadcastPipe := flume.CreatePipeline[message.Message](flumeInst, "Broadcast Pipeline", 100)
+	eventPipe := flume.CreatePipeline[any](flumeInst, "Event Pipeline", 100)
+	networkPipe := flume.CreatePipeline[network.Event](flumeInst, "Network Pipeline", 500)
 
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
@@ -70,29 +73,29 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	txPool := txpool.NewTxPool(conf.TxPool, store, messageCh)
+	txPool := txpool.NewTxPool(conf.TxPool, store, broadcastPipe)
 
-	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventCh)
+	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventPipe)
 	if err != nil {
 		cancel()
 
 		return nil, err
 	}
 
-	net, err := network.NewNetwork(ctx, conf.Network)
+	net, err := network.NewNetwork(ctx, conf.Network, networkPipe)
 	if err != nil {
 		cancel()
 
 		return nil, err
 	}
 
-	consMgr := consensus.NewManager(conf.Consensus, state, valKeys, rewardAddrs, messageCh)
+	consMgr := consensus.NewManager(conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
 	walletMgr := wallet.NewWalletManager(conf.WalletManager)
 
 	if !store.IsPruned() {
 		conf.Sync.Services.Append(service.FullNode)
 	}
-	syn, err := sync.NewSynchronizer(ctx, conf.Sync, valKeys, state, consMgr, net, messageCh)
+	syn, err := sync.NewSynchronizer(conf.Sync, valKeys, state, consMgr, net, broadcastPipe, networkPipe)
 	if err != nil {
 		cancel()
 
@@ -104,7 +107,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		enableHTTPAuth = true
 	}
 
-	zeromqServer, err := zmq.New(context.TODO(), conf.ZeroMq, eventCh)
+	zeromqServer, err := zmq.New(ctx, conf.ZeroMq, eventPipe)
 	if err != nil {
 		cancel()
 
@@ -119,6 +122,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	node := &Node{
 		ctx:        ctx,
 		cancel:     cancel,
+		flume:      flumeInst,
 		config:     conf,
 		genesisDoc: genDoc,
 		network:    net,
@@ -132,7 +136,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		jsonrpc:    jsonrpcServer,
 		rest:       restServer,
 		zeromq:     zeromqServer,
-		eventCh:    eventCh,
 	}
 
 	return node, nil
@@ -205,8 +208,6 @@ func (n *Node) Stop() {
 	n.jsonrpc.StopServer()
 	n.rest.StopServer()
 	n.zeromq.Close()
-
-	close(n.eventCh)
 }
 
 // these methods are using by GUI.

@@ -8,28 +8,29 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2peer "github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
 type streamService struct {
-	ctx        context.Context
-	host       lp2phost.Host
-	protocolID lp2pcore.ProtocolID
-	timeout    time.Duration
-	eventCh    chan Event
-	logger     *logger.SubLogger
+	ctx         context.Context
+	host        lp2phost.Host
+	protocolID  lp2pcore.ProtocolID
+	timeout     time.Duration
+	networkPipe flume.Pipeline[Event]
+	logger      *logger.SubLogger
 }
 
 func newStreamService(ctx context.Context, host lp2phost.Host, conf *Config,
-	protocolID lp2pcore.ProtocolID, eventCh chan Event, log *logger.SubLogger,
+	protocolID lp2pcore.ProtocolID, networkPipe flume.Pipeline[Event], log *logger.SubLogger,
 ) *streamService {
 	service := &streamService{
-		ctx:        ctx,
-		host:       host,
-		protocolID: protocolID,
-		timeout:    conf.StreamTimeout,
-		eventCh:    eventCh,
-		logger:     log,
+		ctx:         ctx,
+		host:        host,
+		protocolID:  protocolID,
+		timeout:     conf.StreamTimeout,
+		networkPipe: networkPipe,
+		logger:      log,
 	}
 
 	service.host.SetStreamHandler(protocolID, service.handleStream)
@@ -50,7 +51,7 @@ func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 		Reader: stream,
 	}
 
-	s.eventCh <- event
+	s.networkPipe.Send(event)
 }
 
 // SendRequest sends a message to a specific peer, assuming there is already a direct connection.

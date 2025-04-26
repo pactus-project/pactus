@@ -13,6 +13,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/linkedlist"
 	"github.com/pactus-project/pactus/util/linkedmap"
 	"github.com/pactus-project/pactus/util/logger"
@@ -25,14 +26,14 @@ type txPool struct {
 	sbx            sandbox.Sandbox
 	pools          map[payload.Type]pool
 	consumptionMap map[crypto.Address]int
-	broadcastCh    chan message.Message
+	messagePipe    flume.Pipeline[message.Message]
 	store          store.Reader
 	logger         *logger.SubLogger
 }
 
 // NewTxPool constructs a new transaction pool with various sub-pools for different transaction types.
 // The transaction pool also maintains a consumption map for tracking byte usage per address.
-func NewTxPool(conf *Config, storeReader store.Reader, broadcastCh chan message.Message) TxPool {
+func NewTxPool(conf *Config, storeReader store.Reader, messagePipe flume.Pipeline[message.Message]) TxPool {
 	pools := make(map[payload.Type]pool)
 	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.fixedFee())
 	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), conf.fixedFee())
@@ -45,7 +46,7 @@ func NewTxPool(conf *Config, storeReader store.Reader, broadcastCh chan message.
 		pools:          pools,
 		consumptionMap: make(map[crypto.Address]int),
 		store:          storeReader,
-		broadcastCh:    broadcastCh,
+		messagePipe:    messagePipe,
 	}
 
 	pool.logger = logger.NewSubLogger("_pool", pool)
@@ -111,7 +112,8 @@ func (p *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	}
 
 	go func(t *tx.Tx) {
-		p.broadcastCh <- message.NewTransactionsMessage([]*tx.Tx{t})
+		msg := message.NewTransactionsMessage([]*tx.Tx{t})
+		p.messagePipe.Send(msg)
 	}(trx)
 
 	return nil

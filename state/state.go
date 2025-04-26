@@ -28,6 +28,7 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/persistentmerkle"
 	"github.com/pactus-project/pactus/util/simplemerkle"
@@ -48,14 +49,15 @@ type state struct {
 	validatorMerkle *persistentmerkle.Tree
 	scoreMgr        *score.Manager
 	logger          *logger.SubLogger
-	eventCh         chan<- any
+	eventPipe       flume.Pipeline[any]
 }
 
 func LoadOrNewState(
 	genDoc *genesis.Genesis,
 	valKeys []*bls.ValidatorKey,
 	store store.Store,
-	txPool txpool.TxPool, eventCh chan<- any,
+	txPool txpool.TxPool,
+	eventPipe flume.Pipeline[any],
 ) (Facade, error) {
 	state := &state{
 		valKeys:         valKeys,
@@ -66,7 +68,7 @@ func LoadOrNewState(
 		lastInfo:        lastinfo.NewLastInfo(),
 		accountMerkle:   persistentmerkle.New(),
 		validatorMerkle: persistentmerkle.New(),
-		eventCh:         eventCh,
+		eventPipe:       eventPipe,
 	}
 	state.logger = logger.NewSubLogger("_state", state)
 	state.store = store
@@ -748,12 +750,5 @@ func (st *state) PruningHeight() uint32 {
 }
 
 func (st *state) publishEvent(msg any) {
-	if st.eventCh == nil {
-		return
-	}
-
-	select {
-	case st.eventCh <- msg:
-	default:
-	}
+	st.eventPipe.Send(msg)
 }

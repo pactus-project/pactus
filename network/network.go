@@ -20,6 +20,7 @@ import (
 	lp2ptcp "github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/version"
 	"github.com/prometheus/client_golang/prometheus"
@@ -29,18 +30,18 @@ import (
 var _ Network = &network{}
 
 type network struct {
-	ctx          context.Context
-	config       *Config
-	host         lp2phost.Host
-	mdns         *mdnsService
-	dht          *dhtService
-	peerMgr      *peerMgr
-	connGater    *ConnectionGater
-	stream       *streamService
-	gossip       *gossipService
-	notifee      *NotifeeService
-	eventChannel chan Event
-	logger       *logger.SubLogger
+	ctx         context.Context
+	config      *Config
+	host        lp2phost.Host
+	mdns        *mdnsService
+	dht         *dhtService
+	peerMgr     *peerMgr
+	connGater   *ConnectionGater
+	stream      *streamService
+	gossip      *gossipService
+	notifee     *NotifeeService
+	networkPipe flume.Pipeline[Event]
+	logger      *logger.SubLogger
 }
 
 func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
@@ -77,14 +78,14 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 	return key, nil
 }
 
-func NewNetwork(ctx context.Context, conf *Config) (Network, error) {
+func NewNetwork(ctx context.Context, conf *Config, networkPipe flume.Pipeline[Event]) (Network, error) {
 	log := logger.NewSubLogger("_network", nil)
 
-	return makeNetwork(ctx, conf, log, []lp2p.Option{})
+	return makeNetwork(ctx, conf, log, networkPipe, []lp2p.Option{})
 }
 
 func makeNetwork(ctx context.Context, conf *Config,
-	log *logger.SubLogger, opts []lp2p.Option,
+	log *logger.SubLogger, networkPipe flume.Pipeline[Event], opts []lp2p.Option,
 ) (*network, error) {
 	self := new(network)
 
@@ -239,7 +240,7 @@ func makeNetwork(ctx context.Context, conf *Config,
 	self.logger = log
 	self.host = host
 	self.connGater = connGater
-	self.eventChannel = make(chan Event, 100)
+	self.networkPipe = networkPipe
 
 	log.SetObj(self)
 
@@ -254,9 +255,9 @@ func makeNetwork(ctx context.Context, conf *Config,
 
 	self.peerMgr = newPeerMgr(ctx, host, conf, self.logger)
 	self.dht = newDHTService(ctx, host, kadProtocolID, conf, self.logger)
-	self.stream = newStreamService(ctx, host, conf, streamProtocolID, self.eventChannel, self.logger)
-	self.gossip = newGossipService(ctx, host, conf, self.eventChannel, self.logger)
-	self.notifee = newNotifeeService(ctx, host, self.eventChannel, self.peerMgr, streamProtocolID, self.logger)
+	self.stream = newStreamService(ctx, host, conf, streamProtocolID, self.networkPipe, self.logger)
+	self.gossip = newGossipService(ctx, host, conf, self.networkPipe, self.logger)
+	self.notifee = newNotifeeService(ctx, host, self.networkPipe, self.peerMgr, streamProtocolID, self.logger)
 
 	self.logger.Info("network setup", "id", self.host.ID(),
 		"name", conf.NetworkName,
@@ -311,10 +312,6 @@ func findRelayPeers(networkGetter func() *network) func(ctx context.Context,
 
 		return r
 	}
-}
-
-func (n *network) EventChannel() <-chan Event {
-	return n.eventChannel
 }
 
 func (n *network) Start() error {

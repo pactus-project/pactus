@@ -9,6 +9,7 @@ import (
 	lp2pps "github.com/libp2p/go-libp2p-pubsub"
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
+	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
 )
 
@@ -23,12 +24,12 @@ type gossipService struct {
 	topicTransaction *lp2pps.Topic
 	topicConsensus   *lp2pps.Topic
 	networkName      string
-	eventCh          chan Event
+	networkPipe      flume.Pipeline[Event]
 	logger           *logger.SubLogger
 }
 
 func newGossipService(ctx context.Context, host lp2phost.Host, conf *Config,
-	eventCh chan Event, log *logger.SubLogger,
+	networkPipe flume.Pipeline[Event], log *logger.SubLogger,
 ) *gossipService {
 	opts := []lp2pps.Option{
 		lp2pps.WithFloodPublish(true),
@@ -65,7 +66,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, conf *Config,
 		host:        host,
 		pubsub:      pubsub,
 		wg:          sync.WaitGroup{},
-		eventCh:     eventCh,
+		networkPipe: networkPipe,
 		logger:      log,
 	}
 }
@@ -265,5 +266,5 @@ func (g *gossipService) onReceiveMessage(msg *GossipMessage) {
 	}
 
 	g.logger.Debug("receiving new gossip message", "from", msg.From)
-	g.eventCh <- msg
+	g.networkPipe.Send(msg)
 }

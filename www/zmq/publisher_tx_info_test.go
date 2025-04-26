@@ -31,8 +31,7 @@ func TestTxInfoPublisher(t *testing.T) {
 	require.NoError(t, err)
 
 	blk, _ := td.TestSuite.GenerateTestBlock(td.RandHeight())
-
-	td.eventCh <- blk
+	td.pipe.Send(blk)
 
 	for i := 0; i < len(blk.Transactions()); i++ {
 		received, err := sub.Recv()

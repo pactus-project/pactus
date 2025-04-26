@@ -31,8 +31,7 @@ func TestBlockInfoPublisher(t *testing.T) {
 	require.NoError(t, err)
 
 	blk, _ := td.TestSuite.GenerateTestBlock(td.RandHeight())
-
-	td.eventCh <- blk
+	td.pipe.Send(blk)
 
 	received, err := sub.Recv()
 	require.NoError(t, err)
