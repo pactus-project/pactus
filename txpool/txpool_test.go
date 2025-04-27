@@ -13,8 +13,8 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -25,7 +25,7 @@ type testData struct {
 
 	pool *txPool
 	sbx  *sandbox.MockSandbox
-	pipe *flume.MockPipeline[message.Message]
+	pipe *pipeline.MockPipeline[message.Message]
 }
 
 func testDefaultConfig() *Config {
@@ -49,7 +49,7 @@ func setup(t *testing.T, cfg *Config) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
-	pipe := flume.MockingPipeline[message.Message]()
+	pipe := pipeline.MockingPipeline[message.Message]()
 	sbx := sandbox.MockingSandbox(ts)
 	config := testDefaultConfig()
 	if cfg != nil {
@@ -82,7 +82,7 @@ func (td *testData) shouldPublishTransaction(t *testing.T, txID tx.ID) {
 
 			return
 
-		case msg := <-td.pipe.Channel():
+		case msg := <-td.pipe.UnsafeGetChannel():
 			logger.Info("shouldPublishTransaction", "msg", msg)
 
 			if msg.Type() == message.TypeTransaction {

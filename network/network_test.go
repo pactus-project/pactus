@@ -70,7 +70,7 @@ func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 
 			return nil
 
-		case e := <-net.Ch:
+		case e := <-net.networkPipe.UnsafeGetChannel():
 			if e.Type() == eventType {
 				return e
 			}
@@ -83,17 +83,12 @@ func shouldNotReceiveEvent(t *testing.T, net *network) {
 
 	timer := time.NewTimer(100 * time.Millisecond)
 
-	received := make(chan Event, 1)
-	net.networkPipe.RegisterReceiver(func(data any) {
-		received <- data.(Event)
-	})
-
 	for {
 		select {
 		case <-timer.C:
 			return
 
-		case <-received:
+		case <-net.networkPipe.UnsafeGetChannel():
 			require.NoError(t, fmt.Errorf("shouldNotReceiveEvent, test: %v id:%s", t.Name(), net.SelfID().String()))
 
 			return
@@ -437,14 +432,6 @@ func TestNetworkName(t *testing.T) {
 	net := makeTestNetwork(t, conf, nil)
 
 	assert.Equal(t, conf.NetworkName, net.Name())
-}
-
-func TestLoadNetworkKey(t *testing.T) {
-	// conf := testConfig()
-	// net, err := NewNetwork(context.TODO(), conf)
-	// assert.NoError(t, err)
-
-	// assert.Equal(t, conf.NetworkName, net.Name())
 }
 
 func TestConnections(t *testing.T) {

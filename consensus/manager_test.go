@@ -162,8 +162,6 @@ func TestMediator(t *testing.T) {
 		ts.RandAccAddress(), ts.RandAccAddress(),
 		ts.RandAccAddress(), ts.RandAccAddress(),
 	}
-	broadcastCh := make(chan message.Message, 500)
-
 	stateHeight := ts.RandHeight()
 	blk, cert := ts.GenerateTestBlock(stateHeight)
 	state.TestStore.SaveBlock(blk, cert)
@@ -174,7 +172,7 @@ func TestMediator(t *testing.T) {
 	mgr.MoveToNewHeight()
 
 	for {
-		msg := <-broadcastCh
+		msg := <-pipe.UnsafeGetChannel()
 		logger.Info("shouldPublishProposal", "msg", msg)
 
 		m, ok := msg.(*message.BlockAnnounceMessage)

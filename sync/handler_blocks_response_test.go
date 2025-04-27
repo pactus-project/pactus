@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -170,18 +171,21 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	stateBob := state.MockingState(ts)
 	consMgrAlice, _ := consensus.MockingManager(ts, stateAlice, valKeyAlice)
 	consMgrBob, _ := consensus.MockingManager(ts, stateBob, valKeyBob)
-	internalMessageCh := make(chan message.Message, 1000)
+	broadcastPipe := pipeline.MockingPipeline[message.Message]()
+	networkPipe := pipeline.MockingPipeline[network.Event]()
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
 
-	sync1, err := NewSynchronizer(configAlice, valKeyAlice, stateAlice, consMgrAlice, networkAlice, internalMessageCh)
+	sync1, err := NewSynchronizer(configAlice, valKeyAlice, stateAlice,
+		consMgrAlice, networkAlice, broadcastPipe, networkPipe)
 	assert.NoError(t, err)
 	syncAlice := sync1.(*synchronizer)
 
-	sync2, err := NewSynchronizer(configBob, valKeyBob, stateBob, consMgrBob, networkBob, internalMessageCh)
+	sync2, err := NewSynchronizer(configBob, valKeyBob, stateBob,
+		consMgrBob, networkBob, broadcastPipe, networkPipe)
 	assert.NoError(t, err)
 	syncBob := sync2.(*synchronizer)
 

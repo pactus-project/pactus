@@ -6,6 +6,7 @@ import (
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 )
 
@@ -20,7 +21,7 @@ type MockNetwork struct {
 	*testsuite.TestSuite
 
 	PublishCh chan PublishData
-	EventCh   chan Event
+	EventPipe pipeline.Pipeline[Event]
 	ID        lp2ppeer.ID
 	OtherNets []*MockNetwork
 }
@@ -29,7 +30,7 @@ func MockingNetwork(ts *testsuite.TestSuite, pid lp2ppeer.ID) *MockNetwork {
 	return &MockNetwork{
 		TestSuite: ts,
 		PublishCh: make(chan PublishData, 100),
-		EventCh:   make(chan Event, 100),
+		EventPipe: pipeline.MockingPipeline[Event](),
 		OtherNets: make([]*MockNetwork, 0),
 		ID:        pid,
 	}
@@ -42,10 +43,6 @@ func (*MockNetwork) Start() error {
 func (*MockNetwork) Stop() {}
 
 func (*MockNetwork) Protect(_ lp2pcore.PeerID, _ string) {}
-
-func (mock *MockNetwork) EventChannel() <-chan Event {
-	return mock.EventCh
-}
 
 func (*MockNetwork) JoinTopic(_ TopicID, _ PropagationEvaluator) error {
 	return nil
@@ -77,14 +74,14 @@ func (mock *MockNetwork) SendToOthers(data []byte, target *lp2ppeer.ID) {
 				From: mock.ID,
 				Data: data,
 			}
-			net.EventCh <- event
+			net.EventPipe.Send(event)
 		} else if net.ID == *target {
 			// direct message
 			event := &StreamMessage{
 				From:   mock.ID,
 				Reader: io.NopCloser(bytes.NewReader(data)),
 			}
-			net.EventCh <- event
+			net.EventPipe.Send(event)
 		}
 	}
 }

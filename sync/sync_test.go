@@ -20,6 +20,7 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
@@ -29,13 +30,12 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	config      *Config
-	state       *state.MockState
-	consMgr     consensus.Manager
-	consMocks   []*consensus.MockConsensus
-	network     *network.MockNetwork
-	sync        *synchronizer
-	broadcastCh chan message.Message
+	config    *Config
+	state     *state.MockState
+	consMgr   consensus.Manager
+	consMocks []*consensus.MockConsensus
+	network   *network.MockNetwork
+	sync      *synchronizer
 }
 
 func testConfig() *Config {
@@ -67,24 +67,22 @@ func setup(t *testing.T, config *Config) *testData {
 	consMgr, consMocks := consensus.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
 	consMgr.MoveToNewHeight()
 
-	broadcastCh := make(chan message.Message, 1000)
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
+	broadcastPipe := pipeline.MockingPipeline[message.Message]()
 
 	syncInst, err := NewSynchronizer(config, valKeys,
-		mockState, consMgr, mockNetwork, broadcastCh,
-	)
+		mockState, consMgr, mockNetwork, broadcastPipe, mockNetwork.EventPipe)
 	assert.NoError(t, err)
 	sync := syncInst.(*synchronizer)
 
 	td := &testData{
-		TestSuite:   ts,
-		config:      config,
-		state:       mockState,
-		consMgr:     consMgr,
-		consMocks:   consMocks,
-		network:     mockNetwork,
-		sync:        sync,
-		broadcastCh: broadcastCh,
+		TestSuite: ts,
+		config:    config,
+		state:     mockState,
+		consMgr:   consMgr,
+		consMocks: consMocks,
+		network:   mockNetwork,
+		sync:      sync,
 	}
 
 	assert.NoError(t, td.sync.Start())
@@ -242,7 +240,7 @@ func TestConnectEvent(t *testing.T) {
 		PeerID:        pid,
 		RemoteAddress: "/ip4/2.2.2.2/tcp/21888",
 	}
-	td.network.EventCh <- ce
+	td.network.EventPipe.Send(ce)
 
 	assert.Eventually(t, func() bool {
 		peer := td.sync.peerSet.GetPeer(pid)
@@ -261,9 +259,10 @@ func TestConnectEvent(t *testing.T) {
 func TestDisconnectEvent(t *testing.T) {
 	td := setup(t, nil)
 	pid := td.RandPeerID()
-	td.network.EventCh <- &network.DisconnectEvent{
+	de := &network.DisconnectEvent{
 		PeerID: pid,
 	}
+	td.network.EventPipe.Send(de)
 
 	assert.Eventually(t, func() bool {
 		s := td.sync.peerSet.GetPeerStatus(pid)
@@ -276,10 +275,11 @@ func TestProtocolsEvent(t *testing.T) {
 	td := setup(t, nil)
 
 	pid := td.RandPeerID()
-	td.network.EventCh <- &network.ProtocolsEvents{
+	pe := &network.ProtocolsEvents{
 		PeerID:    pid,
 		Protocols: []string{"protocol-1"},
 	}
+	td.network.EventPipe.Send(pe)
 	td.shouldPublishMessageWithThisType(t, message.TypeHello)
 }
 

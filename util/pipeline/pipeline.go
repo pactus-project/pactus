@@ -1,13 +1,12 @@
-// Package pipeline provides managed Go channels.
+// Package pipeline provides a high-level abstraction for managing Go channels with
+// built-in lifecycle management, error handling, and receiver callbacks.
 //
-// Pipeline completely encapsulates Go channels internally,
-// exposing only clean Pipeline interfaces to consumers.
-// This design keeps all channel management internal to the system.
-//
-// Key Features:
-// - Designed for long-lived channels shared between separate modules
-// - Automatic lifecycle management via context
-// - Receiving messages through callback functions
+// The pipeline pattern implemented here offers several advantages over raw channels:
+// - Encapsulated channel management with controlled access
+// - Context-aware cancellation and graceful shutdown
+// - Thread-safe operations with proper synchronization
+// - Simplified receiver registration pattern
+// - Built-in logging for debugging and monitoring
 package pipeline
 
 import (
@@ -19,23 +18,31 @@ import (
 
 var _ Pipeline[int] = &pipeline[int]{}
 
-// Pipeline defines the core interface for all pipelines.
+// Pipeline defines the contract for a managed channel pipeline.
 // It provides type-safe channel operations with lifecycle management.
 type Pipeline[T any] interface {
-	// Returns the name of the pipeline
+	// Name returns the identifier for this pipeline instance.
 	Name() string
-	// Closes the pipeline gracefully
+
+	// Close initiates a graceful shutdown of the pipeline.
 	Close()
-	// Checks if pipeline is closed
+
+	// IsClosed reports whether the pipeline has been closed.
 	IsClosed() bool
-	// Sends data through the pipeline
+
+	// Send publishes a message to the pipeline (non-blocking).
 	Send(T)
-	// Registers a receiver callback
+
+	// RegisterReceiver sets the handler function for incoming messages.
 	RegisterReceiver(func(T))
+
+	// UnsafeGetChannel provides direct read access to the underlying channel
+	// WARNING: This bypasses pipeline management and should be used with caution.
+	UnsafeGetChannel() <-chan T
 }
 
-// pipeline is the internal implementation of the Pipeline interface.
-// It manages the channel lifecycle and handles message passing.
+// pipeline implements the Pipeline interface with proper synchronization
+// and lifecycle management.
 type pipeline[T any] struct {
 	sync.RWMutex
 
@@ -56,7 +63,7 @@ type pipeline[T any] struct {
 //
 // Returns:
 //   - A new pipeline instance ready for use
-func New[T any](parentCtx context.Context, name string, bufferSize int) *pipeline[T] {
+func New[T any](parentCtx context.Context, name string, bufferSize int) Pipeline[T] {
 	ctx, cancel := context.WithCancel(parentCtx)
 
 	return &pipeline[T]{
@@ -85,6 +92,7 @@ func (p *pipeline[T]) Send(data T) {
 
 	if closed {
 		logger.Warn("send on closed channel", "name", p.name)
+
 		return
 	}
 
@@ -93,14 +101,14 @@ func (p *pipeline[T]) Send(data T) {
 		err := p.ctx.Err()
 		switch err {
 		case context.Canceled:
-			logger.Debug("pipeline draining, normal shutdown", "name", p.name)
+			logger.Debug("pipeline draining", "name", p.name)
 		case context.DeadlineExceeded:
-			logger.Warn("pipeline timeout, possible stall", "name", p.name)
+			logger.Warn("pipeline timeout", "name", p.name)
 		default:
-			logger.Error("pipeline aborted, unexpected error", "name", p.name, "error", err)
+			logger.Error("pipeline error", "name", p.name, "error", err)
 		}
 	case p.ch <- data:
-		// Data successfully sent
+		// Successful send
 	}
 }
 
@@ -125,6 +133,7 @@ func (p *pipeline[T]) receiveLoop() {
 		case data, ok := <-p.ch:
 			if !ok {
 				logger.Warn("channel is closed", "name", p.name)
+
 				return
 			}
 			// Process received data with the callback
@@ -158,4 +167,13 @@ func (p *pipeline[T]) IsClosed() bool {
 	defer p.RUnlock()
 
 	return p.closed
+}
+
+// UnsafeGetChannel provides direct read access to the underlying channel.
+// WARNING: Bypasses all pipeline safeguards.
+//
+// Returns:
+//   - The underlying receive channel
+func (p *pipeline[T]) UnsafeGetChannel() <-chan T {
+	return p.ch
 }
