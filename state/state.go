@@ -28,9 +28,9 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/persistentmerkle"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/simplemerkle"
 )
 
@@ -49,7 +49,7 @@ type state struct {
 	validatorMerkle *persistentmerkle.Tree
 	scoreMgr        *score.Manager
 	logger          *logger.SubLogger
-	eventPipe       flume.Pipeline[any]
+	eventPipe       pipeline.Pipeline[any]
 }
 
 func LoadOrNewState(
@@ -57,7 +57,7 @@ func LoadOrNewState(
 	valKeys []*bls.ValidatorKey,
 	store store.Store,
 	txPool txpool.TxPool,
-	eventPipe flume.Pipeline[any],
+	eventPipe pipeline.Pipeline[any],
 ) (Facade, error) {
 	state := &state{
 		valKeys:         valKeys,

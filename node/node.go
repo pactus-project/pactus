@@ -16,8 +16,8 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/txpool"
-	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/www/grpc"
@@ -29,22 +29,24 @@ import (
 )
 
 type Node struct {
-	ctx        context.Context
-	cancel     context.CancelFunc
-	flume      *flume.Flume
-	genesisDoc *genesis.Genesis
-	config     *config.Config
-	state      state.Facade
-	store      store.Store
-	txPool     txpool.TxPool
-	consMgr    consensus.Manager
-	network    network.Network
-	sync       sync.Synchronizer
-	http       *http.Server
-	grpc       *grpc.Server
-	jsonrpc    *jsonrpc.Server
-	rest       *rest.Server
-	zeromq     *zmq.Server
+	ctx           context.Context
+	cancel        context.CancelFunc
+	genesisDoc    *genesis.Genesis
+	config        *config.Config
+	state         state.Facade
+	store         store.Store
+	txPool        txpool.TxPool
+	consMgr       consensus.Manager
+	network       network.Network
+	sync          sync.Synchronizer
+	http          *http.Server
+	grpc          *grpc.Server
+	jsonrpc       *jsonrpc.Server
+	rest          *rest.Server
+	zeromq        *zmq.Server
+	broadcastPipe pipeline.Pipeline[message.Message]
+	networkPipe   pipeline.Pipeline[network.Event]
+	eventPipe     pipeline.Pipeline[any]
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config,
@@ -61,10 +63,9 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		"version", version.NodeVersion().StringWithAlias(),
 		"network", chainType)
 
-	flumeInst := flume.New(ctx)
-	broadcastPipe := flume.CreatePipeline[message.Message](flumeInst, "Broadcast Pipeline", 100)
-	eventPipe := flume.CreatePipeline[any](flumeInst, "Event Pipeline", 100)
-	networkPipe := flume.CreatePipeline[network.Event](flumeInst, "Network Pipeline", 500)
+	broadcastPipe := pipeline.New[message.Message](ctx, "Broadcast Pipeline", 100)
+	networkPipe := pipeline.New[network.Event](ctx, "Network Pipeline", 500)
+	eventPipe := pipeline.New[any](ctx, "Event Pipeline", 100)
 
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
@@ -120,22 +121,24 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	jsonrpcServer := jsonrpc.NewServer(ctx, conf.JSONRPC)
 
 	node := &Node{
-		ctx:        ctx,
-		cancel:     cancel,
-		flume:      flumeInst,
-		config:     conf,
-		genesisDoc: genDoc,
-		network:    net,
-		state:      state,
-		txPool:     txPool,
-		consMgr:    consMgr,
-		sync:       syn,
-		store:      store,
-		http:       httpServer,
-		grpc:       grpcServer,
-		jsonrpc:    jsonrpcServer,
-		rest:       restServer,
-		zeromq:     zeromqServer,
+		ctx:           ctx,
+		cancel:        cancel,
+		config:        conf,
+		genesisDoc:    genDoc,
+		network:       net,
+		state:         state,
+		txPool:        txPool,
+		consMgr:       consMgr,
+		sync:          syn,
+		store:         store,
+		http:          httpServer,
+		grpc:          grpcServer,
+		jsonrpc:       jsonrpcServer,
+		rest:          restServer,
+		zeromq:        zeromqServer,
+		broadcastPipe: broadcastPipe,
+		networkPipe:   networkPipe,
+		eventPipe:     eventPipe,
 	}
 
 	return node, nil
@@ -190,6 +193,9 @@ func (n *Node) Start() error {
 func (n *Node) Stop() {
 	logger.Info("stopping Node")
 	n.cancel()
+	n.broadcastPipe.Close()
+	n.networkPipe.Close()
+	n.eventPipe.Close()
 
 	// Wait for one second
 	time.Sleep(1 * time.Second)

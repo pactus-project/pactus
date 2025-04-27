@@ -12,8 +12,8 @@ import (
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	lp2pproto "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/proto"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -26,7 +26,7 @@ func alwaysPropagate(_ *GossipMessage) PropagationPolicy {
 func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 	t.Helper()
 
-	pipe := flume.MockingPipeline()
+	pipe := pipeline.MockingPipeline[Event]()
 	log := logger.NewSubLogger("_network", nil)
 	net, err := makeNetwork(context.TODO(), conf, log, pipe, opts)
 	require.NoError(t, err)

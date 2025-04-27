@@ -5,8 +5,8 @@ import (
 
 	"github.com/go-zeromq/zmq4"
 	"github.com/pactus-project/pactus/types/block"
-	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 type Server struct {
@@ -14,11 +14,11 @@ type Server struct {
 	sockets    map[string]zmq4.Socket
 	publishers []Publisher
 	config     *Config
-	eventPipe  flume.Pipeline[any]
+	eventPipe  pipeline.Pipeline[any]
 	logger     *logger.SubLogger
 }
 
-func New(ctx context.Context, conf *Config, eventPipe flume.Pipeline[any]) (*Server, error) {
+func New(ctx context.Context, conf *Config, eventPipe pipeline.Pipeline[any]) (*Server, error) {
 	server := &Server{
 		ctx:        ctx,
 		eventPipe:  eventPipe,

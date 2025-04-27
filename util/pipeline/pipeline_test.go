@@ -1,4 +1,4 @@
-package flume
+package pipeline
 
 import (
 	"context"
@@ -9,12 +9,12 @@ import (
 )
 
 func TestGetName(t *testing.T) {
-	p := NewPipeline[int](context.TODO(), "test", 10)
+	p := New[int](context.TODO(), "test", 10)
 	assert.Equal(t, "test", p.Name())
 }
 
 func TestClosePipeline(t *testing.T) {
-	p := NewPipeline[int](context.TODO(), "test", 10)
+	p := New[int](context.TODO(), "test", 10)
 
 	p.RegisterReceiver(func(a int) {
 		time.Sleep(time.Duration(a) * time.Millisecond)
@@ -31,7 +31,7 @@ func TestClosePipeline(t *testing.T) {
 }
 
 func TestSendReceive(t *testing.T) {
-	p := NewPipeline[float64](context.TODO(), "test", 10)
+	p := New[float64](context.TODO(), "test", 10)
 
 	received := make(chan float64, 1)
 	receiver := func(data float64) {
@@ -52,7 +52,7 @@ func TestSendReceive(t *testing.T) {
 
 // TestSendAfterClose verifies error handling
 func TestSendAfterClose(t *testing.T) {
-	p := NewPipeline[string](context.TODO(), "test", 10)
+	p := New[string](context.TODO(), "test", 10)
 
 	// Close the pipeline first
 	p.Close()
@@ -65,7 +65,7 @@ func TestSendAfterClose(t *testing.T) {
 
 func TestContextCancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
-	p := NewPipeline[string](ctx, "test", 10)
+	p := New[string](ctx, "test", 10)
 
 	// Cancel the context
 	cancel()

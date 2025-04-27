@@ -13,10 +13,10 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/linkedlist"
 	"github.com/pactus-project/pactus/util/linkedmap"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 type txPool struct {
@@ -26,14 +26,14 @@ type txPool struct {
 	sbx            sandbox.Sandbox
 	pools          map[payload.Type]pool
 	consumptionMap map[crypto.Address]int
-	messagePipe    flume.Pipeline[message.Message]
+	messagePipe    pipeline.Pipeline[message.Message]
 	store          store.Reader
 	logger         *logger.SubLogger
 }
 
 // NewTxPool constructs a new transaction pool with various sub-pools for different transaction types.
 // The transaction pool also maintains a consumption map for tracking byte usage per address.
-func NewTxPool(conf *Config, storeReader store.Reader, messagePipe flume.Pipeline[message.Message]) TxPool {
+func NewTxPool(conf *Config, storeReader store.Reader, messagePipe pipeline.Pipeline[message.Message]) TxPool {
 	pools := make(map[payload.Type]pool)
 	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.fixedFee())
 	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), conf.fixedFee())

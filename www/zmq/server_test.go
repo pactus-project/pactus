@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/state"
-	"github.com/pactus-project/pactus/util/flume"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/require"
 )
@@ -16,7 +16,7 @@ type testData struct {
 
 	mockState *state.MockState
 	server    *Server
-	pipe      flume.Pipeline[any]
+	pipe      pipeline.Pipeline[any]
 }
 
 func setup(t *testing.T, conf *Config) *testData {
@@ -24,7 +24,7 @@ func setup(t *testing.T, conf *Config) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 	mockState := state.MockingState(ts)
-	pipe := flume.MockingPipeline[any]()
+	pipe := pipeline.MockingPipeline[any]()
 	server, err := New(context.TODO(), conf, pipe)
 	require.NoError(t, err)
 

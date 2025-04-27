@@ -20,8 +20,8 @@ import (
 	lp2ptcp "github.com/libp2p/go-libp2p/p2p/transport/tcp"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/version"
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/exp/slices"
@@ -40,7 +40,7 @@ type network struct {
 	stream      *streamService
 	gossip      *gossipService
 	notifee     *NotifeeService
-	networkPipe flume.Pipeline[Event]
+	networkPipe pipeline.Pipeline[Event]
 	logger      *logger.SubLogger
 }
 
@@ -78,14 +78,14 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 	return key, nil
 }
 
-func NewNetwork(ctx context.Context, conf *Config, networkPipe flume.Pipeline[Event]) (Network, error) {
+func NewNetwork(ctx context.Context, conf *Config, networkPipe pipeline.Pipeline[Event]) (Network, error) {
 	log := logger.NewSubLogger("_network", nil)
 
 	return makeNetwork(ctx, conf, log, networkPipe, []lp2p.Option{})
 }
 
 func makeNetwork(ctx context.Context, conf *Config,
-	log *logger.SubLogger, networkPipe flume.Pipeline[Event], opts []lp2p.Option,
+	log *logger.SubLogger, networkPipe pipeline.Pipeline[Event], opts []lp2p.Option,
 ) (*network, error) {
 	self := new(network)
 

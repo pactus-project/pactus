@@ -1,8 +1,9 @@
-package flume
+package pipeline
 
 // MockPipeline implements the Pipeline interface for testing
 type MockPipeline[T any] struct {
-	ch chan T
+	ch       chan T
+	receiver func(T)
 }
 
 // MockingPipeline creates a new mock pipeline instance
@@ -17,10 +18,15 @@ func (m *MockPipeline[T]) Name() string {
 }
 
 func (m *MockPipeline[T]) Send(data T) {
-	m.ch <- data
+	if m.receiver != nil {
+		m.receiver(data)
+	} else {
+		m.ch <- data
+	}
 }
 
 func (m *MockPipeline[T]) RegisterReceiver(fn func(T)) {
+	m.receiver = fn
 }
 
 func (m *MockPipeline[T]) Close() {

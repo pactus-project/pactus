@@ -17,8 +17,8 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 type broadcaster func(crypto.Address, message.Message)
@@ -58,7 +58,7 @@ func NewConsensus(
 	bcState state.Facade,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
-	broadcastPipe flume.Pipeline[message.Message],
+	broadcastPipe pipeline.Pipeline[message.Message],
 	mediator mediator,
 ) Consensus {
 	broadcaster := func(_ crypto.Address, msg message.Message) {

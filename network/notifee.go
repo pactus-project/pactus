@@ -9,8 +9,8 @@ import (
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2peventbus "github.com/libp2p/go-libp2p/p2p/host/eventbus"
 	"github.com/multiformats/go-multiaddr"
-	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"golang.org/x/exp/slices"
 )
 
@@ -18,14 +18,14 @@ type NotifeeService struct {
 	ctx              context.Context
 	host             lp2phost.Host
 	lp2pEventSub     lp2pevent.Subscription
-	networkPipe      flume.Pipeline[Event]
+	networkPipe      pipeline.Pipeline[Event]
 	logger           *logger.SubLogger
 	streamProtocolID lp2pcore.ProtocolID
 	peerMgr          *peerMgr
 	reachability     lp2pnetwork.Reachability
 }
 
-func newNotifeeService(ctx context.Context, host lp2phost.Host, networkPipe flume.Pipeline[Event],
+func newNotifeeService(ctx context.Context, host lp2phost.Host, networkPipe pipeline.Pipeline[Event],
 	peerMgr *peerMgr,
 	protocolID lp2pcore.ProtocolID, log *logger.SubLogger,
 ) *NotifeeService {

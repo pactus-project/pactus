@@ -1,7 +1,6 @@
 package consensus
 
 import (
-	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -23,6 +22,7 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -453,8 +453,9 @@ func TestNotInCommittee(t *testing.T) {
 	store := store.MockingStore(td.TestSuite)
 
 	state, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, store, td.txPool, nil)
-	consInt := NewConsensus(testConfig(), state, valKey, valKey.Address(), make(chan message.Message, 100),
-		newConcreteMediator())
+	pipe := pipeline.MockingPipeline[message.Message]()
+	consInt := NewConsensus(testConfig(), state, valKey,
+		valKey.Address(), pipe, newConcreteMediator())
 	cons := consInt.(*consensus)
 
 	td.enterNewHeight(cons)
@@ -756,8 +757,9 @@ func TestNonActiveValidator(t *testing.T) {
 	td := setup(t)
 
 	valKey := td.RandValKey()
+	pipe := pipeline.MockingPipeline[message.Message]()
 	consInt := NewConsensus(testConfig(), state.MockingState(td.TestSuite),
-		valKey, valKey.Address(), make(chan message.Message, 100), newConcreteMediator())
+		valKey, valKey.Address(), pipe, newConcreteMediator())
 	nonActiveCons := consInt.(*consensus)
 
 	t.Run("non-active instances should be in new-height state", func(t *testing.T) {

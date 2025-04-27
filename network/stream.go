@@ -8,8 +8,8 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2peer "github.com/libp2p/go-libp2p/core/peer"
-	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 type streamService struct {
@@ -17,12 +17,12 @@ type streamService struct {
 	host        lp2phost.Host
 	protocolID  lp2pcore.ProtocolID
 	timeout     time.Duration
-	networkPipe flume.Pipeline[Event]
+	networkPipe pipeline.Pipeline[Event]
 	logger      *logger.SubLogger
 }
 
 func newStreamService(ctx context.Context, host lp2phost.Host, conf *Config,
-	protocolID lp2pcore.ProtocolID, networkPipe flume.Pipeline[Event], log *logger.SubLogger,
+	protocolID lp2pcore.ProtocolID, networkPipe pipeline.Pipeline[Event], log *logger.SubLogger,
 ) *streamService {
 	service := &streamService{
 		ctx:         ctx,

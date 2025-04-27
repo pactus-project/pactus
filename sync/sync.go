@@ -19,9 +19,9 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
 	"github.com/pactus-project/pactus/sync/peerset/session"
 	"github.com/pactus-project/pactus/util"
-	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/ntp"
+	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 // IMPORTANT NOTES:
@@ -41,8 +41,8 @@ type synchronizer struct {
 	firewall      *firewall.Firewall
 	cache         *cache.Cache
 	handlers      map[message.Type]messageHandler
-	broadcastPipe flume.Pipeline[message.Message]
-	networkPipe   flume.Pipeline[network.Event]
+	broadcastPipe pipeline.Pipeline[message.Message]
+	networkPipe   pipeline.Pipeline[network.Event]
 	network       network.Network
 	logger        *logger.SubLogger
 	ntp           *ntp.Checker
@@ -54,8 +54,8 @@ func NewSynchronizer(
 	state state.Facade,
 	consMgr consensus.Manager,
 	network network.Network,
-	broadcastPipe flume.Pipeline[message.Message],
-	networkPipe flume.Pipeline[network.Event],
+	broadcastPipe pipeline.Pipeline[message.Message],
+	networkPipe pipeline.Pipeline[network.Event],
 ) (Synchronizer, error) {
 	sync := &synchronizer{
 		config:        conf,

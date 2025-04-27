@@ -7,8 +7,8 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/flume"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"golang.org/x/exp/slices"
 )
 
@@ -31,7 +31,7 @@ func NewManager(
 	state state.Facade,
 	valKeys []*bls.ValidatorKey,
 	rewardAddrs []crypto.Address,
-	broadcastPipe flume.Pipeline[message.Message],
+	broadcastPipe pipeline.Pipeline[message.Message],
 ) Manager {
 	mgr := &manager{
 		instances:         make([]Consensus, len(valKeys)),
