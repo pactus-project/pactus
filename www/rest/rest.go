@@ -93,38 +93,18 @@ func (s *Server) StartServer(grpcAddr string) error {
 		return err
 	}
 
-	// Create a new mux for our REST path
-	restMux := http.NewServeMux()
-
-	// Serve API endpoints under /rest/api
-	restMux.Handle("/rest/api/", http.StripPrefix("/rest/api", gwMux))
-
-	// Serve Swagger UI under /rest/ui
-	restMux.Handle("/rest/ui/", http.StripPrefix("/rest/ui", handler))
-
-	// Redirect /rest to /rest/ui/ for better UX
-	restMux.HandleFunc("/rest", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/rest/ui/", http.StatusFound)
-	})
-
 	server := &http.Server{
 		Addr:              s.config.Listen,
 		ReadHeaderTimeout: 3 * time.Second,
-		Handler:           restMux,
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if strings.HasPrefix(r.URL.Path, "/pactus/") {
+				gwMux.ServeHTTP(w, r)
+
+				return
+			}
+			handler.ServeHTTP(w, r)
+		}),
 	}
-
-	// server := &http.Server{
-	// 	Addr:              s.config.Listen,
-	// 	ReadHeaderTimeout: 3 * time.Second,
-	// 	Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// 		if strings.HasPrefix(r.URL.Path, "/pactus/") {
-	// 			gwMux.ServeHTTP(w, r)
-
-	// 			return
-	// 		}
-	// 		handler.ServeHTTP(w, r)
-	// 	}),
-	// }
 
 	if s.config.EnableCORS {
 		server.Handler = allowCORS(server.Handler)
