@@ -172,7 +172,6 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	consMgrAlice, _ := consensus.MockingManager(ts, stateAlice, valKeyAlice)
 	consMgrBob, _ := consensus.MockingManager(ts, stateBob, valKeyBob)
 	broadcastPipe := pipeline.MockingPipeline[message.Message]()
-	networkPipe := pipeline.MockingPipeline[network.Event]()
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 
@@ -180,12 +179,12 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	networkBob.AddAnotherNetwork(networkAlice)
 
 	sync1, err := NewSynchronizer(configAlice, valKeyAlice, stateAlice,
-		consMgrAlice, networkAlice, broadcastPipe, networkPipe)
+		consMgrAlice, networkAlice, broadcastPipe, networkAlice.EventPipe)
 	assert.NoError(t, err)
 	syncAlice := sync1.(*synchronizer)
 
 	sync2, err := NewSynchronizer(configBob, valKeyBob, stateBob,
-		consMgrBob, networkBob, broadcastPipe, networkPipe)
+		consMgrBob, networkBob, broadcastPipe, networkBob.EventPipe)
 	assert.NoError(t, err)
 	syncBob := sync2.(*synchronizer)
 

@@ -105,7 +105,6 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 
 			return nil
 		case data := <-net.PublishCh:
-			net.SendToOthers(data.Data, data.Target)
 			// Decode message again to check the message type
 			bdl := new(bundle.Bundle)
 			_, err := bdl.Decode(bytes.NewReader(data.Data))
