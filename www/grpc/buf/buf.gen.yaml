@@ -5,6 +5,9 @@ plugins:
     opt: paths=source_relative
   - local: protoc-gen-doc
     out: ./gen/docs
+    opt: ./buf/openrpc.tmpl,openrpc.json
+  - local: protoc-gen-doc
+    out: ./gen/docs
     opt: ./buf/grpc.md.tmpl,grpc.md
   - local: protoc-gen-doc
     out: ./gen/docs
