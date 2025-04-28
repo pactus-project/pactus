@@ -1,0 +1,99 @@
+{
+  "openrpc": "1.2.1",
+  "info": {
+    "title": "Pactus OpenRPC"
+  },
+  "methods": [
+{{ $firstMethod := true }}
+{{ range .Files }}
+  {{ range .Services }}
+    {{ range .Methods }}
+      {{ if not $firstMethod }},{{ end }}
+      {{ $firstMethod = false }}
+      {
+        "name": "{{ .SnakeName }}",
+        "description": "{{ .Description }}",
+        "params": [
+{{- with getMessage .RequestLongType }}
+  {{- $firstParam := true }}
+  {{- range .Fields }}
+    {{ if not $firstParam }},{{ end }}
+    {{ $firstParam = false }}
+          {
+            "name": "{{ .SnakeName }}",
+            "description": "{{ .Description }}",
+            "schema": {{ template "renderFieldSchema" . }}
+          }
+  {{- end }}
+{{- end }}
+        ],
+        "result": {
+          "name": "fields",
+          "schema": {
+            "type": "object",
+            "properties": {
+{{- with getMessage .ResponseLongType }}
+  {{- $firstField := true }}
+  {{- range .Fields }}
+    {{ if not $firstField }},{{ end }}
+    {{ $firstField = false }}
+              "{{ .SnakeName }}": {{ template "renderFieldSchema" . }}
+  {{- end }}
+{{- end }}
+            }
+          }
+        }
+      }
+    {{ end }}
+  {{ end }}
+{{ end }}
+  ]
+}
+
+{{/* --- Helper: renderFieldSchema --- */}}
+{{ define "renderFieldSchema" }}
+{{- if .IsRepeated }}
+{
+  "type": "array",
+  "items": {{ if or (eq .OpenRPCType "string") (eq .OpenRPCType "boolean") (eq .OpenRPCType "integer") (eq .OpenRPCType "number") }}
+{
+  "type": "{{ .OpenRPCType }}"
+}
+{{ else }}
+{
+  "type": "object",
+  "properties": {
+{{- with getMessage .LongType }}
+{{- $firstSubField := true }}
+{{- range .Fields }}
+{{- if not $firstSubField }},{{ end }}
+{{- $firstSubField = false }}
+"{{ .SnakeName }}": {{ template "renderFieldSchema" . }}
+{{- end }}
+{{- end }}
+}
+}
+{{- end }}
+}
+{{- else }}
+{{- if or (eq .OpenRPCType "string") (eq .OpenRPCType "boolean") (eq .OpenRPCType "integer") (eq .OpenRPCType "number") }}
+{
+  "type": "{{ .OpenRPCType }}"
+}
+{{- else }}
+{
+  "type": "object",
+  "properties": {
+{{- with getMessage .LongType }}
+{{- $firstSubField := true }}
+{{- range .Fields }}
+{{- if not $firstSubField }},{{ end }}
+{{- $firstSubField = false }}
+"{{ .SnakeName }}": {{ template "renderFieldSchema" . }}
+{{- end }}
+{{- end }}
+}
+}
+{{- end }}
+{{- end }}
+{{ end }}
