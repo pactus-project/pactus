@@ -129,7 +129,12 @@ func (p *pipeline[T]) receiveLoop() {
 		select {
 		case <-p.ctx.Done():
 			return
-		case data := <-p.ch:
+		case data, ok := <-p.ch:
+			if !ok {
+				logger.Warn("channel is closed", "name", p.name)
+
+				return
+			}
 			// Process received data with the callback
 			p.receiver(data)
 		}
