@@ -140,7 +140,7 @@ func (s *Server) StartServer(grpcAddr string) error {
 	go func() {
 		s.logger.Info("Rest-API server start listening", "address", listener.Addr().String())
 		if err := server.Serve(listener); err != nil {
-			s.logger.Error("error on grpc-gateway serve", "error", err)
+			s.logger.Debug("error on grpc-gateway serve", "error", err)
 		}
 	}()
 

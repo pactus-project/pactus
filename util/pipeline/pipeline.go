@@ -90,7 +90,7 @@ func (p *pipeline[T]) Send(data T) {
 	defer p.RUnlock()
 
 	if p.closed {
-		logger.Warn("send on closed channel", "name", p.name)
+		logger.Debug("send on closed channel", "name", p.name)
 
 		return
 	}

@@ -118,9 +118,8 @@ func (s *Server) StartServer(grpcServer string) error {
 
 	go func() {
 		s.logger.Info("HTTP server start listening", "address", listener.Addr())
-		err := s.server.Serve(listener)
-		if err != nil {
-			s.logger.Error("error on a connection", "error", err)
+		if err := s.server.Serve(listener); err != nil {
+			s.logger.Debug("error on a connection", "error", err)
 		}
 	}()
 

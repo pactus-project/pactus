@@ -99,7 +99,7 @@ func (s *Server) startListening(listener net.Listener) error {
 	go func() {
 		s.logger.Info("gRPC server start listening", "address", listener.Addr())
 		if err := s.server.Serve(listener); err != nil {
-			s.logger.Error("error on grpc serve", "error", err)
+			s.logger.Debug("error on grpc serve", "error", err)
 		}
 	}()
 

@@ -81,7 +81,7 @@ func (s *Server) StartServer(grpcServer string) error {
 	go func() {
 		s.logger.Info("JSON-RPC server start listening", "address", listener.Addr())
 		if err := server.Serve(listener); err != nil {
-			s.logger.Error("error while establishing JSON-RPC connection", "error", err)
+			s.logger.Debug("error while establishing JSON-RPC connection", "error", err)
 		}
 	}()
 

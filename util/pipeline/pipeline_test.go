@@ -92,17 +92,17 @@ func TestDeadlineExceeded(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 0)
 	defer cancel()
 
-	p := New[int](ctx, "error-pipeline", 5)
+	pipe := New[int](ctx, "error-pipeline", 5)
 
 	receiverCalled := make(chan struct{})
-	p.RegisterReceiver(func(data int) {
+	pipe.RegisterReceiver(func(_ int) {
 		close(receiverCalled)
 	})
 
 	// Wait for context to timeout
 	time.Sleep(100 * time.Millisecond)
 
-	p.Send(42)
+	pipe.Send(42)
 
 	// Verify receiver wasn't called
 	select {
@@ -113,20 +113,20 @@ func TestDeadlineExceeded(t *testing.T) {
 	}
 
 	// Verify pipeline is still operational for other cases
-	assert.False(t, p.IsClosed(), "pipeline should not be closed just because send failed")
+	assert.False(t, pipe.IsClosed(), "pipeline should not be closed just because send failed")
 }
 
 func TestUnsafeGetChannel(t *testing.T) {
 	pipe := New[int](context.Background(), "test-pipeline", 5)
 
-	ch := pipe.UnsafeGetChannel()
-	assert.NotNil(t, ch)
+	pipeCh := pipe.UnsafeGetChannel()
+	assert.NotNil(t, pipeCh)
 
 	testValue := 123
 	pipe.Send(testValue)
 
 	select {
-	case val := <-ch:
+	case val := <-pipeCh:
 		assert.Equal(t, testValue, val)
 	case <-time.After(1 * time.Second):
 		t.Fatal("timeout waiting for channel value")
