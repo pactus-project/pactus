@@ -10,6 +10,6 @@ type MockPipeline[T any] struct {
 // MockingPipeline creates a new mock pipeline instance.
 func MockingPipeline[T any]() *MockPipeline[T] {
 	return &MockPipeline[T]{
-		Pipeline: New[T](context.TODO(), "test", 100),
+		Pipeline: New[T](context.Background(), "test", 100),
 	}
 }

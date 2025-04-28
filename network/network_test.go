@@ -28,7 +28,7 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 
 	pipe := pipeline.MockingPipeline[Event]()
 	log := logger.NewSubLogger("_network", nil)
-	net, err := makeNetwork(context.TODO(), conf, log, pipe, opts)
+	net, err := makeNetwork(context.Background(), conf, log, pipe, opts)
 	require.NoError(t, err)
 
 	log.SetObj(testsuite.NewOverrideStringer(

@@ -45,7 +45,7 @@ func setup(t *testing.T) *testData {
 		ChainType:  genesis.Mainnet,
 	}
 	mockState := state.MockingState(ts)
-	gRPCServer := grpc.NewServer(context.TODO(),
+	gRPCServer := grpc.NewServer(context.Background(),
 		grpcConf, mockState,
 		nil, nil, nil,
 		wallet.NewWalletManager(walletMgrConf), nil)

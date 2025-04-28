@@ -9,12 +9,12 @@ import (
 )
 
 func TestGetName(t *testing.T) {
-	pipe := New[int](context.TODO(), "test", 10)
+	pipe := New[int](context.Background(), "test", 10)
 	assert.Equal(t, "test", pipe.Name())
 }
 
 func TestClosePipeline(t *testing.T) {
-	pipe := New[int](context.TODO(), "test", 10)
+	pipe := New[int](context.Background(), "test", 10)
 
 	pipe.RegisterReceiver(func(a int) {
 		time.Sleep(time.Duration(a) * time.Millisecond)
@@ -31,7 +31,7 @@ func TestClosePipeline(t *testing.T) {
 }
 
 func TestSendReceive(t *testing.T) {
-	pipe := New[float64](context.TODO(), "test", 10)
+	pipe := New[float64](context.Background(), "test", 10)
 
 	received := make(chan float64, 1)
 	receiver := func(data float64) {
@@ -52,7 +52,7 @@ func TestSendReceive(t *testing.T) {
 
 // TestSendAfterClose verifies error handling.
 func TestSendAfterClose(t *testing.T) {
-	pipe := New[string](context.TODO(), "test", 10)
+	pipe := New[string](context.Background(), "test", 10)
 
 	// Close the pipeline first
 	pipe.Close()
@@ -76,24 +76,59 @@ func TestContextCancel(t *testing.T) {
 	})
 }
 
-// TestReceiveError simulates error in receiver
-// func TestReceiveError(t *testing.T) {
-// 	p := NewPipeline(context.TODO(), "test", 10)
+func TestClose(t *testing.T) {
+	pipe := New[int](context.Background(), "test-pipeline", 5)
 
-// 	errCh := make(chan error, 1)
-// 	p.OnReceive(func(data any) {
-// 		if data == "error" {
-// 			errCh <- errors.New("mock error")
-// 		}
-// 	})
+	assert.False(t, pipe.IsClosed())
+	pipe.Close()
+	assert.True(t, pipe.IsClosed())
 
-// 	// Trigger error case
-// 	p.Send("error")
+	// Second close should be no-op
+	pipe.Close()
+	assert.True(t, pipe.IsClosed())
+}
 
-// 	select {
-// 	case err := <-errCh:
-// 		assert.EqualError(t, err, "mock error")
-// 	case <-time.After(100 * time.Millisecond):
-// 		t.Fatal("receiver did not process message")
-// 	}
-// }
+func TestDeadlineExceeded(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 0)
+	defer cancel()
+
+	p := New[int](ctx, "error-pipeline", 5)
+
+	receiverCalled := make(chan struct{})
+	p.RegisterReceiver(func(data int) {
+		close(receiverCalled)
+	})
+
+	// Wait for context to timeout
+	time.Sleep(100 * time.Millisecond)
+
+	p.Send(42)
+
+	// Verify receiver wasn't called
+	select {
+	case <-receiverCalled:
+		t.Fatal("receiver should not be called for failed sends")
+	case <-time.After(50 * time.Millisecond):
+		// Expected - no message should be received
+	}
+
+	// Verify pipeline is still operational for other cases
+	assert.False(t, p.IsClosed(), "pipeline should not be closed just because send failed")
+}
+
+func TestUnsafeGetChannel(t *testing.T) {
+	pipe := New[int](context.Background(), "test-pipeline", 5)
+
+	ch := pipe.UnsafeGetChannel()
+	assert.NotNil(t, ch)
+
+	testValue := 123
+	pipe.Send(testValue)
+
+	select {
+	case val := <-ch:
+		assert.Equal(t, testValue, val)
+	case <-time.After(1 * time.Second):
+		t.Fatal("timeout waiting for channel value")
+	}
+}

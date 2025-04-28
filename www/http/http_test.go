@@ -71,13 +71,13 @@ func setup(t *testing.T) *testData {
 		zmq.MockingPublisher("zmq_address", "zmq_topic", 100),
 	}
 
-	gRPCServer := grpc.NewServer(context.TODO(), grpcConf,
+	gRPCServer := grpc.NewServer(context.Background(), grpcConf,
 		mockState, mockSync, mockNet, mockConsMgr,
 		wallet.NewWalletManager(walletMgrConf), zmqPublishers,
 	)
 	assert.NoError(t, gRPCServer.StartServer())
 
-	httpServer := NewServer(context.TODO(), httpConf, false)
+	httpServer := NewServer(context.Background(), httpConf, false)
 	assert.NoError(t, httpServer.StartServer(gRPCServer.Address()))
 
 	return &testData{

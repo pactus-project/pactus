@@ -87,10 +87,9 @@ func (p *pipeline[T]) Name() string {
 //   - data: The data to send through the pipeline
 func (p *pipeline[T]) Send(data T) {
 	p.RLock()
-	closed := p.closed
-	p.RUnlock()
+	defer p.RUnlock()
 
-	if closed {
+	if p.closed {
 		logger.Warn("send on closed channel", "name", p.name)
 
 		return
@@ -130,12 +129,7 @@ func (p *pipeline[T]) receiveLoop() {
 		select {
 		case <-p.ctx.Done():
 			return
-		case data, ok := <-p.ch:
-			if !ok {
-				logger.Warn("channel is closed", "name", p.name)
-
-				return
-			}
+		case data := <-p.ch:
 			// Process received data with the callback
 			p.receiver(data)
 		}

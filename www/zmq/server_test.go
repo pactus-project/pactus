@@ -25,7 +25,7 @@ func setup(t *testing.T, conf *Config) *testData {
 	ts := testsuite.NewTestSuite(t)
 	mockState := state.MockingState(ts)
 	pipe := pipeline.MockingPipeline[any]()
-	server, err := New(context.TODO(), conf, pipe)
+	server, err := New(context.Background(), conf, pipe)
 	require.NoError(t, err)
 
 	return &testData{
