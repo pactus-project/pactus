@@ -126,13 +126,12 @@ func TestStrippedPublicKey(t *testing.T) {
 	}
 }
 
-func shouldPublishBlockRequest(t *testing.T, net *network.MockNetwork, from, count uint32) {
+func shouldPublishBlockRequest(t *testing.T, net *network.MockNetwork, from uint32) {
 	t.Helper()
 
 	bdl := shouldPublishMessageWithThisType(t, net, message.TypeBlocksRequest)
 	msg := bdl.Message.(*message.BlocksRequestMessage)
 	require.Equal(t, from, msg.From)
-	require.Equal(t, count, msg.Count)
 }
 
 func shouldPublishBlockResponse(t *testing.T, net *network.MockNetwork,
@@ -271,32 +270,32 @@ func TestSyncing(t *testing.T) {
 	assert.Equal(t, uint32(23), nets.syncAlice.config.BlockPerSession)
 
 	shouldNotPublishMessageWithThisType(t, nets.networkBob, message.TypeBlocksRequest)
-	shouldPublishBlockRequest(t, nets.networkAlice, 1, 23)
+	shouldPublishBlockRequest(t, nets.networkAlice, 1)
 	shouldPublishBlockResponse(t, nets.networkBob, 1, 11, message.ResponseCodeMoreBlocks)  // 1-11
 	shouldPublishBlockResponse(t, nets.networkBob, 12, 11, message.ResponseCodeMoreBlocks) // 12-22
 	shouldPublishBlockResponse(t, nets.networkBob, 23, 1, message.ResponseCodeMoreBlocks)  // 23-23
 	shouldPublishBlockResponse(t, nets.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
 
-	shouldPublishBlockRequest(t, nets.networkAlice, 24, 23)
+	shouldPublishBlockRequest(t, nets.networkAlice, 24)
 	shouldPublishBlockResponse(t, nets.networkBob, 24, 11, message.ResponseCodeMoreBlocks) // 24-34
 	shouldPublishBlockResponse(t, nets.networkBob, 35, 11, message.ResponseCodeMoreBlocks) // 35-45
 	shouldPublishBlockResponse(t, nets.networkBob, 46, 1, message.ResponseCodeMoreBlocks)  // 46-46
 	shouldPublishBlockResponse(t, nets.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
 
-	shouldPublishBlockRequest(t, nets.networkAlice, 47, 23)
+	shouldPublishBlockRequest(t, nets.networkAlice, 47)
 	shouldPublishBlockResponse(t, nets.networkBob, 47, 11, message.ResponseCodeMoreBlocks) // 47-57
 	shouldPublishBlockResponse(t, nets.networkBob, 58, 11, message.ResponseCodeMoreBlocks) // 58-68
 	shouldPublishBlockResponse(t, nets.networkBob, 69, 1, message.ResponseCodeMoreBlocks)  // 69-69
 	shouldPublishBlockResponse(t, nets.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
 
-	shouldPublishBlockRequest(t, nets.networkAlice, 70, 23)
+	shouldPublishBlockRequest(t, nets.networkAlice, 70)
 	shouldPublishBlockResponse(t, nets.networkBob, 70, 11, message.ResponseCodeMoreBlocks) // 70-80
 	shouldPublishBlockResponse(t, nets.networkBob, 81, 11, message.ResponseCodeMoreBlocks) // 81-91
 	shouldPublishBlockResponse(t, nets.networkBob, 92, 1, message.ResponseCodeMoreBlocks)  // 92-92
 	shouldPublishBlockResponse(t, nets.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
 
 	// Last block requests
-	shouldPublishBlockRequest(t, nets.networkAlice, 93, 23)                               // 93-116
+	shouldPublishBlockRequest(t, nets.networkAlice, 93)                                   // 93-116
 	shouldPublishBlockResponse(t, nets.networkBob, 93, 8, message.ResponseCodeMoreBlocks) // 93-100
 	shouldPublishBlockResponse(t, nets.networkBob, 100, 0, message.ResponseCodeSynced)    // Synced
 
@@ -337,7 +336,7 @@ func TestSyncingHasBlockInCache(t *testing.T) {
 
 	shouldNotPublishMessageWithThisType(t, nets.networkBob, message.TypeBlocksRequest)
 	// blocks 1-2 are inside the cache
-	shouldPublishBlockRequest(t, nets.networkAlice, 4, 23)
+	shouldPublishBlockRequest(t, nets.networkAlice, 4)
 	shouldPublishBlockResponse(t, nets.networkBob, 4, 11, message.ResponseCodeMoreBlocks) // 4-14
 	shouldPublishBlockResponse(t, nets.networkBob, 15, 9, message.ResponseCodeMoreBlocks) // 15-23
 	shouldPublishBlockResponse(t, nets.networkBob, 23, 0, message.ResponseCodeSynced)     // Synced

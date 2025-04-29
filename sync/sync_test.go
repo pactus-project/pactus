@@ -134,7 +134,6 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 			logger.Info("shouldPublishMessageWithThisType", "bundle", bdl, "type", msgType.String())
 
 			return bdl
-
 		}
 	}
 }
