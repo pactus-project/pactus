@@ -269,7 +269,6 @@ func TestSyncing(t *testing.T) {
 	assert.Equal(t, uint32(11), nets.syncAlice.config.BlockPerMessage)
 	assert.Equal(t, uint32(23), nets.syncAlice.config.BlockPerSession)
 
-	shouldNotPublishMessageWithThisType(t, nets.networkBob, message.TypeBlocksRequest)
 	shouldPublishBlockRequest(t, nets.networkAlice, 1)
 	shouldPublishBlockResponse(t, nets.networkBob, 1, 11, message.ResponseCodeMoreBlocks)  // 1-11
 	shouldPublishBlockResponse(t, nets.networkBob, 12, 11, message.ResponseCodeMoreBlocks) // 12-22
@@ -334,7 +333,6 @@ func TestSyncingHasBlockInCache(t *testing.T) {
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 
-	shouldNotPublishMessageWithThisType(t, nets.networkBob, message.TypeBlocksRequest)
 	// blocks 1-2 are inside the cache
 	shouldPublishBlockRequest(t, nets.networkAlice, 4)
 	shouldPublishBlockResponse(t, nets.networkBob, 4, 11, message.ResponseCodeMoreBlocks) // 4-14

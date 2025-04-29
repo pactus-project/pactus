@@ -131,8 +131,7 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 			}
 			// -----------
 
-			require.Equal(t, msgType, bdl.Message.Type(), "not expected %s", msgType)
-			logger.Info("shouldPublishMessageWithThisType", "bundle", bdl, "type", msgType.String())
+			require.Equal(t, msgType, bdl.Message.Type(), "not expected message: %s", msgType)
 
 			return bdl
 		}
@@ -146,7 +145,7 @@ func (td *testData) shouldPublishMessageWithThisType(t *testing.T, msgType messa
 	return shouldPublishMessageWithThisType(t, td.network, msgType)
 }
 
-func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
+func shouldNotPublishAnyMessage(t *testing.T, net *network.MockNetwork) {
 	t.Helper()
 
 	timer := time.NewTimer(3 * time.Millisecond)
@@ -161,15 +160,15 @@ func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
 			bdl := new(bundle.Bundle)
 			_, err := bdl.Decode(bytes.NewReader(data.Data))
 			require.NoError(t, err)
-			assert.NotEqual(t, msgType, bdl.Message.Type(), "not expected %s", msgType)
+			require.Fail(t, "not expected message: %s", bdl.Message.Type())
 		}
 	}
 }
 
-func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, msgType message.Type) {
+func (td *testData) shouldNotPublishAnyMessage(t *testing.T) {
 	t.Helper()
 
-	shouldNotPublishMessageWithThisType(t, td.network, msgType)
+	shouldNotPublishAnyMessage(t, td.network)
 }
 
 func (*testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) {
@@ -296,7 +295,7 @@ func TestDownload(t *testing.T) {
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
 		td.receivingNewMessage(td.sync, baMsg, pid)
 
-		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
+		td.shouldNotPublishAnyMessage(t)
 		td.network.IsClosed(pid)
 	})
 
@@ -308,7 +307,7 @@ func TestDownload(t *testing.T) {
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
 		td.receivingNewMessage(td.sync, baMsg, pid)
 
-		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
+		td.shouldNotPublishAnyMessage(t)
 		td.network.IsClosed(pid)
 	})
 
@@ -357,7 +356,7 @@ func TestBroadcastBlockAnnounce(t *testing.T) {
 		td.sync.cache.AddBlock(blk)
 		td.sync.broadcast(msg)
 
-		td.shouldNotPublishMessageWithThisType(t, message.TypeBlockAnnounce)
+		td.shouldNotPublishAnyMessage(t)
 	})
 }
 
