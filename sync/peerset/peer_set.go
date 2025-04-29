@@ -1,7 +1,6 @@
 package peerset
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
@@ -234,7 +233,6 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, status status.Status) {
 		return
 	}
 
-	fmt.Printf("status %s changed from %s to %s", peer.PeerID, peer.Status, status)
 	peer.Status = status
 
 	if status.IsDisconnected() {
