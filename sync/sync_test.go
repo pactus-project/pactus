@@ -87,6 +87,7 @@ func setup(t *testing.T, config *Config) *testData {
 
 	assert.NoError(t, td.sync.Start())
 	assert.Equal(t, config.Moniker, td.sync.Moniker())
+	assert.Equal(t, config.Services, td.sync.Services())
 
 	logger.Info("setup finished, running the tests", "name", t.Name())
 
@@ -225,34 +226,25 @@ func TestStop(t *testing.T) {
 }
 
 func TestConnectEvent(t *testing.T) {
-	conf := testConfig()
-	conf.Firewall.BannedNets = []string{
-		"84.247.0.0/24",
-		"115.193.0.0/16",
-		"240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/64",
-	}
-
-	td := setup(t, conf)
+	td := setup(t, nil)
 
 	pid := td.RandPeerID()
+	remoteAddr := "/ip4/2.2.2.2/tcp/21888"
 	ce := &network.ConnectEvent{
 		PeerID:        pid,
-		RemoteAddress: "/ip4/2.2.2.2/tcp/21888",
+		RemoteAddress: remoteAddr,
+		Direction:     "Inbound",
 	}
 	td.network.EventPipe.Send(ce)
 
 	assert.Eventually(t, func() bool {
-		peer := td.sync.peerSet.GetPeer(pid)
-		if peer == nil {
-			return false
-		}
-		assert.Equal(t, "/ip4/2.2.2.2/tcp/21888", peer.Address)
-
-		return peer.Status == status.StatusConnected
+		return td.sync.peerSet.HasPeer(pid)
 	}, time.Second, 100*time.Millisecond)
 
 	p1 := td.sync.peerSet.GetPeer(pid)
 	assert.Equal(t, status.StatusConnected, p1.Status)
+	assert.Equal(t, remoteAddr, p1.Address)
+	assert.Equal(t, "Inbound", p1.Direction)
 }
 
 func TestDisconnectEvent(t *testing.T) {

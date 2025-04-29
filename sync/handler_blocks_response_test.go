@@ -175,9 +175,6 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 
-	networkAlice.AddAnotherNetwork(networkBob)
-	networkBob.AddAnotherNetwork(networkAlice)
-
 	sync1, err := NewSynchronizer(configAlice, valKeyAlice, stateAlice,
 		consMgrAlice, networkAlice, broadcastPipe, networkAlice.EventPipe)
 	assert.NoError(t, err)
@@ -202,12 +199,9 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	assert.NoError(t, syncAlice.Start())
 	assert.NoError(t, syncBob.Start())
 
-	// Verify that Hello messages are exchanged between Alice and Bob
-	syncAlice.sayHello(syncBob.SelfID())
-	syncBob.sayHello(syncAlice.SelfID())
-
-	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
-	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
+	// Connect the networks of Alice and Bob to each other
+	networkAlice.AddAnotherNetwork(networkBob)
+	networkBob.AddAnotherNetwork(networkAlice)
 
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeHelloAck)
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHelloAck)

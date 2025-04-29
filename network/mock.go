@@ -53,11 +53,6 @@ func (mock *MockNetwork) SelfID() lp2ppeer.ID {
 }
 
 func (mock *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) {
-	mock.PublishCh <- PublishData{
-		Data:   data,
-		Target: &pid,
-	}
-
 	net, exists := mock.OtherNets[pid]
 	if exists {
 		// direct message
@@ -68,14 +63,14 @@ func (mock *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) {
 
 		net.EventPipe.Send(event)
 	}
+
+	mock.PublishCh <- PublishData{
+		Data:   data,
+		Target: &pid,
+	}
 }
 
 func (mock *MockNetwork) Broadcast(data []byte, _ TopicID) {
-	mock.PublishCh <- PublishData{
-		Data:   data,
-		Target: nil, // Send to all
-	}
-
 	for _, net := range mock.OtherNets {
 		if net.SelfID() == mock.ID {
 			continue
@@ -87,6 +82,11 @@ func (mock *MockNetwork) Broadcast(data []byte, _ TopicID) {
 			Data: data,
 		}
 		net.EventPipe.Send(event)
+	}
+
+	mock.PublishCh <- PublishData{
+		Data:   data,
+		Target: nil, // Send to all
 	}
 }
 
@@ -104,8 +104,17 @@ func (mock *MockNetwork) NumConnectedPeers() int {
 	return len(mock.OtherNets)
 }
 
-func (mock *MockNetwork) AddAnotherNetwork(net *MockNetwork) {
-	mock.OtherNets[net.SelfID()] = net
+func (mock *MockNetwork) AddAnotherNetwork(otherNet *MockNetwork) {
+	otherNet.SelfID()
+	mock.OtherNets[otherNet.SelfID()] = otherNet
+
+	mock.EventPipe.Send(&ConnectEvent{
+		PeerID:        otherNet.SelfID(),
+		RemoteAddress: mock.RandMultiAddress(),
+	})
+	mock.EventPipe.Send(&ProtocolsEvents{
+		PeerID: otherNet.SelfID(),
+	})
 }
 
 func (*MockNetwork) ReachabilityStatus() string {

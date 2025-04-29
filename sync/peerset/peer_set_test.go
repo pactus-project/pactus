@@ -66,6 +66,11 @@ func TestPeerSet(t *testing.T) {
 		assert.True(t, found, "Peer with ID %s not found in the peer list", pid2)
 	})
 
+	t.Run("Testing hasPeer", func(t *testing.T) {
+		assert.True(t, peerSet.HasPeer(pid1))
+		assert.False(t, peerSet.HasPeer(ts.RandPeerID()))
+	})
+
 	t.Run("Testing GetPeer", func(t *testing.T) {
 		p := peerSet.GetPeer(pid2)
 		assert.Equal(t, pid2, p.PeerID)
