@@ -131,7 +131,7 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 			}
 			// -----------
 
-			require.Equal(t, bdl.Message.Type(), msgType, "not expected %s", msgType)
+			require.Equal(t, msgType, bdl.Message.Type(),  "not expected %s", msgType)
 			logger.Info("shouldPublishMessageWithThisType", "bundle", bdl, "type", msgType.String())
 
 			return bdl

@@ -105,7 +105,6 @@ func (mock *MockNetwork) NumConnectedPeers() int {
 }
 
 func (mock *MockNetwork) AddAnotherNetwork(otherNet *MockNetwork) {
-	otherNet.SelfID()
 	mock.OtherNets[otherNet.SelfID()] = otherNet
 
 	mock.EventPipe.Send(&ConnectEvent{

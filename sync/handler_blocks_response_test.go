@@ -206,8 +206,8 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
 
-	shouldPublishMessageWithThisType(t, networkBob, message.TypeHelloAck)
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHelloAck)
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeHelloAck)
 
 	// Ensure Alice and Bob are connected and handshaked
 	require.Eventually(t, func() bool {
