@@ -130,12 +130,11 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 			}
 			// -----------
 
-			if bdl.Message.Type() == msgType {
-				logger.Info("shouldPublishMessageWithThisType",
-					"bundle", bdl, "type", msgType.String())
+			require.Equal(t, bdl.Message.Type(), msgType, "not expected %s", msgType)
+			logger.Info("shouldPublishMessageWithThisType", "bundle", bdl, "type", msgType.String())
 
-				return bdl
-			}
+			return bdl
+
 		}
 	}
 }
@@ -162,8 +161,7 @@ func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
 			bdl := new(bundle.Bundle)
 			_, err := bdl.Decode(bytes.NewReader(b.Data))
 			require.NoError(t, err)
-			assert.NotEqual(t, msgType, bdl.Message.Type(),
-				"not expected %s", msgType)
+			assert.NotEqual(t, msgType, bdl.Message.Type(), "not expected %s", msgType)
 		}
 	}
 }
