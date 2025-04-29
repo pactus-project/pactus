@@ -78,7 +78,9 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) (*bundle.Bundle, 
 func (f *Firewall) IsBannedAddress(remoteAddr string) bool {
 	ip, err := f.getIPFromMultiAddress(remoteAddr)
 	if err != nil {
-		f.logger.Warn("firewall: unable to parse remote address", "error", err, "addr", remoteAddr)
+		// Connect event not yet received from this peer.
+		// Refer to: https://github.com/libp2p/go-libp2p/issues/3074
+		f.logger.Debug("firewall: unable to parse remote address", "error", err, "addr", remoteAddr)
 
 		return false
 	}

@@ -1,6 +1,7 @@
 package network
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -12,6 +13,7 @@ import (
 	lp2pproto "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/proto"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -24,8 +26,9 @@ func alwaysPropagate(_ *GossipMessage) PropagationPolicy {
 func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 	t.Helper()
 
+	pipe := pipeline.MockingPipeline[Event]()
 	log := logger.NewSubLogger("_network", nil)
-	net, err := makeNetwork(conf, log, opts)
+	net, err := makeNetwork(context.Background(), conf, log, pipe, opts)
 	require.NoError(t, err)
 
 	log.SetObj(testsuite.NewOverrideStringer(
@@ -67,7 +70,7 @@ func shouldReceiveEvent(t *testing.T, net *network, eventType EventType) Event {
 
 			return nil
 
-		case e := <-net.EventChannel():
+		case e := <-net.networkPipe.UnsafeGetChannel():
 			if e.Type() == eventType {
 				return e
 			}
@@ -85,7 +88,7 @@ func shouldNotReceiveEvent(t *testing.T, net *network) {
 		case <-timer.C:
 			return
 
-		case <-net.EventChannel():
+		case <-net.networkPipe.UnsafeGetChannel():
 			require.NoError(t, fmt.Errorf("shouldNotReceiveEvent, test: %v id:%s", t.Name(), net.SelfID().String()))
 
 			return
@@ -107,8 +110,7 @@ func readData(t *testing.T, r io.ReadCloser, length int) []byte {
 }
 
 func TestStoppingNetwork(t *testing.T) {
-	net, err := NewNetwork(testConfig())
-	assert.NoError(t, err)
+	net := makeTestNetwork(t, testConfig(), nil)
 
 	assert.NoError(t, net.Start())
 	assert.NoError(t, net.JoinTopic(TopicIDBlock, alwaysPropagate))
@@ -418,8 +420,7 @@ func TestNetwork(t *testing.T) {
 
 func TestHostAddrs(t *testing.T) {
 	conf := testConfig()
-	net, err := NewNetwork(conf)
-	assert.NoError(t, err)
+	net := makeTestNetwork(t, conf, nil)
 
 	addrs := net.HostAddrs()
 	assert.Contains(t, addrs, fmt.Sprintf("/ip4/127.0.0.1/tcp/%d", conf.DefaultPort))
@@ -428,8 +429,7 @@ func TestHostAddrs(t *testing.T) {
 
 func TestNetworkName(t *testing.T) {
 	conf := testConfig()
-	net, err := NewNetwork(conf)
-	assert.NoError(t, err)
+	net := makeTestNetwork(t, conf, nil)
 
 	assert.Equal(t, conf.NetworkName, net.Name())
 }

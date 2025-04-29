@@ -3,11 +3,10 @@ package grpc
 import "github.com/pactus-project/pactus/util/htpasswd"
 
 type Config struct {
-	Enable       bool          `toml:"enable"`
-	EnableWallet bool          `toml:"enable_wallet"`
-	Listen       string        `toml:"listen"`
-	BasicAuth    string        `toml:"basic_auth"`
-	Gateway      GatewayConfig `toml:"gateway"`
+	Enable       bool   `toml:"enable"`
+	EnableWallet bool   `toml:"enable_wallet"`
+	Listen       string `toml:"listen"`
+	BasicAuth    string `toml:"basic_auth"`
 
 	// Private config
 	WalletsDir        string `toml:"-"`
@@ -18,11 +17,6 @@ func DefaultConfig() *Config {
 	return &Config{
 		Enable: false,
 		Listen: "",
-		Gateway: GatewayConfig{
-			Enable:     false,
-			Listen:     "",
-			EnableCORS: false,
-		},
 	}
 }
 

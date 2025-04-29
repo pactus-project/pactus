@@ -175,56 +175,56 @@
     _network = 'error'
     _nonomsg = 'info'
     _pool = 'error'
+    _rest = 'info'
     _state = 'info'
     _sync = 'error'
     _zmq = 'info'
     default = 'info'
 
-# `grpc` contains configuration of the gRPC module.
+# `grpc` contains configuration for the gRPC server.
 [grpc]
 
-  # `enable` indicates whether gRPC service should be enabled or not.
+  # `enable` indicates whether the gRPC service should be enabled.
   # Default is `true`.
   enable = true
 
-  # `enable_wallet` indicates whether Wallet service should be enabled or not.
+  # `enable_wallet` indicates whether the Wallet service should be enabled.
   # Default is `false`.
   enable_wallet = false
 
-  # `listen` is the address to listen for incoming connections for gRPC server.
+  # `listen` is the address the gRPC server will listen on for incoming connections.
   listen = '127.0.0.1:50051'
 
-  # `basic_auth`  is the Basic Auth credential used to enhance gRPC security.
+  # `basic_auth` is the Basic Auth credential used to enhance gRPC security.
   basic_auth = ''
 
-  # `grpc.gateway` contains configuration for the gRPC Gateway server
-  # which translates a RESTful HTTP API into gRPC.
-  [grpc.gateway]
+# `rest` contains configuration for the HTTP REST API server.
+[rest]
 
-    # `enable` indicates whether gRPCGateway service should be enabled or not.
-    # Default is `false`.
-    enable = false
-
-    # `listen` is the address to listen for incoming connections for gRPCGateway server.
-    listen = '127.0.0.1:8080'
-
-    # `enable_cors` indicates whether Cross-Origin Request Sharing (CORS)
-    # protection should be enabled or not.
-    # Default is `false`.
-    enable_cors = false
-
-# `jsonrpc` configuration.
-[jsonrpc]
-
-  # `enable` indicates whether JSON-RPC service should be enabled or not.
+  # `enable` indicates whether the REST API should be enabled.
   # Default is `false`.
   enable = false
 
-  # `listen` is the address to listen for incoming connections for JSON-RPC server.
+  # `listen` is the address the REST API server will listen on for incoming connections.
+  listen = '127.0.0.1:8080'
+
+  # `enable_cors` indicates whether Cross-Origin Resource Sharing (CORS)
+  # should be enabled.
+  # Default is `false`.
+  enable_cors = false
+
+# `jsonrpc` contains configuration for the JSON-RPC server.
+[jsonrpc]
+
+  # `enable` indicates whether the JSON-RPC service should be enabled.
+  # Default is `false`.
+  enable = false
+
+  # `listen` is the address the JSON-RPC server will listen on for incoming connections.
   listen = '127.0.0.1:8545'
 
   # `origins` specifies the allowed CORS origins for the JSON-RPC server.
-  # This is used to control which domains can make requests to the JSON-RPC API from a browser.
+  # This controls which domains can make requests to the JSON-RPC API from a browser.
   # Only the specified origins will be allowed. If not set or left empty, CORS is disabled by default.
   # Example: origins = ["wallet.pactus.org"]
   origins = []

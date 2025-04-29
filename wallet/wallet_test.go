@@ -1,6 +1,7 @@
 package wallet_test
 
 import (
+	"context"
 	"path"
 	"testing"
 
@@ -44,11 +45,10 @@ func setup(t *testing.T) *testData {
 		ChainType:  genesis.Mainnet,
 	}
 	mockState := state.MockingState(ts)
-	gRPCServer := grpc.NewServer(
+	gRPCServer := grpc.NewServer(context.Background(),
 		grpcConf, mockState,
-		nil, nil,
-		nil, wallet.NewWalletManager(walletMgrConf), nil,
-	)
+		nil, nil, nil,
+		wallet.NewWalletManager(walletMgrConf), nil)
 
 	assert.NoError(t, gRPCServer.StartServer())
 

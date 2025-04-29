@@ -19,12 +19,12 @@ func TestCloseStream(t *testing.T) {
 	networkB := makeTestNetwork(t, confB, nil)
 
 	assert.EventuallyWithT(t, func(c *assert.CollectT) {
-		e := <-networkA.EventChannel()
+		e := <-networkA.networkPipe.UnsafeGetChannel()
 		assert.Equal(c, EventTypeConnect, e.Type())
 	}, 5*time.Second, 100*time.Millisecond)
 
 	assert.EventuallyWithT(t, func(c *assert.CollectT) {
-		e := <-networkB.EventChannel()
+		e := <-networkB.networkPipe.UnsafeGetChannel()
 		assert.Equal(c, EventTypeConnect, e.Type())
 	}, 5*time.Second, 100*time.Millisecond)
 
@@ -34,7 +34,7 @@ func TestCloseStream(t *testing.T) {
 
 		// NetworkB doesn't close the stream.
 		assert.EventuallyWithT(t, func(c *assert.CollectT) {
-			e := <-networkB.EventChannel()
+			e := <-networkB.networkPipe.UnsafeGetChannel()
 			_, ok := e.(*StreamMessage)
 			assert.True(c, ok)
 		}, 5*time.Second, 100*time.Millisecond)
@@ -52,7 +52,7 @@ func TestCloseStream(t *testing.T) {
 
 		// NetworkB close the stream.
 		assert.EventuallyWithT(t, func(c *assert.CollectT) {
-			e := <-networkB.EventChannel()
+			e := <-networkB.networkPipe.UnsafeGetChannel()
 			s, ok := e.(*StreamMessage)
 			assert.True(c, ok)
 

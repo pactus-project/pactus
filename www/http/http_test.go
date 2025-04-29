@@ -18,7 +18,6 @@ import (
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 type testData struct {
@@ -68,19 +67,17 @@ func setup(t *testing.T) *testData {
 		ChainType:  mockState.Genesis().ChainType(),
 	}
 
-	zmqServer, err := zmq.New(context.TODO(), &zmq.Config{
-		ZmqPubTxInfo: fmt.Sprintf("tcp://localhost:%d", testsuite.FindFreePort()),
-	}, nil)
-	require.NoError(t, err)
+	zmqPublishers := []zmq.Publisher{
+		zmq.MockingPublisher("zmq_address", "zmq_topic", 100),
+	}
 
-	gRPCServer := grpc.NewServer(
-		grpcConf, mockState,
-		mockSync, mockNet,
-		mockConsMgr, wallet.NewWalletManager(walletMgrConf), zmqServer,
+	gRPCServer := grpc.NewServer(context.Background(), grpcConf,
+		mockState, mockSync, mockNet, mockConsMgr,
+		wallet.NewWalletManager(walletMgrConf), zmqPublishers,
 	)
 	assert.NoError(t, gRPCServer.StartServer())
 
-	httpServer := NewServer(httpConf, false)
+	httpServer := NewServer(context.Background(), httpConf, false)
 	assert.NoError(t, httpServer.StartServer(gRPCServer.Address()))
 
 	return &testData{

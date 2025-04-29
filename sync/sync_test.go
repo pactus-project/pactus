@@ -20,6 +20,7 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
@@ -29,13 +30,12 @@ import (
 type testData struct {
 	*testsuite.TestSuite
 
-	config      *Config
-	state       *state.MockState
-	consMgr     consensus.Manager
-	consMocks   []*consensus.MockConsensus
-	network     *network.MockNetwork
-	sync        *synchronizer
-	broadcastCh chan message.Message
+	config    *Config
+	state     *state.MockState
+	consMgr   consensus.Manager
+	consMocks []*consensus.MockConsensus
+	network   *network.MockNetwork
+	sync      *synchronizer
 }
 
 func testConfig() *Config {
@@ -67,32 +67,27 @@ func setup(t *testing.T, config *Config) *testData {
 	consMgr, consMocks := consensus.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
 	consMgr.MoveToNewHeight()
 
-	broadcastCh := make(chan message.Message, 1000)
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
+	broadcastPipe := pipeline.MockingPipeline[message.Message]()
 
-	syncInst, err := NewSynchronizer(config,
-		valKeys,
-		mockState,
-		consMgr,
-		mockNetwork,
-		broadcastCh,
-	)
+	syncInst, err := NewSynchronizer(config, valKeys,
+		mockState, consMgr, mockNetwork, broadcastPipe, mockNetwork.EventPipe)
 	assert.NoError(t, err)
 	sync := syncInst.(*synchronizer)
 
 	td := &testData{
-		TestSuite:   ts,
-		config:      config,
-		state:       mockState,
-		consMgr:     consMgr,
-		consMocks:   consMocks,
-		network:     mockNetwork,
-		sync:        sync,
-		broadcastCh: broadcastCh,
+		TestSuite: ts,
+		config:    config,
+		state:     mockState,
+		consMgr:   consMgr,
+		consMocks: consMocks,
+		network:   mockNetwork,
+		sync:      sync,
 	}
 
 	assert.NoError(t, td.sync.Start())
 	assert.Equal(t, config.Moniker, td.sync.Moniker())
+	assert.Equal(t, config.Services, td.sync.Services())
 
 	logger.Info("setup finished, running the tests", "name", t.Name())
 
@@ -110,8 +105,8 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 			require.NoError(t, fmt.Errorf("shouldPublishMessageWithThisType %v: Timeout, test: %v", msgType, t.Name()))
 
 			return nil
+
 		case data := <-net.PublishCh:
-			net.SendToOthers(data.Data, data.Target)
 			// Decode message again to check the message type
 			bdl := new(bundle.Bundle)
 			_, err := bdl.Decode(bytes.NewReader(data.Data))
@@ -136,12 +131,9 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 			}
 			// -----------
 
-			if bdl.Message.Type() == msgType {
-				logger.Info("shouldPublishMessageWithThisType",
-					"bundle", bdl, "type", msgType.String())
+			require.Equal(t, msgType, bdl.Message.Type(), "not expected message: %s", msgType)
 
-				return bdl
-			}
+			return bdl
 		}
 	}
 }
@@ -153,7 +145,7 @@ func (td *testData) shouldPublishMessageWithThisType(t *testing.T, msgType messa
 	return shouldPublishMessageWithThisType(t, td.network, msgType)
 }
 
-func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, msgType message.Type) {
+func shouldNotPublishAnyMessage(t *testing.T, net *network.MockNetwork) {
 	t.Helper()
 
 	timer := time.NewTimer(3 * time.Millisecond)
@@ -163,21 +155,20 @@ func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
 		case <-timer.C:
 			return
 
-		case b := <-net.PublishCh:
+		case data := <-net.PublishCh:
 			// Decode message again to check the message type
 			bdl := new(bundle.Bundle)
-			_, err := bdl.Decode(bytes.NewReader(b.Data))
+			_, err := bdl.Decode(bytes.NewReader(data.Data))
 			require.NoError(t, err)
-			assert.NotEqual(t, msgType, bdl.Message.Type(),
-				"not expected %s", msgType)
+			require.Fail(t, "not expected message: %s", bdl.Message.Type())
 		}
 	}
 }
 
-func (td *testData) shouldNotPublishMessageWithThisType(t *testing.T, msgType message.Type) {
+func (td *testData) shouldNotPublishAnyMessage(t *testing.T) {
 	t.Helper()
 
-	shouldNotPublishMessageWithThisType(t, td.network, msgType)
+	shouldNotPublishAnyMessage(t, td.network)
 }
 
 func (*testData) receivingNewMessage(sync *synchronizer, msg message.Message, from peer.ID) {
@@ -232,42 +223,34 @@ func TestStop(t *testing.T) {
 }
 
 func TestConnectEvent(t *testing.T) {
-	conf := testConfig()
-	conf.Firewall.BannedNets = []string{
-		"84.247.0.0/24",
-		"115.193.0.0/16",
-		"240e:390:8a1:ae80:7dbc:64b6:e84c:d2bf/64",
-	}
-
-	td := setup(t, conf)
+	td := setup(t, nil)
 
 	pid := td.RandPeerID()
+	remoteAddr := "/ip4/2.2.2.2/tcp/21888"
 	ce := &network.ConnectEvent{
 		PeerID:        pid,
-		RemoteAddress: "/ip4/2.2.2.2/tcp/21888",
+		RemoteAddress: remoteAddr,
+		Direction:     "Inbound",
 	}
-	td.network.EventCh <- ce
+	td.network.EventPipe.Send(ce)
 
 	assert.Eventually(t, func() bool {
-		peer := td.sync.peerSet.GetPeer(pid)
-		if peer == nil {
-			return false
-		}
-		assert.Equal(t, "/ip4/2.2.2.2/tcp/21888", peer.Address)
-
-		return peer.Status == status.StatusConnected
+		return td.sync.peerSet.HasPeer(pid)
 	}, time.Second, 100*time.Millisecond)
 
 	p1 := td.sync.peerSet.GetPeer(pid)
 	assert.Equal(t, status.StatusConnected, p1.Status)
+	assert.Equal(t, remoteAddr, p1.Address)
+	assert.Equal(t, "Inbound", p1.Direction)
 }
 
 func TestDisconnectEvent(t *testing.T) {
 	td := setup(t, nil)
 	pid := td.RandPeerID()
-	td.network.EventCh <- &network.DisconnectEvent{
+	de := &network.DisconnectEvent{
 		PeerID: pid,
 	}
+	td.network.EventPipe.Send(de)
 
 	assert.Eventually(t, func() bool {
 		s := td.sync.peerSet.GetPeerStatus(pid)
@@ -280,10 +263,11 @@ func TestProtocolsEvent(t *testing.T) {
 	td := setup(t, nil)
 
 	pid := td.RandPeerID()
-	td.network.EventCh <- &network.ProtocolsEvents{
+	pe := &network.ProtocolsEvents{
 		PeerID:    pid,
 		Protocols: []string{"protocol-1"},
 	}
+	td.network.EventPipe.Send(pe)
 	td.shouldPublishMessageWithThisType(t, message.TypeHello)
 }
 
@@ -311,7 +295,7 @@ func TestDownload(t *testing.T) {
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
 		td.receivingNewMessage(td.sync, baMsg, pid)
 
-		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
+		td.shouldNotPublishAnyMessage(t)
 		td.network.IsClosed(pid)
 	})
 
@@ -323,7 +307,7 @@ func TestDownload(t *testing.T) {
 		baMsg := message.NewBlockAnnounceMessage(blk, cert)
 		td.receivingNewMessage(td.sync, baMsg, pid)
 
-		td.shouldNotPublishMessageWithThisType(t, message.TypeBlocksRequest)
+		td.shouldNotPublishAnyMessage(t)
 		td.network.IsClosed(pid)
 	})
 
@@ -372,7 +356,7 @@ func TestBroadcastBlockAnnounce(t *testing.T) {
 		td.sync.cache.AddBlock(blk)
 		td.sync.broadcast(msg)
 
-		td.shouldNotPublishMessageWithThisType(t, message.TypeBlockAnnounce)
+		td.shouldNotPublishAnyMessage(t)
 	})
 }
 

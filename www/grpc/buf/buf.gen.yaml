@@ -20,7 +20,7 @@ plugins:
       - paths=source_relative
       - grpc_api_configuration=./buf/grpc-gateway.config.yaml
   - local: protoc-gen-openapiv2
-    out: ./swagger-ui
+    out: ../rest/swagger-ui
     opt:
       - grpc_api_configuration=./buf/grpc-gateway.config.yaml,allow_merge=true,merge_file_name=pactus
       - openapi_configuration=./buf/openapi.config.yaml

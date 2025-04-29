@@ -22,6 +22,7 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -93,17 +94,19 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	getTime := util.RoundNow(params.BlockIntervalInSecond).
 		Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
+	eventPipe := pipeline.MockingPipeline[any]()
+
 	stateX, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
-		store.MockingStore(ts), txPool, nil)
+		store.MockingStore(ts), txPool, eventPipe)
 	require.NoError(t, err)
 	stateY, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexY]},
-		store.MockingStore(ts), txPool, nil)
+		store.MockingStore(ts), txPool, eventPipe)
 	require.NoError(t, err)
 	stateB, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexB]},
-		store.MockingStore(ts), txPool, nil)
+		store.MockingStore(ts), txPool, eventPipe)
 	require.NoError(t, err)
 	stateP, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexP]},
-		store.MockingStore(ts), txPool, nil)
+		store.MockingStore(ts), txPool, eventPipe)
 	require.NoError(t, err)
 
 	consMessages := make([]consMessage, 0)
@@ -449,11 +452,11 @@ func TestNotInCommittee(t *testing.T) {
 	td := setup(t)
 
 	valKey := td.RandValKey()
-	store := store.MockingStore(td.TestSuite)
 
-	state, _ := state.LoadOrNewState(td.genDoc, []*bls.ValidatorKey{valKey}, store, td.txPool, nil)
-	consInt := NewConsensus(testConfig(), state, valKey, valKey.Address(), make(chan message.Message, 100),
-		newConcreteMediator())
+	state := state.MockingState(td.TestSuite)
+	pipe := pipeline.MockingPipeline[message.Message]()
+	consInt := NewConsensus(testConfig(), state, valKey,
+		valKey.Address(), pipe, newConcreteMediator())
 	cons := consInt.(*consensus)
 
 	td.enterNewHeight(cons)
@@ -755,8 +758,9 @@ func TestNonActiveValidator(t *testing.T) {
 	td := setup(t)
 
 	valKey := td.RandValKey()
+	pipe := pipeline.MockingPipeline[message.Message]()
 	consInt := NewConsensus(testConfig(), state.MockingState(td.TestSuite),
-		valKey, valKey.Address(), make(chan message.Message, 100), newConcreteMediator())
+		valKey, valKey.Address(), pipe, newConcreteMediator())
 	nonActiveCons := consInt.(*consensus)
 
 	t.Run("non-active instances should be in new-height state", func(t *testing.T) {

@@ -19,6 +19,7 @@ import (
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
+	"github.com/pactus-project/pactus/www/rest"
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/pelletier/go-toml/v2"
 )
@@ -43,6 +44,7 @@ type Config struct {
 	Consensus     *consensus.Config `toml:"-"`
 	Logger        *logger.Config    `toml:"logger"`
 	GRPC          *grpc.Config      `toml:"grpc"`
+	Rest          *rest.Config      `toml:"rest"`
 	JSONRPC       *jsonrpc.Config   `toml:"jsonrpc"`
 	HTTP          *http.Config      `toml:"http"`
 	WalletManager *wallet.Config    `toml:"-"`
@@ -97,6 +99,7 @@ func defaultConfig() *Config {
 		Logger:        logger.DefaultConfig(),
 		GRPC:          grpc.DefaultConfig(),
 		JSONRPC:       jsonrpc.DefaultConfig(),
+		Rest:          rest.DefaultConfig(),
 		HTTP:          http.DefaultConfig(),
 		ZeroMq:        zmq.DefaultConfig(),
 		WalletManager: wallet.DefaultConfig(),
@@ -146,8 +149,8 @@ func DefaultConfigMainnet() *Config {
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "127.0.0.1:50051"
 	conf.GRPC.BasicAuth = ""
-	conf.GRPC.Gateway.Enable = false
-	conf.GRPC.Gateway.Listen = "127.0.0.1:8080"
+	conf.Rest.Enable = false
+	conf.Rest.Listen = "127.0.0.1:8080"
 	conf.JSONRPC.Enable = false
 	conf.JSONRPC.Listen = "127.0.0.1:8545"
 	conf.JSONRPC.Origins = []string{}
@@ -181,8 +184,8 @@ func DefaultConfigTestnet() *Config {
 	conf.Network.DefaultPort = 21777
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:50052"
-	conf.GRPC.Gateway.Enable = true
-	conf.GRPC.Gateway.Listen = "[::]:8080"
+	conf.Rest.Enable = true
+	conf.Rest.Listen = "[::]:8080"
 	conf.JSONRPC.Enable = false
 	conf.JSONRPC.Listen = "127.0.0.1:8545"
 	conf.JSONRPC.Origins = []string{}
@@ -208,8 +211,8 @@ func DefaultConfigLocalnet() *Config {
 	conf.GRPC.Enable = true
 	conf.GRPC.EnableWallet = true
 	conf.GRPC.Listen = "[::]:50052"
-	conf.GRPC.Gateway.Enable = true
-	conf.GRPC.Gateway.Listen = "[::]:8080"
+	conf.Rest.Enable = true
+	conf.Rest.Listen = "[::]:8080"
 	conf.JSONRPC.Enable = true
 	conf.JSONRPC.Listen = "127.0.0.1:8545"
 	conf.JSONRPC.Origins = []string{"*"}
@@ -290,6 +293,9 @@ func (conf *Config) BasicCheck() error {
 		return err
 	}
 	if err := conf.JSONRPC.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.Rest.BasicCheck(); err != nil {
 		return err
 	}
 	if err := conf.GRPC.BasicCheck(); err != nil {

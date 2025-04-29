@@ -1,6 +1,7 @@
-package grpc
+package rest
 
 import (
+	"context"
 	"embed"
 	"fmt"
 	"io/fs"
@@ -10,19 +11,23 @@ import (
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+type Server struct {
+	ctx      context.Context
+	config   *Config
+	listener net.Listener
+	server   *http.Server
+	grpcConn *grpc.ClientConn
+	logger   *logger.SubLogger
+}
+
 //go:embed swagger-ui
 var swaggerFS embed.FS
-
-type GatewayConfig struct {
-	Enable     bool   `toml:"enable"`
-	Listen     string `toml:"listen"`
-	EnableCORS bool   `toml:"enable_cors"`
-}
 
 // getOpenAPIHandler serves an OpenAPI UI.
 func (*Server) getOpenAPIHandler() (http.Handler, error) {
@@ -38,12 +43,20 @@ func (*Server) getOpenAPIHandler() (http.Handler, error) {
 	return http.FileServer(http.Dir("swagger-ui")), nil
 }
 
-func (s *Server) startGateway(grpcAddr string) error {
-	if !s.config.Gateway.Enable {
+func NewServer(ctx context.Context, conf *Config) *Server {
+	return &Server{
+		ctx:    ctx,
+		config: conf,
+		logger: logger.NewSubLogger("_rest", nil),
+	}
+}
+
+func (s *Server) StartServer(grpcAddr string) error {
+	if !s.config.Enable {
 		return nil
 	}
 
-	conn, err := grpc.NewClient(
+	grpcConn, err := grpc.NewClient(
 		grpcAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	)
@@ -51,24 +64,26 @@ func (s *Server) startGateway(grpcAddr string) error {
 		return fmt.Errorf("failed to dial server: %w", err)
 	}
 
+	s.grpcConn = grpcConn
+
 	gwMux := runtime.NewServeMux()
-	err = pactus.RegisterBlockchainHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterBlockchainHandler(s.ctx, gwMux, grpcConn)
 	if err != nil {
 		return err
 	}
-	err = pactus.RegisterTransactionHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterTransactionHandler(s.ctx, gwMux, grpcConn)
 	if err != nil {
 		return err
 	}
-	err = pactus.RegisterNetworkHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterNetworkHandler(s.ctx, gwMux, grpcConn)
 	if err != nil {
 		return err
 	}
-	err = pactus.RegisterWalletHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterWalletHandler(s.ctx, gwMux, grpcConn)
 	if err != nil {
 		return err
 	}
-	err = pactus.RegisterUtilsHandler(s.ctx, gwMux, conn)
+	err = pactus.RegisterUtilsHandler(s.ctx, gwMux, grpcConn)
 	if err != nil {
 		return err
 	}
@@ -78,8 +93,8 @@ func (s *Server) startGateway(grpcAddr string) error {
 		return err
 	}
 
-	gwServer := &http.Server{
-		Addr:              s.config.Gateway.Listen,
+	server := &http.Server{
+		Addr:              s.config.Listen,
 		ReadHeaderTimeout: 3 * time.Second,
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if strings.HasPrefix(r.URL.Path, "/pactus/") {
@@ -91,24 +106,36 @@ func (s *Server) startGateway(grpcAddr string) error {
 		}),
 	}
 
-	if s.config.Gateway.EnableCORS {
-		gwServer.Handler = allowCORS(gwServer.Handler)
+	if s.config.EnableCORS {
+		server.Handler = allowCORS(server.Handler)
 	}
 
-	listener, err := net.Listen("tcp", s.config.Gateway.Listen)
+	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}
-
-	s.logger.Info("grpc-gateway started listening", "address", listener.Addr().String())
+	s.server = server
+	s.listener = listener
 
 	go func() {
-		if err := gwServer.Serve(listener); err != nil {
-			s.logger.Error("error on grpc-gateway serve", "error", err)
+		s.logger.Info("Rest-API server start listening", "address", listener.Addr().String())
+		if err := server.Serve(listener); err != nil {
+			s.logger.Debug("error on grpc-gateway serve", "error", err)
 		}
 	}()
 
 	return nil
+}
+
+func (s *Server) StopServer() {
+	if s.server != nil {
+		_ = s.server.Close()
+		_ = s.listener.Close()
+	}
+
+	if s.grpcConn != nil {
+		_ = s.grpcConn.Close()
+	}
 }
 
 // preflightHandler adds the necessary headers in order to serve

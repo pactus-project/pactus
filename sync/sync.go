@@ -1,7 +1,6 @@
 package sync
 
 import (
-	"context"
 	"fmt"
 	"time"
 
@@ -22,6 +21,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/ntp"
+	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 // IMPORTANT NOTES:
@@ -33,21 +33,19 @@ import (
 // such as state or consensus, should be thread-safe.
 
 type synchronizer struct {
-	ctx         context.Context
-	cancel      context.CancelFunc
-	config      *Config
-	valKeys     []*bls.ValidatorKey
-	state       state.Facade
-	consMgr     consensus.Manager
-	peerSet     *peerset.PeerSet
-	firewall    *firewall.Firewall
-	cache       *cache.Cache
-	handlers    map[message.Type]messageHandler
-	broadcastCh <-chan message.Message
-	networkCh   <-chan network.Event
-	network     network.Network
-	logger      *logger.SubLogger
-	ntp         *ntp.Checker
+	config        *Config
+	valKeys       []*bls.ValidatorKey
+	state         state.Facade
+	consMgr       consensus.Manager
+	peerSet       *peerset.PeerSet
+	firewall      *firewall.Firewall
+	cache         *cache.Cache
+	handlers      map[message.Type]messageHandler
+	broadcastPipe pipeline.Pipeline[message.Message]
+	networkPipe   pipeline.Pipeline[network.Event]
+	network       network.Network
+	logger        *logger.SubLogger
+	ntp           *ntp.Checker
 }
 
 func NewSynchronizer(
@@ -56,20 +54,18 @@ func NewSynchronizer(
 	state state.Facade,
 	consMgr consensus.Manager,
 	network network.Network,
-	broadcastCh <-chan message.Message,
+	broadcastPipe pipeline.Pipeline[message.Message],
+	networkPipe pipeline.Pipeline[network.Event],
 ) (Synchronizer, error) {
-	ctx, cancel := context.WithCancel(context.Background())
 	sync := &synchronizer{
-		ctx:         ctx,
-		cancel:      cancel,
-		config:      conf,
-		valKeys:     valKeys,
-		state:       state,
-		consMgr:     consMgr,
-		network:     network,
-		broadcastCh: broadcastCh,
-		networkCh:   network.EventChannel(),
-		ntp:         ntp.NewNtpChecker(),
+		config:        conf,
+		valKeys:       valKeys,
+		state:         state,
+		consMgr:       consMgr,
+		network:       network,
+		broadcastPipe: broadcastPipe,
+		networkPipe:   networkPipe,
+		ntp:           ntp.NewNtpChecker(),
 	}
 
 	sync.peerSet = peerset.NewPeerSet(conf.SessionTimeout())
@@ -120,17 +116,14 @@ func (sync *synchronizer) Start() error {
 	}
 
 	go sync.ntp.Start()
-	go sync.receiveLoop()
-	go sync.broadcastLoop()
+	sync.networkPipe.RegisterReceiver(sync.processNetworkEvent)
+	sync.broadcastPipe.RegisterReceiver(sync.broadcastMessage)
 
 	return nil
 }
 
 func (sync *synchronizer) Stop() {
-	sync.cancel()
 	sync.ntp.Stop()
-
-	sync.logger.Debug("context closed", "reason", sync.ctx.Err())
 }
 
 func (sync *synchronizer) ClockOffset() (time.Duration, error) {
@@ -243,47 +236,31 @@ func (sync *synchronizer) sayHello(pid peer.ID) {
 	sync.sendTo(msg, pid)
 }
 
-func (sync *synchronizer) broadcastLoop() {
-	for {
-		select {
-		case <-sync.ctx.Done():
-			return
-
-		case msg := <-sync.broadcastCh:
-			sync.broadcast(msg)
-		}
-	}
+func (sync *synchronizer) broadcastMessage(msg message.Message) {
+	sync.broadcast(msg)
 }
 
-func (sync *synchronizer) receiveLoop() {
-	for {
-		select {
-		case <-sync.ctx.Done():
-			return
+func (sync *synchronizer) processNetworkEvent(evt network.Event) {
+	switch evt.Type() {
+	case network.EventTypeGossip:
+		ge := evt.(*network.GossipMessage)
+		sync.processGossipMessage(ge)
 
-		case evt := <-sync.networkCh:
-			switch evt.Type() {
-			case network.EventTypeGossip:
-				ge := evt.(*network.GossipMessage)
-				sync.processGossipMessage(ge)
+	case network.EventTypeStream:
+		se := evt.(*network.StreamMessage)
+		sync.processStreamMessage(se)
 
-			case network.EventTypeStream:
-				se := evt.(*network.StreamMessage)
-				sync.processStreamMessage(se)
+	case network.EventTypeConnect:
+		ce := evt.(*network.ConnectEvent)
+		sync.processConnectEvent(ce)
 
-			case network.EventTypeConnect:
-				ce := evt.(*network.ConnectEvent)
-				sync.processConnectEvent(ce)
+	case network.EventTypeDisconnect:
+		de := evt.(*network.DisconnectEvent)
+		sync.processDisconnectEvent(de)
 
-			case network.EventTypeDisconnect:
-				de := evt.(*network.DisconnectEvent)
-				sync.processDisconnectEvent(de)
-
-			case network.EventTypeProtocols:
-				pe := evt.(*network.ProtocolsEvents)
-				sync.processProtocolsEvent(pe)
-			}
-		}
+	case network.EventTypeProtocols:
+		pe := evt.(*network.ProtocolsEvents)
+		sync.processProtocolsEvent(pe)
 	}
 }
 
