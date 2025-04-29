@@ -205,7 +205,7 @@
   # Default is `false`.
   enable = false
 
-  # `listen` is the address the REST server will listen on for incoming connections.
+  # `listen` is the address the REST API server will listen on for incoming connections.
   listen = '127.0.0.1:8080'
 
   # `enable_cors` indicates whether Cross-Origin Resource Sharing (CORS)
