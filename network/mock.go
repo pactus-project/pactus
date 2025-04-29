@@ -3,6 +3,7 @@ package network
 import (
 	"bytes"
 	"io"
+	"sync"
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
@@ -20,6 +21,7 @@ type PublishData struct {
 type MockNetwork struct {
 	*testsuite.TestSuite
 
+	lk        sync.RWMutex
 	ID        lp2ppeer.ID
 	PublishCh chan PublishData
 	EventPipe pipeline.Pipeline[Event]
@@ -48,70 +50,85 @@ func (*MockNetwork) JoinTopic(_ TopicID, _ PropagationEvaluator) error {
 	return nil
 }
 
-func (mock *MockNetwork) SelfID() lp2ppeer.ID {
-	return mock.ID
+func (m *MockNetwork) SelfID() lp2ppeer.ID {
+	return m.ID
 }
 
-func (mock *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) {
-	net, exists := mock.OtherNets[pid]
+func (m *MockNetwork) SendTo(data []byte, pid lp2pcore.PeerID) {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
+	net, exists := m.OtherNets[pid]
 	if exists {
 		// direct message
 		event := &StreamMessage{
-			From:   mock.ID,
+			From:   m.ID,
 			Reader: io.NopCloser(bytes.NewReader(data)),
 		}
 
 		net.EventPipe.Send(event)
 	}
 
-	mock.PublishCh <- PublishData{
+	m.PublishCh <- PublishData{
 		Data:   data,
 		Target: &pid,
 	}
 }
 
-func (mock *MockNetwork) Broadcast(data []byte, _ TopicID) {
-	for _, net := range mock.OtherNets {
-		if net.SelfID() == mock.ID {
+func (m *MockNetwork) Broadcast(data []byte, _ TopicID) {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
+	for _, net := range m.OtherNets {
+		if net.SelfID() == m.ID {
 			continue
 		}
 
 		// Broadcast message
 		event := &GossipMessage{
-			From: mock.ID,
+			From: m.ID,
 			Data: data,
 		}
 		net.EventPipe.Send(event)
 	}
 
-	mock.PublishCh <- PublishData{
+	m.PublishCh <- PublishData{
 		Data:   data,
 		Target: nil, // Send to all
 	}
 }
 
-func (mock *MockNetwork) CloseConnection(pid lp2ppeer.ID) {
-	delete(mock.OtherNets, pid)
+func (m *MockNetwork) CloseConnection(pid lp2ppeer.ID) {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
+	delete(m.OtherNets, pid)
 }
 
-func (mock *MockNetwork) IsClosed(pid lp2ppeer.ID) bool {
-	_, exists := mock.OtherNets[pid]
+func (m *MockNetwork) IsClosed(pid lp2ppeer.ID) bool {
+	m.lk.RLock()
+	defer m.lk.RUnlock()
+
+	_, exists := m.OtherNets[pid]
 
 	return !exists
 }
 
-func (mock *MockNetwork) NumConnectedPeers() int {
-	return len(mock.OtherNets)
+func (m *MockNetwork) NumConnectedPeers() int {
+	return len(m.OtherNets)
 }
 
-func (mock *MockNetwork) AddAnotherNetwork(otherNet *MockNetwork) {
-	mock.OtherNets[otherNet.SelfID()] = otherNet
+func (m *MockNetwork) AddAnotherNetwork(otherNet *MockNetwork) {
+	m.lk.Lock()
+	defer m.lk.Unlock()
 
-	mock.EventPipe.Send(&ConnectEvent{
+	m.OtherNets[otherNet.SelfID()] = otherNet
+
+	m.EventPipe.Send(&ConnectEvent{
 		PeerID:        otherNet.SelfID(),
-		RemoteAddress: mock.RandMultiAddress(),
+		RemoteAddress: m.RandMultiAddress(),
 	})
-	mock.EventPipe.Send(&ProtocolsEvents{
+	m.EventPipe.Send(&ProtocolsEvents{
 		PeerID: otherNet.SelfID(),
 	})
 }
@@ -132,10 +149,10 @@ func (*MockNetwork) Protocols() []string {
 	return []string{"gossip"}
 }
 
-func (*MockNetwork) NumInbound() int {
-	return 0
+func (m *MockNetwork) NumInbound() int {
+	return len(m.OtherNets)
 }
 
-func (*MockNetwork) NumOutbound() int {
-	return 0
+func (m *MockNetwork) NumOutbound() int {
+	return len(m.OtherNets)
 }
