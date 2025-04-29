@@ -141,9 +141,9 @@ func shouldPublishBlockResponse(t *testing.T, net *network.MockNetwork,
 
 	bdl := shouldPublishMessageWithThisType(t, net, message.TypeBlocksResponse)
 	msg := bdl.Message.(*message.BlocksResponseMessage)
-	require.Equal(t, msg.From, from)
-	require.Equal(t, msg.Count(), count)
-	require.Equal(t, msg.ResponseCode, code)
+	require.Equal(t, from, msg.From)
+	require.Equal(t, count, msg.Count())
+	require.Equal(t, code, msg.ResponseCode)
 }
 
 type networkAliceBob struct {
