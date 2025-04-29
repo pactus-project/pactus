@@ -198,7 +198,7 @@
   # `basic_auth` is the Basic Auth credential used to enhance gRPC security.
   basic_auth = ''
 
-# `rest` contains configuration for the HTTP REST server.
+# `rest` contains configuration for the HTTP REST API server.
 [rest]
 
   # `enable` indicates whether the REST API should be enabled.
