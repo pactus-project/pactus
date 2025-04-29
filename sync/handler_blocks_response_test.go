@@ -203,17 +203,17 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
 
+	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
+
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeHelloAck)
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHelloAck)
 
-	// Ensure peers are connected and block heights are correct
+	// Ensure Alice and Bob are connected and handshaked
 	require.Eventually(t, func() bool {
-		return syncAlice.PeerSet().Len() == 1 &&
-			syncBob.PeerSet().Len() == 1
+		return syncAlice.PeerSet().GetPeerStatus(syncBob.SelfID()).IsKnown() &&
+			syncBob.PeerSet().GetPeerStatus(syncAlice.SelfID()).IsKnown()
 	}, 2*time.Second, 100*time.Millisecond)
-
-	require.Equal(t, status.StatusKnown, syncAlice.PeerSet().GetPeerStatus(syncBob.SelfID()))
-	require.Equal(t, status.StatusKnown, syncBob.PeerSet().GetPeerStatus(syncAlice.SelfID()))
 
 	return &networkAliceBob{
 		TestSuite:    ts,

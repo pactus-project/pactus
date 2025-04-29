@@ -1,6 +1,7 @@
 package peerset
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -221,13 +222,20 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, status status.Status) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
-	p := ps.findOrCreatePeer(pid)
+	peer := ps.findOrCreatePeer(pid)
 
-	if !p.Status.IsBanned() || // Don't update the status if peer is banned
-		// Don't change status to connected if peer is known already
-		!(p.Status.IsKnown() && status.IsConnected()) {
-		p.Status = status
+	// Don't update the status if peer is banned
+	if peer.Status.IsBanned() {
+		return
 	}
+
+	// Don't change status to connected if peer is known already
+	if peer.Status.IsKnown() && status.IsConnected() {
+		return
+	}
+
+	fmt.Printf("status %s changed from %s to %s", peer.PeerID, peer.Status, status)
+	peer.Status = status
 
 	if status.IsDisconnected() {
 		for _, ssn := range ps.sessionManager.Sessions() {
