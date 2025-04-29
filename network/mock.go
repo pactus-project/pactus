@@ -128,9 +128,6 @@ func (m *MockNetwork) AddAnotherNetwork(otherNet *MockNetwork) {
 		PeerID:        otherNet.SelfID(),
 		RemoteAddress: m.RandMultiAddress(),
 	})
-	m.EventPipe.Send(&ProtocolsEvents{
-		PeerID: otherNet.SelfID(),
-	})
 }
 
 func (*MockNetwork) ReachabilityStatus() string {

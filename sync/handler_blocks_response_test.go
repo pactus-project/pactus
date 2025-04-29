@@ -203,11 +203,14 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	networkAlice.AddAnotherNetwork(networkBob)
 	networkBob.AddAnotherNetwork(networkAlice)
 
+	// Verify that Hello messages are exchanged between Alice and Bob
+	syncAlice.sayHello(syncBob.SelfID())
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
-	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
-
-	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHelloAck)
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeHelloAck)
+
+	syncBob.sayHello(syncAlice.SelfID())
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
+	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHelloAck)
 
 	// Ensure Alice and Bob are connected and handshaked
 	require.Eventually(t, func() bool {
