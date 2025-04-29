@@ -105,6 +105,7 @@ func shouldPublishMessageWithThisType(t *testing.T, net *network.MockNetwork, ms
 			require.NoError(t, fmt.Errorf("shouldPublishMessageWithThisType %v: Timeout, test: %v", msgType, t.Name()))
 
 			return nil
+
 		case data := <-net.PublishCh:
 			// Decode message again to check the message type
 			bdl := new(bundle.Bundle)
@@ -155,10 +156,10 @@ func shouldNotPublishMessageWithThisType(t *testing.T, net *network.MockNetwork,
 		case <-timer.C:
 			return
 
-		case b := <-net.PublishCh:
+		case data := <-net.PublishCh:
 			// Decode message again to check the message type
 			bdl := new(bundle.Bundle)
-			_, err := bdl.Decode(bytes.NewReader(b.Data))
+			_, err := bdl.Decode(bytes.NewReader(data.Data))
 			require.NoError(t, err)
 			assert.NotEqual(t, msgType, bdl.Message.Type(), "not expected %s", msgType)
 		}
