@@ -65,6 +65,8 @@ proto:
 	rm -rf www/grpc/gen
 	$(SED_CMD) 's/{{ VERSION }}/$(VERSION)/g' www/grpc/buf/openapi.config.yaml
 	cd www/grpc && buf generate --template ./buf/buf.gen.yaml --config ./buf/buf.yaml ./proto
+	$(SED_CMD) 's/"version": *"[0-9]\+\.[0-9]\+\.[0-9]\+"/"version": "$(VERSION)"/' www/grpc/gen/open-rpc/pactus-openrpc.json
+
 
 proto-check:
 	cd www/grpc && buf lint --config ./buf/buf.yaml
