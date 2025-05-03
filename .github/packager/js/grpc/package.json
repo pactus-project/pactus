@@ -5,7 +5,7 @@
   "author": "Pactus Developers",
   "license": "MIT",
   "homepage": "https://github.com/pactus-project/pactus#readme",
-  "main": "./index.js",
+  "main": "./src/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pactus-project/pactus.git"
