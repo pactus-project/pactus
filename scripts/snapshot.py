@@ -142,13 +142,19 @@ def run_command(command):
             stderr=subprocess.PIPE,
             text=True,
         )
-        logging.info(f"Command output: {result.stdout.strip()}")
+
+        if result.stdout.strip():
+            logging.info(f"Command output: {result.stdout.strip()}")
+
         if result.stderr.strip():
-            logging.error(f"Command error: {result.stderr.strip()}")
+            # Downgrade from error to info for successful commands
+            logging.info(f"Command stderr: {result.stderr.strip()}")
+
         return result.stdout.strip()
     except subprocess.CalledProcessError as e:
         logging.error(f"Command failed with error: {e.stderr.strip()}")
         return f"Error: {e.stderr.strip()}"
+
 
 
 def get_service_name(service_path):
@@ -159,16 +165,26 @@ def get_service_name(service_path):
 
 class DaemonManager:
     @staticmethod
-    def start_service(service_path):
-        sv = get_service_name(service_path)
-        logging.info(f"Starting '{sv}' service")
-        return run_command(["sudo", "systemctl", "start", sv])
+    def start_service(service_path=None, docker_compose_path=None, docker_service_name=None):
+        if docker_compose_path and docker_service_name:
+            logging.info(f"Starting Docker Compose service '{docker_service_name}' at '{docker_compose_path}'")
+            return run_command(["docker", "compose", "-f", docker_compose_path, "start", docker_service_name])
+        elif service_path:
+            sv = get_service_name(service_path)
+            logging.info(f"Starting systemctl service '{sv}'")
+            return run_command(["sudo", "systemctl", "start", sv])
+        return None
 
     @staticmethod
-    def stop_service(service_path):
-        sv = get_service_name(service_path)
-        logging.info(f"Stopping '{sv}' service")
-        return run_command(["sudo", "systemctl", "stop", sv])
+    def stop_service(service_path=None, docker_compose_path=None, docker_service_name=None):
+        if docker_compose_path and docker_service_name:
+            logging.info(f"Stopping Docker Compose service '{docker_service_name}' at '{docker_compose_path}'")
+            return run_command(["docker", "compose", "-f", docker_compose_path, "stop", docker_service_name])
+        elif service_path:
+            sv = get_service_name(service_path)
+            logging.info(f"Stopping systemctl service '{sv}'")
+            return run_command(["sudo", "systemctl", "stop", sv])
+        return None
 
 
 class SnapshotManager:
@@ -250,10 +266,26 @@ class Validation:
     def validate_args(args):
         logging.info("Validating arguments")
 
-        if not os.path.isfile(args.service_path):
-            raise ValueError(f"Service file '{args.service_path}' does not exist.")
-        logging.info(f"Service file '{args.service_path}' exists")
+        # Ensure at least one service method is provided
+        if not args.service_path and not args.docker_compose_path:
+            raise ValueError("Either --service_path or --docker_compose_path must be provided.")
 
+        # Validate systemctl service path if provided
+        if args.service_path:
+            if not os.path.isfile(args.service_path):
+                raise ValueError(f"Service file '{args.service_path}' does not exist.")
+            logging.info(f"Service file '{args.service_path}' exists")
+
+        # Validate docker-compose if provided
+        if args.docker_compose_path:
+            if not os.path.isfile(args.docker_compose_path):
+                raise ValueError(f"Docker Compose file '{args.docker_compose_path}' does not exist.")
+            if not args.docker_service_name:
+                raise ValueError("--docker_service_name is required when using --docker_compose_path")
+            logging.info(f"Docker Compose file '{args.docker_compose_path}' exists")
+            logging.info(f"Docker service name is '{args.docker_service_name}'")
+
+        # Common validations
         if not os.path.isdir(args.data_path):
             raise ValueError(f"Data path '{args.data_path}' does not exist.")
         logging.info(f"Data path '{args.data_path}' exists")
@@ -293,28 +325,25 @@ class Validation:
         else:
             logging.info("Snapshots directory exists")
 
-    @staticmethod
-    def validate():
-        if os.name == "nt":
-            raise EnvironmentError("Windows not supported.")
-        if os.geteuid() != 0:
-            raise PermissionError(
-                "This script requires sudo/root access. Please run with sudo."
-            )
-
-
 class ProcessBackup:
     def __init__(self, args):
         self.args = args
 
     def run(self):
-        Validation.validate()
         Validation.validate_args(self.args)
-        DaemonManager.stop_service(self.args.service_path)
+        DaemonManager.stop_service(
+            service_path=self.args.service_path,
+            docker_compose_path=self.args.docker_compose_path,
+            docker_service_name=self.args.docker_service_name
+        )
         snapshot_manager = SnapshotManager(self.args)
         snapshot_manager.manage_snapshots()
         snapshot_manager.create_snapshot()
-        DaemonManager.start_service(self.args.service_path)
+        DaemonManager.start_service(
+            service_path=self.args.service_path,
+            docker_compose_path=self.args.docker_compose_path,
+            docker_service_name=self.args.docker_service_name
+        )
 
 
 def parse_args():
@@ -323,7 +352,15 @@ def parse_args():
 
     parser = argparse.ArgumentParser(description="Pactus Blockchain Snapshot Tool")
     parser.add_argument(
-        "--service_path", required=True, help="Path to pactus systemctl service"
+        "--service_path", help="Path to pactus systemctl service"
+    )
+    parser.add_argument(
+        "--docker_compose_path",
+        help="Path to docker-compose.yml file to manage Docker-based service"
+    )
+    parser.add_argument(
+        "--docker_service_name",
+        help="Name of the Docker service in the Compose file"
     )
     parser.add_argument(
         "--data_path", default=default_data_path, help="Path to data directory"
