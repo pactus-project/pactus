@@ -30,7 +30,7 @@
       "name": "Wallet"
     }
   ],
-  "basePath": "/rest/api",
+  "basePath": "/http/api",
   "schemes": [
     "http",
     "https"

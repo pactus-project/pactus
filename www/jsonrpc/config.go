@@ -9,7 +9,7 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		Enable: false,
-		Listen: "localhost:8545",
+		Listen: "",
 	}
 }
 

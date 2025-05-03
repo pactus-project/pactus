@@ -170,12 +170,11 @@
     _consensus = 'warn'
     _firewall = 'warn'
     _grpc = 'info'
+    _html = 'info'
     _http = 'info'
     _jsonrpc = 'info'
     _network = 'error'
-    _nonomsg = 'info'
     _pool = 'error'
-    _rest = 'info'
     _state = 'info'
     _sync = 'error'
     _zmq = 'info'
@@ -198,24 +197,6 @@
   # `basic_auth` is the Basic Auth credential used to enhance gRPC security.
   basic_auth = ''
 
-# `rest` contains configuration for the HTTP REST API server.
-[rest]
-
-  # `enable` indicates whether the REST API should be enabled.
-  # Default is `false`.
-  enable = false
-
-  # `listen` is the address the REST API server will listen on for incoming connections.
-  listen = '127.0.0.1:8080'
-
-  # `base_path` is the base path for the REST API.
-  base_path = '/rest'
-
-  # `enable_cors` indicates whether Cross-Origin Resource Sharing (CORS)
-  # should be enabled.
-  # Default is `false`.
-  enable_cors = false
-
 # `jsonrpc` contains configuration for the JSON-RPC server.
 [jsonrpc]
 
@@ -232,14 +213,33 @@
   # Example: origins = ["wallet.pactus.org"]
   origins = []
 
-# `http` configuration.
+# `http` contains configuration for the HTTP-API server.
 [http]
 
-  # `enable` indicates whether HTTP service should be enabled or not.
+  # `enable` indicates whether the HTTP-API should be enabled.
   # Default is `false`.
   enable = false
 
-  # `listen` is the address to listen for incoming connections for HTTP server.
+  # `listen` is the address the HTTP-API server will listen on for incoming connections.
+  listen = '127.0.0.1:8080'
+
+  # `base_path` sets the URL prefix for all HTTP-API endpoints.
+  base_path = '/http'
+
+  # `enable_cors` indicates whether Cross-Origin Resource Sharing (CORS)
+  # should be enabled.
+  # Default is `false`.
+  enable_cors = false
+
+# `html` contains configuration for the HTML server.
+# HTML server is mostly used for debugging and testing purposes.
+[html]
+
+  # `enable` indicates whether HTML service should be enabled or not.
+  # Default is `false`.
+  enable = false
+
+  # `listen` is the address to listen for incoming connections for HTML server.
   listen = '127.0.0.1:80'
 
   # `enable_pprof` Enables Golang's pprof debugger for profiling CPU, memory, and goroutines,

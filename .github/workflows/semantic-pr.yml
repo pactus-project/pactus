@@ -58,9 +58,9 @@ jobs:
             www
             grpc
             proto
-            http
             jsonrpc
-            rest
+            http
+            html
             zeromq
             windows
             linux

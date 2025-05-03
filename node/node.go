@@ -21,9 +21,9 @@ import (
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/www/grpc"
+	"github.com/pactus-project/pactus/www/html"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
-	"github.com/pactus-project/pactus/www/rest"
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/pkg/errors"
 )
@@ -39,10 +39,10 @@ type Node struct {
 	consMgr       consensus.Manager
 	network       network.Network
 	sync          sync.Synchronizer
-	http          *http.Server
 	grpc          *grpc.Server
+	html          *html.Server
+	http          *http.Server
 	jsonrpc       *jsonrpc.Server
-	rest          *rest.Server
 	zeromq        *zmq.Server
 	broadcastPipe pipeline.Pipeline[message.Message]
 	networkPipe   pipeline.Pipeline[network.Event]
@@ -116,8 +116,8 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	}
 
 	grpcServer := grpc.NewServer(ctx, conf.GRPC, state, syn, net, consMgr, walletMgr, zeromqServer.Publishers())
-	httpServer := http.NewServer(ctx, conf.HTTP, enableHTTPAuth)
-	restServer := rest.NewServer(ctx, conf.Rest)
+	htmlServer := html.NewServer(ctx, conf.HTML, enableHTTPAuth)
+	httpServer := http.NewServer(ctx, conf.HTTP)
 	jsonrpcServer := jsonrpc.NewServer(ctx, conf.JSONRPC)
 
 	node := &Node{
@@ -131,10 +131,10 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		consMgr:       consMgr,
 		sync:          syn,
 		store:         store,
-		http:          httpServer,
 		grpc:          grpcServer,
+		html:          htmlServer,
+		http:          httpServer,
 		jsonrpc:       jsonrpcServer,
-		rest:          restServer,
 		zeromq:        zeromqServer,
 		broadcastPipe: broadcastPipe,
 		networkPipe:   networkPipe,
@@ -172,17 +172,17 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start gRPC server")
 	}
 
+	err = n.html.StartServer(n.grpc.Address())
+	if err != nil {
+		return errors.Wrap(err, "could not start HTML server")
+	}
+
 	err = n.http.StartServer(n.grpc.Address())
 	if err != nil {
-		return errors.Wrap(err, "could not start HTTP server")
+		return errors.Wrap(err, "could not start HTTP-API server")
 	}
 
 	err = n.jsonrpc.StartServer(n.grpc.Address())
-	if err != nil {
-		return errors.Wrap(err, "could not start JSON-RPC server")
-	}
-
-	err = n.rest.StartServer(n.grpc.Address())
 	if err != nil {
 		return errors.Wrap(err, "could not start JSON-RPC server")
 	}
@@ -210,9 +210,9 @@ func (n *Node) Stop() {
 	n.state.Close()
 	n.store.Close()
 	n.grpc.StopServer()
+	n.html.StopServer()
 	n.http.StopServer()
 	n.jsonrpc.StopServer()
-	n.rest.StopServer()
 	n.zeromq.Close()
 }
 
