@@ -15,6 +15,7 @@ replace_in_place() {
 ROOT_DIR="$(pwd)"
 PACKAGE_DIR="${ROOT_DIR}/packages"
 GEN_DIR="${ROOT_DIR}/www/grpc/gen"
+GENERATOR_DIR="${PACKAGE_DIR}/js/generator"
 VERSION="$(echo `git -C ${ROOT_DIR} describe --abbrev=0 --tags` | sed 's/^.//')" # "v1.2.3" -> "1.2.3"
 
 if [[ -z "$VERSION" ]]; then
@@ -26,13 +27,29 @@ echo "Packing Version:" ${VERSION}
 
 rm -rf ${PACKAGE_DIR}
 mkdir -p ${PACKAGE_DIR}
+mkdir -p ${PACKAGE_DIR}/js/{pactus-grpc,pactus-jsonrpc}/src
 
 echo "== Building pactus-grpc package for JavaScript"
-cp -R ${ROOT_DIR}/.github/packager/js ${PACKAGE_DIR}/js
-cp -R ${GEN_DIR}/js/* ${PACKAGE_DIR}/js/
-cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/js/
-cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/js/
-replace_in_place "s/{{ VERSION }}/$VERSION/g" "${PACKAGE_DIR}/js/package.json"
+cp -R ${ROOT_DIR}/.github/packager/js/grpc/package.json ${PACKAGE_DIR}/js/pactus-grpc
+cp -R ${ROOT_DIR}/.github/packager/js/index.js ${PACKAGE_DIR}/js/pactus-grpc/src
+cp -R ${GEN_DIR}/js/* ${PACKAGE_DIR}/js/pactus-grpc/src
+cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/js/pactus-grpc
+cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/js/pactus-grpc
+replace_in_place "s/{{ VERSION }}/$VERSION/g" "${PACKAGE_DIR}/js/pactus-grpc/package.json"
+
+echo "== Building pactus-jsonrpc package for JavaScript"
+rm -rf "$GENERATOR_DIR"
+git clone https://github.com/pactus-project/generator.git "$GENERATOR_DIR" && cd "$GENERATOR_DIR"
+npm i && npm run build
+cd "$ROOT_DIR" && $GENERATOR_DIR/build/cli.js generate \
+  -t client \
+  -l typescript \
+  -n pactusClientTs \
+  -d "www/grpc/gen/open-rpc/pactus-openrpc.json" \
+  -o "$GENERATOR_DIR/gen"
+cp -R ${ROOT_DIR}/.github/packager/js/jsonrpc/package.json ${PACKAGE_DIR}/js/pactus-jsonrpc
+cp -R $GENERATOR_DIR/gen/client/typescript/src/* ${PACKAGE_DIR}/js/pactus-jsonrpc/src
+replace_in_place "s/{{ VERSION }}/$VERSION/g" "${PACKAGE_DIR}/js/pactus-jsonrpc/package.json"
 
 echo "== Building pactus-grpc package for Python"
 cp -R ${ROOT_DIR}/.github/packager/python ${PACKAGE_DIR}/python
