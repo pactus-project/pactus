@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"bytes"
 	"context"
 	"embed"
 	"fmt"
@@ -30,17 +31,29 @@ type Server struct {
 var swaggerFS embed.FS
 
 // getOpenAPIHandler serves an OpenAPI UI.
-func (*Server) getOpenAPIHandler() (http.Handler, error) {
-	if _, err := swaggerFS.ReadFile("swagger-ui/index.html"); err == nil {
-		swagger, err := fs.Sub(swaggerFS, "swagger-ui")
-		if err != nil {
-			return nil, err
-		}
+func (s *Server) getOpenAPIHandler() (http.Handler, error) {
+	swaggerTree, err := fs.Sub(swaggerFS, "swagger-ui")
+	if err != nil {
+		return nil, err
+	}
+	handler := http.FileServer(http.FS(swaggerTree))
 
-		return http.FileServer(http.FS(swagger)), nil
+	// Modify basePath in Swagger JSON file
+	origContent, err := swaggerFS.ReadFile("swagger-ui/pactus.swagger.json")
+	if err != nil {
+		return nil, err
 	}
 
-	return http.FileServer(http.Dir("swagger-ui")), nil
+	modifiedContent := bytes.Replace(
+		origContent,
+		[]byte(`"basePath": "/rest/api"`),
+		[]byte(fmt.Sprintf(`"basePath": %q`, s.patternToPrefix(s.config.apiPattern()))),
+		1,
+	)
+
+	handler = s.changeBasePath(handler, modifiedContent)
+
+	return handler, nil
 }
 
 func NewServer(ctx context.Context, conf *Config) *Server {
@@ -66,65 +79,88 @@ func (s *Server) StartServer(grpcAddr string) error {
 
 	s.grpcConn = grpcConn
 
-	gwMux := runtime.NewServeMux()
-	err = pactus.RegisterBlockchainHandler(s.ctx, gwMux, grpcConn)
-	if err != nil {
+	// gRPC-Gateway multiplexer
+	gatewayMux := runtime.NewServeMux()
+	if err := pactus.RegisterBlockchainHandler(s.ctx, gatewayMux, grpcConn); err != nil {
 		return err
 	}
-	err = pactus.RegisterTransactionHandler(s.ctx, gwMux, grpcConn)
-	if err != nil {
+	if err := pactus.RegisterTransactionHandler(s.ctx, gatewayMux, grpcConn); err != nil {
 		return err
 	}
-	err = pactus.RegisterNetworkHandler(s.ctx, gwMux, grpcConn)
-	if err != nil {
+	if err := pactus.RegisterNetworkHandler(s.ctx, gatewayMux, grpcConn); err != nil {
 		return err
 	}
-	err = pactus.RegisterWalletHandler(s.ctx, gwMux, grpcConn)
-	if err != nil {
+	if err := pactus.RegisterWalletHandler(s.ctx, gatewayMux, grpcConn); err != nil {
 		return err
 	}
-	err = pactus.RegisterUtilsHandler(s.ctx, gwMux, grpcConn)
+	if err := pactus.RegisterUtilsHandler(s.ctx, gatewayMux, grpcConn); err != nil {
+		return err
+	}
+
+	// Swagger UI
+	swaggerHandler, err := s.getOpenAPIHandler()
 	if err != nil {
 		return err
 	}
 
-	handler, err := s.getOpenAPIHandler()
-	if err != nil {
-		return err
-	}
+	restMux := http.NewServeMux()
 
-	server := &http.Server{
+	// Register gRPC-Gateway Handler at `/rest/api`
+	restMux.Handle(s.config.apiPattern(),
+		http.StripPrefix(s.patternToPrefix(s.config.apiPattern()), gatewayMux))
+
+	// Register Swagger Handler at `/rest/ui`
+	restMux.Handle(s.config.swaggerPattern(),
+		http.StripPrefix(s.patternToPrefix(s.config.swaggerPattern()), swaggerHandler))
+
+	// Redirect `/rest` to `/rest/ui`
+	restMux.HandleFunc(s.config.rootPattern(),
+		func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, s.config.swaggerPattern(), http.StatusFound)
+		})
+
+	gwServer := &http.Server{
 		Addr:              s.config.Listen,
 		ReadHeaderTimeout: 3 * time.Second,
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if strings.HasPrefix(r.URL.Path, "/pactus/") {
-				gwMux.ServeHTTP(w, r)
-
-				return
-			}
-			handler.ServeHTTP(w, r)
-		}),
+		Handler:           restMux,
 	}
 
 	if s.config.EnableCORS {
-		server.Handler = allowCORS(server.Handler)
+		gwServer.Handler = allowCORS(gwServer.Handler)
 	}
 
 	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}
-	s.server = server
+
+	s.server = gwServer
 	s.listener = listener
 
 	go func() {
-		s.logger.Info("Rest-API server start listening", "address", listener.Addr().String())
-		if err := server.Serve(listener); err != nil {
-			s.logger.Debug("error on grpc-gateway serve", "error", err)
+		s.logger.Info("REST API server start listening", "address", listener.Addr().String())
+		if err := s.server.Serve(listener); err != nil && err != http.ErrServerClosed {
+			s.logger.Debug("error on REST API server", "error", err)
 		}
 	}()
 
 	return nil
+}
+
+func (*Server) changeBasePath(handler http.Handler, modifiedContent []byte) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/pactus.swagger.json" {
+			w.Header().Set("Content-Type", "application/json")
+			_, err := w.Write(modifiedContent)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+
+				return
+			}
+		} else {
+			handler.ServeHTTP(w, r)
+		}
+	})
 }
 
 func (s *Server) StopServer() {
@@ -162,4 +198,10 @@ func allowCORS(handler http.Handler) http.Handler {
 		}
 		handler.ServeHTTP(w, r)
 	})
+}
+
+// patternToPrefix removes the trailing '/' from the given pattern.
+// Example: "/rest/ui/" becomes "/rest/ui".
+func (*Server) patternToPrefix(pattern string) string {
+	return pattern[:len(pattern)-1]
 }
