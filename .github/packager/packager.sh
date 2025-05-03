@@ -14,8 +14,7 @@ replace_in_place() {
 
 ROOT_DIR="$(pwd)"
 PACKAGE_DIR="${ROOT_DIR}/packages"
-GEN_DIR="${ROOT_DIR}/www/grpc/gen"
-GENERATOR_DIR="${PACKAGE_DIR}/js/generator"
+PROTO_GEN_DIR="${ROOT_DIR}/www/grpc/gen"
 VERSION="$(echo `git -C ${ROOT_DIR} describe --abbrev=0 --tags` | sed 's/^.//')" # "v1.2.3" -> "1.2.3"
 
 if [[ -z "$VERSION" ]]; then
@@ -28,32 +27,49 @@ echo "Packing Version:" ${VERSION}
 rm -rf ${PACKAGE_DIR}
 mkdir -p ${PACKAGE_DIR}
 mkdir -p ${PACKAGE_DIR}/js/{pactus-grpc,pactus-jsonrpc}/src
+mkdir -p ${PACKAGE_DIR}/python/{pactus-grpc,pactus-jsonrpc}
 
 echo "== Building pactus-grpc package for JavaScript"
 cp -R ${ROOT_DIR}/.github/packager/js/grpc/package.json ${PACKAGE_DIR}/js/pactus-grpc
 cp -R ${ROOT_DIR}/.github/packager/js/index.js ${PACKAGE_DIR}/js/pactus-grpc/src
-cp -R ${GEN_DIR}/js/* ${PACKAGE_DIR}/js/pactus-grpc/src
+cp -R ${PROTO_GEN_DIR}/js/* ${PACKAGE_DIR}/js/pactus-grpc/src
 cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/js/pactus-grpc
 cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/js/pactus-grpc
 replace_in_place "s/{{ VERSION }}/$VERSION/g" "${PACKAGE_DIR}/js/pactus-grpc/package.json"
 
 echo "== Building pactus-jsonrpc package for JavaScript"
-rm -rf "$GENERATOR_DIR"
+GENERATOR_DIR="${PACKAGE_DIR}/js/generator"
 git clone https://github.com/pactus-project/generator.git "$GENERATOR_DIR" && cd "$GENERATOR_DIR"
 npm i && npm run build
 cd "$ROOT_DIR" && $GENERATOR_DIR/build/cli.js generate \
   -t client \
   -l typescript \
-  -n pactusClientTs \
-  -d "www/grpc/gen/open-rpc/pactus-openrpc.json" \
+  -n pactusClientTS \
+  -d "${ROOT_DIR}/www/grpc/gen/open-rpc/pactus-openrpc.json" \
   -o "$GENERATOR_DIR/gen"
 cp -R ${ROOT_DIR}/.github/packager/js/jsonrpc/package.json ${PACKAGE_DIR}/js/pactus-jsonrpc
-cp -R $GENERATOR_DIR/gen/client/typescript/src/* ${PACKAGE_DIR}/js/pactus-jsonrpc/src
+cp -R $GENERATOR_DIR/gen/client/typescript/src/index.ts ${PACKAGE_DIR}/js/pactus-jsonrpc/src
+cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/js/pactus-jsonrpc
+cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/js/pactus-jsonrpc
 replace_in_place "s/{{ VERSION }}/$VERSION/g" "${PACKAGE_DIR}/js/pactus-jsonrpc/package.json"
 
 echo "== Building pactus-grpc package for Python"
-cp -R ${ROOT_DIR}/.github/packager/python ${PACKAGE_DIR}/python
-cp ${GEN_DIR}/python/* ${PACKAGE_DIR}/python/pactus_grpc
-cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/python/
-cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/python/
-replace_in_place "s/{{ VERSION }}/$VERSION/g" ${PACKAGE_DIR}/python/setup.py
+cp -R ${ROOT_DIR}/.github/packager/python/grpc/* ${PACKAGE_DIR}/python/pactus-grpc
+cp ${PROTO_GEN_DIR}/python/* ${PACKAGE_DIR}/python/pactus-grpc/pactus_grpc
+cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/python/pactus-grpc
+cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/python/pactus-grpc
+replace_in_place "s/{{ VERSION }}/$VERSION/g" ${PACKAGE_DIR}/python/pactus-grpc/setup.py
+
+echo "== Building pactus-jsonrpc package for Python"
+pip install openrpcclientgenerator
+ORPC_DIR="${PACKAGE_DIR}/python/orpc"
+mkdir -p ${ORPC_DIR}
+cp "${ROOT_DIR}/www/grpc/gen/open-rpc/pactus-openrpc.json" ${ORPC_DIR}/openrpc.json
+cd ${ORPC_DIR}
+orpc python example.com ./out
+cp -R ${ROOT_DIR}/.github/packager/python/jsonrpc/* ${PACKAGE_DIR}/python/pactus-jsonrpc
+cp ${ORPC_DIR}/out/python/pactus-open-rpc-http-client/pactus_open_rpc_http_client/client.py ${PACKAGE_DIR}/python/pactus-jsonrpc/pactus_jsonrpc/client.py
+cp ${ORPC_DIR}/out/python/pactus-open-rpc-http-client/pactus_open_rpc_http_client/models.py ${PACKAGE_DIR}/python/pactus-jsonrpc/pactus_jsonrpc/models.py
+cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/python/pactus-jsonrpc
+cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/python/pactus-jsonrpc
+replace_in_place "s/{{ VERSION }}/$VERSION/g" ${PACKAGE_DIR}/python/pactus-jsonrpc/setup.py

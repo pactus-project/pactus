@@ -8,6 +8,9 @@ plugins:
     opt:
       - paths=source_relative
   - name: doc
+    out: ../gen/open-rpc
+    opt: ./openrpc.tmpl,pactus-openrpc.json
+  - name: doc
     out: ../gen/docs
     opt:
       - ./grpc-md.tmpl,grpc.md

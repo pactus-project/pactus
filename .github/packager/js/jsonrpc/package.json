@@ -1,7 +1,7 @@
 {
   "name": "pactus-jsonrpc",
   "version": "{{ VERSION }}",
-  "description": "Pactus jsonrpc client for JavaScript",
+  "description": "JavaScript client for interacting with the Pactus blockchain via JSON-RPC",
   "author": "Pactus Development Team",
   "license": "MIT",
   "homepage": "https://github.com/pactus-project/pactus#readme",
@@ -16,7 +16,7 @@
   "keywords": [
     "pactus",
     "blockchain",
-    "jsonrpc"
+    "json-rpc"
   ],
   "dependencies": {
     "@open-rpc/client-js": "1.8.1",

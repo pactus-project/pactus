@@ -7,7 +7,7 @@ setup(
     version="{{ VERSION }}",
     author="Pactus Development Team",
     author_email="info@pactus.org",
-    description="gRPC client bindings for the Pactus blockchain",
+    description="Python client for interacting with the Pactus blockchain via gRPC",
     long_description=Path("README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
     url="https://github.com/pactus-project/pactus",

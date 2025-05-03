@@ -20,7 +20,7 @@ devtools:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.35
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5
 	go install github.com/NathanBaulch/protoc-gen-cobra@v1.2
-	go install github.com/pactus-project/protoc-gen-doc/cmd/protoc-gen-doc@v0.0.0-20240815105130-84e89d0170e4
+	go install github.com/pactus-project/protoc-gen-doc/cmd/protoc-gen-doc@v0.0.0-20250428081805-49e8e8103faa
 	go install github.com/bufbuild/buf/cmd/buf@v1.47
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.5
