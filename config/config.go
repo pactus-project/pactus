@@ -274,26 +274,39 @@ func LoadFromFile(file string, strict bool, defaultConfig *Config) (*Config, err
 
 // BasicCheck performs basic checks on the configuration.
 func (conf *Config) BasicCheck() error {
-	errs := []error{
-		conf.Node.BasicCheck(),
-		conf.Store.BasicCheck(),
-		conf.TxPool.BasicCheck(),
-		conf.Consensus.BasicCheck(),
-		conf.Network.BasicCheck(),
-		conf.Logger.BasicCheck(),
-		conf.Sync.BasicCheck(),
-		conf.GRPC.BasicCheck(),
-		conf.HTML.BasicCheck(),
-		conf.HTTP.BasicCheck(),
-		conf.JSONRPC.BasicCheck(),
-		conf.ZeroMq.BasicCheck(),
+	if err := conf.Node.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.Store.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.TxPool.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.Consensus.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.Network.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.Logger.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.Sync.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.JSONRPC.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.HTTP.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.GRPC.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.ZeroMq.BasicCheck(); err != nil {
+		return err
 	}
 
-	for _, err := range errs {
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return conf.HTTP.BasicCheck()
 }
