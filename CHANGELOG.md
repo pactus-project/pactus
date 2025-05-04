@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.4](https://github.com/pactus-project/pactus/compare/v1.7.3...v1.7.4) (2025-05-04)
+
+### Feat
+
+- **packager**: add python package ([#1775](https://github.com/pactus-project/pactus/pull/1775))
+- **release**: add packager jsonrpc for javascript ([#1773](https://github.com/pactus-project/pactus/pull/1773))
+- generate grpc-web files
+
+### Fix
+
+- fix openrpc issues
+
 ## [1.7.3](https://github.com/pactus-project/pactus/compare/v1.7.2...v1.7.3) (2025-04-16)
 
 ### Fix
