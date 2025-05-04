@@ -17,9 +17,9 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/www/grpc"
+	"github.com/pactus-project/pactus/www/html"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
-	"github.com/pactus-project/pactus/www/rest"
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/pelletier/go-toml/v2"
 )
@@ -36,19 +36,20 @@ var (
 )
 
 type Config struct {
-	Node          *NodeConfig       `toml:"node"`
-	Store         *store.Config     `toml:"store"`
-	Network       *network.Config   `toml:"network"`
-	Sync          *sync.Config      `toml:"sync"`
-	TxPool        *txpool.Config    `toml:"tx_pool"`
-	Consensus     *consensus.Config `toml:"-"`
-	Logger        *logger.Config    `toml:"logger"`
-	GRPC          *grpc.Config      `toml:"grpc"`
-	Rest          *rest.Config      `toml:"rest"`
-	JSONRPC       *jsonrpc.Config   `toml:"jsonrpc"`
-	HTTP          *http.Config      `toml:"http"`
-	WalletManager *wallet.Config    `toml:"-"`
-	ZeroMq        *zmq.Config       `toml:"zeromq"`
+	Node      *NodeConfig       `toml:"node"`
+	Store     *store.Config     `toml:"store"`
+	Network   *network.Config   `toml:"network"`
+	Sync      *sync.Config      `toml:"sync"`
+	TxPool    *txpool.Config    `toml:"tx_pool"`
+	Consensus *consensus.Config `toml:"-"`
+	Logger    *logger.Config    `toml:"logger"`
+	GRPC      *grpc.Config      `toml:"grpc"`
+	JSONRPC   *jsonrpc.Config   `toml:"jsonrpc"`
+	HTTP      *http.Config      `toml:"http"`
+	HTML      *html.Config      `toml:"html"`
+	ZeroMq    *zmq.Config       `toml:"zeromq"`
+
+	WalletManager *wallet.Config `toml:"-"`
 }
 
 type BootstrapInfo struct {
@@ -98,9 +99,9 @@ func defaultConfig() *Config {
 		Consensus:     consensus.DefaultConfig(),
 		Logger:        logger.DefaultConfig(),
 		GRPC:          grpc.DefaultConfig(),
-		JSONRPC:       jsonrpc.DefaultConfig(),
-		Rest:          rest.DefaultConfig(),
+		HTML:          html.DefaultConfig(),
 		HTTP:          http.DefaultConfig(),
+		JSONRPC:       jsonrpc.DefaultConfig(),
 		ZeroMq:        zmq.DefaultConfig(),
 		WalletManager: wallet.DefaultConfig(),
 	}
@@ -149,14 +150,15 @@ func DefaultConfigMainnet() *Config {
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "127.0.0.1:50051"
 	conf.GRPC.BasicAuth = ""
-	conf.Rest.Enable = false
-	conf.Rest.Listen = "127.0.0.1:8080"
+	conf.HTML.Enable = false
+	conf.HTML.Listen = "127.0.0.1:80"
+	conf.HTTP.Enable = false
+	conf.HTTP.Listen = "127.0.0.1:8080"
+	conf.HTTP.BasePath = "/http"
 	conf.JSONRPC.Enable = false
 	conf.JSONRPC.Listen = "127.0.0.1:8545"
 	conf.JSONRPC.Origins = []string{}
-	conf.HTTP.Enable = false
-	conf.HTTP.Listen = "127.0.0.1:80"
-	conf.HTTP.EnablePprof = false
+	conf.HTML.EnablePprof = false
 
 	return conf
 }
@@ -184,14 +186,15 @@ func DefaultConfigTestnet() *Config {
 	conf.Network.DefaultPort = 21777
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "[::]:50052"
-	conf.Rest.Enable = true
-	conf.Rest.Listen = "[::]:8080"
-	conf.JSONRPC.Enable = false
-	conf.JSONRPC.Listen = "127.0.0.1:8545"
+	conf.HTML.Enable = false
+	conf.HTML.Listen = "[::]:80"
+	conf.HTTP.Enable = true
+	conf.HTTP.Listen = "[::]:8080"
+	conf.HTTP.BasePath = "/http"
+	conf.JSONRPC.Enable = true
+	conf.JSONRPC.Listen = "[::]:8545"
 	conf.JSONRPC.Origins = []string{}
-	conf.HTTP.Enable = false
-	conf.HTTP.Listen = "[::]:80"
-	conf.HTTP.EnablePprof = false
+	conf.HTML.EnablePprof = false
 
 	return conf
 }
@@ -211,14 +214,14 @@ func DefaultConfigLocalnet() *Config {
 	conf.GRPC.Enable = true
 	conf.GRPC.EnableWallet = true
 	conf.GRPC.Listen = "[::]:50052"
-	conf.Rest.Enable = true
-	conf.Rest.Listen = "[::]:8080"
-	conf.JSONRPC.Enable = true
-	conf.JSONRPC.Listen = "127.0.0.1:8545"
-	conf.JSONRPC.Origins = []string{"*"}
+	conf.HTML.Enable = true
+	conf.HTML.Listen = "[::]:0"
+	conf.HTML.EnablePprof = true
 	conf.HTTP.Enable = true
-	conf.HTTP.Listen = "[::]:0"
-	conf.HTTP.EnablePprof = true
+	conf.HTTP.Listen = "[::]:8080"
+	conf.JSONRPC.Enable = true
+	conf.JSONRPC.Listen = "[::]:8545"
+	conf.JSONRPC.Origins = []string{"*"}
 	conf.ZeroMq.ZmqPubBlockInfo = "tcp://127.0.0.1:28332"
 	conf.ZeroMq.ZmqPubTxInfo = "tcp://127.0.0.1:28333"
 	conf.ZeroMq.ZmqPubRawBlock = "tcp://127.0.0.1:28334"
@@ -295,7 +298,7 @@ func (conf *Config) BasicCheck() error {
 	if err := conf.JSONRPC.BasicCheck(); err != nil {
 		return err
 	}
-	if err := conf.Rest.BasicCheck(); err != nil {
+	if err := conf.HTTP.BasicCheck(); err != nil {
 		return err
 	}
 	if err := conf.GRPC.BasicCheck(); err != nil {

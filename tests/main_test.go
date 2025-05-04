@@ -96,7 +96,7 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Network.ListenAddrStrings = []string{"/ip4/127.0.0.1/tcp/0", "/ip4/127.0.0.1/udp/0/quic-v1"}
 		tConfigs[i].Network.MaxConns = 32
 		tConfigs[i].Network.PeerStorePath = util.TempFilePath()
-		tConfigs[i].HTTP.Enable = false
+		tConfigs[i].HTML.Enable = false
 		tConfigs[i].GRPC.Enable = false
 
 		if i == 0 {

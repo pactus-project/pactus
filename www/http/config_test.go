@@ -1,4 +1,4 @@
-package rest
+package http
 
 import (
 	"testing"
@@ -26,22 +26,22 @@ func TestHandlerPattern(t *testing.T) {
 			expectedSwagger: "/ui/",
 		},
 		{
-			basePath:        "rest",
-			expectedRoot:    "/rest/",
-			expectedAPI:     "/rest/api/",
-			expectedSwagger: "/rest/ui/",
+			basePath:        "http",
+			expectedRoot:    "/http/",
+			expectedAPI:     "/http/api/",
+			expectedSwagger: "/http/ui/",
 		},
 		{
-			basePath:        "/rest",
-			expectedRoot:    "/rest/",
-			expectedAPI:     "/rest/api/",
-			expectedSwagger: "/rest/ui/",
+			basePath:        "/http",
+			expectedRoot:    "/http/",
+			expectedAPI:     "/http/api/",
+			expectedSwagger: "/http/ui/",
 		},
 		{
-			basePath:        "rest/",
-			expectedRoot:    "/rest/",
-			expectedAPI:     "/rest/api/",
-			expectedSwagger: "/rest/ui/",
+			basePath:        "http/",
+			expectedRoot:    "/http/",
+			expectedAPI:     "/http/api/",
+			expectedSwagger: "/http/ui/",
 		},
 	}
 
