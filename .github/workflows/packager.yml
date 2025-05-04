@@ -1,3 +1,9 @@
+## Important Notes:
+## 1. The Releaser workflow is triggered when a new tag is pushed to the repository.
+## 2. The Packager workflow is triggered when the Releaser workflow completes successfully.
+## 3. GitHub always executes this workflow using the version from the main branch
+## 4. To package the correct release, it checks out the latest tag.
+##
 name: Packager
 permissions:
   contents: read
@@ -33,25 +39,25 @@ jobs:
       - name: Create Packages
         run: bash ./.github/packager/packager.sh
 
-      - name: Upload Pactus grpc npm package
+      - name: Upload `package-js-grpc` package
         uses: actions/upload-artifact@v4
         with:
           name: package-js-grpc
           path: packages/js/pactus-grpc
 
-      - name: Upload Pactus jsonrpc npm package
+      - name: Upload `package-js-jsonrpc` package
         uses: actions/upload-artifact@v4
         with:
           name: package-js-jsonrpc
           path: packages/js/pactus-jsonrpc
 
-      - name: Upload Pactus grpc PyPI package
+      - name: Upload `package-python-grpc` package
         uses: actions/upload-artifact@v4
         with:
           name: package-python-grpc
           path: packages/python/pactus-grpc
 
-      - name: Upload Pactus jsonrpc PyPI package
+      - name: Upload `package-python-jsonrpc` package
         uses: actions/upload-artifact@v4
         with:
           name: package-python-jsonrpc
