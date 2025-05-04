@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Pactus APIs",
-    "description": "Each node in the Pactus network can be configured to use the [gRPC](https://grpc.io/) protocol for communication.\nHere you can find the list of all gRPC methods and messages.\n\nAll the amounts and values in gRPC endpoints are in NanoPAC units, which are atomic and the smallest unit in the Pactus blockchain.\nEach PAC is equivalent to 1,000,000,000 or 10\u003csup\u003e9\u003c/sup\u003e NanoPACs.\n",
+    "description": "Every node in the Pactus network can be configured to expose HTTP-APIs for communication.\nThese APIs follow the [OpenAPI (Swagger)](https://swagger.io/specification/) specification, and a complete list of available endpoints can be found here.\n\n## Units\n\nAll the amounts are in NanoPAC units, which are atomic and the smallest unit in the Pactus blockchain.\nEach PAC is equivalent to 1,000,000,000 or 10\u003csup\u003e9\u003c/sup\u003e NanoPACs.\n",
     "version": "2.0",
     "contact": {
       "name": "Pactus Blockchain",

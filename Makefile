@@ -1,5 +1,4 @@
 PACKAGES=$(shell go list ./... | grep -v 'tests' | grep -v 'grpc/gen')
-VERSION=$(shell jq -r 'if .meta != "" then "\(.major).\(.minor).\(.patch)-\(.meta)" else "\(.major).\(.minor).\(.patch)" end' version/version.json)
 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
@@ -63,10 +62,7 @@ docker:
 # This target works only on Unix-like terminals.
 proto:
 	rm -rf www/grpc/gen
-	$(SED_CMD) 's/{{ VERSION }}/$(VERSION)/g' www/grpc/buf/openapi.config.yaml
 	cd www/grpc && buf generate --template ./buf/buf.gen.yaml --config ./buf/buf.yaml ./proto
-	$(SED_CMD) 's/"version": *"[0-9]\+\.[0-9]\+\.[0-9]\+"/"version": "$(VERSION)"/' www/grpc/gen/open-rpc/pactus-openrpc.json
-
 
 proto-check:
 	cd www/grpc && buf lint --config ./buf/buf.yaml

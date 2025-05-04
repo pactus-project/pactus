@@ -3,13 +3,22 @@ title: JSON-RPC API Reference
 weight: 2
 ---
 
-Each node in the Pactus network can be configured to use the
+Every node in the Pactus network can be configured to use the
 [JSON-RPC](https://www.jsonrpc.org/specification) protocol for communication.
-Here, you can find the list of all JSON-RPC methods and messages.
+Here, you can find the list of all JSON-RPC methods, params and result.
 
-All the amounts and values in JSON-RPC endpoints are in NanoPAC units,
+## Units
+
+All the amounts are in NanoPAC units,
 which are atomic and the smallest unit in the Pactus blockchain.
 Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
+
+## Packages
+
+For seamless integration with Pactus, you can use these client libraries:
+
+- [pactus-jsonrpc](https://pypi.org/project/pactus-jsonrpc/) package for Python
+- [pactus-jsonrpc](https://www.npmjs.com/package/pactus-jsonrpc/) package for Javascript
 
 ## Example
 
@@ -61,7 +70,7 @@ curl --location 'http://localhost:8545/' \
 }'
 ```
 
-<h2>JSON-RPC Methods</h2>
+## JSON-RPC Methods
 
 <div id="toc-container">
   <ul class="">
@@ -85,12 +94,12 @@ curl --location 'http://localhost:8545/' \
 <div class="api-doc">
 {{range .Files}}{{range .Services}}{{- print "\n" -}}
 
-## {{.Name}} Service
+### {{.Name}} Service
 
 {{p .Description}}
 {{$service_name := .FullName}}{{range .Methods}}{{- print "\n" -}}
 
-### {{.SnakeName}} <span id="{{.SnakeName}}" class="rpc-badge"></span>
+#### {{.SnakeName}} <span id="{{.SnakeName}}" class="rpc-badge"></span>
 
 {{p .Description}}
 
