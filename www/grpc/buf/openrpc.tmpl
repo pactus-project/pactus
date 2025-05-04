@@ -8,47 +8,46 @@
 {{- $firstMethod := true -}}
 {{- range .Files -}}
   {{- range .Services -}}
-    {{- range .Methods -}}
-      {{- if not $firstMethod }},{{ end }}
+    {{ range .Methods }}
+      {{- if not $firstMethod -}},{{- end -}}
       {{- $firstMethod = false }}
-      {
-        "name": "{{- .SnakeName -}}",
-        "description": "{{- .Description -}}",
-        "params": [
-{{- with getMessage .RequestLongType }}
-  {{- $firstParam := true }}
-  {{- range .Fields }}
-          {{- if not $firstParam }},{{ end }}
-          {{- $firstParam = false }}
-          {
-            "name": "{{ .SnakeName }}",
-            "description": "{{ .Description }}",
-            "schema": {{ template "renderFieldSchema" . }}
-          }
-  {{- end }}
+    {
+      "name": "{{ .SnakeName }}",
+      "description": "{{ .Description | nobr }}",
+      "params": [
+{{- with getMessage .RequestLongType -}}
+  {{- $firstParam := true -}}
+  {{ range .Fields }}
+    {{- if not $firstParam -}},{{- end -}}
+    {{- $firstParam = false }}
+        {
+          "name": "{{ .SnakeName }}",
+          "description": "{{ .Description | nobr }}",
+          "schema": {{ template "renderFieldSchema" . }}
+        }
+  {{- end -}}
 {{- end }}
-        ],
-        "paramStructure": "by-name",
-        "result": {
-          "name": "fields",
-          "schema": {
-            "type": "object",
-            "properties": {
-{{- with getMessage .ResponseLongType }}
-  {{- $firstField := true }}
-  {{- range .Fields }}
-              {{- if not $firstField }},{{ end }}
-              {{- $firstField = false }}
-              "{{ .SnakeName }}": {{ template "renderFieldSchema" . }}
-  {{- end }}
-{{- end }}
+      ],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object",
+          "properties": {
+{{- with getMessage .ResponseLongType -}}
+  {{- $firstField := true -}}
+  {{- range .Fields -}}
+              {{- if not $firstField }},{{ end -}}
+              {{- $firstField = false -}}
+              "{{ .SnakeName }}": {{ template "renderFieldSchema" . -}}
+  {{- end -}}
+{{- end -}}
             }
           }
         }
       }
-    {{- end }}
-  {{- end }}
-{{- end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
   ]
 }
 
@@ -61,26 +60,26 @@
   "items": {{ template "renderFieldItemSchema" . }}
 }
 {{- else }}
-{{ template "renderFieldItemSchema" . }}
-{{- end }}
-{{ end }}
+{{- template "renderFieldItemSchema" . -}}
+{{- end -}}
+{{- end -}}
 
-{{ define "renderFieldItemSchema" }}
-{{- if or (eq .OpenRPCType "string") (eq .OpenRPCType "boolean") (eq .OpenRPCType "integer") (eq .OpenRPCType "number") }}
+{{- define "renderFieldItemSchema" -}}
+{{- if or (eq .OpenRPCType "string") (eq .OpenRPCType "boolean") (eq .OpenRPCType "integer") (eq .OpenRPCType "number") -}}
 { "type": "{{ .OpenRPCType }}" }
-{{- else }}
+{{- else -}}
 {
   "type": "object",
   "properties": {
-{{- with getMessage .LongType }}
-  {{- $first := true }}
-  {{- range .Fields }}
-    {{- if not $first }},{{ end }}
-    {{- $first = false }}
+{{- with getMessage .LongType -}}
+  {{- $first := true -}}
+  {{- range .Fields -}}
+    {{- if not $first -}},{{- end -}}
+    {{- $first = false -}}
     "{{ .SnakeName }}": {{ template "renderFieldSchema" . }}
-  {{- end }}
-{{- end }}
+  {{- end -}}
+{{- end -}}
   }
 }
-{{- end }}
-{{ end }}
+{{- end -}}
+{{- end -}}
