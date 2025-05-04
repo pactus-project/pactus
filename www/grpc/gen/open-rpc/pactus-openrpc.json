@@ -8,6 +8,8 @@
     {
       "name": "pactus.transaction.get_transaction",
       "description": "GetTransaction retrieves transaction details based on the provided request parameters.",
+      "tags": [{ "name": "transaction"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "id",
@@ -50,6 +52,8 @@
     {
       "name": "pactus.transaction.calculate_fee",
       "description": "CalculateFee calculates the transaction fee based on the specified amount and payload type.",
+      "tags": [{ "name": "transaction"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "amount",
@@ -79,6 +83,8 @@
     {
       "name": "pactus.transaction.broadcast_transaction",
       "description": "BroadcastTransaction broadcasts a signed transaction to the network.",
+      "tags": [{ "name": "transaction"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "signed_raw_transaction",
@@ -98,6 +104,8 @@
     {
       "name": "pactus.transaction.get_raw_transfer_transaction",
       "description": "GetRawTransferTransaction retrieves raw details of a transfer transaction.",
+      "tags": [{ "name": "transaction"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "lock_time",
@@ -142,6 +150,8 @@
     {
       "name": "pactus.transaction.get_raw_bond_transaction",
       "description": "GetRawBondTransaction retrieves raw details of a bond transaction.",
+      "tags": [{ "name": "transaction"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "lock_time",
@@ -191,6 +201,8 @@
     {
       "name": "pactus.transaction.get_raw_unbond_transaction",
       "description": "GetRawUnbondTransaction retrieves raw details of an unbond transaction.",
+      "tags": [{ "name": "transaction"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "lock_time",
@@ -220,6 +232,8 @@
     {
       "name": "pactus.transaction.get_raw_withdraw_transaction",
       "description": "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.",
+      "tags": [{ "name": "transaction"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "lock_time",
@@ -266,6 +280,8 @@
     {
       "name": "pactus.blockchain.get_block",
       "description": "GetBlock retrieves information about a block based on the provided request parameters.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "height",
@@ -326,6 +342,8 @@
     {
       "name": "pactus.blockchain.get_block_hash",
       "description": "GetBlockHash retrieves the hash of a block at the specified height.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "height",
@@ -345,6 +363,8 @@
     {
       "name": "pactus.blockchain.get_block_height",
       "description": "GetBlockHeight retrieves the height of a block with the specified hash.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "hash",
@@ -364,6 +384,8 @@
     {
       "name": "pactus.blockchain.get_blockchain_info",
       "description": "GetBlockchainInfo retrieves general information about the blockchain.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
       "params": [
       ],
       "result": {
@@ -385,6 +407,8 @@
     {
       "name": "pactus.blockchain.get_consensus_info",
       "description": "GetConsensusInfo retrieves information about the consensus instances.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
       "params": [
       ],
       "result": {
@@ -416,6 +440,8 @@
     {
       "name": "pactus.blockchain.get_account",
       "description": "GetAccount retrieves information about an account based on the provided address.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "address",
@@ -438,6 +464,8 @@
     {
       "name": "pactus.blockchain.get_validator",
       "description": "GetValidator retrieves information about a validator based on the provided address.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "address",
@@ -460,6 +488,8 @@
     {
       "name": "pactus.blockchain.get_validator_by_number",
       "description": "GetValidatorByNumber retrieves information about a validator based on the provided number.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "number",
@@ -482,6 +512,8 @@
     {
       "name": "pactus.blockchain.get_validator_addresses",
       "description": "GetValidatorAddresses retrieves a list of all validator addresses.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
       "params": [
       ],
       "result": {
@@ -500,6 +532,8 @@
     {
       "name": "pactus.blockchain.get_public_key",
       "description": "GetPublicKey retrieves the public key of an account based on the provided address.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "address",
@@ -519,6 +553,8 @@
     {
       "name": "pactus.blockchain.get_tx_pool_content",
       "description": "GetTxPoolContent retrieves current transactions in the transaction pool.",
+      "tags": [{ "name": "blockchain"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "payload_type",
@@ -562,6 +598,8 @@
     {
       "name": "pactus.network.get_network_info",
       "description": "GetNetworkInfo retrieves information about the overall network.",
+      "tags": [{ "name": "network"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "only_connected",
@@ -652,6 +690,8 @@
     {
       "name": "pactus.network.get_node_info",
       "description": "GetNodeInfo retrieves information about a specific node in the network.",
+      "tags": [{ "name": "network"}],
+      "paramStructure": "by-name",
       "params": [
       ],
       "result": {
@@ -686,6 +726,8 @@
     {
       "name": "pactus.utils.sign_message_with_private_key",
       "description": "SignMessageWithPrivateKey signs message with provided private key.",
+      "tags": [{ "name": "utils"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "private_key",
@@ -710,6 +752,8 @@
     {
       "name": "pactus.utils.verify_message",
       "description": "VerifyMessage verifies signature with public key and message.",
+      "tags": [{ "name": "utils"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "message",
@@ -739,6 +783,8 @@
     {
       "name": "pactus.utils.b_l_s_public_key_aggregation",
       "description": "BLSPublicKeyAggregation aggregates bls public keys.",
+      "tags": [{ "name": "utils"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "public_keys",
@@ -762,6 +808,8 @@
     {
       "name": "pactus.utils.b_l_s_signature_aggregation",
       "description": "BLSSignatureAggregation aggregates bls signatures.",
+      "tags": [{ "name": "utils"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "signatures",
@@ -787,6 +835,8 @@
     {
       "name": "pactus.wallet.create_wallet",
       "description": "CreateWallet creates a new wallet with the specified parameters.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -811,6 +861,8 @@
     {
       "name": "pactus.wallet.restore_wallet",
       "description": "RestoreWallet restores an existing wallet with the given mnemonic.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -840,6 +892,8 @@
     {
       "name": "pactus.wallet.load_wallet",
       "description": "LoadWallet loads an existing wallet with the given name.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -859,6 +913,8 @@
     {
       "name": "pactus.wallet.unload_wallet",
       "description": "UnloadWallet unloads a currently loaded wallet with the specified name.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -878,6 +934,8 @@
     {
       "name": "pactus.wallet.get_total_balance",
       "description": "GetTotalBalance returns the total available balance of the wallet.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -897,6 +955,8 @@
     {
       "name": "pactus.wallet.sign_raw_transaction",
       "description": "SignRawTransaction signs a raw transaction for a specified wallet.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -926,6 +986,8 @@
     {
       "name": "pactus.wallet.get_validator_address",
       "description": "GetValidatorAddress retrieves the validator address associated with a public key.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "public_key",
@@ -945,6 +1007,8 @@
     {
       "name": "pactus.wallet.get_new_address",
       "description": "GetNewAddress generates a new address for the specified wallet.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -982,6 +1046,8 @@
     {
       "name": "pactus.wallet.get_address_history",
       "description": "GetAddressHistory retrieves the transaction history of an address.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -1013,6 +1079,8 @@
     {
       "name": "pactus.wallet.sign_message",
       "description": "SignMessage signs an arbitrary message.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -1047,6 +1115,8 @@
     {
       "name": "pactus.wallet.get_total_stake",
       "description": "GetTotalStake return total stake of wallet.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -1066,6 +1136,8 @@
     {
       "name": "pactus.wallet.get_address_info",
       "description": "GetAddressInfo return address information.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -1090,6 +1162,8 @@
     {
       "name": "pactus.wallet.set_address_label",
       "description": "SetAddressLabel set label for given address.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -1124,6 +1198,8 @@
     {
       "name": "pactus.wallet.list_wallet",
       "description": "ListWallet return list wallet name.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
       ],
       "result": {
@@ -1142,6 +1218,8 @@
     {
       "name": "pactus.wallet.get_wallet_info",
       "description": "GetWalletInfo return wallet information.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",
@@ -1161,6 +1239,8 @@
     {
       "name": "pactus.wallet.list_address",
       "description": "ListAddress return list address in wallet.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
       "params": [
         {
           "name": "wallet_name",

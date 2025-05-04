@@ -7,13 +7,15 @@
   "methods": [
 {{- $firstMethod := true -}}
 {{- range .Files -}}
-  {{- range .Services -}}
+  {{- range .Services -}}{{- $ServiceName := .SnakeName -}}
     {{ range .Methods }}
       {{- if not $firstMethod -}},{{- end -}}
       {{- $firstMethod = false }}
     {
       "name": "{{ .SnakeName }}",
       "description": "{{ .Description | nobr }}",
+      "tags": [{ "name": "{{ $ServiceName}}"}],
+      "paramStructure": "by-name",
       "params": [
 {{- with getMessage .RequestLongType -}}
   {{- $firstParam := true -}}

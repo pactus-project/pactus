@@ -26,13 +26,12 @@ echo "Packing Version:" ${VERSION}
 
 rm -rf ${PACKAGE_DIR}
 mkdir -p ${PACKAGE_DIR}
-mkdir -p ${PACKAGE_DIR}/js/{pactus-grpc,pactus-jsonrpc}/src
+mkdir -p ${PACKAGE_DIR}/js/{pactus-grpc,pactus-jsonrpc}
 mkdir -p ${PACKAGE_DIR}/python/{pactus-grpc,pactus-jsonrpc}
 
 echo "== Building pactus-grpc package for JavaScript"
 cp -R ${ROOT_DIR}/.github/packager/js/grpc/package.json ${PACKAGE_DIR}/js/pactus-grpc
-cp -R ${ROOT_DIR}/.github/packager/js/index.js ${PACKAGE_DIR}/js/pactus-grpc/src
-cp -R ${PROTO_GEN_DIR}/js/* ${PACKAGE_DIR}/js/pactus-grpc/src
+cp -R ${PROTO_GEN_DIR}/js/* ${PACKAGE_DIR}/js/pactus-grpc
 cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/js/pactus-grpc
 cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/js/pactus-grpc
 replace_in_place "s/{{ VERSION }}/$VERSION/g" "${PACKAGE_DIR}/js/pactus-grpc/package.json"
@@ -40,18 +39,23 @@ replace_in_place "s/{{ VERSION }}/$VERSION/g" "${PACKAGE_DIR}/js/pactus-grpc/pac
 echo "== Building pactus-jsonrpc package for JavaScript"
 GENERATOR_DIR="${PACKAGE_DIR}/js/generator"
 git clone https://github.com/pactus-project/generator.git "$GENERATOR_DIR" && cd "$GENERATOR_DIR"
-npm i && npm run build
+npm install && npm run build
 cd "$ROOT_DIR" && $GENERATOR_DIR/build/cli.js generate \
   -t client \
   -l typescript \
-  -n pactusClientTS \
+  -n pactus-jsonrpc \
   -d "${ROOT_DIR}/www/grpc/gen/open-rpc/pactus-openrpc.json" \
   -o "$GENERATOR_DIR/gen"
-cp -R ${ROOT_DIR}/.github/packager/js/jsonrpc/package.json ${PACKAGE_DIR}/js/pactus-jsonrpc
-cp -R $GENERATOR_DIR/gen/client/typescript/src/index.ts ${PACKAGE_DIR}/js/pactus-jsonrpc/src
+cd "$GENERATOR_DIR/gen/client/typescript"
+npm install && tsc
+cp $GENERATOR_DIR/gen/client/typescript/build/index.d.ts ${PACKAGE_DIR}/js/pactus-jsonrpc
+cp $GENERATOR_DIR/gen/client/typescript/build/index.js ${PACKAGE_DIR}/js/pactus-jsonrpc
+cp $GENERATOR_DIR/gen/client/typescript/build/index.js.map ${PACKAGE_DIR}/js/pactus-jsonrpc
+cp ${ROOT_DIR}/.github/packager/js/jsonrpc/package.json ${PACKAGE_DIR}/js/pactus-jsonrpc
 cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/js/pactus-jsonrpc
 cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/js/pactus-jsonrpc
 replace_in_place "s/{{ VERSION }}/$VERSION/g" "${PACKAGE_DIR}/js/pactus-jsonrpc/package.json"
+
 
 echo "== Building pactus-grpc package for Python"
 cp -R ${ROOT_DIR}/.github/packager/python/grpc/* ${PACKAGE_DIR}/python/pactus-grpc
