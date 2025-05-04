@@ -1,11 +1,11 @@
 {
-  "name": "pactus-grpc",
+  "name": "pactus-jsonrpc",
   "version": "{{ VERSION }}",
-  "description": "Pactus gRPC client for JavaScript",
+  "description": "JavaScript client for interacting with the Pactus blockchain via JSON-RPC",
   "author": "Pactus Development Team",
   "license": "MIT",
   "homepage": "https://github.com/pactus-project/pactus#readme",
-  "main": "index.js",
+  "main": "./index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pactus-project/pactus.git"
@@ -16,11 +16,12 @@
   "keywords": [
     "pactus",
     "blockchain",
-    "grpc"
+    "json-rpc"
   ],
   "dependencies": {
-    "@grpc/grpc-js": "^1.12",
-    "grpc-web": "^1.5",
-    "google-protobuf": "^3.21"
+    "@open-rpc/client-js": "1.8.1",
+    "@open-rpc/meta-schema": "1.14.9",
+    "@open-rpc/schema-utils-js": "2.1.2",
+    "lodash": "^4.17.15"
   }
 }
