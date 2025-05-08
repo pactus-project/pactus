@@ -29,7 +29,7 @@ func TestCloseStream(t *testing.T) {
 	}, 5*time.Second, 100*time.Millisecond)
 
 	t.Run("Stream timeout", func(t *testing.T) {
-		stream, err := networkA.stream.SendRequest([]byte("test-1"), networkB.SelfID())
+		stream, err := networkA.stream.SendTo([]byte("test-1"), networkB.SelfID())
 		require.NoError(t, err)
 
 		// NetworkB doesn't close the stream.
@@ -47,7 +47,7 @@ func TestCloseStream(t *testing.T) {
 	})
 
 	t.Run("Stream closed", func(t *testing.T) {
-		stream, err := networkA.stream.SendRequest([]byte("test-2"), networkB.SelfID())
+		stream, err := networkA.stream.SendTo([]byte("test-2"), networkB.SelfID())
 		require.NoError(t, err)
 
 		// NetworkB close the stream.
