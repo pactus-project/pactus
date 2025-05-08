@@ -54,13 +54,13 @@ func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 	s.networkPipe.Send(event)
 }
 
-// SendRequest sends a message to a specific peer, assuming there is already a direct connection.
+// SendTo sends a message to a specific peer, assuming there is already a direct connection.
 //
 // For simplicity, we do not use bi-directional streams.
 // Each time a peer wants to send a message, it creates a new stream.
 //
 // For more details on stream multiplexing, refer to: https://docs.libp2p.io/concepts/multiplex/overview/
-func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) (lp2pnetwork.Stream, error) {
+func (s *streamService) SendTo(msg []byte, pid lp2peer.ID) (lp2pnetwork.Stream, error) {
 	s.logger.Trace("sending stream", "to", pid)
 	_, err := s.host.Peerstore().SupportsProtocols(pid, s.protocolID)
 	if err != nil {

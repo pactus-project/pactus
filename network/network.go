@@ -364,7 +364,7 @@ func (n *network) Protect(pid lp2pcore.PeerID, tag string) {
 // It uses a goroutine to ensure that if sending is blocked, receiving messages won't be blocked.
 func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) {
 	go func() {
-		_, err := n.stream.SendRequest(msg, pid)
+		_, err := n.stream.SendTo(msg, pid)
 		if err != nil {
 			n.logger.Warn("error on sending msg", "pid", pid, "error", err)
 		}
