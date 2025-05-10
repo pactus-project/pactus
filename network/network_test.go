@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -493,4 +495,49 @@ func checkConnection(t *testing.T, networkP, networkB *network) {
 
 	networkB.Stop()
 	networkP.Stop()
+}
+
+func TestLoadOrCreateKey(t *testing.T) {
+	t.Run("ReturnsSuccessfullyWhenValidKeyCreated", func(t *testing.T) {
+		tempDir := t.TempDir()
+		keyPath := filepath.Join(tempDir, "valid_key")
+
+		// Create new valid key
+		validKey, err := loadOrCreateKey(keyPath)
+		assert.NoError(t, err)
+
+		// Retrieve previously created valid key, the file path exists
+		previousValidKey, err := loadOrCreateKey(keyPath)
+		assert.NoError(t, err)
+
+		// Compare public keys of both private keys
+		assert.True(t, validKey.GetPublic().Equals(previousValidKey.GetPublic()))
+	})
+
+	t.Run("ReturnsErrorWhenInvalidKeyCreated", func(t *testing.T) {
+		tempFile, err := os.CreateTemp("", "invalid_key")
+		assert.NoError(t, err)
+		defer os.Remove(tempFile.Name())
+
+		// Writes an invalid private key to the file, decoding key will fail later
+		err = os.WriteFile(tempFile.Name(), []byte("invalid_data"), 0644)
+		assert.NoError(t, err)
+
+		key, err := loadOrCreateKey(tempFile.Name())
+		assert.Error(t, err)
+		assert.Nil(t, key)
+	})
+
+	t.Run("ReturnsErrorWhenGivenDirectory", func(t *testing.T) {
+		tempDir := t.TempDir()
+		key, err := loadOrCreateKey(tempDir)
+		assert.Error(t, err)
+		assert.Nil(t, key)
+	})
+
+	t.Run("ReturnsErrorWithInvalidFilePath", func(t *testing.T) {
+		key, err := loadOrCreateKey("/invalid-file-path")
+		assert.Error(t, err)
+		assert.Nil(t, key)
+	})
 }
