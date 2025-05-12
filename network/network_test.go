@@ -494,3 +494,45 @@ func checkConnection(t *testing.T, networkP, networkB *network) {
 	networkB.Stop()
 	networkP.Stop()
 }
+
+func TestLoadOrCreateKey(t *testing.T) {
+	t.Run("Should load same network key after being created", func(t *testing.T) {
+		keyPath := util.TempFilePath()
+
+		// Create new valid key
+		validKey, err := loadOrCreateKey(keyPath)
+		assert.NoError(t, err)
+
+		// Retrieve previously created valid key, the file path exists
+		previousValidKey, err := loadOrCreateKey(keyPath)
+		assert.NoError(t, err)
+
+		assert.Equal(t, validKey.GetPublic(), previousValidKey.GetPublic())
+	})
+
+	t.Run("Should return error when file contains invalid private key", func(t *testing.T) {
+		tempFilePath := util.TempFilePath()
+
+		// Writes an invalid private key to the file, decoding key will fail later
+		err := util.WriteFile(tempFilePath, []byte("invalid_data"))
+		assert.NoError(t, err)
+
+		key, err := loadOrCreateKey(tempFilePath)
+		assert.Error(t, err)
+		assert.Nil(t, key)
+	})
+
+	t.Run("Should return error when input path is directory", func(t *testing.T) {
+		tempDir := t.TempDir()
+		key, err := loadOrCreateKey(tempDir)
+		assert.Error(t, err)
+		assert.Nil(t, key)
+	})
+
+	t.Run("Should return error when input path is invalid", func(t *testing.T) {
+		invalidPath := string([]byte{0x00})
+		key, err := loadOrCreateKey(invalidPath)
+		assert.Error(t, err)
+		assert.Nil(t, key)
+	})
+}
