@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"testing"
 	"time"
 
@@ -512,14 +511,13 @@ func TestLoadOrCreateKey(t *testing.T) {
 	})
 
 	t.Run("Should return error when file contains invalid private key", func(t *testing.T) {
-		tempFile, err := os.CreateTemp("", "invalid_key")
-		assert.NoError(t, err)
+		tempFilePath := util.TempFilePath()
 
 		// Writes an invalid private key to the file, decoding key will fail later
-		err = util.WriteFile(tempFile.Name(), []byte("invalid_data"))
+		err := util.WriteFile(tempFilePath, []byte("invalid_data"))
 		assert.NoError(t, err)
 
-		key, err := loadOrCreateKey(tempFile.Name())
+		key, err := loadOrCreateKey(tempFilePath)
 		assert.Error(t, err)
 		assert.Nil(t, key)
 	})
