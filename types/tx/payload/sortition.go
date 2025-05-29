@@ -58,7 +58,3 @@ func (p *SortitionPayload) String() string {
 	return fmt.Sprintf("{Sortition 🎯 %s",
 		p.Validator.ShortString())
 }
-
-func (*SortitionPayload) Receiver() *crypto.Address {
-	return nil
-}
