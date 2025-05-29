@@ -129,7 +129,3 @@ func (p *BondPayload) String() string {
 		p.To.ShortString(),
 		p.Stake)
 }
-
-func (p *BondPayload) Receiver() *crypto.Address {
-	return &p.To
-}

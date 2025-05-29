@@ -15,6 +15,11 @@ func TestSortitionType(t *testing.T) {
 	assert.Equal(t, TypeSortition, pld.Type())
 }
 
+func TestSortitionString(t *testing.T) {
+	pld := SortitionPayload{}
+	assert.Contains(t, pld.String(), "{Sortition ")
+}
+
 func TestSortitionDecoding(t *testing.T) {
 	tests := []struct {
 		raw      []byte
@@ -122,7 +127,6 @@ func TestSortitionDecoding(t *testing.T) {
 				}
 
 				assert.Equal(t, tt.value, pld.Value())
-				assert.Nil(t, pld.Receiver())
 			}
 		}
 	}

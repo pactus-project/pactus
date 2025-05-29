@@ -16,6 +16,11 @@ func TestBondType(t *testing.T) {
 	assert.Equal(t, TypeBond, pld.Type())
 }
 
+func TestBondString(t *testing.T) {
+	pld := BondPayload{}
+	assert.Contains(t, pld.String(), "{Bond ")
+}
+
 func TestBondDecoding(t *testing.T) {
 	tests := []struct {
 		raw      []byte
@@ -263,7 +268,6 @@ func TestBondDecoding(t *testing.T) {
 
 				// Check signer
 				assert.Equal(t, crypto.Address(tt.raw[:21]), pld.Signer())
-				assert.Equal(t, crypto.Address(tt.raw[21:42]), *pld.Receiver())
 				assert.Equal(t, tt.value, pld.Value())
 			}
 		}

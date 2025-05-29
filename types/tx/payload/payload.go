@@ -11,11 +11,12 @@ import (
 type Type uint8
 
 const (
-	TypeTransfer  = Type(1)
-	TypeBond      = Type(2)
-	TypeSortition = Type(3)
-	TypeUnbond    = Type(4)
-	TypeWithdraw  = Type(5)
+	TypeTransfer      = Type(1)
+	TypeBond          = Type(2)
+	TypeSortition     = Type(3)
+	TypeUnbond        = Type(4)
+	TypeWithdraw      = Type(5)
+	TypeBatchTransfer = Type(6)
 )
 
 func (t Type) String() string {
@@ -30,6 +31,8 @@ func (t Type) String() string {
 		return "withdraw"
 	case TypeSortition:
 		return "sortition"
+	case TypeBatchTransfer:
+		return "batch-transfer"
 	}
 
 	return fmt.Sprintf("%d", t)
@@ -44,5 +47,4 @@ type Payload interface {
 	Decode(io.Reader) error
 	BasicCheck() error
 	String() string
-	Receiver() *crypto.Address
 }

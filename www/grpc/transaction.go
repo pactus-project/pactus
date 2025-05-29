@@ -306,6 +306,9 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 				Amount:           pld.Amount.ToNanoPAC(),
 			},
 		}
+
+	case payload.TypeBatchTransfer:
+		logger.Error("BatchTransfer is not implemented yet")
 	default:
 		logger.Error("payload type not defined", "type", trx.Payload().Type())
 	}

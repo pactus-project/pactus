@@ -83,12 +83,8 @@ func (p *TransferPayload) Decode(r io.Reader) error {
 }
 
 func (p *TransferPayload) String() string {
-	return fmt.Sprintf("{Send 💸 %s->%s %s",
+	return fmt.Sprintf("{Transfer 💸 %s->%s %s",
 		p.From.ShortString(),
 		p.To.ShortString(),
 		p.Amount)
-}
-
-func (p *TransferPayload) Receiver() *crypto.Address {
-	return &p.To
 }

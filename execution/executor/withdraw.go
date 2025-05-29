@@ -40,7 +40,7 @@ func newWithdrawExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*WithdrawExecutor, er
 }
 
 func (e *WithdrawExecutor) Check(_ bool) error {
-	if e.sender.Stake() < e.pld.Amount+e.fee {
+	if e.sender.Stake() < e.pld.Value()+e.fee {
 		return ErrInsufficientFunds
 	}
 
