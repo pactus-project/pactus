@@ -50,7 +50,7 @@ TAG_MSG="Version ${CUR_VER}"
 
 ## 5. Update the Version
 
-clear Meta and set Alias in [version.json](../version/version.json).
+Clear Meta and set Alias in [version.json](../version/version.json).
 
 ## 6. Update Changelog
 
@@ -85,7 +85,7 @@ Create a Git tag and sign it using your [GPG key](https://docs.github.com/en/aut
 ```bash
 git checkout ${BASE_BRANCH}
 git pull
-git tag -s -a ${TAG_NAME} -m ${TAG_MSG}
+git tag -s -a ${TAG_NAME} -m "${TAG_MSG}"
 ```
 
 Inspect the tag information:
@@ -107,9 +107,9 @@ Pushing the tag will automatically create a release tag and build the binaries.
 ## 10. Bump the Version
 
 Update the version inside [version.json](../version/version.json), add `beta` to the `meta` field, and:
-- If this is a **major release**, update the versions inside this document in step 3 and
-update the versions inside the [patching](./patching.md) in step 2.
-- If this is a **patch release**, update the versions inside the [patching](./patching.md) in step 2.
+- If this is a **major release**, update the versions inside [this document](./releasing.md#4-set-environment-variables) in step 4 and
+update the versions inside the [patching](./patching.md#4-set-environment-variables) in step 2.
+- If this is a **patch release**, update the versions inside the [patching](./patching.md#4-set-environment-variables) in step 4.
 
 Create a new PR against the base branch:
 
