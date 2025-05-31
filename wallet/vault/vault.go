@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"encoding/json"
 
+	"github.com/cosmos/go-bip39"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	blshdkeychain "github.com/pactus-project/pactus/crypto/bls/hdkeychain"
@@ -11,7 +12,6 @@ import (
 	ed25519hdkeychain "github.com/pactus-project/pactus/crypto/ed25519/hdkeychain"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
-	"github.com/tyler-smith/go-bip39"
 	"golang.org/x/exp/slices"
 )
 
