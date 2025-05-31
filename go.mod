@@ -7,7 +7,6 @@ require (
 	github.com/beevik/ntp v1.4.3
 	github.com/c-bata/go-prompt v0.2.6
 	github.com/consensys/gnark-crypto v0.15.0
-	github.com/cosmos/go-bip39 v1.0.0
 	github.com/fxamacker/cbor/v2 v2.7.0
 	github.com/go-zeromq/zmq4 v0.17.0
 	github.com/gofrs/flock v0.12.1

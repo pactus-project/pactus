@@ -27,19 +27,19 @@ func TestValidateMnemonic(t *testing.T) {
 	}{
 		{
 			"",
-			"Invalid mnemonic",
+			"invalid mnenomic",
 		},
 		{
 			"abandon ability able about above absent absorb abstract absurd abuse access",
-			"Invalid mnemonic",
+			"invalid mnenomic",
 		},
 		{
 			"bandon ability able about above absent absorb abstract absurd abuse access ability",
-			"Invalid mnemonic",
+			"word `bandon` not found in reverse map",
 		},
 		{
 			"abandon ability able about above absent absorb abstract absurd abuse access accident",
-			"Invalid byte at position 16",
+			"checksum incorrect",
 		},
 		{
 			"abandon ability able about above absent absorb abstract absurd abuse access ability",
