@@ -1,8 +1,8 @@
 package vault
 
 import (
+	"github.com/pactus-project/pactus/util/bip39"
 	"github.com/pactus-project/pactus/wallet/addresspath"
-	"github.com/tyler-smith/go-bip39"
 	"golang.org/x/exp/constraints"
 )
 
@@ -14,9 +14,9 @@ func GenerateMnemonic(bitSize int) (string, error) {
 		return "", err
 	}
 
-	mnemonic, _ := bip39.NewMnemonic(entropy)
+	mnemonic, err := bip39.NewMnemonic(entropy)
 
-	return mnemonic, nil
+	return mnemonic, err
 }
 
 // CheckMnemonic validates a mnemonic (seed phrase) based on BIP-39.

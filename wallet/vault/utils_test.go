@@ -27,11 +27,11 @@ func TestValidateMnemonic(t *testing.T) {
 	}{
 		{
 			"",
-			"Invalid mnenomic",
+			"invalid mnenomic",
 		},
 		{
 			"abandon ability able about above absent absorb abstract absurd abuse access",
-			"Invalid mnenomic",
+			"invalid mnenomic",
 		},
 		{
 			"bandon ability able about above absent absorb abstract absurd abuse access ability",
@@ -39,7 +39,7 @@ func TestValidateMnemonic(t *testing.T) {
 		},
 		{
 			"abandon ability able about above absent absorb abstract absurd abuse access accident",
-			"Checksum incorrect",
+			"checksum incorrect",
 		},
 		{
 			"abandon ability able about above absent absorb abstract absurd abuse access ability",
