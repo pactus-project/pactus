@@ -1,7 +1,5 @@
 # go-bip39
 
-
-
 A golang implementation of the BIP0039 spec for mnemonic seeds
 
 ## Example
