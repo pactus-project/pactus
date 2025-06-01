@@ -140,7 +140,6 @@ type Network interface {
 	Start() error
 	Stop()
 	Protect(lp2pcore.PeerID, string)
-	EventChannel() <-chan Event
 	Broadcast([]byte, TopicID)
 	SendTo([]byte, lp2pcore.PeerID)
 	JoinTopic(TopicID, PropagationEvaluator) error

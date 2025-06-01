@@ -1,31 +1,32 @@
 from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
-from typing import ClassVar as _ClassVar, Mapping as _Mapping, Optional as _Optional, Union as _Union
+from collections.abc import Mapping as _Mapping
+from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class PayloadType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
-    UNKNOWN: _ClassVar[PayloadType]
-    TRANSFER_PAYLOAD: _ClassVar[PayloadType]
-    BOND_PAYLOAD: _ClassVar[PayloadType]
-    SORTITION_PAYLOAD: _ClassVar[PayloadType]
-    UNBOND_PAYLOAD: _ClassVar[PayloadType]
-    WITHDRAW_PAYLOAD: _ClassVar[PayloadType]
+    PAYLOAD_TYPE_UNSPECIFIED: _ClassVar[PayloadType]
+    PAYLOAD_TYPE_TRANSFER: _ClassVar[PayloadType]
+    PAYLOAD_TYPE_BOND: _ClassVar[PayloadType]
+    PAYLOAD_TYPE_SORTITION: _ClassVar[PayloadType]
+    PAYLOAD_TYPE_UNBOND: _ClassVar[PayloadType]
+    PAYLOAD_TYPE_WITHDRAW: _ClassVar[PayloadType]
 
 class TransactionVerbosity(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
-    TRANSACTION_DATA: _ClassVar[TransactionVerbosity]
-    TRANSACTION_INFO: _ClassVar[TransactionVerbosity]
-UNKNOWN: PayloadType
-TRANSFER_PAYLOAD: PayloadType
-BOND_PAYLOAD: PayloadType
-SORTITION_PAYLOAD: PayloadType
-UNBOND_PAYLOAD: PayloadType
-WITHDRAW_PAYLOAD: PayloadType
-TRANSACTION_DATA: TransactionVerbosity
-TRANSACTION_INFO: TransactionVerbosity
+    TRANSACTION_VERBOSITY_DATA: _ClassVar[TransactionVerbosity]
+    TRANSACTION_VERBOSITY_INFO: _ClassVar[TransactionVerbosity]
+PAYLOAD_TYPE_UNSPECIFIED: PayloadType
+PAYLOAD_TYPE_TRANSFER: PayloadType
+PAYLOAD_TYPE_BOND: PayloadType
+PAYLOAD_TYPE_SORTITION: PayloadType
+PAYLOAD_TYPE_UNBOND: PayloadType
+PAYLOAD_TYPE_WITHDRAW: PayloadType
+TRANSACTION_VERBOSITY_DATA: TransactionVerbosity
+TRANSACTION_VERBOSITY_INFO: TransactionVerbosity
 
 class GetTransactionRequest(_message.Message):
     __slots__ = ("id", "verbosity")

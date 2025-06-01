@@ -1,15 +1,20 @@
-///
+//
 //  Generated code. Do not modify.
 //  source: blockchain.proto
 //
-// @dart = 2.12
-// ignore_for_file: annotate_overrides,camel_case_types,constant_identifier_names,deprecated_member_use_from_same_package,directives_ordering,library_prefixes,non_constant_identifier_names,prefer_final_fields,return_of_invalid_type,unnecessary_const,unnecessary_import,unnecessary_this,unused_import,unused_shown_name
+// @dart = 3.3
+
+// ignore_for_file: annotate_overrides, camel_case_types, comment_references
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_final_fields
+// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
 
 import 'dart:async' as $async;
+import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import 'dart:core' as $core;
 import 'blockchain.pb.dart' as $1;
 import 'blockchain.pbjson.dart';
 
@@ -28,8 +33,8 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
   $async.Future<$1.GetPublicKeyResponse> getPublicKey($pb.ServerContext ctx, $1.GetPublicKeyRequest request);
   $async.Future<$1.GetTxPoolContentResponse> getTxPoolContent($pb.ServerContext ctx, $1.GetTxPoolContentRequest request);
 
-  $pb.GeneratedMessage createRequest($core.String method) {
-    switch (method) {
+  $pb.GeneratedMessage createRequest($core.String methodName) {
+    switch (methodName) {
       case 'GetBlock': return $1.GetBlockRequest();
       case 'GetBlockHash': return $1.GetBlockHashRequest();
       case 'GetBlockHeight': return $1.GetBlockHeightRequest();
@@ -41,12 +46,12 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
       case 'GetValidatorAddresses': return $1.GetValidatorAddressesRequest();
       case 'GetPublicKey': return $1.GetPublicKeyRequest();
       case 'GetTxPoolContent': return $1.GetTxPoolContentRequest();
-      default: throw $core.ArgumentError('Unknown method: $method');
+      default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }
 
-  $async.Future<$pb.GeneratedMessage> handleCall($pb.ServerContext ctx, $core.String method, $pb.GeneratedMessage request) {
-    switch (method) {
+  $async.Future<$pb.GeneratedMessage> handleCall($pb.ServerContext ctx, $core.String methodName, $pb.GeneratedMessage request) {
+    switch (methodName) {
       case 'GetBlock': return this.getBlock(ctx, request as $1.GetBlockRequest);
       case 'GetBlockHash': return this.getBlockHash(ctx, request as $1.GetBlockHashRequest);
       case 'GetBlockHeight': return this.getBlockHeight(ctx, request as $1.GetBlockHeightRequest);
@@ -58,7 +63,7 @@ abstract class BlockchainServiceBase extends $pb.GeneratedService {
       case 'GetValidatorAddresses': return this.getValidatorAddresses(ctx, request as $1.GetValidatorAddressesRequest);
       case 'GetPublicKey': return this.getPublicKey(ctx, request as $1.GetPublicKeyRequest);
       case 'GetTxPoolContent': return this.getTxPoolContent(ctx, request as $1.GetTxPoolContentRequest);
-      default: throw $core.ArgumentError('Unknown method: $method');
+      default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }
 

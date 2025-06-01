@@ -21,6 +21,7 @@ import (
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/version"
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/exp/slices"
@@ -29,19 +30,18 @@ import (
 var _ Network = &network{}
 
 type network struct {
-	ctx          context.Context
-	cancel       context.CancelFunc
-	config       *Config
-	host         lp2phost.Host
-	mdns         *mdnsService
-	dht          *dhtService
-	peerMgr      *peerMgr
-	connGater    *ConnectionGater
-	stream       *streamService
-	gossip       *gossipService
-	notifee      *NotifeeService
-	eventChannel chan Event
-	logger       *logger.SubLogger
+	ctx         context.Context
+	config      *Config
+	host        lp2phost.Host
+	mdns        *mdnsService
+	dht         *dhtService
+	peerMgr     *peerMgr
+	connGater   *ConnectionGater
+	stream      *streamService
+	gossip      *gossipService
+	notifee     *NotifeeService
+	networkPipe pipeline.Pipeline[Event]
+	logger      *logger.SubLogger
 }
 
 func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
@@ -78,13 +78,15 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 	return key, nil
 }
 
-func NewNetwork(conf *Config) (Network, error) {
+func NewNetwork(ctx context.Context, conf *Config, networkPipe pipeline.Pipeline[Event]) (Network, error) {
 	log := logger.NewSubLogger("_network", nil)
 
-	return makeNetwork(conf, log, []lp2p.Option{})
+	return makeNetwork(ctx, conf, log, networkPipe, []lp2p.Option{})
 }
 
-func makeNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*network, error) {
+func makeNetwork(ctx context.Context, conf *Config,
+	log *logger.SubLogger, networkPipe pipeline.Pipeline[Event], opts []lp2p.Option,
+) (*network, error) {
 	self := new(network)
 
 	networkKey, err := loadOrCreateKey(conf.NetworkKey)
@@ -233,15 +235,12 @@ func makeNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netw
 		return nil, LibP2PError{Err: err}
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-
 	self.ctx = ctx
-	self.cancel = cancel
 	self.config = conf
 	self.logger = log
 	self.host = host
 	self.connGater = connGater
-	self.eventChannel = make(chan Event, 100)
+	self.networkPipe = networkPipe
 
 	log.SetObj(self)
 
@@ -256,9 +255,9 @@ func makeNetwork(conf *Config, log *logger.SubLogger, opts []lp2p.Option) (*netw
 
 	self.peerMgr = newPeerMgr(ctx, host, conf, self.logger)
 	self.dht = newDHTService(ctx, host, kadProtocolID, conf, self.logger)
-	self.stream = newStreamService(ctx, host, conf, streamProtocolID, self.eventChannel, self.logger)
-	self.gossip = newGossipService(ctx, host, conf, self.eventChannel, self.logger)
-	self.notifee = newNotifeeService(ctx, host, self.eventChannel, self.peerMgr, streamProtocolID, self.logger)
+	self.stream = newStreamService(ctx, host, conf, streamProtocolID, self.networkPipe, self.logger)
+	self.gossip = newGossipService(ctx, host, conf, self.networkPipe, self.logger)
+	self.notifee = newNotifeeService(ctx, host, self.networkPipe, self.peerMgr, streamProtocolID, self.logger)
 
 	self.logger.Info("network setup", "id", self.host.ID(),
 		"name", conf.NetworkName,
@@ -315,10 +314,6 @@ func findRelayPeers(networkGetter func() *network) func(ctx context.Context,
 	}
 }
 
-func (n *network) EventChannel() <-chan Event {
-	return n.eventChannel
-}
-
 func (n *network) Start() error {
 	if err := n.dht.Start(); err != nil {
 		return LibP2PError{Err: err}
@@ -342,9 +337,6 @@ func (n *network) Start() error {
 }
 
 func (n *network) Stop() {
-	n.cancel()
-	n.logger.Debug("context closed", "reason", n.ctx.Err())
-
 	if n.mdns != nil {
 		n.mdns.Stop()
 	}
@@ -372,7 +364,7 @@ func (n *network) Protect(pid lp2pcore.PeerID, tag string) {
 // It uses a goroutine to ensure that if sending is blocked, receiving messages won't be blocked.
 func (n *network) SendTo(msg []byte, pid lp2pcore.PeerID) {
 	go func() {
-		_, err := n.stream.SendRequest(msg, pid)
+		_, err := n.stream.SendTo(msg, pid)
 		if err != nil {
 			n.logger.Warn("error on sending msg", "pid", pid, "error", err)
 		}

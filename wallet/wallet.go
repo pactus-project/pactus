@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/vault"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
@@ -58,12 +59,12 @@ func Open(walletPath string, offline bool, options ...Option) (*Wallet, error) {
 		return nil, err
 	}
 
-	walletStore, err := FromBytes(data)
+	store, err := FromBytes(data)
 	if err != nil {
 		return nil, err
 	}
 
-	err = walletStore.UpgradeWallet(walletPath)
+	err = store.UpgradeWallet(walletPath)
 	if err != nil {
 		return nil, err
 	}
@@ -73,11 +74,11 @@ func Open(walletPath string, offline bool, options ...Option) (*Wallet, error) {
 		opt(opts)
 	}
 
-	if err := walletStore.ValidateCRC(); err != nil {
+	if err := store.ValidateCRC(); err != nil {
 		return nil, err
 	}
 
-	return newWallet(walletPath, walletStore, offline, opts)
+	return newWallet(walletPath, store, offline, opts)
 }
 
 // Create creates a wallet from mnemonic (seed phrase) and save it at the
@@ -109,7 +110,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType,
 	}
 
 	store := &Store{
-		Version:   Version2,
+		Version:   VersionLatest,
 		UUID:      uuid.New(),
 		CreatedAt: time.Now().Round(time.Second).UTC(),
 		Network:   chain,
@@ -375,8 +376,8 @@ func (w *Wallet) CalculateFee(amt amount.Amount, payloadType payload.Type) (amou
 	return w.grpcClient.getFee(amt, payloadType)
 }
 
-func (w *Wallet) UpdatePassword(oldPassword, newPassword string) error {
-	return w.store.Vault.UpdatePassword(oldPassword, newPassword)
+func (w *Wallet) UpdatePassword(oldPassword, newPassword string, opts ...encrypter.Option) error {
+	return w.store.Vault.UpdatePassword(oldPassword, newPassword, opts...)
 }
 
 func (w *Wallet) IsEncrypted() bool {

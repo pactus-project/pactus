@@ -18,10 +18,11 @@ import (
 )
 
 const (
-	Version1 = 1 // initial version
-	Version2 = 2 // supporting Ed25519
+	Version1 = 1 // Initial version
+	Version2 = 2 // Supporting Ed25519
+	Version3 = 3 // USe AEC-256-CBC for default encryption
 
-	VersionLatest = Version2
+	VersionLatest = Version3
 )
 
 type Store struct {
@@ -83,9 +84,23 @@ func (s *Store) UpgradeWallet(walletPath string) error {
 		if err := s.setPublicKeys(); err != nil {
 			return err
 		}
+		s.Version = Version2
+
+		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
+			Version1, Version2))
+
+		fallthrough
 
 	case Version2:
-		// Current version
+		if s.Vault.IsEncrypted() {
+			s.Vault.Encrypter.Params.SetUint32("keylen", 32)
+		}
+		s.Version = Version3
+
+		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
+			Version2, Version3))
+
+	case Version3:
 		return nil
 
 	default:
@@ -95,8 +110,8 @@ func (s *Store) UpgradeWallet(walletPath string) error {
 		}
 	}
 
+	// Write wallet data.
 	s.VaultCRC = s.calcVaultCRC()
-	s.Version = Version2
 
 	bs, err := s.ToBytes()
 	if err != nil {
@@ -107,8 +122,6 @@ func (s *Store) UpgradeWallet(walletPath string) error {
 	if err != nil {
 		return err
 	}
-	logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
-		oldVersion, VersionLatest))
 
 	return nil
 }

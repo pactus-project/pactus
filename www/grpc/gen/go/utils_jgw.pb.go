@@ -71,8 +71,8 @@ func (s *UtilsJsonRPC) Methods() map[string]func(ctx context.Context, message js
 			return s.client.VerifyMessage(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.utils.b_l_s_public_key_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
-			req := new(BLSPublicKeyAggregationRequest)
+		"pactus.utils.public_key_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(PublicKeyAggregationRequest)
 
 			var jrpcData paramsAndHeadersUtils
 
@@ -85,11 +85,11 @@ func (s *UtilsJsonRPC) Methods() map[string]func(ctx context.Context, message js
 				return nil, err
 			}
 
-			return s.client.BLSPublicKeyAggregation(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+			return s.client.PublicKeyAggregation(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.utils.b_l_s_signature_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
-			req := new(BLSSignatureAggregationRequest)
+		"pactus.utils.signature_aggregation": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(SignatureAggregationRequest)
 
 			var jrpcData paramsAndHeadersUtils
 
@@ -102,7 +102,7 @@ func (s *UtilsJsonRPC) Methods() map[string]func(ctx context.Context, message js
 				return nil, err
 			}
 
-			return s.client.BLSSignatureAggregation(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+			return s.client.SignatureAggregation(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 	}
 }

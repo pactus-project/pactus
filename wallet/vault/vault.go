@@ -9,9 +9,9 @@ import (
 	blshdkeychain "github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	ed25519hdkeychain "github.com/pactus-project/pactus/crypto/ed25519/hdkeychain"
+	"github.com/pactus-project/pactus/util/bip39"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
-	"github.com/tyler-smith/go-bip39"
 	"golang.org/x/exp/slices"
 )
 
@@ -430,7 +430,7 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 	if err != nil {
 		return nil, err
 	}
-	mnemonicSeed := bip39.NewSeed(keyStore.MasterNode.Mnemonic, "")
+	seed := bip39.NewSeed(keyStore.MasterNode.Mnemonic, "")
 
 	keys := make([]crypto.PrivateKey, len(addrs))
 	for i, addr := range addrs {
@@ -450,13 +450,13 @@ func (v *Vault) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKe
 
 		switch hdPath.Purpose() {
 		case _H(PurposeBLS12381):
-			prvKey, err := v.deriveBLSPrivateKey(mnemonicSeed, hdPath)
+			prvKey, err := v.deriveBLSPrivateKey(seed, hdPath)
 			if err != nil {
 				return nil, err
 			}
 			keys[i] = prvKey
 		case _H(PurposeBIP44):
-			prvKey, err := v.deriveEd25519PrivateKey(mnemonicSeed, hdPath)
+			prvKey, err := v.deriveEd25519PrivateKey(seed, hdPath)
 			if err != nil {
 				return nil, err
 			}

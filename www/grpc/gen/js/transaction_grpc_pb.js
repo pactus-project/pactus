@@ -1,7 +1,7 @@
 // GENERATED CODE -- DO NOT EDIT!
 
 'use strict';
-var grpc = require('grpc');
+var grpc = require('@grpc/grpc-js');
 var transaction_pb = require('./transaction_pb.js');
 
 function serialize_pactus_BroadcastTransactionRequest(arg) {
@@ -148,11 +148,9 @@ function deserialize_pactus_GetTransactionResponse(buffer_arg) {
 }
 
 
-// Transaction service defines various RPC methods for interacting with
-// transactions.
+// Transaction service defines various RPC methods for interacting with transactions.
 var TransactionService = exports.TransactionService = {
-  // GetTransaction retrieves transaction details based on the provided request
-// parameters.
+  // GetTransaction retrieves transaction details based on the provided request parameters.
 getTransaction: {
     path: '/pactus.Transaction/GetTransaction',
     requestStream: false,
@@ -164,8 +162,7 @@ getTransaction: {
     responseSerialize: serialize_pactus_GetTransactionResponse,
     responseDeserialize: deserialize_pactus_GetTransactionResponse,
   },
-  // CalculateFee calculates the transaction fee based on the specified amount
-// and payload type.
+  // CalculateFee calculates the transaction fee based on the specified amount and payload type.
 calculateFee: {
     path: '/pactus.Transaction/CalculateFee',
     requestStream: false,
@@ -237,7 +234,7 @@ getRawWithdrawTransaction: {
     responseSerialize: serialize_pactus_GetRawTransactionResponse,
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },
-  // DecodeRawTransaction accepts raw transaction and returnes decoded transaction.
+  // DecodeRawTransaction accepts raw transaction and returns decoded transaction.
 decodeRawTransaction: {
     path: '/pactus.Transaction/DecodeRawTransaction',
     requestStream: false,
@@ -251,4 +248,4 @@ decodeRawTransaction: {
   },
 };
 
-exports.TransactionClient = grpc.makeGenericClientConstructor(TransactionService);
+exports.TransactionClient = grpc.makeGenericClientConstructor(TransactionService, 'Transaction');

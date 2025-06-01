@@ -1,0 +1,2939 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Pactus APIs",
+    "description": "Every node in the Pactus network can be configured to expose HTTP-APIs for communication.\nThese APIs follow the [OpenAPI (Swagger)](https://swagger.io/specification/) specification, and a complete list of available endpoints can be found here.\n\n## Units\n\nAll the amounts are in NanoPAC units, which are atomic and the smallest unit in the Pactus blockchain.\nEach PAC is equivalent to 1,000,000,000 or 10\u003csup\u003e9\u003c/sup\u003e NanoPACs.\n",
+    "version": "2.0",
+    "contact": {
+      "name": "Pactus Blockchain",
+      "url": "https://pactus.org"
+    },
+    "license": {
+      "name": "MIT License",
+      "url": "https://github.com/pactus-project/pactus/blob/main/LICENSE"
+    }
+  },
+  "tags": [
+    {
+      "name": "Transaction"
+    },
+    {
+      "name": "Blockchain"
+    },
+    {
+      "name": "Network"
+    },
+    {
+      "name": "Utils"
+    },
+    {
+      "name": "Wallet"
+    }
+  ],
+  "basePath": "/http/api",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/pactus/Utils/public_key_aggregation": {
+      "get": {
+        "summary": "PublicKeyAggregation aggregates multiple BLS public keys into a single key.",
+        "operationId": "Utils_PublicKeyAggregation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusPublicKeyAggregationResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "publicKeys",
+            "description": "List of BLS public keys to be aggregated.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Utils"
+        ]
+      }
+    },
+    "/pactus/Utils/sign_message_with_private_key": {
+      "get": {
+        "summary": "SignMessageWithPrivateKey signs a message with the provided private key.",
+        "operationId": "Utils_SignMessageWithPrivateKey",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSignMessageWithPrivateKeyResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "privateKey",
+            "description": "The private key to sign the message.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "message",
+            "description": "The message content to be signed.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Utils"
+        ]
+      }
+    },
+    "/pactus/Utils/signature_aggregation": {
+      "get": {
+        "summary": "SignatureAggregation aggregates multiple BLS signatures into a single signature.",
+        "operationId": "Utils_SignatureAggregation",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSignatureAggregationResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "signatures",
+            "description": "List of BLS signatures to be aggregated.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "Utils"
+        ]
+      }
+    },
+    "/pactus/Utils/verify_message": {
+      "get": {
+        "summary": "VerifyMessage verifies a signature against the public key and message.",
+        "operationId": "Utils_VerifyMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusVerifyMessageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "message",
+            "description": "The original message content that was signed.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "signature",
+            "description": "The signature to verify in hexadecimal format.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "publicKey",
+            "description": "The public key of the signer.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Utils"
+        ]
+      }
+    },
+    "/pactus/blockchain/get_account": {
+      "get": {
+        "summary": "GetAccount retrieves information about an account based on the provided address.",
+        "operationId": "Blockchain_GetAccount",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetAccountResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "description": "The address of the account to retrieve information for.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/pactus/blockchain/get_block": {
+      "get": {
+        "summary": "GetBlock retrieves information about a block based on the provided request parameters.",
+        "operationId": "Blockchain_GetBlock",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetBlockResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "height",
+            "description": "The height of the block to retrieve.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "verbosity",
+            "description": "The verbosity level for block information.\n\n - BLOCK_VERBOSITY_DATA: Request only block data.\n - BLOCK_VERBOSITY_INFO: Request block information and transaction IDs.\n - BLOCK_VERBOSITY_TRANSACTIONS: Request block information and detailed transaction data.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "BLOCK_VERBOSITY_DATA",
+              "BLOCK_VERBOSITY_INFO",
+              "BLOCK_VERBOSITY_TRANSACTIONS"
+            ],
+            "default": "BLOCK_VERBOSITY_DATA"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/pactus/blockchain/get_block_hash": {
+      "get": {
+        "summary": "GetBlockHash retrieves the hash of a block at the specified height.",
+        "operationId": "Blockchain_GetBlockHash",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetBlockHashResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "height",
+            "description": "The height of the block to retrieve the hash for.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/pactus/blockchain/get_block_height": {
+      "get": {
+        "summary": "GetBlockHeight retrieves the height of a block with the specified hash.",
+        "operationId": "Blockchain_GetBlockHeight",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetBlockHeightResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "hash",
+            "description": "The hash of the block to retrieve the height for.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/pactus/blockchain/get_blockchain_info": {
+      "get": {
+        "summary": "GetBlockchainInfo retrieves general information about the blockchain.",
+        "operationId": "Blockchain_GetBlockchainInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetBlockchainInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/pactus/blockchain/get_consensus_info": {
+      "get": {
+        "summary": "GetConsensusInfo retrieves information about the consensus instances.",
+        "operationId": "Blockchain_GetConsensusInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetConsensusInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/pactus/blockchain/get_public_key": {
+      "get": {
+        "summary": "GetPublicKey retrieves the public key of an account based on the provided address.",
+        "operationId": "Blockchain_GetPublicKey",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetPublicKeyResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "description": "The address for which to retrieve the public key.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/pactus/blockchain/get_txpool_content": {
+      "get": {
+        "summary": "GetTxPoolContent retrieves current transactions in the transaction pool.",
+        "operationId": "Blockchain_GetTxPoolContent",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetTxPoolContentResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "payloadType",
+            "description": "The type of transactions to retrieve from the transaction pool. 0 means all types.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "PAYLOAD_TYPE_UNSPECIFIED",
+              "PAYLOAD_TYPE_TRANSFER",
+              "PAYLOAD_TYPE_BOND",
+              "PAYLOAD_TYPE_SORTITION",
+              "PAYLOAD_TYPE_UNBOND",
+              "PAYLOAD_TYPE_WITHDRAW"
+            ],
+            "default": "PAYLOAD_TYPE_UNSPECIFIED"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/pactus/blockchain/get_validator": {
+      "get": {
+        "summary": "GetValidator retrieves information about a validator based on the provided address.",
+        "operationId": "Blockchain_GetValidator",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetValidatorResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "description": "The address of the validator to retrieve information for.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/pactus/blockchain/get_validator_by_number": {
+      "get": {
+        "summary": "GetValidatorByNumber retrieves information about a validator based on the provided number.",
+        "operationId": "Blockchain_GetValidatorByNumber",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetValidatorResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "number",
+            "description": "The unique number of the validator to retrieve information for.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Blockchain"
+        ]
+      }
+    },
+    "/pactus/network/get_network_info": {
+      "get": {
+        "summary": "GetNetworkInfo retrieves information about the overall network.",
+        "operationId": "Network_GetNetworkInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetNetworkInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "onlyConnected",
+            "description": "If true, returns only peers that are currently connected.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Network"
+        ]
+      }
+    },
+    "/pactus/network/get_node_info": {
+      "get": {
+        "summary": "GetNodeInfo retrieves information about a specific node in the network.",
+        "operationId": "Network_GetNodeInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetNodeInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Network"
+        ]
+      }
+    },
+    "/pactus/transaction/broadcast_transaction": {
+      "put": {
+        "summary": "BroadcastTransaction broadcasts a signed transaction to the network.",
+        "operationId": "Transaction_BroadcastTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusBroadcastTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "signedRawTransaction",
+            "description": "The signed raw transaction data to be broadcasted.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/pactus/transaction/calculate_fee": {
+      "get": {
+        "summary": "CalculateFee calculates the transaction fee based on the specified amount and payload type.",
+        "operationId": "Transaction_CalculateFee",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusCalculateFeeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "amount",
+            "description": "The amount involved in the transaction, specified in NanoPAC.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "payloadType",
+            "description": "The type of transaction payload.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "PAYLOAD_TYPE_UNSPECIFIED",
+              "PAYLOAD_TYPE_TRANSFER",
+              "PAYLOAD_TYPE_BOND",
+              "PAYLOAD_TYPE_SORTITION",
+              "PAYLOAD_TYPE_UNBOND",
+              "PAYLOAD_TYPE_WITHDRAW"
+            ],
+            "default": "PAYLOAD_TYPE_UNSPECIFIED"
+          },
+          {
+            "name": "fixedAmount",
+            "description": "Indicates if the amount should be fixed and include the fee.",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/pactus/transaction/get_raw_bond_transaction": {
+      "get": {
+        "summary": "GetRawBondTransaction retrieves raw details of a bond transaction.",
+        "operationId": "Transaction_GetRawBondTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "lockTime",
+            "description": "The lock time for the transaction. If not set, defaults to the last block height.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "sender",
+            "description": "The sender's account address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "receiver",
+            "description": "The receiver's validator address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "stake",
+            "description": "The stake amount in NanoPAC. Must be greater than 0.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "publicKey",
+            "description": "The public key of the validator.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "fee",
+            "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "memo",
+            "description": "A memo string for the transaction.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/pactus/transaction/get_raw_transfer_transaction": {
+      "get": {
+        "summary": "GetRawTransferTransaction retrieves raw details of a transfer transaction.",
+        "operationId": "Transaction_GetRawTransferTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "lockTime",
+            "description": "The lock time for the transaction. If not set, defaults to the last block height.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "sender",
+            "description": "The sender's account address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "receiver",
+            "description": "The receiver's account address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "description": "The amount to be transferred, specified in NanoPAC. Must be greater than 0.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "fee",
+            "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "memo",
+            "description": "A memo string for the transaction.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/pactus/transaction/get_raw_unbond_transaction": {
+      "get": {
+        "summary": "GetRawUnbondTransaction retrieves raw details of an unbond transaction.",
+        "operationId": "Transaction_GetRawUnbondTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "lockTime",
+            "description": "The lock time for the transaction. If not set, defaults to the last block height.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "validatorAddress",
+            "description": "The address of the validator to unbond from.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "memo",
+            "description": "A memo string for the transaction.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/pactus/transaction/get_raw_withdraw_transaction": {
+      "get": {
+        "summary": "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.",
+        "operationId": "Transaction_GetRawWithdrawTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "lockTime",
+            "description": "The lock time for the transaction. If not set, defaults to the last block height.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "validatorAddress",
+            "description": "The address of the validator to withdraw from.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "accountAddress",
+            "description": "The address of the account to withdraw to.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "description": "The withdrawal amount in NanoPAC. Must be greater than 0.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "fee",
+            "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "memo",
+            "description": "A memo string for the transaction.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/pactus/transaction/get_transaction": {
+      "get": {
+        "summary": "GetTransaction retrieves transaction details based on the provided request parameters.",
+        "operationId": "Transaction_GetTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "description": "The unique ID of the transaction to retrieve.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "verbosity",
+            "description": "The verbosity level for transaction details.\n\n - TRANSACTION_VERBOSITY_DATA: Request transaction data only.\n - TRANSACTION_VERBOSITY_INFO: Request detailed transaction information.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "TRANSACTION_VERBOSITY_DATA",
+              "TRANSACTION_VERBOSITY_INFO"
+            ],
+            "default": "TRANSACTION_VERBOSITY_DATA"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/pactus/wallet/create_wallet": {
+      "get": {
+        "summary": "CreateWallet creates a new wallet with the specified parameters.",
+        "operationId": "Wallet_CreateWallet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusCreateWalletResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name for the new wallet.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "Password to secure the new wallet.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/get_address_history": {
+      "get": {
+        "summary": "GetAddressHistory retrieves the transaction history of an address.",
+        "operationId": "Wallet_GetAddressHistory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetAddressHistoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet containing the address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "description": "The address to retrieve history for.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/get_address_info": {
+      "get": {
+        "summary": "GetAddressInfo returns detailed information about a specific address.",
+        "operationId": "Wallet_GetAddressInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetAddressInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet containing the address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "description": "The address to query.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/get_new_address": {
+      "get": {
+        "summary": "GetNewAddress generates a new address for the specified wallet.",
+        "operationId": "Wallet_GetNewAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetNewAddressResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet to generate a new address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "addressType",
+            "description": "The type of address to generate.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "ADDRESS_TYPE_TREASURY",
+              "ADDRESS_TYPE_VALIDATOR",
+              "ADDRESS_TYPE_BLS_ACCOUNT",
+              "ADDRESS_TYPE_ED25519_ACCOUNT"
+            ],
+            "default": "ADDRESS_TYPE_TREASURY"
+          },
+          {
+            "name": "label",
+            "description": "A label for the new address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "Password for the new address. It's required when address_type is Ed25519 type.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/get_total_balance": {
+      "get": {
+        "summary": "GetTotalBalance returns the total available balance of the wallet.",
+        "operationId": "Wallet_GetTotalBalance",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetTotalBalanceResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet to get the total balance.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/get_total_stake": {
+      "get": {
+        "summary": "GetTotalStake returns the total stake amount in the wallet.",
+        "operationId": "Wallet_GetTotalStake",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetTotalStakeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet to get the total stake.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/get_validator_address": {
+      "get": {
+        "summary": "GetValidatorAddress retrieves the validator address associated with a public key.",
+        "operationId": "Wallet_GetValidatorAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetValidatorAddressResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "publicKey",
+            "description": "The public key of the validator.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/get_wallet_info": {
+      "get": {
+        "summary": "GetWalletInfo returns detailed information about a specific wallet.",
+        "operationId": "Wallet_GetWalletInfo",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetWalletInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet to query.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/list_address": {
+      "get": {
+        "summary": "ListAddress returns all addresses in the specified wallet.",
+        "operationId": "Wallet_ListAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusListAddressResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the queried wallet.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/list_wallet": {
+      "get": {
+        "summary": "ListWallet returns list of all available wallets.",
+        "operationId": "Wallet_ListWallet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusListWalletResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/load_wallet": {
+      "get": {
+        "summary": "LoadWallet loads an existing wallet with the given name.",
+        "operationId": "Wallet_LoadWallet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusLoadWalletResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet to load.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/restore_wallet": {
+      "get": {
+        "summary": "RestoreWallet restores an existing wallet with the given mnemonic.",
+        "operationId": "Wallet_RestoreWallet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusRestoreWalletResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name for the restored wallet.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "mnemonic",
+            "description": "The mnemonic (seed phrase) for wallet recovery.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "Password to secure the restored wallet.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/set_address_label": {
+      "patch": {
+        "summary": "SetAddressLabel sets or updates the label for a given address.",
+        "operationId": "Wallet_SetAddressLabel",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSetAddressLabelResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet containing the address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "Wallet password required for modification.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "description": "The address to label.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "label",
+            "description": "The new label for the address.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/sign_message": {
+      "get": {
+        "summary": "SignMessage signs an arbitrary message using a wallet's private key.",
+        "operationId": "Wallet_SignMessage",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSignMessageResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet to sign with.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "Wallet password required for signing.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "address",
+            "description": "The address whose private key should be used for signing the message.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "message",
+            "description": "The arbitrary message to be signed.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/sign_raw_transaction": {
+      "get": {
+        "summary": "SignRawTransaction signs a raw transaction for a specified wallet.",
+        "operationId": "Wallet_SignRawTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusSignRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet used for signing.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "rawTransaction",
+            "description": "The raw transaction data to be signed.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "description": "Wallet password required for signing.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/pactus/wallet/unload_wallet": {
+      "get": {
+        "summary": "UnloadWallet unloads a currently loaded wallet with the specified name.",
+        "operationId": "Wallet_UnloadWallet",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusUnloadWalletResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet to unload.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "pactusAccountInfo": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "description": "The hash of the account."
+        },
+        "data": {
+          "type": "string",
+          "description": "The serialized data of the account."
+        },
+        "number": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The unique number assigned to the account."
+        },
+        "balance": {
+          "type": "string",
+          "format": "int64",
+          "description": "The balance of the account in NanoPAC."
+        },
+        "address": {
+          "type": "string",
+          "description": "The address of the account."
+        }
+      },
+      "description": "Message contains information about an account."
+    },
+    "pactusAddressInfo": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "description": "The address string."
+        },
+        "publicKey": {
+          "type": "string",
+          "description": "The public key associated with the address."
+        },
+        "label": {
+          "type": "string",
+          "description": "A human-readable label associated with the address."
+        },
+        "path": {
+          "type": "string",
+          "description": "The Hierarchical Deterministic (HD) path of the address within the wallet."
+        }
+      },
+      "description": "AddressInfo contains detailed information about a wallet address."
+    },
+    "pactusAddressType": {
+      "type": "string",
+      "enum": [
+        "ADDRESS_TYPE_TREASURY",
+        "ADDRESS_TYPE_VALIDATOR",
+        "ADDRESS_TYPE_BLS_ACCOUNT",
+        "ADDRESS_TYPE_ED25519_ACCOUNT"
+      ],
+      "default": "ADDRESS_TYPE_TREASURY",
+      "description": "AddressType defines different types of blockchain addresses.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password."
+    },
+    "pactusBlockHeaderInfo": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The version of the block."
+        },
+        "prevBlockHash": {
+          "type": "string",
+          "description": "The hash of the previous block."
+        },
+        "stateRoot": {
+          "type": "string",
+          "description": "The state root hash of the blockchain."
+        },
+        "sortitionSeed": {
+          "type": "string",
+          "description": "The sortition seed of the block."
+        },
+        "proposerAddress": {
+          "type": "string",
+          "description": "The address of the proposer of the block."
+        }
+      },
+      "description": "Message contains information about the header of a block."
+    },
+    "pactusBlockVerbosity": {
+      "type": "string",
+      "enum": [
+        "BLOCK_VERBOSITY_DATA",
+        "BLOCK_VERBOSITY_INFO",
+        "BLOCK_VERBOSITY_TRANSACTIONS"
+      ],
+      "default": "BLOCK_VERBOSITY_DATA",
+      "description": "Enumeration for verbosity levels when requesting block information.\n\n - BLOCK_VERBOSITY_DATA: Request only block data.\n - BLOCK_VERBOSITY_INFO: Request block information and transaction IDs.\n - BLOCK_VERBOSITY_TRANSACTIONS: Request block information and detailed transaction data."
+    },
+    "pactusBroadcastTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique ID of the broadcasted transaction."
+        }
+      },
+      "description": "Response message contains the ID of the broadcasted transaction."
+    },
+    "pactusCalculateFeeResponse": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The calculated amount in NanoPAC."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The calculated transaction fee in NanoPAC."
+        }
+      },
+      "description": "Response message contains the calculated transaction fee."
+    },
+    "pactusCertificateInfo": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "description": "The hash of the certificate."
+        },
+        "round": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The round of the certificate."
+        },
+        "committers": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "List of committers in the certificate."
+        },
+        "absentees": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": "List of absentees in the certificate."
+        },
+        "signature": {
+          "type": "string",
+          "description": "The signature of the certificate."
+        }
+      },
+      "description": "Message contains information about a certificate."
+    },
+    "pactusConnectionInfo": {
+      "type": "object",
+      "properties": {
+        "connections": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Total number of connections."
+        },
+        "inboundConnections": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Number of inbound connections."
+        },
+        "outboundConnections": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Number of outbound connections."
+        }
+      },
+      "description": "ConnectionInfo contains information about the node's connections."
+    },
+    "pactusConsensusInfo": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "description": "The address of the consensus instance."
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Indicates whether the consensus instance is active and part of the committee."
+        },
+        "height": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height of the consensus instance."
+        },
+        "round": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The round of the consensus instance."
+        },
+        "votes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusVoteInfo"
+          },
+          "description": "List of votes in the consensus instance."
+        }
+      },
+      "description": "Message contains information about a consensus instance."
+    },
+    "pactusCounterInfo": {
+      "type": "object",
+      "properties": {
+        "bytes": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Total number of bytes."
+        },
+        "bundles": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Total number of bundles."
+        }
+      },
+      "description": "CounterInfo holds counter data regarding byte and bundle counts."
+    },
+    "pactusCreateWalletResponse": {
+      "type": "object",
+      "properties": {
+        "mnemonic": {
+          "type": "string",
+          "description": "The mnemonic (seed phrase) for wallet recovery."
+        }
+      },
+      "description": "Response message contains wallet recovery mnemonic (seed phrase)."
+    },
+    "pactusDecodeRawTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "transaction": {
+          "$ref": "#/definitions/pactusTransactionInfo",
+          "description": "The decoded transaction information."
+        }
+      },
+      "description": "Response message contains the decoded transaction."
+    },
+    "pactusGetAccountResponse": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "$ref": "#/definitions/pactusAccountInfo",
+          "description": "Detailed information about the account."
+        }
+      },
+      "description": "Response message contains account information."
+    },
+    "pactusGetAddressHistoryResponse": {
+      "type": "object",
+      "properties": {
+        "historyInfo": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusHistoryInfo"
+          },
+          "description": "List of all historical transactions associated with the address."
+        }
+      },
+      "description": "Response message contains address transaction history."
+    },
+    "pactusGetAddressInfoResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet containing the address."
+        },
+        "address": {
+          "type": "string",
+          "description": "The queried address."
+        },
+        "label": {
+          "type": "string",
+          "description": "The address label."
+        },
+        "publicKey": {
+          "type": "string",
+          "description": "The public key of the address."
+        },
+        "path": {
+          "type": "string",
+          "description": "The Hierarchical Deterministic (HD) path of the address."
+        }
+      },
+      "description": "Response message contains address details."
+    },
+    "pactusGetBlockHashResponse": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "description": "The hash of the block."
+        }
+      },
+      "description": "Response message contains block hash."
+    },
+    "pactusGetBlockHeightResponse": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height of the block."
+        }
+      },
+      "description": "Response message contains block height."
+    },
+    "pactusGetBlockResponse": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height of the block."
+        },
+        "hash": {
+          "type": "string",
+          "description": "The hash of the block."
+        },
+        "data": {
+          "type": "string",
+          "description": "Block data, available only if verbosity level is set to BLOCK_DATA."
+        },
+        "blockTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The timestamp of the block."
+        },
+        "header": {
+          "$ref": "#/definitions/pactusBlockHeaderInfo",
+          "description": "Header information of the block."
+        },
+        "prevCert": {
+          "$ref": "#/definitions/pactusCertificateInfo",
+          "description": "Certificate information of the previous block."
+        },
+        "txs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusTransactionInfo"
+          },
+          "description": "List of transactions in the block, available when verbosity level is set to\nBLOCK_TRANSACTIONS."
+        }
+      },
+      "description": "Response message contains block information."
+    },
+    "pactusGetBlockchainInfoResponse": {
+      "type": "object",
+      "properties": {
+        "lastBlockHeight": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height of the last block in the blockchain."
+        },
+        "lastBlockHash": {
+          "type": "string",
+          "description": "The hash of the last block in the blockchain."
+        },
+        "totalAccounts": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The total number of accounts in the blockchain."
+        },
+        "totalValidators": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The total number of validators in the blockchain."
+        },
+        "totalPower": {
+          "type": "string",
+          "format": "int64",
+          "description": "The total power of the blockchain."
+        },
+        "committeePower": {
+          "type": "string",
+          "format": "int64",
+          "description": "The power of the committee."
+        },
+        "committeeValidators": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusValidatorInfo"
+          },
+          "description": "List of committee validators."
+        },
+        "isPruned": {
+          "type": "boolean",
+          "description": "If the blocks are subject to pruning."
+        },
+        "pruningHeight": {
+          "type": "integer",
+          "format": "int64",
+          "title": "Lowest-height block stored (only present if pruning is enabled)"
+        },
+        "lastBlockTime": {
+          "type": "string",
+          "format": "int64",
+          "title": "Timestamp of the last block in Unix format"
+        }
+      },
+      "description": "Response message contains general blockchain information."
+    },
+    "pactusGetConsensusInfoResponse": {
+      "type": "object",
+      "properties": {
+        "proposal": {
+          "$ref": "#/definitions/pactusProposalInfo",
+          "description": "The proposal of the consensus info."
+        },
+        "instances": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusConsensusInfo"
+          },
+          "description": "List of consensus instances."
+        }
+      },
+      "description": "Response message contains consensus information."
+    },
+    "pactusGetNetworkInfoResponse": {
+      "type": "object",
+      "properties": {
+        "networkName": {
+          "type": "string",
+          "description": "Name of the network."
+        },
+        "connectedPeersCount": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Number of connected peers."
+        },
+        "connectedPeers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusPeerInfo"
+          },
+          "description": "List of connected peers."
+        },
+        "metricInfo": {
+          "$ref": "#/definitions/pactusMetricInfo",
+          "description": "Metrics related to node activity."
+        }
+      },
+      "description": "Response message contains information about the overall network."
+    },
+    "pactusGetNewAddressResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet where address was generated."
+        },
+        "addressInfo": {
+          "$ref": "#/definitions/pactusAddressInfo",
+          "description": "Detailed information about the new address."
+        }
+      },
+      "description": "Response message contains newly generated address information."
+    },
+    "pactusGetNodeInfoResponse": {
+      "type": "object",
+      "properties": {
+        "moniker": {
+          "type": "string",
+          "description": "Moniker or Human-readable name identifying this node in the network."
+        },
+        "agent": {
+          "type": "string",
+          "description": "Version and agent details of the node."
+        },
+        "peerId": {
+          "type": "string",
+          "description": "Peer ID of the node."
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Time the node was started (in epoch format)."
+        },
+        "reachability": {
+          "type": "string",
+          "description": "Reachability status of the node."
+        },
+        "services": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Bitfield representing the services provided by the node."
+        },
+        "servicesNames": {
+          "type": "string",
+          "description": "Names of services provided by the node."
+        },
+        "localAddrs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of addresses associated with the node."
+        },
+        "protocols": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of protocols supported by the node."
+        },
+        "clockOffset": {
+          "type": "number",
+          "format": "double",
+          "description": "Offset between the node's clock and the network's clock (in seconds)."
+        },
+        "connectionInfo": {
+          "$ref": "#/definitions/pactusConnectionInfo",
+          "description": "Information about the node's connections."
+        },
+        "zmqPublishers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusZMQPublisherInfo"
+          },
+          "description": "List of active ZeroMQ publishers."
+        }
+      },
+      "description": "Response message contains information about a specific node in the network."
+    },
+    "pactusGetPublicKeyResponse": {
+      "type": "object",
+      "properties": {
+        "publicKey": {
+          "type": "string",
+          "description": "The public key associated with the provided address."
+        }
+      },
+      "description": "Response message contains public key information."
+    },
+    "pactusGetRawTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "rawTransaction": {
+          "type": "string",
+          "description": "The raw transaction data in hexadecimal format."
+        },
+        "id": {
+          "type": "string",
+          "description": "The unique ID of the transaction."
+        }
+      },
+      "description": "Response message contains raw transaction data."
+    },
+    "pactusGetTotalBalanceResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the queried wallet."
+        },
+        "totalBalance": {
+          "type": "string",
+          "format": "int64",
+          "description": "The total balance of the wallet in NanoPAC."
+        }
+      },
+      "description": "Response message contains the total available balance of the wallet."
+    },
+    "pactusGetTotalStakeResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the queried wallet."
+        },
+        "totalStake": {
+          "type": "string",
+          "format": "int64",
+          "description": "The total stake amount in NanoPAC."
+        }
+      },
+      "description": "Response message contains the total stake of the wallet."
+    },
+    "pactusGetTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "blockHeight": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height of the block containing the transaction."
+        },
+        "blockTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The UNIX timestamp of the block containing the transaction."
+        },
+        "transaction": {
+          "$ref": "#/definitions/pactusTransactionInfo",
+          "description": "Detailed information about the transaction."
+        }
+      },
+      "description": "Response message contains details of a transaction."
+    },
+    "pactusGetTxPoolContentResponse": {
+      "type": "object",
+      "properties": {
+        "txs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusTransactionInfo"
+          },
+          "description": "List of transactions currently in the pool."
+        }
+      },
+      "description": "Response message contains transactions in the transaction pool."
+    },
+    "pactusGetValidatorAddressResponse": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "description": "The validator address associated with the public key."
+        }
+      },
+      "description": "Response message containing the validator address corresponding to a public key."
+    },
+    "pactusGetValidatorAddressesResponse": {
+      "type": "object",
+      "properties": {
+        "addresses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of validator addresses."
+        }
+      },
+      "description": "Response message contains list of validator addresses."
+    },
+    "pactusGetValidatorResponse": {
+      "type": "object",
+      "properties": {
+        "validator": {
+          "$ref": "#/definitions/pactusValidatorInfo",
+          "description": "Detailed information about the validator."
+        }
+      },
+      "description": "Response message contains validator information."
+    },
+    "pactusGetWalletInfoResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet to query."
+        },
+        "version": {
+          "type": "string",
+          "format": "int64",
+          "description": "The wallet format version."
+        },
+        "network": {
+          "type": "string",
+          "description": "The network the wallet is connected to (e.g., mainnet, testnet)."
+        },
+        "encrypted": {
+          "type": "boolean",
+          "description": "Indicates if the wallet is encrypted."
+        },
+        "uuid": {
+          "type": "string",
+          "description": "A unique identifier of the wallet."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "int64",
+          "description": "Unix timestamp of wallet creation."
+        }
+      },
+      "description": "Response message contains wallet details."
+    },
+    "pactusHistoryInfo": {
+      "type": "object",
+      "properties": {
+        "transactionId": {
+          "type": "string",
+          "description": "The transaction ID in hexadecimal format."
+        },
+        "time": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Unix timestamp of when the transaction was confirmed."
+        },
+        "payloadType": {
+          "type": "string",
+          "description": "The type of transaction payload."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the transaction."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction amount in NanoPAC."
+        }
+      },
+      "description": "HistoryInfo contains transaction history details for an address."
+    },
+    "pactusListAddressResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the queried wallet."
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusAddressInfo"
+          },
+          "description": "ist of all addresses in the wallet with their details."
+        }
+      },
+      "description": "Response message contains wallet addresses."
+    },
+    "pactusListWalletResponse": {
+      "type": "object",
+      "properties": {
+        "wallets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Array of wallet names."
+        }
+      },
+      "description": "Response message contains wallet names."
+    },
+    "pactusLoadWalletResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the loaded wallet."
+        }
+      },
+      "description": "Response message confirming wallet loaded."
+    },
+    "pactusMetricInfo": {
+      "type": "object",
+      "properties": {
+        "totalInvalid": {
+          "$ref": "#/definitions/pactusCounterInfo",
+          "description": "Total number of invalid bundles."
+        },
+        "totalSent": {
+          "$ref": "#/definitions/pactusCounterInfo",
+          "description": "Total number of bundles sent."
+        },
+        "totalReceived": {
+          "$ref": "#/definitions/pactusCounterInfo",
+          "description": "Total number of bundles received."
+        },
+        "messageSent": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/pactusCounterInfo"
+          },
+          "description": "Number of sent bundles categorized by message type."
+        },
+        "messageReceived": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/pactusCounterInfo"
+          },
+          "description": "Number of received bundles categorized by message type."
+        }
+      },
+      "description": "MetricInfo contains metrics data regarding network activity."
+    },
+    "pactusPayloadBond": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string",
+          "description": "The sender's address."
+        },
+        "receiver": {
+          "type": "string",
+          "description": "The receiver's address."
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64",
+          "description": "The stake amount in NanoPAC."
+        },
+        "publicKey": {
+          "type": "string",
+          "description": "The public key of the validator."
+        }
+      },
+      "description": "Payload for a bond transaction."
+    },
+    "pactusPayloadSortition": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string",
+          "description": "The validator address associated with the sortition proof."
+        },
+        "proof": {
+          "type": "string",
+          "description": "The proof for the sortition."
+        }
+      },
+      "description": "Payload for a sortition transaction."
+    },
+    "pactusPayloadTransfer": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string",
+          "description": "The sender's address."
+        },
+        "receiver": {
+          "type": "string",
+          "description": "The receiver's address."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The amount to be transferred in NanoPAC."
+        }
+      },
+      "description": "Payload for a transfer transaction."
+    },
+    "pactusPayloadType": {
+      "type": "string",
+      "enum": [
+        "PAYLOAD_TYPE_UNSPECIFIED",
+        "PAYLOAD_TYPE_TRANSFER",
+        "PAYLOAD_TYPE_BOND",
+        "PAYLOAD_TYPE_SORTITION",
+        "PAYLOAD_TYPE_UNBOND",
+        "PAYLOAD_TYPE_WITHDRAW"
+      ],
+      "default": "PAYLOAD_TYPE_UNSPECIFIED",
+      "description": "Enumeration for different types of transaction payloads.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type."
+    },
+    "pactusPayloadUnbond": {
+      "type": "object",
+      "properties": {
+        "validator": {
+          "type": "string",
+          "description": "The address of the validator to unbond from."
+        }
+      },
+      "description": "Payload for an unbond transaction."
+    },
+    "pactusPayloadWithdraw": {
+      "type": "object",
+      "properties": {
+        "validatorAddress": {
+          "type": "string",
+          "description": "The address of the validator to withdraw from."
+        },
+        "accountAddress": {
+          "type": "string",
+          "description": "The address of the account to withdraw to."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The withdrawal amount in NanoPAC."
+        }
+      },
+      "description": "Payload for a withdraw transaction."
+    },
+    "pactusPeerInfo": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Current status of the peer (e.g., connected, disconnected)."
+        },
+        "moniker": {
+          "type": "string",
+          "description": "Moniker or Human-Readable name of the peer."
+        },
+        "agent": {
+          "type": "string",
+          "description": "Version and agent details of the peer."
+        },
+        "peerId": {
+          "type": "string",
+          "description": "Peer ID of the peer in P2P network."
+        },
+        "consensusKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of consensus keys used by the peer."
+        },
+        "consensusAddresses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of consensus addresses used by the peer."
+        },
+        "services": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Bitfield representing the services provided by the peer."
+        },
+        "lastBlockHash": {
+          "type": "string",
+          "description": "Hash of the last block the peer knows."
+        },
+        "height": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Blockchain height of the peer."
+        },
+        "lastSent": {
+          "type": "string",
+          "format": "int64",
+          "description": "Time the last bundle sent to the peer (in epoch format)."
+        },
+        "lastReceived": {
+          "type": "string",
+          "format": "int64",
+          "description": "Time the last bundle received from the peer (in epoch format)."
+        },
+        "address": {
+          "type": "string",
+          "description": "Network address of the peer."
+        },
+        "direction": {
+          "type": "string",
+          "description": "Connection direction (e.g., inbound, outbound)."
+        },
+        "protocols": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of protocols supported by the peer."
+        },
+        "totalSessions": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Total download sessions with the peer."
+        },
+        "completedSessions": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Completed download sessions with the peer."
+        },
+        "metricInfo": {
+          "$ref": "#/definitions/pactusMetricInfo",
+          "description": "Metrics related to peer activity."
+        }
+      },
+      "description": "PeerInfo contains information about a peer in the network."
+    },
+    "pactusProposalInfo": {
+      "type": "object",
+      "properties": {
+        "height": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height of the proposal."
+        },
+        "round": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The round of the proposal."
+        },
+        "blockData": {
+          "type": "string",
+          "description": "The block data of the proposal."
+        },
+        "signature": {
+          "type": "string",
+          "description": "The signature of the proposal, signed by the proposer."
+        }
+      },
+      "description": "Message contains information about a proposal."
+    },
+    "pactusPublicKeyAggregationResponse": {
+      "type": "object",
+      "properties": {
+        "publicKey": {
+          "type": "string",
+          "description": "The aggregated BLS public key."
+        },
+        "address": {
+          "type": "string",
+          "description": "The blockchain address derived from the aggregated public key."
+        }
+      },
+      "description": "Response message contains the aggregated BLS public key result."
+    },
+    "pactusRestoreWalletResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the restored wallet."
+        }
+      },
+      "description": "Response message confirming wallet restoration."
+    },
+    "pactusSetAddressLabelResponse": {
+      "type": "object",
+      "description": "Response message for address label update."
+    },
+    "pactusSignMessageResponse": {
+      "type": "object",
+      "properties": {
+        "signature": {
+          "type": "string",
+          "description": "The signature in hexadecimal format."
+        }
+      },
+      "description": "Response message contains message signature."
+    },
+    "pactusSignMessageWithPrivateKeyResponse": {
+      "type": "object",
+      "properties": {
+        "signature": {
+          "type": "string",
+          "description": "The resulting signature in hexadecimal format."
+        }
+      },
+      "description": "Response message contains the signature generated from the message."
+    },
+    "pactusSignRawTransactionResponse": {
+      "type": "object",
+      "properties": {
+        "transactionId": {
+          "type": "string",
+          "description": "The ID of the signed transaction."
+        },
+        "signedRawTransaction": {
+          "type": "string",
+          "description": "The signed raw transaction data."
+        }
+      },
+      "description": "Response message contains the transaction ID and signed raw transaction."
+    },
+    "pactusSignatureAggregationResponse": {
+      "type": "object",
+      "properties": {
+        "signature": {
+          "type": "string",
+          "description": "The aggregated BLS signature in hexadecimal format."
+        }
+      },
+      "description": "Response message contains the aggregated BLS signature."
+    },
+    "pactusTransactionInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique ID of the transaction."
+        },
+        "data": {
+          "type": "string",
+          "description": "The raw transaction data in hexadecimal format."
+        },
+        "version": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The version of the transaction."
+        },
+        "lockTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The lock time for the transaction."
+        },
+        "value": {
+          "type": "string",
+          "format": "int64",
+          "description": "The value of the transaction in NanoPAC."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The fee for the transaction in NanoPAC."
+        },
+        "payloadType": {
+          "$ref": "#/definitions/pactusPayloadType",
+          "description": "The type of transaction payload."
+        },
+        "transfer": {
+          "$ref": "#/definitions/pactusPayloadTransfer",
+          "description": "Transfer transaction payload."
+        },
+        "bond": {
+          "$ref": "#/definitions/pactusPayloadBond",
+          "description": "Bond transaction payload."
+        },
+        "sortition": {
+          "$ref": "#/definitions/pactusPayloadSortition",
+          "description": "Sortition transaction payload."
+        },
+        "unbond": {
+          "$ref": "#/definitions/pactusPayloadUnbond",
+          "description": "Unbond transaction payload."
+        },
+        "withdraw": {
+          "$ref": "#/definitions/pactusPayloadWithdraw",
+          "description": "Withdraw transaction payload."
+        },
+        "memo": {
+          "type": "string",
+          "description": "A memo string for the transaction."
+        },
+        "publicKey": {
+          "type": "string",
+          "description": "The public key associated with the transaction."
+        },
+        "signature": {
+          "type": "string",
+          "description": "The signature for the transaction."
+        }
+      },
+      "description": "Information about a transaction."
+    },
+    "pactusTransactionVerbosity": {
+      "type": "string",
+      "enum": [
+        "TRANSACTION_VERBOSITY_DATA",
+        "TRANSACTION_VERBOSITY_INFO"
+      ],
+      "default": "TRANSACTION_VERBOSITY_DATA",
+      "description": "Enumeration for verbosity levels when requesting transaction details.\n\n - TRANSACTION_VERBOSITY_DATA: Request transaction data only.\n - TRANSACTION_VERBOSITY_INFO: Request detailed transaction information."
+    },
+    "pactusUnloadWalletResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the unloaded wallet."
+        }
+      },
+      "description": "Response message confirming wallet unloading."
+    },
+    "pactusValidatorInfo": {
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "description": "The hash of the validator."
+        },
+        "data": {
+          "type": "string",
+          "description": "The serialized data of the validator."
+        },
+        "publicKey": {
+          "type": "string",
+          "description": "The public key of the validator."
+        },
+        "number": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The unique number assigned to the validator."
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64",
+          "description": "The stake of the validator in NanoPAC."
+        },
+        "lastBondingHeight": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height at which the validator last bonded."
+        },
+        "lastSortitionHeight": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height at which the validator last participated in sortition."
+        },
+        "unbondingHeight": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The height at which the validator will unbond."
+        },
+        "address": {
+          "type": "string",
+          "description": "The address of the validator."
+        },
+        "availabilityScore": {
+          "type": "number",
+          "format": "double",
+          "description": "The availability score of the validator."
+        }
+      },
+      "description": "Message contains information about a validator."
+    },
+    "pactusVerifyMessageResponse": {
+      "type": "object",
+      "properties": {
+        "isValid": {
+          "type": "boolean",
+          "description": "Boolean indicating whether the signature is valid for the given message and public key."
+        }
+      },
+      "description": "Response message contains the verification result."
+    },
+    "pactusVoteInfo": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/pactusVoteType",
+          "description": "The type of the vote."
+        },
+        "voter": {
+          "type": "string",
+          "description": "The address of the voter."
+        },
+        "blockHash": {
+          "type": "string",
+          "description": "The hash of the block being voted on."
+        },
+        "round": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The consensus round of the vote."
+        },
+        "cpRound": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The change-proposer round of the vote."
+        },
+        "cpValue": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The change-proposer value of the vote."
+        }
+      },
+      "description": "Message contains information about a vote."
+    },
+    "pactusVoteType": {
+      "type": "string",
+      "enum": [
+        "VOTE_TYPE_UNSPECIFIED",
+        "VOTE_TYPE_PREPARE",
+        "VOTE_TYPE_PRECOMMIT",
+        "VOTE_TYPE_CP_PRE_VOTE",
+        "VOTE_TYPE_CP_MAIN_VOTE",
+        "VOTE_TYPE_CP_DECIDED"
+      ],
+      "default": "VOTE_TYPE_UNSPECIFIED",
+      "description": "Enumeration for types of votes.\n\n - VOTE_TYPE_UNSPECIFIED: Unspecified vote type.\n - VOTE_TYPE_PREPARE: Prepare vote type.\n - VOTE_TYPE_PRECOMMIT: Precommit vote type.\n - VOTE_TYPE_CP_PRE_VOTE: Change-proposer:pre-vote vote type.\n - VOTE_TYPE_CP_MAIN_VOTE: Change-proposer:main-vote vote type.\n - VOTE_TYPE_CP_DECIDED: Change-proposer:decided vote type."
+    },
+    "pactusZMQPublisherInfo": {
+      "type": "object",
+      "properties": {
+        "topic": {
+          "type": "string",
+          "description": "The topic associated with the publisher."
+        },
+        "address": {
+          "type": "string",
+          "description": "The address of the publisher."
+        },
+        "hwm": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The high-water mark (HWM) for the publisher, indicating the\nmaximum number of messages to queue before dropping older ones."
+        }
+      },
+      "description": "ZMQPublisherInfo contains information about a ZeroMQ publisher."
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "BasicAuth": {
+      "type": "basic"
+    }
+  },
+  "security": [
+    {
+      "BasicAuth": []
+    }
+  ]
+}

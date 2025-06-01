@@ -1,13 +1,12 @@
-name: Lint and format check
+name: Lint and Format Check
+permissions:
+  contents: read
 
 on:
   push:
-    branches:
-      - main
-
+    branches: ["main"]
   pull_request:
-    branches:
-      - main
+    branches: ["main"]
 
 jobs:
   linting:
@@ -23,7 +22,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Installing golangci-lint
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62
+        run: |
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62
+          go install github.com/bufbuild/buf/cmd/buf@v1.50
 
       - name: Formatting and linting the project
         run: make check
+
+      - name: Formatting and linting the proto files
+        run: make proto-check

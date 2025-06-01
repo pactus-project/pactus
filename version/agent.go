@@ -8,7 +8,7 @@ import (
 )
 
 var NodeAgent = Agent{
-	Version:         NodeVersion,
+	Version:         NodeVersion(),
 	ProtocolVersion: 1,
 	OS:              runtime.GOOS,
 	Arch:            runtime.GOARCH,

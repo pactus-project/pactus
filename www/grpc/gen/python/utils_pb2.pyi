@@ -1,7 +1,8 @@
 from google.protobuf.internal import containers as _containers
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
-from typing import ClassVar as _ClassVar, Iterable as _Iterable, Optional as _Optional
+from collections.abc import Iterable as _Iterable
+from typing import ClassVar as _ClassVar, Optional as _Optional
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
@@ -35,13 +36,13 @@ class VerifyMessageResponse(_message.Message):
     is_valid: bool
     def __init__(self, is_valid: bool = ...) -> None: ...
 
-class BLSPublicKeyAggregationRequest(_message.Message):
+class PublicKeyAggregationRequest(_message.Message):
     __slots__ = ("public_keys",)
     PUBLIC_KEYS_FIELD_NUMBER: _ClassVar[int]
     public_keys: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, public_keys: _Optional[_Iterable[str]] = ...) -> None: ...
 
-class BLSPublicKeyAggregationResponse(_message.Message):
+class PublicKeyAggregationResponse(_message.Message):
     __slots__ = ("public_key", "address")
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
@@ -49,13 +50,13 @@ class BLSPublicKeyAggregationResponse(_message.Message):
     address: str
     def __init__(self, public_key: _Optional[str] = ..., address: _Optional[str] = ...) -> None: ...
 
-class BLSSignatureAggregationRequest(_message.Message):
+class SignatureAggregationRequest(_message.Message):
     __slots__ = ("signatures",)
     SIGNATURES_FIELD_NUMBER: _ClassVar[int]
     signatures: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, signatures: _Optional[_Iterable[str]] = ...) -> None: ...
 
-class BLSSignatureAggregationResponse(_message.Message):
+class SignatureAggregationResponse(_message.Message):
     __slots__ = ("signature",)
     SIGNATURE_FIELD_NUMBER: _ClassVar[int]
     signature: str

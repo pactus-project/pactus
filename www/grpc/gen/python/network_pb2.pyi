@@ -1,7 +1,8 @@
 from google.protobuf.internal import containers as _containers
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
-from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Mapping, Optional as _Optional, Union as _Union
+from collections.abc import Iterable as _Iterable, Mapping as _Mapping
+from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
@@ -114,7 +115,7 @@ class ConnectionInfo(_message.Message):
     def __init__(self, connections: _Optional[int] = ..., inbound_connections: _Optional[int] = ..., outbound_connections: _Optional[int] = ...) -> None: ...
 
 class MetricInfo(_message.Message):
-    __slots__ = ("TotalInvalid", "TotalSent", "TotalReceived", "MessageSent", "MessageReceived")
+    __slots__ = ("total_invalid", "total_sent", "total_received", "message_sent", "message_received")
     class MessageSentEntry(_message.Message):
         __slots__ = ("key", "value")
         KEY_FIELD_NUMBER: _ClassVar[int]
@@ -129,22 +130,22 @@ class MetricInfo(_message.Message):
         key: int
         value: CounterInfo
         def __init__(self, key: _Optional[int] = ..., value: _Optional[_Union[CounterInfo, _Mapping]] = ...) -> None: ...
-    TOTALINVALID_FIELD_NUMBER: _ClassVar[int]
-    TOTALSENT_FIELD_NUMBER: _ClassVar[int]
-    TOTALRECEIVED_FIELD_NUMBER: _ClassVar[int]
-    MESSAGESENT_FIELD_NUMBER: _ClassVar[int]
-    MESSAGERECEIVED_FIELD_NUMBER: _ClassVar[int]
-    TotalInvalid: CounterInfo
-    TotalSent: CounterInfo
-    TotalReceived: CounterInfo
-    MessageSent: _containers.MessageMap[int, CounterInfo]
-    MessageReceived: _containers.MessageMap[int, CounterInfo]
-    def __init__(self, TotalInvalid: _Optional[_Union[CounterInfo, _Mapping]] = ..., TotalSent: _Optional[_Union[CounterInfo, _Mapping]] = ..., TotalReceived: _Optional[_Union[CounterInfo, _Mapping]] = ..., MessageSent: _Optional[_Mapping[int, CounterInfo]] = ..., MessageReceived: _Optional[_Mapping[int, CounterInfo]] = ...) -> None: ...
+    TOTAL_INVALID_FIELD_NUMBER: _ClassVar[int]
+    TOTAL_SENT_FIELD_NUMBER: _ClassVar[int]
+    TOTAL_RECEIVED_FIELD_NUMBER: _ClassVar[int]
+    MESSAGE_SENT_FIELD_NUMBER: _ClassVar[int]
+    MESSAGE_RECEIVED_FIELD_NUMBER: _ClassVar[int]
+    total_invalid: CounterInfo
+    total_sent: CounterInfo
+    total_received: CounterInfo
+    message_sent: _containers.MessageMap[int, CounterInfo]
+    message_received: _containers.MessageMap[int, CounterInfo]
+    def __init__(self, total_invalid: _Optional[_Union[CounterInfo, _Mapping]] = ..., total_sent: _Optional[_Union[CounterInfo, _Mapping]] = ..., total_received: _Optional[_Union[CounterInfo, _Mapping]] = ..., message_sent: _Optional[_Mapping[int, CounterInfo]] = ..., message_received: _Optional[_Mapping[int, CounterInfo]] = ...) -> None: ...
 
 class CounterInfo(_message.Message):
-    __slots__ = ("Bytes", "Bundles")
+    __slots__ = ("bytes", "bundles")
     BYTES_FIELD_NUMBER: _ClassVar[int]
     BUNDLES_FIELD_NUMBER: _ClassVar[int]
-    Bytes: int
-    Bundles: int
-    def __init__(self, Bytes: _Optional[int] = ..., Bundles: _Optional[int] = ...) -> None: ...
+    bytes: int
+    bundles: int
+    def __init__(self, bytes: _Optional[int] = ..., bundles: _Optional[int] = ...) -> None: ...

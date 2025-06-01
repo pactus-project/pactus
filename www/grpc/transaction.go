@@ -45,13 +45,13 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 	}
 
 	switch req.Verbosity {
-	case pactus.TransactionVerbosity_TRANSACTION_DATA:
+	case pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_DATA:
 		res.Transaction = &pactus.TransactionInfo{
 			Id:   committedTx.TxID.String(),
 			Data: hex.EncodeToString(committedTx.Data),
 		}
 
-	case pactus.TransactionVerbosity_TRANSACTION_INFO:
+	case pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_INFO:
 		trx, err := committedTx.ToTx()
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "%s", err.Error())

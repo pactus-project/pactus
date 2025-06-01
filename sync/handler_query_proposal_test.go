@@ -17,7 +17,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 		msg := message.NewQueryProposalMessage(consHeight, consRound, td.RandValAddress())
 		td.receivingNewMessage(td.sync, msg, pid)
 
-		td.shouldNotPublishMessageWithThisType(t, message.TypeProposal)
+		td.shouldNotPublishAnyMessage(t)
 	})
 
 	t.Run("should respond to the query proposal message", func(t *testing.T) {

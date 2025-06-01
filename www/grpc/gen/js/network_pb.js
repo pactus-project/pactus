@@ -251,7 +251,7 @@ proto.pactus.GetNetworkInfoRequest.prototype.toObject = function(opt_includeInst
  */
 proto.pactus.GetNetworkInfoRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    onlyConnected: jspb.Message.getBooleanFieldWithDefault(msg, 1, false)
+onlyConnected: jspb.Message.getBooleanFieldWithDefault(msg, 1, false)
   };
 
   if (includeInstance) {
@@ -388,11 +388,11 @@ proto.pactus.GetNetworkInfoResponse.prototype.toObject = function(opt_includeIns
  */
 proto.pactus.GetNetworkInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    networkName: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    connectedPeersCount: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    connectedPeersList: jspb.Message.toObjectList(msg.getConnectedPeersList(),
+networkName: jspb.Message.getFieldWithDefault(msg, 1, ""),
+connectedPeersCount: jspb.Message.getFieldWithDefault(msg, 2, 0),
+connectedPeersList: jspb.Message.toObjectList(msg.getConnectedPeersList(),
     proto.pactus.PeerInfo.toObject, includeInstance),
-    metricInfo: (f = msg.getMetricInfo()) && proto.pactus.MetricInfo.toObject(includeInstance, f)
+metricInfo: (f = msg.getMetricInfo()) && proto.pactus.MetricInfo.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -760,18 +760,18 @@ proto.pactus.GetNodeInfoResponse.prototype.toObject = function(opt_includeInstan
  */
 proto.pactus.GetNodeInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    moniker: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    agent: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    peerId: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    startedAt: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    reachability: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    services: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    servicesNames: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    localAddrsList: (f = jspb.Message.getRepeatedField(msg, 8)) == null ? undefined : f,
-    protocolsList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f,
-    clockOffset: jspb.Message.getFloatingPointFieldWithDefault(msg, 13, 0.0),
-    connectionInfo: (f = msg.getConnectionInfo()) && proto.pactus.ConnectionInfo.toObject(includeInstance, f),
-    zmqPublishersList: jspb.Message.toObjectList(msg.getZmqPublishersList(),
+moniker: jspb.Message.getFieldWithDefault(msg, 1, ""),
+agent: jspb.Message.getFieldWithDefault(msg, 2, ""),
+peerId: jspb.Message.getFieldWithDefault(msg, 3, ""),
+startedAt: jspb.Message.getFieldWithDefault(msg, 4, 0),
+reachability: jspb.Message.getFieldWithDefault(msg, 5, ""),
+services: jspb.Message.getFieldWithDefault(msg, 6, 0),
+servicesNames: jspb.Message.getFieldWithDefault(msg, 7, ""),
+localAddrsList: (f = jspb.Message.getRepeatedField(msg, 8)) == null ? undefined : f,
+protocolsList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f,
+clockOffset: jspb.Message.getFloatingPointFieldWithDefault(msg, 13, 0.0),
+connectionInfo: (f = msg.getConnectionInfo()) && proto.pactus.ConnectionInfo.toObject(includeInstance, f),
+zmqPublishersList: jspb.Message.toObjectList(msg.getZmqPublishersList(),
     proto.pactus.ZMQPublisherInfo.toObject, includeInstance)
   };
 
@@ -1302,9 +1302,9 @@ proto.pactus.ZMQPublisherInfo.prototype.toObject = function(opt_includeInstance)
  */
 proto.pactus.ZMQPublisherInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    topic: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    address: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    hwm: jspb.Message.getFieldWithDefault(msg, 3, 0)
+topic: jspb.Message.getFieldWithDefault(msg, 1, ""),
+address: jspb.Message.getFieldWithDefault(msg, 2, ""),
+hwm: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -1499,23 +1499,23 @@ proto.pactus.PeerInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.PeerInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    status: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    moniker: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    agent: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    peerId: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    consensusKeysList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f,
-    consensusAddressesList: (f = jspb.Message.getRepeatedField(msg, 6)) == null ? undefined : f,
-    services: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    lastBlockHash: jspb.Message.getFieldWithDefault(msg, 8, ""),
-    height: jspb.Message.getFieldWithDefault(msg, 9, 0),
-    lastSent: jspb.Message.getFieldWithDefault(msg, 10, 0),
-    lastReceived: jspb.Message.getFieldWithDefault(msg, 11, 0),
-    address: jspb.Message.getFieldWithDefault(msg, 12, ""),
-    direction: jspb.Message.getFieldWithDefault(msg, 13, ""),
-    protocolsList: (f = jspb.Message.getRepeatedField(msg, 14)) == null ? undefined : f,
-    totalSessions: jspb.Message.getFieldWithDefault(msg, 15, 0),
-    completedSessions: jspb.Message.getFieldWithDefault(msg, 16, 0),
-    metricInfo: (f = msg.getMetricInfo()) && proto.pactus.MetricInfo.toObject(includeInstance, f)
+status: jspb.Message.getFieldWithDefault(msg, 1, 0),
+moniker: jspb.Message.getFieldWithDefault(msg, 2, ""),
+agent: jspb.Message.getFieldWithDefault(msg, 3, ""),
+peerId: jspb.Message.getFieldWithDefault(msg, 4, ""),
+consensusKeysList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f,
+consensusAddressesList: (f = jspb.Message.getRepeatedField(msg, 6)) == null ? undefined : f,
+services: jspb.Message.getFieldWithDefault(msg, 7, 0),
+lastBlockHash: jspb.Message.getFieldWithDefault(msg, 8, ""),
+height: jspb.Message.getFieldWithDefault(msg, 9, 0),
+lastSent: jspb.Message.getFieldWithDefault(msg, 10, 0),
+lastReceived: jspb.Message.getFieldWithDefault(msg, 11, 0),
+address: jspb.Message.getFieldWithDefault(msg, 12, ""),
+direction: jspb.Message.getFieldWithDefault(msg, 13, ""),
+protocolsList: (f = jspb.Message.getRepeatedField(msg, 14)) == null ? undefined : f,
+totalSessions: jspb.Message.getFieldWithDefault(msg, 15, 0),
+completedSessions: jspb.Message.getFieldWithDefault(msg, 16, 0),
+metricInfo: (f = msg.getMetricInfo()) && proto.pactus.MetricInfo.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -2187,9 +2187,9 @@ proto.pactus.ConnectionInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.ConnectionInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    connections: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    inboundConnections: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    outboundConnections: jspb.Message.getFieldWithDefault(msg, 3, 0)
+connections: jspb.Message.getFieldWithDefault(msg, 1, 0),
+inboundConnections: jspb.Message.getFieldWithDefault(msg, 2, 0),
+outboundConnections: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -2377,11 +2377,11 @@ proto.pactus.MetricInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.MetricInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    totalinvalid: (f = msg.getTotalinvalid()) && proto.pactus.CounterInfo.toObject(includeInstance, f),
-    totalsent: (f = msg.getTotalsent()) && proto.pactus.CounterInfo.toObject(includeInstance, f),
-    totalreceived: (f = msg.getTotalreceived()) && proto.pactus.CounterInfo.toObject(includeInstance, f),
-    messagesentMap: (f = msg.getMessagesentMap()) ? f.toObject(includeInstance, proto.pactus.CounterInfo.toObject) : [],
-    messagereceivedMap: (f = msg.getMessagereceivedMap()) ? f.toObject(includeInstance, proto.pactus.CounterInfo.toObject) : []
+totalInvalid: (f = msg.getTotalInvalid()) && proto.pactus.CounterInfo.toObject(includeInstance, f),
+totalSent: (f = msg.getTotalSent()) && proto.pactus.CounterInfo.toObject(includeInstance, f),
+totalReceived: (f = msg.getTotalReceived()) && proto.pactus.CounterInfo.toObject(includeInstance, f),
+messageSentMap: (f = msg.getMessageSentMap()) ? f.toObject(includeInstance, proto.pactus.CounterInfo.toObject) : [],
+messageReceivedMap: (f = msg.getMessageReceivedMap()) ? f.toObject(includeInstance, proto.pactus.CounterInfo.toObject) : []
   };
 
   if (includeInstance) {
@@ -2421,26 +2421,26 @@ proto.pactus.MetricInfo.deserializeBinaryFromReader = function(msg, reader) {
     case 1:
       var value = new proto.pactus.CounterInfo;
       reader.readMessage(value,proto.pactus.CounterInfo.deserializeBinaryFromReader);
-      msg.setTotalinvalid(value);
+      msg.setTotalInvalid(value);
       break;
     case 2:
       var value = new proto.pactus.CounterInfo;
       reader.readMessage(value,proto.pactus.CounterInfo.deserializeBinaryFromReader);
-      msg.setTotalsent(value);
+      msg.setTotalSent(value);
       break;
     case 3:
       var value = new proto.pactus.CounterInfo;
       reader.readMessage(value,proto.pactus.CounterInfo.deserializeBinaryFromReader);
-      msg.setTotalreceived(value);
+      msg.setTotalReceived(value);
       break;
     case 4:
-      var value = msg.getMessagesentMap();
+      var value = msg.getMessageSentMap();
       reader.readMessage(value, function(message, reader) {
         jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readMessage, proto.pactus.CounterInfo.deserializeBinaryFromReader, 0, new proto.pactus.CounterInfo());
          });
       break;
     case 5:
-      var value = msg.getMessagereceivedMap();
+      var value = msg.getMessageReceivedMap();
       reader.readMessage(value, function(message, reader) {
         jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readMessage, proto.pactus.CounterInfo.deserializeBinaryFromReader, 0, new proto.pactus.CounterInfo());
          });
@@ -2474,7 +2474,7 @@ proto.pactus.MetricInfo.prototype.serializeBinary = function() {
  */
 proto.pactus.MetricInfo.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getTotalinvalid();
+  f = message.getTotalInvalid();
   if (f != null) {
     writer.writeMessage(
       1,
@@ -2482,7 +2482,7 @@ proto.pactus.MetricInfo.serializeBinaryToWriter = function(message, writer) {
       proto.pactus.CounterInfo.serializeBinaryToWriter
     );
   }
-  f = message.getTotalsent();
+  f = message.getTotalSent();
   if (f != null) {
     writer.writeMessage(
       2,
@@ -2490,7 +2490,7 @@ proto.pactus.MetricInfo.serializeBinaryToWriter = function(message, writer) {
       proto.pactus.CounterInfo.serializeBinaryToWriter
     );
   }
-  f = message.getTotalreceived();
+  f = message.getTotalReceived();
   if (f != null) {
     writer.writeMessage(
       3,
@@ -2498,11 +2498,11 @@ proto.pactus.MetricInfo.serializeBinaryToWriter = function(message, writer) {
       proto.pactus.CounterInfo.serializeBinaryToWriter
     );
   }
-  f = message.getMessagesentMap(true);
+  f = message.getMessageSentMap(true);
   if (f && f.getLength() > 0) {
     f.serializeBinary(4, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeMessage, proto.pactus.CounterInfo.serializeBinaryToWriter);
   }
-  f = message.getMessagereceivedMap(true);
+  f = message.getMessageReceivedMap(true);
   if (f && f.getLength() > 0) {
     f.serializeBinary(5, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeMessage, proto.pactus.CounterInfo.serializeBinaryToWriter);
   }
@@ -2510,10 +2510,10 @@ proto.pactus.MetricInfo.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional CounterInfo TotalInvalid = 1;
+ * optional CounterInfo total_invalid = 1;
  * @return {?proto.pactus.CounterInfo}
  */
-proto.pactus.MetricInfo.prototype.getTotalinvalid = function() {
+proto.pactus.MetricInfo.prototype.getTotalInvalid = function() {
   return /** @type{?proto.pactus.CounterInfo} */ (
     jspb.Message.getWrapperField(this, proto.pactus.CounterInfo, 1));
 };
@@ -2523,7 +2523,7 @@ proto.pactus.MetricInfo.prototype.getTotalinvalid = function() {
  * @param {?proto.pactus.CounterInfo|undefined} value
  * @return {!proto.pactus.MetricInfo} returns this
 */
-proto.pactus.MetricInfo.prototype.setTotalinvalid = function(value) {
+proto.pactus.MetricInfo.prototype.setTotalInvalid = function(value) {
   return jspb.Message.setWrapperField(this, 1, value);
 };
 
@@ -2532,8 +2532,8 @@ proto.pactus.MetricInfo.prototype.setTotalinvalid = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.pactus.MetricInfo} returns this
  */
-proto.pactus.MetricInfo.prototype.clearTotalinvalid = function() {
-  return this.setTotalinvalid(undefined);
+proto.pactus.MetricInfo.prototype.clearTotalInvalid = function() {
+  return this.setTotalInvalid(undefined);
 };
 
 
@@ -2541,16 +2541,16 @@ proto.pactus.MetricInfo.prototype.clearTotalinvalid = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.pactus.MetricInfo.prototype.hasTotalinvalid = function() {
+proto.pactus.MetricInfo.prototype.hasTotalInvalid = function() {
   return jspb.Message.getField(this, 1) != null;
 };
 
 
 /**
- * optional CounterInfo TotalSent = 2;
+ * optional CounterInfo total_sent = 2;
  * @return {?proto.pactus.CounterInfo}
  */
-proto.pactus.MetricInfo.prototype.getTotalsent = function() {
+proto.pactus.MetricInfo.prototype.getTotalSent = function() {
   return /** @type{?proto.pactus.CounterInfo} */ (
     jspb.Message.getWrapperField(this, proto.pactus.CounterInfo, 2));
 };
@@ -2560,7 +2560,7 @@ proto.pactus.MetricInfo.prototype.getTotalsent = function() {
  * @param {?proto.pactus.CounterInfo|undefined} value
  * @return {!proto.pactus.MetricInfo} returns this
 */
-proto.pactus.MetricInfo.prototype.setTotalsent = function(value) {
+proto.pactus.MetricInfo.prototype.setTotalSent = function(value) {
   return jspb.Message.setWrapperField(this, 2, value);
 };
 
@@ -2569,8 +2569,8 @@ proto.pactus.MetricInfo.prototype.setTotalsent = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.pactus.MetricInfo} returns this
  */
-proto.pactus.MetricInfo.prototype.clearTotalsent = function() {
-  return this.setTotalsent(undefined);
+proto.pactus.MetricInfo.prototype.clearTotalSent = function() {
+  return this.setTotalSent(undefined);
 };
 
 
@@ -2578,16 +2578,16 @@ proto.pactus.MetricInfo.prototype.clearTotalsent = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.pactus.MetricInfo.prototype.hasTotalsent = function() {
+proto.pactus.MetricInfo.prototype.hasTotalSent = function() {
   return jspb.Message.getField(this, 2) != null;
 };
 
 
 /**
- * optional CounterInfo TotalReceived = 3;
+ * optional CounterInfo total_received = 3;
  * @return {?proto.pactus.CounterInfo}
  */
-proto.pactus.MetricInfo.prototype.getTotalreceived = function() {
+proto.pactus.MetricInfo.prototype.getTotalReceived = function() {
   return /** @type{?proto.pactus.CounterInfo} */ (
     jspb.Message.getWrapperField(this, proto.pactus.CounterInfo, 3));
 };
@@ -2597,7 +2597,7 @@ proto.pactus.MetricInfo.prototype.getTotalreceived = function() {
  * @param {?proto.pactus.CounterInfo|undefined} value
  * @return {!proto.pactus.MetricInfo} returns this
 */
-proto.pactus.MetricInfo.prototype.setTotalreceived = function(value) {
+proto.pactus.MetricInfo.prototype.setTotalReceived = function(value) {
   return jspb.Message.setWrapperField(this, 3, value);
 };
 
@@ -2606,8 +2606,8 @@ proto.pactus.MetricInfo.prototype.setTotalreceived = function(value) {
  * Clears the message field making it undefined.
  * @return {!proto.pactus.MetricInfo} returns this
  */
-proto.pactus.MetricInfo.prototype.clearTotalreceived = function() {
-  return this.setTotalreceived(undefined);
+proto.pactus.MetricInfo.prototype.clearTotalReceived = function() {
+  return this.setTotalReceived(undefined);
 };
 
 
@@ -2615,18 +2615,18 @@ proto.pactus.MetricInfo.prototype.clearTotalreceived = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.pactus.MetricInfo.prototype.hasTotalreceived = function() {
+proto.pactus.MetricInfo.prototype.hasTotalReceived = function() {
   return jspb.Message.getField(this, 3) != null;
 };
 
 
 /**
- * map<int32, CounterInfo> MessageSent = 4;
+ * map<int32, CounterInfo> message_sent = 4;
  * @param {boolean=} opt_noLazyCreate Do not create the map if
  * empty, instead returning `undefined`
  * @return {!jspb.Map<number,!proto.pactus.CounterInfo>}
  */
-proto.pactus.MetricInfo.prototype.getMessagesentMap = function(opt_noLazyCreate) {
+proto.pactus.MetricInfo.prototype.getMessageSentMap = function(opt_noLazyCreate) {
   return /** @type {!jspb.Map<number,!proto.pactus.CounterInfo>} */ (
       jspb.Message.getMapField(this, 4, opt_noLazyCreate,
       proto.pactus.CounterInfo));
@@ -2637,19 +2637,19 @@ proto.pactus.MetricInfo.prototype.getMessagesentMap = function(opt_noLazyCreate)
  * Clears values from the map. The map will be non-null.
  * @return {!proto.pactus.MetricInfo} returns this
  */
-proto.pactus.MetricInfo.prototype.clearMessagesentMap = function() {
-  this.getMessagesentMap().clear();
+proto.pactus.MetricInfo.prototype.clearMessageSentMap = function() {
+  this.getMessageSentMap().clear();
   return this;
 };
 
 
 /**
- * map<int32, CounterInfo> MessageReceived = 5;
+ * map<int32, CounterInfo> message_received = 5;
  * @param {boolean=} opt_noLazyCreate Do not create the map if
  * empty, instead returning `undefined`
  * @return {!jspb.Map<number,!proto.pactus.CounterInfo>}
  */
-proto.pactus.MetricInfo.prototype.getMessagereceivedMap = function(opt_noLazyCreate) {
+proto.pactus.MetricInfo.prototype.getMessageReceivedMap = function(opt_noLazyCreate) {
   return /** @type {!jspb.Map<number,!proto.pactus.CounterInfo>} */ (
       jspb.Message.getMapField(this, 5, opt_noLazyCreate,
       proto.pactus.CounterInfo));
@@ -2660,8 +2660,8 @@ proto.pactus.MetricInfo.prototype.getMessagereceivedMap = function(opt_noLazyCre
  * Clears values from the map. The map will be non-null.
  * @return {!proto.pactus.MetricInfo} returns this
  */
-proto.pactus.MetricInfo.prototype.clearMessagereceivedMap = function() {
-  this.getMessagereceivedMap().clear();
+proto.pactus.MetricInfo.prototype.clearMessageReceivedMap = function() {
+  this.getMessageReceivedMap().clear();
   return this;
 };
 
@@ -2698,8 +2698,8 @@ proto.pactus.CounterInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.CounterInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    bytes: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    bundles: jspb.Message.getFieldWithDefault(msg, 2, 0)
+bytes: jspb.Message.getFieldWithDefault(msg, 1, 0),
+bundles: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -2791,7 +2791,7 @@ proto.pactus.CounterInfo.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional uint64 Bytes = 1;
+ * optional uint64 bytes = 1;
  * @return {number}
  */
 proto.pactus.CounterInfo.prototype.getBytes = function() {
@@ -2809,7 +2809,7 @@ proto.pactus.CounterInfo.prototype.setBytes = function(value) {
 
 
 /**
- * optional uint64 Bundles = 2;
+ * optional uint64 bundles = 2;
  * @return {number}
  */
 proto.pactus.CounterInfo.prototype.getBundles = function() {

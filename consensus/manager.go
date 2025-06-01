@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"golang.org/x/exp/slices"
 )
 
@@ -30,7 +31,7 @@ func NewManager(
 	state state.Facade,
 	valKeys []*bls.ValidatorKey,
 	rewardAddrs []crypto.Address,
-	broadcastCh chan message.Message,
+	broadcastPipe pipeline.Pipeline[message.Message],
 ) Manager {
 	mgr := &manager{
 		instances:         make([]Consensus, len(valKeys)),
@@ -41,7 +42,7 @@ func NewManager(
 	mediatorConcrete := newConcreteMediator()
 
 	for i, key := range valKeys {
-		cons := NewConsensus(conf, state, key, rewardAddrs[i], broadcastCh, mediatorConcrete)
+		cons := NewConsensus(conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
 
 		mgr.instances[i] = cons
 	}

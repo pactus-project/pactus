@@ -34,7 +34,7 @@ func main() {
 		Use:          "shell",
 		Short:        "Pactus Shell",
 		SilenceUsage: true,
-		Long:         `pactus-shell is a command line tool for interacting with the Pactus blockchain using gRPC`,
+		Long:         "pactus-shell is a command line tool for interacting with the Pactus blockchain using gRPC",
 	}
 
 	shell := shell.New(rootCmd, nil,
@@ -87,6 +87,7 @@ func main() {
 	rootCmd.AddCommand(changeDefaultParameters(pb.NetworkClientCommand()))
 	rootCmd.AddCommand(changeDefaultParameters(pb.TransactionClientCommand()))
 	rootCmd.AddCommand(changeDefaultParameters(pb.WalletClientCommand()))
+	rootCmd.AddCommand(changeDefaultParameters(pb.UtilsClientCommand()))
 	rootCmd.AddCommand(clearScreen())
 	rootCmd.AddCommand(shell)
 

@@ -1,44 +1,50 @@
-#  Update Dependencies
+# Update Dependencies
 
-This document is about how to update the Pactus project repository to latest version.
+This document outlines the steps to update dependencies in the Pactus project repository
+to their latest versions.
 
-### Packages
+## Update Go
 
-First of all you need to update golang dependencies to latest version using this commands:
+First, update the Go version to the [latest release](https://go.dev/doc/install) in [go.mod](../go.mod).
+Ensure the Golang version is also updated in the [Dockerfile](../Dockerfile).
+
+## Update Dependencies
+
+To update Go dependencies to their latest versions, use the following commands:
 
 ```sh
 go get -u ./...
 go mod tidy
 ```
 
-Once all packages got updated, make sure you run `make build`, `make test` and `make build_gui` commands to
-make sure none of previous behaviors are broken.
-If any packages had breaking changes or some of them are deprecated,
-you need to update the code and use new methods or use another package.
+Once all packages are updated, run `make build`, `make test`, and `make build_gui`
+to ensure no existing functionality is broken.
+If any packages introduce breaking changes or are deprecated,
+update the code to use the new methods or replace the package entirely.
 
-### Dev tools
+## Update Dev Tools
 
-After packages, you need to update dev tools such as `golangci-lint`, `buf`, etc.
+Next, update development tools such as `golangci-lint`, `buf`, and others.
+Refer to the [Makefile](../Makefile) and locate the `devtools` target.
+Replace each tool with its latest version.
 
-You can go to root [make file](../Makefile) and find all dev tools on devtools part.
-You have to find latest version of dev tools and replace them here.
+## Update GitHub Workflows
 
-> Note: consider breaking changes and deprecated packages for devtools too.
+Navigate to the [workflows](../.github/workflows) directory and
+update outdated GitHub actions to their latest versions.
+You can find the latest versions by searching for the action name on GitHub.
 
-### Go version
+## Buf Dependencies
 
-You have to update the go version to latest release in [go.mod](../go.mod).
-Make sure you are updating version of Golang on [Dockerfile](../Dockerfile).
+We use [buf](https://buf.build/explore) to generate code from proto files.
+Update the buf plugins in [buf.gen.yaml](../www/grpc/buf/buf.gen.yaml) to their latest versions.
 
-> Note: you must run `make build` and `make build_gui` after this change to make sure everything works smoothly.
+### Packager Dependencies
 
-### CI/CD and GitHub workflows
+When updating Buf plugins, ensure that the **Runtime dependencies** align with the dependencies
+defined in the packages within the [packager](../.github/packager/) folder.
 
-You need to go to [workflows](../.github/workflows) directory and update old GitHub actions to latest version.
-You can find the latest version by searching the action name on GitHub.
+## Example Pull Request
 
-### Example Pull Request
-
-Here is an example pull request to find out what you need to update and how to set commit message:
+For reference, see this example pull request for updates and commit format:
 https://github.com/pactus-project/pactus/pull/1202
-

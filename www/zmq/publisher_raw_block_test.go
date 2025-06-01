@@ -24,7 +24,7 @@ func TestRawBlockPublisher(t *testing.T) {
 
 	td.server.Publishers()
 
-	sub := zmq4.NewSub(context.TODO(), zmq4.WithAutomaticReconnect(false))
+	sub := zmq4.NewSub(context.Background(), zmq4.WithAutomaticReconnect(false))
 
 	err := sub.Dial(addr)
 	require.NoError(t, err)
@@ -33,8 +33,7 @@ func TestRawBlockPublisher(t *testing.T) {
 	require.NoError(t, err)
 
 	blk, _ := td.TestSuite.GenerateTestBlock(td.RandHeight())
-
-	td.eventCh <- blk
+	td.pipe.Send(blk)
 
 	received, err := sub.Recv()
 	require.NoError(t, err)

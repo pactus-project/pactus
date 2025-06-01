@@ -2,6 +2,7 @@ package testsuite
 
 import (
 	"encoding/hex"
+	"fmt"
 	"math/rand"
 	"net"
 	"testing"
@@ -330,6 +331,11 @@ func (ts *TestSuite) RandPeerID() peer.ID {
 	copy(id[2:], s)
 
 	return peer.ID(id[:])
+}
+
+// RandMultiAddress returns a random MultiAddress.
+func (ts *TestSuite) RandMultiAddress() string {
+	return fmt.Sprintf("/dns/%s/udp/1234", ts.RandString(12))
 }
 
 type AccountMaker struct {

@@ -1,0 +1,172 @@
+## Important Notes:
+## 1. The Releaser workflow is triggered when a new tag is pushed to the repository.
+## 2. The Packager workflow is triggered when the Releaser workflow completes successfully.
+## 3. GitHub always executes this workflow using the version from the main branch
+## 4. To package the correct release, it checks out the latest tag.
+##
+name: Packager
+permissions:
+  contents: read
+  id-token: write
+
+on:
+  workflow_run:
+    workflows: ["Releaser"]
+    types: ["completed"]
+
+jobs:
+  packager:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout latest release tag
+        run: |
+          LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          echo "Latest tag: $LATEST_TAG"
+          git checkout $LATEST_TAG
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Create Packages
+        run: bash ./.github/packager/packager.sh
+
+      - name: Upload `package-js-grpc` package
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-js-grpc
+          path: packages/js/pactus-grpc
+
+      - name: Upload `package-js-jsonrpc` package
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-js-jsonrpc
+          path: packages/js/pactus-jsonrpc
+
+      - name: Upload `package-python-grpc` package
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-python-grpc
+          path: packages/python/pactus-grpc
+
+      - name: Upload `package-python-jsonrpc` package
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-python-jsonrpc
+          path: packages/python/pactus-jsonrpc
+
+  publish-npm-grpc:
+    name: Publish pactus-grpc package to npm
+    needs: packager
+    runs-on: ubuntu-latest
+
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/pactus-grpc
+
+    steps:
+      - name: Download JavaScript Package
+        uses: actions/download-artifact@v4
+        with:
+          name: package-js-grpc
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
+
+  publish-npm-jsonrpc:
+    name: Publish pactus-jsonrpc package to npm
+    needs: packager
+    runs-on: ubuntu-latest
+
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/pactus-jsonrpc
+
+    steps:
+      - name: Download JavaScript Package
+        uses: actions/download-artifact@v4
+        with:
+          name: package-js-jsonrpc
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_ACCESS_TOKEN }}
+
+  publish-pypi-grpc:
+    name: Publish pactus-grpc package to PyPI
+    needs: packager
+    runs-on: ubuntu-latest
+
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pactus-grpc
+
+    steps:
+      - name: Download Python Package
+        uses: actions/download-artifact@v4
+        with:
+          name: package-python-grpc
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install build tools and build Python wheel
+        run: |
+          python3 -m pip install build --user
+          python3 -m build
+
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  publish-pypi-jsonrpc:
+    name: Publish pactus-jsonrpc package to PyPI
+    needs: packager
+    runs-on: ubuntu-latest
+
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pactus-jsonrpc
+
+    steps:
+      - name: Download Python Package
+        uses: actions/download-artifact@v4
+        with:
+          name: package-python-jsonrpc
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install build tools and build Python wheel
+        run: |
+          python3 -m pip install build --user
+          python3 -m build
+
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

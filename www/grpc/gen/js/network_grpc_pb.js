@@ -1,7 +1,7 @@
 // GENERATED CODE -- DO NOT EDIT!
 
 'use strict';
-var grpc = require('grpc');
+var grpc = require('@grpc/grpc-js');
 var network_pb = require('./network_pb.js');
 
 function serialize_pactus_GetNetworkInfoRequest(arg) {
@@ -77,4 +77,4 @@ getNodeInfo: {
   },
 };
 
-exports.NetworkClient = grpc.makeGenericClientConstructor(NetworkService);
+exports.NetworkClient = grpc.makeGenericClientConstructor(NetworkService, 'Network');

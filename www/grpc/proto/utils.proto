@@ -2,77 +2,76 @@ syntax = "proto3";
 package pactus;
 
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
-option java_package = "pactus.utils";
+option java_package = "pactus";
 
 // Utils service defines RPC methods for utility functions such as message
-// signing and verification.
+// signing, verification, and etc.
 service Utils {
-  // SignMessageWithPrivateKey signs message with provided private key.
+  // SignMessageWithPrivateKey signs a message with the provided private key.
   rpc SignMessageWithPrivateKey(SignMessageWithPrivateKeyRequest) returns (SignMessageWithPrivateKeyResponse);
 
-  // VerifyMessage verifies signature with public key and message.
+  // VerifyMessage verifies a signature against the public key and message.
   rpc VerifyMessage(VerifyMessageRequest) returns (VerifyMessageResponse);
 
-  // BLSPublicKeyAggregation aggregates bls public keys.
-  rpc BLSPublicKeyAggregation(BLSPublicKeyAggregationRequest) returns (BLSPublicKeyAggregationResponse);
+  // PublicKeyAggregation aggregates multiple BLS public keys into a single key.
+  rpc PublicKeyAggregation(PublicKeyAggregationRequest) returns (PublicKeyAggregationResponse);
 
-  // BLSSignatureAggregation aggregates bls signatures.
-  rpc BLSSignatureAggregation(BLSSignatureAggregationRequest) returns (BLSSignatureAggregationResponse);
+  // SignatureAggregation aggregates multiple BLS signatures into a single signature.
+  rpc SignatureAggregation(SignatureAggregationRequest) returns (SignatureAggregationResponse);
 }
 
-// Request message for sign message with private key.
+// Request message for signing a message with a private key.
 message SignMessageWithPrivateKeyRequest {
   // The private key to sign the message.
   string private_key = 1;
-
-  // The message to sign.
+  // The message content to be signed.
   string message = 2;
 }
 
-// Response message containing the generated signature.
+// Response message contains the signature generated from the message.
 message SignMessageWithPrivateKeyResponse {
-  // The signature of the message.
+  // The resulting signature in hexadecimal format.
   string signature = 1;
 }
 
 // Request message for verifying a message signature.
 message VerifyMessageRequest {
-  // The signed message.
+  // The original message content that was signed.
   string message = 1;
-  // The signature of the message.
+  // The signature to verify in hexadecimal format.
   string signature = 2;
-    // The public key of the signer.
+  // The public key of the signer.
   string public_key = 3;
 }
 
-// Response message containing the resualt of validation of signature and message.
+// Response message contains the verification result.
 message VerifyMessageResponse {
-  // Indicates if the signature is valid (true) or not (false).
+  // Boolean indicating whether the signature is valid for the given message and public key.
   bool is_valid = 1;
 }
 
-// Request message for aggregating BLS public keys.
-message BLSPublicKeyAggregationRequest {
-  // The public keys to aggregate.
+// Request message for aggregating multiple BLS public keys.
+message PublicKeyAggregationRequest {
+  // List of BLS public keys to be aggregated.
   repeated string public_keys = 1;
 }
 
-// Response message containing the aggregated public key.
-message BLSPublicKeyAggregationResponse {
-  // The aggregated public key.
+// Response message contains the aggregated BLS public key result.
+message PublicKeyAggregationResponse {
+  // The aggregated BLS public key.
   string public_key = 1;
-  // The aggregated public key account address.
+  // The blockchain address derived from the aggregated public key.
   string address = 2;
 }
 
-// Request message for aggregating BLS signatures.
-message BLSSignatureAggregationRequest {
-  // The signatures to aggregate.
+// Request message for aggregating multiple BLS signatures.
+message SignatureAggregationRequest {
+  // List of BLS signatures to be aggregated.
   repeated string signatures = 1;
 }
 
-// Response message containing the aggregated signature.
-message BLSSignatureAggregationResponse {
-  // The aggregated signature.
+// Response message contains the aggregated BLS signature.
+message SignatureAggregationResponse {
+  // The aggregated BLS signature in hexadecimal format.
   string signature = 1;
 }

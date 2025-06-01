@@ -56,18 +56,20 @@ func TestParamsUint64(t *testing.T) {
 
 func TestParamsBytes(t *testing.T) {
 	tests := []struct {
-		key string
-		val []byte
+		key    string
+		val    []byte
+		base64 string
 	}{
-		{"k1", []byte{0, 0}},
-		{"k2", []byte{0xff, 0xff}},
-		{"k2", []byte{}},
+		{"k1", []byte{0, 0}, "AAA="},
+		{"k2", []byte{0xff, 0xff}, "//8="},
+		{"k2", []byte{}, ""},
 	}
 
 	p := params{}
 	for _, tt := range tests {
 		p.SetBytes(tt.key, tt.val)
 		assert.Equal(t, tt.val, p.GetBytes(tt.key))
+		assert.Equal(t, tt.base64, p.GetString(tt.key))
 	}
 }
 
@@ -78,7 +80,7 @@ func TestParamsString(t *testing.T) {
 	}{
 		{"k1", "foo"},
 		{"k2", "bar"},
-		{"k3", "bar"},
+		{"k3", ""},
 	}
 
 	p := params{}

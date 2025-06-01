@@ -16,39 +16,35 @@ import (
 )
 
 type Server struct {
-	ctx       context.Context
-	cancel    context.CancelFunc
-	config    *Config
-	listener  net.Listener
-	address   string
-	grpc      *grpc.Server
-	state     state.Facade
-	net       network.Network
-	sync      sync.Synchronizer
-	consMgr   consensus.ManagerReader
-	walletMgr *wallet.Manager
-	zmq       *zmq.Server
-	logger    *logger.SubLogger
+	ctx           context.Context
+	config        *Config
+	listener      net.Listener
+	server        *grpc.Server
+	address       string
+	state         state.Facade
+	net           network.Network
+	sync          sync.Synchronizer
+	consMgr       consensus.ManagerReader
+	walletMgr     *wallet.Manager
+	zmqPublishers []zmq.Publisher
+	logger        *logger.SubLogger
 }
 
-func NewServer(conf *Config, state state.Facade, sync sync.Synchronizer,
+func NewServer(ctx context.Context, conf *Config, state state.Facade, sync sync.Synchronizer,
 	network network.Network, consMgr consensus.ManagerReader,
 	walletMgr *wallet.Manager,
-	zmq *zmq.Server,
+	zmqPublishers []zmq.Publisher,
 ) *Server {
-	ctx, cancel := context.WithCancel(context.Background())
-
 	return &Server{
-		ctx:       ctx,
-		cancel:    cancel,
-		config:    conf,
-		state:     state,
-		sync:      sync,
-		net:       network,
-		consMgr:   consMgr,
-		walletMgr: walletMgr,
-		zmq:       zmq,
-		logger:    logger.NewSubLogger("_grpc", nil),
+		ctx:           ctx,
+		config:        conf,
+		state:         state,
+		sync:          sync,
+		net:           network,
+		consMgr:       consMgr,
+		walletMgr:     walletMgr,
+		zmqPublishers: zmqPublishers,
+		logger:        logger.NewSubLogger("_grpc", nil),
 	}
 }
 
@@ -98,25 +94,21 @@ func (s *Server) startListening(listener net.Listener) error {
 
 	s.listener = listener
 	s.address = listener.Addr().String()
-	s.grpc = grpcServer
+	s.server = grpcServer
 
-	s.logger.Info("grpc started listening", "address", listener.Addr().String())
 	go func() {
-		s.logger.Info("grpc server started", "addr", listener.Addr())
-		if err := s.grpc.Serve(listener); err != nil {
-			s.logger.Error("error on grpc serve", "error", err)
+		s.logger.Info("gRPC server start listening", "address", listener.Addr())
+		if err := s.server.Serve(listener); err != nil {
+			s.logger.Debug("error on gRPC server", "error", err)
 		}
 	}()
 
-	return s.startGateway(s.address)
+	return nil
 }
 
 func (s *Server) StopServer() {
-	s.cancel()
-	s.logger.Debug("context closed", "reason", s.ctx.Err())
-
-	if s.grpc != nil {
-		s.grpc.Stop()
+	if s.server != nil {
+		s.server.Stop()
 		_ = s.listener.Close()
 	}
 }

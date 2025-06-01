@@ -16,7 +16,7 @@ func TestParsingQueryVoteMessages(t *testing.T) {
 		msg := message.NewQueryVoteMessage(consHeight, consRound, td.RandValAddress())
 		td.receivingNewMessage(td.sync, msg, pid)
 
-		td.shouldNotPublishMessageWithThisType(t, message.TypeVote)
+		td.shouldNotPublishAnyMessage(t)
 	})
 
 	t.Run("should respond to the query votes message", func(t *testing.T) {

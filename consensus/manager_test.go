@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -23,13 +24,13 @@ func TestManager(t *testing.T) {
 
 	rewardAddrs := []crypto.Address{ts.RandAccAddress(), ts.RandAccAddress()}
 	valKeys := []*bls.ValidatorKey{state.TestValKeys[0], ts.RandValKey()}
-	broadcastCh := make(chan message.Message, 500)
+	pipe := pipeline.MockingPipeline[message.Message]()
 
 	randomHeight := ts.RandHeight()
 	rndBlk, rndCert := ts.GenerateTestBlock(randomHeight)
 	state.TestStore.SaveBlock(rndBlk, rndCert)
 
-	mgrInt := NewManager(testConfig(), state, valKeys, rewardAddrs, broadcastCh)
+	mgrInt := NewManager(testConfig(), state, valKeys, rewardAddrs, pipe)
 	mgr := mgrInt.(*manager)
 
 	consA := mgr.instances[0].(*consensus) // active
@@ -161,19 +162,17 @@ func TestMediator(t *testing.T) {
 		ts.RandAccAddress(), ts.RandAccAddress(),
 		ts.RandAccAddress(), ts.RandAccAddress(),
 	}
-	broadcastCh := make(chan message.Message, 500)
-
 	stateHeight := ts.RandHeight()
 	blk, cert := ts.GenerateTestBlock(stateHeight)
 	state.TestStore.SaveBlock(blk, cert)
-
-	mgrInt := NewManager(testConfig(), state, valKeys, rewardAddrs, broadcastCh)
+	pipe := pipeline.MockingPipeline[message.Message]()
+	mgrInt := NewManager(testConfig(), state, valKeys, rewardAddrs, pipe)
 	mgr := mgrInt.(*manager)
 
 	mgr.MoveToNewHeight()
 
 	for {
-		msg := <-broadcastCh
+		msg := <-pipe.UnsafeGetChannel()
 		logger.Info("shouldPublishProposal", "msg", msg)
 
 		m, ok := msg.(*message.BlockAnnounceMessage)

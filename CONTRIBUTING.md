@@ -25,8 +25,9 @@ You can use these commands in the Makefile:
 - `make check` runs checks on the code, including formatting and linting.
 - `make test` runs all the tests, including unit tests and system tests.
 - `make unit_test` runs only unit tests.
-- `make proto` generates [protobuf](https://protobuf.dev/) files.
-  Run this target if you have made any changes to the proto buffer files.
+- `make proto` generates gRPC code from [Protobuf](https://protobuf.dev/) files.
+- `make proto-check` validates Protobuf files against best practices.
+- `make proto-format` formats Protobuf files.
 
 ### GUI Development
 
@@ -37,7 +38,7 @@ Development of the Pactus Core GUI have some requirements on your machine which 
 Error and log messages should not start with a capital letter (unless it's a proper noun or acronym) and
 should not end with punctuation.
 
-All changes on core must contain proper and well-defined unit-tests, also previous tests must be passed as well. 
+All changes on core must contain proper and well-defined unit-tests, also previous tests must be passed as well.
 This codebase used `testify` for unit tests, make sure you follow these guide for tests:
 
 - For panic cases make sure you use `assert.Panics`

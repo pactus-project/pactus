@@ -5,11 +5,9 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
 )
@@ -140,15 +138,4 @@ func TestParsingHelloMessages(t *testing.T) {
 			assert.Equal(t, peerHeight, peer.Height)
 			assert.True(t, peer.IsFullNode())
 		})
-}
-
-func TestSendingHelloMessage(t *testing.T) {
-	td := setup(t, nil)
-
-	to := td.RandPeerID()
-	td.sync.sayHello(to)
-
-	bdl := td.shouldPublishMessageWithThisType(t, message.TypeHello)
-	assert.True(t, util.IsFlagSet(bdl.Flags, bundle.BundleFlagHandshaking))
-	assert.True(t, util.IsFlagSet(bdl.Message.(*message.HelloMessage).Services, service.New(service.FullNode)))
 }

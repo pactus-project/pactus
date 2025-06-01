@@ -9,26 +9,23 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pacviewer/jrpc-gateway/jrpc"
+	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Server struct {
-	ctx        context.Context
-	cancel     context.CancelFunc
-	config     *Config
-	server     *jrpc.Server
-	listener   net.Listener
-	grpcClient *grpc.ClientConn
-	logger     *logger.SubLogger
+	ctx      context.Context
+	config   *Config
+	listener net.Listener
+	server   *jrpc.Server
+	grpcConn *grpc.ClientConn
+	logger   *logger.SubLogger
 }
 
-func NewServer(conf *Config) *Server {
-	ctx, cancel := context.WithCancel(context.Background())
-
+func NewServer(ctx context.Context, conf *Config) *Server {
 	return &Server{
 		ctx:    ctx,
-		cancel: cancel,
 		config: conf,
 		logger: logger.NewSubLogger("_jsonrpc", nil),
 	}
@@ -52,7 +49,7 @@ func (s *Server) StartServer(grpcServer string) error {
 		return fmt.Errorf("failed to dial server: %w", err)
 	}
 
-	s.grpcClient = grpcConn
+	s.grpcConn = grpcConn
 
 	blockchainService := pactus.RegisterBlockchainJsonRPC(grpcConn)
 	networkService := pactus.RegisterNetworkJsonRPC(grpcConn)
@@ -60,7 +57,17 @@ func (s *Server) StartServer(grpcServer string) error {
 	walletService := pactus.RegisterWalletJsonRPC(grpcConn)
 	utilsService := pactus.RegisterUtilsJsonRPC(grpcConn)
 
-	server := jrpc.NewServer()
+	opts := make([]jrpc.Option, 0)
+	if len(s.config.Origins) > 0 {
+		opts = append(opts, jrpc.WithCorsOrigins(&cors.Options{
+			AllowedOrigins:   s.config.Origins,
+			AllowedMethods:   []string{"POST"},
+			AllowedHeaders:   []string{"*"},
+			AllowCredentials: true,
+		}))
+	}
+
+	server := jrpc.NewServer(opts...)
 	server.RegisterServices(blockchainService, networkService, transactionService, walletService, utilsService)
 
 	listener, err := net.Listen("tcp", s.config.Listen)
@@ -68,36 +75,26 @@ func (s *Server) StartServer(grpcServer string) error {
 		s.logger.Error("unable to establish tcp connection", "error", err)
 	}
 
-	go func() {
-		for {
-			select {
-			case <-s.ctx.Done():
-				return
-			default:
-				if err := server.Serve(listener); err != nil {
-					s.logger.Error("error while establishing JSON-RPC connection", "error", err)
-				}
-			}
-		}
-	}()
-
-	s.logger.Info("json-rpc started listening", "address", listener.Addr().String())
 	s.server = server
 	s.listener = listener
+
+	go func() {
+		s.logger.Info("JSON-RPC server start listening", "address", listener.Addr())
+		if err := server.Serve(listener); err != nil {
+			s.logger.Debug("error on JSON-RPC server", "error", err)
+		}
+	}()
 
 	return nil
 }
 
 func (s *Server) StopServer() {
-	s.cancel()
-	s.logger.Debug("context closed", "reason", s.ctx.Err())
-
 	if s.server != nil {
 		_ = s.server.GracefulStop(s.ctx)
 		_ = s.listener.Close()
 	}
 
-	if s.grpcClient != nil {
-		_ = s.grpcClient.Close()
+	if s.grpcConn != nil {
+		_ = s.grpcConn.Close()
 	}
 }

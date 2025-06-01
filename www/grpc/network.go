@@ -50,15 +50,12 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		ZmqPublishers: make([]*pactus.ZMQPublisherInfo, 0),
 	}
 
-	publishers := s.zmq.Publishers()
-	if len(publishers) > 0 {
-		for _, publisher := range publishers {
-			resp.ZmqPublishers = append(resp.ZmqPublishers, &pactus.ZMQPublisherInfo{
-				Topic:   publisher.TopicName(),
-				Address: publisher.Address(),
-				Hwm:     int32(publisher.HWM()),
-			})
-		}
+	for _, publisher := range s.zmqPublishers {
+		resp.ZmqPublishers = append(resp.ZmqPublishers, &pactus.ZMQPublisherInfo{
+			Topic:   publisher.TopicName(),
+			Address: publisher.Address(),
+			Hwm:     int32(publisher.HWM()),
+		})
 	}
 
 	return resp, nil

@@ -1,8 +1,11 @@
 ---
 name: Feature request
 about: Any new functionality for Pactus.
-title: ''
-labels: ''
+title: '[FEATURE]: '
+labels: '["enhancement"]'
+type: "Feature"
+assignees: ''
+
 ---
 
 <!--
