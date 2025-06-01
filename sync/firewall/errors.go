@@ -16,8 +16,8 @@ var ErrStreamMessage = errors.New("receive gossip message as stream message")
 // ErrNetworkMismatch is returned when the bundle doesn't belong to this network.
 var ErrNetworkMismatch = errors.New("bundle is not for this network")
 
-// ErrMisMatchConsensusHeight is returned when the bundle height mismatch with message consensus height.
-var ErrMisMatchConsensusHeight = errors.New("consensus height mismatch")
+// ErrMisMatchConsensusHeight is returned when the bundle height mismatches with the message consensus height.
+var ErrMisMatchConsensusHeight = errors.New("bundle and message consensus height mismatch")
 
 // PeerBannedError is returned when a message received from a banned peer-id or banned address.
 type PeerBannedError struct {
