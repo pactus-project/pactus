@@ -19,8 +19,9 @@ func init() {
 
 // Czech is a slice of mnemonic words taken from the bip39 specification
 // https://raw.githubusercontent.com/bitcoin/bips/master/bip-0039/czech.txt
-var Czech = strings.Split(strings.TrimSpace(czech), "\n")
-var czech = `abdikace
+var (
+	Czech = strings.Split(strings.TrimSpace(czech), "\n")
+	czech = `abdikace
 abeceda
 adresa
 agrese
@@ -2069,3 +2070,4 @@ zvrat
 zvukovod
 zvyk
 `
+)

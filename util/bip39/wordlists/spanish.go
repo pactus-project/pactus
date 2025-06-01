@@ -19,8 +19,9 @@ func init() {
 
 // Spanish is a slice of mnemonic words taken from the bip39 specification
 // https://raw.githubusercontent.com/bitcoin/bips/master/bip-0039/spanish.txt
-var Spanish = strings.Split(strings.TrimSpace(spanish), "\n")
-var spanish = `ábaco
+var (
+	Spanish = strings.Split(strings.TrimSpace(spanish), "\n")
+	spanish = `ábaco
 abdomen
 abeja
 abierto
@@ -2069,3 +2070,4 @@ zorro
 zumo
 zurdo
 `
+)

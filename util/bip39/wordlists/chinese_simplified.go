@@ -19,8 +19,9 @@ func init() {
 
 // ChineseSimplified is a slice of mnemonic words taken from the bip39 specification
 // https://raw.githubusercontent.com/bitcoin/bips/master/bip-0039/chinese_simplified.txt
-var ChineseSimplified = strings.Split(strings.TrimSpace(chineseSimplified), "\n")
-var chineseSimplified = `的
+var (
+	ChineseSimplified = strings.Split(strings.TrimSpace(chineseSimplified), "\n")
+	chineseSimplified = `的
 一
 是
 在
@@ -2069,3 +2070,4 @@ var chineseSimplified = `的
 矮
 歇
 `
+)

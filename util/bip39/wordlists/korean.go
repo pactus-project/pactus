@@ -19,8 +19,9 @@ func init() {
 
 // Korean is a slice of mnemonic words taken from the bip39 specification
 // https://raw.githubusercontent.com/bitcoin/bips/master/bip-0039/korean.txt
-var Korean = strings.Split(strings.TrimSpace(korean), "\n")
-var korean = `가격
+var (
+	Korean = strings.Split(strings.TrimSpace(korean), "\n")
+	korean = `가격
 가끔
 가난
 가능
@@ -2069,3 +2070,4 @@ var korean = `가격
 흰색
 힘껏
 `
+)

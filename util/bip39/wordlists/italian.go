@@ -19,8 +19,9 @@ func init() {
 
 // Italian is a slice of mnemonic words taken from the bip39 specification
 // https://raw.githubusercontent.com/bitcoin/bips/master/bip-0039/italian.txt
-var Italian = strings.Split(strings.TrimSpace(italian), "\n")
-var italian = `abaco
+var (
+	Italian = strings.Split(strings.TrimSpace(italian), "\n")
+	italian = `abaco
 abbaglio
 abbinato
 abete
@@ -2069,3 +2070,4 @@ zufolo
 zulu
 zuppa
 `
+)
