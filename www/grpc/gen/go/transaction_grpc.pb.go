@@ -19,14 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Transaction_GetTransaction_FullMethodName            = "/pactus.Transaction/GetTransaction"
-	Transaction_CalculateFee_FullMethodName              = "/pactus.Transaction/CalculateFee"
-	Transaction_BroadcastTransaction_FullMethodName      = "/pactus.Transaction/BroadcastTransaction"
-	Transaction_GetRawTransferTransaction_FullMethodName = "/pactus.Transaction/GetRawTransferTransaction"
-	Transaction_GetRawBondTransaction_FullMethodName     = "/pactus.Transaction/GetRawBondTransaction"
-	Transaction_GetRawUnbondTransaction_FullMethodName   = "/pactus.Transaction/GetRawUnbondTransaction"
-	Transaction_GetRawWithdrawTransaction_FullMethodName = "/pactus.Transaction/GetRawWithdrawTransaction"
-	Transaction_DecodeRawTransaction_FullMethodName      = "/pactus.Transaction/DecodeRawTransaction"
+	Transaction_GetTransaction_FullMethodName                 = "/pactus.Transaction/GetTransaction"
+	Transaction_CalculateFee_FullMethodName                   = "/pactus.Transaction/CalculateFee"
+	Transaction_BroadcastTransaction_FullMethodName           = "/pactus.Transaction/BroadcastTransaction"
+	Transaction_GetRawTransferTransaction_FullMethodName      = "/pactus.Transaction/GetRawTransferTransaction"
+	Transaction_GetRawBondTransaction_FullMethodName          = "/pactus.Transaction/GetRawBondTransaction"
+	Transaction_GetRawUnbondTransaction_FullMethodName        = "/pactus.Transaction/GetRawUnbondTransaction"
+	Transaction_GetRawWithdrawTransaction_FullMethodName      = "/pactus.Transaction/GetRawWithdrawTransaction"
+	Transaction_GetRawBatchTransferTransaction_FullMethodName = "/pactus.Transaction/GetRawBatchTransferTransaction"
+	Transaction_DecodeRawTransaction_FullMethodName           = "/pactus.Transaction/DecodeRawTransaction"
 )
 
 // TransactionClient is the client API for Transaction service.
@@ -49,6 +50,8 @@ type TransactionClient interface {
 	GetRawUnbondTransaction(ctx context.Context, in *GetRawUnbondTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
 	GetRawWithdrawTransaction(ctx context.Context, in *GetRawWithdrawTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
+	// GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.
+	GetRawBatchTransferTransaction(ctx context.Context, in *GetRawBatchTransferTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error)
 	// DecodeRawTransaction accepts raw transaction and returns decoded transaction.
 	DecodeRawTransaction(ctx context.Context, in *DecodeRawTransactionRequest, opts ...grpc.CallOption) (*DecodeRawTransactionResponse, error)
 }
@@ -131,6 +134,16 @@ func (c *transactionClient) GetRawWithdrawTransaction(ctx context.Context, in *G
 	return out, nil
 }
 
+func (c *transactionClient) GetRawBatchTransferTransaction(ctx context.Context, in *GetRawBatchTransferTransactionRequest, opts ...grpc.CallOption) (*GetRawTransactionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRawTransactionResponse)
+	err := c.cc.Invoke(ctx, Transaction_GetRawBatchTransferTransaction_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *transactionClient) DecodeRawTransaction(ctx context.Context, in *DecodeRawTransactionRequest, opts ...grpc.CallOption) (*DecodeRawTransactionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DecodeRawTransactionResponse)
@@ -161,6 +174,8 @@ type TransactionServer interface {
 	GetRawUnbondTransaction(context.Context, *GetRawUnbondTransactionRequest) (*GetRawTransactionResponse, error)
 	// GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
 	GetRawWithdrawTransaction(context.Context, *GetRawWithdrawTransactionRequest) (*GetRawTransactionResponse, error)
+	// GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.
+	GetRawBatchTransferTransaction(context.Context, *GetRawBatchTransferTransactionRequest) (*GetRawTransactionResponse, error)
 	// DecodeRawTransaction accepts raw transaction and returns decoded transaction.
 	DecodeRawTransaction(context.Context, *DecodeRawTransactionRequest) (*DecodeRawTransactionResponse, error)
 }
@@ -192,6 +207,9 @@ func (UnimplementedTransactionServer) GetRawUnbondTransaction(context.Context, *
 }
 func (UnimplementedTransactionServer) GetRawWithdrawTransaction(context.Context, *GetRawWithdrawTransactionRequest) (*GetRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRawWithdrawTransaction not implemented")
+}
+func (UnimplementedTransactionServer) GetRawBatchTransferTransaction(context.Context, *GetRawBatchTransferTransactionRequest) (*GetRawTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRawBatchTransferTransaction not implemented")
 }
 func (UnimplementedTransactionServer) DecodeRawTransaction(context.Context, *DecodeRawTransactionRequest) (*DecodeRawTransactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DecodeRawTransaction not implemented")
@@ -342,6 +360,24 @@ func _Transaction_GetRawWithdrawTransaction_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Transaction_GetRawBatchTransferTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRawBatchTransferTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TransactionServer).GetRawBatchTransferTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Transaction_GetRawBatchTransferTransaction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TransactionServer).GetRawBatchTransferTransaction(ctx, req.(*GetRawBatchTransferTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Transaction_DecodeRawTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DecodeRawTransactionRequest)
 	if err := dec(in); err != nil {
@@ -394,6 +430,10 @@ var Transaction_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRawWithdrawTransaction",
 			Handler:    _Transaction_GetRawWithdrawTransaction_Handler,
+		},
+		{
+			MethodName: "GetRawBatchTransferTransaction",
+			Handler:    _Transaction_GetRawBatchTransferTransaction_Handler,
 		},
 		{
 			MethodName: "DecodeRawTransaction",

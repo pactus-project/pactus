@@ -28,6 +28,7 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
   $async.Future<$0.GetRawTransactionResponse> getRawBondTransaction($pb.ServerContext ctx, $0.GetRawBondTransactionRequest request);
   $async.Future<$0.GetRawTransactionResponse> getRawUnbondTransaction($pb.ServerContext ctx, $0.GetRawUnbondTransactionRequest request);
   $async.Future<$0.GetRawTransactionResponse> getRawWithdrawTransaction($pb.ServerContext ctx, $0.GetRawWithdrawTransactionRequest request);
+  $async.Future<$0.GetRawTransactionResponse> getRawBatchTransferTransaction($pb.ServerContext ctx, $0.GetRawBatchTransferTransactionRequest request);
   $async.Future<$0.DecodeRawTransactionResponse> decodeRawTransaction($pb.ServerContext ctx, $0.DecodeRawTransactionRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
@@ -39,6 +40,7 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
       case 'GetRawBondTransaction': return $0.GetRawBondTransactionRequest();
       case 'GetRawUnbondTransaction': return $0.GetRawUnbondTransactionRequest();
       case 'GetRawWithdrawTransaction': return $0.GetRawWithdrawTransactionRequest();
+      case 'GetRawBatchTransferTransaction': return $0.GetRawBatchTransferTransactionRequest();
       case 'DecodeRawTransaction': return $0.DecodeRawTransactionRequest();
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
@@ -53,6 +55,7 @@ abstract class TransactionServiceBase extends $pb.GeneratedService {
       case 'GetRawBondTransaction': return this.getRawBondTransaction(ctx, request as $0.GetRawBondTransactionRequest);
       case 'GetRawUnbondTransaction': return this.getRawUnbondTransaction(ctx, request as $0.GetRawUnbondTransactionRequest);
       case 'GetRawWithdrawTransaction': return this.getRawWithdrawTransaction(ctx, request as $0.GetRawWithdrawTransactionRequest);
+      case 'GetRawBatchTransferTransaction': return this.getRawBatchTransferTransaction(ctx, request as $0.GetRawBatchTransferTransactionRequest);
       case 'DecodeRawTransaction': return this.decodeRawTransaction(ctx, request as $0.DecodeRawTransactionRequest);
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }

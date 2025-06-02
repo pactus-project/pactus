@@ -27,6 +27,8 @@ class PayloadType extends $pb.ProtobufEnum {
   static const PayloadType PAYLOAD_TYPE_UNBOND = PayloadType._(4, _omitEnumNames ? '' : 'PAYLOAD_TYPE_UNBOND');
   /// Withdraw payload type.
   static const PayloadType PAYLOAD_TYPE_WITHDRAW = PayloadType._(5, _omitEnumNames ? '' : 'PAYLOAD_TYPE_WITHDRAW');
+  /// Batch transfer payload type.
+  static const PayloadType PAYLOAD_TYPE_BATCH_TRANSFER = PayloadType._(6, _omitEnumNames ? '' : 'PAYLOAD_TYPE_BATCH_TRANSFER');
 
   static const $core.List<PayloadType> values = <PayloadType> [
     PAYLOAD_TYPE_UNSPECIFIED,
@@ -35,6 +37,7 @@ class PayloadType extends $pb.ProtobufEnum {
     PAYLOAD_TYPE_SORTITION,
     PAYLOAD_TYPE_UNBOND,
     PAYLOAD_TYPE_WITHDRAW,
+    PAYLOAD_TYPE_BATCH_TRANSFER,
   ];
 
   static final $core.Map<$core.int, PayloadType> _byValue = $pb.ProtobufEnum.initByValue(values);

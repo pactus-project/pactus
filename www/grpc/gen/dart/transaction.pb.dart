@@ -903,6 +903,112 @@ class GetRawWithdrawTransactionRequest extends $pb.GeneratedMessage {
   void clearMemo() => $_clearField(6);
 }
 
+/// Request message for retrieving raw details of a batch transfer transaction.
+class GetRawBatchTransferTransactionRequest extends $pb.GeneratedMessage {
+  factory GetRawBatchTransferTransactionRequest({
+    $core.int? lockTime,
+    $core.String? sender,
+    $core.Iterable<Recipient>? recipients,
+    $fixnum.Int64? fee,
+    $core.String? memo,
+  }) {
+    final $result = create();
+    if (lockTime != null) {
+      $result.lockTime = lockTime;
+    }
+    if (sender != null) {
+      $result.sender = sender;
+    }
+    if (recipients != null) {
+      $result.recipients.addAll(recipients);
+    }
+    if (fee != null) {
+      $result.fee = fee;
+    }
+    if (memo != null) {
+      $result.memo = memo;
+    }
+    return $result;
+  }
+  GetRawBatchTransferTransactionRequest._() : super();
+  factory GetRawBatchTransferTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory GetRawBatchTransferTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetRawBatchTransferTransactionRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
+    ..a<$core.int>(1, _omitFieldNames ? '' : 'lockTime', $pb.PbFieldType.OU3)
+    ..aOS(2, _omitFieldNames ? '' : 'sender')
+    ..pc<Recipient>(3, _omitFieldNames ? '' : 'recipients', $pb.PbFieldType.PM, subBuilder: Recipient.create)
+    ..aInt64(4, _omitFieldNames ? '' : 'fee')
+    ..aOS(5, _omitFieldNames ? '' : 'memo')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  GetRawBatchTransferTransactionRequest clone() => GetRawBatchTransferTransactionRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  GetRawBatchTransferTransactionRequest copyWith(void Function(GetRawBatchTransferTransactionRequest) updates) => super.copyWith((message) => updates(message as GetRawBatchTransferTransactionRequest)) as GetRawBatchTransferTransactionRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static GetRawBatchTransferTransactionRequest create() => GetRawBatchTransferTransactionRequest._();
+  GetRawBatchTransferTransactionRequest createEmptyInstance() => create();
+  static $pb.PbList<GetRawBatchTransferTransactionRequest> createRepeated() => $pb.PbList<GetRawBatchTransferTransactionRequest>();
+  @$core.pragma('dart2js:noInline')
+  static GetRawBatchTransferTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetRawBatchTransferTransactionRequest>(create);
+  static GetRawBatchTransferTransactionRequest? _defaultInstance;
+
+  /// The lock time for the transaction. If not set, defaults to the last block height.
+  @$pb.TagNumber(1)
+  $core.int get lockTime => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set lockTime($core.int v) { $_setUnsignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasLockTime() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearLockTime() => $_clearField(1);
+
+  /// The sender's account address.
+  @$pb.TagNumber(2)
+  $core.String get sender => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set sender($core.String v) { $_setString(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasSender() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearSender() => $_clearField(2);
+
+  /// The recipients list of receiver with amount, min 2 recipients.
+  @$pb.TagNumber(3)
+  $pb.PbList<Recipient> get recipients => $_getList(2);
+
+  /// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+  @$pb.TagNumber(4)
+  $fixnum.Int64 get fee => $_getI64(3);
+  @$pb.TagNumber(4)
+  set fee($fixnum.Int64 v) { $_setInt64(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasFee() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearFee() => $_clearField(4);
+
+  /// A memo string for the transaction.
+  @$pb.TagNumber(5)
+  $core.String get memo => $_getSZ(4);
+  @$pb.TagNumber(5)
+  set memo($core.String v) { $_setString(4, v); }
+  @$pb.TagNumber(5)
+  $core.bool hasMemo() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearMemo() => $_clearField(5);
+}
+
 /// Response message contains raw transaction data.
 class GetRawTransactionResponse extends $pb.GeneratedMessage {
   factory GetRawTransactionResponse({
@@ -1350,12 +1456,141 @@ class PayloadWithdraw extends $pb.GeneratedMessage {
   void clearAmount() => $_clearField(3);
 }
 
+/// Payload for a batch transfer transaction.
+class PayloadBatchTransfer extends $pb.GeneratedMessage {
+  factory PayloadBatchTransfer({
+    $core.String? sender,
+    $core.Iterable<Recipient>? recipients,
+  }) {
+    final $result = create();
+    if (sender != null) {
+      $result.sender = sender;
+    }
+    if (recipients != null) {
+      $result.recipients.addAll(recipients);
+    }
+    return $result;
+  }
+  PayloadBatchTransfer._() : super();
+  factory PayloadBatchTransfer.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PayloadBatchTransfer.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PayloadBatchTransfer', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'sender')
+    ..pc<Recipient>(2, _omitFieldNames ? '' : 'recipients', $pb.PbFieldType.PM, subBuilder: Recipient.create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  PayloadBatchTransfer clone() => PayloadBatchTransfer()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  PayloadBatchTransfer copyWith(void Function(PayloadBatchTransfer) updates) => super.copyWith((message) => updates(message as PayloadBatchTransfer)) as PayloadBatchTransfer;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static PayloadBatchTransfer create() => PayloadBatchTransfer._();
+  PayloadBatchTransfer createEmptyInstance() => create();
+  static $pb.PbList<PayloadBatchTransfer> createRepeated() => $pb.PbList<PayloadBatchTransfer>();
+  @$core.pragma('dart2js:noInline')
+  static PayloadBatchTransfer getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PayloadBatchTransfer>(create);
+  static PayloadBatchTransfer? _defaultInstance;
+
+  /// The sender's address.
+  @$pb.TagNumber(1)
+  $core.String get sender => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set sender($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasSender() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearSender() => $_clearField(1);
+
+  /// The recipients of list receiver with amount.
+  @$pb.TagNumber(2)
+  $pb.PbList<Recipient> get recipients => $_getList(1);
+}
+
+/// Recipient is receiver with amount.
+class Recipient extends $pb.GeneratedMessage {
+  factory Recipient({
+    $core.String? receiver,
+    $fixnum.Int64? amount,
+  }) {
+    final $result = create();
+    if (receiver != null) {
+      $result.receiver = receiver;
+    }
+    if (amount != null) {
+      $result.amount = amount;
+    }
+    return $result;
+  }
+  Recipient._() : super();
+  factory Recipient.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory Recipient.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'Recipient', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'receiver')
+    ..aInt64(2, _omitFieldNames ? '' : 'amount')
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  Recipient clone() => Recipient()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  Recipient copyWith(void Function(Recipient) updates) => super.copyWith((message) => updates(message as Recipient)) as Recipient;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static Recipient create() => Recipient._();
+  Recipient createEmptyInstance() => create();
+  static $pb.PbList<Recipient> createRepeated() => $pb.PbList<Recipient>();
+  @$core.pragma('dart2js:noInline')
+  static Recipient getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Recipient>(create);
+  static Recipient? _defaultInstance;
+
+  /// The receiver's address.
+  @$pb.TagNumber(1)
+  $core.String get receiver => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set receiver($core.String v) { $_setString(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasReceiver() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearReceiver() => $_clearField(1);
+
+  /// The amount in NanoPAC.
+  @$pb.TagNumber(2)
+  $fixnum.Int64 get amount => $_getI64(1);
+  @$pb.TagNumber(2)
+  set amount($fixnum.Int64 v) { $_setInt64(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasAmount() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAmount() => $_clearField(2);
+}
+
 enum TransactionInfo_Payload {
   transfer, 
   bond, 
   sortition, 
   unbond, 
   withdraw, 
+  batchTransfer, 
   notSet
 }
 
@@ -1377,6 +1612,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     PayloadSortition? sortition,
     PayloadUnbond? unbond,
     PayloadWithdraw? withdraw,
+    PayloadBatchTransfer? batchTransfer,
   }) {
     final $result = create();
     if (id != null) {
@@ -1424,6 +1660,9 @@ class TransactionInfo extends $pb.GeneratedMessage {
     if (withdraw != null) {
       $result.withdraw = withdraw;
     }
+    if (batchTransfer != null) {
+      $result.batchTransfer = batchTransfer;
+    }
     return $result;
   }
   TransactionInfo._() : super();
@@ -1436,10 +1675,11 @@ class TransactionInfo extends $pb.GeneratedMessage {
     32 : TransactionInfo_Payload.sortition,
     33 : TransactionInfo_Payload.unbond,
     34 : TransactionInfo_Payload.withdraw,
+    35 : TransactionInfo_Payload.batchTransfer,
     0 : TransactionInfo_Payload.notSet
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'TransactionInfo', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
-    ..oo(0, [30, 31, 32, 33, 34])
+    ..oo(0, [30, 31, 32, 33, 34, 35])
     ..aOS(1, _omitFieldNames ? '' : 'id')
     ..aOS(2, _omitFieldNames ? '' : 'data')
     ..a<$core.int>(3, _omitFieldNames ? '' : 'version', $pb.PbFieldType.O3)
@@ -1455,6 +1695,7 @@ class TransactionInfo extends $pb.GeneratedMessage {
     ..aOM<PayloadSortition>(32, _omitFieldNames ? '' : 'sortition', subBuilder: PayloadSortition.create)
     ..aOM<PayloadUnbond>(33, _omitFieldNames ? '' : 'unbond', subBuilder: PayloadUnbond.create)
     ..aOM<PayloadWithdraw>(34, _omitFieldNames ? '' : 'withdraw', subBuilder: PayloadWithdraw.create)
+    ..aOM<PayloadBatchTransfer>(35, _omitFieldNames ? '' : 'batchTransfer', subBuilder: PayloadBatchTransfer.create)
     ..hasRequiredFields = false
   ;
 
@@ -1641,6 +1882,18 @@ class TransactionInfo extends $pb.GeneratedMessage {
   void clearWithdraw() => $_clearField(34);
   @$pb.TagNumber(34)
   PayloadWithdraw ensureWithdraw() => $_ensure(14);
+
+  /// Batch Transfer transaction payload.
+  @$pb.TagNumber(35)
+  PayloadBatchTransfer get batchTransfer => $_getN(15);
+  @$pb.TagNumber(35)
+  set batchTransfer(PayloadBatchTransfer v) { $_setField(35, v); }
+  @$pb.TagNumber(35)
+  $core.bool hasBatchTransfer() => $_has(15);
+  @$pb.TagNumber(35)
+  void clearBatchTransfer() => $_clearField(35);
+  @$pb.TagNumber(35)
+  PayloadBatchTransfer ensureBatchTransfer() => $_ensure(15);
 }
 
 /// Request message for decoding a raw transaction.
@@ -1781,6 +2034,10 @@ class TransactionApi {
   /// GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
   $async.Future<GetRawTransactionResponse> getRawWithdrawTransaction($pb.ClientContext? ctx, GetRawWithdrawTransactionRequest request) =>
     _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawWithdrawTransaction', request, GetRawTransactionResponse())
+  ;
+  /// GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.
+  $async.Future<GetRawTransactionResponse> getRawBatchTransferTransaction($pb.ClientContext? ctx, GetRawBatchTransferTransactionRequest request) =>
+    _client.invoke<GetRawTransactionResponse>(ctx, 'Transaction', 'GetRawBatchTransferTransaction', request, GetRawTransactionResponse())
   ;
   /// DecodeRawTransaction accepts raw transaction and returns decoded transaction.
   $async.Future<DecodeRawTransactionResponse> decodeRawTransaction($pb.ClientContext? ctx, DecodeRawTransactionRequest request) =>

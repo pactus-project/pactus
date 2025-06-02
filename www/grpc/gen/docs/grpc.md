@@ -55,6 +55,10 @@ For seamless integration with Pactus, you can use these client libraries:
           <span class="rpc-badge"></span> GetRawWithdrawTransaction</a>
         </li>
         <li>
+          <a href="#pactus.Transaction.GetRawBatchTransferTransaction">
+          <span class="rpc-badge"></span> GetRawBatchTransferTransaction</a>
+        </li>
+        <li>
           <a href="#pactus.Transaction.DecodeRawTransaction">
           <span class="rpc-badge"></span> DecodeRawTransaction</a>
         </li>
@@ -330,6 +334,7 @@ For seamless integration with Pactus, you can use these client libraries:
           <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
           <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
           <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+          <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
           </ul>
         </td>
       </tr>
@@ -460,6 +465,27 @@ For seamless integration with Pactus, you can use these client libraries:
             </td>
           </tr>
           <tr>
+        <td class="fw-bold">transaction.batch_transfer</td>
+        <td> PayloadBatchTransfer</td>
+        <td>
+        (OneOf)Batch Transfer transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">transaction.batch_transfer.sender</td>
+            <td> string</td>
+            <td>
+            The sender's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.batch_transfer.recipients</td>
+            <td>repeated Recipient</td>
+            <td>
+            The recipients of list receiver with amount.
+            </td>
+          </tr>
+          <tr>
         <td class="fw-bold">transaction.memo</td>
         <td> string</td>
         <td>
@@ -513,6 +539,7 @@ For seamless integration with Pactus, you can use these client libraries:
       <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
       <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
       <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+      <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
       </ul>
     </td>
   </tr>
@@ -888,6 +915,78 @@ For seamless integration with Pactus, you can use these client libraries:
      </tbody>
 </table>
 
+#### GetRawBatchTransferTransaction <span id="pactus.Transaction.GetRawBatchTransferTransaction" class="rpc-badge"></span>
+
+<p>GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.</p>
+
+<h4>GetRawBatchTransferTransactionRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">lock_time</td>
+    <td> uint32</td>
+    <td>
+    The lock time for the transaction. If not set, defaults to the last block height.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">sender</td>
+    <td> string</td>
+    <td>
+    The sender's account address.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">recipients</td>
+    <td>repeated Recipient</td>
+    <td>
+    The recipients list of receiver with amount, min 2 recipients.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">fee</td>
+    <td> int64</td>
+    <td>
+    The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">memo</td>
+    <td> string</td>
+    <td>
+    A memo string for the transaction.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>GetRawTransactionResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">raw_transaction</td>
+    <td> string</td>
+    <td>
+    The raw transaction data in hexadecimal format.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">id</td>
+    <td> string</td>
+    <td>
+    The unique ID of the transaction.
+    </td>
+  </tr>
+     </tbody>
+</table>
+
 #### DecodeRawTransaction <span id="pactus.Transaction.DecodeRawTransaction" class="rpc-badge"></span>
 
 <p>DecodeRawTransaction accepts raw transaction and returns decoded transaction.</p>
@@ -976,6 +1075,7 @@ For seamless integration with Pactus, you can use these client libraries:
           <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
           <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
           <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+          <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
           </ul>
         </td>
       </tr>
@@ -1103,6 +1203,27 @@ For seamless integration with Pactus, you can use these client libraries:
             <td> int64</td>
             <td>
             The withdrawal amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">transaction.batch_transfer</td>
+        <td> PayloadBatchTransfer</td>
+        <td>
+        (OneOf)Batch Transfer transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">transaction.batch_transfer.sender</td>
+            <td> string</td>
+            <td>
+            The sender's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">transaction.batch_transfer.recipients</td>
+            <td>repeated Recipient</td>
+            <td>
+            The recipients of list receiver with amount.
             </td>
           </tr>
           <tr>
@@ -1346,6 +1467,7 @@ BLOCK_TRANSACTIONS.
           <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
           <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
           <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+          <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
           </ul>
         </td>
       </tr>
@@ -1473,6 +1595,27 @@ BLOCK_TRANSACTIONS.
             <td> int64</td>
             <td>
             The withdrawal amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].batch_transfer</td>
+        <td> PayloadBatchTransfer</td>
+        <td>
+        (OneOf)Batch Transfer transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].batch_transfer.sender</td>
+            <td> string</td>
+            <td>
+            The sender's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].batch_transfer.recipients</td>
+            <td>repeated Recipient</td>
+            <td>
+            The recipients of list receiver with amount.
             </td>
           </tr>
           <tr>
@@ -2244,6 +2387,7 @@ Message has no fields.
       <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
       <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
       <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+      <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
       </ul>
     </td>
   </tr>
@@ -2317,6 +2461,7 @@ Message has no fields.
           <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
           <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
           <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+          <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
           </ul>
         </td>
       </tr>
@@ -2444,6 +2589,27 @@ Message has no fields.
             <td> int64</td>
             <td>
             The withdrawal amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].batch_transfer</td>
+        <td> PayloadBatchTransfer</td>
+        <td>
+        (OneOf)Batch Transfer transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].batch_transfer.sender</td>
+            <td> string</td>
+            <td>
+            The sender's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].batch_transfer.recipients</td>
+            <td>repeated Recipient</td>
+            <td>
+            The recipients of list receiver with amount.
             </td>
           </tr>
           <tr>

@@ -496,6 +496,8 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Blockchain
   '.pactus.PayloadSortition': $0.PayloadSortition$json,
   '.pactus.PayloadUnbond': $0.PayloadUnbond$json,
   '.pactus.PayloadWithdraw': $0.PayloadWithdraw$json,
+  '.pactus.PayloadBatchTransfer': $0.PayloadBatchTransfer$json,
+  '.pactus.Recipient': $0.Recipient$json,
   '.pactus.GetBlockHashRequest': GetBlockHashRequest$json,
   '.pactus.GetBlockHashResponse': GetBlockHashResponse$json,
   '.pactus.GetBlockHeightRequest': GetBlockHeightRequest$json,

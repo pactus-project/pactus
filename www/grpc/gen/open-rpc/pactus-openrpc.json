@@ -43,6 +43,16 @@
 },"withdraw": {
   "type": "object",
   "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
+},"batch_transfer": {
+  "type": "object",
+  "properties": {"sender": { "type": "string" },"recipients": 
+{
+  "type": "array",
+  "items": {
+  "type": "object",
+  "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
+}
+}}
 },"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" }}
 }}
           }
@@ -276,6 +286,54 @@
       }
     ,
     {
+      "name": "pactus.transaction.get_raw_batch_transfer_transaction",
+      "description": "GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.",
+      "tags": [{ "name": "transaction"}],
+      "paramStructure": "by-name",
+      "params": [
+        {
+          "name": "lock_time",
+          "description": "The lock time for the transaction. If not set, defaults to the last block height.",
+          "schema": { "type": "integer" }
+        },
+        {
+          "name": "sender",
+          "description": "The sender's account address.",
+          "schema": { "type": "string" }
+        },
+        {
+          "name": "recipients",
+          "description": "The recipients list of receiver with amount, min 2 recipients.",
+          "schema": 
+{
+  "type": "array",
+  "items": {
+  "type": "object",
+  "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
+}
+}
+        },
+        {
+          "name": "fee",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
+          "schema": { "type": "integer" }
+        },
+        {
+          "name": "memo",
+          "description": "A memo string for the transaction.",
+          "schema": { "type": "string" }
+        }
+      ],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object",
+          "properties": {"raw_transaction": { "type": "string" },"id": { "type": "string" }}
+          }
+        }
+      }
+    ,
+    {
       "name": "pactus.transaction.decode_raw_transaction",
       "description": "DecodeRawTransaction accepts raw transaction and returns decoded transaction.",
       "tags": [{ "name": "transaction"}],
@@ -308,6 +366,16 @@
 },"withdraw": {
   "type": "object",
   "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
+},"batch_transfer": {
+  "type": "object",
+  "properties": {"sender": { "type": "string" },"recipients": 
+{
+  "type": "array",
+  "items": {
+  "type": "object",
+  "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
+}
+}}
 },"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" }}
 }}
           }
@@ -371,6 +439,16 @@
 },"withdraw": {
   "type": "object",
   "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
+},"batch_transfer": {
+  "type": "object",
+  "properties": {"sender": { "type": "string" },"recipients": 
+{
+  "type": "array",
+  "items": {
+  "type": "object",
+  "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
+}
+}}
 },"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" }}
 }
 }}
@@ -625,6 +703,16 @@
 },"withdraw": {
   "type": "object",
   "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
+},"batch_transfer": {
+  "type": "object",
+  "properties": {"sender": { "type": "string" },"recipients": 
+{
+  "type": "array",
+  "items": {
+  "type": "object",
+  "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
+}
+}}
 },"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" }}
 }
 }}

@@ -266,6 +266,30 @@ func local_request_Transaction_GetRawWithdrawTransaction_0(ctx context.Context, 
 	return msg, metadata, err
 }
 
+func request_Transaction_GetRawBatchTransferTransaction_0(ctx context.Context, marshaler runtime.Marshaler, client TransactionClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetRawBatchTransferTransactionRequest
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	msg, err := client.GetRawBatchTransferTransaction(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_Transaction_GetRawBatchTransferTransaction_0(ctx context.Context, marshaler runtime.Marshaler, server TransactionServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq GetRawBatchTransferTransactionRequest
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	msg, err := server.GetRawBatchTransferTransaction(ctx, &protoReq)
+	return msg, metadata, err
+}
+
 // RegisterTransactionHandlerServer registers the http handlers for service Transaction to "mux".
 // UnaryRPC     :call TransactionServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
@@ -411,6 +435,26 @@ func RegisterTransactionHandlerServer(ctx context.Context, mux *runtime.ServeMux
 			return
 		}
 		forward_Transaction_GetRawWithdrawTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodPost, pattern_Transaction_GetRawBatchTransferTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/pactus.Transaction/GetRawBatchTransferTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_batch_transfer_transaction"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_Transaction_GetRawBatchTransferTransaction_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_Transaction_GetRawBatchTransferTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -571,25 +615,44 @@ func RegisterTransactionHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		}
 		forward_Transaction_GetRawWithdrawTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+	mux.Handle(http.MethodPost, pattern_Transaction_GetRawBatchTransferTransaction_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/pactus.Transaction/GetRawBatchTransferTransaction", runtime.WithHTTPPathPattern("/pactus/transaction/get_raw_batch_transfer_transaction"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_Transaction_GetRawBatchTransferTransaction_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_Transaction_GetRawBatchTransferTransaction_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
 	return nil
 }
 
 var (
-	pattern_Transaction_GetTransaction_0            = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_transaction"}, ""))
-	pattern_Transaction_CalculateFee_0              = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "calculate_fee"}, ""))
-	pattern_Transaction_BroadcastTransaction_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "broadcast_transaction"}, ""))
-	pattern_Transaction_GetRawTransferTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_transfer_transaction"}, ""))
-	pattern_Transaction_GetRawBondTransaction_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_bond_transaction"}, ""))
-	pattern_Transaction_GetRawUnbondTransaction_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_unbond_transaction"}, ""))
-	pattern_Transaction_GetRawWithdrawTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_withdraw_transaction"}, ""))
+	pattern_Transaction_GetTransaction_0                 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_transaction"}, ""))
+	pattern_Transaction_CalculateFee_0                   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "calculate_fee"}, ""))
+	pattern_Transaction_BroadcastTransaction_0           = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "broadcast_transaction"}, ""))
+	pattern_Transaction_GetRawTransferTransaction_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_transfer_transaction"}, ""))
+	pattern_Transaction_GetRawBondTransaction_0          = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_bond_transaction"}, ""))
+	pattern_Transaction_GetRawUnbondTransaction_0        = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_unbond_transaction"}, ""))
+	pattern_Transaction_GetRawWithdrawTransaction_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_withdraw_transaction"}, ""))
+	pattern_Transaction_GetRawBatchTransferTransaction_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"pactus", "transaction", "get_raw_batch_transfer_transaction"}, ""))
 )
 
 var (
-	forward_Transaction_GetTransaction_0            = runtime.ForwardResponseMessage
-	forward_Transaction_CalculateFee_0              = runtime.ForwardResponseMessage
-	forward_Transaction_BroadcastTransaction_0      = runtime.ForwardResponseMessage
-	forward_Transaction_GetRawTransferTransaction_0 = runtime.ForwardResponseMessage
-	forward_Transaction_GetRawBondTransaction_0     = runtime.ForwardResponseMessage
-	forward_Transaction_GetRawUnbondTransaction_0   = runtime.ForwardResponseMessage
-	forward_Transaction_GetRawWithdrawTransaction_0 = runtime.ForwardResponseMessage
+	forward_Transaction_GetTransaction_0                 = runtime.ForwardResponseMessage
+	forward_Transaction_CalculateFee_0                   = runtime.ForwardResponseMessage
+	forward_Transaction_BroadcastTransaction_0           = runtime.ForwardResponseMessage
+	forward_Transaction_GetRawTransferTransaction_0      = runtime.ForwardResponseMessage
+	forward_Transaction_GetRawBondTransaction_0          = runtime.ForwardResponseMessage
+	forward_Transaction_GetRawUnbondTransaction_0        = runtime.ForwardResponseMessage
+	forward_Transaction_GetRawWithdrawTransaction_0      = runtime.ForwardResponseMessage
+	forward_Transaction_GetRawBatchTransferTransaction_0 = runtime.ForwardResponseMessage
 )
