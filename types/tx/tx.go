@@ -363,6 +363,8 @@ func (tx *Tx) Decode(r io.Reader) error {
 		tx.data.Payload = new(payload.WithdrawPayload)
 	case payload.TypeSortition:
 		tx.data.Payload = new(payload.SortitionPayload)
+	case payload.TypeBatchTransfer:
+		tx.data.Payload = new(payload.BatchTransferPayload)
 
 	default:
 		return InvalidPayloadTypeError{

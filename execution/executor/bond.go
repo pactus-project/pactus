@@ -49,7 +49,7 @@ func (e *BondExecutor) Check(strict bool) error {
 		return ErrValidatorUnbonded
 	}
 
-	if e.sender.Balance() < e.pld.Stake+e.fee {
+	if e.sender.Balance() < e.pld.Value()+e.fee {
 		return ErrInsufficientFunds
 	}
 

@@ -138,6 +138,9 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 	case payload.TypeWithdraw:
 		trx = tx.NewWithdrawTx(m.lockTime, *m.sender, *m.receiver, m.amount, *m.fee, tx.WithMemo(m.memo))
 
+	case payload.TypeBatchTransfer:
+		return nil, fmt.Errorf("BatchTransfer is not implemented yet")
+
 	case payload.TypeSortition:
 		return nil, fmt.Errorf("unable to build sortition transactions")
 	}

@@ -188,14 +188,14 @@ func TestInvalidPayloadType(t *testing.T) {
 			"01020300" + // LockTime
 			"01" + // Fee
 			"00" + // Memo
-			"06" + // PayloadType
+			"07" + // PayloadType
 			"00" + // Sender (treasury)
 			"012222222222222222222222222222222222222222" + // Receiver
 			"01") // Amount
 
 	_, err := tx.FromBytes(data)
 	assert.ErrorIs(t, err, tx.InvalidPayloadTypeError{
-		PayloadType: payload.Type(6),
+		PayloadType: payload.Type(7),
 	})
 }
 
