@@ -390,7 +390,7 @@ func (p *txPool) getPendingConsumption(signer crypto.Address) int {
 }
 
 func (p *txPool) String() string {
-	return fmt.Sprintf("{💸 %v 🗃 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
+	return fmt.Sprintf("{💸 %v💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
 		p.pools[payload.TypeTransfer].list.Size(),
 		p.pools[payload.TypeBatchTransfer].list.Size(),
 		p.pools[payload.TypeBond].list.Size(),
