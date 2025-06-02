@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -139,12 +140,12 @@ func TestDecodeBundles(t *testing.T) {
 			data: "a4" + // Map with 4 key-value pairs
 				"01" + "01" + // Key 1 (Flags), Value: 1 (Mainnet)
 				"02" + "06" + // Key 2 (Message Type), Value: 6 (QueryVote)
-				"03" + "581d" + // Key 2 (Message), Value: 30 Bytes
+				"03" + "581d" + // Key 3 (Message), Value: 29 Bytes
 				"" + "a3" + // Map with 3 key-value pairs
-				"" + "01" + "1864" + // Key 1 (Height), Value: 100
-				"" + "02" + "00" + // Key 2 (Round), Value: 0
-				"" + "03" + "5501aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + // Key 3 (Querier), Value: 21 Bytes
-				"04" + "1a00001234", // Key 4 (Consensus Height), Value: 0x1234
+				"" + "01" + "1864" + // Message Height = 100
+				"" + "02" + "00" + // Round = 0
+				"" + "03" + "5501aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + // Querier
+				"04" + "1864", // Bundle Consensus Height = 100
 			wantErr: false,
 		},
 	}
@@ -210,6 +211,43 @@ func TestGossipMessage(t *testing.T) {
 		require.NoError(t, err)
 		assert.False(t, td.network.IsClosed(td.goodPeerID))
 	})
+}
+
+func TestGossipMismatchBundleHeight(t *testing.T) {
+	td := setup(t, nil)
+	messageHeight := td.RandHeight()
+	fakeBundleHeight := td.RandHeight()
+
+	require.NotEqual(t, messageHeight, fakeBundleHeight)
+
+	bdl := bundle.NewBundle(message.NewQueryVoteMessage(messageHeight, td.RandRound(), td.RandValAddress()))
+	bdl.Flags = util.SetFlag(bdl.Flags, bundle.BundleFlagNetworkMainnet)
+	require.NoError(t, bdl.BasicCheck())
+
+	data, err := cbor.Marshal(bdl.Message)
+	require.NoError(t, err)
+	require.NotEmpty(t, data)
+
+	msg := struct {
+		Flags           int          `cbor:"1,keyasint"`
+		MessageType     message.Type `cbor:"2,keyasint"`
+		MessageData     []byte       `cbor:"3,keyasint"`
+		ConsensusHeight uint32       `cbor:"4,keyasint,omitempty"`
+	}{
+		Flags:           bdl.Flags,
+		MessageType:     bdl.Message.Type(),
+		MessageData:     data,
+		ConsensusHeight: fakeBundleHeight,
+	}
+
+	rawMsg, err := cbor.Marshal(&msg)
+	require.NoError(t, err)
+	require.NotEmpty(t, rawMsg)
+
+	assert.False(t, td.network.IsClosed(td.goodPeerID))
+	_, err = td.firewall.OpenGossipBundle(rawMsg, td.goodPeerID)
+	assert.Error(t, err)
+	assert.Equal(t, err, ErrMisMatchConsensusHeight)
 }
 
 func TestStreamMessage(t *testing.T) {
