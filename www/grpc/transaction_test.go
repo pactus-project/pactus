@@ -157,6 +157,40 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.Equal(t, expectedFee, decodedTrx.Fee())
 	})
 
+	t.Run("Batch Transfer", func(t *testing.T) {
+		amt1 := td.RandAmount()
+		amt2 := td.RandAmount()
+		totalAmt := amt1 + amt2
+
+		res, err := client.GetRawBatchTransferTransaction(context.Background(),
+			&pactus.GetRawBatchTransferTransactionRequest{
+				Sender: td.RandAccAddress().String(),
+				Recipients: []*pactus.Recipient{
+					{
+						Receiver: td.RandAccAddress().String(),
+						Amount:   amt1.ToNanoPAC(),
+					},
+					{
+						Receiver: td.RandAccAddress().String(),
+						Amount:   amt2.ToNanoPAC(),
+					},
+				},
+				Memo: td.RandString(32),
+			},
+		)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, res.RawTransaction)
+
+		decodedTrx, err := tx.FromBytes(td.DecodingHex(res.RawTransaction))
+		assert.NoError(t, err)
+		expectedLockTime := td.mockState.LastBlockHeight()
+		expectedFee := td.mockState.CalculateFee(totalAmt, payload.TypeBatchTransfer)
+
+		assert.Equal(t, totalAmt, decodedTrx.Payload().Value())
+		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
+		assert.Equal(t, expectedFee, decodedTrx.Fee())
+	})
+
 	t.Run("Bond with the Public Key", func(t *testing.T) {
 		amt := td.RandAmount()
 		pub, _ := td.RandBLSKeyPair()
