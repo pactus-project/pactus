@@ -441,7 +441,7 @@
         "parameters": [
           {
             "name": "payloadType",
-            "description": "The type of transactions to retrieve from the transaction pool. 0 means all types.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.",
+            "description": "The type of transactions to retrieve from the transaction pool. 0 means all types.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.\n - PAYLOAD_TYPE_BATCH_TRANSFER: Batch transfer payload type.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -451,7 +451,8 @@
               "PAYLOAD_TYPE_BOND",
               "PAYLOAD_TYPE_SORTITION",
               "PAYLOAD_TYPE_UNBOND",
-              "PAYLOAD_TYPE_WITHDRAW"
+              "PAYLOAD_TYPE_WITHDRAW",
+              "PAYLOAD_TYPE_BATCH_TRANSFER"
             ],
             "default": "PAYLOAD_TYPE_UNSPECIFIED"
           }
@@ -642,7 +643,7 @@
           },
           {
             "name": "payloadType",
-            "description": "The type of transaction payload.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.",
+            "description": "The type of transaction payload.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.\n - PAYLOAD_TYPE_BATCH_TRANSFER: Batch transfer payload type.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -652,7 +653,8 @@
               "PAYLOAD_TYPE_BOND",
               "PAYLOAD_TYPE_SORTITION",
               "PAYLOAD_TYPE_UNBOND",
-              "PAYLOAD_TYPE_WITHDRAW"
+              "PAYLOAD_TYPE_WITHDRAW",
+              "PAYLOAD_TYPE_BATCH_TRANSFER"
             ],
             "default": "PAYLOAD_TYPE_UNSPECIFIED"
           },
@@ -662,6 +664,40 @@
             "in": "query",
             "required": false,
             "type": "boolean"
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/pactus/transaction/get_raw_batch_transfer_transaction": {
+      "post": {
+        "summary": "GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.",
+        "operationId": "Transaction_GetRawBatchTransferTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransactionResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "description": "Request message for retrieving raw details of a batch transfer transaction.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawBatchTransferTransactionRequest"
+            }
           }
         ],
         "tags": [
@@ -2153,6 +2189,38 @@
       },
       "description": "Response message contains public key information."
     },
+    "pactusGetRawBatchTransferTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "lockTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The lock time for the transaction. If not set, defaults to the last block height."
+        },
+        "sender": {
+          "type": "string",
+          "description": "The sender's account address."
+        },
+        "recipients": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusRecipient"
+          },
+          "description": "The recipients list of receiver with amount, min 2 recipients."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
+        },
+        "memo": {
+          "type": "string",
+          "description": "A memo string for the transaction."
+        }
+      },
+      "description": "Request message for retrieving raw details of a batch transfer transaction."
+    },
     "pactusGetRawTransactionResponse": {
       "type": "object",
       "properties": {
@@ -2397,6 +2465,24 @@
       },
       "description": "MetricInfo contains metrics data regarding network activity."
     },
+    "pactusPayloadBatchTransfer": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string",
+          "description": "The sender's address."
+        },
+        "recipients": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusRecipient"
+          },
+          "description": "The recipients of list receiver with amount."
+        }
+      },
+      "description": "Payload for a batch transfer transaction."
+    },
     "pactusPayloadBond": {
       "type": "object",
       "properties": {
@@ -2461,10 +2547,11 @@
         "PAYLOAD_TYPE_BOND",
         "PAYLOAD_TYPE_SORTITION",
         "PAYLOAD_TYPE_UNBOND",
-        "PAYLOAD_TYPE_WITHDRAW"
+        "PAYLOAD_TYPE_WITHDRAW",
+        "PAYLOAD_TYPE_BATCH_TRANSFER"
       ],
       "default": "PAYLOAD_TYPE_UNSPECIFIED",
-      "description": "Enumeration for different types of transaction payloads.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type."
+      "description": "Enumeration for different types of transaction payloads.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.\n - PAYLOAD_TYPE_BATCH_TRANSFER: Batch transfer payload type."
     },
     "pactusPayloadUnbond": {
       "type": "object",
@@ -2623,6 +2710,21 @@
       },
       "description": "Response message contains the aggregated BLS public key result."
     },
+    "pactusRecipient": {
+      "type": "object",
+      "properties": {
+        "receiver": {
+          "type": "string",
+          "description": "The receiver's address."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The amount in NanoPAC."
+        }
+      },
+      "description": "Recipient is receiver with amount."
+    },
     "pactusRestoreWalletResponse": {
       "type": "object",
       "properties": {
@@ -2735,6 +2837,10 @@
         "withdraw": {
           "$ref": "#/definitions/pactusPayloadWithdraw",
           "description": "Withdraw transaction payload."
+        },
+        "batchTransfer": {
+          "$ref": "#/definitions/pactusPayloadBatchTransfer",
+          "description": "Batch Transfer transaction payload."
         },
         "memo": {
           "type": "string",
