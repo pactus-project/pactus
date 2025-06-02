@@ -11,12 +11,12 @@ import (
 
 const maxBatchRecipients = 8
 
-type batchRecipient struct {
+type BatchRecipient struct {
 	To     crypto.Address
 	Amount amount.Amount
 }
 
-func (tr *batchRecipient) BasicCheck() error {
+func (tr *BatchRecipient) BasicCheck() error {
 	if !tr.To.IsAccountAddress() {
 		return BasicCheckError{
 			Reason: "receiver is not an account address: " + tr.To.String(),
@@ -32,12 +32,12 @@ func (tr *batchRecipient) BasicCheck() error {
 	return nil
 }
 
-func (tr *batchRecipient) SerializeSize() int {
+func (tr *BatchRecipient) SerializeSize() int {
 	return tr.To.SerializeSize() +
 		encoding.VarIntSerializeSize(uint64(tr.Amount))
 }
 
-func (tr *batchRecipient) Encode(w io.Writer) error {
+func (tr *BatchRecipient) Encode(w io.Writer) error {
 	err := tr.To.Encode(w)
 	if err != nil {
 		return err
@@ -46,7 +46,7 @@ func (tr *batchRecipient) Encode(w io.Writer) error {
 	return encoding.WriteVarInt(w, uint64(tr.Amount))
 }
 
-func (tr *batchRecipient) Decode(r io.Reader) error {
+func (tr *BatchRecipient) Decode(r io.Reader) error {
 	err := tr.To.Decode(r)
 	if err != nil {
 		return err
@@ -63,7 +63,7 @@ func (tr *batchRecipient) Decode(r io.Reader) error {
 
 type BatchTransferPayload struct {
 	From       crypto.Address
-	Recipients []batchRecipient
+	Recipients []BatchRecipient
 }
 
 func (*BatchTransferPayload) Type() Type {
@@ -147,7 +147,7 @@ func (p *BatchTransferPayload) Decode(r io.Reader) error {
 		return err
 	}
 
-	p.Recipients = make([]batchRecipient, numberOfRecipients)
+	p.Recipients = make([]BatchRecipient, numberOfRecipients)
 	for i := uint64(0); i < numberOfRecipients; i++ {
 		err := p.Recipients[i].Decode(r)
 		if err != nil {
