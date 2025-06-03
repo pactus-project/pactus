@@ -130,7 +130,6 @@ func TestEncodingData(t *testing.T) {
 			"0400" // Consensus height (0x00)
 		assert.Equal(t, expectedData, hex.EncodeToString(data))
 		assert.Equal(t, uint32(0x00), bdl.ConsensusHeight)
-
 	})
 
 	t.Run("Encoding consensus message", func(t *testing.T) {
@@ -149,7 +148,7 @@ func TestEncodingData(t *testing.T) {
 			"" + "0112" +
 			"" + "0201" +
 			"" + "0355" + hex.EncodeToString(rndAddr.Bytes()) +
-			"041a00000012" // Consensus height (0x78)
+			"041a00000012" // Consensus height (0x12)
 		assert.Equal(t, expectedData, hex.EncodeToString(data))
 		assert.Equal(t, uint32(0x12), bdl.ConsensusHeight)
 	})
