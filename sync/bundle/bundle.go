@@ -47,8 +47,9 @@ type Bundle struct {
 
 func NewBundle(msg message.Message) *Bundle {
 	return &Bundle{
-		Flags:   0,
-		Message: msg,
+		Flags:           0,
+		Message:         msg,
+		ConsensusHeight: msg.ConsensusHeight(),
 	}
 }
 
@@ -89,7 +90,7 @@ func (b *Bundle) Encode() ([]byte, error) {
 		Flags:           b.Flags,
 		MessageType:     b.Message.Type(),
 		MessageData:     data,
-		ConsensusHeight: fixedUint32(b.Message.ConsensusHeight()),
+		ConsensusHeight: fixedUint32(b.ConsensusHeight),
 	}
 
 	return cbor.Marshal(msg)
