@@ -714,9 +714,7 @@ func (ts *TestSuite) GenerateTestTransferTx(options ...func(*TransactionMaker)) 
 }
 
 // GenerateTestBatchTransferTx generate a batch transfer transaction for test.
-func (ts *TestSuite) GenerateTestBatchTransferTx(recipients []payload.BatchRecipient,
-	options ...func(*TransactionMaker),
-) *tx.Tx {
+func (ts *TestSuite) GenerateTestBatchTransferTx(options ...func(*TransactionMaker)) *tx.Tx {
 	tmk := ts.NewTransactionMaker()
 
 	for _, opt := range options {
@@ -734,16 +732,13 @@ func (ts *TestSuite) GenerateTestBatchTransferTx(recipients []payload.BatchRecip
 		}
 	}
 
-	if len(recipients) < 2 {
-		recipients = []payload.BatchRecipient{
-			{
-				To:     ts.RandAccAddress(),
-				Amount: ts.RandAmount(),
-			},
-			{
-				To:     ts.RandAccAddress(),
-				Amount: ts.RandAmount(),
-			},
+	numOfRecip := ts.RandInt(6) + 2
+	recipients := make([]payload.BatchRecipient, numOfRecip)
+
+	for i := 0; i < numOfRecip; i++ {
+		recipients[i] = payload.BatchRecipient{
+			To:     ts.RandAccAddress(),
+			Amount: ts.RandAmount(),
 		}
 	}
 

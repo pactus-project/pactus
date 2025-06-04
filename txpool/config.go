@@ -80,6 +80,5 @@ func (conf *Config) transferPoolSize() int {
 }
 
 func (conf *Config) batchTransferPoolSize() int {
-	// TODO: The pool should be re-categorized based on the size of tx-pool.
 	return int(float32(conf.MaxSize) * 0.1)
 }

@@ -109,11 +109,9 @@ func (td *testData) makeValidTransferTx(options ...func(tm *testsuite.Transactio
 }
 
 // makeValidBatchTransferTx make a valid Batch transfer transaction for test purpose.
-func (td *testData) makeValidBatchTransferTx(recipients []payload.BatchRecipient,
-	options ...func(tm *testsuite.TransactionMaker),
-) *tx.Tx {
+func (td *testData) makeValidBatchTransferTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
 	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
-	trx := td.GenerateTestBatchTransferTx(recipients, options...)
+	trx := td.GenerateTestBatchTransferTx(options...)
 	signer := trx.Payload().Signer()
 
 	acc := td.sbx.MakeNewAccount(signer)
@@ -236,16 +234,7 @@ func TestCalculatingConsumption(t *testing.T) {
 	trx50 := tx.NewSubsidyTx(5, td.RandAccAddress(), 1e9)
 	trx51 := td.makeValidWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
 	trx52 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
-	trx53 := td.makeValidBatchTransferTx([]payload.BatchRecipient{
-		{
-			To:     td.RandAccAddress(),
-			Amount: td.RandAmount(),
-		},
-		{
-			To:     td.RandAccAddress(),
-			Amount: td.RandAmount(),
-		},
-	}, testsuite.TransactionWithEd25519Signer(prv2))
+	trx53 := td.makeValidBatchTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
 
 	// Commit the first block
 	blk1, cert1 := td.GenerateTestBlock(1,
@@ -386,16 +375,7 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	unbondTx := td.makeValidUnbondTx(testsuite.TransactionWithBLSSigner(prv2))
 	withdrawTx := td.makeValidWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
 	sortitionTx := td.makeValidSortitionTx(testsuite.TransactionWithBLSSigner(prv4))
-	batchTransferTx := td.makeValidBatchTransferTx([]payload.BatchRecipient{
-		{
-			To:     td.RandAccAddress(),
-			Amount: td.RandAmount(),
-		},
-		{
-			To:     td.RandAccAddress(),
-			Amount: td.RandAmount(),
-		},
-	}, testsuite.TransactionWithBLSSigner(prv5))
+	batchTransferTx := td.makeValidBatchTransferTx(testsuite.TransactionWithBLSSigner(prv5))
 
 	assert.NoError(t, td.pool.AppendTx(transferTx))
 	assert.NoError(t, td.pool.AppendTx(unbondTx))
@@ -498,16 +478,7 @@ func TestAllPendingTxs(t *testing.T) {
 	unbondTx := td.makeValidUnbondTx()
 	withdrawTx := td.makeValidWithdrawTx()
 	sortitionTx := td.makeValidSortitionTx(testsuite.TransactionWithBLSSigner(prv2))
-	batchTransferTx := td.makeValidBatchTransferTx([]payload.BatchRecipient{
-		{
-			To:     td.RandAccAddress(),
-			Amount: td.RandAmount(),
-		},
-		{
-			To:     td.RandAccAddress(),
-			Amount: td.RandAmount(),
-		},
-	})
+	batchTransferTx := td.makeValidBatchTransferTx()
 
 	assert.NoError(t, td.pool.AppendTx(transferTx))
 	assert.NoError(t, td.pool.AppendTx(bondTx))
