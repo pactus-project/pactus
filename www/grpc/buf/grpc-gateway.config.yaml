@@ -39,22 +39,32 @@ http:
       get: "/pactus/transaction/get_transaction"
 
     - selector: pactus.Transaction.BroadcastTransaction
-      put: "/pactus/transaction/broadcast_transaction"
+      post: "/pactus/transaction/broadcast_transaction"
+      body: "*"
 
     - selector: pactus.Transaction.CalculateFee
-      get: "/pactus/transaction/calculate_fee"
+      post: "/pactus/transaction/calculate_fee"
+      body: "*"
 
     - selector: pactus.Transaction.GetRawTransferTransaction
-      get: "/pactus/transaction/get_raw_transfer_transaction"
+      post: "/pactus/transaction/get_raw_transfer_transaction"
+      body: "*"
 
     - selector: pactus.Transaction.GetRawBondTransaction
-      get: "/pactus/transaction/get_raw_bond_transaction"
+      post: "/pactus/transaction/get_raw_bond_transaction"
+      body: "*"
 
     - selector: pactus.Transaction.GetRawUnbondTransaction
-      get: "/pactus/transaction/get_raw_unbond_transaction"
+      post: "/pactus/transaction/get_raw_unbond_transaction"
+      body: "*"
 
     - selector: pactus.Transaction.GetRawWithdrawTransaction
-      get: "/pactus/transaction/get_raw_withdraw_transaction"
+      post: "/pactus/transaction/get_raw_withdraw_transaction"
+      body: "*"
+
+    - selector: pactus.Transaction.DecodeRawTransaction
+      post: "/pactus/transaction/decode_raw_transaction"
+      body: "*"
 
     - selector: pactus.Transaction.GetRawBatchTransferTransaction
       post: "/pactus/transaction/get_raw_batch_transfer_transaction"
@@ -118,13 +128,17 @@ http:
 
     # Util APIs
     - selector: pactus.Utils.SignMessageWithPrivateKey
-      get: "/pactus/Utils/sign_message_with_private_key"
+      post: "/pactus/Utils/sign_message_with_private_key"
+      body: "*"
 
     - selector: pactus.Utils.VerifyMessage
-      get: "/pactus/Utils/verify_message"
+      post: "/pactus/Utils/verify_message"
+      body: "*"
 
     - selector: pactus.Utils.PublicKeyAggregation
-      get: "/pactus/Utils/public_key_aggregation"
+      post: "/pactus/Utils/public_key_aggregation"
+      body: "*"
 
     - selector: pactus.Utils.SignatureAggregation
-      get: "/pactus/Utils/signature_aggregation"
+      post: "/pactus/Utils/signature_aggregation"
+      body: "*"
