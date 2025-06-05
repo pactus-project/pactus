@@ -2,6 +2,7 @@ package consensus
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
@@ -24,10 +25,8 @@ func (cp *changeProposer) onTimeout(t *ticker) {
 }
 
 func (*changeProposer) checkCPValue(vote *vote.Vote, allowedValues ...vote.CPValue) error {
-	for _, v := range allowedValues {
-		if vote.CPValue() == v {
-			return nil
-		}
+	if slices.Contains(allowedValues, vote.CPValue()) {
+		return nil
 	}
 
 	return InvalidJustificationError{
