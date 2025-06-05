@@ -16,7 +16,7 @@ for OS_ARCH in \
      "android arm64" \
      "freebsd amd64" "freebsd arm" \
      "darwin amd64" "darwin arm64" \
-     "windows 386" "windows amd64"; do
+     "windows 386" "windows amd64" "windows arm64"; do
 
     PAIR=($OS_ARCH);
     OS=${PAIR[0]};

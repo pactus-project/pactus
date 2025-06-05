@@ -8,9 +8,23 @@ BUILD_DIR="${ROOT_DIR}/build"
 PACKAGE_NAME="pactus-gui_${VERSION}"
 PACKAGE_DIR="${ROOT_DIR}/${PACKAGE_NAME}"
 
+# Check the architecture
+ARC="$(uname -m)"
+
+if [ "${ARC}" = "x86_64" ]; then
+    FILE_NAME="${PACKAGE_NAME}_windows_amd64"
+    INNO_PATH="/c/Program Files (x86)/Inno Setup 6"
+elif [ "${ARC}" = "arm64" ]; then
+    FILE_NAME="${PACKAGE_NAME}_windows_arm64"
+    INNO_PATH="/c/Program Files/Inno Setup 6"
+else
+    echo "Unsupported architecture: ${ARC}"
+    exit 1
+fi
+
 mkdir ${PACKAGE_DIR}
 
-echo "Building the binaries"
+echo "Building the binaries for Windows ${ARC} architecture"
 
 # This fixes a bug in pkgconfig: invalid flag in pkg-config --libs: -Wl,-luuid
 sed -i -e 's/-Wl,-luuid/-luuid/g' /mingw64/lib/pkgconfig/gdk-3.0.pc
@@ -126,7 +140,7 @@ mv ${BUILD_DIR}/pactus-shell.exe   ${PACKAGE_DIR}/pactus-shell.exe
 mv ${BUILD_DIR}/pactus-gui.exe     ${PACKAGE_DIR}/pactus-gui/pactus-gui.exe
 
 echo "Archiving the package"
-7z a ${ROOT_DIR}/${PACKAGE_NAME}_windows_amd64.zip ${PACKAGE_DIR}
+7z a ${ROOT_DIR}/${FILE_NAME}.zip ${PACKAGE_DIR}
 
 echo "Creating installer"
 echo "
@@ -141,6 +155,7 @@ Source:${PACKAGE_NAME}/*; DestDir:{app}; Flags: recursesubdirs
 Name:{group}\\Pactus GUI; Filename:{app}\\pactus-gui\\pactus-gui.exe;" >> ${ROOT_DIR}/inno.iss
 
 cd ${ROOT_DIR}
-INNO_DIR=$(cygpath -w -s "/c/Program Files (x86)/Inno Setup 6")
+
+INNO_DIR=$(cygpath -w -s "${INNO_PATH}")
 ${INNO_DIR}/ISCC.exe ${ROOT_DIR}/inno.iss
-mv Output/mysetup.exe ${ROOT_DIR}/${PACKAGE_NAME}_windows_amd64_installer.exe
+mv Output/mysetup.exe ${ROOT_DIR}/${FILE_NAME}_installer.exe
