@@ -39,8 +39,8 @@ func newBatchTransferExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*BatchTransferEx
 			receiver := sbx.Account(r.To)
 			if receiver == nil {
 				receiver = sbx.MakeNewAccount(r.To)
-				recipients[i].Account = receiver
 			}
+			recipients[i].Account = receiver
 		}
 
 		recipients[i].Address = r.To

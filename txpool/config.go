@@ -76,5 +76,9 @@ func (conf *Config) withdrawPoolSize() int {
 }
 
 func (conf *Config) transferPoolSize() int {
-	return int(float32(conf.MaxSize) * 0.6)
+	return int(float32(conf.MaxSize) * 0.5)
+}
+
+func (conf *Config) batchTransferPoolSize() int {
+	return int(float32(conf.MaxSize) * 0.1)
 }

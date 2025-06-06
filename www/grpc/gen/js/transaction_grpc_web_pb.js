@@ -504,6 +504,67 @@ proto.pactus.TransactionPromiseClient.prototype.getRawWithdrawTransaction =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.GetRawBatchTransferTransactionRequest,
+ *   !proto.pactus.GetRawTransactionResponse>}
+ */
+const methodDescriptor_Transaction_GetRawBatchTransferTransaction = new grpc.web.MethodDescriptor(
+  '/pactus.Transaction/GetRawBatchTransferTransaction',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.GetRawBatchTransferTransactionRequest,
+  proto.pactus.GetRawTransactionResponse,
+  /**
+   * @param {!proto.pactus.GetRawBatchTransferTransactionRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.GetRawTransactionResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.GetRawBatchTransferTransactionRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.GetRawTransactionResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetRawTransactionResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.TransactionClient.prototype.getRawBatchTransferTransaction =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Transaction/GetRawBatchTransferTransaction',
+      request,
+      metadata || {},
+      methodDescriptor_Transaction_GetRawBatchTransferTransaction,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.GetRawBatchTransferTransactionRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.GetRawTransactionResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.TransactionPromiseClient.prototype.getRawBatchTransferTransaction =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Transaction/GetRawBatchTransferTransaction',
+      request,
+      metadata || {},
+      methodDescriptor_Transaction_GetRawBatchTransferTransaction);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
  *   !proto.pactus.DecodeRawTransactionRequest,
  *   !proto.pactus.DecodeRawTransactionResponse>}
  */

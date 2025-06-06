@@ -152,6 +152,26 @@ pub struct GetRawWithdrawTransactionRequest {
     #[prost(string, tag="6")]
     pub memo: ::prost::alloc::string::String,
 }
+/// Request message for retrieving raw details of a batch transfer transaction.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetRawBatchTransferTransactionRequest {
+    /// The lock time for the transaction. If not set, defaults to the last block height.
+    #[prost(uint32, tag="1")]
+    pub lock_time: u32,
+    /// The sender's account address.
+    #[prost(string, tag="2")]
+    pub sender: ::prost::alloc::string::String,
+    /// The recipients list of receiver with amount, min 2 recipients.
+    #[prost(message, repeated, tag="3")]
+    pub recipients: ::prost::alloc::vec::Vec<Recipient>,
+    /// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+    #[prost(int64, tag="4")]
+    pub fee: i64,
+    /// A memo string for the transaction.
+    #[prost(string, tag="5")]
+    pub memo: ::prost::alloc::string::String,
+}
 /// Response message contains raw transaction data.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -227,6 +247,28 @@ pub struct PayloadWithdraw {
     #[prost(int64, tag="3")]
     pub amount: i64,
 }
+/// Payload for a batch transfer transaction.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PayloadBatchTransfer {
+    /// The sender's address.
+    #[prost(string, tag="1")]
+    pub sender: ::prost::alloc::string::String,
+    /// The recipients of list receiver with amount.
+    #[prost(message, repeated, tag="2")]
+    pub recipients: ::prost::alloc::vec::Vec<Recipient>,
+}
+/// Recipient is receiver with amount.
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Recipient {
+    /// The receiver's address.
+    #[prost(string, tag="1")]
+    pub receiver: ::prost::alloc::string::String,
+    /// The amount in NanoPAC.
+    #[prost(int64, tag="2")]
+    pub amount: i64,
+}
 /// Information about a transaction.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -262,7 +304,7 @@ pub struct TransactionInfo {
     #[prost(string, tag="10")]
     pub signature: ::prost::alloc::string::String,
     /// Transaction payload.
-    #[prost(oneof="transaction_info::Payload", tags="30, 31, 32, 33, 34")]
+    #[prost(oneof="transaction_info::Payload", tags="30, 31, 32, 33, 34, 35")]
     pub payload: ::core::option::Option<transaction_info::Payload>,
 }
 /// Nested message and enum types in `TransactionInfo`.
@@ -286,6 +328,9 @@ pub mod transaction_info {
         /// Withdraw transaction payload.
         #[prost(message, tag="34")]
         Withdraw(super::PayloadWithdraw),
+        /// Batch Transfer transaction payload.
+        #[prost(message, tag="35")]
+        BatchTransfer(super::PayloadBatchTransfer),
     }
 }
 /// Request message for decoding a raw transaction.
@@ -320,6 +365,8 @@ pub enum PayloadType {
     Unbond = 4,
     /// Withdraw payload type.
     Withdraw = 5,
+    /// Batch transfer payload type.
+    BatchTransfer = 6,
 }
 impl PayloadType {
     /// String value of the enum field names used in the ProtoBuf definition.
@@ -334,6 +381,7 @@ impl PayloadType {
             PayloadType::Sortition => "PAYLOAD_TYPE_SORTITION",
             PayloadType::Unbond => "PAYLOAD_TYPE_UNBOND",
             PayloadType::Withdraw => "PAYLOAD_TYPE_WITHDRAW",
+            PayloadType::BatchTransfer => "PAYLOAD_TYPE_BATCH_TRANSFER",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
@@ -345,6 +393,7 @@ impl PayloadType {
             "PAYLOAD_TYPE_SORTITION" => Some(Self::Sortition),
             "PAYLOAD_TYPE_UNBOND" => Some(Self::Unbond),
             "PAYLOAD_TYPE_WITHDRAW" => Some(Self::Withdraw),
+            "PAYLOAD_TYPE_BATCH_TRANSFER" => Some(Self::BatchTransfer),
             _ => None,
         }
     }

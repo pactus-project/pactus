@@ -82,6 +82,14 @@ public final class TransactionOuterClass {
      * <code>PAYLOAD_TYPE_WITHDRAW = 5;</code>
      */
     PAYLOAD_TYPE_WITHDRAW(5),
+    /**
+     * <pre>
+     * Batch transfer payload type.
+     * </pre>
+     *
+     * <code>PAYLOAD_TYPE_BATCH_TRANSFER = 6;</code>
+     */
+    PAYLOAD_TYPE_BATCH_TRANSFER(6),
     UNRECOGNIZED(-1),
     ;
 
@@ -142,6 +150,14 @@ public final class TransactionOuterClass {
      * <code>PAYLOAD_TYPE_WITHDRAW = 5;</code>
      */
     public static final int PAYLOAD_TYPE_WITHDRAW_VALUE = 5;
+    /**
+     * <pre>
+     * Batch transfer payload type.
+     * </pre>
+     *
+     * <code>PAYLOAD_TYPE_BATCH_TRANSFER = 6;</code>
+     */
+    public static final int PAYLOAD_TYPE_BATCH_TRANSFER_VALUE = 6;
 
 
     public final int getNumber() {
@@ -174,6 +190,7 @@ public final class TransactionOuterClass {
         case 3: return PAYLOAD_TYPE_SORTITION;
         case 4: return PAYLOAD_TYPE_UNBOND;
         case 5: return PAYLOAD_TYPE_WITHDRAW;
+        case 6: return PAYLOAD_TYPE_BATCH_TRANSFER;
         default: return null;
       }
     }
@@ -8859,6 +8876,1419 @@ public final class TransactionOuterClass {
 
   }
 
+  public interface GetRawBatchTransferTransactionRequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.GetRawBatchTransferTransactionRequest)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The lock time for the transaction. If not set, defaults to the last block height.
+     * </pre>
+     *
+     * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
+     * @return The lockTime.
+     */
+    int getLockTime();
+
+    /**
+     * <pre>
+     * The sender's account address.
+     * </pre>
+     *
+     * <code>string sender = 2 [json_name = "sender"];</code>
+     * @return The sender.
+     */
+    java.lang.String getSender();
+    /**
+     * <pre>
+     * The sender's account address.
+     * </pre>
+     *
+     * <code>string sender = 2 [json_name = "sender"];</code>
+     * @return The bytes for sender.
+     */
+    com.google.protobuf.ByteString
+        getSenderBytes();
+
+    /**
+     * <pre>
+     * The recipients list of receiver with amount, min 2 recipients.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+     */
+    java.util.List<pactus.TransactionOuterClass.Recipient> 
+        getRecipientsList();
+    /**
+     * <pre>
+     * The recipients list of receiver with amount, min 2 recipients.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+     */
+    pactus.TransactionOuterClass.Recipient getRecipients(int index);
+    /**
+     * <pre>
+     * The recipients list of receiver with amount, min 2 recipients.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+     */
+    int getRecipientsCount();
+    /**
+     * <pre>
+     * The recipients list of receiver with amount, min 2 recipients.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+     */
+    java.util.List<? extends pactus.TransactionOuterClass.RecipientOrBuilder> 
+        getRecipientsOrBuilderList();
+    /**
+     * <pre>
+     * The recipients list of receiver with amount, min 2 recipients.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+     */
+    pactus.TransactionOuterClass.RecipientOrBuilder getRecipientsOrBuilder(
+        int index);
+
+    /**
+     * <pre>
+     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+     * </pre>
+     *
+     * <code>int64 fee = 4 [json_name = "fee"];</code>
+     * @return The fee.
+     */
+    long getFee();
+
+    /**
+     * <pre>
+     * A memo string for the transaction.
+     * </pre>
+     *
+     * <code>string memo = 5 [json_name = "memo"];</code>
+     * @return The memo.
+     */
+    java.lang.String getMemo();
+    /**
+     * <pre>
+     * A memo string for the transaction.
+     * </pre>
+     *
+     * <code>string memo = 5 [json_name = "memo"];</code>
+     * @return The bytes for memo.
+     */
+    com.google.protobuf.ByteString
+        getMemoBytes();
+  }
+  /**
+   * <pre>
+   * Request message for retrieving raw details of a batch transfer transaction.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.GetRawBatchTransferTransactionRequest}
+   */
+  public static final class GetRawBatchTransferTransactionRequest extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:pactus.GetRawBatchTransferTransactionRequest)
+      GetRawBatchTransferTransactionRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 30,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        GetRawBatchTransferTransactionRequest.class.getName());
+    }
+    // Use GetRawBatchTransferTransactionRequest.newBuilder() to construct.
+    private GetRawBatchTransferTransactionRequest(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private GetRawBatchTransferTransactionRequest() {
+      sender_ = "";
+      recipients_ = java.util.Collections.emptyList();
+      memo_ = "";
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.TransactionOuterClass.internal_static_pactus_GetRawBatchTransferTransactionRequest_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.TransactionOuterClass.internal_static_pactus_GetRawBatchTransferTransactionRequest_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest.class, pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest.Builder.class);
+    }
+
+    public static final int LOCK_TIME_FIELD_NUMBER = 1;
+    private int lockTime_ = 0;
+    /**
+     * <pre>
+     * The lock time for the transaction. If not set, defaults to the last block height.
+     * </pre>
+     *
+     * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
+     * @return The lockTime.
+     */
+    @java.lang.Override
+    public int getLockTime() {
+      return lockTime_;
+    }
+
+    public static final int SENDER_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object sender_ = "";
+    /**
+     * <pre>
+     * The sender's account address.
+     * </pre>
+     *
+     * <code>string sender = 2 [json_name = "sender"];</code>
+     * @return The sender.
+     */
+    @java.lang.Override
+    public java.lang.String getSender() {
+      java.lang.Object ref = sender_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        sender_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The sender's account address.
+     * </pre>
+     *
+     * <code>string sender = 2 [json_name = "sender"];</code>
+     * @return The bytes for sender.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSenderBytes() {
+      java.lang.Object ref = sender_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        sender_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int RECIPIENTS_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private java.util.List<pactus.TransactionOuterClass.Recipient> recipients_;
+    /**
+     * <pre>
+     * The recipients list of receiver with amount, min 2 recipients.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+     */
+    @java.lang.Override
+    public java.util.List<pactus.TransactionOuterClass.Recipient> getRecipientsList() {
+      return recipients_;
+    }
+    /**
+     * <pre>
+     * The recipients list of receiver with amount, min 2 recipients.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends pactus.TransactionOuterClass.RecipientOrBuilder> 
+        getRecipientsOrBuilderList() {
+      return recipients_;
+    }
+    /**
+     * <pre>
+     * The recipients list of receiver with amount, min 2 recipients.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+     */
+    @java.lang.Override
+    public int getRecipientsCount() {
+      return recipients_.size();
+    }
+    /**
+     * <pre>
+     * The recipients list of receiver with amount, min 2 recipients.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+     */
+    @java.lang.Override
+    public pactus.TransactionOuterClass.Recipient getRecipients(int index) {
+      return recipients_.get(index);
+    }
+    /**
+     * <pre>
+     * The recipients list of receiver with amount, min 2 recipients.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+     */
+    @java.lang.Override
+    public pactus.TransactionOuterClass.RecipientOrBuilder getRecipientsOrBuilder(
+        int index) {
+      return recipients_.get(index);
+    }
+
+    public static final int FEE_FIELD_NUMBER = 4;
+    private long fee_ = 0L;
+    /**
+     * <pre>
+     * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+     * </pre>
+     *
+     * <code>int64 fee = 4 [json_name = "fee"];</code>
+     * @return The fee.
+     */
+    @java.lang.Override
+    public long getFee() {
+      return fee_;
+    }
+
+    public static final int MEMO_FIELD_NUMBER = 5;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object memo_ = "";
+    /**
+     * <pre>
+     * A memo string for the transaction.
+     * </pre>
+     *
+     * <code>string memo = 5 [json_name = "memo"];</code>
+     * @return The memo.
+     */
+    @java.lang.Override
+    public java.lang.String getMemo() {
+      java.lang.Object ref = memo_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        memo_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * A memo string for the transaction.
+     * </pre>
+     *
+     * <code>string memo = 5 [json_name = "memo"];</code>
+     * @return The bytes for memo.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getMemoBytes() {
+      java.lang.Object ref = memo_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        memo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (lockTime_ != 0) {
+        output.writeUInt32(1, lockTime_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(sender_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 2, sender_);
+      }
+      for (int i = 0; i < recipients_.size(); i++) {
+        output.writeMessage(3, recipients_.get(i));
+      }
+      if (fee_ != 0L) {
+        output.writeInt64(4, fee_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(memo_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 5, memo_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (lockTime_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(1, lockTime_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(sender_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(2, sender_);
+      }
+      for (int i = 0; i < recipients_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, recipients_.get(i));
+      }
+      if (fee_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(4, fee_);
+      }
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(memo_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(5, memo_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest)) {
+        return super.equals(obj);
+      }
+      pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest other = (pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest) obj;
+
+      if (getLockTime()
+          != other.getLockTime()) return false;
+      if (!getSender()
+          .equals(other.getSender())) return false;
+      if (!getRecipientsList()
+          .equals(other.getRecipientsList())) return false;
+      if (getFee()
+          != other.getFee()) return false;
+      if (!getMemo()
+          .equals(other.getMemo())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + LOCK_TIME_FIELD_NUMBER;
+      hash = (53 * hash) + getLockTime();
+      hash = (37 * hash) + SENDER_FIELD_NUMBER;
+      hash = (53 * hash) + getSender().hashCode();
+      if (getRecipientsCount() > 0) {
+        hash = (37 * hash) + RECIPIENTS_FIELD_NUMBER;
+        hash = (53 * hash) + getRecipientsList().hashCode();
+      }
+      hash = (37 * hash) + FEE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getFee());
+      hash = (37 * hash) + MEMO_FIELD_NUMBER;
+      hash = (53 * hash) + getMemo().hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Request message for retrieving raw details of a batch transfer transaction.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.GetRawBatchTransferTransactionRequest}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.GetRawBatchTransferTransactionRequest)
+        pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequestOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.TransactionOuterClass.internal_static_pactus_GetRawBatchTransferTransactionRequest_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.TransactionOuterClass.internal_static_pactus_GetRawBatchTransferTransactionRequest_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest.class, pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest.Builder.class);
+      }
+
+      // Construct using pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        lockTime_ = 0;
+        sender_ = "";
+        if (recipientsBuilder_ == null) {
+          recipients_ = java.util.Collections.emptyList();
+        } else {
+          recipients_ = null;
+          recipientsBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000004);
+        fee_ = 0L;
+        memo_ = "";
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.TransactionOuterClass.internal_static_pactus_GetRawBatchTransferTransactionRequest_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest getDefaultInstanceForType() {
+        return pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest build() {
+        pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest buildPartial() {
+        pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest result = new pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest(this);
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest result) {
+        if (recipientsBuilder_ == null) {
+          if (((bitField0_ & 0x00000004) != 0)) {
+            recipients_ = java.util.Collections.unmodifiableList(recipients_);
+            bitField0_ = (bitField0_ & ~0x00000004);
+          }
+          result.recipients_ = recipients_;
+        } else {
+          result.recipients_ = recipientsBuilder_.build();
+        }
+      }
+
+      private void buildPartial0(pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.lockTime_ = lockTime_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.sender_ = sender_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.fee_ = fee_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.memo_ = memo_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest) {
+          return mergeFrom((pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest other) {
+        if (other == pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest.getDefaultInstance()) return this;
+        if (other.getLockTime() != 0) {
+          setLockTime(other.getLockTime());
+        }
+        if (!other.getSender().isEmpty()) {
+          sender_ = other.sender_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        if (recipientsBuilder_ == null) {
+          if (!other.recipients_.isEmpty()) {
+            if (recipients_.isEmpty()) {
+              recipients_ = other.recipients_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+            } else {
+              ensureRecipientsIsMutable();
+              recipients_.addAll(other.recipients_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.recipients_.isEmpty()) {
+            if (recipientsBuilder_.isEmpty()) {
+              recipientsBuilder_.dispose();
+              recipientsBuilder_ = null;
+              recipients_ = other.recipients_;
+              bitField0_ = (bitField0_ & ~0x00000004);
+              recipientsBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   internalGetRecipientsFieldBuilder() : null;
+            } else {
+              recipientsBuilder_.addAllMessages(other.recipients_);
+            }
+          }
+        }
+        if (other.getFee() != 0L) {
+          setFee(other.getFee());
+        }
+        if (!other.getMemo().isEmpty()) {
+          memo_ = other.memo_;
+          bitField0_ |= 0x00000010;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 8: {
+                lockTime_ = input.readUInt32();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 18: {
+                sender_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                pactus.TransactionOuterClass.Recipient m =
+                    input.readMessage(
+                        pactus.TransactionOuterClass.Recipient.parser(),
+                        extensionRegistry);
+                if (recipientsBuilder_ == null) {
+                  ensureRecipientsIsMutable();
+                  recipients_.add(m);
+                } else {
+                  recipientsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 26
+              case 32: {
+                fee_ = input.readInt64();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 32
+              case 42: {
+                memo_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 42
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private int lockTime_ ;
+      /**
+       * <pre>
+       * The lock time for the transaction. If not set, defaults to the last block height.
+       * </pre>
+       *
+       * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
+       * @return The lockTime.
+       */
+      @java.lang.Override
+      public int getLockTime() {
+        return lockTime_;
+      }
+      /**
+       * <pre>
+       * The lock time for the transaction. If not set, defaults to the last block height.
+       * </pre>
+       *
+       * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
+       * @param value The lockTime to set.
+       * @return This builder for chaining.
+       */
+      public Builder setLockTime(int value) {
+
+        lockTime_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The lock time for the transaction. If not set, defaults to the last block height.
+       * </pre>
+       *
+       * <code>uint32 lock_time = 1 [json_name = "lockTime"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearLockTime() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        lockTime_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object sender_ = "";
+      /**
+       * <pre>
+       * The sender's account address.
+       * </pre>
+       *
+       * <code>string sender = 2 [json_name = "sender"];</code>
+       * @return The sender.
+       */
+      public java.lang.String getSender() {
+        java.lang.Object ref = sender_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          sender_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The sender's account address.
+       * </pre>
+       *
+       * <code>string sender = 2 [json_name = "sender"];</code>
+       * @return The bytes for sender.
+       */
+      public com.google.protobuf.ByteString
+          getSenderBytes() {
+        java.lang.Object ref = sender_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          sender_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The sender's account address.
+       * </pre>
+       *
+       * <code>string sender = 2 [json_name = "sender"];</code>
+       * @param value The sender to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSender(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        sender_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The sender's account address.
+       * </pre>
+       *
+       * <code>string sender = 2 [json_name = "sender"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSender() {
+        sender_ = getDefaultInstance().getSender();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The sender's account address.
+       * </pre>
+       *
+       * <code>string sender = 2 [json_name = "sender"];</code>
+       * @param value The bytes for sender to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSenderBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        sender_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<pactus.TransactionOuterClass.Recipient> recipients_ =
+        java.util.Collections.emptyList();
+      private void ensureRecipientsIsMutable() {
+        if (!((bitField0_ & 0x00000004) != 0)) {
+          recipients_ = new java.util.ArrayList<pactus.TransactionOuterClass.Recipient>(recipients_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          pactus.TransactionOuterClass.Recipient, pactus.TransactionOuterClass.Recipient.Builder, pactus.TransactionOuterClass.RecipientOrBuilder> recipientsBuilder_;
+
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public java.util.List<pactus.TransactionOuterClass.Recipient> getRecipientsList() {
+        if (recipientsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(recipients_);
+        } else {
+          return recipientsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public int getRecipientsCount() {
+        if (recipientsBuilder_ == null) {
+          return recipients_.size();
+        } else {
+          return recipientsBuilder_.getCount();
+        }
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public pactus.TransactionOuterClass.Recipient getRecipients(int index) {
+        if (recipientsBuilder_ == null) {
+          return recipients_.get(index);
+        } else {
+          return recipientsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public Builder setRecipients(
+          int index, pactus.TransactionOuterClass.Recipient value) {
+        if (recipientsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRecipientsIsMutable();
+          recipients_.set(index, value);
+          onChanged();
+        } else {
+          recipientsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public Builder setRecipients(
+          int index, pactus.TransactionOuterClass.Recipient.Builder builderForValue) {
+        if (recipientsBuilder_ == null) {
+          ensureRecipientsIsMutable();
+          recipients_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          recipientsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public Builder addRecipients(pactus.TransactionOuterClass.Recipient value) {
+        if (recipientsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRecipientsIsMutable();
+          recipients_.add(value);
+          onChanged();
+        } else {
+          recipientsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public Builder addRecipients(
+          int index, pactus.TransactionOuterClass.Recipient value) {
+        if (recipientsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRecipientsIsMutable();
+          recipients_.add(index, value);
+          onChanged();
+        } else {
+          recipientsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public Builder addRecipients(
+          pactus.TransactionOuterClass.Recipient.Builder builderForValue) {
+        if (recipientsBuilder_ == null) {
+          ensureRecipientsIsMutable();
+          recipients_.add(builderForValue.build());
+          onChanged();
+        } else {
+          recipientsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public Builder addRecipients(
+          int index, pactus.TransactionOuterClass.Recipient.Builder builderForValue) {
+        if (recipientsBuilder_ == null) {
+          ensureRecipientsIsMutable();
+          recipients_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          recipientsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public Builder addAllRecipients(
+          java.lang.Iterable<? extends pactus.TransactionOuterClass.Recipient> values) {
+        if (recipientsBuilder_ == null) {
+          ensureRecipientsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, recipients_);
+          onChanged();
+        } else {
+          recipientsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public Builder clearRecipients() {
+        if (recipientsBuilder_ == null) {
+          recipients_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000004);
+          onChanged();
+        } else {
+          recipientsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public Builder removeRecipients(int index) {
+        if (recipientsBuilder_ == null) {
+          ensureRecipientsIsMutable();
+          recipients_.remove(index);
+          onChanged();
+        } else {
+          recipientsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public pactus.TransactionOuterClass.Recipient.Builder getRecipientsBuilder(
+          int index) {
+        return internalGetRecipientsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public pactus.TransactionOuterClass.RecipientOrBuilder getRecipientsOrBuilder(
+          int index) {
+        if (recipientsBuilder_ == null) {
+          return recipients_.get(index);  } else {
+          return recipientsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public java.util.List<? extends pactus.TransactionOuterClass.RecipientOrBuilder> 
+           getRecipientsOrBuilderList() {
+        if (recipientsBuilder_ != null) {
+          return recipientsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(recipients_);
+        }
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public pactus.TransactionOuterClass.Recipient.Builder addRecipientsBuilder() {
+        return internalGetRecipientsFieldBuilder().addBuilder(
+            pactus.TransactionOuterClass.Recipient.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public pactus.TransactionOuterClass.Recipient.Builder addRecipientsBuilder(
+          int index) {
+        return internalGetRecipientsFieldBuilder().addBuilder(
+            index, pactus.TransactionOuterClass.Recipient.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * The recipients list of receiver with amount, min 2 recipients.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
+       */
+      public java.util.List<pactus.TransactionOuterClass.Recipient.Builder> 
+           getRecipientsBuilderList() {
+        return internalGetRecipientsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          pactus.TransactionOuterClass.Recipient, pactus.TransactionOuterClass.Recipient.Builder, pactus.TransactionOuterClass.RecipientOrBuilder> 
+          internalGetRecipientsFieldBuilder() {
+        if (recipientsBuilder_ == null) {
+          recipientsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              pactus.TransactionOuterClass.Recipient, pactus.TransactionOuterClass.Recipient.Builder, pactus.TransactionOuterClass.RecipientOrBuilder>(
+                  recipients_,
+                  ((bitField0_ & 0x00000004) != 0),
+                  getParentForChildren(),
+                  isClean());
+          recipients_ = null;
+        }
+        return recipientsBuilder_;
+      }
+
+      private long fee_ ;
+      /**
+       * <pre>
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+       * </pre>
+       *
+       * <code>int64 fee = 4 [json_name = "fee"];</code>
+       * @return The fee.
+       */
+      @java.lang.Override
+      public long getFee() {
+        return fee_;
+      }
+      /**
+       * <pre>
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+       * </pre>
+       *
+       * <code>int64 fee = 4 [json_name = "fee"];</code>
+       * @param value The fee to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFee(long value) {
+
+        fee_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+       * </pre>
+       *
+       * <code>int64 fee = 4 [json_name = "fee"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFee() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        fee_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object memo_ = "";
+      /**
+       * <pre>
+       * A memo string for the transaction.
+       * </pre>
+       *
+       * <code>string memo = 5 [json_name = "memo"];</code>
+       * @return The memo.
+       */
+      public java.lang.String getMemo() {
+        java.lang.Object ref = memo_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          memo_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * A memo string for the transaction.
+       * </pre>
+       *
+       * <code>string memo = 5 [json_name = "memo"];</code>
+       * @return The bytes for memo.
+       */
+      public com.google.protobuf.ByteString
+          getMemoBytes() {
+        java.lang.Object ref = memo_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          memo_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * A memo string for the transaction.
+       * </pre>
+       *
+       * <code>string memo = 5 [json_name = "memo"];</code>
+       * @param value The memo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMemo(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        memo_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * A memo string for the transaction.
+       * </pre>
+       *
+       * <code>string memo = 5 [json_name = "memo"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMemo() {
+        memo_ = getDefaultInstance().getMemo();
+        bitField0_ = (bitField0_ & ~0x00000010);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * A memo string for the transaction.
+       * </pre>
+       *
+       * <code>string memo = 5 [json_name = "memo"];</code>
+       * @param value The bytes for memo to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMemoBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        memo_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pactus.GetRawBatchTransferTransactionRequest)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.GetRawBatchTransferTransactionRequest)
+    private static final pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest();
+    }
+
+    public static pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<GetRawBatchTransferTransactionRequest>
+        PARSER = new com.google.protobuf.AbstractParser<GetRawBatchTransferTransactionRequest>() {
+      @java.lang.Override
+      public GetRawBatchTransferTransactionRequest parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<GetRawBatchTransferTransactionRequest> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<GetRawBatchTransferTransactionRequest> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface GetRawTransactionResponseOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.GetRawTransactionResponse)
       com.google.protobuf.MessageOrBuilder {
@@ -13566,6 +14996,1697 @@ public final class TransactionOuterClass {
 
   }
 
+  public interface PayloadBatchTransferOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.PayloadBatchTransfer)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The sender's address.
+     * </pre>
+     *
+     * <code>string sender = 1 [json_name = "sender"];</code>
+     * @return The sender.
+     */
+    java.lang.String getSender();
+    /**
+     * <pre>
+     * The sender's address.
+     * </pre>
+     *
+     * <code>string sender = 1 [json_name = "sender"];</code>
+     * @return The bytes for sender.
+     */
+    com.google.protobuf.ByteString
+        getSenderBytes();
+
+    /**
+     * <pre>
+     * The recipients of list receiver with amount.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+     */
+    java.util.List<pactus.TransactionOuterClass.Recipient> 
+        getRecipientsList();
+    /**
+     * <pre>
+     * The recipients of list receiver with amount.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+     */
+    pactus.TransactionOuterClass.Recipient getRecipients(int index);
+    /**
+     * <pre>
+     * The recipients of list receiver with amount.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+     */
+    int getRecipientsCount();
+    /**
+     * <pre>
+     * The recipients of list receiver with amount.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+     */
+    java.util.List<? extends pactus.TransactionOuterClass.RecipientOrBuilder> 
+        getRecipientsOrBuilderList();
+    /**
+     * <pre>
+     * The recipients of list receiver with amount.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+     */
+    pactus.TransactionOuterClass.RecipientOrBuilder getRecipientsOrBuilder(
+        int index);
+  }
+  /**
+   * <pre>
+   * Payload for a batch transfer transaction.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.PayloadBatchTransfer}
+   */
+  public static final class PayloadBatchTransfer extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:pactus.PayloadBatchTransfer)
+      PayloadBatchTransferOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 30,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        PayloadBatchTransfer.class.getName());
+    }
+    // Use PayloadBatchTransfer.newBuilder() to construct.
+    private PayloadBatchTransfer(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private PayloadBatchTransfer() {
+      sender_ = "";
+      recipients_ = java.util.Collections.emptyList();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.TransactionOuterClass.internal_static_pactus_PayloadBatchTransfer_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.TransactionOuterClass.internal_static_pactus_PayloadBatchTransfer_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.TransactionOuterClass.PayloadBatchTransfer.class, pactus.TransactionOuterClass.PayloadBatchTransfer.Builder.class);
+    }
+
+    public static final int SENDER_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object sender_ = "";
+    /**
+     * <pre>
+     * The sender's address.
+     * </pre>
+     *
+     * <code>string sender = 1 [json_name = "sender"];</code>
+     * @return The sender.
+     */
+    @java.lang.Override
+    public java.lang.String getSender() {
+      java.lang.Object ref = sender_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        sender_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The sender's address.
+     * </pre>
+     *
+     * <code>string sender = 1 [json_name = "sender"];</code>
+     * @return The bytes for sender.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getSenderBytes() {
+      java.lang.Object ref = sender_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        sender_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int RECIPIENTS_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private java.util.List<pactus.TransactionOuterClass.Recipient> recipients_;
+    /**
+     * <pre>
+     * The recipients of list receiver with amount.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+     */
+    @java.lang.Override
+    public java.util.List<pactus.TransactionOuterClass.Recipient> getRecipientsList() {
+      return recipients_;
+    }
+    /**
+     * <pre>
+     * The recipients of list receiver with amount.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+     */
+    @java.lang.Override
+    public java.util.List<? extends pactus.TransactionOuterClass.RecipientOrBuilder> 
+        getRecipientsOrBuilderList() {
+      return recipients_;
+    }
+    /**
+     * <pre>
+     * The recipients of list receiver with amount.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+     */
+    @java.lang.Override
+    public int getRecipientsCount() {
+      return recipients_.size();
+    }
+    /**
+     * <pre>
+     * The recipients of list receiver with amount.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+     */
+    @java.lang.Override
+    public pactus.TransactionOuterClass.Recipient getRecipients(int index) {
+      return recipients_.get(index);
+    }
+    /**
+     * <pre>
+     * The recipients of list receiver with amount.
+     * </pre>
+     *
+     * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+     */
+    @java.lang.Override
+    public pactus.TransactionOuterClass.RecipientOrBuilder getRecipientsOrBuilder(
+        int index) {
+      return recipients_.get(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(sender_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 1, sender_);
+      }
+      for (int i = 0; i < recipients_.size(); i++) {
+        output.writeMessage(2, recipients_.get(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(sender_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, sender_);
+      }
+      for (int i = 0; i < recipients_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, recipients_.get(i));
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.TransactionOuterClass.PayloadBatchTransfer)) {
+        return super.equals(obj);
+      }
+      pactus.TransactionOuterClass.PayloadBatchTransfer other = (pactus.TransactionOuterClass.PayloadBatchTransfer) obj;
+
+      if (!getSender()
+          .equals(other.getSender())) return false;
+      if (!getRecipientsList()
+          .equals(other.getRecipientsList())) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + SENDER_FIELD_NUMBER;
+      hash = (53 * hash) + getSender().hashCode();
+      if (getRecipientsCount() > 0) {
+        hash = (37 * hash) + RECIPIENTS_FIELD_NUMBER;
+        hash = (53 * hash) + getRecipientsList().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.TransactionOuterClass.PayloadBatchTransfer prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Payload for a batch transfer transaction.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.PayloadBatchTransfer}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.PayloadBatchTransfer)
+        pactus.TransactionOuterClass.PayloadBatchTransferOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.TransactionOuterClass.internal_static_pactus_PayloadBatchTransfer_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.TransactionOuterClass.internal_static_pactus_PayloadBatchTransfer_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.TransactionOuterClass.PayloadBatchTransfer.class, pactus.TransactionOuterClass.PayloadBatchTransfer.Builder.class);
+      }
+
+      // Construct using pactus.TransactionOuterClass.PayloadBatchTransfer.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        sender_ = "";
+        if (recipientsBuilder_ == null) {
+          recipients_ = java.util.Collections.emptyList();
+        } else {
+          recipients_ = null;
+          recipientsBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.TransactionOuterClass.internal_static_pactus_PayloadBatchTransfer_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.PayloadBatchTransfer getDefaultInstanceForType() {
+        return pactus.TransactionOuterClass.PayloadBatchTransfer.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.PayloadBatchTransfer build() {
+        pactus.TransactionOuterClass.PayloadBatchTransfer result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.PayloadBatchTransfer buildPartial() {
+        pactus.TransactionOuterClass.PayloadBatchTransfer result = new pactus.TransactionOuterClass.PayloadBatchTransfer(this);
+        buildPartialRepeatedFields(result);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartialRepeatedFields(pactus.TransactionOuterClass.PayloadBatchTransfer result) {
+        if (recipientsBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)) {
+            recipients_ = java.util.Collections.unmodifiableList(recipients_);
+            bitField0_ = (bitField0_ & ~0x00000002);
+          }
+          result.recipients_ = recipients_;
+        } else {
+          result.recipients_ = recipientsBuilder_.build();
+        }
+      }
+
+      private void buildPartial0(pactus.TransactionOuterClass.PayloadBatchTransfer result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.sender_ = sender_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.TransactionOuterClass.PayloadBatchTransfer) {
+          return mergeFrom((pactus.TransactionOuterClass.PayloadBatchTransfer)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.TransactionOuterClass.PayloadBatchTransfer other) {
+        if (other == pactus.TransactionOuterClass.PayloadBatchTransfer.getDefaultInstance()) return this;
+        if (!other.getSender().isEmpty()) {
+          sender_ = other.sender_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (recipientsBuilder_ == null) {
+          if (!other.recipients_.isEmpty()) {
+            if (recipients_.isEmpty()) {
+              recipients_ = other.recipients_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+            } else {
+              ensureRecipientsIsMutable();
+              recipients_.addAll(other.recipients_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.recipients_.isEmpty()) {
+            if (recipientsBuilder_.isEmpty()) {
+              recipientsBuilder_.dispose();
+              recipientsBuilder_ = null;
+              recipients_ = other.recipients_;
+              bitField0_ = (bitField0_ & ~0x00000002);
+              recipientsBuilder_ = 
+                com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   internalGetRecipientsFieldBuilder() : null;
+            } else {
+              recipientsBuilder_.addAllMessages(other.recipients_);
+            }
+          }
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                sender_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                pactus.TransactionOuterClass.Recipient m =
+                    input.readMessage(
+                        pactus.TransactionOuterClass.Recipient.parser(),
+                        extensionRegistry);
+                if (recipientsBuilder_ == null) {
+                  ensureRecipientsIsMutable();
+                  recipients_.add(m);
+                } else {
+                  recipientsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 18
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object sender_ = "";
+      /**
+       * <pre>
+       * The sender's address.
+       * </pre>
+       *
+       * <code>string sender = 1 [json_name = "sender"];</code>
+       * @return The sender.
+       */
+      public java.lang.String getSender() {
+        java.lang.Object ref = sender_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          sender_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The sender's address.
+       * </pre>
+       *
+       * <code>string sender = 1 [json_name = "sender"];</code>
+       * @return The bytes for sender.
+       */
+      public com.google.protobuf.ByteString
+          getSenderBytes() {
+        java.lang.Object ref = sender_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          sender_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The sender's address.
+       * </pre>
+       *
+       * <code>string sender = 1 [json_name = "sender"];</code>
+       * @param value The sender to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSender(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        sender_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The sender's address.
+       * </pre>
+       *
+       * <code>string sender = 1 [json_name = "sender"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSender() {
+        sender_ = getDefaultInstance().getSender();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The sender's address.
+       * </pre>
+       *
+       * <code>string sender = 1 [json_name = "sender"];</code>
+       * @param value The bytes for sender to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSenderBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        sender_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private java.util.List<pactus.TransactionOuterClass.Recipient> recipients_ =
+        java.util.Collections.emptyList();
+      private void ensureRecipientsIsMutable() {
+        if (!((bitField0_ & 0x00000002) != 0)) {
+          recipients_ = new java.util.ArrayList<pactus.TransactionOuterClass.Recipient>(recipients_);
+          bitField0_ |= 0x00000002;
+         }
+      }
+
+      private com.google.protobuf.RepeatedFieldBuilder<
+          pactus.TransactionOuterClass.Recipient, pactus.TransactionOuterClass.Recipient.Builder, pactus.TransactionOuterClass.RecipientOrBuilder> recipientsBuilder_;
+
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public java.util.List<pactus.TransactionOuterClass.Recipient> getRecipientsList() {
+        if (recipientsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(recipients_);
+        } else {
+          return recipientsBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public int getRecipientsCount() {
+        if (recipientsBuilder_ == null) {
+          return recipients_.size();
+        } else {
+          return recipientsBuilder_.getCount();
+        }
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public pactus.TransactionOuterClass.Recipient getRecipients(int index) {
+        if (recipientsBuilder_ == null) {
+          return recipients_.get(index);
+        } else {
+          return recipientsBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public Builder setRecipients(
+          int index, pactus.TransactionOuterClass.Recipient value) {
+        if (recipientsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRecipientsIsMutable();
+          recipients_.set(index, value);
+          onChanged();
+        } else {
+          recipientsBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public Builder setRecipients(
+          int index, pactus.TransactionOuterClass.Recipient.Builder builderForValue) {
+        if (recipientsBuilder_ == null) {
+          ensureRecipientsIsMutable();
+          recipients_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          recipientsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public Builder addRecipients(pactus.TransactionOuterClass.Recipient value) {
+        if (recipientsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRecipientsIsMutable();
+          recipients_.add(value);
+          onChanged();
+        } else {
+          recipientsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public Builder addRecipients(
+          int index, pactus.TransactionOuterClass.Recipient value) {
+        if (recipientsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureRecipientsIsMutable();
+          recipients_.add(index, value);
+          onChanged();
+        } else {
+          recipientsBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public Builder addRecipients(
+          pactus.TransactionOuterClass.Recipient.Builder builderForValue) {
+        if (recipientsBuilder_ == null) {
+          ensureRecipientsIsMutable();
+          recipients_.add(builderForValue.build());
+          onChanged();
+        } else {
+          recipientsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public Builder addRecipients(
+          int index, pactus.TransactionOuterClass.Recipient.Builder builderForValue) {
+        if (recipientsBuilder_ == null) {
+          ensureRecipientsIsMutable();
+          recipients_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          recipientsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public Builder addAllRecipients(
+          java.lang.Iterable<? extends pactus.TransactionOuterClass.Recipient> values) {
+        if (recipientsBuilder_ == null) {
+          ensureRecipientsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, recipients_);
+          onChanged();
+        } else {
+          recipientsBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public Builder clearRecipients() {
+        if (recipientsBuilder_ == null) {
+          recipients_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000002);
+          onChanged();
+        } else {
+          recipientsBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public Builder removeRecipients(int index) {
+        if (recipientsBuilder_ == null) {
+          ensureRecipientsIsMutable();
+          recipients_.remove(index);
+          onChanged();
+        } else {
+          recipientsBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public pactus.TransactionOuterClass.Recipient.Builder getRecipientsBuilder(
+          int index) {
+        return internalGetRecipientsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public pactus.TransactionOuterClass.RecipientOrBuilder getRecipientsOrBuilder(
+          int index) {
+        if (recipientsBuilder_ == null) {
+          return recipients_.get(index);  } else {
+          return recipientsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public java.util.List<? extends pactus.TransactionOuterClass.RecipientOrBuilder> 
+           getRecipientsOrBuilderList() {
+        if (recipientsBuilder_ != null) {
+          return recipientsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(recipients_);
+        }
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public pactus.TransactionOuterClass.Recipient.Builder addRecipientsBuilder() {
+        return internalGetRecipientsFieldBuilder().addBuilder(
+            pactus.TransactionOuterClass.Recipient.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public pactus.TransactionOuterClass.Recipient.Builder addRecipientsBuilder(
+          int index) {
+        return internalGetRecipientsFieldBuilder().addBuilder(
+            index, pactus.TransactionOuterClass.Recipient.getDefaultInstance());
+      }
+      /**
+       * <pre>
+       * The recipients of list receiver with amount.
+       * </pre>
+       *
+       * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
+       */
+      public java.util.List<pactus.TransactionOuterClass.Recipient.Builder> 
+           getRecipientsBuilderList() {
+        return internalGetRecipientsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilder<
+          pactus.TransactionOuterClass.Recipient, pactus.TransactionOuterClass.Recipient.Builder, pactus.TransactionOuterClass.RecipientOrBuilder> 
+          internalGetRecipientsFieldBuilder() {
+        if (recipientsBuilder_ == null) {
+          recipientsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
+              pactus.TransactionOuterClass.Recipient, pactus.TransactionOuterClass.Recipient.Builder, pactus.TransactionOuterClass.RecipientOrBuilder>(
+                  recipients_,
+                  ((bitField0_ & 0x00000002) != 0),
+                  getParentForChildren(),
+                  isClean());
+          recipients_ = null;
+        }
+        return recipientsBuilder_;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pactus.PayloadBatchTransfer)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.PayloadBatchTransfer)
+    private static final pactus.TransactionOuterClass.PayloadBatchTransfer DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.TransactionOuterClass.PayloadBatchTransfer();
+    }
+
+    public static pactus.TransactionOuterClass.PayloadBatchTransfer getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<PayloadBatchTransfer>
+        PARSER = new com.google.protobuf.AbstractParser<PayloadBatchTransfer>() {
+      @java.lang.Override
+      public PayloadBatchTransfer parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<PayloadBatchTransfer> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<PayloadBatchTransfer> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.TransactionOuterClass.PayloadBatchTransfer getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
+  public interface RecipientOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:pactus.Recipient)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * The receiver's address.
+     * </pre>
+     *
+     * <code>string receiver = 1 [json_name = "receiver"];</code>
+     * @return The receiver.
+     */
+    java.lang.String getReceiver();
+    /**
+     * <pre>
+     * The receiver's address.
+     * </pre>
+     *
+     * <code>string receiver = 1 [json_name = "receiver"];</code>
+     * @return The bytes for receiver.
+     */
+    com.google.protobuf.ByteString
+        getReceiverBytes();
+
+    /**
+     * <pre>
+     * The amount in NanoPAC.
+     * </pre>
+     *
+     * <code>int64 amount = 2 [json_name = "amount"];</code>
+     * @return The amount.
+     */
+    long getAmount();
+  }
+  /**
+   * <pre>
+   * Recipient is receiver with amount.
+   * </pre>
+   *
+   * Protobuf type {@code pactus.Recipient}
+   */
+  public static final class Recipient extends
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:pactus.Recipient)
+      RecipientOrBuilder {
+  private static final long serialVersionUID = 0L;
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 30,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        Recipient.class.getName());
+    }
+    // Use Recipient.newBuilder() to construct.
+    private Recipient(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+    }
+    private Recipient() {
+      receiver_ = "";
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return pactus.TransactionOuterClass.internal_static_pactus_Recipient_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return pactus.TransactionOuterClass.internal_static_pactus_Recipient_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              pactus.TransactionOuterClass.Recipient.class, pactus.TransactionOuterClass.Recipient.Builder.class);
+    }
+
+    public static final int RECEIVER_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object receiver_ = "";
+    /**
+     * <pre>
+     * The receiver's address.
+     * </pre>
+     *
+     * <code>string receiver = 1 [json_name = "receiver"];</code>
+     * @return The receiver.
+     */
+    @java.lang.Override
+    public java.lang.String getReceiver() {
+      java.lang.Object ref = receiver_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        receiver_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * The receiver's address.
+     * </pre>
+     *
+     * <code>string receiver = 1 [json_name = "receiver"];</code>
+     * @return The bytes for receiver.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getReceiverBytes() {
+      java.lang.Object ref = receiver_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        receiver_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int AMOUNT_FIELD_NUMBER = 2;
+    private long amount_ = 0L;
+    /**
+     * <pre>
+     * The amount in NanoPAC.
+     * </pre>
+     *
+     * <code>int64 amount = 2 [json_name = "amount"];</code>
+     * @return The amount.
+     */
+    @java.lang.Override
+    public long getAmount() {
+      return amount_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(receiver_)) {
+        com.google.protobuf.GeneratedMessage.writeString(output, 1, receiver_);
+      }
+      if (amount_ != 0L) {
+        output.writeInt64(2, amount_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(receiver_)) {
+        size += com.google.protobuf.GeneratedMessage.computeStringSize(1, receiver_);
+      }
+      if (amount_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(2, amount_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof pactus.TransactionOuterClass.Recipient)) {
+        return super.equals(obj);
+      }
+      pactus.TransactionOuterClass.Recipient other = (pactus.TransactionOuterClass.Recipient) obj;
+
+      if (!getReceiver()
+          .equals(other.getReceiver())) return false;
+      if (getAmount()
+          != other.getAmount()) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + RECEIVER_FIELD_NUMBER;
+      hash = (53 * hash) + getReceiver().hashCode();
+      hash = (37 * hash) + AMOUNT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getAmount());
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static pactus.TransactionOuterClass.Recipient parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.Recipient parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.Recipient parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.Recipient parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.Recipient parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static pactus.TransactionOuterClass.Recipient parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.Recipient parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.TransactionOuterClass.Recipient parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public static pactus.TransactionOuterClass.Recipient parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static pactus.TransactionOuterClass.Recipient parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static pactus.TransactionOuterClass.Recipient parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input);
+    }
+    public static pactus.TransactionOuterClass.Recipient parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessage
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(pactus.TransactionOuterClass.Recipient prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * <pre>
+     * Recipient is receiver with amount.
+     * </pre>
+     *
+     * Protobuf type {@code pactus.Recipient}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:pactus.Recipient)
+        pactus.TransactionOuterClass.RecipientOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return pactus.TransactionOuterClass.internal_static_pactus_Recipient_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return pactus.TransactionOuterClass.internal_static_pactus_Recipient_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                pactus.TransactionOuterClass.Recipient.class, pactus.TransactionOuterClass.Recipient.Builder.class);
+      }
+
+      // Construct using pactus.TransactionOuterClass.Recipient.newBuilder()
+      private Builder() {
+
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        receiver_ = "";
+        amount_ = 0L;
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return pactus.TransactionOuterClass.internal_static_pactus_Recipient_descriptor;
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.Recipient getDefaultInstanceForType() {
+        return pactus.TransactionOuterClass.Recipient.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.Recipient build() {
+        pactus.TransactionOuterClass.Recipient result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public pactus.TransactionOuterClass.Recipient buildPartial() {
+        pactus.TransactionOuterClass.Recipient result = new pactus.TransactionOuterClass.Recipient(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(pactus.TransactionOuterClass.Recipient result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.receiver_ = receiver_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.amount_ = amount_;
+        }
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof pactus.TransactionOuterClass.Recipient) {
+          return mergeFrom((pactus.TransactionOuterClass.Recipient)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(pactus.TransactionOuterClass.Recipient other) {
+        if (other == pactus.TransactionOuterClass.Recipient.getDefaultInstance()) return this;
+        if (!other.getReceiver().isEmpty()) {
+          receiver_ = other.receiver_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (other.getAmount() != 0L) {
+          setAmount(other.getAmount());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10: {
+                receiver_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 16: {
+                amount_ = input.readInt64();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 16
+              default: {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object receiver_ = "";
+      /**
+       * <pre>
+       * The receiver's address.
+       * </pre>
+       *
+       * <code>string receiver = 1 [json_name = "receiver"];</code>
+       * @return The receiver.
+       */
+      public java.lang.String getReceiver() {
+        java.lang.Object ref = receiver_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          receiver_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The receiver's address.
+       * </pre>
+       *
+       * <code>string receiver = 1 [json_name = "receiver"];</code>
+       * @return The bytes for receiver.
+       */
+      public com.google.protobuf.ByteString
+          getReceiverBytes() {
+        java.lang.Object ref = receiver_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          receiver_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * The receiver's address.
+       * </pre>
+       *
+       * <code>string receiver = 1 [json_name = "receiver"];</code>
+       * @param value The receiver to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReceiver(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        receiver_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The receiver's address.
+       * </pre>
+       *
+       * <code>string receiver = 1 [json_name = "receiver"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearReceiver() {
+        receiver_ = getDefaultInstance().getReceiver();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The receiver's address.
+       * </pre>
+       *
+       * <code>string receiver = 1 [json_name = "receiver"];</code>
+       * @param value The bytes for receiver to set.
+       * @return This builder for chaining.
+       */
+      public Builder setReceiverBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        receiver_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private long amount_ ;
+      /**
+       * <pre>
+       * The amount in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 amount = 2 [json_name = "amount"];</code>
+       * @return The amount.
+       */
+      @java.lang.Override
+      public long getAmount() {
+        return amount_;
+      }
+      /**
+       * <pre>
+       * The amount in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 amount = 2 [json_name = "amount"];</code>
+       * @param value The amount to set.
+       * @return This builder for chaining.
+       */
+      public Builder setAmount(long value) {
+
+        amount_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The amount in NanoPAC.
+       * </pre>
+       *
+       * <code>int64 amount = 2 [json_name = "amount"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearAmount() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        amount_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:pactus.Recipient)
+    }
+
+    // @@protoc_insertion_point(class_scope:pactus.Recipient)
+    private static final pactus.TransactionOuterClass.Recipient DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new pactus.TransactionOuterClass.Recipient();
+    }
+
+    public static pactus.TransactionOuterClass.Recipient getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Recipient>
+        PARSER = new com.google.protobuf.AbstractParser<Recipient>() {
+      @java.lang.Override
+      public Recipient parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        Builder builder = newBuilder();
+        try {
+          builder.mergeFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.setUnfinishedMessage(builder.buildPartial());
+        } catch (com.google.protobuf.UninitializedMessageException e) {
+          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+        } catch (java.io.IOException e) {
+          throw new com.google.protobuf.InvalidProtocolBufferException(e)
+              .setUnfinishedMessage(builder.buildPartial());
+        }
+        return builder.buildPartial();
+      }
+    };
+
+    public static com.google.protobuf.Parser<Recipient> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Recipient> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public pactus.TransactionOuterClass.Recipient getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface TransactionInfoOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.TransactionInfo)
       com.google.protobuf.MessageOrBuilder {
@@ -13806,6 +16927,33 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
+     * Batch Transfer transaction payload.
+     * </pre>
+     *
+     * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+     * @return Whether the batchTransfer field is set.
+     */
+    boolean hasBatchTransfer();
+    /**
+     * <pre>
+     * Batch Transfer transaction payload.
+     * </pre>
+     *
+     * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+     * @return The batchTransfer.
+     */
+    pactus.TransactionOuterClass.PayloadBatchTransfer getBatchTransfer();
+    /**
+     * <pre>
+     * Batch Transfer transaction payload.
+     * </pre>
+     *
+     * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+     */
+    pactus.TransactionOuterClass.PayloadBatchTransferOrBuilder getBatchTransferOrBuilder();
+
+    /**
+     * <pre>
      * A memo string for the transaction.
      * </pre>
      *
@@ -13924,6 +17072,7 @@ public final class TransactionOuterClass {
       SORTITION(32),
       UNBOND(33),
       WITHDRAW(34),
+      BATCH_TRANSFER(35),
       PAYLOAD_NOT_SET(0);
       private final int value;
       private PayloadCase(int value) {
@@ -13946,6 +17095,7 @@ public final class TransactionOuterClass {
           case 32: return SORTITION;
           case 33: return UNBOND;
           case 34: return WITHDRAW;
+          case 35: return BATCH_TRANSFER;
           case 0: return PAYLOAD_NOT_SET;
           default: return null;
         }
@@ -14356,6 +17506,49 @@ public final class TransactionOuterClass {
       return pactus.TransactionOuterClass.PayloadWithdraw.getDefaultInstance();
     }
 
+    public static final int BATCH_TRANSFER_FIELD_NUMBER = 35;
+    /**
+     * <pre>
+     * Batch Transfer transaction payload.
+     * </pre>
+     *
+     * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+     * @return Whether the batchTransfer field is set.
+     */
+    @java.lang.Override
+    public boolean hasBatchTransfer() {
+      return payloadCase_ == 35;
+    }
+    /**
+     * <pre>
+     * Batch Transfer transaction payload.
+     * </pre>
+     *
+     * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+     * @return The batchTransfer.
+     */
+    @java.lang.Override
+    public pactus.TransactionOuterClass.PayloadBatchTransfer getBatchTransfer() {
+      if (payloadCase_ == 35) {
+         return (pactus.TransactionOuterClass.PayloadBatchTransfer) payload_;
+      }
+      return pactus.TransactionOuterClass.PayloadBatchTransfer.getDefaultInstance();
+    }
+    /**
+     * <pre>
+     * Batch Transfer transaction payload.
+     * </pre>
+     *
+     * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+     */
+    @java.lang.Override
+    public pactus.TransactionOuterClass.PayloadBatchTransferOrBuilder getBatchTransferOrBuilder() {
+      if (payloadCase_ == 35) {
+         return (pactus.TransactionOuterClass.PayloadBatchTransfer) payload_;
+      }
+      return pactus.TransactionOuterClass.PayloadBatchTransfer.getDefaultInstance();
+    }
+
     public static final int MEMO_FIELD_NUMBER = 8;
     @SuppressWarnings("serial")
     private volatile java.lang.Object memo_ = "";
@@ -14556,6 +17749,9 @@ public final class TransactionOuterClass {
       if (payloadCase_ == 34) {
         output.writeMessage(34, (pactus.TransactionOuterClass.PayloadWithdraw) payload_);
       }
+      if (payloadCase_ == 35) {
+        output.writeMessage(35, (pactus.TransactionOuterClass.PayloadBatchTransfer) payload_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -14620,6 +17816,10 @@ public final class TransactionOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(34, (pactus.TransactionOuterClass.PayloadWithdraw) payload_);
       }
+      if (payloadCase_ == 35) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(35, (pactus.TransactionOuterClass.PayloadBatchTransfer) payload_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -14675,6 +17875,10 @@ public final class TransactionOuterClass {
         case 34:
           if (!getWithdraw()
               .equals(other.getWithdraw())) return false;
+          break;
+        case 35:
+          if (!getBatchTransfer()
+              .equals(other.getBatchTransfer())) return false;
           break;
         case 0:
         default:
@@ -14732,6 +17936,10 @@ public final class TransactionOuterClass {
         case 34:
           hash = (37 * hash) + WITHDRAW_FIELD_NUMBER;
           hash = (53 * hash) + getWithdraw().hashCode();
+          break;
+        case 35:
+          hash = (37 * hash) + BATCH_TRANSFER_FIELD_NUMBER;
+          hash = (53 * hash) + getBatchTransfer().hashCode();
           break;
         case 0:
         default:
@@ -14893,6 +18101,9 @@ public final class TransactionOuterClass {
         if (withdrawBuilder_ != null) {
           withdrawBuilder_.clear();
         }
+        if (batchTransferBuilder_ != null) {
+          batchTransferBuilder_.clear();
+        }
         memo_ = "";
         publicKey_ = "";
         signature_ = "";
@@ -14953,13 +18164,13 @@ public final class TransactionOuterClass {
         if (((from_bitField0_ & 0x00000040) != 0)) {
           result.payloadType_ = payloadType_;
         }
-        if (((from_bitField0_ & 0x00001000) != 0)) {
+        if (((from_bitField0_ & 0x00002000) != 0)) {
           result.memo_ = memo_;
         }
-        if (((from_bitField0_ & 0x00002000) != 0)) {
+        if (((from_bitField0_ & 0x00004000) != 0)) {
           result.publicKey_ = publicKey_;
         }
-        if (((from_bitField0_ & 0x00004000) != 0)) {
+        if (((from_bitField0_ & 0x00008000) != 0)) {
           result.signature_ = signature_;
         }
       }
@@ -14986,6 +18197,10 @@ public final class TransactionOuterClass {
         if (payloadCase_ == 34 &&
             withdrawBuilder_ != null) {
           result.payload_ = withdrawBuilder_.build();
+        }
+        if (payloadCase_ == 35 &&
+            batchTransferBuilder_ != null) {
+          result.payload_ = batchTransferBuilder_.build();
         }
       }
 
@@ -15028,17 +18243,17 @@ public final class TransactionOuterClass {
         }
         if (!other.getMemo().isEmpty()) {
           memo_ = other.memo_;
-          bitField0_ |= 0x00001000;
+          bitField0_ |= 0x00002000;
           onChanged();
         }
         if (!other.getPublicKey().isEmpty()) {
           publicKey_ = other.publicKey_;
-          bitField0_ |= 0x00002000;
+          bitField0_ |= 0x00004000;
           onChanged();
         }
         if (!other.getSignature().isEmpty()) {
           signature_ = other.signature_;
-          bitField0_ |= 0x00004000;
+          bitField0_ |= 0x00008000;
           onChanged();
         }
         switch (other.getPayloadCase()) {
@@ -15060,6 +18275,10 @@ public final class TransactionOuterClass {
           }
           case WITHDRAW: {
             mergeWithdraw(other.getWithdraw());
+            break;
+          }
+          case BATCH_TRANSFER: {
+            mergeBatchTransfer(other.getBatchTransfer());
             break;
           }
           case PAYLOAD_NOT_SET: {
@@ -15129,17 +18348,17 @@ public final class TransactionOuterClass {
               } // case 56
               case 66: {
                 memo_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00001000;
+                bitField0_ |= 0x00002000;
                 break;
               } // case 66
               case 74: {
                 publicKey_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00002000;
+                bitField0_ |= 0x00004000;
                 break;
               } // case 74
               case 82: {
                 signature_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00004000;
+                bitField0_ |= 0x00008000;
                 break;
               } // case 82
               case 242: {
@@ -15177,6 +18396,13 @@ public final class TransactionOuterClass {
                 payloadCase_ = 34;
                 break;
               } // case 274
+              case 282: {
+                input.readMessage(
+                    internalGetBatchTransferFieldBuilder().getBuilder(),
+                    extensionRegistry);
+                payloadCase_ = 35;
+                break;
+              } // case 282
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -16532,6 +19758,184 @@ public final class TransactionOuterClass {
         return withdrawBuilder_;
       }
 
+      private com.google.protobuf.SingleFieldBuilder<
+          pactus.TransactionOuterClass.PayloadBatchTransfer, pactus.TransactionOuterClass.PayloadBatchTransfer.Builder, pactus.TransactionOuterClass.PayloadBatchTransferOrBuilder> batchTransferBuilder_;
+      /**
+       * <pre>
+       * Batch Transfer transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+       * @return Whether the batchTransfer field is set.
+       */
+      @java.lang.Override
+      public boolean hasBatchTransfer() {
+        return payloadCase_ == 35;
+      }
+      /**
+       * <pre>
+       * Batch Transfer transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+       * @return The batchTransfer.
+       */
+      @java.lang.Override
+      public pactus.TransactionOuterClass.PayloadBatchTransfer getBatchTransfer() {
+        if (batchTransferBuilder_ == null) {
+          if (payloadCase_ == 35) {
+            return (pactus.TransactionOuterClass.PayloadBatchTransfer) payload_;
+          }
+          return pactus.TransactionOuterClass.PayloadBatchTransfer.getDefaultInstance();
+        } else {
+          if (payloadCase_ == 35) {
+            return batchTransferBuilder_.getMessage();
+          }
+          return pactus.TransactionOuterClass.PayloadBatchTransfer.getDefaultInstance();
+        }
+      }
+      /**
+       * <pre>
+       * Batch Transfer transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+       */
+      public Builder setBatchTransfer(pactus.TransactionOuterClass.PayloadBatchTransfer value) {
+        if (batchTransferBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          payload_ = value;
+          onChanged();
+        } else {
+          batchTransferBuilder_.setMessage(value);
+        }
+        payloadCase_ = 35;
+        return this;
+      }
+      /**
+       * <pre>
+       * Batch Transfer transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+       */
+      public Builder setBatchTransfer(
+          pactus.TransactionOuterClass.PayloadBatchTransfer.Builder builderForValue) {
+        if (batchTransferBuilder_ == null) {
+          payload_ = builderForValue.build();
+          onChanged();
+        } else {
+          batchTransferBuilder_.setMessage(builderForValue.build());
+        }
+        payloadCase_ = 35;
+        return this;
+      }
+      /**
+       * <pre>
+       * Batch Transfer transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+       */
+      public Builder mergeBatchTransfer(pactus.TransactionOuterClass.PayloadBatchTransfer value) {
+        if (batchTransferBuilder_ == null) {
+          if (payloadCase_ == 35 &&
+              payload_ != pactus.TransactionOuterClass.PayloadBatchTransfer.getDefaultInstance()) {
+            payload_ = pactus.TransactionOuterClass.PayloadBatchTransfer.newBuilder((pactus.TransactionOuterClass.PayloadBatchTransfer) payload_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            payload_ = value;
+          }
+          onChanged();
+        } else {
+          if (payloadCase_ == 35) {
+            batchTransferBuilder_.mergeFrom(value);
+          } else {
+            batchTransferBuilder_.setMessage(value);
+          }
+        }
+        payloadCase_ = 35;
+        return this;
+      }
+      /**
+       * <pre>
+       * Batch Transfer transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+       */
+      public Builder clearBatchTransfer() {
+        if (batchTransferBuilder_ == null) {
+          if (payloadCase_ == 35) {
+            payloadCase_ = 0;
+            payload_ = null;
+            onChanged();
+          }
+        } else {
+          if (payloadCase_ == 35) {
+            payloadCase_ = 0;
+            payload_ = null;
+          }
+          batchTransferBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <pre>
+       * Batch Transfer transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+       */
+      public pactus.TransactionOuterClass.PayloadBatchTransfer.Builder getBatchTransferBuilder() {
+        return internalGetBatchTransferFieldBuilder().getBuilder();
+      }
+      /**
+       * <pre>
+       * Batch Transfer transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+       */
+      @java.lang.Override
+      public pactus.TransactionOuterClass.PayloadBatchTransferOrBuilder getBatchTransferOrBuilder() {
+        if ((payloadCase_ == 35) && (batchTransferBuilder_ != null)) {
+          return batchTransferBuilder_.getMessageOrBuilder();
+        } else {
+          if (payloadCase_ == 35) {
+            return (pactus.TransactionOuterClass.PayloadBatchTransfer) payload_;
+          }
+          return pactus.TransactionOuterClass.PayloadBatchTransfer.getDefaultInstance();
+        }
+      }
+      /**
+       * <pre>
+       * Batch Transfer transaction payload.
+       * </pre>
+       *
+       * <code>.pactus.PayloadBatchTransfer batch_transfer = 35 [json_name = "batchTransfer"];</code>
+       */
+      private com.google.protobuf.SingleFieldBuilder<
+          pactus.TransactionOuterClass.PayloadBatchTransfer, pactus.TransactionOuterClass.PayloadBatchTransfer.Builder, pactus.TransactionOuterClass.PayloadBatchTransferOrBuilder> 
+          internalGetBatchTransferFieldBuilder() {
+        if (batchTransferBuilder_ == null) {
+          if (!(payloadCase_ == 35)) {
+            payload_ = pactus.TransactionOuterClass.PayloadBatchTransfer.getDefaultInstance();
+          }
+          batchTransferBuilder_ = new com.google.protobuf.SingleFieldBuilder<
+              pactus.TransactionOuterClass.PayloadBatchTransfer, pactus.TransactionOuterClass.PayloadBatchTransfer.Builder, pactus.TransactionOuterClass.PayloadBatchTransferOrBuilder>(
+                  (pactus.TransactionOuterClass.PayloadBatchTransfer) payload_,
+                  getParentForChildren(),
+                  isClean());
+          payload_ = null;
+        }
+        payloadCase_ = 35;
+        onChanged();
+        return batchTransferBuilder_;
+      }
+
       private java.lang.Object memo_ = "";
       /**
        * <pre>
@@ -16587,7 +19991,7 @@ public final class TransactionOuterClass {
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         memo_ = value;
-        bitField0_ |= 0x00001000;
+        bitField0_ |= 0x00002000;
         onChanged();
         return this;
       }
@@ -16601,7 +20005,7 @@ public final class TransactionOuterClass {
        */
       public Builder clearMemo() {
         memo_ = getDefaultInstance().getMemo();
-        bitField0_ = (bitField0_ & ~0x00001000);
+        bitField0_ = (bitField0_ & ~0x00002000);
         onChanged();
         return this;
       }
@@ -16619,7 +20023,7 @@ public final class TransactionOuterClass {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         memo_ = value;
-        bitField0_ |= 0x00001000;
+        bitField0_ |= 0x00002000;
         onChanged();
         return this;
       }
@@ -16679,7 +20083,7 @@ public final class TransactionOuterClass {
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         publicKey_ = value;
-        bitField0_ |= 0x00002000;
+        bitField0_ |= 0x00004000;
         onChanged();
         return this;
       }
@@ -16693,7 +20097,7 @@ public final class TransactionOuterClass {
        */
       public Builder clearPublicKey() {
         publicKey_ = getDefaultInstance().getPublicKey();
-        bitField0_ = (bitField0_ & ~0x00002000);
+        bitField0_ = (bitField0_ & ~0x00004000);
         onChanged();
         return this;
       }
@@ -16711,7 +20115,7 @@ public final class TransactionOuterClass {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         publicKey_ = value;
-        bitField0_ |= 0x00002000;
+        bitField0_ |= 0x00004000;
         onChanged();
         return this;
       }
@@ -16771,7 +20175,7 @@ public final class TransactionOuterClass {
           java.lang.String value) {
         if (value == null) { throw new NullPointerException(); }
         signature_ = value;
-        bitField0_ |= 0x00004000;
+        bitField0_ |= 0x00008000;
         onChanged();
         return this;
       }
@@ -16785,7 +20189,7 @@ public final class TransactionOuterClass {
        */
       public Builder clearSignature() {
         signature_ = getDefaultInstance().getSignature();
-        bitField0_ = (bitField0_ & ~0x00004000);
+        bitField0_ = (bitField0_ & ~0x00008000);
         onChanged();
         return this;
       }
@@ -16803,7 +20207,7 @@ public final class TransactionOuterClass {
         if (value == null) { throw new NullPointerException(); }
         checkByteStringIsUtf8(value);
         signature_ = value;
-        bitField0_ |= 0x00004000;
+        bitField0_ |= 0x00008000;
         onChanged();
         return this;
       }
@@ -18102,6 +21506,11 @@ public final class TransactionOuterClass {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pactus_GetRawWithdrawTransactionRequest_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_GetRawBatchTransferTransactionRequest_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pactus_GetRawBatchTransferTransactionRequest_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_GetRawTransactionResponse_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -18131,6 +21540,16 @@ public final class TransactionOuterClass {
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pactus_PayloadWithdraw_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_PayloadBatchTransfer_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pactus_PayloadBatchTransfer_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_Recipient_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pactus_Recipient_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_TransactionInfo_descriptor;
   private static final 
@@ -18188,67 +21607,81 @@ public final class TransactionOuterClass {
       "\021validator_address\030\002 \001(\tR\020validatorAddre" +
       "ss\022\'\n\017account_address\030\003 \001(\tR\016accountAddr" +
       "ess\022\026\n\006amount\030\004 \001(\003R\006amount\022\020\n\003fee\030\005 \001(\003" +
-      "R\003fee\022\022\n\004memo\030\006 \001(\tR\004memo\"T\n\031GetRawTrans" +
-      "actionResponse\022\'\n\017raw_transaction\030\001 \001(\tR" +
-      "\016rawTransaction\022\016\n\002id\030\002 \001(\tR\002id\"]\n\017Paylo" +
-      "adTransfer\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010re" +
-      "ceiver\030\002 \001(\tR\010receiver\022\026\n\006amount\030\003 \001(\003R\006" +
-      "amount\"v\n\013PayloadBond\022\026\n\006sender\030\001 \001(\tR\006s" +
-      "ender\022\032\n\010receiver\030\002 \001(\tR\010receiver\022\024\n\005sta" +
-      "ke\030\003 \001(\003R\005stake\022\035\n\npublic_key\030\004 \001(\tR\tpub" +
-      "licKey\"B\n\020PayloadSortition\022\030\n\007address\030\001 " +
-      "\001(\tR\007address\022\024\n\005proof\030\002 \001(\tR\005proof\"-\n\rPa" +
-      "yloadUnbond\022\034\n\tvalidator\030\001 \001(\tR\tvalidato" +
-      "r\"\177\n\017PayloadWithdraw\022+\n\021validator_addres" +
-      "s\030\001 \001(\tR\020validatorAddress\022\'\n\017account_add" +
-      "ress\030\002 \001(\tR\016accountAddress\022\026\n\006amount\030\003 \001" +
-      "(\003R\006amount\"\254\004\n\017TransactionInfo\022\016\n\002id\030\001 \001" +
-      "(\tR\002id\022\022\n\004data\030\002 \001(\tR\004data\022\030\n\007version\030\003 " +
-      "\001(\005R\007version\022\033\n\tlock_time\030\004 \001(\rR\010lockTim" +
-      "e\022\024\n\005value\030\005 \001(\003R\005value\022\020\n\003fee\030\006 \001(\003R\003fe" +
-      "e\0226\n\014payload_type\030\007 \001(\0162\023.pactus.Payload" +
-      "TypeR\013payloadType\0225\n\010transfer\030\036 \001(\0132\027.pa" +
-      "ctus.PayloadTransferH\000R\010transfer\022)\n\004bond" +
-      "\030\037 \001(\0132\023.pactus.PayloadBondH\000R\004bond\0228\n\ts" +
-      "ortition\030  \001(\0132\030.pactus.PayloadSortition" +
-      "H\000R\tsortition\022/\n\006unbond\030! \001(\0132\025.pactus.P" +
-      "ayloadUnbondH\000R\006unbond\0225\n\010withdraw\030\" \001(\013" +
-      "2\027.pactus.PayloadWithdrawH\000R\010withdraw\022\022\n" +
-      "\004memo\030\010 \001(\tR\004memo\022\035\n\npublic_key\030\t \001(\tR\tp" +
-      "ublicKey\022\034\n\tsignature\030\n \001(\tR\tsignatureB\t" +
-      "\n\007payload\"F\n\033DecodeRawTransactionRequest" +
-      "\022\'\n\017raw_transaction\030\001 \001(\tR\016rawTransactio" +
-      "n\"Y\n\034DecodeRawTransactionResponse\0229\n\013tra" +
-      "nsaction\030\001 \001(\0132\027.pactus.TransactionInfoR" +
-      "\013transaction*\255\001\n\013PayloadType\022\034\n\030PAYLOAD_" +
-      "TYPE_UNSPECIFIED\020\000\022\031\n\025PAYLOAD_TYPE_TRANS" +
-      "FER\020\001\022\025\n\021PAYLOAD_TYPE_BOND\020\002\022\032\n\026PAYLOAD_" +
-      "TYPE_SORTITION\020\003\022\027\n\023PAYLOAD_TYPE_UNBOND\020" +
-      "\004\022\031\n\025PAYLOAD_TYPE_WITHDRAW\020\005*V\n\024Transact" +
-      "ionVerbosity\022\036\n\032TRANSACTION_VERBOSITY_DA" +
-      "TA\020\000\022\036\n\032TRANSACTION_VERBOSITY_INFO\020\0012\213\006\n" +
-      "\013Transaction\022O\n\016GetTransaction\022\035.pactus." +
-      "GetTransactionRequest\032\036.pactus.GetTransa" +
-      "ctionResponse\022I\n\014CalculateFee\022\033.pactus.C" +
-      "alculateFeeRequest\032\034.pactus.CalculateFee" +
-      "Response\022a\n\024BroadcastTransaction\022#.pactu" +
-      "s.BroadcastTransactionRequest\032$.pactus.B" +
-      "roadcastTransactionResponse\022h\n\031GetRawTra" +
-      "nsferTransaction\022(.pactus.GetRawTransfer" +
-      "TransactionRequest\032!.pactus.GetRawTransa" +
-      "ctionResponse\022`\n\025GetRawBondTransaction\022$" +
-      ".pactus.GetRawBondTransactionRequest\032!.p" +
-      "actus.GetRawTransactionResponse\022d\n\027GetRa" +
-      "wUnbondTransaction\022&.pactus.GetRawUnbond" +
-      "TransactionRequest\032!.pactus.GetRawTransa" +
-      "ctionResponse\022h\n\031GetRawWithdrawTransacti" +
-      "on\022(.pactus.GetRawWithdrawTransactionReq" +
-      "uest\032!.pactus.GetRawTransactionResponse\022" +
-      "a\n\024DecodeRawTransaction\022#.pactus.DecodeR" +
-      "awTransactionRequest\032$.pactus.DecodeRawT" +
-      "ransactionResponseB:\n\006pactusZ0github.com" +
-      "/pactus-project/pactus/www/grpc/pactusb\006" +
-      "proto3"
+      "R\003fee\022\022\n\004memo\030\006 \001(\tR\004memo\"\265\001\n%GetRawBatc" +
+      "hTransferTransactionRequest\022\033\n\tlock_time" +
+      "\030\001 \001(\rR\010lockTime\022\026\n\006sender\030\002 \001(\tR\006sender" +
+      "\0221\n\nrecipients\030\003 \003(\0132\021.pactus.RecipientR" +
+      "\nrecipients\022\020\n\003fee\030\004 \001(\003R\003fee\022\022\n\004memo\030\005 " +
+      "\001(\tR\004memo\"T\n\031GetRawTransactionResponse\022\'" +
+      "\n\017raw_transaction\030\001 \001(\tR\016rawTransaction\022" +
+      "\016\n\002id\030\002 \001(\tR\002id\"]\n\017PayloadTransfer\022\026\n\006se" +
+      "nder\030\001 \001(\tR\006sender\022\032\n\010receiver\030\002 \001(\tR\010re" +
+      "ceiver\022\026\n\006amount\030\003 \001(\003R\006amount\"v\n\013Payloa" +
+      "dBond\022\026\n\006sender\030\001 \001(\tR\006sender\022\032\n\010receive" +
+      "r\030\002 \001(\tR\010receiver\022\024\n\005stake\030\003 \001(\003R\005stake\022" +
+      "\035\n\npublic_key\030\004 \001(\tR\tpublicKey\"B\n\020Payloa" +
+      "dSortition\022\030\n\007address\030\001 \001(\tR\007address\022\024\n\005" +
+      "proof\030\002 \001(\tR\005proof\"-\n\rPayloadUnbond\022\034\n\tv" +
+      "alidator\030\001 \001(\tR\tvalidator\"\177\n\017PayloadWith" +
+      "draw\022+\n\021validator_address\030\001 \001(\tR\020validat" +
+      "orAddress\022\'\n\017account_address\030\002 \001(\tR\016acco" +
+      "untAddress\022\026\n\006amount\030\003 \001(\003R\006amount\"a\n\024Pa" +
+      "yloadBatchTransfer\022\026\n\006sender\030\001 \001(\tR\006send" +
+      "er\0221\n\nrecipients\030\002 \003(\0132\021.pactus.Recipien" +
+      "tR\nrecipients\"?\n\tRecipient\022\032\n\010receiver\030\001" +
+      " \001(\tR\010receiver\022\026\n\006amount\030\002 \001(\003R\006amount\"\363" +
+      "\004\n\017TransactionInfo\022\016\n\002id\030\001 \001(\tR\002id\022\022\n\004da" +
+      "ta\030\002 \001(\tR\004data\022\030\n\007version\030\003 \001(\005R\007version" +
+      "\022\033\n\tlock_time\030\004 \001(\rR\010lockTime\022\024\n\005value\030\005" +
+      " \001(\003R\005value\022\020\n\003fee\030\006 \001(\003R\003fee\0226\n\014payload" +
+      "_type\030\007 \001(\0162\023.pactus.PayloadTypeR\013payloa" +
+      "dType\0225\n\010transfer\030\036 \001(\0132\027.pactus.Payload" +
+      "TransferH\000R\010transfer\022)\n\004bond\030\037 \001(\0132\023.pac" +
+      "tus.PayloadBondH\000R\004bond\0228\n\tsortition\030  \001" +
+      "(\0132\030.pactus.PayloadSortitionH\000R\tsortitio" +
+      "n\022/\n\006unbond\030! \001(\0132\025.pactus.PayloadUnbond" +
+      "H\000R\006unbond\0225\n\010withdraw\030\" \001(\0132\027.pactus.Pa" +
+      "yloadWithdrawH\000R\010withdraw\022E\n\016batch_trans" +
+      "fer\030# \001(\0132\034.pactus.PayloadBatchTransferH" +
+      "\000R\rbatchTransfer\022\022\n\004memo\030\010 \001(\tR\004memo\022\035\n\n" +
+      "public_key\030\t \001(\tR\tpublicKey\022\034\n\tsignature" +
+      "\030\n \001(\tR\tsignatureB\t\n\007payload\"F\n\033DecodeRa" +
+      "wTransactionRequest\022\'\n\017raw_transaction\030\001" +
+      " \001(\tR\016rawTransaction\"Y\n\034DecodeRawTransac" +
+      "tionResponse\0229\n\013transaction\030\001 \001(\0132\027.pact" +
+      "us.TransactionInfoR\013transaction*\316\001\n\013Payl" +
+      "oadType\022\034\n\030PAYLOAD_TYPE_UNSPECIFIED\020\000\022\031\n" +
+      "\025PAYLOAD_TYPE_TRANSFER\020\001\022\025\n\021PAYLOAD_TYPE" +
+      "_BOND\020\002\022\032\n\026PAYLOAD_TYPE_SORTITION\020\003\022\027\n\023P" +
+      "AYLOAD_TYPE_UNBOND\020\004\022\031\n\025PAYLOAD_TYPE_WIT" +
+      "HDRAW\020\005\022\037\n\033PAYLOAD_TYPE_BATCH_TRANSFER\020\006" +
+      "*V\n\024TransactionVerbosity\022\036\n\032TRANSACTION_" +
+      "VERBOSITY_DATA\020\000\022\036\n\032TRANSACTION_VERBOSIT" +
+      "Y_INFO\020\0012\377\006\n\013Transaction\022O\n\016GetTransacti" +
+      "on\022\035.pactus.GetTransactionRequest\032\036.pact" +
+      "us.GetTransactionResponse\022I\n\014CalculateFe" +
+      "e\022\033.pactus.CalculateFeeRequest\032\034.pactus." +
+      "CalculateFeeResponse\022a\n\024BroadcastTransac" +
+      "tion\022#.pactus.BroadcastTransactionReques" +
+      "t\032$.pactus.BroadcastTransactionResponse\022" +
+      "h\n\031GetRawTransferTransaction\022(.pactus.Ge" +
+      "tRawTransferTransactionRequest\032!.pactus." +
+      "GetRawTransactionResponse\022`\n\025GetRawBondT" +
+      "ransaction\022$.pactus.GetRawBondTransactio" +
+      "nRequest\032!.pactus.GetRawTransactionRespo" +
+      "nse\022d\n\027GetRawUnbondTransaction\022&.pactus." +
+      "GetRawUnbondTransactionRequest\032!.pactus." +
+      "GetRawTransactionResponse\022h\n\031GetRawWithd" +
+      "rawTransaction\022(.pactus.GetRawWithdrawTr" +
+      "ansactionRequest\032!.pactus.GetRawTransact" +
+      "ionResponse\022r\n\036GetRawBatchTransferTransa" +
+      "ction\022-.pactus.GetRawBatchTransferTransa" +
+      "ctionRequest\032!.pactus.GetRawTransactionR" +
+      "esponse\022a\n\024DecodeRawTransaction\022#.pactus" +
+      ".DecodeRawTransactionRequest\032$.pactus.De" +
+      "codeRawTransactionResponseB:\n\006pactusZ0gi" +
+      "thub.com/pactus-project/pactus/www/grpc/" +
+      "pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -18314,56 +21747,74 @@ public final class TransactionOuterClass {
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetRawWithdrawTransactionRequest_descriptor,
         new java.lang.String[] { "LockTime", "ValidatorAddress", "AccountAddress", "Amount", "Fee", "Memo", });
-    internal_static_pactus_GetRawTransactionResponse_descriptor =
+    internal_static_pactus_GetRawBatchTransferTransactionRequest_descriptor =
       getDescriptor().getMessageTypes().get(10);
+    internal_static_pactus_GetRawBatchTransferTransactionRequest_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pactus_GetRawBatchTransferTransactionRequest_descriptor,
+        new java.lang.String[] { "LockTime", "Sender", "Recipients", "Fee", "Memo", });
+    internal_static_pactus_GetRawTransactionResponse_descriptor =
+      getDescriptor().getMessageTypes().get(11);
     internal_static_pactus_GetRawTransactionResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetRawTransactionResponse_descriptor,
         new java.lang.String[] { "RawTransaction", "Id", });
     internal_static_pactus_PayloadTransfer_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(12);
     internal_static_pactus_PayloadTransfer_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PayloadTransfer_descriptor,
         new java.lang.String[] { "Sender", "Receiver", "Amount", });
     internal_static_pactus_PayloadBond_descriptor =
-      getDescriptor().getMessageTypes().get(12);
+      getDescriptor().getMessageTypes().get(13);
     internal_static_pactus_PayloadBond_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PayloadBond_descriptor,
         new java.lang.String[] { "Sender", "Receiver", "Stake", "PublicKey", });
     internal_static_pactus_PayloadSortition_descriptor =
-      getDescriptor().getMessageTypes().get(13);
+      getDescriptor().getMessageTypes().get(14);
     internal_static_pactus_PayloadSortition_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PayloadSortition_descriptor,
         new java.lang.String[] { "Address", "Proof", });
     internal_static_pactus_PayloadUnbond_descriptor =
-      getDescriptor().getMessageTypes().get(14);
+      getDescriptor().getMessageTypes().get(15);
     internal_static_pactus_PayloadUnbond_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PayloadUnbond_descriptor,
         new java.lang.String[] { "Validator", });
     internal_static_pactus_PayloadWithdraw_descriptor =
-      getDescriptor().getMessageTypes().get(15);
+      getDescriptor().getMessageTypes().get(16);
     internal_static_pactus_PayloadWithdraw_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PayloadWithdraw_descriptor,
         new java.lang.String[] { "ValidatorAddress", "AccountAddress", "Amount", });
+    internal_static_pactus_PayloadBatchTransfer_descriptor =
+      getDescriptor().getMessageTypes().get(17);
+    internal_static_pactus_PayloadBatchTransfer_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pactus_PayloadBatchTransfer_descriptor,
+        new java.lang.String[] { "Sender", "Recipients", });
+    internal_static_pactus_Recipient_descriptor =
+      getDescriptor().getMessageTypes().get(18);
+    internal_static_pactus_Recipient_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pactus_Recipient_descriptor,
+        new java.lang.String[] { "Receiver", "Amount", });
     internal_static_pactus_TransactionInfo_descriptor =
-      getDescriptor().getMessageTypes().get(16);
+      getDescriptor().getMessageTypes().get(19);
     internal_static_pactus_TransactionInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_TransactionInfo_descriptor,
-        new java.lang.String[] { "Id", "Data", "Version", "LockTime", "Value", "Fee", "PayloadType", "Transfer", "Bond", "Sortition", "Unbond", "Withdraw", "Memo", "PublicKey", "Signature", "Payload", });
+        new java.lang.String[] { "Id", "Data", "Version", "LockTime", "Value", "Fee", "PayloadType", "Transfer", "Bond", "Sortition", "Unbond", "Withdraw", "BatchTransfer", "Memo", "PublicKey", "Signature", "Payload", });
     internal_static_pactus_DecodeRawTransactionRequest_descriptor =
-      getDescriptor().getMessageTypes().get(17);
+      getDescriptor().getMessageTypes().get(20);
     internal_static_pactus_DecodeRawTransactionRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_DecodeRawTransactionRequest_descriptor,
         new java.lang.String[] { "RawTransaction", });
     internal_static_pactus_DecodeRawTransactionResponse_descriptor =
-      getDescriptor().getMessageTypes().get(18);
+      getDescriptor().getMessageTypes().get(21);
     internal_static_pactus_DecodeRawTransactionResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_DecodeRawTransactionResponse_descriptor,

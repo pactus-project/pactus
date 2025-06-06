@@ -27,6 +27,9 @@ service Transaction {
   // GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
   rpc GetRawWithdrawTransaction(GetRawWithdrawTransactionRequest) returns (GetRawTransactionResponse);
 
+  // GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.
+  rpc GetRawBatchTransferTransaction(GetRawBatchTransferTransactionRequest) returns (GetRawTransactionResponse);
+
   // DecodeRawTransaction accepts raw transaction and returns decoded transaction.
   rpc DecodeRawTransaction(DecodeRawTransactionRequest) returns (DecodeRawTransactionResponse);
 }
@@ -139,6 +142,20 @@ message GetRawWithdrawTransactionRequest {
   string memo = 6;
 }
 
+// Request message for retrieving raw details of a batch transfer transaction.
+message GetRawBatchTransferTransactionRequest {
+  // The lock time for the transaction. If not set, defaults to the last block height.
+  uint32 lock_time = 1;
+  // The sender's account address.
+  string sender = 2;
+  // The recipients list of receiver with amount, min 2 recipients.
+  repeated Recipient recipients = 3;
+  // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
+  int64 fee = 4;
+  // A memo string for the transaction.
+  string memo = 5;
+}
+
 // Response message contains raw transaction data.
 message GetRawTransactionResponse {
   // The raw transaction data in hexadecimal format.
@@ -193,6 +210,22 @@ message PayloadWithdraw {
   int64 amount = 3;
 }
 
+// Payload for a batch transfer transaction.
+message PayloadBatchTransfer {
+  // The sender's address.
+  string sender = 1;
+  // The recipients of list receiver with amount.
+  repeated Recipient recipients = 2;
+}
+
+// Recipient is receiver with amount.
+message Recipient {
+  // The receiver's address.
+  string receiver = 1;
+  // The amount in NanoPAC.
+  int64 amount = 2;
+}
+
 // Information about a transaction.
 message TransactionInfo {
   // The unique ID of the transaction.
@@ -221,6 +254,8 @@ message TransactionInfo {
     PayloadUnbond unbond = 33;
     // Withdraw transaction payload.
     PayloadWithdraw withdraw = 34;
+    // Batch Transfer transaction payload.
+    PayloadBatchTransfer batch_transfer = 35;
   }
   // A memo string for the transaction.
   string memo = 8;
@@ -244,6 +279,8 @@ enum PayloadType {
   PAYLOAD_TYPE_UNBOND = 4;
   // Withdraw payload type.
   PAYLOAD_TYPE_WITHDRAW = 5;
+  // Batch transfer payload type.
+  PAYLOAD_TYPE_BATCH_TRANSFER = 6;
 }
 
 // Enumeration for verbosity levels when requesting transaction details.

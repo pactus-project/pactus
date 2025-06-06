@@ -4922,6 +4922,172 @@ impl<'de> serde::Deserialize<'de> for GetPublicKeyResponse {
         deserializer.deserialize_struct("pactus.GetPublicKeyResponse", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for GetRawBatchTransferTransactionRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.lock_time != 0 {
+            len += 1;
+        }
+        if !self.sender.is_empty() {
+            len += 1;
+        }
+        if !self.recipients.is_empty() {
+            len += 1;
+        }
+        if self.fee != 0 {
+            len += 1;
+        }
+        if !self.memo.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.GetRawBatchTransferTransactionRequest", len)?;
+        if self.lock_time != 0 {
+            struct_ser.serialize_field("lockTime", &self.lock_time)?;
+        }
+        if !self.sender.is_empty() {
+            struct_ser.serialize_field("sender", &self.sender)?;
+        }
+        if !self.recipients.is_empty() {
+            struct_ser.serialize_field("recipients", &self.recipients)?;
+        }
+        if self.fee != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
+        }
+        if !self.memo.is_empty() {
+            struct_ser.serialize_field("memo", &self.memo)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for GetRawBatchTransferTransactionRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "lock_time",
+            "lockTime",
+            "sender",
+            "recipients",
+            "fee",
+            "memo",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            LockTime,
+            Sender,
+            Recipients,
+            Fee,
+            Memo,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "lockTime" | "lock_time" => Ok(GeneratedField::LockTime),
+                            "sender" => Ok(GeneratedField::Sender),
+                            "recipients" => Ok(GeneratedField::Recipients),
+                            "fee" => Ok(GeneratedField::Fee),
+                            "memo" => Ok(GeneratedField::Memo),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = GetRawBatchTransferTransactionRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.GetRawBatchTransferTransactionRequest")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetRawBatchTransferTransactionRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut lock_time__ = None;
+                let mut sender__ = None;
+                let mut recipients__ = None;
+                let mut fee__ = None;
+                let mut memo__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::LockTime => {
+                            if lock_time__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("lockTime"));
+                            }
+                            lock_time__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Sender => {
+                            if sender__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("sender"));
+                            }
+                            sender__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Recipients => {
+                            if recipients__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("recipients"));
+                            }
+                            recipients__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Fee => {
+                            if fee__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("fee"));
+                            }
+                            fee__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Memo => {
+                            if memo__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("memo"));
+                            }
+                            memo__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(GetRawBatchTransferTransactionRequest {
+                    lock_time: lock_time__.unwrap_or_default(),
+                    sender: sender__.unwrap_or_default(),
+                    recipients: recipients__.unwrap_or_default(),
+                    fee: fee__.unwrap_or_default(),
+                    memo: memo__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.GetRawBatchTransferTransactionRequest", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for GetRawBondTransactionRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -8361,6 +8527,114 @@ impl<'de> serde::Deserialize<'de> for MetricInfo {
         deserializer.deserialize_struct("pactus.MetricInfo", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for PayloadBatchTransfer {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.sender.is_empty() {
+            len += 1;
+        }
+        if !self.recipients.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.PayloadBatchTransfer", len)?;
+        if !self.sender.is_empty() {
+            struct_ser.serialize_field("sender", &self.sender)?;
+        }
+        if !self.recipients.is_empty() {
+            struct_ser.serialize_field("recipients", &self.recipients)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for PayloadBatchTransfer {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "sender",
+            "recipients",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Sender,
+            Recipients,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "sender" => Ok(GeneratedField::Sender),
+                            "recipients" => Ok(GeneratedField::Recipients),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = PayloadBatchTransfer;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.PayloadBatchTransfer")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<PayloadBatchTransfer, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut sender__ = None;
+                let mut recipients__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Sender => {
+                            if sender__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("sender"));
+                            }
+                            sender__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Recipients => {
+                            if recipients__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("recipients"));
+                            }
+                            recipients__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(PayloadBatchTransfer {
+                    sender: sender__.unwrap_or_default(),
+                    recipients: recipients__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.PayloadBatchTransfer", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for PayloadBond {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -8758,6 +9032,7 @@ impl serde::Serialize for PayloadType {
             Self::Sortition => "PAYLOAD_TYPE_SORTITION",
             Self::Unbond => "PAYLOAD_TYPE_UNBOND",
             Self::Withdraw => "PAYLOAD_TYPE_WITHDRAW",
+            Self::BatchTransfer => "PAYLOAD_TYPE_BATCH_TRANSFER",
         };
         serializer.serialize_str(variant)
     }
@@ -8775,6 +9050,7 @@ impl<'de> serde::Deserialize<'de> for PayloadType {
             "PAYLOAD_TYPE_SORTITION",
             "PAYLOAD_TYPE_UNBOND",
             "PAYLOAD_TYPE_WITHDRAW",
+            "PAYLOAD_TYPE_BATCH_TRANSFER",
         ];
 
         struct GeneratedVisitor;
@@ -8821,6 +9097,7 @@ impl<'de> serde::Deserialize<'de> for PayloadType {
                     "PAYLOAD_TYPE_SORTITION" => Ok(PayloadType::Sortition),
                     "PAYLOAD_TYPE_UNBOND" => Ok(PayloadType::Unbond),
                     "PAYLOAD_TYPE_WITHDRAW" => Ok(PayloadType::Withdraw),
+                    "PAYLOAD_TYPE_BATCH_TRANSFER" => Ok(PayloadType::BatchTransfer),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }
@@ -9786,6 +10063,118 @@ impl<'de> serde::Deserialize<'de> for PublicKeyAggregationResponse {
             }
         }
         deserializer.deserialize_struct("pactus.PublicKeyAggregationResponse", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for Recipient {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.receiver.is_empty() {
+            len += 1;
+        }
+        if self.amount != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.Recipient", len)?;
+        if !self.receiver.is_empty() {
+            struct_ser.serialize_field("receiver", &self.receiver)?;
+        }
+        if self.amount != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for Recipient {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "receiver",
+            "amount",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Receiver,
+            Amount,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "receiver" => Ok(GeneratedField::Receiver),
+                            "amount" => Ok(GeneratedField::Amount),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = Recipient;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.Recipient")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<Recipient, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut receiver__ = None;
+                let mut amount__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Receiver => {
+                            if receiver__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("receiver"));
+                            }
+                            receiver__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Amount => {
+                            if amount__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("amount"));
+                            }
+                            amount__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(Recipient {
+                    receiver: receiver__.unwrap_or_default(),
+                    amount: amount__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.Recipient", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for RestoreWalletRequest {
@@ -11168,6 +11557,9 @@ impl serde::Serialize for TransactionInfo {
                 transaction_info::Payload::Withdraw(v) => {
                     struct_ser.serialize_field("withdraw", v)?;
                 }
+                transaction_info::Payload::BatchTransfer(v) => {
+                    struct_ser.serialize_field("batchTransfer", v)?;
+                }
             }
         }
         struct_ser.end()
@@ -11198,6 +11590,8 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
             "sortition",
             "unbond",
             "withdraw",
+            "batch_transfer",
+            "batchTransfer",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -11217,6 +11611,7 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
             Sortition,
             Unbond,
             Withdraw,
+            BatchTransfer,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -11253,6 +11648,7 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                             "sortition" => Ok(GeneratedField::Sortition),
                             "unbond" => Ok(GeneratedField::Unbond),
                             "withdraw" => Ok(GeneratedField::Withdraw),
+                            "batchTransfer" | "batch_transfer" => Ok(GeneratedField::BatchTransfer),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -11386,6 +11782,13 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                                 return Err(serde::de::Error::duplicate_field("withdraw"));
                             }
                             payload__ = map_.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::Withdraw)
+;
+                        }
+                        GeneratedField::BatchTransfer => {
+                            if payload__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("batchTransfer"));
+                            }
+                            payload__ = map_.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::BatchTransfer)
 ;
                         }
                     }

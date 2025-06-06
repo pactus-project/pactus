@@ -108,6 +108,19 @@ func (td *testData) makeValidTransferTx(options ...func(tm *testsuite.Transactio
 	return trx
 }
 
+// makeValidBatchTransferTx make a valid Batch transfer transaction for test purpose.
+func (td *testData) makeValidBatchTransferTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
+	trx := td.GenerateTestBatchTransferTx(options...)
+	signer := trx.Payload().Signer()
+
+	acc := td.sbx.MakeNewAccount(signer)
+	acc.AddToBalance(trx.Payload().Value() + trx.Fee())
+	td.sbx.UpdateAccount(signer, acc)
+
+	return trx
+}
+
 // makeValidBondTx makes a valid Bond transaction for testing purpose.
 func (td *testData) makeValidBondTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
 	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
@@ -221,6 +234,7 @@ func TestCalculatingConsumption(t *testing.T) {
 	trx50 := tx.NewSubsidyTx(5, td.RandAccAddress(), 1e9)
 	trx51 := td.makeValidWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
 	trx52 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
+	trx53 := td.makeValidBatchTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
 
 	// Commit the first block
 	blk1, cert1 := td.GenerateTestBlock(1,
@@ -234,7 +248,7 @@ func TestCalculatingConsumption(t *testing.T) {
 	}
 
 	expected := map[crypto.Address]int{
-		pub2.AccountAddress():   trx52.SerializeSize() + diff2,
+		pub2.AccountAddress():   trx52.SerializeSize() + trx53.SerializeSize() + diff2,
 		pub3.AccountAddress():   trx31.SerializeSize(),
 		pub3.ValidatorAddress(): trx41.SerializeSize() + trx51.SerializeSize(),
 		pub4.ValidatorAddress(): trx32.SerializeSize() - trx13.SerializeSize(),
@@ -247,7 +261,7 @@ func TestCalculatingConsumption(t *testing.T) {
 		{2, []*tx.Tx{trx20, trx21}},
 		{3, []*tx.Tx{trx30, trx31, trx32}},
 		{4, []*tx.Tx{trx40, trx41, trx42}},
-		{5, []*tx.Tx{trx50, trx51, trx52}},
+		{5, []*tx.Tx{trx50, trx51, trx52, trx53}},
 	}
 
 	for _, tt := range tests {
@@ -354,26 +368,30 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	_, prv2 := td.RandBLSKeyPair()
 	_, prv3 := td.RandBLSKeyPair()
 	_, prv4 := td.RandBLSKeyPair()
+	_, prv5 := td.RandBLSKeyPair()
 
 	transferTx := td.makeValidTransferTx()
 	bondTx := td.makeValidBondTx(testsuite.TransactionWithValidatorPublicKey(pub1))
 	unbondTx := td.makeValidUnbondTx(testsuite.TransactionWithBLSSigner(prv2))
 	withdrawTx := td.makeValidWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
 	sortitionTx := td.makeValidSortitionTx(testsuite.TransactionWithBLSSigner(prv4))
+	batchTransferTx := td.makeValidBatchTransferTx(testsuite.TransactionWithBLSSigner(prv5))
 
 	assert.NoError(t, td.pool.AppendTx(transferTx))
 	assert.NoError(t, td.pool.AppendTx(unbondTx))
 	assert.NoError(t, td.pool.AppendTx(withdrawTx))
 	assert.NoError(t, td.pool.AppendTx(bondTx))
 	assert.NoError(t, td.pool.AppendTx(sortitionTx))
+	assert.NoError(t, td.pool.AppendTx(batchTransferTx))
 
 	trxs := td.pool.PrepareBlockTransactions()
-	assert.Len(t, trxs, 5)
+	assert.Len(t, trxs, 6)
 	assert.Equal(t, sortitionTx.ID(), trxs[0].ID())
 	assert.Equal(t, bondTx.ID(), trxs[1].ID())
 	assert.Equal(t, unbondTx.ID(), trxs[2].ID())
 	assert.Equal(t, withdrawTx.ID(), trxs[3].ID())
 	assert.Equal(t, transferTx.ID(), trxs[4].ID())
+	assert.Equal(t, batchTransferTx.ID(), trxs[5].ID())
 }
 
 func TestAddSubsidyTransactions(t *testing.T) {
@@ -460,15 +478,17 @@ func TestAllPendingTxs(t *testing.T) {
 	unbondTx := td.makeValidUnbondTx()
 	withdrawTx := td.makeValidWithdrawTx()
 	sortitionTx := td.makeValidSortitionTx(testsuite.TransactionWithBLSSigner(prv2))
+	batchTransferTx := td.makeValidBatchTransferTx()
 
 	assert.NoError(t, td.pool.AppendTx(transferTx))
 	assert.NoError(t, td.pool.AppendTx(bondTx))
 	assert.NoError(t, td.pool.AppendTx(unbondTx))
 	assert.NoError(t, td.pool.AppendTx(withdrawTx))
 	assert.NoError(t, td.pool.AppendTx(sortitionTx))
+	assert.NoError(t, td.pool.AppendTx(batchTransferTx))
 
 	trxs = td.pool.AllPendingTxs()
-	assert.Len(t, trxs, 5)
+	assert.Len(t, trxs, 6)
 }
 
 func TestEstimatedFee(t *testing.T) {

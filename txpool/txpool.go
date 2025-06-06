@@ -40,6 +40,7 @@ func NewTxPool(conf *Config, storeReader store.Reader, messagePipe pipeline.Pipe
 	pools[payload.TypeUnbond] = newPool(conf.unbondPoolSize(), 0)
 	pools[payload.TypeWithdraw] = newPool(conf.withdrawPoolSize(), conf.fixedFee())
 	pools[payload.TypeSortition] = newPool(conf.sortitionPoolSize(), 0)
+	pools[payload.TypeBatchTransfer] = newPool(conf.batchTransferPoolSize(), conf.fixedFee())
 
 	pool := &txPool{
 		config:         conf,
@@ -284,6 +285,11 @@ func (p *txPool) PrepareBlockTransactions() block.Txs {
 		trxs = append(trxs, n.Data.Value)
 	}
 
+	poolBatchTransfer := p.pools[payload.TypeBatchTransfer]
+	for n := poolBatchTransfer.list.HeadNode(); n != nil; n = n.Next {
+		trxs = append(trxs, n.Data.Value)
+	}
+
 	return trxs
 }
 
@@ -384,8 +390,9 @@ func (p *txPool) getPendingConsumption(signer crypto.Address) int {
 }
 
 func (p *txPool) String() string {
-	return fmt.Sprintf("{💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
+	return fmt.Sprintf("{💸 %v💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
 		p.pools[payload.TypeTransfer].list.Size(),
+		p.pools[payload.TypeBatchTransfer].list.Size(),
 		p.pools[payload.TypeBond].list.Size(),
 		p.pools[payload.TypeUnbond].list.Size(),
 		p.pools[payload.TypeSortition].list.Size(),

@@ -70,6 +70,17 @@ function deserialize_pactus_DecodeRawTransactionResponse(buffer_arg) {
   return transaction_pb.DecodeRawTransactionResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_GetRawBatchTransferTransactionRequest(arg) {
+  if (!(arg instanceof transaction_pb.GetRawBatchTransferTransactionRequest)) {
+    throw new Error('Expected argument of type pactus.GetRawBatchTransferTransactionRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_GetRawBatchTransferTransactionRequest(buffer_arg) {
+  return transaction_pb.GetRawBatchTransferTransactionRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_pactus_GetRawBondTransactionRequest(arg) {
   if (!(arg instanceof transaction_pb.GetRawBondTransactionRequest)) {
     throw new Error('Expected argument of type pactus.GetRawBondTransactionRequest');
@@ -231,6 +242,18 @@ getRawWithdrawTransaction: {
     responseType: transaction_pb.GetRawTransactionResponse,
     requestSerialize: serialize_pactus_GetRawWithdrawTransactionRequest,
     requestDeserialize: deserialize_pactus_GetRawWithdrawTransactionRequest,
+    responseSerialize: serialize_pactus_GetRawTransactionResponse,
+    responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
+  },
+  // GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.
+getRawBatchTransferTransaction: {
+    path: '/pactus.Transaction/GetRawBatchTransferTransaction',
+    requestStream: false,
+    responseStream: false,
+    requestType: transaction_pb.GetRawBatchTransferTransactionRequest,
+    responseType: transaction_pb.GetRawTransactionResponse,
+    requestSerialize: serialize_pactus_GetRawBatchTransferTransactionRequest,
+    requestDeserialize: deserialize_pactus_GetRawBatchTransferTransactionRequest,
     responseSerialize: serialize_pactus_GetRawTransactionResponse,
     responseDeserialize: deserialize_pactus_GetRawTransactionResponse,
   },

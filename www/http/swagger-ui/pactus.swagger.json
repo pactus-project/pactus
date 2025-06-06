@@ -43,7 +43,7 @@
   ],
   "paths": {
     "/pactus/Utils/public_key_aggregation": {
-      "get": {
+      "post": {
         "summary": "PublicKeyAggregation aggregates multiple BLS public keys into a single key.",
         "operationId": "Utils_PublicKeyAggregation",
         "responses": {
@@ -62,15 +62,13 @@
         },
         "parameters": [
           {
-            "name": "publicKeys",
-            "description": "List of BLS public keys to be aggregated.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
+            "name": "body",
+            "description": "Request message for aggregating multiple BLS public keys.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusPublicKeyAggregationRequest"
+            }
           }
         ],
         "tags": [
@@ -79,7 +77,7 @@
       }
     },
     "/pactus/Utils/sign_message_with_private_key": {
-      "get": {
+      "post": {
         "summary": "SignMessageWithPrivateKey signs a message with the provided private key.",
         "operationId": "Utils_SignMessageWithPrivateKey",
         "responses": {
@@ -98,18 +96,13 @@
         },
         "parameters": [
           {
-            "name": "privateKey",
-            "description": "The private key to sign the message.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "message",
-            "description": "The message content to be signed.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for signing a message with a private key.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusSignMessageWithPrivateKeyRequest"
+            }
           }
         ],
         "tags": [
@@ -118,7 +111,7 @@
       }
     },
     "/pactus/Utils/signature_aggregation": {
-      "get": {
+      "post": {
         "summary": "SignatureAggregation aggregates multiple BLS signatures into a single signature.",
         "operationId": "Utils_SignatureAggregation",
         "responses": {
@@ -137,15 +130,13 @@
         },
         "parameters": [
           {
-            "name": "signatures",
-            "description": "List of BLS signatures to be aggregated.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
+            "name": "body",
+            "description": "Request message for aggregating multiple BLS signatures.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusSignatureAggregationRequest"
+            }
           }
         ],
         "tags": [
@@ -154,7 +145,7 @@
       }
     },
     "/pactus/Utils/verify_message": {
-      "get": {
+      "post": {
         "summary": "VerifyMessage verifies a signature against the public key and message.",
         "operationId": "Utils_VerifyMessage",
         "responses": {
@@ -173,25 +164,13 @@
         },
         "parameters": [
           {
-            "name": "message",
-            "description": "The original message content that was signed.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "signature",
-            "description": "The signature to verify in hexadecimal format.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "publicKey",
-            "description": "The public key of the signer.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for verifying a message signature.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusVerifyMessageRequest"
+            }
           }
         ],
         "tags": [
@@ -441,7 +420,7 @@
         "parameters": [
           {
             "name": "payloadType",
-            "description": "The type of transactions to retrieve from the transaction pool. 0 means all types.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.",
+            "description": "The type of transactions to retrieve from the transaction pool. 0 means all types.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.\n - PAYLOAD_TYPE_BATCH_TRANSFER: Batch transfer payload type.",
             "in": "query",
             "required": false,
             "type": "string",
@@ -451,7 +430,8 @@
               "PAYLOAD_TYPE_BOND",
               "PAYLOAD_TYPE_SORTITION",
               "PAYLOAD_TYPE_UNBOND",
-              "PAYLOAD_TYPE_WITHDRAW"
+              "PAYLOAD_TYPE_WITHDRAW",
+              "PAYLOAD_TYPE_BATCH_TRANSFER"
             ],
             "default": "PAYLOAD_TYPE_UNSPECIFIED"
           }
@@ -582,7 +562,7 @@
       }
     },
     "/pactus/transaction/broadcast_transaction": {
-      "put": {
+      "post": {
         "summary": "BroadcastTransaction broadcasts a signed transaction to the network.",
         "operationId": "Transaction_BroadcastTransaction",
         "responses": {
@@ -601,11 +581,13 @@
         },
         "parameters": [
           {
-            "name": "signedRawTransaction",
-            "description": "The signed raw transaction data to be broadcasted.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for broadcasting a signed transaction to the network.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusBroadcastTransactionRequest"
+            }
           }
         ],
         "tags": [
@@ -614,7 +596,7 @@
       }
     },
     "/pactus/transaction/calculate_fee": {
-      "get": {
+      "post": {
         "summary": "CalculateFee calculates the transaction fee based on the specified amount and payload type.",
         "operationId": "Transaction_CalculateFee",
         "responses": {
@@ -633,35 +615,81 @@
         },
         "parameters": [
           {
-            "name": "amount",
-            "description": "The amount involved in the transaction, specified in NanoPAC.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
+            "name": "body",
+            "description": "Request message for calculating transaction fee.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusCalculateFeeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/pactus/transaction/decode_raw_transaction": {
+      "post": {
+        "summary": "DecodeRawTransaction accepts raw transaction and returns decoded transaction.",
+        "operationId": "Transaction_DecodeRawTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusDecodeRawTransactionResponse"
+            }
           },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
           {
-            "name": "payloadType",
-            "description": "The type of transaction payload.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "enum": [
-              "PAYLOAD_TYPE_UNSPECIFIED",
-              "PAYLOAD_TYPE_TRANSFER",
-              "PAYLOAD_TYPE_BOND",
-              "PAYLOAD_TYPE_SORTITION",
-              "PAYLOAD_TYPE_UNBOND",
-              "PAYLOAD_TYPE_WITHDRAW"
-            ],
-            "default": "PAYLOAD_TYPE_UNSPECIFIED"
+            "name": "body",
+            "description": "Request message for decoding a raw transaction.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusDecodeRawTransactionRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Transaction"
+        ]
+      }
+    },
+    "/pactus/transaction/get_raw_batch_transfer_transaction": {
+      "post": {
+        "summary": "GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.",
+        "operationId": "Transaction_GetRawBatchTransferTransaction",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransactionResponse"
+            }
           },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
           {
-            "name": "fixedAmount",
-            "description": "Indicates if the amount should be fixed and include the fee.",
-            "in": "query",
-            "required": false,
-            "type": "boolean"
+            "name": "body",
+            "description": "Request message for retrieving raw details of a batch transfer transaction.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawBatchTransferTransactionRequest"
+            }
           }
         ],
         "tags": [
@@ -670,7 +698,7 @@
       }
     },
     "/pactus/transaction/get_raw_bond_transaction": {
-      "get": {
+      "post": {
         "summary": "GetRawBondTransaction retrieves raw details of a bond transaction.",
         "operationId": "Transaction_GetRawBondTransaction",
         "responses": {
@@ -689,56 +717,13 @@
         },
         "parameters": [
           {
-            "name": "lockTime",
-            "description": "The lock time for the transaction. If not set, defaults to the last block height.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "sender",
-            "description": "The sender's account address.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "receiver",
-            "description": "The receiver's validator address.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "stake",
-            "description": "The stake amount in NanoPAC. Must be greater than 0.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "publicKey",
-            "description": "The public key of the validator.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "fee",
-            "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "memo",
-            "description": "A memo string for the transaction.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for retrieving raw details of a bond transaction.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawBondTransactionRequest"
+            }
           }
         ],
         "tags": [
@@ -747,7 +732,7 @@
       }
     },
     "/pactus/transaction/get_raw_transfer_transaction": {
-      "get": {
+      "post": {
         "summary": "GetRawTransferTransaction retrieves raw details of a transfer transaction.",
         "operationId": "Transaction_GetRawTransferTransaction",
         "responses": {
@@ -766,49 +751,13 @@
         },
         "parameters": [
           {
-            "name": "lockTime",
-            "description": "The lock time for the transaction. If not set, defaults to the last block height.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "sender",
-            "description": "The sender's account address.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "receiver",
-            "description": "The receiver's account address.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "amount",
-            "description": "The amount to be transferred, specified in NanoPAC. Must be greater than 0.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "fee",
-            "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "memo",
-            "description": "A memo string for the transaction.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for retrieving raw details of a transfer transaction.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawTransferTransactionRequest"
+            }
           }
         ],
         "tags": [
@@ -817,7 +766,7 @@
       }
     },
     "/pactus/transaction/get_raw_unbond_transaction": {
-      "get": {
+      "post": {
         "summary": "GetRawUnbondTransaction retrieves raw details of an unbond transaction.",
         "operationId": "Transaction_GetRawUnbondTransaction",
         "responses": {
@@ -836,26 +785,13 @@
         },
         "parameters": [
           {
-            "name": "lockTime",
-            "description": "The lock time for the transaction. If not set, defaults to the last block height.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "validatorAddress",
-            "description": "The address of the validator to unbond from.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "memo",
-            "description": "A memo string for the transaction.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for retrieving raw details of an unbond transaction.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawUnbondTransactionRequest"
+            }
           }
         ],
         "tags": [
@@ -864,7 +800,7 @@
       }
     },
     "/pactus/transaction/get_raw_withdraw_transaction": {
-      "get": {
+      "post": {
         "summary": "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.",
         "operationId": "Transaction_GetRawWithdrawTransaction",
         "responses": {
@@ -883,49 +819,13 @@
         },
         "parameters": [
           {
-            "name": "lockTime",
-            "description": "The lock time for the transaction. If not set, defaults to the last block height.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "validatorAddress",
-            "description": "The address of the validator to withdraw from.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "accountAddress",
-            "description": "The address of the account to withdraw to.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "amount",
-            "description": "The withdrawal amount in NanoPAC. Must be greater than 0.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "fee",
-            "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          },
-          {
-            "name": "memo",
-            "description": "A memo string for the transaction.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "description": "Request message for retrieving raw details of a withdraw transaction.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pactusGetRawWithdrawTransactionRequest"
+            }
           }
         ],
         "tags": [
@@ -1699,6 +1599,16 @@
       "default": "BLOCK_VERBOSITY_DATA",
       "description": "Enumeration for verbosity levels when requesting block information.\n\n - BLOCK_VERBOSITY_DATA: Request only block data.\n - BLOCK_VERBOSITY_INFO: Request block information and transaction IDs.\n - BLOCK_VERBOSITY_TRANSACTIONS: Request block information and detailed transaction data."
     },
+    "pactusBroadcastTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "signedRawTransaction": {
+          "type": "string",
+          "description": "The signed raw transaction data to be broadcasted."
+        }
+      },
+      "description": "Request message for broadcasting a signed transaction to the network."
+    },
     "pactusBroadcastTransactionResponse": {
       "type": "object",
       "properties": {
@@ -1708,6 +1618,25 @@
         }
       },
       "description": "Response message contains the ID of the broadcasted transaction."
+    },
+    "pactusCalculateFeeRequest": {
+      "type": "object",
+      "properties": {
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The amount involved in the transaction, specified in NanoPAC."
+        },
+        "payloadType": {
+          "$ref": "#/definitions/pactusPayloadType",
+          "description": "The type of transaction payload."
+        },
+        "fixedAmount": {
+          "type": "boolean",
+          "description": "Indicates if the amount should be fixed and include the fee."
+        }
+      },
+      "description": "Request message for calculating transaction fee."
     },
     "pactusCalculateFeeResponse": {
       "type": "object",
@@ -1838,6 +1767,16 @@
         }
       },
       "description": "Response message contains wallet recovery mnemonic (seed phrase)."
+    },
+    "pactusDecodeRawTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "rawTransaction": {
+          "type": "string",
+          "description": "The raw transaction data in hexadecimal format."
+        }
+      },
+      "description": "Request message for decoding a raw transaction."
     },
     "pactusDecodeRawTransactionResponse": {
       "type": "object",
@@ -2153,6 +2092,75 @@
       },
       "description": "Response message contains public key information."
     },
+    "pactusGetRawBatchTransferTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "lockTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The lock time for the transaction. If not set, defaults to the last block height."
+        },
+        "sender": {
+          "type": "string",
+          "description": "The sender's account address."
+        },
+        "recipients": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusRecipient"
+          },
+          "description": "The recipients list of receiver with amount, min 2 recipients."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
+        },
+        "memo": {
+          "type": "string",
+          "description": "A memo string for the transaction."
+        }
+      },
+      "description": "Request message for retrieving raw details of a batch transfer transaction."
+    },
+    "pactusGetRawBondTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "lockTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The lock time for the transaction. If not set, defaults to the last block height."
+        },
+        "sender": {
+          "type": "string",
+          "description": "The sender's account address."
+        },
+        "receiver": {
+          "type": "string",
+          "description": "The receiver's validator address."
+        },
+        "stake": {
+          "type": "string",
+          "format": "int64",
+          "description": "The stake amount in NanoPAC. Must be greater than 0."
+        },
+        "publicKey": {
+          "type": "string",
+          "description": "The public key of the validator."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
+        },
+        "memo": {
+          "type": "string",
+          "description": "A memo string for the transaction."
+        }
+      },
+      "description": "Request message for retrieving raw details of a bond transaction."
+    },
     "pactusGetRawTransactionResponse": {
       "type": "object",
       "properties": {
@@ -2166,6 +2174,91 @@
         }
       },
       "description": "Response message contains raw transaction data."
+    },
+    "pactusGetRawTransferTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "lockTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The lock time for the transaction. If not set, defaults to the last block height."
+        },
+        "sender": {
+          "type": "string",
+          "description": "The sender's account address."
+        },
+        "receiver": {
+          "type": "string",
+          "description": "The receiver's account address."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The amount to be transferred, specified in NanoPAC. Must be greater than 0."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
+        },
+        "memo": {
+          "type": "string",
+          "description": "A memo string for the transaction."
+        }
+      },
+      "description": "Request message for retrieving raw details of a transfer transaction."
+    },
+    "pactusGetRawUnbondTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "lockTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The lock time for the transaction. If not set, defaults to the last block height."
+        },
+        "validatorAddress": {
+          "type": "string",
+          "description": "The address of the validator to unbond from."
+        },
+        "memo": {
+          "type": "string",
+          "description": "A memo string for the transaction."
+        }
+      },
+      "description": "Request message for retrieving raw details of an unbond transaction."
+    },
+    "pactusGetRawWithdrawTransactionRequest": {
+      "type": "object",
+      "properties": {
+        "lockTime": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The lock time for the transaction. If not set, defaults to the last block height."
+        },
+        "validatorAddress": {
+          "type": "string",
+          "description": "The address of the validator to withdraw from."
+        },
+        "accountAddress": {
+          "type": "string",
+          "description": "The address of the account to withdraw to."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The withdrawal amount in NanoPAC. Must be greater than 0."
+        },
+        "fee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee."
+        },
+        "memo": {
+          "type": "string",
+          "description": "A memo string for the transaction."
+        }
+      },
+      "description": "Request message for retrieving raw details of a withdraw transaction."
     },
     "pactusGetTotalBalanceResponse": {
       "type": "object",
@@ -2397,6 +2490,24 @@
       },
       "description": "MetricInfo contains metrics data regarding network activity."
     },
+    "pactusPayloadBatchTransfer": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "string",
+          "description": "The sender's address."
+        },
+        "recipients": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusRecipient"
+          },
+          "description": "The recipients of list receiver with amount."
+        }
+      },
+      "description": "Payload for a batch transfer transaction."
+    },
     "pactusPayloadBond": {
       "type": "object",
       "properties": {
@@ -2461,10 +2572,11 @@
         "PAYLOAD_TYPE_BOND",
         "PAYLOAD_TYPE_SORTITION",
         "PAYLOAD_TYPE_UNBOND",
-        "PAYLOAD_TYPE_WITHDRAW"
+        "PAYLOAD_TYPE_WITHDRAW",
+        "PAYLOAD_TYPE_BATCH_TRANSFER"
       ],
       "default": "PAYLOAD_TYPE_UNSPECIFIED",
-      "description": "Enumeration for different types of transaction payloads.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type."
+      "description": "Enumeration for different types of transaction payloads.\n\n - PAYLOAD_TYPE_UNSPECIFIED: Unspecified payload type.\n - PAYLOAD_TYPE_TRANSFER: Transfer payload type.\n - PAYLOAD_TYPE_BOND: Bond payload type.\n - PAYLOAD_TYPE_SORTITION: Sortition payload type.\n - PAYLOAD_TYPE_UNBOND: Unbond payload type.\n - PAYLOAD_TYPE_WITHDRAW: Withdraw payload type.\n - PAYLOAD_TYPE_BATCH_TRANSFER: Batch transfer payload type."
     },
     "pactusPayloadUnbond": {
       "type": "object",
@@ -2609,6 +2721,19 @@
       },
       "description": "Message contains information about a proposal."
     },
+    "pactusPublicKeyAggregationRequest": {
+      "type": "object",
+      "properties": {
+        "publicKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of BLS public keys to be aggregated."
+        }
+      },
+      "description": "Request message for aggregating multiple BLS public keys."
+    },
     "pactusPublicKeyAggregationResponse": {
       "type": "object",
       "properties": {
@@ -2622,6 +2747,21 @@
         }
       },
       "description": "Response message contains the aggregated BLS public key result."
+    },
+    "pactusRecipient": {
+      "type": "object",
+      "properties": {
+        "receiver": {
+          "type": "string",
+          "description": "The receiver's address."
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64",
+          "description": "The amount in NanoPAC."
+        }
+      },
+      "description": "Recipient is receiver with amount."
     },
     "pactusRestoreWalletResponse": {
       "type": "object",
@@ -2647,6 +2787,20 @@
       },
       "description": "Response message contains message signature."
     },
+    "pactusSignMessageWithPrivateKeyRequest": {
+      "type": "object",
+      "properties": {
+        "privateKey": {
+          "type": "string",
+          "description": "The private key to sign the message."
+        },
+        "message": {
+          "type": "string",
+          "description": "The message content to be signed."
+        }
+      },
+      "description": "Request message for signing a message with a private key."
+    },
     "pactusSignMessageWithPrivateKeyResponse": {
       "type": "object",
       "properties": {
@@ -2670,6 +2824,19 @@
         }
       },
       "description": "Response message contains the transaction ID and signed raw transaction."
+    },
+    "pactusSignatureAggregationRequest": {
+      "type": "object",
+      "properties": {
+        "signatures": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of BLS signatures to be aggregated."
+        }
+      },
+      "description": "Request message for aggregating multiple BLS signatures."
     },
     "pactusSignatureAggregationResponse": {
       "type": "object",
@@ -2735,6 +2902,10 @@
         "withdraw": {
           "$ref": "#/definitions/pactusPayloadWithdraw",
           "description": "Withdraw transaction payload."
+        },
+        "batchTransfer": {
+          "$ref": "#/definitions/pactusPayloadBatchTransfer",
+          "description": "Batch Transfer transaction payload."
         },
         "memo": {
           "type": "string",
@@ -2821,6 +2992,24 @@
         }
       },
       "description": "Message contains information about a validator."
+    },
+    "pactusVerifyMessageRequest": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "description": "The original message content that was signed."
+        },
+        "signature": {
+          "type": "string",
+          "description": "The signature to verify in hexadecimal format."
+        },
+        "publicKey": {
+          "type": "string",
+          "description": "The public key of the signer."
+        }
+      },
+      "description": "Request message for verifying a message signature."
     },
     "pactusVerifyMessageResponse": {
       "type": "object",

@@ -1,6 +1,7 @@
 package html
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -68,6 +69,16 @@ func txToTable(tmk *tableMaker, trx *pactus.TransactionInfo) {
 		tmk.addRowValAddress("Sender", pld.ValidatorAddress)
 		tmk.addRowAccAddress("Receiver", pld.AccountAddress)
 		tmk.addRowAmount("Amount", amount.Amount(pld.Amount))
+
+	case pactus.PayloadType_PAYLOAD_TYPE_BATCH_TRANSFER:
+		pld := trx.Payload.(*pactus.TransactionInfo_BatchTransfer)
+		tmk.addRowAccAddress("Sender", pld.BatchTransfer.Sender)
+		tmk.addRowString("--- Begin Recipients", "---")
+		for i, recip := range pld.BatchTransfer.Recipients {
+			tmk.addRowAccAddress(fmt.Sprintf("Receiver [%d]", i+1), recip.Receiver)
+			tmk.addRowAmount("Amount", amount.Amount(recip.Amount))
+		}
+		tmk.addRowString("--- End Recipients", "---")
 
 	case pactus.PayloadType_PAYLOAD_TYPE_UNSPECIFIED:
 		tmk.addRowValAddress("error", "unknown payload type")

@@ -23,6 +23,7 @@ const PayloadType$json = {
     {'1': 'PAYLOAD_TYPE_SORTITION', '2': 3},
     {'1': 'PAYLOAD_TYPE_UNBOND', '2': 4},
     {'1': 'PAYLOAD_TYPE_WITHDRAW', '2': 5},
+    {'1': 'PAYLOAD_TYPE_BATCH_TRANSFER', '2': 6},
   ],
 };
 
@@ -31,7 +32,7 @@ final $typed_data.Uint8List payloadTypeDescriptor = $convert.base64Decode(
     'CgtQYXlsb2FkVHlwZRIcChhQQVlMT0FEX1RZUEVfVU5TUEVDSUZJRUQQABIZChVQQVlMT0FEX1'
     'RZUEVfVFJBTlNGRVIQARIVChFQQVlMT0FEX1RZUEVfQk9ORBACEhoKFlBBWUxPQURfVFlQRV9T'
     'T1JUSVRJT04QAxIXChNQQVlMT0FEX1RZUEVfVU5CT05EEAQSGQoVUEFZTE9BRF9UWVBFX1dJVE'
-    'hEUkFXEAU=');
+    'hEUkFXEAUSHwobUEFZTE9BRF9UWVBFX0JBVENIX1RSQU5TRkVSEAY=');
 
 @$core.Deprecated('Use transactionVerbosityDescriptor instead')
 const TransactionVerbosity$json = {
@@ -209,6 +210,25 @@ final $typed_data.Uint8List getRawWithdrawTransactionRequestDescriptor = $conver
     'D2FjY291bnRfYWRkcmVzcxgDIAEoCVIOYWNjb3VudEFkZHJlc3MSFgoGYW1vdW50GAQgASgDUg'
     'ZhbW91bnQSEAoDZmVlGAUgASgDUgNmZWUSEgoEbWVtbxgGIAEoCVIEbWVtbw==');
 
+@$core.Deprecated('Use getRawBatchTransferTransactionRequestDescriptor instead')
+const GetRawBatchTransferTransactionRequest$json = {
+  '1': 'GetRawBatchTransferTransactionRequest',
+  '2': [
+    {'1': 'lock_time', '3': 1, '4': 1, '5': 13, '10': 'lockTime'},
+    {'1': 'sender', '3': 2, '4': 1, '5': 9, '10': 'sender'},
+    {'1': 'recipients', '3': 3, '4': 3, '5': 11, '6': '.pactus.Recipient', '10': 'recipients'},
+    {'1': 'fee', '3': 4, '4': 1, '5': 3, '10': 'fee'},
+    {'1': 'memo', '3': 5, '4': 1, '5': 9, '10': 'memo'},
+  ],
+};
+
+/// Descriptor for `GetRawBatchTransferTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List getRawBatchTransferTransactionRequestDescriptor = $convert.base64Decode(
+    'CiVHZXRSYXdCYXRjaFRyYW5zZmVyVHJhbnNhY3Rpb25SZXF1ZXN0EhsKCWxvY2tfdGltZRgBIA'
+    'EoDVIIbG9ja1RpbWUSFgoGc2VuZGVyGAIgASgJUgZzZW5kZXISMQoKcmVjaXBpZW50cxgDIAMo'
+    'CzIRLnBhY3R1cy5SZWNpcGllbnRSCnJlY2lwaWVudHMSEAoDZmVlGAQgASgDUgNmZWUSEgoEbW'
+    'VtbxgFIAEoCVIEbWVtbw==');
+
 @$core.Deprecated('Use getRawTransactionResponseDescriptor instead')
 const GetRawTransactionResponse$json = {
   '1': 'GetRawTransactionResponse',
@@ -297,6 +317,34 @@ final $typed_data.Uint8List payloadWithdrawDescriptor = $convert.base64Decode(
     'FkZHJlc3MSJwoPYWNjb3VudF9hZGRyZXNzGAIgASgJUg5hY2NvdW50QWRkcmVzcxIWCgZhbW91'
     'bnQYAyABKANSBmFtb3VudA==');
 
+@$core.Deprecated('Use payloadBatchTransferDescriptor instead')
+const PayloadBatchTransfer$json = {
+  '1': 'PayloadBatchTransfer',
+  '2': [
+    {'1': 'sender', '3': 1, '4': 1, '5': 9, '10': 'sender'},
+    {'1': 'recipients', '3': 2, '4': 3, '5': 11, '6': '.pactus.Recipient', '10': 'recipients'},
+  ],
+};
+
+/// Descriptor for `PayloadBatchTransfer`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List payloadBatchTransferDescriptor = $convert.base64Decode(
+    'ChRQYXlsb2FkQmF0Y2hUcmFuc2ZlchIWCgZzZW5kZXIYASABKAlSBnNlbmRlchIxCgpyZWNpcG'
+    'llbnRzGAIgAygLMhEucGFjdHVzLlJlY2lwaWVudFIKcmVjaXBpZW50cw==');
+
+@$core.Deprecated('Use recipientDescriptor instead')
+const Recipient$json = {
+  '1': 'Recipient',
+  '2': [
+    {'1': 'receiver', '3': 1, '4': 1, '5': 9, '10': 'receiver'},
+    {'1': 'amount', '3': 2, '4': 1, '5': 3, '10': 'amount'},
+  ],
+};
+
+/// Descriptor for `Recipient`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List recipientDescriptor = $convert.base64Decode(
+    'CglSZWNpcGllbnQSGgoIcmVjZWl2ZXIYASABKAlSCHJlY2VpdmVyEhYKBmFtb3VudBgCIAEoA1'
+    'IGYW1vdW50');
+
 @$core.Deprecated('Use transactionInfoDescriptor instead')
 const TransactionInfo$json = {
   '1': 'TransactionInfo',
@@ -313,6 +361,7 @@ const TransactionInfo$json = {
     {'1': 'sortition', '3': 32, '4': 1, '5': 11, '6': '.pactus.PayloadSortition', '9': 0, '10': 'sortition'},
     {'1': 'unbond', '3': 33, '4': 1, '5': 11, '6': '.pactus.PayloadUnbond', '9': 0, '10': 'unbond'},
     {'1': 'withdraw', '3': 34, '4': 1, '5': 11, '6': '.pactus.PayloadWithdraw', '9': 0, '10': 'withdraw'},
+    {'1': 'batch_transfer', '3': 35, '4': 1, '5': 11, '6': '.pactus.PayloadBatchTransfer', '9': 0, '10': 'batchTransfer'},
     {'1': 'memo', '3': 8, '4': 1, '5': 9, '10': 'memo'},
     {'1': 'public_key', '3': 9, '4': 1, '5': 9, '10': 'publicKey'},
     {'1': 'signature', '3': 10, '4': 1, '5': 9, '10': 'signature'},
@@ -332,9 +381,10 @@ final $typed_data.Uint8List transactionInfoDescriptor = $convert.base64Decode(
     'FjdHVzLlBheWxvYWRCb25kSABSBGJvbmQSOAoJc29ydGl0aW9uGCAgASgLMhgucGFjdHVzLlBh'
     'eWxvYWRTb3J0aXRpb25IAFIJc29ydGl0aW9uEi8KBnVuYm9uZBghIAEoCzIVLnBhY3R1cy5QYX'
     'lsb2FkVW5ib25kSABSBnVuYm9uZBI1Cgh3aXRoZHJhdxgiIAEoCzIXLnBhY3R1cy5QYXlsb2Fk'
-    'V2l0aGRyYXdIAFIId2l0aGRyYXcSEgoEbWVtbxgIIAEoCVIEbWVtbxIdCgpwdWJsaWNfa2V5GA'
-    'kgASgJUglwdWJsaWNLZXkSHAoJc2lnbmF0dXJlGAogASgJUglzaWduYXR1cmVCCQoHcGF5bG9h'
-    'ZA==');
+    'V2l0aGRyYXdIAFIId2l0aGRyYXcSRQoOYmF0Y2hfdHJhbnNmZXIYIyABKAsyHC5wYWN0dXMuUG'
+    'F5bG9hZEJhdGNoVHJhbnNmZXJIAFINYmF0Y2hUcmFuc2ZlchISCgRtZW1vGAggASgJUgRtZW1v'
+    'Eh0KCnB1YmxpY19rZXkYCSABKAlSCXB1YmxpY0tleRIcCglzaWduYXR1cmUYCiABKAlSCXNpZ2'
+    '5hdHVyZUIJCgdwYXlsb2Fk');
 
 @$core.Deprecated('Use decodeRawTransactionRequestDescriptor instead')
 const DecodeRawTransactionRequest$json = {
@@ -372,6 +422,7 @@ const $core.Map<$core.String, $core.dynamic> TransactionServiceBase$json = {
     {'1': 'GetRawBondTransaction', '2': '.pactus.GetRawBondTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
     {'1': 'GetRawUnbondTransaction', '2': '.pactus.GetRawUnbondTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
     {'1': 'GetRawWithdrawTransaction', '2': '.pactus.GetRawWithdrawTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
+    {'1': 'GetRawBatchTransferTransaction', '2': '.pactus.GetRawBatchTransferTransactionRequest', '3': '.pactus.GetRawTransactionResponse'},
     {'1': 'DecodeRawTransaction', '2': '.pactus.DecodeRawTransactionRequest', '3': '.pactus.DecodeRawTransactionResponse'},
   ],
 };
@@ -386,6 +437,8 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Transactio
   '.pactus.PayloadSortition': PayloadSortition$json,
   '.pactus.PayloadUnbond': PayloadUnbond$json,
   '.pactus.PayloadWithdraw': PayloadWithdraw$json,
+  '.pactus.PayloadBatchTransfer': PayloadBatchTransfer$json,
+  '.pactus.Recipient': Recipient$json,
   '.pactus.CalculateFeeRequest': CalculateFeeRequest$json,
   '.pactus.CalculateFeeResponse': CalculateFeeResponse$json,
   '.pactus.BroadcastTransactionRequest': BroadcastTransactionRequest$json,
@@ -395,6 +448,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Transactio
   '.pactus.GetRawBondTransactionRequest': GetRawBondTransactionRequest$json,
   '.pactus.GetRawUnbondTransactionRequest': GetRawUnbondTransactionRequest$json,
   '.pactus.GetRawWithdrawTransactionRequest': GetRawWithdrawTransactionRequest$json,
+  '.pactus.GetRawBatchTransferTransactionRequest': GetRawBatchTransferTransactionRequest$json,
   '.pactus.DecodeRawTransactionRequest': DecodeRawTransactionRequest$json,
   '.pactus.DecodeRawTransactionResponse': DecodeRawTransactionResponse$json,
 };
@@ -413,7 +467,9 @@ final $typed_data.Uint8List transactionServiceDescriptor = $convert.base64Decode
     'ImLnBhY3R1cy5HZXRSYXdVbmJvbmRUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3'
     'VHJhbnNhY3Rpb25SZXNwb25zZRJoChlHZXRSYXdXaXRoZHJhd1RyYW5zYWN0aW9uEigucGFjdH'
     'VzLkdldFJhd1dpdGhkcmF3VHJhbnNhY3Rpb25SZXF1ZXN0GiEucGFjdHVzLkdldFJhd1RyYW5z'
-    'YWN0aW9uUmVzcG9uc2USYQoURGVjb2RlUmF3VHJhbnNhY3Rpb24SIy5wYWN0dXMuRGVjb2RlUm'
-    'F3VHJhbnNhY3Rpb25SZXF1ZXN0GiQucGFjdHVzLkRlY29kZVJhd1RyYW5zYWN0aW9uUmVzcG9u'
-    'c2U=');
+    'YWN0aW9uUmVzcG9uc2UScgoeR2V0UmF3QmF0Y2hUcmFuc2ZlclRyYW5zYWN0aW9uEi0ucGFjdH'
+    'VzLkdldFJhd0JhdGNoVHJhbnNmZXJUcmFuc2FjdGlvblJlcXVlc3QaIS5wYWN0dXMuR2V0UmF3'
+    'VHJhbnNhY3Rpb25SZXNwb25zZRJhChREZWNvZGVSYXdUcmFuc2FjdGlvbhIjLnBhY3R1cy5EZW'
+    'NvZGVSYXdUcmFuc2FjdGlvblJlcXVlc3QaJC5wYWN0dXMuRGVjb2RlUmF3VHJhbnNhY3Rpb25S'
+    'ZXNwb25zZQ==');
 
