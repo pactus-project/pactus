@@ -83,6 +83,7 @@ func (p *BatchTransferPayload) Value() amount.Amount {
 	return value
 }
 
+// BasicCheck performs basic checks on the Batch Transfer payload.
 func (p *BatchTransferPayload) BasicCheck() error {
 	if !p.From.IsAccountAddress() {
 		return BasicCheckError{

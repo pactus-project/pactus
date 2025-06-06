@@ -28,7 +28,6 @@ func (p *WithdrawPayload) Value() amount.Amount {
 }
 
 // BasicCheck performs basic checks on the Withdraw payload.
-// TODO: write test for me.
 func (p *WithdrawPayload) BasicCheck() error {
 	if !p.From.IsValidatorAddress() {
 		return BasicCheckError{
@@ -45,7 +44,9 @@ func (p *WithdrawPayload) BasicCheck() error {
 }
 
 func (p *WithdrawPayload) SerializeSize() int {
-	return 42 + encoding.VarIntSerializeSize(uint64(p.Amount))
+	return p.From.SerializeSize() +
+		p.To.SerializeSize() +
+		encoding.VarIntSerializeSize(uint64(p.Amount))
 }
 
 func (p *WithdrawPayload) Encode(w io.Writer) error {

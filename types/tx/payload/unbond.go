@@ -24,8 +24,8 @@ func (*UnbondPayload) Value() amount.Amount {
 	return 0
 }
 
+// BasicCheck performs basic checks on the Unbond payload.
 func (p *UnbondPayload) BasicCheck() error {
-	// TODO: write test for me.
 	if !p.Validator.IsValidatorAddress() {
 		return BasicCheckError{
 			Reason: "address is not a validator address",

@@ -29,6 +29,7 @@ func (p *BondPayload) Value() amount.Amount {
 	return p.Stake
 }
 
+// BasicCheck performs basic checks on the Bond payload.
 func (p *BondPayload) BasicCheck() error {
 	if !p.From.IsAccountAddress() {
 		return BasicCheckError{
