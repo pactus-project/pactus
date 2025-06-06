@@ -50,7 +50,7 @@ case $OS in
             x86_64)
                 ARCH="amd64"
                 ;;
-            arm64)
+            aarch64 | arm64)
                 ARCH="arm64"
                 ;;
             *)
@@ -105,6 +105,9 @@ case $OS in
                 ;;
             x86_64)
                 ARCH="amd64"
+                ;;
+            aarch64 | arm64)
+                ARCH="arm64"
                 ;;
             *)
                 echo "Unrecognized CPU type: $ARCH"

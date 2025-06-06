@@ -12,11 +12,6 @@ jobs:
   build-cli:
     runs-on: ubuntu-latest
 
-    # Defining outputs for jobs
-    # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
-    outputs:
-      checksums: ${{ steps.calc_checksums.outputs.checksums }}
-
     steps:
       - uses: actions/checkout@v4
 
@@ -33,16 +28,14 @@ jobs:
       - name: Create release files
         run: bash ./.github/releasers/releaser_cli.sh
 
-      # Multiline strings in GitHub actions
-      # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
       - name: Calculate sha256sum
-        id: calc_checksums
-        run: |
-          set -e
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "checksums<<$EOF"                          >> "$GITHUB_OUTPUT"
-          echo "$(sha256sum pactus-*.zip pactus-*tar.gz)" >> "$GITHUB_OUTPUT"
-          echo "$EOF"                                     >> "$GITHUB_OUTPUT"
+        run: sha256sum pactus-*.zip pactus-*tar.gz > checksum-cli.txt
+
+      - name: Upload checksum artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksum-cli
+          path: checksum-cli.txt
 
       - name: Publish
         uses: softprops/action-gh-release@v2
@@ -55,10 +48,15 @@ jobs:
 
   ########################################
   build-gui-linux:
-    runs-on: ubuntu-latest
-
-    outputs:
-      checksums: ${{ steps.calc_checksums.outputs.checksums }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        name: [linux-amd64, linux-arm64]
+        include:
+          - name: linux-amd64
+            runner: ubuntu-24.04
+          - name: linux-arm64
+            runner: ubuntu-24.04-arm
 
     steps:
       - uses: actions/checkout@v4
@@ -77,14 +75,13 @@ jobs:
         run: bash ./.github/releasers/releaser_gui_linux.sh
 
       - name: Calculate sha256sum
-        id: calc_checksums
-        run: |
-          set -e
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "checksums<<$EOF"                    >> "$GITHUB_OUTPUT"
-          echo "$(sha256sum pactus-gui*.tar.gz)"    >> "$GITHUB_OUTPUT"
-          echo "$(sha256sum pactus-gui*.AppImage)"  >> "$GITHUB_OUTPUT"
-          echo "$EOF"                               >> "$GITHUB_OUTPUT"
+        run: sha256sum pactus-gui*.tar.gz pactus-gui*.tar.gz > checksum-${{ matrix.name }}.txt
+
+      - name: Upload checksum artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksum-${{ matrix.name }}
+          path: checksum-${{ matrix.name }}.txt
 
       - name: Publish
         uses: softprops/action-gh-release@v2
@@ -97,12 +94,20 @@ jobs:
 
   ########################################
   build-gui-macos:
-    runs-on: macos-13
-    env:
-      LIB_HOME: /usr/local
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        name: [macos-amd64, macos-arm64]
+        include:
+          - name: macos-amd64
+            runner: macos-13
+            lib_home: /usr/local
+          - name: macos-arm64
+            runner: macos-14
+            lib_home: /opt/homebrew
 
-    outputs:
-      checksums: ${{ steps.calc_checksums.outputs.checksums }}
+    env:
+      LIB_HOME: ${{ matrix.lib_home }}
 
     steps:
       - uses: actions/checkout@v4
@@ -119,57 +124,13 @@ jobs:
         run: bash ./.github/releasers/releaser_gui_macos.sh
 
       - name: Calculate sha256sum
-        id: calc_checksums
-        run: |
-          set -e
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "checksums<<$EOF"                          >> "$GITHUB_OUTPUT"
-          echo "$(sha256sum pactus-*.dmg pactus-*tar.gz)" >> "$GITHUB_OUTPUT"
-          echo "$EOF"                                     >> "$GITHUB_OUTPUT"
+        run: sha256sum pactus-*.dmg pactus-*.tar.gz > checksum-${{ matrix.name }}.txt
 
-      - name: Publish
-        uses: softprops/action-gh-release@v2
+      - name: Upload checksum artifact
+        uses: actions/upload-artifact@v4
         with:
-          files: |
-            pactus-*.dmg
-            pactus-*.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  ########################################
-  build-gui-macos-arm:
-    runs-on: macos-14
-    env:
-      # In M1 `/usr/local` moved to `/opt/homebrew`.
-      #  More info: https://earthly.dev/blog/homebrew-on-m1/
-      #
-      LIB_HOME: /opt/homebrew
-
-    outputs:
-      checksums: ${{ steps.calc_checksums.outputs.checksums }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Dependencies
-        run: brew install gtk+3 librsvg create-dmg coreutils gdk-pixbuf glib-networking
-
-      - name: Install Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.23.5"
-
-      - name: Create release files
-        run: bash ./.github/releasers/releaser_gui_macos.sh
-
-      - name: Calculate sha256sum
-        id: calc_checksums
-        run: |
-          set -e
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "checksums<<$EOF"                          >> "$GITHUB_OUTPUT"
-          echo "$(sha256sum pactus-*.dmg pactus-*tar.gz)" >> "$GITHUB_OUTPUT"
-          echo "$EOF"                                     >> "$GITHUB_OUTPUT"
+          name: checksum-${{ matrix.name }}
+          path: checksum-${{ matrix.name }}.txt
 
       - name: Publish
         uses: softprops/action-gh-release@v2
@@ -182,10 +143,15 @@ jobs:
 
   ########################################
   build-gui-windows:
-    runs-on: windows-latest
-
-    outputs:
-      checksums: ${{ steps.calc_checksums.outputs.checksums }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        name: [windows-amd64, windows-arm64]
+        include:
+          - name: windows-amd64
+            runner: windows-latest
+          - name: windows-arm64
+            runner: windows-11-arm
 
     defaults:
       run:
@@ -212,13 +178,13 @@ jobs:
         run: bash ./.github/releasers/releaser_gui_windows.sh
 
       - name: Calculate sha256sum
-        id: calc_checksums
-        run: |
-          set -e
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "checksums<<$EOF"                                 >> "$GITHUB_OUTPUT"
-          echo "$(sha256sum pactus-*.zip pactus-*installer.exe)" >> "$GITHUB_OUTPUT"
-          echo "$EOF"                                            >> "$GITHUB_OUTPUT"
+        run: sha256sum pactus-*.zip pactus-*installer.exe > checksum-${{ matrix.name }}.txt
+
+      - name: Upload checksum artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksum-${{ matrix.name }}
+          path: checksum-${{ matrix.name }}.txt
 
       - name: Publish
         uses: softprops/action-gh-release@v2
@@ -236,19 +202,19 @@ jobs:
         build-cli,
         build-gui-linux,
         build-gui-macos,
-        build-gui-macos-arm,
         build-gui-windows,
       ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Create SHA256SUMS file
+      - name: Download checksum artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: checksums
+
+      - name: Combine checksums
         run: |
-          echo "${{ needs.build-cli.outputs.checksums }}" >> SHA256SUMS
-          echo "${{ needs.build-gui-linux.outputs.checksums }}" >> SHA256SUMS
-          echo "${{ needs.build-gui-macos.outputs.checksums }}" >> SHA256SUMS
-          echo "${{ needs.build-gui-macos-arm.outputs.checksums }}" >> SHA256SUMS
-          echo "${{ needs.build-gui-windows.outputs.checksums }}" >> SHA256SUMS
+          cat checksums/*/*.txt > SHA256SUMS
+          cat SHA256SUMS
 
       - name: Upload SHA256SUMS as an artifact
         uses: actions/upload-artifact@v4
