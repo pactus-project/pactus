@@ -177,8 +177,44 @@ jobs:
       - name: Create release files
         run: bash ./.github/releasers/releaser_gui_windows.sh
 
+      # ########################
+      # Signing installer: start
+      - name: upload-unsigned-artifact
+        id: upload-unsigned-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'pactus-installer'
+          path: pactus-*installer.exe
+          if-no-files-found: error
+
+      - name: sign
+        uses: signpath/github-action-submit-signing-request@v1.1
+        env:
+          # select release-signing policy for main and release branches
+          SIGNPATH_SIGNING_POLICY_SLUG: |
+            ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/'))
+              && 'release-signing'
+              || 'test-signing' }}
+        with:
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          organization-id: '${{ vars.SIGNPATH_ORGANIZATION_ID }}'
+          project-slug: 'Pactus'
+          signing-policy-slug: 'release-signing'
+          github-artifact-id: '${{steps.upload-unsigned-artifact.outputs.artifact-id}}'
+          wait-for-completion: true
+          output-artifact-directory: 'pactus-signed'
+
+      - name: upload-signed-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'pactus-signed'
+          path: 'pactus-signed'
+          if-no-files-found: error
+      # Signing installer: end
+      # ######################
+
       - name: Calculate sha256sum
-        run: sha256sum pactus-*.zip pactus-*installer.exe > checksum-${{ matrix.name }}.txt
+        run: sha256sum pactus-*.zip ./pactus-signed/pactus-*installer.exe > checksum-${{ matrix.name }}.txt
 
       - name: Upload checksum artifact
         uses: actions/upload-artifact@v4
@@ -191,7 +227,7 @@ jobs:
         with:
           files: |
             pactus-*.zip
-            pactus-*installer.exe
+            ./pactus-signed/pactus-*installer.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

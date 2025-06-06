@@ -55,10 +55,12 @@ jobs:
             util
             version
             wallet
+            www
             grpc
             proto
-            http
             jsonrpc
+            http
+            html
             zeromq
             windows
             linux

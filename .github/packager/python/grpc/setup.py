@@ -1,6 +1,4 @@
-from pathlib import Path
-
-from setuptools import find_packages, setup
+from setuptools import setup, find_packages
 
 setup(
     name="pactus-grpc",
@@ -11,13 +9,13 @@ setup(
     long_description=Path("README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
     url="https://github.com/pactus-project/pactus",
-    packages=find_packages(),
     license="MIT",
+    packages=find_packages(),
+    keywords=["pactus", "blockchain", "grpc"],
     install_requires=[
         "grpcio",
         "protobuf",
     ],
-    keywords=["pactus", "blockchain", "grpc"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",

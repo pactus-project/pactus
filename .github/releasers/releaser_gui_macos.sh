@@ -22,7 +22,7 @@ fi
 
 mkdir ${PACKAGE_DIR}
 
-echo "Building the binaries"
+echo "Building the binaries for macOS ${ARC} architecture"
 
 cd ${ROOT_DIR}
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-daemon ./cmd/daemon
