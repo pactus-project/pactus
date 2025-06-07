@@ -27,6 +27,7 @@ func (*SortitionPayload) Value() amount.Amount {
 	return 0
 }
 
+// BasicCheck performs basic checks on the Sortition payload.
 func (p *SortitionPayload) BasicCheck() error {
 	if !p.Validator.IsValidatorAddress() {
 		return BasicCheckError{

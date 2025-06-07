@@ -27,6 +27,7 @@ func (p *TransferPayload) Value() amount.Amount {
 	return p.Amount
 }
 
+// BasicCheck performs basic checks on the Transfer payload.
 func (p *TransferPayload) BasicCheck() error {
 	if !p.From.IsAccountAddress() {
 		return BasicCheckError{
