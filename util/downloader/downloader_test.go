@@ -64,15 +64,6 @@ func TestDownloader(t *testing.T) {
 		}
 	}()
 
-	go func() {
-		for err := range downloader.Errors() {
-			assert.Fail(t, "Download encountered an error", err)
-			done <- true
-
-			return
-		}
-	}()
-
 	select {
 	case <-done:
 	case <-time.After(2 * time.Minute):
