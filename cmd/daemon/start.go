@@ -87,16 +87,34 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			return password, true
 		}
 
-		confModifiers := []config.Modifier{
-			config.EnableGRPCTransport(*gRPCOpt, *gRPCWalletOpt),
-			config.EnableZMQBlockInfoPub(*zmqBlockInfoOpt),
-			config.EnableZMQTxInfoPub(*zmqTxInfoOpt),
-			config.EnableZMQRawBlockPub(*zmqRawBlockOpt),
-			config.EnableZMQRawTxPub(*zmqRawTxOpt),
-		}
-
 		node, _, err := cmd.StartNode(
-			workingDir, passwordFetcher, confModifiers...)
+			workingDir, passwordFetcher, func(cfg *config.Config) *config.Config {
+				if *gRPCOpt != "" {
+					cfg.GRPC.Listen = *gRPCOpt
+				}
+
+				if *gRPCWalletOpt {
+					cfg.GRPC.EnableWallet = *gRPCWalletOpt
+				}
+
+				if *zmqBlockInfoOpt != "" {
+					cfg.ZeroMq.ZmqPubBlockInfo = *zmqBlockInfoOpt
+				}
+
+				if *zmqTxInfoOpt != "" {
+					cfg.ZeroMq.ZmqPubTxInfo = *zmqTxInfoOpt
+				}
+
+				if *zmqRawBlockOpt != "" {
+					cfg.ZeroMq.ZmqPubRawBlock = *zmqRawBlockOpt
+				}
+
+				if *zmqRawTxOpt != "" {
+					cfg.ZeroMq.ZmqPubRawTx = *zmqRawTxOpt
+				}
+
+				return cfg
+			})
 		cmd.FatalErrorCheck(err)
 
 		cmd.TrapSignal(func() {

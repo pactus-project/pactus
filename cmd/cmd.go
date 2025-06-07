@@ -371,12 +371,14 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 // It returns an error if the genesis doc or default_wallet can't be found inside the working directory.
 // TODO: write test for me.
 func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool),
-	confModifiers ...config.Modifier,
+	configModifier func(cfg *config.Config) *config.Config,
 ) (*node.Node, *wallet.Wallet, error) {
-	conf, gen, err := MakeConfig(workingDir, confModifiers...)
+	conf, gen, err := MakeConfig(workingDir)
 	if err != nil {
 		return nil, nil, err
 	}
+
+	conf = configModifier(conf)
 
 	defaultWalletPath := PactusDefaultWalletPath(workingDir)
 	wlt, err := wallet.Open(defaultWalletPath, true,
@@ -448,7 +450,7 @@ func makeLocalGenesis(wlt wallet.Wallet) *genesis.Genesis {
 // The genesis document is required to determine the chain type, which influences the configuration settings.
 // The function sets various private configurations, such as the "wallets directory" and chain-specific HRP values.
 // If the configuration file cannot be loaded, it tries to recover or restore the configuration.
-func MakeConfig(workingDir string, confModifiers ...config.Modifier) (*config.Config, *genesis.Genesis, error) {
+func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 	gen, err := genesis.LoadFromFile(PactusGenesisPath(workingDir))
 	if err != nil {
 		return nil, nil, err
@@ -497,10 +499,6 @@ func MakeConfig(workingDir string, confModifiers ...config.Modifier) (*config.Co
 
 	conf.WalletManager.ChainType = chainType
 	conf.WalletManager.WalletsDir = walletsDir
-
-	for _, modify := range confModifiers {
-		modify(conf)
-	}
 
 	if err := conf.BasicCheck(); err != nil {
 		return nil, nil, err
