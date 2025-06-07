@@ -1,5 +1,25 @@
-version: v1
-name: pactus_apis
-lint:
-  use:
-    - DEFAULT
+# For details on buf.yaml configuration, visit https://buf.build/docs/configuration/v2/buf-yaml
+version: v2
+modules:
+  - path: ./proto
+    lint:
+      use:
+        - STANDARD
+        - COMMENT_ENUM
+        - COMMENT_ENUM_VALUE
+        - COMMENT_FIELD
+        - COMMENT_MESSAGE
+        - COMMENT_ONEOF
+        - COMMENT_RPC
+        - COMMENT_SERVICE
+        - RPC_NO_CLIENT_STREAMING
+        - RPC_NO_SERVER_STREAMING
+
+      except:
+        - PACKAGE_DIRECTORY_MATCH
+        - PACKAGE_VERSION_SUFFIX
+        - SERVICE_SUFFIX
+        - RPC_REQUEST_RESPONSE_UNIQUE
+        - RPC_RESPONSE_STANDARD_NAME
+        - ENUM_ZERO_VALUE_SUFFIX
+      disallow_comment_ignores: true

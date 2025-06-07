@@ -28,7 +28,6 @@ func getSessionByID(ps *PeerSet, sid int) *session.Session {
 
 func TestPeerSet(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
-
 	peerSet := NewPeerSet(time.Minute)
 
 	pk11, _ := ts.RandBLSKeyPair()
@@ -64,6 +63,11 @@ func TestPeerSet(t *testing.T) {
 		})
 
 		assert.True(t, found, "Peer with ID %s not found in the peer list", pid2)
+	})
+
+	t.Run("Testing hasPeer", func(t *testing.T) {
+		assert.True(t, peerSet.HasPeer(pid1))
+		assert.False(t, peerSet.HasPeer(ts.RandPeerID()))
 	})
 
 	t.Run("Testing GetPeer", func(t *testing.T) {
@@ -114,15 +118,6 @@ func TestPeerSet(t *testing.T) {
 		assert.Equal(t, h, peer1.LastBlockHash)
 	})
 
-	t.Run("Testing UpdateStatus", func(t *testing.T) {
-		peerSet.UpdateStatus(pid1, status.StatusBanned)
-		peerStatus := peerSet.GetPeerStatus(pid1)
-		assert.Equal(t, status.StatusBanned, peerStatus)
-
-		peerStatus = peerSet.GetPeerStatus(ts.RandPeerID())
-		assert.Equal(t, status.StatusUnknown, peerStatus)
-	})
-
 	t.Run("Testing UpdateLastSent", func(t *testing.T) {
 		now := time.Now()
 		peerSet.UpdateLastSent(pid1)
@@ -154,7 +149,6 @@ func TestPeerSet(t *testing.T) {
 
 func TestOpenSession(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
-
 	peerSet := NewPeerSet(time.Minute)
 
 	pid1 := ts.RandPeerID()
@@ -368,4 +362,54 @@ func TestUpdateProtocols(t *testing.T) {
 
 	p := peerSet.GetPeer(pid)
 	assert.Equal(t, protocols, p.Protocols)
+}
+
+func TestUpdateStatus(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	peerSet := NewPeerSet(time.Minute)
+
+	t.Run("Status of Unknown peer", func(t *testing.T) {
+		pid := ts.RandPeerID()
+
+		assert.Equal(t, status.StatusUnknown, peerSet.GetPeerStatus(pid))
+	})
+
+	t.Run("UpdateStatus To Known Peer to Disconnected", func(t *testing.T) {
+		pid := ts.RandPeerID()
+		peerSet.UpdateStatus(pid, status.StatusKnown)
+
+		peerSet.UpdateStatus(pid, status.StatusDisconnected)
+		assert.Equal(t, status.StatusDisconnected, peerSet.GetPeerStatus(pid))
+	})
+
+	t.Run("UpdateStatus To Known Peer to Connected", func(t *testing.T) {
+		pid := ts.RandPeerID()
+		peerSet.UpdateStatus(pid, status.StatusKnown)
+
+		peerSet.UpdateStatus(pid, status.StatusConnected)
+		assert.Equal(t, status.StatusKnown, peerSet.GetPeerStatus(pid))
+	})
+
+	t.Run("UpdateStatus To Banned Peer", func(t *testing.T) {
+		pid := ts.RandPeerID()
+		peerSet.UpdateStatus(pid, status.StatusBanned)
+
+		peerSet.UpdateStatus(pid, status.StatusConnected)
+		assert.Equal(t, status.StatusBanned, peerSet.GetPeerStatus(pid))
+
+		peerSet.UpdateStatus(pid, status.StatusDisconnected)
+		assert.Equal(t, status.StatusBanned, peerSet.GetPeerStatus(pid))
+	})
+
+	t.Run("Close Sessions On Disconnect", func(t *testing.T) {
+		pid1 := ts.RandPeerID()
+		pid2 := ts.RandPeerID()
+		peerSet.OpenSession(pid1, 100, 10)
+		peerSet.OpenSession(pid2, 110, 10)
+
+		peerSet.UpdateStatus(pid1, status.StatusDisconnected)
+
+		assert.False(t, peerSet.HasOpenSession(pid1))
+		assert.True(t, peerSet.HasOpenSession(pid2))
+	})
 }

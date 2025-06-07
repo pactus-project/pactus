@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -140,9 +141,9 @@ func shouldPublishBlockResponse(t *testing.T, net *network.MockNetwork,
 
 	bdl := shouldPublishMessageWithThisType(t, net, message.TypeBlocksResponse)
 	msg := bdl.Message.(*message.BlocksResponseMessage)
-	require.Equal(t, msg.From, from)
-	require.Equal(t, msg.Count(), count)
-	require.Equal(t, msg.ResponseCode, code)
+	require.Equal(t, from, msg.From)
+	require.Equal(t, count, msg.Count())
+	require.Equal(t, code, msg.ResponseCode)
 }
 
 type networkAliceBob struct {
@@ -170,30 +171,17 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	stateBob := state.MockingState(ts)
 	consMgrAlice, _ := consensus.MockingManager(ts, stateAlice, valKeyAlice)
 	consMgrBob, _ := consensus.MockingManager(ts, stateBob, valKeyBob)
-	internalMessageCh := make(chan message.Message, 1000)
+	broadcastPipe := pipeline.MockingPipeline[message.Message]()
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 
-	networkAlice.AddAnotherNetwork(networkBob)
-	networkBob.AddAnotherNetwork(networkAlice)
-
-	sync1, err := NewSynchronizer(configAlice,
-		valKeyAlice,
-		stateAlice,
-		consMgrAlice,
-		networkAlice,
-		internalMessageCh,
-	)
+	sync1, err := NewSynchronizer(configAlice, valKeyAlice, stateAlice,
+		consMgrAlice, networkAlice, broadcastPipe, networkAlice.EventPipe)
 	assert.NoError(t, err)
 	syncAlice := sync1.(*synchronizer)
 
-	sync2, err := NewSynchronizer(configBob,
-		valKeyBob,
-		stateBob,
-		consMgrBob,
-		networkBob,
-		internalMessageCh,
-	)
+	sync2, err := NewSynchronizer(configBob, valKeyBob, stateBob,
+		consMgrBob, networkBob, broadcastPipe, networkBob.EventPipe)
 	assert.NoError(t, err)
 	syncBob := sync2.(*synchronizer)
 
@@ -211,24 +199,24 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	assert.NoError(t, syncAlice.Start())
 	assert.NoError(t, syncBob.Start())
 
+	// Connect the networks of Alice and Bob to each other
+	networkAlice.AddAnotherNetwork(networkBob)
+	networkBob.AddAnotherNetwork(networkAlice)
+
 	// Verify that Hello messages are exchanged between Alice and Bob
 	syncAlice.sayHello(syncBob.SelfID())
-	syncBob.sayHello(syncAlice.SelfID())
-
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
-	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
-
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeHelloAck)
+
+	syncBob.sayHello(syncAlice.SelfID())
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHelloAck)
 
-	// Ensure peers are connected and block heights are correct
+	// Ensure Alice and Bob are connected and handshaked
 	require.Eventually(t, func() bool {
-		return syncAlice.PeerSet().Len() == 1 &&
-			syncBob.PeerSet().Len() == 1
+		return syncAlice.PeerSet().GetPeerStatus(syncBob.SelfID()).IsKnown() &&
+			syncBob.PeerSet().GetPeerStatus(syncAlice.SelfID()).IsKnown()
 	}, 2*time.Second, 100*time.Millisecond)
-
-	require.Equal(t, status.StatusKnown, syncAlice.PeerSet().GetPeerStatus(syncBob.SelfID()))
-	require.Equal(t, status.StatusKnown, syncBob.PeerSet().GetPeerStatus(syncAlice.SelfID()))
 
 	return &networkAliceBob{
 		TestSuite:    ts,
@@ -284,7 +272,6 @@ func TestSyncing(t *testing.T) {
 	assert.Equal(t, uint32(11), nets.syncAlice.config.BlockPerMessage)
 	assert.Equal(t, uint32(23), nets.syncAlice.config.BlockPerSession)
 
-	shouldNotPublishMessageWithThisType(t, nets.networkBob, message.TypeBlocksRequest)
 	shouldPublishBlockRequest(t, nets.networkAlice, 1)
 	shouldPublishBlockResponse(t, nets.networkBob, 1, 11, message.ResponseCodeMoreBlocks)  // 1-11
 	shouldPublishBlockResponse(t, nets.networkBob, 12, 11, message.ResponseCodeMoreBlocks) // 12-22
@@ -349,7 +336,6 @@ func TestSyncingHasBlockInCache(t *testing.T) {
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 
-	shouldNotPublishMessageWithThisType(t, nets.networkBob, message.TypeBlocksRequest)
 	// blocks 1-2 are inside the cache
 	shouldPublishBlockRequest(t, nets.networkAlice, 4)
 	shouldPublishBlockResponse(t, nets.networkBob, 4, 11, message.ResponseCodeMoreBlocks) // 4-14

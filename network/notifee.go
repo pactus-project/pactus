@@ -10,6 +10,7 @@ import (
 	lp2peventbus "github.com/libp2p/go-libp2p/p2p/host/eventbus"
 	"github.com/multiformats/go-multiaddr"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"golang.org/x/exp/slices"
 )
 
@@ -17,14 +18,14 @@ type NotifeeService struct {
 	ctx              context.Context
 	host             lp2phost.Host
 	lp2pEventSub     lp2pevent.Subscription
-	eventChannel     chan<- Event
+	networkPipe      pipeline.Pipeline[Event]
 	logger           *logger.SubLogger
 	streamProtocolID lp2pcore.ProtocolID
 	peerMgr          *peerMgr
 	reachability     lp2pnetwork.Reachability
 }
 
-func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel chan<- Event,
+func newNotifeeService(ctx context.Context, host lp2phost.Host, networkPipe pipeline.Pipeline[Event],
 	peerMgr *peerMgr,
 	protocolID lp2pcore.ProtocolID, log *logger.SubLogger,
 ) *NotifeeService {
@@ -45,7 +46,7 @@ func newNotifeeService(ctx context.Context, host lp2phost.Host, eventChannel cha
 		ctx:              ctx,
 		host:             host,
 		lp2pEventSub:     eventSub,
-		eventChannel:     eventChannel,
+		networkPipe:      networkPipe,
 		streamProtocolID: protocolID,
 		peerMgr:          peerMgr,
 		logger:           log,
@@ -77,7 +78,7 @@ func (s *NotifeeService) Start() {
 					s.sendProtocolsEvent(evt.Peer)
 
 				default:
-					s.logger.Debug("unhandled libp2p event", "event", evt)
+					// unhandled libp2p event
 				}
 
 			case <-s.ctx.Done():
@@ -130,22 +131,27 @@ func (s *NotifeeService) sendProtocolsEvent(pid lp2pcore.PeerID) {
 	}
 
 	slices.Sort(protocolsStr)
-	s.eventChannel <- &ProtocolsEvents{
+	event := &ProtocolsEvents{
 		PeerID:    pid,
 		Protocols: protocolsStr,
 	}
+	s.networkPipe.Send(event)
 }
 
 func (s *NotifeeService) sendConnectEvent(pid lp2pcore.PeerID,
 	remoteAddress multiaddr.Multiaddr, direction lp2pnetwork.Direction,
 ) {
-	s.eventChannel <- &ConnectEvent{
+	event := &ConnectEvent{
 		PeerID:        pid,
 		RemoteAddress: remoteAddress.String(),
 		Direction:     direction.String(),
 	}
+	s.networkPipe.Send(event)
 }
 
 func (s *NotifeeService) sendDisconnectEvent(pid lp2pcore.PeerID) {
-	s.eventChannel <- &DisconnectEvent{PeerID: pid}
+	event := &DisconnectEvent{
+		PeerID: pid,
+	}
+	s.networkPipe.Send(event)
 }

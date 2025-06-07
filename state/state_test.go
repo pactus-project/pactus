@@ -19,6 +19,7 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -74,7 +75,8 @@ func setup(t *testing.T) *testData {
 
 	// First validator is in the committee
 	valKeys := []*bls.ValidatorKey{genValKeys[0], ts.RandValKey()}
-	st1, err := LoadOrNewState(gnDoc, valKeys, mockStore, mockTxPool, nil)
+	eventPipe := pipeline.MockingPipeline[any]()
+	st1, err := LoadOrNewState(gnDoc, valKeys, mockStore, mockTxPool, eventPipe)
 	require.NoError(t, err)
 
 	state, _ := st1.(*state)
@@ -538,8 +540,9 @@ func TestLoadState(t *testing.T) {
 	blk6, cert6 := td.makeBlockAndCertificate(t, 0)
 
 	// Load last state info
+	eventPipe := pipeline.MockingPipeline[any]()
 	newState, err := LoadOrNewState(td.state.genDoc, td.state.valKeys,
-		td.state.store, td.commonTxPool, nil)
+		td.state.store, td.commonTxPool, eventPipe)
 	require.NoError(t, err)
 
 	assert.Equal(t, td.state.TotalAccounts(), newState.TotalAccounts())

@@ -1,14 +1,15 @@
 package jsonrpc
 
 type Config struct {
-	Enable bool   `toml:"enable"`
-	Listen string `toml:"listen"`
+	Enable  bool     `toml:"enable"`
+	Listen  string   `toml:"listen"`
+	Origins []string `toml:"origins"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
 		Enable: false,
-		Listen: "localhost:8545",
+		Listen: "",
 	}
 }
 

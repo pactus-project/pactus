@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Set –e is used within the Bash to stop execution instantly as a query exits
-# while having a non-zero status.
+# The 'set -e' command causes the script to immediately exit
+# if any command returns a non-zero exit status (i.e., an error).
 set -e
 
 ROOT_DIR="$(pwd)"
@@ -16,7 +16,7 @@ for OS_ARCH in \
      "android arm64" \
      "freebsd amd64" "freebsd arm" \
      "darwin amd64" "darwin arm64" \
-     "windows 386" "windows amd64"; do
+     "windows 386" "windows amd64" "windows arm64"; do
 
     PAIR=($OS_ARCH);
     OS=${PAIR[0]};

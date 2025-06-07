@@ -2,11 +2,14 @@ PACKAGES=$(shell go list ./... | grep -v 'tests' | grep -v 'grpc/gen')
 
 ifneq (,$(filter $(OS),Windows_NT MINGW64))
 EXE = .exe
-RM = del /q
-else
-RM = rm -rf
 endif
 
+# Handle sed differences between macOS and Linux
+ifeq ($(shell uname),Darwin)
+  SED_CMD = sed -i ''
+else
+  SED_CMD = sed -i
+endif
 
 all: build test
 
@@ -17,10 +20,8 @@ devtools:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.63.4
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.26
 	go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.26
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.4
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5.1
 	go install github.com/NathanBaulch/protoc-gen-cobra@v1.2.1
-	go install github.com/pactus-project/protoc-gen-doc/cmd/protoc-gen-doc@v0.0.0-20240815105130-84e89d0170e4
+	go install github.com/pactus-project/protoc-gen-doc/cmd/protoc-gen-doc@v0.0.0-20250428081805-49e8e8103faa
 	go install github.com/bufbuild/buf/cmd/buf@v1.50
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.5
@@ -31,7 +32,6 @@ build:
 	go build -o ./build/pactus-daemon$(EXE) ./cmd/daemon
 	go build -o ./build/pactus-wallet$(EXE) ./cmd/wallet
 	go build -o ./build/pactus-shell$(EXE)  ./cmd/shell
-
 
 build_race:
 	go build -race -o ./build/pactus-daemon$(EXE) ./cmd/daemon
@@ -58,9 +58,18 @@ docker:
 
 ########################################
 ### proto
+
+# This target works only on Unix-like terminals.
 proto:
-	$(RM) www/grpc/gen
-	cd www/grpc/buf && buf generate --template buf.gen.yaml ../proto
+	rm -rf www/grpc/gen
+	cd www/grpc && buf generate --template ./buf/buf.gen.yaml --config ./buf/buf.yaml ./proto
+
+proto-check:
+	cd www/grpc && buf lint --config ./buf/buf.yaml
+
+proto-format:
+	cd www/grpc && buf format --config ./buf/buf.yaml -w
+
 
 ########################################
 ### Formatting the code
@@ -75,5 +84,5 @@ check:
 # https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
 .PHONY: build build_gui
 .PHONY: test unit_test test_race
-.PHONY: devtools proto
-.PHONY: fmt check docker
+.PHONY: proto proto-format proto-check
+.PHONY: devtools fmt check docker

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Set –e is used within the Bash to stop execution instantly as a query exits
-# while having a non-zero status.
 set -e
 
 ROOT_DIR="$(pwd)"
@@ -24,7 +22,7 @@ fi
 
 mkdir ${PACKAGE_DIR}
 
-echo "Building the binaries"
+echo "Building the binaries for macOS ${ARC} architecture"
 
 cd ${ROOT_DIR}
 CGO_ENABLED=0 go build -ldflags "-s -w" -trimpath -o ${BUILD_DIR}/pactus-daemon ./cmd/daemon

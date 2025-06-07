@@ -11,11 +11,12 @@ func TestDefaultConfig(t *testing.T) {
 	conf := DefaultConfig()
 	assert.NoError(t, conf.BasicCheck())
 
-	assert.Equal(t, 600, conf.transferPoolSize())
+	assert.Equal(t, 500, conf.transferPoolSize())
 	assert.Equal(t, 100, conf.bondPoolSize())
 	assert.Equal(t, 100, conf.unbondPoolSize())
 	assert.Equal(t, 100, conf.withdrawPoolSize())
 	assert.Equal(t, 100, conf.sortitionPoolSize())
+	assert.Equal(t, 100, conf.batchTransferPoolSize())
 	assert.Equal(t, amount.Amount(0.1e8), conf.fixedFee())
 
 	assert.Equal(t,
@@ -23,7 +24,8 @@ func TestDefaultConfig(t *testing.T) {
 			conf.bondPoolSize()+
 			conf.unbondPoolSize()+
 			conf.withdrawPoolSize()+
-			conf.sortitionPoolSize(), conf.MaxSize)
+			conf.sortitionPoolSize()+
+			conf.batchTransferPoolSize(), conf.MaxSize)
 }
 
 func TestConfigBasicCheck(t *testing.T) {

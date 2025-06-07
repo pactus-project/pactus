@@ -2,7 +2,7 @@ syntax = "proto3";
 package pactus;
 
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
-option java_package = "pactus.network";
+option java_package = "pactus";
 
 // Network service provides RPCs for retrieving information about the network.
 service Network {
@@ -19,7 +19,7 @@ message GetNetworkInfoRequest {
   bool only_connected = 1;
 }
 
-// Response message containing information about the overall network.
+// Response message contains information about the overall network.
 message GetNetworkInfoResponse {
   // Name of the network.
   string network_name = 1;
@@ -34,9 +34,9 @@ message GetNetworkInfoResponse {
 // Request message for retrieving information of the node.
 message GetNodeInfoRequest {}
 
-// Response message containing information about a specific node in the network.
+// Response message contains information about a specific node in the network.
 message GetNodeInfoResponse {
-  // Moniker of the node.
+  // Moniker or Human-readable name identifying this node in the network.
   string moniker = 1;
   // Version and agent details of the node.
   string agent = 2;
@@ -62,27 +62,26 @@ message GetNodeInfoResponse {
   repeated ZMQPublisherInfo zmq_publishers = 15;
 }
 
+// ZMQPublisherInfo contains information about a ZeroMQ publisher.
 message ZMQPublisherInfo {
   // The topic associated with the publisher.
   string topic = 1;
-
   // The address of the publisher.
   string address = 2;
-
   // The high-water mark (HWM) for the publisher, indicating the
   // maximum number of messages to queue before dropping older ones.
   int32 hwm = 3;
 }
 
-// Information about a peer in the network.
+// PeerInfo contains information about a peer in the network.
 message PeerInfo {
   // Current status of the peer (e.g., connected, disconnected).
   int32 status = 1;
-  // Moniker of the peer.
+  // Moniker or Human-Readable name of the peer.
   string moniker = 2;
   // Version and agent details of the peer.
   string agent = 3;
-  // Peer ID of the peer.
+  // Peer ID of the peer in P2P network.
   string peer_id = 4;
   // List of consensus keys used by the peer.
   repeated string consensus_keys = 5;
@@ -122,24 +121,24 @@ message ConnectionInfo {
   uint64 outbound_connections = 3;
 }
 
-// MetricInfo contains data regarding network actvity.
+// MetricInfo contains metrics data regarding network activity.
 message MetricInfo {
   // Total number of invalid bundles.
-  CounterInfo TotalInvalid = 1;
+  CounterInfo total_invalid = 1;
   // Total number of bundles sent.
-  CounterInfo TotalSent = 2;
+  CounterInfo total_sent = 2;
   // Total number of bundles received.
-  CounterInfo TotalReceived = 3;
+  CounterInfo total_received = 3;
   // Number of sent bundles categorized by message type.
-  map<int32, CounterInfo> MessageSent = 4;
+  map<int32, CounterInfo> message_sent = 4;
   // Number of received bundles categorized by message type.
-  map<int32, CounterInfo> MessageReceived = 5;
+  map<int32, CounterInfo> message_received = 5;
 }
 
-// CounterInfo holds data regarding byte and bundle counts.
+// CounterInfo holds counter data regarding byte and bundle counts.
 message CounterInfo {
   // Total number of bytes.
-  uint64 Bytes = 1;
+  uint64 bytes = 1;
   // Total number of bundles.
-  uint64 Bundles = 2;
+  uint64 bundles = 2;
 }

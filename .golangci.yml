@@ -225,6 +225,12 @@ issues:
         - gocognit
         - forbidigo
 
+    - path: util/bip39/wordlists/
+      linters:
+        - misspell
+        - gosmopolitan
+        - gofumpt
+
   exclude:
     - "shadow: declaration of \"err\" shadows"
     - "builtinShadow: shadowing of predeclared identifier: min"

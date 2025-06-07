@@ -1,6 +1,7 @@
 package wallet_test
 
 import (
+	"context"
 	"path"
 	"testing"
 
@@ -44,11 +45,10 @@ func setup(t *testing.T) *testData {
 		ChainType:  genesis.Mainnet,
 	}
 	mockState := state.MockingState(ts)
-	gRPCServer := grpc.NewServer(
+	gRPCServer := grpc.NewServer(context.Background(),
 		grpcConf, mockState,
-		nil, nil,
-		nil, wallet.NewWalletManager(walletMgrConf), nil,
-	)
+		nil, nil, nil,
+		wallet.NewWalletManager(walletMgrConf), nil)
 
 	assert.NoError(t, gRPCServer.StartServer())
 
@@ -97,7 +97,7 @@ func TestOpenWallet(t *testing.T) {
 		_, err := wallet.Open(td.wallet.Path(), true)
 		assert.ErrorIs(t, err, wallet.UnsupportedVersionError{
 			WalletVersion:    0,
-			SupportedVersion: 2,
+			SupportedVersion: wallet.VersionLatest,
 		})
 	})
 

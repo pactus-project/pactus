@@ -30,7 +30,7 @@ func TestGetTransaction(t *testing.T) {
 		res, err := client.GetTransaction(context.Background(),
 			&pactus.GetTransactionRequest{
 				Id:        textTrx.ID().String(),
-				Verbosity: pactus.TransactionVerbosity_TRANSACTION_DATA,
+				Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_DATA,
 			})
 
 		assert.NoError(t, err)
@@ -50,7 +50,7 @@ func TestGetTransaction(t *testing.T) {
 		res, err := client.GetTransaction(context.Background(),
 			&pactus.GetTransactionRequest{
 				Id:        textTrx.ID().String(),
-				Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
+				Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_INFO,
 			})
 		pld := res.Transaction.Payload.(*pactus.TransactionInfo_Bond)
 
@@ -153,6 +153,40 @@ func TestGetRawTransaction(t *testing.T) {
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeTransfer)
 
 		assert.Equal(t, amt, decodedTrx.Payload().Value())
+		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
+		assert.Equal(t, expectedFee, decodedTrx.Fee())
+	})
+
+	t.Run("Batch Transfer", func(t *testing.T) {
+		amt1 := td.RandAmount()
+		amt2 := td.RandAmount()
+		totalAmt := amt1 + amt2
+
+		res, err := client.GetRawBatchTransferTransaction(context.Background(),
+			&pactus.GetRawBatchTransferTransactionRequest{
+				Sender: td.RandAccAddress().String(),
+				Recipients: []*pactus.Recipient{
+					{
+						Receiver: td.RandAccAddress().String(),
+						Amount:   amt1.ToNanoPAC(),
+					},
+					{
+						Receiver: td.RandAccAddress().String(),
+						Amount:   amt2.ToNanoPAC(),
+					},
+				},
+				Memo: td.RandString(32),
+			},
+		)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, res.RawTransaction)
+
+		decodedTrx, err := tx.FromBytes(td.DecodingHex(res.RawTransaction))
+		assert.NoError(t, err)
+		expectedLockTime := td.mockState.LastBlockHeight()
+		expectedFee := td.mockState.CalculateFee(totalAmt, payload.TypeBatchTransfer)
+
+		assert.Equal(t, totalAmt, decodedTrx.Payload().Value())
 		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
 		assert.Equal(t, expectedFee, decodedTrx.Fee())
 	})
@@ -260,7 +294,7 @@ func TestCalculateFee(t *testing.T) {
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
 				Amount:      amt.ToNanoPAC(),
-				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
 				FixedAmount: false,
 			})
 		assert.NoError(t, err)
@@ -274,7 +308,7 @@ func TestCalculateFee(t *testing.T) {
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
 				Amount:      100e9,
-				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
 				FixedAmount: true,
 			})
 		assert.NoError(t, err)
@@ -288,7 +322,7 @@ func TestCalculateFee(t *testing.T) {
 		res, err := client.CalculateFee(context.Background(),
 			&pactus.CalculateFeeRequest{
 				Amount:      amt.ToNanoPAC(),
-				PayloadType: pactus.PayloadType_TRANSFER_PAYLOAD,
+				PayloadType: pactus.PayloadType_PAYLOAD_TYPE_TRANSFER,
 				FixedAmount: true,
 			})
 		assert.NoError(t, err)

@@ -45,13 +45,13 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 	}
 
 	switch req.Verbosity {
-	case pactus.TransactionVerbosity_TRANSACTION_DATA:
+	case pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_DATA:
 		res.Transaction = &pactus.TransactionInfo{
 			Id:   committedTx.TxID.String(),
 			Data: hex.EncodeToString(committedTx.Data),
 		}
 
-	case pactus.TransactionVerbosity_TRANSACTION_INFO:
+	case pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_INFO:
 		trx, err := committedTx.ToTx()
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "%s", err.Error())
@@ -219,6 +219,47 @@ func (s *transactionServer) GetRawWithdrawTransaction(_ context.Context,
 	}, nil
 }
 
+func (s *transactionServer) GetRawBatchTransferTransaction(_ context.Context,
+	req *pactus.GetRawBatchTransferTransactionRequest,
+) (*pactus.GetRawTransactionResponse, error) {
+	sender, err := crypto.AddressFromString(req.Sender)
+	if err != nil {
+		return nil, err
+	}
+
+	totalAmount := amount.Amount(0)
+
+	recipients := make([]payload.BatchRecipient, 0, len(req.Recipients))
+	for _, recipient := range req.Recipients {
+		receiver, err := crypto.AddressFromString(recipient.Receiver)
+		if err != nil {
+			return nil, err
+		}
+
+		amt := amount.Amount(recipient.Amount)
+
+		recipients = append(recipients, payload.BatchRecipient{
+			To:     receiver,
+			Amount: amt,
+		})
+
+		totalAmount += amt
+	}
+
+	fee := s.getFee(req.Fee, totalAmount)
+	lockTime := s.getLockTime(req.LockTime)
+
+	batchTransferTx := tx.NewBatchTransferTx(lockTime, sender, recipients, fee, tx.WithMemo(req.Memo))
+	rawTx, err := batchTransferTx.Bytes()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.GetRawTransactionResponse{
+		RawTransaction: hex.EncodeToString(rawTx),
+	}, nil
+}
+
 func (s *transactionServer) getFee(f int64, amt amount.Amount) amount.Amount {
 	fee := amount.Amount(f)
 	if fee == 0 {
@@ -304,6 +345,23 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 				ValidatorAddress: pld.From.String(),
 				AccountAddress:   pld.To.String(),
 				Amount:           pld.Amount.ToNanoPAC(),
+			},
+		}
+
+	case payload.TypeBatchTransfer:
+		pld := trx.Payload().(*payload.BatchTransferPayload)
+		recipients := make([]*pactus.Recipient, 0, len(pld.Recipients))
+		for _, recipient := range pld.Recipients {
+			recipients = append(recipients, &pactus.Recipient{
+				Receiver: recipient.To.String(),
+				Amount:   recipient.Amount.ToNanoPAC(),
+			})
+		}
+
+		trxInfo.Payload = &pactus.TransactionInfo_BatchTransfer{
+			BatchTransfer: &pactus.PayloadBatchTransfer{
+				Sender:     pld.From.String(),
+				Recipients: recipients,
 			},
 		}
 	default:

@@ -16,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/util/linkedlist"
 	"github.com/pactus-project/pactus/util/linkedmap"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 type txPool struct {
@@ -25,27 +26,28 @@ type txPool struct {
 	sbx            sandbox.Sandbox
 	pools          map[payload.Type]pool
 	consumptionMap map[crypto.Address]int
-	broadcastCh    chan message.Message
+	messagePipe    pipeline.Pipeline[message.Message]
 	store          store.Reader
 	logger         *logger.SubLogger
 }
 
 // NewTxPool constructs a new transaction pool with various sub-pools for different transaction types.
 // The transaction pool also maintains a consumption map for tracking byte usage per address.
-func NewTxPool(conf *Config, storeReader store.Reader, broadcastCh chan message.Message) TxPool {
+func NewTxPool(conf *Config, storeReader store.Reader, messagePipe pipeline.Pipeline[message.Message]) TxPool {
 	pools := make(map[payload.Type]pool)
 	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.fixedFee())
 	pools[payload.TypeBond] = newPool(conf.bondPoolSize(), conf.fixedFee())
 	pools[payload.TypeUnbond] = newPool(conf.unbondPoolSize(), 0)
 	pools[payload.TypeWithdraw] = newPool(conf.withdrawPoolSize(), conf.fixedFee())
 	pools[payload.TypeSortition] = newPool(conf.sortitionPoolSize(), 0)
+	pools[payload.TypeBatchTransfer] = newPool(conf.batchTransferPoolSize(), conf.fixedFee())
 
 	pool := &txPool{
 		config:         conf,
 		pools:          pools,
 		consumptionMap: make(map[crypto.Address]int),
 		store:          storeReader,
-		broadcastCh:    broadcastCh,
+		messagePipe:    messagePipe,
 	}
 
 	pool.logger = logger.NewSubLogger("_pool", pool)
@@ -111,7 +113,8 @@ func (p *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	}
 
 	go func(t *tx.Tx) {
-		p.broadcastCh <- message.NewTransactionsMessage([]*tx.Tx{t})
+		msg := message.NewTransactionsMessage([]*tx.Tx{t})
+		p.messagePipe.Send(msg)
 	}(trx)
 
 	return nil
@@ -282,6 +285,11 @@ func (p *txPool) PrepareBlockTransactions() block.Txs {
 		trxs = append(trxs, n.Data.Value)
 	}
 
+	poolBatchTransfer := p.pools[payload.TypeBatchTransfer]
+	for n := poolBatchTransfer.list.HeadNode(); n != nil; n = n.Next {
+		trxs = append(trxs, n.Data.Value)
+	}
+
 	return trxs
 }
 
@@ -382,8 +390,9 @@ func (p *txPool) getPendingConsumption(signer crypto.Address) int {
 }
 
 func (p *txPool) String() string {
-	return fmt.Sprintf("{💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
+	return fmt.Sprintf("{💸 %v💸 %v 🔐 %v 🔓 %v 🎯 %v 🧾 %v}",
 		p.pools[payload.TypeTransfer].list.Size(),
+		p.pools[payload.TypeBatchTransfer].list.Size(),
 		p.pools[payload.TypeBond].list.Size(),
 		p.pools[payload.TypeUnbond].list.Size(),
 		p.pools[payload.TypeSortition].list.Size(),

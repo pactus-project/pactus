@@ -2,6 +2,7 @@ package testsuite
 
 import (
 	"encoding/hex"
+	"fmt"
 	"math/rand"
 	"net"
 	"testing"
@@ -20,6 +21,7 @@ import (
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
@@ -330,6 +332,11 @@ func (ts *TestSuite) RandPeerID() peer.ID {
 	copy(id[2:], s)
 
 	return peer.ID(id[:])
+}
+
+// RandMultiAddress returns a random MultiAddress.
+func (ts *TestSuite) RandMultiAddress() string {
+	return fmt.Sprintf("/dns/%s/udp/1234", ts.RandString(12))
 }
 
 type AccountMaker struct {
@@ -701,6 +708,42 @@ func (ts *TestSuite) GenerateTestTransferTx(options ...func(*TransactionMaker)) 
 
 	sender := tmk.SignerAccountAddress()
 	trx := tx.NewTransferTx(tmk.LockTime, sender, ts.RandAccAddress(), tmk.Amount, tmk.Fee)
+	ts.HelperSignTransaction(tmk.Signer, trx)
+
+	return trx
+}
+
+// GenerateTestBatchTransferTx generate a batch transfer transaction for test.
+func (ts *TestSuite) GenerateTestBatchTransferTx(options ...func(*TransactionMaker)) *tx.Tx {
+	tmk := ts.NewTransactionMaker()
+
+	for _, opt := range options {
+		opt(tmk)
+	}
+
+	if tmk.Signer == nil {
+		useBLSSigner := ts.RandBool()
+		if useBLSSigner {
+			_, prv := ts.RandBLSKeyPair()
+			tmk.Signer = prv
+		} else {
+			_, prv := ts.RandEd25519KeyPair()
+			tmk.Signer = prv
+		}
+	}
+
+	numOfRecip := ts.RandInt(6) + 2
+	recipients := make([]payload.BatchRecipient, numOfRecip)
+
+	for i := 0; i < numOfRecip; i++ {
+		recipients[i] = payload.BatchRecipient{
+			To:     ts.RandAccAddress(),
+			Amount: ts.RandAmount(),
+		}
+	}
+
+	sender := tmk.SignerAccountAddress()
+	trx := tx.NewBatchTransferTx(tmk.LockTime, sender, recipients, tmk.Fee)
 	ts.HelperSignTransaction(tmk.Signer, trx)
 
 	return trx

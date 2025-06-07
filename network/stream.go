@@ -9,27 +9,28 @@ import (
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2peer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 type streamService struct {
-	ctx        context.Context
-	host       lp2phost.Host
-	protocolID lp2pcore.ProtocolID
-	timeout    time.Duration
-	eventCh    chan Event
-	logger     *logger.SubLogger
+	ctx         context.Context
+	host        lp2phost.Host
+	protocolID  lp2pcore.ProtocolID
+	timeout     time.Duration
+	networkPipe pipeline.Pipeline[Event]
+	logger      *logger.SubLogger
 }
 
 func newStreamService(ctx context.Context, host lp2phost.Host, conf *Config,
-	protocolID lp2pcore.ProtocolID, eventCh chan Event, log *logger.SubLogger,
+	protocolID lp2pcore.ProtocolID, networkPipe pipeline.Pipeline[Event], log *logger.SubLogger,
 ) *streamService {
 	service := &streamService{
-		ctx:        ctx,
-		host:       host,
-		protocolID: protocolID,
-		timeout:    conf.StreamTimeout,
-		eventCh:    eventCh,
-		logger:     log,
+		ctx:         ctx,
+		host:        host,
+		protocolID:  protocolID,
+		timeout:     conf.StreamTimeout,
+		networkPipe: networkPipe,
+		logger:      log,
 	}
 
 	service.host.SetStreamHandler(protocolID, service.handleStream)
@@ -50,16 +51,16 @@ func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 		Reader: stream,
 	}
 
-	s.eventCh <- event
+	s.networkPipe.Send(event)
 }
 
-// SendRequest sends a message to a specific peer, assuming there is already a direct connection.
+// SendTo sends a message to a specific peer, assuming there is already a direct connection.
 //
 // For simplicity, we do not use bi-directional streams.
 // Each time a peer wants to send a message, it creates a new stream.
 //
 // For more details on stream multiplexing, refer to: https://docs.libp2p.io/concepts/multiplex/overview/
-func (s *streamService) SendRequest(msg []byte, pid lp2peer.ID) (lp2pnetwork.Stream, error) {
+func (s *streamService) SendTo(msg []byte, pid lp2peer.ID) (lp2pnetwork.Stream, error) {
 	s.logger.Trace("sending stream", "to", pid)
 	_, err := s.host.Peerstore().SupportsProtocols(pid, s.protocolID)
 	if err != nil {

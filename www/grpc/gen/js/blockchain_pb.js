@@ -673,7 +673,7 @@ proto.pactus.GetAccountRequest.prototype.toObject = function(opt_includeInstance
  */
 proto.pactus.GetAccountRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    address: jspb.Message.getFieldWithDefault(msg, 1, "")
+address: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -803,7 +803,7 @@ proto.pactus.GetAccountResponse.prototype.toObject = function(opt_includeInstanc
  */
 proto.pactus.GetAccountResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    account: (f = msg.getAccount()) && proto.pactus.AccountInfo.toObject(includeInstance, f)
+account: (f = msg.getAccount()) && proto.pactus.AccountInfo.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1062,7 +1062,7 @@ proto.pactus.GetValidatorAddressesResponse.prototype.toObject = function(opt_inc
  */
 proto.pactus.GetValidatorAddressesResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    addressesList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f
+addressesList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -1211,7 +1211,7 @@ proto.pactus.GetValidatorRequest.prototype.toObject = function(opt_includeInstan
  */
 proto.pactus.GetValidatorRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    address: jspb.Message.getFieldWithDefault(msg, 1, "")
+address: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -1341,7 +1341,7 @@ proto.pactus.GetValidatorByNumberRequest.prototype.toObject = function(opt_inclu
  */
 proto.pactus.GetValidatorByNumberRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    number: jspb.Message.getFieldWithDefault(msg, 1, 0)
+number: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -1471,7 +1471,7 @@ proto.pactus.GetValidatorResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.pactus.GetValidatorResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    validator: (f = msg.getValidator()) && proto.pactus.ValidatorInfo.toObject(includeInstance, f)
+validator: (f = msg.getValidator()) && proto.pactus.ValidatorInfo.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -1622,7 +1622,7 @@ proto.pactus.GetPublicKeyRequest.prototype.toObject = function(opt_includeInstan
  */
 proto.pactus.GetPublicKeyRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    address: jspb.Message.getFieldWithDefault(msg, 1, "")
+address: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -1752,7 +1752,7 @@ proto.pactus.GetPublicKeyResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.pactus.GetPublicKeyResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    publicKey: jspb.Message.getFieldWithDefault(msg, 1, "")
+publicKey: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -1882,8 +1882,8 @@ proto.pactus.GetBlockRequest.prototype.toObject = function(opt_includeInstance) 
  */
 proto.pactus.GetBlockRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    height: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    verbosity: jspb.Message.getFieldWithDefault(msg, 2, 0)
+height: jspb.Message.getFieldWithDefault(msg, 1, 0),
+verbosity: jspb.Message.getFieldWithDefault(msg, 2, 0)
   };
 
   if (includeInstance) {
@@ -2049,13 +2049,13 @@ proto.pactus.GetBlockResponse.prototype.toObject = function(opt_includeInstance)
  */
 proto.pactus.GetBlockResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    height: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    hash: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    data: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    blockTime: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    header: (f = msg.getHeader()) && proto.pactus.BlockHeaderInfo.toObject(includeInstance, f),
-    prevCert: (f = msg.getPrevCert()) && proto.pactus.CertificateInfo.toObject(includeInstance, f),
-    txsList: jspb.Message.toObjectList(msg.getTxsList(),
+height: jspb.Message.getFieldWithDefault(msg, 1, 0),
+hash: jspb.Message.getFieldWithDefault(msg, 2, ""),
+data: jspb.Message.getFieldWithDefault(msg, 3, ""),
+blockTime: jspb.Message.getFieldWithDefault(msg, 4, 0),
+header: (f = msg.getHeader()) && proto.pactus.BlockHeaderInfo.toObject(includeInstance, f),
+prevCert: (f = msg.getPrevCert()) && proto.pactus.CertificateInfo.toObject(includeInstance, f),
+txsList: jspb.Message.toObjectList(msg.getTxsList(),
     transaction_pb.TransactionInfo.toObject, includeInstance)
   };
 
@@ -2424,7 +2424,7 @@ proto.pactus.GetBlockHashRequest.prototype.toObject = function(opt_includeInstan
  */
 proto.pactus.GetBlockHashRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    height: jspb.Message.getFieldWithDefault(msg, 1, 0)
+height: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -2554,7 +2554,7 @@ proto.pactus.GetBlockHashResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.pactus.GetBlockHashResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    hash: jspb.Message.getFieldWithDefault(msg, 1, "")
+hash: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -2684,7 +2684,7 @@ proto.pactus.GetBlockHeightRequest.prototype.toObject = function(opt_includeInst
  */
 proto.pactus.GetBlockHeightRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    hash: jspb.Message.getFieldWithDefault(msg, 1, "")
+hash: jspb.Message.getFieldWithDefault(msg, 1, "")
   };
 
   if (includeInstance) {
@@ -2814,7 +2814,7 @@ proto.pactus.GetBlockHeightResponse.prototype.toObject = function(opt_includeIns
  */
 proto.pactus.GetBlockHeightResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    height: jspb.Message.getFieldWithDefault(msg, 1, 0)
+height: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -3052,17 +3052,17 @@ proto.pactus.GetBlockchainInfoResponse.prototype.toObject = function(opt_include
  */
 proto.pactus.GetBlockchainInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    lastBlockHeight: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    lastBlockHash: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    totalAccounts: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    totalValidators: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    totalPower: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    committeePower: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    committeeValidatorsList: jspb.Message.toObjectList(msg.getCommitteeValidatorsList(),
+lastBlockHeight: jspb.Message.getFieldWithDefault(msg, 1, 0),
+lastBlockHash: jspb.Message.getFieldWithDefault(msg, 2, ""),
+totalAccounts: jspb.Message.getFieldWithDefault(msg, 3, 0),
+totalValidators: jspb.Message.getFieldWithDefault(msg, 4, 0),
+totalPower: jspb.Message.getFieldWithDefault(msg, 5, 0),
+committeePower: jspb.Message.getFieldWithDefault(msg, 6, 0),
+committeeValidatorsList: jspb.Message.toObjectList(msg.getCommitteeValidatorsList(),
     proto.pactus.ValidatorInfo.toObject, includeInstance),
-    isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
-    pruningHeight: jspb.Message.getFieldWithDefault(msg, 9, 0),
-    lastBlockTime: jspb.Message.getFieldWithDefault(msg, 10, 0)
+isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
+pruningHeight: jspb.Message.getFieldWithDefault(msg, 9, 0),
+lastBlockTime: jspb.Message.getFieldWithDefault(msg, 10, 0)
   };
 
   if (includeInstance) {
@@ -3583,8 +3583,8 @@ proto.pactus.GetConsensusInfoResponse.prototype.toObject = function(opt_includeI
  */
 proto.pactus.GetConsensusInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    proposal: (f = msg.getProposal()) && proto.pactus.ProposalInfo.toObject(includeInstance, f),
-    instancesList: jspb.Message.toObjectList(msg.getInstancesList(),
+proposal: (f = msg.getProposal()) && proto.pactus.ProposalInfo.toObject(includeInstance, f),
+instancesList: jspb.Message.toObjectList(msg.getInstancesList(),
     proto.pactus.ConsensusInfo.toObject, includeInstance)
   };
 
@@ -3787,7 +3787,7 @@ proto.pactus.GetTxPoolContentRequest.prototype.toObject = function(opt_includeIn
  */
 proto.pactus.GetTxPoolContentRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    payloadType: jspb.Message.getFieldWithDefault(msg, 1, 0)
+payloadType: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -3924,7 +3924,7 @@ proto.pactus.GetTxPoolContentResponse.prototype.toObject = function(opt_includeI
  */
 proto.pactus.GetTxPoolContentResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    txsList: jspb.Message.toObjectList(msg.getTxsList(),
+txsList: jspb.Message.toObjectList(msg.getTxsList(),
     transaction_pb.TransactionInfo.toObject, includeInstance)
   };
 
@@ -4077,16 +4077,16 @@ proto.pactus.ValidatorInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.ValidatorInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    hash: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    data: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    publicKey: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    number: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    stake: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    lastBondingHeight: jspb.Message.getFieldWithDefault(msg, 6, 0),
-    lastSortitionHeight: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    unbondingHeight: jspb.Message.getFieldWithDefault(msg, 8, 0),
-    address: jspb.Message.getFieldWithDefault(msg, 9, ""),
-    availabilityScore: jspb.Message.getFloatingPointFieldWithDefault(msg, 10, 0.0)
+hash: jspb.Message.getFieldWithDefault(msg, 1, ""),
+data: jspb.Message.getFieldWithDefault(msg, 2, ""),
+publicKey: jspb.Message.getFieldWithDefault(msg, 3, ""),
+number: jspb.Message.getFieldWithDefault(msg, 4, 0),
+stake: jspb.Message.getFieldWithDefault(msg, 5, 0),
+lastBondingHeight: jspb.Message.getFieldWithDefault(msg, 6, 0),
+lastSortitionHeight: jspb.Message.getFieldWithDefault(msg, 7, 0),
+unbondingHeight: jspb.Message.getFieldWithDefault(msg, 8, 0),
+address: jspb.Message.getFieldWithDefault(msg, 9, ""),
+availabilityScore: jspb.Message.getFloatingPointFieldWithDefault(msg, 10, 0.0)
   };
 
   if (includeInstance) {
@@ -4477,11 +4477,11 @@ proto.pactus.AccountInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.AccountInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    hash: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    data: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    number: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    balance: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    address: jspb.Message.getFieldWithDefault(msg, 5, "")
+hash: jspb.Message.getFieldWithDefault(msg, 1, ""),
+data: jspb.Message.getFieldWithDefault(msg, 2, ""),
+number: jspb.Message.getFieldWithDefault(msg, 3, 0),
+balance: jspb.Message.getFieldWithDefault(msg, 4, 0),
+address: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
   if (includeInstance) {
@@ -4727,11 +4727,11 @@ proto.pactus.BlockHeaderInfo.prototype.toObject = function(opt_includeInstance) 
  */
 proto.pactus.BlockHeaderInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    version: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    prevBlockHash: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    stateRoot: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    sortitionSeed: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    proposerAddress: jspb.Message.getFieldWithDefault(msg, 5, "")
+version: jspb.Message.getFieldWithDefault(msg, 1, 0),
+prevBlockHash: jspb.Message.getFieldWithDefault(msg, 2, ""),
+stateRoot: jspb.Message.getFieldWithDefault(msg, 3, ""),
+sortitionSeed: jspb.Message.getFieldWithDefault(msg, 4, ""),
+proposerAddress: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
   if (includeInstance) {
@@ -4984,11 +4984,11 @@ proto.pactus.CertificateInfo.prototype.toObject = function(opt_includeInstance) 
  */
 proto.pactus.CertificateInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    hash: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    round: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    committersList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f,
-    absenteesList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f,
-    signature: jspb.Message.getFieldWithDefault(msg, 5, "")
+hash: jspb.Message.getFieldWithDefault(msg, 1, ""),
+round: jspb.Message.getFieldWithDefault(msg, 2, 0),
+committersList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f,
+absenteesList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f,
+signature: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
   if (includeInstance) {
@@ -5276,12 +5276,12 @@ proto.pactus.VoteInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.VoteInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    type: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    voter: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    blockHash: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    round: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    cpRound: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    cpValue: jspb.Message.getFieldWithDefault(msg, 6, 0)
+type: jspb.Message.getFieldWithDefault(msg, 1, 0),
+voter: jspb.Message.getFieldWithDefault(msg, 2, ""),
+blockHash: jspb.Message.getFieldWithDefault(msg, 3, ""),
+round: jspb.Message.getFieldWithDefault(msg, 4, 0),
+cpRound: jspb.Message.getFieldWithDefault(msg, 5, 0),
+cpValue: jspb.Message.getFieldWithDefault(msg, 6, 0)
   };
 
   if (includeInstance) {
@@ -5563,11 +5563,11 @@ proto.pactus.ConsensusInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.ConsensusInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    address: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    active: jspb.Message.getBooleanFieldWithDefault(msg, 2, false),
-    height: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    round: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    votesList: jspb.Message.toObjectList(msg.getVotesList(),
+address: jspb.Message.getFieldWithDefault(msg, 1, ""),
+active: jspb.Message.getBooleanFieldWithDefault(msg, 2, false),
+height: jspb.Message.getFieldWithDefault(msg, 3, 0),
+round: jspb.Message.getFieldWithDefault(msg, 4, 0),
+votesList: jspb.Message.toObjectList(msg.getVotesList(),
     proto.pactus.VoteInfo.toObject, includeInstance)
   };
 
@@ -5836,10 +5836,10 @@ proto.pactus.ProposalInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pactus.ProposalInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    height: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    round: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    blockData: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    signature: jspb.Message.getFieldWithDefault(msg, 4, "")
+height: jspb.Message.getFieldWithDefault(msg, 1, 0),
+round: jspb.Message.getFieldWithDefault(msg, 2, 0),
+blockData: jspb.Message.getFieldWithDefault(msg, 3, ""),
+signature: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -6028,19 +6028,21 @@ proto.pactus.ProposalInfo.prototype.setSignature = function(value) {
  * @enum {number}
  */
 proto.pactus.BlockVerbosity = {
-  BLOCK_DATA: 0,
-  BLOCK_INFO: 1,
-  BLOCK_TRANSACTIONS: 2
+  BLOCK_VERBOSITY_DATA: 0,
+  BLOCK_VERBOSITY_INFO: 1,
+  BLOCK_VERBOSITY_TRANSACTIONS: 2
 };
 
 /**
  * @enum {number}
  */
 proto.pactus.VoteType = {
-  VOTE_UNKNOWN: 0,
-  VOTE_PREPARE: 1,
-  VOTE_PRECOMMIT: 2,
-  VOTE_CHANGE_PROPOSER: 3
+  VOTE_TYPE_UNSPECIFIED: 0,
+  VOTE_TYPE_PREPARE: 1,
+  VOTE_TYPE_PRECOMMIT: 2,
+  VOTE_TYPE_CP_PRE_VOTE: 3,
+  VOTE_TYPE_CP_MAIN_VOTE: 4,
+  VOTE_TYPE_CP_DECIDED: 5
 };
 
 goog.object.extend(exports, proto.pactus);

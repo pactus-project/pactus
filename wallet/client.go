@@ -151,7 +151,7 @@ func (c *grpcClient) getTransaction(txID tx.ID) (*pactus.GetTransactionResponse,
 	res, err := c.transactionClient.GetTransaction(c.ctx,
 		&pactus.GetTransactionRequest{
 			Id:        txID.String(),
-			Verbosity: pactus.TransactionVerbosity_TRANSACTION_INFO,
+			Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_INFO,
 		})
 	if err != nil {
 		return nil, err

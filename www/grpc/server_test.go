@@ -2,7 +2,6 @@ package grpc
 
 import (
 	"context"
-	"fmt"
 	"net"
 	"os"
 	"path/filepath"
@@ -81,15 +80,13 @@ func setup(t *testing.T, conf *Config) *testData {
 	mockWalletMgrConf.WalletsDir = conf.WalletsDir
 	mockWalletMgrConf.ChainType = mockState.Genesis().ChainType()
 
-	zmqServer, err := zmq.New(context.TODO(), &zmq.Config{
-		ZmqPubTxInfo: fmt.Sprintf("tcp://localhost:%d", testsuite.FindFreePort()),
-	}, nil)
-	require.NoError(t, err)
+	zmqPublishers := []zmq.Publisher{
+		zmq.MockingPublisher("zmq_address", "zmq_topic", 100),
+	}
 
-	server := NewServer(
-		conf, mockState,
-		mockSync, mockNet,
-		mockConsMgr, wallet.NewWalletManager(mockWalletMgrConf), zmqServer,
+	server := NewServer(context.Background(), conf,
+		mockState, mockSync, mockNet, mockConsMgr,
+		wallet.NewWalletManager(mockWalletMgrConf), zmqPublishers,
 	)
 	err = server.startListening(listener)
 	assert.NoError(t, err)

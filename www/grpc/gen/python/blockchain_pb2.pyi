@@ -3,29 +3,34 @@ from google.protobuf.internal import containers as _containers
 from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
-from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Mapping, Optional as _Optional, Union as _Union
+from collections.abc import Iterable as _Iterable, Mapping as _Mapping
+from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class BlockVerbosity(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
-    BLOCK_DATA: _ClassVar[BlockVerbosity]
-    BLOCK_INFO: _ClassVar[BlockVerbosity]
-    BLOCK_TRANSACTIONS: _ClassVar[BlockVerbosity]
+    BLOCK_VERBOSITY_DATA: _ClassVar[BlockVerbosity]
+    BLOCK_VERBOSITY_INFO: _ClassVar[BlockVerbosity]
+    BLOCK_VERBOSITY_TRANSACTIONS: _ClassVar[BlockVerbosity]
 
 class VoteType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
-    VOTE_UNKNOWN: _ClassVar[VoteType]
-    VOTE_PREPARE: _ClassVar[VoteType]
-    VOTE_PRECOMMIT: _ClassVar[VoteType]
-    VOTE_CHANGE_PROPOSER: _ClassVar[VoteType]
-BLOCK_DATA: BlockVerbosity
-BLOCK_INFO: BlockVerbosity
-BLOCK_TRANSACTIONS: BlockVerbosity
-VOTE_UNKNOWN: VoteType
-VOTE_PREPARE: VoteType
-VOTE_PRECOMMIT: VoteType
-VOTE_CHANGE_PROPOSER: VoteType
+    VOTE_TYPE_UNSPECIFIED: _ClassVar[VoteType]
+    VOTE_TYPE_PREPARE: _ClassVar[VoteType]
+    VOTE_TYPE_PRECOMMIT: _ClassVar[VoteType]
+    VOTE_TYPE_CP_PRE_VOTE: _ClassVar[VoteType]
+    VOTE_TYPE_CP_MAIN_VOTE: _ClassVar[VoteType]
+    VOTE_TYPE_CP_DECIDED: _ClassVar[VoteType]
+BLOCK_VERBOSITY_DATA: BlockVerbosity
+BLOCK_VERBOSITY_INFO: BlockVerbosity
+BLOCK_VERBOSITY_TRANSACTIONS: BlockVerbosity
+VOTE_TYPE_UNSPECIFIED: VoteType
+VOTE_TYPE_PREPARE: VoteType
+VOTE_TYPE_PRECOMMIT: VoteType
+VOTE_TYPE_CP_PRE_VOTE: VoteType
+VOTE_TYPE_CP_MAIN_VOTE: VoteType
+VOTE_TYPE_CP_DECIDED: VoteType
 
 class GetAccountRequest(_message.Message):
     __slots__ = ("address",)

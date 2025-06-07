@@ -17,9 +17,11 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/www/grpc"
+	"github.com/pactus-project/pactus/www/html"
 	"github.com/pactus-project/pactus/www/http"
 	"github.com/pactus-project/pactus/www/jsonrpc"
 	"github.com/pactus-project/pactus/www/zmq"
@@ -27,61 +29,77 @@ import (
 )
 
 type Node struct {
-	genesisDoc *genesis.Genesis
-	config     *config.Config
-	state      state.Facade
-	store      store.Store
-	txPool     txpool.TxPool
-	consMgr    consensus.Manager
-	network    network.Network
-	sync       sync.Synchronizer
-	http       *http.Server
-	grpc       *grpc.Server
-	jsonrpc    *jsonrpc.Server
-	zeromq     *zmq.Server
-	eventCh    chan any
+	ctx           context.Context
+	cancel        context.CancelFunc
+	genesisDoc    *genesis.Genesis
+	config        *config.Config
+	state         state.Facade
+	store         store.Store
+	txPool        txpool.TxPool
+	consMgr       consensus.Manager
+	network       network.Network
+	sync          sync.Synchronizer
+	grpc          *grpc.Server
+	html          *html.Server
+	http          *http.Server
+	jsonrpc       *jsonrpc.Server
+	zeromq        *zmq.Server
+	broadcastPipe pipeline.Pipeline[message.Message]
+	networkPipe   pipeline.Pipeline[network.Event]
+	eventPipe     pipeline.Pipeline[any]
 }
 
 func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	valKeys []*bls.ValidatorKey, rewardAddrs []crypto.Address,
 ) (*Node, error) {
+	ctx, cancel := context.WithCancel(context.Background())
+
 	// Initialize the logger
 	logger.InitGlobalLogger(conf.Logger)
 
 	chainType := genDoc.ChainType()
 
 	logger.Info("You are running a Pactus blockchain",
-		"version", version.NodeVersion.StringWithAlias(),
+		"version", version.NodeVersion().StringWithAlias(),
 		"network", chainType)
 
-	messageCh := make(chan message.Message, 500)
-	eventCh := make(chan any)
+	broadcastPipe := pipeline.New[message.Message](ctx, "Broadcast Pipeline", 100)
+	networkPipe := pipeline.New[network.Event](ctx, "Network Pipeline", 500)
+	eventPipe := pipeline.New[any](ctx, "Event Pipeline", 100)
 
 	store, err := store.NewStore(conf.Store)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 
-	txPool := txpool.NewTxPool(conf.TxPool, store, messageCh)
+	txPool := txpool.NewTxPool(conf.TxPool, store, broadcastPipe)
 
-	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventCh)
+	state, err := state.LoadOrNewState(genDoc, valKeys, store, txPool, eventPipe)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 
-	net, err := network.NewNetwork(conf.Network)
+	net, err := network.NewNetwork(ctx, conf.Network, networkPipe)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 
-	consMgr := consensus.NewManager(conf.Consensus, state, valKeys, rewardAddrs, messageCh)
+	consMgr := consensus.NewManager(conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
 	walletMgr := wallet.NewWalletManager(conf.WalletManager)
 
 	if !store.IsPruned() {
 		conf.Sync.Services.Append(service.FullNode)
 	}
-	syn, err := sync.NewSynchronizer(conf.Sync, valKeys, state, consMgr, net, messageCh)
+	syn, err := sync.NewSynchronizer(conf.Sync, valKeys, state, consMgr, net, broadcastPipe, networkPipe)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 
@@ -90,29 +108,37 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		enableHTTPAuth = true
 	}
 
-	zeromqServer, err := zmq.New(context.TODO(), conf.ZeroMq, eventCh)
+	zeromqServer, err := zmq.New(ctx, conf.ZeroMq, eventPipe)
 	if err != nil {
+		cancel()
+
 		return nil, err
 	}
 
-	grpcServer := grpc.NewServer(conf.GRPC, state, syn, net, consMgr, walletMgr, zeromqServer)
-	httpServer := http.NewServer(conf.HTTP, enableHTTPAuth)
-	jsonrpcServer := jsonrpc.NewServer(conf.JSONRPC)
+	grpcServer := grpc.NewServer(ctx, conf.GRPC, state, syn, net, consMgr, walletMgr, zeromqServer.Publishers())
+	htmlServer := html.NewServer(ctx, conf.HTML, enableHTTPAuth)
+	httpServer := http.NewServer(ctx, conf.HTTP)
+	jsonrpcServer := jsonrpc.NewServer(ctx, conf.JSONRPC)
 
 	node := &Node{
-		config:     conf,
-		genesisDoc: genDoc,
-		network:    net,
-		state:      state,
-		txPool:     txPool,
-		consMgr:    consMgr,
-		sync:       syn,
-		store:      store,
-		http:       httpServer,
-		grpc:       grpcServer,
-		jsonrpc:    jsonrpcServer,
-		zeromq:     zeromqServer,
-		eventCh:    eventCh,
+		ctx:           ctx,
+		cancel:        cancel,
+		config:        conf,
+		genesisDoc:    genDoc,
+		network:       net,
+		state:         state,
+		txPool:        txPool,
+		consMgr:       consMgr,
+		sync:          syn,
+		store:         store,
+		grpc:          grpcServer,
+		html:          htmlServer,
+		http:          httpServer,
+		jsonrpc:       jsonrpcServer,
+		zeromq:        zeromqServer,
+		broadcastPipe: broadcastPipe,
+		networkPipe:   networkPipe,
+		eventPipe:     eventPipe,
 	}
 
 	return node, nil
@@ -146,9 +172,14 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start gRPC server")
 	}
 
+	err = n.html.StartServer(n.grpc.Address())
+	if err != nil {
+		return errors.Wrap(err, "could not start HTML server")
+	}
+
 	err = n.http.StartServer(n.grpc.Address())
 	if err != nil {
-		return errors.Wrap(err, "could not start HTTP server")
+		return errors.Wrap(err, "could not start HTTP-API server")
 	}
 
 	err = n.jsonrpc.StartServer(n.grpc.Address())
@@ -161,6 +192,13 @@ func (n *Node) Start() error {
 
 func (n *Node) Stop() {
 	logger.Info("stopping Node")
+	n.cancel()
+	n.broadcastPipe.Close()
+	n.networkPipe.Close()
+	n.eventPipe.Close()
+
+	// Wait for one second
+	time.Sleep(1 * time.Second)
 
 	n.network.Stop()
 
@@ -172,11 +210,10 @@ func (n *Node) Stop() {
 	n.state.Close()
 	n.store.Close()
 	n.grpc.StopServer()
+	n.html.StopServer()
 	n.http.StopServer()
 	n.jsonrpc.StopServer()
 	n.zeromq.Close()
-
-	close(n.eventCh)
 }
 
 // these methods are using by GUI.

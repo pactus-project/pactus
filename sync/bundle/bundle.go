@@ -40,14 +40,16 @@ func (u fixedUint32) MarshalCBOR() ([]byte, error) {
 }
 
 type Bundle struct {
-	Flags   int
-	Message message.Message
+	Flags           int
+	Message         message.Message
+	ConsensusHeight uint32
 }
 
 func NewBundle(msg message.Message) *Bundle {
 	return &Bundle{
-		Flags:   0,
-		Message: msg,
+		Flags:           0,
+		Message:         msg,
+		ConsensusHeight: msg.ConsensusHeight(),
 	}
 }
 
@@ -88,7 +90,7 @@ func (b *Bundle) Encode() ([]byte, error) {
 		Flags:           b.Flags,
 		MessageType:     b.Message.Type(),
 		MessageData:     data,
-		ConsensusHeight: fixedUint32(b.Message.ConsensusHeight()),
+		ConsensusHeight: fixedUint32(b.ConsensusHeight),
 	}
 
 	return cbor.Marshal(msg)
@@ -119,6 +121,7 @@ func (b *Bundle) Decode(r io.Reader) (int, error) {
 
 	b.Flags = bdl.Flags
 	b.Message = msg
+	b.ConsensusHeight = uint32(bdl.ConsensusHeight)
 
 	return bytesRead, cbor.Unmarshal(data, msg)
 }

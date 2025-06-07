@@ -6,6 +6,7 @@ import (
 	"crypto/subtle"
 	"encoding/binary"
 	"math/rand"
+	"slices"
 )
 
 func Uint16ToSlice(n uint16) []byte {
@@ -116,14 +117,7 @@ func Subtracts(slice1, slice2 []int32) []int32 {
 	}
 
 	for _, num1 := range slice1 {
-		found := false
-		for _, num2 := range slice2 {
-			if num1 == num2 {
-				found = true
-
-				break
-			}
-		}
+		found := slices.Contains(slice2, num1)
 		if !found {
 			sub = append(sub, num1)
 		}
@@ -134,13 +128,7 @@ func Subtracts(slice1, slice2 []int32) []int32 {
 
 // Contains checks whether the given slice has a specific item.
 func Contains[T comparable](slice []T, item T) bool {
-	for _, i := range slice {
-		if i == item {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(slice, item)
 }
 
 // Equal tells whether a and b contain the same elements.

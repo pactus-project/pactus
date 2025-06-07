@@ -60,7 +60,9 @@ func TestGetNodeInfo(t *testing.T) {
 	assert.Equal(t, version.NodeAgent.String(), res.Agent)
 	assert.Equal(t, hex.EncodeToString([]byte(td.mockSync.SelfID())), res.PeerId)
 	assert.Equal(t, "test-moniker", res.Moniker)
-	assert.Contains(t, res.ZmqPublishers[0].Topic, "transaction_info")
+	assert.Equal(t, res.ZmqPublishers[0].Address, "zmq_address")
+	assert.Equal(t, res.ZmqPublishers[0].Topic, "zmq_topic")
+	assert.Equal(t, res.ZmqPublishers[0].Hwm, int32(100))
 
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()

@@ -1,14 +1,13 @@
 package encrypter
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
-	"errors"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/pactus-project/pactus/util"
@@ -21,6 +20,7 @@ type argon2dParameters struct {
 	iterations  uint32
 	memory      uint32
 	parallelism uint8
+	keyLen      uint32
 }
 
 type Option func(p *argon2dParameters)
@@ -47,16 +47,21 @@ const (
 	nameParamIterations  = "iterations"
 	nameParamMemory      = "memory"
 	nameParamParallelism = "parallelism"
+	nameParamKeyLen      = "keylen"
 
 	nameFuncNope      = ""
 	nameFuncArgon2ID  = "ARGON2ID"
 	nameFuncAES256CTR = "AES_256_CTR"
+	nameFuncAES256CBC = "AES_256_CBC"
 	nameFuncMACv1     = "MACV1"
-)
 
-// ErrNotSupported describes an error in which the encrypted method is no
-// known or supported.
-var ErrNotSupported = errors.New("encrypted method is not supported")
+	// Parameter Choice
+	// https://www.rfc-editor.org/rfc/rfc9106.html#section-4
+	defaultIterations  = 3
+	defaultMemory      = 65536 // 2 ^ 16
+	defaultParallelism = 4
+	defaultKeyLen      = 48
+)
 
 // Encrypter keeps the method and parameters for the cipher algorithm.
 type Encrypter struct {
@@ -75,17 +80,17 @@ func NopeEncrypter() Encrypter {
 	}
 }
 
-// DefaultEncrypter creates a default encrypter instance.
+// DefaultEncrypter creates a new encrypter instance.
+// If no option sets it uses the default parameters.
 //
 // The default encrypter uses Argon2ID as password hasher and AES_256_CTR as
 // encryption algorithm.
 func DefaultEncrypter(opts ...Option) Encrypter {
-	// Parameter Choice
-	// https://www.rfc-editor.org/rfc/rfc9106.html#section-4
 	argon2dParameters := &argon2dParameters{
-		iterations:  uint32(3),
-		memory:      uint32(65536), // 2 ^ 16
-		parallelism: uint8(4),
+		iterations:  defaultIterations,
+		memory:      defaultMemory,
+		parallelism: defaultParallelism,
+		keyLen:      defaultKeyLen,
 	}
 	for _, opt := range opts {
 		opt(argon2dParameters)
@@ -98,6 +103,7 @@ func DefaultEncrypter(opts ...Option) Encrypter {
 	encParams.SetUint32(nameParamIterations, argon2dParameters.iterations)
 	encParams.SetUint32(nameParamMemory, argon2dParameters.memory)
 	encParams.SetUint8(nameParamParallelism, argon2dParameters.parallelism)
+	encParams.SetUint32(nameParamKeyLen, argon2dParameters.keyLen)
 
 	return Encrypter{
 		Method: method,
@@ -129,53 +135,67 @@ func (e *Encrypter) Encrypt(message, password string) (string, error) {
 		return "", ErrMethodNotSupported
 	}
 
-	data := make([]byte, 0)
+	// Password hasher method
+	salt := make([]byte, 16)
+	_, err := rand.Read(salt)
+	if err != nil {
+		return "", err
+	}
+
+	iterations := e.Params.GetUint32(nameParamIterations)
+	memory := e.Params.GetUint32(nameParamMemory)
+	parallelism := e.Params.GetUint8(nameParamParallelism)
+	keyLen := e.Params.GetUint32(nameParamKeyLen)
+
+	if keyLen == 32 {
+		// Legacy encryption methods where the same salt is reused as the IV.
+		// Update to 48 byes key length.
+		keyLen = 48
+		e.Params.SetUint32(nameParamKeyLen, 48)
+	}
 
 	// Password hasher method
+	var passwordHash []byte
 	switch funcs[0] {
 	case nameFuncArgon2ID:
-		salt := make([]byte, 16)
-		_, err := rand.Read(salt)
-		if err != nil {
-			return "", err
-		}
-
-		iterations := e.Params.GetUint32(nameParamIterations)
-		memory := e.Params.GetUint32(nameParamMemory)
-		parallelism := e.Params.GetUint8(nameParamParallelism)
-
 		// Argon2 currently has three modes:
 		// - data-dependent Argon2d,
 		// - data-independent Argon2i,
 		// - a mix of the two, Argon2id.
-		cipherKey := argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, 32)
+		passwordHash = argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, keyLen)
+	default:
+		return "", ErrMethodNotSupported
+	}
 
-		// Encrypter method
-		switch funcs[1] {
-		case nameFuncAES256CTR:
-			// Using salt for Initialization Vector (IV)
-			iv := salt
-			cipher := aesCrypt([]byte(message), iv, cipherKey)
+	// Encrypter method
+	// The first 32 bytes are used as the encryption key, and the last 16 bytes are used as the IV.
+	cipherKey := passwordHash[:32]
+	initVec := passwordHash[32:]
+	var cipher []byte
+	switch funcs[1] {
+	case nameFuncAES256CTR:
+		cipher = aes256CTRCrypt([]byte(message), initVec, cipherKey)
 
-			// MAC method
-			switch funcs[2] {
-			case nameFuncMACv1:
-				// Calculate the MAC
-				// We use the MAC to check if the password is correct
-				// https: //en.wikipedia.org/wiki/Authenticated_encryption#Encrypt-then-MAC_(EtM)
-				mac := calcMACv1(cipherKey[16:32], cipher)
+	case nameFuncAES256CBC:
+		cipher = aes256CBCEncrypt([]byte(message), initVec, cipherKey)
 
-				data = append(data, salt...)
-				data = append(data, cipher...)
-				data = append(data, mac...)
+	default:
+		return "", ErrMethodNotSupported
+	}
 
-			default:
-				return "", ErrMethodNotSupported
-			}
+	// MAC method
+	data := make([]byte, 0)
+	switch funcs[2] {
+	case nameFuncMACv1:
+		// Calculate the MAC
+		// We use the MAC to check if the password is correct.
+		// Use Cipher key as the key for the MAC.
+		// https: //en.wikipedia.org/wiki/Authenticated_encryption#Encrypt-then-MAC_(EtM)
+		mac := calcMACv1(cipherKey[16:32], cipher)
 
-		default:
-			return "", ErrMethodNotSupported
-		}
+		data = append(data, salt...)
+		data = append(data, cipher...)
+		data = append(data, mac...)
 
 	default:
 		return "", ErrMethodNotSupported
@@ -202,83 +222,143 @@ func (e *Encrypter) Decrypt(cipherText, password string) (string, error) {
 	}
 
 	data, err := base64.StdEncoding.DecodeString(cipherText)
-	exitOnErr(err)
+	if err != nil {
+		return "", ErrInvalidCipher
+	}
 
-	var text string
 	// Minimum length of data should be 20 (16 salt + 4 bytes mac)
 	if len(data) < 20 {
 		return "", ErrInvalidCipher
 	}
 
+	iterations := e.Params.GetUint32(nameParamIterations)
+	memory := e.Params.GetUint32(nameParamMemory)
+	parallelism := e.Params.GetUint8(nameParamParallelism)
+	keyLen := e.Params.GetUint32(nameParamKeyLen)
+
 	// Password hasher method
+	salt := data[0:16]
+	var passwordHash []byte
+
 	switch funcs[0] {
 	case nameFuncArgon2ID:
-		salt := data[0:16]
+		passwordHash = argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, keyLen)
 
-		iterations := e.Params.GetUint32(nameParamIterations)
-		memory := e.Params.GetUint32(nameParamMemory)
-		parallelism := e.Params.GetUint8(nameParamParallelism)
+	default:
+		return "", ErrMethodNotSupported
+	}
 
-		cipherKey := argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, 32)
+	// Encrypter method
+	var initVec, cipherKey []byte
 
-		// Encrypter method
-		switch funcs[1] {
-		case nameFuncAES256CTR:
-			iv := salt
-			enc := data[16 : len(data)-4]
-			text = string(aesCrypt(enc, iv, cipherKey))
+	switch keyLen {
+	case 32:
+		// This case supports legacy encryption methods where the same salt is reused as the IV.
+		cipherKey = passwordHash
+		initVec = salt
 
-			// MAC method
-			switch funcs[2] {
-			case nameFuncMACv1:
-				mac := data[len(data)-4:]
-				if !util.SafeCmp(mac, calcMACv1(cipherKey[16:32], enc)) {
-					return "", ErrInvalidPassword
-				}
-			default:
-				return "", ErrMethodNotSupported
-			}
-		default:
-			return "", ErrMethodNotSupported
+	case 48:
+		// The first 32 bytes are used as the encryption key, and the last 16 bytes are used as the IV.
+		cipherKey = passwordHash[:32]
+		initVec = passwordHash[32:]
+
+	default:
+		return "", ErrInvalidParam
+	}
+
+	cipher := data[16 : len(data)-4]
+	var msg []byte
+
+	switch funcs[1] {
+	case nameFuncAES256CTR:
+		msg = aes256CTRCrypt(cipher, initVec, cipherKey)
+
+	case nameFuncAES256CBC:
+		msg = aes256CBCDecrypt(cipher, initVec, cipherKey)
+
+	default:
+		return "", ErrMethodNotSupported
+	}
+
+	// MAC method
+	switch funcs[2] {
+	case nameFuncMACv1:
+		mac := data[len(data)-4:]
+		if !util.SafeCmp(mac, calcMACv1(cipherKey[16:32], cipher)) {
+			return "", ErrInvalidPassword
 		}
 
 	default:
 		return "", ErrMethodNotSupported
 	}
 
-	return text, nil
+	return string(msg), nil
 }
 
-// aesCrypt encrypts/decrypts a message using AES-256-CTR and
-// returns the encoded/decoded bytes.
-func aesCrypt(message, initVec, cipherKey []byte) []byte {
-	// Generate the cipher message
-	cipherMsg := make([]byte, len(message))
-	aesCipher, err := aes.NewCipher(cipherKey)
-	exitOnErr(err)
+// aes256CTRCrypt encrypts or decrypts a message using AES-256-CTR mode.
+// It requires a 32-byte (256-bit) cipher key and a 16-byte (128-bit) initialization vector (IV).
+// Returns the encrypted or decrypted output.
+func aes256CTRCrypt(input, initVec, cipherKey []byte) []byte {
+	aesCipher, _ := aes.NewCipher(cipherKey)
 
+	output := make([]byte, len(input))
 	stream := cipher.NewCTR(aesCipher, initVec)
-	stream.XORKeyStream(cipherMsg, message)
+	stream.XORKeyStream(output, input)
+
+	return output
+}
+
+// aes256CBCEncrypt encrypts a plain message using AES-256-CBC mode.
+// It requires a 32-byte (256-bit) cipher key and a 16-byte (128-bit) initialization vector (IV).
+// Returns the encrypted cipher message.
+func aes256CBCEncrypt(plainMsg, initVec, cipherKey []byte) []byte {
+	aesCipher, _ := aes.NewCipher(cipherKey)
+
+	plainMsg = pkcs7Padding(plainMsg, aes.BlockSize)
+	cipherMsg := make([]byte, len(plainMsg))
+	enc := cipher.NewCBCEncrypter(aesCipher, initVec)
+	enc.CryptBlocks(cipherMsg, plainMsg)
 
 	return cipherMsg
+}
+
+// aes256CBCDecrypt decrypts a cipher message using AES-256-CBC mode.
+// It requires a 32-byte (256-bit) cipher key and a 16-byte (128-bit) initialization vector (IV).
+// Returns the decrypted plain message.
+func aes256CBCDecrypt(cipherMsg, initVec, cipherKey []byte) []byte {
+	aesCipher, _ := aes.NewCipher(cipherKey)
+
+	plainMsg := make([]byte, len(cipherMsg))
+	dec := cipher.NewCBCDecrypter(aesCipher, initVec)
+	dec.CryptBlocks(plainMsg, cipherMsg)
+	plainMsg = pkcs7UnPadding(plainMsg)
+
+	return plainMsg
+}
+
+func pkcs7Padding(cipherMsg []byte, blockSize int) []byte {
+	padding := blockSize - len(cipherMsg)%blockSize
+	padMsg := bytes.Repeat([]byte{byte(padding)}, padding)
+
+	return append(cipherMsg, padMsg...)
+}
+
+func pkcs7UnPadding(plainMsg []byte) []byte {
+	length := len(plainMsg)
+	unpadding := int(plainMsg[length-1])
+	if length-unpadding <= 0 {
+		return plainMsg
+	}
+
+	return plainMsg[:(length - unpadding)]
 }
 
 // calcMACv1 calculates the 4 bytes MAC of the given slices base on SHA-256.
 func calcMACv1(data ...[]byte) []byte {
 	hasher := sha256.New()
 	for _, d := range data {
-		_, err := hasher.Write(d)
-		exitOnErr(err)
+		_, _ = hasher.Write(d)
 	}
 
 	return hasher.Sum(nil)[:4]
-}
-
-// exitOnErr exit the software immediately if an error happens.
-// Panics are not safe because panics print a stack trace,
-// which may not be relevant to the error at all.
-func exitOnErr(e error) {
-	if e != nil {
-		os.Exit(1)
-	}
 }

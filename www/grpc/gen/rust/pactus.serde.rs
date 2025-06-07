@@ -33,6 +33,8 @@ impl serde::Serialize for AccountInfo {
             struct_ser.serialize_field("number", &self.number)?;
         }
         if self.balance != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("balance", ToString::to_string(&self.balance).as_str())?;
         }
         if !self.address.is_empty() {
@@ -103,7 +105,7 @@ impl<'de> serde::Deserialize<'de> for AccountInfo {
                 formatter.write_str("struct pactus.AccountInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<AccountInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<AccountInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -112,26 +114,26 @@ impl<'de> serde::Deserialize<'de> for AccountInfo {
                 let mut number__ = None;
                 let mut balance__ = None;
                 let mut address__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Hash => {
                             if hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hash"));
                             }
-                            hash__ = Some(map.next_value()?);
+                            hash__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Data => {
                             if data__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("data"));
                             }
-                            data__ = Some(map.next_value()?);
+                            data__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Number => {
                             if number__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("number"));
                             }
                             number__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Balance => {
@@ -139,14 +141,14 @@ impl<'de> serde::Deserialize<'de> for AccountInfo {
                                 return Err(serde::de::Error::duplicate_field("balance"));
                             }
                             balance__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -258,7 +260,7 @@ impl<'de> serde::Deserialize<'de> for AddressInfo {
                 formatter.write_str("struct pactus.AddressInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<AddressInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<AddressInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -266,31 +268,31 @@ impl<'de> serde::Deserialize<'de> for AddressInfo {
                 let mut public_key__ = None;
                 let mut label__ = None;
                 let mut path__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::PublicKey => {
                             if public_key__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("publicKey"));
                             }
-                            public_key__ = Some(map.next_value()?);
+                            public_key__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Label => {
                             if label__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("label"));
                             }
-                            label__ = Some(map.next_value()?);
+                            label__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Path => {
                             if path__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("path"));
                             }
-                            path__ = Some(map.next_value()?);
+                            path__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -346,10 +348,9 @@ impl<'de> serde::Deserialize<'de> for AddressType {
             where
                 E: serde::de::Error,
             {
-                use std::convert::TryFrom;
                 i32::try_from(v)
                     .ok()
-                    .and_then(AddressType::from_i32)
+                    .and_then(|x| x.try_into().ok())
                     .ok_or_else(|| {
                         serde::de::Error::invalid_value(serde::de::Unexpected::Signed(v), &self)
                     })
@@ -359,10 +360,9 @@ impl<'de> serde::Deserialize<'de> for AddressType {
             where
                 E: serde::de::Error,
             {
-                use std::convert::TryFrom;
                 i32::try_from(v)
                     .ok()
-                    .and_then(AddressType::from_i32)
+                    .and_then(|x| x.try_into().ok())
                     .ok_or_else(|| {
                         serde::de::Error::invalid_value(serde::de::Unexpected::Unsigned(v), &self)
                     })
@@ -382,389 +382,6 @@ impl<'de> serde::Deserialize<'de> for AddressType {
             }
         }
         deserializer.deserialize_any(GeneratedVisitor)
-    }
-}
-impl serde::Serialize for BlsPublicKeyAggregationRequest {
-    #[allow(deprecated)]
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use serde::ser::SerializeStruct;
-        let mut len = 0;
-        if !self.public_keys.is_empty() {
-            len += 1;
-        }
-        let mut struct_ser = serializer.serialize_struct("pactus.BLSPublicKeyAggregationRequest", len)?;
-        if !self.public_keys.is_empty() {
-            struct_ser.serialize_field("publicKeys", &self.public_keys)?;
-        }
-        struct_ser.end()
-    }
-}
-impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregationRequest {
-    #[allow(deprecated)]
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        const FIELDS: &[&str] = &[
-            "public_keys",
-            "publicKeys",
-        ];
-
-        #[allow(clippy::enum_variant_names)]
-        enum GeneratedField {
-            PublicKeys,
-        }
-        impl<'de> serde::Deserialize<'de> for GeneratedField {
-            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
-            where
-                D: serde::Deserializer<'de>,
-            {
-                struct GeneratedVisitor;
-
-                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-                    type Value = GeneratedField;
-
-                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                        write!(formatter, "expected one of: {:?}", &FIELDS)
-                    }
-
-                    #[allow(unused_variables)]
-                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
-                    where
-                        E: serde::de::Error,
-                    {
-                        match value {
-                            "publicKeys" | "public_keys" => Ok(GeneratedField::PublicKeys),
-                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
-                        }
-                    }
-                }
-                deserializer.deserialize_identifier(GeneratedVisitor)
-            }
-        }
-        struct GeneratedVisitor;
-        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = BlsPublicKeyAggregationRequest;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.BLSPublicKeyAggregationRequest")
-            }
-
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlsPublicKeyAggregationRequest, V::Error>
-                where
-                    V: serde::de::MapAccess<'de>,
-            {
-                let mut public_keys__ = None;
-                while let Some(k) = map.next_key()? {
-                    match k {
-                        GeneratedField::PublicKeys => {
-                            if public_keys__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("publicKeys"));
-                            }
-                            public_keys__ = Some(map.next_value()?);
-                        }
-                    }
-                }
-                Ok(BlsPublicKeyAggregationRequest {
-                    public_keys: public_keys__.unwrap_or_default(),
-                })
-            }
-        }
-        deserializer.deserialize_struct("pactus.BLSPublicKeyAggregationRequest", FIELDS, GeneratedVisitor)
-    }
-}
-impl serde::Serialize for BlsPublicKeyAggregationResponse {
-    #[allow(deprecated)]
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use serde::ser::SerializeStruct;
-        let mut len = 0;
-        if !self.public_key.is_empty() {
-            len += 1;
-        }
-        if !self.address.is_empty() {
-            len += 1;
-        }
-        let mut struct_ser = serializer.serialize_struct("pactus.BLSPublicKeyAggregationResponse", len)?;
-        if !self.public_key.is_empty() {
-            struct_ser.serialize_field("publicKey", &self.public_key)?;
-        }
-        if !self.address.is_empty() {
-            struct_ser.serialize_field("address", &self.address)?;
-        }
-        struct_ser.end()
-    }
-}
-impl<'de> serde::Deserialize<'de> for BlsPublicKeyAggregationResponse {
-    #[allow(deprecated)]
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        const FIELDS: &[&str] = &[
-            "public_key",
-            "publicKey",
-            "address",
-        ];
-
-        #[allow(clippy::enum_variant_names)]
-        enum GeneratedField {
-            PublicKey,
-            Address,
-        }
-        impl<'de> serde::Deserialize<'de> for GeneratedField {
-            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
-            where
-                D: serde::Deserializer<'de>,
-            {
-                struct GeneratedVisitor;
-
-                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-                    type Value = GeneratedField;
-
-                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                        write!(formatter, "expected one of: {:?}", &FIELDS)
-                    }
-
-                    #[allow(unused_variables)]
-                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
-                    where
-                        E: serde::de::Error,
-                    {
-                        match value {
-                            "publicKey" | "public_key" => Ok(GeneratedField::PublicKey),
-                            "address" => Ok(GeneratedField::Address),
-                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
-                        }
-                    }
-                }
-                deserializer.deserialize_identifier(GeneratedVisitor)
-            }
-        }
-        struct GeneratedVisitor;
-        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = BlsPublicKeyAggregationResponse;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.BLSPublicKeyAggregationResponse")
-            }
-
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlsPublicKeyAggregationResponse, V::Error>
-                where
-                    V: serde::de::MapAccess<'de>,
-            {
-                let mut public_key__ = None;
-                let mut address__ = None;
-                while let Some(k) = map.next_key()? {
-                    match k {
-                        GeneratedField::PublicKey => {
-                            if public_key__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("publicKey"));
-                            }
-                            public_key__ = Some(map.next_value()?);
-                        }
-                        GeneratedField::Address => {
-                            if address__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("address"));
-                            }
-                            address__ = Some(map.next_value()?);
-                        }
-                    }
-                }
-                Ok(BlsPublicKeyAggregationResponse {
-                    public_key: public_key__.unwrap_or_default(),
-                    address: address__.unwrap_or_default(),
-                })
-            }
-        }
-        deserializer.deserialize_struct("pactus.BLSPublicKeyAggregationResponse", FIELDS, GeneratedVisitor)
-    }
-}
-impl serde::Serialize for BlsSignatureAggregationRequest {
-    #[allow(deprecated)]
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use serde::ser::SerializeStruct;
-        let mut len = 0;
-        if !self.signatures.is_empty() {
-            len += 1;
-        }
-        let mut struct_ser = serializer.serialize_struct("pactus.BLSSignatureAggregationRequest", len)?;
-        if !self.signatures.is_empty() {
-            struct_ser.serialize_field("signatures", &self.signatures)?;
-        }
-        struct_ser.end()
-    }
-}
-impl<'de> serde::Deserialize<'de> for BlsSignatureAggregationRequest {
-    #[allow(deprecated)]
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        const FIELDS: &[&str] = &[
-            "signatures",
-        ];
-
-        #[allow(clippy::enum_variant_names)]
-        enum GeneratedField {
-            Signatures,
-        }
-        impl<'de> serde::Deserialize<'de> for GeneratedField {
-            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
-            where
-                D: serde::Deserializer<'de>,
-            {
-                struct GeneratedVisitor;
-
-                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-                    type Value = GeneratedField;
-
-                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                        write!(formatter, "expected one of: {:?}", &FIELDS)
-                    }
-
-                    #[allow(unused_variables)]
-                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
-                    where
-                        E: serde::de::Error,
-                    {
-                        match value {
-                            "signatures" => Ok(GeneratedField::Signatures),
-                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
-                        }
-                    }
-                }
-                deserializer.deserialize_identifier(GeneratedVisitor)
-            }
-        }
-        struct GeneratedVisitor;
-        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = BlsSignatureAggregationRequest;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.BLSSignatureAggregationRequest")
-            }
-
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlsSignatureAggregationRequest, V::Error>
-                where
-                    V: serde::de::MapAccess<'de>,
-            {
-                let mut signatures__ = None;
-                while let Some(k) = map.next_key()? {
-                    match k {
-                        GeneratedField::Signatures => {
-                            if signatures__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("signatures"));
-                            }
-                            signatures__ = Some(map.next_value()?);
-                        }
-                    }
-                }
-                Ok(BlsSignatureAggregationRequest {
-                    signatures: signatures__.unwrap_or_default(),
-                })
-            }
-        }
-        deserializer.deserialize_struct("pactus.BLSSignatureAggregationRequest", FIELDS, GeneratedVisitor)
-    }
-}
-impl serde::Serialize for BlsSignatureAggregationResponse {
-    #[allow(deprecated)]
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        use serde::ser::SerializeStruct;
-        let mut len = 0;
-        if !self.signature.is_empty() {
-            len += 1;
-        }
-        let mut struct_ser = serializer.serialize_struct("pactus.BLSSignatureAggregationResponse", len)?;
-        if !self.signature.is_empty() {
-            struct_ser.serialize_field("signature", &self.signature)?;
-        }
-        struct_ser.end()
-    }
-}
-impl<'de> serde::Deserialize<'de> for BlsSignatureAggregationResponse {
-    #[allow(deprecated)]
-    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        const FIELDS: &[&str] = &[
-            "signature",
-        ];
-
-        #[allow(clippy::enum_variant_names)]
-        enum GeneratedField {
-            Signature,
-        }
-        impl<'de> serde::Deserialize<'de> for GeneratedField {
-            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
-            where
-                D: serde::Deserializer<'de>,
-            {
-                struct GeneratedVisitor;
-
-                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-                    type Value = GeneratedField;
-
-                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                        write!(formatter, "expected one of: {:?}", &FIELDS)
-                    }
-
-                    #[allow(unused_variables)]
-                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
-                    where
-                        E: serde::de::Error,
-                    {
-                        match value {
-                            "signature" => Ok(GeneratedField::Signature),
-                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
-                        }
-                    }
-                }
-                deserializer.deserialize_identifier(GeneratedVisitor)
-            }
-        }
-        struct GeneratedVisitor;
-        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = BlsSignatureAggregationResponse;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.BLSSignatureAggregationResponse")
-            }
-
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlsSignatureAggregationResponse, V::Error>
-                where
-                    V: serde::de::MapAccess<'de>,
-            {
-                let mut signature__ = None;
-                while let Some(k) = map.next_key()? {
-                    match k {
-                        GeneratedField::Signature => {
-                            if signature__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("signature"));
-                            }
-                            signature__ = Some(map.next_value()?);
-                        }
-                    }
-                }
-                Ok(BlsSignatureAggregationResponse {
-                    signature: signature__.unwrap_or_default(),
-                })
-            }
-        }
-        deserializer.deserialize_struct("pactus.BLSSignatureAggregationResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for BlockHeaderInfo {
@@ -875,7 +492,7 @@ impl<'de> serde::Deserialize<'de> for BlockHeaderInfo {
                 formatter.write_str("struct pactus.BlockHeaderInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<BlockHeaderInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<BlockHeaderInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -884,39 +501,39 @@ impl<'de> serde::Deserialize<'de> for BlockHeaderInfo {
                 let mut state_root__ = None;
                 let mut sortition_seed__ = None;
                 let mut proposer_address__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Version => {
                             if version__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("version"));
                             }
                             version__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::PrevBlockHash => {
                             if prev_block_hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("prevBlockHash"));
                             }
-                            prev_block_hash__ = Some(map.next_value()?);
+                            prev_block_hash__ = Some(map_.next_value()?);
                         }
                         GeneratedField::StateRoot => {
                             if state_root__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("stateRoot"));
                             }
-                            state_root__ = Some(map.next_value()?);
+                            state_root__ = Some(map_.next_value()?);
                         }
                         GeneratedField::SortitionSeed => {
                             if sortition_seed__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("sortitionSeed"));
                             }
-                            sortition_seed__ = Some(map.next_value()?);
+                            sortition_seed__ = Some(map_.next_value()?);
                         }
                         GeneratedField::ProposerAddress => {
                             if proposer_address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("proposerAddress"));
                             }
-                            proposer_address__ = Some(map.next_value()?);
+                            proposer_address__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -939,9 +556,9 @@ impl serde::Serialize for BlockVerbosity {
         S: serde::Serializer,
     {
         let variant = match self {
-            Self::BlockData => "BLOCK_DATA",
-            Self::BlockInfo => "BLOCK_INFO",
-            Self::BlockTransactions => "BLOCK_TRANSACTIONS",
+            Self::Data => "BLOCK_VERBOSITY_DATA",
+            Self::Info => "BLOCK_VERBOSITY_INFO",
+            Self::Transactions => "BLOCK_VERBOSITY_TRANSACTIONS",
         };
         serializer.serialize_str(variant)
     }
@@ -953,9 +570,9 @@ impl<'de> serde::Deserialize<'de> for BlockVerbosity {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "BLOCK_DATA",
-            "BLOCK_INFO",
-            "BLOCK_TRANSACTIONS",
+            "BLOCK_VERBOSITY_DATA",
+            "BLOCK_VERBOSITY_INFO",
+            "BLOCK_VERBOSITY_TRANSACTIONS",
         ];
 
         struct GeneratedVisitor;
@@ -971,10 +588,9 @@ impl<'de> serde::Deserialize<'de> for BlockVerbosity {
             where
                 E: serde::de::Error,
             {
-                use std::convert::TryFrom;
                 i32::try_from(v)
                     .ok()
-                    .and_then(BlockVerbosity::from_i32)
+                    .and_then(|x| x.try_into().ok())
                     .ok_or_else(|| {
                         serde::de::Error::invalid_value(serde::de::Unexpected::Signed(v), &self)
                     })
@@ -984,10 +600,9 @@ impl<'de> serde::Deserialize<'de> for BlockVerbosity {
             where
                 E: serde::de::Error,
             {
-                use std::convert::TryFrom;
                 i32::try_from(v)
                     .ok()
-                    .and_then(BlockVerbosity::from_i32)
+                    .and_then(|x| x.try_into().ok())
                     .ok_or_else(|| {
                         serde::de::Error::invalid_value(serde::de::Unexpected::Unsigned(v), &self)
                     })
@@ -998,9 +613,9 @@ impl<'de> serde::Deserialize<'de> for BlockVerbosity {
                 E: serde::de::Error,
             {
                 match value {
-                    "BLOCK_DATA" => Ok(BlockVerbosity::BlockData),
-                    "BLOCK_INFO" => Ok(BlockVerbosity::BlockInfo),
-                    "BLOCK_TRANSACTIONS" => Ok(BlockVerbosity::BlockTransactions),
+                    "BLOCK_VERBOSITY_DATA" => Ok(BlockVerbosity::Data),
+                    "BLOCK_VERBOSITY_INFO" => Ok(BlockVerbosity::Info),
+                    "BLOCK_VERBOSITY_TRANSACTIONS" => Ok(BlockVerbosity::Transactions),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }
@@ -1077,18 +692,18 @@ impl<'de> serde::Deserialize<'de> for BroadcastTransactionRequest {
                 formatter.write_str("struct pactus.BroadcastTransactionRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<BroadcastTransactionRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<BroadcastTransactionRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut signed_raw_transaction__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::SignedRawTransaction => {
                             if signed_raw_transaction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("signedRawTransaction"));
                             }
-                            signed_raw_transaction__ = Some(map.next_value()?);
+                            signed_raw_transaction__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -1168,18 +783,18 @@ impl<'de> serde::Deserialize<'de> for BroadcastTransactionResponse {
                 formatter.write_str("struct pactus.BroadcastTransactionResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<BroadcastTransactionResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<BroadcastTransactionResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut id__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Id => {
                             if id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("id"));
                             }
-                            id__ = Some(map.next_value()?);
+                            id__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -1210,11 +825,13 @@ impl serde::Serialize for CalculateFeeRequest {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.CalculateFeeRequest", len)?;
         if self.amount != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
         }
         if self.payload_type != 0 {
-            let v = PayloadType::from_i32(self.payload_type)
-                .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", self.payload_type)))?;
+            let v = PayloadType::try_from(self.payload_type)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.payload_type)))?;
             struct_ser.serialize_field("payloadType", &v)?;
         }
         if self.fixed_amount {
@@ -1281,34 +898,34 @@ impl<'de> serde::Deserialize<'de> for CalculateFeeRequest {
                 formatter.write_str("struct pactus.CalculateFeeRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<CalculateFeeRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<CalculateFeeRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut amount__ = None;
                 let mut payload_type__ = None;
                 let mut fixed_amount__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Amount => {
                             if amount__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("amount"));
                             }
                             amount__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::PayloadType => {
                             if payload_type__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("payloadType"));
                             }
-                            payload_type__ = Some(map.next_value::<PayloadType>()? as i32);
+                            payload_type__ = Some(map_.next_value::<PayloadType>()? as i32);
                         }
                         GeneratedField::FixedAmount => {
                             if fixed_amount__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("fixedAmount"));
                             }
-                            fixed_amount__ = Some(map.next_value()?);
+                            fixed_amount__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -1338,9 +955,13 @@ impl serde::Serialize for CalculateFeeResponse {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.CalculateFeeResponse", len)?;
         if self.amount != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
         }
         if self.fee != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
         }
         struct_ser.end()
@@ -1399,20 +1020,20 @@ impl<'de> serde::Deserialize<'de> for CalculateFeeResponse {
                 formatter.write_str("struct pactus.CalculateFeeResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<CalculateFeeResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<CalculateFeeResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut amount__ = None;
                 let mut fee__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Amount => {
                             if amount__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("amount"));
                             }
                             amount__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Fee => {
@@ -1420,7 +1041,7 @@ impl<'de> serde::Deserialize<'de> for CalculateFeeResponse {
                                 return Err(serde::de::Error::duplicate_field("fee"));
                             }
                             fee__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -1538,7 +1159,7 @@ impl<'de> serde::Deserialize<'de> for CertificateInfo {
                 formatter.write_str("struct pactus.CertificateInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<CertificateInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<CertificateInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -1547,20 +1168,20 @@ impl<'de> serde::Deserialize<'de> for CertificateInfo {
                 let mut committers__ = None;
                 let mut absentees__ = None;
                 let mut signature__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Hash => {
                             if hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hash"));
                             }
-                            hash__ = Some(map.next_value()?);
+                            hash__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Round => {
                             if round__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("round"));
                             }
                             round__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Committers => {
@@ -1568,7 +1189,7 @@ impl<'de> serde::Deserialize<'de> for CertificateInfo {
                                 return Err(serde::de::Error::duplicate_field("committers"));
                             }
                             committers__ = 
-                                Some(map.next_value::<Vec<::pbjson::private::NumberDeserialize<_>>>()?
+                                Some(map_.next_value::<Vec<::pbjson::private::NumberDeserialize<_>>>()?
                                     .into_iter().map(|x| x.0).collect())
                             ;
                         }
@@ -1577,7 +1198,7 @@ impl<'de> serde::Deserialize<'de> for CertificateInfo {
                                 return Err(serde::de::Error::duplicate_field("absentees"));
                             }
                             absentees__ = 
-                                Some(map.next_value::<Vec<::pbjson::private::NumberDeserialize<_>>>()?
+                                Some(map_.next_value::<Vec<::pbjson::private::NumberDeserialize<_>>>()?
                                     .into_iter().map(|x| x.0).collect())
                             ;
                         }
@@ -1585,7 +1206,7 @@ impl<'de> serde::Deserialize<'de> for CertificateInfo {
                             if signature__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("signature"));
                             }
-                            signature__ = Some(map.next_value()?);
+                            signature__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -1620,12 +1241,18 @@ impl serde::Serialize for ConnectionInfo {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.ConnectionInfo", len)?;
         if self.connections != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("connections", ToString::to_string(&self.connections).as_str())?;
         }
         if self.inbound_connections != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("inboundConnections", ToString::to_string(&self.inbound_connections).as_str())?;
         }
         if self.outbound_connections != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("outboundConnections", ToString::to_string(&self.outbound_connections).as_str())?;
         }
         struct_ser.end()
@@ -1689,21 +1316,21 @@ impl<'de> serde::Deserialize<'de> for ConnectionInfo {
                 formatter.write_str("struct pactus.ConnectionInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<ConnectionInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ConnectionInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut connections__ = None;
                 let mut inbound_connections__ = None;
                 let mut outbound_connections__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Connections => {
                             if connections__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("connections"));
                             }
                             connections__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::InboundConnections => {
@@ -1711,7 +1338,7 @@ impl<'de> serde::Deserialize<'de> for ConnectionInfo {
                                 return Err(serde::de::Error::duplicate_field("inboundConnections"));
                             }
                             inbound_connections__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::OutboundConnections => {
@@ -1719,7 +1346,7 @@ impl<'de> serde::Deserialize<'de> for ConnectionInfo {
                                 return Err(serde::de::Error::duplicate_field("outboundConnections"));
                             }
                             outbound_connections__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -1838,7 +1465,7 @@ impl<'de> serde::Deserialize<'de> for ConsensusInfo {
                 formatter.write_str("struct pactus.ConsensusInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<ConsensusInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ConsensusInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -1847,26 +1474,26 @@ impl<'de> serde::Deserialize<'de> for ConsensusInfo {
                 let mut height__ = None;
                 let mut round__ = None;
                 let mut votes__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Active => {
                             if active__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("active"));
                             }
-                            active__ = Some(map.next_value()?);
+                            active__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Height => {
                             if height__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("height"));
                             }
                             height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Round => {
@@ -1874,14 +1501,14 @@ impl<'de> serde::Deserialize<'de> for ConsensusInfo {
                                 return Err(serde::de::Error::duplicate_field("round"));
                             }
                             round__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Votes => {
                             if votes__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("votes"));
                             }
-                            votes__ = Some(map.next_value()?);
+                            votes__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -1913,10 +1540,14 @@ impl serde::Serialize for CounterInfo {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.CounterInfo", len)?;
         if self.bytes != 0 {
-            struct_ser.serialize_field("Bytes", ToString::to_string(&self.bytes).as_str())?;
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("bytes", ToString::to_string(&self.bytes).as_str())?;
         }
         if self.bundles != 0 {
-            struct_ser.serialize_field("Bundles", ToString::to_string(&self.bundles).as_str())?;
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("bundles", ToString::to_string(&self.bundles).as_str())?;
         }
         struct_ser.end()
     }
@@ -1928,8 +1559,8 @@ impl<'de> serde::Deserialize<'de> for CounterInfo {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "Bytes",
-            "Bundles",
+            "bytes",
+            "bundles",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -1957,8 +1588,8 @@ impl<'de> serde::Deserialize<'de> for CounterInfo {
                         E: serde::de::Error,
                     {
                         match value {
-                            "Bytes" => Ok(GeneratedField::Bytes),
-                            "Bundles" => Ok(GeneratedField::Bundles),
+                            "bytes" => Ok(GeneratedField::Bytes),
+                            "bundles" => Ok(GeneratedField::Bundles),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -1974,28 +1605,28 @@ impl<'de> serde::Deserialize<'de> for CounterInfo {
                 formatter.write_str("struct pactus.CounterInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<CounterInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<CounterInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut bytes__ = None;
                 let mut bundles__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Bytes => {
                             if bytes__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("Bytes"));
+                                return Err(serde::de::Error::duplicate_field("bytes"));
                             }
                             bytes__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Bundles => {
                             if bundles__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("Bundles"));
+                                return Err(serde::de::Error::duplicate_field("bundles"));
                             }
                             bundles__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -2087,25 +1718,25 @@ impl<'de> serde::Deserialize<'de> for CreateWalletRequest {
                 formatter.write_str("struct pactus.CreateWalletRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<CreateWalletRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<CreateWalletRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
                 let mut password__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Password => {
                             if password__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("password"));
                             }
-                            password__ = Some(map.next_value()?);
+                            password__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -2186,18 +1817,18 @@ impl<'de> serde::Deserialize<'de> for CreateWalletResponse {
                 formatter.write_str("struct pactus.CreateWalletResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<CreateWalletResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<CreateWalletResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut mnemonic__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Mnemonic => {
                             if mnemonic__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("mnemonic"));
                             }
-                            mnemonic__ = Some(map.next_value()?);
+                            mnemonic__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -2278,18 +1909,18 @@ impl<'de> serde::Deserialize<'de> for DecodeRawTransactionRequest {
                 formatter.write_str("struct pactus.DecodeRawTransactionRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<DecodeRawTransactionRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<DecodeRawTransactionRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut raw_transaction__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::RawTransaction => {
                             if raw_transaction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("rawTransaction"));
                             }
-                            raw_transaction__ = Some(map.next_value()?);
+                            raw_transaction__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -2369,18 +2000,18 @@ impl<'de> serde::Deserialize<'de> for DecodeRawTransactionResponse {
                 formatter.write_str("struct pactus.DecodeRawTransactionResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<DecodeRawTransactionResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<DecodeRawTransactionResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut transaction__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Transaction => {
                             if transaction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("transaction"));
                             }
-                            transaction__ = map.next_value()?;
+                            transaction__ = map_.next_value()?;
                         }
                     }
                 }
@@ -2460,18 +2091,18 @@ impl<'de> serde::Deserialize<'de> for GetAccountRequest {
                 formatter.write_str("struct pactus.GetAccountRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetAccountRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetAccountRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut address__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -2551,18 +2182,18 @@ impl<'de> serde::Deserialize<'de> for GetAccountResponse {
                 formatter.write_str("struct pactus.GetAccountResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetAccountResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetAccountResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut account__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Account => {
                             if account__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("account"));
                             }
-                            account__ = map.next_value()?;
+                            account__ = map_.next_value()?;
                         }
                     }
                 }
@@ -2652,25 +2283,25 @@ impl<'de> serde::Deserialize<'de> for GetAddressHistoryRequest {
                 formatter.write_str("struct pactus.GetAddressHistoryRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetAddressHistoryRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetAddressHistoryRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
                 let mut address__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -2752,18 +2383,18 @@ impl<'de> serde::Deserialize<'de> for GetAddressHistoryResponse {
                 formatter.write_str("struct pactus.GetAddressHistoryResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetAddressHistoryResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetAddressHistoryResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut history_info__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::HistoryInfo => {
                             if history_info__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("historyInfo"));
                             }
-                            history_info__ = Some(map.next_value()?);
+                            history_info__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -2853,25 +2484,25 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoRequest {
                 formatter.write_str("struct pactus.GetAddressInfoRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetAddressInfoRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetAddressInfoRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
                 let mut address__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -2892,6 +2523,9 @@ impl serde::Serialize for GetAddressInfoResponse {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
+        if !self.wallet_name.is_empty() {
+            len += 1;
+        }
         if !self.address.is_empty() {
             len += 1;
         }
@@ -2904,10 +2538,10 @@ impl serde::Serialize for GetAddressInfoResponse {
         if !self.path.is_empty() {
             len += 1;
         }
-        if !self.wallet_name.is_empty() {
-            len += 1;
-        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetAddressInfoResponse", len)?;
+        if !self.wallet_name.is_empty() {
+            struct_ser.serialize_field("walletName", &self.wallet_name)?;
+        }
         if !self.address.is_empty() {
             struct_ser.serialize_field("address", &self.address)?;
         }
@@ -2920,9 +2554,6 @@ impl serde::Serialize for GetAddressInfoResponse {
         if !self.path.is_empty() {
             struct_ser.serialize_field("path", &self.path)?;
         }
-        if !self.wallet_name.is_empty() {
-            struct_ser.serialize_field("walletName", &self.wallet_name)?;
-        }
         struct_ser.end()
     }
 }
@@ -2933,22 +2564,22 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoResponse {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "wallet_name",
+            "walletName",
             "address",
             "label",
             "public_key",
             "publicKey",
             "path",
-            "wallet_name",
-            "walletName",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            WalletName,
             Address,
             Label,
             PublicKey,
             Path,
-            WalletName,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -2970,11 +2601,11 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoResponse {
                         E: serde::de::Error,
                     {
                         match value {
+                            "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
                             "address" => Ok(GeneratedField::Address),
                             "label" => Ok(GeneratedField::Label),
                             "publicKey" | "public_key" => Ok(GeneratedField::PublicKey),
                             "path" => Ok(GeneratedField::Path),
-                            "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -2990,55 +2621,55 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoResponse {
                 formatter.write_str("struct pactus.GetAddressInfoResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetAddressInfoResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetAddressInfoResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
+                let mut wallet_name__ = None;
                 let mut address__ = None;
                 let mut label__ = None;
                 let mut public_key__ = None;
                 let mut path__ = None;
-                let mut wallet_name__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
+                        GeneratedField::WalletName => {
+                            if wallet_name__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("walletName"));
+                            }
+                            wallet_name__ = Some(map_.next_value()?);
+                        }
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Label => {
                             if label__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("label"));
                             }
-                            label__ = Some(map.next_value()?);
+                            label__ = Some(map_.next_value()?);
                         }
                         GeneratedField::PublicKey => {
                             if public_key__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("publicKey"));
                             }
-                            public_key__ = Some(map.next_value()?);
+                            public_key__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Path => {
                             if path__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("path"));
                             }
-                            path__ = Some(map.next_value()?);
-                        }
-                        GeneratedField::WalletName => {
-                            if wallet_name__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("walletName"));
-                            }
-                            wallet_name__ = Some(map.next_value()?);
+                            path__ = Some(map_.next_value()?);
                         }
                     }
                 }
                 Ok(GetAddressInfoResponse {
+                    wallet_name: wallet_name__.unwrap_or_default(),
                     address: address__.unwrap_or_default(),
                     label: label__.unwrap_or_default(),
                     public_key: public_key__.unwrap_or_default(),
                     path: path__.unwrap_or_default(),
-                    wallet_name: wallet_name__.unwrap_or_default(),
                 })
             }
         }
@@ -3113,19 +2744,19 @@ impl<'de> serde::Deserialize<'de> for GetBlockHashRequest {
                 formatter.write_str("struct pactus.GetBlockHashRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetBlockHashRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetBlockHashRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut height__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Height => {
                             if height__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("height"));
                             }
                             height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -3206,18 +2837,18 @@ impl<'de> serde::Deserialize<'de> for GetBlockHashResponse {
                 formatter.write_str("struct pactus.GetBlockHashResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetBlockHashResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetBlockHashResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut hash__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Hash => {
                             if hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hash"));
                             }
-                            hash__ = Some(map.next_value()?);
+                            hash__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -3297,18 +2928,18 @@ impl<'de> serde::Deserialize<'de> for GetBlockHeightRequest {
                 formatter.write_str("struct pactus.GetBlockHeightRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetBlockHeightRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetBlockHeightRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut hash__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Hash => {
                             if hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hash"));
                             }
-                            hash__ = Some(map.next_value()?);
+                            hash__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -3388,19 +3019,19 @@ impl<'de> serde::Deserialize<'de> for GetBlockHeightResponse {
                 formatter.write_str("struct pactus.GetBlockHeightResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetBlockHeightResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetBlockHeightResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut height__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Height => {
                             if height__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("height"));
                             }
                             height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -3432,8 +3063,8 @@ impl serde::Serialize for GetBlockRequest {
             struct_ser.serialize_field("height", &self.height)?;
         }
         if self.verbosity != 0 {
-            let v = BlockVerbosity::from_i32(self.verbosity)
-                .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", self.verbosity)))?;
+            let v = BlockVerbosity::try_from(self.verbosity)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.verbosity)))?;
             struct_ser.serialize_field("verbosity", &v)?;
         }
         struct_ser.end()
@@ -3492,27 +3123,27 @@ impl<'de> serde::Deserialize<'de> for GetBlockRequest {
                 formatter.write_str("struct pactus.GetBlockRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetBlockRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetBlockRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut height__ = None;
                 let mut verbosity__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Height => {
                             if height__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("height"));
                             }
                             height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Verbosity => {
                             if verbosity__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("verbosity"));
                             }
-                            verbosity__ = Some(map.next_value::<BlockVerbosity>()? as i32);
+                            verbosity__ = Some(map_.next_value::<BlockVerbosity>()? as i32);
                         }
                     }
                 }
@@ -3649,7 +3280,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockResponse {
                 formatter.write_str("struct pactus.GetBlockResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetBlockResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetBlockResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -3660,53 +3291,53 @@ impl<'de> serde::Deserialize<'de> for GetBlockResponse {
                 let mut header__ = None;
                 let mut prev_cert__ = None;
                 let mut txs__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Height => {
                             if height__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("height"));
                             }
                             height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Hash => {
                             if hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hash"));
                             }
-                            hash__ = Some(map.next_value()?);
+                            hash__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Data => {
                             if data__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("data"));
                             }
-                            data__ = Some(map.next_value()?);
+                            data__ = Some(map_.next_value()?);
                         }
                         GeneratedField::BlockTime => {
                             if block_time__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("blockTime"));
                             }
                             block_time__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Header => {
                             if header__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("header"));
                             }
-                            header__ = map.next_value()?;
+                            header__ = map_.next_value()?;
                         }
                         GeneratedField::PrevCert => {
                             if prev_cert__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("prevCert"));
                             }
-                            prev_cert__ = map.next_value()?;
+                            prev_cert__ = map_.next_value()?;
                         }
                         GeneratedField::Txs => {
                             if txs__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("txs"));
                             }
-                            txs__ = Some(map.next_value()?);
+                            txs__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -3781,12 +3412,12 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoRequest {
                 formatter.write_str("struct pactus.GetBlockchainInfoRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetBlockchainInfoRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetBlockchainInfoRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                while map.next_key::<GeneratedField>()?.is_some() {
-                    let _ = map.next_value::<serde::de::IgnoredAny>()?;
+                while map_.next_key::<GeneratedField>()?.is_some() {
+                    let _ = map_.next_value::<serde::de::IgnoredAny>()?;
                 }
                 Ok(GetBlockchainInfoRequest {
                 })
@@ -3847,9 +3478,13 @@ impl serde::Serialize for GetBlockchainInfoResponse {
             struct_ser.serialize_field("totalValidators", &self.total_validators)?;
         }
         if self.total_power != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("totalPower", ToString::to_string(&self.total_power).as_str())?;
         }
         if self.committee_power != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("committeePower", ToString::to_string(&self.committee_power).as_str())?;
         }
         if !self.committee_validators.is_empty() {
@@ -3862,6 +3497,8 @@ impl serde::Serialize for GetBlockchainInfoResponse {
             struct_ser.serialize_field("pruningHeight", &self.pruning_height)?;
         }
         if self.last_block_time != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("lastBlockTime", ToString::to_string(&self.last_block_time).as_str())?;
         }
         struct_ser.end()
@@ -3954,7 +3591,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                 formatter.write_str("struct pactus.GetBlockchainInfoResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetBlockchainInfoResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetBlockchainInfoResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -3968,28 +3605,28 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                 let mut is_pruned__ = None;
                 let mut pruning_height__ = None;
                 let mut last_block_time__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::LastBlockHeight => {
                             if last_block_height__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("lastBlockHeight"));
                             }
                             last_block_height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::LastBlockHash => {
                             if last_block_hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("lastBlockHash"));
                             }
-                            last_block_hash__ = Some(map.next_value()?);
+                            last_block_hash__ = Some(map_.next_value()?);
                         }
                         GeneratedField::TotalAccounts => {
                             if total_accounts__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("totalAccounts"));
                             }
                             total_accounts__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::TotalValidators => {
@@ -3997,7 +3634,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                                 return Err(serde::de::Error::duplicate_field("totalValidators"));
                             }
                             total_validators__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::TotalPower => {
@@ -4005,7 +3642,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                                 return Err(serde::de::Error::duplicate_field("totalPower"));
                             }
                             total_power__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::CommitteePower => {
@@ -4013,27 +3650,27 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                                 return Err(serde::de::Error::duplicate_field("committeePower"));
                             }
                             committee_power__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::CommitteeValidators => {
                             if committee_validators__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("committeeValidators"));
                             }
-                            committee_validators__ = Some(map.next_value()?);
+                            committee_validators__ = Some(map_.next_value()?);
                         }
                         GeneratedField::IsPruned => {
                             if is_pruned__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("isPruned"));
                             }
-                            is_pruned__ = Some(map.next_value()?);
+                            is_pruned__ = Some(map_.next_value()?);
                         }
                         GeneratedField::PruningHeight => {
                             if pruning_height__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("pruningHeight"));
                             }
                             pruning_height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::LastBlockTime => {
@@ -4041,7 +3678,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                                 return Err(serde::de::Error::duplicate_field("lastBlockTime"));
                             }
                             last_block_time__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -4120,12 +3757,12 @@ impl<'de> serde::Deserialize<'de> for GetConsensusInfoRequest {
                 formatter.write_str("struct pactus.GetConsensusInfoRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetConsensusInfoRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetConsensusInfoRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                while map.next_key::<GeneratedField>()?.is_some() {
-                    let _ = map.next_value::<serde::de::IgnoredAny>()?;
+                while map_.next_key::<GeneratedField>()?.is_some() {
+                    let _ = map_.next_value::<serde::de::IgnoredAny>()?;
                 }
                 Ok(GetConsensusInfoRequest {
                 })
@@ -4211,25 +3848,25 @@ impl<'de> serde::Deserialize<'de> for GetConsensusInfoResponse {
                 formatter.write_str("struct pactus.GetConsensusInfoResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetConsensusInfoResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetConsensusInfoResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut proposal__ = None;
                 let mut instances__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Proposal => {
                             if proposal__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("proposal"));
                             }
-                            proposal__ = map.next_value()?;
+                            proposal__ = map_.next_value()?;
                         }
                         GeneratedField::Instances => {
                             if instances__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("instances"));
                             }
-                            instances__ = Some(map.next_value()?);
+                            instances__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -4311,18 +3948,18 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoRequest {
                 formatter.write_str("struct pactus.GetNetworkInfoRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetNetworkInfoRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetNetworkInfoRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut only_connected__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::OnlyConnected => {
                             if only_connected__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("onlyConnected"));
                             }
-                            only_connected__ = Some(map.next_value()?);
+                            only_connected__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -4433,7 +4070,7 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
                 formatter.write_str("struct pactus.GetNetworkInfoResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetNetworkInfoResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetNetworkInfoResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -4441,33 +4078,33 @@ impl<'de> serde::Deserialize<'de> for GetNetworkInfoResponse {
                 let mut connected_peers_count__ = None;
                 let mut connected_peers__ = None;
                 let mut metric_info__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::NetworkName => {
                             if network_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("networkName"));
                             }
-                            network_name__ = Some(map.next_value()?);
+                            network_name__ = Some(map_.next_value()?);
                         }
                         GeneratedField::ConnectedPeersCount => {
                             if connected_peers_count__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("connectedPeersCount"));
                             }
                             connected_peers_count__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::ConnectedPeers => {
                             if connected_peers__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("connectedPeers"));
                             }
-                            connected_peers__ = Some(map.next_value()?);
+                            connected_peers__ = Some(map_.next_value()?);
                         }
                         GeneratedField::MetricInfo => {
                             if metric_info__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("metricInfo"));
                             }
-                            metric_info__ = map.next_value()?;
+                            metric_info__ = map_.next_value()?;
                         }
                     }
                 }
@@ -4507,8 +4144,8 @@ impl serde::Serialize for GetNewAddressRequest {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
         if self.address_type != 0 {
-            let v = AddressType::from_i32(self.address_type)
-                .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", self.address_type)))?;
+            let v = AddressType::try_from(self.address_type)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.address_type)))?;
             struct_ser.serialize_field("addressType", &v)?;
         }
         if !self.label.is_empty() {
@@ -4581,7 +4218,7 @@ impl<'de> serde::Deserialize<'de> for GetNewAddressRequest {
                 formatter.write_str("struct pactus.GetNewAddressRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetNewAddressRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetNewAddressRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -4589,31 +4226,31 @@ impl<'de> serde::Deserialize<'de> for GetNewAddressRequest {
                 let mut address_type__ = None;
                 let mut label__ = None;
                 let mut password__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                         GeneratedField::AddressType => {
                             if address_type__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("addressType"));
                             }
-                            address_type__ = Some(map.next_value::<AddressType>()? as i32);
+                            address_type__ = Some(map_.next_value::<AddressType>()? as i32);
                         }
                         GeneratedField::Label => {
                             if label__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("label"));
                             }
-                            label__ = Some(map.next_value()?);
+                            label__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Password => {
                             if password__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("password"));
                             }
-                            password__ = Some(map.next_value()?);
+                            password__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -4707,25 +4344,25 @@ impl<'de> serde::Deserialize<'de> for GetNewAddressResponse {
                 formatter.write_str("struct pactus.GetNewAddressResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetNewAddressResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetNewAddressResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
                 let mut address_info__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                         GeneratedField::AddressInfo => {
                             if address_info__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("addressInfo"));
                             }
-                            address_info__ = map.next_value()?;
+                            address_info__ = map_.next_value()?;
                         }
                     }
                 }
@@ -4795,12 +4432,12 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoRequest {
                 formatter.write_str("struct pactus.GetNodeInfoRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetNodeInfoRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetNodeInfoRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                while map.next_key::<GeneratedField>()?.is_some() {
-                    let _ = map.next_value::<serde::de::IgnoredAny>()?;
+                while map_.next_key::<GeneratedField>()?.is_some() {
+                    let _ = map_.next_value::<serde::de::IgnoredAny>()?;
                 }
                 Ok(GetNodeInfoRequest {
                 })
@@ -4864,6 +4501,8 @@ impl serde::Serialize for GetNodeInfoResponse {
             struct_ser.serialize_field("peerId", &self.peer_id)?;
         }
         if self.started_at != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("startedAt", ToString::to_string(&self.started_at).as_str())?;
         }
         if !self.reachability.is_empty() {
@@ -4983,7 +4622,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                 formatter.write_str("struct pactus.GetNodeInfoResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetNodeInfoResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetNodeInfoResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -4999,85 +4638,85 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                 let mut clock_offset__ = None;
                 let mut connection_info__ = None;
                 let mut zmq_publishers__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Moniker => {
                             if moniker__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("moniker"));
                             }
-                            moniker__ = Some(map.next_value()?);
+                            moniker__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Agent => {
                             if agent__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("agent"));
                             }
-                            agent__ = Some(map.next_value()?);
+                            agent__ = Some(map_.next_value()?);
                         }
                         GeneratedField::PeerId => {
                             if peer_id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("peerId"));
                             }
-                            peer_id__ = Some(map.next_value()?);
+                            peer_id__ = Some(map_.next_value()?);
                         }
                         GeneratedField::StartedAt => {
                             if started_at__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("startedAt"));
                             }
                             started_at__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Reachability => {
                             if reachability__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("reachability"));
                             }
-                            reachability__ = Some(map.next_value()?);
+                            reachability__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Services => {
                             if services__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("services"));
                             }
                             services__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::ServicesNames => {
                             if services_names__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("servicesNames"));
                             }
-                            services_names__ = Some(map.next_value()?);
+                            services_names__ = Some(map_.next_value()?);
                         }
                         GeneratedField::LocalAddrs => {
                             if local_addrs__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("localAddrs"));
                             }
-                            local_addrs__ = Some(map.next_value()?);
+                            local_addrs__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Protocols => {
                             if protocols__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("protocols"));
                             }
-                            protocols__ = Some(map.next_value()?);
+                            protocols__ = Some(map_.next_value()?);
                         }
                         GeneratedField::ClockOffset => {
                             if clock_offset__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("clockOffset"));
                             }
                             clock_offset__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::ConnectionInfo => {
                             if connection_info__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("connectionInfo"));
                             }
-                            connection_info__ = map.next_value()?;
+                            connection_info__ = map_.next_value()?;
                         }
                         GeneratedField::ZmqPublishers => {
                             if zmq_publishers__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("zmqPublishers"));
                             }
-                            zmq_publishers__ = Some(map.next_value()?);
+                            zmq_publishers__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -5168,18 +4807,18 @@ impl<'de> serde::Deserialize<'de> for GetPublicKeyRequest {
                 formatter.write_str("struct pactus.GetPublicKeyRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetPublicKeyRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetPublicKeyRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut address__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -5260,18 +4899,18 @@ impl<'de> serde::Deserialize<'de> for GetPublicKeyResponse {
                 formatter.write_str("struct pactus.GetPublicKeyResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetPublicKeyResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetPublicKeyResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut public_key__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::PublicKey => {
                             if public_key__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("publicKey"));
                             }
-                            public_key__ = Some(map.next_value()?);
+                            public_key__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -5281,6 +4920,172 @@ impl<'de> serde::Deserialize<'de> for GetPublicKeyResponse {
             }
         }
         deserializer.deserialize_struct("pactus.GetPublicKeyResponse", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for GetRawBatchTransferTransactionRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if self.lock_time != 0 {
+            len += 1;
+        }
+        if !self.sender.is_empty() {
+            len += 1;
+        }
+        if !self.recipients.is_empty() {
+            len += 1;
+        }
+        if self.fee != 0 {
+            len += 1;
+        }
+        if !self.memo.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.GetRawBatchTransferTransactionRequest", len)?;
+        if self.lock_time != 0 {
+            struct_ser.serialize_field("lockTime", &self.lock_time)?;
+        }
+        if !self.sender.is_empty() {
+            struct_ser.serialize_field("sender", &self.sender)?;
+        }
+        if !self.recipients.is_empty() {
+            struct_ser.serialize_field("recipients", &self.recipients)?;
+        }
+        if self.fee != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
+        }
+        if !self.memo.is_empty() {
+            struct_ser.serialize_field("memo", &self.memo)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for GetRawBatchTransferTransactionRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "lock_time",
+            "lockTime",
+            "sender",
+            "recipients",
+            "fee",
+            "memo",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            LockTime,
+            Sender,
+            Recipients,
+            Fee,
+            Memo,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "lockTime" | "lock_time" => Ok(GeneratedField::LockTime),
+                            "sender" => Ok(GeneratedField::Sender),
+                            "recipients" => Ok(GeneratedField::Recipients),
+                            "fee" => Ok(GeneratedField::Fee),
+                            "memo" => Ok(GeneratedField::Memo),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = GetRawBatchTransferTransactionRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.GetRawBatchTransferTransactionRequest")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetRawBatchTransferTransactionRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut lock_time__ = None;
+                let mut sender__ = None;
+                let mut recipients__ = None;
+                let mut fee__ = None;
+                let mut memo__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::LockTime => {
+                            if lock_time__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("lockTime"));
+                            }
+                            lock_time__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Sender => {
+                            if sender__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("sender"));
+                            }
+                            sender__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Recipients => {
+                            if recipients__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("recipients"));
+                            }
+                            recipients__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Fee => {
+                            if fee__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("fee"));
+                            }
+                            fee__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Memo => {
+                            if memo__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("memo"));
+                            }
+                            memo__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(GetRawBatchTransferTransactionRequest {
+                    lock_time: lock_time__.unwrap_or_default(),
+                    sender: sender__.unwrap_or_default(),
+                    recipients: recipients__.unwrap_or_default(),
+                    fee: fee__.unwrap_or_default(),
+                    memo: memo__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.GetRawBatchTransferTransactionRequest", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for GetRawBondTransactionRequest {
@@ -5323,12 +5128,16 @@ impl serde::Serialize for GetRawBondTransactionRequest {
             struct_ser.serialize_field("receiver", &self.receiver)?;
         }
         if self.stake != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("stake", ToString::to_string(&self.stake).as_str())?;
         }
         if !self.public_key.is_empty() {
             struct_ser.serialize_field("publicKey", &self.public_key)?;
         }
         if self.fee != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
         }
         if !self.memo.is_empty() {
@@ -5407,7 +5216,7 @@ impl<'de> serde::Deserialize<'de> for GetRawBondTransactionRequest {
                 formatter.write_str("struct pactus.GetRawBondTransactionRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetRawBondTransactionRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetRawBondTransactionRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -5418,55 +5227,55 @@ impl<'de> serde::Deserialize<'de> for GetRawBondTransactionRequest {
                 let mut public_key__ = None;
                 let mut fee__ = None;
                 let mut memo__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::LockTime => {
                             if lock_time__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("lockTime"));
                             }
                             lock_time__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Sender => {
                             if sender__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("sender"));
                             }
-                            sender__ = Some(map.next_value()?);
+                            sender__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Receiver => {
                             if receiver__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("receiver"));
                             }
-                            receiver__ = Some(map.next_value()?);
+                            receiver__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Stake => {
                             if stake__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("stake"));
                             }
                             stake__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::PublicKey => {
                             if public_key__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("publicKey"));
                             }
-                            public_key__ = Some(map.next_value()?);
+                            public_key__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Fee => {
                             if fee__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("fee"));
                             }
                             fee__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Memo => {
                             if memo__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("memo"));
                             }
-                            memo__ = Some(map.next_value()?);
+                            memo__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -5562,25 +5371,25 @@ impl<'de> serde::Deserialize<'de> for GetRawTransactionResponse {
                 formatter.write_str("struct pactus.GetRawTransactionResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetRawTransactionResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetRawTransactionResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut raw_transaction__ = None;
                 let mut id__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::RawTransaction => {
                             if raw_transaction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("rawTransaction"));
                             }
-                            raw_transaction__ = Some(map.next_value()?);
+                            raw_transaction__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Id => {
                             if id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("id"));
                             }
-                            id__ = Some(map.next_value()?);
+                            id__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -5630,9 +5439,13 @@ impl serde::Serialize for GetRawTransferTransactionRequest {
             struct_ser.serialize_field("receiver", &self.receiver)?;
         }
         if self.amount != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
         }
         if self.fee != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
         }
         if !self.memo.is_empty() {
@@ -5707,7 +5520,7 @@ impl<'de> serde::Deserialize<'de> for GetRawTransferTransactionRequest {
                 formatter.write_str("struct pactus.GetRawTransferTransactionRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetRawTransferTransactionRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetRawTransferTransactionRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -5717,34 +5530,34 @@ impl<'de> serde::Deserialize<'de> for GetRawTransferTransactionRequest {
                 let mut amount__ = None;
                 let mut fee__ = None;
                 let mut memo__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::LockTime => {
                             if lock_time__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("lockTime"));
                             }
                             lock_time__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Sender => {
                             if sender__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("sender"));
                             }
-                            sender__ = Some(map.next_value()?);
+                            sender__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Receiver => {
                             if receiver__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("receiver"));
                             }
-                            receiver__ = Some(map.next_value()?);
+                            receiver__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Amount => {
                             if amount__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("amount"));
                             }
                             amount__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Fee => {
@@ -5752,14 +5565,14 @@ impl<'de> serde::Deserialize<'de> for GetRawTransferTransactionRequest {
                                 return Err(serde::de::Error::duplicate_field("fee"));
                             }
                             fee__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Memo => {
                             if memo__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("memo"));
                             }
-                            memo__ = Some(map.next_value()?);
+                            memo__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -5864,34 +5677,34 @@ impl<'de> serde::Deserialize<'de> for GetRawUnbondTransactionRequest {
                 formatter.write_str("struct pactus.GetRawUnbondTransactionRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetRawUnbondTransactionRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetRawUnbondTransactionRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut lock_time__ = None;
                 let mut validator_address__ = None;
                 let mut memo__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::LockTime => {
                             if lock_time__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("lockTime"));
                             }
                             lock_time__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::ValidatorAddress => {
                             if validator_address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("validatorAddress"));
                             }
-                            validator_address__ = Some(map.next_value()?);
+                            validator_address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Memo => {
                             if memo__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("memo"));
                             }
-                            memo__ = Some(map.next_value()?);
+                            memo__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -5942,9 +5755,13 @@ impl serde::Serialize for GetRawWithdrawTransactionRequest {
             struct_ser.serialize_field("accountAddress", &self.account_address)?;
         }
         if self.amount != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
         }
         if self.fee != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
         }
         if !self.memo.is_empty() {
@@ -6021,7 +5838,7 @@ impl<'de> serde::Deserialize<'de> for GetRawWithdrawTransactionRequest {
                 formatter.write_str("struct pactus.GetRawWithdrawTransactionRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetRawWithdrawTransactionRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetRawWithdrawTransactionRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -6031,34 +5848,34 @@ impl<'de> serde::Deserialize<'de> for GetRawWithdrawTransactionRequest {
                 let mut amount__ = None;
                 let mut fee__ = None;
                 let mut memo__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::LockTime => {
                             if lock_time__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("lockTime"));
                             }
                             lock_time__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::ValidatorAddress => {
                             if validator_address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("validatorAddress"));
                             }
-                            validator_address__ = Some(map.next_value()?);
+                            validator_address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::AccountAddress => {
                             if account_address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("accountAddress"));
                             }
-                            account_address__ = Some(map.next_value()?);
+                            account_address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Amount => {
                             if amount__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("amount"));
                             }
                             amount__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Fee => {
@@ -6066,14 +5883,14 @@ impl<'de> serde::Deserialize<'de> for GetRawWithdrawTransactionRequest {
                                 return Err(serde::de::Error::duplicate_field("fee"));
                             }
                             fee__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Memo => {
                             if memo__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("memo"));
                             }
-                            memo__ = Some(map.next_value()?);
+                            memo__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -6159,18 +5976,18 @@ impl<'de> serde::Deserialize<'de> for GetTotalBalanceRequest {
                 formatter.write_str("struct pactus.GetTotalBalanceRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetTotalBalanceRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetTotalBalanceRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -6201,6 +6018,8 @@ impl serde::Serialize for GetTotalBalanceResponse {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
         if self.total_balance != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("totalBalance", ToString::to_string(&self.total_balance).as_str())?;
         }
         struct_ser.end()
@@ -6261,26 +6080,26 @@ impl<'de> serde::Deserialize<'de> for GetTotalBalanceResponse {
                 formatter.write_str("struct pactus.GetTotalBalanceResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetTotalBalanceResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetTotalBalanceResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
                 let mut total_balance__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                         GeneratedField::TotalBalance => {
                             if total_balance__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("totalBalance"));
                             }
                             total_balance__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -6363,18 +6182,18 @@ impl<'de> serde::Deserialize<'de> for GetTotalStakeRequest {
                 formatter.write_str("struct pactus.GetTotalStakeRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetTotalStakeRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetTotalStakeRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -6394,18 +6213,20 @@ impl serde::Serialize for GetTotalStakeResponse {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
-        if self.total_stake != 0 {
+        if !self.wallet_name.is_empty() {
             len += 1;
         }
-        if !self.wallet_name.is_empty() {
+        if self.total_stake != 0 {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetTotalStakeResponse", len)?;
-        if self.total_stake != 0 {
-            struct_ser.serialize_field("totalStake", ToString::to_string(&self.total_stake).as_str())?;
-        }
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
+        }
+        if self.total_stake != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("totalStake", ToString::to_string(&self.total_stake).as_str())?;
         }
         struct_ser.end()
     }
@@ -6417,16 +6238,16 @@ impl<'de> serde::Deserialize<'de> for GetTotalStakeResponse {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "total_stake",
-            "totalStake",
             "wallet_name",
             "walletName",
+            "total_stake",
+            "totalStake",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
-            TotalStake,
             WalletName,
+            TotalStake,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -6448,8 +6269,8 @@ impl<'de> serde::Deserialize<'de> for GetTotalStakeResponse {
                         E: serde::de::Error,
                     {
                         match value {
-                            "totalStake" | "total_stake" => Ok(GeneratedField::TotalStake),
                             "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
+                            "totalStake" | "total_stake" => Ok(GeneratedField::TotalStake),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -6465,33 +6286,33 @@ impl<'de> serde::Deserialize<'de> for GetTotalStakeResponse {
                 formatter.write_str("struct pactus.GetTotalStakeResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetTotalStakeResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetTotalStakeResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                let mut total_stake__ = None;
                 let mut wallet_name__ = None;
-                while let Some(k) = map.next_key()? {
+                let mut total_stake__ = None;
+                while let Some(k) = map_.next_key()? {
                     match k {
+                        GeneratedField::WalletName => {
+                            if wallet_name__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("walletName"));
+                            }
+                            wallet_name__ = Some(map_.next_value()?);
+                        }
                         GeneratedField::TotalStake => {
                             if total_stake__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("totalStake"));
                             }
                             total_stake__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
-                        }
-                        GeneratedField::WalletName => {
-                            if wallet_name__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("walletName"));
-                            }
-                            wallet_name__ = Some(map.next_value()?);
                         }
                     }
                 }
                 Ok(GetTotalStakeResponse {
-                    total_stake: total_stake__.unwrap_or_default(),
                     wallet_name: wallet_name__.unwrap_or_default(),
+                    total_stake: total_stake__.unwrap_or_default(),
                 })
             }
         }
@@ -6517,8 +6338,8 @@ impl serde::Serialize for GetTransactionRequest {
             struct_ser.serialize_field("id", &self.id)?;
         }
         if self.verbosity != 0 {
-            let v = TransactionVerbosity::from_i32(self.verbosity)
-                .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", self.verbosity)))?;
+            let v = TransactionVerbosity::try_from(self.verbosity)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.verbosity)))?;
             struct_ser.serialize_field("verbosity", &v)?;
         }
         struct_ser.end()
@@ -6577,25 +6398,25 @@ impl<'de> serde::Deserialize<'de> for GetTransactionRequest {
                 formatter.write_str("struct pactus.GetTransactionRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetTransactionRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetTransactionRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut id__ = None;
                 let mut verbosity__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Id => {
                             if id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("id"));
                             }
-                            id__ = Some(map.next_value()?);
+                            id__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Verbosity => {
                             if verbosity__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("verbosity"));
                             }
-                            verbosity__ = Some(map.next_value::<TransactionVerbosity>()? as i32);
+                            verbosity__ = Some(map_.next_value::<TransactionVerbosity>()? as i32);
                         }
                     }
                 }
@@ -6696,21 +6517,21 @@ impl<'de> serde::Deserialize<'de> for GetTransactionResponse {
                 formatter.write_str("struct pactus.GetTransactionResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetTransactionResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetTransactionResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut block_height__ = None;
                 let mut block_time__ = None;
                 let mut transaction__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::BlockHeight => {
                             if block_height__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("blockHeight"));
                             }
                             block_height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::BlockTime => {
@@ -6718,14 +6539,14 @@ impl<'de> serde::Deserialize<'de> for GetTransactionResponse {
                                 return Err(serde::de::Error::duplicate_field("blockTime"));
                             }
                             block_time__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Transaction => {
                             if transaction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("transaction"));
                             }
-                            transaction__ = map.next_value()?;
+                            transaction__ = map_.next_value()?;
                         }
                     }
                 }
@@ -6752,8 +6573,8 @@ impl serde::Serialize for GetTxPoolContentRequest {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetTxPoolContentRequest", len)?;
         if self.payload_type != 0 {
-            let v = PayloadType::from_i32(self.payload_type)
-                .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", self.payload_type)))?;
+            let v = PayloadType::try_from(self.payload_type)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.payload_type)))?;
             struct_ser.serialize_field("payloadType", &v)?;
         }
         struct_ser.end()
@@ -6810,18 +6631,18 @@ impl<'de> serde::Deserialize<'de> for GetTxPoolContentRequest {
                 formatter.write_str("struct pactus.GetTxPoolContentRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetTxPoolContentRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetTxPoolContentRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut payload_type__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::PayloadType => {
                             if payload_type__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("payloadType"));
                             }
-                            payload_type__ = Some(map.next_value::<PayloadType>()? as i32);
+                            payload_type__ = Some(map_.next_value::<PayloadType>()? as i32);
                         }
                     }
                 }
@@ -6901,18 +6722,18 @@ impl<'de> serde::Deserialize<'de> for GetTxPoolContentResponse {
                 formatter.write_str("struct pactus.GetTxPoolContentResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetTxPoolContentResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetTxPoolContentResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut txs__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Txs => {
                             if txs__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("txs"));
                             }
-                            txs__ = Some(map.next_value()?);
+                            txs__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -6993,18 +6814,18 @@ impl<'de> serde::Deserialize<'de> for GetValidatorAddressRequest {
                 formatter.write_str("struct pactus.GetValidatorAddressRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetValidatorAddressRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetValidatorAddressRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut public_key__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::PublicKey => {
                             if public_key__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("publicKey"));
                             }
-                            public_key__ = Some(map.next_value()?);
+                            public_key__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -7084,18 +6905,18 @@ impl<'de> serde::Deserialize<'de> for GetValidatorAddressResponse {
                 formatter.write_str("struct pactus.GetValidatorAddressResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetValidatorAddressResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetValidatorAddressResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut address__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -7164,12 +6985,12 @@ impl<'de> serde::Deserialize<'de> for GetValidatorAddressesRequest {
                 formatter.write_str("struct pactus.GetValidatorAddressesRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetValidatorAddressesRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetValidatorAddressesRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                while map.next_key::<GeneratedField>()?.is_some() {
-                    let _ = map.next_value::<serde::de::IgnoredAny>()?;
+                while map_.next_key::<GeneratedField>()?.is_some() {
+                    let _ = map_.next_value::<serde::de::IgnoredAny>()?;
                 }
                 Ok(GetValidatorAddressesRequest {
                 })
@@ -7246,18 +7067,18 @@ impl<'de> serde::Deserialize<'de> for GetValidatorAddressesResponse {
                 formatter.write_str("struct pactus.GetValidatorAddressesResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetValidatorAddressesResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetValidatorAddressesResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut addresses__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Addresses => {
                             if addresses__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("addresses"));
                             }
-                            addresses__ = Some(map.next_value()?);
+                            addresses__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -7337,19 +7158,19 @@ impl<'de> serde::Deserialize<'de> for GetValidatorByNumberRequest {
                 formatter.write_str("struct pactus.GetValidatorByNumberRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetValidatorByNumberRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetValidatorByNumberRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut number__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Number => {
                             if number__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("number"));
                             }
                             number__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -7430,18 +7251,18 @@ impl<'de> serde::Deserialize<'de> for GetValidatorRequest {
                 formatter.write_str("struct pactus.GetValidatorRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetValidatorRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetValidatorRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut address__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -7521,18 +7342,18 @@ impl<'de> serde::Deserialize<'de> for GetValidatorResponse {
                 formatter.write_str("struct pactus.GetValidatorResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetValidatorResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetValidatorResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut validator__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Validator => {
                             if validator__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("validator"));
                             }
-                            validator__ = map.next_value()?;
+                            validator__ = map_.next_value()?;
                         }
                     }
                 }
@@ -7613,18 +7434,18 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoRequest {
                 formatter.write_str("struct pactus.GetWalletInfoRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetWalletInfoRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetWalletInfoRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -7667,6 +7488,8 @@ impl serde::Serialize for GetWalletInfoResponse {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
         if self.version != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("version", ToString::to_string(&self.version).as_str())?;
         }
         if !self.network.is_empty() {
@@ -7679,6 +7502,8 @@ impl serde::Serialize for GetWalletInfoResponse {
             struct_ser.serialize_field("uuid", &self.uuid)?;
         }
         if self.created_at != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("createdAt", ToString::to_string(&self.created_at).as_str())?;
         }
         struct_ser.end()
@@ -7751,7 +7576,7 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                 formatter.write_str("struct pactus.GetWalletInfoResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<GetWalletInfoResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<GetWalletInfoResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -7761,46 +7586,46 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                 let mut encrypted__ = None;
                 let mut uuid__ = None;
                 let mut created_at__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Version => {
                             if version__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("version"));
                             }
                             version__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Network => {
                             if network__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("network"));
                             }
-                            network__ = Some(map.next_value()?);
+                            network__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Encrypted => {
                             if encrypted__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("encrypted"));
                             }
-                            encrypted__ = Some(map.next_value()?);
+                            encrypted__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Uuid => {
                             if uuid__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("uuid"));
                             }
-                            uuid__ = Some(map.next_value()?);
+                            uuid__ = Some(map_.next_value()?);
                         }
                         GeneratedField::CreatedAt => {
                             if created_at__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("createdAt"));
                             }
                             created_at__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -7855,6 +7680,8 @@ impl serde::Serialize for HistoryInfo {
             struct_ser.serialize_field("description", &self.description)?;
         }
         if self.amount != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
         }
         struct_ser.end()
@@ -7924,7 +7751,7 @@ impl<'de> serde::Deserialize<'de> for HistoryInfo {
                 formatter.write_str("struct pactus.HistoryInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<HistoryInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<HistoryInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -7933,40 +7760,40 @@ impl<'de> serde::Deserialize<'de> for HistoryInfo {
                 let mut payload_type__ = None;
                 let mut description__ = None;
                 let mut amount__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::TransactionId => {
                             if transaction_id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("transactionId"));
                             }
-                            transaction_id__ = Some(map.next_value()?);
+                            transaction_id__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Time => {
                             if time__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("time"));
                             }
                             time__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::PayloadType => {
                             if payload_type__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("payloadType"));
                             }
-                            payload_type__ = Some(map.next_value()?);
+                            payload_type__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Description => {
                             if description__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("description"));
                             }
-                            description__ = Some(map.next_value()?);
+                            description__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Amount => {
                             if amount__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("amount"));
                             }
                             amount__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -8052,18 +7879,18 @@ impl<'de> serde::Deserialize<'de> for ListAddressRequest {
                 formatter.write_str("struct pactus.ListAddressRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<ListAddressRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListAddressRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -8083,10 +7910,16 @@ impl serde::Serialize for ListAddressResponse {
     {
         use serde::ser::SerializeStruct;
         let mut len = 0;
+        if !self.wallet_name.is_empty() {
+            len += 1;
+        }
         if !self.data.is_empty() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.ListAddressResponse", len)?;
+        if !self.wallet_name.is_empty() {
+            struct_ser.serialize_field("walletName", &self.wallet_name)?;
+        }
         if !self.data.is_empty() {
             struct_ser.serialize_field("data", &self.data)?;
         }
@@ -8100,11 +7933,14 @@ impl<'de> serde::Deserialize<'de> for ListAddressResponse {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "wallet_name",
+            "walletName",
             "data",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            WalletName,
             Data,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
@@ -8127,6 +7963,7 @@ impl<'de> serde::Deserialize<'de> for ListAddressResponse {
                         E: serde::de::Error,
                     {
                         match value {
+                            "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
                             "data" => Ok(GeneratedField::Data),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
@@ -8143,22 +7980,30 @@ impl<'de> serde::Deserialize<'de> for ListAddressResponse {
                 formatter.write_str("struct pactus.ListAddressResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<ListAddressResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListAddressResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
+                let mut wallet_name__ = None;
                 let mut data__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
+                        GeneratedField::WalletName => {
+                            if wallet_name__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("walletName"));
+                            }
+                            wallet_name__ = Some(map_.next_value()?);
+                        }
                         GeneratedField::Data => {
                             if data__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("data"));
                             }
-                            data__ = Some(map.next_value()?);
+                            data__ = Some(map_.next_value()?);
                         }
                     }
                 }
                 Ok(ListAddressResponse {
+                    wallet_name: wallet_name__.unwrap_or_default(),
                     data: data__.unwrap_or_default(),
                 })
             }
@@ -8223,12 +8068,12 @@ impl<'de> serde::Deserialize<'de> for ListWalletRequest {
                 formatter.write_str("struct pactus.ListWalletRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<ListWalletRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListWalletRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                while map.next_key::<GeneratedField>()?.is_some() {
-                    let _ = map.next_value::<serde::de::IgnoredAny>()?;
+                while map_.next_key::<GeneratedField>()?.is_some() {
+                    let _ = map_.next_value::<serde::de::IgnoredAny>()?;
                 }
                 Ok(ListWalletRequest {
                 })
@@ -8305,18 +8150,18 @@ impl<'de> serde::Deserialize<'de> for ListWalletResponse {
                 formatter.write_str("struct pactus.ListWalletResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<ListWalletResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListWalletResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallets__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Wallets => {
                             if wallets__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("wallets"));
                             }
-                            wallets__ = Some(map.next_value()?);
+                            wallets__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -8397,18 +8242,18 @@ impl<'de> serde::Deserialize<'de> for LoadWalletRequest {
                 formatter.write_str("struct pactus.LoadWalletRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<LoadWalletRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<LoadWalletRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -8489,18 +8334,18 @@ impl<'de> serde::Deserialize<'de> for LoadWalletResponse {
                 formatter.write_str("struct pactus.LoadWalletResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<LoadWalletResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<LoadWalletResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -8537,19 +8382,19 @@ impl serde::Serialize for MetricInfo {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.MetricInfo", len)?;
         if let Some(v) = self.total_invalid.as_ref() {
-            struct_ser.serialize_field("TotalInvalid", v)?;
+            struct_ser.serialize_field("totalInvalid", v)?;
         }
         if let Some(v) = self.total_sent.as_ref() {
-            struct_ser.serialize_field("TotalSent", v)?;
+            struct_ser.serialize_field("totalSent", v)?;
         }
         if let Some(v) = self.total_received.as_ref() {
-            struct_ser.serialize_field("TotalReceived", v)?;
+            struct_ser.serialize_field("totalReceived", v)?;
         }
         if !self.message_sent.is_empty() {
-            struct_ser.serialize_field("MessageSent", &self.message_sent)?;
+            struct_ser.serialize_field("messageSent", &self.message_sent)?;
         }
         if !self.message_received.is_empty() {
-            struct_ser.serialize_field("MessageReceived", &self.message_received)?;
+            struct_ser.serialize_field("messageReceived", &self.message_received)?;
         }
         struct_ser.end()
     }
@@ -8561,11 +8406,16 @@ impl<'de> serde::Deserialize<'de> for MetricInfo {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "TotalInvalid",
-            "TotalSent",
-            "TotalReceived",
-            "MessageSent",
-            "MessageReceived",
+            "total_invalid",
+            "totalInvalid",
+            "total_sent",
+            "totalSent",
+            "total_received",
+            "totalReceived",
+            "message_sent",
+            "messageSent",
+            "message_received",
+            "messageReceived",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -8596,11 +8446,11 @@ impl<'de> serde::Deserialize<'de> for MetricInfo {
                         E: serde::de::Error,
                     {
                         match value {
-                            "TotalInvalid" => Ok(GeneratedField::TotalInvalid),
-                            "TotalSent" => Ok(GeneratedField::TotalSent),
-                            "TotalReceived" => Ok(GeneratedField::TotalReceived),
-                            "MessageSent" => Ok(GeneratedField::MessageSent),
-                            "MessageReceived" => Ok(GeneratedField::MessageReceived),
+                            "totalInvalid" | "total_invalid" => Ok(GeneratedField::TotalInvalid),
+                            "totalSent" | "total_sent" => Ok(GeneratedField::TotalSent),
+                            "totalReceived" | "total_received" => Ok(GeneratedField::TotalReceived),
+                            "messageSent" | "message_sent" => Ok(GeneratedField::MessageSent),
+                            "messageReceived" | "message_received" => Ok(GeneratedField::MessageReceived),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -8616,7 +8466,7 @@ impl<'de> serde::Deserialize<'de> for MetricInfo {
                 formatter.write_str("struct pactus.MetricInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<MetricInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<MetricInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -8625,41 +8475,41 @@ impl<'de> serde::Deserialize<'de> for MetricInfo {
                 let mut total_received__ = None;
                 let mut message_sent__ = None;
                 let mut message_received__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::TotalInvalid => {
                             if total_invalid__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("TotalInvalid"));
+                                return Err(serde::de::Error::duplicate_field("totalInvalid"));
                             }
-                            total_invalid__ = map.next_value()?;
+                            total_invalid__ = map_.next_value()?;
                         }
                         GeneratedField::TotalSent => {
                             if total_sent__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("TotalSent"));
+                                return Err(serde::de::Error::duplicate_field("totalSent"));
                             }
-                            total_sent__ = map.next_value()?;
+                            total_sent__ = map_.next_value()?;
                         }
                         GeneratedField::TotalReceived => {
                             if total_received__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("TotalReceived"));
+                                return Err(serde::de::Error::duplicate_field("totalReceived"));
                             }
-                            total_received__ = map.next_value()?;
+                            total_received__ = map_.next_value()?;
                         }
                         GeneratedField::MessageSent => {
                             if message_sent__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("MessageSent"));
+                                return Err(serde::de::Error::duplicate_field("messageSent"));
                             }
                             message_sent__ = Some(
-                                map.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, _>>()?
+                                map_.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, _>>()?
                                     .into_iter().map(|(k,v)| (k.0, v)).collect()
                             );
                         }
                         GeneratedField::MessageReceived => {
                             if message_received__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("MessageReceived"));
+                                return Err(serde::de::Error::duplicate_field("messageReceived"));
                             }
                             message_received__ = Some(
-                                map.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, _>>()?
+                                map_.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, _>>()?
                                     .into_iter().map(|(k,v)| (k.0, v)).collect()
                             );
                         }
@@ -8675,6 +8525,114 @@ impl<'de> serde::Deserialize<'de> for MetricInfo {
             }
         }
         deserializer.deserialize_struct("pactus.MetricInfo", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for PayloadBatchTransfer {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.sender.is_empty() {
+            len += 1;
+        }
+        if !self.recipients.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.PayloadBatchTransfer", len)?;
+        if !self.sender.is_empty() {
+            struct_ser.serialize_field("sender", &self.sender)?;
+        }
+        if !self.recipients.is_empty() {
+            struct_ser.serialize_field("recipients", &self.recipients)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for PayloadBatchTransfer {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "sender",
+            "recipients",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Sender,
+            Recipients,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "sender" => Ok(GeneratedField::Sender),
+                            "recipients" => Ok(GeneratedField::Recipients),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = PayloadBatchTransfer;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.PayloadBatchTransfer")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<PayloadBatchTransfer, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut sender__ = None;
+                let mut recipients__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Sender => {
+                            if sender__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("sender"));
+                            }
+                            sender__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Recipients => {
+                            if recipients__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("recipients"));
+                            }
+                            recipients__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(PayloadBatchTransfer {
+                    sender: sender__.unwrap_or_default(),
+                    recipients: recipients__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.PayloadBatchTransfer", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for PayloadBond {
@@ -8705,6 +8663,8 @@ impl serde::Serialize for PayloadBond {
             struct_ser.serialize_field("receiver", &self.receiver)?;
         }
         if self.stake != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("stake", ToString::to_string(&self.stake).as_str())?;
         }
         if !self.public_key.is_empty() {
@@ -8773,7 +8733,7 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
                 formatter.write_str("struct pactus.PayloadBond")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<PayloadBond, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<PayloadBond, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -8781,33 +8741,33 @@ impl<'de> serde::Deserialize<'de> for PayloadBond {
                 let mut receiver__ = None;
                 let mut stake__ = None;
                 let mut public_key__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Sender => {
                             if sender__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("sender"));
                             }
-                            sender__ = Some(map.next_value()?);
+                            sender__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Receiver => {
                             if receiver__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("receiver"));
                             }
-                            receiver__ = Some(map.next_value()?);
+                            receiver__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Stake => {
                             if stake__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("stake"));
                             }
                             stake__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::PublicKey => {
                             if public_key__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("publicKey"));
                             }
-                            public_key__ = Some(map.next_value()?);
+                            public_key__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -8899,25 +8859,25 @@ impl<'de> serde::Deserialize<'de> for PayloadSortition {
                 formatter.write_str("struct pactus.PayloadSortition")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<PayloadSortition, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<PayloadSortition, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut address__ = None;
                 let mut proof__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Proof => {
                             if proof__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("proof"));
                             }
-                            proof__ = Some(map.next_value()?);
+                            proof__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -8955,6 +8915,8 @@ impl serde::Serialize for PayloadTransfer {
             struct_ser.serialize_field("receiver", &self.receiver)?;
         }
         if self.amount != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
         }
         struct_ser.end()
@@ -9016,33 +8978,33 @@ impl<'de> serde::Deserialize<'de> for PayloadTransfer {
                 formatter.write_str("struct pactus.PayloadTransfer")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<PayloadTransfer, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<PayloadTransfer, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut sender__ = None;
                 let mut receiver__ = None;
                 let mut amount__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Sender => {
                             if sender__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("sender"));
                             }
-                            sender__ = Some(map.next_value()?);
+                            sender__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Receiver => {
                             if receiver__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("receiver"));
                             }
-                            receiver__ = Some(map.next_value()?);
+                            receiver__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Amount => {
                             if amount__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("amount"));
                             }
                             amount__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -9064,12 +9026,13 @@ impl serde::Serialize for PayloadType {
         S: serde::Serializer,
     {
         let variant = match self {
-            Self::Unknown => "UNKNOWN",
-            Self::TransferPayload => "TRANSFER_PAYLOAD",
-            Self::BondPayload => "BOND_PAYLOAD",
-            Self::SortitionPayload => "SORTITION_PAYLOAD",
-            Self::UnbondPayload => "UNBOND_PAYLOAD",
-            Self::WithdrawPayload => "WITHDRAW_PAYLOAD",
+            Self::Unspecified => "PAYLOAD_TYPE_UNSPECIFIED",
+            Self::Transfer => "PAYLOAD_TYPE_TRANSFER",
+            Self::Bond => "PAYLOAD_TYPE_BOND",
+            Self::Sortition => "PAYLOAD_TYPE_SORTITION",
+            Self::Unbond => "PAYLOAD_TYPE_UNBOND",
+            Self::Withdraw => "PAYLOAD_TYPE_WITHDRAW",
+            Self::BatchTransfer => "PAYLOAD_TYPE_BATCH_TRANSFER",
         };
         serializer.serialize_str(variant)
     }
@@ -9081,12 +9044,13 @@ impl<'de> serde::Deserialize<'de> for PayloadType {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "UNKNOWN",
-            "TRANSFER_PAYLOAD",
-            "BOND_PAYLOAD",
-            "SORTITION_PAYLOAD",
-            "UNBOND_PAYLOAD",
-            "WITHDRAW_PAYLOAD",
+            "PAYLOAD_TYPE_UNSPECIFIED",
+            "PAYLOAD_TYPE_TRANSFER",
+            "PAYLOAD_TYPE_BOND",
+            "PAYLOAD_TYPE_SORTITION",
+            "PAYLOAD_TYPE_UNBOND",
+            "PAYLOAD_TYPE_WITHDRAW",
+            "PAYLOAD_TYPE_BATCH_TRANSFER",
         ];
 
         struct GeneratedVisitor;
@@ -9102,10 +9066,9 @@ impl<'de> serde::Deserialize<'de> for PayloadType {
             where
                 E: serde::de::Error,
             {
-                use std::convert::TryFrom;
                 i32::try_from(v)
                     .ok()
-                    .and_then(PayloadType::from_i32)
+                    .and_then(|x| x.try_into().ok())
                     .ok_or_else(|| {
                         serde::de::Error::invalid_value(serde::de::Unexpected::Signed(v), &self)
                     })
@@ -9115,10 +9078,9 @@ impl<'de> serde::Deserialize<'de> for PayloadType {
             where
                 E: serde::de::Error,
             {
-                use std::convert::TryFrom;
                 i32::try_from(v)
                     .ok()
-                    .and_then(PayloadType::from_i32)
+                    .and_then(|x| x.try_into().ok())
                     .ok_or_else(|| {
                         serde::de::Error::invalid_value(serde::de::Unexpected::Unsigned(v), &self)
                     })
@@ -9129,12 +9091,13 @@ impl<'de> serde::Deserialize<'de> for PayloadType {
                 E: serde::de::Error,
             {
                 match value {
-                    "UNKNOWN" => Ok(PayloadType::Unknown),
-                    "TRANSFER_PAYLOAD" => Ok(PayloadType::TransferPayload),
-                    "BOND_PAYLOAD" => Ok(PayloadType::BondPayload),
-                    "SORTITION_PAYLOAD" => Ok(PayloadType::SortitionPayload),
-                    "UNBOND_PAYLOAD" => Ok(PayloadType::UnbondPayload),
-                    "WITHDRAW_PAYLOAD" => Ok(PayloadType::WithdrawPayload),
+                    "PAYLOAD_TYPE_UNSPECIFIED" => Ok(PayloadType::Unspecified),
+                    "PAYLOAD_TYPE_TRANSFER" => Ok(PayloadType::Transfer),
+                    "PAYLOAD_TYPE_BOND" => Ok(PayloadType::Bond),
+                    "PAYLOAD_TYPE_SORTITION" => Ok(PayloadType::Sortition),
+                    "PAYLOAD_TYPE_UNBOND" => Ok(PayloadType::Unbond),
+                    "PAYLOAD_TYPE_WITHDRAW" => Ok(PayloadType::Withdraw),
+                    "PAYLOAD_TYPE_BATCH_TRANSFER" => Ok(PayloadType::BatchTransfer),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }
@@ -9210,18 +9173,18 @@ impl<'de> serde::Deserialize<'de> for PayloadUnbond {
                 formatter.write_str("struct pactus.PayloadUnbond")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<PayloadUnbond, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<PayloadUnbond, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut validator__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Validator => {
                             if validator__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("validator"));
                             }
-                            validator__ = Some(map.next_value()?);
+                            validator__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -9258,6 +9221,8 @@ impl serde::Serialize for PayloadWithdraw {
             struct_ser.serialize_field("accountAddress", &self.account_address)?;
         }
         if self.amount != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
         }
         struct_ser.end()
@@ -9321,33 +9286,33 @@ impl<'de> serde::Deserialize<'de> for PayloadWithdraw {
                 formatter.write_str("struct pactus.PayloadWithdraw")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<PayloadWithdraw, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<PayloadWithdraw, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut validator_address__ = None;
                 let mut account_address__ = None;
                 let mut amount__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::ValidatorAddress => {
                             if validator_address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("validatorAddress"));
                             }
-                            validator_address__ = Some(map.next_value()?);
+                            validator_address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::AccountAddress => {
                             if account_address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("accountAddress"));
                             }
-                            account_address__ = Some(map.next_value()?);
+                            account_address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Amount => {
                             if amount__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("amount"));
                             }
                             amount__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -9450,9 +9415,13 @@ impl serde::Serialize for PeerInfo {
             struct_ser.serialize_field("height", &self.height)?;
         }
         if self.last_sent != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("lastSent", ToString::to_string(&self.last_sent).as_str())?;
         }
         if self.last_received != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("lastReceived", ToString::to_string(&self.last_received).as_str())?;
         }
         if !self.address.is_empty() {
@@ -9583,7 +9552,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                 formatter.write_str("struct pactus.PeerInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<PeerInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<PeerInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -9604,66 +9573,66 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                 let mut total_sessions__ = None;
                 let mut completed_sessions__ = None;
                 let mut metric_info__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Status => {
                             if status__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("status"));
                             }
                             status__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Moniker => {
                             if moniker__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("moniker"));
                             }
-                            moniker__ = Some(map.next_value()?);
+                            moniker__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Agent => {
                             if agent__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("agent"));
                             }
-                            agent__ = Some(map.next_value()?);
+                            agent__ = Some(map_.next_value()?);
                         }
                         GeneratedField::PeerId => {
                             if peer_id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("peerId"));
                             }
-                            peer_id__ = Some(map.next_value()?);
+                            peer_id__ = Some(map_.next_value()?);
                         }
                         GeneratedField::ConsensusKeys => {
                             if consensus_keys__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("consensusKeys"));
                             }
-                            consensus_keys__ = Some(map.next_value()?);
+                            consensus_keys__ = Some(map_.next_value()?);
                         }
                         GeneratedField::ConsensusAddresses => {
                             if consensus_addresses__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("consensusAddresses"));
                             }
-                            consensus_addresses__ = Some(map.next_value()?);
+                            consensus_addresses__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Services => {
                             if services__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("services"));
                             }
                             services__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::LastBlockHash => {
                             if last_block_hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("lastBlockHash"));
                             }
-                            last_block_hash__ = Some(map.next_value()?);
+                            last_block_hash__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Height => {
                             if height__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("height"));
                             }
                             height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::LastSent => {
@@ -9671,7 +9640,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                                 return Err(serde::de::Error::duplicate_field("lastSent"));
                             }
                             last_sent__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::LastReceived => {
@@ -9679,33 +9648,33 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                                 return Err(serde::de::Error::duplicate_field("lastReceived"));
                             }
                             last_received__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Direction => {
                             if direction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("direction"));
                             }
-                            direction__ = Some(map.next_value()?);
+                            direction__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Protocols => {
                             if protocols__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("protocols"));
                             }
-                            protocols__ = Some(map.next_value()?);
+                            protocols__ = Some(map_.next_value()?);
                         }
                         GeneratedField::TotalSessions => {
                             if total_sessions__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("totalSessions"));
                             }
                             total_sessions__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::CompletedSessions => {
@@ -9713,14 +9682,14 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                                 return Err(serde::de::Error::duplicate_field("completedSessions"));
                             }
                             completed_sessions__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::MetricInfo => {
                             if metric_info__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("metricInfo"));
                             }
-                            metric_info__ = map.next_value()?;
+                            metric_info__ = map_.next_value()?;
                         }
                     }
                 }
@@ -9844,7 +9813,7 @@ impl<'de> serde::Deserialize<'de> for ProposalInfo {
                 formatter.write_str("struct pactus.ProposalInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<ProposalInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ProposalInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -9852,14 +9821,14 @@ impl<'de> serde::Deserialize<'de> for ProposalInfo {
                 let mut round__ = None;
                 let mut block_data__ = None;
                 let mut signature__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Height => {
                             if height__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("height"));
                             }
                             height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Round => {
@@ -9867,20 +9836,20 @@ impl<'de> serde::Deserialize<'de> for ProposalInfo {
                                 return Err(serde::de::Error::duplicate_field("round"));
                             }
                             round__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::BlockData => {
                             if block_data__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("blockData"));
                             }
-                            block_data__ = Some(map.next_value()?);
+                            block_data__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Signature => {
                             if signature__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("signature"));
                             }
-                            signature__ = Some(map.next_value()?);
+                            signature__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -9893,6 +9862,319 @@ impl<'de> serde::Deserialize<'de> for ProposalInfo {
             }
         }
         deserializer.deserialize_struct("pactus.ProposalInfo", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for PublicKeyAggregationRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.public_keys.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.PublicKeyAggregationRequest", len)?;
+        if !self.public_keys.is_empty() {
+            struct_ser.serialize_field("publicKeys", &self.public_keys)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for PublicKeyAggregationRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "public_keys",
+            "publicKeys",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            PublicKeys,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "publicKeys" | "public_keys" => Ok(GeneratedField::PublicKeys),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = PublicKeyAggregationRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.PublicKeyAggregationRequest")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<PublicKeyAggregationRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut public_keys__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::PublicKeys => {
+                            if public_keys__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("publicKeys"));
+                            }
+                            public_keys__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(PublicKeyAggregationRequest {
+                    public_keys: public_keys__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.PublicKeyAggregationRequest", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for PublicKeyAggregationResponse {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.public_key.is_empty() {
+            len += 1;
+        }
+        if !self.address.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.PublicKeyAggregationResponse", len)?;
+        if !self.public_key.is_empty() {
+            struct_ser.serialize_field("publicKey", &self.public_key)?;
+        }
+        if !self.address.is_empty() {
+            struct_ser.serialize_field("address", &self.address)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for PublicKeyAggregationResponse {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "public_key",
+            "publicKey",
+            "address",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            PublicKey,
+            Address,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "publicKey" | "public_key" => Ok(GeneratedField::PublicKey),
+                            "address" => Ok(GeneratedField::Address),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = PublicKeyAggregationResponse;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.PublicKeyAggregationResponse")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<PublicKeyAggregationResponse, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut public_key__ = None;
+                let mut address__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::PublicKey => {
+                            if public_key__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("publicKey"));
+                            }
+                            public_key__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Address => {
+                            if address__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("address"));
+                            }
+                            address__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(PublicKeyAggregationResponse {
+                    public_key: public_key__.unwrap_or_default(),
+                    address: address__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.PublicKeyAggregationResponse", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for Recipient {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.receiver.is_empty() {
+            len += 1;
+        }
+        if self.amount != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.Recipient", len)?;
+        if !self.receiver.is_empty() {
+            struct_ser.serialize_field("receiver", &self.receiver)?;
+        }
+        if self.amount != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("amount", ToString::to_string(&self.amount).as_str())?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for Recipient {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "receiver",
+            "amount",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Receiver,
+            Amount,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "receiver" => Ok(GeneratedField::Receiver),
+                            "amount" => Ok(GeneratedField::Amount),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = Recipient;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.Recipient")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<Recipient, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut receiver__ = None;
+                let mut amount__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Receiver => {
+                            if receiver__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("receiver"));
+                            }
+                            receiver__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Amount => {
+                            if amount__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("amount"));
+                            }
+                            amount__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(Recipient {
+                    receiver: receiver__.unwrap_or_default(),
+                    amount: amount__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.Recipient", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for RestoreWalletRequest {
@@ -9982,32 +10264,32 @@ impl<'de> serde::Deserialize<'de> for RestoreWalletRequest {
                 formatter.write_str("struct pactus.RestoreWalletRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<RestoreWalletRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<RestoreWalletRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
                 let mut mnemonic__ = None;
                 let mut password__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Mnemonic => {
                             if mnemonic__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("mnemonic"));
                             }
-                            mnemonic__ = Some(map.next_value()?);
+                            mnemonic__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Password => {
                             if password__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("password"));
                             }
-                            password__ = Some(map.next_value()?);
+                            password__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -10090,18 +10372,18 @@ impl<'de> serde::Deserialize<'de> for RestoreWalletResponse {
                 formatter.write_str("struct pactus.RestoreWalletResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<RestoreWalletResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<RestoreWalletResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -10113,7 +10395,7 @@ impl<'de> serde::Deserialize<'de> for RestoreWalletResponse {
         deserializer.deserialize_struct("pactus.RestoreWalletResponse", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for SetLabelRequest {
+impl serde::Serialize for SetAddressLabelRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -10133,7 +10415,7 @@ impl serde::Serialize for SetLabelRequest {
         if !self.label.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("pactus.SetLabelRequest", len)?;
+        let mut struct_ser = serializer.serialize_struct("pactus.SetAddressLabelRequest", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
@@ -10149,7 +10431,7 @@ impl serde::Serialize for SetLabelRequest {
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for SetLabelRequest {
+impl<'de> serde::Deserialize<'de> for SetAddressLabelRequest {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -10203,13 +10485,13 @@ impl<'de> serde::Deserialize<'de> for SetLabelRequest {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = SetLabelRequest;
+            type Value = SetAddressLabelRequest;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.SetLabelRequest")
+                formatter.write_str("struct pactus.SetAddressLabelRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<SetLabelRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<SetAddressLabelRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -10217,35 +10499,35 @@ impl<'de> serde::Deserialize<'de> for SetLabelRequest {
                 let mut password__ = None;
                 let mut address__ = None;
                 let mut label__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Password => {
                             if password__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("password"));
                             }
-                            password__ = Some(map.next_value()?);
+                            password__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Label => {
                             if label__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("label"));
                             }
-                            label__ = Some(map.next_value()?);
+                            label__ = Some(map_.next_value()?);
                         }
                     }
                 }
-                Ok(SetLabelRequest {
+                Ok(SetAddressLabelRequest {
                     wallet_name: wallet_name__.unwrap_or_default(),
                     password: password__.unwrap_or_default(),
                     address: address__.unwrap_or_default(),
@@ -10253,10 +10535,10 @@ impl<'de> serde::Deserialize<'de> for SetLabelRequest {
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.SetLabelRequest", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.SetAddressLabelRequest", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for SetLabelResponse {
+impl serde::Serialize for SetAddressLabelResponse {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -10264,11 +10546,11 @@ impl serde::Serialize for SetLabelResponse {
     {
         use serde::ser::SerializeStruct;
         let len = 0;
-        let struct_ser = serializer.serialize_struct("pactus.SetLabelResponse", len)?;
+        let struct_ser = serializer.serialize_struct("pactus.SetAddressLabelResponse", len)?;
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for SetLabelResponse {
+impl<'de> serde::Deserialize<'de> for SetAddressLabelResponse {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -10307,24 +10589,24 @@ impl<'de> serde::Deserialize<'de> for SetLabelResponse {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = SetLabelResponse;
+            type Value = SetAddressLabelResponse;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.SetLabelResponse")
+                formatter.write_str("struct pactus.SetAddressLabelResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<SetLabelResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<SetAddressLabelResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                while map.next_key::<GeneratedField>()?.is_some() {
-                    let _ = map.next_value::<serde::de::IgnoredAny>()?;
+                while map_.next_key::<GeneratedField>()?.is_some() {
+                    let _ = map_.next_value::<serde::de::IgnoredAny>()?;
                 }
-                Ok(SetLabelResponse {
+                Ok(SetAddressLabelResponse {
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.SetLabelResponse", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.SetAddressLabelResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for SignMessageRequest {
@@ -10423,7 +10705,7 @@ impl<'de> serde::Deserialize<'de> for SignMessageRequest {
                 formatter.write_str("struct pactus.SignMessageRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<SignMessageRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<SignMessageRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -10431,31 +10713,31 @@ impl<'de> serde::Deserialize<'de> for SignMessageRequest {
                 let mut password__ = None;
                 let mut address__ = None;
                 let mut message__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Password => {
                             if password__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("password"));
                             }
-                            password__ = Some(map.next_value()?);
+                            password__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Message => {
                             if message__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("message"));
                             }
-                            message__ = Some(map.next_value()?);
+                            message__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -10538,18 +10820,18 @@ impl<'de> serde::Deserialize<'de> for SignMessageResponse {
                 formatter.write_str("struct pactus.SignMessageResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<SignMessageResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<SignMessageResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut signature__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Signature => {
                             if signature__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("signature"));
                             }
-                            signature__ = Some(map.next_value()?);
+                            signature__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -10639,25 +10921,25 @@ impl<'de> serde::Deserialize<'de> for SignMessageWithPrivateKeyRequest {
                 formatter.write_str("struct pactus.SignMessageWithPrivateKeyRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<SignMessageWithPrivateKeyRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<SignMessageWithPrivateKeyRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut private_key__ = None;
                 let mut message__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::PrivateKey => {
                             if private_key__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("privateKey"));
                             }
-                            private_key__ = Some(map.next_value()?);
+                            private_key__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Message => {
                             if message__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("message"));
                             }
-                            message__ = Some(map.next_value()?);
+                            message__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -10738,18 +11020,18 @@ impl<'de> serde::Deserialize<'de> for SignMessageWithPrivateKeyResponse {
                 formatter.write_str("struct pactus.SignMessageWithPrivateKeyResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<SignMessageWithPrivateKeyResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<SignMessageWithPrivateKeyResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut signature__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Signature => {
                             if signature__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("signature"));
                             }
-                            signature__ = Some(map.next_value()?);
+                            signature__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -10849,32 +11131,32 @@ impl<'de> serde::Deserialize<'de> for SignRawTransactionRequest {
                 formatter.write_str("struct pactus.SignRawTransactionRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<SignRawTransactionRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<SignRawTransactionRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
                 let mut raw_transaction__ = None;
                 let mut password__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                         GeneratedField::RawTransaction => {
                             if raw_transaction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("rawTransaction"));
                             }
-                            raw_transaction__ = Some(map.next_value()?);
+                            raw_transaction__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Password => {
                             if password__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("password"));
                             }
-                            password__ = Some(map.next_value()?);
+                            password__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -10967,25 +11249,25 @@ impl<'de> serde::Deserialize<'de> for SignRawTransactionResponse {
                 formatter.write_str("struct pactus.SignRawTransactionResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<SignRawTransactionResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<SignRawTransactionResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut transaction_id__ = None;
                 let mut signed_raw_transaction__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::TransactionId => {
                             if transaction_id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("transactionId"));
                             }
-                            transaction_id__ = Some(map.next_value()?);
+                            transaction_id__ = Some(map_.next_value()?);
                         }
                         GeneratedField::SignedRawTransaction => {
                             if signed_raw_transaction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("signedRawTransaction"));
                             }
-                            signed_raw_transaction__ = Some(map.next_value()?);
+                            signed_raw_transaction__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -10996,6 +11278,188 @@ impl<'de> serde::Deserialize<'de> for SignRawTransactionResponse {
             }
         }
         deserializer.deserialize_struct("pactus.SignRawTransactionResponse", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for SignatureAggregationRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.signatures.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.SignatureAggregationRequest", len)?;
+        if !self.signatures.is_empty() {
+            struct_ser.serialize_field("signatures", &self.signatures)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for SignatureAggregationRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "signatures",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Signatures,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "signatures" => Ok(GeneratedField::Signatures),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = SignatureAggregationRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.SignatureAggregationRequest")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<SignatureAggregationRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut signatures__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Signatures => {
+                            if signatures__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("signatures"));
+                            }
+                            signatures__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(SignatureAggregationRequest {
+                    signatures: signatures__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.SignatureAggregationRequest", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for SignatureAggregationResponse {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.signature.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.SignatureAggregationResponse", len)?;
+        if !self.signature.is_empty() {
+            struct_ser.serialize_field("signature", &self.signature)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for SignatureAggregationResponse {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "signature",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            Signature,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "signature" => Ok(GeneratedField::Signature),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = SignatureAggregationResponse;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.SignatureAggregationResponse")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<SignatureAggregationResponse, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut signature__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::Signature => {
+                            if signature__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("signature"));
+                            }
+                            signature__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(SignatureAggregationResponse {
+                    signature: signature__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.SignatureAggregationResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for TransactionInfo {
@@ -11053,14 +11517,18 @@ impl serde::Serialize for TransactionInfo {
             struct_ser.serialize_field("lockTime", &self.lock_time)?;
         }
         if self.value != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("value", ToString::to_string(&self.value).as_str())?;
         }
         if self.fee != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("fee", ToString::to_string(&self.fee).as_str())?;
         }
         if self.payload_type != 0 {
-            let v = PayloadType::from_i32(self.payload_type)
-                .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", self.payload_type)))?;
+            let v = PayloadType::try_from(self.payload_type)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.payload_type)))?;
             struct_ser.serialize_field("payloadType", &v)?;
         }
         if !self.memo.is_empty() {
@@ -11088,6 +11556,9 @@ impl serde::Serialize for TransactionInfo {
                 }
                 transaction_info::Payload::Withdraw(v) => {
                     struct_ser.serialize_field("withdraw", v)?;
+                }
+                transaction_info::Payload::BatchTransfer(v) => {
+                    struct_ser.serialize_field("batchTransfer", v)?;
                 }
             }
         }
@@ -11119,6 +11590,8 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
             "sortition",
             "unbond",
             "withdraw",
+            "batch_transfer",
+            "batchTransfer",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -11138,6 +11611,7 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
             Sortition,
             Unbond,
             Withdraw,
+            BatchTransfer,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -11174,6 +11648,7 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                             "sortition" => Ok(GeneratedField::Sortition),
                             "unbond" => Ok(GeneratedField::Unbond),
                             "withdraw" => Ok(GeneratedField::Withdraw),
+                            "batchTransfer" | "batch_transfer" => Ok(GeneratedField::BatchTransfer),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -11189,7 +11664,7 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                 formatter.write_str("struct pactus.TransactionInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<TransactionInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<TransactionInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -11204,26 +11679,26 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                 let mut public_key__ = None;
                 let mut signature__ = None;
                 let mut payload__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Id => {
                             if id__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("id"));
                             }
-                            id__ = Some(map.next_value()?);
+                            id__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Data => {
                             if data__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("data"));
                             }
-                            data__ = Some(map.next_value()?);
+                            data__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Version => {
                             if version__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("version"));
                             }
                             version__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::LockTime => {
@@ -11231,7 +11706,7 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                                 return Err(serde::de::Error::duplicate_field("lockTime"));
                             }
                             lock_time__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Value => {
@@ -11239,7 +11714,7 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                                 return Err(serde::de::Error::duplicate_field("value"));
                             }
                             value__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Fee => {
@@ -11247,66 +11722,73 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                                 return Err(serde::de::Error::duplicate_field("fee"));
                             }
                             fee__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::PayloadType => {
                             if payload_type__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("payloadType"));
                             }
-                            payload_type__ = Some(map.next_value::<PayloadType>()? as i32);
+                            payload_type__ = Some(map_.next_value::<PayloadType>()? as i32);
                         }
                         GeneratedField::Memo => {
                             if memo__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("memo"));
                             }
-                            memo__ = Some(map.next_value()?);
+                            memo__ = Some(map_.next_value()?);
                         }
                         GeneratedField::PublicKey => {
                             if public_key__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("publicKey"));
                             }
-                            public_key__ = Some(map.next_value()?);
+                            public_key__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Signature => {
                             if signature__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("signature"));
                             }
-                            signature__ = Some(map.next_value()?);
+                            signature__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Transfer => {
                             if payload__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("transfer"));
                             }
-                            payload__ = map.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::Transfer)
+                            payload__ = map_.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::Transfer)
 ;
                         }
                         GeneratedField::Bond => {
                             if payload__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("bond"));
                             }
-                            payload__ = map.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::Bond)
+                            payload__ = map_.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::Bond)
 ;
                         }
                         GeneratedField::Sortition => {
                             if payload__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("sortition"));
                             }
-                            payload__ = map.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::Sortition)
+                            payload__ = map_.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::Sortition)
 ;
                         }
                         GeneratedField::Unbond => {
                             if payload__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("unbond"));
                             }
-                            payload__ = map.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::Unbond)
+                            payload__ = map_.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::Unbond)
 ;
                         }
                         GeneratedField::Withdraw => {
                             if payload__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("withdraw"));
                             }
-                            payload__ = map.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::Withdraw)
+                            payload__ = map_.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::Withdraw)
+;
+                        }
+                        GeneratedField::BatchTransfer => {
+                            if payload__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("batchTransfer"));
+                            }
+                            payload__ = map_.next_value::<::std::option::Option<_>>()?.map(transaction_info::Payload::BatchTransfer)
 ;
                         }
                     }
@@ -11336,8 +11818,8 @@ impl serde::Serialize for TransactionVerbosity {
         S: serde::Serializer,
     {
         let variant = match self {
-            Self::TransactionData => "TRANSACTION_DATA",
-            Self::TransactionInfo => "TRANSACTION_INFO",
+            Self::Data => "TRANSACTION_VERBOSITY_DATA",
+            Self::Info => "TRANSACTION_VERBOSITY_INFO",
         };
         serializer.serialize_str(variant)
     }
@@ -11349,8 +11831,8 @@ impl<'de> serde::Deserialize<'de> for TransactionVerbosity {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "TRANSACTION_DATA",
-            "TRANSACTION_INFO",
+            "TRANSACTION_VERBOSITY_DATA",
+            "TRANSACTION_VERBOSITY_INFO",
         ];
 
         struct GeneratedVisitor;
@@ -11366,10 +11848,9 @@ impl<'de> serde::Deserialize<'de> for TransactionVerbosity {
             where
                 E: serde::de::Error,
             {
-                use std::convert::TryFrom;
                 i32::try_from(v)
                     .ok()
-                    .and_then(TransactionVerbosity::from_i32)
+                    .and_then(|x| x.try_into().ok())
                     .ok_or_else(|| {
                         serde::de::Error::invalid_value(serde::de::Unexpected::Signed(v), &self)
                     })
@@ -11379,10 +11860,9 @@ impl<'de> serde::Deserialize<'de> for TransactionVerbosity {
             where
                 E: serde::de::Error,
             {
-                use std::convert::TryFrom;
                 i32::try_from(v)
                     .ok()
-                    .and_then(TransactionVerbosity::from_i32)
+                    .and_then(|x| x.try_into().ok())
                     .ok_or_else(|| {
                         serde::de::Error::invalid_value(serde::de::Unexpected::Unsigned(v), &self)
                     })
@@ -11393,8 +11873,8 @@ impl<'de> serde::Deserialize<'de> for TransactionVerbosity {
                 E: serde::de::Error,
             {
                 match value {
-                    "TRANSACTION_DATA" => Ok(TransactionVerbosity::TransactionData),
-                    "TRANSACTION_INFO" => Ok(TransactionVerbosity::TransactionInfo),
+                    "TRANSACTION_VERBOSITY_DATA" => Ok(TransactionVerbosity::Data),
+                    "TRANSACTION_VERBOSITY_INFO" => Ok(TransactionVerbosity::Info),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }
@@ -11471,18 +11951,18 @@ impl<'de> serde::Deserialize<'de> for UnloadWalletRequest {
                 formatter.write_str("struct pactus.UnloadWalletRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<UnloadWalletRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<UnloadWalletRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -11563,18 +12043,18 @@ impl<'de> serde::Deserialize<'de> for UnloadWalletResponse {
                 formatter.write_str("struct pactus.UnloadWalletResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<UnloadWalletResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<UnloadWalletResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
                             if wallet_name__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("walletName"));
                             }
-                            wallet_name__ = Some(map.next_value()?);
+                            wallet_name__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -11638,6 +12118,8 @@ impl serde::Serialize for ValidatorInfo {
             struct_ser.serialize_field("number", &self.number)?;
         }
         if self.stake != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("stake", ToString::to_string(&self.stake).as_str())?;
         }
         if self.last_bonding_height != 0 {
@@ -11740,7 +12222,7 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                 formatter.write_str("struct pactus.ValidatorInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<ValidatorInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ValidatorInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -11754,32 +12236,32 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                 let mut unbonding_height__ = None;
                 let mut address__ = None;
                 let mut availability_score__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Hash => {
                             if hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hash"));
                             }
-                            hash__ = Some(map.next_value()?);
+                            hash__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Data => {
                             if data__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("data"));
                             }
-                            data__ = Some(map.next_value()?);
+                            data__ = Some(map_.next_value()?);
                         }
                         GeneratedField::PublicKey => {
                             if public_key__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("publicKey"));
                             }
-                            public_key__ = Some(map.next_value()?);
+                            public_key__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Number => {
                             if number__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("number"));
                             }
                             number__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Stake => {
@@ -11787,7 +12269,7 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                                 return Err(serde::de::Error::duplicate_field("stake"));
                             }
                             stake__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::LastBondingHeight => {
@@ -11795,7 +12277,7 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                                 return Err(serde::de::Error::duplicate_field("lastBondingHeight"));
                             }
                             last_bonding_height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::LastSortitionHeight => {
@@ -11803,7 +12285,7 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                                 return Err(serde::de::Error::duplicate_field("lastSortitionHeight"));
                             }
                             last_sortition_height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::UnbondingHeight => {
@@ -11811,21 +12293,21 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                                 return Err(serde::de::Error::duplicate_field("unbondingHeight"));
                             }
                             unbonding_height__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::AvailabilityScore => {
                             if availability_score__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("availabilityScore"));
                             }
                             availability_score__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -11934,32 +12416,32 @@ impl<'de> serde::Deserialize<'de> for VerifyMessageRequest {
                 formatter.write_str("struct pactus.VerifyMessageRequest")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<VerifyMessageRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<VerifyMessageRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut message__ = None;
                 let mut signature__ = None;
                 let mut public_key__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Message => {
                             if message__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("message"));
                             }
-                            message__ = Some(map.next_value()?);
+                            message__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Signature => {
                             if signature__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("signature"));
                             }
-                            signature__ = Some(map.next_value()?);
+                            signature__ = Some(map_.next_value()?);
                         }
                         GeneratedField::PublicKey => {
                             if public_key__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("publicKey"));
                             }
-                            public_key__ = Some(map.next_value()?);
+                            public_key__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -12042,18 +12524,18 @@ impl<'de> serde::Deserialize<'de> for VerifyMessageResponse {
                 formatter.write_str("struct pactus.VerifyMessageResponse")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<VerifyMessageResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<VerifyMessageResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut is_valid__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::IsValid => {
                             if is_valid__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("isValid"));
                             }
-                            is_valid__ = Some(map.next_value()?);
+                            is_valid__ = Some(map_.next_value()?);
                         }
                     }
                 }
@@ -12093,8 +12575,8 @@ impl serde::Serialize for VoteInfo {
         }
         let mut struct_ser = serializer.serialize_struct("pactus.VoteInfo", len)?;
         if self.r#type != 0 {
-            let v = VoteType::from_i32(self.r#type)
-                .ok_or_else(|| serde::ser::Error::custom(format!("Invalid variant {}", self.r#type)))?;
+            let v = VoteType::try_from(self.r#type)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.r#type)))?;
             struct_ser.serialize_field("type", &v)?;
         }
         if !self.voter.is_empty() {
@@ -12183,7 +12665,7 @@ impl<'de> serde::Deserialize<'de> for VoteInfo {
                 formatter.write_str("struct pactus.VoteInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<VoteInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<VoteInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -12193,32 +12675,32 @@ impl<'de> serde::Deserialize<'de> for VoteInfo {
                 let mut round__ = None;
                 let mut cp_round__ = None;
                 let mut cp_value__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Type => {
                             if r#type__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("type"));
                             }
-                            r#type__ = Some(map.next_value::<VoteType>()? as i32);
+                            r#type__ = Some(map_.next_value::<VoteType>()? as i32);
                         }
                         GeneratedField::Voter => {
                             if voter__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("voter"));
                             }
-                            voter__ = Some(map.next_value()?);
+                            voter__ = Some(map_.next_value()?);
                         }
                         GeneratedField::BlockHash => {
                             if block_hash__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("blockHash"));
                             }
-                            block_hash__ = Some(map.next_value()?);
+                            block_hash__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Round => {
                             if round__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("round"));
                             }
                             round__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::CpRound => {
@@ -12226,7 +12708,7 @@ impl<'de> serde::Deserialize<'de> for VoteInfo {
                                 return Err(serde::de::Error::duplicate_field("cpRound"));
                             }
                             cp_round__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                         GeneratedField::CpValue => {
@@ -12234,7 +12716,7 @@ impl<'de> serde::Deserialize<'de> for VoteInfo {
                                 return Err(serde::de::Error::duplicate_field("cpValue"));
                             }
                             cp_value__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }
@@ -12259,10 +12741,12 @@ impl serde::Serialize for VoteType {
         S: serde::Serializer,
     {
         let variant = match self {
-            Self::VoteUnknown => "VOTE_UNKNOWN",
-            Self::VotePrepare => "VOTE_PREPARE",
-            Self::VotePrecommit => "VOTE_PRECOMMIT",
-            Self::VoteChangeProposer => "VOTE_CHANGE_PROPOSER",
+            Self::Unspecified => "VOTE_TYPE_UNSPECIFIED",
+            Self::Prepare => "VOTE_TYPE_PREPARE",
+            Self::Precommit => "VOTE_TYPE_PRECOMMIT",
+            Self::CpPreVote => "VOTE_TYPE_CP_PRE_VOTE",
+            Self::CpMainVote => "VOTE_TYPE_CP_MAIN_VOTE",
+            Self::CpDecided => "VOTE_TYPE_CP_DECIDED",
         };
         serializer.serialize_str(variant)
     }
@@ -12274,10 +12758,12 @@ impl<'de> serde::Deserialize<'de> for VoteType {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
-            "VOTE_UNKNOWN",
-            "VOTE_PREPARE",
-            "VOTE_PRECOMMIT",
-            "VOTE_CHANGE_PROPOSER",
+            "VOTE_TYPE_UNSPECIFIED",
+            "VOTE_TYPE_PREPARE",
+            "VOTE_TYPE_PRECOMMIT",
+            "VOTE_TYPE_CP_PRE_VOTE",
+            "VOTE_TYPE_CP_MAIN_VOTE",
+            "VOTE_TYPE_CP_DECIDED",
         ];
 
         struct GeneratedVisitor;
@@ -12293,10 +12779,9 @@ impl<'de> serde::Deserialize<'de> for VoteType {
             where
                 E: serde::de::Error,
             {
-                use std::convert::TryFrom;
                 i32::try_from(v)
                     .ok()
-                    .and_then(VoteType::from_i32)
+                    .and_then(|x| x.try_into().ok())
                     .ok_or_else(|| {
                         serde::de::Error::invalid_value(serde::de::Unexpected::Signed(v), &self)
                     })
@@ -12306,10 +12791,9 @@ impl<'de> serde::Deserialize<'de> for VoteType {
             where
                 E: serde::de::Error,
             {
-                use std::convert::TryFrom;
                 i32::try_from(v)
                     .ok()
-                    .and_then(VoteType::from_i32)
+                    .and_then(|x| x.try_into().ok())
                     .ok_or_else(|| {
                         serde::de::Error::invalid_value(serde::de::Unexpected::Unsigned(v), &self)
                     })
@@ -12320,10 +12804,12 @@ impl<'de> serde::Deserialize<'de> for VoteType {
                 E: serde::de::Error,
             {
                 match value {
-                    "VOTE_UNKNOWN" => Ok(VoteType::VoteUnknown),
-                    "VOTE_PREPARE" => Ok(VoteType::VotePrepare),
-                    "VOTE_PRECOMMIT" => Ok(VoteType::VotePrecommit),
-                    "VOTE_CHANGE_PROPOSER" => Ok(VoteType::VoteChangeProposer),
+                    "VOTE_TYPE_UNSPECIFIED" => Ok(VoteType::Unspecified),
+                    "VOTE_TYPE_PREPARE" => Ok(VoteType::Prepare),
+                    "VOTE_TYPE_PRECOMMIT" => Ok(VoteType::Precommit),
+                    "VOTE_TYPE_CP_PRE_VOTE" => Ok(VoteType::CpPreVote),
+                    "VOTE_TYPE_CP_MAIN_VOTE" => Ok(VoteType::CpMainVote),
+                    "VOTE_TYPE_CP_DECIDED" => Ok(VoteType::CpDecided),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }
@@ -12417,33 +12903,33 @@ impl<'de> serde::Deserialize<'de> for ZmqPublisherInfo {
                 formatter.write_str("struct pactus.ZMQPublisherInfo")
             }
 
-            fn visit_map<V>(self, mut map: V) -> std::result::Result<ZmqPublisherInfo, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ZmqPublisherInfo, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut topic__ = None;
                 let mut address__ = None;
                 let mut hwm__ = None;
-                while let Some(k) = map.next_key()? {
+                while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Topic => {
                             if topic__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("topic"));
                             }
-                            topic__ = Some(map.next_value()?);
+                            topic__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Address => {
                             if address__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("address"));
                             }
-                            address__ = Some(map.next_value()?);
+                            address__ = Some(map_.next_value()?);
                         }
                         GeneratedField::Hwm => {
                             if hwm__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("hwm"));
                             }
                             hwm__ = 
-                                Some(map.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
                     }

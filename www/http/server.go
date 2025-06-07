@@ -3,110 +3,130 @@ package http
 import (
 	"bytes"
 	"context"
+	"embed"
 	"fmt"
-	"io"
+	"io/fs"
 	"net"
 	"net/http"
-	"net/http/pprof"
 	"strings"
 	"time"
 
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
-	ret "github.com/grpc-ecosystem/go-grpc-middleware/retry"
-	"github.com/pactus-project/pactus/types/amount"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Server struct {
-	ctx         context.Context
-	cancel      context.CancelFunc
-	config      *Config
-	router      *mux.Router
-	grpcClient  *grpc.ClientConn
-	enableAuth  bool
-	httpServer  *http.Server
-	blockchain  pactus.BlockchainClient
-	transaction pactus.TransactionClient
-	network     pactus.NetworkClient
-	listener    net.Listener
-	logger      *logger.SubLogger
+	ctx      context.Context
+	config   *Config
+	listener net.Listener
+	server   *http.Server
+	grpcConn *grpc.ClientConn
+	logger   *logger.SubLogger
 }
 
-// init disables default pprof handlers registered by importing net/http/pprof.
-// Your pprof is showing (https://mmcloughlin.com/posts/your-pprof-is-showing)
-func init() {
-	http.DefaultServeMux = http.NewServeMux()
+//go:embed swagger-ui
+var swaggerFS embed.FS
+
+// getOpenAPIHandler serves an OpenAPI UI.
+func (s *Server) getOpenAPIHandler() (http.Handler, error) {
+	swaggerTree, err := fs.Sub(swaggerFS, "swagger-ui")
+	if err != nil {
+		return nil, err
+	}
+	handler := http.FileServer(http.FS(swaggerTree))
+
+	// Modify basePath in Swagger JSON file
+	origContent, err := swaggerFS.ReadFile("swagger-ui/pactus.swagger.json")
+	if err != nil {
+		return nil, err
+	}
+
+	modifiedContent := bytes.Replace(
+		origContent,
+		[]byte(`"basePath": "/http/api"`),
+		[]byte(fmt.Sprintf(`"basePath": %q`, s.patternToPrefix(s.config.apiPattern()))),
+		1,
+	)
+
+	handler = s.changeBasePath(handler, modifiedContent)
+
+	return handler, nil
 }
 
-func NewServer(conf *Config, enableAuth bool) *Server {
-	ctx, cancel := context.WithCancel(context.Background())
-
+func NewServer(ctx context.Context, conf *Config) *Server {
 	return &Server{
-		ctx:        ctx,
-		cancel:     cancel,
-		config:     conf,
-		enableAuth: enableAuth,
-		logger:     logger.NewSubLogger("_http", nil),
+		ctx:    ctx,
+		config: conf,
+		logger: logger.NewSubLogger("_http", nil),
 	}
 }
 
-func (s *Server) StartServer(grpcServer string) error {
+func (s *Server) StartServer(grpcAddr string) error {
 	if !s.config.Enable {
 		return nil
 	}
 
-	dialOpts := make([]grpc.DialOption, 0)
-	dialOpts = append(dialOpts,
+	grpcConn, err := grpc.NewClient(
+		grpcAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithUnaryInterceptor(ret.UnaryClientInterceptor()),
-	)
-	conn, err := grpc.NewClient(
-		grpcServer,
-		dialOpts...,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to dial server: %w", err)
 	}
 
-	s.grpcClient = conn
-	s.blockchain = pactus.NewBlockchainClient(conn)
-	s.transaction = pactus.NewTransactionClient(conn)
-	s.network = pactus.NewNetworkClient(conn)
+	s.grpcConn = grpcConn
 
-	s.router = mux.NewRouter()
-	s.router.HandleFunc("/", s.RootHandler)
-	s.router.HandleFunc("/blockchain/", s.BlockchainHandler)
-	s.router.HandleFunc("/consensus", s.ConsensusHandler)
-	s.router.HandleFunc("/network", s.NetworkHandler)
-	s.router.HandleFunc("/node", s.NodeHandler)
-	s.router.HandleFunc("/block/hash/{hash}", s.GetBlockByHashHandler)
-	s.router.HandleFunc("/block/height/{height}", s.GetBlockByHeightHandler)
-	s.router.HandleFunc("/transaction/id/{id}", s.GetTransactionHandler)
-	s.router.HandleFunc("/txpool", s.GetTxPoolContentHandler)
-	s.router.HandleFunc("/account/address/{address}", s.GetAccountHandler)
-	s.router.HandleFunc("/validator/address/{address}", s.GetValidatorHandler)
-	s.router.HandleFunc("/validator/number/{number}", s.GetValidatorByNumberHandler)
-	s.router.HandleFunc("/metrics/prometheus", promhttp.Handler().ServeHTTP)
-
-	if s.config.EnablePprof {
-		http.HandleFunc("/debug/pprof/", pprof.Index)
-		http.HandleFunc("/debug/pprof/profile", pprof.Profile)
-		http.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
-		http.HandleFunc("/debug/pprof/trace", pprof.Trace)
-		s.router.HandleFunc("/debug/pprof", func(w http.ResponseWriter, r *http.Request) {
-			http.Redirect(w, r, "/debug/pprof/", http.StatusPermanentRedirect)
-		})
+	// gRPC-Gateway multiplexer
+	gatewayMux := runtime.NewServeMux()
+	if err := pactus.RegisterBlockchainHandler(s.ctx, gatewayMux, grpcConn); err != nil {
+		return err
+	}
+	if err := pactus.RegisterTransactionHandler(s.ctx, gatewayMux, grpcConn); err != nil {
+		return err
+	}
+	if err := pactus.RegisterNetworkHandler(s.ctx, gatewayMux, grpcConn); err != nil {
+		return err
+	}
+	if err := pactus.RegisterWalletHandler(s.ctx, gatewayMux, grpcConn); err != nil {
+		return err
+	}
+	if err := pactus.RegisterUtilsHandler(s.ctx, gatewayMux, grpcConn); err != nil {
+		return err
 	}
 
-	if s.enableAuth {
-		http.Handle("/", handlers.RecoveryHandler()(basicAuth(s.router)))
-	} else {
-		http.Handle("/", handlers.RecoveryHandler()(s.router))
+	// Swagger UI
+	swaggerHandler, err := s.getOpenAPIHandler()
+	if err != nil {
+		return err
+	}
+
+	httpMux := http.NewServeMux()
+
+	// Register gRPC-Gateway Handler at `/http/api`
+	httpMux.Handle(s.config.apiPattern(),
+		http.StripPrefix(s.patternToPrefix(s.config.apiPattern()), gatewayMux))
+
+	// Register Swagger Handler at `/http/ui`
+	httpMux.Handle(s.config.swaggerPattern(),
+		http.StripPrefix(s.patternToPrefix(s.config.swaggerPattern()), swaggerHandler))
+
+	// Redirect `/http` to `/http/ui`
+	httpMux.HandleFunc(s.config.rootPattern(),
+		func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(w, r, s.config.swaggerPattern(), http.StatusFound)
+		})
+
+	gwServer := &http.Server{
+		Addr:              s.config.Listen,
+		ReadHeaderTimeout: 3 * time.Second,
+		Handler:           httpMux,
+	}
+
+	if s.config.EnableCORS {
+		gwServer.Handler = allowCORS(gwServer.Handler)
 	}
 
 	listener, err := net.Listen("tcp", s.config.Listen)
@@ -114,178 +134,74 @@ func (s *Server) StartServer(grpcServer string) error {
 		return err
 	}
 
-	s.logger.Info("http started listening", "address", listener.Addr().String())
+	s.server = gwServer
 	s.listener = listener
 
-	s.httpServer = &http.Server{
-		Addr:              listener.Addr().String(),
-		ReadHeaderTimeout: 3 * time.Second,
-	}
-
 	go func() {
-		for {
-			select {
-			case <-s.ctx.Done():
-				return
-
-			default:
-				err := s.httpServer.Serve(listener)
-				if err != nil {
-					s.logger.Error("error on a connection", "error", err)
-				}
-			}
+		s.logger.Info("HTTP-API server start listening", "address", listener.Addr().String())
+		if err := s.server.Serve(listener); err != nil && err != http.ErrServerClosed {
+			s.logger.Debug("error on HTTP-API server", "error", err)
 		}
 	}()
 
 	return nil
 }
 
-func (s *Server) StopServer() {
-	s.cancel()
-	s.logger.Debug("context closed", "reason", s.ctx.Err())
+func (*Server) changeBasePath(handler http.Handler, modifiedContent []byte) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/pactus.swagger.json" {
+			w.Header().Set("Content-Type", "application/json")
+			_, err := w.Write(modifiedContent)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 
-	if s.httpServer != nil {
-		_ = s.httpServer.Shutdown(s.ctx)
-		_ = s.httpServer.Close()
+				return
+			}
+		} else {
+			handler.ServeHTTP(w, r)
+		}
+	})
+}
+
+func (s *Server) StopServer() {
+	if s.server != nil {
+		_ = s.server.Close()
 		_ = s.listener.Close()
 	}
 
-	if s.grpcClient != nil {
-		_ = s.grpcClient.Close()
+	if s.grpcConn != nil {
+		_ = s.grpcConn.Close()
 	}
 }
 
-func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
-	if s.enableAuth {
-		if _, _, ok := r.BasicAuth(); !ok {
-			w.Header().Set("WWW-Authenticate", `Basic realm="restricted", charset="UTF-8"`)
-			http.Error(w, "unauthorized", http.StatusUnauthorized)
+// preflightHandler adds the necessary headers in order to serve
+// CORS from any origin using the methods "GET", "HEAD", "POST", "PUT", "DELETE"
+// We insist, don't do this without consideration in production systems.
+func preflightHandler(w http.ResponseWriter) {
+	headers := []string{"Content-Type", "Accept", "Authorization"}
+	w.Header().Set("Access-Control-Allow-Headers", strings.Join(headers, ","))
+	methods := []string{"GET", "HEAD", "POST", "PUT", "DELETE"}
+	w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
+}
 
-			return
-		}
-	}
+// allowCORS allows Cross Origin Resource Sharing from any origin.
+// Don't do this without consideration in production systems.
+func allowCORS(handler http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if origin := r.Header.Get("Origin"); origin != "" {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
+				preflightHandler(w)
 
-	buf := new(bytes.Buffer)
-	buf.WriteString("<html><body><br>")
-
-	err := s.router.Walk(func(route *mux.Route, _ *mux.Router, _ []*mux.Route) error {
-		pathTemplate, err := route.GetPathTemplate()
-		if err == nil {
-			link := pathTemplate
-			i := strings.Index(link, "{")
-			if i != -1 {
-				link = link[0:i]
+				return
 			}
-			fmt.Fprintf(buf, "<a href=\"%s\">%s</a></br>", link, pathTemplate)
 		}
-
-		return nil
+		handler.ServeHTTP(w, r)
 	})
-	if err != nil {
-		s.logger.Error("unable to walk through methods", "error", err)
-
-		return
-	}
-
-	buf.WriteString("</body></html>")
-	s.writeHTML(w, buf.String())
 }
 
-func (s *Server) writeError(w http.ResponseWriter, err error) int {
-	s.logger.Error("an error occurred", "error", err)
-
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(http.StatusBadRequest)
-	n, _ := io.WriteString(w, err.Error())
-
-	return n
-}
-
-func (*Server) writeHTML(w http.ResponseWriter, html string) int {
-	w.Header().Set("Content-Type", "text/html")
-	w.WriteHeader(http.StatusOK)
-	n, _ := io.WriteString(w, html)
-
-	return n
-}
-
-type tableMaker struct {
-	w *bytes.Buffer
-}
-
-func newTableMaker() *tableMaker {
-	t := &tableMaker{
-		w: bytes.NewBufferString("<table>"),
-	}
-
-	return t
-}
-
-func (t *tableMaker) addRowBlockHash(key, val string) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/block/hash/%s\">%s</a></td></tr>", key, val, val)
-}
-
-func (t *tableMaker) addRowAccAddress(key, val string) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/account/address/%s\">%s</a></td></tr>", key, val, val)
-}
-
-func (t *tableMaker) addRowValAddress(key, val string) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/validator/address/%s\">%s</a></td></tr>", key, val, val)
-}
-
-func (t *tableMaker) addRowTxID(key, val string) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td><a href=\"/transaction/id/%s\">%s</a></td></tr>", key, val, val)
-}
-
-func (t *tableMaker) addRowString(key, val string) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, val)
-}
-
-func (t *tableMaker) addRowStrings(key string, val []string) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%v</td></tr>", key, strings.Join(val, ","))
-}
-
-func (t *tableMaker) addRowTime(key string, sec int64) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>", key, time.Unix(sec, 0).String())
-}
-
-func (t *tableMaker) addRowAmount(key string, amt amount.Amount) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>",
-		key, amt.String())
-}
-
-func (t *tableMaker) addRowPower(key string, power int64) {
-	amt := amount.Amount(power)
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%s</td></tr>",
-		key, amt.String())
-}
-
-func (t *tableMaker) addRowFloat64(key string, val float64) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%v</td></tr>", key, val)
-}
-
-func (t *tableMaker) addRowInt(key string, val int) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%d</td></tr>", key, val)
-}
-
-func (t *tableMaker) addRowBool(key string, val bool) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%v</td></tr>", key, val)
-}
-
-func (t *tableMaker) addRowInts(key string, vals []int32) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>", key)
-	for _, n := range vals {
-		fmt.Fprintf(t.w, "%d, ", n)
-	}
-	t.w.WriteString("</td></tr>")
-}
-
-func (t *tableMaker) addRowDouble(key string, val float64) {
-	fmt.Fprintf(t.w, "<tr><td>%s</td><td>%f</td></tr>", key, val)
-}
-
-func (t *tableMaker) html() string {
-	t.w.WriteString("</table>")
-
-	return t.w.String()
+// patternToPrefix removes the trailing '/' from the given pattern.
+// Example: "/http/ui/" becomes "/http/ui".
+func (*Server) patternToPrefix(pattern string) string {
+	return pattern[:len(pattern)-1]
 }

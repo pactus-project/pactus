@@ -25,6 +25,8 @@ func MakeExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (Executor, error) {
 		exe, err = newWithdrawExecutor(trx, sbx)
 	case payload.TypeSortition:
 		exe, err = newSortitionExecutor(trx, sbx)
+	case payload.TypeBatchTransfer:
+		exe, err = newBatchTransferExecutor(trx, sbx)
 	default:
 		return nil, InvalidPayloadTypeError{
 			PayloadType: typ,

@@ -112,12 +112,12 @@ func TestDecodeBundles(t *testing.T) {
 			data: "a4" + // Map with 4 key-value pairs
 				"01" + "01" + // Key 1 (Flags), Value: 1 (Mainnet)
 				"02" + "06" + // Key 2 (Message Type), Value: 6 (QueryVote)
-				"03" + "581d" + // Key 2 (Message), Value: 30 Bytes
+				"03" + "581d" + // Key 3 (Message), Value: 30 Bytes
 				"" + "a3" + // Map with 3 key-value pairs
 				"" + "01" + "1864" + // Key 1 (Height), Value: 100
 				"" + "02" + "20" + // Key 2 (Round), Value: -1
 				"" + "03" + "5501aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + // Key 3 (Querier), Value: 21 Bytes
-				"04" + "1a00001234", // Key 4 (Consensus Height), Value: 0x1234
+				"04" + "1a00000064", // Key 4 (Consensus Height), Value: 100
 			wantErr: true,
 		},
 
@@ -126,12 +126,12 @@ func TestDecodeBundles(t *testing.T) {
 			data: "a4" + // Map with 4 key-value pairs
 				"01" + "02" + // Key 1 (Flags), Value: 1 (Testnet)
 				"02" + "06" + // Key 2 (Message Type), Value: 6 (QueryVote)
-				"03" + "581d" + // Key 2 (Message), Value: 30 Bytes
+				"03" + "581d" + // Key 3 (Message), Value: 30 Bytes
 				"" + "a3" + // Map with 3 key-value pairs
 				"" + "01" + "1864" + // Key 1 (Height), Value: 100
 				"" + "02" + "00" + // Key 2 (Round), Value: 0
 				"" + "03" + "5501aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + // Key 3 (Querier), Value: 21 Bytes
-				"04" + "1a00001234", // Key 4 (Consensus Height), Value: 0x1234
+				"04" + "1a00000064", // Key 4 (Consensus Height), Value: 100
 			wantErr: true,
 		},
 		{
@@ -139,12 +139,12 @@ func TestDecodeBundles(t *testing.T) {
 			data: "a4" + // Map with 4 key-value pairs
 				"01" + "01" + // Key 1 (Flags), Value: 1 (Mainnet)
 				"02" + "06" + // Key 2 (Message Type), Value: 6 (QueryVote)
-				"03" + "581d" + // Key 2 (Message), Value: 30 Bytes
+				"03" + "581d" + // Key 3 (Message), Value: 29 Bytes
 				"" + "a3" + // Map with 3 key-value pairs
 				"" + "01" + "1864" + // Key 1 (Height), Value: 100
 				"" + "02" + "00" + // Key 2 (Round), Value: 0
 				"" + "03" + "5501aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + // Key 3 (Querier), Value: 21 Bytes
-				"04" + "1a00001234", // Key 4 (Consensus Height), Value: 0x1234
+				"04" + "1a00000064", // Key 4 (Consensus Height), Value: 100
 			wantErr: false,
 		},
 	}
@@ -164,6 +164,26 @@ func TestDecodeBundles(t *testing.T) {
 	p := td.firewall.peerSet.GetPeer(td.unknownPeerID)
 	assert.Equal(t, int64(1), p.Metric.TotalReceived.Bundles)
 	assert.Equal(t, int64(4), p.Metric.TotalInvalid.Bundles)
+}
+
+func TestGossipMismatchBundleHeight(t *testing.T) {
+	td := setup(t, nil)
+	corruptedData := "a4" + // Map with 4 key-value pairs
+		"01" + "01" + // Key 1 (Flags), Value: 1 (Mainnet)
+		"02" + "06" + // Key 2 (Message Type), Value: 6 (QueryVote)
+		"03" + "581d" + // Key 3 (Message), Value: 29 Bytes
+		"" + "a3" + // Map with 3 key-value pairs
+		"" + "01" + "1864" + // Key 1 (Height), Value: 100
+		"" + "02" + "00" + // Key 2 (Round), Value: 0
+		"" + "03" + "5501aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + // Key 3 (Querier), Value: 21 Bytes
+		"04" + "1a0000029a" // Bundle Consensus Height = 666
+
+	rawMsg := td.DecodingHex(corruptedData)
+	_, err := td.firewall.OpenGossipBundle(rawMsg, td.unknownPeerID)
+	assert.Error(t, err)
+	assert.Equal(t, err, ErrMisMatchConsensusHeight)
+
+	assert.Equal(t, status.StatusBanned, td.firewall.peerSet.GetPeerStatus(td.unknownPeerID))
 }
 
 func TestGossipMessage(t *testing.T) {

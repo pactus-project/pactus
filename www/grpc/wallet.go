@@ -234,9 +234,9 @@ func (s *walletServer) GetAddressInfo(_ context.Context,
 }
 
 func (s *walletServer) SetAddressLabel(_ context.Context,
-	req *pactus.SetLabelRequest,
-) (*pactus.SetLabelResponse, error) {
-	return &pactus.SetLabelResponse{}, s.walletMgr.SetAddressLabel(req.WalletName, req.Address, req.Label)
+	req *pactus.SetAddressLabelRequest,
+) (*pactus.SetAddressLabelResponse, error) {
+	return &pactus.SetAddressLabelResponse{}, s.walletMgr.SetAddressLabel(req.WalletName, req.Address, req.Label)
 }
 
 func (s *walletServer) ListWallet(_ context.Context,

@@ -33,8 +33,8 @@ func TestRunningNode(t *testing.T) {
 	conf := config.DefaultConfigMainnet()
 	conf.GRPC.Enable = true
 	conf.GRPC.Listen = "0.0.0.0:0"
-	conf.GRPC.Gateway.Enable = true
-	conf.GRPC.Gateway.Listen = "0.0.0.0:0"
+	conf.HTML.Enable = true
+	conf.HTML.Listen = "0.0.0.0:0"
 	conf.HTTP.Enable = true
 	conf.HTTP.Listen = "0.0.0.0:0"
 	conf.JSONRPC.Enable = true

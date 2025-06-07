@@ -33,6 +33,18 @@ func NewTransferTx(lockTime uint32,
 	return newTx(lockTime, pld, fee, opts...)
 }
 
+func NewBatchTransferTx(lockTime uint32,
+	sender crypto.Address, recipients []payload.BatchRecipient,
+	fee amount.Amount, opts ...TxOption,
+) *Tx {
+	pld := &payload.BatchTransferPayload{
+		From:       sender,
+		Recipients: recipients,
+	}
+
+	return newTx(lockTime, pld, fee, opts...)
+}
+
 func NewBondTx(lockTime uint32,
 	sender, receiver crypto.Address,
 	pubKey *bls.PublicKey,

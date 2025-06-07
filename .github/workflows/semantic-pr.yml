@@ -1,4 +1,6 @@
 name: Semantic PR
+permissions:
+  pull-requests: read
 
 on:
   pull_request_target:
@@ -7,9 +9,6 @@ on:
       - edited
       - synchronize
       - reopened
-
-permissions:
-  pull-requests: read
 
 jobs:
   main:
@@ -26,7 +25,8 @@ jobs:
             linter
             deps
             makefile
-            release
+            releaser
+            packager
             other
             daemon
             cmd
@@ -55,10 +55,12 @@ jobs:
             util
             version
             wallet
+            www
             grpc
             proto
-            http
             jsonrpc
+            http
+            html
             zeromq
             windows
             linux
@@ -69,5 +71,3 @@ jobs:
           subjectPattern: ^(?![A-Z]).+[^.]$
           subjectPatternError: |
             The subject "{subject}" cannot start with an uppercase character or end with a period.
-
-

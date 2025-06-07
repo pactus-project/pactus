@@ -1,7 +1,7 @@
 // GENERATED CODE -- DO NOT EDIT!
 
 'use strict';
-var grpc = require('grpc');
+var grpc = require('@grpc/grpc-js');
 var blockchain_pb = require('./blockchain_pb.js');
 var transaction_pb = require('./transaction_pb.js');
 
@@ -239,8 +239,7 @@ function deserialize_pactus_GetValidatorResponse(buffer_arg) {
 
 // Blockchain service defines RPC methods for interacting with the blockchain.
 var BlockchainService = exports.BlockchainService = {
-  // GetBlock retrieves information about a block based on the provided request
-// parameters.
+  // GetBlock retrieves information about a block based on the provided request parameters.
 getBlock: {
     path: '/pactus.Blockchain/GetBlock',
     requestStream: false,
@@ -300,8 +299,7 @@ getConsensusInfo: {
     responseSerialize: serialize_pactus_GetConsensusInfoResponse,
     responseDeserialize: deserialize_pactus_GetConsensusInfoResponse,
   },
-  // GetAccount retrieves information about an account based on the provided
-// address.
+  // GetAccount retrieves information about an account based on the provided address.
 getAccount: {
     path: '/pactus.Blockchain/GetAccount',
     requestStream: false,
@@ -313,8 +311,7 @@ getAccount: {
     responseSerialize: serialize_pactus_GetAccountResponse,
     responseDeserialize: deserialize_pactus_GetAccountResponse,
   },
-  // GetValidator retrieves information about a validator based on the provided
-// address.
+  // GetValidator retrieves information about a validator based on the provided address.
 getValidator: {
     path: '/pactus.Blockchain/GetValidator',
     requestStream: false,
@@ -326,8 +323,7 @@ getValidator: {
     responseSerialize: serialize_pactus_GetValidatorResponse,
     responseDeserialize: deserialize_pactus_GetValidatorResponse,
   },
-  // GetValidatorByNumber retrieves information about a validator based on the
-// provided number.
+  // GetValidatorByNumber retrieves information about a validator based on the provided number.
 getValidatorByNumber: {
     path: '/pactus.Blockchain/GetValidatorByNumber',
     requestStream: false,
@@ -351,8 +347,7 @@ getValidatorAddresses: {
     responseSerialize: serialize_pactus_GetValidatorAddressesResponse,
     responseDeserialize: deserialize_pactus_GetValidatorAddressesResponse,
   },
-  // GetPublicKey retrieves the public key of an account based on the provided
-// address.
+  // GetPublicKey retrieves the public key of an account based on the provided address.
 getPublicKey: {
     path: '/pactus.Blockchain/GetPublicKey',
     requestStream: false,
@@ -378,4 +373,4 @@ getTxPoolContent: {
   },
 };
 
-exports.BlockchainClient = grpc.makeGenericClientConstructor(BlockchainService);
+exports.BlockchainClient = grpc.makeGenericClientConstructor(BlockchainService, 'Blockchain');
