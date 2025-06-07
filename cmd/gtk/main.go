@@ -155,7 +155,7 @@ func newNode(workingDir string) (*node.Node, *wallet.Wallet, error) {
 
 		return getWalletPassword(wlt)
 	}
-	n, wlt, err := cmd.StartNode(workingDir, passwordFetcher)
+	n, wlt, err := cmd.StartNode(workingDir, passwordFetcher, nil)
 	if err != nil {
 		return nil, nil, err
 	}
