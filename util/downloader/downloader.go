@@ -18,18 +18,20 @@ import (
 const (
 	_defaultConcurrencyPerChunk = 16
 	_defaultMinSizeForChunk     = 1 << 20
+	_defaultMaxRetries          = 3
 )
 
 type Downloader struct {
-	client    *http.Client
-	url       string
-	filePath  string
-	sha256Sum string
-	fileType  string
-	fileName  string
-	statsCh   chan Stats
-	cancel    context.CancelFunc
-	stopOnce  sync.Once
+	client     *http.Client
+	url        string
+	filePath   string
+	sha256Sum  string
+	fileType   string
+	fileName   string
+	statsCh    chan Stats
+	maxRetries int
+	cancel     context.CancelFunc
+	stopOnce   sync.Once
 
 	chunks []*chunk
 
@@ -52,12 +54,13 @@ func New(url, filePath, sha256Sum string, opts ...Option) *Downloader {
 	}
 
 	return &Downloader{
-		client:    opt.client,
-		url:       url,
-		filePath:  filePath,
-		sha256Sum: sha256Sum,
-		chunks:    make([]*chunk, 0, _defaultConcurrencyPerChunk),
-		statsCh:   make(chan Stats),
+		client:     opt.client,
+		url:        url,
+		filePath:   filePath,
+		sha256Sum:  sha256Sum,
+		chunks:     make([]*chunk, 0, _defaultConcurrencyPerChunk),
+		statsCh:    make(chan Stats),
+		maxRetries: opt.maxRetries,
 	}
 }
 
@@ -115,7 +118,7 @@ func (d *Downloader) download(ctx context.Context) {
 		wg.Add(1)
 		go func(c *chunk) {
 			defer wg.Done()
-			if err := d.downloadChunkWithContext(ctx, out, c, stats.TotalSize); err != nil {
+			if err := d.downloadChunk(ctx, out, c, stats.TotalSize); err != nil {
 				d.handleError(err)
 			}
 		}(chuck)
@@ -177,6 +180,18 @@ func (d *Downloader) createDir() error {
 	}
 
 	return nil
+}
+
+func (d *Downloader) downloadChunk(ctx context.Context, out *os.File, chuck *chunk, totalSize int64) error {
+	var err error
+	for i := 0; i < d.maxRetries; i++ {
+		err = d.downloadChunkWithContext(ctx, out, chuck, totalSize)
+		if err == nil || ctx.Err() != nil {
+			return err
+		}
+	}
+
+	return err
 }
 
 func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File, chuck *chunk, totalSize int64) error {

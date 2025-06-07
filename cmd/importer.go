@@ -144,14 +144,6 @@ func (i *Importer) Download(ctx context.Context, metadata *Metadata,
 	downloader.Start(ctx)
 
 	go func() {
-		err := <-downloader.Errors()
-		if err != nil {
-			log.Printf("download encountered an error: %s\n", err)
-			done <- err
-		}
-	}()
-
-	go func() {
 		for state := range downloader.Stats() {
 			stateFunc(fileName, state.TotalSize, state.Downloaded, state.Percent)
 			if state.Completed {
