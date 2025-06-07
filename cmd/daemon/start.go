@@ -87,34 +87,35 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			return password, true
 		}
 
-		node, _, err := cmd.StartNode(
-			workingDir, passwordFetcher, func(cfg *config.Config) *config.Config {
-				if *gRPCOpt != "" {
-					cfg.GRPC.Listen = *gRPCOpt
-				}
+		configModifier := func(cfg *config.Config) *config.Config {
+			if *gRPCOpt != "" {
+				cfg.GRPC.Listen = *gRPCOpt
+			}
 
-				if *gRPCWalletOpt {
-					cfg.GRPC.EnableWallet = *gRPCWalletOpt
-				}
+			if *gRPCWalletOpt {
+				cfg.GRPC.EnableWallet = *gRPCWalletOpt
+			}
 
-				if *zmqBlockInfoOpt != "" {
-					cfg.ZeroMq.ZmqPubBlockInfo = *zmqBlockInfoOpt
-				}
+			if *zmqBlockInfoOpt != "" {
+				cfg.ZeroMq.ZmqPubBlockInfo = *zmqBlockInfoOpt
+			}
 
-				if *zmqTxInfoOpt != "" {
-					cfg.ZeroMq.ZmqPubTxInfo = *zmqTxInfoOpt
-				}
+			if *zmqTxInfoOpt != "" {
+				cfg.ZeroMq.ZmqPubTxInfo = *zmqTxInfoOpt
+			}
 
-				if *zmqRawBlockOpt != "" {
-					cfg.ZeroMq.ZmqPubRawBlock = *zmqRawBlockOpt
-				}
+			if *zmqRawBlockOpt != "" {
+				cfg.ZeroMq.ZmqPubRawBlock = *zmqRawBlockOpt
+			}
 
-				if *zmqRawTxOpt != "" {
-					cfg.ZeroMq.ZmqPubRawTx = *zmqRawTxOpt
-				}
+			if *zmqRawTxOpt != "" {
+				cfg.ZeroMq.ZmqPubRawTx = *zmqRawTxOpt
+			}
 
-				return cfg
-			})
+			return cfg
+		}
+
+		node, _, err := cmd.StartNode(workingDir, passwordFetcher, configModifier)
 		cmd.FatalErrorCheck(err)
 
 		cmd.TrapSignal(func() {
