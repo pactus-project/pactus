@@ -378,7 +378,9 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 		return nil, nil, err
 	}
 
-	conf = configModifier(conf)
+	if configModifier != nil {
+		conf = configModifier(conf)
+	}
 
 	defaultWalletPath := PactusDefaultWalletPath(workingDir)
 	wlt, err := wallet.Open(defaultWalletPath, true,
