@@ -11,6 +11,8 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/pactus-project/pactus/util/logger"
 )
 
 const (
@@ -26,7 +28,8 @@ type Downloader struct {
 	fileType  string
 	fileName  string
 	statsCh   chan Stats
-	errCh     chan error
+	cancel    context.CancelFunc
+	stopOnce  sync.Once
 
 	chunks []*chunk
 
@@ -55,7 +58,6 @@ func New(url, filePath, sha256Sum string, opts ...Option) *Downloader {
 		sha256Sum: sha256Sum,
 		chunks:    make([]*chunk, 0, _defaultConcurrencyPerChunk),
 		statsCh:   make(chan Stats),
-		errCh:     make(chan error, 1),
 	}
 }
 
@@ -75,14 +77,14 @@ func (d *Downloader) FileName() string {
 	return d.fileName
 }
 
-func (d *Downloader) Errors() <-chan error {
-	return d.errCh
-}
-
 func (d *Downloader) download(ctx context.Context) {
+	ctx, cancel := context.WithCancel(ctx)
+	d.cancel = cancel
+
 	stats, err := d.getHeader(ctx)
 	if err != nil {
 		d.handleError(err)
+		d.stop()
 
 		return
 	}
@@ -90,6 +92,7 @@ func (d *Downloader) download(ctx context.Context) {
 	d.fileName = filepath.Base(d.filePath)
 	if err := d.createDir(); err != nil {
 		d.handleError(err)
+		d.stop()
 
 		return
 	}
@@ -97,6 +100,7 @@ func (d *Downloader) download(ctx context.Context) {
 	out, err := os.OpenFile(d.filePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o600)
 	if err != nil {
 		d.handleError(err)
+		d.stop()
 
 		return
 	}
@@ -111,20 +115,28 @@ func (d *Downloader) download(ctx context.Context) {
 		wg.Add(1)
 		go func(c *chunk) {
 			defer wg.Done()
-			err := d.downloadChunkWithContext(ctx, out, c, stats.TotalSize)
-			if err != nil {
+			if err := d.downloadChunkWithContext(ctx, out, c, stats.TotalSize); err != nil {
 				d.handleError(err)
-
-				return
 			}
 		}(chuck)
 	}
 
 	wg.Wait()
 
+	if ctx.Err() != nil {
+		d.stop()
+
+		return
+	}
+
 	if err := d.finalizeDownload(&stats); err != nil {
 		d.handleError(err)
+		d.stop()
+
+		return
 	}
+
+	d.stop()
 }
 
 func (d *Downloader) getHeader(ctx context.Context) (Stats, error) {
@@ -255,17 +267,18 @@ func (d *Downloader) finalizeDownload(stats *Stats) error {
 	}
 	d.statsCh <- *stats
 
-	d.stop()
-
 	return nil
 }
 
 func (d *Downloader) stop() {
-	close(d.statsCh)
-	close(d.errCh)
+	d.stopOnce.Do(func() {
+		close(d.statsCh)
+	})
 }
 
 func (d *Downloader) handleError(err error) {
-	d.errCh <- err
-	d.stop()
+	logger.Error("failed to download", "error", err)
+	if d.cancel != nil {
+		d.cancel()
+	}
 }
