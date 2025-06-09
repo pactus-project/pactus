@@ -16,6 +16,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/downloader"
 	"github.com/pactus-project/pactus/wallet"
 )
 
@@ -263,17 +264,21 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 										log.Printf("start downloading...\n")
 
 										err := importer.Download(ctx, &md[snapshotIndex],
-											func(fileName string, totalSize, downloaded int64, percentage float64) {
-												percent := int(percentage)
-												glib.IdleAdd(func() {
-													dlMessage := fmt.Sprintf("🌐 Downloading %s | %d%% (%s / %s)",
-														fileName,
-														percent,
-														util.FormatBytesToHumanReadable(uint64(downloaded)),
-														util.FormatBytesToHumanReadable(uint64(totalSize)),
-													)
-													ssPBLabel.SetText("   " + dlMessage)
-												})
+											func(fileName string) func(stats downloader.Stats) {
+												return func(stats downloader.Stats) {
+													if !stats.Completed {
+														percent := int(stats.Percent)
+														glib.IdleAdd(func() {
+															dlMessage := fmt.Sprintf("🌐 Downloading %s | %d%% (%s / %s)",
+																fileName,
+																percent,
+																util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
+																util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
+															)
+															ssPBLabel.SetText("   " + dlMessage)
+														})
+													}
+												}
 											},
 										)
 
