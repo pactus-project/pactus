@@ -3,8 +3,9 @@ package downloader
 import "net/http"
 
 type options struct {
-	client     *http.Client
-	maxRetries int
+	client        *http.Client
+	statsCallBack func(Stats)
+	maxRetries    int
 }
 
 type Option func(*options)
@@ -27,5 +28,11 @@ func WithMaxRetries(n int) Option {
 		if n > 0 {
 			o.maxRetries = n
 		}
+	}
+}
+
+func WithStatsCallback(cb func(Stats)) Option {
+	return func(opt *options) {
+		opt.statsCallBack = cb
 	}
 }
