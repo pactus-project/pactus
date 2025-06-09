@@ -89,11 +89,9 @@ func buildStartCmd(parentCmd *cobra.Command) {
 
 		configModifier := func(cfg *config.Config) *config.Config {
 			if *gRPCOpt != "" {
-				cfg.GRPC.Listen = *gRPCOpt
-			}
-
-			if *gRPCWalletOpt {
+				cfg.GRPC.Enable = true
 				cfg.GRPC.EnableWallet = *gRPCWalletOpt
+				cfg.GRPC.Listen = *gRPCOpt
 			}
 
 			if *zmqBlockInfoOpt != "" {
