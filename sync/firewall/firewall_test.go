@@ -179,11 +179,12 @@ func TestGossipMismatchBundleHeight(t *testing.T) {
 		"04" + "1a0000029a" // Bundle Consensus Height = 666
 
 	rawMsg := td.DecodingHex(corruptedData)
-	_, err := td.firewall.OpenGossipBundle(rawMsg, td.unknownPeerID)
+	bdl, err := td.firewall.OpenGossipBundle(rawMsg, td.unknownPeerID)
+	assert.Nil(t, bdl)
 	assert.Error(t, err)
 	assert.Equal(t, err, ErrMisMatchConsensusHeight)
 
-	assert.Equal(t, status.StatusBanned, td.firewall.peerSet.GetPeerStatus(td.unknownPeerID))
+	assert.Equal(t, status.StatusUnknown, td.firewall.peerSet.GetPeerStatus(td.unknownPeerID))
 }
 
 func TestGossipMessage(t *testing.T) {

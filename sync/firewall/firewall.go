@@ -78,9 +78,8 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) (*bundle.Bundle, 
 			"message_height", bdl.Message.ConsensusHeight(),
 		)
 
-		f.peerSet.UpdateStatus(from, status.StatusBanned)
-
-		return bdl, ErrMisMatchConsensusHeight
+		// Drop the message. n future release we should ban these peers.
+		return nil, ErrMisMatchConsensusHeight
 	}
 
 	return bdl, nil
