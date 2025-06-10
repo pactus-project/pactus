@@ -23,11 +23,6 @@ const (
 type fixedUint32 uint32
 
 func (u fixedUint32) MarshalCBOR() ([]byte, error) {
-	if u == 0 {
-		// Why can't be empty??
-		return []byte{0}, nil
-	}
-
 	buf := make([]byte, 0, 5)
 
 	// The header for a 4-byte integer is 0x1A followed by the 4 bytes of the uint32.
