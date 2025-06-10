@@ -288,7 +288,7 @@ func TestBatchTransfer(t *testing.T) {
 	err := CheckAndExecute(trx1, sbx, false)
 	assert.ErrorIs(t, err, ErrBatchTransferNotAllowed)
 
-	sbx.TestStore.AddTestBlock(4_800_000 )
+	sbx.TestStore.AddTestBlock(4_800_000)
 	trx2 := ts.GenerateTestBatchTransferTx(
 		testsuite.TransactionWithLockTime(sbx.CurrentHeight()),
 		testsuite.TransactionWithEd25519Signer(rndPrvKey))
