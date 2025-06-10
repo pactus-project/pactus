@@ -78,7 +78,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) (*bundle.Bundle, 
 			"message_height", bdl.Message.ConsensusHeight(),
 		)
 
-		// Drop the message. n future release we should ban these peers.
+		// Drop the message. In next releases we may ban these peers.
 		return nil, ErrMisMatchConsensusHeight
 	}
 
@@ -230,8 +230,9 @@ func (f *Firewall) isExpiredMessage(msgData []byte) bool {
 		return true
 	}
 
-	consensusHeightRaw := msgData[msgLen-6:]
-	consensusHeight := binary.BigEndian.Uint32(consensusHeightRaw[2:])
+	// Consensus height is the last 4 bytes of the bundle.
+	// Refer to the bundle encoding for more details.
+	consensusHeight := binary.BigEndian.Uint32(msgData[msgLen-4:])
 
 	// The message is expired, or the consensus height is behind the network's current height.
 	if f.state.LastBlockHeight() > 0 && consensusHeight < f.state.LastBlockHeight()-1 {

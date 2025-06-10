@@ -83,7 +83,7 @@ func TestDecodeVoteCBOR(t *testing.T) {
 			"" + "f40551e4ff89f3d235e32b4b92055501c0067d277f2dff99943016d6a0f379cf" +
 			"" + "09846c6f06f60758308ab7aecbe03c4ed5b688bcb7e848baffa62bcbf1a40215" +
 			"" + "22c56693f0a7bbcc1fe865277556ee59c1f63ba592acfe1b43" +
-			"041a00001234") // Consensus Height (0x1234)
+			"041a00001234") // Consensus Height (0x00001234)
 	data2, _ := hex.DecodeString(
 		"a4" + // Map(4)
 			"01190100" + // Flags = 0x0100 (compressed)
@@ -94,7 +94,7 @@ func TestDecodeVoteCBOR(t *testing.T) {
 			"" + "067d277f2dff99943016d6a0f379cf09846c6f06f60758308ab7aecbe03c4ed5" +
 			"" + "b688bcb7e848baffa62bcbf1a4021522c56693f0a7bbcc1fe865277556ee59c1" +
 			"" + "f63ba592acfe1b43010000ffff798ce7ec79000000" +
-			"041a00001234") // Consensus Height (0x1234)
+			"041a00001234") // Consensus Height (0x00001234)
 
 	bdl1 := new(Bundle)
 	bdl2 := new(Bundle)
@@ -127,7 +127,7 @@ func TestEncodingData(t *testing.T) {
 			"" + "0100" +
 			"" + "0212" +
 			"" + "0313" +
-			"0400" // Consensus height (0x00)
+			"041a00000000" // Consensus height (0x00000000)
 		assert.Equal(t, expectedData, hex.EncodeToString(data))
 		assert.Equal(t, uint32(0x00), bdl.ConsensusHeight)
 	})
@@ -148,7 +148,7 @@ func TestEncodingData(t *testing.T) {
 			"" + "0112" +
 			"" + "0201" +
 			"" + "0355" + hex.EncodeToString(rndAddr.Bytes()) +
-			"041a00000012" // Consensus height (0x12)
+			"041a00000012" // Consensus height (0x00000012)
 		assert.Equal(t, expectedData, hex.EncodeToString(data))
 		assert.Equal(t, uint32(0x12), bdl.ConsensusHeight)
 	})
