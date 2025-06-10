@@ -11,22 +11,26 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/pactus-project/pactus/util/logger"
 )
 
 const (
 	_defaultConcurrencyPerChunk = 16
 	_defaultMinSizeForChunk     = 1 << 20
+	_defaultMaxRetries          = 3
 )
 
 type Downloader struct {
-	client    *http.Client
-	url       string
-	filePath  string
-	sha256Sum string
-	fileType  string
-	fileName  string
-	statsCh   chan Stats
-	errCh     chan error
+	client        *http.Client
+	url           string
+	filePath      string
+	sha256Sum     string
+	fileType      string
+	fileName      string
+	maxRetries    int
+	cancel        context.CancelFunc
+	statsCallback func(Stats)
 
 	chunks []*chunk
 
@@ -49,22 +53,18 @@ func New(url, filePath, sha256Sum string, opts ...Option) *Downloader {
 	}
 
 	return &Downloader{
-		client:    opt.client,
-		url:       url,
-		filePath:  filePath,
-		sha256Sum: sha256Sum,
-		chunks:    make([]*chunk, 0, _defaultConcurrencyPerChunk),
-		statsCh:   make(chan Stats),
-		errCh:     make(chan error, 1),
+		client:        opt.client,
+		statsCallback: opt.statsCallBack,
+		url:           url,
+		filePath:      filePath,
+		sha256Sum:     sha256Sum,
+		chunks:        make([]*chunk, 0, _defaultConcurrencyPerChunk),
+		maxRetries:    opt.maxRetries,
 	}
 }
 
 func (d *Downloader) Start(ctx context.Context) {
-	go d.download(ctx)
-}
-
-func (d *Downloader) Stats() <-chan Stats {
-	return d.statsCh
+	d.download(ctx)
 }
 
 func (d *Downloader) FileType() string {
@@ -75,12 +75,11 @@ func (d *Downloader) FileName() string {
 	return d.fileName
 }
 
-func (d *Downloader) Errors() <-chan error {
-	return d.errCh
-}
-
 func (d *Downloader) download(ctx context.Context) {
-	stats, err := d.getHeader(ctx)
+	ctx, cancel := context.WithCancel(ctx)
+	d.cancel = cancel
+
+	totalSize, err := d.getHeader(ctx)
 	if err != nil {
 		d.handleError(err)
 
@@ -104,38 +103,41 @@ func (d *Downloader) download(ctx context.Context) {
 		_ = out.Close()
 	}()
 
-	d.statsCh <- stats
+	d.updateStats(0, totalSize, false)
 
 	var wg sync.WaitGroup
 	for _, chuck := range d.chunks {
 		wg.Add(1)
 		go func(c *chunk) {
 			defer wg.Done()
-			err := d.downloadChunkWithContext(ctx, out, c, stats.TotalSize)
-			if err != nil {
+			if err := d.downloadChunk(ctx, out, c, totalSize); err != nil {
 				d.handleError(err)
-
-				return
 			}
 		}(chuck)
 	}
 
 	wg.Wait()
 
-	if err := d.finalizeDownload(&stats); err != nil {
+	if ctx.Err() != nil {
+		return
+	}
+
+	if err := d.finalizeDownload(); err != nil {
 		d.handleError(err)
+
+		return
 	}
 }
 
-func (d *Downloader) getHeader(ctx context.Context) (Stats, error) {
+func (d *Downloader) getHeader(ctx context.Context) (int64, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodHead, d.url, http.NoBody)
 	if err != nil {
-		return Stats{}, &Error{Message: "failed to create new request for get header", Reason: err}
+		return 0, &Error{Message: "failed to create new request for get header", Reason: err}
 	}
 
 	resp, err := d.client.Do(req)
 	if err != nil {
-		return Stats{}, &Error{Message: "failed to do request get header", Reason: err}
+		return 0, &Error{Message: "failed to do request get header", Reason: err}
 	}
 
 	defer func() {
@@ -153,9 +155,7 @@ func (d *Downloader) getHeader(ctx context.Context) (Stats, error) {
 		})
 	}
 
-	return Stats{
-		TotalSize: resp.ContentLength,
-	}, nil
+	return resp.ContentLength, nil
 }
 
 func (d *Downloader) createDir() error {
@@ -165,6 +165,18 @@ func (d *Downloader) createDir() error {
 	}
 
 	return nil
+}
+
+func (d *Downloader) downloadChunk(ctx context.Context, out *os.File, chuck *chunk, totalSize int64) error {
+	var err error
+	for i := 0; i < d.maxRetries; i++ {
+		err = d.downloadChunkWithContext(ctx, out, chuck, totalSize)
+		if err == nil || ctx.Err() != nil {
+			return err
+		}
+	}
+
+	return err
 }
 
 func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File, chuck *chunk, totalSize int64) error {
@@ -207,7 +219,7 @@ func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File,
 			}
 			offset += int64(count)
 			d.downloaded += int64(count)
-			d.updateStats(d.downloaded, totalSize)
+			d.updateStats(d.downloaded, totalSize, false)
 			d.mu.Unlock()
 		}
 		if err != nil {
@@ -223,16 +235,23 @@ func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File,
 	return nil
 }
 
-func (d *Downloader) updateStats(downloaded, totalSize int64) {
-	stats := Stats{
-		Downloaded: downloaded,
-		TotalSize:  totalSize,
-		Percent:    float64(downloaded) / float64(totalSize) * 100,
+func (d *Downloader) updateStats(downloaded, totalSize int64, completed bool) {
+	if d.statsCallback != nil {
+		stats := Stats{
+			Downloaded: downloaded,
+			TotalSize:  totalSize,
+			Percent:    float64(downloaded) / float64(totalSize) * 100,
+		}
+
+		if completed {
+			stats.Completed = true
+		}
+
+		d.statsCallback(stats)
 	}
-	d.statsCh <- stats
 }
 
-func (d *Downloader) finalizeDownload(stats *Stats) error {
+func (d *Downloader) finalizeDownload() error {
 	// Recalculate the hash by re-reading the entire file
 	out, err := os.Open(d.filePath)
 	if err != nil {
@@ -247,25 +266,19 @@ func (d *Downloader) finalizeDownload(stats *Stats) error {
 		return &Error{Message: "failed copy file data to hasher for calculate hash", Reason: err}
 	}
 
-	stats.Completed = true
-	stats.Percent = 100
 	sum := hex.EncodeToString(hasher.Sum(nil))
 	if sum != d.sha256Sum {
 		return &Error{Message: "sha256 mismatch", Reason: err}
 	}
-	d.statsCh <- *stats
 
-	d.stop()
+	d.updateStats(0, 0, true)
 
 	return nil
 }
 
-func (d *Downloader) stop() {
-	close(d.statsCh)
-	close(d.errCh)
-}
-
 func (d *Downloader) handleError(err error) {
-	d.errCh <- err
-	d.stop()
+	logger.Error("failed to download", "error", err)
+	if d.cancel != nil {
+		d.cancel()
+	}
 }

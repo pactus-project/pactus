@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -24,11 +23,7 @@ const DefaultSnapshotURL = "https://snapshot.pactus.org"
 
 const maxDecompressedSize = 10 << 20 // 10 MB
 
-type ImporterStateFunc func(
-	fileName string,
-	totalSize, downloaded int64,
-	percentage float64,
-)
+type ImporterStateFunc func(fileName string) func(stats downloader.Stats)
 
 type Metadata struct {
 	Name      string       `json:"name"`
@@ -128,9 +123,6 @@ func (i *Importer) GetMetadata(ctx context.Context) ([]Metadata, error) {
 func (i *Importer) Download(ctx context.Context, metadata *Metadata,
 	stateFunc ImporterStateFunc,
 ) error {
-	done := make(chan error)
-	defer close((done))
-
 	dlLink, err := url.JoinPath(i.snapshotURL, metadata.Data.Path)
 	if err != nil {
 		return err
@@ -140,30 +132,12 @@ func (i *Importer) Download(ctx context.Context, metadata *Metadata,
 	i.dataFileName = fileName
 	filePath := fmt.Sprintf("%s/%s", i.tempDir, fileName)
 
-	downloader := downloader.New(dlLink, filePath, metadata.Data.Sha)
-	downloader.Start(ctx)
+	download := downloader.New(dlLink, filePath, metadata.Data.Sha,
+		downloader.WithStatsCallback(stateFunc(fileName)))
 
-	go func() {
-		err := <-downloader.Errors()
-		if err != nil {
-			log.Printf("download encountered an error: %s\n", err)
-			done <- err
-		}
-	}()
+	download.Start(ctx)
 
-	go func() {
-		for state := range downloader.Stats() {
-			stateFunc(fileName, state.TotalSize, state.Downloaded, state.Percent)
-			if state.Completed {
-				log.Println("download completed")
-				done <- nil
-
-				return
-			}
-		}
-	}()
-
-	return <-done
+	return nil
 }
 
 func (i *Importer) Cleanup() error {

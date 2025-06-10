@@ -8,6 +8,7 @@ import (
 	"github.com/gofrs/flock"
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/downloader"
 	"github.com/spf13/cobra"
 )
 
@@ -109,13 +110,17 @@ func buildImportCmd(parentCmd *cobra.Command) {
 	}
 }
 
-func downloadProgressBar(fileName string, totalSize, downloaded int64, _ float64) {
-	bar := cmd.TerminalProgressBar(totalSize, 30)
-	bar.Describe(fmt.Sprintf("%s (%s/%s)",
-		fileName,
-		util.FormatBytesToHumanReadable(uint64(downloaded)),
-		util.FormatBytesToHumanReadable(uint64(totalSize)),
-	))
-	err := bar.Add64(downloaded)
-	cmd.FatalErrorCheck(err)
+func downloadProgressBar(fileName string) func(stats downloader.Stats) {
+	return func(stats downloader.Stats) {
+		if !stats.Completed {
+			bar := cmd.TerminalProgressBar(stats.TotalSize, 30)
+			bar.Describe(fmt.Sprintf("%s (%s/%s)",
+				fileName,
+				util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
+				util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
+			))
+			err := bar.Add64(stats.Downloaded)
+			cmd.FatalErrorCheck(err)
+		}
+	}
 }
