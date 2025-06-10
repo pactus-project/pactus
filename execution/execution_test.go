@@ -18,7 +18,7 @@ func TestTransferLockTime(t *testing.T) {
 	rndPubKey, rndPrvKey := ts.RandEd25519KeyPair()
 	rndAccAddr := rndPubKey.AccountAddress()
 	rndAcc := sbx.MakeNewAccount(rndAccAddr)
-	rndAcc.AddToBalance(1000 * 1e9)
+	rndAcc.AddToBalance(1000e9)
 	sbx.UpdateAccount(rndAccAddr, rndAcc)
 	_ = sbx.TestStore.AddTestBlock(8642)
 
@@ -256,13 +256,11 @@ func TestReplay(t *testing.T) {
 	rndPubKey, rndPrvKey := ts.RandEd25519KeyPair()
 	rndAccAddr := rndPubKey.AccountAddress()
 	rndAcc := sbx.MakeNewAccount(rndAccAddr)
-	rndAcc.AddToBalance(1e9)
+	rndAcc.AddToBalance(1000e9)
 	sbx.UpdateAccount(rndAccAddr, rndAcc)
-	lockTime := sbx.CurrentHeight()
 
-	trx := tx.NewTransferTx(lockTime,
-		rndAccAddr, ts.RandAccAddress(), 10000, 1000)
-	ts.HelperSignTransaction(rndPrvKey, trx)
+	trx := ts.GenerateTestTransferTx(
+		testsuite.TransactionWithEd25519Signer(rndPrvKey))
 
 	err := Execute(trx, sbx)
 	assert.NoError(t, err)
@@ -271,4 +269,29 @@ func TestReplay(t *testing.T) {
 	assert.ErrorIs(t, err, TransactionCommittedError{
 		ID: trx.ID(),
 	})
+}
+
+func TestBatchTransfer(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	sbx := sandbox.MockingSandbox(ts)
+	rndPubKey, rndPrvKey := ts.RandEd25519KeyPair()
+	rndAccAddr := rndPubKey.AccountAddress()
+	rndAcc := sbx.MakeNewAccount(rndAccAddr)
+	rndAcc.AddToBalance(1000e9)
+	sbx.UpdateAccount(rndAccAddr, rndAcc)
+
+	sbx.TestStore.AddTestBlock(4_800_000 - 2)
+	trx1 := ts.GenerateTestBatchTransferTx(
+		testsuite.TransactionWithLockTime(sbx.CurrentHeight()),
+		testsuite.TransactionWithEd25519Signer(rndPrvKey))
+	err := CheckAndExecute(trx1, sbx, false)
+	assert.ErrorIs(t, err, ErrBatchTransferNotAllowed)
+
+	sbx.TestStore.AddTestBlock(4_800_000 )
+	trx2 := ts.GenerateTestBatchTransferTx(
+		testsuite.TransactionWithLockTime(sbx.CurrentHeight()),
+		testsuite.TransactionWithEd25519Signer(rndPrvKey))
+	err = CheckAndExecute(trx2, sbx, false)
+	assert.NoError(t, err)
 }

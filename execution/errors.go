@@ -7,6 +7,10 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 )
 
+// ErrBatchTransferNotAllowed is returned when a batch transaction is observed in a block
+// with a height lower than 4,800,000.
+var ErrBatchTransferNotAllowed error = fmt.Errorf("batch transfer is not allowed")
+
 // TransactionCommittedError is returned when an attempt is made
 // to replay a transaction that has already been committed.
 // This is to prevent replay attacks where an attacker tries to
