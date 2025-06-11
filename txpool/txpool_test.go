@@ -370,6 +370,9 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	_, prv4 := td.RandBLSKeyPair()
 	_, prv5 := td.RandBLSKeyPair()
 
+	// For supporting Batch Transfer transactions
+	td.sbx.TestStore.AddTestBlock(4_800_000)
+
 	transferTx := td.makeValidTransferTx()
 	bondTx := td.makeValidBondTx(testsuite.TransactionWithValidatorPublicKey(pub1))
 	unbondTx := td.makeValidUnbondTx(testsuite.TransactionWithBLSSigner(prv2))
@@ -472,6 +475,9 @@ func TestAllPendingTxs(t *testing.T) {
 
 	pub1, _ := td.RandBLSKeyPair()
 	_, prv2 := td.RandBLSKeyPair()
+
+	// For supporting Batch Transfer transactions
+	td.sbx.TestStore.AddTestBlock(4_800_000)
 
 	transferTx := td.makeValidTransferTx()
 	bondTx := td.makeValidBondTx(testsuite.TransactionWithValidatorPublicKey(pub1))

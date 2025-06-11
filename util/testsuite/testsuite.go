@@ -738,7 +738,7 @@ func (ts *TestSuite) GenerateTestBatchTransferTx(options ...func(*TransactionMak
 	for i := 0; i < numOfRecip; i++ {
 		recipients[i] = payload.BatchRecipient{
 			To:     ts.RandAccAddress(),
-			Amount: ts.RandAmount(),
+			Amount: ts.RandAmount(10e9),
 		}
 	}
 
