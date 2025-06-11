@@ -55,7 +55,7 @@ func setup(t *testing.T) *testData {
 		mockStore.SaveBlock(blk, cert)
 	}
 	sbx := NewSandbox(mockStore.LastHeight,
-		mockStore, param.FromGenesis(params), cmt, totalPower).(*sandbox)
+		mockStore, param.FromGenesis(params), cmt, totalPower, false).(*sandbox)
 	assert.Equal(t, lastHeight, sbx.CurrentHeight())
 	assert.Equal(t, param.FromGenesis(params), sbx.Params())
 

@@ -27,6 +27,7 @@ type sandbox struct {
 	validators      map[crypto.Address]*sandboxValidator
 	committedTrxs   map[tx.ID]*tx.Tx
 	params          *param.Params
+	isTestnet       bool
 	height          uint32
 	totalAccounts   int32
 	totalValidators int32
@@ -47,7 +48,7 @@ type sandboxAccount struct {
 }
 
 func NewSandbox(height uint32, store store.Reader, params *param.Params,
-	committee committee.Reader, totalPower int64,
+	committee committee.Reader, totalPower int64, isTestnet bool,
 ) Sandbox {
 	sbx := &sandbox{
 		height:     height,
@@ -55,6 +56,7 @@ func NewSandbox(height uint32, store store.Reader, params *param.Params,
 		committee:  committee,
 		totalPower: totalPower,
 		params:     params,
+		isTestnet:  isTestnet,
 	}
 
 	sbx.accounts = make(map[crypto.Address]*sandboxAccount)
@@ -236,6 +238,10 @@ func (sb *sandbox) CurrentHeight() uint32 {
 	defer sb.lk.RUnlock()
 
 	return sb.height + 1
+}
+
+func (sb *sandbox) IsTestnet() bool {
+	return sb.isTestnet
 }
 
 func (sb *sandbox) IterateAccounts(
