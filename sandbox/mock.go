@@ -112,8 +112,8 @@ func (m *MockSandbox) CurrentHeight() uint32 {
 	return m.TestStore.LastHeight + 1
 }
 
-func (*MockSandbox) IsTestnet() bool {
-	return false
+func (*MockSandbox) IsMainnet() bool {
+	return true
 }
 
 func (m *MockSandbox) Params() *param.Params {
