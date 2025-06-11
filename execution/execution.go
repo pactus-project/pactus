@@ -89,7 +89,7 @@ func CheckLockTime(trx *tx.Tx, sbx sandbox.Sandbox, strict bool) error {
 func CheckBatchTransfer(trx *tx.Tx, sbx sandbox.Sandbox) error {
 	if trx.Payload().Type() == payload.TypeBatchTransfer {
 		// 4_800_000 defined in PIP-39
-		if sbx.CurrentHeight() < 4_800_000 {
+		if sbx.IsMainnet() && sbx.CurrentHeight() < 4_800_000 {
 			return ErrBatchTransferNotAllowed
 		}
 	}
