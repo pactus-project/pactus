@@ -190,13 +190,13 @@ jobs:
       - name: sign
         uses: signpath/github-action-submit-signing-request@v1.1
         with:
-          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
-          organization-id: '${{ vars.SIGNPATH_ORGANIZATION_ID }}'
-          project-slug: 'pactus'
-          signing-policy-slug: 'release-signing'
-          github-artifact-id: '${{steps.upload-unsigned-artifact.outputs.artifact-id}}'
+          project-slug: pactus
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          signing-policy-slug: release-signing
+          github-artifact-id: ${{steps.upload-unsigned-artifact.outputs.artifact-id}}
           wait-for-completion: true
-          output-artifact-directory: 'pactus-signed'
+          output-artifact-directory: pactus-signed
 
       - name: upload-signed-artifact
         uses: actions/upload-artifact@v4
