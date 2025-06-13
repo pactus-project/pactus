@@ -72,7 +72,7 @@ func (f *Firewall) OpenGossipBundle(data []byte, from peer.ID) (*bundle.Bundle, 
 	}
 
 	if bdl.ConsensusHeight != bdl.Message.ConsensusHeight() {
-		f.logger.Warn("firewall: consensus height mismatch",
+		f.logger.Debug("firewall: consensus height mismatch",
 			"peer", from,
 			"bundle_height", bdl.ConsensusHeight,
 			"message_height", bdl.Message.ConsensusHeight(),
