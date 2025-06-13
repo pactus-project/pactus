@@ -193,7 +193,7 @@ jobs:
           project-slug: pactus
           organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
-          signing-policy-slug: release-signing
+          signing-policy-slug: test-signing
           github-artifact-id: ${{steps.upload-unsigned-artifact.outputs.artifact-id}}
           wait-for-completion: true
           output-artifact-directory: pactus-signed
