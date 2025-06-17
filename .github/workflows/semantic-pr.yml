@@ -25,6 +25,7 @@ jobs:
             linter
             deps
             makefile
+            release
             releaser
             packager
             other
