@@ -285,9 +285,8 @@ AppPublisher=Pactus
 AppPublisherURL=https://pactus.org/
 DefaultDirName={autopf}/Pactus
 DefaultGroupName=Pactus
-SetupIconFile=${ROOT_DIR}/.github/releasers/pactus.ico
-LicenseFile=${ROOT_DIR}/LICENSE
-Uninstallable=yes
+SetupIconFile=.github/releasers/pactus.ico
+LicenseFile=LICENSE
 UninstallDisplayIcon={app}\\pactus-gui\\pactus-gui.exe
 
 [Files]
