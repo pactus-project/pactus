@@ -278,8 +278,8 @@ echo "Archiving the package"
 echo "Creating installer"
 cat << EOF > ${ROOT_DIR}/inno.iss
 [Setup]
-AppId=PactusGUI
-AppName=Pactus GUI
+AppId=Pactus
+AppName=Pactus
 AppVersion=${VERSION}
 AppPublisher=Pactus
 AppPublisherURL=https://pactus.org/
@@ -294,11 +294,11 @@ UninstallDisplayIcon={app}\\pactus-gui\\pactus-gui.exe
 Source:"${PACKAGE_NAME}/*"; DestDir:"{app}"; Flags: recursesubdirs
 
 [Icons]
-Name:"{group}\\Pactus GUI"; Filename:"{app}\\pactus-gui\\pactus-gui.exe"
-Name:"{commondesktop}\\Pactus GUI"; Filename:"{app}\\pactus-gui\\pactus-gui.exe"
+Name:"{group}\\Pactus"; Filename:"{app}\\pactus-gui\\pactus-gui.exe"
+Name:"{commondesktop}\\Pactus"; Filename:"{app}\\pactus-gui\\pactus-gui.exe"
 
 [Run]
-Filename:"{app}\\pactus-gui\\pactus-gui.exe"; Description:"Launch Pactus GUI"; Flags: postinstall nowait
+Filename:"{app}\\pactus-gui\\pactus-gui.exe"; Description:"Launch Pactus"; Flags: postinstall nowait
 EOF
 
 cd ${ROOT_DIR}
@@ -307,4 +307,4 @@ INNO_DIR=$(cygpath -w -s "${INNO_PATH}")
 "${INNO_DIR}/ISCC.exe" "${ROOT_DIR}/inno.iss"
 mv "Output/mysetup.exe" "${ROOT_DIR}/${FILE_NAME}_installer_unsigned.exe"
 
-sign_app ${ROOT_DIR}/${FILE_NAME}_installer_unsigned.exe  ${ROOT_DIR}/${FILE_NAME}_installer.exe "Pactus GUI Installer"
+sign_app ${ROOT_DIR}/${FILE_NAME}_installer_unsigned.exe  ${ROOT_DIR}/${FILE_NAME}_installer.exe "Pactus Installer"
