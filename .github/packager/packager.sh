@@ -15,7 +15,6 @@ replace_in_place() {
 ROOT_DIR="$(pwd)"
 PACKAGE_DIR="${ROOT_DIR}/packages"
 PROTO_GEN_DIR="${ROOT_DIR}/www/grpc/gen"
-VERSION="$(echo `git -C ${ROOT_DIR} describe --abbrev=0 --tags` | sed 's/^.//')" # "v1.2.3" -> "1.2.3"
 
 if [[ -z "$VERSION" ]]; then
   echo "❌ Error: Version tag not found."
