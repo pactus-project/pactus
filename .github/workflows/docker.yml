@@ -4,7 +4,7 @@ permissions:
 
 on:
   push:
-    tags: ["v*"]
+    tags: ["v*.*.*"] # Trigger on version tags (e.g., v1.0.0)
     branches: ["main"]
 
 env:
