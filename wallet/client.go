@@ -16,7 +16,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-// gRPCClient is a gRPC client that randomly establishes a connection to a gRPC server.
+// grpcClient is a gRPC client that randomly establishes a connection to a gRPC server.
 // It is used to get information such as account balance or transaction data from the server.
 type grpcClient struct {
 	ctx               context.Context

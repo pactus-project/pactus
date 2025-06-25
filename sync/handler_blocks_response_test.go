@@ -322,7 +322,7 @@ func TestSyncingHasBlockInCache(t *testing.T) {
 	assert.Equal(t, uint32(0), nets.syncAlice.state.LastBlockHeight())
 	assert.Equal(t, uint32(23), nets.syncBob.state.LastBlockHeight())
 
-	// Adding some blocs to the cache
+	// Adding some blocks to the cache
 	blk1 := nets.stateBob.TestStore.Blocks[1]
 	blk2 := nets.stateBob.TestStore.Blocks[2]
 	blk3 := nets.stateBob.TestStore.Blocks[3]
