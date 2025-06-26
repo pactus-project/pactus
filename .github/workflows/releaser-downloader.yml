@@ -1,0 +1,120 @@
+name: "Release Downloader"
+permissions:
+  contents: write
+
+on:
+  workflow_run:
+    workflows: [
+      "Release CLI Artifacts",
+      "Release GUI Linux Artifacts",
+      "Release GUI macOS Artifacts",
+      "Release GUI Windows Artifacts",
+      ]
+    types: ["completed"]
+
+jobs:
+  checksums:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: checksums
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: checksum-cli
+          run-id: 15906072521
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: checksums
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: checksum-gui-linux_amd64
+          run-id: 15906072539
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: checksums
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: checksum-gui-linux_arm64
+          run-id: 15906072539
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: checksums
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: checksum-gui-macos_amd64
+          run-id: 15906072514
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: checksums
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: checksum-gui-macos_arm64
+          run-id: 15906072514
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: checksums
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: checksum-gui-windows_amd64
+          run-id: 15906072522
+
+      - name: Combine checksums
+        run: |
+          cat checksums/*/*.txt > SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Upload SHA256SUMS as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sha256sums
+          path: SHA256SUMS
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: SHA256SUMS
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ########################################
+  cosign:
+    needs: [checksums]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download SHA256SUMS artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sha256sums
+
+      - uses: sigstore/cosign-installer@v3
+
+      - name: Sign Checksum
+        run: cosign sign-blob --yes --key env://COSIGN_PRIVATE_KEY SHA256SUMS > SHA256SUMS.sig
+        env:
+          COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: SHA256SUMS.sig
+
+  ########################################
+  downloader:
+    needs: [cosign]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create Downloader file
+        run: |
+          VERSION="$(echo `git -C . describe --abbrev=0 --tags` | sed 's/^.//')" # "v1.2.3" -> "1.2.3"
+          echo ${VERSION}
+          sed -i "s/__VERSION__/${VERSION}/g" .github/releasers/pactus_downloader.sh
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: .github/releasers/pactus_downloader.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
