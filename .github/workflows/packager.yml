@@ -1,7 +1,7 @@
 ## Important Notes:
-## 1. The Releaser workflow is triggered when a new tag is pushed to the repository.
-## 2. The Packager workflow is triggered when the Releaser workflow completes successfully.
-## 3. GitHub always executes this workflow using the version from the main branch
+## 1. The Releaser workflows are triggered when a new tag is pushed to the repository.
+## 2. The Packager workflow is triggered when the "Release Downloader" workflow completes successfully.
+## 3. GitHub always executes this workflow using the version from the main branch.
 ## 4. To package the correct release, it checks out the latest tag.
 ##
 name: Packager
@@ -11,7 +11,7 @@ permissions:
 
 on:
   workflow_run:
-    workflows: ["Releaser"]
+    workflows: ["Releaser Downloader"]
     types: ["completed"]
 
 jobs:

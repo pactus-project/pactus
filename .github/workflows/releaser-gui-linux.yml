@@ -1,0 +1,53 @@
+name: "Release GUI Linux Artifacts"
+permissions:
+  contents: write
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  release-gui-linux:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        name: [linux_amd64, linux_arm64]
+        include:
+          - name: linux_amd64
+            runner: ubuntu-24.04
+          - name: linux_arm64
+            runner: ubuntu-24.04-arm
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install libgtk-3-dev libcairo2-dev libglib2.0-dev libfuse2 pkg-config dpkg dpkg-dev
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.5"
+
+      - name: Create release files
+        run: bash ./.github/releasers/releaser_gui_linux.sh
+
+      - name: Calculate sha256sum
+        run: sha256sum pactus-gui*.tar.gz pactus-gui*.tar.gz > checksum-${{ matrix.name }}.txt
+
+      - name: Upload checksum artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksum-gui-${{ matrix.name }}
+          path: checksum-gui-${{ matrix.name }}.txt
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            pactus-gui*.tar.gz
+            pactus-gui*.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

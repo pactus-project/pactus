@@ -1,0 +1,38 @@
+name: "Signing Windows Artifacts"
+description: "Signing Windows Artifacts"
+
+inputs:
+  signpath-api-token:
+    description: "SignPath API Token"
+    required: true
+
+  signpath-signing-policy-slug:
+    description: "SignPath Signing Policy Slug"
+    required: true
+
+  artifact-name:
+    description: "The name of artifact (.zip) file"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: upload-unsigned-artifact
+      id: upload-unsigned-artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ./build/unsigned/${{ inputs.artifact-name }}.exe
+
+    - name: sign-artifact
+      id: sign-artifact
+      uses: signpath/github-action-submit-signing-request@v1.2
+      with:
+        api-token: "${{ inputs.signpath-api-token }}"
+        organization-id: "208fe1b4-fd9d-41c8-be2e-8ebd037cd0db"
+        project-slug: "pactus"
+        signing-policy-slug: "${{ inputs.signpath-signing-policy-slug }}"
+        github-artifact-id: "${{ steps.upload-unsigned-artifact.outputs.artifact-id }}"
+        wait-for-completion: true
+        wait-for-completion-timeout-in-seconds: 3600
+        output-artifact-directory: ./build/signed/

@@ -1,0 +1,56 @@
+name: "Release GUI macOS Artifacts"
+permissions:
+  contents: write
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  release-gui-macos:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        name: [macos_amd64, macos_arm64]
+        include:
+          - name: macos_amd64
+            runner: macos-13
+            lib_home: /usr/local
+          - name: macos_arm64
+            runner: macos-14
+            lib_home: /opt/homebrew
+
+    env:
+      LIB_HOME: ${{ matrix.lib_home }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: brew install gtk+3 librsvg create-dmg coreutils gdk-pixbuf glib-networking
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.5"
+
+      - name: Create release files
+        run: bash ./.github/releasers/releaser_gui_macos.sh
+
+      - name: Calculate sha256sum
+        run: sha256sum pactus-*.dmg pactus-*.tar.gz > checksum-${{ matrix.name }}.txt
+
+      - name: Upload checksum artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksum-${{ matrix.name }}
+          path: checksum-${{ matrix.name }}.txt
+
+      - name: Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            pactus-*.dmg
+            pactus-*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
