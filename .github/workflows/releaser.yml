@@ -8,6 +8,7 @@ on:
     tags: ["v*"]
 
 jobs:
+
   ########################################
   build-cli:
     runs-on: ubuntu-latest
@@ -146,12 +147,10 @@ jobs:
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        name: [windows-amd64, windows-arm64]
+        name: [windows_amd64]
         include:
-          - name: windows-amd64
+          - name: windows_amd64
             runner: windows-latest
-          - name: windows-arm64
-            runner: windows-11-arm
 
     defaults:
       run:
@@ -173,18 +172,59 @@ jobs:
             mingw-w64-x86_64-glib2
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-pkg-config
-            mingw-w64-x86_64-jq
 
-      - name: Create release files
-        run: bash ./.github/releasers/releaser_gui_windows.sh
-        env:
-          SIGNPATH_API_TOKEN: ${{ secrets.SIGNPATH_API_TOKEN }}
-          SIGNPATH_ORGANIZATION_ID: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
-          SIGNPATH_SIGNING_POLICY_SLUG: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
-          SIGNPATH_PROJECT_SLUG: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+      - name: Get Version
+        id: get_version
+        run: |
+          VERSION="$(echo `git -C . describe --abbrev=0 --tags` | sed 's/^.//')"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build Binaries
+        run: bash ./.github/releasers/releaser_gui_windows_build.sh
+
+      - name: Sign Pactus Daemon
+        uses: ./.github/actions/windows-signing
+        with:
+            signpath-api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+            signpath-signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
+            artifact-name: pactus-daemon
+
+      - name: Sign Pactus Wallet
+        uses: ./.github/actions/windows-signing
+        with:
+            signpath-api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+            signpath-signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
+            artifact-name: pactus-wallet
+
+      - name: Sign Pactus Shell
+        uses: ./.github/actions/windows-signing
+        with:
+            signpath-api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+            signpath-signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
+            artifact-name: pactus-shell
+
+      - name: Sign Pactus GUI
+        uses: ./.github/actions/windows-signing
+        with:
+            signpath-api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+            signpath-signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
+            artifact-name: pactus-gui
+
+      - name: Build Installer
+        run: bash ./.github/releasers/releaser_gui_windows_installer.sh
+
+      - name: Sign Installer
+        uses: ./.github/actions/windows-signing
+        with:
+            signpath-api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+            signpath-signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY_SLUG }}
+            artifact-name: pactus-gui_${{ steps.get_version.outputs.VERSION }}_${{ matrix.name }}_installer
+
+      - name: Move Installer to Root
+        run: mv ./build/signed/pactus-gui_*_installer.exe .
 
       - name: Calculate sha256sum
-        run: sha256sum pactus-*.zip pactus-*installer.exe > checksum-${{ matrix.name }}.txt
+        run: sha256sum pactus-gui_*.zip pactus-gui_*_installer.exe > checksum-${{ matrix.name }}.txt
 
       - name: Upload checksum artifact
         uses: actions/upload-artifact@v4
@@ -196,8 +236,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            pactus-*.zip
-            pactus-*installer.exe
+            pactus-gui_*.zip
+            pactus-gui_*_installer.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

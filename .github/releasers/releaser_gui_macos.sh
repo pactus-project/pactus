@@ -76,7 +76,10 @@ rm -rf ${ROOT_DIR}/pactus-gui.app/Contents/Resources/Cellar
 
 echo "Creating dmg"
 # https://github.com/create-dmg/create-dmg
-create-dmg \
+
+create-dmg --version
+
+create-dmg --skip-jenkins \
   --volname "Pactus GUI" \
   "${FILE_NAME}.dmg" \
   "${ROOT_DIR}/pactus-gui.app"
