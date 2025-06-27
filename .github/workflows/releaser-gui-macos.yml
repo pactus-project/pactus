@@ -38,13 +38,13 @@ jobs:
         run: bash ./.github/releasers/releaser_gui_macos.sh
 
       - name: Calculate sha256sum
-        run: sha256sum pactus-*.dmg pactus-*.tar.gz > checksum-${{ matrix.name }}.txt
+        run: sha256sum pactus-*.dmg pactus-*.tar.gz > checksum-gui-${{ matrix.name }}.txt
 
       - name: Upload checksum artifact
         uses: actions/upload-artifact@v4
         with:
-          name: checksum-${{ matrix.name }}
-          path: checksum-${{ matrix.name }}.txt
+          name: checksum-gui-${{ matrix.name }}
+          path: checksum-gui-${{ matrix.name }}.txt
 
       - name: Publish
         uses: softprops/action-gh-release@v2
