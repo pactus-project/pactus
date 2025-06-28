@@ -76,7 +76,7 @@ jobs:
         run: bash ./.github/releasers/releaser_gui_linux.sh
 
       - name: Calculate sha256sum
-        run: sha256sum pactus-gui*.tar.gz pactus-gui*.tar.gz > checksum-${{ matrix.name }}.txt
+        run: sha256sum pactus-gui*.tar.gz pactus-gui*.AppImage > checksum-${{ matrix.name }}.txt
 
       - name: Upload checksum artifact
         uses: actions/upload-artifact@v4
