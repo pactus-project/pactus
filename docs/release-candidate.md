@@ -18,7 +18,7 @@ TAG_MSG="Version ${CUR_VER}"
 
 ## 2. Update the Version
 
-Set `rcX` in the `Meta` field and update the `Alias` in [version.go](../version/version.go).
+Set `rcX` in the `Meta` field and update the `Alias` in [version.go](../version/version.json).
 
 ## 3. Make a Release Candidate Commit
 
