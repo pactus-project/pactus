@@ -1,6 +1,7 @@
 [![codecov](https://codecov.io/gh/pactus-project/pactus/branch/main/graph/badge.svg?token=8N6N60D5UI)](https://codecov.io/gh/pactus-project/pactus)
 [![Go Report Card](https://goreportcard.com/badge/github.com/pactus-project/pactus)](https://goreportcard.com/report/github.com/pactus-project/pactus)
-[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/zPqWqV85ch)
+[![Twitter(X)](https://badgen.net/badge/icon/twitter?icon=twitter&label)](https://x.com/PactusChain)
+[![Discord](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/H5vZkNnXCu)
 
 ------
 
