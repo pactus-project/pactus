@@ -6,7 +6,13 @@ Please carefully follow the instructions provided below:
 ## 1. Preparing Your Environment
 
 Before proceeding with the release process,
-ensure that your `origin` remote is set to `git@github.com:pactus-project/pactus.git` and not your local fork.
+ensure that your `origin` remote is set to `git@github.com:pactus-project/pactus.git`
+and not your local fork.
+
+```bash
+git remote -vv
+```
+
 It is recommended to re-clone the project in a location other than your current working directory.
 Also, make sure that you have set up GPG for your GitHub account.
 
@@ -19,22 +25,7 @@ git checkout main
 git pull
 ```
 
-## 3. Update Windows DLLs (Optional)
-
-To ensure that the GUI can locate the required dependency DLLs on Windows,
-you may need to update them for the [Windows installer](../.github/releasers/releaser_gui_windows.sh).
-Make sure you have access to a Windows OS and follow these steps in the project's root directory using [MSYS2](https://www.msys2.org/):
-
-```bash
-git pull
-pacman -Suyyy
-.github/releasers/releaser_gui_windows.sh
-```
-
-Wait for the build to finish. If everything is successful, proceed to the next step.
-If not, update the dependency DLLs inside `.github/releasers/releaser_gui_windows.sh` and re-run the command.
-
-## 4. Set Environment Variables
+## 3. Set Environment Variables
 
 Create environment variables for the release version, which will be used in subsequent commands throughout this document.
 Keep your terminal open for further steps.
@@ -48,11 +39,11 @@ TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 ```
 
-## 5. Update the Version
+## 4. Update the Version
 
 Clear Meta and set Alias in [version.json](../version/version.json).
 
-## 6. Update Changelog
+## 5. Update Changelog
 
 Use [Commitizen](https://github.com/commitizen-tools/commitizen) to update the CHANGELOG. Execute the following command:
 
@@ -64,7 +55,7 @@ perl -i -pe "s/\(#([0-9]+)\)/([#\1](https:\/\/github.com\/pactus-project\/pactus
 
 Occasionally, you may need to make manual updates to the [CHANGELOG](../CHANGELOG.md).
 
-## 7. Create a Release PR
+## 6. Create a Release PR
 
 Generate a new PR against the base branch.
 It's better to use [GitHub CLI](https://github.com/cli/cli/) to create the PR, but manual creation is also an option.
@@ -78,7 +69,7 @@ gh pr create --title "chore(release): releasing version ${CUR_VER}" --body "Rele
 
 Wait for the PR to be approved and merged into the main branch.
 
-## 8. Tagging the Release
+## 7. Tagging the Release
 
 Create a Git tag and sign it using your [GPG key](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification) with the following commands:
 
@@ -94,7 +85,7 @@ Inspect the tag information:
 git show ${TAG_NAME}
 ```
 
-## 9. Push the Tag
+## 8. Push the Tag
 
 Now, push the tag to the repository:
 
@@ -104,7 +95,7 @@ git push origin ${TAG_NAME}
 
 Pushing the tag will automatically create a release tag and build the binaries.
 
-## 10. Bump the Version
+## 9. Bump the Version
 
 Update the version inside [version.json](../version/version.json), add `beta` to the `meta` field, and:
 - If this is a **major release**, update the versions inside [this document](./releasing.md#4-set-environment-variables) in step 4 and
@@ -122,7 +113,7 @@ gh pr create --title "chore(version): bumping version to ${NEXT_VER}" --body "Bu
 
 Wait for the PR to be approved and merged into the main branch.
 
-## 11. Update the Website
+## 10. Update the Website
 
 Create a new announcement post on the
 [blog](https://pactus.org/blog/) and update the
@@ -134,7 +125,7 @@ If gRPC APIs has changed in this version,
 be sure to update the [API documentation](https://docs.pactus.org/api/) and
 [Python SDK](https://github.com/pactus-project/python-sdk) accordingly.
 
-## 12. Celebrate 🎉
+## 11. Celebrate 🎉
 
 Before celebrating, ensure that the release has been tested and that all documentation is up to date.
 Don't forget to update dependencies after major releases (see [Update Dependencies](./update-dependencies.md)).
