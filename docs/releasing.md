@@ -31,9 +31,9 @@ Create environment variables for the release version, which will be used in subs
 Keep your terminal open for further steps.
 
 ```bash
-PRV_VER="1.7.0"
-CUR_VER="1.8.0"
-NEXT_VER="1.9.0"
+PRV_VER="1.8.0"
+CUR_VER="1.9.0"
+NEXT_VER="1.10.0"
 BASE_BRANCH="main"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
@@ -98,7 +98,7 @@ Pushing the tag will automatically create a release tag and build the binaries.
 ## 9. Bump the Version
 
 Update the version inside [version.json](../version/version.json), add `beta` to the `meta` field, and:
-- If this is a **major release**, update the versions inside [this document](./releasing.md#4-set-environment-variables) in step 4 and
+- If this is a **major release**, update the versions inside [this document](./releasing.md#3-set-environment-variables) in step 4 and
 update the versions inside the [patching](./patching.md#4-set-environment-variables) in step 2.
 - If this is a **patch release**, update the versions inside the [patching](./patching.md#4-set-environment-variables) in step 4.
 
