@@ -6,7 +6,12 @@ proceed with the required updates, and eventually release the patched branch.
 ## 1. Preparing Your Environment
 
 Before proceeding with the patching process,
-ensure that your `origin` remote is set to `git@github.com:pactus-project/pactus.git` and not your local fork.
+ensure that your `origin` remote is set to `git@github.com:pactus-project/pactus.git`
+and not your local fork.
+
+```bash
+git remote -vv
+```
 
 ## 2. Create a Patch Branch
 
@@ -46,10 +51,10 @@ create environment variables for the release version, which will be used in subs
 Keep your terminal open for further steps.
 
 ```bash
-PRV_VER="1.8.0"
-CUR_VER="1.8.1"
-NEXT_VER="1.8.2"
-BASE_BRANCH="1.8.x"
+PRV_VER="1.9.0"
+CUR_VER="1.9.1"
+NEXT_VER="1.9.2"
+BASE_BRANCH="1.9.x"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 
