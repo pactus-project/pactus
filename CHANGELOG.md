@@ -1,5 +1,43 @@
 # Changelog
 
+## [1.8.0](https://github.com/pactus-project/pactus/compare/v1.7.0...v1.8.0) (2025-07-01)
+
+### Feat
+
+- **cmd**: add transport switch in flag start daemon ([#1681](https://github.com/pactus-project/pactus/pull/1681))
+- **grpc**: add get raw batch transfer transaction ([#1799](https://github.com/pactus-project/pactus/pull/1799))
+- **types**: implement batch transfer payload ([#1793](https://github.com/pactus-project/pactus/pull/1793))
+- **packager**: publish jsonrpc packages on release ([#1776](https://github.com/pactus-project/pactus/pull/1776))
+- **rest**: define base path for REST APIs ([#1770](https://github.com/pactus-project/pactus/pull/1770))
+- **grpc**: define Rest-API server ([#1765](https://github.com/pactus-project/pactus/pull/1765))
+- **docs**: add openrpc template and schema ([#1767](https://github.com/pactus-project/pactus/pull/1767))
+- **grpc**: support gRPC Web library ([#1762](https://github.com/pactus-project/pactus/pull/1762))
+- **jsonrpc**: add CORS support ([#1755](https://github.com/pactus-project/pactus/pull/1755))
+- **grpc**: publish `pactus_grpc` package for Python ([#1732](https://github.com/pactus-project/pactus/pull/1732))
+- **grpc**: publish `pactus_grpc` package for JS ([#1736](https://github.com/pactus-project/pactus/pull/1736))
+- **wallet**: support of AES-256-CBC for the encryption ([#1706](https://github.com/pactus-project/pactus/pull/1706))
+- **wallet-cmd**: add Neuter command for wallet ([#1683](https://github.com/pactus-project/pactus/pull/1683))
+- **grpc**: add decode raw transaction method ([#1671](https://github.com/pactus-project/pactus/pull/1671))
+
+### Fix
+
+- **execution**: check network type for batch transfer ([#1812](https://github.com/pactus-project/pactus/pull/1812))
+- **execution**: set batch transfer height ([#1811](https://github.com/pactus-project/pactus/pull/1811))
+- **util**: panic on importing snapshot ([#1807](https://github.com/pactus-project/pactus/pull/1807))
+- **sync**: drop messages with mismatched consensus height ([#1810](https://github.com/pactus-project/pactus/pull/1810))
+- **firewall**: remove decoding bundle for expired message ([#1682](https://github.com/pactus-project/pactus/pull/1682))
+- **util**: replace go-bip39 ([#1795](https://github.com/pactus-project/pactus/pull/1795))
+- **wallet**: set Argon2 derived bytes for AES IV ([#1703](https://github.com/pactus-project/pactus/pull/1703))
+- **consensus**: schedule timeout to retry querying for the proposal or votes ([#1698](https://github.com/pactus-project/pactus/pull/1698))
+- **util**: add manually copy to prevent invalid cross-device link ([#1684](https://github.com/pactus-project/pactus/pull/1684))
+
+### Refactor
+
+- **util**: use the built-in max/min to simplify the code ([#1819](https://github.com/pactus-project/pactus/pull/1819))
+- **other**: use slices.Contains to simplify code ([#1802](https://github.com/pactus-project/pactus/pull/1802))
+- **www**: rename Rest to HTTP-API ([#1774](https://github.com/pactus-project/pactus/pull/1774))
+- **grpc**: update buf.build ([#1716](https://github.com/pactus-project/pactus/pull/1716))
+
 ## [1.7.0](https://github.com/pactus-project/pactus/compare/v1.6.0...v1.7.0) (2025-01-23)
 
 ### Feat
