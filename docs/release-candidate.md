@@ -8,7 +8,7 @@ To create a release candidate, follow the structure below:
 
 Create environment variables for the release version, which will be used in subsequent commands throughout this document.
 Keep your terminal open for further steps.
-Update `X`, `Y`, `Z`, and `N` to reflect the the release candidate (e.g., `1.7.0-rc1`, `1.7.0-rc2`, etc.).
+Update `X`, `Y`, `Z`, and `N` to reflect the release candidate (e.g., `1.7.0-rc1`, `1.7.0-rc2`, etc.).
 
 ```bash
 CUR_VER="X.Y.Z-rcN"
