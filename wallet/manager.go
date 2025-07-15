@@ -130,7 +130,7 @@ func (wm *Manager) TotalStake(walletName string) (amount.Amount, error) {
 
 func (wm *Manager) SignRawTransaction(
 	walletName, password string, rawTx []byte,
-) ([]byte, []byte, error) {
+) (txID, data []byte, err error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return nil, nil, status.Errorf(codes.NotFound, "wallet is not loaded")
@@ -145,7 +145,7 @@ func (wm *Manager) SignRawTransaction(
 		return nil, nil, err
 	}
 
-	data, err := trx.Bytes()
+	data, err = trx.Bytes()
 	if err != nil {
 		return nil, nil, err
 	}

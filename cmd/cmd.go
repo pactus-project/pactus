@@ -628,7 +628,7 @@ func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []vault.Addres
 	valKeys := make([]*bls.ValidatorKey, len(valAddrsInfo))
 	password, ok := passwordFetcher(walletInstance)
 	if !ok {
-		return nil, fmt.Errorf("aborted")
+		return nil, errors.New("aborted")
 	}
 	prvKeys, err := walletInstance.PrivateKeys(password, valAddrs)
 	if err != nil {

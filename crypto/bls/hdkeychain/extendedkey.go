@@ -449,11 +449,14 @@ func NewKeyFromString(str string) (*ExtendedKey, error) {
 	}
 
 	var isPrivate bool
-	if hrp == crypto.XPrivateKeyHRP {
+	switch hrp {
+	case crypto.XPrivateKeyHRP:
 		isPrivate = true
-	} else if hrp == crypto.XPublicKeyHRP {
+
+	case crypto.XPublicKeyHRP:
 		isPrivate = false
-	} else {
+
+	default:
 		return nil, ErrInvalidHRP
 	}
 

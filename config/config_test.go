@@ -133,11 +133,12 @@ func TestExampleConfig(t *testing.T) {
 	lines := strings.Split(string(exampleConfigBytes), "\n")
 	exampleToml := ""
 	for _, line := range lines {
-		if !(strings.HasPrefix(line, "# ") ||
-			strings.HasPrefix(line, "###") ||
-			strings.HasPrefix(line, "  # ") ||
-			strings.HasPrefix(line, "    # ") ||
-			strings.HasPrefix(line, "      # ")) {
+		//lint:ignore QF1001 Reason for ignoring (e.g., readability)
+		if !strings.HasPrefix(line, "# ") &&
+			!strings.HasPrefix(line, "###") &&
+			!strings.HasPrefix(line, "  # ") &&
+			!strings.HasPrefix(line, "    # ") &&
+			!strings.HasPrefix(line, "      # ") {
 			exampleToml += line
 			exampleToml += "\n"
 		}

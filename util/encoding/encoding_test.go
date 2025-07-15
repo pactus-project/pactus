@@ -8,8 +8,9 @@ package encoding
 
 import (
 	"bytes"
+	"crypto/rand"
 	"io"
-	"math/rand/v2"
+	"math/big"
 	"reflect"
 	"strings"
 	"testing"
@@ -387,7 +388,10 @@ func TestVarIntError(t *testing.T) {
 }
 
 func TestVarIntRandom(t *testing.T) {
-	randInt1 := uint64(rand.Int64())
+	max := new(big.Int).SetUint64(^uint64(0)) // max uint64
+	randIntBig, _ := rand.Int(rand.Reader, max)
+	randInt1 := randIntBig.Uint64()
+
 	var wBuf bytes.Buffer
 	err := WriteVarInt(&wBuf, randInt1)
 	require.NoError(t, err)
