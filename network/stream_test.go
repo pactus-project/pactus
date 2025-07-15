@@ -11,11 +11,14 @@ import (
 func TestCloseStream(t *testing.T) {
 	confA := testConfig()
 	confA.StreamTimeout = 1 * time.Second // Reduce timeout for testing
+	confA.EnableUDP = true
 	confA.EnableMdns = true
 	networkA := makeTestNetwork(t, confA, nil)
 
 	confB := testConfig()
+	confB.EnableUDP = true
 	confB.EnableMdns = true
+	confB.StreamTimeout = 1 * time.Second
 	networkB := makeTestNetwork(t, confB, nil)
 
 	assert.EventuallyWithT(t, func(c *assert.CollectT) {

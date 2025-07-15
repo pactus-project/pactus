@@ -162,7 +162,9 @@ func makeNetwork(ctx context.Context, conf *Config,
 		)
 	} else {
 		log.Info("AutoNATv2 enabled")
-		lp2p.EnableAutoNATv2()
+		opts = append(opts,
+			lp2p.EnableAutoNATv2(),
+		)
 	}
 
 	if conf.EnableUPnP {

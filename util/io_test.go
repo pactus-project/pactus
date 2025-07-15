@@ -59,7 +59,7 @@ func TestTempFile(t *testing.T) {
 	t.Run("Should panic because it doesn't exist", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
+				t.Error("The code did not panic")
 			}
 		}()
 		IsDirEmpty(tmpFile)

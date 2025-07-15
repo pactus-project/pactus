@@ -1,6 +1,7 @@
 package version
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 	"strconv"
@@ -30,7 +31,7 @@ func ParseAgent(agentStr string) (Agent, error) {
 	for _, part := range parts {
 		fields := strings.Split(part, "=")
 		if len(fields) != 2 {
-			return agent, fmt.Errorf("invalid field format in agent string")
+			return agent, errors.New("invalid field format in agent string")
 		}
 		key := fields[0]
 		value := fields[1]

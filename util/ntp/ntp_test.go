@@ -1,7 +1,7 @@
 package ntp
 
 import (
-	"fmt"
+	"errors"
 	"testing"
 	"time"
 
@@ -101,7 +101,7 @@ func TestNTPChecker(t *testing.T) {
 		td := setup(t)
 		defer td.Stop()
 
-		td.querier.err = fmt.Errorf("unable to query")
+		td.querier.err = errors.New("unable to query")
 
 		go td.checker.Start()
 

@@ -2,6 +2,7 @@ package logger
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"testing"
 
@@ -26,7 +27,7 @@ func TestNilObjLogger(t *testing.T) {
 	var buf bytes.Buffer
 	l.logger = l.logger.Output(&buf)
 
-	l.Info("hello", "error", fmt.Errorf("error"))
+	l.Info("hello", "error", errors.New("error"))
 	assert.Contains(t, buf.String(), "hello")
 	assert.Contains(t, buf.String(), "error")
 }
