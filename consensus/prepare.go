@@ -60,7 +60,8 @@ func (s *prepareState) vote() {
 }
 
 func (s *prepareState) onTimeout(ticker *ticker) {
-	if ticker.Target == tickerTargetQueryProposal {
+	switch ticker.Target {
+	case tickerTargetQueryProposal:
 		roundProposal := s.log.RoundProposal(s.round)
 		if roundProposal == nil {
 			s.queryProposal()
@@ -72,8 +73,12 @@ func (s *prepareState) onTimeout(ticker *ticker) {
 		// Schedule another timeout to retry querying for the proposal or votes.
 		// This ensures that delayed or missing data doesn't cause the process to stall.
 		s.scheduleTimeout(ticker.Duration*2, s.height, s.round, tickerTargetQueryProposal)
-	} else if ticker.Target == tickerTargetChangeProposer {
+
+	case tickerTargetChangeProposer:
 		s.startChangingProposer()
+
+	case tickerTargetNewHeight, tickerTargetQueryVote:
+		// These targets are not used in the prepare state
 	}
 }
 

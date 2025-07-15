@@ -258,7 +258,7 @@ func TestCreateDuplicated(t *testing.T) {
 	t.Run("Try creating duplicated account, Should panic", func(t *testing.T) {
 		defer func() {
 			if r := recover(); r == nil {
-				t.Errorf("The code did not panic")
+				t.Error("The code did not panic")
 			}
 		}()
 		addr := crypto.TreasuryAddress

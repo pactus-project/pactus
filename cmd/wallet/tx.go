@@ -186,17 +186,17 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 	}
 }
 
-func addCommonTxOptions(cobra *cobra.Command) (*int, *string, *string, *bool) {
-	lockTimeOpt := cobra.Flags().Int("lock-time", 0,
+func addCommonTxOptions(cobra *cobra.Command) (lockTimeOpt *int, feeOpt, memoOpt *string, noConfirmOpt *bool) {
+	lockTimeOpt = cobra.Flags().Int("lock-time", 0,
 		"transaction lock-time, if not specified will be the latest height")
 
-	feeOpt := cobra.Flags().String("fee", "",
+	feeOpt = cobra.Flags().String("fee", "",
 		"transaction fee in PAC, if not specified will set to the estimated value")
 
-	memoOpt := cobra.Flags().String("memo", "",
+	memoOpt = cobra.Flags().String("memo", "",
 		"transaction memo, maximum should be 64 character")
 
-	noConfirmOpt := cobra.Flags().Bool("no-confirm", false,
+	noConfirmOpt = cobra.Flags().Bool("no-confirm", false,
 		"no confirmation question")
 
 	return lockTimeOpt, feeOpt, memoOpt, noConfirmOpt

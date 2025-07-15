@@ -1,7 +1,7 @@
 package state
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution"
@@ -63,7 +63,7 @@ func (st *state) checkEd25519Fork(trx *tx.Tx) error {
 	if trx.Payload().Signer().Type() == crypto.AddressTypeEd25519Account {
 		if st.genDoc.ChainType().IsMainnet() {
 			if st.lastInfo.BlockHeight() < 2_320_000 {
-				return fmt.Errorf("ed255519 not supported yet")
+				return errors.New("ed255519 not supported yet")
 			}
 		}
 	}

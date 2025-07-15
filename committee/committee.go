@@ -1,6 +1,7 @@
 package committee
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -32,7 +33,7 @@ func NewCommittee(validators []*validator.Validator, committeeSize int,
 	}
 
 	if proposerPos == nil {
-		return nil, fmt.Errorf("Proposer is not in the list")
+		return nil, errors.New("Proposer is not in the list")
 	}
 
 	return &committee{

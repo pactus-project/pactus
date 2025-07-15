@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
+	"errors"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/amount"
@@ -120,7 +120,7 @@ func TestSendRawTransaction(t *testing.T) {
 		assert.NotNil(t, res)
 	})
 	t.Run("Should fail and not broadcast", func(t *testing.T) {
-		td.mockState.TestPool.AppendError = fmt.Errorf("some error")
+		td.mockState.TestPool.AppendError = errors.New("some error")
 		res, err := client.BroadcastTransaction(context.Background(),
 			&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 		assert.Error(t, err)

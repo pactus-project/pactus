@@ -103,10 +103,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	enableHTTPAuth := false
-	if conf.GRPC.BasicAuth != "" {
-		enableHTTPAuth = true
-	}
+	enableHTTPAuth := (conf.GRPC.BasicAuth != "")
 
 	zeromqServer, err := zmq.New(ctx, conf.ZeroMq, eventPipe)
 	if err != nil {

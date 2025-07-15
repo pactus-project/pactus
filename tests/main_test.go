@@ -3,7 +3,6 @@ package tests
 import (
 	"context"
 	"fmt"
-	"os"
 	"testing"
 	"time"
 
@@ -177,7 +176,7 @@ func TestMain(m *testing.M) {
 	waitForNewBlocks(8)
 
 	fmt.Println("Running tests...")
-	exitCode := m.Run()
+	m.Run()
 	// Commit more blocks, then new nodes can catch up and send sortition transactions
 
 	fmt.Println("Waiting to commit some blocks...")
@@ -215,6 +214,4 @@ func TestMain(m *testing.M) {
 	if total != tGenDoc.TotalSupply() {
 		panic(fmt.Sprintf("Some coins missed: %v", tGenDoc.TotalSupply()-total))
 	}
-
-	os.Exit(exitCode)
 }

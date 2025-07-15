@@ -2,7 +2,7 @@ package sortition
 
 import (
 	"encoding/hex"
-	"fmt"
+	"errors"
 
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -23,7 +23,7 @@ func VerifiableSeedFromString(text string) (VerifiableSeed, error) {
 
 func VerifiableSeedFromBytes(data []byte) (VerifiableSeed, error) {
 	if len(data) != 48 {
-		return UndefVerifiableSeed, fmt.Errorf("invalid seed length")
+		return UndefVerifiableSeed, errors.New("invalid seed length")
 	}
 
 	s := UndefVerifiableSeed

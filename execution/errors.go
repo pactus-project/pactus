@@ -1,6 +1,7 @@
 package execution
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -9,7 +10,7 @@ import (
 
 // ErrBatchTransferNotAllowed is returned when a batch transaction is observed in a block
 // with a height lower than 4,800,000.
-var ErrBatchTransferNotAllowed = fmt.Errorf("batch transfer is not allowed")
+var ErrBatchTransferNotAllowed = errors.New("batch transfer is not allowed")
 
 // TransactionCommittedError is returned when an attempt is made
 // to replay a transaction that has already been committed.

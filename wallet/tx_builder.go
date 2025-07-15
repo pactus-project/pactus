@@ -1,7 +1,7 @@
 package wallet
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -139,10 +139,10 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 		trx = tx.NewWithdrawTx(m.lockTime, *m.sender, *m.receiver, m.amount, *m.fee, tx.WithMemo(m.memo))
 
 	case payload.TypeBatchTransfer:
-		return nil, fmt.Errorf("BatchTransfer is not implemented yet")
+		return nil, errors.New("BatchTransfer is not implemented yet")
 
 	case payload.TypeSortition:
-		return nil, fmt.Errorf("unable to build sortition transactions")
+		return nil, errors.New("unable to build sortition transactions")
 	}
 
 	return trx, nil
