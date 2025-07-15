@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
+	"errors"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/wallet"
@@ -57,7 +57,7 @@ func (s *walletServer) CreateWallet(_ context.Context,
 	req *pactus.CreateWalletRequest,
 ) (*pactus.CreateWalletResponse, error) {
 	if req.WalletName == "" {
-		return nil, fmt.Errorf("wallet name is required")
+		return nil, errors.New("wallet name is required")
 	}
 
 	mnemonic, err := s.walletManager.CreateWallet(
@@ -76,10 +76,10 @@ func (s *walletServer) RestoreWallet(_ context.Context,
 	req *pactus.RestoreWalletRequest,
 ) (*pactus.RestoreWalletResponse, error) {
 	if req.WalletName == "" {
-		return nil, fmt.Errorf("wallet name is required")
+		return nil, errors.New("wallet name is required")
 	}
 	if req.Mnemonic == "" {
-		return nil, fmt.Errorf("mnemonic is required")
+		return nil, errors.New("mnemonic is required")
 	}
 
 	if err := s.walletManager.RestoreWallet(

@@ -33,7 +33,7 @@ jobs:
         if: runner.os != 'Windows'
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23.5"
+          go-version: "1.24.5"
 
       - name: Install Dependencies (Linux)
         if: runner.os == 'Linux'

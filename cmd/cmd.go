@@ -342,7 +342,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 
 	case genesis.Localnet:
 		if numValidators < 4 {
-			return nil, "", fmt.Errorf("LocalNeed needs at least 4 validators")
+			return nil, "", errors.New("LocalNeed needs at least 4 validators")
 		}
 		genDoc := makeLocalGenesis(*wlt)
 		if err := genDoc.SaveToFile(genPath); err != nil {
@@ -391,7 +391,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 
 	valAddrsInfo := wlt.AllValidatorAddresses()
 	if len(valAddrsInfo) == 0 {
-		return nil, nil, fmt.Errorf("no validator addresses found in the wallet")
+		return nil, nil, errors.New("no validator addresses found in the wallet")
 	}
 
 	if len(valAddrsInfo) > 32 {
@@ -581,7 +581,7 @@ func MakeRewardAddresses(wlt *wallet.Wallet, valAddrsInfo []vault.AddressInfo,
 			addrInfo = wlt.AddressFromPath(firstBLSAddrPath.String())
 
 			if addrInfo == nil {
-				return nil, fmt.Errorf("unable to find a reward address in the wallet")
+				return nil, errors.New("unable to find a reward address in the wallet")
 			}
 		}
 
