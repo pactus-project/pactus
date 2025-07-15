@@ -9,6 +9,7 @@ package encoding
 import (
 	"bytes"
 	"io"
+	"math/rand/v2"
 	"reflect"
 	"strings"
 	"testing"
@@ -17,7 +18,6 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"golang.org/x/exp/rand"
 )
 
 // TestElementEncoding tests encode and decode for various element types.  This
@@ -387,7 +387,7 @@ func TestVarIntError(t *testing.T) {
 }
 
 func TestVarIntRandom(t *testing.T) {
-	randInt1 := uint64(rand.Int63())
+	randInt1 := uint64(rand.Int64())
 	var wBuf bytes.Buffer
 	err := WriteVarInt(&wBuf, randInt1)
 	require.NoError(t, err)

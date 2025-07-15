@@ -89,7 +89,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           go install github.com/gotk3/gotk3/gtk
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@v2.2.2
 
       - name: Build the GUI binary
         run: make build_gui

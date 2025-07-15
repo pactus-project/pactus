@@ -142,7 +142,7 @@ linters:
     staticcheck:
       checks:
         - all
-        - -ST1000
+        - -QF1008
     tagliatelle:
       case:
         rules:
