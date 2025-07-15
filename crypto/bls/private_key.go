@@ -2,7 +2,7 @@ package bls
 
 import (
 	"crypto/sha256"
-	"fmt"
+	"errors"
 	"math/big"
 	"strings"
 
@@ -54,7 +54,7 @@ func KeyGen(ikm, keyInfo []byte) (*PrivateKey, error) {
 	//
 
 	if len(ikm) < 32 {
-		return nil, fmt.Errorf("ikm is too short")
+		return nil, errors.New("ikm is too short")
 	}
 
 	secret := make([]byte, 0, len(ikm)+1)

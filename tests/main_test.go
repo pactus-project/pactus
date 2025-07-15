@@ -3,7 +3,6 @@ package tests
 import (
 	"context"
 	"fmt"
-	"os"
 	"testing"
 	"time"
 
@@ -215,6 +214,4 @@ func TestMain(m *testing.M) {
 	if total != tGenDoc.TotalSupply() {
 		panic(fmt.Sprintf("Some coins missed: %v", tGenDoc.TotalSupply()-total))
 	}
-
-	os.Exit(exitCode)
 }
