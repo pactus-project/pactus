@@ -1,7 +1,7 @@
 package store
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -47,7 +47,7 @@ func (m *MockStore) Block(height uint32) (*CommittedBlock, error) {
 		}, nil
 	}
 
-	return nil, fmt.Errorf("not found")
+	return nil, errors.New("not found")
 }
 
 func (m *MockStore) BlockHash(height uint32) hash.Hash {
@@ -118,7 +118,7 @@ func (m *MockStore) Transaction(txID tx.ID) (*CommittedTx, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("not found")
+	return nil, errors.New("not found")
 }
 
 func (m *MockStore) RecentTransaction(txID tx.ID) bool {
@@ -145,7 +145,7 @@ func (m *MockStore) Account(addr crypto.Address) (*account.Account, error) {
 		return a.Clone(), nil
 	}
 
-	return nil, fmt.Errorf("not found")
+	return nil, errors.New("not found")
 }
 
 func (m *MockStore) AccountByNumber(number int32) (*account.Account, error) {
@@ -155,7 +155,7 @@ func (m *MockStore) AccountByNumber(number int32) (*account.Account, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("not found")
+	return nil, errors.New("not found")
 }
 
 func (m *MockStore) UpdateAccount(addr crypto.Address, acc *account.Account) {
@@ -197,7 +197,7 @@ func (m *MockStore) ValidatorByNumber(num int32) (*validator.Validator, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("not found")
+	return nil, errors.New("not found")
 }
 
 func (m *MockStore) UpdateValidator(val *validator.Validator) {

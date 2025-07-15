@@ -3,6 +3,7 @@ package network
 import (
 	"context"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"time"
 
@@ -63,7 +64,7 @@ func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 	}
 	key, _, err := lp2pcrypto.GenerateEd25519Key(nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate private key")
+		return nil, errors.New("failed to generate private key")
 	}
 	bs, err := lp2pcrypto.MarshalPrivateKey(key)
 	if err != nil {

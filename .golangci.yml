@@ -189,20 +189,18 @@ linters:
         text: 'builtinShadow: shadowing of predeclared identifier: max'
       - path: (.+)\.go$
         text: 'builtinShadow: shadowing of predeclared identifier: len'
+      - linters:
+          - revive
+        path: 'util/*'
+        text: 'var-naming: avoid meaningless package names'
     paths:
       - third_party$
       - builtin$
       - examples$
+      - util/bip39/wordlists/
 formatters:
   enable:
     - gci
     - gofmt
     - gofumpt
     - goimports
-  exclusions:
-    generated: lax
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
-      - util/bip39/wordlists/

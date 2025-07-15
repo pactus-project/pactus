@@ -176,7 +176,7 @@ func TestMain(m *testing.M) {
 	waitForNewBlocks(8)
 
 	fmt.Println("Running tests...")
-	exitCode := m.Run()
+	m.Run()
 	// Commit more blocks, then new nodes can catch up and send sortition transactions
 
 	fmt.Println("Waiting to commit some blocks...")

@@ -418,10 +418,10 @@ func (cs *consensus) makeBlockCertificate(votes map[crypto.Address]*vote.Vote,
 // - A list of all validators' numbers eligible to vote in this step.
 // - A list of absentee validators' numbers who did not vote in this step.
 // - An aggregated signature generated from the signatures of participating validators.
-func (cs *consensus) signersInfo(votes map[crypto.Address]*vote.Vote) ([]int32, []int32, *bls.Signature) {
+func (cs *consensus) signersInfo(votes map[crypto.Address]*vote.Vote) (committers []int32, absentees []int32, aggSig *bls.Signature) {
 	vals := cs.validators
-	committers := make([]int32, len(vals))
-	absentees := make([]int32, 0)
+	committers = make([]int32, len(vals))
+	absentees = make([]int32, 0)
 	sigs := make([]*bls.Signature, 0)
 
 	for i, val := range vals {
@@ -435,7 +435,7 @@ func (cs *consensus) signersInfo(votes map[crypto.Address]*vote.Vote) ([]int32, 
 		committers[i] = val.Number()
 	}
 
-	aggSig := bls.SignatureAggregate(sigs...)
+	aggSig = bls.SignatureAggregate(sigs...)
 
 	return committers, absentees, aggSig
 }

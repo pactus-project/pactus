@@ -197,7 +197,7 @@ func TestCanDecodeUnlimtedBech32(t *testing.T) {
 	// basic check that an input of this length errors on regular Decode()
 	_, _, err := Decode(input)
 	if err == nil {
-		t.Fatalf("Test vector not appropriate")
+		t.Fatal("Test vector not appropriate")
 	}
 
 	// Try and decode it.
