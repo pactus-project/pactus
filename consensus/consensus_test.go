@@ -1,6 +1,7 @@
 package consensus
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 	"time"
@@ -163,7 +164,7 @@ func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensus, ha
 			return
 		}
 	}
-	require.NoError(t, fmt.Errorf("Not found"))
+	require.NoError(t, errors.New("Not found"))
 }
 
 func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
@@ -181,7 +182,6 @@ func (td *testData) shouldPublishProposal(t *testing.T, cons *consensus,
 			return m.Proposal
 		}
 	}
-	require.NoError(t, fmt.Errorf("Not found"))
 
 	return nil
 }
@@ -212,7 +212,6 @@ func (td *testData) shouldPublishQueryProposal(t *testing.T, cons *consensus, he
 
 		return
 	}
-	require.NoError(t, fmt.Errorf("Not found"))
 }
 
 func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height uint32, round int16) {
@@ -231,7 +230,6 @@ func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensus, height
 
 		return
 	}
-	require.NoError(t, fmt.Errorf("Not found"))
 }
 
 func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vote.Type, hash hash.Hash) *vote.Vote {
@@ -248,7 +246,6 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensus, voteType vo
 			}
 		}
 	}
-	require.NoError(t, fmt.Errorf("Not found"))
 
 	return nil
 }
