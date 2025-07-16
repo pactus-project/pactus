@@ -148,3 +148,93 @@ func hasSubcommand(cmd *cobra.Command, name string) bool {
 
 	return false
 }
+func TestNew_CommandProperties(t *testing.T) {
+	// Test that the New function creates a command with correct properties
+	root := &cobra.Command{}
+
+	interactiveCmd := New(root, nil)
+
+	require.Equal(t, "interactive", interactiveCmd.Use)
+	require.Equal(t, "Start pactus-shell in interactive mode.", interactiveCmd.Short)
+	require.NotNil(t, interactiveCmd.Run)
+}
+
+func TestNew_CommandName(t *testing.T) {
+	// Test that the command is named "interactive" not "shell"
+	root := &cobra.Command{}
+
+	interactiveCmd := New(root, nil)
+
+	require.Equal(t, "interactive", interactiveCmd.Name())
+	require.NotEqual(t, "shell", interactiveCmd.Name())
+}
+
+func TestNew_WithOptions(t *testing.T) {
+	// Test that New function accepts prompt options
+	root := &cobra.Command{}
+
+	// Test with some dummy options
+	interactiveCmd := New(root, nil,
+		prompt.OptionPrefix("test> "),
+		prompt.OptionShowCompletionAtStart(),
+	)
+
+	require.Equal(t, "interactive", interactiveCmd.Use)
+	require.NotNil(t, interactiveCmd.Run)
+}
+func TestNew_InteractiveCommandCreation(t *testing.T) {
+	// Test that the New function creates a command with the exact changed properties
+	root := &cobra.Command{}
+
+	interactiveCmd := New(root, nil)
+
+	// Verify the specific changed lines
+	require.Equal(t, "interactive", interactiveCmd.Use)
+	require.Equal(t, "Start pactus-shell in interactive mode.", interactiveCmd.Short)
+	require.NotNil(t, interactiveCmd.Run)
+
+	// Test that it's not the old values
+	require.NotEqual(t, "shell", interactiveCmd.Use)
+	require.NotEqual(t, "Start an interactive shell.", interactiveCmd.Short)
+}
+
+func TestNew_WithAllOptions(t *testing.T) {
+	root := &cobra.Command{}
+	refresh := func() *cobra.Command { return root }
+
+	interactiveCmd := New(root, refresh,
+		prompt.OptionPrefix("test> "),
+		prompt.OptionShowCompletionAtStart(),
+		prompt.OptionSuggestionBGColor(prompt.Black),
+		prompt.OptionSuggestionTextColor(prompt.Green),
+	)
+
+	// Verify the changed properties are correct
+	require.Equal(t, "interactive", interactiveCmd.Use)
+	require.Equal(t, "Start pactus-shell in interactive mode.", interactiveCmd.Short)
+	require.NotNil(t, interactiveCmd.Run)
+}
+
+func TestNew_CommandNameNotShell(t *testing.T) {
+	// Explicitly test that the command is NOT named "shell" anymore
+	root := &cobra.Command{}
+
+	interactiveCmd := New(root, nil)
+
+	// This ensures we're testing the actual change
+	require.NotEqual(t, "shell", interactiveCmd.Name())
+	require.Equal(t, "interactive", interactiveCmd.Name())
+}
+
+func TestChangedLinesExecution(t *testing.T) {
+	root := &cobra.Command{}
+
+	cmd := New(root, nil)
+
+	// Verify the exact changes
+	require.Equal(t, "interactive", cmd.Use)                               // Line 36
+	require.Equal(t, "Start pactus-shell in interactive mode.", cmd.Short) // Line 37
+
+	require.NotEqual(t, "shell", cmd.Use)
+	require.NotEqual(t, "Start an interactive shell.", cmd.Short)
+}
