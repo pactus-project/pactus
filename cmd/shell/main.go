@@ -23,7 +23,9 @@ const (
 
 var _prefix string
 
-func main() {
+// createRootCommand creates and configures the root command with all subcommands
+// This function contains all the logic from main() but is testable
+func createRootCommand() *cobra.Command {
 	var (
 		serverAddr string
 		username   string
@@ -53,6 +55,7 @@ func main() {
 	interactive.Flags().StringVar(&serverAddr, "server-addr", defaultServerAddr, "gRPC server address")
 	interactive.Flags().StringVar(&username, "auth-username", "",
 		"username for gRPC basic authentication")
+
 	interactive.Flags().StringVar(&password, "auth-password", "",
 		"username for gRPC basic authentication")
 
@@ -77,6 +80,7 @@ func main() {
 		cobra.PersistentFlags().Lookup("server-addr").DefValue = defaultServerAddr
 		_ = cobra.PersistentFlags().Lookup("response-format").Value.Set(defaultResponseFormat)
 		cobra.PersistentFlags().Lookup("response-format").DefValue = defaultResponseFormat
+
 		return cobra
 	}
 
@@ -90,6 +94,12 @@ func main() {
 	interactive.Short = "Start pactus-shell in interactive mode"
 
 	rootCmd.AddCommand(interactive)
+
+	return rootCmd
+}
+
+func main() {
+	rootCmd := createRootCommand()
 
 	err := rootCmd.Execute()
 	if err != nil {
