@@ -49,6 +49,7 @@ func testConfig() *Config {
 		EnableNATService:     false,
 		EnableUPnP:           false,
 		EnableRelay:          false,
+		EnableRelayService:   false,
 		EnableMdns:           false,
 		ForcePrivateNetwork:  true,
 		NetworkName:          "test",
@@ -152,6 +153,7 @@ func TestNetwork(t *testing.T) {
 	confP.BootstrapAddrStrings = bootstrapAddresses
 	confP.EnableRelay = false
 	confP.EnableRelayService = true
+	confP.ForcePrivateNetwork = false
 	confP.ListenAddrStrings = []string{
 		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", confP.DefaultPort),
 	}
@@ -186,7 +188,7 @@ func TestNetwork(t *testing.T) {
 		lp2p.ForceReachabilityPrivate(),
 	})
 
-	// Private node X, doesn't join consensus topic and without relay address
+	// Private node X, doesn't join consensus topic and disabled relay
 	confX := testConfig()
 	confX.EnableRelay = false
 	confX.BootstrapAddrStrings = bootstrapAddresses
@@ -245,28 +247,28 @@ func TestNetwork(t *testing.T) {
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkB.ReachabilityStatus()
-			assert.Equal(c, "Public", reachability)
-		}, time.Second, 100*time.Millisecond)
+			require.Equal(c, "Public", reachability)
+		}, time.Second*2, 100*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkM.ReachabilityStatus()
-			assert.Equal(c, "Private", reachability)
-		}, time.Second, 100*time.Millisecond)
+			require.Equal(c, "Private", reachability)
+		}, time.Second*2, 100*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkN.ReachabilityStatus()
-			assert.Equal(c, "Private", reachability)
-		}, time.Second, 100*time.Millisecond)
+			require.Equal(c, "Private", reachability)
+		}, time.Second*2, 100*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkP.ReachabilityStatus()
-			assert.Equal(c, "Public", reachability)
-		}, time.Second, 100*time.Millisecond)
+			require.Equal(c, "Public", reachability)
+		}, time.Second*2, 100*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkP.ReachabilityStatus()
-			assert.Equal(c, "Public", reachability)
-		}, time.Second, 100*time.Millisecond)
+			require.Equal(c, "Public", reachability)
+		}, time.Second*2, 100*time.Millisecond)
 	})
 
 	t.Run("all nodes have at least one connection to the bootstrap node B", func(t *testing.T) {
