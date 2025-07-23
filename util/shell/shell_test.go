@@ -183,6 +183,7 @@ func TestNew_WithOptions(t *testing.T) {
 	require.Equal(t, "interactive", interactiveCmd.Use)
 	require.NotNil(t, interactiveCmd.Run)
 }
+
 func TestNew_InteractiveCommandCreation(t *testing.T) {
 	// Test that the New function creates a command with the exact changed properties
 	root := &cobra.Command{}
