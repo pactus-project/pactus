@@ -32,7 +32,7 @@ func TestCreateRootCommand(t *testing.T) {
 	require.Equal(t, "interactive", interactiveCmd.Use)
 	require.Equal(t, "Start pactus-shell in interactive mode", interactiveCmd.Short)
 
-	// Verify flags were set up 
+	// Verify flags were set up
 	serverAddrFlag := interactiveCmd.Flags().Lookup("server-addr")
 	require.NotNil(t, serverAddrFlag)
 	require.Equal(t, defaultServerAddr, serverAddrFlag.DefValue)
@@ -43,7 +43,7 @@ func TestCreateRootCommand(t *testing.T) {
 	passwordFlag := interactiveCmd.Flags().Lookup("auth-password")
 	require.NotNil(t, passwordFlag)
 
-	// Verify PreRun and PersistentPreRun are set 
+	// Verify PreRun and PersistentPreRun are set
 	require.NotNil(t, interactiveCmd.PreRun)
 	require.NotNil(t, interactiveCmd.PersistentPreRun)
 
@@ -65,7 +65,6 @@ func TestCreateRootCommand(t *testing.T) {
 		}
 	}
 	require.NotNil(t, clearCmd)
-
 
 	rootCmd.SetArgs([]string{"--help"})
 	err := rootCmd.Execute()
