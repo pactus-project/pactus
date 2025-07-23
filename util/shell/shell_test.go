@@ -148,6 +148,7 @@ func hasSubcommand(cmd *cobra.Command, name string) bool {
 
 	return false
 }
+
 func TestNew_CommandProperties(t *testing.T) {
 	// Test that the New function creates a command with correct properties
 	root := &cobra.Command{}
@@ -232,8 +233,8 @@ func TestChangedLinesExecution(t *testing.T) {
 	cmd := New(root, nil)
 
 	// Verify the exact changes
-	require.Equal(t, "interactive", cmd.Use)                               // Line 36
-	require.Equal(t, "Start pactus-shell in interactive mode.", cmd.Short) // Line 37
+	require.Equal(t, "interactive", cmd.Use)
+	require.Equal(t, "Start pactus-shell in interactive mode.", cmd.Short)
 
 	require.NotEqual(t, "shell", cmd.Use)
 	require.NotEqual(t, "Start an interactive shell.", cmd.Short)
