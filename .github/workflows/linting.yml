@@ -21,12 +21,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: golangci-lint Check
+      - name: Check linting and formatting
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.2.2
 
-      - name: Check Proto Files
+      - name: Check proto files
         run: |
           go install github.com/bufbuild/buf/cmd/buf@v1.55
           make proto-check
