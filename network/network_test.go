@@ -153,7 +153,6 @@ func TestNetwork(t *testing.T) {
 	confP.BootstrapAddrStrings = bootstrapAddresses
 	confP.EnableRelay = false
 	confP.EnableRelayService = true
-	confP.ForcePrivateNetwork = false
 	confP.ListenAddrStrings = []string{
 		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", confP.DefaultPort),
 	}
