@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/require"
 )
+
 func TestCreateRootCommand(t *testing.T) {
 	// This executes the ENTIRE main() logic including all changed lines
 	rootCmd := createRootCommand()
