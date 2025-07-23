@@ -1,8 +1,6 @@
 package state
 
 import (
-	"errors"
-
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
@@ -25,10 +23,6 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 		}
 
 		if check {
-			if err := st.checkEd25519Fork(trx); err != nil {
-				return err
-			}
-
 			err := execution.CheckAndExecute(trx, sbx, true)
 			if err != nil {
 				return err
@@ -54,19 +48,6 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 	acc := sbx.Account(crypto.TreasuryAddress)
 	acc.AddToBalance(accumulatedFee)
 	sbx.UpdateAccount(crypto.TreasuryAddress, acc)
-
-	return nil
-}
-
-func (st *state) checkEd25519Fork(trx *tx.Tx) error {
-	// TODO: remove me after enabling Ed255519
-	if trx.Payload().Signer().Type() == crypto.AddressTypeEd25519Account {
-		if st.genDoc.ChainType().IsMainnet() {
-			if st.lastInfo.BlockHeight() < 2_320_000 {
-				return errors.New("ed255519 not supported yet")
-			}
-		}
-	}
 
 	return nil
 }
