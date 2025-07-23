@@ -59,6 +59,7 @@ func TestCreateRootCommand(t *testing.T) {
 	for _, cmd := range rootCmd.Commands() {
 		if cmd.Use == "clear" {
 			clearCmd = cmd
+
 			break
 		}
 	}
@@ -78,7 +79,7 @@ func TestCreateRootCommand(t *testing.T) {
 	require.Equal(t, "interactive", rootCmd.Use)
 }
 
-// TestLivePrefix tests the livePrefix function
+// TestLivePrefix tests the livePrefix function.
 func TestLivePrefix(t *testing.T) {
 	_prefix = "test@localhost > "
 
@@ -100,7 +101,7 @@ func TestClearScreenCommand(t *testing.T) {
 	clearCmd.Run(nil, nil)
 }
 
-// TestSetAuthContext tests the setAuthContext function
+// TestSetAuthContext tests the setAuthContext function.
 func TestSetAuthContext(t *testing.T) {
 	rootCmd := &cobra.Command{}
 	rootCmd.SetContext(context.Background())
