@@ -126,7 +126,7 @@ func TestConstants(t *testing.T) {
 
 // TestClsFunction tests the cls function doesn't panic
 func TestClsFunction(t *testing.T) {
-	assert.NotPanics(t, func() {
+	require.NotPanics(t, func() {
 		cls()
 	}, "calling cls() shoul not panic")
 }
