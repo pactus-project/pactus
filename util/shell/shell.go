@@ -21,7 +21,7 @@ type lexer struct {
 	stdin   *term.State
 }
 
-// New creates a Cobra CLI command named "shell" which runs an interactive shell prompt for the root command.
+// New creates a Cobra CLI command named "interactive" which runs an interactive shell prompt for the root command.
 func New(root *cobra.Command, refresh func() *cobra.Command, opts ...prompt.Option) *cobra.Command {
 	lexer := &lexer{
 		root:    root,
@@ -33,8 +33,8 @@ func New(root *cobra.Command, refresh func() *cobra.Command, opts ...prompt.Opti
 	opts = append(opts, prompt.OptionPrefix(prefix), prompt.OptionShowCompletionAtStart())
 
 	return &cobra.Command{
-		Use:   "shell",
-		Short: "Start an interactive shell.",
+		Use:   "interactive",
+		Short: "Start pactus-shell in interactive mode.",
 		Run: func(cmd *cobra.Command, _ []string) {
 			lexer.saveStdin()
 

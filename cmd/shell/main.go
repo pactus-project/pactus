@@ -23,7 +23,9 @@ const (
 
 var _prefix string
 
-func main() {
+// createRootCommand creates and configures the root command with all subcommands
+// This function contains all the logic from main() but is testable.
+func createRootCommand() *cobra.Command {
 	var (
 		serverAddr string
 		username   string
@@ -31,13 +33,13 @@ func main() {
 	)
 
 	rootCmd := &cobra.Command{
-		Use:          "shell",
+		Use:          "interactive",
 		Short:        "Pactus Shell",
 		SilenceUsage: true,
 		Long:         "pactus-shell is a command line tool for interacting with the Pactus blockchain using gRPC",
 	}
 
-	shell := shell.New(rootCmd, nil,
+	interactive := shell.New(rootCmd, nil,
 		prompt.OptionSuggestionBGColor(prompt.Black),
 		prompt.OptionSuggestionTextColor(prompt.Green),
 		prompt.OptionDescriptionBGColor(prompt.Black),
@@ -50,22 +52,22 @@ func main() {
 		fs.StringVar(&password, namer("auth-password"), "", "password for gRPC basic authentication")
 	})
 
-	shell.Flags().StringVar(&serverAddr, "server-addr", defaultServerAddr, "gRPC server address")
-	shell.Flags().StringVar(&username, "auth-username", "",
+	interactive.Flags().StringVar(&serverAddr, "server-addr", defaultServerAddr, "gRPC server address")
+	interactive.Flags().StringVar(&username, "auth-username", "",
 		"username for gRPC basic authentication")
 
-	shell.Flags().StringVar(&password, "auth-password", "",
+	interactive.Flags().StringVar(&password, "auth-password", "",
 		"username for gRPC basic authentication")
 
-	shell.PreRun = func(_ *cobra.Command, _ []string) {
+	interactive.PreRun = func(_ *cobra.Command, _ []string) {
 		cls()
-		cmd.PrintInfoMsgf("Welcome to PactusBlockchain shell\n\n- Home: https://pactus.org\n- " +
+		cmd.PrintInfoMsgf("Welcome to PactusBlockchain interactive mode\n\n- Home: https://pactus.org\n- " +
 			"Docs: https://docs.pactus.org")
 		cmd.PrintLine()
 		_prefix = fmt.Sprintf("pactus@%s > ", serverAddr)
 	}
 
-	shell.PersistentPreRun = func(cmd *cobra.Command, _ []string) {
+	interactive.PersistentPreRun = func(cmd *cobra.Command, _ []string) {
 		setAuthContext(cmd, username, password)
 	}
 
@@ -76,7 +78,6 @@ func main() {
 	changeDefaultParameters := func(cobra *cobra.Command) *cobra.Command {
 		_ = cobra.PersistentFlags().Lookup("server-addr").Value.Set(defaultServerAddr)
 		cobra.PersistentFlags().Lookup("server-addr").DefValue = defaultServerAddr
-
 		_ = cobra.PersistentFlags().Lookup("response-format").Value.Set(defaultResponseFormat)
 		cobra.PersistentFlags().Lookup("response-format").DefValue = defaultResponseFormat
 
@@ -89,7 +90,17 @@ func main() {
 	rootCmd.AddCommand(changeDefaultParameters(pb.WalletClientCommand()))
 	rootCmd.AddCommand(changeDefaultParameters(pb.UtilsClientCommand()))
 	rootCmd.AddCommand(clearScreen())
-	rootCmd.AddCommand(shell)
+
+	interactive.Use = "interactive"
+	interactive.Short = "Start pactus-shell in interactive mode"
+
+	rootCmd.AddCommand(interactive)
+
+	return rootCmd
+}
+
+func main() {
+	rootCmd := createRootCommand()
 
 	err := rootCmd.Execute()
 	if err != nil {
