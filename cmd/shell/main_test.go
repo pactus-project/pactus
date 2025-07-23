@@ -12,7 +12,7 @@ func TestCreateRootCommand(t *testing.T) {
 	// This executes the ENTIRE main() logic including all changed lines
 	rootCmd := createRootCommand()
 
-	// Verify the root command properties 
+	// Verify the root command properties
 	require.Equal(t, "interactive", rootCmd.Use)
 	require.Equal(t, "Pactus Shell", rootCmd.Short)
 	require.Contains(t, rootCmd.Long, "pactus-shell is a command line tool")
@@ -89,7 +89,7 @@ func TestLivePrefix(t *testing.T) {
 	require.Equal(t, "test@localhost > ", prefix)
 }
 
-// TestClearScreenCommand tests the clearScreen function
+// TestClearScreenCommand tests the clearScreen function.
 func TestClearScreenCommand(t *testing.T) {
 	clearCmd := clearScreen()
 
@@ -118,13 +118,13 @@ func TestSetAuthContext(t *testing.T) {
 	require.NotEqual(t, originalCtx, rootCmd.Context())
 }
 
-// TestConstants tests the defined constants
+// TestConstants tests the defined constants.
 func TestConstants(t *testing.T) {
 	require.Equal(t, "localhost:50051", defaultServerAddr)
 	require.Equal(t, "prettyjson", defaultResponseFormat)
 }
 
-// TestClsFunction tests the cls function doesn't panic
+// TestClsFunction tests the cls function doesn't panic.
 func TestClsFunction(t *testing.T) {
 	require.NotPanics(t, func() {
 		cls()
