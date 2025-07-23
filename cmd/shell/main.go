@@ -24,7 +24,7 @@ const (
 var _prefix string
 
 // createRootCommand creates and configures the root command with all subcommands
-// This function contains all the logic from main() but is testable
+// This function contains all the logic from main() but is testable.
 func createRootCommand() *cobra.Command {
 	var (
 		serverAddr string
