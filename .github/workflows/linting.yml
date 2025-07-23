@@ -29,4 +29,4 @@ jobs:
       - name: Check Proto Files
         run: |
           go install github.com/bufbuild/buf/cmd/buf@v1.55
-          buf lint
+          make proto-check
