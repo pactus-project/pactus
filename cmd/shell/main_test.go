@@ -23,6 +23,7 @@ func TestCreateRootCommand(t *testing.T) {
 	for _, cmd := range rootCmd.Commands() {
 		if cmd.Use == "interactive" {
 			interactiveCmd = cmd
+
 			break
 		}
 	}
@@ -125,6 +126,7 @@ func TestConstants(t *testing.T) {
 
 // TestClsFunction tests the cls function doesn't panic
 func TestClsFunction(t *testing.T) {
-	// Test that cls() doesn't panic
-	cls()
+	assert.NotPanics(t, func() {
+		cls()
+	}, "calling cls() shoul not panic")
 }
