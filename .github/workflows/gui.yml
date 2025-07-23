@@ -96,5 +96,6 @@ jobs:
 
       - name: Lint check (Linux only)
         if: runner.os == 'Linux'
-        run: |
-          BUILD_TAG=gtk make check
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.2.2
