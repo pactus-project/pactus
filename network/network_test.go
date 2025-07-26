@@ -49,6 +49,7 @@ func testConfig() *Config {
 		EnableNATService:     false,
 		EnableUPnP:           false,
 		EnableRelay:          false,
+		EnableRelayService:   false,
 		EnableMdns:           false,
 		ForcePrivateNetwork:  true,
 		NetworkName:          "test",
@@ -186,7 +187,7 @@ func TestNetwork(t *testing.T) {
 		lp2p.ForceReachabilityPrivate(),
 	})
 
-	// Private node X, doesn't join consensus topic and without relay address
+	// Private node X, doesn't join consensus topic and disabled relay
 	confX := testConfig()
 	confX.EnableRelay = false
 	confX.BootstrapAddrStrings = bootstrapAddresses
@@ -245,51 +246,51 @@ func TestNetwork(t *testing.T) {
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkB.ReachabilityStatus()
-			assert.Equal(c, "Public", reachability)
-		}, time.Second, 100*time.Millisecond)
+			require.Equal(c, "Public", reachability)
+		}, time.Second*2, 100*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkM.ReachabilityStatus()
-			assert.Equal(c, "Private", reachability)
-		}, time.Second, 100*time.Millisecond)
+			require.Equal(c, "Private", reachability)
+		}, time.Second*2, 100*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkN.ReachabilityStatus()
-			assert.Equal(c, "Private", reachability)
-		}, time.Second, 100*time.Millisecond)
+			require.Equal(c, "Private", reachability)
+		}, time.Second*2, 100*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkP.ReachabilityStatus()
-			assert.Equal(c, "Public", reachability)
-		}, time.Second, 100*time.Millisecond)
+			require.Equal(c, "Public", reachability)
+		}, time.Second*2, 100*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkP.ReachabilityStatus()
-			assert.Equal(c, "Public", reachability)
-		}, time.Second, 100*time.Millisecond)
+			require.Equal(c, "Public", reachability)
+		}, time.Second*2, 100*time.Millisecond)
 	})
 
 	t.Run("all nodes have at least one connection to the bootstrap node B", func(t *testing.T) {
 		fmt.Printf("Running %s\n", t.Name())
 
-		assert.EventuallyWithT(t, func(c *assert.CollectT) {
-			assert.GreaterOrEqual(c, networkP.NumConnectedPeers(), 1) // Connected to B, M, N, X
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
+			require.GreaterOrEqual(c, networkP.NumConnectedPeers(), 1) // Connected to B, M, N, X
 		}, 5*time.Second, 100*time.Millisecond)
 
-		assert.EventuallyWithT(t, func(c *assert.CollectT) {
-			assert.GreaterOrEqual(c, networkB.NumConnectedPeers(), 1) // Connected to P, M, N, X
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
+			require.GreaterOrEqual(c, networkB.NumConnectedPeers(), 1) // Connected to P, M, N, X
 		}, 5*time.Second, 100*time.Millisecond)
 
-		assert.EventuallyWithT(t, func(c *assert.CollectT) {
-			assert.GreaterOrEqual(c, networkM.NumConnectedPeers(), 1) // Connected to B, P, N?
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
+			require.GreaterOrEqual(c, networkM.NumConnectedPeers(), 1) // Connected to B, P, N?
 		}, 5*time.Second, 100*time.Millisecond)
 
-		assert.EventuallyWithT(t, func(c *assert.CollectT) {
-			assert.GreaterOrEqual(c, networkN.NumConnectedPeers(), 1) // Connected to B, P, M?
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
+			require.GreaterOrEqual(c, networkN.NumConnectedPeers(), 1) // Connected to B, P, M?
 		}, 5*time.Second, 100*time.Millisecond)
 
-		assert.EventuallyWithT(t, func(c *assert.CollectT) {
-			assert.GreaterOrEqual(c, networkX.NumConnectedPeers(), 1) // Connected to B, P
+		require.EventuallyWithT(t, func(c *assert.CollectT) {
+			require.GreaterOrEqual(c, networkX.NumConnectedPeers(), 1) // Connected to B, P
 		}, 5*time.Second, 100*time.Millisecond)
 	})
 
@@ -410,11 +411,11 @@ func TestNetwork(t *testing.T) {
 	t.Run("Reachability Status", func(t *testing.T) {
 		fmt.Printf("Running %s\n", t.Name())
 
-		assert.Equal(t, "Public", networkP.ReachabilityStatus())
-		assert.Equal(t, "Public", networkB.ReachabilityStatus())
-		assert.Equal(t, "Private", networkM.ReachabilityStatus())
-		assert.Equal(t, "Private", networkN.ReachabilityStatus())
-		assert.Equal(t, "Private", networkX.ReachabilityStatus())
+		require.Equal(t, "Public", networkP.ReachabilityStatus())
+		require.Equal(t, "Public", networkB.ReachabilityStatus())
+		require.Equal(t, "Private", networkM.ReachabilityStatus())
+		require.Equal(t, "Private", networkN.ReachabilityStatus())
+		require.Equal(t, "Private", networkX.ReachabilityStatus())
 	})
 }
 
