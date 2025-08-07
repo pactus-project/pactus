@@ -96,10 +96,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
 	eventPipe := pipeline.MockingPipeline[any]()
-	stateConf := &state.Config{
-		FoundationAddress: []crypto.Address{crypto.TreasuryAddress},
-		RewardForkHeight:  4_888_000,
-	}
+	stateConf := &state.Config{}
 	stateX, err := state.LoadOrNewState(stateConf, genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
 		store.MockingStore(ts), txPool, eventPipe)
 	require.NoError(t, err)

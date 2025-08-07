@@ -34,6 +34,9 @@ var (
 
 	//go:embed banned_addrs.json
 	bannedAddrBytes []byte
+
+	//go:embed foundation_testnet.json
+	foundationTestnetBytes []byte
 )
 
 type Config struct {
@@ -198,6 +201,21 @@ func DefaultConfigTestnet() *Config {
 	conf.JSONRPC.Listen = "[::]:8545"
 	conf.JSONRPC.Origins = []string{}
 	conf.HTML.EnablePprof = false
+	conf.State.FoundationAddress = []crypto.Address{}
+	conf.State.RewardForkHeight = 3_680_000
+
+	foundationAddressList := make([]string, 0)
+	if err := json.Unmarshal(foundationTestnetBytes, &foundationAddressList); err != nil {
+		panic(err)
+	}
+
+	for _, addrStr := range foundationAddressList {
+		addr, err := crypto.AddressFromString(addrStr)
+		if err != nil {
+			panic(err)
+		}
+		conf.State.FoundationAddress = append(conf.State.FoundationAddress, addr)
+	}
 
 	return conf
 }

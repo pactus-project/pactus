@@ -12,6 +12,6 @@ type Config struct {
 func DefaultConfig() *Config {
 	return &Config{
 		FoundationAddress: []crypto.Address{},
-		RewardForkHeight:  0, // 4_888_000,
+		RewardForkHeight:  0,
 	}
 }
