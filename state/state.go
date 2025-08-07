@@ -326,9 +326,9 @@ func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amoun
 		}
 
 		return tx.NewSubsidyTx(lockTime, recipients)
-	} else {
-		return tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
 	}
+
+	return tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
 }
 
 func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address) (*block.Block, error) {
