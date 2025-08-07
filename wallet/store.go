@@ -78,6 +78,10 @@ func (s *Store) ValidateCRC() error {
 }
 
 func (s *Store) UpgradeWallet(walletPath string) error {
+	if !s.Network.IsMainnet() {
+		crypto.ToTestnetHRP()
+	}
+
 	oldVersion := s.Version
 	switch oldVersion {
 	case Version1:
