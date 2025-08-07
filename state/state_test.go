@@ -76,7 +76,11 @@ func setup(t *testing.T) *testData {
 	// First validator is in the committee
 	valKeys := []*bls.ValidatorKey{genValKeys[0], ts.RandValKey()}
 	eventPipe := pipeline.MockingPipeline[any]()
-	st1, err := LoadOrNewState(gnDoc, valKeys, mockStore, mockTxPool, eventPipe)
+	conf := &Config{
+		FoundationAddress: []crypto.Address{ts.RandAccAddress()},
+		RewardForkHeight:  4_888_000,
+	}
+	st1, err := LoadOrNewState(conf, gnDoc, valKeys, mockStore, mockTxPool, eventPipe)
 	require.NoError(t, err)
 
 	state, _ := st1.(*state)
@@ -541,7 +545,11 @@ func TestLoadState(t *testing.T) {
 
 	// Load last state info
 	eventPipe := pipeline.MockingPipeline[any]()
-	newState, err := LoadOrNewState(td.state.genDoc, td.state.valKeys,
+	conf := &Config{
+		FoundationAddress: []crypto.Address{td.RandAccAddress()},
+		RewardForkHeight:  4_888_000,
+	}
+	newState, err := LoadOrNewState(conf, td.state.genDoc, td.state.valKeys,
 		td.state.store, td.commonTxPool, eventPipe)
 	require.NoError(t, err)
 

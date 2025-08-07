@@ -219,19 +219,19 @@ func TestCalculatingConsumption(t *testing.T) {
 	pub4, prv4 := td.RandBLSKeyPair()
 
 	// Generate different types of transactions
-	trx10 := tx.NewSubsidyTx(1, td.RandAccAddress(), 1e9)
+	trx10 := tx.NewSubsidyTxLegacy(1, td.RandAccAddress(), 1e9)
 	trx11 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv1))
 	trx12 := td.makeValidBondTx(testsuite.TransactionWithEd25519Signer(prv2))
 	trx13 := td.makeValidUnbondTx(testsuite.TransactionWithBLSSigner(prv4))
-	trx20 := tx.NewSubsidyTx(2, td.RandAccAddress(), 1e9)
+	trx20 := tx.NewSubsidyTxLegacy(2, td.RandAccAddress(), 1e9)
 	trx21 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv1))
-	trx30 := tx.NewSubsidyTx(3, td.RandAccAddress(), 1e9)
+	trx30 := tx.NewSubsidyTxLegacy(3, td.RandAccAddress(), 1e9)
 	trx31 := td.makeValidBondTx(testsuite.TransactionWithBLSSigner(prv3))
 	trx32 := td.makeValidSortitionTx(testsuite.TransactionWithBLSSigner(prv4))
-	trx40 := tx.NewSubsidyTx(4, td.RandAccAddress(), 1e9)
+	trx40 := tx.NewSubsidyTxLegacy(4, td.RandAccAddress(), 1e9)
 	trx41 := td.makeValidUnbondTx(testsuite.TransactionWithBLSSigner(prv3))
 	trx42 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
-	trx50 := tx.NewSubsidyTx(5, td.RandAccAddress(), 1e9)
+	trx50 := tx.NewSubsidyTxLegacy(5, td.RandAccAddress(), 1e9)
 	trx51 := td.makeValidWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
 	trx52 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
 	trx53 := td.makeValidBatchTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
@@ -403,7 +403,7 @@ func TestAddSubsidyTransactions(t *testing.T) {
 
 		randHeight := td.RandHeight()
 		td.sbx.TestStore.AddTestBlock(randHeight)
-		trx := tx.NewSubsidyTx(randHeight, td.RandAccAddress(), 1e9)
+		trx := tx.NewSubsidyTxLegacy(randHeight, td.RandAccAddress(), 1e9)
 
 		err := td.pool.AppendTx(trx)
 		assert.ErrorIs(t, err, execution.LockTimeExpiredError{
@@ -414,7 +414,7 @@ func TestAddSubsidyTransactions(t *testing.T) {
 	t.Run("valid transaction: Should add it to the pool", func(t *testing.T) {
 		td := setup(t, nil)
 
-		trx := tx.NewSubsidyTx(td.RandHeight(), td.RandAccAddress(), 1e9)
+		trx := tx.NewSubsidyTxLegacy(td.RandHeight(), td.RandAccAddress(), 1e9)
 
 		err := td.pool.AppendTx(trx)
 		assert.NoError(t, err)
@@ -424,7 +424,7 @@ func TestAddSubsidyTransactions(t *testing.T) {
 func TestRecheckTransactions(t *testing.T) {
 	td := setup(t, nil)
 
-	trx := tx.NewSubsidyTx(td.RandHeight(), td.RandAccAddress(), 1e9)
+	trx := tx.NewSubsidyTxLegacy(td.RandHeight(), td.RandAccAddress(), 1e9)
 
 	err := td.pool.AppendTx(trx)
 	assert.NoError(t, err)

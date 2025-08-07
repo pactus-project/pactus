@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/network"
+	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/txpool"
@@ -36,20 +37,21 @@ var (
 )
 
 type Config struct {
-	Node      *NodeConfig       `toml:"node"`
-	Store     *store.Config     `toml:"store"`
-	Network   *network.Config   `toml:"network"`
-	Sync      *sync.Config      `toml:"sync"`
-	TxPool    *txpool.Config    `toml:"tx_pool"`
-	Consensus *consensus.Config `toml:"-"`
-	Logger    *logger.Config    `toml:"logger"`
-	GRPC      *grpc.Config      `toml:"grpc"`
-	JSONRPC   *jsonrpc.Config   `toml:"jsonrpc"`
-	HTTP      *http.Config      `toml:"http"`
-	HTML      *html.Config      `toml:"html"`
-	ZeroMq    *zmq.Config       `toml:"zeromq"`
+	Node    *NodeConfig     `toml:"node"`
+	Store   *store.Config   `toml:"store"`
+	Network *network.Config `toml:"network"`
+	Sync    *sync.Config    `toml:"sync"`
+	TxPool  *txpool.Config  `toml:"tx_pool"`
+	Logger  *logger.Config  `toml:"logger"`
+	GRPC    *grpc.Config    `toml:"grpc"`
+	JSONRPC *jsonrpc.Config `toml:"jsonrpc"`
+	HTTP    *http.Config    `toml:"http"`
+	HTML    *html.Config    `toml:"html"`
+	ZeroMq  *zmq.Config     `toml:"zeromq"`
 
-	WalletManager *wallet.Config `toml:"-"`
+	Consensus     *consensus.Config `toml:"-"`
+	State         *state.Config     `toml:"-"`
+	WalletManager *wallet.Config    `toml:"-"`
 }
 
 type BootstrapInfo struct {
@@ -92,6 +94,7 @@ func (conf *NodeConfig) BasicCheck() error {
 func defaultConfig() *Config {
 	conf := &Config{
 		Node:          DefaultNodeConfig(),
+		State:         state.DefaultConfig(),
 		Store:         store.DefaultConfig(),
 		Network:       network.DefaultConfig(),
 		Sync:          sync.DefaultConfig(),

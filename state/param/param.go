@@ -19,6 +19,7 @@ type Params struct {
 	SortitionInterval         uint32
 	MinimumStake              amount.Amount
 	MaximumStake              amount.Amount
+	FoundationReward          amount.Amount
 }
 
 func FromGenesis(genDoc *genesis.GenesisParams) *Params {
@@ -37,6 +38,7 @@ func FromGenesis(genDoc *genesis.GenesisParams) *Params {
 
 		// chain parameters
 		MaxTransactionsPerBlock: 1000,
+		FoundationReward:        amount.Amount(300_000_000),
 	}
 }
 

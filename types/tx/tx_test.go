@@ -205,7 +205,7 @@ func TestSubsidyTx(t *testing.T) {
 	pub, prv := ts.RandEd25519KeyPair()
 
 	t.Run("Has signature", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500)
+		trx := tx.NewSubsidyTxLegacy(ts.RandHeight(), pub.AccountAddress(), 2500)
 		sig := prv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
 
@@ -216,7 +216,7 @@ func TestSubsidyTx(t *testing.T) {
 	})
 
 	t.Run("Has public key", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500)
+		trx := tx.NewSubsidyTxLegacy(ts.RandHeight(), pub.AccountAddress(), 2500)
 		trx.SetPublicKey(pub)
 
 		err := trx.BasicCheck()
@@ -226,7 +226,7 @@ func TestSubsidyTx(t *testing.T) {
 	})
 
 	t.Run("Strip public key", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500)
+		trx := tx.NewSubsidyTxLegacy(ts.RandHeight(), pub.AccountAddress(), 2500)
 		trx.StripPublicKey()
 
 		err := trx.BasicCheck()

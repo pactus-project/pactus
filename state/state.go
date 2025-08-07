@@ -37,6 +37,7 @@ import (
 type state struct {
 	lk sync.RWMutex
 
+	config          *Config
 	valKeys         []*bls.ValidatorKey
 	genDoc          *genesis.Genesis
 	store           store.Store
@@ -53,6 +54,7 @@ type state struct {
 }
 
 func LoadOrNewState(
+	conf *Config,
 	genDoc *genesis.Genesis,
 	valKeys []*bls.ValidatorKey,
 	store store.Store,
@@ -60,6 +62,7 @@ func LoadOrNewState(
 	eventPipe pipeline.Pipeline[any],
 ) (Facade, error) {
 	state := &state{
+		config:          conf,
 		valKeys:         valKeys,
 		genDoc:          genDoc,
 		txPool:          txPool,
@@ -308,9 +311,24 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 
 func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amount.Amount) *tx.Tx {
 	lockTime := st.lastInfo.BlockHeight() + 1
-	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
+	if st.config.RewardForkHeight > 0 {
+		addressIndex := int(lockTime) % len(st.config.FoundationAddress)
+		foundationAddress := st.config.FoundationAddress[addressIndex]
+		recipients := []payload.BatchRecipient{
+			{
+				To:     foundationAddress,
+				Amount: st.params.FoundationReward,
+			},
+			{
+				To:     rewardAddr,
+				Amount: st.params.BlockReward - st.params.FoundationReward + accumulatedFee,
+			},
+		}
 
-	return transaction
+		return tx.NewSubsidyTx(lockTime, recipients)
+	} else {
+		return tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
+	}
 }
 
 func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address) (*block.Block, error) {
