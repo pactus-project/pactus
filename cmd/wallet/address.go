@@ -78,24 +78,30 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 	addressType := newAddressCmd.Flags().String("type",
 		crypto.AddressTypeEd25519Account.String(), "the type of address: ed25519_account, bls_account and validator")
 
+	label := newAddressCmd.Flags().String("label",
+		crypto.AddressTypeEd25519Account.String(), "a label for the address")
+
 	newAddressCmd.Run = func(_ *cobra.Command, _ []string) {
 		var addressInfo *vault.AddressInfo
 		var err error
 
-		label := cmd.PromptInput("Label")
+		if label == nil {
+			labelIn := cmd.PromptInput("Label")
+			label = &labelIn
+		}
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
 		if *addressType == crypto.AddressTypeBLSAccount.String() {
-			addressInfo, err = wlt.NewBLSAccountAddress(label)
+			addressInfo, err = wlt.NewBLSAccountAddress(*label)
 		} else if *addressType == crypto.AddressTypeEd25519Account.String() {
 			password := ""
 			if wlt.IsEncrypted() {
 				password = cmd.PromptPassword("Password", false)
 			}
-			addressInfo, err = wlt.NewEd25519AccountAddress(label, password)
+			addressInfo, err = wlt.NewEd25519AccountAddress(*label, password)
 		} else if *addressType == crypto.AddressTypeValidator.String() {
-			addressInfo, err = wlt.NewValidatorAddress(label)
+			addressInfo, err = wlt.NewValidatorAddress(*label)
 		} else {
 			err = fmt.Errorf("invalid address type '%s'", *addressType)
 		}
