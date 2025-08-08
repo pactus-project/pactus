@@ -35,7 +35,7 @@ func MockingSandbox(ts *testsuite.TestSuite) *MockSandbox {
 
 	sbx := &MockSandbox{
 		ts:                   ts,
-		TestParams:           param.FromGenesis(genesis.DefaultGenesisParams()),
+		TestParams:           param.FromGenesis(genesis.MainnetGenesis()),
 		TestStore:            store.MockingStore(ts),
 		TestCommittee:        cmt,
 		TestJoinedValidators: make(map[crypto.Address]bool),

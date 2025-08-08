@@ -473,8 +473,11 @@ func (tx *Tx) ID() ID {
 }
 
 func (tx *Tx) IsTransferTx() bool {
-	return tx.Payload().Type() == payload.TypeTransfer &&
-		tx.Payload().Signer() != crypto.TreasuryAddress
+	return tx.Payload().Type() == payload.TypeTransfer
+}
+
+func (tx *Tx) IsBatchTransferTx() bool {
+	return tx.Payload().Type() == payload.TypeBatchTransfer
 }
 
 func (tx *Tx) IsBondTx() bool {
@@ -482,8 +485,7 @@ func (tx *Tx) IsBondTx() bool {
 }
 
 func (tx *Tx) IsSubsidyTx() bool {
-	return tx.Payload().Type() == payload.TypeTransfer &&
-		tx.Payload().Signer() == crypto.TreasuryAddress
+	return tx.Payload().Signer() == crypto.TreasuryAddress
 }
 
 func (tx *Tx) IsSortitionTx() bool {

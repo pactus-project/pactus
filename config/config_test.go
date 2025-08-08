@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -26,6 +27,9 @@ func TestSaveMainnetConfig(t *testing.T) {
 }
 
 func TestSaveTestnetConfig(t *testing.T) {
+	crypto.ToTestnetHRP()
+	defer crypto.ToMainnetHRP()
+
 	path := util.TempFilePath()
 	defConf := DefaultConfigTestnet()
 	assert.NoError(t, defConf.Save(path))
@@ -76,6 +80,9 @@ func TestMainnetConfig(t *testing.T) {
 }
 
 func TestTestnetConfig(t *testing.T) {
+	crypto.ToTestnetHRP()
+	defer crypto.ToMainnetHRP()
+
 	conf := DefaultConfigTestnet()
 
 	assert.NoError(t, conf.BasicCheck())
@@ -115,7 +122,7 @@ func TestLocalnetConfig(t *testing.T) {
 
 func TestLoadFromFile(t *testing.T) {
 	path := util.TempFilePath()
-	defConf := DefaultConfigTestnet()
+	defConf := DefaultConfigMainnet()
 
 	_, err := LoadFromFile(path, true, defConf)
 	assert.Error(t, err, "not exists")

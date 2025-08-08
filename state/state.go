@@ -63,7 +63,7 @@ func LoadOrNewState(
 		valKeys:         valKeys,
 		genDoc:          genDoc,
 		txPool:          txPool,
-		params:          param.FromGenesis(genDoc.Params()),
+		params:          param.FromGenesis(genDoc),
 		store:           store,
 		lastInfo:        lastinfo.NewLastInfo(),
 		accountMerkle:   persistentmerkle.New(),
@@ -308,9 +308,24 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 
 func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amount.Amount) *tx.Tx {
 	lockTime := st.lastInfo.BlockHeight() + 1
-	transaction := tx.NewSubsidyTx(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
+	if st.params.SplitRewardForkHeight > 0 && st.params.SplitRewardForkHeight < lockTime {
+		addressIndex := int(lockTime) % len(st.params.FoundationAddress)
+		foundationAddress := st.params.FoundationAddress[addressIndex]
+		recipients := []payload.BatchRecipient{
+			{
+				To:     foundationAddress,
+				Amount: st.params.FoundationReward,
+			},
+			{
+				To:     rewardAddr,
+				Amount: st.params.BlockReward - st.params.FoundationReward + accumulatedFee,
+			},
+		}
 
-	return transaction
+		return tx.NewSubsidyTx(lockTime, recipients)
+	}
+
+	return tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
 }
 
 func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address) (*block.Block, error) {
@@ -324,7 +339,7 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 	txs := st.txPool.PrepareBlockTransactions()
 	txs = util.Trim(txs, st.params.MaxTransactionsPerBlock-1)
 	for i := 0; i < txs.Len(); i++ {
-		// Only one subsidy transaction per blk
+		// Only one subsidy transaction per block
 		if txs[i].IsSubsidyTx() {
 			st.logger.Error("found duplicated subsidy transaction", "tx", txs[i])
 			txs.Remove(i)
@@ -341,12 +356,6 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 	}
 
 	subsidyTx := st.createSubsidyTx(rewardAddr, sbx.AccumulatedFee())
-	if subsidyTx == nil {
-		// probably the node is shutting down.
-		st.logger.Error("no subsidy transaction")
-
-		return nil, ErrInvalidSubsidyTransaction
-	}
 	txs.Prepend(subsidyTx)
 	prevSeed := st.lastInfo.SortitionSeed()
 

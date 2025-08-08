@@ -21,3 +21,12 @@ func ToTestnetHRP() {
 	XPublicKeyHRP = "txpublic"
 	XPrivateKeyHRP = "txsecret"
 }
+
+// ToMainnetHRP makes HRPs mainnet specified.
+func ToMainnetHRP() {
+	AddressHRP = "pc"
+	PublicKeyHRP = "public"
+	PrivateKeyHRP = "secret"
+	XPublicKeyHRP = "xpublic"
+	XPrivateKeyHRP = "xsecret"
+}

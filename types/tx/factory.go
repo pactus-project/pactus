@@ -9,6 +9,17 @@ import (
 )
 
 func NewSubsidyTx(lockTime uint32,
+	recipients []payload.BatchRecipient, opts ...TxOption,
+) *Tx {
+	return NewBatchTransferTx(
+		lockTime,
+		crypto.TreasuryAddress,
+		recipients,
+		0,
+		opts...)
+}
+
+func NewSubsidyTxLegacy(lockTime uint32,
 	receiver crypto.Address, amt amount.Amount, opts ...TxOption,
 ) *Tx {
 	return NewTransferTx(

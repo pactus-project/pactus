@@ -172,7 +172,7 @@ func TestSubsidyLockTime(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			trx := tx.NewSubsidyTx(tt.lockTime, ts.RandAccAddress(), 1000)
+			trx := tx.NewSubsidyTxLegacy(tt.lockTime, ts.RandAccAddress(), 1000)
 
 			strictErr := CheckLockTime(trx, sbx, true)
 			assert.ErrorIs(t, strictErr, tt.strictErr)
@@ -200,7 +200,7 @@ func TestExecute(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(lockTime, ts.RandAccAddress(), 1000)
+		trx := tx.NewSubsidyTxLegacy(lockTime, ts.RandAccAddress(), 1000)
 		err := Execute(trx, sbx)
 		assert.NoError(t, err)
 
@@ -241,7 +241,7 @@ func TestCheck(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(lockTime, ts.RandAccAddress(), 1000)
+		trx := tx.NewSubsidyTxLegacy(lockTime, ts.RandAccAddress(), 1000)
 		err := CheckAndExecute(trx, sbx, true)
 		assert.NoError(t, err)
 

@@ -96,7 +96,6 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
 	eventPipe := pipeline.MockingPipeline[any]()
-
 	stateX, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
 		store.MockingStore(ts), txPool, eventPipe)
 	require.NoError(t, err)

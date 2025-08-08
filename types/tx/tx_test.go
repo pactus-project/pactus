@@ -37,12 +37,13 @@ func TestEncodingTx(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	trx1 := ts.GenerateTestTransferTx()
-	trx2 := ts.GenerateTestBondTx()
-	trx3 := ts.GenerateTestUnbondTx()
-	trx4 := ts.GenerateTestWithdrawTx()
-	trx5 := ts.GenerateTestSortitionTx()
+	trx2 := ts.GenerateTestBatchTransferTx()
+	trx3 := ts.GenerateTestBondTx()
+	trx4 := ts.GenerateTestUnbondTx()
+	trx5 := ts.GenerateTestWithdrawTx()
+	trx6 := ts.GenerateTestSortitionTx()
 
-	tests := []*tx.Tx{trx1, trx2, trx3, trx4, trx5}
+	tests := []*tx.Tx{trx1, trx2, trx3, trx4, trx5, trx6}
 	for _, trx := range tests {
 		assert.NoError(t, trx.BasicCheck())
 		assert.NoError(t, trx.BasicCheck()) // double basic check
@@ -205,7 +206,7 @@ func TestSubsidyTx(t *testing.T) {
 	pub, prv := ts.RandEd25519KeyPair()
 
 	t.Run("Has signature", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500)
+		trx := tx.NewSubsidyTxLegacy(ts.RandHeight(), pub.AccountAddress(), 2500)
 		sig := prv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
 
@@ -216,7 +217,7 @@ func TestSubsidyTx(t *testing.T) {
 	})
 
 	t.Run("Has public key", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500)
+		trx := tx.NewSubsidyTxLegacy(ts.RandHeight(), pub.AccountAddress(), 2500)
 		trx.SetPublicKey(pub)
 
 		err := trx.BasicCheck()
@@ -226,7 +227,7 @@ func TestSubsidyTx(t *testing.T) {
 	})
 
 	t.Run("Strip public key", func(t *testing.T) {
-		trx := tx.NewSubsidyTx(ts.RandHeight(), pub.AccountAddress(), 2500)
+		trx := tx.NewSubsidyTxLegacy(ts.RandHeight(), pub.AccountAddress(), 2500)
 		trx.StripPublicKey()
 
 		err := trx.BasicCheck()
@@ -452,22 +453,25 @@ func TestIsFreeTx(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	trx1 := ts.GenerateTestTransferTx()
-	trx2 := ts.GenerateTestBondTx()
-	trx3 := ts.GenerateTestUnbondTx()
-	trx4 := ts.GenerateTestWithdrawTx()
-	trx5 := ts.GenerateTestSortitionTx()
+	trx2 := ts.GenerateTestBatchTransferTx()
+	trx3 := ts.GenerateTestBondTx()
+	trx4 := ts.GenerateTestUnbondTx()
+	trx5 := ts.GenerateTestWithdrawTx()
+	trx6 := ts.GenerateTestSortitionTx()
 
 	assert.True(t, trx1.IsTransferTx())
-	assert.True(t, trx2.IsBondTx())
-	assert.True(t, trx3.IsUnbondTx())
-	assert.True(t, trx4.IsWithdrawTx())
-	assert.True(t, trx5.IsSortitionTx())
+	assert.True(t, trx2.IsBatchTransferTx())
+	assert.True(t, trx3.IsBondTx())
+	assert.True(t, trx4.IsUnbondTx())
+	assert.True(t, trx5.IsWithdrawTx())
+	assert.True(t, trx6.IsSortitionTx())
 
 	assert.False(t, trx1.IsFreeTx())
 	assert.False(t, trx2.IsFreeTx())
-	assert.True(t, trx3.IsFreeTx())
-	assert.False(t, trx4.IsFreeTx())
-	assert.True(t, trx5.IsFreeTx())
+	assert.False(t, trx3.IsFreeTx())
+	assert.True(t, trx4.IsFreeTx())
+	assert.False(t, trx5.IsFreeTx())
+	assert.True(t, trx6.IsFreeTx())
 }
 
 func TestCheckFee(t *testing.T) {
