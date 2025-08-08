@@ -29,8 +29,7 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 	mockStore := store.MockingStore(ts)
-	params := genesis.DefaultGenesisParams()
-	params.TransactionToLiveInterval = 64
+	genDoc := genesis.MainnetGenesis()
 
 	cmt, valKeys := ts.GenerateTestCommittee(21)
 	acc := account.NewAccount(0)
@@ -55,9 +54,9 @@ func setup(t *testing.T) *testData {
 		mockStore.SaveBlock(blk, cert)
 	}
 	sbx := NewSandbox(mockStore.LastHeight,
-		mockStore, param.FromGenesis(params), cmt, totalPower, true).(*sandbox)
+		mockStore, param.FromGenesis(genDoc), cmt, totalPower, true).(*sandbox)
 	assert.Equal(t, lastHeight, sbx.CurrentHeight())
-	assert.Equal(t, param.FromGenesis(params), sbx.Params())
+	assert.Equal(t, param.FromGenesis(genDoc), sbx.Params())
 
 	return &testData{
 		TestSuite: ts,

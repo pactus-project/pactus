@@ -49,7 +49,7 @@ func MockingState(ts *testsuite.TestSuite) *MockState {
 		TestPool:      txpool.MockingTxPool(),
 		TestCommittee: cmt,
 		TestValKeys:   valKeys,
-		TestParams:    param.FromGenesis(genDoc.Params()),
+		TestParams:    param.FromGenesis(genDoc),
 	}
 }
 

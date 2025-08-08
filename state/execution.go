@@ -14,9 +14,11 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 		// The first transaction should be subsidy transaction
 		isSubsidyTx := (i == 0)
 		if isSubsidyTx {
-			if !trx.IsSubsidyTx() {
-				return ErrInvalidSubsidyTransaction
+			err := st.checkSubsidy(blk, trx)
+			if err != nil {
+				return err
 			}
+
 			subsidyTrx = trx
 		} else if trx.IsSubsidyTx() {
 			return ErrDuplicatedSubsidyTransaction
@@ -48,6 +50,24 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 	acc := sbx.Account(crypto.TreasuryAddress)
 	acc.AddToBalance(accumulatedFee)
 	sbx.UpdateAccount(crypto.TreasuryAddress, acc)
+
+	return nil
+}
+
+func (st *state) checkSubsidy(blk *block.Block, trx *tx.Tx) error {
+	if !trx.IsSubsidyTx() {
+		return ErrInvalidSubsidyTransaction
+	}
+
+	if st.params.SplitRewardForkHeight > 0 && blk.Height() > st.params.SplitRewardForkHeight {
+		if !trx.IsBatchTransferTx() {
+			return ErrInvalidSubsidyTransaction
+		}
+	} else {
+		if !trx.IsTransferTx() {
+			return ErrInvalidSubsidyTransaction
+		}
+	}
 
 	return nil
 }

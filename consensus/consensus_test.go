@@ -96,17 +96,16 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		Add(time.Duration(params.BlockIntervalInSecond) * time.Second)
 	genDoc := genesis.MakeGenesis(getTime, accs, vals, params)
 	eventPipe := pipeline.MockingPipeline[any]()
-	stateConf := &state.Config{}
-	stateX, err := state.LoadOrNewState(stateConf, genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
+	stateX, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexX]},
 		store.MockingStore(ts), txPool, eventPipe)
 	require.NoError(t, err)
-	stateY, err := state.LoadOrNewState(stateConf, genDoc, []*bls.ValidatorKey{valKeys[tIndexY]},
+	stateY, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexY]},
 		store.MockingStore(ts), txPool, eventPipe)
 	require.NoError(t, err)
-	stateB, err := state.LoadOrNewState(stateConf, genDoc, []*bls.ValidatorKey{valKeys[tIndexB]},
+	stateB, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexB]},
 		store.MockingStore(ts), txPool, eventPipe)
 	require.NoError(t, err)
-	stateP, err := state.LoadOrNewState(stateConf, genDoc, []*bls.ValidatorKey{valKeys[tIndexP]},
+	stateP, err := state.LoadOrNewState(genDoc, []*bls.ValidatorKey{valKeys[tIndexP]},
 		store.MockingStore(ts), txPool, eventPipe)
 	require.NoError(t, err)
 
