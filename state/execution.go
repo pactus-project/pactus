@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
 func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool) error {
@@ -14,7 +15,7 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 		// The first transaction should be subsidy transaction
 		isSubsidyTx := (i == 0)
 		if isSubsidyTx {
-			err := st.checkSubsidy(blk, trx)
+			err := st.checkSubsidy(trx)
 			if err != nil {
 				return err
 			}
@@ -54,19 +55,31 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 	return nil
 }
 
-func (st *state) checkSubsidy(blk *block.Block, trx *tx.Tx) error {
+func (st *state) checkSubsidy(trx *tx.Tx) error {
 	if !trx.IsSubsidyTx() {
 		return ErrInvalidSubsidyTransaction
 	}
 
-	if st.params.SplitRewardForkHeight > 0 && blk.Height() > st.params.SplitRewardForkHeight {
-		if !trx.IsBatchTransferTx() {
+	lockTime := trx.LockTime()
+	if st.params.SplitRewardForkHeight > 0 && lockTime > st.params.SplitRewardForkHeight {
+		batchTrx, ok := trx.Payload().(*payload.BatchTransferPayload)
+		if !ok {
 			return ErrInvalidSubsidyTransaction
 		}
-	} else {
-		if !trx.IsTransferTx() {
+
+		if batchTrx.Recipients[0].Amount != st.params.FoundationReward {
 			return ErrInvalidSubsidyTransaction
 		}
+
+		addressIndex := int(lockTime) % len(st.params.FoundationAddress)
+		foundationAddress := st.params.FoundationAddress[addressIndex]
+		if batchTrx.Recipients[0].To != foundationAddress {
+			return ErrInvalidSubsidyTransaction
+		}
+
+		return nil
+	} else if !trx.IsTransferTx() {
+		return ErrInvalidSubsidyTransaction
 	}
 
 	return nil

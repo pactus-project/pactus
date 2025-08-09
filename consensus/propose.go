@@ -47,11 +47,6 @@ func (s *proposeState) createProposal(height uint32, round int16) {
 
 		return
 	}
-	if err := s.bcState.ValidateBlock(block, round); err != nil {
-		s.logger.Error("proposed block is invalid!", "error", err)
-
-		return
-	}
 
 	prop := proposal.NewProposal(height, round, block)
 	sig := s.valKey.Sign(prop.SignBytes())
