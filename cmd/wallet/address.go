@@ -91,7 +91,6 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		fmt.Printf("*addressType: %v %v\n", *addressType, *label)
 		if *addressType == crypto.AddressTypeBLSAccount.String() {
 			addressInfo, err = wlt.NewBLSAccountAddress(*label)
 		} else if *addressType == crypto.AddressTypeEd25519Account.String() {
