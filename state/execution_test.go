@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -144,5 +145,104 @@ func TestExecuteBlock(t *testing.T) {
 		treasury := sb.Account(crypto.TreasuryAddress)
 		subsidy := td.state.params.BlockReward
 		assert.Equal(t, 21*1e15-(10*subsidy), treasury.Balance()) // Two extra blocks has committed yet
+	})
+}
+
+func TestSubsidyTransaction(t *testing.T) {
+	td := setup(t)
+
+	t.Run("Legacy Reward", func(t *testing.T) {
+		td.state.params.SplitRewardForkHeight = 0
+		trx := tx.NewSubsidyTxLegacy(td.RandHeight(), td.RandAccAddress(), td.RandAmount())
+
+		err := td.state.checkSubsidy(trx)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Legacy Reward, Invalid transaction", func(t *testing.T) {
+		td.state.params.SplitRewardForkHeight = 0
+		trx := tx.NewSubsidyTx(td.RandHeight(), []payload.BatchRecipient{
+			{
+				To:     td.RandAccAddress(),
+				Amount: td.RandAmount(),
+			},
+		})
+
+		err := td.state.checkSubsidy(trx)
+		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+	})
+
+	t.Run("Legacy Reward", func(t *testing.T) {
+		splitHeight := td.RandHeight()
+		td.state.params.SplitRewardForkHeight = splitHeight
+		trx := tx.NewSubsidyTxLegacy(splitHeight-1, td.RandAccAddress(), td.RandAmount())
+
+		err := td.state.checkSubsidy(trx)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Legacy Reward after splitting Reward", func(t *testing.T) {
+		splitHeight := td.RandHeight()
+		td.state.params.SplitRewardForkHeight = splitHeight
+		trx := tx.NewSubsidyTxLegacy(splitHeight+1, td.RandAccAddress(), td.RandAmount())
+
+		err := td.state.checkSubsidy(trx)
+		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+	})
+
+	t.Run("Split Reward With Invalid Foundation", func(t *testing.T) {
+		splitHeight := td.RandHeight()
+		td.state.params.SplitRewardForkHeight = splitHeight
+		td.state.params.FoundationAddress = []crypto.Address{td.RandAccAddress()}
+
+		trx := tx.NewSubsidyTx(splitHeight+1, []payload.BatchRecipient{
+			{
+				To:     td.RandAccAddress(),
+				Amount: td.RandAmount(),
+			},
+		})
+
+		err := td.state.checkSubsidy(trx)
+		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+	})
+
+	t.Run("Split Reward With Invalid Foundation", func(t *testing.T) {
+		splitHeight := td.RandHeight()
+		td.state.params.SplitRewardForkHeight = splitHeight
+		td.state.params.FoundationAddress = []crypto.Address{td.RandAccAddress()}
+
+		trx := tx.NewSubsidyTx(splitHeight+1, []payload.BatchRecipient{
+			{
+				To:     td.RandAccAddress(),
+				Amount: td.state.params.FoundationReward,
+			},
+			{
+				To:     td.RandAccAddress(),
+				Amount: td.RandAmount(),
+			},
+		})
+
+		err := td.state.checkSubsidy(trx)
+		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
+	})
+
+	t.Run("Split Reward: Ok", func(t *testing.T) {
+		splitHeight := td.RandHeight()
+		td.state.params.SplitRewardForkHeight = splitHeight
+		td.state.params.FoundationAddress = []crypto.Address{td.RandAccAddress()}
+
+		trx := tx.NewSubsidyTx(splitHeight+1, []payload.BatchRecipient{
+			{
+				To:     td.state.params.FoundationAddress[0],
+				Amount: td.state.params.FoundationReward,
+			},
+			{
+				To:     td.RandAccAddress(),
+				Amount: td.RandAmount(),
+			},
+		})
+
+		err := td.state.checkSubsidy(trx)
+		assert.NoError(t, err)
 	})
 }
