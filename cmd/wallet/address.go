@@ -78,14 +78,13 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 	addressType := newAddressCmd.Flags().String("type",
 		crypto.AddressTypeEd25519Account.String(), "the type of address: ed25519_account, bls_account and validator")
 
-	label := newAddressCmd.Flags().String("label",
-		crypto.AddressTypeEd25519Account.String(), "a label for the address")
+	label := newAddressCmd.Flags().String("label", "", "a label for the address")
 
 	newAddressCmd.Run = func(_ *cobra.Command, _ []string) {
 		var addressInfo *vault.AddressInfo
 		var err error
 
-		if label == nil {
+		if *label == "" {
 			labelIn := cmd.PromptInput("Label")
 			label = &labelIn
 		}
