@@ -15,7 +15,7 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 		// The first transaction should be subsidy transaction
 		isSubsidyTx := (i == 0)
 		if isSubsidyTx {
-			err := st.checkSubsidy(trx)
+			err := st.checkSubsidy(trx, check)
 			if err != nil {
 				return err
 			}
@@ -55,7 +55,8 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 	return nil
 }
 
-func (st *state) checkSubsidy(trx *tx.Tx) error {
+//nolint:all // Remove me after enabling split reward forks
+func (st *state) checkSubsidy(trx *tx.Tx, check bool) error {
 	if !trx.IsSubsidyTx() {
 		return ErrInvalidSubsidyTransaction
 	}
@@ -64,7 +65,11 @@ func (st *state) checkSubsidy(trx *tx.Tx) error {
 	if st.params.SplitRewardForkHeight > 0 && lockTime > st.params.SplitRewardForkHeight {
 		batchTrx, ok := trx.Payload().(*payload.BatchTransferPayload)
 		if !ok {
-			return ErrInvalidSubsidyTransaction
+			if st.isSplitForkEnabled {
+				return ErrInvalidSubsidyTransaction
+			}
+
+			return nil
 		}
 
 		if batchTrx.Recipients[0].Amount != st.params.FoundationReward {
@@ -75,6 +80,10 @@ func (st *state) checkSubsidy(trx *tx.Tx) error {
 		foundationAddress := st.params.FoundationAddress[addressIndex]
 		if batchTrx.Recipients[0].To != foundationAddress {
 			return ErrInvalidSubsidyTransaction
+		}
+
+		if !check {
+			st.isSplitForkEnabled = true
 		}
 
 		return nil

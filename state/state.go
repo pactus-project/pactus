@@ -50,6 +50,9 @@ type state struct {
 	scoreMgr        *score.Manager
 	logger          *logger.SubLogger
 	eventPipe       pipeline.Pipeline[any]
+
+	// TODO: remove me in next version after enabling forks
+	isSplitForkEnabled bool
 }
 
 func LoadOrNewState(
