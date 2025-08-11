@@ -155,7 +155,7 @@ func TestSubsidyTransaction(t *testing.T) {
 		td.state.params.SplitRewardForkHeight = 0
 		trx := tx.NewSubsidyTxLegacy(td.RandHeight(), td.RandAccAddress(), td.RandAmount())
 
-		err := td.state.checkSubsidy(trx)
+		err := td.state.checkSubsidy(trx, true)
 		assert.NoError(t, err)
 	})
 
@@ -168,7 +168,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			},
 		})
 
-		err := td.state.checkSubsidy(trx)
+		err := td.state.checkSubsidy(trx, true)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
@@ -177,16 +177,17 @@ func TestSubsidyTransaction(t *testing.T) {
 		td.state.params.SplitRewardForkHeight = splitHeight
 		trx := tx.NewSubsidyTxLegacy(splitHeight-1, td.RandAccAddress(), td.RandAmount())
 
-		err := td.state.checkSubsidy(trx)
+		err := td.state.checkSubsidy(trx, true)
 		assert.NoError(t, err)
 	})
 
 	t.Run("Legacy Reward after splitting Reward", func(t *testing.T) {
 		splitHeight := td.RandHeight()
+		td.state.isSplitForkEnabled = true
 		td.state.params.SplitRewardForkHeight = splitHeight
 		trx := tx.NewSubsidyTxLegacy(splitHeight+1, td.RandAccAddress(), td.RandAmount())
 
-		err := td.state.checkSubsidy(trx)
+		err := td.state.checkSubsidy(trx, true)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
@@ -202,7 +203,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			},
 		})
 
-		err := td.state.checkSubsidy(trx)
+		err := td.state.checkSubsidy(trx, true)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
@@ -222,7 +223,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			},
 		})
 
-		err := td.state.checkSubsidy(trx)
+		err := td.state.checkSubsidy(trx, true)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
@@ -242,7 +243,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			},
 		})
 
-		err := td.state.checkSubsidy(trx)
+		err := td.state.checkSubsidy(trx, true)
 		assert.NoError(t, err)
 	})
 }
