@@ -119,8 +119,7 @@ func downloadProgressBar(fileName string) func(stats downloader.Stats) {
 				util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
 				util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
 			))
-			err := bar.Add64(stats.Downloaded)
-			cmd.FatalErrorCheck(err)
+			_ = bar.Add64(stats.Downloaded)
 		}
 	}
 }
