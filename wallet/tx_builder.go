@@ -22,8 +22,8 @@ func OptionLockTime(lockTime uint32) func(builder *txBuilder) error {
 	}
 }
 
-// OptionFeeFromString sets the transaction fee using a string input.
-func OptionFeeFromString(feeStr string) func(builder *txBuilder) error {
+// OptionFee sets the transaction fee using a string input.
+func OptionFee(feeStr string) func(builder *txBuilder) error {
 	return func(builder *txBuilder) error {
 		if feeStr == "" {
 			return nil
@@ -33,16 +33,7 @@ func OptionFeeFromString(feeStr string) func(builder *txBuilder) error {
 		if err != nil {
 			return err
 		}
-		builder.fee = &fee
-
-		return nil
-	}
-}
-
-// OptionFee sets the transaction fee using an Amount input.
-func OptionFee(fee amount.Amount) func(builder *txBuilder) error {
-	return func(builder *txBuilder) error {
-		builder.fee = &fee
+		builder.fee = fee
 
 		return nil
 	}
@@ -66,23 +57,8 @@ type txBuilder struct {
 	typ      payload.Type
 	lockTime uint32
 	amount   amount.Amount
-	fee      *amount.Amount
+	fee      amount.Amount
 	memo     string
-}
-
-// newTxBuilder initializes a txBuilder with provided options, allowing for flexible configuration of the transaction.
-func newTxBuilder(client *grpcClient, options ...TxOption) (*txBuilder, error) {
-	builder := &txBuilder{
-		client: client,
-	}
-	for _, op := range options {
-		err := op(builder)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return builder, nil
 }
 
 // setSenderAddr sets the sender's address for the transaction.
@@ -113,16 +89,10 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	err = m.setFee()
-	if err != nil {
-		return nil, err
-	}
-
 	var trx *tx.Tx
 	switch m.typ {
 	case payload.TypeTransfer:
-		trx = tx.NewTransferTx(m.lockTime, *m.sender, *m.receiver, m.amount, *m.fee, tx.WithMemo(m.memo))
+		trx = tx.NewTransferTx(m.lockTime, *m.sender, *m.receiver, m.amount, m.fee, tx.WithMemo(m.memo))
 	case payload.TypeBond:
 		pub := m.pub
 		val, _ := m.client.getValidator(m.receiver.String())
@@ -130,13 +100,13 @@ func (m *txBuilder) build() (*tx.Tx, error) {
 			// validator exists
 			pub = nil
 		}
-		trx = tx.NewBondTx(m.lockTime, *m.sender, *m.receiver, pub, m.amount, *m.fee, tx.WithMemo(m.memo))
+		trx = tx.NewBondTx(m.lockTime, *m.sender, *m.receiver, pub, m.amount, m.fee, tx.WithMemo(m.memo))
 
 	case payload.TypeUnbond:
 		trx = tx.NewUnbondTx(m.lockTime, *m.sender, tx.WithMemo(m.memo))
 
 	case payload.TypeWithdraw:
-		trx = tx.NewWithdrawTx(m.lockTime, *m.sender, *m.receiver, m.amount, *m.fee, tx.WithMemo(m.memo))
+		trx = tx.NewWithdrawTx(m.lockTime, *m.sender, *m.receiver, m.amount, m.fee, tx.WithMemo(m.memo))
 
 	case payload.TypeBatchTransfer:
 		return nil, errors.New("BatchTransfer is not implemented yet")
@@ -161,23 +131,6 @@ func (m *txBuilder) setLockTime() error {
 			return err
 		}
 		m.lockTime = info.LastBlockHeight + 1
-	}
-
-	return nil
-}
-
-// setFee determines the fee for the transaction.
-// If not set, it retrieves the fee from the client based on amount and transaction type.
-func (m *txBuilder) setFee() error {
-	if m.fee == nil {
-		if m.client == nil {
-			return ErrOffline
-		}
-		fee, err := m.client.getFee(m.amount, m.typ)
-		if err != nil {
-			return err
-		}
-		m.fee = &fee
 	}
 
 	return nil

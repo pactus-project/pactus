@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	blshdkeychain "github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet/addresspath"
@@ -20,9 +21,10 @@ import (
 const (
 	Version1 = 1 // Initial version
 	Version2 = 2 // Supporting Ed25519
-	Version3 = 3 // USe AEC-256-CBC for default encryption
+	Version3 = 3 // Supporting AEC-256-CBC encryption method
+	Version4 = 4 // Set Default Fee for the Wallet
 
-	VersionLatest = Version3
+	VersionLatest = Version4
 )
 
 type Store struct {
@@ -103,8 +105,16 @@ func (s *Store) UpgradeWallet(walletPath string) error {
 
 		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
 			Version2, Version3))
+		fallthrough
 
 	case Version3:
+		s.Vault.DefaultFee = amount.Amount(10_000_000) // Set default fee to 0.01 PAC
+		s.Version = Version4
+
+		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
+			Version3, Version4))
+
+	case Version4:
 		return nil
 
 	default:

@@ -30,6 +30,7 @@ type Info struct {
 	WalletName string
 	Version    int64
 	Network    string
+	DefaultFee amount.Amount
 	UUID       string
 	Encrypted  bool
 	CreatedAt  time.Time
@@ -256,7 +257,7 @@ func (w *Wallet) TotalStake() (amount.Amount, error) {
 func (w *Wallet) MakeTransferTx(sender, receiver string, amt amount.Amount,
 	options ...TxOption,
 ) (*tx.Tx, error) {
-	maker, err := newTxBuilder(w.grpcClient, options...)
+	maker, err := w.makeTxBuilder(options...)
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +279,7 @@ func (w *Wallet) MakeTransferTx(sender, receiver string, amt amount.Amount,
 func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amt amount.Amount,
 	options ...TxOption,
 ) (*tx.Tx, error) {
-	maker, err := newTxBuilder(w.grpcClient, options...)
+	maker, err := w.makeTxBuilder(options...)
 	if err != nil {
 		return nil, err
 	}
@@ -311,7 +312,7 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amt amount.Amount,
 
 // MakeUnbondTx creates a new unbond transaction based on the given parameters.
 func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
-	maker, err := newTxBuilder(w.grpcClient, opts...)
+	maker, err := w.makeTxBuilder(opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -329,7 +330,7 @@ func (w *Wallet) MakeUnbondTx(addr string, opts ...TxOption) (*tx.Tx, error) {
 func (w *Wallet) MakeWithdrawTx(sender, receiver string, amt amount.Amount,
 	options ...TxOption,
 ) (*tx.Tx, error) {
-	maker, err := newTxBuilder(w.grpcClient, options...)
+	maker, err := w.makeTxBuilder(options...)
 	if err != nil {
 		return nil, err
 	}
@@ -370,10 +371,6 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	w.store.History.addPending(trx.Payload().Signer().String(), trx.Payload().Value(), txID, data)
 
 	return txID.String(), nil
-}
-
-func (w *Wallet) CalculateFee(amt amount.Amount, payloadType payload.Type) (amount.Amount, error) {
-	return w.grpcClient.getFee(amt, payloadType)
 }
 
 func (w *Wallet) UpdatePassword(oldPassword, newPassword string, opts ...encrypter.Option) error {
@@ -544,6 +541,7 @@ func (w *Wallet) Info() *Info {
 		WalletName: w.Name(),
 		Version:    int64(w.store.Version),
 		Network:    w.store.Network.String(),
+		DefaultFee: w.store.Vault.DefaultFee,
 		UUID:       w.store.UUID.String(),
 		Encrypted:  w.IsEncrypted(),
 		CreatedAt:  w.store.CreatedAt,
@@ -561,4 +559,20 @@ func (w *Wallet) Neuter(path string) *Wallet {
 	}
 
 	return neuteredWallet
+}
+
+// makeTxBuilder initializes a txBuilder with provided options, allowing for flexible configuration of the transaction.
+func (w *Wallet) makeTxBuilder(options ...TxOption) (*txBuilder, error) {
+	builder := &txBuilder{
+		client: w.grpcClient,
+		fee:    w.store.Vault.DefaultFee,
+	}
+	for _, op := range options {
+		err := op(builder)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return builder, nil
 }

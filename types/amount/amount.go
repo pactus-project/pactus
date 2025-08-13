@@ -10,6 +10,7 @@ import (
 	"errors"
 	"math"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -101,6 +102,8 @@ func NewAmount(pac float64) (Amount, error) {
 // floating-point value.
 // If the parsing of the string fails, it returns an error.
 func FromString(str string) (Amount, error) {
+	str = strings.Replace(str, "PAC", "", 1)
+	str = strings.TrimSpace(str)
 	f, err := strconv.ParseFloat(str, 64)
 	if err != nil {
 		return 0, err
