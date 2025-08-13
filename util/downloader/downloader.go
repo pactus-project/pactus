@@ -106,14 +106,14 @@ func (d *Downloader) download(ctx context.Context) {
 	d.updateStats(0, totalSize, false)
 
 	var wg sync.WaitGroup
-	for _, chuck := range d.chunks {
+	for _, chk := range d.chunks {
 		wg.Add(1)
-		go func(c *chunk) {
+		go func(chk *chunk) {
 			defer wg.Done()
-			if err := d.downloadChunk(ctx, out, c, totalSize); err != nil {
+			if err := d.downloadChunk(ctx, out, chk, totalSize); err != nil {
 				d.handleError(err)
 			}
-		}(chuck)
+		}(chk)
 	}
 
 	wg.Wait()
@@ -167,10 +167,10 @@ func (d *Downloader) createDir() error {
 	return nil
 }
 
-func (d *Downloader) downloadChunk(ctx context.Context, out *os.File, chuck *chunk, totalSize int64) error {
+func (d *Downloader) downloadChunk(ctx context.Context, out *os.File, chk *chunk, totalSize int64) error {
 	var err error
 	for i := 0; i < d.maxRetries; i++ {
-		err = d.downloadChunkWithContext(ctx, out, chuck, totalSize)
+		err = d.downloadChunkWithContext(ctx, out, chk, totalSize)
 		if err == nil || ctx.Err() != nil {
 			return err
 		}
@@ -179,13 +179,13 @@ func (d *Downloader) downloadChunk(ctx context.Context, out *os.File, chuck *chu
 	return err
 }
 
-func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File, chuck *chunk, totalSize int64) error {
+func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File, chk *chunk, totalSize int64) error {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, d.url, http.NoBody)
 	if err != nil {
 		return &Error{Message: "failed to create new request for download chunk", Reason: err}
 	}
 
-	req.Header.Set("Range", chuck.rangeHeader())
+	req.Header.Set("Range", chk.rangeHeader())
 	resp, err := d.client.Do(req)
 	if err != nil {
 		return &Error{Message: "failed to do request download chunk", Reason: err}
@@ -203,7 +203,7 @@ func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File,
 	}
 
 	buf := make([]byte, 32*1024) // 32KB buffer for reading the response body
-	offset := chuck.start
+	offset := chk.start
 	for {
 		count, err := resp.Body.Read(buf)
 		if count > 0 {
@@ -237,6 +237,10 @@ func (d *Downloader) downloadChunkWithContext(ctx context.Context, out *os.File,
 
 func (d *Downloader) updateStats(downloaded, totalSize int64, completed bool) {
 	if d.statsCallback != nil {
+		if downloaded > totalSize {
+			// In case of re-downloading a chunk...
+			downloaded = totalSize
+		}
 		stats := Stats{
 			Downloaded: downloaded,
 			TotalSize:  totalSize,
