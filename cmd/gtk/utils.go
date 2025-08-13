@@ -13,7 +13,6 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet"
@@ -194,12 +193,6 @@ func updateFeeHint(_ *gtk.Label, _ *wallet.Wallet, _ payload.Type) {
 	// The goal is to show an estimate of how long it takes for a transaction
 	// with the given fee to be confirmed (confirmation time).
 	// We can analyze data from past blocks to estimate the confirmation time.
-}
-
-func estimatedFee(wlt *wallet.Wallet, payloadType payload.Type) amount.Amount {
-	fee, _ := wlt.CalculateFee(0, payloadType)
-
-	return fee
 }
 
 func updateBalanceHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {

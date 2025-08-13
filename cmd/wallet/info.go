@@ -20,9 +20,13 @@ func buildInfoCmd(parentCmd *cobra.Command) {
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
 
-		cmd.PrintInfoMsgf("version: %d", wlt.Version())
-		cmd.PrintInfoMsgf("created at: %s", wlt.CreationTime().Format(time.RFC3339))
-		cmd.PrintInfoMsgf("is encrtypted: %t", wlt.IsEncrypted())
-		cmd.PrintInfoMsgf("network: %s", wlt.Network().String())
+		info := wlt.Info()
+
+		cmd.PrintInfoMsgf("Version: %d", info.Version)
+		cmd.PrintInfoMsgf("UUID: %s", info.UUID)
+		cmd.PrintInfoMsgf("Default fee: %s", info.DefaultFee.String())
+		cmd.PrintInfoMsgf("Created at: %s", info.CreatedAt.Format(time.RFC3339))
+		cmd.PrintInfoMsgf("Is encrtypted: %t", info.Encrypted)
+		cmd.PrintInfoMsgf("Network: %s", info.Network)
 	}
 }

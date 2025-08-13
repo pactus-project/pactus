@@ -266,7 +266,7 @@ func TestSigningTxWithBLS(t *testing.T) {
 	lockTime := td.RandHeight()
 
 	opts := []wallet.TxOption{
-		wallet.OptionFee(fee),
+		wallet.OptionFee(fee.String()),
 		wallet.OptionLockTime(lockTime),
 		wallet.OptionMemo("test"),
 	}
@@ -295,7 +295,7 @@ func TestSigningTxWithEd25519(t *testing.T) {
 	lockTime := td.RandHeight()
 
 	opts := []wallet.TxOption{
-		wallet.OptionFee(fee),
+		wallet.OptionFee(fee.String()),
 		wallet.OptionLockTime(lockTime),
 		wallet.OptionMemo("test"),
 	}
@@ -325,7 +325,7 @@ func TestMakeTransferTx(t *testing.T) {
 	t.Run("set parameters manually", func(t *testing.T) {
 		fee := td.RandFee()
 		opts := []wallet.TxOption{
-			wallet.OptionFee(fee),
+			wallet.OptionFee(fee.String()),
 			wallet.OptionLockTime(lockTime),
 			wallet.OptionMemo("test"),
 		}
@@ -345,9 +345,6 @@ func TestMakeTransferTx(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, trx.LockTime(), testHeight+1)
 		assert.Equal(t, amt, trx.Payload().Value())
-		fee, err := td.wallet.CalculateFee(amt, payload.TypeTransfer)
-		assert.NoError(t, err)
-		assert.Equal(t, fee, trx.Fee())
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {
@@ -380,7 +377,7 @@ func TestMakeBondTx(t *testing.T) {
 		lockTime := td.RandHeight()
 		fee := td.RandFee()
 		opts := []wallet.TxOption{
-			wallet.OptionFee(fee),
+			wallet.OptionFee(fee.String()),
 			wallet.OptionLockTime(lockTime),
 			wallet.OptionMemo("test"),
 		}
@@ -401,9 +398,6 @@ func TestMakeBondTx(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, trx.LockTime(), testHeight+1)
 		assert.Equal(t, amt, trx.Payload().Value())
-		fee, err := td.wallet.CalculateFee(amt, payload.TypeBond)
-		assert.NoError(t, err)
-		assert.Equal(t, fee, trx.Fee())
 	})
 
 	t.Run("validator address is not stored in wallet", func(t *testing.T) {
@@ -549,7 +543,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 		lockTime := td.RandHeight()
 		fee := td.RandFee()
 		opts := []wallet.TxOption{
-			wallet.OptionFee(fee),
+			wallet.OptionFee(fee.String()),
 			wallet.OptionLockTime(lockTime),
 			wallet.OptionMemo("test"),
 		}
@@ -569,9 +563,6 @@ func TestMakeWithdrawTx(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, trx.LockTime(), testHeight+1)
 		assert.Equal(t, amt, trx.Payload().Value())
-		fee, err := td.wallet.CalculateFee(amt, payload.TypeWithdraw)
-		assert.NoError(t, err)
-		assert.Equal(t, fee, trx.Fee())
 	})
 
 	t.Run("invalid sender address", func(t *testing.T) {

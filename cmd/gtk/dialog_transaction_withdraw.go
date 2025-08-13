@@ -33,8 +33,7 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
-	estimatedFee := estimatedFee(wlt, payload.TypeWithdraw)
-	feeEntry.SetText(fmt.Sprintf("%g", estimatedFee.ToPAC()))
+	feeEntry.SetText(fmt.Sprintf("%g", wlt.Info().DefaultFee.ToPAC()))
 
 	for _, ai := range wlt.AllValidatorAddresses() {
 		validatorEntry.Append(ai.Address, ai.Address)
@@ -78,7 +77,7 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 		feeStr, _ := feeEntry.GetText()
 		opts := []wallet.TxOption{
 			wallet.OptionMemo(memo),
-			wallet.OptionFeeFromString(feeStr),
+			wallet.OptionFee(feeStr),
 		}
 
 		trx, err := wlt.MakeWithdrawTx(sender, receiver, amt, opts...)

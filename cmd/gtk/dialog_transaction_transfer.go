@@ -33,8 +33,7 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
-	estimatedFee := estimatedFee(wlt, payload.TypeTransfer)
-	feeEntry.SetText(fmt.Sprintf("%g", estimatedFee.ToPAC()))
+	feeEntry.SetText(fmt.Sprintf("%g", wlt.Info().DefaultFee.ToPAC()))
 
 	for _, i := range wlt.AllAccountAddresses() {
 		senderEntry.Append(i.Address, i.Address)
@@ -71,7 +70,7 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 		feeStr, _ := feeEntry.GetText()
 		opts := []wallet.TxOption{
 			wallet.OptionMemo(memo),
-			wallet.OptionFeeFromString(feeStr),
+			wallet.OptionFee(feeStr),
 		}
 
 		trx, err := wlt.MakeTransferTx(sender, receiver, amt, opts...)
