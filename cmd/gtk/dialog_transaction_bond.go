@@ -34,8 +34,7 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
-	estimatedFee := estimatedFee(wlt, payload.TypeBond)
-	feeEntry.SetText(fmt.Sprintf("%g", estimatedFee.ToPAC()))
+	feeEntry.SetText(fmt.Sprintf("%g", wlt.Info().DefaultFee.ToPAC()))
 
 	for _, ai := range wlt.AllAccountAddresses() {
 		senderEntry.Append(ai.Address, ai.Address)

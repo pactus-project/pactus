@@ -27,5 +27,7 @@ func buildFeeCmd(parentCmd *cobra.Command) {
 
 		err = wlt.Save()
 		cmd.FatalErrorCheck(err)
+
+		cmd.PrintInfoMsgf("Default fee is set to %s", fee.String())
 	}
 }
