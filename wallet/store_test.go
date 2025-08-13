@@ -9,6 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+//nolint:dupword // duplicated seed phrase words
+var testMnemonic = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus"
+
 func TestSupportedWallets(t *testing.T) {
 	// password is: "password"
 	tests := []struct {
@@ -37,9 +40,7 @@ func TestSupportedWallets(t *testing.T) {
 
 		mnemonic, err := wlt.Mnemonic("password")
 		require.NoError(t, err)
-		//nolint:dupword // duplicated seed phrase words
-		assert.Equal(t,
-			"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus", mnemonic)
+		assert.Equal(t, testMnemonic, mnemonic)
 	}
 }
 
@@ -117,8 +118,7 @@ func TestUpgradeWallet(t *testing.T) {
 		mnemonic, err := wlt.Mnemonic(password)
 		require.NoError(t, err)
 		assert.Equal(t, "ARGON2ID-AES_256_CBC-MACV1", wlt.store.Vault.Encrypter.Method)
-		assert.Equal(t,
-			"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus", mnemonic)
+		assert.Equal(t, testMnemonic, mnemonic)
 	})
 
 	t.Run("Upgrade Wallet From Version 4", func(t *testing.T) {

@@ -78,7 +78,7 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 		feeStr, _ := feeEntry.GetText()
 		opts := []wallet.TxOption{
 			wallet.OptionMemo(memo),
-			wallet.OptionFeeFromString(feeStr),
+			wallet.OptionFee(feeStr),
 		}
 
 		trx, err := wlt.MakeWithdrawTx(sender, receiver, amt, opts...)

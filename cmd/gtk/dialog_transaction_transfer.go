@@ -71,7 +71,7 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 		feeStr, _ := feeEntry.GetText()
 		opts := []wallet.TxOption{
 			wallet.OptionMemo(memo),
-			wallet.OptionFeeFromString(feeStr),
+			wallet.OptionFee(feeStr),
 		}
 
 		trx, err := wlt.MakeTransferTx(sender, receiver, amt, opts...)

@@ -81,7 +81,7 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 		feeStr, _ := feeEntry.GetText()
 		opts := []wallet.TxOption{
 			wallet.OptionMemo(memo),
-			wallet.OptionFeeFromString(feeStr),
+			wallet.OptionFee(feeStr),
 		}
 
 		trx, err := wlt.MakeBondTx(sender, receiver, publicKey, amt, opts...)

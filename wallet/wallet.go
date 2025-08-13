@@ -576,3 +576,7 @@ func (w *Wallet) makeTxBuilder(options ...TxOption) (*txBuilder, error) {
 
 	return builder, nil
 }
+
+func (w *Wallet) SetDefaultFee(fee amount.Amount) {
+	w.store.Vault.DefaultFee = fee
+}

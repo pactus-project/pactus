@@ -105,6 +105,7 @@ func (s *Store) UpgradeWallet(walletPath string) error {
 
 		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
 			Version2, Version3))
+
 		fallthrough
 
 	case Version3:
