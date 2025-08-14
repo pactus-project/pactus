@@ -20,6 +20,7 @@ import (
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -428,7 +429,7 @@ func (ts *TestSuite) GenerateTestValidator(options ...func(*ValidatorMaker)) *va
 }
 
 type BlockMaker struct {
-	Version   uint8
+	Version   protocol.Version
 	Txs       block.Txs
 	Proposer  crypto.Address
 	Time      time.Time
@@ -465,7 +466,7 @@ func (ts *TestSuite) NewBlockMaker() *BlockMaker {
 }
 
 // BlockWithVersion sets version to the block.
-func BlockWithVersion(ver uint8) func(*BlockMaker) {
+func BlockWithVersion(ver protocol.Version) func(*BlockMaker) {
 	return func(bm *BlockMaker) {
 		bm.Version = ver
 	}

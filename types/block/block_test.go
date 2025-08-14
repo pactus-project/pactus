@@ -7,6 +7,7 @@ import (
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/simplemerkle"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -210,7 +211,7 @@ func TestBasicCheck(t *testing.T) {
 		blk, _ := block.FromBytes(data)
 		assert.NoError(t, blk.BasicCheck())
 		assert.Zero(t, blk.Header().UnixTime())
-		assert.Equal(t, uint8(1), blk.Header().Version())
+		assert.Equal(t, protocol.ProtocolVersion1, blk.Header().Version())
 	})
 }
 

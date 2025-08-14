@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +19,7 @@ func TestBlockValidation(t *testing.T) {
 	round := td.RandRound()
 	t.Run("Invalid version", func(t *testing.T) {
 		blk0, _ := td.makeBlockAndCertificate(t, round)
-		invBlockVersion := uint8(2)
+		invBlockVersion := protocol.Version(-1)
 		blk := block.MakeBlock(
 			invBlockVersion,
 			blk0.Header().Time(),

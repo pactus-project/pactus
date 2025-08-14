@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
@@ -16,7 +17,7 @@ type Header struct {
 }
 
 type headerData struct {
-	Version         uint8
+	Version         protocol.Version
 	UnixTime        uint32
 	PrevBlockHash   hash.Hash
 	StateRoot       hash.Hash
@@ -25,7 +26,7 @@ type headerData struct {
 }
 
 // Version returns the block version.
-func (h *Header) Version() uint8 {
+func (h *Header) Version() protocol.Version {
 	return h.data.Version
 }
 
@@ -59,7 +60,7 @@ func (h *Header) ProposerAddress() crypto.Address {
 	return h.data.ProposerAddress
 }
 
-func NewHeader(version uint8, tme time.Time, stateRoot, prevBlockHash hash.Hash,
+func NewHeader(version protocol.Version, tme time.Time, stateRoot, prevBlockHash hash.Hash,
 	sortitionSeed sortition.VerifiableSeed, proposerAddress crypto.Address,
 ) *Header {
 	return &Header{
