@@ -178,7 +178,3 @@ func (val *Validator) Clone() *Validator {
 
 	return cloned
 }
-
-func (val *Validator) ProtocolVersion() int32 {
-	return 0
-}

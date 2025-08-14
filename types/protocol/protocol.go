@@ -19,6 +19,7 @@ func ParseVersion(s string) (Version, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	return Version(v), nil
 }
 
