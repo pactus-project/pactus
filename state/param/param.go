@@ -8,13 +8,14 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 )
 
 //go:embed foundation_testnet.json
 var foundationTestnetBytes []byte
 
 type Params struct {
-	BlockVersion              uint8
+	BlockVersion              protocol.Version
 	BlockIntervalInSecond     int
 	MaxTransactionsPerBlock   int
 	CommitteeSize             int

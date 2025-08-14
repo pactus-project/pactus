@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sortition"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/encoding"
@@ -49,7 +50,7 @@ func FromBytes(data []byte) (*Block, error) {
 	return blk, nil
 }
 
-func MakeBlock(version uint8, timestamp time.Time, txs Txs,
+func MakeBlock(version protocol.Version, timestamp time.Time, txs Txs,
 	prevBlockHash, stateRoot hash.Hash,
 	prevCert *certificate.BlockCertificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address,
 ) *Block {

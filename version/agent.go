@@ -4,13 +4,14 @@ import (
 	"errors"
 	"fmt"
 	"runtime"
-	"strconv"
 	"strings"
+
+	"github.com/pactus-project/pactus/types/protocol"
 )
 
 var NodeAgent = Agent{
 	Version:         NodeVersion(),
-	ProtocolVersion: 1,
+	ProtocolVersion: protocol.ProtocolVersion2,
 	OS:              runtime.GOOS,
 	Arch:            runtime.GOARCH,
 }
@@ -18,7 +19,7 @@ var NodeAgent = Agent{
 type Agent struct {
 	AppType         string
 	Version         Version
-	ProtocolVersion uint
+	ProtocolVersion protocol.Version
 	OS              string
 	Arch            string
 }
@@ -46,11 +47,11 @@ func ParseAgent(agentStr string) (Agent, error) {
 			}
 			agent.Version = v
 		case "protocol-version":
-			protocolVersion, err := strconv.ParseUint(value, 10, 64)
+			protocolVersion, err := protocol.ParseVersion(value)
 			if err != nil {
 				return agent, fmt.Errorf("failed to parse protocol version: %w", err)
 			}
-			agent.ProtocolVersion = uint(protocolVersion)
+			agent.ProtocolVersion = protocolVersion
 		case "os":
 			agent.OS = value
 		case "arch":
