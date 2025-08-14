@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
@@ -373,6 +374,13 @@ func (s *store) UpdateValidator(acc *validator.Validator) {
 	defer s.lk.Unlock()
 
 	s.validatorStore.updateValidator(s.batch, acc)
+}
+
+func (s *store) UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version) {
+	s.lk.Lock()
+	defer s.lk.Unlock()
+
+	s.validatorStore.updateValidatorProtocolVersion(addr, ver)
 }
 
 func (s *store) LastCertificate() *certificate.BlockCertificate {

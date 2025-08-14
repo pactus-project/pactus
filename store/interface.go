@@ -7,6 +7,7 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 )
@@ -107,6 +108,7 @@ type Store interface {
 
 	UpdateAccount(addr crypto.Address, acc *account.Account)
 	UpdateValidator(val *validator.Validator)
+	UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version)
 	SaveBlock(blk *block.Block, cert *certificate.BlockCertificate)
 	Prune(callback func(pruned bool, pruningHeight uint32) bool) error
 	WriteBatch() error

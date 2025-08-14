@@ -23,6 +23,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -764,4 +765,8 @@ func (st *state) PruningHeight() uint32 {
 
 func (st *state) publishEvent(msg any) {
 	st.eventPipe.Send(msg)
+}
+
+func (st *state) UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version) {
+	st.store.UpdateValidatorProtocolVersion(addr, ver)
 }

@@ -514,7 +514,7 @@
   "type": "array",
   "items": {
   "type": "object",
-  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" }}
+  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" }}
 }
 },"is_pruned": { "type": "boolean" },"pruning_height": { "type": "integer" },"last_block_time": { "type": "integer" }}
           }
@@ -596,7 +596,7 @@
           "type": "object",
           "properties": {"validator": {
   "type": "object",
-  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" }}
+  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" }}
 }}
           }
         }
@@ -620,7 +620,7 @@
           "type": "object",
           "properties": {"validator": {
   "type": "object",
-  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" }}
+  "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" }}
 }}
           }
         }

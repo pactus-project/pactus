@@ -672,6 +672,9 @@ pub struct ValidatorInfo {
     /// The availability score of the validator.
     #[prost(double, tag="10")]
     pub availability_score: f64,
+    /// The protocol version of the validator.
+    #[prost(int32, tag="11")]
+    pub protocol_version: i32,
 }
 /// Message contains information about an account.
 #[allow(clippy::derive_partial_eq_without_eq)]

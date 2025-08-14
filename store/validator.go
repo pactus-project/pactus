@@ -2,6 +2,7 @@ package store
 
 import (
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/syndtr/goleveldb/leveldb"
@@ -102,4 +103,11 @@ func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.V
 	vs.addressMap[val.Address()] = val
 
 	batch.Put(valKey(val.Address()), data)
+}
+
+func (vs *validatorStore) updateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version) {
+	val, ok := vs.addressMap[addr]
+	if ok {
+		val.UpdateProtocolVersion(ver)
+	}
 }

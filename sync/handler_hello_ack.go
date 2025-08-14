@@ -22,7 +22,7 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) {
 	msg := m.(*message.HelloAckMessage)
 	handler.logger.Trace("parsing HelloAck message", "msg", msg)
 
-	if msg.ResponseCode != message.ResponseCodeOK {
+	if msg.ResponseCode == message.ResponseCodeRejected {
 		handler.logger.Warn("hello message rejected",
 			"from", pid, "reason", msg.Reason)
 

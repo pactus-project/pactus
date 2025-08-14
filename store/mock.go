@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -305,4 +306,11 @@ func (*MockStore) IsPruned() bool {
 
 func (*MockStore) PruningHeight() uint32 {
 	return 0
+}
+
+func (m *MockStore) UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version) {
+	val, ok := m.Validators[addr]
+	if ok {
+		val.UpdateProtocolVersion(ver)
+	}
 }

@@ -187,7 +187,7 @@ class GetTxPoolContentResponse(_message.Message):
     def __init__(self, txs: _Optional[_Iterable[_Union[_transaction_pb2.TransactionInfo, _Mapping]]] = ...) -> None: ...
 
 class ValidatorInfo(_message.Message):
-    __slots__ = ("hash", "data", "public_key", "number", "stake", "last_bonding_height", "last_sortition_height", "unbonding_height", "address", "availability_score")
+    __slots__ = ("hash", "data", "public_key", "number", "stake", "last_bonding_height", "last_sortition_height", "unbonding_height", "address", "availability_score", "protocol_version")
     HASH_FIELD_NUMBER: _ClassVar[int]
     DATA_FIELD_NUMBER: _ClassVar[int]
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
@@ -198,6 +198,7 @@ class ValidatorInfo(_message.Message):
     UNBONDING_HEIGHT_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
     AVAILABILITY_SCORE_FIELD_NUMBER: _ClassVar[int]
+    PROTOCOL_VERSION_FIELD_NUMBER: _ClassVar[int]
     hash: str
     data: str
     public_key: str
@@ -208,7 +209,8 @@ class ValidatorInfo(_message.Message):
     unbonding_height: int
     address: str
     availability_score: float
-    def __init__(self, hash: _Optional[str] = ..., data: _Optional[str] = ..., public_key: _Optional[str] = ..., number: _Optional[int] = ..., stake: _Optional[int] = ..., last_bonding_height: _Optional[int] = ..., last_sortition_height: _Optional[int] = ..., unbonding_height: _Optional[int] = ..., address: _Optional[str] = ..., availability_score: _Optional[float] = ...) -> None: ...
+    protocol_version: int
+    def __init__(self, hash: _Optional[str] = ..., data: _Optional[str] = ..., public_key: _Optional[str] = ..., number: _Optional[int] = ..., stake: _Optional[int] = ..., last_bonding_height: _Optional[int] = ..., last_sortition_height: _Optional[int] = ..., unbonding_height: _Optional[int] = ..., address: _Optional[str] = ..., availability_score: _Optional[float] = ..., protocol_version: _Optional[int] = ...) -> None: ...
 
 class AccountInfo(_message.Message):
     __slots__ = ("hash", "data", "number", "balance", "address")

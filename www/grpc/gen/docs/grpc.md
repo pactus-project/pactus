@@ -1850,6 +1850,13 @@ Message has no fields.
         </td>
       </tr>
          <tr>
+        <td class="fw-bold">committee_validators[].protocol_version</td>
+        <td> int32</td>
+        <td>
+        The protocol version of the validator.
+        </td>
+      </tr>
+         <tr>
     <td class="fw-bold">is_pruned</td>
     <td> bool</td>
     <td>
@@ -2193,6 +2200,13 @@ Message has no fields.
         The availability score of the validator.
         </td>
       </tr>
+         <tr>
+        <td class="fw-bold">validator.protocol_version</td>
+        <td> int32</td>
+        <td>
+        The protocol version of the validator.
+        </td>
+      </tr>
          </tbody>
 </table>
 
@@ -2298,6 +2312,13 @@ Message has no fields.
         <td> double</td>
         <td>
         The availability score of the validator.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">validator.protocol_version</td>
+        <td> int32</td>
+        <td>
+        The protocol version of the validator.
         </td>
       </tr>
          </tbody>

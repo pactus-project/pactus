@@ -1255,8 +1255,10 @@ type ValidatorInfo struct {
 	Address string `protobuf:"bytes,9,opt,name=address,proto3" json:"address,omitempty"`
 	// The availability score of the validator.
 	AvailabilityScore float64 `protobuf:"fixed64,10,opt,name=availability_score,json=availabilityScore,proto3" json:"availability_score,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	// The protocol version of the validator.
+	ProtocolVersion int32 `protobuf:"varint,11,opt,name=protocol_version,json=protocolVersion,proto3" json:"protocol_version,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ValidatorInfo) Reset() {
@@ -1355,6 +1357,13 @@ func (x *ValidatorInfo) GetAddress() string {
 func (x *ValidatorInfo) GetAvailabilityScore() float64 {
 	if x != nil {
 		return x.AvailabilityScore
+	}
+	return 0
+}
+
+func (x *ValidatorInfo) GetProtocolVersion() int32 {
+	if x != nil {
+		return x.ProtocolVersion
 	}
 	return 0
 }
@@ -1915,7 +1924,7 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x17GetTxPoolContentRequest\x126\n" +
 	"\fpayload_type\x18\x01 \x01(\x0e2\x13.pactus.PayloadTypeR\vpayloadType\"E\n" +
 	"\x18GetTxPoolContentResponse\x12)\n" +
-	"\x03txs\x18\x01 \x03(\v2\x17.pactus.TransactionInfoR\x03txs\"\xdc\x02\n" +
+	"\x03txs\x18\x01 \x03(\v2\x17.pactus.TransactionInfoR\x03txs\"\x87\x03\n" +
 	"\rValidatorInfo\x12\x12\n" +
 	"\x04hash\x18\x01 \x01(\tR\x04hash\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\tR\x04data\x12\x1d\n" +
@@ -1928,7 +1937,8 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x10unbonding_height\x18\b \x01(\rR\x0funbondingHeight\x12\x18\n" +
 	"\aaddress\x18\t \x01(\tR\aaddress\x12-\n" +
 	"\x12availability_score\x18\n" +
-	" \x01(\x01R\x11availabilityScore\"\x81\x01\n" +
+	" \x01(\x01R\x11availabilityScore\x12)\n" +
+	"\x10protocol_version\x18\v \x01(\x05R\x0fprotocolVersion\"\x81\x01\n" +
 	"\vAccountInfo\x12\x12\n" +
 	"\x04hash\x18\x01 \x01(\tR\x04hash\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\tR\x04data\x12\x16\n" +

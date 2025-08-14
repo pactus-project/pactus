@@ -77,6 +77,10 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		return
 	}
 
+	for _, pub := range msg.PublicKeys {
+		handler.state.UpdateValidatorProtocolVersion(pub.ValidatorAddress(), agent.ProtocolVersion)
+	}
+
 	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
 	handler.peerSet.UpdateStatus(pid, status.StatusConnected)
 

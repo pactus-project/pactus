@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
@@ -24,6 +25,10 @@ type validatorData struct {
 	LastBondingHeight   uint32
 	UnbondingHeight     uint32
 	LastSortitionHeight uint32
+
+	// The protocol version of the validator.
+	// This is in memory and not saved to the blockchain.
+	ProtocolVersion protocol.Version
 }
 
 // NewValidator constructs a new validator from the given public key and number.
@@ -177,4 +182,14 @@ func (val *Validator) Clone() *Validator {
 	*cloned = *val
 
 	return cloned
+}
+
+// UpdateProtocolVersion updates the protocol version of the validator.
+func (val *Validator) UpdateProtocolVersion(ver protocol.Version) {
+	val.data.ProtocolVersion = ver
+}
+
+// ProtocolVersion returns the protocol version of the validator.
+func (val *Validator) ProtocolVersion() protocol.Version {
+	return val.data.ProtocolVersion
 }
