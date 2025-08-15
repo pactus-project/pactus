@@ -11,7 +11,7 @@ import (
 
 var NodeAgent = Agent{
 	Version:         NodeVersion(),
-	ProtocolVersion: protocol.ProtocolVersion2,
+	ProtocolVersion: protocol.ProtocolVersionLatest,
 	OS:              runtime.GOOS,
 	Arch:            runtime.GOARCH,
 }

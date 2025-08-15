@@ -3,15 +3,18 @@ package message
 import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/types/proposal"
+	"github.com/pactus-project/pactus/types/protocol"
 )
 
 type ProposalMessage struct {
-	Proposal *proposal.Proposal `cbor:"1,keyasint"`
+	Proposal        *proposal.Proposal `cbor:"1,keyasint"`
+	ProtocolVersion protocol.Version   `cbor:"2,keyasint"`
 }
 
 func NewProposalMessage(p *proposal.Proposal) *ProposalMessage {
 	return &ProposalMessage{
-		Proposal: p,
+		Proposal:        p,
+		ProtocolVersion: protocol.ProtocolVersionLatest,
 	}
 }
 
