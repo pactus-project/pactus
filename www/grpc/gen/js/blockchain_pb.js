@@ -4086,7 +4086,8 @@ lastBondingHeight: jspb.Message.getFieldWithDefault(msg, 6, 0),
 lastSortitionHeight: jspb.Message.getFieldWithDefault(msg, 7, 0),
 unbondingHeight: jspb.Message.getFieldWithDefault(msg, 8, 0),
 address: jspb.Message.getFieldWithDefault(msg, 9, ""),
-availabilityScore: jspb.Message.getFloatingPointFieldWithDefault(msg, 10, 0.0)
+availabilityScore: jspb.Message.getFloatingPointFieldWithDefault(msg, 10, 0.0),
+protocolVersion: jspb.Message.getFieldWithDefault(msg, 11, 0)
   };
 
   if (includeInstance) {
@@ -4162,6 +4163,10 @@ proto.pactus.ValidatorInfo.deserializeBinaryFromReader = function(msg, reader) {
     case 10:
       var value = /** @type {number} */ (reader.readDouble());
       msg.setAvailabilityScore(value);
+      break;
+    case 11:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setProtocolVersion(value);
       break;
     default:
       reader.skipField();
@@ -4259,6 +4264,13 @@ proto.pactus.ValidatorInfo.serializeBinaryToWriter = function(message, writer) {
   if (f !== 0.0) {
     writer.writeDouble(
       10,
+      f
+    );
+  }
+  f = message.getProtocolVersion();
+  if (f !== 0) {
+    writer.writeInt32(
+      11,
       f
     );
   }
@@ -4442,6 +4454,24 @@ proto.pactus.ValidatorInfo.prototype.getAvailabilityScore = function() {
  */
 proto.pactus.ValidatorInfo.prototype.setAvailabilityScore = function(value) {
   return jspb.Message.setProto3FloatField(this, 10, value);
+};
+
+
+/**
+ * optional int32 protocol_version = 11;
+ * @return {number}
+ */
+proto.pactus.ValidatorInfo.prototype.getProtocolVersion = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.ValidatorInfo} returns this
+ */
+proto.pactus.ValidatorInfo.prototype.setProtocolVersion = function(value) {
+  return jspb.Message.setProto3IntField(this, 11, value);
 };
 
 

@@ -12104,6 +12104,9 @@ impl serde::Serialize for ValidatorInfo {
         if self.availability_score != 0. {
             len += 1;
         }
+        if self.protocol_version != 0 {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.ValidatorInfo", len)?;
         if !self.hash.is_empty() {
             struct_ser.serialize_field("hash", &self.hash)?;
@@ -12137,6 +12140,9 @@ impl serde::Serialize for ValidatorInfo {
         if self.availability_score != 0. {
             struct_ser.serialize_field("availabilityScore", &self.availability_score)?;
         }
+        if self.protocol_version != 0 {
+            struct_ser.serialize_field("protocolVersion", &self.protocol_version)?;
+        }
         struct_ser.end()
     }
 }
@@ -12162,6 +12168,8 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
             "address",
             "availability_score",
             "availabilityScore",
+            "protocol_version",
+            "protocolVersion",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -12176,6 +12184,7 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
             UnbondingHeight,
             Address,
             AvailabilityScore,
+            ProtocolVersion,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -12207,6 +12216,7 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                             "unbondingHeight" | "unbonding_height" => Ok(GeneratedField::UnbondingHeight),
                             "address" => Ok(GeneratedField::Address),
                             "availabilityScore" | "availability_score" => Ok(GeneratedField::AvailabilityScore),
+                            "protocolVersion" | "protocol_version" => Ok(GeneratedField::ProtocolVersion),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -12236,6 +12246,7 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                 let mut unbonding_height__ = None;
                 let mut address__ = None;
                 let mut availability_score__ = None;
+                let mut protocol_version__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Hash => {
@@ -12310,6 +12321,14 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                                 Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
+                        GeneratedField::ProtocolVersion => {
+                            if protocol_version__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("protocolVersion"));
+                            }
+                            protocol_version__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                     }
                 }
                 Ok(ValidatorInfo {
@@ -12323,6 +12342,7 @@ impl<'de> serde::Deserialize<'de> for ValidatorInfo {
                     unbonding_height: unbonding_height__.unwrap_or_default(),
                     address: address__.unwrap_or_default(),
                     availability_score: availability_score__.unwrap_or_default(),
+                    protocol_version: protocol_version__.unwrap_or_default(),
                 })
             }
         }

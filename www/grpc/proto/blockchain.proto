@@ -216,6 +216,8 @@ message ValidatorInfo {
   string address = 9;
   // The availability score of the validator.
   double availability_score = 10;
+  // The protocol version of the validator.
+  int32 protocol_version = 11;
 }
 
 // Message contains information about an account.

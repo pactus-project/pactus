@@ -2989,6 +2989,11 @@
           "type": "number",
           "format": "double",
           "description": "The availability score of the validator."
+        },
+        "protocolVersion": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The protocol version of the validator."
         }
       },
       "description": "Message contains information about a validator."

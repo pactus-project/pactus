@@ -5,6 +5,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
@@ -220,4 +221,15 @@ func TestValidatorDeepCopy(t *testing.T) {
 	val3, _ := td.store.Validator(val1.Address())
 	val3.AddToStake(1)
 	assert.NotEqual(t, td.store.validatorStore.numberMap[num].Hash(), val3.Hash())
+}
+
+func TestUpdateValidatorProtocolVersion(t *testing.T) {
+	td := setup(t, nil)
+
+	val1 := td.GenerateTestValidator()
+	td.store.UpdateValidator(val1)
+	td.store.UpdateValidatorProtocolVersion(val1.Address(), protocol.ProtocolVersion2)
+
+	val2, _ := td.store.Validator(val1.Address())
+	assert.Equal(t, protocol.ProtocolVersion2, val2.ProtocolVersion())
 }

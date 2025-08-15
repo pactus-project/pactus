@@ -1307,6 +1307,7 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     $core.int? unbondingHeight,
     $core.String? address,
     $core.double? availabilityScore,
+    $core.int? protocolVersion,
   }) {
     final $result = create();
     if (hash != null) {
@@ -1339,6 +1340,9 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     if (availabilityScore != null) {
       $result.availabilityScore = availabilityScore;
     }
+    if (protocolVersion != null) {
+      $result.protocolVersion = protocolVersion;
+    }
     return $result;
   }
   ValidatorInfo._() : super();
@@ -1356,6 +1360,7 @@ class ValidatorInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(8, _omitFieldNames ? '' : 'unbondingHeight', $pb.PbFieldType.OU3)
     ..aOS(9, _omitFieldNames ? '' : 'address')
     ..a<$core.double>(10, _omitFieldNames ? '' : 'availabilityScore', $pb.PbFieldType.OD)
+    ..a<$core.int>(11, _omitFieldNames ? '' : 'protocolVersion', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -1479,6 +1484,16 @@ class ValidatorInfo extends $pb.GeneratedMessage {
   $core.bool hasAvailabilityScore() => $_has(9);
   @$pb.TagNumber(10)
   void clearAvailabilityScore() => $_clearField(10);
+
+  /// The protocol version of the validator.
+  @$pb.TagNumber(11)
+  $core.int get protocolVersion => $_getIZ(10);
+  @$pb.TagNumber(11)
+  set protocolVersion($core.int v) { $_setSignedInt32(10, v); }
+  @$pb.TagNumber(11)
+  $core.bool hasProtocolVersion() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearProtocolVersion() => $_clearField(11);
 }
 
 /// Message contains information about an account.

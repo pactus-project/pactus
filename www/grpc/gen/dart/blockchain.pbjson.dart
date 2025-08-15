@@ -344,6 +344,7 @@ const ValidatorInfo$json = {
     {'1': 'unbonding_height', '3': 8, '4': 1, '5': 13, '10': 'unbondingHeight'},
     {'1': 'address', '3': 9, '4': 1, '5': 9, '10': 'address'},
     {'1': 'availability_score', '3': 10, '4': 1, '5': 1, '10': 'availabilityScore'},
+    {'1': 'protocol_version', '3': 11, '4': 1, '5': 5, '10': 'protocolVersion'},
   ],
 };
 
@@ -355,7 +356,8 @@ final $typed_data.Uint8List validatorInfoDescriptor = $convert.base64Decode(
     'RCb25kaW5nSGVpZ2h0EjIKFWxhc3Rfc29ydGl0aW9uX2hlaWdodBgHIAEoDVITbGFzdFNvcnRp'
     'dGlvbkhlaWdodBIpChB1bmJvbmRpbmdfaGVpZ2h0GAggASgNUg91bmJvbmRpbmdIZWlnaHQSGA'
     'oHYWRkcmVzcxgJIAEoCVIHYWRkcmVzcxItChJhdmFpbGFiaWxpdHlfc2NvcmUYCiABKAFSEWF2'
-    'YWlsYWJpbGl0eVNjb3Jl');
+    'YWlsYWJpbGl0eVNjb3JlEikKEHByb3RvY29sX3ZlcnNpb24YCyABKAVSD3Byb3RvY29sVmVyc2'
+    'lvbg==');
 
 @$core.Deprecated('Use accountInfoDescriptor instead')
 const AccountInfo$json = {

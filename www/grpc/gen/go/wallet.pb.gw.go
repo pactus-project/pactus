@@ -42,7 +42,9 @@ func request_Wallet_CreateWallet_0(ctx context.Context, marshaler runtime.Marsha
 		protoReq CreateWalletRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -75,7 +77,9 @@ func request_Wallet_RestoreWallet_0(ctx context.Context, marshaler runtime.Marsh
 		protoReq RestoreWalletRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -108,7 +112,9 @@ func request_Wallet_LoadWallet_0(ctx context.Context, marshaler runtime.Marshale
 		protoReq LoadWalletRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -141,7 +147,9 @@ func request_Wallet_UnloadWallet_0(ctx context.Context, marshaler runtime.Marsha
 		protoReq UnloadWalletRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -174,7 +182,9 @@ func request_Wallet_GetTotalBalance_0(ctx context.Context, marshaler runtime.Mar
 		protoReq GetTotalBalanceRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -207,7 +217,9 @@ func request_Wallet_SignRawTransaction_0(ctx context.Context, marshaler runtime.
 		protoReq SignRawTransactionRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -240,7 +252,9 @@ func request_Wallet_GetValidatorAddress_0(ctx context.Context, marshaler runtime
 		protoReq GetValidatorAddressRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -273,7 +287,9 @@ func request_Wallet_GetNewAddress_0(ctx context.Context, marshaler runtime.Marsh
 		protoReq GetNewAddressRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -306,7 +322,9 @@ func request_Wallet_GetAddressHistory_0(ctx context.Context, marshaler runtime.M
 		protoReq GetAddressHistoryRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -339,7 +357,9 @@ func request_Wallet_SignMessage_0(ctx context.Context, marshaler runtime.Marshal
 		protoReq SignMessageRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -372,7 +392,9 @@ func request_Wallet_GetTotalStake_0(ctx context.Context, marshaler runtime.Marsh
 		protoReq GetTotalStakeRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -405,7 +427,9 @@ func request_Wallet_GetAddressInfo_0(ctx context.Context, marshaler runtime.Mars
 		protoReq GetAddressInfoRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -438,7 +462,9 @@ func request_Wallet_SetAddressLabel_0(ctx context.Context, marshaler runtime.Mar
 		protoReq SetAddressLabelRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -469,7 +495,9 @@ func request_Wallet_ListWallet_0(ctx context.Context, marshaler runtime.Marshale
 		protoReq ListWalletRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	msg, err := client.ListWallet(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 }
@@ -490,7 +518,9 @@ func request_Wallet_GetWalletInfo_0(ctx context.Context, marshaler runtime.Marsh
 		protoReq GetWalletInfoRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
@@ -523,7 +553,9 @@ func request_Wallet_ListAddress_0(ctx context.Context, marshaler runtime.Marshal
 		protoReq ListAddressRequest
 		metadata runtime.ServerMetadata
 	)
-	io.Copy(io.Discard, req.Body)
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
