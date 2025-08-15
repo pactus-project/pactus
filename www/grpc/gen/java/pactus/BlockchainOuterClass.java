@@ -10467,6 +10467,58 @@ public final class BlockchainOuterClass {
      * @return The lastBlockTime.
      */
     long getLastBlockTime();
+
+    /**
+     * <pre>
+     * Map of protocol versions and their percentages in the committee.
+     * </pre>
+     *
+     * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+     */
+    int getCommitteeProtocolVersionsCount();
+    /**
+     * <pre>
+     * Map of protocol versions and their percentages in the committee.
+     * </pre>
+     *
+     * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+     */
+    boolean containsCommitteeProtocolVersions(
+        int key);
+    /**
+     * Use {@link #getCommitteeProtocolVersionsMap()} instead.
+     */
+    @java.lang.Deprecated
+    java.util.Map<java.lang.Integer, java.lang.Double>
+    getCommitteeProtocolVersions();
+    /**
+     * <pre>
+     * Map of protocol versions and their percentages in the committee.
+     * </pre>
+     *
+     * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+     */
+    java.util.Map<java.lang.Integer, java.lang.Double>
+    getCommitteeProtocolVersionsMap();
+    /**
+     * <pre>
+     * Map of protocol versions and their percentages in the committee.
+     * </pre>
+     *
+     * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+     */
+    double getCommitteeProtocolVersionsOrDefault(
+        int key,
+        double defaultValue);
+    /**
+     * <pre>
+     * Map of protocol versions and their percentages in the committee.
+     * </pre>
+     *
+     * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+     */
+    double getCommitteeProtocolVersionsOrThrow(
+        int key);
   }
   /**
    * <pre>
@@ -10503,6 +10555,18 @@ public final class BlockchainOuterClass {
       return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoResponse_descriptor;
     }
 
+    @SuppressWarnings({"rawtypes"})
+    @java.lang.Override
+    protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
+        int number) {
+      switch (number) {
+        case 11:
+          return internalGetCommitteeProtocolVersions();
+        default:
+          throw new RuntimeException(
+              "Invalid map field number: " + number);
+      }
+    }
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
@@ -10739,6 +10803,99 @@ public final class BlockchainOuterClass {
       return lastBlockTime_;
     }
 
+    public static final int COMMITTEE_PROTOCOL_VERSIONS_FIELD_NUMBER = 11;
+    private static final class CommitteeProtocolVersionsDefaultEntryHolder {
+      static final com.google.protobuf.MapEntry<
+          java.lang.Integer, java.lang.Double> defaultEntry =
+              com.google.protobuf.MapEntry
+              .<java.lang.Integer, java.lang.Double>newDefaultInstance(
+                  pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry_descriptor, 
+                  com.google.protobuf.WireFormat.FieldType.INT32,
+                  0,
+                  com.google.protobuf.WireFormat.FieldType.DOUBLE,
+                  0D);
+    }
+    @SuppressWarnings("serial")
+    private com.google.protobuf.MapField<
+        java.lang.Integer, java.lang.Double> committeeProtocolVersions_;
+    private com.google.protobuf.MapField<java.lang.Integer, java.lang.Double>
+    internalGetCommitteeProtocolVersions() {
+      if (committeeProtocolVersions_ == null) {
+        return com.google.protobuf.MapField.emptyMapField(
+            CommitteeProtocolVersionsDefaultEntryHolder.defaultEntry);
+      }
+      return committeeProtocolVersions_;
+    }
+    public int getCommitteeProtocolVersionsCount() {
+      return internalGetCommitteeProtocolVersions().getMap().size();
+    }
+    /**
+     * <pre>
+     * Map of protocol versions and their percentages in the committee.
+     * </pre>
+     *
+     * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+     */
+    @java.lang.Override
+    public boolean containsCommitteeProtocolVersions(
+        int key) {
+
+      return internalGetCommitteeProtocolVersions().getMap().containsKey(key);
+    }
+    /**
+     * Use {@link #getCommitteeProtocolVersionsMap()} instead.
+     */
+    @java.lang.Override
+    @java.lang.Deprecated
+    public java.util.Map<java.lang.Integer, java.lang.Double> getCommitteeProtocolVersions() {
+      return getCommitteeProtocolVersionsMap();
+    }
+    /**
+     * <pre>
+     * Map of protocol versions and their percentages in the committee.
+     * </pre>
+     *
+     * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+     */
+    @java.lang.Override
+    public java.util.Map<java.lang.Integer, java.lang.Double> getCommitteeProtocolVersionsMap() {
+      return internalGetCommitteeProtocolVersions().getMap();
+    }
+    /**
+     * <pre>
+     * Map of protocol versions and their percentages in the committee.
+     * </pre>
+     *
+     * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+     */
+    @java.lang.Override
+    public double getCommitteeProtocolVersionsOrDefault(
+        int key,
+        double defaultValue) {
+
+      java.util.Map<java.lang.Integer, java.lang.Double> map =
+          internalGetCommitteeProtocolVersions().getMap();
+      return map.containsKey(key) ? map.get(key) : defaultValue;
+    }
+    /**
+     * <pre>
+     * Map of protocol versions and their percentages in the committee.
+     * </pre>
+     *
+     * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+     */
+    @java.lang.Override
+    public double getCommitteeProtocolVersionsOrThrow(
+        int key) {
+
+      java.util.Map<java.lang.Integer, java.lang.Double> map =
+          internalGetCommitteeProtocolVersions().getMap();
+      if (!map.containsKey(key)) {
+        throw new java.lang.IllegalArgumentException();
+      }
+      return map.get(key);
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -10783,6 +10940,12 @@ public final class BlockchainOuterClass {
       if (lastBlockTime_ != 0L) {
         output.writeInt64(10, lastBlockTime_);
       }
+      com.google.protobuf.GeneratedMessage
+        .serializeIntegerMapTo(
+          output,
+          internalGetCommitteeProtocolVersions(),
+          CommitteeProtocolVersionsDefaultEntryHolder.defaultEntry,
+          11);
       getUnknownFields().writeTo(output);
     }
 
@@ -10831,6 +10994,16 @@ public final class BlockchainOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(10, lastBlockTime_);
       }
+      for (java.util.Map.Entry<java.lang.Integer, java.lang.Double> entry
+           : internalGetCommitteeProtocolVersions().getMap().entrySet()) {
+        com.google.protobuf.MapEntry<java.lang.Integer, java.lang.Double>
+        committeeProtocolVersions__ = CommitteeProtocolVersionsDefaultEntryHolder.defaultEntry.newBuilderForType()
+            .setKey(entry.getKey())
+            .setValue(entry.getValue())
+            .build();
+        size += com.google.protobuf.CodedOutputStream
+            .computeMessageSize(11, committeeProtocolVersions__);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -10866,6 +11039,8 @@ public final class BlockchainOuterClass {
           != other.getPruningHeight()) return false;
       if (getLastBlockTime()
           != other.getLastBlockTime()) return false;
+      if (!internalGetCommitteeProtocolVersions().equals(
+          other.internalGetCommitteeProtocolVersions())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -10903,6 +11078,10 @@ public final class BlockchainOuterClass {
       hash = (37 * hash) + LAST_BLOCK_TIME_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getLastBlockTime());
+      if (!internalGetCommitteeProtocolVersions().getMap().isEmpty()) {
+        hash = (37 * hash) + COMMITTEE_PROTOCOL_VERSIONS_FIELD_NUMBER;
+        hash = (53 * hash) + internalGetCommitteeProtocolVersions().hashCode();
+      }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -11016,6 +11195,28 @@ public final class BlockchainOuterClass {
         return pactus.BlockchainOuterClass.internal_static_pactus_GetBlockchainInfoResponse_descriptor;
       }
 
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapFieldReflectionAccessor internalGetMapFieldReflection(
+          int number) {
+        switch (number) {
+          case 11:
+            return internalGetCommitteeProtocolVersions();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
+      @SuppressWarnings({"rawtypes"})
+      protected com.google.protobuf.MapFieldReflectionAccessor internalGetMutableMapFieldReflection(
+          int number) {
+        switch (number) {
+          case 11:
+            return internalGetMutableCommitteeProtocolVersions();
+          default:
+            throw new RuntimeException(
+                "Invalid map field number: " + number);
+        }
+      }
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
@@ -11054,6 +11255,7 @@ public final class BlockchainOuterClass {
         isPruned_ = false;
         pruningHeight_ = 0;
         lastBlockTime_ = 0L;
+        internalGetMutableCommitteeProtocolVersions().clear();
         return this;
       }
 
@@ -11127,6 +11329,10 @@ public final class BlockchainOuterClass {
         if (((from_bitField0_ & 0x00000200) != 0)) {
           result.lastBlockTime_ = lastBlockTime_;
         }
+        if (((from_bitField0_ & 0x00000400) != 0)) {
+          result.committeeProtocolVersions_ = internalGetCommitteeProtocolVersions();
+          result.committeeProtocolVersions_.makeImmutable();
+        }
       }
 
       @java.lang.Override
@@ -11196,6 +11402,9 @@ public final class BlockchainOuterClass {
         if (other.getLastBlockTime() != 0L) {
           setLastBlockTime(other.getLastBlockTime());
         }
+        internalGetMutableCommitteeProtocolVersions().mergeFrom(
+            other.internalGetCommitteeProtocolVersions());
+        bitField0_ |= 0x00000400;
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -11280,6 +11489,15 @@ public final class BlockchainOuterClass {
                 bitField0_ |= 0x00000200;
                 break;
               } // case 80
+              case 90: {
+                com.google.protobuf.MapEntry<java.lang.Integer, java.lang.Double>
+                committeeProtocolVersions__ = input.readMessage(
+                    CommitteeProtocolVersionsDefaultEntryHolder.defaultEntry.getParserForType(), extensionRegistry);
+                internalGetMutableCommitteeProtocolVersions().getMutableMap().put(
+                    committeeProtocolVersions__.getKey(), committeeProtocolVersions__.getValue());
+                bitField0_ |= 0x00000400;
+                break;
+              } // case 90
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -12050,6 +12268,159 @@ public final class BlockchainOuterClass {
         bitField0_ = (bitField0_ & ~0x00000200);
         lastBlockTime_ = 0L;
         onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.MapField<
+          java.lang.Integer, java.lang.Double> committeeProtocolVersions_;
+      private com.google.protobuf.MapField<java.lang.Integer, java.lang.Double>
+          internalGetCommitteeProtocolVersions() {
+        if (committeeProtocolVersions_ == null) {
+          return com.google.protobuf.MapField.emptyMapField(
+              CommitteeProtocolVersionsDefaultEntryHolder.defaultEntry);
+        }
+        return committeeProtocolVersions_;
+      }
+      private com.google.protobuf.MapField<java.lang.Integer, java.lang.Double>
+          internalGetMutableCommitteeProtocolVersions() {
+        if (committeeProtocolVersions_ == null) {
+          committeeProtocolVersions_ = com.google.protobuf.MapField.newMapField(
+              CommitteeProtocolVersionsDefaultEntryHolder.defaultEntry);
+        }
+        if (!committeeProtocolVersions_.isMutable()) {
+          committeeProtocolVersions_ = committeeProtocolVersions_.copy();
+        }
+        bitField0_ |= 0x00000400;
+        onChanged();
+        return committeeProtocolVersions_;
+      }
+      public int getCommitteeProtocolVersionsCount() {
+        return internalGetCommitteeProtocolVersions().getMap().size();
+      }
+      /**
+       * <pre>
+       * Map of protocol versions and their percentages in the committee.
+       * </pre>
+       *
+       * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+       */
+      @java.lang.Override
+      public boolean containsCommitteeProtocolVersions(
+          int key) {
+
+        return internalGetCommitteeProtocolVersions().getMap().containsKey(key);
+      }
+      /**
+       * Use {@link #getCommitteeProtocolVersionsMap()} instead.
+       */
+      @java.lang.Override
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.Integer, java.lang.Double> getCommitteeProtocolVersions() {
+        return getCommitteeProtocolVersionsMap();
+      }
+      /**
+       * <pre>
+       * Map of protocol versions and their percentages in the committee.
+       * </pre>
+       *
+       * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+       */
+      @java.lang.Override
+      public java.util.Map<java.lang.Integer, java.lang.Double> getCommitteeProtocolVersionsMap() {
+        return internalGetCommitteeProtocolVersions().getMap();
+      }
+      /**
+       * <pre>
+       * Map of protocol versions and their percentages in the committee.
+       * </pre>
+       *
+       * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+       */
+      @java.lang.Override
+      public double getCommitteeProtocolVersionsOrDefault(
+          int key,
+          double defaultValue) {
+
+        java.util.Map<java.lang.Integer, java.lang.Double> map =
+            internalGetCommitteeProtocolVersions().getMap();
+        return map.containsKey(key) ? map.get(key) : defaultValue;
+      }
+      /**
+       * <pre>
+       * Map of protocol versions and their percentages in the committee.
+       * </pre>
+       *
+       * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+       */
+      @java.lang.Override
+      public double getCommitteeProtocolVersionsOrThrow(
+          int key) {
+
+        java.util.Map<java.lang.Integer, java.lang.Double> map =
+            internalGetCommitteeProtocolVersions().getMap();
+        if (!map.containsKey(key)) {
+          throw new java.lang.IllegalArgumentException();
+        }
+        return map.get(key);
+      }
+      public Builder clearCommitteeProtocolVersions() {
+        bitField0_ = (bitField0_ & ~0x00000400);
+        internalGetMutableCommitteeProtocolVersions().getMutableMap()
+            .clear();
+        return this;
+      }
+      /**
+       * <pre>
+       * Map of protocol versions and their percentages in the committee.
+       * </pre>
+       *
+       * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+       */
+      public Builder removeCommitteeProtocolVersions(
+          int key) {
+
+        internalGetMutableCommitteeProtocolVersions().getMutableMap()
+            .remove(key);
+        return this;
+      }
+      /**
+       * Use alternate mutation accessors instead.
+       */
+      @java.lang.Deprecated
+      public java.util.Map<java.lang.Integer, java.lang.Double>
+          getMutableCommitteeProtocolVersions() {
+        bitField0_ |= 0x00000400;
+        return internalGetMutableCommitteeProtocolVersions().getMutableMap();
+      }
+      /**
+       * <pre>
+       * Map of protocol versions and their percentages in the committee.
+       * </pre>
+       *
+       * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+       */
+      public Builder putCommitteeProtocolVersions(
+          int key,
+          double value) {
+
+
+        internalGetMutableCommitteeProtocolVersions().getMutableMap()
+            .put(key, value);
+        bitField0_ |= 0x00000400;
+        return this;
+      }
+      /**
+       * <pre>
+       * Map of protocol versions and their percentages in the committee.
+       * </pre>
+       *
+       * <code>map&lt;int32, double&gt; committee_protocol_versions = 11 [json_name = "committeeProtocolVersions"];</code>
+       */
+      public Builder putAllCommitteeProtocolVersions(
+          java.util.Map<java.lang.Integer, java.lang.Double> values) {
+        internalGetMutableCommitteeProtocolVersions().getMutableMap()
+            .putAll(values);
+        bitField0_ |= 0x00000400;
         return this;
       }
 
@@ -23826,6 +24197,11 @@ public final class BlockchainOuterClass {
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_pactus_GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_pactus_GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_pactus_GetConsensusInfoRequest_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -23916,7 +24292,7 @@ public final class BlockchainOuterClass {
       "ashResponse\022\022\n\004hash\030\001 \001(\tR\004hash\"+\n\025GetBl" +
       "ockHeightRequest\022\022\n\004hash\030\001 \001(\tR\004hash\"0\n\026" +
       "GetBlockHeightResponse\022\026\n\006height\030\001 \001(\rR\006" +
-      "height\"\032\n\030GetBlockchainInfoRequest\"\301\003\n\031G" +
+      "height\"\032\n\030GetBlockchainInfoRequest\"\222\005\n\031G" +
       "etBlockchainInfoResponse\022*\n\021last_block_h" +
       "eight\030\001 \001(\rR\017lastBlockHeight\022&\n\017last_blo" +
       "ck_hash\030\002 \001(\tR\rlastBlockHash\022%\n\016total_ac" +
@@ -23928,79 +24304,84 @@ public final class BlockchainOuterClass {
       "ommitteeValidators\022\033\n\tis_pruned\030\010 \001(\010R\010i" +
       "sPruned\022%\n\016pruning_height\030\t \001(\rR\rpruning" +
       "Height\022&\n\017last_block_time\030\n \001(\003R\rlastBlo" +
-      "ckTime\"\031\n\027GetConsensusInfoRequest\"\201\001\n\030Ge" +
-      "tConsensusInfoResponse\0220\n\010proposal\030\001 \001(\013" +
-      "2\024.pactus.ProposalInfoR\010proposal\0223\n\tinst" +
-      "ances\030\002 \003(\0132\025.pactus.ConsensusInfoR\tinst" +
-      "ances\"Q\n\027GetTxPoolContentRequest\0226\n\014payl" +
-      "oad_type\030\001 \001(\0162\023.pactus.PayloadTypeR\013pay" +
-      "loadType\"E\n\030GetTxPoolContentResponse\022)\n\003" +
-      "txs\030\001 \003(\0132\027.pactus.TransactionInfoR\003txs\"" +
-      "\207\003\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n" +
-      "\004data\030\002 \001(\tR\004data\022\035\n\npublic_key\030\003 \001(\tR\tp" +
-      "ublicKey\022\026\n\006number\030\004 \001(\005R\006number\022\024\n\005stak" +
-      "e\030\005 \001(\003R\005stake\022.\n\023last_bonding_height\030\006 " +
-      "\001(\rR\021lastBondingHeight\0222\n\025last_sortition" +
-      "_height\030\007 \001(\rR\023lastSortitionHeight\022)\n\020un" +
-      "bonding_height\030\010 \001(\rR\017unbondingHeight\022\030\n" +
-      "\007address\030\t \001(\tR\007address\022-\n\022availability_" +
-      "score\030\n \001(\001R\021availabilityScore\022)\n\020protoc" +
-      "ol_version\030\013 \001(\005R\017protocolVersion\"\201\001\n\013Ac" +
-      "countInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022\n\004data\030\002 " +
-      "\001(\tR\004data\022\026\n\006number\030\003 \001(\005R\006number\022\030\n\007bal" +
-      "ance\030\004 \001(\003R\007balance\022\030\n\007address\030\005 \001(\tR\007ad" +
-      "dress\"\304\001\n\017BlockHeaderInfo\022\030\n\007version\030\001 \001" +
-      "(\005R\007version\022&\n\017prev_block_hash\030\002 \001(\tR\rpr" +
-      "evBlockHash\022\035\n\nstate_root\030\003 \001(\tR\tstateRo" +
-      "ot\022%\n\016sortition_seed\030\004 \001(\tR\rsortitionSee" +
-      "d\022)\n\020proposer_address\030\005 \001(\tR\017proposerAdd" +
-      "ress\"\227\001\n\017CertificateInfo\022\022\n\004hash\030\001 \001(\tR\004" +
-      "hash\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\ncommitters" +
-      "\030\003 \003(\005R\ncommitters\022\034\n\tabsentees\030\004 \003(\005R\ta" +
-      "bsentees\022\034\n\tsignature\030\005 \001(\tR\tsignature\"\261" +
-      "\001\n\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pactus.VoteT" +
-      "ypeR\004type\022\024\n\005voter\030\002 \001(\tR\005voter\022\035\n\nblock" +
-      "_hash\030\003 \001(\tR\tblockHash\022\024\n\005round\030\004 \001(\005R\005r" +
-      "ound\022\031\n\010cp_round\030\005 \001(\005R\007cpRound\022\031\n\010cp_va" +
-      "lue\030\006 \001(\005R\007cpValue\"\227\001\n\rConsensusInfo\022\030\n\007" +
-      "address\030\001 \001(\tR\007address\022\026\n\006active\030\002 \001(\010R\006" +
-      "active\022\026\n\006height\030\003 \001(\rR\006height\022\024\n\005round\030" +
-      "\004 \001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.pactus.Vot" +
-      "eInfoR\005votes\"y\n\014ProposalInfo\022\026\n\006height\030\001" +
-      " \001(\rR\006height\022\024\n\005round\030\002 \001(\005R\005round\022\035\n\nbl" +
-      "ock_data\030\003 \001(\tR\tblockData\022\034\n\tsignature\030\004" +
-      " \001(\tR\tsignature*f\n\016BlockVerbosity\022\030\n\024BLO" +
-      "CK_VERBOSITY_DATA\020\000\022\030\n\024BLOCK_VERBOSITY_I" +
-      "NFO\020\001\022 \n\034BLOCK_VERBOSITY_TRANSACTIONS\020\002*" +
-      "\246\001\n\010VoteType\022\031\n\025VOTE_TYPE_UNSPECIFIED\020\000\022" +
-      "\025\n\021VOTE_TYPE_PREPARE\020\001\022\027\n\023VOTE_TYPE_PREC" +
-      "OMMIT\020\002\022\031\n\025VOTE_TYPE_CP_PRE_VOTE\020\003\022\032\n\026VO" +
-      "TE_TYPE_CP_MAIN_VOTE\020\004\022\030\n\024VOTE_TYPE_CP_D" +
-      "ECIDED\020\0052\213\007\n\nBlockchain\022=\n\010GetBlock\022\027.pa" +
-      "ctus.GetBlockRequest\032\030.pactus.GetBlockRe" +
-      "sponse\022I\n\014GetBlockHash\022\033.pactus.GetBlock" +
-      "HashRequest\032\034.pactus.GetBlockHashRespons" +
-      "e\022O\n\016GetBlockHeight\022\035.pactus.GetBlockHei" +
-      "ghtRequest\032\036.pactus.GetBlockHeightRespon" +
-      "se\022X\n\021GetBlockchainInfo\022 .pactus.GetBloc" +
-      "kchainInfoRequest\032!.pactus.GetBlockchain" +
-      "InfoResponse\022U\n\020GetConsensusInfo\022\037.pactu" +
-      "s.GetConsensusInfoRequest\032 .pactus.GetCo" +
-      "nsensusInfoResponse\022C\n\nGetAccount\022\031.pact" +
-      "us.GetAccountRequest\032\032.pactus.GetAccount" +
-      "Response\022I\n\014GetValidator\022\033.pactus.GetVal" +
-      "idatorRequest\032\034.pactus.GetValidatorRespo" +
-      "nse\022Y\n\024GetValidatorByNumber\022#.pactus.Get" +
-      "ValidatorByNumberRequest\032\034.pactus.GetVal" +
-      "idatorResponse\022d\n\025GetValidatorAddresses\022" +
-      "$.pactus.GetValidatorAddressesRequest\032%." +
-      "pactus.GetValidatorAddressesResponse\022I\n\014" +
-      "GetPublicKey\022\033.pactus.GetPublicKeyReques" +
-      "t\032\034.pactus.GetPublicKeyResponse\022U\n\020GetTx" +
-      "PoolContent\022\037.pactus.GetTxPoolContentReq" +
-      "uest\032 .pactus.GetTxPoolContentResponseB:" +
-      "\n\006pactusZ0github.com/pactus-project/pact" +
-      "us/www/grpc/pactusb\006proto3"
+      "ckTime\022\200\001\n\033committee_protocol_versions\030\013" +
+      " \003(\0132@.pactus.GetBlockchainInfoResponse." +
+      "CommitteeProtocolVersionsEntryR\031committe" +
+      "eProtocolVersions\032L\n\036CommitteeProtocolVe" +
+      "rsionsEntry\022\020\n\003key\030\001 \001(\005R\003key\022\024\n\005value\030\002" +
+      " \001(\001R\005value:\0028\001\"\031\n\027GetConsensusInfoReque" +
+      "st\"\201\001\n\030GetConsensusInfoResponse\0220\n\010propo" +
+      "sal\030\001 \001(\0132\024.pactus.ProposalInfoR\010proposa" +
+      "l\0223\n\tinstances\030\002 \003(\0132\025.pactus.ConsensusI" +
+      "nfoR\tinstances\"Q\n\027GetTxPoolContentReques" +
+      "t\0226\n\014payload_type\030\001 \001(\0162\023.pactus.Payload" +
+      "TypeR\013payloadType\"E\n\030GetTxPoolContentRes" +
+      "ponse\022)\n\003txs\030\001 \003(\0132\027.pactus.TransactionI" +
+      "nfoR\003txs\"\207\003\n\rValidatorInfo\022\022\n\004hash\030\001 \001(\t" +
+      "R\004hash\022\022\n\004data\030\002 \001(\tR\004data\022\035\n\npublic_key" +
+      "\030\003 \001(\tR\tpublicKey\022\026\n\006number\030\004 \001(\005R\006numbe" +
+      "r\022\024\n\005stake\030\005 \001(\003R\005stake\022.\n\023last_bonding_" +
+      "height\030\006 \001(\rR\021lastBondingHeight\0222\n\025last_" +
+      "sortition_height\030\007 \001(\rR\023lastSortitionHei" +
+      "ght\022)\n\020unbonding_height\030\010 \001(\rR\017unbonding" +
+      "Height\022\030\n\007address\030\t \001(\tR\007address\022-\n\022avai" +
+      "lability_score\030\n \001(\001R\021availabilityScore\022" +
+      ")\n\020protocol_version\030\013 \001(\005R\017protocolVersi" +
+      "on\"\201\001\n\013AccountInfo\022\022\n\004hash\030\001 \001(\tR\004hash\022\022" +
+      "\n\004data\030\002 \001(\tR\004data\022\026\n\006number\030\003 \001(\005R\006numb" +
+      "er\022\030\n\007balance\030\004 \001(\003R\007balance\022\030\n\007address\030" +
+      "\005 \001(\tR\007address\"\304\001\n\017BlockHeaderInfo\022\030\n\007ve" +
+      "rsion\030\001 \001(\005R\007version\022&\n\017prev_block_hash\030" +
+      "\002 \001(\tR\rprevBlockHash\022\035\n\nstate_root\030\003 \001(\t" +
+      "R\tstateRoot\022%\n\016sortition_seed\030\004 \001(\tR\rsor" +
+      "titionSeed\022)\n\020proposer_address\030\005 \001(\tR\017pr" +
+      "oposerAddress\"\227\001\n\017CertificateInfo\022\022\n\004has" +
+      "h\030\001 \001(\tR\004hash\022\024\n\005round\030\002 \001(\005R\005round\022\036\n\nc" +
+      "ommitters\030\003 \003(\005R\ncommitters\022\034\n\tabsentees" +
+      "\030\004 \003(\005R\tabsentees\022\034\n\tsignature\030\005 \001(\tR\tsi" +
+      "gnature\"\261\001\n\010VoteInfo\022$\n\004type\030\001 \001(\0162\020.pac" +
+      "tus.VoteTypeR\004type\022\024\n\005voter\030\002 \001(\tR\005voter" +
+      "\022\035\n\nblock_hash\030\003 \001(\tR\tblockHash\022\024\n\005round" +
+      "\030\004 \001(\005R\005round\022\031\n\010cp_round\030\005 \001(\005R\007cpRound" +
+      "\022\031\n\010cp_value\030\006 \001(\005R\007cpValue\"\227\001\n\rConsensu" +
+      "sInfo\022\030\n\007address\030\001 \001(\tR\007address\022\026\n\006activ" +
+      "e\030\002 \001(\010R\006active\022\026\n\006height\030\003 \001(\rR\006height\022" +
+      "\024\n\005round\030\004 \001(\005R\005round\022&\n\005votes\030\005 \003(\0132\020.p" +
+      "actus.VoteInfoR\005votes\"y\n\014ProposalInfo\022\026\n" +
+      "\006height\030\001 \001(\rR\006height\022\024\n\005round\030\002 \001(\005R\005ro" +
+      "und\022\035\n\nblock_data\030\003 \001(\tR\tblockData\022\034\n\tsi" +
+      "gnature\030\004 \001(\tR\tsignature*f\n\016BlockVerbosi" +
+      "ty\022\030\n\024BLOCK_VERBOSITY_DATA\020\000\022\030\n\024BLOCK_VE" +
+      "RBOSITY_INFO\020\001\022 \n\034BLOCK_VERBOSITY_TRANSA" +
+      "CTIONS\020\002*\246\001\n\010VoteType\022\031\n\025VOTE_TYPE_UNSPE" +
+      "CIFIED\020\000\022\025\n\021VOTE_TYPE_PREPARE\020\001\022\027\n\023VOTE_" +
+      "TYPE_PRECOMMIT\020\002\022\031\n\025VOTE_TYPE_CP_PRE_VOT" +
+      "E\020\003\022\032\n\026VOTE_TYPE_CP_MAIN_VOTE\020\004\022\030\n\024VOTE_" +
+      "TYPE_CP_DECIDED\020\0052\213\007\n\nBlockchain\022=\n\010GetB" +
+      "lock\022\027.pactus.GetBlockRequest\032\030.pactus.G" +
+      "etBlockResponse\022I\n\014GetBlockHash\022\033.pactus" +
+      ".GetBlockHashRequest\032\034.pactus.GetBlockHa" +
+      "shResponse\022O\n\016GetBlockHeight\022\035.pactus.Ge" +
+      "tBlockHeightRequest\032\036.pactus.GetBlockHei" +
+      "ghtResponse\022X\n\021GetBlockchainInfo\022 .pactu" +
+      "s.GetBlockchainInfoRequest\032!.pactus.GetB" +
+      "lockchainInfoResponse\022U\n\020GetConsensusInf" +
+      "o\022\037.pactus.GetConsensusInfoRequest\032 .pac" +
+      "tus.GetConsensusInfoResponse\022C\n\nGetAccou" +
+      "nt\022\031.pactus.GetAccountRequest\032\032.pactus.G" +
+      "etAccountResponse\022I\n\014GetValidator\022\033.pact" +
+      "us.GetValidatorRequest\032\034.pactus.GetValid" +
+      "atorResponse\022Y\n\024GetValidatorByNumber\022#.p" +
+      "actus.GetValidatorByNumberRequest\032\034.pact" +
+      "us.GetValidatorResponse\022d\n\025GetValidatorA" +
+      "ddresses\022$.pactus.GetValidatorAddressesR" +
+      "equest\032%.pactus.GetValidatorAddressesRes" +
+      "ponse\022I\n\014GetPublicKey\022\033.pactus.GetPublic" +
+      "KeyRequest\032\034.pactus.GetPublicKeyResponse" +
+      "\022U\n\020GetTxPoolContent\022\037.pactus.GetTxPoolC" +
+      "ontentRequest\032 .pactus.GetTxPoolContentR" +
+      "esponseB:\n\006pactusZ0github.com/pactus-pro" +
+      "ject/pactus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -24108,7 +24489,13 @@ public final class BlockchainOuterClass {
     internal_static_pactus_GetBlockchainInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetBlockchainInfoResponse_descriptor,
-        new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "TotalAccounts", "TotalValidators", "TotalPower", "CommitteePower", "CommitteeValidators", "IsPruned", "PruningHeight", "LastBlockTime", });
+        new java.lang.String[] { "LastBlockHeight", "LastBlockHash", "TotalAccounts", "TotalValidators", "TotalPower", "CommitteePower", "CommitteeValidators", "IsPruned", "PruningHeight", "LastBlockTime", "CommitteeProtocolVersions", });
+    internal_static_pactus_GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry_descriptor =
+      internal_static_pactus_GetBlockchainInfoResponse_descriptor.getNestedTypes().get(0);
+    internal_static_pactus_GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_pactus_GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry_descriptor,
+        new java.lang.String[] { "Key", "Value", });
     internal_static_pactus_GetConsensusInfoRequest_descriptor =
       getDescriptor().getMessageTypes().get(17);
     internal_static_pactus_GetConsensusInfoRequest_fieldAccessorTable = new

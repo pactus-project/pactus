@@ -33,6 +33,9 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	tmk.addRowString("--- Committee", "---")
 	tmk.addRowPower("Total Power", res.TotalPower)
 	tmk.addRowPower("Committee Power", res.CommitteePower)
+	for ver, percentage := range res.CommitteeProtocolVersions {
+		tmk.addRowDouble(fmt.Sprintf("Version %d", ver), percentage)
+	}
 	for i, val := range res.CommitteeValidators {
 		tmk.addRowInt("--- Validator", i+1)
 		tmVal := s.writeValidatorTable(val)

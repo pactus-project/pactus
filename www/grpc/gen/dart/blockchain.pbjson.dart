@@ -265,7 +265,19 @@ const GetBlockchainInfoResponse$json = {
     {'1': 'is_pruned', '3': 8, '4': 1, '5': 8, '10': 'isPruned'},
     {'1': 'pruning_height', '3': 9, '4': 1, '5': 13, '10': 'pruningHeight'},
     {'1': 'last_block_time', '3': 10, '4': 1, '5': 3, '10': 'lastBlockTime'},
+    {'1': 'committee_protocol_versions', '3': 11, '4': 3, '5': 11, '6': '.pactus.GetBlockchainInfoResponse.CommitteeProtocolVersionsEntry', '10': 'committeeProtocolVersions'},
   ],
+  '3': [GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry$json],
+};
+
+@$core.Deprecated('Use getBlockchainInfoResponseDescriptor instead')
+const GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry$json = {
+  '1': 'CommitteeProtocolVersionsEntry',
+  '2': [
+    {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
+    {'1': 'value', '3': 2, '4': 1, '5': 1, '10': 'value'},
+  ],
+  '7': {'7': true},
 };
 
 /// Descriptor for `GetBlockchainInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
@@ -278,7 +290,10 @@ final $typed_data.Uint8List getBlockchainInfoResponseDescriptor = $convert.base6
     'RlZV92YWxpZGF0b3JzGAcgAygLMhUucGFjdHVzLlZhbGlkYXRvckluZm9SE2NvbW1pdHRlZVZh'
     'bGlkYXRvcnMSGwoJaXNfcHJ1bmVkGAggASgIUghpc1BydW5lZBIlCg5wcnVuaW5nX2hlaWdodB'
     'gJIAEoDVINcHJ1bmluZ0hlaWdodBImCg9sYXN0X2Jsb2NrX3RpbWUYCiABKANSDWxhc3RCbG9j'
-    'a1RpbWU=');
+    'a1RpbWUSgAEKG2NvbW1pdHRlZV9wcm90b2NvbF92ZXJzaW9ucxgLIAMoCzJALnBhY3R1cy5HZX'
+    'RCbG9ja2NoYWluSW5mb1Jlc3BvbnNlLkNvbW1pdHRlZVByb3RvY29sVmVyc2lvbnNFbnRyeVIZ'
+    'Y29tbWl0dGVlUHJvdG9jb2xWZXJzaW9ucxpMCh5Db21taXR0ZWVQcm90b2NvbFZlcnNpb25zRW'
+    '50cnkSEAoDa2V5GAEgASgFUgNrZXkSFAoFdmFsdWUYAiABKAFSBXZhbHVlOgI4AQ==');
 
 @$core.Deprecated('Use getConsensusInfoRequestDescriptor instead')
 const GetConsensusInfoRequest$json = {
@@ -507,6 +522,7 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Blockchain
   '.pactus.GetBlockchainInfoRequest': GetBlockchainInfoRequest$json,
   '.pactus.GetBlockchainInfoResponse': GetBlockchainInfoResponse$json,
   '.pactus.ValidatorInfo': ValidatorInfo$json,
+  '.pactus.GetBlockchainInfoResponse.CommitteeProtocolVersionsEntry': GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry$json,
   '.pactus.GetConsensusInfoRequest': GetConsensusInfoRequest$json,
   '.pactus.GetConsensusInfoResponse': GetConsensusInfoResponse$json,
   '.pactus.ProposalInfo': ProposalInfo$json,

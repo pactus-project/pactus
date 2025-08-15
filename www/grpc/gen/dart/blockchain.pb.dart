@@ -932,6 +932,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     $core.bool? isPruned,
     $core.int? pruningHeight,
     $fixnum.Int64? lastBlockTime,
+    $pb.PbMap<$core.int, $core.double>? committeeProtocolVersions,
   }) {
     final $result = create();
     if (lastBlockHeight != null) {
@@ -964,6 +965,9 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     if (lastBlockTime != null) {
       $result.lastBlockTime = lastBlockTime;
     }
+    if (committeeProtocolVersions != null) {
+      $result.committeeProtocolVersions.addAll(committeeProtocolVersions);
+    }
     return $result;
   }
   GetBlockchainInfoResponse._() : super();
@@ -981,6 +985,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     ..aOB(8, _omitFieldNames ? '' : 'isPruned')
     ..a<$core.int>(9, _omitFieldNames ? '' : 'pruningHeight', $pb.PbFieldType.OU3)
     ..aInt64(10, _omitFieldNames ? '' : 'lastBlockTime')
+    ..m<$core.int, $core.double>(11, _omitFieldNames ? '' : 'committeeProtocolVersions', entryClassName: 'GetBlockchainInfoResponse.CommitteeProtocolVersionsEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.OD, packageName: const $pb.PackageName('pactus'))
     ..hasRequiredFields = false
   ;
 
@@ -1098,6 +1103,10 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   $core.bool hasLastBlockTime() => $_has(9);
   @$pb.TagNumber(10)
   void clearLastBlockTime() => $_clearField(10);
+
+  /// Map of protocol versions and their percentages in the committee.
+  @$pb.TagNumber(11)
+  $pb.PbMap<$core.int, $core.double> get committeeProtocolVersions => $_getMap(10);
 }
 
 /// Request message for retrieving consensus information.

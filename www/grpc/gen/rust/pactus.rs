@@ -605,6 +605,9 @@ pub struct GetBlockchainInfoResponse {
     /// Timestamp of the last block in Unix format
     #[prost(int64, tag="10")]
     pub last_block_time: i64,
+    /// Map of protocol versions and their percentages in the committee.
+    #[prost(map="int32, double", tag="11")]
+    pub committee_protocol_versions: ::std::collections::HashMap<i32, f64>,
 }
 /// Request message for retrieving consensus information.
 #[allow(clippy::derive_partial_eq_without_eq)]

@@ -169,6 +169,8 @@ message GetBlockchainInfoResponse {
   uint32 pruning_height = 9;
   // Timestamp of the last block in Unix format
   int64 last_block_time = 10;
+  // Map of protocol versions and their percentages in the committee.
+  map<int32, double> committee_protocol_versions = 11;
 }
 
 // Request message for retrieving consensus information.

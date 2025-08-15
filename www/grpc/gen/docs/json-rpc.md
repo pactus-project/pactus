@@ -1927,6 +1927,13 @@ Parameters has no fields.
     Timestamp of the last block in Unix format
     </td>
   </tr>
+     <tr>
+    <td class="fw-bold">committee_protocol_versions</td>
+    <td> map&lt;int32, double&gt;</td>
+    <td>
+    Map of protocol versions and their percentages in the committee.
+    </td>
+  </tr>
      </tbody>
 </table>
 

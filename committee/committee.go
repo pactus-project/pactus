@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/linkedlist"
 )
@@ -210,4 +211,25 @@ func (c *committee) iterate(consumer func(*validator.Validator) (stop bool)) {
 			return
 		}
 	}
+}
+
+// ProtocolVersions returns a map of protocol version to the percentage of validators
+// in the committee that have that version.
+func (c *committee) ProtocolVersions() map[protocol.Version]float64 {
+	counts := make(map[protocol.Version]int)
+	total := c.validatorList.Length()
+
+	c.iterate(func(v *validator.Validator) bool {
+		version := v.ProtocolVersion()
+		counts[version]++
+
+		return false
+	})
+
+	percentages := make(map[protocol.Version]float64)
+	for version, count := range counts {
+		percentages[version] = (float64(count) / float64(total)) * 100
+	}
+
+	return percentages
 }

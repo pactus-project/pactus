@@ -31,6 +31,7 @@ type Facade interface {
 	ValidateBlock(blk *block.Block, round int16) error
 	CommitBlock(blk *block.Block, cert *certificate.BlockCertificate) error
 	CommitteeValidators() []*validator.Validator
+	CommitteeProtocolVersions() map[protocol.Version]float64
 	IsInCommittee(addr crypto.Address) bool
 	Proposer(round int16) *validator.Validator
 	IsProposer(addr crypto.Address, round int16) bool

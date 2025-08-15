@@ -270,3 +270,7 @@ func (m *MockState) PruningHeight() uint32 {
 func (m *MockState) UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version) {
 	m.TestStore.UpdateValidatorProtocolVersion(addr, ver)
 }
+
+func (m *MockState) CommitteeProtocolVersions() map[protocol.Version]float64 {
+	return m.TestCommittee.ProtocolVersions()
+}
