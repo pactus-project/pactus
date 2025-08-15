@@ -1952,6 +1952,14 @@
           "type": "string",
           "format": "int64",
           "title": "Timestamp of the last block in Unix format"
+        },
+        "committeeProtocolVersions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "format": "double"
+          },
+          "description": "Map of protocol versions and their percentages in the committee."
         }
       },
       "description": "Response message contains general blockchain information."

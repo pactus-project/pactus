@@ -3062,7 +3062,8 @@ committeeValidatorsList: jspb.Message.toObjectList(msg.getCommitteeValidatorsLis
     proto.pactus.ValidatorInfo.toObject, includeInstance),
 isPruned: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
 pruningHeight: jspb.Message.getFieldWithDefault(msg, 9, 0),
-lastBlockTime: jspb.Message.getFieldWithDefault(msg, 10, 0)
+lastBlockTime: jspb.Message.getFieldWithDefault(msg, 10, 0),
+committeeProtocolVersionsMap: (f = msg.getCommitteeProtocolVersionsMap()) ? f.toObject(includeInstance, undefined) : []
   };
 
   if (includeInstance) {
@@ -3139,6 +3140,12 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
     case 10:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setLastBlockTime(value);
+      break;
+    case 11:
+      var value = msg.getCommitteeProtocolVersionsMap();
+      reader.readMessage(value, function(message, reader) {
+        jspb.Map.deserializeBinary(message, reader, jspb.BinaryReader.prototype.readInt32, jspb.BinaryReader.prototype.readDouble, null, 0, 0.0);
+         });
       break;
     default:
       reader.skipField();
@@ -3239,6 +3246,10 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
       10,
       f
     );
+  }
+  f = message.getCommitteeProtocolVersionsMap(true);
+  if (f && f.getLength() > 0) {
+    f.serializeBinary(11, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeDouble);
   }
 };
 
@@ -3440,6 +3451,29 @@ proto.pactus.GetBlockchainInfoResponse.prototype.getLastBlockTime = function() {
  */
 proto.pactus.GetBlockchainInfoResponse.prototype.setLastBlockTime = function(value) {
   return jspb.Message.setProto3IntField(this, 10, value);
+};
+
+
+/**
+ * map<int32, double> committee_protocol_versions = 11;
+ * @param {boolean=} opt_noLazyCreate Do not create the map if
+ * empty, instead returning `undefined`
+ * @return {!jspb.Map<number,number>}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getCommitteeProtocolVersionsMap = function(opt_noLazyCreate) {
+  return /** @type {!jspb.Map<number,number>} */ (
+      jspb.Message.getMapField(this, 11, opt_noLazyCreate,
+      null));
+};
+
+
+/**
+ * Clears values from the map. The map will be non-null.
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.clearCommitteeProtocolVersionsMap = function() {
+  this.getCommitteeProtocolVersionsMap().clear();
+  return this;
 };
 
 

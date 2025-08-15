@@ -8,8 +8,9 @@ import (
 type Version int8
 
 const (
-	ProtocolVersion1 Version = 1
-	ProtocolVersion2 Version = 2
+	ProtocolVersionUnknown Version = 0
+	ProtocolVersion1       Version = 1
+	ProtocolVersion2       Version = 2
 
 	ProtocolVersionLatest = ProtocolVersion2
 )

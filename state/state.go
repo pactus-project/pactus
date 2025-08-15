@@ -770,3 +770,10 @@ func (st *state) publishEvent(msg any) {
 func (st *state) UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version) {
 	st.store.UpdateValidatorProtocolVersion(addr, ver)
 }
+
+func (st *state) CommitteeProtocolVersions() map[protocol.Version]float64 {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return st.committee.ProtocolVersions()
+}

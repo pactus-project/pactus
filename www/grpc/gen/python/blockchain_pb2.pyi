@@ -139,7 +139,14 @@ class GetBlockchainInfoRequest(_message.Message):
     def __init__(self) -> None: ...
 
 class GetBlockchainInfoResponse(_message.Message):
-    __slots__ = ("last_block_height", "last_block_hash", "total_accounts", "total_validators", "total_power", "committee_power", "committee_validators", "is_pruned", "pruning_height", "last_block_time")
+    __slots__ = ("last_block_height", "last_block_hash", "total_accounts", "total_validators", "total_power", "committee_power", "committee_validators", "is_pruned", "pruning_height", "last_block_time", "committee_protocol_versions")
+    class CommitteeProtocolVersionsEntry(_message.Message):
+        __slots__ = ("key", "value")
+        KEY_FIELD_NUMBER: _ClassVar[int]
+        VALUE_FIELD_NUMBER: _ClassVar[int]
+        key: int
+        value: float
+        def __init__(self, key: _Optional[int] = ..., value: _Optional[float] = ...) -> None: ...
     LAST_BLOCK_HEIGHT_FIELD_NUMBER: _ClassVar[int]
     LAST_BLOCK_HASH_FIELD_NUMBER: _ClassVar[int]
     TOTAL_ACCOUNTS_FIELD_NUMBER: _ClassVar[int]
@@ -150,6 +157,7 @@ class GetBlockchainInfoResponse(_message.Message):
     IS_PRUNED_FIELD_NUMBER: _ClassVar[int]
     PRUNING_HEIGHT_FIELD_NUMBER: _ClassVar[int]
     LAST_BLOCK_TIME_FIELD_NUMBER: _ClassVar[int]
+    COMMITTEE_PROTOCOL_VERSIONS_FIELD_NUMBER: _ClassVar[int]
     last_block_height: int
     last_block_hash: str
     total_accounts: int
@@ -160,7 +168,8 @@ class GetBlockchainInfoResponse(_message.Message):
     is_pruned: bool
     pruning_height: int
     last_block_time: int
-    def __init__(self, last_block_height: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., total_accounts: _Optional[int] = ..., total_validators: _Optional[int] = ..., total_power: _Optional[int] = ..., committee_power: _Optional[int] = ..., committee_validators: _Optional[_Iterable[_Union[ValidatorInfo, _Mapping]]] = ..., is_pruned: bool = ..., pruning_height: _Optional[int] = ..., last_block_time: _Optional[int] = ...) -> None: ...
+    committee_protocol_versions: _containers.ScalarMap[int, float]
+    def __init__(self, last_block_height: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., total_accounts: _Optional[int] = ..., total_validators: _Optional[int] = ..., total_power: _Optional[int] = ..., committee_power: _Optional[int] = ..., committee_validators: _Optional[_Iterable[_Union[ValidatorInfo, _Mapping]]] = ..., is_pruned: bool = ..., pruning_height: _Optional[int] = ..., last_block_time: _Optional[int] = ..., committee_protocol_versions: _Optional[_Mapping[int, float]] = ...) -> None: ...
 
 class GetConsensusInfoRequest(_message.Message):
     __slots__ = ()

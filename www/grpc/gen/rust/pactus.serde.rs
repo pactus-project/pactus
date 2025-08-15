@@ -3464,6 +3464,9 @@ impl serde::Serialize for GetBlockchainInfoResponse {
         if self.last_block_time != 0 {
             len += 1;
         }
+        if !self.committee_protocol_versions.is_empty() {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetBlockchainInfoResponse", len)?;
         if self.last_block_height != 0 {
             struct_ser.serialize_field("lastBlockHeight", &self.last_block_height)?;
@@ -3501,6 +3504,9 @@ impl serde::Serialize for GetBlockchainInfoResponse {
             #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("lastBlockTime", ToString::to_string(&self.last_block_time).as_str())?;
         }
+        if !self.committee_protocol_versions.is_empty() {
+            struct_ser.serialize_field("committeeProtocolVersions", &self.committee_protocol_versions)?;
+        }
         struct_ser.end()
     }
 }
@@ -3531,6 +3537,8 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             "pruningHeight",
             "last_block_time",
             "lastBlockTime",
+            "committee_protocol_versions",
+            "committeeProtocolVersions",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -3545,6 +3553,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             IsPruned,
             PruningHeight,
             LastBlockTime,
+            CommitteeProtocolVersions,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -3576,6 +3585,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                             "isPruned" | "is_pruned" => Ok(GeneratedField::IsPruned),
                             "pruningHeight" | "pruning_height" => Ok(GeneratedField::PruningHeight),
                             "lastBlockTime" | "last_block_time" => Ok(GeneratedField::LastBlockTime),
+                            "committeeProtocolVersions" | "committee_protocol_versions" => Ok(GeneratedField::CommitteeProtocolVersions),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -3605,6 +3615,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                 let mut is_pruned__ = None;
                 let mut pruning_height__ = None;
                 let mut last_block_time__ = None;
+                let mut committee_protocol_versions__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::LastBlockHeight => {
@@ -3681,6 +3692,15 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                                 Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
+                        GeneratedField::CommitteeProtocolVersions => {
+                            if committee_protocol_versions__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("committeeProtocolVersions"));
+                            }
+                            committee_protocol_versions__ = Some(
+                                map_.next_value::<std::collections::HashMap<::pbjson::private::NumberDeserialize<i32>, ::pbjson::private::NumberDeserialize<f64>>>()?
+                                    .into_iter().map(|(k,v)| (k.0, v.0)).collect()
+                            );
+                        }
                     }
                 }
                 Ok(GetBlockchainInfoResponse {
@@ -3694,6 +3714,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                     is_pruned: is_pruned__.unwrap_or_default(),
                     pruning_height: pruning_height__.unwrap_or_default(),
                     last_block_time: last_block_time__.unwrap_or_default(),
+                    committee_protocol_versions: committee_protocol_versions__.unwrap_or_default(),
                 })
             }
         }
