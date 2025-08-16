@@ -387,11 +387,11 @@ func TestTotalPower(t *testing.T) {
 func TestProtocolVersionPercentages(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	val1 := ts.GenerateTestValidator()
-	val2 := ts.GenerateTestValidator()
-	val3 := ts.GenerateTestValidator()
-	val4 := ts.GenerateTestValidator()
-	val5 := ts.GenerateTestValidator()
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
+	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(500))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(500))
+	val5 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
 
 	val2.UpdateProtocolVersion(protocol.ProtocolVersion1)
 	val3.UpdateProtocolVersion(protocol.ProtocolVersion2)
@@ -402,7 +402,31 @@ func TestProtocolVersionPercentages(t *testing.T) {
 	assert.NoError(t, err)
 
 	percentages := cmt.ProtocolVersions()
-	assert.Equal(t, float64(20), percentages[protocol.ProtocolVersionUnknown])
-	assert.Equal(t, float64(20), percentages[protocol.ProtocolVersion1])
-	assert.Equal(t, float64(60), percentages[protocol.ProtocolVersion2])
+	assert.Equal(t, float64(25), percentages[protocol.ProtocolVersionUnknown])
+	assert.Equal(t, float64(25), percentages[protocol.ProtocolVersion1])
+	assert.Equal(t, float64(50), percentages[protocol.ProtocolVersion2])
+}
+
+func TestSupportProtocolVersion(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	val1 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
+	val2 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
+	val3 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(500))
+	val4 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(500))
+	val5 := ts.GenerateTestValidator(testsuite.ValidatorWithStake(1000))
+
+	val2.UpdateProtocolVersion(protocol.ProtocolVersion1)
+	val3.UpdateProtocolVersion(protocol.ProtocolVersion2)
+	val4.UpdateProtocolVersion(protocol.ProtocolVersion2)
+	val5.UpdateProtocolVersion(protocol.ProtocolVersion2)
+
+	cmt, err := committee.NewCommittee([]*validator.Validator{val1, val2, val3, val4, val5}, 5, val1.Address())
+	assert.NoError(t, err)
+
+	supportVer1 := cmt.SupportProtocolVersion(protocol.ProtocolVersion1)
+	supportVer2 := cmt.SupportProtocolVersion(protocol.ProtocolVersion2)
+
+	assert.True(t, supportVer1)
+	assert.False(t, supportVer2)
 }
