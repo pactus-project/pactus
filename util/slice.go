@@ -218,7 +218,7 @@ func IsSubset[T comparable](parentSet, subSet []T) bool {
 func RemoveFirstOccurrenceOf[T comparable](slice []T, element T) ([]T, bool) {
 	for i, v := range slice {
 		if v == element {
-			return append(slice[:i], slice[i+1:]...), true
+			return slices.Delete(slice, i, i+1), true
 		}
 	}
 
