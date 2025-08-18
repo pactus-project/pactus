@@ -36,7 +36,8 @@ type synchronizer struct {
 	config        *Config
 	valKeys       []*bls.ValidatorKey
 	state         state.Facade
-	consMgr       consensus.Manager
+	consV1Mgr     consensus.Manager
+	consV2Mgr     consensus.Manager
 	peerSet       *peerset.PeerSet
 	firewall      *firewall.Firewall
 	cache         *cache.Cache
@@ -52,7 +53,8 @@ func NewSynchronizer(
 	conf *Config,
 	valKeys []*bls.ValidatorKey,
 	state state.Facade,
-	consMgr consensus.Manager,
+	consV1Mgr consensus.Manager,
+	consV2Mgr consensus.Manager,
 	network network.Network,
 	broadcastPipe pipeline.Pipeline[message.Message],
 	networkPipe pipeline.Pipeline[network.Event],
@@ -61,7 +63,8 @@ func NewSynchronizer(
 		config:        conf,
 		valKeys:       valKeys,
 		state:         state,
-		consMgr:       consMgr,
+		consV1Mgr:     consV1Mgr,
+		consV2Mgr:     consV2Mgr,
 		network:       network,
 		broadcastPipe: broadcastPipe,
 		networkPipe:   networkPipe,
@@ -142,9 +145,9 @@ func (sync *synchronizer) stateHeight() uint32 {
 
 func (sync *synchronizer) moveConsensusToNewHeight() {
 	stateHeight := sync.stateHeight()
-	consHeight, _ := sync.consMgr.HeightRound()
+	consHeight, _ := sync.getConsMgr().HeightRound()
 	if stateHeight >= consHeight {
-		sync.consMgr.MoveToNewHeight()
+		sync.getConsMgr().MoveToNewHeight()
 	}
 }
 
@@ -570,4 +573,22 @@ func (sync *synchronizer) transactionTopicEvaluator(msg *network.GossipMessage) 
 
 func (sync *synchronizer) consensusTopicEvaluator(msg *network.GossipMessage) network.PropagationPolicy {
 	return sync.firewall.AllowConsensusRequest(msg)
+}
+
+// getConsMgr returns consensus manager based on the upgrade condition.
+// After the chain is fully upgraded, we can remove this function.
+func (sync *synchronizer) getConsMgr() consensus.Manager {
+	switch sync.state.Genesis().ChainType() {
+	case genesis.Mainnet:
+		return sync.consV1Mgr
+
+	case genesis.Testnet:
+		return sync.consV1Mgr
+
+	case genesis.Localnet:
+		return sync.consV2Mgr
+
+	default:
+		return sync.consV2Mgr
+	}
 }

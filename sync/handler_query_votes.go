@@ -20,7 +20,7 @@ func (handler *queryVoteHandler) ParseMessage(m message.Message, _ peer.ID) {
 	msg := m.(*message.QueryVoteMessage)
 	handler.logger.Trace("parsing QueryVote message", "msg", msg)
 
-	v := handler.consMgr.HandleQueryVote(msg.Height, msg.Round)
+	v := handler.getConsMgr().HandleQueryVote(msg.Height, msg.Round)
 	if v != nil {
 		response := message.NewVoteMessage(v)
 		handler.broadcast(response)

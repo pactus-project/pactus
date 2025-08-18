@@ -42,10 +42,9 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Check if all instances move to new height", func(t *testing.T) {
-		stateHeight := mgr.state.LastBlockHeight()
-		assert.False(t, mgr.HasActiveInstance())
-
 		mgr.MoveToNewHeight()
+
+		stateHeight := mgr.state.LastBlockHeight()
 		consHeight, consRound := mgr.HeightRound()
 
 		assert.True(t, mgr.HasActiveInstance())

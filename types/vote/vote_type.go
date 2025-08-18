@@ -5,7 +5,7 @@ import "fmt"
 type Type int
 
 const (
-	VoteTypePrepare    = Type(1) // prepare vote
+	VoteTypePrepare    = Type(1) // Deprecated  prepare vote
 	VoteTypePrecommit  = Type(2) // precommit vote
 	VoteTypeCPPreVote  = Type(3) // change-proposer:pre-vote
 	VoteTypeCPMainVote = Type(4) // change-proposer:main-vote

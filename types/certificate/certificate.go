@@ -203,9 +203,16 @@ func (cert *baseCertificate) Decode(r io.Reader) error {
 
 type requiredPowerFn func(int64) int64
 
-var require2Fp1Power = func(committeePower int64) int64 {
+var require2FPower = func(committeePower int64) int64 {
 	f := (committeePower - 1) / 3
 	p := (2 * f) + 1
+
+	return p
+}
+
+var require1FPower = func(committeePower int64) int64 {
+	f := (committeePower - 1) / 3
+	p := (1 * f) + 1
 
 	return p
 }

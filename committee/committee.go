@@ -216,20 +216,36 @@ func (c *committee) iterate(consumer func(*validator.Validator) (stop bool)) {
 // ProtocolVersions returns a map of protocol version to the percentage of validators
 // in the committee that have that version.
 func (c *committee) ProtocolVersions() map[protocol.Version]float64 {
-	counts := make(map[protocol.Version]int)
-	total := c.validatorList.Length()
+	powers := make(map[protocol.Version]int64)
+	total := int64(0)
 
 	c.iterate(func(v *validator.Validator) bool {
 		version := v.ProtocolVersion()
-		counts[version]++
+		powers[version] += v.Power()
+		total += v.Power()
 
 		return false
 	})
 
 	percentages := make(map[protocol.Version]float64)
-	for version, count := range counts {
+	for version, count := range powers {
 		percentages[version] = (float64(count) / float64(total)) * 100
 	}
 
 	return percentages
+}
+
+// SupportProtocolVersion checks if more than 70% of committee members
+// support the given protocol version.
+func (c *committee) SupportProtocolVersion(version protocol.Version) bool {
+	versions := c.ProtocolVersions()
+	supported := float64(0)
+
+	for ver, percent := range versions {
+		if ver >= version {
+			supported += percent
+		}
+	}
+
+	return supported > 70.0
 }

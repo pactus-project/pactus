@@ -13,6 +13,7 @@ type Reader interface {
 	Proposer(round int16) *validator.Validator
 	IsProposer(addr crypto.Address, round int16) bool
 	ProtocolVersions() map[protocol.Version]float64
+	SupportProtocolVersion(version protocol.Version) bool
 	Size() int
 	TotalPower() int64
 	String() string
