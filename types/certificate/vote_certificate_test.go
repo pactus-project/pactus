@@ -37,6 +37,7 @@ func TestVoteCertificate(t *testing.T) {
 	assert.Equal(t, certHash, cert.Hash())
 }
 
+// Deprecated test.
 func TestVoteCertificateValidatePrepare(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
@@ -77,6 +78,49 @@ func TestVoteCertificateValidatePrepare(t *testing.T) {
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrepare(validators, blockHash)
+		assert.NoError(t, err)
+	})
+}
+
+func TestVoteCertificateValidatePrecommit(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	blockHash := ts.RandHash()
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	cert := certificate.NewVoteCertificate(height, round)
+	signBytes := cert.SignBytes(blockHash)
+	committers := ts.RandSlice(6)
+	sigs := []*bls.Signature{}
+	validators := []*validator.Validator{}
+
+	for _, committer := range committers {
+		valKey := ts.RandValKey()
+		val := validator.NewValidator(valKey.PublicKey(), committer)
+		sig := valKey.Sign(signBytes)
+
+		validators = append(validators, val)
+		sigs = append(sigs, sig)
+	}
+
+	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
+		absentees := committers[2:]
+		aggSig := bls.SignatureAggregate(sigs[:2]...)
+		cert.SetSignature(committers, absentees, aggSig)
+
+		err := cert.ValidatePrecommit(validators, blockHash)
+		assert.ErrorIs(t, err, certificate.InsufficientPowerError{
+			SignedPower:   2,
+			RequiredPower: 3,
+		})
+	})
+
+	t.Run("Ok, should return no error", func(t *testing.T) {
+		absentees := committers[3:]
+		aggSig := bls.SignatureAggregate(sigs[:3]...)
+		cert.SetSignature(committers, absentees, aggSig)
+
+		err := cert.ValidatePrecommit(validators, blockHash)
 		assert.NoError(t, err)
 	})
 }

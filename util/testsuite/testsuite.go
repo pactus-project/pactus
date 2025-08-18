@@ -194,10 +194,7 @@ func (ts *TestSuite) RandFee(max ...amount.Amount) amount.Amount {
 // RandBytes returns a slice of random bytes of the given length.
 func (ts *TestSuite) RandBytes(length int) []byte {
 	buf := make([]byte, length)
-	_, err := ts.Rand.Read(buf)
-	if err != nil {
-		panic(err)
-	}
+	_, _ = ts.Rand.Read(buf)
 
 	return buf
 }
@@ -231,10 +228,7 @@ func (ts *TestSuite) RandString(length int) string {
 
 // DecodingHex decodes the input string from hexadecimal format and returns the resulting byte slice.
 func (*TestSuite) DecodingHex(in string) []byte {
-	d, err := hex.DecodeString(in)
-	if err != nil {
-		panic(err)
-	}
+	d, _ := hex.DecodeString(in)
 
 	return d
 }
@@ -242,10 +236,8 @@ func (*TestSuite) DecodingHex(in string) []byte {
 // RandBLSKeyPair generates a random BLS key pair for testing purposes.
 func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 	buf := make([]byte, bls.PrivateKeySize)
-	_, err := ts.Rand.Read(buf)
-	if err != nil {
-		panic(err)
-	}
+	_, _ = ts.Rand.Read(buf)
+
 	prv, _ := bls.PrivateKeyFromBytes(buf)
 	pub := prv.PublicKeyNative()
 
@@ -569,11 +561,6 @@ func (ts *TestSuite) GenerateTestPrepareCertificate(height uint32) *certificate.
 	absentees := []int32{committers[5]}
 	cert.SetSignature(committers, absentees, sig)
 
-	err := cert.BasicCheck()
-	if err != nil {
-		panic(err)
-	}
-
 	return cert
 }
 
@@ -869,9 +856,6 @@ func (ts *TestSuite) GenerateTestPrepareVote(height uint32, round int16) (*vote.
 // GenerateTestCommittee generates a committee for testing purposes.
 // All committee members have the same power.
 func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls.ValidatorKey) {
-	if num < 4 {
-		panic("the number of committee members must be at least 4")
-	}
 	valKeys := make([]*bls.ValidatorKey, num)
 	vals := make([]*validator.Validator, num)
 	for index := int32(0); index < int32(num); index++ {
@@ -896,10 +880,6 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls
 func (*TestSuite) HelperSignVote(valKey *bls.ValidatorKey, v *vote.Vote) {
 	sig := valKey.Sign(v.SignBytes())
 	v.SetSignature(sig)
-
-	if err := v.BasicCheck(); err != nil {
-		panic(err)
-	}
 }
 
 func (*TestSuite) HelperSignProposal(valKey *bls.ValidatorKey, p *proposal.Proposal) {

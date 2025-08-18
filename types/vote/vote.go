@@ -26,6 +26,7 @@ type voteData struct {
 }
 
 // NewPrepareVote creates a new PREPARE with the specified parameters.
+// Deprecated: Prevote step is removed in the new consensus algorithm.
 func NewPrepareVote(blockHash hash.Hash, height uint32, round int16, signer crypto.Address) *Vote {
 	return newVote(VoteTypePrepare, blockHash, height, round, signer)
 }

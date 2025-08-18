@@ -19,7 +19,7 @@ func TestHandlerProposalParsingMessages(t *testing.T) {
 		pid := td.RandPeerID()
 
 		td.receivingNewMessage(td.sync, msg, pid)
-		assert.Equal(t, prop, td.consMgr.Proposal())
+		assert.Equal(t, prop, td.sync.getConsMgr().Proposal())
 	})
 
 	t.Run("Update protocol version of the proposer", func(t *testing.T) {

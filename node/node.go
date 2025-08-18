@@ -36,7 +36,8 @@ type Node struct {
 	state         state.Facade
 	store         store.Store
 	txPool        txpool.TxPool
-	consMgr       consensus.Manager
+	consV1Mgr     consensus.Manager // Deprecated:: replaced by new consensus algorithm
+	consV2Mgr     consensus.Manager
 	network       network.Network
 	sync          sync.Synchronizer
 	grpc          *grpc.Server
@@ -90,13 +91,14 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	consMgr := consensus.NewManager(conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
+	consV1Mgr := consensus.NewManager(conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
+	consV2Mgr := consensus.NewManager(conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe)
 	walletMgr := wallet.NewWalletManager(conf.WalletManager)
 
 	if !store.IsPruned() {
 		conf.Sync.Services.Append(service.FullNode)
 	}
-	syn, err := sync.NewSynchronizer(conf.Sync, valKeys, state, consMgr, net, broadcastPipe, networkPipe)
+	sync, err := sync.NewSynchronizer(conf.Sync, valKeys, state, consV1Mgr, consV2Mgr, net, broadcastPipe, networkPipe)
 	if err != nil {
 		cancel()
 
@@ -111,8 +113,21 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 		return nil, err
 	}
+	curConsMgr := consV1Mgr
+	switch genDoc.ChainType() {
+	case genesis.Mainnet:
+		curConsMgr = consV1Mgr
 
-	grpcServer := grpc.NewServer(ctx, conf.GRPC, state, syn, net, consMgr, walletMgr, zeromqServer.Publishers())
+	case genesis.Testnet:
+		curConsMgr = consV1Mgr
+
+	case genesis.Localnet:
+		curConsMgr = consV2Mgr
+
+	default:
+		curConsMgr = consV2Mgr
+	}
+	grpcServer := grpc.NewServer(ctx, conf.GRPC, state, sync, net, curConsMgr, walletMgr, zeromqServer.Publishers())
 	htmlServer := html.NewServer(ctx, conf.HTML, enableHTTPAuth)
 	httpServer := http.NewServer(ctx, conf.HTTP)
 	jsonrpcServer := jsonrpc.NewServer(ctx, conf.JSONRPC)
@@ -125,8 +140,9 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		network:       net,
 		state:         state,
 		txPool:        txPool,
-		consMgr:       consMgr,
-		sync:          syn,
+		consV1Mgr:     consV1Mgr,
+		consV2Mgr:     consV2Mgr,
+		sync:          sync,
 		store:         store,
 		grpc:          grpcServer,
 		html:          htmlServer,
@@ -158,10 +174,6 @@ func (n *Node) Start() error {
 
 	if err := n.sync.Start(); err != nil {
 		return errors.Wrap(err, "could not start Sync")
-	}
-
-	if err := n.consMgr.Start(); err != nil {
-		return errors.Wrap(err, "could not start Consensus manager")
 	}
 
 	err := n.grpc.StartServer()
@@ -202,7 +214,6 @@ func (n *Node) Stop() {
 	// Wait for network to stop
 	time.Sleep(1 * time.Second)
 
-	n.consMgr.Stop()
 	n.sync.Stop()
 	n.state.Close()
 	n.store.Close()
@@ -216,7 +227,7 @@ func (n *Node) Stop() {
 // these methods are using by GUI.
 
 func (n *Node) ConsManager() consensus.ManagerReader {
-	return n.consMgr
+	return n.consV1Mgr
 }
 
 func (n *Node) Sync() sync.Synchronizer {

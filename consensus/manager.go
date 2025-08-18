@@ -50,20 +50,6 @@ func NewManager(
 	return mgr
 }
 
-// Start starts the manager.
-func (mgr *manager) Start() error {
-	logger.Debug("starting consensus instances")
-	for _, cons := range mgr.instances {
-		cons.Start()
-	}
-
-	return nil
-}
-
-// Stop stops the manager.
-func (*manager) Stop() {
-}
-
 // Instances return all consensus instances that are read-only and
 // can be safely accessed without modifying their state.
 func (mgr *manager) Instances() []Reader {

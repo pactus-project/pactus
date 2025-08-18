@@ -77,6 +77,9 @@ func TestMain(m *testing.M) {
 		tConfigs[i].Consensus.ChangeProposerTimeout = 2 * time.Second
 		tConfigs[i].Consensus.ChangeProposerDelta = 2 * time.Second
 		tConfigs[i].Consensus.QueryVoteTimeout = 2 * time.Second
+		tConfigs[i].ConsensusV2.ChangeProposerTimeout = 2 * time.Second
+		tConfigs[i].ConsensusV2.ChangeProposerDelta = 2 * time.Second
+		tConfigs[i].ConsensusV2.QueryVoteTimeout = 2 * time.Second
 		tConfigs[i].Logger.Levels["default"] = "info"
 		tConfigs[i].Logger.Levels["_state"] = "info"
 		tConfigs[i].Logger.Levels["_sync"] = "info"
