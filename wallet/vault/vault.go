@@ -9,6 +9,7 @@ import (
 	blshdkeychain "github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	ed25519hdkeychain "github.com/pactus-project/pactus/crypto/ed25519/hdkeychain"
+	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/bip39"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
@@ -75,12 +76,13 @@ const (
 )
 
 type Vault struct {
-	Type      int                    `json:"type"`      // Wallet type. 1: Full keys, 2: Neutered
-	CoinType  uint32                 `json:"coin_type"` // Coin type: 21888 for Mainnet, 21777 for Testnet
-	Addresses map[string]AddressInfo `json:"addresses"` // All addresses that are stored in the wallet
-	Encrypter encrypter.Encrypter    `json:"encrypter"` // Encryption algorithm
-	KeyStore  string                 `json:"key_store"` // KeyStore that stores the secrets and encrypts using Encrypter
-	Purposes  purposes               `json:"purposes"`  // Contains Purpose 12381 for BLS signature
+	Type       int                    `json:"type"`        // Wallet type. 1: Full keys, 2: Neutered
+	CoinType   uint32                 `json:"coin_type"`   // Coin type: 21888 for Mainnet, 21777 for Testnet
+	DefaultFee amount.Amount          `json:"default_fee"` // The Wallet's default fee
+	Addresses  map[string]AddressInfo `json:"addresses"`   // All addresses that are stored in the wallet
+	Encrypter  encrypter.Encrypter    `json:"encrypter"`   // Encryption algorithm
+	KeyStore   string                 `json:"key_store"`   // KeyStore that stores the secrets and encrypts using Encrypter
+	Purposes   purposes               `json:"purposes"`    // Contains Purpose 12381 for BLS signature
 }
 
 type keyStore struct {

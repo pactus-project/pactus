@@ -59,6 +59,7 @@ func main() {
 	buildCreateCmd(rootCmd)
 	buildRecoverCmd(rootCmd)
 	buildGetSeedCmd(rootCmd)
+	buildFeeCmd(rootCmd)
 	buildChangePasswordCmd(rootCmd)
 	buildAllTransactionCmd(rootCmd)
 	buildAllAddrCmd(rootCmd)

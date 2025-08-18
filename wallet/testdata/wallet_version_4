@@ -1,12 +1,13 @@
 {
-  "version": 3,
+  "version": 4,
   "uuid": "44156117-268a-49f0-a906-400659b7a051",
   "created_at": "2024-08-27T16:45:08Z",
   "network": 0,
-  "crc": 2777809414,
+  "crc": 3937455804,
   "vault": {
     "type": 1,
     "coin_type": 21888,
+    "default_fee": 10000000,
     "addresses": {
       "pc1p4xuja689hg2434yhr32clhn97x6afw58qlrcyd": {
         "address": "pc1p4xuja689hg2434yhr32clhn97x6afw58qlrcyd",
@@ -40,15 +41,15 @@
       }
     },
     "encrypter": {
-      "method": "ARGON2ID-AES_256_CBC-MACV1",
+      "method": "ARGON2ID-AES_256_CTR-MACV1",
       "params": {
         "iterations": "1",
-        "keylen": "48",
         "memory": "8",
-        "parallelism": "1"
+        "parallelism": "1",
+        "keylen": "48"
       }
     },
-    "key_store": "ZQHdkrbVekwBYAAkXqU4m3TbgJsLVx1CkNdaYG035PEJlRIpc7yhc6VqaxMNZmCH1XpNbMQt97+DGX9ar8KqBauCMEgAUBMyeYqL2AMpXZcV5fVVtjHetfBmd6ywqH7/poGVjBoK8daXRz9X2tGB023FELUS93ZaVT29TX5S4f/LM9MoOsjjeXPT6tlSFgvCpeB7oiNZECUYwAFtfH1fbYLBpaPhENPXFWD8IHgC/Dd9tWm3wOCPkI2BnYy1aQZ9qqImcTJTpkM5pp/kvjTU4TmUDzmn6Y+EdWQqOjBphmXUdF8nkqJEKw51vmFGr8cp6TRAOw==",
+    "key_store": "aLEdVCpZOJmZZz067JTxWivw/41sWooR+E2iM46WYjskjFTE3VviPzc9SQ6gba5g+8CWWcw1q1YT9x1XAg/QAt2Rd7zR2FKL+ACwCbmZ/H+lLPDBt3nlvOkD2qkxi2rjjLpbAtf2UjKrW2b3+/KxSJGuG5GPIqPvPonqHhSWrF1j0nnKqm+btD1gaeJ5IRLchi27BNorMR4qvETMeV7YjkvZlrEFdNffqpWee+o4+bnr33MwysXm4hZU1c4/zzMIODAyxsMRgbrfTDfdQ19c0yjYmDGAPDpAqNAvMmDL07nGKR2f",
     "purposes": {
       "purpose_bls": {
         "xpub_account": "xpublic1pqdwnqqyqsp2spqqpqqqgqgxj6mlduay8ase6hkefwa2lk2esz0gn2yu59tnk3w2tgnlfk5hleuqxpqdlt5q2f207qrwq9gasqscpckjv8hggc57n044gvml7u05cpzu8ra0zq2s3x3mak6xhtzga27tdx5pypnqxhlkf9aedptzcsd8l3q6m7ch6g4lphzsdv20fvc3dsu7mlj8kdy3n5fyllg07wecmpr8y6nsr95zlz",
