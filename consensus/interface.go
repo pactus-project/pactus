@@ -22,7 +22,6 @@ type Reader interface {
 type Consensus interface {
 	Reader
 
-	Start()
 	MoveToNewHeight()
 	AddVote(vote *vote.Vote)
 	SetProposal(prop *proposal.Proposal)
@@ -40,8 +39,6 @@ type ManagerReader interface {
 type Manager interface {
 	ManagerReader
 
-	Start() error
-	Stop()
 	MoveToNewHeight()
 	AddVote(vote *vote.Vote)
 	SetProposal(prop *proposal.Proposal)
