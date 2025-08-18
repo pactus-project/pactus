@@ -115,13 +115,6 @@ func makeConsensus(
 	return cons
 }
 
-func (cs *consensus) Start() {
-	cs.lk.Lock()
-	defer cs.lk.Unlock()
-
-	cs.moveToNewHeight()
-}
-
 func (cs *consensus) String() string {
 	return fmt.Sprintf("{%s %d/%d/%s/%d}",
 		cs.valKey.Address().ShortString(),
@@ -174,10 +167,6 @@ func (cs *consensus) MoveToNewHeight() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.moveToNewHeight()
-}
-
-func (cs *consensus) moveToNewHeight() {
 	stateHeight := cs.bcState.LastBlockHeight()
 	if cs.height != stateHeight+1 {
 		cs.enterNewState(cs.newHeightState)

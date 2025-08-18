@@ -24,7 +24,7 @@ func TestHandlerBlockAnnounceParsingMessages(t *testing.T) {
 		td.receivingNewMessage(td.sync, msg2, pid)
 
 		stateHeight := td.sync.state.LastBlockHeight()
-		consHeight, _ := td.consMgr.HeightRound()
+		consHeight, _ := td.sync.getConsMgr().HeightRound()
 		assert.Equal(t, lastHeight, stateHeight)
 		assert.Equal(t, lastHeight+1, consHeight)
 	})

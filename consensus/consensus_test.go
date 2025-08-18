@@ -56,9 +56,9 @@ type testData struct {
 
 func testConfig() *Config {
 	return &Config{
-		ChangeProposerTimeout: 1 * time.Hour, // Disabling timers
-		ChangeProposerDelta:   1 * time.Hour, // Disabling timers
-		QueryVoteTimeout:      1 * time.Hour, // Disabling timers
+		ChangeProposerTimeout:    1 * time.Hour, // Disabling timers
+		ChangeProposerDelta:      1 * time.Hour, // Disabling timers
+		QueryVoteTimeout:         1 * time.Hour, // Disabling timers
 	}
 }
 
@@ -440,7 +440,7 @@ func (td *testData) makeMainVoteCertificate(t *testing.T,
 func TestStart(t *testing.T) {
 	td := setup(t)
 
-	td.consX.Start()
+	td.consX.MoveToNewHeight()
 	td.checkHeightRound(t, td.consX, 1, 0)
 }
 
@@ -613,6 +613,7 @@ func TestSetProposalOnPrecommit(t *testing.T) {
 	td.shouldPublishBlockAnnounce(t, td.consP, prop.Block().Hash())
 }
 
+// update me from TestHandleQueryVote: consensus:v1.
 func TestHandleQueryVote(t *testing.T) {
 	td := setup(t)
 

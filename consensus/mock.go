@@ -58,8 +58,6 @@ func (m *MockConsensus) MoveToNewHeight() {
 	m.Height = m.State.LastBlockHeight() + 1
 }
 
-func (*MockConsensus) Start() {}
-
 func (m *MockConsensus) AddVote(v *vote.Vote) {
 	m.Votes = append(m.Votes, v)
 }

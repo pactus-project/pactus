@@ -48,7 +48,8 @@ type Config struct {
 	HTML    *html.Config    `toml:"html"`
 	ZeroMq  *zmq.Config     `toml:"zeromq"`
 
-	Consensus     *consensus.Config `toml:"-"`
+	Consensus     *consensus.Config `toml:"-"` // Deprecated: replaced by new consensus algorithm
+	ConsensusV2   *consensus.Config `toml:"-"`
 	WalletManager *wallet.Config    `toml:"-"`
 }
 
@@ -97,6 +98,7 @@ func defaultConfig() *Config {
 		Sync:          sync.DefaultConfig(),
 		TxPool:        txpool.DefaultConfig(),
 		Consensus:     consensus.DefaultConfig(),
+		ConsensusV2:   consensus.DefaultConfig(),
 		Logger:        logger.DefaultConfig(),
 		GRPC:          grpc.DefaultConfig(),
 		HTML:          html.DefaultConfig(),
@@ -284,6 +286,9 @@ func (conf *Config) BasicCheck() error {
 		return err
 	}
 	if err := conf.Consensus.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.ConsensusV2.BasicCheck(); err != nil {
 		return err
 	}
 	if err := conf.Network.BasicCheck(); err != nil {
