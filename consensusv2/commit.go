@@ -18,17 +18,17 @@ func (s *commitState) decide() {
 	precommits := s.log.PrecommitVoteSet(s.round)
 	precommitQH := precommits.QuorumHash()
 	votes := precommits.BlockVotes(*precommitQH)
-	blockCert := s.makeBlockCertificate(votes)
+	cert := s.makeBlockCertificate(votes)
 
-	certBlock := roundProposal.Block()
-	err := s.bcState.CommitBlock(certBlock, blockCert)
+	block := roundProposal.Block()
+	err := s.bcState.CommitBlock(block, cert)
 	if err != nil {
-		s.logger.Error("committing block failed", "block", certBlock, "error", err)
+		s.logger.Error("committing block failed", "block", block, "error", err)
 	} else {
-		s.logger.Info("block committed, schedule new height", "hash", certBlock.Hash())
+		s.logger.Info("block committed, schedule new height", "hash", block.Hash())
 
 		// Now we can announce the committed block and certificate
-		s.announceNewBlock(certBlock, blockCert)
+		s.announceNewBlock(block, cert)
 	}
 
 	s.enterNewState(s.newHeightState)

@@ -6,6 +6,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
 )
@@ -22,14 +23,19 @@ func TestChangeProposer(t *testing.T) {
 func TestQueryVote(t *testing.T) {
 	td := setup(t)
 
+	td.commitBlockForAllStates(t)
+	td.commitBlockForAllStates(t)
+	h := uint32(3)
+	r := int16(1)
+
 	td.enterNewHeight(td.consP)
-	h := uint32(1)
-	r := int16(0)
+	td.enterNextRound(td.consP)
 
-	td.changeProposerTimeout(td.consP)
-	td.queryVoteTimeout(td.consP)
-
+	// consP is the proposer for this round, but there are not enough votes.
+	td.queryProposalTimeout(td.consP)
+	td.shouldPublishProposal(t, td.consP, h, r)
 	td.shouldPublishQueryVote(t, td.consP, h, r)
+	td.shouldNotPublish(t, td.consP, message.TypeQueryProposal)
 }
 
 func TestSetProposalAfterChangeProposer(t *testing.T) {

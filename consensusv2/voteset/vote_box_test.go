@@ -17,12 +17,12 @@ func TestDuplicateVote(t *testing.T) {
 	signer := ts.RandValAddress()
 	power := ts.RandInt64(1000)
 
-	v := vote.NewPrepareVote(hash, height, round, signer)
+	v := vote.NewPrecommitVote(hash, height, round, signer)
 
 	vb := newVoteBox()
 
 	vb.addVote(v, power)
 	vb.addVote(v, power)
 
-	assert.Equal(t, power, vb.votedPower, power)
+	assert.Equal(t, power, vb.votedPower)
 }

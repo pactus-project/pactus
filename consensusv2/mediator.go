@@ -6,7 +6,7 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 )
 
-// The `mediator“ interface defines a mechanism for setting proposals and votes
+// The `mediator` interface defines a mechanism for setting proposals and votes
 // between independent consensus instances.
 type mediator interface {
 	OnPublishProposal(from consensus.Consensus, prop *proposal.Proposal)

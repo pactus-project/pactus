@@ -71,7 +71,7 @@ func TestConfigBasicCheck(t *testing.T) {
 	}
 }
 
-func TestCalculateChangeProposerTimeout(t *testing.T) {
+func TestConfigCalculateChangeProposerTimeout(t *testing.T) {
 	c := DefaultConfig()
 
 	assert.Equal(t, c.ChangeProposerTimeout, c.CalculateChangeProposerTimeout(0))

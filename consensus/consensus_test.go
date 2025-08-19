@@ -56,9 +56,12 @@ type testData struct {
 
 func testConfig() *Config {
 	return &Config{
-		ChangeProposerTimeout: 1 * time.Hour, // Disabling timers
-		ChangeProposerDelta:   1 * time.Hour, // Disabling timers
-		QueryVoteTimeout:      1 * time.Hour, // Disabling timers
+		ChangeProposerTimeout:    1 * time.Hour, // Disabling timers
+		ChangeProposerDelta:      1 * time.Hour, // Disabling timers
+		QueryVoteTimeout:         1 * time.Hour, // Disabling timers
+		DeprecatedHeightTestnet:  util.MaxUint32,
+		DeprecatedHeightMainnet:  util.MaxUint32,
+		DeprecatedHeightLocalnet: util.MaxUint32,
 	}
 }
 
