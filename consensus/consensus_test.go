@@ -125,13 +125,13 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		})
 	}
 	td.consX = makeConsensus(testConfig(), stateX, valKeys[tIndexX],
-		valKeys[tIndexX].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
+		valKeys[tIndexX].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
 	td.consY = makeConsensus(testConfig(), stateY, valKeys[tIndexY],
-		valKeys[tIndexY].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
+		valKeys[tIndexY].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
 	td.consB = makeConsensus(testConfig(), stateB, valKeys[tIndexB],
-		valKeys[tIndexB].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
+		valKeys[tIndexB].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
 	td.consP = makeConsensus(testConfig(), stateP, valKeys[tIndexP],
-		valKeys[tIndexP].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
+		valKeys[tIndexP].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
 
 	// -------------------------------
 	// Better logging during testing
@@ -452,7 +452,7 @@ func TestNotInCommittee(t *testing.T) {
 	state := state.MockingState(td.TestSuite)
 	pipe := pipeline.MockingPipeline[message.Message]()
 	consInt := NewConsensus(testConfig(), state, valKey,
-		valKey.Address(), pipe, newConcreteMediator())
+		valKey.Address(), pipe, NewConcreteMediator())
 	cons := consInt.(*consensus)
 
 	td.enterNewHeight(cons)
@@ -757,7 +757,7 @@ func TestNonActiveValidator(t *testing.T) {
 	valKey := td.RandValKey()
 	pipe := pipeline.MockingPipeline[message.Message]()
 	consInt := NewConsensus(testConfig(), state.MockingState(td.TestSuite),
-		valKey, valKey.Address(), pipe, newConcreteMediator())
+		valKey, valKey.Address(), pipe, NewConcreteMediator())
 	nonActiveCons := consInt.(*consensus)
 
 	t.Run("non-active instances should be in new-height state", func(t *testing.T) {
