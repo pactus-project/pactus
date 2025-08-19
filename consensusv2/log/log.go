@@ -39,7 +39,6 @@ func (log *Log) mustGetRoundMessages(round int16) *Messages {
 	msgs, ok := log.roundMessages[round]
 	if !ok {
 		msgs = &Messages{
-			prepareVotes:   voteset.NewPrepareVoteSet(round, log.totalPower, log.validators),
 			precommitVotes: voteset.NewPrecommitVoteSet(round, log.totalPower, log.validators),
 			cpPreVotes:     voteset.NewCPPreVoteVoteSet(round, log.totalPower, log.validators),
 			cpMainVotes:    voteset.NewCPMainVoteVoteSet(round, log.totalPower, log.validators),
