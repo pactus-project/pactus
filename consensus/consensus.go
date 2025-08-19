@@ -49,7 +49,7 @@ type consensus struct {
 	cpDecideState   consState
 	currentState    consState
 	broadcaster     broadcaster
-	mediator        mediator
+	mediator        Mediator
 	active          bool
 }
 
@@ -59,7 +59,7 @@ func NewConsensus(
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcastPipe pipeline.Pipeline[message.Message],
-	mediator mediator,
+	mediator Mediator,
 ) Consensus {
 	broadcaster := func(_ crypto.Address, msg message.Message) {
 		broadcastPipe.Send(msg)
@@ -75,7 +75,7 @@ func makeConsensus(
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcaster broadcaster,
-	mediator mediator,
+	mediator Mediator,
 ) *consensus {
 	cons := &consensus{
 		config:      conf,
