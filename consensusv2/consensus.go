@@ -27,7 +27,7 @@ type broadcaster func(crypto.Address, message.Message)
 type consensusV2 struct {
 	lk sync.RWMutex
 
-	config         *consensus.Config
+	config         *Config
 	logger         *logger.SubLogger
 	log            *log.Log
 	validators     []*validator.Validator
@@ -55,7 +55,7 @@ type consensusV2 struct {
 }
 
 func NewConsensus(
-	conf *consensus.Config,
+	conf *Config,
 	bcState state.Facade,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
@@ -71,7 +71,7 @@ func NewConsensus(
 }
 
 func makeConsensus(
-	conf *consensus.Config,
+	conf *Config,
 	bcState state.Facade,
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
