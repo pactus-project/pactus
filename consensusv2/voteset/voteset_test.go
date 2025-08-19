@@ -42,12 +42,12 @@ func TestAddBlockVote(t *testing.T) {
 	round := ts.RandRound()
 	invKey := ts.RandValKey()
 	valKey := valKeys[0]
-	voteSet := NewPrepareVoteSet(round, totalPower, valsMap)
+	voteSet := NewPrecommitVoteSet(round, totalPower, valsMap)
 	assert.Equal(t, round, voteSet.Round())
 
-	vote1 := vote.NewPrepareVote(hash1, height, round, invKey.Address())
-	vote2 := vote.NewPrepareVote(hash1, height, round, valKey.Address())
-	vote3 := vote.NewPrepareVote(hash2, height, round, valKey.Address())
+	vote1 := vote.NewPrecommitVote(hash1, height, round, invKey.Address())
+	vote2 := vote.NewPrecommitVote(hash1, height, round, valKey.Address())
+	vote3 := vote.NewPrecommitVote(hash2, height, round, valKey.Address())
 
 	ts.HelperSignVote(invKey, vote1)
 	added, err := voteSet.AddVote(vote1)
@@ -133,11 +133,11 @@ func TestDuplicateBlockVote(t *testing.T) {
 	hash2 := ts.RandHash()
 	hash3 := ts.RandHash()
 	addr := valKeys[0].Address()
-	voteSet := NewPrepareVoteSet(0, totalPower, valsMap)
+	voteSet := NewPrecommitVoteSet(0, totalPower, valsMap)
 
-	correctVote := vote.NewPrepareVote(hash1, 1, 0, addr)
-	duplicatedVote1 := vote.NewPrepareVote(hash2, 1, 0, addr)
-	duplicatedVote2 := vote.NewPrepareVote(hash3, 1, 0, addr)
+	correctVote := vote.NewPrecommitVote(hash1, 1, 0, addr)
+	duplicatedVote1 := vote.NewPrecommitVote(hash2, 1, 0, addr)
+	duplicatedVote2 := vote.NewPrecommitVote(hash3, 1, 0, addr)
 
 	// sign the votes
 	ts.HelperSignVote(valKeys[0], correctVote)
@@ -217,14 +217,14 @@ func TestQuorum(t *testing.T) {
 	// 3f+1 = 4501
 	valsMap, valKeys, totalPower := setupCommittee(ts, 1000, 900, 801, 700, 600, 500)
 
-	voteSet := NewPrepareVoteSet(0, totalPower, valsMap)
+	voteSet := NewPrecommitVoteSet(0, totalPower, valsMap)
 	blockHash := ts.RandHash()
-	vote1 := vote.NewPrepareVote(blockHash, 1, 0, valKeys[0].Address())
-	vote2 := vote.NewPrepareVote(blockHash, 1, 0, valKeys[1].Address())
-	vote3 := vote.NewPrepareVote(blockHash, 1, 0, valKeys[2].Address())
-	vote4 := vote.NewPrepareVote(blockHash, 1, 0, valKeys[3].Address())
-	vote5 := vote.NewPrepareVote(blockHash, 1, 0, valKeys[4].Address())
-	vote6 := vote.NewPrepareVote(blockHash, 1, 0, valKeys[5].Address())
+	vote1 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[0].Address())
+	vote2 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[1].Address())
+	vote3 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[2].Address())
+	vote4 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[3].Address())
+	vote5 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[4].Address())
+	vote6 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[5].Address())
 
 	ts.HelperSignVote(valKeys[0], vote1)
 	ts.HelperSignVote(valKeys[1], vote2)

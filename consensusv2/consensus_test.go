@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -55,8 +54,8 @@ type testData struct {
 	consMessages []consMessage
 }
 
-func testConfig() *consensus.Config {
-	return &consensus.Config{
+func testConfig() *Config {
+	return &Config{
 		ChangeProposerTimeout: 1 * time.Hour, // Disabling timers
 		ChangeProposerDelta:   1 * time.Hour, // Disabling timers
 		QueryVoteTimeout:      1 * time.Hour, // Disabling timers
