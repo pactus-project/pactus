@@ -7,6 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// PASSED
+
 func TestNewHeightTimeout(t *testing.T) {
 	td := setup(t)
 
@@ -38,7 +40,7 @@ func TestNewHeightDoubleEntry(t *testing.T) {
 
 	td.checkHeightRound(t, td.consX, 2, 0)
 	assert.True(t, td.consX.active)
-	assert.NotEqual(t, td.consX.currentState.name(), "new-height")
+	assert.NotEqual(t, "new-height", td.consX.currentState.name())
 }
 
 func TestNewHeightTimeBehindNetwork(t *testing.T) {
@@ -47,15 +49,16 @@ func TestNewHeightTimeBehindNetwork(t *testing.T) {
 	td.commitBlockForAllStates(t)
 	td.consP.MoveToNewHeight()
 
-	h := uint32(2)
-	r := int16(0)
-	p := td.makeProposal(t, h, r)
-	blockHash := p.Block().Hash()
+	height := uint32(2)
+	round := int16(0)
+	prop := td.makeProposal(t, height, round)
+	blockHash := prop.Block().Hash()
 
-	td.consP.SetProposal(p)
-	td.addPrecommitVote(td.consP, blockHash, h, r, tIndexX)
-	td.addPrecommitVote(td.consP, blockHash, h, r, tIndexY)
+	td.consP.SetProposal(prop)
+	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexX)
+	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexY)
+	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexB)
 
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, blockHash)
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, blockHash)
 	td.shouldPublishBlockAnnounce(t, td.consP, blockHash)
 }

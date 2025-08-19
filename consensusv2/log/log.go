@@ -51,33 +51,33 @@ func (log *Log) mustGetRoundMessages(round int16) *Messages {
 }
 
 func (log *Log) AddVote(v *vote.Vote) (bool, error) {
-	m := log.mustGetRoundMessages(v.Round())
+	msgs := log.mustGetRoundMessages(v.Round())
 
-	return m.addVote(v)
+	return msgs.addVote(v)
 }
 
 func (log *Log) PrecommitVoteSet(round int16) *voteset.BlockVoteSet {
-	m := log.mustGetRoundMessages(round)
+	msgs := log.mustGetRoundMessages(round)
 
-	return m.precommitVotes
+	return msgs.precommitVotes
 }
 
 func (log *Log) CPPreVoteVoteSet(round int16) *voteset.BinaryVoteSet {
-	m := log.mustGetRoundMessages(round)
+	msgs := log.mustGetRoundMessages(round)
 
-	return m.cpPreVotes
+	return msgs.cpPreVotes
 }
 
 func (log *Log) CPMainVoteVoteSet(round int16) *voteset.BinaryVoteSet {
-	m := log.mustGetRoundMessages(round)
+	msgs := log.mustGetRoundMessages(round)
 
-	return m.cpMainVotes
+	return msgs.cpMainVotes
 }
 
 func (log *Log) CPDecidedVoteSet(round int16) *voteset.BinaryVoteSet {
-	m := log.mustGetRoundMessages(round)
+	msgs := log.mustGetRoundMessages(round)
 
-	return m.cpDecidedVotes
+	return msgs.cpDecidedVotes
 }
 
 func (log *Log) HasRoundProposal(round int16) bool {
@@ -94,8 +94,8 @@ func (log *Log) RoundProposal(round int16) *proposal.Proposal {
 }
 
 func (log *Log) SetRoundProposal(round int16, prop *proposal.Proposal) {
-	m := log.mustGetRoundMessages(round)
-	m.proposal = prop
+	msgs := log.mustGetRoundMessages(round)
+	msgs.proposal = prop
 }
 
 func (log *Log) MoveToNewHeight(validators []*validator.Validator) {

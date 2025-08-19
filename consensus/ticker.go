@@ -23,7 +23,7 @@ func (rs tickerTarget) String() string {
 	case tickerTargetQueryProposal:
 		return "query-proposal"
 	case tickerTargetQueryVote:
-		return "query-votes"
+		return "query-vote"
 	default:
 		return "Unknown"
 	}

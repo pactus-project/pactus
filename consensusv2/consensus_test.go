@@ -162,14 +162,14 @@ func (td *testData) shouldNotPublish(t *testing.T, cons *consensusV2, msgType me
 	}
 }
 
-func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensusV2, h hash.Hash) {
+func (td *testData) shouldPublishBlockAnnounce(t *testing.T, cons *consensusV2, hash hash.Hash) {
 	t.Helper()
 
 	for _, consMsg := range td.consMessages {
 		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == message.TypeBlockAnnounce {
 			m := consMsg.message.(*message.BlockAnnounceMessage)
-			assert.Equal(t, m.Block.Hash(), h)
+			assert.Equal(t, hash, m.Block.Hash())
 
 			return
 		}
@@ -186,8 +186,8 @@ func (td *testData) shouldPublishProposal(t *testing.T, cons *consensusV2,
 		if consMsg.sender == cons.valKey.Address() &&
 			consMsg.message.Type() == message.TypeProposal {
 			m := consMsg.message.(*message.ProposalMessage)
-			require.Equal(t, m.Proposal.Height(), height)
-			require.Equal(t, m.Proposal.Round(), round)
+			require.Equal(t, height, m.Proposal.Height())
+			require.Equal(t, round, m.Proposal.Round())
 
 			return m.Proposal
 		}
@@ -235,7 +235,7 @@ func (td *testData) shouldPublishQueryVote(t *testing.T, cons *consensusV2, heig
 	require.NoError(t, errors.New("Query proposal message not published"))
 }
 
-func (td *testData) shouldPublishVote(t *testing.T, cons *consensusV2, voteType vote.Type, h hash.Hash) *vote.Vote {
+func (td *testData) shouldPublishVote(t *testing.T, cons *consensusV2, voteType vote.Type, hash hash.Hash) *vote.Vote {
 	t.Helper()
 
 	for i := len(td.consMessages) - 1; i >= 0; i-- {
@@ -244,7 +244,7 @@ func (td *testData) shouldPublishVote(t *testing.T, cons *consensusV2, voteType 
 			consMsg.message.Type() == message.TypeVote {
 			m := consMsg.message.(*message.VoteMessage)
 			if m.Vote.Type() == voteType &&
-				m.Vote.BlockHash() == h {
+				m.Vote.BlockHash() == hash {
 				return m.Vote
 			}
 		}
