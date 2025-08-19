@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/block"
@@ -49,7 +50,7 @@ type consensus struct {
 	cpDecideState   consState
 	currentState    consState
 	broadcaster     broadcaster
-	mediator        Mediator
+	mediator        mediator
 	active          bool
 }
 
@@ -59,7 +60,7 @@ func NewConsensus(
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcastPipe pipeline.Pipeline[message.Message],
-	mediator Mediator,
+	mediator mediator,
 ) Consensus {
 	broadcaster := func(_ crypto.Address, msg message.Message) {
 		broadcastPipe.Send(msg)
@@ -75,7 +76,7 @@ func makeConsensus(
 	valKey *bls.ValidatorKey,
 	rewardAddr crypto.Address,
 	broadcaster broadcaster,
-	mediator Mediator,
+	mediator mediator,
 ) *consensus {
 	cons := &consensus{
 		config:      conf,
@@ -108,7 +109,7 @@ func makeConsensus(
 
 	mediator.Register(cons)
 
-	logger.Info("consensus instance created",
+	logger.Info("consensus instance created (Legacy)",
 		"validator address", valKey.Address().String(),
 		"reward address", rewardAddr.String())
 
@@ -166,6 +167,10 @@ func (cs *consensus) enterNewState(s consState) {
 func (cs *consensus) MoveToNewHeight() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
+
+	if cs.isDeprecated() {
+		return
+	}
 
 	stateHeight := cs.bcState.LastBlockHeight()
 	if cs.height != stateHeight+1 {
@@ -444,6 +449,10 @@ func (cs *consensus) IsActive() bool {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
+	if cs.isDeprecated() {
+		return false
+	}
+
 	return cs.active
 }
 
@@ -527,5 +536,21 @@ func (cs *consensus) startChangingProposer() {
 		cs.logger.Info("changing proposer started",
 			"cpRound", cs.cpRound, "proposer", cs.proposer(cs.round).Address())
 		cs.enterNewState(cs.cpPreVoteState)
+	}
+}
+
+func (cs *consensus) isDeprecated() bool {
+	switch cs.bcState.Genesis().ChainType() {
+	case genesis.Mainnet:
+		return cs.bcState.LastBlockHeight() > cs.config.DeprecatedHeightMainnet
+
+	case genesis.Testnet:
+		return cs.bcState.LastBlockHeight() > cs.config.DeprecatedHeightTestnet
+
+	case genesis.Localnet:
+		return cs.bcState.LastBlockHeight() > cs.config.DeprecatedHeightLocalnet
+
+	default:
+		return false
 	}
 }

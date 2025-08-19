@@ -14,7 +14,7 @@ func DefaultConfig() *Config {
 		ChangeProposerTimeout:    5 * time.Second,
 		ChangeProposerDelta:      5 * time.Second,
 		QueryVoteTimeout:         5 * time.Second,
-		MinimumAvailabilityScore: 0.666667,
+		MinimumAvailabilityScore: 0.666667, // TODO: Shall not be a consensus parameter?
 	}
 }
 

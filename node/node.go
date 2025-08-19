@@ -116,13 +116,19 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 	curConsMgr := consV1Mgr
 	switch genDoc.ChainType() {
 	case genesis.Mainnet:
-		curConsMgr = consV1Mgr
+		if state.LastBlockHeight() > conf.Consensus.DeprecatedHeightMainnet {
+			curConsMgr = consV2Mgr
+		}
 
 	case genesis.Testnet:
-		curConsMgr = consV1Mgr
+		if state.LastBlockHeight() > conf.Consensus.DeprecatedHeightTestnet {
+			curConsMgr = consV2Mgr
+		}
 
 	case genesis.Localnet:
-		curConsMgr = consV2Mgr
+		if state.LastBlockHeight() > conf.Consensus.DeprecatedHeightLocalnet {
+			curConsMgr = consV2Mgr
+		}
 
 	default:
 		curConsMgr = consV2Mgr

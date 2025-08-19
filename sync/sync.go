@@ -593,7 +593,11 @@ func (sync *synchronizer) getConsMgr() manager.Manager {
 		return sync.consV1Mgr
 
 	case genesis.Localnet:
-		return sync.consV2Mgr
+		if sync.state.LastBlockHeight() > 710 {
+			return sync.consV2Mgr
+		}
+
+		return sync.consV1Mgr
 
 	default:
 		return sync.consV2Mgr

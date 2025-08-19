@@ -60,16 +60,17 @@ func (vs *BlockVoteSet) AllVotes() []*vote.Vote {
 	return votes
 }
 
-// AddVote attempts to add a vote to the VoteSet. Returns an error if the vote is invalid.
-func (vs *BlockVoteSet) AddVote(vte *vote.Vote) (bool, error) {
-	power, err := vs.voteSet.verifyVote(vte)
+// AddVote attempts to add a vote to the VoteSet.
+// Returns an error if the vote is invalid or if it is a duplicate vote.
+func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
+	power, err := vs.voteSet.verifyVote(vote)
 	if err != nil {
 		return false, err
 	}
 
-	existingVote, ok := vs.allVotes[vte.Signer()]
+	existingVote, ok := vs.allVotes[vote.Signer()]
 	if ok {
-		if existingVote.Hash() == vte.Hash() {
+		if existingVote.Hash() == vote.Hash() {
 			// The vote is already added
 			return false, nil
 		}
@@ -77,24 +78,26 @@ func (vs *BlockVoteSet) AddVote(vte *vote.Vote) (bool, error) {
 		// It is a duplicated vote
 		err = ErrDuplicatedVote
 	} else {
-		vs.allVotes[vte.Signer()] = vte
+		vs.allVotes[vote.Signer()] = vote
 	}
 
-	blockVotes := vs.mustGetBlockVotes(vte.BlockHash())
-	blockVotes.addVote(vte, power)
+	blockVotes := vs.mustGetBlockVotes(vote.BlockHash())
+	blockVotes.addVote(vote, power)
 	if vs.hasFPlusOnePower(blockVotes.votedPower) {
-		quorumHash := vte.BlockHash()
+		quorumHash := vote.BlockHash()
 		vs.quorumHash = &quorumHash
 	}
 
 	return true, err
 }
 
+// HasVoted checks whether the given address has voted.
 func (vs *BlockVoteSet) HasVoted(addr crypto.Address) bool {
 	return vs.allVotes[addr] != nil
 }
 
-// HasAbsoluteQuorum checks if there is a block that has received an absolute quorum of votes (3f+1 of total power).
+// HasAbsoluteQuorum checks whether there is a block that has received
+// an absolute quorum of votes (3f+1 of total voting power).
 func (vs *BlockVoteSet) HasAbsoluteQuorum() bool {
 	if vs.quorumHash == nil {
 		return false
@@ -104,20 +107,23 @@ func (vs *BlockVoteSet) HasAbsoluteQuorum() bool {
 	return vs.hasThreeFPlusOnePower(blockVotes.votedPower)
 }
 
-// HasMajorityQuorum checks if there is a block that has received an majority quorum of votes (2f+1 of total power).
+// HasMajorityQuorum checks whether the given block has received
+// a majority quorum of votes (2f+1 of total voting power).
 func (vs *BlockVoteSet) HasMajorityQuorum(blockHash hash.Hash) bool {
 	blockVotes := vs.mustGetBlockVotes(blockHash)
 
 	return vs.hasTwoFPlusOnePower(blockVotes.votedPower)
 }
 
-// HasQuorumHash checks if there is a block that has received a quorum of votes (3t+1 of total power).
+// HasQuorumHash reports whether there exists a block that has received
+// a quorum of votes (2f+1 of total voting power).
 func (vs *BlockVoteSet) HasQuorumHash() bool {
 	return vs.quorumHash != nil
 }
 
-// QuorumHash returns the hash of the block that has received a quorum of votes (3t+1 of total power).
-// If no block has received the quorum threshold, it returns nil.
+// QuorumHash returns the hash of the block that has received
+// a quorum of votes (2f+1 of total voting power).
+// If no block has reached the quorum threshold, it returns nil.
 func (vs *BlockVoteSet) QuorumHash() *hash.Hash {
 	return vs.quorumHash
 }
