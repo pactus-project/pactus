@@ -1,6 +1,8 @@
-package consensus
+package manager
 
 import (
+	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensusv2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state"
@@ -26,8 +28,8 @@ type manager struct {
 // NewManager creates a new manager instance that manages a set of consensus instances,
 // each associated with a validator key and a reward address.
 // It is not thread-safe.
-func NewManager(
-	conf *Config,
+func NewManagerV1(
+	conf *consensus.Config,
 	state state.Facade,
 	valKeys []*bls.ValidatorKey,
 	rewardAddrs []crypto.Address,
@@ -39,10 +41,34 @@ func NewManager(
 		upcomingProposals: make([]*proposal.Proposal, 0),
 		state:             state,
 	}
-	mediatorConcrete := newConcreteMediator()
+	mediatorConcrete := consensus.NewConcreteMediator()
 
 	for i, key := range valKeys {
-		cons := NewConsensus(conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
+		cons := consensus.NewConsensus(conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
+
+		mgr.instances[i] = cons
+	}
+
+	return mgr
+}
+
+func NewManagerV2(
+	conf *consensusv2.Config,
+	state state.Facade,
+	valKeys []*bls.ValidatorKey,
+	rewardAddrs []crypto.Address,
+	broadcastPipe pipeline.Pipeline[message.Message],
+) Manager {
+	mgr := &manager{
+		instances:         make([]Consensus, len(valKeys)),
+		upcomingVotes:     make([]*vote.Vote, 0),
+		upcomingProposals: make([]*proposal.Proposal, 0),
+		state:             state,
+	}
+	mediatorConcrete := consensus.NewConcreteMediator()
+
+	for i, key := range valKeys {
+		cons := consensusv2.NewConsensus(conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
 
 		mgr.instances[i] = cons
 	}

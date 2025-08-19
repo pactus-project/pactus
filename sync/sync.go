@@ -5,7 +5,7 @@ import (
 	"time"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
-	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
@@ -37,8 +37,8 @@ type synchronizer struct {
 	config        *Config
 	valKeys       []*bls.ValidatorKey
 	state         state.Facade
-	consV1Mgr     consensus.Manager
-	consV2Mgr     consensus.Manager
+	consV1Mgr     manager.Manager
+	consV2Mgr     manager.Manager
 	peerSet       *peerset.PeerSet
 	firewall      *firewall.Firewall
 	cache         *cache.Cache
@@ -54,8 +54,8 @@ func NewSynchronizer(
 	conf *Config,
 	valKeys []*bls.ValidatorKey,
 	state state.Facade,
-	consV1Mgr consensus.Manager,
-	consV2Mgr consensus.Manager,
+	consV1Mgr manager.Manager,
+	consV2Mgr manager.Manager,
 	network network.Network,
 	broadcastPipe pipeline.Pipeline[message.Message],
 	networkPipe pipeline.Pipeline[network.Event],
@@ -584,7 +584,7 @@ func (sync *synchronizer) consensusTopicEvaluator(msg *network.GossipMessage) ne
 
 // getConsMgr returns consensus manager based on the upgrade condition.
 // After the chain is fully upgraded, we can remove this function.
-func (sync *synchronizer) getConsMgr() consensus.Manager {
+func (sync *synchronizer) getConsMgr() manager.Manager {
 	switch sync.state.Genesis().ChainType() {
 	case genesis.Mainnet:
 		return sync.consV1Mgr

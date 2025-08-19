@@ -8,6 +8,7 @@ import (
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
@@ -64,10 +65,10 @@ func setup(t *testing.T, config *Config) *testData {
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	mockState := state.MockingState(ts)
 
-	consV1Mgr, consMocks := consensus.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
+	consV1Mgr, consMocks := manager.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
 	consV1Mgr.MoveToNewHeight()
 
-	consV2Mgr, _ := consensus.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
+	consV2Mgr, _ := manager.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
 	consV2Mgr.MoveToNewHeight()
 
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
