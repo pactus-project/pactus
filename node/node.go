@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/config"
-	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
@@ -36,8 +36,8 @@ type Node struct {
 	state         state.Facade
 	store         store.Store
 	txPool        txpool.TxPool
-	consV1Mgr     consensus.Manager // Deprecated:: replaced by new consensus algorithm
-	consV2Mgr     consensus.Manager
+	consV1Mgr     manager.Manager // Deprecated:: replaced by new consensus algorithm
+	consV2Mgr     manager.Manager
 	network       network.Network
 	sync          sync.Synchronizer
 	grpc          *grpc.Server
@@ -91,8 +91,8 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	consV1Mgr := consensus.NewManager(conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
-	consV2Mgr := consensus.NewManager(conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe)
+	consV1Mgr := manager.NewManagerV1(conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
+	consV2Mgr := manager.NewManagerV2(conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe)
 	walletMgr := wallet.NewWalletManager(conf.WalletManager)
 
 	if !store.IsPruned() {
@@ -176,6 +176,9 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start Sync")
 	}
 
+	n.consV1Mgr.MoveToNewHeight()
+	n.consV2Mgr.MoveToNewHeight()
+
 	err := n.grpc.StartServer()
 	if err != nil {
 		return errors.Wrap(err, "could not start gRPC server")
@@ -226,7 +229,7 @@ func (n *Node) Stop() {
 
 // these methods are using by GUI.
 
-func (n *Node) ConsManager() consensus.ManagerReader {
+func (n *Node) ConsManager() manager.ManagerReader {
 	return n.consV1Mgr
 }
 

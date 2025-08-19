@@ -6,7 +6,7 @@ import (
 	"time"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
-	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -170,10 +170,10 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	valKeyBob := []*bls.ValidatorKey{ts.RandValKey()}
 	stateAlice := state.MockingState(ts)
 	stateBob := state.MockingState(ts)
-	consV1MgrAlice, _ := consensus.MockingManager(ts, stateAlice, valKeyAlice)
-	consV2MgrAlice, _ := consensus.MockingManager(ts, stateAlice, valKeyAlice)
-	consV1MgrBob, _ := consensus.MockingManager(ts, stateBob, valKeyBob)
-	consV2MgrBob, _ := consensus.MockingManager(ts, stateBob, valKeyBob)
+	consV1MgrAlice, _ := manager.MockingManager(ts, stateAlice, valKeyAlice)
+	consV2MgrAlice, _ := manager.MockingManager(ts, stateAlice, valKeyAlice)
+	consV1MgrBob, _ := manager.MockingManager(ts, stateBob, valKeyBob)
+	consV2MgrBob, _ := manager.MockingManager(ts, stateBob, valKeyBob)
 	broadcastPipe := pipeline.MockingPipeline[message.Message]()
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())

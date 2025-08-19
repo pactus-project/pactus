@@ -1,8 +1,9 @@
-package consensus
+package manager
 
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state"
@@ -29,12 +30,13 @@ func TestManager(t *testing.T) {
 	randomHeight := ts.RandHeight()
 	rndBlk, rndCert := ts.GenerateTestBlock(randomHeight)
 	state.TestStore.SaveBlock(rndBlk, rndCert)
+	conf := &consensus.Config{}
 
-	mgrInt := NewManager(testConfig(), state, valKeys, rewardAddrs, pipe)
+	mgrInt := NewManagerV1(conf, state, valKeys, rewardAddrs, pipe)
 	mgr := mgrInt.(*manager)
 
-	consA := mgr.instances[0].(*consensus) // active
-	consB := mgr.instances[1].(*consensus) // inactive
+	consA := mgr.instances[0] // active
+	consB := mgr.instances[1] // inactive
 
 	t.Run("Check if keys are assigned properly", func(t *testing.T) {
 		assert.Equal(t, consA.ConsensusKey(), valKeys[0].PublicKey())
@@ -165,7 +167,9 @@ func TestMediator(t *testing.T) {
 	blk, cert := ts.GenerateTestBlock(stateHeight)
 	state.TestStore.SaveBlock(blk, cert)
 	pipe := pipeline.MockingPipeline[message.Message]()
-	mgrInt := NewManager(testConfig(), state, valKeys, rewardAddrs, pipe)
+	conf := &consensus.Config{}
+
+	mgrInt := NewManagerV1(conf, state, valKeys, rewardAddrs, pipe)
 	mgr := mgrInt.(*manager)
 
 	mgr.MoveToNewHeight()

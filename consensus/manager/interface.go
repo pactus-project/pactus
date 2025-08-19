@@ -1,4 +1,4 @@
-package consensus
+package manager
 
 import (
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -21,6 +21,23 @@ type Reader interface {
 
 type Consensus interface {
 	Reader
+
+	MoveToNewHeight()
+	AddVote(vote *vote.Vote)
+	SetProposal(prop *proposal.Proposal)
+}
+
+type ManagerReader interface {
+	Instances() []Reader
+	HandleQueryVote(height uint32, round int16) *vote.Vote
+	HandleQueryProposal(height uint32, round int16) *proposal.Proposal
+	Proposal() *proposal.Proposal
+	HeightRound() (uint32, int16)
+	HasActiveInstance() bool
+}
+
+type Manager interface {
+	ManagerReader
 
 	MoveToNewHeight()
 	AddVote(vote *vote.Vote)

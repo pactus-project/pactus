@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -25,7 +25,7 @@ type testData struct {
 
 	mockState   *state.MockState
 	mockSync    *sync.MockSync
-	mockConsMgr consensus.Manager
+	mockConsMgr manager.Manager
 	gRPCServer  *grpc.Server
 	httpServer  *Server
 }
@@ -49,7 +49,7 @@ func setup(t *testing.T) *testData {
 	mockState := state.MockingState(ts)
 	mockSync := sync.MockingSync(ts)
 	mockNet := network.MockingNetwork(ts, ts.RandPeerID())
-	mockConsMgr, _ := consensus.MockingManager(ts, mockState, valKeys)
+	mockConsMgr, _ := manager.MockingManager(ts, mockState, valKeys)
 
 	mockConsMgr.MoveToNewHeight()
 
