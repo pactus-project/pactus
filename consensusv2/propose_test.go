@@ -9,7 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestProposeBlock(t *testing.T) {
+// PASSED
+func TestProposePublishProposal(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consX)
@@ -17,7 +18,7 @@ func TestProposeBlock(t *testing.T) {
 	assert.Equal(t, td.consX.valKey.Address(), p.Block().Header().ProposerAddress())
 }
 
-func TestSetProposalInvalidProposer(t *testing.T) {
+func TestProposeInvalidProposer(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consY)
@@ -35,7 +36,7 @@ func TestSetProposalInvalidProposer(t *testing.T) {
 	assert.Nil(t, td.consY.Proposal())
 }
 
-func TestSetProposalInvalidBlock(t *testing.T) {
+func TestProposeInvalidBlock(t *testing.T) {
 	td := setup(t)
 
 	addr := td.consB.valKey.Address()
@@ -51,7 +52,7 @@ func TestSetProposalInvalidBlock(t *testing.T) {
 	assert.Nil(t, td.consP.Proposal())
 }
 
-func TestSetProposalInvalidHeight(t *testing.T) {
+func TestProposeInvalidHeight(t *testing.T) {
 	td := setup(t)
 
 	addr := td.consB.valKey.Address()
@@ -64,29 +65,29 @@ func TestSetProposalInvalidHeight(t *testing.T) {
 	assert.Nil(t, td.consY.Proposal())
 }
 
-func TestNetworkLagging(t *testing.T) {
+func TestProposeNetworkLagging(t *testing.T) {
 	td := setup(t)
 
 	td.enterNewHeight(td.consP)
 
-	h := uint32(1)
-	r := int16(0)
-	prop := td.makeProposal(t, h, r)
+	height := uint32(1)
+	round := int16(0)
+	prop := td.makeProposal(t, height, round)
 
 	// consP doesn't have the proposal, but it has received prepared votes from other peers
-	td.addPrecommitVote(td.consP, prop.Block().Hash(), h, r, tIndexX)
-	td.addPrecommitVote(td.consP, prop.Block().Hash(), h, r, tIndexY)
+	td.addPrecommitVote(td.consP, prop.Block().Hash(), height, round, tIndexX)
+	td.addPrecommitVote(td.consP, prop.Block().Hash(), height, round, tIndexY)
 
 	td.queryProposalTimeout(td.consP)
-	td.shouldPublishQueryProposal(t, td.consP, h, r)
+	td.shouldPublishQueryProposal(t, td.consP, height, round)
 
 	// Proposal is received now
 	td.consP.SetProposal(prop)
 
-	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, prop.Block().Hash())
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop.Block().Hash())
 }
 
-func TestProposalNextRound(t *testing.T) {
+func TestProposeNextRound(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
@@ -104,6 +105,6 @@ func TestProposalNextRound(t *testing.T) {
 	// consX accepts his proposal, but doesn't move to the next round
 	assert.NotNil(t, td.consX.log.RoundProposal(1))
 	assert.Nil(t, td.consX.Proposal())
-	assert.Equal(t, td.consX.height, uint32(2))
-	assert.Equal(t, td.consX.round, int16(0))
+	assert.Equal(t, uint32(2), td.consX.height)
+	assert.Equal(t, int16(0), td.consX.round)
 }

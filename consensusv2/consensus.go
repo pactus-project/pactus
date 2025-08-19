@@ -108,7 +108,7 @@ func makeConsensus(
 
 	mediator.Register(cons)
 
-	logger.Info("consensus instance created (v2)",
+	logger.Info("consensus instance created",
 		"validator address", valKey.Address().String(),
 		"reward address", rewardAddr.String())
 
@@ -301,14 +301,6 @@ func (cs *consensusV2) AddVote(vte *vote.Vote) {
 		cs.logger.Info("new vote added", "vote", vte)
 
 		cs.currentState.onAddVote(vte)
-
-		// If there is a proper and justified "Decide" vote for a subsequent round, move consensus to that round.
-		// This especially helps validators to catch up with the network when they restart their node.
-		if vte.Type() == vote.VoteTypeCPDecided {
-			if vte.Round() > cs.round {
-				cs.changeProposer.cpDecide(vte.Round(), vte.CPValue())
-			}
-		}
 	}
 }
 
@@ -418,16 +410,18 @@ func (cs *consensusV2) makeVoteCertificate(votes map[crypto.Address]*vote.Vote,
 // - A list of all validators' numbers eligible to vote in this step.
 // - A list of absentee validators' numbers who did not vote in this step.
 // - An aggregated signature generated from the signatures of participating validators.
-func (cs *consensusV2) signersInfo(votes map[crypto.Address]*vote.Vote) ([]int32, []int32, *bls.Signature) {
+func (cs *consensusV2) signersInfo(votes map[crypto.Address]*vote.Vote) (
+	committers, absentees []int32, aggSig *bls.Signature,
+) {
 	vals := cs.validators
-	committers := make([]int32, len(vals))
-	absentees := make([]int32, 0)
+	committers = make([]int32, len(vals))
+	absentees = make([]int32, 0)
 	sigs := make([]*bls.Signature, 0)
 
 	for i, val := range vals {
-		vte := votes[val.Address()]
-		if vte != nil {
-			sigs = append(sigs, vte.Signature())
+		vote := votes[val.Address()]
+		if vote != nil {
+			sigs = append(sigs, vote.Signature())
 		} else {
 			absentees = append(absentees, val.Number())
 		}
@@ -435,7 +429,7 @@ func (cs *consensusV2) signersInfo(votes map[crypto.Address]*vote.Vote) ([]int32
 		committers[i] = val.Number()
 	}
 
-	aggSig := bls.SignatureAggregate(sigs...)
+	aggSig = bls.SignatureAggregate(sigs...)
 
 	return committers, absentees, aggSig
 }

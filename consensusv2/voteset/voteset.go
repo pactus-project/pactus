@@ -29,8 +29,8 @@ func (vs *voteSet) Round() int16 {
 
 // verifyVote checks if the given vote is valid.
 // It returns the voting power of if valid, or an error if not.
-func (vs *voteSet) verifyVote(vte *vote.Vote) (int64, error) {
-	signer := vte.Signer()
+func (vs *voteSet) verifyVote(vote *vote.Vote) (int64, error) {
+	signer := vote.Signer()
 	val := vs.validators[signer]
 	if val == nil {
 		return 0, IneligibleVoterError{
@@ -38,15 +38,15 @@ func (vs *voteSet) verifyVote(vte *vote.Vote) (int64, error) {
 		}
 	}
 
-	if err := vte.Verify(val.PublicKey()); err != nil {
+	if err := vote.Verify(val.PublicKey()); err != nil {
 		return 0, err
 	}
 
 	return val.Power(), nil
 }
 
-// faultyPower calculates the faulty power based on the total power.
-// The formula used is: f = (n - 1) / 5, where n is the total power.
+// faultyPower calculates the maximum faulty power based on the total voting power.
+// The formula used is: f = (n - 1) / 3, where n is the total voting power.
 func (vs *voteSet) faultyPower() int64 {
 	return (vs.totalPower - 1) / 3
 }

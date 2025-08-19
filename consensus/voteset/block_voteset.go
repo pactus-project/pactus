@@ -49,13 +49,13 @@ func (vs *BlockVoteSet) BlockVotes(blockHash hash.Hash) map[crypto.Address]*vote
 }
 
 func (vs *BlockVoteSet) mustGetBlockVotes(blockHash hash.Hash) *voteBox {
-	box, exists := vs.blockVotes[blockHash]
+	blockVotes, exists := vs.blockVotes[blockHash]
 	if !exists {
-		box = newVoteBox()
-		vs.blockVotes[blockHash] = box
+		blockVotes = newVoteBox()
+		vs.blockVotes[blockHash] = blockVotes
 	}
 
-	return box
+	return blockVotes
 }
 
 // AllVotes returns a list of all votes in the VoteSet.

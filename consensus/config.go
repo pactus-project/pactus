@@ -7,6 +7,10 @@ type Config struct {
 	ChangeProposerDelta      time.Duration `toml:"-"`
 	QueryVoteTimeout         time.Duration `toml:"-"`
 	MinimumAvailabilityScore float64       `toml:"-"`
+
+	DeprecatedHeightTestnet  uint32 `toml:"-"`
+	DeprecatedHeightMainnet  uint32 `toml:"-"`
+	DeprecatedHeightLocalnet uint32 `toml:"-"`
 }
 
 func DefaultConfig() *Config {
@@ -15,6 +19,10 @@ func DefaultConfig() *Config {
 		ChangeProposerDelta:      5 * time.Second,
 		QueryVoteTimeout:         5 * time.Second,
 		MinimumAvailabilityScore: 0.666667,
+
+		DeprecatedHeightTestnet:  100_000_000,
+		DeprecatedHeightMainnet:  100_000_000,
+		DeprecatedHeightLocalnet: 710,
 	}
 }
 
