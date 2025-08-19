@@ -10,7 +10,6 @@ import (
 )
 
 type Messages struct {
-	prepareVotes   *voteset.BlockVoteSet  // Prepare votes
 	precommitVotes *voteset.BlockVoteSet  // Precommit votes
 	cpPreVotes     *voteset.BinaryVoteSet // Change proposer Pre-votes
 	cpMainVotes    *voteset.BinaryVoteSet // Change proposer Main-votes
@@ -21,7 +20,7 @@ type Messages struct {
 func (m *Messages) addVote(vte *vote.Vote) (bool, error) {
 	switch vte.Type() {
 	case vote.VoteTypePrepare:
-		return m.prepareVotes.AddVote(vte)
+		// Deprecated
 	case vote.VoteTypePrecommit:
 		return m.precommitVotes.AddVote(vte)
 	case vote.VoteTypeCPPreVote:
@@ -48,7 +47,6 @@ func (m *Messages) HasVote(h hash.Hash) bool {
 
 func (m *Messages) AllVotes() []*vote.Vote {
 	votes := []*vote.Vote{}
-	votes = append(votes, m.prepareVotes.AllVotes()...)
 	votes = append(votes, m.precommitVotes.AllVotes()...)
 	votes = append(votes, m.cpPreVotes.AllVotes()...)
 	votes = append(votes, m.cpMainVotes.AllVotes()...)

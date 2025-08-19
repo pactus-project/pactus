@@ -14,14 +14,6 @@ type BlockVoteSet struct {
 	quorumHash *hash.Hash
 }
 
-func NewPrepareVoteSet(round int16, totalPower int64,
-	validators map[crypto.Address]*validator.Validator,
-) *BlockVoteSet {
-	voteSet := newVoteSet(round, totalPower, validators)
-
-	return newBlockVoteSet(voteSet)
-}
-
 func NewPrecommitVoteSet(round int16, totalPower int64,
 	validators map[crypto.Address]*validator.Validator,
 ) *BlockVoteSet {
