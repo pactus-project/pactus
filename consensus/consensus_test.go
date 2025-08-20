@@ -56,9 +56,12 @@ type testData struct {
 
 func testConfig() *Config {
 	return &Config{
-		ChangeProposerTimeout: 1 * time.Hour, // Disabling timers
-		ChangeProposerDelta:   1 * time.Hour, // Disabling timers
-		QueryVoteTimeout:      1 * time.Hour, // Disabling timers
+		ChangeProposerTimeout:    1 * time.Hour, // Disabling timers
+		ChangeProposerDelta:      1 * time.Hour, // Disabling timers
+		QueryVoteTimeout:         1 * time.Hour, // Disabling timers
+		DeprecatedHeightTestnet:  util.MaxUint32,
+		DeprecatedHeightMainnet:  util.MaxUint32,
+		DeprecatedHeightLocalnet: util.MaxUint32,
 	}
 }
 
@@ -125,13 +128,13 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		})
 	}
 	td.consX = makeConsensus(testConfig(), stateX, valKeys[tIndexX],
-		valKeys[tIndexX].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
+		valKeys[tIndexX].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
 	td.consY = makeConsensus(testConfig(), stateY, valKeys[tIndexY],
-		valKeys[tIndexY].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
+		valKeys[tIndexY].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
 	td.consB = makeConsensus(testConfig(), stateB, valKeys[tIndexB],
-		valKeys[tIndexB].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
+		valKeys[tIndexB].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
 	td.consP = makeConsensus(testConfig(), stateP, valKeys[tIndexP],
-		valKeys[tIndexP].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
+		valKeys[tIndexP].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
 
 	// -------------------------------
 	// Better logging during testing
@@ -440,7 +443,7 @@ func (td *testData) makeMainVoteCertificate(t *testing.T,
 func TestStart(t *testing.T) {
 	td := setup(t)
 
-	td.consX.Start()
+	td.consX.MoveToNewHeight()
 	td.checkHeightRound(t, td.consX, 1, 0)
 }
 
@@ -452,7 +455,7 @@ func TestNotInCommittee(t *testing.T) {
 	state := state.MockingState(td.TestSuite)
 	pipe := pipeline.MockingPipeline[message.Message]()
 	consInt := NewConsensus(testConfig(), state, valKey,
-		valKey.Address(), pipe, newConcreteMediator())
+		valKey.Address(), pipe, NewConcreteMediator())
 	cons := consInt.(*consensus)
 
 	td.enterNewHeight(cons)
@@ -613,6 +616,7 @@ func TestSetProposalOnPrecommit(t *testing.T) {
 	td.shouldPublishBlockAnnounce(t, td.consP, prop.Block().Hash())
 }
 
+// update me from TestHandleQueryVote: consensus:v1.
 func TestHandleQueryVote(t *testing.T) {
 	td := setup(t)
 
@@ -756,7 +760,7 @@ func TestNonActiveValidator(t *testing.T) {
 	valKey := td.RandValKey()
 	pipe := pipeline.MockingPipeline[message.Message]()
 	consInt := NewConsensus(testConfig(), state.MockingState(td.TestSuite),
-		valKey, valKey.Address(), pipe, newConcreteMediator())
+		valKey, valKey.Address(), pipe, NewConcreteMediator())
 	nonActiveCons := consInt.(*consensus)
 
 	t.Run("non-active instances should be in new-height state", func(t *testing.T) {

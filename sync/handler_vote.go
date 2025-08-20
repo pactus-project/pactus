@@ -20,7 +20,7 @@ func (handler *voteHandler) ParseMessage(m message.Message, _ peer.ID) {
 	msg := m.(*message.VoteMessage)
 	handler.logger.Trace("parsing Vote message", "msg", msg)
 
-	handler.consMgr.AddVote(msg.Vote)
+	handler.getConsMgr().AddVote(msg.Vote)
 }
 
 func (*voteHandler) PrepareBundle(m message.Message) *bundle.Bundle {

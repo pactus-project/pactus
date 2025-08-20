@@ -72,7 +72,7 @@ func (s *Server) StartServer(grpcServer string) error {
 
 	listener, err := net.Listen("tcp", s.config.Listen)
 	if err != nil {
-		s.logger.Error("unable to establish tcp connection", "error", err)
+		return err
 	}
 
 	s.server = server
