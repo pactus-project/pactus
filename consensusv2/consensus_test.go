@@ -303,19 +303,19 @@ func (td *testData) addVote(cons *consensusV2, v *vote.Vote, valID int) *vote.Vo
 
 func (*testData) newHeightTimeout(cons *consensusV2) {
 	cons.lk.Lock()
-	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetNewHeight})
+	cons.currentState.onTimeout(&ticker{time.Hour, cons.height, cons.round, tickerTargetNewHeight})
 	cons.lk.Unlock()
 }
 
 func (*testData) queryProposalTimeout(cons *consensusV2) {
 	cons.lk.Lock()
-	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetQueryProposal})
+	cons.currentState.onTimeout(&ticker{time.Hour, cons.height, cons.round, tickerTargetQueryProposal})
 	cons.lk.Unlock()
 }
 
 func (*testData) changeProposerTimeout(cons *consensusV2) {
 	cons.lk.Lock()
-	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetChangeProposer})
+	cons.currentState.onTimeout(&ticker{time.Hour, cons.height, cons.round, tickerTargetChangeProposer})
 	cons.lk.Unlock()
 }
 
@@ -417,21 +417,21 @@ func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Has
 
 	if propBlockHash != hash.UndefHash {
 		cpValue = vote.CPValueNo
-		prepareCommitters := []int32{}
-		prepareSigs := []*bls.Signature{}
+		committers := []int32{}
+		sigs := []*bls.Signature{}
 		for i, val := range td.consP.validators {
-			prepareVote := vote.NewPrepareVote(propBlockHash, height, round, val.Address())
-			signBytes := prepareVote.SignBytes()
+			vote := vote.NewPrecommitVote(propBlockHash, height, round, val.Address())
+			signBytes := vote.SignBytes()
 
-			prepareCommitters = append(prepareCommitters, val.Number())
-			prepareSigs = append(prepareSigs, td.valKeys[i].Sign(signBytes))
+			committers = append(committers, val.Number())
+			sigs = append(sigs, td.valKeys[i].Sign(signBytes))
 		}
-		prepareAggSig := bls.SignatureAggregate(prepareSigs...)
-		certPrepare := certificate.NewVoteCertificate(height, round)
-		certPrepare.SetSignature(prepareCommitters, []int32{}, prepareAggSig)
+		aggSig := bls.SignatureAggregate(sigs...)
+		cert := certificate.NewVoteCertificate(height, round)
+		cert.SetSignature(committers, []int32{}, aggSig)
 
 		preVoteJust = &vote.JustInitNo{
-			QCert: certPrepare,
+			QCert: cert,
 		}
 	} else {
 		cpValue = vote.CPValueYes
@@ -710,7 +710,7 @@ func TestHandleQueryProposal(t *testing.T) {
 	prop2 := td.consY.HandleQueryProposal(height, round)
 	assert.NotNil(t, prop2, "proposer should send a proposal")
 
-	td.consX.cpDecidedCert = td.GenerateTestPrepareCertificate(1) // TODO: better way?
+	td.consX.cpDecidedCert = td.GenerateTestVoteCertificate(1) // TODO: better way?
 	prop3 := td.consX.HandleQueryProposal(height, round)
 	assert.NotNil(t, prop3, "non-proposer should send a proposal on decided proposal")
 

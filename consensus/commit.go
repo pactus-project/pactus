@@ -27,7 +27,7 @@ func (s *commitState) decide() {
 	}
 
 	// Now we can announce the committed block and certificate
-	s.announceNewBlock(certBlock, cert)
+	s.announceNewBlock(certBlock, cert, nil)
 
 	s.enterNewState(s.newHeightState)
 }

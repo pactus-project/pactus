@@ -237,7 +237,7 @@ func TestHandlerBlocksResponseIdenticalBundles(t *testing.T) {
 	nets := makeAliceAndBobNetworks(t)
 
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
-	msg := message.NewBlockAnnounceMessage(blk, cert)
+	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 
 	bdlAlice := nets.syncAlice.prepareBundle(msg)
 	bdlBob := nets.syncBob.prepareBundle(msg)
@@ -266,7 +266,7 @@ func TestHandlerBlocksResponseSyncing(t *testing.T) {
 
 	// Announcing a block
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
-	msg := message.NewBlockAnnounceMessage(blk, cert)
+	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 
@@ -334,7 +334,7 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 
 	// Announcing a block
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
-	msg := message.NewBlockAnnounceMessage(blk, cert)
+	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 

@@ -551,8 +551,8 @@ func (ts *TestSuite) GenerateTestBlockCertificate(height uint32) *certificate.Bl
 	return cert
 }
 
-// GenerateTestPrepareCertificate generates a prepare certificate for testing purposes.
-func (ts *TestSuite) GenerateTestPrepareCertificate(height uint32) *certificate.VoteCertificate {
+// GenerateTestVoteCertificate generates a prepare certificate for testing purposes.
+func (ts *TestSuite) GenerateTestVoteCertificate(height uint32) *certificate.VoteCertificate {
 	sig := ts.RandBLSSignature()
 
 	cert := certificate.NewVoteCertificate(height, ts.RandRound())

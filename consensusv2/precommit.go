@@ -17,14 +17,39 @@ func (s *precommitState) enter() {
 	queryProposalTimeout := changeProperTimeout / 2
 	s.scheduleTimeout(queryProposalTimeout, s.height, s.round, tickerTargetQueryProposal)
 	s.scheduleTimeout(changeProperTimeout, s.height, s.round, tickerTargetChangeProposer)
+
+	s.decide()
 }
 
 func (s *precommitState) decide() {
 	s.vote()
-	s.strongCommit()
+	s.absoluteCommit()
 
 	//
-	// If a validator receives a set of f+1 valid cp:PRE-VOTE votes for this round,
+	// The block can be committed by `2f+1` votes from the committee and
+	// the proof of the change-proposer phase.
+	//
+	if s.cpDecidedCert != nil {
+		roundProposal := s.log.RoundProposal(s.round)
+		if roundProposal == nil {
+			s.queryProposal()
+
+			return
+		}
+
+		precommits := s.log.PrecommitVoteSet(s.round)
+		precommitQH := precommits.QuorumHash()
+		if precommitQH == nil {
+			s.queryVote()
+
+			return
+		}
+
+		s.enterNewState(s.commitState)
+	}
+
+	//
+	// If a validator receives a set of `f+1` valid `cp:PRE-VOTE` votes for this round,
 	// it starts changing the proposer phase, even if its timer has not expired;
 	// This prevents it from starting the change-proposer phase too late.
 	//
@@ -69,6 +94,10 @@ func (s *precommitState) onTimeout(ticker *ticker) {
 		if s.isProposer() {
 			s.queryVote()
 		}
+
+		// Schedule another timeout to retry querying for the proposal or votes.
+		// This ensures that delayed or missing data doesn't cause the process to stall.
+		s.scheduleTimeout(ticker.Duration*2, s.height, s.round, tickerTargetQueryProposal)
 
 	case tickerTargetChangeProposer:
 		s.startChangingProposer()

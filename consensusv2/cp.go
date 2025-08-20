@@ -6,6 +6,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
+	"github.com/pactus-project/pactus/util"
 )
 
 type changeProposer struct {
@@ -24,13 +25,11 @@ func (cp *changeProposer) onTimeout(t *ticker) {
 }
 
 func (*changeProposer) cpCheckCPValue(value vote.CPValue, allowedValues ...vote.CPValue) error {
-	for _, v := range allowedValues {
-		if value == v {
-			return nil
-		}
+	if util.Contains(allowedValues, value) {
+		return nil
 	}
 
-	return invalidJustificationError{
+	return InvalidJustificationError{
 		Reason: fmt.Sprintf("invalid value: %v", value),
 	}
 }
@@ -40,13 +39,13 @@ func (cp *changeProposer) cpCheckJustInitNo(just vote.Just,
 ) error {
 	j, ok := just.(*vote.JustInitNo)
 	if !ok {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: "invalid just data",
 		}
 	}
 
 	if cpRound != 0 {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: fmt.Sprintf("invalid round: %v", cpRound),
 		}
 	}
@@ -69,13 +68,13 @@ func (cp *changeProposer) cpCheckJustInitYes(just vote.Just,
 ) error {
 	_, ok := just.(*vote.JustInitYes)
 	if !ok {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: "invalid just data",
 		}
 	}
 
 	if cpRound != 0 {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: fmt.Sprintf("invalid round: %v", cpRound),
 		}
 	}
@@ -86,7 +85,7 @@ func (cp *changeProposer) cpCheckJustInitYes(just vote.Just,
 	}
 
 	if !blockHash.IsUndef() {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: fmt.Sprintf("invalid block hash: %s", blockHash),
 		}
 	}
@@ -99,13 +98,13 @@ func (cp *changeProposer) cpCheckJustPreVoteHard(just vote.Just,
 ) error {
 	j, ok := just.(*vote.JustPreVoteHard)
 	if !ok {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: "invalid just data",
 		}
 	}
 
 	if cpRound == 0 {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: "invalid round: 0",
 		}
 	}
@@ -118,7 +117,7 @@ func (cp *changeProposer) cpCheckJustPreVoteHard(just vote.Just,
 	err = j.QCert.ValidateCPPreVote(cp.validators,
 		blockHash, cpRound-1, byte(cpValue))
 	if err != nil {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: err.Error(),
 		}
 	}
@@ -131,13 +130,13 @@ func (cp *changeProposer) cpCheckJustPreVoteSoft(just vote.Just,
 ) error {
 	j, ok := just.(*vote.JustPreVoteSoft)
 	if !ok {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: "invalid just data",
 		}
 	}
 
 	if cpRound == 0 {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: "invalid round: 0",
 		}
 	}
@@ -150,7 +149,7 @@ func (cp *changeProposer) cpCheckJustPreVoteSoft(just vote.Just,
 	err = j.QCert.ValidateCPMainVote(cp.validators,
 		blockHash, cpRound-1, byte(vote.CPValueAbstain))
 	if err != nil {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: err.Error(),
 		}
 	}
@@ -163,7 +162,7 @@ func (cp *changeProposer) cpCheckJustMainVoteNoConflict(just vote.Just,
 ) error {
 	j, ok := just.(*vote.JustMainVoteNoConflict)
 	if !ok {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: "invalid just data",
 		}
 	}
@@ -175,7 +174,7 @@ func (cp *changeProposer) cpCheckJustMainVoteNoConflict(just vote.Just,
 	err = j.QCert.ValidateCPPreVote(cp.validators,
 		blockHash, cpRound, byte(cpValue))
 	if err != nil {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: err.Error(),
 		}
 	}
@@ -188,7 +187,7 @@ func (cp *changeProposer) cpCheckJustMainVoteConflict(just vote.Just,
 ) error {
 	j, ok := just.(*vote.JustMainVoteConflict)
 	if !ok {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: "invalid just data",
 		}
 	}
@@ -219,7 +218,7 @@ func (cp *changeProposer) cpCheckJustMainVoteConflict(just vote.Just,
 		vote.JustTypeMainVoteConflict,
 		vote.JustTypeMainVoteNoConflict,
 		vote.JustTypeDecided:
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: fmt.Sprintf("unexpected justification: %s", j.JustNo.Type()),
 		}
 	}
@@ -242,7 +241,7 @@ func (cp *changeProposer) cpCheckJustMainVoteConflict(just vote.Just,
 		vote.JustTypeMainVoteConflict,
 		vote.JustTypeMainVoteNoConflict,
 		vote.JustTypeDecided:
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: fmt.Sprintf("unexpected justification: %s", j.JustNo.Type()),
 		}
 	}
@@ -255,7 +254,7 @@ func (cp *changeProposer) cpCheckJustDecide(just vote.Just,
 ) error {
 	j, ok := just.(*vote.JustDecided)
 	if !ok {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: "invalid just data",
 		}
 	}
@@ -268,7 +267,7 @@ func (cp *changeProposer) cpCheckJustDecide(just vote.Just,
 	err = j.QCert.ValidateCPMainVote(cp.validators,
 		blockHash, cpRound, byte(cpValue))
 	if err != nil {
-		return invalidJustificationError{
+		return InvalidJustificationError{
 			Reason: err.Error(),
 		}
 	}
@@ -321,13 +320,7 @@ func (cp *changeProposer) cpCheckJust(vte *vote.Vote) error {
 func (cp *changeProposer) cpStrongTermination() {
 	cpDecided := cp.log.CPDecidedVoteSet(cp.round)
 	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueYes) {
-		cp.cpDecide(cp.round, vote.CPValueYes)
-	}
-}
-
-func (cp *changeProposer) cpDecide(round int16, cpValue vote.CPValue) {
-	if cpValue == vote.CPValueYes {
-		cp.round = round + 1
+		cp.round = cp.round + 1
 		cp.enterNewState(cp.proposeState)
 	}
 }
