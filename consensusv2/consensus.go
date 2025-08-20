@@ -384,10 +384,12 @@ func (cs *consensusV2) broadcastVote(v *vote.Vote) {
 		message.NewVoteMessage(v))
 }
 
-func (cs *consensusV2) announceNewBlock(blk *block.Block, cert *certificate.BlockCertificate) {
+func (cs *consensusV2) announceNewBlock(blk *block.Block,
+	cert *certificate.BlockCertificate,
+	proof *certificate.VoteCertificate) {
 	go cs.mediator.OnBlockAnnounce(cs)
 	cs.broadcaster(cs.valKey.Address(),
-		message.NewBlockAnnounceMessage(blk, cert))
+		message.NewBlockAnnounceMessage(blk, cert, proof))
 }
 
 func (cs *consensusV2) makeBlockCertificate(votes map[crypto.Address]*vote.Vote,
@@ -524,7 +526,7 @@ func (cs *consensusV2) startChangingProposer() {
 	}
 }
 
-func (cs *consensusV2) strongCommit() {
+func (cs *consensusV2) absoluteCommit() {
 	precommits := cs.log.PrecommitVoteSet(cs.round)
 	if precommits.HasAbsoluteQuorum() {
 		cs.logger.Debug("precommits has absolute quorum")

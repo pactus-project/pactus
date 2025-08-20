@@ -14,7 +14,7 @@ func (s *cpPreVoteState) enter() {
 }
 
 func (s *cpPreVoteState) decide() {
-	s.strongCommit()
+	s.absoluteCommit()
 	s.cpStrongTermination()
 
 	if s.cpRound == 0 {
