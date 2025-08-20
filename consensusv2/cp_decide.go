@@ -14,7 +14,7 @@ func (s *cpDecideState) enter() {
 }
 
 func (s *cpDecideState) decide() {
-	s.strongCommit()
+	s.absoluteCommit()
 	s.cpStrongTermination()
 
 	cpMainVotes := s.log.CPMainVoteVoteSet(s.round)
@@ -31,7 +31,7 @@ func (s *cpDecideState) decide() {
 				QCert: cert,
 			}
 			s.signAddCPDecidedVote(hash.UndefHash, s.cpRound, vote.CPValueYes, just)
-			s.cpDecide(s.round, vote.CPValueYes)
+			s.cpStrongTermination()
 		} else {
 			// conflicting votes
 			s.logger.Debug("conflicting main votes", "round", s.cpRound)

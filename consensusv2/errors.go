@@ -4,13 +4,13 @@ import (
 	"fmt"
 )
 
-// invalidJustificationError is returned when the justification for a change-proposer
+// InvalidJustificationError is returned when the justification for a change-proposer
 // vote is invalid.
-type invalidJustificationError struct {
+type InvalidJustificationError struct {
 	Reason string
 }
 
-func (e invalidJustificationError) Error() string {
+func (e InvalidJustificationError) Error() string {
 	return fmt.Sprintf("invalid justification: %s", e.Reason)
 }
 

@@ -85,6 +85,7 @@ func (r ConflictReason) String() string {
 type JustInitNo struct {
 	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
 }
+
 type JustInitYes struct {
 	//
 }

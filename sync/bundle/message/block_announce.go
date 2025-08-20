@@ -11,18 +11,27 @@ import (
 type BlockAnnounceMessage struct {
 	Block       *block.Block                  `cbor:"1,keyasint"`
 	Certificate *certificate.BlockCertificate `cbor:"2,keyasint"`
+	Proof       *certificate.VoteCertificate  `cbor:"3,keyasint"`
 }
 
-func NewBlockAnnounceMessage(blk *block.Block, cert *certificate.BlockCertificate) *BlockAnnounceMessage {
+func NewBlockAnnounceMessage(blk *block.Block, cert *certificate.BlockCertificate,
+	proof *certificate.VoteCertificate) *BlockAnnounceMessage {
 	return &BlockAnnounceMessage{
 		Block:       blk,
 		Certificate: cert,
+		Proof:       proof,
 	}
 }
 
 func (m *BlockAnnounceMessage) BasicCheck() error {
 	if err := m.Block.BasicCheck(); err != nil {
 		return err
+	}
+
+	if m.Proof != nil {
+		if err := m.Proof.BasicCheck(); err != nil {
+			return err
+		}
 	}
 
 	return m.Certificate.BasicCheck()
