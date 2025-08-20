@@ -28,7 +28,7 @@ func (s *commitState) decide() {
 		s.logger.Info("block committed, schedule new height", "hash", block.Hash())
 
 		// Now we can announce the committed block and certificate
-		s.announceNewBlock(block, cert)
+		s.announceNewBlock(block, cert, s.cpDecidedCert)
 	}
 
 	s.enterNewState(s.newHeightState)

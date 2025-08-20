@@ -294,7 +294,7 @@ func TestDownload(t *testing.T) {
 
 		pid := td.addPeer(t, status.StatusConnected, service.New(service.None))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		baMsg := message.NewBlockAnnounceMessage(blk, cert)
+		baMsg := message.NewBlockAnnounceMessage(blk, cert, nil)
 		td.receivingNewMessage(td.sync, baMsg, pid)
 
 		td.shouldNotPublishAnyMessage(t)
@@ -306,7 +306,7 @@ func TestDownload(t *testing.T) {
 
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		baMsg := message.NewBlockAnnounceMessage(blk, cert)
+		baMsg := message.NewBlockAnnounceMessage(blk, cert, nil)
 		td.receivingNewMessage(td.sync, baMsg, pid)
 
 		td.shouldNotPublishAnyMessage(t)
@@ -318,7 +318,7 @@ func TestDownload(t *testing.T) {
 
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		baMsg := message.NewBlockAnnounceMessage(blk, cert)
+		baMsg := message.NewBlockAnnounceMessage(blk, cert, nil)
 		td.receivingNewMessage(td.sync, baMsg, pid)
 
 		td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
@@ -344,7 +344,7 @@ func TestBroadcastBlockAnnounce(t *testing.T) {
 
 	t.Run("Should announce the block", func(t *testing.T) {
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		msg := message.NewBlockAnnounceMessage(blk, cert)
+		msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 
 		td.sync.broadcast(msg)
 
@@ -353,7 +353,7 @@ func TestBroadcastBlockAnnounce(t *testing.T) {
 
 	t.Run("Should NOT announce the block", func(t *testing.T) {
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		msg := message.NewBlockAnnounceMessage(blk, cert)
+		msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 
 		td.sync.cache.AddBlock(blk)
 		td.sync.broadcast(msg)
