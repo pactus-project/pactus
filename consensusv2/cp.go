@@ -242,7 +242,7 @@ func (cp *changeProposer) cpCheckJustMainVoteConflict(just vote.Just,
 		vote.JustTypeMainVoteNoConflict,
 		vote.JustTypeDecided:
 		return InvalidJustificationError{
-			Reason: fmt.Sprintf("unexpected justification: %s", j.JustNo.Type()),
+			Reason: fmt.Sprintf("unexpected justification: %s", j.JustYes.Type()),
 		}
 	}
 
