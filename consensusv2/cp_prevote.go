@@ -38,6 +38,10 @@ func (s *cpPreVoteState) decide() {
 				cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
 				if cpPreVotes.HasFPlusOneVotesFor(0, vote.CPValueYes) {
 					s.signAddCPPreVote(hash.UndefHash, s.cpRound, vote.CPValueYes, just)
+				} else {
+					// Waiting for more votes...
+					// Transition from Synchronous to Asynchronous Consensus....
+					return
 				}
 			}
 		}
