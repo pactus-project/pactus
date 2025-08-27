@@ -83,7 +83,7 @@ func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 
 	blockVotes := vs.mustGetBlockVotes(vote.BlockHash())
 	blockVotes.addVote(vote, power)
-	if vs.hasFPlusOnePower(blockVotes.votedPower) {
+	if vs.hasTwoFPlusOnePower(blockVotes.votedPower) {
 		quorumHash := vote.BlockHash()
 		vs.quorumHash = &quorumHash
 	}
