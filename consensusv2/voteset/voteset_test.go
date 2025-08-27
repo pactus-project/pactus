@@ -211,11 +211,11 @@ func TestDuplicateBinaryVote(t *testing.T) {
 func TestQuorum(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	// N = 4501
+	// N = 4502
 	// f = 1500
 	// 2f+1 = 3001
 	// 3f+1 = 4501
-	valsMap, valKeys, totalPower := setupCommittee(ts, 1000, 900, 801, 700, 600, 500)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 1000, 900, 802, 700, 600, 500)
 
 	voteSet := NewPrecommitVoteSet(0, totalPower, valsMap)
 	blockHash := ts.RandHash()
@@ -238,8 +238,8 @@ func TestQuorum(t *testing.T) {
 	_, err = voteSet.AddVote(vote2)
 	assert.NoError(t, err)
 
-	assert.True(t, voteSet.HasQuorumHash())
-	assert.Equal(t, &blockHash, voteSet.QuorumHash())
+	assert.False(t, voteSet.HasQuorumHash())
+	assert.Nil(t, voteSet.QuorumHash())
 
 	// Add more votes
 	_, err = voteSet.AddVote(vote3)
@@ -346,12 +346,12 @@ func TestAllBinaryVotes(t *testing.T) {
 func TestOneThirdPower(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	// N = 3001
+	// N = 3002
 	// f = 1000
 	// f+1 = 1001
 	// 2f+1 = 2001
 	// 3f+1 = 3001
-	valsMap, valKeys, totalPower := setupCommittee(ts, 1000, 1, 1000, 1000)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 1000, 3, 999, 1000)
 
 	hash := ts.RandHash()
 	height := ts.RandHeight()

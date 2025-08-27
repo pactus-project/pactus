@@ -527,7 +527,7 @@ func TestVoteWithInvalidHeight(t *testing.T) {
 	require.False(t, td.consP.HasVote(vote4.Hash()))
 }
 
-func TestConsensusFastPath(t *testing.T) {
+func TestConsensusAbsoluteCommit(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t) // height 1
@@ -541,7 +541,7 @@ func TestConsensusFastPath(t *testing.T) {
 	td.addPrecommitVote(td.consX, prop.Block().Hash(), 2, 0, tIndexY)
 	td.addPrecommitVote(td.consX, prop.Block().Hash(), 2, 0, tIndexB)
 	td.addPrecommitVote(td.consX, prop.Block().Hash(), 2, 0, tIndexP)
-	td.shouldPublishVote(t, td.consX, vote.VoteTypePrepare, prop.Block().Hash())
+	td.shouldPublishVote(t, td.consX, vote.VoteTypePrecommit, prop.Block().Hash())
 
 	td.shouldPublishBlockAnnounce(t, td.consX, prop.Block().Hash())
 }
@@ -555,19 +555,17 @@ func TestConsensusAddVote(t *testing.T) {
 	vote1 := td.addPrecommitVote(td.consP, td.RandHash(), 1, 0, tIndexX)
 	vote2 := td.addPrecommitVote(td.consP, td.RandHash(), 1, 2, tIndexX)
 	vote3 := td.addPrecommitVote(td.consP, td.RandHash(), 1, 1, tIndexX)
-	vote4 := td.addPrecommitVote(td.consP, td.RandHash(), 1, 1, tIndexX)
-	vote5 := td.addPrecommitVote(td.consP, td.RandHash(), 2, 0, tIndexX)
-	vote6, _ := td.GenerateTestPrepareVote(1, 0)
-	td.consP.AddVote(vote6)
+	vote4 := td.addPrecommitVote(td.consP, td.RandHash(), 2, 0, tIndexX)
+	vote5, _ := td.GenerateTestPrecommitVote(1, 0)
+	td.consP.AddVote(vote5)
 
 	assert.False(t, td.consP.HasVote(vote1.Hash())) // previous round
 	assert.True(t, td.consP.HasVote(vote2.Hash()))  // next round
 	assert.True(t, td.consP.HasVote(vote3.Hash()))
-	assert.True(t, td.consP.HasVote(vote4.Hash()))
-	assert.False(t, td.consP.HasVote(vote5.Hash())) // valid votes for the next height
-	assert.False(t, td.consP.HasVote(vote6.Hash())) // invalid votes
+	assert.False(t, td.consP.HasVote(vote4.Hash())) // valid votes for the next height
+	assert.False(t, td.consP.HasVote(vote5.Hash())) // invalid votes
 
-	assert.Equal(t, td.consP.AllVotes(), []*vote.Vote{vote3, vote4})
+	assert.Equal(t, []*vote.Vote{vote3}, td.consP.AllVotes())
 	assert.NotContains(t, td.consP.AllVotes(), vote2)
 }
 
@@ -861,7 +859,7 @@ func TestCases(t *testing.T) {
 		// {1694849103290580532, 1, "Conflicting votes, cp-round=0"},
 		// {1697900665869342730, 1, "Conflicting votes, cp-round=1"},
 		// {1697887970998950590, 1, "consP & consB: Change Proposer, consX & consY: Commit (2 block announces)"},
-		{1717870730391411396, 2, "move to the next round on decided vote"},
+		{1755876911632377727, 2, "move to the next round on decided vote"},
 	}
 
 	for no, tt := range tests {
@@ -882,20 +880,20 @@ func TestCases(t *testing.T) {
 	}
 }
 
-// func TestFaulty(t *testing.T) {
-// 	for i := 0; i < 100000; i++ {
-// 		td := setup(t)
-// 		td.commitBlockForAllStates(t)
+func TestFaulty(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		td := setup(t)
+		td.commitBlockForAllStates(t)
 
-// 		td.enterNewHeight(td.consX)
-// 		td.enterNewHeight(td.consY)
-// 		td.enterNewHeight(td.consB)
-// 		td.enterNewHeight(td.consP)
+		td.enterNewHeight(td.consX)
+		td.enterNewHeight(td.consY)
+		td.enterNewHeight(td.consB)
+		td.enterNewHeight(td.consP)
 
-// 		_, err := checkConsensus(td, 2, nil)
-// 		require.NoError(t, err)
-// 	}
-// }
+		_, err := checkConsensus(td, 2, nil)
+		require.NoError(t, err)
+	}
+}
 
 // We have four nodes: X, Y, B, and P, which:
 // - B is a Byzantine node
