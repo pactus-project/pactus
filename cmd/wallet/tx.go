@@ -44,7 +44,7 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionFeeFromString(*feeOpt),
+			wallet.OptionFee(*feeOpt),
 			wallet.OptionLockTime(uint32(*lockTimeOpt)),
 			wallet.OptionMemo(*memoOpt),
 		}
@@ -87,7 +87,7 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionFeeFromString(*feeOpt),
+			wallet.OptionFee(*feeOpt),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
 		}
@@ -126,7 +126,7 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionFeeFromString(*feeOpt),
+			wallet.OptionFee(*feeOpt),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
 		}
@@ -166,7 +166,7 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
-			wallet.OptionFeeFromString(*feeOpt),
+			wallet.OptionFee(*feeOpt),
 			wallet.OptionLockTime(uint32(*lockTime)),
 			wallet.OptionMemo(*memoOpt),
 		}
