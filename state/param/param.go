@@ -64,7 +64,10 @@ func FromGenesis(genDoc *genesis.Genesis) *Params {
 		}
 
 	case genesis.Localnet:
-		params.SplitRewardForkHeight = 0
+		params.SplitRewardForkHeight = 10
+		if err := json.Unmarshal(foundationTestnetBytes, &foundationAddressList); err != nil {
+			panic(err)
+		}
 
 	default:
 		params.SplitRewardForkHeight = 0

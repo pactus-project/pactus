@@ -330,13 +330,13 @@ func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amoun
 		// TODO: simplify this code after enabling the split fork
 		if st.isSplitForkEnabled {
 			return newSubsidyTx
-		} else {
-			if st.committee.SupportProtocolVersion(protocol.ProtocolVersion2) {
-				return newSubsidyTx
-			} else {
-				return tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
-			}
 		}
+
+		if st.committee.SupportProtocolVersion(protocol.ProtocolVersion2) {
+			return newSubsidyTx
+		}
+
+		return tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
 	}
 
 	return tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
