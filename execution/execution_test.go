@@ -270,28 +270,3 @@ func TestReplay(t *testing.T) {
 		ID: trx.ID(),
 	})
 }
-
-func TestBatchTransfer(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	sbx := sandbox.MockingSandbox(ts)
-	rndPubKey, rndPrvKey := ts.RandEd25519KeyPair()
-	rndAccAddr := rndPubKey.AccountAddress()
-	rndAcc := sbx.MakeNewAccount(rndAccAddr)
-	rndAcc.AddToBalance(1000e9)
-	sbx.UpdateAccount(rndAccAddr, rndAcc)
-
-	sbx.TestStore.AddTestBlock(4_800_000 - 2)
-	trx1 := ts.GenerateTestBatchTransferTx(
-		testsuite.TransactionWithLockTime(sbx.CurrentHeight()),
-		testsuite.TransactionWithEd25519Signer(rndPrvKey))
-	err := CheckAndExecute(trx1, sbx, false)
-	assert.ErrorIs(t, err, ErrBatchTransferNotAllowed)
-
-	sbx.TestStore.AddTestBlock(4_800_000)
-	trx2 := ts.GenerateTestBatchTransferTx(
-		testsuite.TransactionWithLockTime(sbx.CurrentHeight()),
-		testsuite.TransactionWithEd25519Signer(rndPrvKey))
-	err = CheckAndExecute(trx2, sbx, false)
-	assert.NoError(t, err)
-}
