@@ -396,7 +396,8 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 
 func (cs *consensus) announceNewBlock(blk *block.Block,
 	cert *certificate.BlockCertificate,
-	proof *certificate.VoteCertificate) {
+	proof *certificate.VoteCertificate,
+) {
 	go cs.mediator.OnBlockAnnounce(cs)
 	cs.broadcaster(cs.valKey.Address(),
 		message.NewBlockAnnounceMessage(blk, cert, proof))

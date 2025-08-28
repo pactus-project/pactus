@@ -319,12 +319,6 @@ func (*testData) changeProposerTimeout(cons *consensusV2) {
 	cons.lk.Unlock()
 }
 
-func (*testData) queryVoteTimeout(cons *consensusV2) {
-	cons.lk.Lock()
-	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetQueryVote})
-	cons.lk.Unlock()
-}
-
 // enterNewHeight helps tests to enter new height safely
 // without scheduling new height. It boosts the test speed.
 func (td *testData) enterNewHeight(cons *consensusV2) {
@@ -569,70 +563,33 @@ func TestConsensusAddVote(t *testing.T) {
 	assert.NotContains(t, td.consP.AllVotes(), vote2)
 }
 
-// TestConsensusLateProposal tests the scenario where a slow node doesn't have the proposal
-// in prepare phase.
-// func TestConsensusLateProposal(t *testing.T) {
-// 	td := setup(t)
+// TestConsensusLateProposal tests the scenario where a slow node receive the proposal
+// after receiving the precommit votes.
+func TestConsensusLateProposal(t *testing.T) {
+	td := setup(t)
 
-// 	td.commitBlockForAllStates(t) // height 1
+	td.commitBlockForAllStates(t) // height 1
 
-// 	td.enterNewHeight(td.consP)
+	td.enterNewHeight(td.consP)
 
-// 	height := uint32(2)
-// 	round := int16(0)
-// 	prop := td.makeProposal(t, height, round)
-// 	blockHash := prop.Block().Hash()
+	height := uint32(2)
+	round := int16(0)
+	prop := td.makeProposal(t, height, round)
+	blockHash := prop.Block().Hash()
 
-// 	td.commitBlockForAllStates(t) // height 2
+	td.commitBlockForAllStates(t) // height 2
 
-// 	// consP receives all the votes first
-// 	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexX)
-// 	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexY)
-// 	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexB)
+	// consP receives all the votes first
+	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexX)
+	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexY)
+	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexB)
 
-// 	td.shouldPublishQueryProposal(t, td.consP, height, round)
+	// consP receives proposal now
+	td.consP.SetProposal(prop)
 
-// 	// consP receives proposal now
-// 	td.consP.SetProposal(prop)
-
-// 	td.shouldPublishVote(t, td.consP, vote.VoteTypePrepare, blockHash)
-// 	td.shouldPublishBlockAnnounce(t, td.consP, blockHash)
-// }
-
-// TestConsensusVeryLateProposal tests the scenario where a slow node doesn't have the proposal
-// in precommit phase.
-// func TestConsensusVeryLateProposal(t *testing.T) {
-// 	td := setup(t)
-
-// 	td.commitBlockForAllStates(t) // height 1
-
-// 	td.enterNewHeight(td.consP)
-
-// 	height := uint32(2)
-// 	round := int16(0)
-// 	prop := td.makeProposal(t, height, round)
-// 	blockHash := prop.Block().Hash()
-
-// 	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexX)
-// 	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexY)
-
-// 	// consP timed out
-// 	td.changeProposerTimeout(td.consP)
-
-// 	_, _, decidedJust := td.makeChangeProposerJusts(t, prop.Block().Hash(), height, round)
-// 	td.addCPDecidedVote(td.consP, prop.Block().Hash(), height, round, vote.CPValueNo, decidedJust, tIndexX)
-
-// 	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexX)
-// 	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexY)
-
-// 	td.shouldPublishQueryProposal(t, td.consP, height, round)
-
-// 	// consP receives proposal now
-// 	td.consP.SetProposal(prop)
-
-// 	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop.Block().Hash())
-// 	td.shouldPublishBlockAnnounce(t, td.consP, prop.Block().Hash())
-// }
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, blockHash)
+	td.shouldPublishBlockAnnounce(t, td.consP, blockHash)
+}
 
 func TestHandleQueryVote(t *testing.T) {
 	td := setup(t)
@@ -670,13 +627,13 @@ func TestHandleQueryVote(t *testing.T) {
 	require.True(t, td.consP.HasVote(vote5.Hash()))
 
 	rndVote0 := td.consP.HandleQueryVote(height, 0)
-	assert.Equal(t, rndVote0, vote4, "should send the decided vote for the previous round")
+	assert.Equal(t, rndVote0, vote4, "should send the decided vote for the round 0")
 
 	rndVote1 := td.consP.HandleQueryVote(height, 1)
-	assert.Equal(t, rndVote1, vote4, "should send the decided vote for the previous round")
+	assert.Equal(t, rndVote1, vote4, "should send the decided vote for the round 1")
 
 	rndVote2 := td.consP.HandleQueryVote(height, 2)
-	assert.Equal(t, rndVote2, vote5, "should send the prepare vote for the current round")
+	assert.Equal(t, rndVote2, vote5, "should send the precommit vote for the current round")
 
 	rndVote3 := td.consP.HandleQueryVote(height, 3)
 	assert.Nil(t, rndVote3, "should not send a vote for the next round")
@@ -899,111 +856,111 @@ func TestFaulty(t *testing.T) {
 // - B is a Byzantine node
 // - X, Y, and P are honest nodes
 // - However, P is partitioned and perceives the network through B.
-//
+
 // At height H, B acts maliciously by double proposing:
 // sending one proposal to X and Y, and another proposal to P.
-//
+
 // Once the partition is healed, honest nodes should either reach consensus
 // on the first proposal or change the proposer.
 // This is due to the randomness of the binary agreement.
-// func TestByzantine1(t *testing.T) {
-// 	td := setup(t)
+func TestByzantine1(t *testing.T) {
+	td := setup(t)
 
-// 	for i := 0; i < 6; i++ {
-// 		td.commitBlockForAllStates(t)
-// 	}
+	for i := 0; i < 6; i++ {
+		td.commitBlockForAllStates(t)
+	}
 
-// 	height := uint32(7)
-// 	round := int16(0)
-// 	prop1 := td.makeProposal(t, height, round)
+	height := uint32(7)
+	round := int16(0)
+	prop1 := td.makeProposal(t, height, round)
 
-// 	// =================================
-// 	// X, Y votes
-// 	td.enterNewHeight(td.consX)
-// 	td.enterNewHeight(td.consY)
+	// =================================
+	// X, Y votes
+	td.enterNewHeight(td.consX)
+	td.enterNewHeight(td.consY)
 
-// 	td.consX.SetProposal(prop1)
-// 	td.consY.SetProposal(prop1)
+	td.consX.SetProposal(prop1)
+	td.consY.SetProposal(prop1)
 
-// 	td.shouldPublishVote(t, td.consX, vote.VoteTypePrecommit, prop1.Block().Hash())
-// 	td.shouldPublishVote(t, td.consY, vote.VoteTypePrecommit, prop1.Block().Hash())
+	td.shouldPublishVote(t, td.consX, vote.VoteTypePrecommit, prop1.Block().Hash())
+	td.shouldPublishVote(t, td.consY, vote.VoteTypePrecommit, prop1.Block().Hash())
 
-// 	// Byzantine node doesn't broadcast the prepare vote
-// 	// X and Y request to change proposer
+	// Byzantine node doesn't broadcast the prepare vote
+	// X and Y request to change proposer
 
-// 	td.changeProposerTimeout(td.consX)
-// 	td.changeProposerTimeout(td.consY)
+	td.changeProposerTimeout(td.consX)
+	td.changeProposerTimeout(td.consY)
 
-// 	voteX := td.shouldPublishVote(t, td.consX, vote.VoteTypeCPPreVote, hash.UndefHash)
-// 	voteY := td.shouldPublishVote(t, td.consY, vote.VoteTypeCPPreVote, hash.UndefHash)
+	// voteX := td.shouldPublishVote(t, td.consX, vote.VoteTypeCPPreVote, hash.UndefHash)
+	// voteY := td.shouldPublishVote(t, td.consY, vote.VoteTypeCPPreVote, hash.UndefHash)
 
-// 	// X and Y are unable to progress
+	// X and Y are unable to progress
 
-// 	// =================================
-// 	// B votes
-// 	td.enterNewHeight(td.consB)
+	// =================================
+	// B votes
+	td.enterNewHeight(td.consB)
 
-// 	td.consB.SetProposal(prop1)
+	td.consB.SetProposal(prop1)
 
-// 	td.consB.AddVote(voteX)
-// 	td.consB.AddVote(voteY)
-// 	td.shouldPublishVote(t, td.consB, vote.VoteTypePrecommit, prop1.Block().Hash())
+	// td.consB.AddVote(voteX)
+	// td.consB.AddVote(voteY)
+	td.shouldPublishVote(t, td.consB, vote.VoteTypePrecommit, prop1.Block().Hash())
 
-// 	td.changeProposerTimeout(td.consB)
+	td.changeProposerTimeout(td.consB)
 
-// 	// B requests to NOT change the proposer
-// 	// byzVote1 := td.shouldPublishVote(t, td.consB, vote.VoteTypeCPPreVote, p1.Block().Hash())
+	// B requests to NOT change the proposer
+	// byzVote1 := td.shouldPublishVote(t, td.consB, vote.VoteTypeCPPreVote, p1.Block().Hash())
 
-// 	// =================================
-// 	// P votes
-// 	// Byzantine node create the second proposal and send it to the partitioned node P
-// 	byzTrx := tx.NewTransferTx(height,
-// 		td.consB.rewardAddr, td.RandAccAddress(), 1000, 1000)
-// 	td.HelperSignTransaction(td.consB.valKey.PrivateKey(), byzTrx)
-// 	assert.NoError(t, td.txPool.AppendTx(byzTrx))
-// 	prop2 := td.makeProposal(t, height, round)
+	// =================================
+	// P votes
+	// Byzantine node create the second proposal and send it to the partitioned node P
+	byzTrx := tx.NewTransferTx(height,
+		td.consB.rewardAddr, td.RandAccAddress(), 1000, 1000)
+	td.HelperSignTransaction(td.consB.valKey.PrivateKey(), byzTrx)
+	assert.NoError(t, td.txPool.AppendTx(byzTrx))
+	prop2 := td.makeProposal(t, height, round)
 
-// 	require.NotEqual(t, prop1.Block().Hash(), prop2.Block().Hash())
-// 	require.Equal(t, prop1.Block().Header().ProposerAddress(), td.consB.valKey.Address())
-// 	require.Equal(t, prop2.Block().Header().ProposerAddress(), td.consB.valKey.Address())
+	require.NotEqual(t, prop1.Block().Hash(), prop2.Block().Hash())
+	require.Equal(t, prop1.Block().Header().ProposerAddress(), td.consB.valKey.Address())
+	require.Equal(t, prop2.Block().Header().ProposerAddress(), td.consB.valKey.Address())
 
-// 	td.enterNewHeight(td.consP)
+	td.enterNewHeight(td.consP)
 
-// 	// P receives the Seconds proposal
-// 	td.consP.SetProposal(prop2)
+	// P receives the Seconds proposal
+	td.consP.SetProposal(prop2)
 
-// 	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop2.Block().Hash())
-// 	byzVote2 := td.addPrecommitVote(td.consP, prop2.Block().Hash(), height, round, tIndexB)
+	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop2.Block().Hash())
+	byzVote2 := td.addPrecommitVote(td.consP, prop2.Block().Hash(), height, round, tIndexB)
 
-// 	// Request to change proposer
-// 	td.changeProposerTimeout(td.consP)
+	// Request to change proposer
+	td.changeProposerTimeout(td.consP)
 
-// 	byzVote1 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
+	// byzVote1 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
 
-// 	// P is unable to progress
+	// P is unable to progress
 
-// 	// =================================
+	// =================================
 
-// 	td.checkHeightRound(t, td.consX, height, round)
-// 	td.checkHeightRound(t, td.consY, height, round)
-// 	td.checkHeightRound(t, td.consP, height, round)
+	td.checkHeightRound(t, td.consX, height, round)
+	td.checkHeightRound(t, td.consY, height, round)
+	td.checkHeightRound(t, td.consP, height, round)
 
-// 	// Let's make Byzantine node happy by removing his votes from the log
-// 	for j := len(td.consMessages) - 1; j >= 0; j-- {
-// 		if td.consMessages[j].sender == td.consB.valKey.Address() {
-// 			td.consMessages = slices.Delete(td.consMessages, j, j+1)
-// 		}
-// 	}
+	// Let's make Byzantine node happy by removing his votes from the log
+	for j := len(td.consMessages) - 1; j >= 0; j-- {
+		if td.consMessages[j].sender == td.consB.valKey.Address() {
+			td.consMessages = slices.Delete(td.consMessages, j, j+1)
+		}
+	}
 
-// 	// =================================
-// 	// Now, Partition heals
-// 	fmt.Println("== Partition heals")
-// 	cert, err := checkConsensus(td, height, []*vote.Vote{byzVote1, byzVote2})
+	// =================================
+	// Now, Partition heals
+	fmt.Println("== Partition heals")
+	cert, err := checkConsensus(td, height, []*vote.Vote{byzVote2})
 
-// 	require.NoError(t, err)
-// 	require.Equal(t, cert.Height(), height)
-// 	require.Contains(t, cert.Absentees(), int32(tIndexB))
-// }
+	require.NoError(t, err)
+	require.Equal(t, cert.Height(), height)
+	require.Contains(t, cert.Absentees(), int32(tIndexB))
+}
 
 // In this test, B is a Byzantine node and the network is partitioned.
 // B acts maliciously by double proposing:

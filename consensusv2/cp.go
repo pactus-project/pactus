@@ -320,7 +320,7 @@ func (cp *changeProposer) cpCheckJust(vte *vote.Vote) error {
 func (cp *changeProposer) cpStrongTermination() {
 	cpDecided := cp.log.CPDecidedVoteSet(cp.round)
 	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueYes) {
-		cp.round = cp.round + 1
+		cp.round++
 		cp.enterNewState(cp.proposeState)
 	}
 }

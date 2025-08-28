@@ -15,7 +15,8 @@ type BlockAnnounceMessage struct {
 }
 
 func NewBlockAnnounceMessage(blk *block.Block, cert *certificate.BlockCertificate,
-	proof *certificate.VoteCertificate) *BlockAnnounceMessage {
+	proof *certificate.VoteCertificate,
+) *BlockAnnounceMessage {
 	return &BlockAnnounceMessage{
 		Block:       blk,
 		Certificate: cert,
