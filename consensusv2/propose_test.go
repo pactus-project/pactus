@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// PASSED
+// PASSED.
 func TestProposePublishProposal(t *testing.T) {
 	td := setup(t)
 

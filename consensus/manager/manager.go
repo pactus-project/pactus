@@ -25,7 +25,7 @@ type manager struct {
 	state             state.Facade
 }
 
-// NewManager creates a new manager instance that manages a set of consensus instances,
+// NewManagerV1 creates a new manager instance that manages a set of consensus instances,
 // each associated with a validator key and a reward address.
 // It is not thread-safe.
 func NewManagerV1(
