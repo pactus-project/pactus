@@ -17,7 +17,7 @@ func TestCloseStream(t *testing.T) {
 
 	confB := testConfig()
 	confB.StreamTimeout = 1 * time.Second
-	util.WriteFile(confB.PeerStorePath,
+	_ = util.WriteFile(confB.PeerStorePath,
 		[]byte(fmt.Sprintf("[\"/ip4/127.0.0.1/tcp/%v/p2p/%v\"]",
 			confA.DefaultPort, networkA.SelfID().String())))
 	networkB := makeTestNetwork(t, confB, nil)

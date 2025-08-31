@@ -41,21 +41,22 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 
 func testConfig() *Config {
 	return &Config{
-		ListenAddrStrings:    []string{},
-		NetworkKey:           util.TempFilePath(),
-		BootstrapAddrStrings: []string{},
-		MaxConns:             16,
-		EnableUDP:            true,
-		EnableNATService:     false,
-		EnableUPnP:           false,
-		EnableRelay:          false,
-		EnableRelayService:   false,
-		EnableMdns:           false,
-		ForcePrivateNetwork:  true,
-		NetworkName:          "test",
-		DefaultPort:          FindFreePort(),
-		PeerStorePath:        util.TempFilePath(),
-		StreamTimeout:        10 * time.Second,
+		ListenAddrStrings:         []string{},
+		NetworkKey:                util.TempFilePath(),
+		BootstrapAddrStrings:      []string{},
+		MaxConns:                  16,
+		EnableUDP:                 true,
+		EnableNATService:          false,
+		EnableUPnP:                false,
+		EnableRelay:               false,
+		EnableRelayService:        false,
+		EnableMdns:                false,
+		ForcePrivateNetwork:       true,
+		NetworkName:               "test",
+		DefaultPort:               FindFreePort(),
+		PeerStorePath:             util.TempFilePath(),
+		StreamTimeout:             10 * time.Second,
+		CheckConnectivityInterval: 1 * time.Second,
 	}
 }
 

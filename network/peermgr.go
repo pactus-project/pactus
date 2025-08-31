@@ -27,13 +27,14 @@ type peerMgr struct {
 	lk sync.RWMutex
 
 	ctx           context.Context
+	logger        *logger.SubLogger
 	minConns      int
 	numInbound    int
 	numOutbound   int
 	host          lp2phost.Host
 	peers         map[lp2ppeer.ID]*peerInfo
 	peerStorePath string
-	logger        *logger.SubLogger
+	checkInterval time.Duration
 }
 
 // newPeerMgr creates a new Peer Manager instance.
@@ -64,6 +65,7 @@ func newPeerMgr(ctx context.Context, host lp2phost.Host,
 		peerStorePath: conf.PeerStorePath,
 		host:          host,
 		logger:        log,
+		checkInterval: conf.CheckConnectivityInterval,
 	}
 
 	log.Info("peer manager created", "minConns", mgr.minConns)
@@ -76,7 +78,7 @@ func (mgr *peerMgr) Start() {
 	mgr.CheckConnectivity()
 
 	go func() {
-		ticker := time.NewTicker(60 * time.Second)
+		ticker := time.NewTicker(mgr.checkInterval)
 		defer ticker.Stop()
 
 		for {
