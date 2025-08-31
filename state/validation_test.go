@@ -19,7 +19,7 @@ func TestBlockValidation(t *testing.T) {
 	round := td.RandRound()
 	t.Run("Invalid version", func(t *testing.T) {
 		blk0, _ := td.makeBlockAndCertificate(t, round)
-		invBlockVersion := protocol.Version(-1)
+		invBlockVersion := protocol.ProtocolVersionLatest + 1
 		blk := block.MakeBlock(
 			invBlockVersion,
 			blk0.Header().Time(),

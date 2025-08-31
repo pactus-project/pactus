@@ -76,6 +76,12 @@ func NewHeader(version protocol.Version, tme time.Time, stateRoot, prevBlockHash
 }
 
 func (h *Header) BasicCheck() error {
+	if h.data.Version == 0 {
+		return BasicCheckError{
+			Reason: "invalid block version: 0",
+		}
+	}
+
 	if !h.data.ProposerAddress.IsValidatorAddress() {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("invalid proposer address: %s",

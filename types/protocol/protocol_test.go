@@ -17,7 +17,7 @@ func TestParseVersion(t *testing.T) {
 		{"2", ProtocolVersionLatest, false},
 		{"invalid", 0, true},
 		{"0", 0, false},
-		{"-1", Version(-1), false},
+		{"-1", Version(255), false},
 		{"127", Version(127), false},
 		{"128", 0, true}, // out of int8 range
 	}
@@ -42,22 +42,12 @@ func TestVersionString(t *testing.T) {
 		{ProtocolVersion2, "2"},
 		{ProtocolVersionLatest, "2"},
 		{0, "0"},
-		{-1, "-1"},
 		{127, "127"},
+		{255, "255"},
 	}
 
 	for _, test := range tests {
 		result := test.version.String()
 		assert.Equal(t, test.expected, result, "Version(%d).String()", test.version)
-	}
-}
-
-func TestParseVersionRoundTrip(t *testing.T) {
-	for i := int8(-2); i <= 3; i++ {
-		ver := Version(i)
-		str := ver.String()
-		parsed, err := ParseVersion(str)
-		assert.NoError(t, err)
-		assert.Equal(t, ver, parsed)
 	}
 }

@@ -310,8 +310,10 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 	return nil
 }
 
-func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amount.Amount) *tx.Tx {
+func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amount.Amount) (*tx.Tx, protocol.Version) {
+	// TODO: simplify this code after enabling the split fork
 	lockTime := st.lastInfo.BlockHeight() + 1
+	legacySubsidyTx := tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
 	if st.params.SplitRewardForkHeight > 0 && lockTime > st.params.SplitRewardForkHeight {
 		addressIndex := int(lockTime) % len(st.params.FoundationAddress)
 		foundationAddress := st.params.FoundationAddress[addressIndex]
@@ -329,17 +331,17 @@ func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amoun
 		newSubsidyTx := tx.NewSubsidyTx(lockTime, recipients)
 		// TODO: simplify this code after enabling the split fork
 		if st.isSplitForkEnabled {
-			return newSubsidyTx
+			return newSubsidyTx, protocol.ProtocolVersion2
 		}
 
 		if st.committee.SupportProtocolVersion(protocol.ProtocolVersion2) {
-			return newSubsidyTx
+			return newSubsidyTx, protocol.ProtocolVersion2
 		}
 
-		return tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
+		return legacySubsidyTx, protocol.ProtocolVersion1
 	}
 
-	return tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
+	return legacySubsidyTx, protocol.ProtocolVersion1
 }
 
 func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address) (*block.Block, error) {
@@ -369,12 +371,12 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		}
 	}
 
-	subsidyTx := st.createSubsidyTx(rewardAddr, sbx.AccumulatedFee())
+	subsidyTx, protocolVersion := st.createSubsidyTx(rewardAddr, sbx.AccumulatedFee())
 	txs.Prepend(subsidyTx)
 	prevSeed := st.lastInfo.SortitionSeed()
 
 	blk := block.MakeBlock(
-		st.params.BlockVersion,
+		protocolVersion,
 		st.proposeNextBlockTime(),
 		txs,
 		st.lastInfo.BlockHash(),

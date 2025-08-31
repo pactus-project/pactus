@@ -153,7 +153,7 @@ func TestBlockSubsidyTx(t *testing.T) {
 	// Without reward address in config
 	rewardAddr := td.RandAccAddress()
 	randAccumulatedFee := td.RandFee()
-	trx := td.state.createSubsidyTx(rewardAddr, randAccumulatedFee)
+	trx, _ := td.state.createSubsidyTx(rewardAddr, randAccumulatedFee)
 	assert.True(t, trx.IsSubsidyTx())
 	assert.Equal(t, td.state.params.BlockReward+randAccumulatedFee, trx.Payload().Value())
 	assert.Equal(t, crypto.TreasuryAddress, trx.Payload().(*payload.TransferPayload).From)
@@ -346,7 +346,7 @@ func TestBlockProposal(t *testing.T) {
 	})
 
 	t.Run("Tx pool has two subsidy transactions", func(t *testing.T) {
-		trx := td.state.createSubsidyTx(td.RandAccAddress(), 0)
+		trx, _ := td.state.createSubsidyTx(td.RandAccAddress(), 0)
 		assert.NoError(t, td.state.AddPendingTx(trx))
 
 		b, err := td.state.ProposeBlock(td.state.valKeys[0], td.RandAccAddress())
