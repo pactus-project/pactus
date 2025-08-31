@@ -1,9 +1,11 @@
 package network
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -11,14 +13,13 @@ import (
 func TestCloseStream(t *testing.T) {
 	confA := testConfig()
 	confA.StreamTimeout = 1 * time.Second // Reduce timeout for testing
-	confA.EnableUDP = true
-	confA.EnableMdns = true
 	networkA := makeTestNetwork(t, confA, nil)
 
 	confB := testConfig()
-	confB.EnableUDP = true
-	confB.EnableMdns = true
 	confB.StreamTimeout = 1 * time.Second
+	_ = util.WriteFile(confB.PeerStorePath,
+		[]byte(fmt.Sprintf("[\"/ip4/127.0.0.1/tcp/%v/p2p/%v\"]",
+			confA.DefaultPort, networkA.SelfID().String())))
 	networkB := makeTestNetwork(t, confB, nil)
 
 	assert.EventuallyWithT(t, func(c *assert.CollectT) {
@@ -46,7 +47,9 @@ func TestCloseStream(t *testing.T) {
 		time.Sleep(2 * confA.StreamTimeout)
 
 		_, err = stream.Write([]byte("should-be-closed"))
-		assert.ErrorContains(t, err, "write on closed stream")
+		// The error can be either "stream closed" (from LibP2P)
+		// or "write on closed stream" (from QUIC-UDP).
+		assert.ErrorContains(t, err, "closed")
 	})
 
 	t.Run("Stream closed", func(t *testing.T) {
@@ -66,7 +69,7 @@ func TestCloseStream(t *testing.T) {
 		}, 5*time.Second, 100*time.Millisecond)
 
 		_, err = stream.Write([]byte("should-be-closed"))
-		assert.ErrorContains(t, err, "write on closed stream")
+		assert.ErrorContains(t, err, "closed")
 	})
 
 	// TODO: test for stream reset

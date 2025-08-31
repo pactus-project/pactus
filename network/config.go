@@ -32,27 +32,29 @@ type Config struct {
 	IsBootstrapper              bool          `toml:"-"`
 	PeerStorePath               string        `toml:"-"`
 	StreamTimeout               time.Duration `toml:"-"`
+	CheckConnectivityInterval   time.Duration `toml:"-"`
 }
 
 func DefaultConfig() *Config {
 	return &Config{
-		NetworkKey:           "network_key",
-		PublicAddrString:     "",
-		ListenAddrStrings:    []string{},
-		BootstrapAddrStrings: []string{},
-		MaxConns:             64,
-		EnableUDP:            false,
-		EnableNATService:     false,
-		EnableUPnP:           false,
-		EnableRelay:          true,
-		EnableRelayService:   false,
-		EnableMdns:           false,
-		EnableMetrics:        false,
-		ForcePrivateNetwork:  false,
-		DefaultPort:          0,
-		IsBootstrapper:       false,
-		PeerStorePath:        "peers.json",
-		StreamTimeout:        20 * time.Second,
+		NetworkKey:                "network_key",
+		PublicAddrString:          "",
+		ListenAddrStrings:         []string{},
+		BootstrapAddrStrings:      []string{},
+		MaxConns:                  64,
+		EnableUDP:                 false,
+		EnableNATService:          false,
+		EnableUPnP:                false,
+		EnableRelay:               true,
+		EnableRelayService:        false,
+		EnableMdns:                false,
+		EnableMetrics:             false,
+		ForcePrivateNetwork:       false,
+		DefaultPort:               0,
+		IsBootstrapper:            false,
+		PeerStorePath:             "peers.json",
+		StreamTimeout:             20 * time.Second,
+		CheckConnectivityInterval: 60 * time.Second,
 	}
 }
 

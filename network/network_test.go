@@ -41,21 +41,22 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 
 func testConfig() *Config {
 	return &Config{
-		ListenAddrStrings:    []string{},
-		NetworkKey:           util.TempFilePath(),
-		BootstrapAddrStrings: []string{},
-		MaxConns:             8,
-		EnableUDP:            true,
-		EnableNATService:     false,
-		EnableUPnP:           false,
-		EnableRelay:          false,
-		EnableRelayService:   false,
-		EnableMdns:           false,
-		ForcePrivateNetwork:  true,
-		NetworkName:          "test",
-		DefaultPort:          FindFreePort(),
-		PeerStorePath:        util.TempFilePath(),
-		StreamTimeout:        10 * time.Second,
+		ListenAddrStrings:         []string{},
+		NetworkKey:                util.TempFilePath(),
+		BootstrapAddrStrings:      []string{},
+		MaxConns:                  16,
+		EnableUDP:                 true,
+		EnableNATService:          false,
+		EnableUPnP:                false,
+		EnableRelay:               false,
+		EnableRelayService:        false,
+		EnableMdns:                false,
+		ForcePrivateNetwork:       true,
+		NetworkName:               "test",
+		DefaultPort:               FindFreePort(),
+		PeerStorePath:             util.TempFilePath(),
+		StreamTimeout:             10 * time.Second,
+		CheckConnectivityInterval: 1 * time.Second,
 	}
 }
 
@@ -137,15 +138,15 @@ func TestNetwork(t *testing.T) {
 
 	// Bootstrap node
 	confB := testConfig()
-	confB.ListenAddrStrings = []string{
-		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", confB.DefaultPort),
-	}
 	fmt.Println("Starting Bootstrap node")
 	networkB := makeTestNetwork(t, confB, []lp2p.Option{
 		lp2p.ForceReachabilityPublic(),
 	})
 	bootstrapAddresses := []string{
 		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%v", confB.DefaultPort, networkB.SelfID().String()),
+		fmt.Sprintf("/ip4/127.0.0.1/udp/%v/quic-v1/p2p/%v", confB.DefaultPort, networkB.SelfID().String()),
+		fmt.Sprintf("/ip6/::1/tcp/%v/p2p/%v", confB.DefaultPort, networkB.SelfID().String()),
+		fmt.Sprintf("/ip6/::1/udp/%v/quic-v1/p2p/%v", confB.DefaultPort, networkB.SelfID().String()),
 	}
 
 	// Public and relay node
@@ -153,9 +154,6 @@ func TestNetwork(t *testing.T) {
 	confP.BootstrapAddrStrings = bootstrapAddresses
 	confP.EnableRelay = false
 	confP.EnableRelayService = true
-	confP.ListenAddrStrings = []string{
-		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v", confP.DefaultPort),
-	}
 	fmt.Println("Starting Public node")
 	networkP := makeTestNetwork(t, confP, []lp2p.Option{
 		lp2p.ForceReachabilityPublic(),
@@ -167,9 +165,6 @@ func TestNetwork(t *testing.T) {
 	confM := testConfig()
 	confM.EnableRelay = true
 	confM.BootstrapAddrStrings = bootstrapAddresses
-	confM.ListenAddrStrings = []string{
-		"/ip4/127.0.0.1/tcp/0",
-	}
 	fmt.Println("Starting Private node M")
 	networkM := makeTestNetwork(t, confM, []lp2p.Option{
 		lp2p.ForceReachabilityPrivate(),
@@ -179,9 +174,6 @@ func TestNetwork(t *testing.T) {
 	confN := testConfig()
 	confN.EnableRelay = true
 	confN.BootstrapAddrStrings = bootstrapAddresses
-	confN.ListenAddrStrings = []string{
-		"/ip4/127.0.0.1/tcp/0",
-	}
 	fmt.Println("Starting Private node N")
 	networkN := makeTestNetwork(t, confN, []lp2p.Option{
 		lp2p.ForceReachabilityPrivate(),
@@ -191,9 +183,6 @@ func TestNetwork(t *testing.T) {
 	confX := testConfig()
 	confX.EnableRelay = false
 	confX.BootstrapAddrStrings = bootstrapAddresses
-	confX.ListenAddrStrings = []string{
-		"/ip4/127.0.0.1/tcp/0",
-	}
 	fmt.Println("Starting Private node X")
 	networkX := makeTestNetwork(t, confX, []lp2p.Option{
 		lp2p.ForceReachabilityPrivate(),

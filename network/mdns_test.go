@@ -1,6 +1,7 @@
 package network
 
 import (
+	"runtime"
 	"testing"
 	"time"
 
@@ -8,6 +9,12 @@ import (
 )
 
 func TestMDNS(t *testing.T) {
+	if runtime.GOOS == "darwin" {
+		// Disable this test on darwin (macOS)
+		// Read more here: https://github.com/pactus-project/pactus/issues/1860
+		return
+	}
+
 	conf1 := testConfig()
 	conf1.ListenAddrStrings = []string{
 		"/ip6/::1/tcp/0", "/ip6/::1/udp/0/quic-v1",
