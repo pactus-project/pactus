@@ -196,27 +196,6 @@ func TestSignMessage(t *testing.T) {
 	assert.Equal(t, expectedSig, sig)
 }
 
-func TestKeyInfo(t *testing.T) {
-	td := setup(t)
-	defer td.Close()
-
-	mnemonic, _ := wallet.GenerateMnemonic(128)
-	w1, err := wallet.Create(util.TempFilePath(), mnemonic, td.password,
-		genesis.Mainnet)
-	assert.NoError(t, err)
-	addrInfo1, _ := w1.NewBLSAccountAddress("")
-	prv1, _ := w1.PrivateKey("", addrInfo1.Address)
-
-	w2, err := wallet.Create(util.TempFilePath(), mnemonic, td.password,
-		genesis.Testnet)
-	assert.NoError(t, err)
-	addrInfo2, _ := w2.NewBLSAccountAddress("")
-	prv2, _ := w2.PrivateKey("", addrInfo2.Address)
-
-	assert.NotEqual(t, prv1.Bytes(), prv2.Bytes(),
-		"Should generate different private key for the testnet")
-}
-
 func TestBalance(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
@@ -632,4 +611,23 @@ func TestCoinType(t *testing.T) {
 	defer td.Close()
 
 	assert.Equal(t, td.wallet.CoinType(), uint32(21888))
+}
+
+func TestTestnetKeyInfo(t *testing.T) {
+	td := setup(t)
+	defer td.Close()
+
+	mnemonic, _ := wallet.GenerateMnemonic(128)
+	w1, err := wallet.Create(util.TempFilePath(), mnemonic, td.password, genesis.Mainnet)
+	assert.NoError(t, err)
+	addrInfo1, _ := w1.NewBLSAccountAddress("")
+	prv1, _ := w1.PrivateKey("", addrInfo1.Address)
+
+	w2, err := wallet.Create(util.TempFilePath(), mnemonic, td.password, genesis.Testnet)
+	assert.NoError(t, err)
+	addrInfo2, _ := w2.NewBLSAccountAddress("")
+	prv2, _ := w2.PrivateKey("", addrInfo2.Address)
+
+	assert.NotEqual(t, prv1.Bytes(), prv2.Bytes(),
+		"Should generate different private key for the testnet")
 }

@@ -5,12 +5,12 @@ import (
 	"strconv"
 )
 
-type Version int8
+type Version uint8
 
 const (
 	ProtocolVersionUnknown Version = 0
-	ProtocolVersion1       Version = 1
-	ProtocolVersion2       Version = 2
+	ProtocolVersion1       Version = 1 // Initial version
+	ProtocolVersion2       Version = 2 // Split Reward Fork (PIP-43)
 
 	ProtocolVersionLatest = ProtocolVersion2
 )

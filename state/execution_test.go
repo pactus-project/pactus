@@ -54,8 +54,8 @@ func TestExecuteBlock(t *testing.T) {
 
 	proposerAddr := td.RandAccAddress()
 	rewardAddr := td.RandAccAddress()
-	invSubsidyTx := td.state.createSubsidyTx(rewardAddr, 1001)
-	validSubsidyTx := td.state.createSubsidyTx(rewardAddr, 1000)
+	invSubsidyTx, _ := td.state.createSubsidyTx(rewardAddr, 1001)
+	validSubsidyTx, _ := td.state.createSubsidyTx(rewardAddr, 1000)
 	invTransferTx := td.GenerateTestTransferTx()
 
 	validTx1 := tx.NewTransferTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),

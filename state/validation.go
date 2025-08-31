@@ -4,10 +4,11 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/protocol"
 )
 
 func (st *state) validateBlock(blk *block.Block, round int16) error {
-	if blk.Header().Version() != st.params.BlockVersion {
+	if blk.Header().Version() > protocol.ProtocolVersionLatest {
 		return ErrInvalidBlockVersion
 	}
 
