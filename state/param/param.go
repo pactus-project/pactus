@@ -14,6 +14,9 @@ import (
 //go:embed foundation_testnet.json
 var foundationTestnetBytes []byte
 
+//go:embed foundation_mainnet.json
+var foundationMainnetBytes []byte
+
 type Params struct {
 	BlockVersion              protocol.Version
 	BlockIntervalInSecond     int
@@ -55,7 +58,10 @@ func FromGenesis(genDoc *genesis.Genesis) *Params {
 	foundationAddressList := make([]string, 0)
 	switch genDoc.ChainType() {
 	case genesis.Mainnet:
-		params.SplitRewardForkHeight = 0
+		params.SplitRewardForkHeight = 5_000_000
+		if err := json.Unmarshal(foundationMainnetBytes, &foundationAddressList); err != nil {
+			panic(err)
+		}
 
 	case genesis.Testnet:
 		params.SplitRewardForkHeight = 3_680_000

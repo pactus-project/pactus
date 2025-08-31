@@ -4,7 +4,6 @@ import (
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/tx"
-	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
 func Execute(trx *tx.Tx, sbx sandbox.Sandbox) error {
@@ -38,10 +37,6 @@ func CheckAndExecute(trx *tx.Tx, sbx sandbox.Sandbox, strict bool) error {
 	}
 
 	if err := CheckLockTime(trx, sbx, strict); err != nil {
-		return err
-	}
-
-	if err := CheckBatchTransfer(trx, sbx); err != nil {
 		return err
 	}
 
@@ -80,17 +75,6 @@ func CheckLockTime(trx *tx.Tx, sbx sandbox.Sandbox, strict bool) error {
 			return LockTimeInFutureError{
 				LockTime: trx.LockTime(),
 			}
-		}
-	}
-
-	return nil
-}
-
-func CheckBatchTransfer(trx *tx.Tx, sbx sandbox.Sandbox) error {
-	if trx.Payload().Type() == payload.TypeBatchTransfer {
-		// 4_800_000 defined in PIP-39
-		if sbx.IsMainnet() && sbx.CurrentHeight() < 4_800_000 {
-			return ErrBatchTransferNotAllowed
 		}
 	}
 
