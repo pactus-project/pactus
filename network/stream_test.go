@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -12,18 +13,13 @@ import (
 func TestCloseStream(t *testing.T) {
 	confA := testConfig()
 	confA.StreamTimeout = 1 * time.Second // Reduce timeout for testing
-	confA.EnableUDP = true
-	confA.EnableMdns = true
 	networkA := makeTestNetwork(t, confA, nil)
 
 	confB := testConfig()
-	confB.EnableUDP = true
-	confB.EnableMdns = true
 	confB.StreamTimeout = 1 * time.Second
-	confB.BootstrapAddrStrings = []string{
-		fmt.Sprintf("/ip4/127.0.0.1/tcp/%v/p2p/%v", confA.DefaultPort, networkA.SelfID().String()),
-		fmt.Sprintf("/ip4/127.0.0.1/udp/%v/quic-v1/p2p/%v", confA.DefaultPort, networkA.SelfID().String()),
-	}
+	util.WriteFile(confB.PeerStorePath,
+		[]byte(fmt.Sprintf("[\"/ip4/127.0.0.1/tcp/%v/p2p/%v\"]",
+			confA.DefaultPort, networkA.SelfID().String())))
 	networkB := makeTestNetwork(t, confB, nil)
 
 	assert.EventuallyWithT(t, func(c *assert.CollectT) {
