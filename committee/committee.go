@@ -67,6 +67,7 @@ func (c *committee) Update(lastRound int16, joined []*validator.Validator) {
 			c.validatorList.InsertBefore(val.Clone(), c.proposerPos)
 		} else {
 			committeeVal.UpdateLastSortitionHeight(val.LastSortitionHeight())
+			committeeVal.UpdateProtocolVersion(val.ProtocolVersion())
 
 			// Ensure that a validator's stake and bonding properties
 			// remain unchanged while they are part of the committee.
