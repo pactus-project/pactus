@@ -9,8 +9,8 @@ import (
 )
 
 func TestMDNS(t *testing.T) {
-	if runtime.GOOS == "ios" {
-		// Disable this test on iOS
+	if runtime.GOOS == "darwin" {
+		// Disable this test on darwin (macOS)
 		// Read more here: https://github.com/pactus-project/pactus/issues/1860
 		return
 	}
