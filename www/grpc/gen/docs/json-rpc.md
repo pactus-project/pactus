@@ -2833,14 +2833,14 @@ Parameters has no fields.
         <td class="fw-bold">connected_peers[].last_sent</td>
         <td> numeric</td>
         <td>
-        Time the last bundle sent to the peer (in epoch format).
+        Unix timestamp of the last bundle sent to the peer (UTC).
         </td>
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].last_received</td>
         <td> numeric</td>
         <td>
-        Time the last bundle received from the peer (in epoch format).
+        Unix timestamp of the last bundle received from the peer (UTC).
         </td>
       </tr>
          <tr>
@@ -3046,7 +3046,7 @@ Parameters has no fields.
     <td class="fw-bold">started_at</td>
     <td> numeric</td>
     <td>
-    Time the node was started (in epoch format).
+    Unix timestamp when the node was started (UTC).
     </td>
   </tr>
      <tr>
@@ -3148,7 +3148,14 @@ Parameters has no fields.
 maximum number of messages to queue before dropping older ones.
         </td>
       </tr>
-         </tbody>
+         <tr>
+    <td class="fw-bold">current_time</td>
+    <td> numeric</td>
+    <td>
+    Current Unix timestamp of the node (UTC).
+    </td>
+  </tr>
+     </tbody>
 </table>
 
 ### Utils Service

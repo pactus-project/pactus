@@ -70,6 +70,7 @@ const GetNodeInfoResponse$json = {
     {'1': 'clock_offset', '3': 13, '4': 1, '5': 1, '10': 'clockOffset'},
     {'1': 'connection_info', '3': 14, '4': 1, '5': 11, '6': '.pactus.ConnectionInfo', '10': 'connectionInfo'},
     {'1': 'zmq_publishers', '3': 15, '4': 3, '5': 11, '6': '.pactus.ZMQPublisherInfo', '10': 'zmqPublishers'},
+    {'1': 'current_time', '3': 16, '4': 1, '5': 4, '10': 'currentTime'},
   ],
 };
 
@@ -83,7 +84,7 @@ final $typed_data.Uint8List getNodeInfoResponseDescriptor = $convert.base64Decod
     'MoCVIJcHJvdG9jb2xzEiEKDGNsb2NrX29mZnNldBgNIAEoAVILY2xvY2tPZmZzZXQSPwoPY29u'
     'bmVjdGlvbl9pbmZvGA4gASgLMhYucGFjdHVzLkNvbm5lY3Rpb25JbmZvUg5jb25uZWN0aW9uSW'
     '5mbxI/Cg56bXFfcHVibGlzaGVycxgPIAMoCzIYLnBhY3R1cy5aTVFQdWJsaXNoZXJJbmZvUg16'
-    'bXFQdWJsaXNoZXJz');
+    'bXFQdWJsaXNoZXJzEiEKDGN1cnJlbnRfdGltZRgQIAEoBFILY3VycmVudFRpbWU=');
 
 @$core.Deprecated('Use zMQPublisherInfoDescriptor instead')
 const ZMQPublisherInfo$json = {

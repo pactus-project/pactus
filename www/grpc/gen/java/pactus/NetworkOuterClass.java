@@ -2326,7 +2326,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Time the node was started (in epoch format).
+     * Unix timestamp when the node was started (UTC).
      * </pre>
      *
      * <code>uint64 started_at = 4 [json_name = "startedAt"];</code>
@@ -2546,6 +2546,16 @@ public final class NetworkOuterClass {
      */
     pactus.NetworkOuterClass.ZMQPublisherInfoOrBuilder getZmqPublishersOrBuilder(
         int index);
+
+    /**
+     * <pre>
+     * Current Unix timestamp of the node (UTC).
+     * </pre>
+     *
+     * <code>uint64 current_time = 16 [json_name = "currentTime"];</code>
+     * @return The currentTime.
+     */
+    long getCurrentTime();
   }
   /**
    * <pre>
@@ -2744,7 +2754,7 @@ public final class NetworkOuterClass {
     private long startedAt_ = 0L;
     /**
      * <pre>
-     * Time the node was started (in epoch format).
+     * Unix timestamp when the node was started (UTC).
      * </pre>
      *
      * <code>uint64 started_at = 4 [json_name = "startedAt"];</code>
@@ -3084,6 +3094,21 @@ public final class NetworkOuterClass {
       return zmqPublishers_.get(index);
     }
 
+    public static final int CURRENT_TIME_FIELD_NUMBER = 16;
+    private long currentTime_ = 0L;
+    /**
+     * <pre>
+     * Current Unix timestamp of the node (UTC).
+     * </pre>
+     *
+     * <code>uint64 current_time = 16 [json_name = "currentTime"];</code>
+     * @return The currentTime.
+     */
+    @java.lang.Override
+    public long getCurrentTime() {
+      return currentTime_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -3133,6 +3158,9 @@ public final class NetworkOuterClass {
       }
       for (int i = 0; i < zmqPublishers_.size(); i++) {
         output.writeMessage(15, zmqPublishers_.get(i));
+      }
+      if (currentTime_ != 0L) {
+        output.writeUInt64(16, currentTime_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -3194,6 +3222,10 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(15, zmqPublishers_.get(i));
       }
+      if (currentTime_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(16, currentTime_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -3237,6 +3269,8 @@ public final class NetworkOuterClass {
       }
       if (!getZmqPublishersList()
           .equals(other.getZmqPublishersList())) return false;
+      if (getCurrentTime()
+          != other.getCurrentTime()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -3282,6 +3316,9 @@ public final class NetworkOuterClass {
         hash = (37 * hash) + ZMQ_PUBLISHERS_FIELD_NUMBER;
         hash = (53 * hash) + getZmqPublishersList().hashCode();
       }
+      hash = (37 * hash) + CURRENT_TIME_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getCurrentTime());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -3448,6 +3485,7 @@ public final class NetworkOuterClass {
           zmqPublishersBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000800);
+        currentTime_ = 0L;
         return this;
       }
 
@@ -3532,6 +3570,9 @@ public final class NetworkOuterClass {
               ? connectionInfo_
               : connectionInfoBuilder_.build();
           to_bitField0_ |= 0x00000001;
+        }
+        if (((from_bitField0_ & 0x00001000) != 0)) {
+          result.currentTime_ = currentTime_;
         }
         result.bitField0_ |= to_bitField0_;
       }
@@ -3631,6 +3672,9 @@ public final class NetworkOuterClass {
             }
           }
         }
+        if (other.getCurrentTime() != 0L) {
+          setCurrentTime(other.getCurrentTime());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -3729,6 +3773,11 @@ public final class NetworkOuterClass {
                 }
                 break;
               } // case 122
+              case 128: {
+                currentTime_ = input.readUInt64();
+                bitField0_ |= 0x00001000;
+                break;
+              } // case 128
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -4025,7 +4074,7 @@ public final class NetworkOuterClass {
       private long startedAt_ ;
       /**
        * <pre>
-       * Time the node was started (in epoch format).
+       * Unix timestamp when the node was started (UTC).
        * </pre>
        *
        * <code>uint64 started_at = 4 [json_name = "startedAt"];</code>
@@ -4037,7 +4086,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Time the node was started (in epoch format).
+       * Unix timestamp when the node was started (UTC).
        * </pre>
        *
        * <code>uint64 started_at = 4 [json_name = "startedAt"];</code>
@@ -4053,7 +4102,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Time the node was started (in epoch format).
+       * Unix timestamp when the node was started (UTC).
        * </pre>
        *
        * <code>uint64 started_at = 4 [json_name = "startedAt"];</code>
@@ -5099,6 +5148,50 @@ public final class NetworkOuterClass {
           zmqPublishers_ = null;
         }
         return zmqPublishersBuilder_;
+      }
+
+      private long currentTime_ ;
+      /**
+       * <pre>
+       * Current Unix timestamp of the node (UTC).
+       * </pre>
+       *
+       * <code>uint64 current_time = 16 [json_name = "currentTime"];</code>
+       * @return The currentTime.
+       */
+      @java.lang.Override
+      public long getCurrentTime() {
+        return currentTime_;
+      }
+      /**
+       * <pre>
+       * Current Unix timestamp of the node (UTC).
+       * </pre>
+       *
+       * <code>uint64 current_time = 16 [json_name = "currentTime"];</code>
+       * @param value The currentTime to set.
+       * @return This builder for chaining.
+       */
+      public Builder setCurrentTime(long value) {
+
+        currentTime_ = value;
+        bitField0_ |= 0x00001000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Current Unix timestamp of the node (UTC).
+       * </pre>
+       *
+       * <code>uint64 current_time = 16 [json_name = "currentTime"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearCurrentTime() {
+        bitField0_ = (bitField0_ & ~0x00001000);
+        currentTime_ = 0L;
+        onChanged();
+        return this;
       }
 
       // @@protoc_insertion_point(builder_scope:pactus.GetNodeInfoResponse)
@@ -6185,7 +6278,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Time the last bundle sent to the peer (in epoch format).
+     * Unix timestamp of the last bundle sent to the peer (UTC).
      * </pre>
      *
      * <code>int64 last_sent = 10 [json_name = "lastSent"];</code>
@@ -6195,7 +6288,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Time the last bundle received from the peer (in epoch format).
+     * Unix timestamp of the last bundle received from the peer (UTC).
      * </pre>
      *
      * <code>int64 last_received = 11 [json_name = "lastReceived"];</code>
@@ -6728,7 +6821,7 @@ public final class NetworkOuterClass {
     private long lastSent_ = 0L;
     /**
      * <pre>
-     * Time the last bundle sent to the peer (in epoch format).
+     * Unix timestamp of the last bundle sent to the peer (UTC).
      * </pre>
      *
      * <code>int64 last_sent = 10 [json_name = "lastSent"];</code>
@@ -6743,7 +6836,7 @@ public final class NetworkOuterClass {
     private long lastReceived_ = 0L;
     /**
      * <pre>
-     * Time the last bundle received from the peer (in epoch format).
+     * Unix timestamp of the last bundle received from the peer (UTC).
      * </pre>
      *
      * <code>int64 last_received = 11 [json_name = "lastReceived"];</code>
@@ -8509,7 +8602,7 @@ public final class NetworkOuterClass {
       private long lastSent_ ;
       /**
        * <pre>
-       * Time the last bundle sent to the peer (in epoch format).
+       * Unix timestamp of the last bundle sent to the peer (UTC).
        * </pre>
        *
        * <code>int64 last_sent = 10 [json_name = "lastSent"];</code>
@@ -8521,7 +8614,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Time the last bundle sent to the peer (in epoch format).
+       * Unix timestamp of the last bundle sent to the peer (UTC).
        * </pre>
        *
        * <code>int64 last_sent = 10 [json_name = "lastSent"];</code>
@@ -8537,7 +8630,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Time the last bundle sent to the peer (in epoch format).
+       * Unix timestamp of the last bundle sent to the peer (UTC).
        * </pre>
        *
        * <code>int64 last_sent = 10 [json_name = "lastSent"];</code>
@@ -8553,7 +8646,7 @@ public final class NetworkOuterClass {
       private long lastReceived_ ;
       /**
        * <pre>
-       * Time the last bundle received from the peer (in epoch format).
+       * Unix timestamp of the last bundle received from the peer (UTC).
        * </pre>
        *
        * <code>int64 last_received = 11 [json_name = "lastReceived"];</code>
@@ -8565,7 +8658,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Time the last bundle received from the peer (in epoch format).
+       * Unix timestamp of the last bundle received from the peer (UTC).
        * </pre>
        *
        * <code>int64 last_received = 11 [json_name = "lastReceived"];</code>
@@ -8581,7 +8674,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Time the last bundle received from the peer (in epoch format).
+       * Unix timestamp of the last bundle received from the peer (UTC).
        * </pre>
        *
        * <code>int64 last_received = 11 [json_name = "lastReceived"];</code>
@@ -12444,7 +12537,7 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
       "t\0229\n\017connected_peers\030\003 \003(\0132\020.pactus.Peer" +
       "InfoR\016connectedPeers\0223\n\013metric_info\030\004 \001(" +
       "\0132\022.pactus.MetricInfoR\nmetricInfo\"\024\n\022Get" +
-      "NodeInfoRequest\"\310\003\n\023GetNodeInfoResponse\022" +
+      "NodeInfoRequest\"\353\003\n\023GetNodeInfoResponse\022" +
       "\030\n\007moniker\030\001 \001(\tR\007moniker\022\024\n\005agent\030\002 \001(\t" +
       "R\005agent\022\027\n\007peer_id\030\003 \001(\tR\006peerId\022\035\n\nstar" +
       "ted_at\030\004 \001(\004R\tstartedAt\022\"\n\014reachability\030" +
@@ -12455,48 +12548,49 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
       "ffset\030\r \001(\001R\013clockOffset\022?\n\017connection_i" +
       "nfo\030\016 \001(\0132\026.pactus.ConnectionInfoR\016conne" +
       "ctionInfo\022?\n\016zmq_publishers\030\017 \003(\0132\030.pact" +
-      "us.ZMQPublisherInfoR\rzmqPublishers\"T\n\020ZM" +
-      "QPublisherInfo\022\024\n\005topic\030\001 \001(\tR\005topic\022\030\n\007" +
-      "address\030\002 \001(\tR\007address\022\020\n\003hwm\030\003 \001(\005R\003hwm" +
-      "\"\302\004\n\010PeerInfo\022\026\n\006status\030\001 \001(\005R\006status\022\030\n" +
-      "\007moniker\030\002 \001(\tR\007moniker\022\024\n\005agent\030\003 \001(\tR\005" +
-      "agent\022\027\n\007peer_id\030\004 \001(\tR\006peerId\022%\n\016consen" +
-      "sus_keys\030\005 \003(\tR\rconsensusKeys\022/\n\023consens" +
-      "us_addresses\030\006 \003(\tR\022consensusAddresses\022\032" +
-      "\n\010services\030\007 \001(\rR\010services\022&\n\017last_block" +
-      "_hash\030\010 \001(\tR\rlastBlockHash\022\026\n\006height\030\t \001" +
-      "(\rR\006height\022\033\n\tlast_sent\030\n \001(\003R\010lastSent\022" +
-      "#\n\rlast_received\030\013 \001(\003R\014lastReceived\022\030\n\007" +
-      "address\030\014 \001(\tR\007address\022\034\n\tdirection\030\r \001(" +
-      "\tR\tdirection\022\034\n\tprotocols\030\016 \003(\tR\tprotoco" +
-      "ls\022%\n\016total_sessions\030\017 \001(\005R\rtotalSession" +
-      "s\022-\n\022completed_sessions\030\020 \001(\005R\021completed" +
-      "Sessions\0223\n\013metric_info\030\021 \001(\0132\022.pactus.M" +
-      "etricInfoR\nmetricInfo\"\226\001\n\016ConnectionInfo" +
-      "\022 \n\013connections\030\001 \001(\004R\013connections\022/\n\023in" +
-      "bound_connections\030\002 \001(\004R\022inboundConnecti" +
-      "ons\0221\n\024outbound_connections\030\003 \001(\004R\023outbo" +
-      "undConnections\"\200\004\n\nMetricInfo\0228\n\rtotal_i" +
-      "nvalid\030\001 \001(\0132\023.pactus.CounterInfoR\014total" +
-      "Invalid\0222\n\ntotal_sent\030\002 \001(\0132\023.pactus.Cou" +
-      "nterInfoR\ttotalSent\022:\n\016total_received\030\003 " +
-      "\001(\0132\023.pactus.CounterInfoR\rtotalReceived\022" +
-      "F\n\014message_sent\030\004 \003(\0132#.pactus.MetricInf" +
-      "o.MessageSentEntryR\013messageSent\022R\n\020messa" +
-      "ge_received\030\005 \003(\0132\'.pactus.MetricInfo.Me" +
-      "ssageReceivedEntryR\017messageReceived\032S\n\020M" +
-      "essageSentEntry\022\020\n\003key\030\001 \001(\005R\003key\022)\n\005val" +
-      "ue\030\002 \001(\0132\023.pactus.CounterInfoR\005value:\0028\001" +
-      "\032W\n\024MessageReceivedEntry\022\020\n\003key\030\001 \001(\005R\003k" +
-      "ey\022)\n\005value\030\002 \001(\0132\023.pactus.CounterInfoR\005" +
-      "value:\0028\001\"=\n\013CounterInfo\022\024\n\005bytes\030\001 \001(\004R" +
-      "\005bytes\022\030\n\007bundles\030\002 \001(\004R\007bundles2\242\001\n\007Net" +
-      "work\022O\n\016GetNetworkInfo\022\035.pactus.GetNetwo" +
-      "rkInfoRequest\032\036.pactus.GetNetworkInfoRes" +
-      "ponse\022F\n\013GetNodeInfo\022\032.pactus.GetNodeInf" +
-      "oRequest\032\033.pactus.GetNodeInfoResponseB:\n" +
-      "\006pactusZ0github.com/pactus-project/pactu" +
-      "s/www/grpc/pactusb\006proto3"
+      "us.ZMQPublisherInfoR\rzmqPublishers\022!\n\014cu" +
+      "rrent_time\030\020 \001(\004R\013currentTime\"T\n\020ZMQPubl" +
+      "isherInfo\022\024\n\005topic\030\001 \001(\tR\005topic\022\030\n\007addre" +
+      "ss\030\002 \001(\tR\007address\022\020\n\003hwm\030\003 \001(\005R\003hwm\"\302\004\n\010" +
+      "PeerInfo\022\026\n\006status\030\001 \001(\005R\006status\022\030\n\007moni" +
+      "ker\030\002 \001(\tR\007moniker\022\024\n\005agent\030\003 \001(\tR\005agent" +
+      "\022\027\n\007peer_id\030\004 \001(\tR\006peerId\022%\n\016consensus_k" +
+      "eys\030\005 \003(\tR\rconsensusKeys\022/\n\023consensus_ad" +
+      "dresses\030\006 \003(\tR\022consensusAddresses\022\032\n\010ser" +
+      "vices\030\007 \001(\rR\010services\022&\n\017last_block_hash" +
+      "\030\010 \001(\tR\rlastBlockHash\022\026\n\006height\030\t \001(\rR\006h" +
+      "eight\022\033\n\tlast_sent\030\n \001(\003R\010lastSent\022#\n\rla" +
+      "st_received\030\013 \001(\003R\014lastReceived\022\030\n\007addre" +
+      "ss\030\014 \001(\tR\007address\022\034\n\tdirection\030\r \001(\tR\tdi" +
+      "rection\022\034\n\tprotocols\030\016 \003(\tR\tprotocols\022%\n" +
+      "\016total_sessions\030\017 \001(\005R\rtotalSessions\022-\n\022" +
+      "completed_sessions\030\020 \001(\005R\021completedSessi" +
+      "ons\0223\n\013metric_info\030\021 \001(\0132\022.pactus.Metric" +
+      "InfoR\nmetricInfo\"\226\001\n\016ConnectionInfo\022 \n\013c" +
+      "onnections\030\001 \001(\004R\013connections\022/\n\023inbound" +
+      "_connections\030\002 \001(\004R\022inboundConnections\0221" +
+      "\n\024outbound_connections\030\003 \001(\004R\023outboundCo" +
+      "nnections\"\200\004\n\nMetricInfo\0228\n\rtotal_invali" +
+      "d\030\001 \001(\0132\023.pactus.CounterInfoR\014totalInval" +
+      "id\0222\n\ntotal_sent\030\002 \001(\0132\023.pactus.CounterI" +
+      "nfoR\ttotalSent\022:\n\016total_received\030\003 \001(\0132\023" +
+      ".pactus.CounterInfoR\rtotalReceived\022F\n\014me" +
+      "ssage_sent\030\004 \003(\0132#.pactus.MetricInfo.Mes" +
+      "sageSentEntryR\013messageSent\022R\n\020message_re" +
+      "ceived\030\005 \003(\0132\'.pactus.MetricInfo.Message" +
+      "ReceivedEntryR\017messageReceived\032S\n\020Messag" +
+      "eSentEntry\022\020\n\003key\030\001 \001(\005R\003key\022)\n\005value\030\002 " +
+      "\001(\0132\023.pactus.CounterInfoR\005value:\0028\001\032W\n\024M" +
+      "essageReceivedEntry\022\020\n\003key\030\001 \001(\005R\003key\022)\n" +
+      "\005value\030\002 \001(\0132\023.pactus.CounterInfoR\005value" +
+      ":\0028\001\"=\n\013CounterInfo\022\024\n\005bytes\030\001 \001(\004R\005byte" +
+      "s\022\030\n\007bundles\030\002 \001(\004R\007bundles2\242\001\n\007Network\022" +
+      "O\n\016GetNetworkInfo\022\035.pactus.GetNetworkInf" +
+      "oRequest\032\036.pactus.GetNetworkInfoResponse" +
+      "\022F\n\013GetNodeInfo\022\032.pactus.GetNodeInfoRequ" +
+      "est\032\033.pactus.GetNodeInfoResponseB:\n\006pact" +
+      "usZ0github.com/pactus-project/pactus/www" +
+      "/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -12525,7 +12619,7 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
     internal_static_pactus_GetNodeInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetNodeInfoResponse_descriptor,
-        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "LocalAddrs", "Protocols", "ClockOffset", "ConnectionInfo", "ZmqPublishers", });
+        new java.lang.String[] { "Moniker", "Agent", "PeerId", "StartedAt", "Reachability", "Services", "ServicesNames", "LocalAddrs", "Protocols", "ClockOffset", "ConnectionInfo", "ZmqPublishers", "CurrentTime", });
     internal_static_pactus_ZMQPublisherInfo_descriptor =
       getDescriptor().getMessageTypes().get(4);
     internal_static_pactus_ZMQPublisherInfo_fieldAccessorTable = new

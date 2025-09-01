@@ -94,6 +94,7 @@ func (s *Server) NodeHandler(w http.ResponseWriter, r *http.Request) {
 	tmk.addRowString("Agent", res.Agent)
 	tmk.addRowString("Moniker", res.Moniker)
 	tmk.addRowTime("Started at", int64(res.StartedAt))
+	tmk.addRowTime("Current time", int64(res.CurrentTime))
 	tmk.addRowString("Reachability", res.Reachability)
 	tmk.addRowFloat64("Clock Offset", res.ClockOffset)
 	tmk.addRowInt("Services", int(res.Services))

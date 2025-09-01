@@ -42,7 +42,7 @@ message GetNodeInfoResponse {
   string agent = 2;
   // Peer ID of the node.
   string peer_id = 3;
-  // Time the node was started (in epoch format).
+  // Unix timestamp when the node was started (UTC).
   uint64 started_at = 4;
   // Reachability status of the node.
   string reachability = 5;
@@ -60,6 +60,8 @@ message GetNodeInfoResponse {
   ConnectionInfo connection_info = 14;
   // List of active ZeroMQ publishers.
   repeated ZMQPublisherInfo zmq_publishers = 15;
+  // Current Unix timestamp of the node (UTC).
+  uint64 current_time = 16;
 }
 
 // ZMQPublisherInfo contains information about a ZeroMQ publisher.
@@ -93,9 +95,9 @@ message PeerInfo {
   string last_block_hash = 8;
   // Blockchain height of the peer.
   uint32 height = 9;
-  // Time the last bundle sent to the peer (in epoch format).
+  // Unix timestamp of the last bundle sent to the peer (UTC).
   int64 last_sent = 10;
-  // Time the last bundle received from the peer (in epoch format).
+  // Unix timestamp of the last bundle received from the peer (UTC).
   int64 last_received = 11;
   // Network address of the peer.
   string address = 12;

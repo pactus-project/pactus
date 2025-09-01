@@ -2041,7 +2041,7 @@
         "startedAt": {
           "type": "string",
           "format": "uint64",
-          "description": "Time the node was started (in epoch format)."
+          "description": "Unix timestamp when the node was started (UTC)."
         },
         "reachability": {
           "type": "string",
@@ -2086,6 +2086,11 @@
             "$ref": "#/definitions/pactusZMQPublisherInfo"
           },
           "description": "List of active ZeroMQ publishers."
+        },
+        "currentTime": {
+          "type": "string",
+          "format": "uint64",
+          "description": "Current Unix timestamp of the node (UTC)."
         }
       },
       "description": "Response message contains information about a specific node in the network."
@@ -2666,12 +2671,12 @@
         "lastSent": {
           "type": "string",
           "format": "int64",
-          "description": "Time the last bundle sent to the peer (in epoch format)."
+          "description": "Unix timestamp of the last bundle sent to the peer (UTC)."
         },
         "lastReceived": {
           "type": "string",
           "format": "int64",
-          "description": "Time the last bundle received from the peer (in epoch format)."
+          "description": "Unix timestamp of the last bundle received from the peer (UTC)."
         },
         "address": {
           "type": "string",

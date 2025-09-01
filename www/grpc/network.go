@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"encoding/hex"
+	"time"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
@@ -38,6 +39,7 @@ func (s *networkServer) GetNodeInfo(_ context.Context,
 		Reachability:  s.net.ReachabilityStatus(),
 		LocalAddrs:    s.net.HostAddrs(),
 		StartedAt:     uint64(peerSet.StartedAt().Unix()),
+		CurrentTime:   uint64(time.Now().Unix()),
 		Protocols:     s.net.Protocols(),
 		Services:      int32(s.sync.Services()),
 		ServicesNames: s.sync.Services().String(),
