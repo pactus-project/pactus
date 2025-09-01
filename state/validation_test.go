@@ -17,9 +17,33 @@ func TestBlockValidation(t *testing.T) {
 	td := setup(t)
 
 	round := td.RandRound()
-	t.Run("Invalid version", func(t *testing.T) {
+
+	t.Run("Invalid version, greater than latest", func(t *testing.T) {
 		blk0, _ := td.makeBlockAndCertificate(t, round)
 		invBlockVersion := protocol.ProtocolVersionLatest + 1
+		blk := block.MakeBlock(
+			invBlockVersion,
+			blk0.Header().Time(),
+			blk0.Transactions(),
+			blk0.Header().PrevBlockHash(),
+			blk0.Header().StateRoot(),
+			blk0.PrevCertificate(),
+			blk0.Header().SortitionSeed(),
+			blk0.Header().ProposerAddress())
+		cert := td.makeCertificateAndSign(t, blk.Hash(), round)
+		err := td.state.ValidateBlock(blk, round)
+		assert.ErrorIs(t, err, ErrInvalidBlockVersion)
+
+		// Receiving a block with version 2 and rejects it.
+		// It is possible that the same block would be considered valid by other nodes (Hard Fork).
+		err = td.state.CommitBlock(blk, cert)
+		assert.ErrorIs(t, err, ErrInvalidBlockVersion)
+	})
+
+	t.Run("Invalid version, less than current", func(t *testing.T) {
+		blk0, _ := td.makeBlockAndCertificate(t, round)
+		td.state.params.BlockVersion = protocol.ProtocolVersion2
+		invBlockVersion := protocol.ProtocolVersion1
 		blk := block.MakeBlock(
 			invBlockVersion,
 			blk0.Header().Time(),

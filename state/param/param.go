@@ -31,7 +31,6 @@ type Params struct {
 	MaximumStake              amount.Amount
 	FoundationReward          amount.Amount
 	FoundationAddress         []crypto.Address
-	SplitRewardForkHeight     uint32
 }
 
 func FromGenesis(genDoc *genesis.Genesis) *Params {
@@ -52,28 +51,22 @@ func FromGenesis(genDoc *genesis.Genesis) *Params {
 		MaxTransactionsPerBlock: 1000,
 		FoundationAddress:       []crypto.Address{},
 		FoundationReward:        amount.Amount(300_000_000),
-		SplitRewardForkHeight:   0,
 	}
 
 	foundationAddressList := make([]string, 0)
 	switch genDoc.ChainType() {
 	case genesis.Mainnet:
-		params.SplitRewardForkHeight = 5_000_000
 		if err := json.Unmarshal(foundationMainnetBytes, &foundationAddressList); err != nil {
 			panic(err)
 		}
 
 	case genesis.Testnet:
-		params.SplitRewardForkHeight = 3_680_000
 		if err := json.Unmarshal(foundationTestnetBytes, &foundationAddressList); err != nil {
 			panic(err)
 		}
 
 	case genesis.Localnet:
-		params.SplitRewardForkHeight = 0
-
-	default:
-		params.SplitRewardForkHeight = 0
+		foundationAddressList = []string{crypto.TreasuryAddress.String()}
 	}
 
 	for _, addrStr := range foundationAddressList {

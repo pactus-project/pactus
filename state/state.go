@@ -51,9 +51,6 @@ type state struct {
 	scoreMgr        *score.Manager
 	logger          *logger.SubLogger
 	eventPipe       pipeline.Pipeline[any]
-
-	// TODO: remove me in next version after enabling forks
-	isSplitForkEnabled bool
 }
 
 func LoadOrNewState(
@@ -310,45 +307,43 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 	return nil
 }
 
-func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amount.Amount) (*tx.Tx, protocol.Version) {
+func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amount.Amount) *tx.Tx {
 	// TODO: simplify this code after enabling the split fork
 	lockTime := st.lastInfo.BlockHeight() + 1
 	legacySubsidyTx := tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
-	if st.params.SplitRewardForkHeight > 0 && lockTime > st.params.SplitRewardForkHeight {
-		addressIndex := int(lockTime) % len(st.params.FoundationAddress)
-		foundationAddress := st.params.FoundationAddress[addressIndex]
-		recipients := []payload.BatchRecipient{
-			{
-				To:     foundationAddress,
-				Amount: st.params.FoundationReward,
-			},
-			{
-				To:     rewardAddr,
-				Amount: st.params.BlockReward - st.params.FoundationReward + accumulatedFee,
-			},
-		}
 
-		newSubsidyTx := tx.NewSubsidyTx(lockTime, recipients)
-		// TODO: simplify this code after enabling the split fork
-		if st.isSplitForkEnabled {
-			return newSubsidyTx, protocol.ProtocolVersion2
-		}
+	addressIndex := int(lockTime) % len(st.params.FoundationAddress)
+	foundationAddress := st.params.FoundationAddress[addressIndex]
+	recipients := []payload.BatchRecipient{
+		{
+			To:     foundationAddress,
+			Amount: st.params.FoundationReward,
+		},
+		{
+			To:     rewardAddr,
+			Amount: st.params.BlockReward - st.params.FoundationReward + accumulatedFee,
+		},
+	}
+	newSubsidyTx := tx.NewSubsidyTx(lockTime, recipients)
 
-		if st.committee.SupportProtocolVersion(protocol.ProtocolVersion2) {
-			return newSubsidyTx, protocol.ProtocolVersion2
-		}
-
-		return legacySubsidyTx, protocol.ProtocolVersion1
+	if st.params.BlockVersion >= protocol.ProtocolVersion2 {
+		return newSubsidyTx
 	}
 
-	return legacySubsidyTx, protocol.ProtocolVersion1
+	if st.committee.SupportProtocolVersion(protocol.ProtocolVersion2) {
+		st.params.BlockVersion = protocol.ProtocolVersion2
+
+		return newSubsidyTx
+	}
+
+	return legacySubsidyTx
 }
 
 func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address) (*block.Block, error) {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
-	// Create new sbx and execute transactions
+	// Create new sandbox and execute transactions
 	sbx := st.concreteSandbox()
 
 	// Re-check all transactions strictly and remove invalid ones
@@ -371,12 +366,12 @@ func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Addres
 		}
 	}
 
-	subsidyTx, protocolVersion := st.createSubsidyTx(rewardAddr, sbx.AccumulatedFee())
+	subsidyTx := st.createSubsidyTx(rewardAddr, sbx.AccumulatedFee())
 	txs.Prepend(subsidyTx)
 	prevSeed := st.lastInfo.SortitionSeed()
 
 	blk := block.MakeBlock(
-		protocolVersion,
+		st.params.BlockVersion,
 		st.proposeNextBlockTime(),
 		txs,
 		st.lastInfo.BlockHash(),
@@ -454,6 +449,15 @@ func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificat
 	st.lastInfo.UpdateSortitionSeed(blk.Header().SortitionSeed())
 	st.lastInfo.UpdateCertificate(cert)
 	st.lastInfo.UpdateValidators(st.committee.Validators())
+
+	// -----------------------------------
+	// Update block version
+	if blk.Header().Version() > st.params.BlockVersion {
+		st.logger.Info("block version is higher than the current version",
+			"block version", blk.Header().Version(), "current version", st.params.BlockVersion)
+
+		st.params.BlockVersion = blk.Header().Version()
+	}
 
 	// Commit and update the committee
 	st.commitSandbox(sbx, cert.Round())
