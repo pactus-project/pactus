@@ -5,6 +5,7 @@ import (
 	"github.com/pactus-project/pactus/execution"
 	"github.com/pactus-project/pactus/sandbox"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
@@ -15,7 +16,7 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 		// The first transaction should be subsidy transaction
 		isSubsidyTx := (i == 0)
 		if isSubsidyTx {
-			err := st.checkSubsidy(trx, check)
+			err := st.checkSubsidy(blk.Header().Version(), trx, check)
 			if err != nil {
 				return err
 			}
@@ -56,20 +57,16 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 }
 
 //nolint:all // Remove me after enabling split reward forks
-func (st *state) checkSubsidy(trx *tx.Tx, check bool) error {
+func (st *state) checkSubsidy(blockVersion protocol.Version, trx *tx.Tx, check bool) error {
 	if !trx.IsSubsidyTx() {
 		return ErrInvalidSubsidyTransaction
 	}
 
 	lockTime := trx.LockTime()
-	if st.params.SplitRewardForkHeight > 0 && lockTime > st.params.SplitRewardForkHeight {
+	if blockVersion >= protocol.ProtocolVersion2 {
 		batchTrx, ok := trx.Payload().(*payload.BatchTransferPayload)
 		if !ok {
-			if st.isSplitForkEnabled {
-				return ErrInvalidSubsidyTransaction
-			}
-
-			return nil
+			return ErrInvalidSubsidyTransaction
 		}
 
 		if batchTrx.Recipients[0].Amount != st.params.FoundationReward {
@@ -82,13 +79,11 @@ func (st *state) checkSubsidy(trx *tx.Tx, check bool) error {
 			return ErrInvalidSubsidyTransaction
 		}
 
-		if !check {
-			st.isSplitForkEnabled = true
-		}
-
 		return nil
-	} else if !trx.IsTransferTx() {
-		return ErrInvalidSubsidyTransaction
+	} else {
+		if !trx.IsTransferTx() {
+			return ErrInvalidSubsidyTransaction
+		}
 	}
 
 	return nil

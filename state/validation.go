@@ -8,7 +8,8 @@ import (
 )
 
 func (st *state) validateBlock(blk *block.Block, round int16) error {
-	if blk.Header().Version() > protocol.ProtocolVersionLatest {
+	if blk.Header().Version() > protocol.ProtocolVersionLatest ||
+		blk.Header().Version() < st.params.BlockVersion {
 		return ErrInvalidBlockVersion
 	}
 

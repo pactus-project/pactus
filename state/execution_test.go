@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/block"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -54,8 +55,8 @@ func TestExecuteBlock(t *testing.T) {
 
 	proposerAddr := td.RandAccAddress()
 	rewardAddr := td.RandAccAddress()
-	invSubsidyTx, _ := td.state.createSubsidyTx(rewardAddr, 1001)
-	validSubsidyTx, _ := td.state.createSubsidyTx(rewardAddr, 1000)
+	invSubsidyTx := td.state.createSubsidyTx(rewardAddr, 1001)
+	validSubsidyTx := td.state.createSubsidyTx(rewardAddr, 1000)
 	invTransferTx := td.GenerateTestTransferTx()
 
 	validTx1 := tx.NewTransferTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
@@ -152,15 +153,13 @@ func TestSubsidyTransaction(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Legacy Reward", func(t *testing.T) {
-		td.state.params.SplitRewardForkHeight = 0
 		trx := tx.NewSubsidyTxLegacy(td.RandHeight(), td.RandAccAddress(), td.RandAmount())
 
-		err := td.state.checkSubsidy(trx, true)
+		err := td.state.checkSubsidy(protocol.ProtocolVersion1, trx, true)
 		assert.NoError(t, err)
 	})
 
 	t.Run("Legacy Reward, Invalid transaction", func(t *testing.T) {
-		td.state.params.SplitRewardForkHeight = 0
 		trx := tx.NewSubsidyTx(td.RandHeight(), []payload.BatchRecipient{
 			{
 				To:     td.RandAccAddress(),
@@ -168,51 +167,38 @@ func TestSubsidyTransaction(t *testing.T) {
 			},
 		})
 
-		err := td.state.checkSubsidy(trx, true)
+		err := td.state.checkSubsidy(protocol.ProtocolVersion1, trx, true)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
-	t.Run("Legacy Reward", func(t *testing.T) {
-		splitHeight := td.RandHeight()
-		td.state.params.SplitRewardForkHeight = splitHeight
-		trx := tx.NewSubsidyTxLegacy(splitHeight-1, td.RandAccAddress(), td.RandAmount())
+	t.Run("Split Reward With Legacy Reward", func(t *testing.T) {
+		td.state.params.BlockVersion = protocol.ProtocolVersion2
+		trx := tx.NewSubsidyTxLegacy(td.RandHeight(), td.RandAccAddress(), td.RandAmount())
 
-		err := td.state.checkSubsidy(trx, true)
-		assert.NoError(t, err)
-	})
-
-	t.Run("Legacy Reward after splitting Reward", func(t *testing.T) {
-		splitHeight := td.RandHeight()
-		td.state.isSplitForkEnabled = true
-		td.state.params.SplitRewardForkHeight = splitHeight
-		trx := tx.NewSubsidyTxLegacy(splitHeight+1, td.RandAccAddress(), td.RandAmount())
-
-		err := td.state.checkSubsidy(trx, true)
+		err := td.state.checkSubsidy(protocol.ProtocolVersion2, trx, true)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
-	t.Run("Split Reward With Invalid Foundation", func(t *testing.T) {
-		splitHeight := td.RandHeight()
-		td.state.params.SplitRewardForkHeight = splitHeight
+	t.Run("Split Reward With No Foundation Address", func(t *testing.T) {
+		td.state.params.BlockVersion = protocol.ProtocolVersion2
 		td.state.params.FoundationAddress = []crypto.Address{td.RandAccAddress()}
 
-		trx := tx.NewSubsidyTx(splitHeight+1, []payload.BatchRecipient{
+		trx := tx.NewSubsidyTx(td.RandHeight(), []payload.BatchRecipient{
 			{
 				To:     td.RandAccAddress(),
 				Amount: td.RandAmount(),
 			},
 		})
 
-		err := td.state.checkSubsidy(trx, true)
+		err := td.state.checkSubsidy(protocol.ProtocolVersion2, trx, true)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
-	t.Run("Split Reward With Invalid Foundation", func(t *testing.T) {
-		splitHeight := td.RandHeight()
-		td.state.params.SplitRewardForkHeight = splitHeight
+	t.Run("Split Reward With Invalid Foundation Address", func(t *testing.T) {
+		td.state.params.BlockVersion = protocol.ProtocolVersion2
 		td.state.params.FoundationAddress = []crypto.Address{td.RandAccAddress()}
 
-		trx := tx.NewSubsidyTx(splitHeight+1, []payload.BatchRecipient{
+		trx := tx.NewSubsidyTx(td.RandHeight(), []payload.BatchRecipient{
 			{
 				To:     td.RandAccAddress(),
 				Amount: td.state.params.FoundationReward,
@@ -223,16 +209,15 @@ func TestSubsidyTransaction(t *testing.T) {
 			},
 		})
 
-		err := td.state.checkSubsidy(trx, true)
+		err := td.state.checkSubsidy(protocol.ProtocolVersion2, trx, true)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
 	t.Run("Split Reward: Ok", func(t *testing.T) {
-		splitHeight := td.RandHeight()
-		td.state.params.SplitRewardForkHeight = splitHeight
+		td.state.params.BlockVersion = protocol.ProtocolVersion2
 		td.state.params.FoundationAddress = []crypto.Address{td.RandAccAddress()}
 
-		trx := tx.NewSubsidyTx(splitHeight+1, []payload.BatchRecipient{
+		trx := tx.NewSubsidyTx(td.RandHeight(), []payload.BatchRecipient{
 			{
 				To:     td.state.params.FoundationAddress[0],
 				Amount: td.state.params.FoundationReward,
@@ -243,7 +228,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			},
 		})
 
-		err := td.state.checkSubsidy(trx, true)
+		err := td.state.checkSubsidy(protocol.ProtocolVersion2, trx, true)
 		assert.NoError(t, err)
 	})
 }
