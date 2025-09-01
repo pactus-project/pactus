@@ -772,7 +772,8 @@ protocolsList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined :
 clockOffset: jspb.Message.getFloatingPointFieldWithDefault(msg, 13, 0.0),
 connectionInfo: (f = msg.getConnectionInfo()) && proto.pactus.ConnectionInfo.toObject(includeInstance, f),
 zmqPublishersList: jspb.Message.toObjectList(msg.getZmqPublishersList(),
-    proto.pactus.ZMQPublisherInfo.toObject, includeInstance)
+    proto.pactus.ZMQPublisherInfo.toObject, includeInstance),
+currentTime: jspb.Message.getFieldWithDefault(msg, 16, 0)
   };
 
   if (includeInstance) {
@@ -858,6 +859,10 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
       var value = new proto.pactus.ZMQPublisherInfo;
       reader.readMessage(value,proto.pactus.ZMQPublisherInfo.deserializeBinaryFromReader);
       msg.addZmqPublishers(value);
+      break;
+    case 16:
+      var value = /** @type {number} */ (reader.readUint64());
+      msg.setCurrentTime(value);
       break;
     default:
       reader.skipField();
@@ -972,6 +977,13 @@ proto.pactus.GetNodeInfoResponse.serializeBinaryToWriter = function(message, wri
       15,
       f,
       proto.pactus.ZMQPublisherInfo.serializeBinaryToWriter
+    );
+  }
+  f = message.getCurrentTime();
+  if (f !== 0) {
+    writer.writeUint64(
+      16,
+      f
     );
   }
 };
@@ -1267,6 +1279,24 @@ proto.pactus.GetNodeInfoResponse.prototype.addZmqPublishers = function(opt_value
  */
 proto.pactus.GetNodeInfoResponse.prototype.clearZmqPublishersList = function() {
   return this.setZmqPublishersList([]);
+};
+
+
+/**
+ * optional uint64 current_time = 16;
+ * @return {number}
+ */
+proto.pactus.GetNodeInfoResponse.prototype.getCurrentTime = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 16, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetNodeInfoResponse} returns this
+ */
+proto.pactus.GetNodeInfoResponse.prototype.setCurrentTime = function(value) {
+  return jspb.Message.setProto3IntField(this, 16, value);
 };
 
 

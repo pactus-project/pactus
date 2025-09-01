@@ -186,7 +186,7 @@ type GetNodeInfoResponse struct {
 	Agent string `protobuf:"bytes,2,opt,name=agent,proto3" json:"agent,omitempty"`
 	// Peer ID of the node.
 	PeerId string `protobuf:"bytes,3,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`
-	// Time the node was started (in epoch format).
+	// Unix timestamp when the node was started (UTC).
 	StartedAt uint64 `protobuf:"varint,4,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
 	// Reachability status of the node.
 	Reachability string `protobuf:"bytes,5,opt,name=reachability,proto3" json:"reachability,omitempty"`
@@ -204,6 +204,8 @@ type GetNodeInfoResponse struct {
 	ConnectionInfo *ConnectionInfo `protobuf:"bytes,14,opt,name=connection_info,json=connectionInfo,proto3" json:"connection_info,omitempty"`
 	// List of active ZeroMQ publishers.
 	ZmqPublishers []*ZMQPublisherInfo `protobuf:"bytes,15,rep,name=zmq_publishers,json=zmqPublishers,proto3" json:"zmq_publishers,omitempty"`
+	// Current Unix timestamp of the node (UTC).
+	CurrentTime   uint64 `protobuf:"varint,16,opt,name=current_time,json=currentTime,proto3" json:"current_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -322,6 +324,13 @@ func (x *GetNodeInfoResponse) GetZmqPublishers() []*ZMQPublisherInfo {
 	return nil
 }
 
+func (x *GetNodeInfoResponse) GetCurrentTime() uint64 {
+	if x != nil {
+		return x.CurrentTime
+	}
+	return 0
+}
+
 // ZMQPublisherInfo contains information about a ZeroMQ publisher.
 type ZMQPublisherInfo struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -408,9 +417,9 @@ type PeerInfo struct {
 	LastBlockHash string `protobuf:"bytes,8,opt,name=last_block_hash,json=lastBlockHash,proto3" json:"last_block_hash,omitempty"`
 	// Blockchain height of the peer.
 	Height uint32 `protobuf:"varint,9,opt,name=height,proto3" json:"height,omitempty"`
-	// Time the last bundle sent to the peer (in epoch format).
+	// Unix timestamp of the last bundle sent to the peer (UTC).
 	LastSent int64 `protobuf:"varint,10,opt,name=last_sent,json=lastSent,proto3" json:"last_sent,omitempty"`
-	// Time the last bundle received from the peer (in epoch format).
+	// Unix timestamp of the last bundle received from the peer (UTC).
 	LastReceived int64 `protobuf:"varint,11,opt,name=last_received,json=lastReceived,proto3" json:"last_received,omitempty"`
 	// Network address of the peer.
 	Address string `protobuf:"bytes,12,opt,name=address,proto3" json:"address,omitempty"`
@@ -791,7 +800,7 @@ const file_network_proto_rawDesc = "" +
 	"\x0fconnected_peers\x18\x03 \x03(\v2\x10.pactus.PeerInfoR\x0econnectedPeers\x123\n" +
 	"\vmetric_info\x18\x04 \x01(\v2\x12.pactus.MetricInfoR\n" +
 	"metricInfo\"\x14\n" +
-	"\x12GetNodeInfoRequest\"\xc8\x03\n" +
+	"\x12GetNodeInfoRequest\"\xeb\x03\n" +
 	"\x13GetNodeInfoResponse\x12\x18\n" +
 	"\amoniker\x18\x01 \x01(\tR\amoniker\x12\x14\n" +
 	"\x05agent\x18\x02 \x01(\tR\x05agent\x12\x17\n" +
@@ -806,7 +815,8 @@ const file_network_proto_rawDesc = "" +
 	"\tprotocols\x18\t \x03(\tR\tprotocols\x12!\n" +
 	"\fclock_offset\x18\r \x01(\x01R\vclockOffset\x12?\n" +
 	"\x0fconnection_info\x18\x0e \x01(\v2\x16.pactus.ConnectionInfoR\x0econnectionInfo\x12?\n" +
-	"\x0ezmq_publishers\x18\x0f \x03(\v2\x18.pactus.ZMQPublisherInfoR\rzmqPublishers\"T\n" +
+	"\x0ezmq_publishers\x18\x0f \x03(\v2\x18.pactus.ZMQPublisherInfoR\rzmqPublishers\x12!\n" +
+	"\fcurrent_time\x18\x10 \x01(\x04R\vcurrentTime\"T\n" +
 	"\x10ZMQPublisherInfo\x12\x14\n" +
 	"\x05topic\x18\x01 \x01(\tR\x05topic\x12\x18\n" +
 	"\aaddress\x18\x02 \x01(\tR\aaddress\x12\x10\n" +

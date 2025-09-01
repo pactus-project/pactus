@@ -920,7 +920,7 @@ pub struct GetNodeInfoResponse {
     /// Peer ID of the node.
     #[prost(string, tag="3")]
     pub peer_id: ::prost::alloc::string::String,
-    /// Time the node was started (in epoch format).
+    /// Unix timestamp when the node was started (UTC).
     #[prost(uint64, tag="4")]
     pub started_at: u64,
     /// Reachability status of the node.
@@ -947,6 +947,9 @@ pub struct GetNodeInfoResponse {
     /// List of active ZeroMQ publishers.
     #[prost(message, repeated, tag="15")]
     pub zmq_publishers: ::prost::alloc::vec::Vec<ZmqPublisherInfo>,
+    /// Current Unix timestamp of the node (UTC).
+    #[prost(uint64, tag="16")]
+    pub current_time: u64,
 }
 /// ZMQPublisherInfo contains information about a ZeroMQ publisher.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -994,10 +997,10 @@ pub struct PeerInfo {
     /// Blockchain height of the peer.
     #[prost(uint32, tag="9")]
     pub height: u32,
-    /// Time the last bundle sent to the peer (in epoch format).
+    /// Unix timestamp of the last bundle sent to the peer (UTC).
     #[prost(int64, tag="10")]
     pub last_sent: i64,
-    /// Time the last bundle received from the peer (in epoch format).
+    /// Unix timestamp of the last bundle received from the peer (UTC).
     #[prost(int64, tag="11")]
     pub last_received: i64,
     /// Network address of the peer.

@@ -210,6 +210,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     $core.double? clockOffset,
     ConnectionInfo? connectionInfo,
     $core.Iterable<ZMQPublisherInfo>? zmqPublishers,
+    $fixnum.Int64? currentTime,
   }) {
     final $result = create();
     if (moniker != null) {
@@ -248,6 +249,9 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     if (zmqPublishers != null) {
       $result.zmqPublishers.addAll(zmqPublishers);
     }
+    if (currentTime != null) {
+      $result.currentTime = currentTime;
+    }
     return $result;
   }
   GetNodeInfoResponse._() : super();
@@ -267,6 +271,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     ..a<$core.double>(13, _omitFieldNames ? '' : 'clockOffset', $pb.PbFieldType.OD)
     ..aOM<ConnectionInfo>(14, _omitFieldNames ? '' : 'connectionInfo', subBuilder: ConnectionInfo.create)
     ..pc<ZMQPublisherInfo>(15, _omitFieldNames ? '' : 'zmqPublishers', $pb.PbFieldType.PM, subBuilder: ZMQPublisherInfo.create)
+    ..a<$fixnum.Int64>(16, _omitFieldNames ? '' : 'currentTime', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
     ..hasRequiredFields = false
   ;
 
@@ -321,7 +326,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(3)
   void clearPeerId() => $_clearField(3);
 
-  /// Time the node was started (in epoch format).
+  /// Unix timestamp when the node was started (UTC).
   @$pb.TagNumber(4)
   $fixnum.Int64 get startedAt => $_getI64(3);
   @$pb.TagNumber(4)
@@ -394,6 +399,16 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   /// List of active ZeroMQ publishers.
   @$pb.TagNumber(15)
   $pb.PbList<ZMQPublisherInfo> get zmqPublishers => $_getList(11);
+
+  /// Current Unix timestamp of the node (UTC).
+  @$pb.TagNumber(16)
+  $fixnum.Int64 get currentTime => $_getI64(12);
+  @$pb.TagNumber(16)
+  set currentTime($fixnum.Int64 v) { $_setInt64(12, v); }
+  @$pb.TagNumber(16)
+  $core.bool hasCurrentTime() => $_has(12);
+  @$pb.TagNumber(16)
+  void clearCurrentTime() => $_clearField(16);
 }
 
 /// ZMQPublisherInfo contains information about a ZeroMQ publisher.
@@ -678,7 +693,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(9)
   void clearHeight() => $_clearField(9);
 
-  /// Time the last bundle sent to the peer (in epoch format).
+  /// Unix timestamp of the last bundle sent to the peer (UTC).
   @$pb.TagNumber(10)
   $fixnum.Int64 get lastSent => $_getI64(9);
   @$pb.TagNumber(10)
@@ -688,7 +703,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(10)
   void clearLastSent() => $_clearField(10);
 
-  /// Time the last bundle received from the peer (in epoch format).
+  /// Unix timestamp of the last bundle received from the peer (UTC).
   @$pb.TagNumber(11)
   $fixnum.Int64 get lastReceived => $_getI64(10);
   @$pb.TagNumber(11)

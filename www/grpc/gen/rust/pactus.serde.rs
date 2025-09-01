@@ -4511,6 +4511,9 @@ impl serde::Serialize for GetNodeInfoResponse {
         if !self.zmq_publishers.is_empty() {
             len += 1;
         }
+        if self.current_time != 0 {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetNodeInfoResponse", len)?;
         if !self.moniker.is_empty() {
             struct_ser.serialize_field("moniker", &self.moniker)?;
@@ -4550,6 +4553,11 @@ impl serde::Serialize for GetNodeInfoResponse {
         if !self.zmq_publishers.is_empty() {
             struct_ser.serialize_field("zmqPublishers", &self.zmq_publishers)?;
         }
+        if self.current_time != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("currentTime", ToString::to_string(&self.current_time).as_str())?;
+        }
         struct_ser.end()
     }
 }
@@ -4579,6 +4587,8 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
             "connectionInfo",
             "zmq_publishers",
             "zmqPublishers",
+            "current_time",
+            "currentTime",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -4595,6 +4605,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
             ClockOffset,
             ConnectionInfo,
             ZmqPublishers,
+            CurrentTime,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -4628,6 +4639,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                             "clockOffset" | "clock_offset" => Ok(GeneratedField::ClockOffset),
                             "connectionInfo" | "connection_info" => Ok(GeneratedField::ConnectionInfo),
                             "zmqPublishers" | "zmq_publishers" => Ok(GeneratedField::ZmqPublishers),
+                            "currentTime" | "current_time" => Ok(GeneratedField::CurrentTime),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -4659,6 +4671,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                 let mut clock_offset__ = None;
                 let mut connection_info__ = None;
                 let mut zmq_publishers__ = None;
+                let mut current_time__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Moniker => {
@@ -4739,6 +4752,14 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                             }
                             zmq_publishers__ = Some(map_.next_value()?);
                         }
+                        GeneratedField::CurrentTime => {
+                            if current_time__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("currentTime"));
+                            }
+                            current_time__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                     }
                 }
                 Ok(GetNodeInfoResponse {
@@ -4754,6 +4775,7 @@ impl<'de> serde::Deserialize<'de> for GetNodeInfoResponse {
                     clock_offset: clock_offset__.unwrap_or_default(),
                     connection_info: connection_info__,
                     zmq_publishers: zmq_publishers__.unwrap_or_default(),
+                    current_time: current_time__.unwrap_or_default(),
                 })
             }
         }

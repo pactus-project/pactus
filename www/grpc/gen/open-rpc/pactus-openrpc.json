@@ -850,7 +850,7 @@
   "type": "object",
   "properties": {"topic": { "type": "string" },"address": { "type": "string" },"hwm": { "type": "integer" }}
 }
-}}
+},"current_time": { "type": "integer" }}
           }
         }
       }
