@@ -155,7 +155,7 @@ func TestSubsidyTransaction(t *testing.T) {
 	t.Run("Legacy Reward", func(t *testing.T) {
 		trx := tx.NewSubsidyTxLegacy(td.RandHeight(), td.RandAccAddress(), td.RandAmount())
 
-		err := td.state.checkSubsidy(protocol.ProtocolVersion1, trx, true)
+		err := td.state.checkSubsidy(protocol.ProtocolVersion1, trx)
 		assert.NoError(t, err)
 	})
 
@@ -167,7 +167,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			},
 		})
 
-		err := td.state.checkSubsidy(protocol.ProtocolVersion1, trx, true)
+		err := td.state.checkSubsidy(protocol.ProtocolVersion1, trx)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
@@ -175,7 +175,7 @@ func TestSubsidyTransaction(t *testing.T) {
 		td.state.params.BlockVersion = protocol.ProtocolVersion2
 		trx := tx.NewSubsidyTxLegacy(td.RandHeight(), td.RandAccAddress(), td.RandAmount())
 
-		err := td.state.checkSubsidy(protocol.ProtocolVersion2, trx, true)
+		err := td.state.checkSubsidy(protocol.ProtocolVersion2, trx)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
@@ -190,7 +190,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			},
 		})
 
-		err := td.state.checkSubsidy(protocol.ProtocolVersion2, trx, true)
+		err := td.state.checkSubsidy(protocol.ProtocolVersion2, trx)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
@@ -209,7 +209,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			},
 		})
 
-		err := td.state.checkSubsidy(protocol.ProtocolVersion2, trx, true)
+		err := td.state.checkSubsidy(protocol.ProtocolVersion2, trx)
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
@@ -228,7 +228,7 @@ func TestSubsidyTransaction(t *testing.T) {
 			},
 		})
 
-		err := td.state.checkSubsidy(protocol.ProtocolVersion2, trx, true)
+		err := td.state.checkSubsidy(protocol.ProtocolVersion2, trx)
 		assert.NoError(t, err)
 	})
 }

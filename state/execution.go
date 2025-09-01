@@ -16,7 +16,7 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 		// The first transaction should be subsidy transaction
 		isSubsidyTx := (i == 0)
 		if isSubsidyTx {
-			err := st.checkSubsidy(blk.Header().Version(), trx, check)
+			err := st.checkSubsidy(blk.Header().Version(), trx)
 			if err != nil {
 				return err
 			}
@@ -57,7 +57,7 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 }
 
 //nolint:all // Remove me after enabling split reward forks
-func (st *state) checkSubsidy(blockVersion protocol.Version, trx *tx.Tx, check bool) error {
+func (st *state) checkSubsidy(blockVersion protocol.Version, trx *tx.Tx) error {
 	if !trx.IsSubsidyTx() {
 		return ErrInvalidSubsidyTransaction
 	}
