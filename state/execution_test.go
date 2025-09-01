@@ -171,7 +171,7 @@ func TestSubsidyTransaction(t *testing.T) {
 		assert.ErrorIs(t, err, ErrInvalidSubsidyTransaction)
 	})
 
-	t.Run("Split Reward With Legacy Reward", func(t *testing.T) {
+	t.Run("Legacy Reward after splitting Reward", func(t *testing.T) {
 		td.state.params.BlockVersion = protocol.ProtocolVersion2
 		trx := tx.NewSubsidyTxLegacy(td.RandHeight(), td.RandAccAddress(), td.RandAmount())
 
