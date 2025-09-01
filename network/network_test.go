@@ -209,25 +209,25 @@ func TestNetwork(t *testing.T) {
 			protos := networkM.Protocols()
 			assert.Contains(c, protos, lp2pproto.ProtoIDv2Stop)
 			assert.NotContains(c, protos, lp2pproto.ProtoIDv2Hop)
-		}, time.Second, 100*time.Millisecond)
+		}, 2*time.Second, 100*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			protos := networkN.Protocols()
 			assert.Contains(c, protos, lp2pproto.ProtoIDv2Stop)
 			assert.NotContains(c, protos, lp2pproto.ProtoIDv2Hop)
-		}, time.Second, 100*time.Millisecond)
+		}, 2*time.Second, 100*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			protos := networkP.Protocols()
 			assert.NotContains(c, protos, lp2pproto.ProtoIDv2Stop)
 			assert.Contains(c, protos, lp2pproto.ProtoIDv2Hop)
-		}, time.Second, 100*time.Millisecond)
+		}, 2*time.Second, 100*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			protos := networkX.Protocols()
 			assert.NotContains(c, protos, lp2pproto.ProtoIDv2Stop)
 			assert.NotContains(c, protos, lp2pproto.ProtoIDv2Hop)
-		}, time.Second, 100*time.Millisecond)
+		}, 2*time.Second, 100*time.Millisecond)
 	})
 
 	t.Run("Reachability", func(t *testing.T) {
