@@ -223,8 +223,9 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, status status.Status) {
 
 	peer := ps.findOrCreatePeer(pid)
 
-	// Don't update the status if peer is banned
-	if peer.Status.IsBanned() {
+	// Don't update the status if peer is banned (unless status is disconnected).
+	// This helps banned peers to recover, like fixing their system time, etc.
+	if peer.Status.IsBanned() && !status.IsDisconnected() {
 		return
 	}
 

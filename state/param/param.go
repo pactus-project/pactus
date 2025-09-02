@@ -17,6 +17,9 @@ var foundationTestnetBytes []byte
 //go:embed foundation_mainnet.json
 var foundationMainnetBytes []byte
 
+// Params is the parameters of the Pactus protocol.
+// These parameters are fixed among all the nodes in the network.
+// TODO: Save them in DB and load them on startng the node.
 type Params struct {
 	BlockVersion              protocol.Version
 	BlockIntervalInSecond     int

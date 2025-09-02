@@ -28,7 +28,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 	handler.logger.Trace("parsing Hello message", "msg", msg)
 
 	handler.logger.Debug("updating peer info",
-		"pid", msg.PeerID,
+		"pid", pid,
 		"moniker", msg.Moniker,
 		"services", msg.Services)
 
@@ -37,16 +37,6 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		msg.Agent,
 		msg.PublicKeys,
 		msg.Services)
-
-	if msg.PeerID != pid {
-		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
-			fmt.Sprintf("peer ID is not matched, expected: %v, got: %v",
-				msg.PeerID, pid), 0)
-
-		handler.acknowledge(response, pid)
-
-		return
-	}
 
 	if msg.GenesisHash != handler.state.Genesis().Hash() {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,

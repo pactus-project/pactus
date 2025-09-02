@@ -134,6 +134,8 @@ type Message interface {
 	BasicCheck() error
 	Type() Type
 	TopicID() network.TopicID
+	// ShouldBroadcast indicates whether the message should be broadcasted
+	// or send directly as stream.
 	ShouldBroadcast() bool
 	// ConsensusHeight indicates the consensus height at which the message is broadcast.
 	// This is applicable for consensus messages, including BlockAnnounce.
