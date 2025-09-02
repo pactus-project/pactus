@@ -7,8 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// PASSED
-
 func TestNewHeightTimeout(t *testing.T) {
 	td := setup(t)
 
