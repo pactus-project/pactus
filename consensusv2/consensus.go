@@ -219,12 +219,6 @@ func (cs *consensusV2) SetProposal(prop *proposal.Proposal) {
 		return
 	}
 
-	if err := prop.BasicCheck(); err != nil {
-		cs.logger.Warn("invalid proposal", "proposal", prop, "error", err)
-
-		return
-	}
-
 	roundProposal := cs.log.RoundProposal(prop.Round())
 	if roundProposal != nil {
 		cs.logger.Trace("this round has proposal", "proposal", prop)
@@ -232,30 +226,23 @@ func (cs *consensusV2) SetProposal(prop *proposal.Proposal) {
 		return
 	}
 
-	if prop.Height() == cs.bcState.LastBlockHeight() {
-		// A slow validator might receive a proposal after committing the proposed block.
-		// In this case, the proposal is accepted and the slow validator continues.
-		// By doing so, the validator can broadcast its votes and
-		// prevent itself from being marked as absent in the block certificate.
-		cs.logger.Warn("block committed before receiving proposal", "proposal", prop)
-		if prop.Block().Hash() != cs.bcState.LastBlockHash() {
-			cs.logger.Warn("proposal is not for the committed block", "proposal", prop)
+	if err := prop.BasicCheck(); err != nil {
+		cs.logger.Warn("invalid proposal", "proposal", prop, "error", err)
 
-			return
-		}
-	} else {
-		proposer := cs.proposer(prop.Round())
-		if err := prop.Verify(proposer.PublicKey()); err != nil {
-			cs.logger.Warn("proposal is invalid", "proposal", prop, "error", err)
+		return
+	}
 
-			return
-		}
+	proposer := cs.proposer(prop.Round())
+	if err := prop.Verify(proposer.PublicKey()); err != nil {
+		cs.logger.Warn("invalid proposer", "proposal", prop, "error", err)
 
-		if err := cs.bcState.ValidateBlock(prop.Block(), prop.Round()); err != nil {
-			cs.logger.Warn("invalid block", "proposal", prop, "error", err)
+		return
+	}
 
-			return
-		}
+	if err := cs.bcState.ValidateBlock(prop.Block(), prop.Round()); err != nil {
+		cs.logger.Warn("invalid proposed block", "proposal", prop, "error", err)
+
+		return
 	}
 
 	cs.logger.Info("proposal set", "proposal", prop)

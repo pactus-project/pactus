@@ -8,8 +8,6 @@ import (
 	"github.com/pactus-project/pactus/types/vote"
 )
 
-// PASSED-2
-
 func TestPrecommitStrongCommit(t *testing.T) {
 	td := setup(t)
 

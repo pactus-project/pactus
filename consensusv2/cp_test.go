@@ -5,12 +5,9 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/stretchr/testify/assert"
 )
-
-// PASSED
 
 func TestCPChangeProposer(t *testing.T) {
 	td := setup(t)
@@ -25,18 +22,12 @@ func TestCPQueryVote(t *testing.T) {
 	td := setup(t)
 
 	td.commitBlockForAllStates(t)
-	td.commitBlockForAllStates(t)
-	h := uint32(3)
-	r := int16(1)
 
 	td.enterNewHeight(td.consP)
-	td.enterNextRound(td.consP)
+	td.changeProposerTimeout(td.consP)
+	td.queryVoteTimeout(td.consP)
 
-	// consP is the proposer for this round, but there are not enough votes.
-	td.queryProposalTimeout(td.consP)
-	td.shouldPublishProposal(t, td.consP, h, r)
-	td.shouldPublishQueryVote(t, td.consP, h, r)
-	td.shouldNotPublish(t, td.consP, message.TypeQueryProposal)
+	td.shouldPublishQueryVote(t, td.consP, 2, 0)
 }
 
 func TestCPSetProposalAfterChangeProposer(t *testing.T) {
@@ -128,6 +119,22 @@ func TestCPCrashOnTestnet(t *testing.T) {
 	preVote := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
 	assert.Equal(t, vote.CPValueYes, preVote.CPValue())
 	assert.Equal(t, "precommit", td.consP.currentState.name())
+}
+
+func TestCPMoveToNextRoundOnDecidedVoteYes(t *testing.T) {
+	td := setup(t)
+
+	td.enterNewHeight(td.consP)
+	td.changeProposerTimeout(td.consP)
+	h := uint32(1)
+	r := int16(0)
+
+	td.checkHeightRound(t, td.consP, h, r)
+
+	_, _, decideJust := td.makeChangeProposerJusts(t, hash.UndefHash, h, r)
+	td.addCPDecidedVote(td.consP, hash.UndefHash, h, r, vote.CPValueYes, decideJust, tIndexX)
+
+	td.checkHeightRound(t, td.consP, h, r+1)
 }
 
 func TestCPInvalidJustInitYes(t *testing.T) {
@@ -431,18 +438,4 @@ func TestCPInvalidJustDecided(t *testing.T) {
 			Reason: fmt.Sprintf("certificate has an unexpected committers: %v", just.QCert.Committers()),
 		})
 	})
-}
-
-func TestCPMoveToNextRoundOnDecidedVoteYes(t *testing.T) {
-	td := setup(t)
-
-	td.enterNewHeight(td.consP)
-	td.changeProposerTimeout(td.consP)
-	h := uint32(1)
-	r := int16(0)
-
-	_, _, decideJust := td.makeChangeProposerJusts(t, hash.UndefHash, h, r)
-	td.addCPDecidedVote(td.consP, hash.UndefHash, h, r, vote.CPValueYes, decideJust, tIndexX)
-
-	td.checkHeightRound(t, td.consP, h, 1)
 }
