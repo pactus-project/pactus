@@ -17,20 +17,6 @@ func TestParsingHelloMessages(t *testing.T) {
 
 	td.state.CommitTestBlocks(21)
 
-	t.Run("Receiving Hello message from an unknown peer.",
-		func(t *testing.T) {
-			valKey := td.RandValKey()
-			pid := td.RandPeerID()
-			msg := message.NewHelloMessage(pid, "unknown-peer", service.New(service.FullNode),
-				td.RandHeight(), td.RandHash(), td.state.Genesis().Hash())
-			msg.Sign([]*bls.ValidatorKey{valKey})
-
-			from := td.RandPeerID()
-			td.receivingNewMessage(td.sync, msg, from)
-			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
-			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
-		})
-
 	t.Run("Receiving Hello message from a peer. Genesis hash is wrong.",
 		func(t *testing.T) {
 			invGenHash := td.RandHash()

@@ -374,7 +374,15 @@ func TestUpdateStatus(t *testing.T) {
 		assert.Equal(t, status.StatusUnknown, peerSet.GetPeerStatus(pid))
 	})
 
-	t.Run("UpdateStatus To Known Peer to Disconnected", func(t *testing.T) {
+	t.Run("UpdateStatus from Known to Banned", func(t *testing.T) {
+		pid := ts.RandPeerID()
+		peerSet.UpdateStatus(pid, status.StatusKnown)
+
+		peerSet.UpdateStatus(pid, status.StatusBanned)
+		assert.Equal(t, status.StatusBanned, peerSet.GetPeerStatus(pid))
+	})
+
+	t.Run("UpdateStatus from Known to Disconnected", func(t *testing.T) {
 		pid := ts.RandPeerID()
 		peerSet.UpdateStatus(pid, status.StatusKnown)
 
@@ -382,7 +390,7 @@ func TestUpdateStatus(t *testing.T) {
 		assert.Equal(t, status.StatusDisconnected, peerSet.GetPeerStatus(pid))
 	})
 
-	t.Run("UpdateStatus To Known Peer to Connected", func(t *testing.T) {
+	t.Run("UpdateStatus from Known to Connected (should not change)", func(t *testing.T) {
 		pid := ts.RandPeerID()
 		peerSet.UpdateStatus(pid, status.StatusKnown)
 
@@ -390,14 +398,27 @@ func TestUpdateStatus(t *testing.T) {
 		assert.Equal(t, status.StatusKnown, peerSet.GetPeerStatus(pid))
 	})
 
-	t.Run("UpdateStatus To Banned Peer", func(t *testing.T) {
+	t.Run("UpdateStatus from Banned to Disconnected (should change)", func(t *testing.T) {
+		pid := ts.RandPeerID()
+		peerSet.UpdateStatus(pid, status.StatusBanned)
+
+		peerSet.UpdateStatus(pid, status.StatusDisconnected)
+		assert.Equal(t, status.StatusDisconnected, peerSet.GetPeerStatus(pid))
+	})
+
+	t.Run("UpdateStatus from Banned to Connected", func(t *testing.T) {
 		pid := ts.RandPeerID()
 		peerSet.UpdateStatus(pid, status.StatusBanned)
 
 		peerSet.UpdateStatus(pid, status.StatusConnected)
 		assert.Equal(t, status.StatusBanned, peerSet.GetPeerStatus(pid))
+	})
 
-		peerSet.UpdateStatus(pid, status.StatusDisconnected)
+	t.Run("UpdateStatus from Banned to Known", func(t *testing.T) {
+		pid := ts.RandPeerID()
+		peerSet.UpdateStatus(pid, status.StatusBanned)
+
+		peerSet.UpdateStatus(pid, status.StatusKnown)
 		assert.Equal(t, status.StatusBanned, peerSet.GetPeerStatus(pid))
 	})
 
