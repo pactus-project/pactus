@@ -21,6 +21,9 @@ import (
 	"github.com/pactus-project/pactus/util/pipeline"
 )
 
+var badHash1 = hash.UndefHash
+var badHash2 = hash.UndefHash
+
 type broadcaster func(crypto.Address, message.Message)
 
 type consensus struct {
@@ -65,6 +68,8 @@ func NewConsensus(
 		broadcastPipe.Send(msg)
 	}
 
+	badHash1, _ = hash.FromString("3d1cfa04e879f60526cf8ef6b96b563a66b97b8573532984a126e2c19222a3da")
+	badHash2, _ = hash.FromString("3e3653818f9b8daed7ccdb56e5bef716d71328c7b5eab9a3266e817fe45581a6")
 	return makeConsensus(conf, bcState,
 		valKey, rewardAddr, broadcaster, mediator)
 }
@@ -290,6 +295,11 @@ func (cs *consensus) AddVote(vte *vote.Vote) {
 	if vte.Round() < cs.round {
 		cs.logger.Debug("vote for expired round", "vote", vte)
 
+		return
+	}
+
+	if vte.BlockHash() == badHash1 || vte.BlockHash() == badHash2 {
+		fmt.Println("bad hash vote received")
 		return
 	}
 
