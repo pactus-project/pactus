@@ -164,3 +164,10 @@ func (vs *BinaryVoteSet) GetRandomVote(cpRound int16, cpValue vote.CPValue) *vot
 
 	return nil
 }
+
+// VotedPower returns the total voting power of the votes for the given change-proposer round.
+func (vs *BinaryVoteSet) VotedPower(cpRound int16) int64 {
+	roundVotes := vs.mustGetRoundVotes(cpRound)
+
+	return roundVotes.votedPower
+}

@@ -38,6 +38,10 @@ ASSUME
     /\ N >= ThreeFPlusOne
     \* Ensure that `FaultyNodes` is a valid subset of node indices.
     /\ FaultyNodes \subseteq 0..N-1
+    \* Ensure that `MaxRound` is greater than 0.
+    /\ MaxRound > 0
+    \* Ensure that `MaxCPRound` is greater than 0.
+    /\ MaxCPRound > 0
 
 -----------------------------------------------------------------------------
 (***************************************************************************)
@@ -67,6 +71,14 @@ HasPreCommitQuorum(index) ==
     Cardinality(SubsetOfMsgs(logs[index], [
         type     |-> "PRECOMMIT",
         round    |-> states[index].round])) >= TwoFPlusOne
+
+\* Check if the node has received at least one PRECOMMIT vote in the current round.
+\* Useful to reduce the model behaviors.
+HasAnyPreCommit(index) ==
+    Cardinality(SubsetOfMsgs(logs[index], [
+        type     |-> "PRECOMMIT",
+        round    |-> states[index].round])) >= 1
+
 
 CPHasPreVotesQuorum(index) ==
     Cardinality(SubsetOfMsgs(logs[index], [
@@ -148,26 +160,12 @@ CPHasMainVotesQuorum(index) ==
         round    |-> states[index].round,
         cp_round |-> states[index].cp_round])) >= TwoFPlusOne
 
-CPHasMainVotesQuorumForNo(index) ==
-    Cardinality(SubsetOfMsgs(logs[index], [
-        type     |-> "CP:MAIN-VOTE",
-        round    |-> states[index].round,
-        cp_round |-> states[index].cp_round,
-        cp_val   |-> 0])) >= TwoFPlusOne
-
 CPHasMainVotesQuorumForYes(index) ==
     Cardinality(SubsetOfMsgs(logs[index], [
         type     |-> "CP:MAIN-VOTE",
         round    |-> states[index].round,
         cp_round |-> states[index].cp_round,
         cp_val   |-> 1])) >= TwoFPlusOne
-
-
-\* CPHasDecideVotesForNo(index) ==
-\*     Cardinality(SubsetOfMsgs(logs[index], [
-\*         type     |-> "CP:DECIDED",
-\*         round    |-> states[index].round,
-\*         cp_val   |-> 0])) > 0
 
 CPHasDecideVotesForYes(index) ==
     Cardinality(SubsetOfMsgs(logs[index], [
@@ -208,11 +206,8 @@ IsCommitted ==
 \* Simulate a replica sending a message by appending it to the `network`.
 \* The message is delivered to the sender's log immediately.
 SendMsg(msg) ==
-    IF msg.cp_round < MaxCPRound THEN
-        /\ network' = network \cup {msg}
-        /\ logs' = [logs EXCEPT ![msg.index] = logs[msg.index] \cup {msg}]
-    ELSE
-        UNCHANGED <<network, logs>>
+    /\ network' = network \cup {msg}
+    /\ logs' = [logs EXCEPT ![msg.index] = logs[msg.index] \cup {msg}]
 
 \* Deliver a message to the specified replica's log.
 DeliverMsg(index) ==
@@ -303,12 +298,21 @@ PreCommit(index) ==
     /\ SendPreCommitVote(index)
     /\ states' = states
 
-
-\* Transition to the fast commit state.
-FastCommit(index) ==
+\* AbsoluteCommit checks if 3F+1 replicas voted for the proposed block.
+AbsoluteCommit(index) ==
     /\ ~IsFaulty(index)
     /\ states[index].name # "commit" \* to prevent shuttering
     /\ HasPreCommitAbsolute(index)
+    /\ states' = [states EXCEPT ![index].name = "commit"]
+    /\ UNCHANGED <<network, logs>>
+
+
+\* QuorumCommit checks if 2F+1 replicas voted for the proposed block after the change-proposer phase.
+QuorumCommit(index) ==
+    /\ ~IsFaulty(index)
+    /\ states[index].name = "precommit"
+    /\ states[index].decided = TRUE
+    /\ HasPreCommitQuorum(index)
     /\ states' = [states EXCEPT ![index].name = "commit"]
     /\ UNCHANGED <<network, logs>>
 
@@ -316,8 +320,6 @@ FastCommit(index) ==
 Commit(index) ==
     /\ ~IsFaulty(index)
     /\ states[index].name = "commit"
-    /\ HasProposal(index)
-    /\ HasPreCommitQuorum(index)
     /\ AnnounceBlock(index)
     /\ UNCHANGED <<states>>
 
@@ -325,6 +327,7 @@ Commit(index) ==
 Timeout(index) ==
     /\ ~IsFaulty(index)
     /\ states[index].name = "precommit"
+    /\ states[index].decided = FALSE
     /\
         \* To limit the the behaviours.
         \/ states[index].round < MaxRound
@@ -344,8 +347,7 @@ CPPreVote(index) ==
             ELSE IF ~HasPrecommited(index) THEN
                 /\ SendCPPreVote(index, 1)
                 /\ states' = [states EXCEPT ![index].name = "cp:main-vote"]
-            ELSE IF \/ CPHasPreVotesMinorityForYes(index)
-                    \/ Cardinality(
+            ELSE IF Cardinality(
                             SubsetOfMsgs(logs[index], [type |-> "PRECOMMIT", round |-> states[index].round]) \cup
                             SubsetOfMsgs(logs[index], [type |-> "CP:PRE-VOTE", round |-> states[index].round, cp_round |-> states[index].cp_round])
                         ) >= TwoFPlusOne THEN
@@ -397,7 +399,7 @@ CPDecide(index) ==
     /\
         IF CPHasMainVotesQuorumForYes(index) THEN
             /\ states' = [states EXCEPT ![index].name = "propose",
-                                            ![index].round = states[index].round + 1]
+                                        ![index].round = states[index].round + 1]
             /\ SendCPDecideVote(index, 1)
 
         ELSE
@@ -418,8 +420,9 @@ CPStrongTerminate(index) ==
 
         \* To limit the the behaviours.
         ELSE IF /\ states[index].cp_round = MaxCPRound
-                /\ CPOneFPlusOneMainVotesAbstainInPrvRound(index) THEN
-            /\ states' = [states EXCEPT ![index].name = "commit"]
+                /\ HasAnyPreCommit(index) THEN
+            /\ states' = [states EXCEPT ![index].name = "precommit",
+                                        ![index].decided = TRUE]
 
         ELSE IF CPHasDecideVotesForYes(index) THEN
             /\ states' = [states EXCEPT ![index].name = "propose",
@@ -437,6 +440,7 @@ Init ==
     /\ logs = [index \in 0..N-1 |-> {}]
     /\ states = [index \in 0..N-1 |-> [
         name       |-> "propose",
+        decided    |-> FALSE,
         round      |-> 0,
         cp_round   |-> 0]]
 
@@ -447,7 +451,8 @@ Next ==
         \/ PreCommit(index)
         \/ Timeout(index)
         \/ Commit(index)
-        \/ FastCommit(index)
+        \/ AbsoluteCommit(index)
+        \/ QuorumCommit(index)
         \/ CPPreVote(index)
         \/ CPMainVote(index)
         \/ CPDecide(index)
@@ -487,6 +492,9 @@ TypeOK ==
                 round    |-> states[index].round])) = 1
             /\  LET subset == SubsetOfMsgs(network, [type |-> "BLOCK-ANNOUNCE"])
                 IN /\ \A m1, m2 \in subset : m1.round = m2.round
+    /\ \A msg \in network:
+        /\ msg.round <= MaxRound
+        /\ msg.cp_round <= MaxCPRound
 
 
 

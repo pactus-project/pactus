@@ -425,3 +425,70 @@ func TestDecidedVoteset(t *testing.T) {
 	assert.True(t, voteSet.HasAnyVoteFor(0, vote.CPValueYes))
 	assert.False(t, voteSet.HasAnyVoteFor(0, vote.CPValueNo))
 }
+
+func TestBlockVotedPower(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 3, 7, 11, 13)
+
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	voteSet := NewPrecommitVoteSet(round, totalPower, valsMap)
+
+	hash1 := ts.RandHash()
+	hash2 := ts.RandHash()
+	vote1a := vote.NewPrecommitVote(hash1, height, round, valKeys[0].Address())
+	vote1b := vote.NewPrecommitVote(hash2, height, round, valKeys[0].Address())
+	vote2 := vote.NewPrecommitVote(hash2, height, round, valKeys[1].Address())
+
+	ts.HelperSignVote(valKeys[0], vote1a)
+	ts.HelperSignVote(valKeys[0], vote1b)
+	ts.HelperSignVote(valKeys[1], vote2)
+
+	_, err := voteSet.AddVote(vote1a)
+	assert.NoError(t, err)
+
+	_, err = voteSet.AddVote(vote1b) // Duplicated vote
+	assert.ErrorIs(t, err, ErrDuplicatedVote)
+
+	_, err = voteSet.AddVote(vote2)
+	assert.NoError(t, err)
+
+	assert.Equal(t, int64(3+7), voteSet.VotedPower())
+}
+
+func TestBinaryVotedPower(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 3, 7, 11, 13)
+
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	voteSet := NewCPPreVoteVoteSet(1, totalPower, valsMap)
+
+	just := &vote.JustInitYes{}
+	hash1 := ts.RandHash()
+	hash2 := ts.RandHash()
+	vote1a := vote.NewCPPreVote(hash1, height, round, 0, vote.CPValueYes, just, valKeys[0].Address())
+	vote1b := vote.NewCPPreVote(hash2, height, round, 0, vote.CPValueYes, just, valKeys[0].Address())
+	vote1c := vote.NewCPPreVote(hash1, height, round, 1, vote.CPValueYes, just, valKeys[0].Address())
+	vote2 := vote.NewCPPreVote(hash1, height, round, 0, vote.CPValueYes, just, valKeys[1].Address())
+
+	ts.HelperSignVote(valKeys[0], vote1a)
+	ts.HelperSignVote(valKeys[0], vote1b)
+	ts.HelperSignVote(valKeys[0], vote1c)
+	ts.HelperSignVote(valKeys[1], vote2)
+
+	_, _err := voteSet.AddVote(vote1a)
+	assert.NoError(t, _err)
+
+	_, _err = voteSet.AddVote(vote1b) // Duplicated vote
+	assert.ErrorIs(t, _err, ErrDuplicatedVote)
+
+	_, _err = voteSet.AddVote(vote1c) // Next CP:Round
+	assert.NoError(t, _err)
+
+	_, _err = voteSet.AddVote(vote2)
+	assert.NoError(t, _err)
+
+	assert.Equal(t, int64(3+7), voteSet.VotedPower(0))
+	assert.Equal(t, int64(3), voteSet.VotedPower(1))
+}

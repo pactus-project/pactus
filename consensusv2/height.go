@@ -24,6 +24,9 @@ func (s *newHeightState) decide() {
 	s.validators = validators
 	s.height = sateHeight + 1
 	s.round = 0
+	s.cpRound = 0
+	s.cpDecidedCert = nil
+	s.cpWeakValidity = nil
 	s.active = s.bcState.IsInCommittee(s.valKey.Address())
 	s.logger.Info("entering new height", "height", s.height, "active", s.active)
 

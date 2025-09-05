@@ -118,7 +118,6 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		consMessages: consMessages,
 	}
 	broadcasterFunc := func(sender crypto.Address, msg message.Message) {
-		fmt.Printf("received a message %s: %s\n", msg.Type(), msg.String())
 		td.consMessages = append(td.consMessages, consMessage{
 			sender:  sender,
 			message: msg,
@@ -815,7 +814,7 @@ func TestCases(t *testing.T) {
 		round       int16
 		description string
 	}{
-		// {1697898884837384019, 2, "1/3+ cp:PRE-VOTE in prepare step"},
+		{1757072494246619185, 2, "1/3+ cp:PRE-VOTE in  step"},
 		// {1694848907840926239, 0, "1/3+ cp:PRE-VOTE in precommit step"},
 		// {1694849103290580532, 1, "Conflicting votes, cp-round=0"},
 		// {1697900665869342730, 1, "Conflicting votes, cp-round=1"},
@@ -842,7 +841,7 @@ func TestCases(t *testing.T) {
 }
 
 func TestFaulty(t *testing.T) {
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 1000; i++ {
 		td := setup(t)
 		td.commitBlockForAllStates(t)
 
@@ -868,7 +867,6 @@ func TestFaulty(t *testing.T) {
 // on the first proposal or change the proposer.
 // This is due to the randomness of the binary agreement.
 func TestByzantine(t *testing.T) {
-	return
 	td := setup(t)
 
 	for i := 0; i < 6; i++ {
@@ -890,7 +888,7 @@ func TestByzantine(t *testing.T) {
 	td.shouldPublishVote(t, td.consX, vote.VoteTypePrecommit, prop1.Block().Hash())
 	td.shouldPublishVote(t, td.consY, vote.VoteTypePrecommit, prop1.Block().Hash())
 
-	// Byzantine node doesn't broadcast the prepare vote
+	// Byzantine node partitioned the network and blocked the Node P.
 	// X and Y request to change proposer
 
 	td.changeProposerTimeout(td.consX)

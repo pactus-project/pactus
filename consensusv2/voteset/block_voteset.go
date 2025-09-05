@@ -12,6 +12,7 @@ type BlockVoteSet struct {
 	blockVotes map[hash.Hash]*voteBox
 	allVotes   map[crypto.Address]*vote.Vote
 	quorumHash *hash.Hash
+	votedPower int64
 }
 
 func NewPrecommitVoteSet(round int16, totalPower int64,
@@ -27,6 +28,7 @@ func newBlockVoteSet(voteSet *voteSet) *BlockVoteSet {
 		voteSet:    voteSet,
 		blockVotes: make(map[hash.Hash]*voteBox),
 		allVotes:   make(map[crypto.Address]*vote.Vote),
+		votedPower: 0,
 	}
 }
 
@@ -79,6 +81,7 @@ func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 		err = ErrDuplicatedVote
 	} else {
 		vs.allVotes[vote.Signer()] = vote
+		vs.votedPower += power
 	}
 
 	blockVotes := vs.mustGetBlockVotes(vote.BlockHash())
@@ -127,3 +130,9 @@ func (vs *BlockVoteSet) HasQuorumHash() bool {
 func (vs *BlockVoteSet) QuorumHash() *hash.Hash {
 	return vs.quorumHash
 }
+
+// VotedPower returns the total voting power of the votes.
+func (vs *BlockVoteSet) VotedPower() int64 {
+	return vs.votedPower
+}
+

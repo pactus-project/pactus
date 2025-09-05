@@ -14,8 +14,6 @@ func (s *cpMainVoteState) enter() {
 }
 
 func (s *cpMainVoteState) decide() {
-	s.absoluteCommit()
-	s.cpStrongTermination()
 	s.checkForWeakValidity()
 	s.detectByzantineProposal()
 
@@ -52,6 +50,9 @@ func (s *cpMainVoteState) decide() {
 			s.enterNewState(s.cpDecideState)
 		}
 	}
+
+	s.cpStrongTermination()
+	s.absoluteCommit()
 }
 
 func (s *cpMainVoteState) checkForWeakValidity() {
