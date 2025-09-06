@@ -20,7 +20,7 @@ func (handler *queryProposalHandler) ParseMessage(m message.Message, _ peer.ID) 
 	msg := m.(*message.QueryProposalMessage)
 	handler.logger.Trace("parsing QueryProposal message", "msg", msg)
 
-	prop := handler.consMgr.HandleQueryProposal(msg.Height, msg.Round)
+	prop := handler.getConsMgr().HandleQueryProposal(msg.Height, msg.Round)
 	if prop != nil {
 		response := message.NewProposalMessage(prop)
 		handler.broadcast(response)

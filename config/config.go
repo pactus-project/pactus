@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensusv2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/store"
@@ -48,8 +49,9 @@ type Config struct {
 	HTML    *html.Config    `toml:"html"`
 	ZeroMq  *zmq.Config     `toml:"zeromq"`
 
-	Consensus     *consensus.Config `toml:"-"`
-	WalletManager *wallet.Config    `toml:"-"`
+	Consensus     *consensus.Config   `toml:"-"` // Deprecated: replaced by new consensus algorithm
+	ConsensusV2   *consensusv2.Config `toml:"-"`
+	WalletManager *wallet.Config      `toml:"-"`
 }
 
 type BootstrapInfo struct {
@@ -97,6 +99,7 @@ func defaultConfig() *Config {
 		Sync:          sync.DefaultConfig(),
 		TxPool:        txpool.DefaultConfig(),
 		Consensus:     consensus.DefaultConfig(),
+		ConsensusV2:   consensusv2.DefaultConfig(),
 		Logger:        logger.DefaultConfig(),
 		GRPC:          grpc.DefaultConfig(),
 		HTML:          html.DefaultConfig(),
@@ -284,6 +287,9 @@ func (conf *Config) BasicCheck() error {
 		return err
 	}
 	if err := conf.Consensus.BasicCheck(); err != nil {
+		return err
+	}
+	if err := conf.ConsensusV2.BasicCheck(); err != nil {
 		return err
 	}
 	if err := conf.Network.BasicCheck(); err != nil {
