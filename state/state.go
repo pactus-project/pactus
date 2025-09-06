@@ -33,6 +33,7 @@ import (
 	"github.com/pactus-project/pactus/util/persistentmerkle"
 	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/simplemerkle"
+	"github.com/pactus-project/pactus/version"
 )
 
 type state struct {
@@ -124,6 +125,16 @@ func LoadOrNewState(
 
 	for _, num := range state.committee.Committers() {
 		state.logger.Debug("availability score", "val", num, "score", state.scoreMgr.AvailabilityScore(num))
+	}
+
+	// Set ProtocolVersion for own validators.
+	for _, key := range valKeys {
+		val, _ := store.Validator(key.Address())
+		if val == nil {
+			continue
+		}
+
+		store.UpdateValidatorProtocolVersion(val.Address(), version.NodeAgent.ProtocolVersion)
 	}
 
 	state.logger.Debug("last info", "committers", state.committee.Committers(), "state_root", state.stateRoot())

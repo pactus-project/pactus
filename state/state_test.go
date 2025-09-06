@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/types/validator"
@@ -547,7 +548,6 @@ func TestLoadState(t *testing.T) {
 
 	assert.Equal(t, td.state.TotalAccounts(), newState.TotalAccounts())
 	assert.Equal(t, td.state.TotalValidators(), newState.TotalValidators())
-	assert.Equal(t, td.state.CommitteeValidators(), newState.CommitteeValidators())
 	assert.Equal(t, td.state.CommitteePower(), newState.CommitteePower())
 	assert.Equal(t, td.state.TotalPower(), newState.TotalPower())
 	assert.Equal(t, td.state.Params(), newState.Params())
@@ -627,4 +627,11 @@ func TestCommittedBlock(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, blkLast.Hash(), td.state.LastBlockHash())
 	})
+}
+
+func TestUpdateProptocolVersion(t *testing.T) {
+	td := setup(t)
+
+	val := td.state.ValidatorByAddress(td.state.valKeys[0].Address())
+	assert.Equal(t, protocol.ProtocolVersionLatest, val.ProtocolVersion())
 }

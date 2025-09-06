@@ -24,7 +24,7 @@ func (handler *proposalHandler) ParseMessage(m message.Message, _ peer.ID) {
 	handler.consMgr.SetProposal(msg.Proposal)
 
 	// TODO: This condition can be removed in future releases.
-	// This helps to support old nodes that don't specify their protocol version.
+	// This helps to support old nodes that don't specify their protocol version in proposal.
 	if msg.ProtocolVersion != protocol.ProtocolVersionUnknown {
 		handler.state.UpdateValidatorProtocolVersion(
 			msg.Proposal.Block().Header().ProposerAddress(),
