@@ -4,6 +4,16 @@ package pactus;
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus";
 
+// Direction represents the connection direction between peers.
+enum Direction {
+  // Unknown direction (default value).
+  DIRECTION_UNKNOWN = 0;
+  // Inbound connection - peer connected to us.
+  DIRECTION_INBOUND = 1;
+  // Outbound connection - we connected to peer.
+  DIRECTION_OUTBOUND = 2;
+}
+
 // Network service provides RPCs for retrieving information about the network.
 service Network {
   // GetNetworkInfo retrieves information about the overall network.
@@ -102,7 +112,7 @@ message PeerInfo {
   // Network address of the peer.
   string address = 12;
   // Connection direction (e.g., inbound, outbound).
-  string direction = 13;
+  Direction direction = 13;
   // List of protocols supported by the peer.
   repeated string protocols = 14;
   // Total download sessions with the peer.

@@ -144,7 +144,7 @@ func (s *NotifeeService) sendConnectEvent(pid lp2pcore.PeerID,
 	event := &ConnectEvent{
 		PeerID:        pid,
 		RemoteAddress: remoteAddress.String(),
-		Direction:     direction.String(),
+		Direction:     direction,
 	}
 	s.networkPipe.Send(event)
 }

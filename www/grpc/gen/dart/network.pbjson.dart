@@ -13,6 +13,21 @@ import 'dart:convert' as $convert;
 import 'dart:core' as $core;
 import 'dart:typed_data' as $typed_data;
 
+@$core.Deprecated('Use directionDescriptor instead')
+const Direction$json = {
+  '1': 'Direction',
+  '2': [
+    {'1': 'DIRECTION_UNKNOWN', '2': 0},
+    {'1': 'DIRECTION_INBOUND', '2': 1},
+    {'1': 'DIRECTION_OUTBOUND', '2': 2},
+  ],
+};
+
+/// Descriptor for `Direction`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List directionDescriptor = $convert.base64Decode(
+    'CglEaXJlY3Rpb24SFQoRRElSRUNUSU9OX1VOS05PV04QABIVChFESVJFQ1RJT05fSU5CT1VORB'
+    'ABEhYKEkRJUkVDVElPTl9PVVRCT1VORBAC');
+
 @$core.Deprecated('Use getNetworkInfoRequestDescriptor instead')
 const GetNetworkInfoRequest$json = {
   '1': 'GetNetworkInfoRequest',
@@ -117,7 +132,7 @@ const PeerInfo$json = {
     {'1': 'last_sent', '3': 10, '4': 1, '5': 3, '10': 'lastSent'},
     {'1': 'last_received', '3': 11, '4': 1, '5': 3, '10': 'lastReceived'},
     {'1': 'address', '3': 12, '4': 1, '5': 9, '10': 'address'},
-    {'1': 'direction', '3': 13, '4': 1, '5': 9, '10': 'direction'},
+    {'1': 'direction', '3': 13, '4': 1, '5': 14, '6': '.pactus.Direction', '10': 'direction'},
     {'1': 'protocols', '3': 14, '4': 3, '5': 9, '10': 'protocols'},
     {'1': 'total_sessions', '3': 15, '4': 1, '5': 5, '10': 'totalSessions'},
     {'1': 'completed_sessions', '3': 16, '4': 1, '5': 5, '10': 'completedSessions'},
@@ -133,11 +148,11 @@ final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode(
     'NlcxgGIAMoCVISY29uc2Vuc3VzQWRkcmVzc2VzEhoKCHNlcnZpY2VzGAcgASgNUghzZXJ2aWNl'
     'cxImCg9sYXN0X2Jsb2NrX2hhc2gYCCABKAlSDWxhc3RCbG9ja0hhc2gSFgoGaGVpZ2h0GAkgAS'
     'gNUgZoZWlnaHQSGwoJbGFzdF9zZW50GAogASgDUghsYXN0U2VudBIjCg1sYXN0X3JlY2VpdmVk'
-    'GAsgASgDUgxsYXN0UmVjZWl2ZWQSGAoHYWRkcmVzcxgMIAEoCVIHYWRkcmVzcxIcCglkaXJlY3'
-    'Rpb24YDSABKAlSCWRpcmVjdGlvbhIcCglwcm90b2NvbHMYDiADKAlSCXByb3RvY29scxIlCg50'
-    'b3RhbF9zZXNzaW9ucxgPIAEoBVINdG90YWxTZXNzaW9ucxItChJjb21wbGV0ZWRfc2Vzc2lvbn'
-    'MYECABKAVSEWNvbXBsZXRlZFNlc3Npb25zEjMKC21ldHJpY19pbmZvGBEgASgLMhIucGFjdHVz'
-    'Lk1ldHJpY0luZm9SCm1ldHJpY0luZm8=');
+    'GAsgASgDUgxsYXN0UmVjZWl2ZWQSGAoHYWRkcmVzcxgMIAEoCVIHYWRkcmVzcxIvCglkaXJlY3'
+    'Rpb24YDSABKA4yES5wYWN0dXMuRGlyZWN0aW9uUglkaXJlY3Rpb24SHAoJcHJvdG9jb2xzGA4g'
+    'AygJUglwcm90b2NvbHMSJQoOdG90YWxfc2Vzc2lvbnMYDyABKAVSDXRvdGFsU2Vzc2lvbnMSLQ'
+    'oSY29tcGxldGVkX3Nlc3Npb25zGBAgASgFUhFjb21wbGV0ZWRTZXNzaW9ucxIzCgttZXRyaWNf'
+    'aW5mbxgRIAEoCzISLnBhY3R1cy5NZXRyaWNJbmZvUgptZXRyaWNJbmZv');
 
 @$core.Deprecated('Use connectionInfoDescriptor instead')
 const ConnectionInfo$json = {

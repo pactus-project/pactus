@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
@@ -230,7 +231,7 @@ func TestConnectEvent(t *testing.T) {
 	ce := &network.ConnectEvent{
 		PeerID:        pid,
 		RemoteAddress: remoteAddr,
-		Direction:     "Inbound",
+		Direction:     lp2pnetwork.DirInbound,
 	}
 	td.network.EventPipe.Send(ce)
 

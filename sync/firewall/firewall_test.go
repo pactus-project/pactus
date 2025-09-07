@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -325,7 +326,7 @@ func TestBannedAddress(t *testing.T) {
 
 	for no, tt := range tests {
 		peerID := td.RandPeerID()
-		td.firewall.peerSet.UpdateAddress(peerID, tt.addr, "inbound")
+		td.firewall.peerSet.UpdateAddress(peerID, tt.addr, lp2pnetwork.DirInbound)
 		data := td.testGossipBundle()
 		_, err := td.firewall.OpenGossipBundle(data, peerID)
 

@@ -3,6 +3,7 @@ package peer
 import (
 	"time"
 
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
@@ -18,7 +19,7 @@ type Peer struct {
 	Moniker           string
 	Agent             string
 	Address           string
-	Direction         string
+	Direction         lp2pnetwork.Direction
 	Protocols         []string
 	PeerID            ID
 	ConsensusKeys     []*bls.PublicKey

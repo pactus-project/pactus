@@ -21,6 +21,59 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Direction represents the connection direction between peers.
+type Direction int32
+
+const (
+	// Unknown direction (default value).
+	Direction_DIRECTION_UNKNOWN Direction = 0
+	// Inbound connection - peer connected to us.
+	Direction_DIRECTION_INBOUND Direction = 1
+	// Outbound connection - we connected to peer.
+	Direction_DIRECTION_OUTBOUND Direction = 2
+)
+
+// Enum value maps for Direction.
+var (
+	Direction_name = map[int32]string{
+		0: "DIRECTION_UNKNOWN",
+		1: "DIRECTION_INBOUND",
+		2: "DIRECTION_OUTBOUND",
+	}
+	Direction_value = map[string]int32{
+		"DIRECTION_UNKNOWN":  0,
+		"DIRECTION_INBOUND":  1,
+		"DIRECTION_OUTBOUND": 2,
+	}
+)
+
+func (x Direction) Enum() *Direction {
+	p := new(Direction)
+	*p = x
+	return p
+}
+
+func (x Direction) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Direction) Descriptor() protoreflect.EnumDescriptor {
+	return file_network_proto_enumTypes[0].Descriptor()
+}
+
+func (Direction) Type() protoreflect.EnumType {
+	return &file_network_proto_enumTypes[0]
+}
+
+func (x Direction) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Direction.Descriptor instead.
+func (Direction) EnumDescriptor() ([]byte, []int) {
+	return file_network_proto_rawDescGZIP(), []int{0}
+}
+
 // Request message for retrieving overall network information.
 type GetNetworkInfoRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -424,7 +477,7 @@ type PeerInfo struct {
 	// Network address of the peer.
 	Address string `protobuf:"bytes,12,opt,name=address,proto3" json:"address,omitempty"`
 	// Connection direction (e.g., inbound, outbound).
-	Direction string `protobuf:"bytes,13,opt,name=direction,proto3" json:"direction,omitempty"`
+	Direction Direction `protobuf:"varint,13,opt,name=direction,proto3,enum=pactus.Direction" json:"direction,omitempty"`
 	// List of protocols supported by the peer.
 	Protocols []string `protobuf:"bytes,14,rep,name=protocols,proto3" json:"protocols,omitempty"`
 	// Total download sessions with the peer.
@@ -551,11 +604,11 @@ func (x *PeerInfo) GetAddress() string {
 	return ""
 }
 
-func (x *PeerInfo) GetDirection() string {
+func (x *PeerInfo) GetDirection() Direction {
 	if x != nil {
 		return x.Direction
 	}
-	return ""
+	return Direction_DIRECTION_UNKNOWN
 }
 
 func (x *PeerInfo) GetProtocols() []string {
@@ -820,7 +873,7 @@ const file_network_proto_rawDesc = "" +
 	"\x10ZMQPublisherInfo\x12\x14\n" +
 	"\x05topic\x18\x01 \x01(\tR\x05topic\x12\x18\n" +
 	"\aaddress\x18\x02 \x01(\tR\aaddress\x12\x10\n" +
-	"\x03hwm\x18\x03 \x01(\x05R\x03hwm\"\xc2\x04\n" +
+	"\x03hwm\x18\x03 \x01(\x05R\x03hwm\"\xd5\x04\n" +
 	"\bPeerInfo\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\x05R\x06status\x12\x18\n" +
 	"\amoniker\x18\x02 \x01(\tR\amoniker\x12\x14\n" +
@@ -834,8 +887,8 @@ const file_network_proto_rawDesc = "" +
 	"\tlast_sent\x18\n" +
 	" \x01(\x03R\blastSent\x12#\n" +
 	"\rlast_received\x18\v \x01(\x03R\flastReceived\x12\x18\n" +
-	"\aaddress\x18\f \x01(\tR\aaddress\x12\x1c\n" +
-	"\tdirection\x18\r \x01(\tR\tdirection\x12\x1c\n" +
+	"\aaddress\x18\f \x01(\tR\aaddress\x12/\n" +
+	"\tdirection\x18\r \x01(\x0e2\x11.pactus.DirectionR\tdirection\x12\x1c\n" +
 	"\tprotocols\x18\x0e \x03(\tR\tprotocols\x12%\n" +
 	"\x0etotal_sessions\x18\x0f \x01(\x05R\rtotalSessions\x12-\n" +
 	"\x12completed_sessions\x18\x10 \x01(\x05R\x11completedSessions\x123\n" +
@@ -861,7 +914,11 @@ const file_network_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\v2\x13.pactus.CounterInfoR\x05value:\x028\x01\"=\n" +
 	"\vCounterInfo\x12\x14\n" +
 	"\x05bytes\x18\x01 \x01(\x04R\x05bytes\x12\x18\n" +
-	"\abundles\x18\x02 \x01(\x04R\abundles2\xa2\x01\n" +
+	"\abundles\x18\x02 \x01(\x04R\abundles*Q\n" +
+	"\tDirection\x12\x15\n" +
+	"\x11DIRECTION_UNKNOWN\x10\x00\x12\x15\n" +
+	"\x11DIRECTION_INBOUND\x10\x01\x12\x16\n" +
+	"\x12DIRECTION_OUTBOUND\x10\x022\xa2\x01\n" +
 	"\aNetwork\x12O\n" +
 	"\x0eGetNetworkInfo\x12\x1d.pactus.GetNetworkInfoRequest\x1a\x1e.pactus.GetNetworkInfoResponse\x12F\n" +
 	"\vGetNodeInfo\x12\x1a.pactus.GetNodeInfoRequest\x1a\x1b.pactus.GetNodeInfoResponseB:\n" +
@@ -879,42 +936,45 @@ func file_network_proto_rawDescGZIP() []byte {
 	return file_network_proto_rawDescData
 }
 
+var file_network_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_network_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_network_proto_goTypes = []any{
-	(*GetNetworkInfoRequest)(nil),  // 0: pactus.GetNetworkInfoRequest
-	(*GetNetworkInfoResponse)(nil), // 1: pactus.GetNetworkInfoResponse
-	(*GetNodeInfoRequest)(nil),     // 2: pactus.GetNodeInfoRequest
-	(*GetNodeInfoResponse)(nil),    // 3: pactus.GetNodeInfoResponse
-	(*ZMQPublisherInfo)(nil),       // 4: pactus.ZMQPublisherInfo
-	(*PeerInfo)(nil),               // 5: pactus.PeerInfo
-	(*ConnectionInfo)(nil),         // 6: pactus.ConnectionInfo
-	(*MetricInfo)(nil),             // 7: pactus.MetricInfo
-	(*CounterInfo)(nil),            // 8: pactus.CounterInfo
-	nil,                            // 9: pactus.MetricInfo.MessageSentEntry
-	nil,                            // 10: pactus.MetricInfo.MessageReceivedEntry
+	(Direction)(0),                 // 0: pactus.Direction
+	(*GetNetworkInfoRequest)(nil),  // 1: pactus.GetNetworkInfoRequest
+	(*GetNetworkInfoResponse)(nil), // 2: pactus.GetNetworkInfoResponse
+	(*GetNodeInfoRequest)(nil),     // 3: pactus.GetNodeInfoRequest
+	(*GetNodeInfoResponse)(nil),    // 4: pactus.GetNodeInfoResponse
+	(*ZMQPublisherInfo)(nil),       // 5: pactus.ZMQPublisherInfo
+	(*PeerInfo)(nil),               // 6: pactus.PeerInfo
+	(*ConnectionInfo)(nil),         // 7: pactus.ConnectionInfo
+	(*MetricInfo)(nil),             // 8: pactus.MetricInfo
+	(*CounterInfo)(nil),            // 9: pactus.CounterInfo
+	nil,                            // 10: pactus.MetricInfo.MessageSentEntry
+	nil,                            // 11: pactus.MetricInfo.MessageReceivedEntry
 }
 var file_network_proto_depIdxs = []int32{
-	5,  // 0: pactus.GetNetworkInfoResponse.connected_peers:type_name -> pactus.PeerInfo
-	7,  // 1: pactus.GetNetworkInfoResponse.metric_info:type_name -> pactus.MetricInfo
-	6,  // 2: pactus.GetNodeInfoResponse.connection_info:type_name -> pactus.ConnectionInfo
-	4,  // 3: pactus.GetNodeInfoResponse.zmq_publishers:type_name -> pactus.ZMQPublisherInfo
-	7,  // 4: pactus.PeerInfo.metric_info:type_name -> pactus.MetricInfo
-	8,  // 5: pactus.MetricInfo.total_invalid:type_name -> pactus.CounterInfo
-	8,  // 6: pactus.MetricInfo.total_sent:type_name -> pactus.CounterInfo
-	8,  // 7: pactus.MetricInfo.total_received:type_name -> pactus.CounterInfo
-	9,  // 8: pactus.MetricInfo.message_sent:type_name -> pactus.MetricInfo.MessageSentEntry
-	10, // 9: pactus.MetricInfo.message_received:type_name -> pactus.MetricInfo.MessageReceivedEntry
-	8,  // 10: pactus.MetricInfo.MessageSentEntry.value:type_name -> pactus.CounterInfo
-	8,  // 11: pactus.MetricInfo.MessageReceivedEntry.value:type_name -> pactus.CounterInfo
-	0,  // 12: pactus.Network.GetNetworkInfo:input_type -> pactus.GetNetworkInfoRequest
-	2,  // 13: pactus.Network.GetNodeInfo:input_type -> pactus.GetNodeInfoRequest
-	1,  // 14: pactus.Network.GetNetworkInfo:output_type -> pactus.GetNetworkInfoResponse
-	3,  // 15: pactus.Network.GetNodeInfo:output_type -> pactus.GetNodeInfoResponse
-	14, // [14:16] is the sub-list for method output_type
-	12, // [12:14] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	6,  // 0: pactus.GetNetworkInfoResponse.connected_peers:type_name -> pactus.PeerInfo
+	8,  // 1: pactus.GetNetworkInfoResponse.metric_info:type_name -> pactus.MetricInfo
+	7,  // 2: pactus.GetNodeInfoResponse.connection_info:type_name -> pactus.ConnectionInfo
+	5,  // 3: pactus.GetNodeInfoResponse.zmq_publishers:type_name -> pactus.ZMQPublisherInfo
+	0,  // 4: pactus.PeerInfo.direction:type_name -> pactus.Direction
+	8,  // 5: pactus.PeerInfo.metric_info:type_name -> pactus.MetricInfo
+	9,  // 6: pactus.MetricInfo.total_invalid:type_name -> pactus.CounterInfo
+	9,  // 7: pactus.MetricInfo.total_sent:type_name -> pactus.CounterInfo
+	9,  // 8: pactus.MetricInfo.total_received:type_name -> pactus.CounterInfo
+	10, // 9: pactus.MetricInfo.message_sent:type_name -> pactus.MetricInfo.MessageSentEntry
+	11, // 10: pactus.MetricInfo.message_received:type_name -> pactus.MetricInfo.MessageReceivedEntry
+	9,  // 11: pactus.MetricInfo.MessageSentEntry.value:type_name -> pactus.CounterInfo
+	9,  // 12: pactus.MetricInfo.MessageReceivedEntry.value:type_name -> pactus.CounterInfo
+	1,  // 13: pactus.Network.GetNetworkInfo:input_type -> pactus.GetNetworkInfoRequest
+	3,  // 14: pactus.Network.GetNodeInfo:input_type -> pactus.GetNodeInfoRequest
+	2,  // 15: pactus.Network.GetNetworkInfo:output_type -> pactus.GetNetworkInfoResponse
+	4,  // 16: pactus.Network.GetNodeInfo:output_type -> pactus.GetNodeInfoResponse
+	15, // [15:17] is the sub-list for method output_type
+	13, // [13:15] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_network_proto_init() }
@@ -927,13 +987,14 @@ func file_network_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_network_proto_rawDesc), len(file_network_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_network_proto_goTypes,
 		DependencyIndexes: file_network_proto_depIdxs,
+		EnumInfos:         file_network_proto_enumTypes,
 		MessageInfos:      file_network_proto_msgTypes,
 	}.Build()
 	File_network_proto = out.File

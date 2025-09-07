@@ -15,7 +15,11 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+import 'network.pbenum.dart';
+
 export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
+
+export 'network.pbenum.dart';
 
 /// Request message for retrieving overall network information.
 class GetNetworkInfoRequest extends $pb.GeneratedMessage {
@@ -509,7 +513,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     $fixnum.Int64? lastSent,
     $fixnum.Int64? lastReceived,
     $core.String? address,
-    $core.String? direction,
+    Direction? direction,
     $core.Iterable<$core.String>? protocols,
     $core.int? totalSessions,
     $core.int? completedSessions,
@@ -586,7 +590,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..aInt64(10, _omitFieldNames ? '' : 'lastSent')
     ..aInt64(11, _omitFieldNames ? '' : 'lastReceived')
     ..aOS(12, _omitFieldNames ? '' : 'address')
-    ..aOS(13, _omitFieldNames ? '' : 'direction')
+    ..e<Direction>(13, _omitFieldNames ? '' : 'direction', $pb.PbFieldType.OE, defaultOrMaker: Direction.DIRECTION_UNKNOWN, valueOf: Direction.valueOf, enumValues: Direction.values)
     ..pPS(14, _omitFieldNames ? '' : 'protocols')
     ..a<$core.int>(15, _omitFieldNames ? '' : 'totalSessions', $pb.PbFieldType.O3)
     ..a<$core.int>(16, _omitFieldNames ? '' : 'completedSessions', $pb.PbFieldType.O3)
@@ -725,9 +729,9 @@ class PeerInfo extends $pb.GeneratedMessage {
 
   /// Connection direction (e.g., inbound, outbound).
   @$pb.TagNumber(13)
-  $core.String get direction => $_getSZ(12);
+  Direction get direction => $_getN(12);
   @$pb.TagNumber(13)
-  set direction($core.String v) { $_setString(12, v); }
+  set direction(Direction v) { $_setField(13, v); }
   @$pb.TagNumber(13)
   $core.bool hasDirection() => $_has(12);
   @$pb.TagNumber(13)

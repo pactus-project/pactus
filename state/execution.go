@@ -13,6 +13,7 @@ import (
 func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool) error {
 	var subsidyTrx *tx.Tx
 	for i, trx := range blk.Transactions() {
+		// TODO: This check can be omitted during the old block check.
 		// The first transaction should be subsidy transaction
 		isSubsidyTx := (i == 0)
 		if isSubsidyTx {

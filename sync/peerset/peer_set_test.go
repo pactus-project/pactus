@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
@@ -334,7 +335,7 @@ func TestUpdateAddress(t *testing.T) {
 
 	pid := peer.ID("peer1")
 	addr := "pid-1-address"
-	dir := "Inbound"
+	dir := lp2pnetwork.DirInbound
 	peerSet.UpdateAddress(pid, addr, dir)
 
 	p := peerSet.GetPeer(pid)

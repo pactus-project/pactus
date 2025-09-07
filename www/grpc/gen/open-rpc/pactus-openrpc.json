@@ -758,7 +758,7 @@
 {
   "type": "array",
   "items": { "type": "string" }
-},"services": { "type": "integer" },"last_block_hash": { "type": "string" },"height": { "type": "integer" },"last_sent": { "type": "integer" },"last_received": { "type": "integer" },"address": { "type": "string" },"direction": { "type": "string" },"protocols": 
+},"services": { "type": "integer" },"last_block_hash": { "type": "string" },"height": { "type": "integer" },"last_sent": { "type": "integer" },"last_received": { "type": "integer" },"address": { "type": "string" },"direction": { "type": "integer" },"protocols": 
 {
   "type": "array",
   "items": { "type": "string" }

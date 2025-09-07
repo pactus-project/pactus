@@ -4,6 +4,7 @@ import (
 	"sync"
 	"time"
 
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle/message"
@@ -208,7 +209,7 @@ func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32, lastBlockHash hash.H
 	p.LastBlockHash = lastBlockHash
 }
 
-func (ps *PeerSet) UpdateAddress(pid peer.ID, addr, direction string) {
+func (ps *PeerSet) UpdateAddress(pid peer.ID, addr string, direction lp2pnetwork.Direction) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 

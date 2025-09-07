@@ -32,7 +32,7 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) {
 	}
 
 	handler.peerSet.UpdateStatus(pid, status.StatusKnown)
-	handler.logger.Info("hello message acknowledged", "pid", pid)
+	handler.logger.Info("hello message acknowledged", "pid", pid, "reason", msg.Reason)
 
 	if msg.Height > handler.state.LastBlockHeight() {
 		handler.updateBlockchain()

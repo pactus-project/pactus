@@ -1,10 +1,20 @@
 from google.protobuf.internal import containers as _containers
+from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from collections.abc import Iterable as _Iterable, Mapping as _Mapping
 from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
+
+class Direction(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    DIRECTION_UNKNOWN: _ClassVar[Direction]
+    DIRECTION_INBOUND: _ClassVar[Direction]
+    DIRECTION_OUTBOUND: _ClassVar[Direction]
+DIRECTION_UNKNOWN: Direction
+DIRECTION_INBOUND: Direction
+DIRECTION_OUTBOUND: Direction
 
 class GetNetworkInfoRequest(_message.Message):
     __slots__ = ("only_connected",)
@@ -99,12 +109,12 @@ class PeerInfo(_message.Message):
     last_sent: int
     last_received: int
     address: str
-    direction: str
+    direction: Direction
     protocols: _containers.RepeatedScalarFieldContainer[str]
     total_sessions: int
     completed_sessions: int
     metric_info: MetricInfo
-    def __init__(self, status: _Optional[int] = ..., moniker: _Optional[str] = ..., agent: _Optional[str] = ..., peer_id: _Optional[str] = ..., consensus_keys: _Optional[_Iterable[str]] = ..., consensus_addresses: _Optional[_Iterable[str]] = ..., services: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., height: _Optional[int] = ..., last_sent: _Optional[int] = ..., last_received: _Optional[int] = ..., address: _Optional[str] = ..., direction: _Optional[str] = ..., protocols: _Optional[_Iterable[str]] = ..., total_sessions: _Optional[int] = ..., completed_sessions: _Optional[int] = ..., metric_info: _Optional[_Union[MetricInfo, _Mapping]] = ...) -> None: ...
+    def __init__(self, status: _Optional[int] = ..., moniker: _Optional[str] = ..., agent: _Optional[str] = ..., peer_id: _Optional[str] = ..., consensus_keys: _Optional[_Iterable[str]] = ..., consensus_addresses: _Optional[_Iterable[str]] = ..., services: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., height: _Optional[int] = ..., last_sent: _Optional[int] = ..., last_received: _Optional[int] = ..., address: _Optional[str] = ..., direction: _Optional[_Union[Direction, str]] = ..., protocols: _Optional[_Iterable[str]] = ..., total_sessions: _Optional[int] = ..., completed_sessions: _Optional[int] = ..., metric_info: _Optional[_Union[MetricInfo, _Mapping]] = ...) -> None: ...
 
 class ConnectionInfo(_message.Message):
     __slots__ = ("connections", "inbound_connections", "outbound_connections")

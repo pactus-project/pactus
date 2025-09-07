@@ -1788,6 +1788,16 @@
       },
       "description": "Response message contains the decoded transaction."
     },
+    "pactusDirection": {
+      "type": "string",
+      "enum": [
+        "DIRECTION_UNKNOWN",
+        "DIRECTION_INBOUND",
+        "DIRECTION_OUTBOUND"
+      ],
+      "default": "DIRECTION_UNKNOWN",
+      "description": "Direction represents the connection direction between peers.\n\n - DIRECTION_UNKNOWN: Unknown direction (default value).\n - DIRECTION_INBOUND: Inbound connection - peer connected to us.\n - DIRECTION_OUTBOUND: Outbound connection - we connected to peer."
+    },
     "pactusGetAccountResponse": {
       "type": "object",
       "properties": {
@@ -2683,7 +2693,7 @@
           "description": "Network address of the peer."
         },
         "direction": {
-          "type": "string",
+          "$ref": "#/definitions/pactusDirection",
           "description": "Connection direction (e.g., inbound, outbound)."
         },
         "protocols": {

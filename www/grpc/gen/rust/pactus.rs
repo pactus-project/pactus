@@ -1007,8 +1007,8 @@ pub struct PeerInfo {
     #[prost(string, tag="12")]
     pub address: ::prost::alloc::string::String,
     /// Connection direction (e.g., inbound, outbound).
-    #[prost(string, tag="13")]
-    pub direction: ::prost::alloc::string::String,
+    #[prost(enumeration="Direction", tag="13")]
+    pub direction: i32,
     /// List of protocols supported by the peer.
     #[prost(string, repeated, tag="14")]
     pub protocols: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
@@ -1066,6 +1066,39 @@ pub struct CounterInfo {
     /// Total number of bundles.
     #[prost(uint64, tag="2")]
     pub bundles: u64,
+}
+/// Direction represents the connection direction between peers.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum Direction {
+    /// Unknown direction (default value).
+    Unknown = 0,
+    /// Inbound connection - peer connected to us.
+    Inbound = 1,
+    /// Outbound connection - we connected to peer.
+    Outbound = 2,
+}
+impl Direction {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Direction::Unknown => "DIRECTION_UNKNOWN",
+            Direction::Inbound => "DIRECTION_INBOUND",
+            Direction::Outbound => "DIRECTION_OUTBOUND",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "DIRECTION_UNKNOWN" => Some(Self::Unknown),
+            "DIRECTION_INBOUND" => Some(Self::Inbound),
+            "DIRECTION_OUTBOUND" => Some(Self::Outbound),
+            _ => None,
+        }
+    }
 }
 /// Request message for signing a message with a private key.
 #[allow(clippy::derive_partial_eq_without_eq)]

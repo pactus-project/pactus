@@ -2852,9 +2852,14 @@ Parameters has no fields.
       </tr>
          <tr>
         <td class="fw-bold">connected_peers[].direction</td>
-        <td> string</td>
+        <td> numeric</td>
         <td>
-        Connection direction (e.g., inbound, outbound).
+        (Enum)Connection direction (e.g., inbound, outbound).
+        <br>Available values:<ul>
+          <li>DIRECTION_UNKNOWN = 0 (Unknown direction (default value).)</li>
+          <li>DIRECTION_INBOUND = 1 (Inbound connection - peer connected to us.)</li>
+          <li>DIRECTION_OUTBOUND = 2 (Outbound connection - we connected to peer.)</li>
+          </ul>
         </td>
       </tr>
          <tr>

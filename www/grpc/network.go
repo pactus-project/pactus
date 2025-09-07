@@ -89,7 +89,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		peerInfo.Moniker = peer.Moniker
 		peerInfo.Agent = peer.Agent
 		peerInfo.Address = peer.Address
-		peerInfo.Direction = peer.Direction
+		peerInfo.Direction = pactus.Direction(peer.Direction)
 		peerInfo.Services = uint32(peer.Services)
 		peerInfo.Height = peer.Height
 		peerInfo.Protocols = peer.Protocols
