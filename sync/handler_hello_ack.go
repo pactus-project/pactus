@@ -50,7 +50,6 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) {
 		if !peer.OutboundHelloSent {
 			handler.logger.Warn("received unexpected HelloAc message",
 				"pid", pid, "direction", peer.Direction)
-			handler.network.CloseConnection(pid)
 
 			return
 		}
@@ -59,7 +58,6 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) {
 		if !peer.OutboundHelloSent {
 			handler.logger.Warn("received unexpected HelloAc message",
 				"pid", pid, "direction", peer.Direction)
-			handler.network.CloseConnection(pid)
 
 			return
 		}

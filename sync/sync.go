@@ -233,7 +233,6 @@ func (sync *synchronizer) sayHello(pid peer.ID) {
 	)
 	msg.Sign(sync.valKeys)
 
-	sync.logger.Info("sending Hello message (outbound)", "to", pid)
 	sync.sendTo(msg, pid)
 }
 
@@ -310,6 +309,7 @@ func (sync *synchronizer) processProtocolsEvent(eve *network.ProtocolsEvents) {
 
 	peer := sync.peerSet.GetPeer(eve.PeerID)
 	if peer.Direction == lp2pnetwork.DirOutbound {
+		sync.logger.Info("sending Hello message (outbound)", "to", eve.PeerID)
 		sync.sayHello(eve.PeerID)
 
 		// Mark that we've sent the hello message to the inbound peer

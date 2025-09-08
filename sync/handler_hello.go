@@ -122,7 +122,6 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		if peer.OutboundHelloSent {
 			handler.logger.Warn("received unexpected Hello message",
 				"pid", pid, "direction", peer.Direction)
-			handler.network.CloseConnection(pid)
 
 			return
 		}
@@ -137,7 +136,6 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		if !peer.OutboundHelloSent {
 			handler.logger.Warn("received unexpected Hello message",
 				"pid", pid, "direction", peer.Direction)
-			handler.network.CloseConnection(pid)
 
 			return
 		}
