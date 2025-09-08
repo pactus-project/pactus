@@ -33,8 +33,6 @@ func (handler *blocksRequestHandler) ParseMessage(m message.Message, pid peer.ID
 		return
 	}
 
-	fmt.Printf("== moniker: %v, agent: %v\n", peer.Moniker, peer.Agent)
-
 	if !peer.Status.IsKnown() {
 		response := message.NewBlocksResponseMessage(message.ResponseCodeRejected,
 			fmt.Sprintf("not handshaked (%s)", peer.Status.String()), msg.SessionID, 0, nil, nil)
