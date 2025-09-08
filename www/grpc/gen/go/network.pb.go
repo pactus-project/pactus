@@ -486,7 +486,7 @@ type PeerInfo struct {
 	CompletedSessions int32 `protobuf:"varint,16,opt,name=completed_sessions,json=completedSessions,proto3" json:"completed_sessions,omitempty"`
 	// Metrics related to peer activity.
 	MetricInfo *MetricInfo `protobuf:"bytes,17,opt,name=metric_info,json=metricInfo,proto3" json:"metric_info,omitempty"`
-	// Whether we've sent the hello message for outbound connections.
+	// Whether the hello message was sent from the outbound connection.
 	OutboundHelloSent bool `protobuf:"varint,18,opt,name=outbound_hello_sent,json=outboundHelloSent,proto3" json:"outbound_hello_sent,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache

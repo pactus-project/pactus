@@ -1021,7 +1021,7 @@ pub struct PeerInfo {
     /// Metrics related to peer activity.
     #[prost(message, optional, tag="17")]
     pub metric_info: ::core::option::Option<MetricInfo>,
-    /// Whether we've sent the hello message for outbound connections.
+    /// Whether the hello message was sent from the outbound connection.
     #[prost(bool, tag="18")]
     pub outbound_hello_sent: bool,
 }

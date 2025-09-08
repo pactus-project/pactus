@@ -2929,7 +2929,7 @@ Parameters has no fields.
         <td class="fw-bold">connected_peers[].outbound_hello_sent</td>
         <td> boolean</td>
         <td>
-        Whether we've sent the hello message for outbound connections.
+        Whether the hello message was sent from the outbound connection.
         </td>
       </tr>
          <tr>

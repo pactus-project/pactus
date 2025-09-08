@@ -6579,7 +6579,7 @@ public final class NetworkOuterClass {
 
     /**
      * <pre>
-     * Whether we've sent the hello message for outbound connections.
+     * Whether the hello message was sent from the outbound connection.
      * </pre>
      *
      * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
@@ -7208,7 +7208,7 @@ public final class NetworkOuterClass {
     private boolean outboundHelloSent_ = false;
     /**
      * <pre>
-     * Whether we've sent the hello message for outbound connections.
+     * Whether the hello message was sent from the outbound connection.
      * </pre>
      *
      * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
@@ -9426,7 +9426,7 @@ public final class NetworkOuterClass {
       private boolean outboundHelloSent_ ;
       /**
        * <pre>
-       * Whether we've sent the hello message for outbound connections.
+       * Whether the hello message was sent from the outbound connection.
        * </pre>
        *
        * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
@@ -9438,7 +9438,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Whether we've sent the hello message for outbound connections.
+       * Whether the hello message was sent from the outbound connection.
        * </pre>
        *
        * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
@@ -9454,7 +9454,7 @@ public final class NetworkOuterClass {
       }
       /**
        * <pre>
-       * Whether we've sent the hello message for outbound connections.
+       * Whether the hello message was sent from the outbound connection.
        * </pre>
        *
        * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>

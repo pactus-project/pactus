@@ -2719,7 +2719,7 @@
         },
         "outboundHelloSent": {
           "type": "boolean",
-          "description": "Whether we've sent the hello message for outbound connections."
+          "description": "Whether the hello message was sent from the outbound connection."
         }
       },
       "description": "PeerInfo contains information about a peer in the network."

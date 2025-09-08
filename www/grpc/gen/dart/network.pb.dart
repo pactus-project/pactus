@@ -778,7 +778,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(17)
   MetricInfo ensureMetricInfo() => $_ensure(16);
 
-  /// Whether we've sent the hello message for outbound connections.
+  /// Whether the hello message was sent from the outbound connection.
   @$pb.TagNumber(18)
   $core.bool get outboundHelloSent => $_getBF(17);
   @$pb.TagNumber(18)

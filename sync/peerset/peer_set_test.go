@@ -365,6 +365,15 @@ func TestUpdateProtocols(t *testing.T) {
 	assert.Equal(t, protocols, p.Protocols)
 }
 
+func TestUpdateOutboundHelloSent(t *testing.T) {
+	peerSet := NewPeerSet(time.Minute)
+	pid := peer.ID("peer1")
+	peerSet.UpdateOutboundHelloSent(pid, true)
+
+	p := peerSet.GetPeer(pid)
+	assert.True(t, p.OutboundHelloSent)
+}
+
 func TestUpdateStatus(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 	peerSet := NewPeerSet(time.Minute)

@@ -130,6 +130,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		// Mark that we've received the hello message from the outbound peer
 		handler.peerSet.UpdateOutboundHelloSent(pid, true)
 
+		handler.logger.Info("sending Hello message (inbound)", "to", pid)
 		handler.sayHello(pid)
 
 	case lp2pnetwork.DirOutbound:
