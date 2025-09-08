@@ -24,7 +24,7 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) {
 	handler.logger.Trace("parsing HelloAck message", "msg", msg)
 
 	if msg.ResponseCode == message.ResponseCodeRejected {
-		handler.logger.Warn("our hello message rejected",
+		handler.logger.Warn("hello message rejected",
 			"from", pid, "reason", msg.Reason)
 		handler.network.CloseConnection(pid)
 
