@@ -55,9 +55,9 @@ func setup(t *testing.T, conf *Config) *testData {
 	goodPeerID := ts.RandPeerID()
 	unknownPeerID := ts.RandPeerID()
 
-	net.AddAnotherNetwork(network.MockingNetwork(ts, goodPeerID))
-	net.AddAnotherNetwork(network.MockingNetwork(ts, unknownPeerID))
-	net.AddAnotherNetwork(network.MockingNetwork(ts, bannedPeerID))
+	net.AddAnotherNetwork(network.MockingNetwork(ts, goodPeerID), lp2pnetwork.DirOutbound)
+	net.AddAnotherNetwork(network.MockingNetwork(ts, unknownPeerID), lp2pnetwork.DirOutbound)
+	net.AddAnotherNetwork(network.MockingNetwork(ts, bannedPeerID), lp2pnetwork.DirOutbound)
 
 	firewall.peerSet.UpdateStatus(goodPeerID, status.StatusKnown)
 	firewall.peerSet.UpdateStatus(bannedPeerID, status.StatusBanned)

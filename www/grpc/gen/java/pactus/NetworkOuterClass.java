@@ -6576,6 +6576,16 @@ public final class NetworkOuterClass {
      * <code>.pactus.MetricInfo metric_info = 17 [json_name = "metricInfo"];</code>
      */
     pactus.NetworkOuterClass.MetricInfoOrBuilder getMetricInfoOrBuilder();
+
+    /**
+     * <pre>
+     * Whether we've sent the hello message for outbound connections.
+     * </pre>
+     *
+     * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
+     * @return The outboundHelloSent.
+     */
+    boolean getOutboundHelloSent();
   }
   /**
    * <pre>
@@ -7194,6 +7204,21 @@ public final class NetworkOuterClass {
       return metricInfo_ == null ? pactus.NetworkOuterClass.MetricInfo.getDefaultInstance() : metricInfo_;
     }
 
+    public static final int OUTBOUND_HELLO_SENT_FIELD_NUMBER = 18;
+    private boolean outboundHelloSent_ = false;
+    /**
+     * <pre>
+     * Whether we've sent the hello message for outbound connections.
+     * </pre>
+     *
+     * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
+     * @return The outboundHelloSent.
+     */
+    @java.lang.Override
+    public boolean getOutboundHelloSent() {
+      return outboundHelloSent_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -7258,6 +7283,9 @@ public final class NetworkOuterClass {
       }
       if (((bitField0_ & 0x00000001) != 0)) {
         output.writeMessage(17, getMetricInfo());
+      }
+      if (outboundHelloSent_ != false) {
+        output.writeBool(18, outboundHelloSent_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -7343,6 +7371,10 @@ public final class NetworkOuterClass {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(17, getMetricInfo());
       }
+      if (outboundHelloSent_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(18, outboundHelloSent_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -7394,6 +7426,8 @@ public final class NetworkOuterClass {
         if (!getMetricInfo()
             .equals(other.getMetricInfo())) return false;
       }
+      if (getOutboundHelloSent()
+          != other.getOutboundHelloSent()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -7449,6 +7483,9 @@ public final class NetworkOuterClass {
         hash = (37 * hash) + METRIC_INFO_FIELD_NUMBER;
         hash = (53 * hash) + getMetricInfo().hashCode();
       }
+      hash = (37 * hash) + OUTBOUND_HELLO_SENT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getOutboundHelloSent());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -7614,6 +7651,7 @@ public final class NetworkOuterClass {
           metricInfoBuilder_.dispose();
           metricInfoBuilder_ = null;
         }
+        outboundHelloSent_ = false;
         return this;
       }
 
@@ -7704,6 +7742,9 @@ public final class NetworkOuterClass {
               ? metricInfo_
               : metricInfoBuilder_.build();
           to_bitField0_ |= 0x00000001;
+        }
+        if (((from_bitField0_ & 0x00020000) != 0)) {
+          result.outboundHelloSent_ = outboundHelloSent_;
         }
         result.bitField0_ |= to_bitField0_;
       }
@@ -7801,6 +7842,9 @@ public final class NetworkOuterClass {
         }
         if (other.hasMetricInfo()) {
           mergeMetricInfo(other.getMetricInfo());
+        }
+        if (other.getOutboundHelloSent() != false) {
+          setOutboundHelloSent(other.getOutboundHelloSent());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -7918,6 +7962,11 @@ public final class NetworkOuterClass {
                 bitField0_ |= 0x00010000;
                 break;
               } // case 138
+              case 144: {
+                outboundHelloSent_ = input.readBool();
+                bitField0_ |= 0x00020000;
+                break;
+              } // case 144
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -9372,6 +9421,50 @@ public final class NetworkOuterClass {
           metricInfo_ = null;
         }
         return metricInfoBuilder_;
+      }
+
+      private boolean outboundHelloSent_ ;
+      /**
+       * <pre>
+       * Whether we've sent the hello message for outbound connections.
+       * </pre>
+       *
+       * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
+       * @return The outboundHelloSent.
+       */
+      @java.lang.Override
+      public boolean getOutboundHelloSent() {
+        return outboundHelloSent_;
+      }
+      /**
+       * <pre>
+       * Whether we've sent the hello message for outbound connections.
+       * </pre>
+       *
+       * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
+       * @param value The outboundHelloSent to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOutboundHelloSent(boolean value) {
+
+        outboundHelloSent_ = value;
+        bitField0_ |= 0x00020000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Whether we've sent the hello message for outbound connections.
+       * </pre>
+       *
+       * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearOutboundHelloSent() {
+        bitField0_ = (bitField0_ & ~0x00020000);
+        outboundHelloSent_ = false;
+        onChanged();
+        return this;
       }
 
       // @@protoc_insertion_point(builder_scope:pactus.PeerInfo)
@@ -12662,7 +12755,7 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
       "us.ZMQPublisherInfoR\rzmqPublishers\022!\n\014cu" +
       "rrent_time\030\020 \001(\004R\013currentTime\"T\n\020ZMQPubl" +
       "isherInfo\022\024\n\005topic\030\001 \001(\tR\005topic\022\030\n\007addre" +
-      "ss\030\002 \001(\tR\007address\022\020\n\003hwm\030\003 \001(\005R\003hwm\"\325\004\n\010" +
+      "ss\030\002 \001(\tR\007address\022\020\n\003hwm\030\003 \001(\005R\003hwm\"\205\005\n\010" +
       "PeerInfo\022\026\n\006status\030\001 \001(\005R\006status\022\030\n\007moni" +
       "ker\030\002 \001(\tR\007moniker\022\024\n\005agent\030\003 \001(\tR\005agent" +
       "\022\027\n\007peer_id\030\004 \001(\tR\006peerId\022%\n\016consensus_k" +
@@ -12677,34 +12770,35 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
       "\016 \003(\tR\tprotocols\022%\n\016total_sessions\030\017 \001(\005" +
       "R\rtotalSessions\022-\n\022completed_sessions\030\020 " +
       "\001(\005R\021completedSessions\0223\n\013metric_info\030\021 " +
-      "\001(\0132\022.pactus.MetricInfoR\nmetricInfo\"\226\001\n\016" +
-      "ConnectionInfo\022 \n\013connections\030\001 \001(\004R\013con" +
-      "nections\022/\n\023inbound_connections\030\002 \001(\004R\022i" +
-      "nboundConnections\0221\n\024outbound_connection" +
-      "s\030\003 \001(\004R\023outboundConnections\"\200\004\n\nMetricI" +
-      "nfo\0228\n\rtotal_invalid\030\001 \001(\0132\023.pactus.Coun" +
-      "terInfoR\014totalInvalid\0222\n\ntotal_sent\030\002 \001(" +
-      "\0132\023.pactus.CounterInfoR\ttotalSent\022:\n\016tot" +
-      "al_received\030\003 \001(\0132\023.pactus.CounterInfoR\r" +
-      "totalReceived\022F\n\014message_sent\030\004 \003(\0132#.pa" +
-      "ctus.MetricInfo.MessageSentEntryR\013messag" +
-      "eSent\022R\n\020message_received\030\005 \003(\0132\'.pactus" +
-      ".MetricInfo.MessageReceivedEntryR\017messag" +
-      "eReceived\032S\n\020MessageSentEntry\022\020\n\003key\030\001 \001" +
-      "(\005R\003key\022)\n\005value\030\002 \001(\0132\023.pactus.CounterI" +
-      "nfoR\005value:\0028\001\032W\n\024MessageReceivedEntry\022\020" +
-      "\n\003key\030\001 \001(\005R\003key\022)\n\005value\030\002 \001(\0132\023.pactus" +
-      ".CounterInfoR\005value:\0028\001\"=\n\013CounterInfo\022\024" +
-      "\n\005bytes\030\001 \001(\004R\005bytes\022\030\n\007bundles\030\002 \001(\004R\007b" +
-      "undles*Q\n\tDirection\022\025\n\021DIRECTION_UNKNOWN" +
-      "\020\000\022\025\n\021DIRECTION_INBOUND\020\001\022\026\n\022DIRECTION_O" +
-      "UTBOUND\020\0022\242\001\n\007Network\022O\n\016GetNetworkInfo\022" +
-      "\035.pactus.GetNetworkInfoRequest\032\036.pactus." +
-      "GetNetworkInfoResponse\022F\n\013GetNodeInfo\022\032." +
-      "pactus.GetNodeInfoRequest\032\033.pactus.GetNo" +
-      "deInfoResponseB:\n\006pactusZ0github.com/pac" +
-      "tus-project/pactus/www/grpc/pactusb\006prot" +
-      "o3"
+      "\001(\0132\022.pactus.MetricInfoR\nmetricInfo\022.\n\023o" +
+      "utbound_hello_sent\030\022 \001(\010R\021outboundHelloS" +
+      "ent\"\226\001\n\016ConnectionInfo\022 \n\013connections\030\001 " +
+      "\001(\004R\013connections\022/\n\023inbound_connections\030" +
+      "\002 \001(\004R\022inboundConnections\0221\n\024outbound_co" +
+      "nnections\030\003 \001(\004R\023outboundConnections\"\200\004\n" +
+      "\nMetricInfo\0228\n\rtotal_invalid\030\001 \001(\0132\023.pac" +
+      "tus.CounterInfoR\014totalInvalid\0222\n\ntotal_s" +
+      "ent\030\002 \001(\0132\023.pactus.CounterInfoR\ttotalSen" +
+      "t\022:\n\016total_received\030\003 \001(\0132\023.pactus.Count" +
+      "erInfoR\rtotalReceived\022F\n\014message_sent\030\004 " +
+      "\003(\0132#.pactus.MetricInfo.MessageSentEntry" +
+      "R\013messageSent\022R\n\020message_received\030\005 \003(\0132" +
+      "\'.pactus.MetricInfo.MessageReceivedEntry" +
+      "R\017messageReceived\032S\n\020MessageSentEntry\022\020\n" +
+      "\003key\030\001 \001(\005R\003key\022)\n\005value\030\002 \001(\0132\023.pactus." +
+      "CounterInfoR\005value:\0028\001\032W\n\024MessageReceive" +
+      "dEntry\022\020\n\003key\030\001 \001(\005R\003key\022)\n\005value\030\002 \001(\0132" +
+      "\023.pactus.CounterInfoR\005value:\0028\001\"=\n\013Count" +
+      "erInfo\022\024\n\005bytes\030\001 \001(\004R\005bytes\022\030\n\007bundles\030" +
+      "\002 \001(\004R\007bundles*Q\n\tDirection\022\025\n\021DIRECTION" +
+      "_UNKNOWN\020\000\022\025\n\021DIRECTION_INBOUND\020\001\022\026\n\022DIR" +
+      "ECTION_OUTBOUND\020\0022\242\001\n\007Network\022O\n\016GetNetw" +
+      "orkInfo\022\035.pactus.GetNetworkInfoRequest\032\036" +
+      ".pactus.GetNetworkInfoResponse\022F\n\013GetNod" +
+      "eInfo\022\032.pactus.GetNodeInfoRequest\032\033.pact" +
+      "us.GetNodeInfoResponseB:\n\006pactusZ0github" +
+      ".com/pactus-project/pactus/www/grpc/pact" +
+      "usb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -12745,7 +12839,7 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
-        new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "ConsensusAddresses", "Services", "LastBlockHash", "Height", "LastSent", "LastReceived", "Address", "Direction", "Protocols", "TotalSessions", "CompletedSessions", "MetricInfo", });
+        new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "ConsensusAddresses", "Services", "LastBlockHash", "Height", "LastSent", "LastReceived", "Address", "Direction", "Protocols", "TotalSessions", "CompletedSessions", "MetricInfo", "OutboundHelloSent", });
     internal_static_pactus_ConnectionInfo_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_pactus_ConnectionInfo_fieldAccessorTable = new

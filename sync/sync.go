@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
@@ -217,8 +218,8 @@ func (sync *synchronizer) Services() service.Services {
 }
 
 func (sync *synchronizer) sayHello(pid peer.ID) {
-	s := sync.peerSet.GetPeerStatus(pid)
-	if s.IsKnown() {
+	peer := sync.peerSet.GetPeer(pid)
+	if peer.Status.IsKnown() {
 		return
 	}
 
@@ -232,7 +233,7 @@ func (sync *synchronizer) sayHello(pid peer.ID) {
 	)
 	msg.Sign(sync.valKeys)
 
-	sync.logger.Info("sending Hello message", "to", pid)
+	sync.logger.Info("sending Hello message (outbound)", "to", pid)
 	sync.sendTo(msg, pid)
 }
 
@@ -307,7 +308,13 @@ func (sync *synchronizer) processProtocolsEvent(pe *network.ProtocolsEvents) {
 
 	sync.peerSet.UpdateProtocols(pe.PeerID, pe.Protocols)
 
-	sync.sayHello(pe.PeerID)
+	peer := sync.peerSet.GetPeer(pe.PeerID)
+	if peer.Direction == lp2pnetwork.DirOutbound {
+		sync.sayHello(pe.PeerID)
+
+		// Mark that we've sent the hello message to the inbound peer
+		sync.peerSet.UpdateOutboundHelloSent(pe.PeerID, true)
+	}
 }
 
 func (sync *synchronizer) processDisconnectEvent(de *network.DisconnectEvent) {

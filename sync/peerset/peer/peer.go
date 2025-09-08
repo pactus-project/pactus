@@ -31,6 +31,8 @@ type Peer struct {
 	TotalSessions     int
 	CompletedSessions int
 	Metric            metric.Metric
+	// OutboundHelloSent tracks whether we've sent the initial hello message for outbound connections
+	OutboundHelloSent bool
 }
 
 func NewPeer(peerID ID) *Peer {

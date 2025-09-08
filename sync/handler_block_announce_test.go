@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParsingBlockAnnounceMessages(t *testing.T) {
+func TestHandlerBlockAnnounceParsingMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	td.state.CommitTestBlocks(10)
@@ -36,7 +36,7 @@ func TestParsingBlockAnnounceMessages(t *testing.T) {
 	})
 }
 
-func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
+func TestHandlerBlockAnnounceBroadcastingMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	blk, cert := td.GenerateTestBlock(td.RandHeight())
@@ -47,7 +47,7 @@ func TestBroadcastingBlockAnnounceMessages(t *testing.T) {
 	assert.Equal(t, msg.Certificate.Height(), msg1.Message.(*message.BlockAnnounceMessage).Certificate.Height())
 }
 
-func TestCacheAnnouncedBlock(t *testing.T) {
+func TestHandlerBlockAnnounceCacheBlock(t *testing.T) {
 	td := setup(t, nil)
 
 	height := td.RandHeight()

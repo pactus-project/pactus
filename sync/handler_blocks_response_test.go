@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
@@ -21,7 +22,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestInvalidBlockData(t *testing.T) {
+func TestHandlerBlocksResponseInvalidBlockData(t *testing.T) {
 	td := setup(t, nil)
 
 	td.state.CommitTestBlocks(10)
@@ -47,7 +48,7 @@ func TestInvalidBlockData(t *testing.T) {
 	}
 }
 
-func TestOneBlockShorter(t *testing.T) {
+func TestHandlerBlocksResponseOneBlockShorter(t *testing.T) {
 	td := setup(t, nil)
 
 	td.state.CommitTestBlocks(10)
@@ -65,7 +66,7 @@ func TestOneBlockShorter(t *testing.T) {
 	assert.Equal(t, lastHeight+1, td.state.LastBlockHeight())
 }
 
-func TestStrippedPublicKey(t *testing.T) {
+func TestHandlerBlocksResponseStrippedPublicKey(t *testing.T) {
 	td := setup(t, nil)
 
 	td.state.CommitTestBlocks(10)
@@ -199,17 +200,16 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	assert.NoError(t, syncAlice.Start())
 	assert.NoError(t, syncBob.Start())
 
-	// Connect the networks of Alice and Bob to each other
-	networkAlice.AddAnotherNetwork(networkBob)
-	networkBob.AddAnotherNetwork(networkAlice)
+	// Connect the networks of Alice and Bob to each other (Alice is outbound, Bob is inbound)
+	networkAlice.AddAnotherNetwork(networkBob, lp2pnetwork.DirOutbound)
+	networkBob.AddAnotherNetwork(networkAlice, lp2pnetwork.DirInbound)
 
 	// Verify that Hello messages are exchanged between Alice and Bob
-	syncAlice.sayHello(syncBob.SelfID())
+	// Alice sends hello to Bob
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHello)
-	shouldPublishMessageWithThisType(t, networkBob, message.TypeHelloAck)
-
-	syncBob.sayHello(syncAlice.SelfID())
 	shouldPublishMessageWithThisType(t, networkBob, message.TypeHello)
+
+	shouldPublishMessageWithThisType(t, networkBob, message.TypeHelloAck)
 	shouldPublishMessageWithThisType(t, networkAlice, message.TypeHelloAck)
 
 	// Ensure Alice and Bob are connected and handshaked
@@ -231,7 +231,7 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 
 // TestIdenticalBundles tests if two different peers publish the same message,
 // whether the bundle data is also the same.
-func TestIdenticalBundles(t *testing.T) {
+func TestHandlerBlocksResponseIdenticalBundles(t *testing.T) {
 	nets := makeAliceAndBobNetworks(t)
 
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
@@ -246,7 +246,7 @@ func TestIdenticalBundles(t *testing.T) {
 // TestSyncing is an important test to verify the syncing process between two
 // test nodes, Alice and Bob. In real-world scenarios, multiple nodes are typically
 // involved, but the procedure remains similar.
-func TestSyncing(t *testing.T) {
+func TestHandlerBlocksResponseSyncing(t *testing.T) {
 	nets := makeAliceAndBobNetworks(t)
 
 	// Adding 100 blocks for Bob
@@ -306,7 +306,7 @@ func TestSyncing(t *testing.T) {
 	}, 10*time.Second, 1*time.Second)
 }
 
-func TestSyncingHasBlockInCache(t *testing.T) {
+func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 	nets := makeAliceAndBobNetworks(t)
 
 	// Adding 100 blocks for Bob

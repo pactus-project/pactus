@@ -9503,6 +9503,9 @@ impl serde::Serialize for PeerInfo {
         if self.metric_info.is_some() {
             len += 1;
         }
+        if self.outbound_hello_sent {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.PeerInfo", len)?;
         if self.status != 0 {
             struct_ser.serialize_field("status", &self.status)?;
@@ -9561,6 +9564,9 @@ impl serde::Serialize for PeerInfo {
         if let Some(v) = self.metric_info.as_ref() {
             struct_ser.serialize_field("metricInfo", v)?;
         }
+        if self.outbound_hello_sent {
+            struct_ser.serialize_field("outboundHelloSent", &self.outbound_hello_sent)?;
+        }
         struct_ser.end()
     }
 }
@@ -9597,6 +9603,8 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
             "completedSessions",
             "metric_info",
             "metricInfo",
+            "outbound_hello_sent",
+            "outboundHelloSent",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -9618,6 +9626,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
             TotalSessions,
             CompletedSessions,
             MetricInfo,
+            OutboundHelloSent,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -9656,6 +9665,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                             "totalSessions" | "total_sessions" => Ok(GeneratedField::TotalSessions),
                             "completedSessions" | "completed_sessions" => Ok(GeneratedField::CompletedSessions),
                             "metricInfo" | "metric_info" => Ok(GeneratedField::MetricInfo),
+                            "outboundHelloSent" | "outbound_hello_sent" => Ok(GeneratedField::OutboundHelloSent),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -9692,6 +9702,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                 let mut total_sessions__ = None;
                 let mut completed_sessions__ = None;
                 let mut metric_info__ = None;
+                let mut outbound_hello_sent__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Status => {
@@ -9810,6 +9821,12 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                             }
                             metric_info__ = map_.next_value()?;
                         }
+                        GeneratedField::OutboundHelloSent => {
+                            if outbound_hello_sent__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("outboundHelloSent"));
+                            }
+                            outbound_hello_sent__ = Some(map_.next_value()?);
+                        }
                     }
                 }
                 Ok(PeerInfo {
@@ -9830,6 +9847,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                     total_sessions: total_sessions__.unwrap_or_default(),
                     completed_sessions: completed_sessions__.unwrap_or_default(),
                     metric_info: metric_info__,
+                    outbound_hello_sent: outbound_hello_sent__.unwrap_or_default(),
                 })
             }
         }

@@ -389,6 +389,7 @@ func TestUpdateStatus(t *testing.T) {
 
 		peerSet.UpdateStatus(pid, status.StatusDisconnected)
 		assert.Equal(t, status.StatusDisconnected, peerSet.GetPeerStatus(pid))
+		assert.False(t, peerSet.GetPeer(pid).OutboundHelloSent)
 	})
 
 	t.Run("UpdateStatus from Known to Connected (should not change)", func(t *testing.T) {

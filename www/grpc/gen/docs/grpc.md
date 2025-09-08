@@ -2876,6 +2876,13 @@ Message has no fields.
             </td>
           </tr>
           <tr>
+        <td class="fw-bold">connected_peers[].outbound_hello_sent</td>
+        <td> bool</td>
+        <td>
+        Whether we've sent the hello message for outbound connections.
+        </td>
+      </tr>
+         <tr>
     <td class="fw-bold">metric_info</td>
     <td> MetricInfo</td>
     <td>

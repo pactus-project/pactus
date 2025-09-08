@@ -518,6 +518,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     $core.int? totalSessions,
     $core.int? completedSessions,
     MetricInfo? metricInfo,
+    $core.bool? outboundHelloSent,
   }) {
     final $result = create();
     if (status != null) {
@@ -571,6 +572,9 @@ class PeerInfo extends $pb.GeneratedMessage {
     if (metricInfo != null) {
       $result.metricInfo = metricInfo;
     }
+    if (outboundHelloSent != null) {
+      $result.outboundHelloSent = outboundHelloSent;
+    }
     return $result;
   }
   PeerInfo._() : super();
@@ -595,6 +599,7 @@ class PeerInfo extends $pb.GeneratedMessage {
     ..a<$core.int>(15, _omitFieldNames ? '' : 'totalSessions', $pb.PbFieldType.O3)
     ..a<$core.int>(16, _omitFieldNames ? '' : 'completedSessions', $pb.PbFieldType.O3)
     ..aOM<MetricInfo>(17, _omitFieldNames ? '' : 'metricInfo', subBuilder: MetricInfo.create)
+    ..aOB(18, _omitFieldNames ? '' : 'outboundHelloSent')
     ..hasRequiredFields = false
   ;
 
@@ -772,6 +777,16 @@ class PeerInfo extends $pb.GeneratedMessage {
   void clearMetricInfo() => $_clearField(17);
   @$pb.TagNumber(17)
   MetricInfo ensureMetricInfo() => $_ensure(16);
+
+  /// Whether we've sent the hello message for outbound connections.
+  @$pb.TagNumber(18)
+  $core.bool get outboundHelloSent => $_getBF(17);
+  @$pb.TagNumber(18)
+  set outboundHelloSent($core.bool v) { $_setBool(17, v); }
+  @$pb.TagNumber(18)
+  $core.bool hasOutboundHelloSent() => $_has(17);
+  @$pb.TagNumber(18)
+  void clearOutboundHelloSent() => $_clearField(18);
 }
 
 /// ConnectionInfo contains information about the node's connections.

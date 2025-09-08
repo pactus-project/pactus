@@ -2716,6 +2716,10 @@
         "metricInfo": {
           "$ref": "#/definitions/pactusMetricInfo",
           "description": "Metrics related to peer activity."
+        },
+        "outboundHelloSent": {
+          "type": "boolean",
+          "description": "Whether we've sent the hello message for outbound connections."
         }
       },
       "description": "PeerInfo contains information about a peer in the network."

@@ -218,6 +218,14 @@ func (ps *PeerSet) UpdateAddress(pid peer.ID, addr string, direction lp2pnetwork
 	p.Direction = direction
 }
 
+func (ps *PeerSet) UpdateOutboundHelloSent(pid peer.ID, sent bool) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.findOrCreatePeer(pid)
+	p.OutboundHelloSent = sent
+}
+
 func (ps *PeerSet) UpdateStatus(pid peer.ID, status status.Status) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
@@ -238,6 +246,8 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, status status.Status) {
 	peer.Status = status
 
 	if status.IsDisconnected() {
+		peer.OutboundHelloSent = false
+
 		for _, ssn := range ps.sessionManager.Sessions() {
 			if ssn.PeerID == pid {
 				ssn.Status = session.Uncompleted

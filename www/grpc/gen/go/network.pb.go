@@ -485,9 +485,11 @@ type PeerInfo struct {
 	// Completed download sessions with the peer.
 	CompletedSessions int32 `protobuf:"varint,16,opt,name=completed_sessions,json=completedSessions,proto3" json:"completed_sessions,omitempty"`
 	// Metrics related to peer activity.
-	MetricInfo    *MetricInfo `protobuf:"bytes,17,opt,name=metric_info,json=metricInfo,proto3" json:"metric_info,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	MetricInfo *MetricInfo `protobuf:"bytes,17,opt,name=metric_info,json=metricInfo,proto3" json:"metric_info,omitempty"`
+	// Whether we've sent the hello message for outbound connections.
+	OutboundHelloSent bool `protobuf:"varint,18,opt,name=outbound_hello_sent,json=outboundHelloSent,proto3" json:"outbound_hello_sent,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *PeerInfo) Reset() {
@@ -637,6 +639,13 @@ func (x *PeerInfo) GetMetricInfo() *MetricInfo {
 		return x.MetricInfo
 	}
 	return nil
+}
+
+func (x *PeerInfo) GetOutboundHelloSent() bool {
+	if x != nil {
+		return x.OutboundHelloSent
+	}
+	return false
 }
 
 // ConnectionInfo contains information about the node's connections.
@@ -873,7 +882,7 @@ const file_network_proto_rawDesc = "" +
 	"\x10ZMQPublisherInfo\x12\x14\n" +
 	"\x05topic\x18\x01 \x01(\tR\x05topic\x12\x18\n" +
 	"\aaddress\x18\x02 \x01(\tR\aaddress\x12\x10\n" +
-	"\x03hwm\x18\x03 \x01(\x05R\x03hwm\"\xd5\x04\n" +
+	"\x03hwm\x18\x03 \x01(\x05R\x03hwm\"\x85\x05\n" +
 	"\bPeerInfo\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\x05R\x06status\x12\x18\n" +
 	"\amoniker\x18\x02 \x01(\tR\amoniker\x12\x14\n" +
@@ -893,7 +902,8 @@ const file_network_proto_rawDesc = "" +
 	"\x0etotal_sessions\x18\x0f \x01(\x05R\rtotalSessions\x12-\n" +
 	"\x12completed_sessions\x18\x10 \x01(\x05R\x11completedSessions\x123\n" +
 	"\vmetric_info\x18\x11 \x01(\v2\x12.pactus.MetricInfoR\n" +
-	"metricInfo\"\x96\x01\n" +
+	"metricInfo\x12.\n" +
+	"\x13outbound_hello_sent\x18\x12 \x01(\bR\x11outboundHelloSent\"\x96\x01\n" +
 	"\x0eConnectionInfo\x12 \n" +
 	"\vconnections\x18\x01 \x01(\x04R\vconnections\x12/\n" +
 	"\x13inbound_connections\x18\x02 \x01(\x04R\x12inboundConnections\x121\n" +

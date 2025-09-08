@@ -121,6 +121,8 @@ message PeerInfo {
   int32 completed_sessions = 16;
   // Metrics related to peer activity.
   MetricInfo metric_info = 17;
+  // Whether we've sent the hello message for outbound connections.
+  bool outbound_hello_sent = 18;
 }
 
 // ConnectionInfo contains information about the node's connections.

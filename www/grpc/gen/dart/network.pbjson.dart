@@ -137,6 +137,7 @@ const PeerInfo$json = {
     {'1': 'total_sessions', '3': 15, '4': 1, '5': 5, '10': 'totalSessions'},
     {'1': 'completed_sessions', '3': 16, '4': 1, '5': 5, '10': 'completedSessions'},
     {'1': 'metric_info', '3': 17, '4': 1, '5': 11, '6': '.pactus.MetricInfo', '10': 'metricInfo'},
+    {'1': 'outbound_hello_sent', '3': 18, '4': 1, '5': 8, '10': 'outboundHelloSent'},
   ],
 };
 
@@ -152,7 +153,8 @@ final $typed_data.Uint8List peerInfoDescriptor = $convert.base64Decode(
     'Rpb24YDSABKA4yES5wYWN0dXMuRGlyZWN0aW9uUglkaXJlY3Rpb24SHAoJcHJvdG9jb2xzGA4g'
     'AygJUglwcm90b2NvbHMSJQoOdG90YWxfc2Vzc2lvbnMYDyABKAVSDXRvdGFsU2Vzc2lvbnMSLQ'
     'oSY29tcGxldGVkX3Nlc3Npb25zGBAgASgFUhFjb21wbGV0ZWRTZXNzaW9ucxIzCgttZXRyaWNf'
-    'aW5mbxgRIAEoCzISLnBhY3R1cy5NZXRyaWNJbmZvUgptZXRyaWNJbmZv');
+    'aW5mbxgRIAEoCzISLnBhY3R1cy5NZXRyaWNJbmZvUgptZXRyaWNJbmZvEi4KE291dGJvdW5kX2'
+    'hlbGxvX3NlbnQYEiABKAhSEW91dGJvdW5kSGVsbG9TZW50');
 
 @$core.Deprecated('Use connectionInfoDescriptor instead')
 const ConnectionInfo$json = {

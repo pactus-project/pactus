@@ -1546,7 +1546,8 @@ direction: jspb.Message.getFieldWithDefault(msg, 13, 0),
 protocolsList: (f = jspb.Message.getRepeatedField(msg, 14)) == null ? undefined : f,
 totalSessions: jspb.Message.getFieldWithDefault(msg, 15, 0),
 completedSessions: jspb.Message.getFieldWithDefault(msg, 16, 0),
-metricInfo: (f = msg.getMetricInfo()) && proto.pactus.MetricInfo.toObject(includeInstance, f)
+metricInfo: (f = msg.getMetricInfo()) && proto.pactus.MetricInfo.toObject(includeInstance, f),
+outboundHelloSent: jspb.Message.getBooleanFieldWithDefault(msg, 18, false)
   };
 
   if (includeInstance) {
@@ -1651,6 +1652,10 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       var value = new proto.pactus.MetricInfo;
       reader.readMessage(value,proto.pactus.MetricInfo.deserializeBinaryFromReader);
       msg.setMetricInfo(value);
+      break;
+    case 18:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setOutboundHelloSent(value);
       break;
     default:
       reader.skipField();
@@ -1799,6 +1804,13 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
       17,
       f,
       proto.pactus.MetricInfo.serializeBinaryToWriter
+    );
+  }
+  f = message.getOutboundHelloSent();
+  if (f) {
+    writer.writeBool(
+      18,
+      f
     );
   }
 };
@@ -2183,6 +2195,24 @@ proto.pactus.PeerInfo.prototype.clearMetricInfo = function() {
  */
 proto.pactus.PeerInfo.prototype.hasMetricInfo = function() {
   return jspb.Message.getField(this, 17) != null;
+};
+
+
+/**
+ * optional bool outbound_hello_sent = 18;
+ * @return {boolean}
+ */
+proto.pactus.PeerInfo.prototype.getOutboundHelloSent = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 18, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setOutboundHelloSent = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 18, value);
 };
 
 

@@ -161,7 +161,7 @@ func shouldNotPublishAnyMessage(t *testing.T, net *network.MockNetwork) {
 			bdl := new(bundle.Bundle)
 			_, err := bdl.Decode(bytes.NewReader(data.Data))
 			require.NoError(t, err)
-			require.Fail(t, "not expected message: %s", bdl.Message.Type())
+			require.Fail(t, "published unexpected message: "+bdl.Message.Type().String())
 		}
 	}
 }
@@ -239,10 +239,10 @@ func TestConnectEvent(t *testing.T) {
 		return td.sync.peerSet.HasPeer(pid)
 	}, time.Second, 100*time.Millisecond)
 
-	p1 := td.sync.peerSet.GetPeer(pid)
-	assert.Equal(t, status.StatusConnected, p1.Status)
-	assert.Equal(t, remoteAddr, p1.Address)
-	assert.Equal(t, "Inbound", p1.Direction)
+	peer := td.sync.peerSet.GetPeer(pid)
+	assert.Equal(t, status.StatusConnected, peer.Status)
+	assert.Equal(t, remoteAddr, peer.Address)
+	assert.Equal(t, lp2pnetwork.DirInbound, peer.Direction)
 }
 
 func TestDisconnectEvent(t *testing.T) {
@@ -254,10 +254,10 @@ func TestDisconnectEvent(t *testing.T) {
 	td.network.EventPipe.Send(de)
 
 	assert.Eventually(t, func() bool {
-		s := td.sync.peerSet.GetPeerStatus(pid)
-
-		return s.IsDisconnected()
+		return td.sync.peerSet.HasPeer(pid)
 	}, time.Second, 100*time.Millisecond)
+
+	td.checkPeerStatus(t, pid, status.StatusDisconnected)
 }
 
 func TestProtocolsEvent(t *testing.T) {
@@ -266,10 +266,57 @@ func TestProtocolsEvent(t *testing.T) {
 	pid := td.RandPeerID()
 	pe := &network.ProtocolsEvents{
 		PeerID:    pid,
-		Protocols: []string{"protocol-1"},
+		Protocols: []string{"protocol-1", "protocol-2"},
 	}
 	td.network.EventPipe.Send(pe)
-	td.shouldPublishMessageWithThisType(t, message.TypeHello)
+
+	assert.Eventually(t, func() bool {
+		return td.sync.peerSet.HasPeer(pid)
+	}, time.Second, 100*time.Millisecond)
+
+	peer := td.sync.peerSet.GetPeer(pid)
+	assert.Equal(t, []string{"protocol-1", "protocol-2"}, peer.Protocols)
+}
+
+func TestSendHello(t *testing.T) {
+	td := setup(t, nil)
+
+	t.Run("Peer with unknown Direction", func(t *testing.T) {
+		pid := td.RandPeerID()
+		pe := &network.ProtocolsEvents{
+			PeerID:    pid,
+			Protocols: []string{"protocol-1"},
+		}
+		td.network.EventPipe.Send(pe)
+
+		td.shouldNotPublishAnyMessage(t)
+	})
+
+	t.Run("Peer with inbound Direction", func(t *testing.T) {
+		pid := td.RandPeerID()
+		td.sync.peerSet.UpdateAddress(pid, "test-address", lp2pnetwork.DirInbound)
+
+		pe := &network.ProtocolsEvents{
+			PeerID:    pid,
+			Protocols: []string{"protocol-1"},
+		}
+		td.network.EventPipe.Send(pe)
+
+		td.shouldNotPublishAnyMessage(t)
+	})
+
+	t.Run("Peer with outbound Direction", func(t *testing.T) {
+		pid := td.RandPeerID()
+		td.sync.peerSet.UpdateAddress(pid, "test-address", lp2pnetwork.DirOutbound)
+
+		pe := &network.ProtocolsEvents{
+			PeerID:    pid,
+			Protocols: []string{"protocol-1"},
+		}
+		td.network.EventPipe.Send(pe)
+
+		td.shouldPublishMessageWithThisType(t, message.TypeHello)
+	})
 }
 
 func TestTestNetFlags(t *testing.T) {

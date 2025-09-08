@@ -60,6 +60,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		tmk.addRowString("Moniker", peer.Moniker)
 		tmk.addRowString("Remote Address", peer.Address)
 		tmk.addRowString("Direction", lp2pnetwork.Direction(peer.Direction).String())
+		tmk.addRowBool("OutboundHelloSent", peer.OutboundHelloSent)
 		tmk.addRowStrings("Protocols", peer.Protocols)
 		tmk.addRowString("LastSent", time.Unix(peer.LastSent, 0).String())
 		tmk.addRowString("LastReceived", time.Unix(peer.LastReceived, 0).String())
@@ -67,6 +68,7 @@ func (s *Server) NetworkHandler(w http.ResponseWriter, r *http.Request) {
 		tmk.addRowInt("Height", int(peer.Height))
 		tmk.addRowInt("TotalSessions", int(peer.TotalSessions))
 		tmk.addRowInt("CompletedSessions", int(peer.CompletedSessions))
+
 		metricToTable(tmk, peer.MetricInfo)
 
 		for _, key := range peer.ConsensusKeys {

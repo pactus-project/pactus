@@ -99,6 +99,7 @@ func (s *networkServer) GetNetworkInfo(_ context.Context,
 		peerInfo.LastBlockHash = peer.LastBlockHash.String()
 		peerInfo.TotalSessions = int32(peer.TotalSessions)
 		peerInfo.CompletedSessions = int32(peer.CompletedSessions)
+		peerInfo.OutboundHelloSent = peer.OutboundHelloSent
 		peerInfo.MetricInfo = metricToProto(peer.Metric)
 
 		for _, key := range peer.ConsensusKeys {
