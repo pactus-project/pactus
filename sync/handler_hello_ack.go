@@ -43,6 +43,7 @@ func (handler *helloAckHandler) ParseMessage(m message.Message, pid peer.ID) {
 	case lp2pnetwork.DirUnknown:
 		handler.logger.Warn("received unexpected HelloAc message",
 			"pid", pid, "direction", peer.Direction)
+		handler.network.CloseConnection(pid)
 
 		return
 
