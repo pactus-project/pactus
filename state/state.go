@@ -77,6 +77,7 @@ func LoadOrNewState(
 
 	// Check if the number of accounts is greater than the genesis time;
 	// this indicates we are not at the genesis height anymore.
+	// TODO: We can check the LastCertificate is nil for genesis height.
 	if store.TotalAccounts() > int32(len(genDoc.Accounts())) {
 		err := state.tryLoadLastInfo()
 		if err != nil {

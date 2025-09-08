@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParsingQueryProposalMessages(t *testing.T) {
+func TestHandlerQueryProposalParsingMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	consHeight, consRound := td.consMgr.HeightRound()
@@ -32,7 +32,7 @@ func TestParsingQueryProposalMessages(t *testing.T) {
 	})
 }
 
-func TestBroadcastingQueryProposalMessages(t *testing.T) {
+func TestHandlerQueryProposalBroadcastingMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	consHeight, consRound := td.consMgr.HeightRound()

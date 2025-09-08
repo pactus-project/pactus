@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
@@ -217,8 +218,8 @@ func (sync *synchronizer) Services() service.Services {
 }
 
 func (sync *synchronizer) sayHello(pid peer.ID) {
-	s := sync.peerSet.GetPeerStatus(pid)
-	if s.IsKnown() {
+	peer := sync.peerSet.GetPeer(pid)
+	if peer.Status.IsKnown() {
 		return
 	}
 
@@ -232,7 +233,6 @@ func (sync *synchronizer) sayHello(pid peer.ID) {
 	)
 	msg.Sign(sync.valKeys)
 
-	sync.logger.Info("sending Hello message", "to", pid)
 	sync.sendTo(msg, pid)
 }
 
@@ -295,19 +295,26 @@ func (sync *synchronizer) processStreamMessage(msg *network.StreamMessage) {
 	sync.processIncomingBundle(bdl, msg.From)
 }
 
-func (sync *synchronizer) processConnectEvent(ce *network.ConnectEvent) {
-	sync.logger.Debug("processing connect event", "pid", ce.PeerID)
+func (sync *synchronizer) processConnectEvent(eve *network.ConnectEvent) {
+	sync.logger.Debug("processing connect event", "pid", eve.PeerID)
 
-	sync.peerSet.UpdateAddress(ce.PeerID, ce.RemoteAddress, ce.Direction)
-	sync.peerSet.UpdateStatus(ce.PeerID, status.StatusConnected)
+	sync.peerSet.UpdateAddress(eve.PeerID, eve.RemoteAddress, eve.Direction)
+	sync.peerSet.UpdateStatus(eve.PeerID, status.StatusConnected)
 }
 
-func (sync *synchronizer) processProtocolsEvent(pe *network.ProtocolsEvents) {
-	sync.logger.Debug("processing protocols event", "pid", pe.PeerID, "protocols", pe.Protocols)
+func (sync *synchronizer) processProtocolsEvent(eve *network.ProtocolsEvents) {
+	sync.logger.Debug("processing protocols event", "pid", eve.PeerID, "protocols", eve.Protocols)
 
-	sync.peerSet.UpdateProtocols(pe.PeerID, pe.Protocols)
+	sync.peerSet.UpdateProtocols(eve.PeerID, eve.Protocols)
 
-	sync.sayHello(pe.PeerID)
+	peer := sync.peerSet.GetPeer(eve.PeerID)
+	if peer.Direction == lp2pnetwork.DirOutbound {
+		sync.logger.Info("sending Hello message (outbound)", "to", eve.PeerID)
+		sync.sayHello(eve.PeerID)
+
+		// Mark that we've sent the hello message to the inbound peer
+		sync.peerSet.UpdateOutboundHelloSent(eve.PeerID, true)
+	}
 }
 
 func (sync *synchronizer) processDisconnectEvent(de *network.DisconnectEvent) {

@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBlocksRequestMessages(t *testing.T) {
+func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 	t.Run("NetworkLimited service is enabled", func(t *testing.T) {
 		config := testConfig()
 		config.Services = service.Services(service.PrunedNode)

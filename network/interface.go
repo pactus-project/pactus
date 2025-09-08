@@ -4,6 +4,7 @@ import (
 	"io"
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 )
 
 type TopicID int
@@ -95,7 +96,7 @@ func (*StreamMessage) Type() EventType {
 type ConnectEvent struct {
 	PeerID        lp2pcore.PeerID
 	RemoteAddress string
-	Direction     string
+	Direction     lp2pnetwork.Direction
 }
 
 func (*ConnectEvent) Type() EventType {

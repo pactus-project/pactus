@@ -4,6 +4,7 @@ import (
 	"sync"
 	"time"
 
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/sync/bundle/message"
@@ -208,13 +209,21 @@ func (ps *PeerSet) UpdateHeight(pid peer.ID, height uint32, lastBlockHash hash.H
 	p.LastBlockHash = lastBlockHash
 }
 
-func (ps *PeerSet) UpdateAddress(pid peer.ID, addr, direction string) {
+func (ps *PeerSet) UpdateAddress(pid peer.ID, addr string, direction lp2pnetwork.Direction) {
 	ps.lk.Lock()
 	defer ps.lk.Unlock()
 
 	p := ps.findOrCreatePeer(pid)
 	p.Address = addr
 	p.Direction = direction
+}
+
+func (ps *PeerSet) UpdateOutboundHelloSent(pid peer.ID, sent bool) {
+	ps.lk.Lock()
+	defer ps.lk.Unlock()
+
+	p := ps.findOrCreatePeer(pid)
+	p.OutboundHelloSent = sent
 }
 
 func (ps *PeerSet) UpdateStatus(pid peer.ID, status status.Status) {
@@ -237,6 +246,8 @@ func (ps *PeerSet) UpdateStatus(pid peer.ID, status status.Status) {
 	peer.Status = status
 
 	if status.IsDisconnected() {
+		peer.OutboundHelloSent = false
+
 		for _, ssn := range ps.sessionManager.Sessions() {
 			if ssn.PeerID == pid {
 				ssn.Status = session.Uncompleted

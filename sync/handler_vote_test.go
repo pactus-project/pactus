@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParsingVoteMessages(t *testing.T) {
+func TestHandlerVoteParsingMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	t.Run("Parsing vote message", func(t *testing.T) {

@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	lp2pcore "github.com/libp2p/go-libp2p/core"
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2ppeer "github.com/libp2p/go-libp2p/core/peer"
 	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -118,7 +119,7 @@ func (m *MockNetwork) NumConnectedPeers() int {
 	return len(m.OtherNets)
 }
 
-func (m *MockNetwork) AddAnotherNetwork(otherNet *MockNetwork) {
+func (m *MockNetwork) AddAnotherNetwork(otherNet *MockNetwork, direction lp2pnetwork.Direction) {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
@@ -127,6 +128,12 @@ func (m *MockNetwork) AddAnotherNetwork(otherNet *MockNetwork) {
 	m.EventPipe.Send(&ConnectEvent{
 		PeerID:        otherNet.SelfID(),
 		RemoteAddress: m.RandMultiAddress(),
+		Direction:     direction,
+	})
+
+	m.EventPipe.Send(&ProtocolsEvents{
+		PeerID:    otherNet.SelfID(),
+		Protocols: []string{"protocol-1", "protocol-2"},
 	})
 }
 

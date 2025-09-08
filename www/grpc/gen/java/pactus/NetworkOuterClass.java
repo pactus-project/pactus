@@ -25,6 +25,160 @@ public final class NetworkOuterClass {
     registerAllExtensions(
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
+  /**
+   * <pre>
+   * Direction represents the connection direction between peers.
+   * </pre>
+   *
+   * Protobuf enum {@code pactus.Direction}
+   */
+  public enum Direction
+      implements com.google.protobuf.ProtocolMessageEnum {
+    /**
+     * <pre>
+     * Unknown direction (default value).
+     * </pre>
+     *
+     * <code>DIRECTION_UNKNOWN = 0;</code>
+     */
+    DIRECTION_UNKNOWN(0),
+    /**
+     * <pre>
+     * Inbound connection - peer connected to us.
+     * </pre>
+     *
+     * <code>DIRECTION_INBOUND = 1;</code>
+     */
+    DIRECTION_INBOUND(1),
+    /**
+     * <pre>
+     * Outbound connection - we connected to peer.
+     * </pre>
+     *
+     * <code>DIRECTION_OUTBOUND = 2;</code>
+     */
+    DIRECTION_OUTBOUND(2),
+    UNRECOGNIZED(-1),
+    ;
+
+    static {
+      com.google.protobuf.RuntimeVersion.validateProtobufGencodeVersion(
+        com.google.protobuf.RuntimeVersion.RuntimeDomain.PUBLIC,
+        /* major= */ 4,
+        /* minor= */ 30,
+        /* patch= */ 2,
+        /* suffix= */ "",
+        Direction.class.getName());
+    }
+    /**
+     * <pre>
+     * Unknown direction (default value).
+     * </pre>
+     *
+     * <code>DIRECTION_UNKNOWN = 0;</code>
+     */
+    public static final int DIRECTION_UNKNOWN_VALUE = 0;
+    /**
+     * <pre>
+     * Inbound connection - peer connected to us.
+     * </pre>
+     *
+     * <code>DIRECTION_INBOUND = 1;</code>
+     */
+    public static final int DIRECTION_INBOUND_VALUE = 1;
+    /**
+     * <pre>
+     * Outbound connection - we connected to peer.
+     * </pre>
+     *
+     * <code>DIRECTION_OUTBOUND = 2;</code>
+     */
+    public static final int DIRECTION_OUTBOUND_VALUE = 2;
+
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+            "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Direction valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static Direction forNumber(int value) {
+      switch (value) {
+        case 0: return DIRECTION_UNKNOWN;
+        case 1: return DIRECTION_INBOUND;
+        case 2: return DIRECTION_OUTBOUND;
+        default: return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Direction>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+        Direction> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<Direction>() {
+            public Direction findValueByNumber(int number) {
+              return Direction.forNumber(number);
+            }
+          };
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+        getValueDescriptor() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalStateException(
+            "Can't get the descriptor of an unrecognized enum value.");
+      }
+      return getDescriptor().getValues().get(ordinal());
+    }
+    public final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptorForType() {
+      return getDescriptor();
+    }
+    public static final com.google.protobuf.Descriptors.EnumDescriptor
+        getDescriptor() {
+      return pactus.NetworkOuterClass.getDescriptor().getEnumTypes().get(0);
+    }
+
+    private static final Direction[] VALUES = values();
+
+    public static Direction valueOf(
+        com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    private final int value;
+
+    private Direction(int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:pactus.Direction)
+  }
+
   public interface GetNetworkInfoRequestOrBuilder extends
       // @@protoc_insertion_point(interface_extends:pactus.GetNetworkInfoRequest)
       com.google.protobuf.MessageOrBuilder {
@@ -6321,20 +6475,19 @@ public final class NetworkOuterClass {
      * Connection direction (e.g., inbound, outbound).
      * </pre>
      *
-     * <code>string direction = 13 [json_name = "direction"];</code>
-     * @return The direction.
+     * <code>.pactus.Direction direction = 13 [json_name = "direction"];</code>
+     * @return The enum numeric value on the wire for direction.
      */
-    java.lang.String getDirection();
+    int getDirectionValue();
     /**
      * <pre>
      * Connection direction (e.g., inbound, outbound).
      * </pre>
      *
-     * <code>string direction = 13 [json_name = "direction"];</code>
-     * @return The bytes for direction.
+     * <code>.pactus.Direction direction = 13 [json_name = "direction"];</code>
+     * @return The direction.
      */
-    com.google.protobuf.ByteString
-        getDirectionBytes();
+    pactus.NetworkOuterClass.Direction getDirection();
 
     /**
      * <pre>
@@ -6423,6 +6576,16 @@ public final class NetworkOuterClass {
      * <code>.pactus.MetricInfo metric_info = 17 [json_name = "metricInfo"];</code>
      */
     pactus.NetworkOuterClass.MetricInfoOrBuilder getMetricInfoOrBuilder();
+
+    /**
+     * <pre>
+     * Whether the hello message was sent from the outbound connection.
+     * </pre>
+     *
+     * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
+     * @return The outboundHelloSent.
+     */
+    boolean getOutboundHelloSent();
   }
   /**
    * <pre>
@@ -6459,7 +6622,7 @@ public final class NetworkOuterClass {
           com.google.protobuf.LazyStringArrayList.emptyList();
       lastBlockHash_ = "";
       address_ = "";
-      direction_ = "";
+      direction_ = 0;
       protocols_ =
           com.google.protobuf.LazyStringArrayList.emptyList();
     }
@@ -6895,50 +7058,29 @@ public final class NetworkOuterClass {
     }
 
     public static final int DIRECTION_FIELD_NUMBER = 13;
-    @SuppressWarnings("serial")
-    private volatile java.lang.Object direction_ = "";
+    private int direction_ = 0;
     /**
      * <pre>
      * Connection direction (e.g., inbound, outbound).
      * </pre>
      *
-     * <code>string direction = 13 [json_name = "direction"];</code>
-     * @return The direction.
+     * <code>.pactus.Direction direction = 13 [json_name = "direction"];</code>
+     * @return The enum numeric value on the wire for direction.
      */
-    @java.lang.Override
-    public java.lang.String getDirection() {
-      java.lang.Object ref = direction_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        direction_ = s;
-        return s;
-      }
+    @java.lang.Override public int getDirectionValue() {
+      return direction_;
     }
     /**
      * <pre>
      * Connection direction (e.g., inbound, outbound).
      * </pre>
      *
-     * <code>string direction = 13 [json_name = "direction"];</code>
-     * @return The bytes for direction.
+     * <code>.pactus.Direction direction = 13 [json_name = "direction"];</code>
+     * @return The direction.
      */
-    @java.lang.Override
-    public com.google.protobuf.ByteString
-        getDirectionBytes() {
-      java.lang.Object ref = direction_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        direction_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    @java.lang.Override public pactus.NetworkOuterClass.Direction getDirection() {
+      pactus.NetworkOuterClass.Direction result = pactus.NetworkOuterClass.Direction.forNumber(direction_);
+      return result == null ? pactus.NetworkOuterClass.Direction.UNRECOGNIZED : result;
     }
 
     public static final int PROTOCOLS_FIELD_NUMBER = 14;
@@ -7062,6 +7204,21 @@ public final class NetworkOuterClass {
       return metricInfo_ == null ? pactus.NetworkOuterClass.MetricInfo.getDefaultInstance() : metricInfo_;
     }
 
+    public static final int OUTBOUND_HELLO_SENT_FIELD_NUMBER = 18;
+    private boolean outboundHelloSent_ = false;
+    /**
+     * <pre>
+     * Whether the hello message was sent from the outbound connection.
+     * </pre>
+     *
+     * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
+     * @return The outboundHelloSent.
+     */
+    @java.lang.Override
+    public boolean getOutboundHelloSent() {
+      return outboundHelloSent_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -7112,8 +7269,8 @@ public final class NetworkOuterClass {
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
         com.google.protobuf.GeneratedMessage.writeString(output, 12, address_);
       }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(direction_)) {
-        com.google.protobuf.GeneratedMessage.writeString(output, 13, direction_);
+      if (direction_ != pactus.NetworkOuterClass.Direction.DIRECTION_UNKNOWN.getNumber()) {
+        output.writeEnum(13, direction_);
       }
       for (int i = 0; i < protocols_.size(); i++) {
         com.google.protobuf.GeneratedMessage.writeString(output, 14, protocols_.getRaw(i));
@@ -7126,6 +7283,9 @@ public final class NetworkOuterClass {
       }
       if (((bitField0_ & 0x00000001) != 0)) {
         output.writeMessage(17, getMetricInfo());
+      }
+      if (outboundHelloSent_ != false) {
+        output.writeBool(18, outboundHelloSent_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -7187,8 +7347,9 @@ public final class NetworkOuterClass {
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(address_)) {
         size += com.google.protobuf.GeneratedMessage.computeStringSize(12, address_);
       }
-      if (!com.google.protobuf.GeneratedMessage.isStringEmpty(direction_)) {
-        size += com.google.protobuf.GeneratedMessage.computeStringSize(13, direction_);
+      if (direction_ != pactus.NetworkOuterClass.Direction.DIRECTION_UNKNOWN.getNumber()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(13, direction_);
       }
       {
         int dataSize = 0;
@@ -7209,6 +7370,10 @@ public final class NetworkOuterClass {
       if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(17, getMetricInfo());
+      }
+      if (outboundHelloSent_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(18, outboundHelloSent_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -7249,8 +7414,7 @@ public final class NetworkOuterClass {
           != other.getLastReceived()) return false;
       if (!getAddress()
           .equals(other.getAddress())) return false;
-      if (!getDirection()
-          .equals(other.getDirection())) return false;
+      if (direction_ != other.direction_) return false;
       if (!getProtocolsList()
           .equals(other.getProtocolsList())) return false;
       if (getTotalSessions()
@@ -7262,6 +7426,8 @@ public final class NetworkOuterClass {
         if (!getMetricInfo()
             .equals(other.getMetricInfo())) return false;
       }
+      if (getOutboundHelloSent()
+          != other.getOutboundHelloSent()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -7304,7 +7470,7 @@ public final class NetworkOuterClass {
       hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
       hash = (53 * hash) + getAddress().hashCode();
       hash = (37 * hash) + DIRECTION_FIELD_NUMBER;
-      hash = (53 * hash) + getDirection().hashCode();
+      hash = (53 * hash) + direction_;
       if (getProtocolsCount() > 0) {
         hash = (37 * hash) + PROTOCOLS_FIELD_NUMBER;
         hash = (53 * hash) + getProtocolsList().hashCode();
@@ -7317,6 +7483,9 @@ public final class NetworkOuterClass {
         hash = (37 * hash) + METRIC_INFO_FIELD_NUMBER;
         hash = (53 * hash) + getMetricInfo().hashCode();
       }
+      hash = (37 * hash) + OUTBOUND_HELLO_SENT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getOutboundHelloSent());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -7472,7 +7641,7 @@ public final class NetworkOuterClass {
         lastSent_ = 0L;
         lastReceived_ = 0L;
         address_ = "";
-        direction_ = "";
+        direction_ = 0;
         protocols_ =
             com.google.protobuf.LazyStringArrayList.emptyList();
         totalSessions_ = 0;
@@ -7482,6 +7651,7 @@ public final class NetworkOuterClass {
           metricInfoBuilder_.dispose();
           metricInfoBuilder_ = null;
         }
+        outboundHelloSent_ = false;
         return this;
       }
 
@@ -7573,6 +7743,9 @@ public final class NetworkOuterClass {
               : metricInfoBuilder_.build();
           to_bitField0_ |= 0x00000001;
         }
+        if (((from_bitField0_ & 0x00020000) != 0)) {
+          result.outboundHelloSent_ = outboundHelloSent_;
+        }
         result.bitField0_ |= to_bitField0_;
       }
 
@@ -7648,10 +7821,8 @@ public final class NetworkOuterClass {
           bitField0_ |= 0x00000800;
           onChanged();
         }
-        if (!other.getDirection().isEmpty()) {
-          direction_ = other.direction_;
-          bitField0_ |= 0x00001000;
-          onChanged();
+        if (other.direction_ != 0) {
+          setDirectionValue(other.getDirectionValue());
         }
         if (!other.protocols_.isEmpty()) {
           if (protocols_.isEmpty()) {
@@ -7671,6 +7842,9 @@ public final class NetworkOuterClass {
         }
         if (other.hasMetricInfo()) {
           mergeMetricInfo(other.getMetricInfo());
+        }
+        if (other.getOutboundHelloSent() != false) {
+          setOutboundHelloSent(other.getOutboundHelloSent());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -7760,11 +7934,11 @@ public final class NetworkOuterClass {
                 bitField0_ |= 0x00000800;
                 break;
               } // case 98
-              case 106: {
-                direction_ = input.readStringRequireUtf8();
+              case 104: {
+                direction_ = input.readEnum();
                 bitField0_ |= 0x00001000;
                 break;
-              } // case 106
+              } // case 104
               case 114: {
                 java.lang.String s = input.readStringRequireUtf8();
                 ensureProtocolsIsMutable();
@@ -7788,6 +7962,11 @@ public final class NetworkOuterClass {
                 bitField0_ |= 0x00010000;
                 break;
               } // case 138
+              case 144: {
+                outboundHelloSent_ = input.readBool();
+                bitField0_ |= 0x00020000;
+                break;
+              } // case 144
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -8779,62 +8958,61 @@ public final class NetworkOuterClass {
         return this;
       }
 
-      private java.lang.Object direction_ = "";
+      private int direction_ = 0;
       /**
        * <pre>
        * Connection direction (e.g., inbound, outbound).
        * </pre>
        *
-       * <code>string direction = 13 [json_name = "direction"];</code>
+       * <code>.pactus.Direction direction = 13 [json_name = "direction"];</code>
+       * @return The enum numeric value on the wire for direction.
+       */
+      @java.lang.Override public int getDirectionValue() {
+        return direction_;
+      }
+      /**
+       * <pre>
+       * Connection direction (e.g., inbound, outbound).
+       * </pre>
+       *
+       * <code>.pactus.Direction direction = 13 [json_name = "direction"];</code>
+       * @param value The enum numeric value on the wire for direction to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDirectionValue(int value) {
+        direction_ = value;
+        bitField0_ |= 0x00001000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Connection direction (e.g., inbound, outbound).
+       * </pre>
+       *
+       * <code>.pactus.Direction direction = 13 [json_name = "direction"];</code>
        * @return The direction.
        */
-      public java.lang.String getDirection() {
-        java.lang.Object ref = direction_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          direction_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      @java.lang.Override
+      public pactus.NetworkOuterClass.Direction getDirection() {
+        pactus.NetworkOuterClass.Direction result = pactus.NetworkOuterClass.Direction.forNumber(direction_);
+        return result == null ? pactus.NetworkOuterClass.Direction.UNRECOGNIZED : result;
       }
       /**
        * <pre>
        * Connection direction (e.g., inbound, outbound).
        * </pre>
        *
-       * <code>string direction = 13 [json_name = "direction"];</code>
-       * @return The bytes for direction.
-       */
-      public com.google.protobuf.ByteString
-          getDirectionBytes() {
-        java.lang.Object ref = direction_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          direction_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <pre>
-       * Connection direction (e.g., inbound, outbound).
-       * </pre>
-       *
-       * <code>string direction = 13 [json_name = "direction"];</code>
+       * <code>.pactus.Direction direction = 13 [json_name = "direction"];</code>
        * @param value The direction to set.
        * @return This builder for chaining.
        */
-      public Builder setDirection(
-          java.lang.String value) {
-        if (value == null) { throw new NullPointerException(); }
-        direction_ = value;
+      public Builder setDirection(pactus.NetworkOuterClass.Direction value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
         bitField0_ |= 0x00001000;
+        direction_ = value.getNumber();
         onChanged();
         return this;
       }
@@ -8843,30 +9021,12 @@ public final class NetworkOuterClass {
        * Connection direction (e.g., inbound, outbound).
        * </pre>
        *
-       * <code>string direction = 13 [json_name = "direction"];</code>
+       * <code>.pactus.Direction direction = 13 [json_name = "direction"];</code>
        * @return This builder for chaining.
        */
       public Builder clearDirection() {
-        direction_ = getDefaultInstance().getDirection();
         bitField0_ = (bitField0_ & ~0x00001000);
-        onChanged();
-        return this;
-      }
-      /**
-       * <pre>
-       * Connection direction (e.g., inbound, outbound).
-       * </pre>
-       *
-       * <code>string direction = 13 [json_name = "direction"];</code>
-       * @param value The bytes for direction to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDirectionBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) { throw new NullPointerException(); }
-        checkByteStringIsUtf8(value);
-        direction_ = value;
-        bitField0_ |= 0x00001000;
+        direction_ = 0;
         onChanged();
         return this;
       }
@@ -9261,6 +9421,50 @@ public final class NetworkOuterClass {
           metricInfo_ = null;
         }
         return metricInfoBuilder_;
+      }
+
+      private boolean outboundHelloSent_ ;
+      /**
+       * <pre>
+       * Whether the hello message was sent from the outbound connection.
+       * </pre>
+       *
+       * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
+       * @return The outboundHelloSent.
+       */
+      @java.lang.Override
+      public boolean getOutboundHelloSent() {
+        return outboundHelloSent_;
+      }
+      /**
+       * <pre>
+       * Whether the hello message was sent from the outbound connection.
+       * </pre>
+       *
+       * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
+       * @param value The outboundHelloSent to set.
+       * @return This builder for chaining.
+       */
+      public Builder setOutboundHelloSent(boolean value) {
+
+        outboundHelloSent_ = value;
+        bitField0_ |= 0x00020000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Whether the hello message was sent from the outbound connection.
+       * </pre>
+       *
+       * <code>bool outbound_hello_sent = 18 [json_name = "outboundHelloSent"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearOutboundHelloSent() {
+        bitField0_ = (bitField0_ & ~0x00020000);
+        outboundHelloSent_ = false;
+        onChanged();
+        return this;
       }
 
       // @@protoc_insertion_point(builder_scope:pactus.PeerInfo)
@@ -12551,7 +12755,7 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
       "us.ZMQPublisherInfoR\rzmqPublishers\022!\n\014cu" +
       "rrent_time\030\020 \001(\004R\013currentTime\"T\n\020ZMQPubl" +
       "isherInfo\022\024\n\005topic\030\001 \001(\tR\005topic\022\030\n\007addre" +
-      "ss\030\002 \001(\tR\007address\022\020\n\003hwm\030\003 \001(\005R\003hwm\"\302\004\n\010" +
+      "ss\030\002 \001(\tR\007address\022\020\n\003hwm\030\003 \001(\005R\003hwm\"\205\005\n\010" +
       "PeerInfo\022\026\n\006status\030\001 \001(\005R\006status\022\030\n\007moni" +
       "ker\030\002 \001(\tR\007moniker\022\024\n\005agent\030\003 \001(\tR\005agent" +
       "\022\027\n\007peer_id\030\004 \001(\tR\006peerId\022%\n\016consensus_k" +
@@ -12561,36 +12765,40 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
       "\030\010 \001(\tR\rlastBlockHash\022\026\n\006height\030\t \001(\rR\006h" +
       "eight\022\033\n\tlast_sent\030\n \001(\003R\010lastSent\022#\n\rla" +
       "st_received\030\013 \001(\003R\014lastReceived\022\030\n\007addre" +
-      "ss\030\014 \001(\tR\007address\022\034\n\tdirection\030\r \001(\tR\tdi" +
-      "rection\022\034\n\tprotocols\030\016 \003(\tR\tprotocols\022%\n" +
-      "\016total_sessions\030\017 \001(\005R\rtotalSessions\022-\n\022" +
-      "completed_sessions\030\020 \001(\005R\021completedSessi" +
-      "ons\0223\n\013metric_info\030\021 \001(\0132\022.pactus.Metric" +
-      "InfoR\nmetricInfo\"\226\001\n\016ConnectionInfo\022 \n\013c" +
-      "onnections\030\001 \001(\004R\013connections\022/\n\023inbound" +
-      "_connections\030\002 \001(\004R\022inboundConnections\0221" +
-      "\n\024outbound_connections\030\003 \001(\004R\023outboundCo" +
-      "nnections\"\200\004\n\nMetricInfo\0228\n\rtotal_invali" +
-      "d\030\001 \001(\0132\023.pactus.CounterInfoR\014totalInval" +
-      "id\0222\n\ntotal_sent\030\002 \001(\0132\023.pactus.CounterI" +
-      "nfoR\ttotalSent\022:\n\016total_received\030\003 \001(\0132\023" +
-      ".pactus.CounterInfoR\rtotalReceived\022F\n\014me" +
-      "ssage_sent\030\004 \003(\0132#.pactus.MetricInfo.Mes" +
-      "sageSentEntryR\013messageSent\022R\n\020message_re" +
-      "ceived\030\005 \003(\0132\'.pactus.MetricInfo.Message" +
-      "ReceivedEntryR\017messageReceived\032S\n\020Messag" +
-      "eSentEntry\022\020\n\003key\030\001 \001(\005R\003key\022)\n\005value\030\002 " +
-      "\001(\0132\023.pactus.CounterInfoR\005value:\0028\001\032W\n\024M" +
-      "essageReceivedEntry\022\020\n\003key\030\001 \001(\005R\003key\022)\n" +
-      "\005value\030\002 \001(\0132\023.pactus.CounterInfoR\005value" +
-      ":\0028\001\"=\n\013CounterInfo\022\024\n\005bytes\030\001 \001(\004R\005byte" +
-      "s\022\030\n\007bundles\030\002 \001(\004R\007bundles2\242\001\n\007Network\022" +
-      "O\n\016GetNetworkInfo\022\035.pactus.GetNetworkInf" +
-      "oRequest\032\036.pactus.GetNetworkInfoResponse" +
-      "\022F\n\013GetNodeInfo\022\032.pactus.GetNodeInfoRequ" +
-      "est\032\033.pactus.GetNodeInfoResponseB:\n\006pact" +
-      "usZ0github.com/pactus-project/pactus/www" +
-      "/grpc/pactusb\006proto3"
+      "ss\030\014 \001(\tR\007address\022/\n\tdirection\030\r \001(\0162\021.p" +
+      "actus.DirectionR\tdirection\022\034\n\tprotocols\030" +
+      "\016 \003(\tR\tprotocols\022%\n\016total_sessions\030\017 \001(\005" +
+      "R\rtotalSessions\022-\n\022completed_sessions\030\020 " +
+      "\001(\005R\021completedSessions\0223\n\013metric_info\030\021 " +
+      "\001(\0132\022.pactus.MetricInfoR\nmetricInfo\022.\n\023o" +
+      "utbound_hello_sent\030\022 \001(\010R\021outboundHelloS" +
+      "ent\"\226\001\n\016ConnectionInfo\022 \n\013connections\030\001 " +
+      "\001(\004R\013connections\022/\n\023inbound_connections\030" +
+      "\002 \001(\004R\022inboundConnections\0221\n\024outbound_co" +
+      "nnections\030\003 \001(\004R\023outboundConnections\"\200\004\n" +
+      "\nMetricInfo\0228\n\rtotal_invalid\030\001 \001(\0132\023.pac" +
+      "tus.CounterInfoR\014totalInvalid\0222\n\ntotal_s" +
+      "ent\030\002 \001(\0132\023.pactus.CounterInfoR\ttotalSen" +
+      "t\022:\n\016total_received\030\003 \001(\0132\023.pactus.Count" +
+      "erInfoR\rtotalReceived\022F\n\014message_sent\030\004 " +
+      "\003(\0132#.pactus.MetricInfo.MessageSentEntry" +
+      "R\013messageSent\022R\n\020message_received\030\005 \003(\0132" +
+      "\'.pactus.MetricInfo.MessageReceivedEntry" +
+      "R\017messageReceived\032S\n\020MessageSentEntry\022\020\n" +
+      "\003key\030\001 \001(\005R\003key\022)\n\005value\030\002 \001(\0132\023.pactus." +
+      "CounterInfoR\005value:\0028\001\032W\n\024MessageReceive" +
+      "dEntry\022\020\n\003key\030\001 \001(\005R\003key\022)\n\005value\030\002 \001(\0132" +
+      "\023.pactus.CounterInfoR\005value:\0028\001\"=\n\013Count" +
+      "erInfo\022\024\n\005bytes\030\001 \001(\004R\005bytes\022\030\n\007bundles\030" +
+      "\002 \001(\004R\007bundles*Q\n\tDirection\022\025\n\021DIRECTION" +
+      "_UNKNOWN\020\000\022\025\n\021DIRECTION_INBOUND\020\001\022\026\n\022DIR" +
+      "ECTION_OUTBOUND\020\0022\242\001\n\007Network\022O\n\016GetNetw" +
+      "orkInfo\022\035.pactus.GetNetworkInfoRequest\032\036" +
+      ".pactus.GetNetworkInfoResponse\022F\n\013GetNod" +
+      "eInfo\022\032.pactus.GetNodeInfoRequest\032\033.pact" +
+      "us.GetNodeInfoResponseB:\n\006pactusZ0github" +
+      ".com/pactus-project/pactus/www/grpc/pact" +
+      "usb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -12631,7 +12839,7 @@ pactus.NetworkOuterClass.CounterInfo defaultValue) {
     internal_static_pactus_PeerInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_PeerInfo_descriptor,
-        new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "ConsensusAddresses", "Services", "LastBlockHash", "Height", "LastSent", "LastReceived", "Address", "Direction", "Protocols", "TotalSessions", "CompletedSessions", "MetricInfo", });
+        new java.lang.String[] { "Status", "Moniker", "Agent", "PeerId", "ConsensusKeys", "ConsensusAddresses", "Services", "LastBlockHash", "Height", "LastSent", "LastReceived", "Address", "Direction", "Protocols", "TotalSessions", "CompletedSessions", "MetricInfo", "OutboundHelloSent", });
     internal_static_pactus_ConnectionInfo_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_pactus_ConnectionInfo_fieldAccessorTable = new

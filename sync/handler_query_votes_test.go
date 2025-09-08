@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParsingQueryVoteMessages(t *testing.T) {
+func TestHandlerQueryVoteParsingMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	consHeight, consRound := td.consMgr.HeightRound()
@@ -31,7 +31,7 @@ func TestParsingQueryVoteMessages(t *testing.T) {
 	})
 }
 
-func TestBroadcastingQueryVoteMessages(t *testing.T) {
+func TestHandlerQueryVoteBroadcastingMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	consensusHeight := td.state.LastBlockHeight() + 1

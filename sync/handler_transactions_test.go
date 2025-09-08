@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParsingTransactionsMessages(t *testing.T) {
+func TestHandlerTransactionsParsingMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	t.Run("Parsing transactions message", func(t *testing.T) {
@@ -22,7 +22,7 @@ func TestParsingTransactionsMessages(t *testing.T) {
 	})
 }
 
-func TestBroadcastingTransactionVotesMessages(t *testing.T) {
+func TestHandlerTransactionsBroadcastingMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	trx1 := td.GenerateTestBondTx()

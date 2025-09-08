@@ -2023,6 +2023,80 @@ impl<'de> serde::Deserialize<'de> for DecodeRawTransactionResponse {
         deserializer.deserialize_struct("pactus.DecodeRawTransactionResponse", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for Direction {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let variant = match self {
+            Self::Unknown => "DIRECTION_UNKNOWN",
+            Self::Inbound => "DIRECTION_INBOUND",
+            Self::Outbound => "DIRECTION_OUTBOUND",
+        };
+        serializer.serialize_str(variant)
+    }
+}
+impl<'de> serde::Deserialize<'de> for Direction {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "DIRECTION_UNKNOWN",
+            "DIRECTION_INBOUND",
+            "DIRECTION_OUTBOUND",
+        ];
+
+        struct GeneratedVisitor;
+
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = Direction;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(formatter, "expected one of: {:?}", &FIELDS)
+            }
+
+            fn visit_i64<E>(self, v: i64) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                i32::try_from(v)
+                    .ok()
+                    .and_then(|x| x.try_into().ok())
+                    .ok_or_else(|| {
+                        serde::de::Error::invalid_value(serde::de::Unexpected::Signed(v), &self)
+                    })
+            }
+
+            fn visit_u64<E>(self, v: u64) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                i32::try_from(v)
+                    .ok()
+                    .and_then(|x| x.try_into().ok())
+                    .ok_or_else(|| {
+                        serde::de::Error::invalid_value(serde::de::Unexpected::Unsigned(v), &self)
+                    })
+            }
+
+            fn visit_str<E>(self, value: &str) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                match value {
+                    "DIRECTION_UNKNOWN" => Ok(Direction::Unknown),
+                    "DIRECTION_INBOUND" => Ok(Direction::Inbound),
+                    "DIRECTION_OUTBOUND" => Ok(Direction::Outbound),
+                    _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
+                }
+            }
+        }
+        deserializer.deserialize_any(GeneratedVisitor)
+    }
+}
 impl serde::Serialize for GetAccountRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -9414,7 +9488,7 @@ impl serde::Serialize for PeerInfo {
         if !self.address.is_empty() {
             len += 1;
         }
-        if !self.direction.is_empty() {
+        if self.direction != 0 {
             len += 1;
         }
         if !self.protocols.is_empty() {
@@ -9427,6 +9501,9 @@ impl serde::Serialize for PeerInfo {
             len += 1;
         }
         if self.metric_info.is_some() {
+            len += 1;
+        }
+        if self.outbound_hello_sent {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.PeerInfo", len)?;
@@ -9470,8 +9547,10 @@ impl serde::Serialize for PeerInfo {
         if !self.address.is_empty() {
             struct_ser.serialize_field("address", &self.address)?;
         }
-        if !self.direction.is_empty() {
-            struct_ser.serialize_field("direction", &self.direction)?;
+        if self.direction != 0 {
+            let v = Direction::try_from(self.direction)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.direction)))?;
+            struct_ser.serialize_field("direction", &v)?;
         }
         if !self.protocols.is_empty() {
             struct_ser.serialize_field("protocols", &self.protocols)?;
@@ -9484,6 +9563,9 @@ impl serde::Serialize for PeerInfo {
         }
         if let Some(v) = self.metric_info.as_ref() {
             struct_ser.serialize_field("metricInfo", v)?;
+        }
+        if self.outbound_hello_sent {
+            struct_ser.serialize_field("outboundHelloSent", &self.outbound_hello_sent)?;
         }
         struct_ser.end()
     }
@@ -9521,6 +9603,8 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
             "completedSessions",
             "metric_info",
             "metricInfo",
+            "outbound_hello_sent",
+            "outboundHelloSent",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -9542,6 +9626,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
             TotalSessions,
             CompletedSessions,
             MetricInfo,
+            OutboundHelloSent,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -9580,6 +9665,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                             "totalSessions" | "total_sessions" => Ok(GeneratedField::TotalSessions),
                             "completedSessions" | "completed_sessions" => Ok(GeneratedField::CompletedSessions),
                             "metricInfo" | "metric_info" => Ok(GeneratedField::MetricInfo),
+                            "outboundHelloSent" | "outbound_hello_sent" => Ok(GeneratedField::OutboundHelloSent),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -9616,6 +9702,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                 let mut total_sessions__ = None;
                 let mut completed_sessions__ = None;
                 let mut metric_info__ = None;
+                let mut outbound_hello_sent__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::Status => {
@@ -9704,7 +9791,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                             if direction__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("direction"));
                             }
-                            direction__ = Some(map_.next_value()?);
+                            direction__ = Some(map_.next_value::<Direction>()? as i32);
                         }
                         GeneratedField::Protocols => {
                             if protocols__.is_some() {
@@ -9734,6 +9821,12 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                             }
                             metric_info__ = map_.next_value()?;
                         }
+                        GeneratedField::OutboundHelloSent => {
+                            if outbound_hello_sent__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("outboundHelloSent"));
+                            }
+                            outbound_hello_sent__ = Some(map_.next_value()?);
+                        }
                     }
                 }
                 Ok(PeerInfo {
@@ -9754,6 +9847,7 @@ impl<'de> serde::Deserialize<'de> for PeerInfo {
                     total_sessions: total_sessions__.unwrap_or_default(),
                     completed_sessions: completed_sessions__.unwrap_or_default(),
                     metric_info: metric_info__,
+                    outbound_hello_sent: outbound_hello_sent__.unwrap_or_default(),
                 })
             }
         }

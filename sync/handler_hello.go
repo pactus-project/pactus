@@ -5,6 +5,7 @@ import (
 	"math"
 	"time"
 
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/sync/bundle"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
@@ -12,6 +13,41 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 )
+
+//
+// Handshake protocol in Pactus
+//
+// Handshake protocol is used to exchange information between two peers
+// when they first connect to each other. The handshake process involves
+// the following steps:
+//
+// 1. When two peers connect, the outbound peer first sends a Hello message to the inbound peer.
+// 2. The inbound peer responds with a HelloAck message.
+// 3. Then the Inbound peer sends a Hello message to the outbound peer.
+// 4. Finally, the outbound peer responds with a HelloAck message.
+//
+//                  |                        |
+//    Outbound Peer |                        | Inbound Peer
+//                  |                        |
+//        Connected |                        | Connected
+//                  |                        |
+//                  |         Hello          |
+//                  | ---------------------> |
+//                  |         HelloAck       |
+//                  | <--------------------- |
+//                  |                        |
+//                  |         Hello          |
+//            Known | <--------------------- |
+//                  |         HelloAck       |
+//                  | ---------------------> | Known
+//                  |                        |
+//
+// After the handshake process is complete, both peers have exchanged
+// information about their status, such as their latest block height,
+// genesis hash, and supported services. This information is used to
+// determine whether the peers are compatible and can communicate
+// effectively.
+//
 
 type helloHandler struct {
 	*synchronizer
@@ -37,6 +73,7 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		msg.Agent,
 		msg.PublicKeys,
 		msg.Services)
+	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
 
 	if msg.GenesisHash != handler.state.Genesis().Hash() {
 		response := message.NewHelloAckMessage(message.ResponseCodeRejected,
@@ -71,8 +108,40 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 		handler.state.UpdateValidatorProtocolVersion(pub.ValidatorAddress(), agent.ProtocolVersion)
 	}
 
-	handler.peerSet.UpdateHeight(pid, msg.Height, msg.BlockHash)
-	handler.peerSet.UpdateStatus(pid, status.StatusConnected)
+	peer := handler.peerSet.GetPeer(pid)
+
+	switch peer.Direction {
+	case lp2pnetwork.DirUnknown:
+		handler.logger.Warn("received unexpected Hello message",
+			"pid", pid, "direction", peer.Direction)
+		handler.network.CloseConnection(pid)
+
+		return
+
+	case lp2pnetwork.DirInbound:
+		if peer.OutboundHelloSent {
+			handler.logger.Warn("received unexpected Hello message",
+				"pid", pid, "direction", peer.Direction)
+
+			return
+		}
+
+		// Mark that we've received the hello message from the outbound peer
+		handler.peerSet.UpdateOutboundHelloSent(pid, true)
+
+		handler.logger.Info("sending Hello message (inbound)", "to", pid)
+		handler.sayHello(pid)
+
+	case lp2pnetwork.DirOutbound:
+		if !peer.OutboundHelloSent {
+			handler.logger.Warn("received unexpected Hello message",
+				"pid", pid, "direction", peer.Direction)
+
+			return
+		}
+
+		handler.peerSet.UpdateStatus(pid, status.StatusKnown)
+	}
 
 	response := message.NewHelloAckMessage(message.ResponseCodeOK, "Ok", handler.state.LastBlockHeight())
 	handler.acknowledge(response, pid)

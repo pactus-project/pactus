@@ -23,6 +23,7 @@ var global =
 
 goog.exportSymbol('proto.pactus.ConnectionInfo', null, global);
 goog.exportSymbol('proto.pactus.CounterInfo', null, global);
+goog.exportSymbol('proto.pactus.Direction', null, global);
 goog.exportSymbol('proto.pactus.GetNetworkInfoRequest', null, global);
 goog.exportSymbol('proto.pactus.GetNetworkInfoResponse', null, global);
 goog.exportSymbol('proto.pactus.GetNodeInfoRequest', null, global);
@@ -1541,11 +1542,12 @@ height: jspb.Message.getFieldWithDefault(msg, 9, 0),
 lastSent: jspb.Message.getFieldWithDefault(msg, 10, 0),
 lastReceived: jspb.Message.getFieldWithDefault(msg, 11, 0),
 address: jspb.Message.getFieldWithDefault(msg, 12, ""),
-direction: jspb.Message.getFieldWithDefault(msg, 13, ""),
+direction: jspb.Message.getFieldWithDefault(msg, 13, 0),
 protocolsList: (f = jspb.Message.getRepeatedField(msg, 14)) == null ? undefined : f,
 totalSessions: jspb.Message.getFieldWithDefault(msg, 15, 0),
 completedSessions: jspb.Message.getFieldWithDefault(msg, 16, 0),
-metricInfo: (f = msg.getMetricInfo()) && proto.pactus.MetricInfo.toObject(includeInstance, f)
+metricInfo: (f = msg.getMetricInfo()) && proto.pactus.MetricInfo.toObject(includeInstance, f),
+outboundHelloSent: jspb.Message.getBooleanFieldWithDefault(msg, 18, false)
   };
 
   if (includeInstance) {
@@ -1631,7 +1633,7 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setAddress(value);
       break;
     case 13:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {!proto.pactus.Direction} */ (reader.readEnum());
       msg.setDirection(value);
       break;
     case 14:
@@ -1650,6 +1652,10 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       var value = new proto.pactus.MetricInfo;
       reader.readMessage(value,proto.pactus.MetricInfo.deserializeBinaryFromReader);
       msg.setMetricInfo(value);
+      break;
+    case 18:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setOutboundHelloSent(value);
       break;
     default:
       reader.skipField();
@@ -1765,8 +1771,8 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
     );
   }
   f = message.getDirection();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f !== 0.0) {
+    writer.writeEnum(
       13,
       f
     );
@@ -1798,6 +1804,13 @@ proto.pactus.PeerInfo.serializeBinaryToWriter = function(message, writer) {
       17,
       f,
       proto.pactus.MetricInfo.serializeBinaryToWriter
+    );
+  }
+  f = message.getOutboundHelloSent();
+  if (f) {
+    writer.writeBool(
+      18,
+      f
     );
   }
 };
@@ -2058,20 +2071,20 @@ proto.pactus.PeerInfo.prototype.setAddress = function(value) {
 
 
 /**
- * optional string direction = 13;
- * @return {string}
+ * optional Direction direction = 13;
+ * @return {!proto.pactus.Direction}
  */
 proto.pactus.PeerInfo.prototype.getDirection = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 13, ""));
+  return /** @type {!proto.pactus.Direction} */ (jspb.Message.getFieldWithDefault(this, 13, 0));
 };
 
 
 /**
- * @param {string} value
+ * @param {!proto.pactus.Direction} value
  * @return {!proto.pactus.PeerInfo} returns this
  */
 proto.pactus.PeerInfo.prototype.setDirection = function(value) {
-  return jspb.Message.setProto3StringField(this, 13, value);
+  return jspb.Message.setProto3EnumField(this, 13, value);
 };
 
 
@@ -2182,6 +2195,24 @@ proto.pactus.PeerInfo.prototype.clearMetricInfo = function() {
  */
 proto.pactus.PeerInfo.prototype.hasMetricInfo = function() {
   return jspb.Message.getField(this, 17) != null;
+};
+
+
+/**
+ * optional bool outbound_hello_sent = 18;
+ * @return {boolean}
+ */
+proto.pactus.PeerInfo.prototype.getOutboundHelloSent = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 18, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.pactus.PeerInfo} returns this
+ */
+proto.pactus.PeerInfo.prototype.setOutboundHelloSent = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 18, value);
 };
 
 
@@ -2855,5 +2886,14 @@ proto.pactus.CounterInfo.prototype.setBundles = function(value) {
   return jspb.Message.setProto3IntField(this, 2, value);
 };
 
+
+/**
+ * @enum {number}
+ */
+proto.pactus.Direction = {
+  DIRECTION_UNKNOWN: 0,
+  DIRECTION_INBOUND: 1,
+  DIRECTION_OUTBOUND: 2
+};
 
 goog.object.extend(exports, proto.pactus);

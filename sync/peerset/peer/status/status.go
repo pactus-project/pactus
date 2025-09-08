@@ -15,12 +15,12 @@ func (s Status) String() string {
 	switch s {
 	case StatusBanned:
 		return "banned"
+	case StatusUnknown:
+		return "unknown"
 	case StatusDisconnected:
 		return "disconnected"
 	case StatusConnected:
 		return "connected"
-	case StatusUnknown:
-		return "unknown"
 	case StatusKnown:
 		return "known"
 	}

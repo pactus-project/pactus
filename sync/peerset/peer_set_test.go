@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
@@ -334,7 +335,7 @@ func TestUpdateAddress(t *testing.T) {
 
 	pid := peer.ID("peer1")
 	addr := "pid-1-address"
-	dir := "Inbound"
+	dir := lp2pnetwork.DirInbound
 	peerSet.UpdateAddress(pid, addr, dir)
 
 	p := peerSet.GetPeer(pid)
@@ -364,6 +365,15 @@ func TestUpdateProtocols(t *testing.T) {
 	assert.Equal(t, protocols, p.Protocols)
 }
 
+func TestUpdateOutboundHelloSent(t *testing.T) {
+	peerSet := NewPeerSet(time.Minute)
+	pid := peer.ID("peer1")
+	peerSet.UpdateOutboundHelloSent(pid, true)
+
+	p := peerSet.GetPeer(pid)
+	assert.True(t, p.OutboundHelloSent)
+}
+
 func TestUpdateStatus(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 	peerSet := NewPeerSet(time.Minute)
@@ -388,6 +398,7 @@ func TestUpdateStatus(t *testing.T) {
 
 		peerSet.UpdateStatus(pid, status.StatusDisconnected)
 		assert.Equal(t, status.StatusDisconnected, peerSet.GetPeerStatus(pid))
+		assert.False(t, peerSet.GetPeer(pid).OutboundHelloSent)
 	})
 
 	t.Run("UpdateStatus from Known to Connected (should not change)", func(t *testing.T) {

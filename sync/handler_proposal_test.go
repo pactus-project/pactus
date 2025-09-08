@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParsingProposalMessages(t *testing.T) {
+func TestHandlerProposalParsingMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	t.Run("Set proposal for consensus", func(t *testing.T) {

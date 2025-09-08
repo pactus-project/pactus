@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -54,9 +55,9 @@ func setup(t *testing.T, conf *Config) *testData {
 	goodPeerID := ts.RandPeerID()
 	unknownPeerID := ts.RandPeerID()
 
-	net.AddAnotherNetwork(network.MockingNetwork(ts, goodPeerID))
-	net.AddAnotherNetwork(network.MockingNetwork(ts, unknownPeerID))
-	net.AddAnotherNetwork(network.MockingNetwork(ts, bannedPeerID))
+	net.AddAnotherNetwork(network.MockingNetwork(ts, goodPeerID), lp2pnetwork.DirOutbound)
+	net.AddAnotherNetwork(network.MockingNetwork(ts, unknownPeerID), lp2pnetwork.DirOutbound)
+	net.AddAnotherNetwork(network.MockingNetwork(ts, bannedPeerID), lp2pnetwork.DirOutbound)
 
 	firewall.peerSet.UpdateStatus(goodPeerID, status.StatusKnown)
 	firewall.peerSet.UpdateStatus(bannedPeerID, status.StatusBanned)
@@ -325,7 +326,7 @@ func TestBannedAddress(t *testing.T) {
 
 	for no, tt := range tests {
 		peerID := td.RandPeerID()
-		td.firewall.peerSet.UpdateAddress(peerID, tt.addr, "inbound")
+		td.firewall.peerSet.UpdateAddress(peerID, tt.addr, lp2pnetwork.DirInbound)
 		data := td.testGossipBundle()
 		_, err := td.firewall.OpenGossipBundle(data, peerID)
 
