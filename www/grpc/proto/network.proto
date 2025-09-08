@@ -121,7 +121,7 @@ message PeerInfo {
   int32 completed_sessions = 16;
   // Metrics related to peer activity.
   MetricInfo metric_info = 17;
-  // Whether we've sent the hello message for outbound connections.
+  // Whether the hello message was sent from the outbound connection.
   bool outbound_hello_sent = 18;
 }
 
