@@ -32,7 +32,7 @@ func TestNilObjLogger(t *testing.T) {
 	assert.Contains(t, buf.String(), "error")
 }
 
-func TestObjLogger(t *testing.T) {
+func TestSubLogger(t *testing.T) {
 	globalInst = nil
 	c := DefaultConfig()
 	c.Colorful = false
