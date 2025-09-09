@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/service"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/version"
 	"github.com/stretchr/testify/assert"
 )
@@ -70,7 +71,7 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
 		})
 
-	t.Run("Non supporting version.",
+	t.Run("Non supporting version",
 		func(t *testing.T) {
 			msg := td.validHelloMessage()
 			nodeAgent := version.NodeAgent
@@ -87,7 +88,7 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
 		})
 
-	t.Run("Invalid agent.",
+	t.Run("Invalid agent",
 		func(t *testing.T) {
 			msg := td.validHelloMessage()
 			msg.Agent = "invalid-agent"
@@ -96,6 +97,19 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 			td.checkPeerStatus(t, msg.PeerID, status.StatusBanned)
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeHelloAck)
 			assert.Equal(t, message.ResponseCodeRejected, bdl.Message.(*message.HelloAckMessage).ResponseCode)
+		})
+
+	t.Run("Outdated protocol version",
+		func(t *testing.T) {
+			msg := td.validHelloMessage()
+			nodeAgent := version.NodeAgent
+			nodeAgent.ProtocolVersion = protocol.ProtocolVersionLatest - 1
+			msg.Agent = nodeAgent.String()
+
+			td.sync.peerSet.UpdateStatus(msg.PeerID, status.StatusConnected)
+			td.receivingNewMessage(td.sync, msg, msg.PeerID)
+			td.checkPeerStatus(t, msg.PeerID, status.StatusConnected)
+			td.shouldNotPublishAnyMessage(t)
 		})
 
 	t.Run("Receiving Hello message from a peer. It should be acknowledged and updates the peer info",

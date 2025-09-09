@@ -201,8 +201,8 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	assert.NoError(t, syncBob.Start())
 
 	// Connect the networks of Alice and Bob to each other (Alice is outbound, Bob is inbound)
-	networkAlice.AddAnotherNetwork(networkBob, lp2pnetwork.DirOutbound)
 	networkBob.AddAnotherNetwork(networkAlice, lp2pnetwork.DirInbound)
+	networkAlice.AddAnotherNetwork(networkBob, lp2pnetwork.DirOutbound)
 
 	// Verify that Hello messages are exchanged between Alice and Bob
 	// Alice sends hello to Bob
