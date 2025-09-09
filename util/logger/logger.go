@@ -113,6 +113,10 @@ func InitGlobalLogger(conf *Config) {
 }
 
 func addFields(event *zerolog.Event, keyvals ...any) *zerolog.Event {
+	if event == nil {
+		return nil
+	}
+
 	if len(keyvals)%2 != 0 {
 		keyvals = append(keyvals, "!MISSING-VALUE!")
 	}
@@ -173,6 +177,10 @@ func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
 }
 
 func (sl *SubLogger) logObj(event *zerolog.Event, msg string, keyvals ...any) {
+	if event == nil {
+		return
+	}
+
 	if sl.obj != nil {
 		event = event.Str(sl.name, sl.obj.String())
 	}
