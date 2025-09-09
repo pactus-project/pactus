@@ -31,9 +31,9 @@ Create environment variables for the release version, which will be used in subs
 Keep your terminal open for further steps.
 
 ```bash
-PRV_VER="1.8.0"
-CUR_VER="1.9.0"
-NEXT_VER="1.10.0"
+PRV_VER="1.9.0"
+CUR_VER="1.10.0"
+NEXT_VER="1.11.0"
 BASE_BRANCH="main"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
