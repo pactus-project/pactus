@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/sync/peerset/peer"
 	"github.com/pactus-project/pactus/sync/peerset/peer/status"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/version"
 )
@@ -106,6 +107,11 @@ func (handler *helloHandler) ParseMessage(m message.Message, pid peer.ID) {
 
 	for _, pub := range msg.PublicKeys {
 		handler.state.UpdateValidatorProtocolVersion(pub.ValidatorAddress(), agent.ProtocolVersion)
+	}
+
+	if agent.ProtocolVersion < protocol.ProtocolVersionLatest {
+		// Keep outdated peer connected for gossiping but don't mark as known.
+		return
 	}
 
 	peer := handler.peerSet.GetPeer(pid)
