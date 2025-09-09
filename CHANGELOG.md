@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.9.0](https://github.com/pactus-project/pactus/compare/v1.8.0...v1.9.0) (2025-09-09)
+
+### Feat
+
+- **grpc**: report current time in node API ([#1864](https://github.com/pactus-project/pactus/pull/1864))
+- **state**: update block version on forks ([#1863](https://github.com/pactus-project/pactus/pull/1863))
+- **state**: set foundation addresses for split reward ([#1859](https://github.com/pactus-project/pactus/pull/1859))
+- **wallet**: set default transaction fee ([#1849](https://github.com/pactus-project/pactus/pull/1849))
+- **committee**: check if committee support a protocol version ([#1855](https://github.com/pactus-project/pactus/pull/1855))
+- **sync**: set protocol version for proposal message  ([#1854](https://github.com/pactus-project/pactus/pull/1854))
+- **committee**: calculate committee protocol version percentages ([#1853](https://github.com/pactus-project/pactus/pull/1853))
+- **state**: set protocol version for validators ([#1851](https://github.com/pactus-project/pactus/pull/1851))
+- **types**: define protocol version ([#1850](https://github.com/pactus-project/pactus/pull/1850))
+- **state**: implement PIP-43 ([#1840](https://github.com/pactus-project/pactus/pull/1840))
+- **cmd**: add label option for new address command ([#1842](https://github.com/pactus-project/pactus/pull/1842))
+
+### Fix
+
+- **util**: ignore filtered levels ([#1874](https://github.com/pactus-project/pactus/pull/1874))
+- **sync**: ignore hello message from outdated nodes ([#1873](https://github.com/pactus-project/pactus/pull/1873))
+- **state**: update protocol version for own validators ([#1871](https://github.com/pactus-project/pactus/pull/1871))
+- **sync**: banned peer recovery ([#1869](https://github.com/pactus-project/pactus/pull/1869))
+- **state**: update block version on enabling fork ([#1866](https://github.com/pactus-project/pactus/pull/1866))
+- **sandbox**: remove check height for banned address ([#1868](https://github.com/pactus-project/pactus/pull/1868))
+- **state**: check protocol version to enable split-reward fork ([#1857](https://github.com/pactus-project/pactus/pull/1857))
+- **cmd**: prevent panic on redownloading chunk ([#1847](https://github.com/pactus-project/pactus/pull/1847))
+- **state**: enable soft fork for split reward ([#1846](https://github.com/pactus-project/pactus/pull/1846))
+- **cmd**: prompt for label if it is empty ([#1845](https://github.com/pactus-project/pactus/pull/1845))
+- **state**: check foundation address in subsidy transaction ([#1844](https://github.com/pactus-project/pactus/pull/1844))
+- **wallet**: set Testnet network on upgrading wallet ([#1841](https://github.com/pactus-project/pactus/pull/1841))
+- **execution**: remove Ed25519 check ([#1835](https://github.com/pactus-project/pactus/pull/1835))
+
+### Refactor
+
+- **sync**: refactor handshaking protocol  ([#1872](https://github.com/pactus-project/pactus/pull/1872))
+- **util**: use slices.Equal to simplify code ([#1837](https://github.com/pactus-project/pactus/pull/1837))
+- **shell**: rename shell command to interactive ([#1734](https://github.com/pactus-project/pactus/pull/1734))
+- **docker**: update go version for Dockerfile ([#1834](https://github.com/pactus-project/pactus/pull/1834))
+- **other**: update dependencies ([#1833](https://github.com/pactus-project/pactus/pull/1833))
+
 ## [1.8.0](https://github.com/pactus-project/pactus/compare/v1.7.0...v1.8.0) (2025-07-01)
 
 ### Feat
