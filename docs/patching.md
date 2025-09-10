@@ -51,10 +51,10 @@ create environment variables for the release version, which will be used in subs
 Keep your terminal open for further steps.
 
 ```bash
-PRV_VER="1.9.0"
-CUR_VER="1.9.1"
-NEXT_VER="1.9.2"
-BASE_BRANCH="1.9.x"
+PRV_VER="1.10.0"
+CUR_VER="1.10.1"
+NEXT_VER="1.10.2"
+BASE_BRANCH="1.10.x"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
 
