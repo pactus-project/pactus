@@ -201,11 +201,10 @@ def main():
     mingw_prefix = os.environ.get('MINGW_PREFIX')
     if not mingw_prefix:
         print("Error: MINGW_PREFIX environment variable is not set")
-        print("Please set MINGW_PREFIX to your MinGW installation path (e.g., /mingw64)")
         sys.exit(1)
 
     exe_path = Path(sys.argv[1])
-    target_dir = sys.argv[2]
+    target_dir = Path(sys.argv[2])
 
     bundler = GTKBundler(mingw_prefix, target_dir)
     bundler.bundle_application(exe_path)
