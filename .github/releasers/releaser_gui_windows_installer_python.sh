@@ -17,7 +17,6 @@ mkdir -p "${PACKAGE_DIR}/pactus-gui"
 
 # Bundle GTK application using Python bundler
 python3 "${ROOT_DIR}/.github/releasers/gtk-win-bundler.py" \
-    "$MINGW_PREFIX" \
     "${BUILD_DIR}/signed/pactus-gui.exe" \
     "${PACKAGE_DIR}/pactus-gui"
 

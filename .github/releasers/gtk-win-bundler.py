@@ -192,14 +192,20 @@ class GTKBundler:
         print(f"Bundling complete! Total files copied: {len(self.copied_files)}")
 
 def main():
-    if len(sys.argv) != 4:
-        print("Usage: python3 gtk-win-bundler.py <mingw_prefix> <exe_path> <target_dir>")
-        print("Example: python3 gtk-win-bundler.py /mingw64 /path/to/app.exe /path/to/bundle")
+    if len(sys.argv) != 3:
+        print("Usage: python3 gtk-win-bundler.py <exe_path> <target_dir>")
+        print("Example: python3 gtk-win-bundler.py /path/to/app.exe /path/to/bundle")
         sys.exit(1)
 
-    mingw_prefix = sys.argv[1]
-    exe_path = Path(sys.argv[2])
-    target_dir = sys.argv[3]
+    # Check for MINGW_PREFIX environment variable
+    mingw_prefix = os.environ.get('MINGW_PREFIX')
+    if not mingw_prefix:
+        print("Error: MINGW_PREFIX environment variable is not set")
+        print("Please set MINGW_PREFIX to your MinGW installation path (e.g., /mingw64)")
+        sys.exit(1)
+
+    exe_path = Path(sys.argv[1])
+    target_dir = sys.argv[2]
 
     bundler = GTKBundler(mingw_prefix, target_dir)
     bundler.bundle_application(exe_path)
