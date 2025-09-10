@@ -16,8 +16,6 @@ class GTKBundler:
     def __init__(self, mingw_prefix: str, target_dir: str):
         self.mingw_prefix = Path(mingw_prefix)
         self.target_dir = Path(target_dir)
-        self.copied_files: Set[Path] = set()
-        self.dependency_cache: Dict[str, List[str]] = {}
 
     def run_command(self, cmd: List[str]) -> str:
         """Run a command and return its output."""
@@ -30,9 +28,6 @@ class GTKBundler:
 
     def get_dependencies(self, exe_path: Path, dependencies: List[Path]) -> None:
         """Get all DLL dependencies for an executable using ldd."""
-        if not exe_path.exists():
-            print(f"Warning: {exe_path} does not exist")
-            sys.exit(1)
 
         # Use ldd to get dependencies
         ldd_output = self.run_command(['ldd', str(exe_path)])
@@ -49,7 +44,7 @@ class GTKBundler:
 
     def copy_file(self, src: Path, dst: Path) -> None:
         """Copy a file if it hasn't been copied already."""
-        if src in self.copied_files:
+        if dst.exists():
             print(f"  Already copied: {src.name}")
             return
 
@@ -83,8 +78,8 @@ class GTKBundler:
             print(f"ERROR: Failed to copy directory {src_path} to {dst_path}: {e}")
             sys.exit(1)
 
-    def copy_dependencies_recursive(self, exe_path: Path, target_exe_dir: Path) -> None:
-        """Recursively copy all dependencies for an executable."""
+    def copy_gtk_dependencies(self, exe_path: Path, target_exe_dir: Path) -> None:
+        """Copy all dependencies for the GTK executable."""
         print(f"Analyzing dependencies for: {exe_path.name}")
 
         # Get direct dependencies
@@ -152,7 +147,7 @@ class GTKBundler:
             f.write("gtk-application-prefer-dark-theme=false\n")
         print("  Created settings.ini")
 
-    def copy_helper_executables(self, target_exe_dir: Path) -> None:
+    def copy_gtk_executables(self, target_exe_dir: Path) -> None:
         """Copy helper executables that might be needed."""
         print("Copying helper executables...")
 
@@ -177,10 +172,10 @@ class GTKBundler:
         target_exe_dir.mkdir(parents=True, exist_ok=True)
 
         # Copy all dependencies
-        self.copy_dependencies_recursive(exe_path, target_exe_dir)
+        self.copy_gtk_dependencies(exe_path, target_exe_dir)
 
         # Copy helper executables
-        self.copy_helper_executables(target_exe_dir)
+        self.copy_gtk_executables(target_exe_dir)
 
         # Copy GTK resources
         self.copy_gtk_resources()
