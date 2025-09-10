@@ -177,8 +177,7 @@ class GTKBundler:
 
         # Copy the main executable
         exe_dst = target_exe_dir / exe_path.name
-        shutil.copy2(exe_path, exe_dst)
-        print(f"Copied main executable: {exe_path.name}")
+        self.copy_file(exe_path, exe_dst)
 
         # Copy all dependencies
         self.copy_dependencies_recursive(exe_path, target_exe_dir)
