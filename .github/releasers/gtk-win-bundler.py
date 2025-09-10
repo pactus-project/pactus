@@ -43,7 +43,7 @@ class GTKBundler:
                 # Extract the DLL path
                 parts = line.split()
                 if len(parts) >= 3:
-                    dll_path = dll_path.replace('/mingw64', str(self.mingw_prefix))
+                    dll_path = parts[2].replace('/mingw64', str(self.mingw_prefix))
                     dll_path = Path(dll_path)
                     dependencies.append(dll_path)
 
