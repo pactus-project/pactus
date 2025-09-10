@@ -9,10 +9,8 @@
     <property name="program-name">GTK</property>
     <property name="version">Gtk – 3.0</property>
     <property name="comments" translatable="yes">
-    GTK is a free and open-source cross-platform widget toolkit for creating
-    graphical user interfaces. It is licensed under the terms of the GNU Lesser
-    General Public License, allowing both free and proprietary software to use it.
-    It is one of the most popular toolkits for the Wayland and X11 windowing systems.
+GTK is a free and open-source cross-platform widget toolkit for creating graphical user interfaces.
+It is licensed under the terms of the GNU Lesser General Public License, allowing both free and proprietary software to use it.
 </property>
     <property name="website">https://www.gtk.org/</property>
     <property name="website-label" translatable="yes">GTK</property>

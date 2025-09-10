@@ -10,7 +10,7 @@
     <property name="version">0.0.0</property>
     <property name="comments" translatable="yes">
 Building Decentralized Future Together!
-Pactus is a low-cost, high-performance, and scalable decentralized blockchain protocol with a SSPoS consensus mechanism.
+Pactus is a low-cost, high-performance, and scalable decentralized blockchain protocol with the SSPoS consensus mechanism.
 </property>
     <property name="license-type">mit-x11</property>
     <child internal-child="vbox">
