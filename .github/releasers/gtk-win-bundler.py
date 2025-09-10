@@ -58,7 +58,6 @@ class GTKBundler:
 
             # Copy the file
             shutil.copy2(src, dst)
-            self.copied_files.add(src)
             print(f"  Copied: {src.name}")
         except Exception as e:
             print(f"ERROR: Failed to copy file {src} to {dst}: {e}")
@@ -179,8 +178,6 @@ class GTKBundler:
 
         # Copy GTK resources
         self.copy_gtk_resources()
-
-        print(f"Bundling complete! Total files copied: {len(self.copied_files)}")
 
 def main():
     if len(sys.argv) != 3:
