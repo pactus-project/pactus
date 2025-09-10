@@ -173,10 +173,6 @@ class GTKBundler:
         target_exe_dir = self.target_dir
         target_exe_dir.mkdir(parents=True, exist_ok=True)
 
-        # Copy the main executable
-        exe_dst = target_exe_dir / exe_path.name
-        self.copy_file(exe_path, exe_dst)
-
         # Copy all dependencies
         self.copy_dependencies_recursive(exe_path, target_exe_dir)
 
