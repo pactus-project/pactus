@@ -95,7 +95,7 @@ class GTKBundler:
             self.get_dependencies(dep, dependencies)
 
         # Add dependencies for all pixbuf loader DLLs
-        pixbuf_dir = f"{self.mingw_prefix}/lib/gdk-pixbuf-2.0/2.10.0/loaders"
+        pixbuf_dir = Path(f"{self.mingw_prefix}/lib/gdk-pixbuf-2.0/2.10.0/loaders")
         for loader_file in pixbuf_dir.glob("*.dll"):
             print(f"    Scanning pixbuf loader: {loader_file.name}")
             self.get_dependencies(loader_file, dependencies)
