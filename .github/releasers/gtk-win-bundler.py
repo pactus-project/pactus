@@ -66,7 +66,7 @@ class GTKBundler:
             self.copied_files.add(src)
             print(f"  Copied: {src.name}")
         except Exception as e:
-            print(f"ERROR: Failed to copy {src} to {dst}: {e}")
+            print(f"ERROR: Failed to copy file {src} to {dst}: {e}")
             sys.exit(1)
 
     def copy_dir(self, src_path: str, dst_path: str) -> None:
