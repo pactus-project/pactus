@@ -39,11 +39,12 @@ class GTKBundler:
         dependencies = []
 
         for line in ldd_output.split('\n'):
-            if '/mingw' in line and '.dll' in line:
+            if '/mingw64' in line and '.dll' in line:
                 # Extract the DLL path
                 parts = line.split()
                 if len(parts) >= 3:
-                    dll_path = Path(parts[2])
+                    dll_path = dll_path.replace('/mingw64', str(self.mingw_prefix))
+                    dll_path = Path(dll_path)
                     dependencies.append(dll_path)
 
         return dependencies
