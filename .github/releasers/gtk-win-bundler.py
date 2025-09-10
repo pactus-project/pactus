@@ -26,17 +26,16 @@ class GTKBundler:
             return result.stdout.strip()
         except subprocess.CalledProcessError as e:
             print(f"Error running command {' '.join(cmd)}: {e}")
-            return ""
+            sys.exit(1)
 
-    def get_dependencies(self, exe_path: Path) -> List[Path]:
+    def get_dependencies(self, exe_path: Path, dependencies: List[Path]) -> None:
         """Get all DLL dependencies for an executable using ldd."""
         if not exe_path.exists():
             print(f"Warning: {exe_path} does not exist")
-            return []
+            sys.exit(1)
 
         # Use ldd to get dependencies
         ldd_output = self.run_command(['ldd', str(exe_path)])
-        dependencies = []
 
         for line in ldd_output.split('\n'):
             if '/mingw64' in line and '.dll' in line:
@@ -45,9 +44,8 @@ class GTKBundler:
                 if len(parts) >= 3:
                     dll_path = parts[2].replace('/mingw64', str(self.mingw_prefix))
                     dll_path = Path(dll_path)
-                    dependencies.append(dll_path)
-
-        return dependencies
+                    if dll_path not in dependencies:
+                        dependencies.append(dll_path)
 
     def copy_file(self, src: Path, dst: Path) -> None:
         """Copy a file if it hasn't been copied already."""
@@ -90,18 +88,23 @@ class GTKBundler:
         print(f"Analyzing dependencies for: {exe_path.name}")
 
         # Get direct dependencies
-        dependencies = self.get_dependencies(exe_path)
+        dependencies = []
+        self.get_dependencies(exe_path, dependencies)
 
         for dep in dependencies:
-            if dep not in self.copied_files:
-                self.copy_file(dep, target_exe_dir / dep.name)
+            self.get_dependencies(dep, dependencies)
 
-                # Recursively get dependencies of this dependency
-                sub_deps = self.get_dependencies(dep)
-                for sub_dep in sub_deps:
-                    if sub_dep not in self.copied_files:
-                        self.copy_file(sub_dep, target_exe_dir / sub_dep.name)
+        # Add dependencies for all pixbuf loader DLLs
+        pixbuf_dir = f"{self.mingw_prefix}/lib/gdk-pixbuf-2.0/2.10.0/loaders"
+        for loader_file in pixbuf_dir.glob("*.dll"):
+            print(f"    Scanning pixbuf loader: {loader_file.name}")
+            self.get_dependencies(loader_file, dependencies)
 
+        for dep in dependencies:
+            self.copy_file(dep, target_exe_dir / dep.name)
+
+    # Copy GTK resources
+    # Based on this tutorial: https://www.gtk.org/docs/installations/windows#building-and-distributing-your-application
     def copy_gtk_resources(self) -> None:
         """Copy GTK resources (themes, icons, schemas, etc.)."""
         print("Copying GTK resources...")
