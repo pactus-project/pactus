@@ -23,7 +23,6 @@ func (s *precommitState) enter() {
 
 func (s *precommitState) decide() {
 	s.vote()
-	s.absoluteCommit()
 
 	//
 	// The block can be committed by `2f+1` votes from the committee and
@@ -46,17 +45,19 @@ func (s *precommitState) decide() {
 		}
 
 		s.enterNewState(s.commitState)
+	} else {
+		//
+		// If a validator receives a set of `f+1` valid `cp:PRE-VOTE` votes for this round,
+		// it starts changing the proposer phase, even if its timer has not expired;
+		// This prevents it from starting the change-proposer phase too late.
+		//
+		cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
+		if cpPreVotes.HasFPlusOneVotesFor(0, vote.CPValueYes) {
+			s.startChangingProposer()
+		}
 	}
 
-	//
-	// If a validator receives a set of `f+1` valid `cp:PRE-VOTE` votes for this round,
-	// it starts changing the proposer phase, even if its timer has not expired;
-	// This prevents it from starting the change-proposer phase too late.
-	//
-	cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
-	if cpPreVotes.HasFPlusOneVotesFor(0, vote.CPValueYes) {
-		s.startChangingProposer()
-	}
+	s.absoluteCommit()
 }
 
 func (s *precommitState) vote() {

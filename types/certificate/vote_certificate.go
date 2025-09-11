@@ -41,7 +41,7 @@ func (cert *VoteCertificate) ValidatePrepare(validators []*validator.Validator,
 	signBytes := cert.SignBytes(blockHash,
 		util.StringToBytes("PREPARE"))
 
-	return cert.baseCertificate.validate(validators, signBytes, require2FPower)
+	return cert.baseCertificate.validate(validators, signBytes, Required2FP1Power)
 }
 
 func (cert *VoteCertificate) ValidatePrecommit(validators []*validator.Validator,
@@ -49,7 +49,7 @@ func (cert *VoteCertificate) ValidatePrecommit(validators []*validator.Validator
 ) error {
 	signBytes := cert.SignBytes(blockHash)
 
-	return cert.baseCertificate.validate(validators, signBytes, require2FPower)
+	return cert.baseCertificate.validate(validators, signBytes, Required2FP1Power)
 }
 
 func (cert *VoteCertificate) ValidateCPPreVote(validators []*validator.Validator,
@@ -60,7 +60,7 @@ func (cert *VoteCertificate) ValidateCPPreVote(validators []*validator.Validator
 		util.Int16ToSlice(cpRound),
 		[]byte{cpValue})
 
-	return cert.baseCertificate.validate(validators, signBytes, require2FPower)
+	return cert.baseCertificate.validate(validators, signBytes, Required2FP1Power)
 }
 
 func (cert *VoteCertificate) ValidateCPMainVote(validators []*validator.Validator,
@@ -75,5 +75,5 @@ func (cert *VoteCertificate) ValidateCPMainVote(validators []*validator.Validato
 }
 
 func (cert *VoteCertificate) validate(validators []*validator.Validator, signBytes []byte) error {
-	return cert.baseCertificate.validate(validators, signBytes, require2FPower)
+	return cert.baseCertificate.validate(validators, signBytes, Required2FP1Power)
 }

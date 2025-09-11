@@ -53,9 +53,9 @@ func TestNewHeightTimeBehindNetwork(t *testing.T) {
 	blockHash := prop.Block().Hash()
 
 	td.consP.SetProposal(prop)
-	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexX)
-	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexY)
-	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexB)
+	td.addPrecommitVote(t, td.consP, blockHash, height, round, tIndexX)
+	td.addPrecommitVote(t, td.consP, blockHash, height, round, tIndexY)
+	td.addPrecommitVote(t, td.consP, blockHash, height, round, tIndexB)
 
 	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, blockHash)
 	td.shouldPublishBlockAnnounce(t, td.consP, blockHash)

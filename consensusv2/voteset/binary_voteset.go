@@ -118,7 +118,7 @@ func (vs *BinaryVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 func (vs *BinaryVoteSet) HasTwoFPlusOneVotes(cpRound int16) bool {
 	roundVotes := vs.mustGetRoundVotes(cpRound)
 
-	return vs.hasTwoFPlusOnePower(roundVotes.votedPower)
+	return vs.has2FP1Power(roundVotes.votedPower)
 }
 
 func (vs *BinaryVoteSet) HasAnyVoteFor(cpRound int16, cpValue vote.CPValue) bool {
@@ -136,13 +136,13 @@ func (vs *BinaryVoteSet) HasAllVotesFor(cpRound int16, cpValue vote.CPValue) boo
 func (vs *BinaryVoteSet) HasFPlusOneVotesFor(cpRound int16, cpValue vote.CPValue) bool {
 	roundVotes := vs.mustGetRoundVotes(cpRound)
 
-	return vs.hasFPlusOnePower(roundVotes.voteBoxes[cpValue].votedPower)
+	return vs.has1FP1Power(roundVotes.voteBoxes[cpValue].votedPower)
 }
 
 func (vs *BinaryVoteSet) HasTwoFPlusOneVotesFor(cpRound int16, cpValue vote.CPValue) bool {
 	roundVotes := vs.mustGetRoundVotes(cpRound)
 
-	return vs.hasTwoFPlusOnePower(roundVotes.voteBoxes[cpValue].votedPower)
+	return vs.has2FP1Power(roundVotes.voteBoxes[cpValue].votedPower)
 }
 
 func (vs *BinaryVoteSet) BinaryVotes(cpRound int16, cpValue vote.CPValue) map[crypto.Address]*vote.Vote {
@@ -163,4 +163,11 @@ func (vs *BinaryVoteSet) GetRandomVote(cpRound int16, cpValue vote.CPValue) *vot
 	}
 
 	return nil
+}
+
+// VotedPower returns the total voting power of the votes for the given change-proposer round.
+func (vs *BinaryVoteSet) VotedPower(cpRound int16) int64 {
+	roundVotes := vs.mustGetRoundVotes(cpRound)
+
+	return roundVotes.votedPower
 }

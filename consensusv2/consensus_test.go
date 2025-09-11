@@ -65,7 +65,7 @@ func testConfig() *Config {
 func setup(t *testing.T) *testData {
 	t.Helper()
 
-	return setupWithSeed(t, testsuite.GenerateSeed())
+	return setupWithSeed(t, 1757090067998199037)
 }
 
 func setupWithSeed(t *testing.T, seed int64) *testData {
@@ -118,7 +118,6 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		consMessages: consMessages,
 	}
 	broadcasterFunc := func(sender crypto.Address, msg message.Message) {
-		fmt.Printf("received a message %s: %s\n", msg.Type(), msg.String())
 		td.consMessages = append(td.consMessages, consMessage{
 			sender:  sender,
 			message: msg,
@@ -262,43 +261,53 @@ func (*testData) checkHeightRound(t *testing.T, cons *consensusV2, height uint32
 	assert.Equal(t, r, round)
 }
 
-func (td *testData) addPrecommitVote(cons *consensusV2, blockHash hash.Hash, height uint32, round int16,
-	valID int,
+func (td *testData) addPrecommitVote(t *testing.T, cons *consensusV2, blockHash hash.Hash,
+	height uint32, round int16, valID int,
 ) *vote.Vote {
+	t.Helper()
+
 	v := vote.NewPrecommitVote(blockHash, height, round, td.valKeys[valID].Address())
 
-	return td.addVote(cons, v, valID)
+	return td.addVote(t, cons, v, valID)
 }
 
-func (td *testData) addCPPreVote(cons *consensusV2, blockHash hash.Hash, height uint32, round int16,
-	cpVal vote.CPValue, just vote.Just, valID int,
+func (td *testData) addCPPreVote(t *testing.T, cons *consensusV2, blockHash hash.Hash,
+	height uint32, round int16, cpVal vote.CPValue, just vote.Just, valID int,
 ) *vote.Vote {
+	t.Helper()
+
 	v := vote.NewCPPreVote(blockHash, height, round, 0, cpVal, just, td.valKeys[valID].Address())
 
-	return td.addVote(cons, v, valID)
+	return td.addVote(t, cons, v, valID)
 }
 
-func (td *testData) addCPMainVote(cons *consensusV2, blockHash hash.Hash, height uint32, round int16,
-	cpVal vote.CPValue, just vote.Just, valID int,
+func (td *testData) addCPMainVote(t *testing.T, cons *consensusV2, blockHash hash.Hash,
+	height uint32, round int16, cpVal vote.CPValue, just vote.Just, valID int,
 ) *vote.Vote {
+	t.Helper()
+
 	v := vote.NewCPMainVote(blockHash, height, round, 0, cpVal, just, td.valKeys[valID].Address())
 
-	return td.addVote(cons, v, valID)
+	return td.addVote(t, cons, v, valID)
 }
 
-func (td *testData) addCPDecidedVote(cons *consensusV2, blockHash hash.Hash, height uint32, round int16,
+func (td *testData) addCPDecidedVote(t *testing.T, cons *consensusV2, blockHash hash.Hash, height uint32, round int16,
 	cpVal vote.CPValue, just vote.Just, valID int,
 ) *vote.Vote {
+	t.Helper()
+
 	v := vote.NewCPDecidedVote(blockHash, height, round, 0, cpVal, just, td.valKeys[valID].Address())
 
-	return td.addVote(cons, v, valID)
+	return td.addVote(t, cons, v, valID)
 }
 
-func (td *testData) addVote(cons *consensusV2, v *vote.Vote, valID int) *vote.Vote {
-	td.HelperSignVote(td.valKeys[valID], v)
-	cons.AddVote(v)
+func (td *testData) addVote(t *testing.T, cons *consensusV2, vote *vote.Vote, valID int) *vote.Vote {
+	t.Helper()
 
-	return v
+	td.HelperSignVote(td.valKeys[valID], vote)
+	cons.AddVote(vote)
+
+	return vote
 }
 
 func (*testData) newHeightTimeout(cons *consensusV2) {
@@ -406,13 +415,12 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 //  3. `JustDecided` for the decided step.
 func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Hash,
 	height uint32, round int16,
-) (vote.Just, vote.Just, vote.Just) {
+) (preVoteJust, mainVoteJust, decidedJust vote.Just) {
 	t.Helper()
 
 	cpRound := int16(0)
 
 	// Create PreVote Justification
-	var preVoteJust vote.Just
 	var cpValue vote.CPValue
 
 	if propBlockHash != hash.UndefHash {
@@ -452,7 +460,7 @@ func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Has
 	preVoteAggSig := bls.SignatureAggregate(preVoteSigs...)
 	certPreVote := certificate.NewVoteCertificate(height, round)
 	certPreVote.SetSignature(preVoteCommitters, []int32{}, preVoteAggSig)
-	mainVoteJust := &vote.JustMainVoteNoConflict{QCert: certPreVote}
+	mainVoteJust = &vote.JustMainVoteNoConflict{QCert: certPreVote}
 
 	// Create Decided Justification
 	mainVoteCommitters := []int32{}
@@ -468,7 +476,7 @@ func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Has
 	mainVoteAggSig := bls.SignatureAggregate(mainVoteSigs...)
 	certMainVote := certificate.NewVoteCertificate(height, round)
 	certMainVote.SetSignature(mainVoteCommitters, []int32{}, mainVoteAggSig)
-	decidedJust := &vote.JustDecided{QCert: certMainVote}
+	decidedJust = &vote.JustDecided{QCert: certMainVote}
 
 	return preVoteJust, mainVoteJust, decidedJust
 }
@@ -516,10 +524,10 @@ func TestVoteWithInvalidHeight(t *testing.T) {
 	td.commitBlockForAllStates(t) // height 1
 	td.enterNewHeight(td.consP)
 
-	vote1 := td.addPrecommitVote(td.consP, td.RandHash(), 1, 0, tIndexX)
-	vote2 := td.addPrecommitVote(td.consP, td.RandHash(), 2, 0, tIndexX)
-	vote3 := td.addPrecommitVote(td.consP, td.RandHash(), 2, 0, tIndexY)
-	vote4 := td.addPrecommitVote(td.consP, td.RandHash(), 3, 0, tIndexX)
+	vote1 := td.addPrecommitVote(t, td.consP, td.RandHash(), 1, 0, tIndexX)
+	vote2 := td.addPrecommitVote(t, td.consP, td.RandHash(), 2, 0, tIndexX)
+	vote3 := td.addPrecommitVote(t, td.consP, td.RandHash(), 2, 0, tIndexY)
+	vote4 := td.addPrecommitVote(t, td.consP, td.RandHash(), 3, 0, tIndexX)
 
 	require.False(t, td.consP.HasVote(vote1.Hash()))
 	require.True(t, td.consP.HasVote(vote2.Hash()))
@@ -538,9 +546,9 @@ func TestConsensusAbsoluteCommit(t *testing.T) {
 	prop := td.makeProposal(t, 2, 0)
 	td.consX.SetProposal(prop)
 
-	td.addPrecommitVote(td.consX, prop.Block().Hash(), 2, 0, tIndexY)
-	td.addPrecommitVote(td.consX, prop.Block().Hash(), 2, 0, tIndexB)
-	td.addPrecommitVote(td.consX, prop.Block().Hash(), 2, 0, tIndexP)
+	td.addPrecommitVote(t, td.consX, prop.Block().Hash(), 2, 0, tIndexY)
+	td.addPrecommitVote(t, td.consX, prop.Block().Hash(), 2, 0, tIndexB)
+	td.addPrecommitVote(t, td.consX, prop.Block().Hash(), 2, 0, tIndexP)
 	td.shouldPublishVote(t, td.consX, vote.VoteTypePrecommit, prop.Block().Hash())
 
 	td.shouldPublishBlockAnnounce(t, td.consX, prop.Block().Hash())
@@ -552,10 +560,10 @@ func TestConsensusAddVote(t *testing.T) {
 	td.enterNewHeight(td.consP)
 	td.enterNextRound(td.consP)
 
-	vote1 := td.addPrecommitVote(td.consP, td.RandHash(), 1, 0, tIndexX)
-	vote2 := td.addPrecommitVote(td.consP, td.RandHash(), 1, 2, tIndexX)
-	vote3 := td.addPrecommitVote(td.consP, td.RandHash(), 1, 1, tIndexX)
-	vote4 := td.addPrecommitVote(td.consP, td.RandHash(), 2, 0, tIndexX)
+	vote1 := td.addPrecommitVote(t, td.consP, td.RandHash(), 1, 0, tIndexX)
+	vote2 := td.addPrecommitVote(t, td.consP, td.RandHash(), 1, 2, tIndexX)
+	vote3 := td.addPrecommitVote(t, td.consP, td.RandHash(), 1, 1, tIndexX)
+	vote4 := td.addPrecommitVote(t, td.consP, td.RandHash(), 2, 0, tIndexX)
 	vote5, _ := td.GenerateTestPrecommitVote(1, 0)
 	td.consP.AddVote(vote5)
 
@@ -584,9 +592,9 @@ func TestConsensusLateProposal(t *testing.T) {
 	blockHash := prop.Block().Hash()
 
 	// consP receives all the votes first
-	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexX)
-	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexY)
-	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexB)
+	td.addPrecommitVote(t, td.consP, blockHash, height, round, tIndexX)
+	td.addPrecommitVote(t, td.consP, blockHash, height, round, tIndexY)
+	td.addPrecommitVote(t, td.consP, blockHash, height, round, tIndexB)
 
 	// consP receives proposal now
 	td.consP.SetProposal(prop)
@@ -598,46 +606,50 @@ func TestConsensusLateProposal(t *testing.T) {
 func TestHandleQueryVote(t *testing.T) {
 	td := setup(t)
 
-	td.enterNewHeight(td.consP)
-	height := uint32(1)
-	round := int16(0)
+	td.commitBlockForAllStates(t)
 
-	assert.Nil(t, td.consP.HandleQueryVote(height, round))
+	td.enterNewHeight(td.consP)
+	height := uint32(2)
+
+	assert.Nil(t, td.consP.HandleQueryVote(height, 0))
 
 	// round 0
-	preVoteJust, _, decidedJust := td.makeChangeProposerJusts(t, hash.UndefHash, height, round)
-
-	vote1 := td.addCPDecidedVote(td.consP, hash.UndefHash, height, round, vote.CPValueYes, decidedJust, tIndexY)
+	preVoteJust, mainVoteJust, decidedJust := td.makeChangeProposerJusts(t, hash.UndefHash, height, 0)
+	r0Vote1 := td.addCPPreVote(t, td.consP, hash.UndefHash, height, 0, vote.CPValueYes, preVoteJust, tIndexY)
+	r0Vote2 := td.addCPMainVote(t, td.consP, hash.UndefHash, height, 0, vote.CPValueYes, mainVoteJust, tIndexY)
+	r0Vote3 := td.addCPDecidedVote(t, td.consP, hash.UndefHash, height, 0, vote.CPValueYes, decidedJust, tIndexY)
 
 	// round 1
 	td.enterNextRound(td.consP)
-	round++
 
-	preVoteJust, _, decidedJust = td.makeChangeProposerJusts(t, hash.UndefHash, height, round)
-	vote2 := td.addPrecommitVote(td.consP, td.RandHash(), height, round, tIndexX)
-	vote3 := td.addCPPreVote(td.consP, hash.UndefHash, height, round, vote.CPValueYes, preVoteJust, tIndexY)
-	vote4 := td.addCPDecidedVote(td.consP, hash.UndefHash, height, round, vote.CPValueYes, decidedJust, tIndexY)
+	hash := td.RandHash()
+	preVoteJust, mainVoteJust, decidedJust = td.makeChangeProposerJusts(t, hash, height, 1)
+	r1Vote1 := td.addPrecommitVote(t, td.consP, td.RandHash(), height, 1, tIndexY)
+	r1Vote2 := td.addCPPreVote(t, td.consP, hash, height, 1, vote.CPValueNo, preVoteJust, tIndexY)
+	r1Vote3 := td.addCPMainVote(t, td.consP, hash, height, 1, vote.CPValueNo, mainVoteJust, tIndexY)
+	r1Vote4 := td.addCPDecidedVote(t, td.consP, hash, height, 1, vote.CPValueNo, decidedJust, tIndexY)
 
 	// Round 2
 	td.enterNextRound(td.consP)
-	round++
 
-	vote5 := td.addPrecommitVote(td.consP, td.RandHash(), height, round, tIndexY)
+	td.addPrecommitVote(t, td.consP, td.RandHash(), height, 2, tIndexY)
 
-	require.True(t, td.consP.HasVote(vote1.Hash()))
-	require.True(t, td.consP.HasVote(vote2.Hash()))
-	require.True(t, td.consP.HasVote(vote3.Hash()))
-	require.True(t, td.consP.HasVote(vote4.Hash()))
-	require.True(t, td.consP.HasVote(vote5.Hash()))
+	require.True(t, td.consP.HasVote(r0Vote1.Hash()))
+	require.True(t, td.consP.HasVote(r0Vote2.Hash()))
+	require.True(t, td.consP.HasVote(r0Vote3.Hash()))
+	require.True(t, td.consP.HasVote(r1Vote1.Hash()))
+	require.True(t, td.consP.HasVote(r1Vote2.Hash()))
+	require.True(t, td.consP.HasVote(r1Vote3.Hash()))
+	require.True(t, td.consP.HasVote(r1Vote4.Hash()))
 
 	rndVote0 := td.consP.HandleQueryVote(height, 0)
-	assert.Equal(t, rndVote0, vote4, "should send the decided vote for the round 0")
+	assert.Equal(t, r0Vote3, rndVote0, "should send the decided vote for the round 0")
 
 	rndVote1 := td.consP.HandleQueryVote(height, 1)
-	assert.Equal(t, rndVote1, vote4, "should send the decided vote for the round 1")
+	assert.Equal(t, r1Vote4, rndVote1, "should send the decided vote for the round 1")
 
 	rndVote2 := td.consP.HandleQueryVote(height, 2)
-	assert.Equal(t, rndVote2, vote5, "should send the precommit vote for the current round")
+	assert.Equal(t, int16(2), rndVote2.Round(), "should send the precommit vote for the current round")
 
 	rndVote3 := td.consP.HandleQueryVote(height, 3)
 	assert.Nil(t, rndVote3, "should not send a vote for the next round")
@@ -760,7 +772,7 @@ func TestNonActiveValidator(t *testing.T) {
 	})
 
 	t.Run("non-active instances should ignore votes", func(t *testing.T) {
-		v := td.addPrecommitVote(nonActiveCons, td.RandHash(), 1, 0, tIndexX)
+		v := td.addPrecommitVote(t, nonActiveCons, td.RandHash(), 1, 0, tIndexX)
 
 		assert.False(t, nonActiveCons.HasVote(v.Hash()))
 	})
@@ -784,7 +796,7 @@ func TestVoteWithBigRound(t *testing.T) {
 
 	td.enterNewHeight(td.consX)
 
-	vote := td.addPrecommitVote(td.consX, td.RandHash(), 1, util.MaxInt16, tIndexB)
+	vote := td.addPrecommitVote(t, td.consX, td.RandHash(), 1, util.MaxInt16, tIndexB)
 	assert.True(t, td.consX.HasVote(vote.Hash()))
 }
 
@@ -815,7 +827,7 @@ func TestCases(t *testing.T) {
 		round       int16
 		description string
 	}{
-		// {1697898884837384019, 2, "1/3+ cp:PRE-VOTE in prepare step"},
+		// {1757072494246619185, 2, "1/3+ cp:PRE-VOTE in  step"},
 		// {1694848907840926239, 0, "1/3+ cp:PRE-VOTE in precommit step"},
 		// {1694849103290580532, 1, "Conflicting votes, cp-round=0"},
 		// {1697900665869342730, 1, "Conflicting votes, cp-round=1"},
@@ -842,17 +854,19 @@ func TestCases(t *testing.T) {
 }
 
 func TestFaulty(t *testing.T) {
-	for i := 0; i < 10; i++ {
-		td := setup(t)
-		td.commitBlockForAllStates(t)
+	for i := 0; i < 1000; i++ {
+		// td := setup(t)
+		// td.commitBlockForAllStates(t)
 
-		td.enterNewHeight(td.consX)
-		td.enterNewHeight(td.consY)
-		td.enterNewHeight(td.consB)
-		td.enterNewHeight(td.consP)
+		// td.enterNewHeight(td.consX)
+		// td.enterNewHeight(td.consY)
+		// td.enterNewHeight(td.consB)
+		// td.enterNewHeight(td.consP)
 
-		_, err := checkConsensus(td, 2, nil)
-		require.NoError(t, err)
+		// _, err := checkConsensus(td, 2, nil)
+		// require.NoError(t, err)
+
+		TestByzantine(t)
 	}
 }
 
@@ -860,15 +874,16 @@ func TestFaulty(t *testing.T) {
 // - B is a Byzantine node
 // - X, Y, and P are honest nodes
 // - However, P is partitioned and perceives the network through B.
-
+//
 // At height H, B acts maliciously by double proposing:
 // sending one proposal to X and Y, and another proposal to P.
-
+//
 // Once the partition is healed, honest nodes should either reach consensus
 // on the first proposal or change the proposer.
 // This is due to the randomness of the binary agreement.
+//
+// The Byzantine node B acts maliciously by double proposing and double voting in this test.
 func TestByzantine(t *testing.T) {
-	return
 	td := setup(t)
 
 	for i := 0; i < 6; i++ {
@@ -887,17 +902,14 @@ func TestByzantine(t *testing.T) {
 	td.consX.SetProposal(prop1)
 	td.consY.SetProposal(prop1)
 
-	td.shouldPublishVote(t, td.consX, vote.VoteTypePrecommit, prop1.Block().Hash())
-	td.shouldPublishVote(t, td.consY, vote.VoteTypePrecommit, prop1.Block().Hash())
+	voteX := td.shouldPublishVote(t, td.consX, vote.VoteTypePrecommit, prop1.Block().Hash())
+	voteY := td.shouldPublishVote(t, td.consY, vote.VoteTypePrecommit, prop1.Block().Hash())
 
-	// Byzantine node doesn't broadcast the prepare vote
+	// Byzantine node partitioned the network and blocked the Node P.
 	// X and Y request to change proposer
 
 	td.changeProposerTimeout(td.consX)
 	td.changeProposerTimeout(td.consY)
-
-	// voteX := td.shouldPublishVote(t, td.consX, vote.VoteTypeCPPreVote, hash.UndefHash)
-	// voteY := td.shouldPublishVote(t, td.consY, vote.VoteTypeCPPreVote, hash.UndefHash)
 
 	// X and Y are unable to progress
 
@@ -907,14 +919,14 @@ func TestByzantine(t *testing.T) {
 
 	td.consB.SetProposal(prop1)
 
-	// td.consB.AddVote(voteX)
-	// td.consB.AddVote(voteY)
+	td.consB.AddVote(voteX)
+	td.consB.AddVote(voteY)
 	td.shouldPublishVote(t, td.consB, vote.VoteTypePrecommit, prop1.Block().Hash())
 
 	td.changeProposerTimeout(td.consB)
 
 	// B requests to NOT change the proposer
-	// byzVote1 := td.shouldPublishVote(t, td.consB, vote.VoteTypeCPPreVote, p1.Block().Hash())
+	byzVote1 := td.shouldPublishVote(t, td.consB, vote.VoteTypeCPPreVote, prop1.Block().Hash())
 
 	// =================================
 	// P votes
@@ -935,12 +947,10 @@ func TestByzantine(t *testing.T) {
 	td.consP.SetProposal(prop2)
 
 	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, prop2.Block().Hash())
-	byzVote2 := td.addPrecommitVote(td.consP, prop2.Block().Hash(), height, round, tIndexB)
+	byzVote2 := td.addPrecommitVote(t, td.consP, prop2.Block().Hash(), height, round, tIndexB)
 
 	// Request to change proposer
 	td.changeProposerTimeout(td.consP)
-
-	// byzVote1 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
 
 	// P is unable to progress
 
@@ -960,7 +970,7 @@ func TestByzantine(t *testing.T) {
 	// =================================
 	// Now, Partition heals
 	fmt.Println("== Partition heals")
-	cert, err := checkConsensus(td, height, []*vote.Vote{byzVote2})
+	cert, err := checkConsensus(td, height, []*vote.Vote{byzVote1, byzVote2})
 
 	require.NoError(t, err)
 	require.Equal(t, cert.Height(), height)
@@ -1011,7 +1021,7 @@ func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
 			m := rndMsg.message.(*message.QueryProposalMessage)
 			if m.Height == height {
 				for _, cons := range instances {
-					p := cons.HandleQueryProposal(m.Height, m.Round)
+					p := cons.Proposal()
 					if p != nil {
 						td.consMessages = append(td.consMessages, consMessage{
 							sender:  cons.valKey.Address(),

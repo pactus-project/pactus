@@ -12,6 +12,7 @@ type BlockVoteSet struct {
 	blockVotes map[hash.Hash]*voteBox
 	allVotes   map[crypto.Address]*vote.Vote
 	quorumHash *hash.Hash
+	votedPower int64
 }
 
 func NewPrecommitVoteSet(round int16, totalPower int64,
@@ -27,6 +28,7 @@ func newBlockVoteSet(voteSet *voteSet) *BlockVoteSet {
 		voteSet:    voteSet,
 		blockVotes: make(map[hash.Hash]*voteBox),
 		allVotes:   make(map[crypto.Address]*vote.Vote),
+		votedPower: 0,
 	}
 }
 
@@ -79,11 +81,12 @@ func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 		err = ErrDuplicatedVote
 	} else {
 		vs.allVotes[vote.Signer()] = vote
+		vs.votedPower += power
 	}
 
 	blockVotes := vs.mustGetBlockVotes(vote.BlockHash())
 	blockVotes.addVote(vote, power)
-	if vs.hasTwoFPlusOnePower(blockVotes.votedPower) {
+	if vs.has2FP1Power(blockVotes.votedPower) {
 		quorumHash := vote.BlockHash()
 		vs.quorumHash = &quorumHash
 	}
@@ -104,7 +107,7 @@ func (vs *BlockVoteSet) HasAbsoluteQuorum() bool {
 	}
 	blockVotes := vs.mustGetBlockVotes(*vs.quorumHash)
 
-	return vs.hasThreeFPlusOnePower(blockVotes.votedPower)
+	return vs.has3FP1Power(blockVotes.votedPower)
 }
 
 // HasMajorityQuorum checks whether the given block has received
@@ -112,7 +115,7 @@ func (vs *BlockVoteSet) HasAbsoluteQuorum() bool {
 func (vs *BlockVoteSet) HasMajorityQuorum(blockHash hash.Hash) bool {
 	blockVotes := vs.mustGetBlockVotes(blockHash)
 
-	return vs.hasTwoFPlusOnePower(blockVotes.votedPower)
+	return vs.has2FP1Power(blockVotes.votedPower)
 }
 
 // HasQuorumHash reports whether there exists a block that has received
@@ -126,4 +129,9 @@ func (vs *BlockVoteSet) HasQuorumHash() bool {
 // If no block has reached the quorum threshold, it returns nil.
 func (vs *BlockVoteSet) QuorumHash() *hash.Hash {
 	return vs.quorumHash
+}
+
+// VotedPower returns the total voting power of the votes.
+func (vs *BlockVoteSet) VotedPower() int64 {
+	return vs.votedPower
 }

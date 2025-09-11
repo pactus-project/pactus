@@ -121,7 +121,6 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		consMessages: consMessages,
 	}
 	broadcasterFunc := func(sender crypto.Address, msg message.Message) {
-		fmt.Printf("received a message %s: %s\n", msg.Type(), msg.String())
 		td.consMessages = append(td.consMessages, consMessage{
 			sender:  sender,
 			message: msg,

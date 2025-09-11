@@ -201,17 +201,8 @@ func (cert *baseCertificate) Decode(r io.Reader) error {
 	return nil
 }
 
-type requiredPowerFn func(int64) int64
-
-var require2FPower = func(committeePower int64) int64 {
-	f := (committeePower - 1) / 3
-	p := (2 * f) + 1
-
-	return p
-}
-
 func (cert *baseCertificate) validate(validators []*validator.Validator,
-	signBytes []byte, requiredPowerFn requiredPowerFn,
+	signBytes []byte, requiredPowerFn RequiredPowerFn,
 ) error {
 	if len(validators) != len(cert.committers) {
 		return UnexpectedCommittersError{

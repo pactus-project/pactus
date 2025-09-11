@@ -56,12 +56,12 @@ func TestCPChangeProposerAgreementYes(t *testing.T) {
 	td.changeProposerTimeout(td.consP)
 
 	preVote0 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, hash.UndefHash)
-	td.addCPPreVote(td.consP, hash.UndefHash, height, round, vote.CPValueYes, preVote0.CPJust(), tIndexX)
-	td.addCPPreVote(td.consP, hash.UndefHash, height, round, vote.CPValueYes, preVote0.CPJust(), tIndexY)
+	td.addCPPreVote(t, td.consP, hash.UndefHash, height, round, vote.CPValueYes, preVote0.CPJust(), tIndexX)
+	td.addCPPreVote(t, td.consP, hash.UndefHash, height, round, vote.CPValueYes, preVote0.CPJust(), tIndexY)
 
 	mainVote0 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPMainVote, hash.UndefHash)
-	td.addCPMainVote(td.consP, hash.UndefHash, height, round, vote.CPValueYes, mainVote0.CPJust(), tIndexX)
-	td.addCPMainVote(td.consP, hash.UndefHash, height, round, vote.CPValueYes, mainVote0.CPJust(), tIndexY)
+	td.addCPMainVote(t, td.consP, hash.UndefHash, height, round, vote.CPValueYes, mainVote0.CPJust(), tIndexX)
+	td.addCPMainVote(t, td.consP, hash.UndefHash, height, round, vote.CPValueYes, mainVote0.CPJust(), tIndexY)
 
 	td.shouldPublishVote(t, td.consP, vote.VoteTypeCPDecided, hash.UndefHash)
 	td.checkHeightRound(t, td.consP, height, round+1)
@@ -82,14 +82,14 @@ func TestCPChangeProposerAgreementNo(t *testing.T) {
 	blockHash := prop.Block().Hash()
 
 	td.consP.SetProposal(prop)
-	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexX)
-	td.addPrecommitVote(td.consP, blockHash, height, round, tIndexY)
+	td.addPrecommitVote(t, td.consP, blockHash, height, round, tIndexX)
+	td.addPrecommitVote(t, td.consP, blockHash, height, round, tIndexY)
 
 	td.changeProposerTimeout(td.consP)
 
 	preVote0 := td.shouldPublishVote(t, td.consP, vote.VoteTypeCPPreVote, blockHash)
-	td.addCPPreVote(td.consP, blockHash, height, round, vote.CPValueNo, preVote0.CPJust(), tIndexX)
-	td.addCPPreVote(td.consP, blockHash, height, round, vote.CPValueNo, preVote0.CPJust(), tIndexY)
+	td.addCPPreVote(t, td.consP, blockHash, height, round, vote.CPValueNo, preVote0.CPJust(), tIndexX)
+	td.addCPPreVote(t, td.consP, blockHash, height, round, vote.CPValueNo, preVote0.CPJust(), tIndexY)
 
 	td.shouldPublishVote(t, td.consP, vote.VoteTypePrecommit, blockHash)
 	td.shouldPublishBlockAnnounce(t, td.consP, blockHash)
@@ -109,9 +109,9 @@ func TestCPCrashOnTestnet(t *testing.T) {
 
 	blockHash := td.RandHash()
 	just0, _, _ := td.makeChangeProposerJusts(t, blockHash, height, round)
-	td.addCPPreVote(td.consP, blockHash, height, round, vote.CPValueNo, just0, tIndexX)
-	td.addCPPreVote(td.consP, blockHash, height, round, vote.CPValueNo, just0, tIndexY)
-	td.addCPPreVote(td.consP, blockHash, height, round, vote.CPValueNo, just0, tIndexB)
+	td.addCPPreVote(t, td.consP, blockHash, height, round, vote.CPValueNo, just0, tIndexX)
+	td.addCPPreVote(t, td.consP, blockHash, height, round, vote.CPValueNo, just0, tIndexY)
+	td.addCPPreVote(t, td.consP, blockHash, height, round, vote.CPValueNo, just0, tIndexB)
 
 	td.newHeightTimeout(td.consP)
 	td.changeProposerTimeout(td.consP)
@@ -132,7 +132,7 @@ func TestCPMoveToNextRoundOnDecidedVoteYes(t *testing.T) {
 	td.checkHeightRound(t, td.consP, h, r)
 
 	_, _, decideJust := td.makeChangeProposerJusts(t, hash.UndefHash, h, r)
-	td.addCPDecidedVote(td.consP, hash.UndefHash, h, r, vote.CPValueYes, decideJust, tIndexX)
+	td.addCPDecidedVote(t, td.consP, hash.UndefHash, h, r, vote.CPValueYes, decideJust, tIndexX)
 
 	td.checkHeightRound(t, td.consP, h, r+1)
 }

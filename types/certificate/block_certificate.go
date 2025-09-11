@@ -34,7 +34,7 @@ func (cert *BlockCertificate) SignBytes(blockHash hash.Hash) []byte {
 func (cert *BlockCertificate) Validate(validators []*validator.Validator, blockHash hash.Hash) error {
 	signBytes := cert.SignBytes(blockHash)
 
-	return cert.baseCertificate.validate(validators, signBytes, require2FPower)
+	return cert.baseCertificate.validate(validators, signBytes, Required2FP1Power)
 }
 
 func (cert *BlockCertificate) Clone() *BlockCertificate {
