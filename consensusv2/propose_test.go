@@ -74,8 +74,8 @@ func TestProposeNetworkLagging(t *testing.T) {
 	prop := td.makeProposal(t, height, round)
 
 	// consP doesn't have the proposal, but it has received prepared votes from other peers
-	td.addPrecommitVote(td.consP, prop.Block().Hash(), height, round, tIndexX)
-	td.addPrecommitVote(td.consP, prop.Block().Hash(), height, round, tIndexY)
+	td.addPrecommitVote(t, td.consP, prop.Block().Hash(), height, round, tIndexX)
+	td.addPrecommitVote(t, td.consP, prop.Block().Hash(), height, round, tIndexY)
 
 	td.queryProposalTimeout(td.consP)
 	td.shouldPublishQueryProposal(t, td.consP, height, round)

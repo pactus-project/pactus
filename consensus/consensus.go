@@ -9,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/block"
@@ -168,7 +167,7 @@ func (cs *consensus) MoveToNewHeight() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	if cs.isDeprecated() {
+	if cs.IsDeprecated() {
 		return
 	}
 
@@ -395,17 +394,17 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 }
 
 func (cs *consensus) announceNewBlock(blk *block.Block,
-	cert *certificate.BlockCertificate,
-	proof *certificate.VoteCertificate,
+	cert *certificate.Certificate,
+	proof *certificate.Certificate,
 ) {
 	go cs.mediator.OnBlockAnnounce(cs)
 	cs.broadcaster(cs.valKey.Address(),
 		message.NewBlockAnnounceMessage(blk, cert, proof))
 }
 
-func (cs *consensus) makeBlockCertificate(votes map[crypto.Address]*vote.Vote,
-) *certificate.BlockCertificate {
-	cert := certificate.NewBlockCertificate(cs.height, cs.round)
+func (cs *consensus) makeCertificate(votes map[crypto.Address]*vote.Vote,
+) *certificate.Certificate {
+	cert := certificate.NewCertificate(cs.height, cs.round)
 	cert.SetSignature(cs.signersInfo(votes))
 
 	return cert
@@ -439,20 +438,12 @@ func (cs *consensus) signersInfo(votes map[crypto.Address]*vote.Vote) (
 	return committers, absentees, aggSig
 }
 
-func (cs *consensus) makeVoteCertificate(votes map[crypto.Address]*vote.Vote,
-) *certificate.VoteCertificate {
-	cert := certificate.NewVoteCertificate(cs.height, cs.round)
-	cert.SetSignature(cs.signersInfo(votes))
-
-	return cert
-}
-
 // IsActive checks if the consensus is in an active state and participating in the consensus algorithm.
 func (cs *consensus) IsActive() bool {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
 
-	if cs.isDeprecated() {
+	if cs.IsDeprecated() {
 		return false
 	}
 
@@ -542,18 +533,6 @@ func (cs *consensus) startChangingProposer() {
 	}
 }
 
-func (cs *consensus) isDeprecated() bool {
-	switch cs.bcState.Genesis().ChainType() {
-	case genesis.Mainnet:
-		return cs.bcState.LastBlockHeight() > cs.config.DeprecatedHeightMainnet
-
-	case genesis.Testnet:
-		return cs.bcState.LastBlockHeight() > cs.config.DeprecatedHeightTestnet
-
-	case genesis.Localnet:
-		return cs.bcState.LastBlockHeight() > cs.config.DeprecatedHeightLocalnet
-
-	default:
-		return false
-	}
+func (*consensus) IsDeprecated() bool {
+	return false
 }

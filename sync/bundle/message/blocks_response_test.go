@@ -19,7 +19,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 	sid := 123
 	t.Run("Invalid certificate", func(t *testing.T) {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
-		cert := certificate.NewBlockCertificate(0, 0)
+		cert := certificate.NewCertificate(0, 0)
 		d, _ := blk.Bytes()
 		msg := NewBlocksResponseMessage(ResponseCodeMoreBlocks, ResponseCodeMoreBlocks.String(),
 			sid, ts.RandHeight(), [][]byte{d}, cert)

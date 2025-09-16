@@ -23,7 +23,7 @@ type MockStore struct {
 	Blocks     map[uint32]*block.Block
 	Accounts   map[crypto.Address]*account.Account
 	Validators map[crypto.Address]*validator.Validator
-	LastCert   *certificate.BlockCertificate
+	LastCert   *certificate.Certificate
 	LastHeight uint32
 }
 
@@ -233,13 +233,13 @@ func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop 
 	}
 }
 
-func (m *MockStore) SaveBlock(blk *block.Block, cert *certificate.BlockCertificate) {
+func (m *MockStore) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 	m.Blocks[cert.Height()] = blk
 	m.LastHeight = cert.Height()
 	m.LastCert = cert
 }
 
-func (m *MockStore) LastCertificate() *certificate.BlockCertificate {
+func (m *MockStore) LastCertificate() *certificate.Certificate {
 	if m.LastHeight == 0 {
 		return nil
 	}

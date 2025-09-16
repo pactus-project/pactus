@@ -15,12 +15,11 @@ func (s *commitState) enter() {
 
 func (s *commitState) decide() {
 	roundProposal := s.log.RoundProposal(s.round)
-	precommits := s.log.PrecommitVoteSet(s.round)
-	precommitQH := precommits.QuorumHash()
-	votes := precommits.BlockVotes(*precommitQH)
-	cert := s.makeBlockCertificate(votes)
-
 	block := roundProposal.Block()
+	precommits := s.log.PrecommitVoteSet(s.round)
+	votes := precommits.BlockVotes(block.Hash())
+	cert := s.makeCertificate(votes)
+
 	err := s.bcState.CommitBlock(block, cert)
 	if err != nil {
 		s.logger.Error("committing block failed", "block", block, "error", err)

@@ -429,7 +429,7 @@ type BlockMaker struct {
 	StateHash hash.Hash
 	PrevHash  hash.Hash
 	Seed      sortition.VerifiableSeed
-	PrevCert  *certificate.BlockCertificate
+	PrevCert  *certificate.Certificate
 }
 
 // NewBlockMaker creates a new BlockMaker instance.
@@ -501,7 +501,7 @@ func BlockWithSeed(seed sortition.VerifiableSeed) func(*BlockMaker) {
 }
 
 // BlockWithPrevCert sets previous block certificate to the block.
-func BlockWithPrevCert(cert *certificate.BlockCertificate) func(*BlockMaker) {
+func BlockWithPrevCert(cert *certificate.Certificate) func(*BlockMaker) {
 	return func(bm *BlockMaker) {
 		bm.PrevCert = cert
 	}
@@ -516,10 +516,10 @@ func BlockWithTransactions(txs block.Txs) func(*BlockMaker) {
 
 // GenerateTestBlock generates a block for testing purposes with optional configuration.
 func (ts *TestSuite) GenerateTestBlock(height uint32, options ...func(*BlockMaker)) (
-	*block.Block, *certificate.BlockCertificate,
+	*block.Block, *certificate.Certificate,
 ) {
 	bmk := ts.NewBlockMaker()
-	bmk.PrevCert = ts.GenerateTestBlockCertificate(height - 1)
+	bmk.PrevCert = ts.GenerateTestCertificate(height - 1)
 
 	if height == 1 {
 		bmk.PrevCert = nil
@@ -533,32 +533,19 @@ func (ts *TestSuite) GenerateTestBlock(height uint32, options ...func(*BlockMake
 	header := block.NewHeader(bmk.Version, bmk.Time, bmk.PrevHash, bmk.PrevHash, bmk.Seed, bmk.Proposer)
 	blk := block.NewBlock(header, bmk.PrevCert, bmk.Txs)
 
-	blockCert := ts.GenerateTestBlockCertificate(height)
+	blockCert := ts.GenerateTestCertificate(height)
 
 	return blk, blockCert
 }
 
-// GenerateTestBlockCertificate generates a block certificate for testing purposes.
-func (ts *TestSuite) GenerateTestBlockCertificate(height uint32) *certificate.BlockCertificate {
+// GenerateTestCertificate generates a block certificate for testing purposes.
+func (ts *TestSuite) GenerateTestCertificate(height uint32) *certificate.Certificate {
 	sig := ts.RandBLSSignature()
 
-	cert := certificate.NewBlockCertificate(height, ts.RandRound())
+	cert := certificate.NewCertificate(height, ts.RandRound())
 
-	committers := ts.RandSlice(6)
-	absentees := []int32{committers[5]}
-	cert.SetSignature(committers, absentees, sig)
-
-	return cert
-}
-
-// GenerateTestVoteCertificate generates a prepare certificate for testing purposes.
-func (ts *TestSuite) GenerateTestVoteCertificate(height uint32) *certificate.VoteCertificate {
-	sig := ts.RandBLSSignature()
-
-	cert := certificate.NewVoteCertificate(height, ts.RandRound())
-
-	committers := ts.RandSlice(6)
-	absentees := []int32{committers[5]}
+	committers := ts.RandSlice(4)
+	absentees := []int32{committers[3]}
 	cert.SetSignature(committers, absentees, sig)
 
 	return cert

@@ -32,10 +32,14 @@ func TestAddValidVote(t *testing.T) {
 	mainVotes := log.CPMainVoteVoteSet(round)
 	decidedVotes := log.CPDecidedVoteSet(round)
 
-	vote1 := vote.NewPrecommitVote(ts.RandHash(), height, round, valKeys[0].Address())
-	vote2 := vote.NewCPPreVote(ts.RandHash(), height, round, 0, vote.CPValueYes, &vote.JustInitYes{}, valKeys[0].Address())
-	vote3 := vote.NewCPMainVote(ts.RandHash(), height, round, 0, vote.CPValueYes, &vote.JustInitYes{}, valKeys[0].Address())
-	vote4 := vote.NewCPDecidedVote(ts.RandHash(), height, round, 0, vote.CPValueYes, &vote.JustInitYes{}, valKeys[0].Address())
+	vote1 := vote.NewPrecommitVote(ts.RandHash(),
+		height, round, valKeys[0].Address())
+	vote2 := vote.NewCPPreVote(ts.RandHash(),
+		height, round, 0, vote.CPValueYes, &vote.JustInitYes{}, valKeys[0].Address())
+	vote3 := vote.NewCPMainVote(ts.RandHash(),
+		height, round, 0, vote.CPValueYes, &vote.JustInitYes{}, valKeys[0].Address())
+	vote4 := vote.NewCPDecidedVote(ts.RandHash(),
+		height, round, 0, vote.CPValueYes, &vote.JustInitYes{}, valKeys[0].Address())
 
 	for _, v := range []*vote.Vote{vote1, vote2, vote3, vote4} {
 		ts.HelperSignVote(valKeys[0], v)
@@ -64,8 +68,9 @@ func TestAddInvalidVoteType(t *testing.T) {
 	log := NewLog()
 	log.MoveToNewHeight(cmt.Validators())
 
-	data, _ := hex.DecodeString("A7010F0218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
-		"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
+	data, _ := hex.DecodeString(
+		"A7010F0218320301045820BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" +
+			"055501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA06f607f6")
 	invVote := new(vote.Vote)
 	err := invVote.UnmarshalCBOR(data)
 	assert.NoError(t, err)
@@ -103,4 +108,15 @@ func TestCanVote(t *testing.T) {
 	addr := ts.RandAccAddress()
 	assert.True(t, log.CanVote(valKeys[0].Address()))
 	assert.False(t, log.CanVote(addr))
+}
+
+func TestTotalPower(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	log := NewLog()
+	assert.Zero(t, log.TotalPower())
+
+	cmt, _ := ts.GenerateTestCommittee(4)
+	log.MoveToNewHeight(cmt.Validators())
+	assert.Equal(t, cmt.TotalPower(), log.TotalPower())
 }

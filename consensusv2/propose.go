@@ -1,6 +1,7 @@
 package consensusv2
 
 import (
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
 )
@@ -17,7 +18,7 @@ func (s *proposeState) decide() {
 	proposer := s.proposer(s.round)
 	s.cpRound = 0
 	s.cpDecidedCert = nil
-	s.cpWeakValidity = nil
+	s.cpWeakValidity = hash.UndefHash
 
 	// Based on PIP-19, if the Availability Score is less than the Minimum threshold,
 	// we initiate the Change-Proposer phase.

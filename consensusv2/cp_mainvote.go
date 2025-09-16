@@ -14,24 +14,22 @@ func (s *cpMainVoteState) enter() {
 }
 
 func (s *cpMainVoteState) decide() {
-	s.absoluteCommit()
-	s.cpStrongTermination()
 	s.checkForWeakValidity()
-	s.detectByzantineProposal()
+	s.detectDoubleProposal()
 
 	cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
-	if cpPreVotes.HasTwoFPlusOneVotes(s.cpRound) {
-		if cpPreVotes.HasTwoFPlusOneVotesFor(s.cpRound, vote.CPValueNo) {
+	if cpPreVotes.Has2FP1Votes(s.cpRound) {
+		if cpPreVotes.Has2FP1VotesFor(s.cpRound, vote.CPValueNo) {
 			s.logger.Debug("cp: quorum for pre-votes", "value", "no")
 
 			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueNo)
-			s.cpDecidedCert = s.makeVoteCertificate(votes)
+			s.cpDecidedCert = s.makeCertificate(votes)
 			s.enterNewState(s.precommitState)
-		} else if cpPreVotes.HasTwoFPlusOneVotesFor(s.cpRound, vote.CPValueYes) {
+		} else if cpPreVotes.Has2FP1VotesFor(s.cpRound, vote.CPValueYes) {
 			s.logger.Debug("cp: quorum for pre-votes", "value", "yes")
 
 			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueYes)
-			cert := s.makeVoteCertificate(votes)
+			cert := s.makeCertificate(votes)
 			just := &vote.JustMainVoteNoConflict{
 				QCert: cert,
 			}
@@ -48,40 +46,45 @@ func (s *cpMainVoteState) decide() {
 				JustYes: vote1.CPJust(),
 			}
 
-			s.signAddCPMainVote(*s.cpWeakValidity, s.cpRound, vote.CPValueAbstain, just)
+			s.signAddCPMainVote(s.cpWeakValidity, s.cpRound, vote.CPValueAbstain, just)
 			s.enterNewState(s.cpDecideState)
 		}
 	}
+
+	s.cpStrongTermination()
+	s.absoluteCommit()
 }
 
 func (s *cpMainVoteState) checkForWeakValidity() {
-	if s.cpWeakValidity != nil {
+	if s.cpWeakValidity != hash.UndefHash {
 		return
 	}
 
 	preVotes := s.log.CPPreVoteVoteSet(s.round)
 	randVote := preVotes.GetRandomVote(s.cpRound, vote.CPValueNo)
 	if randVote != nil {
-		bh := randVote.BlockHash()
-		s.cpWeakValidity = &bh
+		s.cpWeakValidity = randVote.BlockHash()
 	}
 }
 
-func (s *cpMainVoteState) detectByzantineProposal() {
-	if s.cpWeakValidity == nil {
+func (s *cpMainVoteState) detectDoubleProposal() {
+	if s.cpWeakValidity == hash.UndefHash {
 		return
 	}
 
-	roundProposal := s.log.RoundProposal(s.round)
+	preVotes := s.log.CPPreVoteVoteSet(s.round)
+	votesForNo := preVotes.BinaryVotes(0, vote.CPValueNo)
+	for _, vte := range votesForNo {
+		if vte.BlockHash() != s.cpWeakValidity {
+			s.logger.Warn("double proposal detected",
+				"proposal_1", s.cpWeakValidity,
+				"proposal_2", vte.BlockHash())
 
-	if roundProposal != nil &&
-		roundProposal.Block().Hash() != *s.cpWeakValidity {
-		s.logger.Warn("double proposal detected",
-			"proposal_1", s.cpWeakValidity,
-			"proposal_2", roundProposal.Block().Hash())
+			s.log.SetRoundProposal(s.round, nil)
+			s.cpWeakValidity = hash.UndefHash
 
-		s.log.SetRoundProposal(s.round, nil)
-		s.queryProposal()
+			return
+		}
 	}
 }
 

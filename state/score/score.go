@@ -8,20 +8,20 @@ type scoreData struct {
 }
 
 type Manager struct {
-	certs   map[uint32]*certificate.BlockCertificate
+	certs   map[uint32]*certificate.Certificate
 	vals    map[int32]*scoreData
 	maxCert uint32
 }
 
 func NewScoreManager(maxCert uint32) *Manager {
 	return &Manager{
-		certs:   make(map[uint32]*certificate.BlockCertificate),
+		certs:   make(map[uint32]*certificate.Certificate),
 		vals:    make(map[int32]*scoreData),
 		maxCert: maxCert,
 	}
 }
 
-func (sm *Manager) SetCertificate(cert *certificate.BlockCertificate) {
+func (sm *Manager) SetCertificate(cert *certificate.Certificate) {
 	lastHeight := cert.Height()
 	sm.certs[lastHeight] = cert
 

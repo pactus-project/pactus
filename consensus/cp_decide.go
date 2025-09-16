@@ -22,7 +22,7 @@ func (s *cpDecideState) decide() {
 			s.logger.Info("binary agreement decided", "value", 1, "round", s.cpRound)
 
 			votes := cpMainVotes.BinaryVotes(s.cpRound, vote.CPValueYes)
-			cert := s.makeVoteCertificate(votes)
+			cert := s.makeCertificate(votes)
 			just := &vote.JustDecided{
 				QCert: cert,
 			}
@@ -33,7 +33,7 @@ func (s *cpDecideState) decide() {
 			s.logger.Info("binary agreement decided", "value", 0, "round", s.cpRound)
 
 			votes := cpMainVotes.BinaryVotes(s.cpRound, vote.CPValueNo)
-			cert := s.makeVoteCertificate(votes)
+			cert := s.makeCertificate(votes)
 			just := &vote.JustDecided{
 				QCert: cert,
 			}

@@ -72,7 +72,7 @@ func TestAddBlockVote(t *testing.T) {
 
 	ts.HelperSignVote(valKey, vote3)
 	added, err = voteSet.AddVote(vote3)
-	assert.ErrorIs(t, err, ErrDuplicatedVote)
+	assert.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 }
 
@@ -117,7 +117,7 @@ func TestAddBinaryVote(t *testing.T) {
 
 	ts.HelperSignVote(valKey, vote3)
 	added, err = voteSet.AddVote(vote3)
-	assert.ErrorIs(t, err, ErrDuplicatedVote)
+	assert.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 }
 
@@ -146,11 +146,11 @@ func TestDuplicateBlockVote(t *testing.T) {
 	assert.True(t, added)
 
 	added, err = voteSet.AddVote(duplicatedVote1)
-	assert.ErrorIs(t, err, ErrDuplicatedVote)
+	assert.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 
 	added, err = voteSet.AddVote(duplicatedVote2)
-	assert.ErrorIs(t, err, ErrDuplicatedVote)
+	assert.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 
 	bv1 := voteSet.BlockVotes(hash1)
@@ -187,11 +187,11 @@ func TestDuplicateBinaryVote(t *testing.T) {
 	assert.True(t, added)
 
 	added, err = voteSet.AddVote(duplicatedVote1)
-	assert.ErrorIs(t, err, ErrDuplicatedVote)
+	assert.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 
 	added, err = voteSet.AddVote(duplicatedVote2)
-	assert.ErrorIs(t, err, ErrDuplicatedVote)
+	assert.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 
 	assert.False(t, voteSet.HasOneThirdOfTotalPower(0))
@@ -273,7 +273,7 @@ func TestAllBlockVotes(t *testing.T) {
 	assert.Equal(t, &hash1, voteSet.QuorumHash())
 
 	_, err = voteSet.AddVote(vote4)
-	assert.ErrorIs(t, err, ErrDuplicatedVote) // duplicated
+	assert.ErrorIs(t, err, ErrDoubleVote)
 
 	// Check accumulated power
 	assert.Equal(t, &hash1, voteSet.QuorumHash())
@@ -282,7 +282,7 @@ func TestAllBlockVotes(t *testing.T) {
 	assert.Contains(t, voteSet.AllVotes(), vote1)
 	assert.Contains(t, voteSet.AllVotes(), vote2)
 	assert.Contains(t, voteSet.AllVotes(), vote3)
-	assert.NotContains(t, voteSet.AllVotes(), vote4) // Should add duplicated votes?
+	assert.NotContains(t, voteSet.AllVotes(), vote4)
 }
 
 func TestAllBinaryVotes(t *testing.T) {

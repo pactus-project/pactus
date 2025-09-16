@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDuplicateVote(t *testing.T) {
+func TestDoubleVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	hash := ts.RandHash()

@@ -117,3 +117,7 @@ func (log *Log) CanVote(addr crypto.Address) bool {
 
 	return false
 }
+
+func (log *Log) TotalPower() int64 {
+	return log.totalPower
+}

@@ -16,12 +16,13 @@ which includes the TLC model checker. Follow the steps below to run the TLC mode
 - Specify an invariants formula as `TypeOK`.
 - Specify a properties formula as `Success`.
 - Define the required constants:
-    - `N`: The total number of nodes (e.g. 1)
+    - `N`: The total number of nodes (e.g. 4)
     - `F`: The maximum number of faulty nodes (e.g. 1)
     - `FaultyNodes`: the index of faulty nodes (e.g. {3})
     - `MaxRound`: The maximum number of rounds (e.g. 1)
     - `MaxCPRound`: The maximum number of change-proposer (CP) rounds (e.g. 1)
 - Run the TLC checker to check the correctness of the specification:
-    ```
-    java -XX:+UseParallelGC -jar tla2tools.jar -config Pactus.cfg Pactus.tla -workers auto -fpmem 1
-    ```
+
+```bash
+java -XX:+UseParallelGC -jar /opt/TLA+Toolbox/tla2tools.jar -config ./Pactus.cfg ./Pactus.tla -workers auto -fpmem 1
+```

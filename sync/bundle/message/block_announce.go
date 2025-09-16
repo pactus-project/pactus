@@ -9,13 +9,13 @@ import (
 )
 
 type BlockAnnounceMessage struct {
-	Block       *block.Block                  `cbor:"1,keyasint"`
-	Certificate *certificate.BlockCertificate `cbor:"2,keyasint"`
-	Proof       *certificate.VoteCertificate  `cbor:"3,keyasint"`
+	Block       *block.Block             `cbor:"1,keyasint"`
+	Certificate *certificate.Certificate `cbor:"2,keyasint"`
+	Proof       *certificate.Certificate `cbor:"3,keyasint"`
 }
 
-func NewBlockAnnounceMessage(blk *block.Block, cert *certificate.BlockCertificate,
-	proof *certificate.VoteCertificate,
+func NewBlockAnnounceMessage(blk *block.Block,
+	cert *certificate.Certificate, proof *certificate.Certificate,
 ) *BlockAnnounceMessage {
 	return &BlockAnnounceMessage{
 		Block:       blk,

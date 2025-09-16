@@ -115,7 +115,7 @@ func LoadOrNewState(
 		// This code decodes the block certificate from the block data
 		// without decoding the header and transactions.
 		r := bytes.NewReader(cBlk.Data[138:]) // Block header is 138 bytes
-		cert := new(certificate.BlockCertificate)
+		cert := new(certificate.Certificate)
 		err = cert.Decode(r)
 		if err != nil {
 			return nil, err
@@ -272,7 +272,7 @@ func (st *state) LastBlockTime() time.Time {
 	return st.lastInfo.BlockTime()
 }
 
-func (st *state) LastCertificate() *certificate.BlockCertificate {
+func (st *state) LastCertificate() *certificate.Certificate {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
@@ -308,11 +308,8 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 		return err
 	}
 
-	// prevent race condition
-	cloneLastCert := lastCert.Clone()
-
-	cloneLastCert.AddSignature(val.Number(), vte.Signature())
-	st.lastInfo.UpdateCertificate(cloneLastCert)
+	lastCert.AddSignature(val.Number(), vte.Signature())
+	st.lastInfo.UpdateCertificate(lastCert)
 
 	st.logger.Debug("certificate updated", "validator", val.Address(), "power", val.Power())
 
@@ -413,7 +410,7 @@ func (st *state) ValidateBlock(blk *block.Block, round int16) error {
 	return st.executeBlock(blk, sb, true)
 }
 
-func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificate) error {
+func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 

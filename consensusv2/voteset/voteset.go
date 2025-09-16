@@ -2,6 +2,7 @@ package voteset
 
 import (
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/certificate"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 )
@@ -45,26 +46,20 @@ func (vs *voteSet) verifyVote(vote *vote.Vote) (int64, error) {
 	return val.Power(), nil
 }
 
-// faultyPower calculates the maximum faulty power based on the total voting power.
-// The formula used is: f = (n - 1) / 3, where n is the total voting power.
-func (vs *voteSet) faultyPower() int64 {
-	return (vs.totalPower - 1) / 3
+// has3FP1Power checks whether the given power is greater than or equal to 3f+1,
+// where f is the maximum faulty power.
+func (vs *BlockVoteSet) has3FP1Power(power int64) bool {
+	return certificate.Has3FP1Power(vs.totalPower, power)
 }
 
-// hasThreeFPlusOnePower checks whether the given power is greater than or equal to 3f+1,
+// has2FP1Power checks whether the given power is greater than or equal to 2f+1,
 // where f is the maximum faulty power.
-func (vs *BlockVoteSet) hasThreeFPlusOnePower(power int64) bool {
-	return power >= (3*vs.faultyPower() + 1)
+func (vs *voteSet) has2FP1Power(power int64) bool {
+	return certificate.Has2FP1Power(vs.totalPower, power)
 }
 
-// hasTwoFPlusOnePower checks whether the given power is greater than or equal to 2f+1,
+// has1FP1Power checks whether the given power is greater than or equal to f+1,
 // where f is the maximum faulty power.
-func (vs *voteSet) hasTwoFPlusOnePower(power int64) bool {
-	return power >= (2*vs.faultyPower() + 1)
-}
-
-// hasFPlusOnePower checks whether the given power is greater than or equal to f+1,
-// where f is the maximum faulty power.
-func (vs *voteSet) hasFPlusOnePower(power int64) bool {
-	return power >= (vs.faultyPower() + 1)
+func (vs *voteSet) has1FP1Power(power int64) bool {
+	return certificate.Has1FP1Power(vs.totalPower, power)
 }
