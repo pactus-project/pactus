@@ -308,8 +308,11 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 		return err
 	}
 
-	lastCert.AddSignature(val.Number(), vte.Signature())
-	st.lastInfo.UpdateCertificate(lastCert)
+	// prevent race condition
+	cloneLastCert := lastCert.Clone()
+
+	cloneLastCert.AddSignature(val.Number(), vte.Signature())
+	st.lastInfo.UpdateCertificate(cloneLastCert)
 
 	st.logger.Debug("certificate updated", "validator", val.Address(), "power", val.Power())
 

@@ -483,3 +483,13 @@ func TestCertificateValidateCPMainVote(t *testing.T) {
 		assert.NoError(t, err)
 	})
 }
+
+func TestClone(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	cert1 := ts.GenerateTestCertificate(ts.RandHeight())
+	cert2 := cert1.Clone()
+	cert2.AddSignature(cert2.Absentees()[0], ts.RandBLSSignature())
+	assert.NotEqual(t, cert1.Absentees(), cert2.Absentees())
+	assert.NotEqual(t, cert1, cert2)
+}

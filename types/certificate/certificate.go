@@ -336,3 +336,19 @@ func (cert *Certificate) AddSignature(valNum int32, sig *bls.Signature) {
 		cert.absentees = absentees
 	}
 }
+
+func (cert *Certificate) Clone() *Certificate {
+	cloned := &Certificate{
+		height:     cert.height,
+		round:      cert.round,
+		committers: make([]int32, len(cert.committers)),
+		absentees:  make([]int32, len(cert.absentees)),
+		signature:  new(bls.Signature),
+	}
+
+	copy(cloned.committers, cert.committers)
+	copy(cloned.absentees, cert.absentees)
+	*cloned.signature = *cert.signature
+
+	return cloned
+}
