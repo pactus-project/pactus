@@ -56,7 +56,12 @@ func (s *precommitState) decide() {
 		if cpPreVotes.Has1FP1VotesFor(0, vote.CPValueYes) {
 			s.startChangingProposer()
 		}
-		// TOD: check decided also + test
+
+		// TODO: write test for me
+		cpDecide := s.log.CPDecidedVoteSet(s.round)
+		if cpDecide.Has2FP1VotesFor(s.round, vote.CPValueYes) {
+			s.startChangingProposer()
+		}
 	}
 
 	s.absoluteCommit()

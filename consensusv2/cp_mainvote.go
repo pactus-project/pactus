@@ -19,13 +19,15 @@ func (s *cpMainVoteState) decide() {
 
 	cpPreVotes := s.log.CPPreVoteVoteSet(s.round)
 	if cpPreVotes.Has2FP1Votes(s.cpRound) {
-		if cpPreVotes.Has2FP1VotesFor(s.cpRound, vote.CPValueNo) {
+		switch {
+		case cpPreVotes.Has2FP1VotesFor(s.cpRound, vote.CPValueNo):
 			s.logger.Debug("cp: quorum for pre-votes", "value", "no")
 
 			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueNo)
 			s.cpDecidedCert = s.makeCertificate(votes)
 			s.enterNewState(s.precommitState)
-		} else if cpPreVotes.Has2FP1VotesFor(s.cpRound, vote.CPValueYes) {
+
+		case cpPreVotes.Has2FP1VotesFor(s.cpRound, vote.CPValueYes):
 			s.logger.Debug("cp: quorum for pre-votes", "value", "yes")
 
 			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueYes)
@@ -35,7 +37,8 @@ func (s *cpMainVoteState) decide() {
 			}
 			s.signAddCPMainVote(hash.UndefHash, s.cpRound, vote.CPValueYes, just)
 			s.enterNewState(s.cpDecideState)
-		} else {
+
+		default:
 			s.logger.Debug("cp: no-quorum for pre-votes", "value", "abstain")
 
 			vote0 := cpPreVotes.GetRandomVote(s.cpRound, vote.CPValueNo)
@@ -72,19 +75,15 @@ func (s *cpMainVoteState) detectDoubleProposal() {
 		return
 	}
 
-	preVotes := s.log.CPPreVoteVoteSet(s.round)
-	votesForNo := preVotes.BinaryVotes(0, vote.CPValueNo)
-	for _, vte := range votesForNo {
-		if vte.BlockHash() != s.cpWeakValidity {
-			s.logger.Warn("double proposal detected",
-				"proposal_1", s.cpWeakValidity,
-				"proposal_2", vte.BlockHash())
+	roundProposal := s.log.RoundProposal(s.round)
+	if roundProposal != nil &&
+		roundProposal.Block().Hash() != s.cpWeakValidity {
+		s.logger.Warn("double proposal detected",
+			"prepared", s.cpWeakValidity,
+			"roundProposal", roundProposal.Block().Hash())
 
-			s.log.SetRoundProposal(s.round, nil)
-			s.cpWeakValidity = hash.UndefHash
-
-			return
-		}
+		s.log.SetRoundProposal(s.round, nil)
+		s.queryProposal()
 	}
 }
 
