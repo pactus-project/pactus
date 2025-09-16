@@ -7,8 +7,8 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 )
 
-// ErrDoubleVote is returned when a validator casts multiple different votes in the same round.
-var ErrDoubleVote = errors.New("double vote")
+// ErrDuplicatedVote is returned when a duplicated vote from a validator is detected.
+var ErrDuplicatedVote = errors.New("duplicated vote")
 
 // IneligibleVoterError is returned when the voter is not a member of the committee.
 type IneligibleVoterError struct {

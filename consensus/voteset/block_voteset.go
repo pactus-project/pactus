@@ -83,7 +83,7 @@ func (vs *BlockVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 		}
 
 		// It is a double vote
-		err = ErrDoubleVote
+		err = ErrDuplicatedVote
 	} else {
 		vs.allVotes[vote.Signer()] = vote
 	}
