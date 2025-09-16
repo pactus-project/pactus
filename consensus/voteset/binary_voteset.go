@@ -103,7 +103,7 @@ func (vs *BinaryVoteSet) AddVote(vote *vote.Vote) (bool, error) {
 			return false, nil
 		}
 
-		// It is a double vote
+		// It is a duplicated vote
 		err = ErrDuplicatedVote
 	} else {
 		roundVotes.allVotes[vote.Signer()] = vote
