@@ -235,9 +235,7 @@ func (*TestSuite) DecodingHex(in string) []byte {
 
 // RandBLSKeyPair generates a random BLS key pair for testing purposes.
 func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
-	buf := make([]byte, bls.PrivateKeySize)
-	_, _ = ts.Rand.Read(buf)
-
+	buf := ts.RandBytes(bls.PrivateKeySize)
 	prv, _ := bls.PrivateKeyFromBytes(buf)
 	pub := prv.PublicKeyNative()
 
@@ -246,11 +244,7 @@ func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 
 // RandEd25519KeyPair generates a random Ed25519 key pair for testing purposes.
 func (ts *TestSuite) RandEd25519KeyPair() (*ed25519.PublicKey, *ed25519.PrivateKey) {
-	buf := make([]byte, ed25519.PrivateKeySize)
-	_, err := ts.Rand.Read(buf)
-	if err != nil {
-		panic(err)
-	}
+	buf := ts.RandBytes(ed25519.PrivateKeySize)
 	prv, _ := ed25519.PrivateKeyFromBytes(buf)
 	pub := prv.PublicKeyNative()
 

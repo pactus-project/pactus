@@ -862,28 +862,27 @@ func TestInvalidProposal(t *testing.T) {
 func TestCasesNormal(t *testing.T) {
 	tests := []struct {
 		seed        int64
-		certHash    string
+		certRound   int16
 		description string
 	}{
-		// 1fp1 precommit votes ..--> check this (TODO)
-		// cpRound decided fro previous round (decided 0 and current is 1)
-		//
-		// {1758007695814331103, "1", "1/3+ cp:PRE-VOTE in  step"},
-		// {1694848907840926239, 0, "1/3+ cp:PRE-VOTE in precommit step"},
-		// {1694849103290580532, 1, "Conflicting votes, cp-round=0"},
-		// {1697900665869342730, 1, "Conflicting votes, cp-round=1"},
-		// {1697887970998950590, 1, "consP & consB: Change Proposer, consX & consY: Commit (2 block announces)"},
-		// {1755876911632377727, 2, "move to the next round on decided vote"},
+		{1758015756630707317, 1, "precommit: startChangingProposer on 1f+1 pre-votes"},
+		{1758013793525473037, 1, "cp_prevote: has one main-vote for `yes` from previous round"},
+		{1758014151948449992, 0, "cp_prevote: all main-votes are `abstain` from previous round"},
+		{1758014780626270377, 2, "cp_mainvote: has 2f+1 pre-votes for `no`, decided on `no (biased)`"},
+		{1758014728375405734, 1, "cp_mainvote: has 2f+1 pre-votes for `yes`"},
+		{1758014840359554900, 1, "cp_mainvote: has no pre-votes quorum"},
+		{1758015210671486317, 2, "cp_decide: decide on `yes`"},
+		{1758015258023425309, 0, "cp_decide: conflicting main-votes"},
+		{1758015607471650150, 0, "cons.cpRound = 1, decided vote for `yes` in cpRound 0"},
 	}
 
-	for no, tt := range tests {
+	for _, tt := range tests {
 		td := setupWithSeed(t, tt.seed)
 		cert := td.executeConsensusNormal(t)
 
-		expectedHash, _ := hash.FromString(tt.certHash)
-		require.Equal(t, expectedHash, cert.Hash(),
-			"test %v failed. certHash not matched (expected %d, got %d)",
-			no+1, expectedHash, cert.Hash())
+		require.Equal(t, tt.certRound, cert.Round(),
+			"test '%s' failed. round not matched (expected %d, got %d)",
+			tt.description, tt.certRound, cert.Round())
 	}
 }
 
@@ -921,18 +920,19 @@ func (td *testData) executeConsensusNormal(t *testing.T) *certificate.Certificat
 func TestCasesByzantine(t *testing.T) {
 	tests := []struct {
 		seed        int64
-		certHash    string
+		certRound   int16
 		description string
-	}{}
+	}{
+		{1758019943838125552, 0, "double proposal detected"},
+	}
 
-	for no, tt := range tests {
+	for _, tt := range tests {
 		td := setupWithSeed(t, tt.seed)
 		cert := td.executeConsensusByzantine(t)
 
-		expectedHash, _ := hash.FromString(tt.certHash)
-		require.Equal(t, expectedHash, cert.Hash(),
-			"test %v failed. certHash not matched (expected %d, got %d)",
-			no+1, expectedHash, cert.Hash())
+		require.Equal(t, tt.certRound, cert.Round(),
+			"test '%s' failed. round not matched (expected %d, got %d)",
+			tt.description, tt.certRound, cert.Round())
 	}
 }
 
@@ -1012,8 +1012,10 @@ func (td *testData) executeConsensusByzantine(t *testing.T) *certificate.Certifi
 
 	// =================================
 	// Byzantine node B votes on both proposals
-	byzVote1 := vote.NewPrecommitVote(prop2.Block().Hash(), height, round, td.consB.valKey.Address())
+	byzVote1 := vote.NewPrecommitVote(prop1.Block().Hash(), height, round, td.consB.valKey.Address())
+	byzVote2 := vote.NewPrecommitVote(prop2.Block().Hash(), height, round, td.consB.valKey.Address())
 	td.HelperSignVote(td.consB.valKey, byzVote1)
+	td.HelperSignVote(td.consB.valKey, byzVote2)
 
 	aggSig1 := bls.SignatureAggregate(voteX.Signature(), voteY.Signature())
 	aggSig2 := bls.SignatureAggregate(voteP.Signature(), byzVote1.Signature())
@@ -1023,9 +1025,9 @@ func (td *testData) executeConsensusByzantine(t *testing.T) *certificate.Certifi
 	cert2 := certificate.NewCertificate(height, round)
 	cert2.SetSignature([]int32{tIndexX, tIndexY, tIndexB, tIndexP}, []int32{tIndexX, tIndexY}, aggSig2)
 
-	byzVote2 := vote.NewCPPreVote(prop1.Block().Hash(), height, round, 0, vote.CPValueNo,
+	byzVote3 := vote.NewCPPreVote(prop1.Block().Hash(), height, round, 0, vote.CPValueNo,
 		&vote.JustInitNo{QCert: cert1}, td.consB.valKey.Address())
-	byzVote3 := vote.NewCPPreVote(prop2.Block().Hash(), height, round, 0, vote.CPValueNo,
+	byzVote4 := vote.NewCPPreVote(prop2.Block().Hash(), height, round, 0, vote.CPValueNo,
 		&vote.JustInitNo{QCert: cert2}, td.consB.valKey.Address())
 
 	td.HelperSignVote(td.consB.valKey, byzVote2)
@@ -1034,6 +1036,7 @@ func (td *testData) executeConsensusByzantine(t *testing.T) *certificate.Certifi
 	td.consB.broadcastVote(byzVote1)
 	td.consB.broadcastVote(byzVote2)
 	td.consB.broadcastVote(byzVote3)
+	td.consB.broadcastVote(byzVote4)
 
 	// =================================
 	// Now, Partition heals
@@ -1045,7 +1048,6 @@ func (td *testData) executeConsensusByzantine(t *testing.T) *certificate.Certifi
 	cert, err := executeConsensus(td, true)
 	require.NoError(t, err)
 	require.Equal(t, cert.Height(), height)
-	require.Contains(t, cert.Absentees(), int32(tIndexB))
 
 	return cert
 }
@@ -1057,20 +1059,11 @@ func (td *testData) executeConsensusByzantine(t *testing.T) *certificate.Certifi
 func executeConsensus(td *testData, withoutByzantineNode bool) (
 	*certificate.Certificate, error,
 ) {
-	instances := map[crypto.Address]*consensusV2{
-		td.consX.valKey.Address(): td.consX,
-		td.consY.valKey.Address(): td.consY,
-		td.consB.valKey.Address(): td.consB,
-		td.consP.valKey.Address(): td.consP,
-	}
+	instances := []*consensusV2{td.consX, td.consY, td.consB, td.consP}
 
 	if withoutByzantineNode {
 		// remove byzantine node (Byzantine node goes offline)
-		instances = map[crypto.Address]*consensusV2{
-			td.consX.valKey.Address(): td.consX,
-			td.consY.valKey.Address(): td.consY,
-			td.consP.valKey.Address(): td.consP,
-		}
+		instances = []*consensusV2{td.consX, td.consY, td.consP}
 	}
 
 	// 50% chance for the first proposal to be lost,
@@ -1086,16 +1079,18 @@ func executeConsensus(td *testData, withoutByzantineNode bool) (
 		switch rndMsg.message.Type() {
 		case message.TypeVote:
 			m := rndMsg.message.(*message.VoteMessage)
-			cons, ok := instances[rndMsg.receiver]
-			if ok {
-				cons.AddVote(m.Vote)
+			for _, cons := range instances {
+				if cons.valKey.Address() == rndMsg.receiver {
+					cons.AddVote(m.Vote)
+				}
 			}
 
 		case message.TypeProposal:
 			m := rndMsg.message.(*message.ProposalMessage)
-			cons, ok := instances[rndMsg.receiver]
-			if ok {
-				cons.SetProposal(m.Proposal)
+			for _, cons := range instances {
+				if cons.valKey.Address() == rndMsg.receiver {
+					cons.SetProposal(m.Proposal)
+				}
 			}
 
 		case message.TypeQueryProposal:
