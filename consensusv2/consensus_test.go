@@ -868,7 +868,7 @@ func TestCasesNormal(t *testing.T) {
 		// 1fp1 precommit votes ..--> check this (TODO)
 		// cpRound decided fro previous round (decided 0 and current is 1)
 		//
-		// {1757738756091420242, 1, "1/3+ cp:PRE-VOTE in  step"},
+		// {1758007695814331103, "1", "1/3+ cp:PRE-VOTE in  step"},
 		// {1694848907840926239, 0, "1/3+ cp:PRE-VOTE in precommit step"},
 		// {1694849103290580532, 1, "Conflicting votes, cp-round=0"},
 		// {1697900665869342730, 1, "Conflicting votes, cp-round=1"},

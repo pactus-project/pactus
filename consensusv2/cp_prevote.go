@@ -57,6 +57,8 @@ func (s *cpPreVoteState) decideFirstRound() {
 		s.cpWeakValidity = prop.Block().Hash()
 		s.signAddCPPreVote(s.cpWeakValidity, s.cpRound, vote.CPValueNo, just)
 		s.enterNewState(s.cpMainVoteState)
+
+		return
 	}
 
 	just := &vote.JustInitYes{}
