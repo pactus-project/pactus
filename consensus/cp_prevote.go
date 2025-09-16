@@ -20,7 +20,7 @@ func (s *cpPreVoteState) decide() {
 		preparesQH := prepares.QuorumHash()
 		if preparesQH != nil {
 			s.cpWeakValidity = preparesQH
-			cert := s.makeVoteCertificate(prepares.BlockVotes(*preparesQH))
+			cert := s.makeCertificate(prepares.BlockVotes(*preparesQH))
 			just := &vote.JustInitNo{
 				QCert: cert,
 			}
@@ -55,7 +55,7 @@ func (s *cpPreVoteState) decide() {
 			s.logger.Debug("cp: all main-votes are abstain", "b", "0 (biased)")
 
 			votes := cpMainVotes.BinaryVotes(s.cpRound-1, vote.CPValueAbstain)
-			cert := s.makeVoteCertificate(votes)
+			cert := s.makeCertificate(votes)
 			just := &vote.JustPreVoteSoft{
 				QCert: cert,
 			}

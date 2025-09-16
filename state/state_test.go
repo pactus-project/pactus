@@ -96,7 +96,7 @@ func setup(t *testing.T) *testData {
 }
 
 func (td *testData) makeBlockAndCertificate(t *testing.T, round int16) (
-	*block.Block, *certificate.BlockCertificate,
+	*block.Block, *certificate.Certificate,
 ) {
 	t.Helper()
 
@@ -113,13 +113,13 @@ func (td *testData) makeBlockAndCertificate(t *testing.T, round int16) (
 
 func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash,
 	round int16,
-) *certificate.BlockCertificate {
+) *certificate.Certificate {
 	t.Helper()
 
 	sigs := make([]*bls.Signature, 0, len(td.genValKeys))
 	height := td.state.LastBlockHeight()
-	cert := certificate.NewBlockCertificate(height+1, round)
-	signBytes := cert.SignBytes(blockHash)
+	cert := certificate.NewCertificate(height+1, round)
+	signBytes := cert.SignBytesPrecommit(blockHash)
 	committers := []int32{0, 1, 2, 3}
 	absentees := []int32{3}
 
@@ -176,7 +176,7 @@ func TestTryCommitInvalidCertificate(t *testing.T) {
 	td := setup(t)
 
 	blk, _ := td.makeBlockAndCertificate(t, td.RandRound())
-	invCert := td.GenerateTestBlockCertificate(td.state.LastBlockHeight() + 1)
+	invCert := td.GenerateTestCertificate(td.state.LastBlockHeight() + 1)
 
 	assert.Error(t, td.state.CommitBlock(blk, invCert))
 }
@@ -184,17 +184,17 @@ func TestTryCommitInvalidCertificate(t *testing.T) {
 func TestTryCommitValidBlocks(t *testing.T) {
 	td := setup(t)
 
-	blk, crt := td.makeBlockAndCertificate(t, 0)
+	blk, cert := td.makeBlockAndCertificate(t, 0)
 
-	assert.NoError(t, td.state.CommitBlock(blk, crt))
+	assert.NoError(t, td.state.CommitBlock(blk, cert))
 
 	// Commit again
 	// No error here but block is ignored, because the height is invalid
-	assert.NoError(t, td.state.CommitBlock(blk, crt))
+	assert.NoError(t, td.state.CommitBlock(blk, cert))
 
 	assert.Equal(t, blk.Hash(), td.state.LastBlockHash())
 	assert.Equal(t, blk.Header().Time(), td.state.LastBlockTime())
-	assert.Equal(t, crt.Hash(), td.state.LastCertificate().Hash())
+	assert.Equal(t, cert.Hash(), td.state.LastCertificate().Hash())
 	assert.Equal(t, uint32(9), td.state.LastBlockHeight())
 }
 
@@ -359,14 +359,6 @@ func TestBlockProposal(t *testing.T) {
 
 func TestForkDetection(t *testing.T) {
 	td := setup(t)
-
-	t.Run("Two certificates with different rounds", func(t *testing.T) {
-		blk, certMain := td.makeBlockAndCertificate(t, 0)
-		certFork := td.makeCertificateAndSign(t, blk.Hash(), 1)
-
-		assert.NoError(t, td.state.CommitBlock(blk, certMain))
-		assert.NoError(t, td.state.CommitBlock(blk, certFork)) // TODO: should panic here
-	})
 
 	t.Run("Two blocks with different previous block hashes", func(t *testing.T) {
 		assert.Panics(t, func() {

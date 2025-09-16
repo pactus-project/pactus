@@ -585,21 +585,9 @@ func (sync *synchronizer) consensusTopicEvaluator(msg *network.GossipMessage) ne
 // getConsMgr returns consensus manager based on the upgrade condition.
 // After the chain is fully upgraded, we can remove this function.
 func (sync *synchronizer) getConsMgr() manager.Manager {
-	switch sync.state.Genesis().ChainType() {
-	case genesis.Mainnet:
-		return sync.consV1Mgr
-
-	case genesis.Testnet:
-		return sync.consV1Mgr
-
-	case genesis.Localnet:
-		if sync.state.LastBlockHeight() > 710 {
-			return sync.consV2Mgr
-		}
-
-		return sync.consV1Mgr
-
-	default:
+	if sync.consV1Mgr.IsDeprecated() {
 		return sync.consV2Mgr
 	}
+
+	return sync.consV1Mgr
 }

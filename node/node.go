@@ -114,25 +114,10 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 	curConsMgr := consV1Mgr
-	switch genDoc.ChainType() {
-	case genesis.Mainnet:
-		if state.LastBlockHeight() > conf.Consensus.DeprecatedHeightMainnet {
-			curConsMgr = consV2Mgr
-		}
-
-	case genesis.Testnet:
-		if state.LastBlockHeight() > conf.Consensus.DeprecatedHeightTestnet {
-			curConsMgr = consV2Mgr
-		}
-
-	case genesis.Localnet:
-		if state.LastBlockHeight() > conf.Consensus.DeprecatedHeightLocalnet {
-			curConsMgr = consV2Mgr
-		}
-
-	default:
+	if consV1Mgr.IsDeprecated() {
 		curConsMgr = consV2Mgr
 	}
+
 	grpcServer := grpc.NewServer(ctx, conf.GRPC, state, sync, net, curConsMgr, walletMgr, zeromqServer.Publishers())
 	htmlServer := html.NewServer(ctx, conf.HTML, enableHTTPAuth)
 	httpServer := http.NewServer(ctx, conf.HTTP)

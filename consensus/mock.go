@@ -98,3 +98,7 @@ func (m *MockConsensus) IsProposer() bool {
 func (m *MockConsensus) SetActive(active bool) {
 	m.Active = active
 }
+
+func (*MockConsensus) IsDeprecated() bool {
+	return false
+}

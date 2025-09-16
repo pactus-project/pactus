@@ -39,19 +39,13 @@ func (st *state) validateBlock(blk *block.Block, round int16) error {
 }
 
 // validatePrevCertificate validates certificate for the previous block.
-func (st *state) validatePrevCertificate(cert *certificate.BlockCertificate, blockHash hash.Hash) error {
+func (st *state) validatePrevCertificate(cert *certificate.Certificate, blockHash hash.Hash) error {
 	if cert == nil {
 		if !st.lastInfo.BlockHash().IsUndef() {
 			return ErrInvalidCertificate
 		}
 	} else {
-		if cert.Round() != st.lastInfo.Certificate().Round() {
-			// TODO: we should panic here?
-			// It is impossible, unless we have a fork on the latest block
-			return ErrInvalidCertificate
-		}
-
-		err := cert.Validate(st.lastInfo.Validators(), blockHash)
+		err := cert.ValidatePrecommit(st.lastInfo.Validators(), blockHash)
 		if err != nil {
 			return err
 		}
@@ -61,8 +55,8 @@ func (st *state) validatePrevCertificate(cert *certificate.BlockCertificate, blo
 }
 
 // validateCurCertificate validates certificate for the current height.
-func (st *state) validateCurCertificate(cert *certificate.BlockCertificate, blockHash hash.Hash) error {
-	err := cert.Validate(st.committee.Validators(), blockHash)
+func (st *state) validateCurCertificate(cert *certificate.Certificate, blockHash hash.Hash) error {
+	err := cert.ValidatePrecommit(st.committee.Validators(), blockHash)
 	if err != nil {
 		return err
 	}

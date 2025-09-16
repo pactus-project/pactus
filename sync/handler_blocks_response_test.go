@@ -114,7 +114,7 @@ func TestHandlerBlocksResponseStrippedPublicKey(t *testing.T) {
 	for _, tt := range tests {
 		blkData, _ := tt.receivedBlock.Bytes()
 		sid := td.RandInt(1000)
-		cert := td.GenerateTestBlockCertificate(lastHeight + 1)
+		cert := td.GenerateTestCertificate(lastHeight + 1)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
 			lastHeight+1, [][]byte{blkData}, cert)
 		td.receivingNewMessage(td.sync, msg, pid)

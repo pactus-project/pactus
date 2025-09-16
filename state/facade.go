@@ -25,11 +25,11 @@ type Facade interface {
 	LastBlockHeight() uint32
 	LastBlockHash() hash.Hash
 	LastBlockTime() time.Time
-	LastCertificate() *certificate.BlockCertificate
+	LastCertificate() *certificate.Certificate
 	UpdateLastCertificate(v *vote.Vote) error
 	ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address) (*block.Block, error)
 	ValidateBlock(blk *block.Block, round int16) error
-	CommitBlock(blk *block.Block, cert *certificate.BlockCertificate) error
+	CommitBlock(blk *block.Block, cert *certificate.Certificate) error
 	CommitteeValidators() []*validator.Validator
 	CommitteeProtocolVersions() map[protocol.Version]float64
 	IsInCommittee(addr crypto.Address) bool

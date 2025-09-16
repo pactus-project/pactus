@@ -13,10 +13,10 @@ import (
 	"github.com/pactus-project/pactus/util/encoding"
 )
 
-// baseCertificate represents a base structure for both BlockCertificate and VoteCertificate.
-// As a BlockCertificate, it verifies if a block is signed by a majority of validators.
-// As a VoteCertificate, it checks whether a majority of validators have voted in the consensus step.
-type baseCertificate struct {
+// Certificate represents a base structure for both Certificate and Certificate.
+// As a Certificate, it verifies if a block is signed by a majority of validators.
+// As a Certificate, it checks whether a majority of validators have voted in the consensus step.
+type Certificate struct {
 	height     uint32
 	round      int16
 	committers []int32
@@ -24,27 +24,35 @@ type baseCertificate struct {
 	signature  *bls.Signature
 }
 
-func (cert *baseCertificate) Height() uint32 {
+// NewCertificate creates a new Certificate instance.
+func NewCertificate(height uint32, round int16) *Certificate {
+	return &Certificate{
+		height: height,
+		round:  round,
+	}
+}
+
+func (cert *Certificate) Height() uint32 {
 	return cert.height
 }
 
-func (cert *baseCertificate) Round() int16 {
+func (cert *Certificate) Round() int16 {
 	return cert.round
 }
 
-func (cert *baseCertificate) Committers() []int32 {
+func (cert *Certificate) Committers() []int32 {
 	return cert.committers
 }
 
-func (cert *baseCertificate) Absentees() []int32 {
+func (cert *Certificate) Absentees() []int32 {
 	return cert.absentees
 }
 
-func (cert *baseCertificate) Signature() *bls.Signature {
+func (cert *Certificate) Signature() *bls.Signature {
 	return cert.signature
 }
 
-func (cert *baseCertificate) BasicCheck() error {
+func (cert *Certificate) BasicCheck() error {
 	if cert.height <= 0 {
 		return BasicCheckError{
 			Reason: fmt.Sprintf("height is not positive: %d", cert.height),
@@ -80,7 +88,7 @@ func (cert *baseCertificate) BasicCheck() error {
 	return nil
 }
 
-func (cert *baseCertificate) Hash() hash.Hash {
+func (cert *Certificate) Hash() hash.Hash {
 	buf := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
 	if err := cert.Encode(buf); err != nil {
 		return hash.UndefHash
@@ -89,14 +97,14 @@ func (cert *baseCertificate) Hash() hash.Hash {
 	return hash.CalcHash(buf.Bytes())
 }
 
-func (cert *baseCertificate) SetSignature(committers, absentees []int32, signature *bls.Signature) {
+func (cert *Certificate) SetSignature(committers, absentees []int32, signature *bls.Signature) {
 	cert.committers = committers
 	cert.absentees = absentees
 	cert.signature = signature
 }
 
 // SerializeSize returns the number of bytes it would take to serialize the block.
-func (cert *baseCertificate) SerializeSize() int {
+func (cert *Certificate) SerializeSize() int {
 	size := 6 + // height (4) + round(2)
 		encoding.VarIntSerializeSize(uint64(len(cert.committers))) +
 		encoding.VarIntSerializeSize(uint64(len(cert.absentees))) +
@@ -113,7 +121,7 @@ func (cert *baseCertificate) SerializeSize() int {
 	return size
 }
 
-func (cert *baseCertificate) MarshalCBOR() ([]byte, error) {
+func (cert *Certificate) MarshalCBOR() ([]byte, error) {
 	buf := bytes.NewBuffer(make([]byte, 0, cert.SerializeSize()))
 	if err := cert.Encode(buf); err != nil {
 		return nil, err
@@ -122,7 +130,7 @@ func (cert *baseCertificate) MarshalCBOR() ([]byte, error) {
 	return cbor.Marshal(buf.Bytes())
 }
 
-func (cert *baseCertificate) UnmarshalCBOR(bs []byte) error {
+func (cert *Certificate) UnmarshalCBOR(bs []byte) error {
 	data := make([]byte, 0, cert.SerializeSize())
 	err := cbor.Unmarshal(bs, &data)
 	if err != nil {
@@ -133,7 +141,7 @@ func (cert *baseCertificate) UnmarshalCBOR(bs []byte) error {
 	return cert.Decode(buf)
 }
 
-func (cert *baseCertificate) Encode(w io.Writer) error {
+func (cert *Certificate) Encode(w io.Writer) error {
 	if err := encoding.WriteElements(w, cert.height, cert.round); err != nil {
 		return err
 	}
@@ -157,7 +165,7 @@ func (cert *baseCertificate) Encode(w io.Writer) error {
 	return cert.signature.Encode(w)
 }
 
-func (cert *baseCertificate) Decode(r io.Reader) error {
+func (cert *Certificate) Decode(r io.Reader) error {
 	err := encoding.ReadElements(r, &cert.height, &cert.round)
 	if err != nil {
 		return err
@@ -201,17 +209,82 @@ func (cert *baseCertificate) Decode(r io.Reader) error {
 	return nil
 }
 
-type requiredPowerFn func(int64) int64
-
-var require2FPower = func(committeePower int64) int64 {
-	f := (committeePower - 1) / 3
-	p := (2 * f) + 1
-
-	return p
+func (cert *Certificate) SignBytesPrepare(blockHash hash.Hash) []byte {
+	return cert.signBytes(blockHash,
+		util.StringToBytes("PREPARE"))
 }
 
-func (cert *baseCertificate) validate(validators []*validator.Validator,
-	signBytes []byte, requiredPowerFn requiredPowerFn,
+func (cert *Certificate) SignBytesPrecommit(blockHash hash.Hash) []byte {
+	return cert.signBytes(blockHash)
+}
+
+func (cert *Certificate) SignBytesCPPreVote(blockHash hash.Hash, cpRound int16, cpValue byte) []byte {
+	return cert.signBytes(blockHash,
+		util.StringToBytes("PRE-VOTE"),
+		util.Int16ToSlice(cpRound),
+		[]byte{cpValue})
+}
+
+func (cert *Certificate) SignBytesCPMainVote(blockHash hash.Hash, cpRound int16, cpValue byte) []byte {
+	return cert.signBytes(blockHash,
+		util.StringToBytes("MAIN-VOTE"),
+		util.Int16ToSlice(cpRound),
+		[]byte{cpValue})
+}
+
+func (cert *Certificate) SignBytesCPDecided(blockHash hash.Hash, cpRound int16, cpValue byte) []byte {
+	return cert.signBytes(blockHash,
+		util.StringToBytes("DECIDED"),
+		util.Int16ToSlice(cpRound),
+		[]byte{cpValue})
+}
+
+// signBytes returns the sign bytes for the vote certificate.
+func (cert *Certificate) signBytes(blockHash hash.Hash, extraData ...[]byte) []byte {
+	signBytes := blockHash.Bytes()
+	signBytes = append(signBytes, util.Uint32ToSlice(cert.height)...)
+	signBytes = append(signBytes, util.Int16ToSlice(cert.round)...)
+	for _, data := range extraData {
+		signBytes = append(signBytes, data...)
+	}
+
+	return signBytes
+}
+
+func (cert *Certificate) ValidatePrepare(validators []*validator.Validator,
+	blockHash hash.Hash,
+) error {
+	signBytes := cert.SignBytesPrepare(blockHash)
+
+	return cert.validate(validators, signBytes, Required2FP1Power)
+}
+
+func (cert *Certificate) ValidatePrecommit(validators []*validator.Validator,
+	blockHash hash.Hash,
+) error {
+	signBytes := cert.SignBytesPrecommit(blockHash)
+
+	return cert.validate(validators, signBytes, Required2FP1Power)
+}
+
+func (cert *Certificate) ValidateCPPreVote(validators []*validator.Validator,
+	blockHash hash.Hash, cpRound int16, cpValue byte,
+) error {
+	signBytes := cert.SignBytesCPPreVote(blockHash, cpRound, cpValue)
+
+	return cert.validate(validators, signBytes, Required2FP1Power)
+}
+
+func (cert *Certificate) ValidateCPMainVote(validators []*validator.Validator,
+	blockHash hash.Hash, cpRound int16, cpValue byte,
+) error {
+	signBytes := cert.SignBytesCPMainVote(blockHash, cpRound, cpValue)
+
+	return cert.validate(validators, signBytes, Required2FP1Power)
+}
+
+func (cert *Certificate) validate(validators []*validator.Validator,
+	signBytes []byte, requiredPowerFn RequiredPowerFn,
 ) error {
 	if len(validators) != len(cert.committers) {
 		return UnexpectedCommittersError{
@@ -256,7 +329,7 @@ func (cert *baseCertificate) validate(validators []*validator.Validator,
 // AddSignature adds a new signature to the certificate.
 // It does not check the validity of the signature.
 // The caller should ensure that the signature is valid.
-func (cert *baseCertificate) AddSignature(valNum int32, sig *bls.Signature) {
+func (cert *Certificate) AddSignature(valNum int32, sig *bls.Signature) {
 	absentees, removed := util.RemoveFirstOccurrenceOf(cert.absentees, valNum)
 	if removed {
 		cert.signature = bls.SignatureAggregate(cert.signature, sig)

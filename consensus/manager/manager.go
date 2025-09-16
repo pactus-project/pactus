@@ -226,3 +226,8 @@ func (mgr *manager) getBestInstance() Consensus {
 
 	return mgr.instances[0]
 }
+
+// IsDeprecated checks if any of the consensus instances are deprecated.
+func (mgr *manager) IsDeprecated() bool {
+	return mgr.instances[0].IsDeprecated()
+}

@@ -21,7 +21,7 @@ type LastInfo struct {
 
 	lastSortitionSeed sortition.VerifiableSeed
 	lastBlockHash     hash.Hash
-	lastCert          *certificate.BlockCertificate
+	lastCert          *certificate.Certificate
 	lastBlockTime     time.Time
 	lastValidators    []*validator.Validator
 }
@@ -55,7 +55,7 @@ func (li *LastInfo) BlockHash() hash.Hash {
 	return li.lastBlockHash
 }
 
-func (li *LastInfo) Certificate() *certificate.BlockCertificate {
+func (li *LastInfo) Certificate() *certificate.Certificate {
 	li.lk.RLock()
 	defer li.lk.RUnlock()
 
@@ -90,7 +90,7 @@ func (li *LastInfo) UpdateBlockHash(lastBlockHash hash.Hash) {
 	li.lastBlockHash = lastBlockHash
 }
 
-func (li *LastInfo) UpdateCertificate(lastCertificate *certificate.BlockCertificate) {
+func (li *LastInfo) UpdateCertificate(lastCertificate *certificate.Certificate) {
 	li.lk.Lock()
 	defer li.lk.Unlock()
 

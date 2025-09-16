@@ -11,23 +11,23 @@ func TestScoreManager(t *testing.T) {
 	maxCert := uint32(3)
 	scoreMgr := NewScoreManager(maxCert)
 
-	cert1 := certificate.NewBlockCertificate(1, 0)
+	cert1 := certificate.NewCertificate(1, 0)
 	cert1.SetSignature([]int32{0, 1, 2, 3}, []int32{0}, nil)
 
-	cert2 := certificate.NewBlockCertificate(2, 0)
+	cert2 := certificate.NewCertificate(2, 0)
 	cert2.SetSignature([]int32{0, 1, 2, 3}, []int32{3}, nil)
 
-	cert3 := certificate.NewBlockCertificate(3, 0)
+	cert3 := certificate.NewCertificate(3, 0)
 	cert3.SetSignature([]int32{1, 2, 3, 4}, []int32{2}, nil)
 
-	cert4 := certificate.NewBlockCertificate(4, 0)
+	cert4 := certificate.NewCertificate(4, 0)
 	cert4.SetSignature([]int32{1, 2, 3, 4}, []int32{2}, nil)
 
-	cert5 := certificate.NewBlockCertificate(5, 0)
+	cert5 := certificate.NewCertificate(5, 0)
 	cert5.SetSignature([]int32{1, 2, 3, 4}, []int32{2}, nil)
 
 	tests := []struct {
-		cert   *certificate.BlockCertificate
+		cert   *certificate.Certificate
 		score0 float64
 		score1 float64
 		score2 float64

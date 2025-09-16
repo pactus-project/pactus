@@ -14,24 +14,20 @@ func (s *cpDecideState) enter() {
 }
 
 func (s *cpDecideState) decide() {
-	s.absoluteCommit()
-	s.cpStrongTermination()
-
 	cpMainVotes := s.log.CPMainVoteVoteSet(s.round)
-	if cpMainVotes.HasTwoFPlusOneVotes(s.cpRound) {
-		if cpMainVotes.HasTwoFPlusOneVotesFor(s.cpRound, vote.CPValueNo) {
-			panic("unreachable")
-		} else if cpMainVotes.HasTwoFPlusOneVotesFor(s.cpRound, vote.CPValueYes) {
+	if cpMainVotes.Has2FP1Votes(s.cpRound) {
+		if cpMainVotes.Has2FP1VotesFor(s.cpRound, vote.CPValueNo) {
+			s.logger.Panic("unreachable state: decide on 'no' should be handled in main-vote state")
+		} else if cpMainVotes.Has2FP1VotesFor(s.cpRound, vote.CPValueYes) {
 			// decided for yes, and proceeds to the next round
 			s.logger.Info("binary agreement decided", "value", "yes", "round", s.cpRound)
 
 			votes := cpMainVotes.BinaryVotes(s.cpRound, vote.CPValueYes)
-			cert := s.makeVoteCertificate(votes)
+			cert := s.makeCertificate(votes)
 			just := &vote.JustDecided{
 				QCert: cert,
 			}
 			s.signAddCPDecidedVote(hash.UndefHash, s.cpRound, vote.CPValueYes, just)
-			s.cpStrongTermination()
 		} else {
 			// conflicting votes
 			s.logger.Debug("conflicting main votes", "round", s.cpRound)
@@ -39,6 +35,9 @@ func (s *cpDecideState) decide() {
 			s.enterNewState(s.cpPreVoteState)
 		}
 	}
+
+	s.cpStrongTermination()
+	s.absoluteCommit()
 }
 
 func (s *cpDecideState) onAddVote(_ *vote.Vote) {

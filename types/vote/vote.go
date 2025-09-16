@@ -7,7 +7,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/hash"
-	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/types/certificate"
 )
 
 // Vote is a struct that represents a consensus vote.
@@ -95,24 +95,27 @@ func newVote(voteType Type, blockHash hash.Hash, height uint32, round int16,
 
 // SignBytes generates the bytes to be signed for the vote.
 func (v *Vote) SignBytes() []byte {
-	signBytes := v.data.BlockHash.Bytes()
-	signBytes = append(signBytes, util.Uint32ToSlice(v.data.Height)...)
-	signBytes = append(signBytes, util.Int16ToSlice(v.data.Round)...)
+	cert := certificate.NewCertificate(v.data.Height, v.data.Round)
 
 	switch typ := v.Type(); typ {
 	case VoteTypePrecommit:
-		// Nothing
+		return cert.SignBytesPrecommit(v.data.BlockHash)
 
 	case VoteTypePrepare:
-		signBytes = append(signBytes, util.StringToBytes(typ.String())...)
+		return cert.SignBytesPrepare(v.data.BlockHash)
 
-	case VoteTypeCPPreVote, VoteTypeCPMainVote, VoteTypeCPDecided:
-		signBytes = append(signBytes, util.StringToBytes(typ.String())...)
-		signBytes = append(signBytes, util.Int16ToSlice(v.data.CPVote.Round)...)
-		signBytes = append(signBytes, byte(v.data.CPVote.Value))
+	case VoteTypeCPPreVote:
+		return cert.SignBytesCPPreVote(v.data.BlockHash, v.data.CPVote.Round, byte(v.data.CPVote.Value))
+
+	case VoteTypeCPMainVote:
+		return cert.SignBytesCPMainVote(v.data.BlockHash, v.data.CPVote.Round, byte(v.data.CPVote.Value))
+
+	case VoteTypeCPDecided:
+		return cert.SignBytesCPDecided(v.data.BlockHash, v.data.CPVote.Round, byte(v.data.CPVote.Value))
+
+	default:
+		return nil
 	}
-
-	return signBytes
 }
 
 // Type returns the type of the vote.

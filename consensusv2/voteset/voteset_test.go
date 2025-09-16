@@ -34,7 +34,7 @@ func setupCommittee(ts *testsuite.TestSuite, stakes ...amount.Amount) (
 func TestAddBlockVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1, 1, 1)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
 
 	hash1 := ts.RandHash()
 	hash2 := ts.RandHash()
@@ -53,36 +53,31 @@ func TestAddBlockVote(t *testing.T) {
 	added, err := voteSet.AddVote(vote1)
 	assert.ErrorIs(t, err, IneligibleVoterError{Address: vote1.Signer()}) // unknown validator
 	assert.False(t, added)
-	assert.False(t, voteSet.HasVoted(vote1.Signer()))
 
 	ts.HelperSignVote(invKey, vote2)
 	added, err = voteSet.AddVote(vote2)
 	assert.ErrorIs(t, err, crypto.ErrInvalidSignature)
 	assert.False(t, added)
-	assert.False(t, voteSet.HasVoted(vote2.Signer()))
 
 	ts.HelperSignVote(valKey, vote2)
 	added, err = voteSet.AddVote(vote2)
 	assert.NoError(t, err) // ok
 	assert.True(t, added)
-	assert.True(t, voteSet.HasVoted(vote2.Signer()))
 
 	added, err = voteSet.AddVote(vote2) // Adding again
 	assert.False(t, added)
 	assert.NoError(t, err)
-	assert.True(t, voteSet.HasVoted(vote2.Signer()))
 
 	ts.HelperSignVote(valKey, vote3)
 	added, err = voteSet.AddVote(vote3)
-	assert.ErrorIs(t, err, ErrDuplicatedVote)
+	assert.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
-	assert.True(t, voteSet.HasVoted(vote3.Signer()))
 }
 
 func TestAddBinaryVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
 
 	hash1 := ts.RandHash()
 	hash2 := ts.RandHash()
@@ -120,14 +115,14 @@ func TestAddBinaryVote(t *testing.T) {
 
 	ts.HelperSignVote(valKey, vote3)
 	added, err = voteSet.AddVote(vote3)
-	assert.ErrorIs(t, err, ErrDuplicatedVote)
+	assert.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 }
 
-func TestDuplicateBlockVote(t *testing.T) {
+func TestDoubleBlockVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1, 1, 1)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
 
 	hash1 := ts.RandHash()
 	hash2 := ts.RandHash()
@@ -136,43 +131,35 @@ func TestDuplicateBlockVote(t *testing.T) {
 	voteSet := NewPrecommitVoteSet(0, totalPower, valsMap)
 
 	correctVote := vote.NewPrecommitVote(hash1, 1, 0, addr)
-	duplicatedVote1 := vote.NewPrecommitVote(hash2, 1, 0, addr)
-	duplicatedVote2 := vote.NewPrecommitVote(hash3, 1, 0, addr)
+	doubleVote1 := vote.NewPrecommitVote(hash2, 1, 0, addr)
+	doubleVote2 := vote.NewPrecommitVote(hash3, 1, 0, addr)
 
 	// sign the votes
 	ts.HelperSignVote(valKeys[0], correctVote)
-	ts.HelperSignVote(valKeys[0], duplicatedVote1)
-	ts.HelperSignVote(valKeys[0], duplicatedVote2)
+	ts.HelperSignVote(valKeys[0], doubleVote1)
+	ts.HelperSignVote(valKeys[0], doubleVote2)
 
 	added, err := voteSet.AddVote(correctVote)
 	assert.NoError(t, err)
 	assert.True(t, added)
 
-	added, err = voteSet.AddVote(duplicatedVote1)
-	assert.ErrorIs(t, err, ErrDuplicatedVote)
+	added, err = voteSet.AddVote(doubleVote1)
+	assert.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 
-	added, err = voteSet.AddVote(duplicatedVote2)
-	assert.ErrorIs(t, err, ErrDuplicatedVote)
+	added, err = voteSet.AddVote(doubleVote2)
+	assert.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
-
-	bv1 := voteSet.BlockVotes(hash1)
-	bv2 := voteSet.BlockVotes(hash2)
-	bv3 := voteSet.BlockVotes(hash3)
-	assert.Equal(t, correctVote, bv1[addr])
-	assert.Equal(t, duplicatedVote1, bv2[addr])
-	assert.Equal(t, duplicatedVote2, bv3[addr])
-	assert.False(t, voteSet.HasQuorumHash())
 
 	assert.Contains(t, voteSet.AllVotes(), correctVote)
-	assert.NotContains(t, voteSet.AllVotes(), duplicatedVote1)
-	assert.NotContains(t, voteSet.AllVotes(), duplicatedVote2)
+	assert.NotContains(t, voteSet.AllVotes(), doubleVote1)
+	assert.NotContains(t, voteSet.AllVotes(), doubleVote2)
 }
 
-func TestDuplicateBinaryVote(t *testing.T) {
+func TestDoubleBinaryVote(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
 
 	hash1 := ts.RandHash()
 	hash2 := ts.RandHash()
@@ -181,135 +168,61 @@ func TestDuplicateBinaryVote(t *testing.T) {
 	voteSet := NewCPPreVoteVoteSet(0, totalPower, valsMap)
 
 	correctVote := vote.NewCPPreVote(hash1, 1, 0, 0, vote.CPValueYes, &vote.JustInitYes{}, addr)
-	duplicatedVote1 := vote.NewCPPreVote(hash2, 1, 0, 0, vote.CPValueYes, &vote.JustInitYes{}, addr)
-	duplicatedVote2 := vote.NewCPPreVote(hash3, 1, 0, 0, vote.CPValueYes, &vote.JustInitYes{}, addr)
+	doubleVote1 := vote.NewCPPreVote(hash2, 1, 0, 0, vote.CPValueYes, &vote.JustInitYes{}, addr)
+	doubleVote2 := vote.NewCPPreVote(hash3, 1, 0, 0, vote.CPValueYes, &vote.JustInitYes{}, addr)
 
 	// sign the votes
 	ts.HelperSignVote(valKeys[0], correctVote)
-	ts.HelperSignVote(valKeys[0], duplicatedVote1)
-	ts.HelperSignVote(valKeys[0], duplicatedVote2)
+	ts.HelperSignVote(valKeys[0], doubleVote1)
+	ts.HelperSignVote(valKeys[0], doubleVote2)
 
 	added, err := voteSet.AddVote(correctVote)
 	assert.NoError(t, err)
 	assert.True(t, added)
 
-	added, err = voteSet.AddVote(duplicatedVote1)
-	assert.ErrorIs(t, err, ErrDuplicatedVote)
+	added, err = voteSet.AddVote(doubleVote1)
+	assert.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
 
-	added, err = voteSet.AddVote(duplicatedVote2)
-	assert.ErrorIs(t, err, ErrDuplicatedVote)
+	added, err = voteSet.AddVote(doubleVote2)
+	assert.ErrorIs(t, err, ErrDoubleVote)
 	assert.True(t, added)
-
-	assert.False(t, voteSet.HasFPlusOneVotesFor(0, vote.CPValueNo))
 
 	assert.Contains(t, voteSet.AllVotes(), correctVote)
-	assert.NotContains(t, voteSet.AllVotes(), duplicatedVote1)
-	assert.NotContains(t, voteSet.AllVotes(), duplicatedVote2)
-}
-
-func TestQuorum(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	// N = 4502
-	// f = 1500
-	// 2f+1 = 3001
-	// 3f+1 = 4501
-	valsMap, valKeys, totalPower := setupCommittee(ts, 1000, 900, 802, 700, 600, 500)
-
-	voteSet := NewPrecommitVoteSet(0, totalPower, valsMap)
-	blockHash := ts.RandHash()
-	vote1 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[0].Address())
-	vote2 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[1].Address())
-	vote3 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[2].Address())
-	vote4 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[3].Address())
-	vote5 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[4].Address())
-	vote6 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[5].Address())
-
-	ts.HelperSignVote(valKeys[0], vote1)
-	ts.HelperSignVote(valKeys[1], vote2)
-	ts.HelperSignVote(valKeys[2], vote3)
-	ts.HelperSignVote(valKeys[3], vote4)
-	ts.HelperSignVote(valKeys[4], vote5)
-	ts.HelperSignVote(valKeys[5], vote6)
-
-	_, err := voteSet.AddVote(vote1)
-	assert.NoError(t, err)
-	_, err = voteSet.AddVote(vote2)
-	assert.NoError(t, err)
-
-	assert.False(t, voteSet.HasQuorumHash())
-	assert.Nil(t, voteSet.QuorumHash())
-
-	// Add more votes
-	_, err = voteSet.AddVote(vote3)
-	assert.NoError(t, err)
-
-	assert.False(t, voteSet.HasMajorityQuorum(blockHash))
-	assert.False(t, voteSet.HasAbsoluteQuorum())
-
-	// Add more votes
-	_, err = voteSet.AddVote(vote4)
-	assert.NoError(t, err)
-	_, err = voteSet.AddVote(vote5)
-	assert.NoError(t, err)
-
-	assert.True(t, voteSet.HasMajorityQuorum(blockHash))
-	assert.False(t, voteSet.HasAbsoluteQuorum())
-
-	// Add more votes
-	_, err = voteSet.AddVote(vote6)
-	assert.NoError(t, err)
-	assert.True(t, voteSet.HasMajorityQuorum(blockHash))
-	assert.True(t, voteSet.HasAbsoluteQuorum())
+	assert.NotContains(t, voteSet.AllVotes(), doubleVote1)
+	assert.NotContains(t, voteSet.AllVotes(), doubleVote2)
 }
 
 func TestAllBlockVotes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1, 1, 1)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
 
 	voteSet := NewPrecommitVoteSet(1, totalPower, valsMap)
 
-	hash1 := ts.RandHash()
-	vote1 := vote.NewPrecommitVote(hash1, 1, 1, valKeys[0].Address())
-	vote2 := vote.NewPrecommitVote(hash1, 1, 1, valKeys[1].Address())
-	vote3 := vote.NewPrecommitVote(hash1, 1, 1, valKeys[2].Address())
-	vote4 := vote.NewPrecommitVote(hash1, 1, 1, valKeys[3].Address())
+	vote1 := vote.NewPrecommitVote(ts.RandHash(), 1, 1, valKeys[0].Address())
+	vote2 := vote.NewPrecommitVote(ts.RandHash(), 1, 1, valKeys[1].Address())
+	vote3 := vote.NewPrecommitVote(ts.RandHash(), 1, 1, valKeys[2].Address())
 
 	ts.HelperSignVote(valKeys[0], vote1)
 	ts.HelperSignVote(valKeys[1], vote2)
 	ts.HelperSignVote(valKeys[2], vote3)
-	ts.HelperSignVote(valKeys[3], vote4)
 
-	_, err := voteSet.AddVote(vote1)
-	assert.NoError(t, err)
+	assert.Empty(t, voteSet.AllVotes())
 
-	_, err = voteSet.AddVote(vote2)
-	assert.NoError(t, err)
+	_, _ = voteSet.AddVote(vote1)
+	_, _ = voteSet.AddVote(vote2)
+	_, _ = voteSet.AddVote(vote3)
 
-	_, err = voteSet.AddVote(vote3)
-	assert.NoError(t, err)
-
-	_, err = voteSet.AddVote(vote4)
-	assert.NoError(t, err)
-
-	assert.Equal(t, &hash1, voteSet.QuorumHash())
-
-	// Check accumulated power
-	assert.Equal(t, &hash1, voteSet.QuorumHash())
-
-	// Check previous votes
 	assert.Contains(t, voteSet.AllVotes(), vote1)
 	assert.Contains(t, voteSet.AllVotes(), vote2)
 	assert.Contains(t, voteSet.AllVotes(), vote3)
-	assert.Contains(t, voteSet.AllVotes(), vote4)
 }
 
 func TestAllBinaryVotes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
 
 	voteSet := NewCPMainVoteVoteSet(1, totalPower, valsMap)
 
@@ -323,14 +236,9 @@ func TestAllBinaryVotes(t *testing.T) {
 
 	assert.Empty(t, voteSet.AllVotes())
 
-	_, err := voteSet.AddVote(vote1)
-	assert.NoError(t, err)
-
-	_, err = voteSet.AddVote(vote2)
-	assert.NoError(t, err)
-
-	_, err = voteSet.AddVote(vote3)
-	assert.NoError(t, err)
+	_, _ = voteSet.AddVote(vote1)
+	_, _ = voteSet.AddVote(vote2)
+	_, _ = voteSet.AddVote(vote3)
 
 	assert.Contains(t, voteSet.AllVotes(), vote1)
 	assert.Contains(t, voteSet.AllVotes(), vote2)
@@ -343,15 +251,55 @@ func TestAllBinaryVotes(t *testing.T) {
 	assert.Equal(t, vote2, ranVote2)
 }
 
-func TestOneThirdPower(t *testing.T) {
+func TestBlockQuorumVotes(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
-	// N = 3002
-	// f = 1000
-	// f+1 = 1001
-	// 2f+1 = 2001
-	// 3f+1 = 3001
-	valsMap, valKeys, totalPower := setupCommittee(ts, 1000, 3, 999, 1000)
+	// N = 30 (5+6+8+11)
+	// f = 9
+	// 1f+1 = 10
+	// 2f+1 = 19
+	// 3f+1 = 28
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
+
+	voteSet := NewPrecommitVoteSet(0, totalPower, valsMap)
+	blockHash := ts.RandHash()
+	vote1 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[0].Address())
+	vote2 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[1].Address())
+	vote3 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[2].Address())
+	vote4 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[3].Address())
+
+	ts.HelperSignVote(valKeys[0], vote1)
+	ts.HelperSignVote(valKeys[1], vote2)
+	ts.HelperSignVote(valKeys[2], vote3)
+	ts.HelperSignVote(valKeys[3], vote4)
+
+	_, _ = voteSet.AddVote(vote1)
+	assert.False(t, voteSet.Has1FP1VotesFor(blockHash))
+
+	// Add more votes
+	_, _ = voteSet.AddVote(vote2)
+	assert.True(t, voteSet.Has1FP1VotesFor(blockHash))
+	assert.False(t, voteSet.Has2FP1VotesFor(blockHash))
+
+	// Add more votes
+	_, _ = voteSet.AddVote(vote3)
+	assert.True(t, voteSet.Has2FP1VotesFor(blockHash))
+	assert.False(t, voteSet.Has3FP1VotesFor(blockHash))
+
+	// Add more votes
+	_, _ = voteSet.AddVote(vote4)
+	assert.True(t, voteSet.Has3FP1VotesFor(blockHash))
+}
+
+func TestBinaryQuorumVotes(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	// N = 30 (5+6+8+11)
+	// f = 9
+	// 1f+1 = 10
+	// 2f+1 = 19
+	// 3f+1 = 28
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
 
 	hash := ts.RandHash()
 	height := ts.RandHeight()
@@ -362,53 +310,96 @@ func TestOneThirdPower(t *testing.T) {
 	vote1 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueYes, just, valKeys[0].Address())
 	vote2 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueYes, just, valKeys[1].Address())
 	vote3 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueYes, just, valKeys[2].Address())
-	vote4 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueNo, just, valKeys[3].Address())
+	vote4 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueYes, just, valKeys[3].Address())
 
 	ts.HelperSignVote(valKeys[0], vote1)
 	ts.HelperSignVote(valKeys[1], vote2)
 	ts.HelperSignVote(valKeys[2], vote3)
 	ts.HelperSignVote(valKeys[3], vote4)
 
-	_, err := voteSet.AddVote(vote1)
-	assert.NoError(t, err)
-	assert.False(t, voteSet.HasFPlusOneVotesFor(0, vote.CPValueNo))
+	_, _ = voteSet.AddVote(vote1)
+
+	assert.False(t, voteSet.Has1FP1VotesFor(0, vote.CPValueNo))
+	assert.False(t, voteSet.Has1FP1VotesFor(0, vote.CPValueYes))
 	assert.True(t, voteSet.HasAnyVoteFor(0, vote.CPValueYes))
 	assert.False(t, voteSet.HasAnyVoteFor(0, vote.CPValueNo))
 	assert.False(t, voteSet.HasAnyVoteFor(0, vote.CPValueAbstain))
 
-	_, err = voteSet.AddVote(vote2)
-	assert.NoError(t, err)
-	assert.True(t, voteSet.HasFPlusOneVotesFor(0, vote.CPValueYes))
-	assert.False(t, voteSet.HasTwoFPlusOneVotes(0))
+	// Add more votes
+	_, _ = voteSet.AddVote(vote2)
 
-	_, err = voteSet.AddVote(vote3)
-	assert.NoError(t, err)
-	assert.True(t, voteSet.HasTwoFPlusOneVotes(0))
-	assert.False(t, voteSet.HasAnyVoteFor(0, vote.CPValueNo))
-	assert.True(t, voteSet.HasAnyVoteFor(0, vote.CPValueYes))
-	assert.False(t, voteSet.HasTwoFPlusOneVotesFor(0, vote.CPValueNo))
-	assert.True(t, voteSet.HasTwoFPlusOneVotesFor(0, vote.CPValueYes))
+	assert.True(t, voteSet.Has1FP1VotesFor(0, vote.CPValueYes))
+	assert.False(t, voteSet.Has2FP1VotesFor(0, vote.CPValueYes))
+
+	// Add more votes
+	_, _ = voteSet.AddVote(vote3)
+
+	assert.True(t, voteSet.Has2FP1VotesFor(0, vote.CPValueYes))
+	assert.False(t, voteSet.HasAllVotesFor(0, vote.CPValueNo))
 	assert.True(t, voteSet.HasAllVotesFor(0, vote.CPValueYes))
 
-	_, err = voteSet.AddVote(vote4)
-	assert.NoError(t, err)
-	assert.True(t, voteSet.HasAnyVoteFor(0, vote.CPValueNo))
-	assert.False(t, voteSet.HasTwoFPlusOneVotesFor(0, vote.CPValueNo))
-	assert.True(t, voteSet.HasTwoFPlusOneVotesFor(0, vote.CPValueYes))
-	assert.False(t, voteSet.HasAllVotesFor(0, vote.CPValueYes))
+	// Add more votes
+	_, _ = voteSet.AddVote(vote4)
+
+	assert.True(t, voteSet.HasAllVotesFor(0, vote.CPValueYes))
+}
+
+func TestBlockVotes(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
+
+	hash := ts.RandHash()
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	voteSet := NewPrecommitVoteSet(round, totalPower, valsMap)
+
+	vote1 := vote.NewPrecommitVote(hash, height, round, valKeys[0].Address())
+	vote2 := vote.NewPrecommitVote(hash, height, round, valKeys[1].Address())
+
+	ts.HelperSignVote(valKeys[0], vote1)
+	ts.HelperSignVote(valKeys[1], vote2)
+
+	_, _ = voteSet.AddVote(vote1)
+	_, _ = voteSet.AddVote(vote2)
+
+	bv := voteSet.BlockVotes(hash)
+	assert.Contains(t, bv, vote1.Signer())
+	assert.Contains(t, bv, vote2.Signer())
+}
+
+func TestBinaryVotes(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
+
+	hash := ts.RandHash()
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	just := &vote.JustInitYes{}
+	voteSet := NewCPPreVoteVoteSet(round, totalPower, valsMap)
+
+	vote1 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueYes, just, valKeys[0].Address())
+	vote2 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueNo, just, valKeys[1].Address())
+
+	ts.HelperSignVote(valKeys[0], vote1)
+	ts.HelperSignVote(valKeys[1], vote2)
+
+	_, _ = voteSet.AddVote(vote1)
+	_, _ = voteSet.AddVote(vote2)
 
 	bv1 := voteSet.BinaryVotes(0, vote.CPValueYes)
-	bv2 := voteSet.BinaryVotes(0, vote.CPValueNo)
-
 	assert.Contains(t, bv1, vote1.Signer())
-	assert.Contains(t, bv1, vote2.Signer())
-	assert.Contains(t, bv1, vote3.Signer())
-	assert.Contains(t, bv2, vote4.Signer())
+	assert.NotContains(t, bv1, vote2.Signer())
+
+	bv2 := voteSet.BinaryVotes(0, vote.CPValueNo)
+	assert.NotContains(t, bv2, vote1.Signer())
+	assert.Contains(t, bv2, vote2.Signer())
 }
 
 func TestDecidedVoteset(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
-	valsMap, valKeys, totalPower := setupCommittee(ts, 1, 1, 1, 1)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
 
 	hash := ts.RandHash()
 	height := ts.RandHeight()
@@ -424,4 +415,125 @@ func TestDecidedVoteset(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, voteSet.HasAnyVoteFor(0, vote.CPValueYes))
 	assert.False(t, voteSet.HasAnyVoteFor(0, vote.CPValueNo))
+}
+
+func TestBlockVotedPower(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
+
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	voteSet := NewPrecommitVoteSet(round, totalPower, valsMap)
+
+	hash1 := ts.RandHash()
+	hash2 := ts.RandHash()
+	vote1a := vote.NewPrecommitVote(hash1, height, round, valKeys[0].Address())
+	vote1b := vote.NewPrecommitVote(hash2, height, round, valKeys[0].Address())
+	vote2 := vote.NewPrecommitVote(hash2, height, round, valKeys[1].Address())
+
+	ts.HelperSignVote(valKeys[0], vote1a)
+	ts.HelperSignVote(valKeys[0], vote1b)
+	ts.HelperSignVote(valKeys[1], vote2)
+
+	_, err := voteSet.AddVote(vote1a)
+	assert.NoError(t, err)
+
+	_, err = voteSet.AddVote(vote1b) // Double vote
+	assert.ErrorIs(t, err, ErrDoubleVote)
+
+	_, err = voteSet.AddVote(vote2)
+	assert.NoError(t, err)
+
+	assert.Equal(t, int64(5+6), voteSet.VotedPower())
+}
+
+func TestBinaryVotedPower(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
+
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	voteSet := NewCPPreVoteVoteSet(1, totalPower, valsMap)
+
+	just := &vote.JustInitYes{}
+	hash1 := ts.RandHash()
+	hash2 := ts.RandHash()
+	vote1a := vote.NewCPPreVote(hash1, height, round, 0, vote.CPValueYes, just, valKeys[0].Address())
+	vote1b := vote.NewCPPreVote(hash2, height, round, 0, vote.CPValueYes, just, valKeys[0].Address())
+	vote1c := vote.NewCPPreVote(hash1, height, round, 1, vote.CPValueYes, just, valKeys[0].Address())
+	vote2 := vote.NewCPPreVote(hash1, height, round, 0, vote.CPValueYes, just, valKeys[1].Address())
+
+	ts.HelperSignVote(valKeys[0], vote1a)
+	ts.HelperSignVote(valKeys[0], vote1b)
+	ts.HelperSignVote(valKeys[0], vote1c)
+	ts.HelperSignVote(valKeys[1], vote2)
+
+	_, _err := voteSet.AddVote(vote1a)
+	assert.NoError(t, _err)
+
+	_, _err = voteSet.AddVote(vote1b) // Double vote
+	assert.ErrorIs(t, _err, ErrDoubleVote)
+
+	_, _err = voteSet.AddVote(vote1c) // Next CP:Round
+	assert.NoError(t, _err)
+
+	_, _err = voteSet.AddVote(vote2)
+	assert.NoError(t, _err)
+
+	assert.Equal(t, int64(5+6), voteSet.VotedPower(0))
+	assert.Equal(t, int64(5), voteSet.VotedPower(1))
+}
+
+func TestBlockHas2FP1Votes(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
+
+	voteSet := NewPrecommitVoteSet(0, totalPower, valsMap)
+	blockHash := ts.RandHash()
+	vote0 := vote.NewPrecommitVote(ts.RandHash(), 1, 0, valKeys[0].Address()) // Byzantine vote
+	vote1 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[0].Address())
+	vote2 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[1].Address())
+	vote3 := vote.NewPrecommitVote(blockHash, 1, 0, valKeys[2].Address())
+
+	ts.HelperSignVote(valKeys[0], vote0)
+	ts.HelperSignVote(valKeys[0], vote1)
+	ts.HelperSignVote(valKeys[1], vote2)
+	ts.HelperSignVote(valKeys[2], vote3)
+
+	_, _ = voteSet.AddVote(vote0)
+	_, _ = voteSet.AddVote(vote1)
+	_, _ = voteSet.AddVote(vote2)
+	assert.False(t, voteSet.Has2FP1Votes())
+
+	_, _ = voteSet.AddVote(vote3)
+	assert.True(t, voteSet.Has2FP1Votes())
+}
+
+func TestBinaryHas3FP1Votes(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+	valsMap, valKeys, totalPower := setupCommittee(ts, 5, 6, 8, 11)
+
+	hash := ts.RandHash()
+	height := ts.RandHeight()
+	round := ts.RandRound()
+	just := &vote.JustInitYes{}
+	voteSet := NewCPPreVoteVoteSet(round, totalPower, valsMap)
+
+	vote0 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueNo, just, valKeys[0].Address()) // Byzantine vote
+	vote1 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueYes, just, valKeys[0].Address())
+	vote2 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueYes, just, valKeys[1].Address())
+	vote3 := vote.NewCPPreVote(hash, height, round, 0, vote.CPValueYes, just, valKeys[2].Address())
+
+	ts.HelperSignVote(valKeys[0], vote0)
+	ts.HelperSignVote(valKeys[0], vote1)
+	ts.HelperSignVote(valKeys[1], vote2)
+	ts.HelperSignVote(valKeys[2], vote3)
+
+	_, _ = voteSet.AddVote(vote0)
+	_, _ = voteSet.AddVote(vote1)
+	_, _ = voteSet.AddVote(vote2)
+	assert.False(t, voteSet.Has2FP1Votes(0))
+
+	_, _ = voteSet.AddVote(vote3)
+	assert.True(t, voteSet.Has2FP1Votes(0))
 }

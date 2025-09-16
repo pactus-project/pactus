@@ -25,6 +25,7 @@ type Consensus interface {
 	MoveToNewHeight()
 	AddVote(vote *vote.Vote)
 	SetProposal(prop *proposal.Proposal)
+	IsDeprecated() bool
 }
 
 type ManagerReader interface {
@@ -42,4 +43,5 @@ type Manager interface {
 	MoveToNewHeight()
 	AddVote(vote *vote.Vote)
 	SetProposal(prop *proposal.Proposal)
+	IsDeprecated() bool
 }

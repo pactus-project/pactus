@@ -27,21 +27,22 @@ type broadcaster func(crypto.Address, message.Message)
 type consensusV2 struct {
 	lk sync.RWMutex
 
-	config         *Config
-	logger         *logger.SubLogger
-	log            *log.Log
-	validators     []*validator.Validator
-	height         uint32
-	round          int16
-	cpWeakValidity *hash.Hash
-	cpDecidedCert  *certificate.VoteCertificate
+	config      *Config
+	logger      *logger.SubLogger
+	log         *log.Log
+	validators  []*validator.Validator
+	height      uint32
+	round       int16
+	valKey      *bls.ValidatorKey
+	rewardAddr  crypto.Address
+	bcState     state.Facade // Blockchain state
+	broadcaster broadcaster
+	mediator    mediator
+	active      bool
+
+	cpWeakValidity hash.Hash
+	cpDecidedCert  *certificate.Certificate
 	cpRound        int16
-	valKey         *bls.ValidatorKey
-	rewardAddr     crypto.Address
-	bcState        state.Facade // Blockchain state
-	broadcaster    broadcaster
-	mediator       mediator
-	active         bool
 
 	changeProposer  *changeProposer
 	newHeightState  *newHeightState
@@ -188,8 +189,6 @@ func (cs *consensusV2) handleTimeout(ticker *ticker) {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.logger.Trace("handle ticker", "ticker", ticker)
-
 	// Old tickers might be triggered now. Ignore them.
 	if cs.height != ticker.Height || cs.round != ticker.Round {
 		cs.logger.Trace("stale ticker", "ticker", ticker)
@@ -197,7 +196,7 @@ func (cs *consensusV2) handleTimeout(ticker *ticker) {
 		return
 	}
 
-	cs.logger.Debug("timer expired", "ticker", ticker)
+	cs.logger.Trace("timer expired", "ticker", ticker)
 	cs.currentState.onTimeout(ticker)
 }
 
@@ -372,40 +371,20 @@ func (cs *consensusV2) broadcastVote(v *vote.Vote) {
 }
 
 func (cs *consensusV2) announceNewBlock(blk *block.Block,
-	cert *certificate.BlockCertificate,
-	proof *certificate.VoteCertificate,
+	cert *certificate.Certificate,
+	proof *certificate.Certificate,
 ) {
 	go cs.mediator.OnBlockAnnounce(cs)
 	cs.broadcaster(cs.valKey.Address(),
 		message.NewBlockAnnounceMessage(blk, cert, proof))
 }
 
-func (cs *consensusV2) makeBlockCertificate(votes map[crypto.Address]*vote.Vote,
-) *certificate.BlockCertificate {
-	cert := certificate.NewBlockCertificate(cs.height, cs.round)
-	cert.SetSignature(cs.signersInfo(votes))
-
-	return cert
-}
-
-func (cs *consensusV2) makeVoteCertificate(votes map[crypto.Address]*vote.Vote,
-) *certificate.VoteCertificate {
-	cert := certificate.NewVoteCertificate(cs.height, cs.round)
-	cert.SetSignature(cs.signersInfo(votes))
-
-	return cert
-}
-
-// signersInfo processes a map of votes from validators and provides these information:
-// - A list of all validators' numbers eligible to vote in this step.
-// - A list of absentee validators' numbers who did not vote in this step.
-// - An aggregated signature generated from the signatures of participating validators.
-func (cs *consensusV2) signersInfo(votes map[crypto.Address]*vote.Vote) (
-	committers, absentees []int32, aggSig *bls.Signature,
-) {
+func (cs *consensusV2) makeCertificate(votes map[crypto.Address]*vote.Vote,
+) *certificate.Certificate {
+	cert := certificate.NewCertificate(cs.height, cs.round)
 	vals := cs.validators
-	committers = make([]int32, len(vals))
-	absentees = make([]int32, 0)
+	committers := make([]int32, len(vals))
+	absentees := make([]int32, 0)
 	sigs := make([]*bls.Signature, 0)
 
 	for i, val := range vals {
@@ -419,9 +398,10 @@ func (cs *consensusV2) signersInfo(votes map[crypto.Address]*vote.Vote) (
 		committers[i] = val.Number()
 	}
 
-	aggSig = bls.SignatureAggregate(sigs...)
+	aggSig := bls.SignatureAggregate(sigs...)
+	cert.SetSignature(committers, absentees, aggSig)
 
-	return committers, absentees, aggSig
+	return cert
 }
 
 // IsActive checks if the consensus is in an active state and participating in the consensus algorithm.
@@ -486,12 +466,12 @@ func (cs *consensusV2) HandleQueryVote(height uint32, round int16) *vote.Vote {
 	switch {
 	case round < cs.round:
 		// Past round: Only broadcast cp:decided votes
-		vs := cs.log.CPDecidedVoteSet(cs.round - 1)
+		vs := cs.log.CPDecidedVoteSet(round)
 		votes = append(votes, vs.AllVotes()...)
 
 	case round == cs.round:
 		// Current round
-		m := cs.log.RoundMessages(cs.round)
+		m := cs.log.RoundMessages(round)
 		votes = append(votes, m.AllVotes()...)
 
 	case round > cs.round:
@@ -515,10 +495,19 @@ func (cs *consensusV2) startChangingProposer() {
 }
 
 func (cs *consensusV2) absoluteCommit() {
+	prop := cs.log.RoundProposal(cs.round)
+	if prop == nil {
+		return
+	}
+
 	precommits := cs.log.PrecommitVoteSet(cs.round)
-	if precommits.HasAbsoluteQuorum() {
-		cs.logger.Debug("precommits has absolute quorum")
+	if precommits.Has3FP1VotesFor(prop.Block().Hash()) {
+		cs.logger.Debug("precommits has 3f+1 votes", "block", prop.Block().Hash())
 
 		cs.enterNewState(cs.commitState)
 	}
+}
+
+func (*consensusV2) IsDeprecated() bool {
+	return false
 }

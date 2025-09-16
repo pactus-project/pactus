@@ -24,7 +24,7 @@ func (s *cpMainVoteState) decide() {
 			s.logger.Debug("cp: quorum for pre-votes", "v", "1")
 
 			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueYes)
-			cert := s.makeVoteCertificate(votes)
+			cert := s.makeCertificate(votes)
 			just := &vote.JustMainVoteNoConflict{
 				QCert: cert,
 			}
@@ -34,7 +34,7 @@ func (s *cpMainVoteState) decide() {
 			s.logger.Debug("cp: quorum for pre-votes", "v", "0")
 
 			votes := cpPreVotes.BinaryVotes(s.cpRound, vote.CPValueNo)
-			cert := s.makeVoteCertificate(votes)
+			cert := s.makeCertificate(votes)
 			just := &vote.JustMainVoteNoConflict{
 				QCert: cert,
 			}

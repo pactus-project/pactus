@@ -319,8 +319,10 @@ func (cp *changeProposer) cpCheckJust(vte *vote.Vote) error {
 // and starts a new round.
 func (cp *changeProposer) cpStrongTermination() {
 	cpDecided := cp.log.CPDecidedVoteSet(cp.round)
-	if cpDecided.HasAnyVoteFor(cp.cpRound, vote.CPValueYes) {
-		cp.round++
-		cp.enterNewState(cp.proposeState)
+	for cpRound := cp.cpRound; cpRound >= 0; cpRound-- {
+		if cpDecided.HasAnyVoteFor(cpRound, vote.CPValueYes) {
+			cp.round++
+			cp.enterNewState(cp.proposeState)
+		}
 	}
 }

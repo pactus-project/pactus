@@ -115,7 +115,7 @@ func TestCrashOnTestnet(t *testing.T) {
 	votes[vote2.Signer()] = vote2
 	votes[vote3.Signer()] = vote3
 
-	qCert := td.consP.makeVoteCertificate(votes)
+	qCert := td.consP.makeCertificate(votes)
 	just0 := &vote.JustInitNo{QCert: qCert}
 	td.addCPPreVote(td.consP, blockHash, height, round, vote.CPValueNo, just0, tIndexX)
 	td.addCPPreVote(td.consP, blockHash, height, round, vote.CPValueNo, just0, tIndexY)
@@ -177,7 +177,7 @@ func TestInvalidJustInitZero(t *testing.T) {
 	height := uint32(1)
 	round := int16(0)
 	just := &vote.JustInitNo{
-		QCert: td.GenerateTestVoteCertificate(height),
+		QCert: td.GenerateTestCertificate(height),
 	}
 
 	t.Run("invalid value: yes", func(t *testing.T) {
@@ -218,7 +218,7 @@ func TestInvalidJustPreVoteHard(t *testing.T) {
 	height := uint32(1)
 	round := int16(0)
 	just := &vote.JustPreVoteHard{
-		QCert: td.GenerateTestVoteCertificate(height),
+		QCert: td.GenerateTestCertificate(height),
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
@@ -259,7 +259,7 @@ func TestInvalidJustPreVoteSoft(t *testing.T) {
 	height := uint32(1)
 	round := int16(0)
 	just := &vote.JustPreVoteSoft{
-		QCert: td.GenerateTestVoteCertificate(height),
+		QCert: td.GenerateTestCertificate(height),
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
@@ -300,7 +300,7 @@ func TestInvalidJustMainVoteNoConflict(t *testing.T) {
 	height := uint32(1)
 	round := int16(0)
 	just := &vote.JustMainVoteNoConflict{
-		QCert: td.GenerateTestVoteCertificate(height),
+		QCert: td.GenerateTestCertificate(height),
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {
@@ -334,7 +334,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 	t.Run("invalid value: no", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
 			JustNo: &vote.JustInitNo{
-				QCert: td.GenerateTestVoteCertificate(height),
+				QCert: td.GenerateTestCertificate(height),
 			},
 			JustYes: &vote.JustInitYes{},
 		}
@@ -350,7 +350,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 	t.Run("invalid value: yes", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
 			JustNo: &vote.JustInitNo{
-				QCert: td.GenerateTestVoteCertificate(height),
+				QCert: td.GenerateTestCertificate(height),
 			},
 			JustYes: &vote.JustInitYes{},
 		}
@@ -366,7 +366,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 	t.Run("invalid value: unexpected justification (just0)", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
 			JustNo: &vote.JustPreVoteSoft{
-				QCert: td.GenerateTestVoteCertificate(height),
+				QCert: td.GenerateTestCertificate(height),
 			},
 			JustYes: &vote.JustInitYes{},
 		}
@@ -382,10 +382,10 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 	t.Run("invalid value: unexpected justification", func(t *testing.T) {
 		just := &vote.JustMainVoteConflict{
 			JustNo: &vote.JustInitNo{
-				QCert: td.GenerateTestVoteCertificate(height),
+				QCert: td.GenerateTestCertificate(height),
 			},
 			JustYes: &vote.JustPreVoteSoft{
-				QCert: td.GenerateTestVoteCertificate(height),
+				QCert: td.GenerateTestCertificate(height),
 			},
 		}
 		v := vote.NewCPMainVote(td.RandHash(), height, round, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
@@ -399,7 +399,7 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 
 	t.Run("invalid certificate", func(t *testing.T) {
 		just0 := &vote.JustInitNo{
-			QCert: td.GenerateTestVoteCertificate(height),
+			QCert: td.GenerateTestCertificate(height),
 		}
 		just := &vote.JustMainVoteConflict{
 			JustNo:  just0,
@@ -416,12 +416,12 @@ func TestInvalidJustMainVoteConflict(t *testing.T) {
 
 	t.Run("invalid certificate", func(t *testing.T) {
 		just0 := &vote.JustPreVoteSoft{
-			QCert: td.GenerateTestVoteCertificate(height),
+			QCert: td.GenerateTestCertificate(height),
 		}
 		just := &vote.JustMainVoteConflict{
 			JustNo: just0,
 			JustYes: &vote.JustPreVoteSoft{
-				QCert: td.GenerateTestVoteCertificate(height),
+				QCert: td.GenerateTestCertificate(height),
 			},
 		}
 		cpVote := vote.NewCPMainVote(td.RandHash(), height, round, 1, vote.CPValueAbstain, just, td.consB.valKey.Address())
@@ -441,7 +441,7 @@ func TestInvalidJustDecided(t *testing.T) {
 	height := uint32(1)
 	round := int16(0)
 	just := &vote.JustDecided{
-		QCert: td.GenerateTestVoteCertificate(height),
+		QCert: td.GenerateTestCertificate(height),
 	}
 
 	t.Run("invalid value: abstain", func(t *testing.T) {

@@ -146,7 +146,7 @@ func (s *store) Close() {
 	}
 }
 
-func (s *store) SaveBlock(blk *block.Block, cert *certificate.BlockCertificate) {
+func (s *store) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
@@ -383,14 +383,14 @@ func (s *store) UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol
 	s.validatorStore.updateValidatorProtocolVersion(addr, ver)
 }
 
-func (s *store) LastCertificate() *certificate.BlockCertificate {
+func (s *store) LastCertificate() *certificate.Certificate {
 	s.lk.Lock()
 	defer s.lk.Unlock()
 
 	return s.lastCertificate()
 }
 
-func (s *store) lastCertificate() *certificate.BlockCertificate {
+func (s *store) lastCertificate() *certificate.Certificate {
 	data, _ := tryGet(s.db, lastInfoKey)
 	if data == nil {
 		// Genesis block
@@ -398,7 +398,7 @@ func (s *store) lastCertificate() *certificate.BlockCertificate {
 	}
 	reader := bytes.NewReader(data)
 	version := int32(0)
-	cert := new(certificate.BlockCertificate)
+	cert := new(certificate.Certificate)
 	err := encoding.ReadElements(reader, &version)
 	if err != nil {
 		return nil
