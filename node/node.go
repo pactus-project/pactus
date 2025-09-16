@@ -167,8 +167,11 @@ func (n *Node) Start() error {
 		return errors.Wrap(err, "could not start Sync")
 	}
 
-	n.consV1Mgr.MoveToNewHeight()
-	n.consV2Mgr.MoveToNewHeight()
+	curConsMgr := n.consV1Mgr
+	if n.consV1Mgr.IsDeprecated() {
+		curConsMgr = n.consV2Mgr
+	}
+	curConsMgr.MoveToNewHeight()
 
 	err := n.grpc.StartServer()
 	if err != nil {
