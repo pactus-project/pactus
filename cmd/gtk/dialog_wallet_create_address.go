@@ -93,5 +93,5 @@ func createAddress(wdgWallet *widgetWallet) {
 
 	dlg.SetModal(true)
 
-	dlg.Run()
+	runDialog(dlg)
 }

@@ -38,8 +38,6 @@ func init() {
 	// the gtk on macos should run on main thread.
 	runtime.UnlockOSThread()
 	runtime.LockOSThread()
-
-	gtk.Init(nil)
 }
 
 func main() {
