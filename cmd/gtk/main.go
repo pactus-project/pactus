@@ -38,6 +38,9 @@ func init() {
 	// the gtk on macos should run on main thread.
 	runtime.UnlockOSThread()
 	runtime.LockOSThread()
+
+	// Changing the PANGOCAIRO_BACKEND is necessary on MacOS to render emoji
+	os.Setenv("PANGOCAIRO_BACKEND", "fontconfig)
 }
 
 func main() {
