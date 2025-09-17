@@ -20,7 +20,7 @@ else
     exit 1
 fi
 
-mkdir ${PACKAGE_DIR}
+mkdir -p ${PACKAGE_DIR}
 
 echo "Building the binaries for macOS ${ARC} architecture"
 
@@ -54,7 +54,7 @@ cd -
 
 echo "Bundling the GUI package"
 GUI_BUNDLE=${ROOT_DIR}/gui-bundle
-mkdir ${GUI_BUNDLE}
+mkdir -p ${GUI_BUNDLE}
 
 cp ${BUILD_DIR}/pactus-gui                ${GUI_BUNDLE}
 cp ${ROOT_DIR}/.github/releasers/macos/*  ${GUI_BUNDLE}
