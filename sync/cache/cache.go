@@ -9,7 +9,7 @@ import (
 
 type Cache struct {
 	blocks *lru.Cache[uint32, *block.Block] // it's thread safe
-	certs  *lru.Cache[uint32, *certificate.BlockCertificate]
+	certs  *lru.Cache[uint32, *certificate.Certificate]
 }
 
 func NewCache(size int) (*Cache, error) {
@@ -18,7 +18,7 @@ func NewCache(size int) (*Cache, error) {
 		return nil, err
 	}
 
-	certCache, err := lru.New[uint32, *certificate.BlockCertificate](size)
+	certCache, err := lru.New[uint32, *certificate.Certificate](size)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (c *Cache) AddBlock(blk *block.Block) {
 	}
 }
 
-func (c *Cache) GetCertificate(height uint32) *certificate.BlockCertificate {
+func (c *Cache) GetCertificate(height uint32) *certificate.Certificate {
 	cert, ok := c.certs.Get(height)
 	if ok {
 		return cert
@@ -61,7 +61,7 @@ func (c *Cache) GetCertificate(height uint32) *certificate.BlockCertificate {
 	return nil
 }
 
-func (c *Cache) AddCertificate(cert *certificate.BlockCertificate) {
+func (c *Cache) AddCertificate(cert *certificate.Certificate) {
 	if cert != nil {
 		c.certs.Add(cert.Height(), cert)
 	}

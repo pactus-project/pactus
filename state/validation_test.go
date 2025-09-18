@@ -114,7 +114,7 @@ func TestBlockValidation(t *testing.T) {
 
 	t.Run("Invalid PrevCertificate", func(t *testing.T) {
 		blk0, _ := td.makeBlockAndCertificate(t, round)
-		invPrevCert := certificate.NewBlockCertificate(
+		invPrevCert := certificate.NewCertificate(
 			blk0.PrevCertificate().Height(),
 			blk0.PrevCertificate().Round(),
 		)

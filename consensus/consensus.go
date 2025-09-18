@@ -108,18 +108,11 @@ func makeConsensus(
 
 	mediator.Register(cons)
 
-	logger.Info("consensus instance created",
+	logger.Info("consensus instance created (Legacy)",
 		"validator address", valKey.Address().String(),
 		"reward address", rewardAddr.String())
 
 	return cons
-}
-
-func (cs *consensus) Start() {
-	cs.lk.Lock()
-	defer cs.lk.Unlock()
-
-	cs.moveToNewHeight()
 }
 
 func (cs *consensus) String() string {
@@ -174,10 +167,10 @@ func (cs *consensus) MoveToNewHeight() {
 	cs.lk.Lock()
 	defer cs.lk.Unlock()
 
-	cs.moveToNewHeight()
-}
+	if cs.IsDeprecated() {
+		return
+	}
 
-func (cs *consensus) moveToNewHeight() {
 	stateHeight := cs.bcState.LastBlockHeight()
 	if cs.height != stateHeight+1 {
 		cs.enterNewState(cs.newHeightState)
@@ -400,15 +393,17 @@ func (cs *consensus) broadcastVote(v *vote.Vote) {
 		message.NewVoteMessage(v))
 }
 
-func (cs *consensus) announceNewBlock(blk *block.Block, cert *certificate.BlockCertificate) {
+func (cs *consensus) announceNewBlock(blk *block.Block,
+	cert *certificate.Certificate, proof *certificate.Certificate,
+) {
 	go cs.mediator.OnBlockAnnounce(cs)
 	cs.broadcaster(cs.valKey.Address(),
-		message.NewBlockAnnounceMessage(blk, cert))
+		message.NewBlockAnnounceMessage(blk, cert, proof))
 }
 
-func (cs *consensus) makeBlockCertificate(votes map[crypto.Address]*vote.Vote,
-) *certificate.BlockCertificate {
-	cert := certificate.NewBlockCertificate(cs.height, cs.round)
+func (cs *consensus) makeCertificate(votes map[crypto.Address]*vote.Vote,
+) *certificate.Certificate {
+	cert := certificate.NewCertificate(cs.height, cs.round)
 	cert.SetSignature(cs.signersInfo(votes))
 
 	return cert
@@ -442,18 +437,14 @@ func (cs *consensus) signersInfo(votes map[crypto.Address]*vote.Vote) (
 	return committers, absentees, aggSig
 }
 
-func (cs *consensus) makeVoteCertificate(votes map[crypto.Address]*vote.Vote,
-) *certificate.VoteCertificate {
-	cert := certificate.NewVoteCertificate(cs.height, cs.round)
-	cert.SetSignature(cs.signersInfo(votes))
-
-	return cert
-}
-
 // IsActive checks if the consensus is in an active state and participating in the consensus algorithm.
 func (cs *consensus) IsActive() bool {
 	cs.lk.RLock()
 	defer cs.lk.RUnlock()
+
+	if cs.IsDeprecated() {
+		return false
+	}
 
 	return cs.active
 }
@@ -539,4 +530,8 @@ func (cs *consensus) startChangingProposer() {
 			"cpRound", cs.cpRound, "proposer", cs.proposer(cs.round).Address())
 		cs.enterNewState(cs.cpPreVoteState)
 	}
+}
+
+func (*consensus) IsDeprecated() bool {
+	return false
 }

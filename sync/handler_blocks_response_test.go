@@ -6,7 +6,7 @@ import (
 	"time"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
-	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -114,7 +114,7 @@ func TestHandlerBlocksResponseStrippedPublicKey(t *testing.T) {
 	for _, tt := range tests {
 		blkData, _ := tt.receivedBlock.Bytes()
 		sid := td.RandInt(1000)
-		cert := td.GenerateTestBlockCertificate(lastHeight + 1)
+		cert := td.GenerateTestCertificate(lastHeight + 1)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
 			lastHeight+1, [][]byte{blkData}, cert)
 		td.receivingNewMessage(td.sync, msg, pid)
@@ -170,19 +170,21 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	valKeyBob := []*bls.ValidatorKey{ts.RandValKey()}
 	stateAlice := state.MockingState(ts)
 	stateBob := state.MockingState(ts)
-	consMgrAlice, _ := consensus.MockingManager(ts, stateAlice, valKeyAlice)
-	consMgrBob, _ := consensus.MockingManager(ts, stateBob, valKeyBob)
+	consV1MgrAlice, _ := manager.MockingManager(ts, stateAlice, valKeyAlice)
+	consV2MgrAlice, _ := manager.MockingManager(ts, stateAlice, valKeyAlice)
+	consV1MgrBob, _ := manager.MockingManager(ts, stateBob, valKeyBob)
+	consV2MgrBob, _ := manager.MockingManager(ts, stateBob, valKeyBob)
 	broadcastPipe := pipeline.MockingPipeline[message.Message]()
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 
 	sync1, err := NewSynchronizer(configAlice, valKeyAlice, stateAlice,
-		consMgrAlice, networkAlice, broadcastPipe, networkAlice.EventPipe)
+		consV1MgrAlice, consV2MgrAlice, networkAlice, broadcastPipe, networkAlice.EventPipe)
 	assert.NoError(t, err)
 	syncAlice := sync1.(*synchronizer)
 
 	sync2, err := NewSynchronizer(configBob, valKeyBob, stateBob,
-		consMgrBob, networkBob, broadcastPipe, networkBob.EventPipe)
+		consV1MgrBob, consV2MgrBob, networkBob, broadcastPipe, networkBob.EventPipe)
 	assert.NoError(t, err)
 	syncBob := sync2.(*synchronizer)
 
@@ -235,7 +237,7 @@ func TestHandlerBlocksResponseIdenticalBundles(t *testing.T) {
 	nets := makeAliceAndBobNetworks(t)
 
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
-	msg := message.NewBlockAnnounceMessage(blk, cert)
+	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 
 	bdlAlice := nets.syncAlice.prepareBundle(msg)
 	bdlBob := nets.syncBob.prepareBundle(msg)
@@ -264,7 +266,7 @@ func TestHandlerBlocksResponseSyncing(t *testing.T) {
 
 	// Announcing a block
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
-	msg := message.NewBlockAnnounceMessage(blk, cert)
+	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 
@@ -332,7 +334,7 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 
 	// Announcing a block
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
-	msg := message.NewBlockAnnounceMessage(blk, cert)
+	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 

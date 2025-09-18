@@ -1,8 +1,9 @@
-package consensus
+package manager
 
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/consensusv2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state"
@@ -29,12 +30,13 @@ func TestManager(t *testing.T) {
 	randomHeight := ts.RandHeight()
 	rndBlk, rndCert := ts.GenerateTestBlock(randomHeight)
 	state.TestStore.SaveBlock(rndBlk, rndCert)
+	conf := consensusv2.DefaultConfig()
 
-	mgrInt := NewManager(testConfig(), state, valKeys, rewardAddrs, pipe)
+	mgrInt := NewManagerV2(conf, state, valKeys, rewardAddrs, pipe)
 	mgr := mgrInt.(*manager)
 
-	consA := mgr.instances[0].(*consensus) // active
-	consB := mgr.instances[1].(*consensus) // inactive
+	consA := mgr.instances[0] // active
+	consB := mgr.instances[1] // inactive
 
 	t.Run("Check if keys are assigned properly", func(t *testing.T) {
 		assert.Equal(t, consA.ConsensusKey(), valKeys[0].PublicKey())
@@ -42,10 +44,9 @@ func TestManager(t *testing.T) {
 	})
 
 	t.Run("Check if all instances move to new height", func(t *testing.T) {
-		stateHeight := mgr.state.LastBlockHeight()
-		assert.False(t, mgr.HasActiveInstance())
-
 		mgr.MoveToNewHeight()
+
+		stateHeight := mgr.state.LastBlockHeight()
 		consHeight, consRound := mgr.HeightRound()
 
 		assert.True(t, mgr.HasActiveInstance())
@@ -55,7 +56,7 @@ func TestManager(t *testing.T) {
 
 	t.Run("Testing add vote", func(t *testing.T) {
 		consHeight, _ := mgr.HeightRound()
-		vote := vote.NewPrepareVote(ts.RandHash(), consHeight, 0, valKeys[0].Address())
+		vote := vote.NewPrecommitVote(ts.RandHash(), consHeight, 0, valKeys[0].Address())
 		ts.HelperSignVote(valKeys[0], vote)
 
 		mgr.AddVote(vote)
@@ -166,14 +167,16 @@ func TestMediator(t *testing.T) {
 	blk, cert := ts.GenerateTestBlock(stateHeight)
 	state.TestStore.SaveBlock(blk, cert)
 	pipe := pipeline.MockingPipeline[message.Message]()
-	mgrInt := NewManager(testConfig(), state, valKeys, rewardAddrs, pipe)
+	conf := consensusv2.DefaultConfig()
+
+	mgrInt := NewManagerV2(conf, state, valKeys, rewardAddrs, pipe)
 	mgr := mgrInt.(*manager)
 
 	mgr.MoveToNewHeight()
 
 	for {
 		msg := <-pipe.UnsafeGetChannel()
-		logger.Info("shouldPublishProposal", "msg", msg)
+		logger.Info("Published Vote", "msg", msg, "type", msg.Type())
 
 		m, ok := msg.(*message.BlockAnnounceMessage)
 		if ok {

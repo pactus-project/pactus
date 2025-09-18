@@ -9,20 +9,30 @@ import (
 )
 
 type BlockAnnounceMessage struct {
-	Block       *block.Block                  `cbor:"1,keyasint"`
-	Certificate *certificate.BlockCertificate `cbor:"2,keyasint"`
+	Block       *block.Block             `cbor:"1,keyasint"`
+	Certificate *certificate.Certificate `cbor:"2,keyasint"`
+	Proof       *certificate.Certificate `cbor:"3,keyasint"`
 }
 
-func NewBlockAnnounceMessage(blk *block.Block, cert *certificate.BlockCertificate) *BlockAnnounceMessage {
+func NewBlockAnnounceMessage(blk *block.Block,
+	cert *certificate.Certificate, proof *certificate.Certificate,
+) *BlockAnnounceMessage {
 	return &BlockAnnounceMessage{
 		Block:       blk,
 		Certificate: cert,
+		Proof:       proof,
 	}
 }
 
 func (m *BlockAnnounceMessage) BasicCheck() error {
 	if err := m.Block.BasicCheck(); err != nil {
 		return err
+	}
+
+	if m.Proof != nil {
+		if err := m.Proof.BasicCheck(); err != nil {
+			return err
+		}
 	}
 
 	return m.Certificate.BasicCheck()

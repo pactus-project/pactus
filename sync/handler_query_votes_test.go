@@ -10,7 +10,7 @@ import (
 func TestHandlerQueryVoteParsingMessages(t *testing.T) {
 	td := setup(t, nil)
 
-	consHeight, consRound := td.consMgr.HeightRound()
+	consHeight, consRound := td.sync.getConsMgr().HeightRound()
 	t.Run("doesn't have any votes", func(t *testing.T) {
 		pid := td.RandPeerID()
 		msg := message.NewQueryVoteMessage(consHeight, consRound, td.RandValAddress())
@@ -21,7 +21,7 @@ func TestHandlerQueryVoteParsingMessages(t *testing.T) {
 
 	t.Run("should respond to the query votes message", func(t *testing.T) {
 		vote, _ := td.GenerateTestPrecommitVote(consHeight, consRound)
-		td.consMgr.AddVote(vote)
+		td.sync.getConsMgr().AddVote(vote)
 		pid := td.RandPeerID()
 		msg := message.NewQueryVoteMessage(consHeight, consRound, td.RandValAddress())
 		td.receivingNewMessage(td.sync, msg, pid)

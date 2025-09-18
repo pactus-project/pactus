@@ -118,20 +118,19 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 		consMessages: consMessages,
 	}
 	broadcasterFunc := func(sender crypto.Address, msg message.Message) {
-		fmt.Printf("received a message %s: %s\n", msg.Type(), msg.String())
 		td.consMessages = append(td.consMessages, consMessage{
 			sender:  sender,
 			message: msg,
 		})
 	}
 	td.consX = makeConsensus(testConfig(), stateX, valKeys[tIndexX],
-		valKeys[tIndexX].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
+		valKeys[tIndexX].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
 	td.consY = makeConsensus(testConfig(), stateY, valKeys[tIndexY],
-		valKeys[tIndexY].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
+		valKeys[tIndexY].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
 	td.consB = makeConsensus(testConfig(), stateB, valKeys[tIndexB],
-		valKeys[tIndexB].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
+		valKeys[tIndexB].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
 	td.consP = makeConsensus(testConfig(), stateP, valKeys[tIndexP],
-		valKeys[tIndexP].PublicKey().AccountAddress(), broadcasterFunc, newConcreteMediator())
+		valKeys[tIndexP].PublicKey().AccountAddress(), broadcasterFunc, NewConcreteMediator())
 
 	// -------------------------------
 	// Better logging during testing
@@ -337,15 +336,15 @@ func (*testData) enterNextRound(cons *consensus) {
 	cons.lk.Unlock()
 }
 
-func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certificate.BlockCertificate) {
+func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certificate.Certificate) {
 	t.Helper()
 
 	height := td.consX.bcState.LastBlockHeight()
 	var err error
 	prop := td.makeProposal(t, height+1, 0)
 
-	cert := certificate.NewBlockCertificate(height+1, 0)
-	signBytes := cert.SignBytes(prop.Block().Hash())
+	cert := certificate.NewCertificate(height+1, 0)
+	signBytes := cert.SignBytesPrecommit(prop.Block().Hash())
 	sig1 := td.consX.valKey.Sign(signBytes)
 	sig2 := td.consY.valKey.Sign(signBytes)
 	sig3 := td.consB.valKey.Sign(signBytes)
@@ -397,9 +396,9 @@ func (td *testData) makeProposal(t *testing.T, height uint32, round int16) *prop
 	return prop
 }
 
-func (td *testData) makeMainVoteCertificate(t *testing.T,
+func (td *testData) makeMainCertificate(t *testing.T,
 	height uint32, round, cpRound int16,
-) *certificate.VoteCertificate {
+) *certificate.Certificate {
 	t.Helper()
 
 	// === make valid certificate
@@ -415,7 +414,7 @@ func (td *testData) makeMainVoteCertificate(t *testing.T,
 		preVoteSigs = append(preVoteSigs, td.valKeys[i].Sign(sbPreVote))
 	}
 	preVoteAggSig := bls.SignatureAggregate(preVoteSigs...)
-	certPreVote := certificate.NewVoteCertificate(height, round)
+	certPreVote := certificate.NewCertificate(height, round)
 	certPreVote.SetSignature(preVoteCommitters, []int32{}, preVoteAggSig)
 
 	mainVoteCommitters := []int32{}
@@ -431,7 +430,7 @@ func (td *testData) makeMainVoteCertificate(t *testing.T,
 		mainVoteSigs = append(mainVoteSigs, td.valKeys[i].Sign(sbMainVote))
 	}
 	mainVoteAggSig := bls.SignatureAggregate(mainVoteSigs...)
-	certMainVote := certificate.NewVoteCertificate(height, round)
+	certMainVote := certificate.NewCertificate(height, round)
 	certMainVote.SetSignature(mainVoteCommitters, []int32{}, mainVoteAggSig)
 
 	return certMainVote
@@ -440,7 +439,7 @@ func (td *testData) makeMainVoteCertificate(t *testing.T,
 func TestStart(t *testing.T) {
 	td := setup(t)
 
-	td.consX.Start()
+	td.consX.MoveToNewHeight()
 	td.checkHeightRound(t, td.consX, 1, 0)
 }
 
@@ -452,7 +451,7 @@ func TestNotInCommittee(t *testing.T) {
 	state := state.MockingState(td.TestSuite)
 	pipe := pipeline.MockingPipeline[message.Message]()
 	consInt := NewConsensus(testConfig(), state, valKey,
-		valKey.Address(), pipe, newConcreteMediator())
+		valKey.Address(), pipe, NewConcreteMediator())
 	cons := consInt.(*consensus)
 
 	td.enterNewHeight(cons)
@@ -613,6 +612,7 @@ func TestSetProposalOnPrecommit(t *testing.T) {
 	td.shouldPublishBlockAnnounce(t, td.consP, prop.Block().Hash())
 }
 
+// update me from TestHandleQueryVote: consensus:v1.
 func TestHandleQueryVote(t *testing.T) {
 	td := setup(t)
 
@@ -623,7 +623,7 @@ func TestHandleQueryVote(t *testing.T) {
 
 	// Add some votes for Round 0
 	td.addCPDecidedVote(td.consP, hash.UndefHash, height, 0, vote.CPValueYes,
-		&vote.JustDecided{QCert: td.makeMainVoteCertificate(t, height, 0, cpRound)}, tIndexY)
+		&vote.JustDecided{QCert: td.makeMainCertificate(t, height, 0, cpRound)}, tIndexY)
 
 	// Add some votes for Round 1
 	td.enterNextRound(td.consP)
@@ -631,7 +631,7 @@ func TestHandleQueryVote(t *testing.T) {
 	td.addCPPreVote(td.consP, hash.UndefHash, height, 1, vote.CPValueYes,
 		&vote.JustInitYes{}, tIndexY)
 	td.addCPDecidedVote(td.consP, hash.UndefHash, height, 1, vote.CPValueYes,
-		&vote.JustDecided{QCert: td.makeMainVoteCertificate(t, height, 1, cpRound)}, tIndexY)
+		&vote.JustDecided{QCert: td.makeMainCertificate(t, height, 1, cpRound)}, tIndexY)
 
 	// Add some votes for Round 2
 	td.enterNextRound(td.consP)
@@ -756,7 +756,7 @@ func TestNonActiveValidator(t *testing.T) {
 	valKey := td.RandValKey()
 	pipe := pipeline.MockingPipeline[message.Message]()
 	consInt := NewConsensus(testConfig(), state.MockingState(td.TestSuite),
-		valKey, valKey.Address(), pipe, newConcreteMediator())
+		valKey, valKey.Address(), pipe, NewConcreteMediator())
 	nonActiveCons := consInt.(*consensus)
 
 	t.Run("non-active instances should be in new-height state", func(t *testing.T) {
@@ -988,7 +988,7 @@ func TestByzantine(t *testing.T) {
 }
 
 func checkConsensus(td *testData, height uint32, byzVotes []*vote.Vote) (
-	*certificate.BlockCertificate, error,
+	*certificate.Certificate, error,
 ) {
 	instances := []*consensus{td.consX, td.consY, td.consB, td.consP}
 
