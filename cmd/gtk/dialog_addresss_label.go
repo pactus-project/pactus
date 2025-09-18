@@ -46,7 +46,7 @@ func getAddressLabel(oldLabel string) (string, bool) {
 
 	dlg.SetModal(true)
 
-	dlg.Run()
+	runDialog(dlg)
 
 	return newLabel, ok
 }

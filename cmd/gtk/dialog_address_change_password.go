@@ -73,5 +73,5 @@ func changePassword(wlt *wallet.Wallet) {
 
 	dlg.SetModal(true)
 
-	dlg.Run()
+	runDialog(dlg)
 }

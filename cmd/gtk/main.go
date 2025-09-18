@@ -39,7 +39,10 @@ func init() {
 	runtime.UnlockOSThread()
 	runtime.LockOSThread()
 
-	gtk.Init(nil)
+	if runtime.GOOS == "darwin" {
+		// Changing the PANGOCAIRO_BACKEND is necessary on MacOS to render emoji
+		os.Setenv("PANGOCAIRO_BACKEND", "fontconfig")
+	}
 }
 
 func main() {

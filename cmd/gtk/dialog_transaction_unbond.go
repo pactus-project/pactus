@@ -75,5 +75,5 @@ Memo:      %s
 	}
 	builder.ConnectSignals(signals)
 
-	dlg.Run()
+	runDialog(dlg)
 }
