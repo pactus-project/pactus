@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
@@ -129,7 +130,7 @@ func (s *Server) StartServer(grpcAddr string) error {
 		gwServer.Handler = allowCORS(gwServer.Handler)
 	}
 
-	listener, err := net.Listen("tcp", s.config.Listen)
+	listener, err := util.NetworkListen(s.ctx, "tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}

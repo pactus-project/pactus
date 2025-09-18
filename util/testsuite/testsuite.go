@@ -1,6 +1,7 @@
 package testsuite
 
 import (
+	"context"
 	"encoding/hex"
 	"fmt"
 	"math/rand"
@@ -913,7 +914,7 @@ func (*TestSuite) HelperSignTransaction(prv crypto.PrivateKey, trx *tx.Tx) {
 }
 
 func FindFreePort() int {
-	listener, _ := net.Listen("tcp", "localhost:0")
+	listener, _ := util.NetworkListen(context.Background(), "tcp", "localhost:0")
 	defer func() {
 		_ = listener.Close()
 	}()

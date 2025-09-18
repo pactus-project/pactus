@@ -9,6 +9,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/util"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -51,8 +52,8 @@ func (c *grpcClient) connect() error {
 	for _, server := range c.servers {
 		conn, err := grpc.NewClient(server,
 			grpc.WithTransportCredentials(insecure.NewCredentials()),
-			grpc.WithContextDialer(func(_ context.Context, s string) (net.Conn, error) {
-				return net.DialTimeout("tcp", s, c.timeout)
+			grpc.WithContextDialer(func(ctx context.Context, address string) (net.Conn, error) {
+				return util.NetworkDialTimeout(ctx, "tcp", address, c.timeout)
 			}))
 		if err != nil {
 			continue

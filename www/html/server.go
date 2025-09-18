@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/mux"
 	ret "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -105,7 +106,7 @@ func (s *Server) StartServer(grpcServer string) error {
 		http.Handle("/", handlers.RecoveryHandler()(s.router))
 	}
 
-	listener, err := net.Listen("tcp", s.config.Listen)
+	listener, err := util.NetworkListen(s.ctx, "tcp", s.config.Listen)
 	if err != nil {
 		return err
 	}

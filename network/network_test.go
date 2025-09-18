@@ -53,7 +53,7 @@ func testConfig() *Config {
 		EnableMdns:                false,
 		ForcePrivateNetwork:       true,
 		NetworkName:               "test",
-		DefaultPort:               FindFreePort(),
+		DefaultPort:               testsuite.FindFreePort(),
 		PeerStorePath:             util.TempFilePath(),
 		StreamTimeout:             10 * time.Second,
 		CheckConnectivityInterval: 1 * time.Second,

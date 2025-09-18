@@ -139,12 +139,3 @@ func MessageIDFunc(m *lp2pspb.Message) string {
 
 	return string(h[:20])
 }
-
-func FindFreePort() int {
-	listener, _ := net.Listen("tcp", "localhost:0")
-	defer func() {
-		_ = listener.Close()
-	}()
-
-	return listener.Addr().(*net.TCPAddr).Port
-}

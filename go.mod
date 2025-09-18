@@ -1,6 +1,6 @@
 module github.com/pactus-project/pactus
 
-go 1.25.0
+go 1.25.1
 
 require (
 	github.com/NathanBaulch/protoc-gen-cobra v1.2.1
@@ -24,7 +24,7 @@ require (
 	github.com/kilic/bls12-381 v0.1.1-0.20220929213557-ca162e8a70f4
 	github.com/libp2p/go-libp2p v0.43.0
 	github.com/libp2p/go-libp2p-kad-dht v0.34.0
-	github.com/libp2p/go-libp2p-pubsub v0.14.3
+	github.com/libp2p/go-libp2p-pubsub v0.15.0
 	github.com/manifoldco/promptui v0.9.0
 	github.com/multiformats/go-multiaddr v0.16.1
 	github.com/pacviewer/jrpc-gateway v0.6.0
@@ -73,7 +73,7 @@ require (
 	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/ipfs/go-cid v0.5.0 // indirect
-	github.com/ipfs/go-datastore v0.8.3 // indirect
+	github.com/ipfs/go-datastore v0.8.4 // indirect
 	github.com/ipfs/go-log/v2 v2.8.1 // indirect
 	github.com/ipld/go-ipld-prime v0.21.0 // indirect
 	github.com/jackpal/go-nat-pmp v1.0.2 // indirect
@@ -151,7 +151,7 @@ require (
 	github.com/whyrusleeping/go-keyspace v0.0.0-20160322163242-5b898ac5add1 // indirect
 	github.com/wlynxg/anet v0.0.5 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
-	go.opentelemetry.io/auto/sdk v1.2.0 // indirect
+	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel v1.38.0 // indirect
 	go.opentelemetry.io/otel/metric v1.38.0 // indirect
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect

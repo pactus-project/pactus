@@ -129,11 +129,11 @@ func (mgr *manager) MoveToNewHeight() {
 			// Ignore old proposals
 
 		case prop.Height() > curHeight:
-			// keep this vote
+			// Keep this future proposal
 			continue
 
 		case prop.Height() == curHeight:
-			logger.Debug("upcoming proposal processed", "height", curHeight)
+			// Process this current proposal
 			for _, cons := range mgr.instances {
 				cons.SetProposal(prop)
 			}
@@ -149,11 +149,11 @@ func (mgr *manager) MoveToNewHeight() {
 			// Ignore old votes
 
 		case vote.Height() > curHeight:
-			// keep this vote
+			// Keep future vote
 			continue
 
 		case vote.Height() == curHeight:
-			logger.Debug("upcoming votes processed", "height", curHeight)
+			// Process current vote
 			for _, cons := range mgr.instances {
 				cons.AddVote(vote)
 			}
@@ -187,7 +187,7 @@ func (mgr *manager) SetProposal(prop *proposal.Proposal) {
 	curHeight, _ := cons.HeightRound()
 	switch {
 	case prop.Height() < curHeight:
-		// discard the old proposal
+		// discard old proposal
 
 	case prop.Height() > curHeight:
 		mgr.upcomingProposals = append(mgr.upcomingProposals, prop)
