@@ -111,5 +111,5 @@ Memo:   %s
 
 	onSenderChanged()
 
-	dlg.Run()
+	runDialog(dlg)
 }
