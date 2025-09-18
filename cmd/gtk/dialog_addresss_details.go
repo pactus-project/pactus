@@ -45,5 +45,5 @@ func showAddressDetails(wlt *wallet.Wallet, addr string) {
 
 	dlg.SetModal(true)
 
-	dlg.Run()
+	runDialog(dlg)
 }
