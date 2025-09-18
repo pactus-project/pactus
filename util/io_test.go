@@ -1,6 +1,7 @@
 package util
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -72,7 +73,7 @@ func TestTempFile(t *testing.T) {
 }
 
 func isRoot() bool {
-	cmd := exec.Command("id", "-u")
+	cmd := exec.CommandContext(context.Background(), "id", "-u")
 	output, err := cmd.Output()
 	if err != nil {
 		fmt.Println(err)

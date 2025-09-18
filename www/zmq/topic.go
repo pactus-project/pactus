@@ -1,6 +1,9 @@
 package zmq
 
-import "encoding/binary"
+import (
+	"encoding/binary"
+	"fmt"
+)
 
 type Topic int16
 
@@ -26,7 +29,7 @@ func (t Topic) String() string {
 		return "raw_transaction"
 
 	default:
-		return ""
+		return fmt.Sprintf("topic-%d", t)
 	}
 }
 
