@@ -17,10 +17,8 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 
 For seamless integration with Pactus, you can use these client libraries:
 
-- <i class="fa-brands fa-js"></i>
-  [pactus-grpc](https://www.npmjs.com/package/pactus-grpc/) package for Javascript
-- <i class="fa-brands fa-python"></i>
-  [pactus-grpc](https://pypi.org/project/pactus-grpc/) package for Python
+- <i class="fa-brands fa-js"></i> [pactus-grpc](https://www.npmjs.com/package/pactus-grpc/) package for Javascript
+- <i class="fa-brands fa-python"></i> [pactus-grpc](https://pypi.org/project/pactus-grpc/) package for Python
 
 ## gRPC Services
 
