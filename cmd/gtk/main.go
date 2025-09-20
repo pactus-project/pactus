@@ -35,10 +35,6 @@ func init() {
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
 	version.NodeAgent.AppType = "gui"
 
-	// the gtk on macos should run on main thread.
-	runtime.UnlockOSThread()
-	runtime.LockOSThread()
-
 	if runtime.GOOS == "darwin" {
 		// Changing the PANGOCAIRO_BACKEND is necessary on MacOS to render emoji
 		os.Setenv("PANGOCAIRO_BACKEND", "fontconfig")
@@ -46,37 +42,16 @@ func init() {
 }
 
 func main() {
+	// the gtk on macos should run on main thread.
+	runtime.UnlockOSThread()
+	runtime.LockOSThread()
+
 	flag.Parse()
 
 	var err error
 	workingDir, err := filepath.Abs(*workingDirOpt)
 	if err != nil {
 		cmd.PrintErrorMsgf("Aborted! %v", err)
-
-		return
-	}
-
-	// If node is not initialized yet
-	if util.IsDirNotExistsOrEmpty(workingDir) {
-		network := genesis.Mainnet
-		if *testnetOpt {
-			network = genesis.Testnet
-		}
-		if !startupAssistant(workingDir, network) {
-			return
-		}
-	}
-
-	// Define the lock file path
-	lockFilePath := filepath.Join(workingDir, ".pactus.lock")
-	fileLock := flock.New(lockFilePath)
-
-	locked, err := fileLock.TryLock()
-	fatalErrorCheck(err)
-
-	if !locked {
-		cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
-
 		return
 	}
 
@@ -85,17 +60,48 @@ func main() {
 	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_NON_UNIQUE)
 	fatalErrorCheck(err)
 
-	// Connect function to application startup event, this is not required.
+	// Declare variables at function scope so they can be accessed by cleanup handlers
+	var node *node.Node
+	var fileLock *flock.Flock
+
+	// Connect function to application startup event
 	app.Connect("startup", func() {
 		log.Println("application startup")
-	})
 
-	node, wlt, err := newNode(workingDir)
-	fatalErrorCheck(err)
+		// If node is not initialized yet, run startup assistant
+		if util.IsDirNotExistsOrEmpty(workingDir) {
+			network := genesis.Mainnet
+			if *testnetOpt {
+				network = genesis.Testnet
+			}
+			if !startupAssistant(workingDir, network) {
+				// If startup assistant was cancelled, quit the application
+				return
+			}
+		}
+	})
 
 	// Connect function to application activate event
 	app.Connect("activate", func() {
 		log.Println("application activate")
+
+		// Define the lock file path
+		lockFilePath := filepath.Join(workingDir, ".pactus.lock")
+		fileLock = flock.New(lockFilePath)
+
+		locked, err := fileLock.TryLock()
+		fatalErrorCheck(err)
+
+		if !locked {
+			cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
+			app.Quit()
+			return
+		}
+
+		// Create node and wallet after startup assistant has completed
+		var wlt *wallet.Wallet
+		node, wlt, err = newNode(workingDir)
+		fatalErrorCheck(err)
 
 		// Show about dialog as splash screen
 		splashDlg := aboutDialog()
@@ -128,15 +134,17 @@ func main() {
 	// Connect function to application shutdown event, this is not required.
 	app.Connect("shutdown", func() {
 		log.Println("Application shutdown")
-		node.Stop()
-		_ = fileLock.Unlock()
+		if node != nil {
+			node.Stop()
+		}
 	})
 
 	cmd.TrapSignal(func() {
 		cmd.PrintInfoMsgf("Exiting...")
 
-		node.Stop()
-		_ = fileLock.Unlock()
+		if node != nil {
+			node.Stop()
+		}
 	})
 
 	// Launch the application
