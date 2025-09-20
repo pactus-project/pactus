@@ -14,19 +14,19 @@ jobs:
 
     steps:
       - name: Install Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: "1.24.5"
+          go-version: "1.25.1"
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Check linting and formatting
         uses: golangci/golangci-lint-action@v8
         with:
-          version: v2.2.2
+          version: v2.4.0
 
       - name: Check proto files
         run: |
-          go install github.com/bufbuild/buf/cmd/buf@v1.55
+          go install github.com/bufbuild/buf/cmd/buf@v1.57
           make proto-check

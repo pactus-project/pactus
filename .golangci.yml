@@ -129,6 +129,8 @@ linters:
           disabled: true
         - name: redefines-builtin-id
           disabled: true
+        - name: enforce-switch-style
+          disabled: true
         - name: unhandled-error
           arguments:
             - fmt.Printf
