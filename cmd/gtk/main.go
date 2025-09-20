@@ -35,10 +35,6 @@ func init() {
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
 	version.NodeAgent.AppType = "gui"
 
-	// the gtk on macos should run on main thread.
-	runtime.UnlockOSThread()
-	runtime.LockOSThread()
-
 	if runtime.GOOS == "darwin" {
 		// Changing the PANGOCAIRO_BACKEND is necessary on MacOS to render emoji
 		os.Setenv("PANGOCAIRO_BACKEND", "fontconfig")
@@ -46,6 +42,10 @@ func init() {
 }
 
 func main() {
+	// the gtk on macos should run on main thread.
+	runtime.UnlockOSThread()
+	runtime.LockOSThread()
+
 	flag.Parse()
 
 	var err error
@@ -137,9 +137,6 @@ func main() {
 		if node != nil {
 			node.Stop()
 		}
-		if fileLock != nil {
-			_ = fileLock.Unlock()
-		}
 	})
 
 	cmd.TrapSignal(func() {
@@ -147,9 +144,6 @@ func main() {
 
 		if node != nil {
 			node.Stop()
-		}
-		if fileLock != nil {
-			_ = fileLock.Unlock()
 		}
 	})
 
