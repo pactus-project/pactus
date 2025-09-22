@@ -915,7 +915,6 @@ func (*TestSuite) HelperSignTransaction(prv crypto.PrivateKey, trx *tx.Tx) {
 
 func FindFreePort() int {
 	var freePort int
-	hited := false
 	for {
 		// Find a free TCP port
 		listenerTCP, err := util.NetworkListen(context.Background(), "tcp", "127.0.0.1:0")
@@ -923,23 +922,15 @@ func FindFreePort() int {
 			continue
 		}
 
-		if !hited {
-			freePort = 57621
-			hited = true
-		} else {
-			freePort = listenerTCP.Addr().(*net.TCPAddr).Port
-		}
-
+		freePort = listenerTCP.Addr().(*net.TCPAddr).Port
 		_ = listenerTCP.Close()
 
 		udpAddr, err := net.ResolveUDPAddr("udp", fmt.Sprintf("127.0.0.1:%d", freePort))
 		if err != nil {
-			panic("11111111111")
 			continue
 		}
 		udpConn, err := net.ListenUDP("udp", udpAddr)
 		if err != nil {
-			panic("22222222222")
 			continue
 		}
 		udpConn.Close()
