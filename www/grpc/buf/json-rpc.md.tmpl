@@ -17,8 +17,8 @@ Each PAC is equivalent to 1,000,000,000 or 10<sup>9</sup> NanoPACs.
 
 For seamless integration with Pactus, you can use these client libraries:
 
-- [pactus-jsonrpc](https://pypi.org/project/pactus-jsonrpc/) package for Python
-- [pactus-jsonrpc](https://www.npmjs.com/package/pactus-jsonrpc/) package for Javascript
+- <i class="fa-brands fa-js"></i> [pactus-jsonrpc](https://www.npmjs.com/package/pactus-jsonrpc/) package for Javascript
+- <i class="fa-brands fa-python"></i> [pactus-jsonrpc](https://pypi.org/project/pactus-jsonrpc/) package for Python
 
 ## Example
 
