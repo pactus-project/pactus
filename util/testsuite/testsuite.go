@@ -933,7 +933,7 @@ func FindFreePort() int {
 		if err != nil {
 			continue
 		}
-		udpConn.Close()
+		_ = udpConn.Close()
 
 		break
 	}
