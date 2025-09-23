@@ -56,7 +56,7 @@ Filename:"{app}\\pactus-gui\\pactus-gui.exe"; Description:"Launch Pactus"; Flags
 EOF
 
 # Build installer
-INNO_DIR=$(cygpath -w "${INNO_PATH}")
+INNO_DIR=$(cygpath -w -l "${INNO_PATH}")
 "${INNO_DIR}/ISCC.exe" "${ROOT_DIR}/inno.iss"
 mv "Output/mysetup.exe" "${BUILD_DIR}/unsigned/${FILE_NAME}_installer.exe"
 

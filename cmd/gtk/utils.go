@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -268,7 +269,7 @@ func openURLInBrowser(address string) error {
 	}
 	args = append(args, address)
 
-	return exec.Command(cmd, args...).Start()
+	return exec.CommandContext(context.Background(), cmd, args...).Start()
 }
 
 func buildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
