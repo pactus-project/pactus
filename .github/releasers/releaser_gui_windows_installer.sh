@@ -8,7 +8,6 @@ BUILD_DIR="${ROOT_DIR}/build"
 PACKAGE_NAME="pactus-gui_${VERSION}"
 PACKAGE_DIR="${ROOT_DIR}/${PACKAGE_NAME}"
 FILE_NAME="${PACKAGE_NAME}_windows_amd64"
-INNO_PATH="/c/Program Files (x86)/Inno Setup 6"
 
 echo "🚀 Starting Pactus GUI Windows packaging..."
 
@@ -56,7 +55,9 @@ Filename:"{app}\\pactus-gui\\pactus-gui.exe"; Description:"Launch Pactus"; Flags
 EOF
 
 # Build installer
-INNO_DIR=$(cygpath -w -s "${INNO_PATH}")
+ls -la "/c/Program Files (x86)"
+INNO_PATH="/c/Program Files (x86)/Inno Setup 6"
+INNO_DIR=$(cygpath -w -s '${INNO_PATH}')
 "${INNO_DIR}/ISCC.exe" "${ROOT_DIR}/inno.iss"
 mv "Output/mysetup.exe" "${BUILD_DIR}/unsigned/${FILE_NAME}_installer.exe"
 
