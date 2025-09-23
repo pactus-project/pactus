@@ -38,6 +38,7 @@ func showQuestionDialog(parent gtk.IWindow, msg string) bool {
 		gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, "%s", msg)
 	updateMessageDialog(dlg)
 	res := runDialog(&dlg.Dialog)
+
 	return res == gtk.RESPONSE_YES
 }
 

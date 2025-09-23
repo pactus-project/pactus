@@ -57,10 +57,11 @@ NEXT_VER="1.10.2"
 BASE_BRANCH="1.10.x"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
+```
 
 ## 5. Follow the Releasing Document
 
-Refer to the [Releasing](./releasing.md) document and follow the steps outlined from Step 5 until the end.
+Refer to the [Releasing](./releasing.md#5-update-changelog) document and follow the steps outlined from Step 5 until the end.
 This document will provide you with the necessary guidance to successfully release the patched branch.
 
 Ensure that your terminal remains open throughout the process for seamless execution of the required commands.

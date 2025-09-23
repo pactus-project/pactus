@@ -12,6 +12,7 @@
 Building Decentralized Future Together!
 Pactus is a low-cost, high-performance, and scalable decentralized blockchain protocol with the SSPoS consensus mechanism.
 </property>
+    <property name="website">https://pactus.org</property>
     <property name="license-type">mit-x11</property>
     <child internal-child="vbox">
       <object class="GtkBox">
