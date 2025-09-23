@@ -182,7 +182,6 @@ class GTKBundler:
 def main():
     if len(sys.argv) != 3:
         print("Usage: python3 gtk-win-bundler.py <exe_path> <target_dir>")
-        print("Example: python3 gtk-win-bundler.py /path/to/app.exe /path/to/bundle")
         sys.exit(1)
 
     # Check for MINGW_PREFIX environment variable

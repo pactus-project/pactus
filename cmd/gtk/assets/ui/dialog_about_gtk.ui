@@ -13,7 +13,6 @@ GTK is a free and open-source cross-platform widget toolkit for creating graphic
 It is licensed under the terms of the GNU Lesser General Public License, allowing both free and proprietary software to use it.
 </property>
     <property name="website">https://www.gtk.org/</property>
-    <property name="website-label" translatable="yes">GTK</property>
     <property name="license-type">lgpl-2-1</property>
     <child internal-child="vbox">
       <object class="GtkBox">
