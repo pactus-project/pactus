@@ -39,8 +39,6 @@ func init() {
 		// Changing the PANGOCAIRO_BACKEND is necessary on MacOS to render emoji
 		_ = os.Setenv("PANGOCAIRO_BACKEND", "fontconfig")
 	}
-
-	gtk.Init(nil)
 }
 
 func main() {
