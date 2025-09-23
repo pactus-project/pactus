@@ -48,6 +48,8 @@ func main() {
 	runtime.UnlockOSThread()
 	runtime.LockOSThread()
 
+	gtk.Init(nil)
+
 	// Create a new app.
 	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_NON_UNIQUE)
 	fatalErrorCheck(err)
