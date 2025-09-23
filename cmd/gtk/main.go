@@ -39,8 +39,6 @@ func init() {
 		// Changing the PANGOCAIRO_BACKEND is necessary on MacOS to render emoji
 		_ = os.Setenv("PANGOCAIRO_BACKEND", "fontconfig")
 	}
-
-	gtk.Init(nil)
 }
 
 func main() {
@@ -49,6 +47,8 @@ func main() {
 	// The gtk should run on main thread.
 	runtime.UnlockOSThread()
 	runtime.LockOSThread()
+
+	gtk.Init(nil)
 
 	// Create a new app.
 	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_NON_UNIQUE)
