@@ -16,7 +16,7 @@ echo "🚀 Starting Pactus GUI Windows packaging..."
 mkdir -p "${PACKAGE_DIR}/pactus-gui"
 
 # Bundle GTK application using Python bundler
-python3 "${ROOT_DIR}/.github/releasers/gtk-win-bundler.py" \
+python3 "${ROOT_DIR}/.github/releasers/windows/gtk-win-bundler.py" \
     "${BUILD_DIR}/signed/pactus-gui.exe" \
     "${PACKAGE_DIR}/pactus-gui"
 

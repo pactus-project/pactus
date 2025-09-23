@@ -57,6 +57,7 @@ NEXT_VER="1.9.2"
 BASE_BRANCH="1.9.x"
 TAG_NAME="v${CUR_VER}"
 TAG_MSG="Version ${CUR_VER}"
+```
 
 ## 5. Follow the Releasing Document
 

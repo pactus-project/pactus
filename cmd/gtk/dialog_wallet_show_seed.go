@@ -41,5 +41,5 @@ func showSeed(seed string) {
 
 	dlg.SetModal(true)
 
-	dlg.Run()
+	runDialog(dlg)
 }

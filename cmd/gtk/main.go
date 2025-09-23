@@ -35,9 +35,10 @@ func init() {
 	testnetOpt = flag.Bool("testnet", false, "initializing for the testnet")
 	version.NodeAgent.AppType = "gui"
 
-	// the gtk on macos should run on main thread.
-	runtime.UnlockOSThread()
-	runtime.LockOSThread()
+	if runtime.GOOS == "darwin" {
+		// Changing the PANGOCAIRO_BACKEND is necessary on MacOS to render emoji
+		_ = os.Setenv("PANGOCAIRO_BACKEND", "fontconfig")
+	}
 
 	gtk.Init(nil)
 }
@@ -45,7 +46,14 @@ func init() {
 func main() {
 	flag.Parse()
 
-	var err error
+	// The gtk should run on main thread.
+	runtime.UnlockOSThread()
+	runtime.LockOSThread()
+
+	// Create a new app.
+	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_NON_UNIQUE)
+	fatalErrorCheck(err)
+
 	workingDir, err := filepath.Abs(*workingDirOpt)
 	if err != nil {
 		cmd.PrintErrorMsgf("Aborted! %v", err)
@@ -76,11 +84,6 @@ func main() {
 
 		return
 	}
-
-	// Create a new app.
-	// When using GtkApplication, it is not necessary to call gtk_init() manually.
-	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_NON_UNIQUE)
-	fatalErrorCheck(err)
 
 	// Connect function to application startup event, this is not required.
 	app.Connect("startup", func() {

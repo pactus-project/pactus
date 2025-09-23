@@ -50,10 +50,7 @@ func getWalletPassword(wlt *wallet.Wallet) (string, bool) {
 
 	dlg.SetModal(true)
 
-	dlg.Run()
-
-	// Destroy dialog after closing dialog
-	dlg.Destroy()
+	runDialog(dlg)
 
 	return password, ok
 }

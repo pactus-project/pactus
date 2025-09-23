@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.1](https://github.com/pactus-project/pactus/compare/v1.9.0...v1.9.1) (2025-09-24)
+
+### Fix
+
+- **gtk**: ensure GTK starts on main thread
+- **gtk**: change fontmap backend for macOS ([#1884](https://github.com/pactus-project/pactus/pull/1884))
+- **gtk**: resolve crash issue on MacOs  ([#1882](https://github.com/pactus-project/pactus/pull/1882))
+
 ## [1.9.0](https://github.com/pactus-project/pactus/compare/v1.8.0...v1.9.0) (2025-09-10)
 
 ### Feat

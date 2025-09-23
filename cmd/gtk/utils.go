@@ -37,8 +37,7 @@ func showQuestionDialog(parent gtk.IWindow, msg string) bool {
 	dlg := gtk.MessageDialogNew(parent,
 		gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, "%s", msg)
 	updateMessageDialog(dlg)
-	res := dlg.Run()
-	dlg.Destroy()
+	res := runDialog(&dlg.Dialog)
 
 	return res == gtk.RESPONSE_YES
 }
@@ -47,24 +46,21 @@ func showInfoDialog(parent gtk.IWindow, msg string) {
 	dlg := gtk.MessageDialogNew(parent,
 		gtk.DIALOG_MODAL, gtk.MESSAGE_INFO, gtk.BUTTONS_OK, "%s", msg)
 	updateMessageDialog(dlg)
-	dlg.Run()
-	dlg.Destroy()
+	runDialog(&dlg.Dialog)
 }
 
 func showWarningDialog(parent gtk.IWindow, msg string) {
 	dlg := gtk.MessageDialogNew(parent,
 		gtk.DIALOG_MODAL, gtk.MESSAGE_WARNING, gtk.BUTTONS_OK, "%s", msg)
 	updateMessageDialog(dlg)
-	dlg.Run()
-	dlg.Destroy()
+	runDialog(&dlg.Dialog)
 }
 
 func showErrorDialog(parent gtk.IWindow, msg string) {
 	dlg := gtk.MessageDialogNew(parent,
 		gtk.DIALOG_MODAL, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, "%s", msg)
 	updateMessageDialog(dlg)
-	dlg.Run()
-	dlg.Destroy()
+	runDialog(&dlg.Dialog)
 }
 
 // showError displays an error dialog and logs the error message.
@@ -320,4 +316,14 @@ func setCSSClass(widget *gtk.Widget, name string) {
 	fatalErrorCheck(err)
 
 	styleContext.AddClass(name)
+}
+
+func runDialog(dlg *gtk.Dialog) gtk.ResponseType {
+	response := dlg.Run()
+
+	// Destroy should be done after the dialog is closed
+	// Read more here: https://docs.gtk.org/gtk3/method.Dialog.run.html
+	dlg.Destroy()
+
+	return response
 }
