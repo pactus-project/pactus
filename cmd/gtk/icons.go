@@ -36,6 +36,7 @@ func pixbufToIcon16(pixbuf *gdk.Pixbuf) *gtk.Image {
 	if pixbuf == nil {
 		// Return empty image if pixbuf failed to load
 		image, _ := gtk.ImageNew()
+
 		return image
 	}
 	resized, _ := pixbuf.ScaleSimple(16, 16, gdk.INTERP_NEAREST)
