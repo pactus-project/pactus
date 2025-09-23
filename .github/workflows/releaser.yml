@@ -150,7 +150,7 @@ jobs:
         name: [windows_amd64]
         include:
           - name: windows_amd64
-            runner: windows-latest
+            runner: windows-2022
 
     defaults:
       run:
