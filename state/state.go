@@ -75,17 +75,17 @@ func LoadOrNewState(
 	state.logger = logger.NewSubLogger("_state", state)
 	state.store = store
 
-	// Check if the number of accounts is greater than the genesis time;
-	// this indicates we are not at the genesis height anymore.
-	// TODO: We can check the LastCertificate is nil for genesis height.
-	if store.TotalAccounts() > int32(len(genDoc.Accounts())) {
-		err := state.tryLoadLastInfo()
+	// If there is no certificate, we are at the genesis height.
+	// Only the genesis block has no certificate.
+	if store.LastCertificate() == nil {
+		// Initialize the state at genesis.
+		err := state.makeGenesisState(genDoc)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		// We are at the genesis height.
-		err := state.makeGenesisState(genDoc)
+		// Otherwise, try to restore the last known state.
+		err := state.tryLoadLastInfo()
 		if err != nil {
 			return nil, err
 		}
