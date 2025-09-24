@@ -194,10 +194,7 @@ func (ts *TestSuite) RandFee(max ...amount.Amount) amount.Amount {
 // RandBytes returns a slice of random bytes of the given length.
 func (ts *TestSuite) RandBytes(length int) []byte {
 	buf := make([]byte, length)
-	_, err := ts.Rand.Read(buf)
-	if err != nil {
-		panic(err)
-	}
+	_, _ = ts.Rand.Read(buf)
 
 	return buf
 }
@@ -231,21 +228,14 @@ func (ts *TestSuite) RandString(length int) string {
 
 // DecodingHex decodes the input string from hexadecimal format and returns the resulting byte slice.
 func (*TestSuite) DecodingHex(in string) []byte {
-	d, err := hex.DecodeString(in)
-	if err != nil {
-		panic(err)
-	}
+	d, _ := hex.DecodeString(in)
 
 	return d
 }
 
 // RandBLSKeyPair generates a random BLS key pair for testing purposes.
 func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
-	buf := make([]byte, bls.PrivateKeySize)
-	_, err := ts.Rand.Read(buf)
-	if err != nil {
-		panic(err)
-	}
+	buf := ts.RandBytes(bls.PrivateKeySize)
 	prv, _ := bls.PrivateKeyFromBytes(buf)
 	pub := prv.PublicKeyNative()
 
@@ -254,11 +244,7 @@ func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 
 // RandEd25519KeyPair generates a random Ed25519 key pair for testing purposes.
 func (ts *TestSuite) RandEd25519KeyPair() (*ed25519.PublicKey, *ed25519.PrivateKey) {
-	buf := make([]byte, ed25519.PrivateKeySize)
-	_, err := ts.Rand.Read(buf)
-	if err != nil {
-		panic(err)
-	}
+	buf := ts.RandBytes(ed25519.PrivateKeySize)
 	prv, _ := ed25519.PrivateKeyFromBytes(buf)
 	pub := prv.PublicKeyNative()
 
@@ -437,7 +423,7 @@ type BlockMaker struct {
 	StateHash hash.Hash
 	PrevHash  hash.Hash
 	Seed      sortition.VerifiableSeed
-	PrevCert  *certificate.BlockCertificate
+	PrevCert  *certificate.Certificate
 }
 
 // NewBlockMaker creates a new BlockMaker instance.
@@ -509,7 +495,7 @@ func BlockWithSeed(seed sortition.VerifiableSeed) func(*BlockMaker) {
 }
 
 // BlockWithPrevCert sets previous block certificate to the block.
-func BlockWithPrevCert(cert *certificate.BlockCertificate) func(*BlockMaker) {
+func BlockWithPrevCert(cert *certificate.Certificate) func(*BlockMaker) {
 	return func(bm *BlockMaker) {
 		bm.PrevCert = cert
 	}
@@ -524,10 +510,10 @@ func BlockWithTransactions(txs block.Txs) func(*BlockMaker) {
 
 // GenerateTestBlock generates a block for testing purposes with optional configuration.
 func (ts *TestSuite) GenerateTestBlock(height uint32, options ...func(*BlockMaker)) (
-	*block.Block, *certificate.BlockCertificate,
+	*block.Block, *certificate.Certificate,
 ) {
 	bmk := ts.NewBlockMaker()
-	bmk.PrevCert = ts.GenerateTestBlockCertificate(height - 1)
+	bmk.PrevCert = ts.GenerateTestCertificate(height - 1)
 
 	if height == 1 {
 		bmk.PrevCert = nil
@@ -541,38 +527,20 @@ func (ts *TestSuite) GenerateTestBlock(height uint32, options ...func(*BlockMake
 	header := block.NewHeader(bmk.Version, bmk.Time, bmk.PrevHash, bmk.PrevHash, bmk.Seed, bmk.Proposer)
 	blk := block.NewBlock(header, bmk.PrevCert, bmk.Txs)
 
-	blockCert := ts.GenerateTestBlockCertificate(height)
+	blockCert := ts.GenerateTestCertificate(height)
 
 	return blk, blockCert
 }
 
-// GenerateTestBlockCertificate generates a block certificate for testing purposes.
-func (ts *TestSuite) GenerateTestBlockCertificate(height uint32) *certificate.BlockCertificate {
+// GenerateTestCertificate generates a block certificate for testing purposes.
+func (ts *TestSuite) GenerateTestCertificate(height uint32) *certificate.Certificate {
 	sig := ts.RandBLSSignature()
 
-	cert := certificate.NewBlockCertificate(height, ts.RandRound())
+	cert := certificate.NewCertificate(height, ts.RandRound())
 
-	committers := ts.RandSlice(6)
-	absentees := []int32{committers[5]}
+	committers := ts.RandSlice(4)
+	absentees := []int32{committers[3]}
 	cert.SetSignature(committers, absentees, sig)
-
-	return cert
-}
-
-// GenerateTestPrepareCertificate generates a prepare certificate for testing purposes.
-func (ts *TestSuite) GenerateTestPrepareCertificate(height uint32) *certificate.VoteCertificate {
-	sig := ts.RandBLSSignature()
-
-	cert := certificate.NewVoteCertificate(height, ts.RandRound())
-
-	committers := ts.RandSlice(6)
-	absentees := []int32{committers[5]}
-	cert.SetSignature(committers, absentees, sig)
-
-	err := cert.BasicCheck()
-	if err != nil {
-		panic(err)
-	}
 
 	return cert
 }
@@ -869,9 +837,6 @@ func (ts *TestSuite) GenerateTestPrepareVote(height uint32, round int16) (*vote.
 // GenerateTestCommittee generates a committee for testing purposes.
 // All committee members have the same power.
 func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls.ValidatorKey) {
-	if num < 4 {
-		panic("the number of committee members must be at least 4")
-	}
 	valKeys := make([]*bls.ValidatorKey, num)
 	vals := make([]*validator.Validator, num)
 	for index := int32(0); index < int32(num); index++ {
@@ -896,10 +861,6 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls
 func (*TestSuite) HelperSignVote(valKey *bls.ValidatorKey, v *vote.Vote) {
 	sig := valKey.Sign(v.SignBytes())
 	v.SetSignature(sig)
-
-	if err := v.BasicCheck(); err != nil {
-		panic(err)
-	}
 }
 
 func (*TestSuite) HelperSignProposal(valKey *bls.ValidatorKey, p *proposal.Proposal) {

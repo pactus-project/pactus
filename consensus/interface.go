@@ -22,27 +22,8 @@ type Reader interface {
 type Consensus interface {
 	Reader
 
-	Start()
 	MoveToNewHeight()
 	AddVote(vote *vote.Vote)
 	SetProposal(prop *proposal.Proposal)
-}
-
-type ManagerReader interface {
-	Instances() []Reader
-	HandleQueryVote(height uint32, round int16) *vote.Vote
-	HandleQueryProposal(height uint32, round int16) *proposal.Proposal
-	Proposal() *proposal.Proposal
-	HeightRound() (uint32, int16)
-	HasActiveInstance() bool
-}
-
-type Manager interface {
-	ManagerReader
-
-	Start() error
-	Stop()
-	MoveToNewHeight()
-	AddVote(vote *vote.Vote)
-	SetProposal(prop *proposal.Proposal)
+	IsDeprecated() bool
 }

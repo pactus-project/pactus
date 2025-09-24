@@ -71,7 +71,7 @@ func setup(t *testing.T) *testData {
 	ts.HelperSignTransaction(prv4, trx)
 	prevHash := ts.RandHash()
 	lastHeight := ts.RandHeight()
-	prevCert := ts.GenerateTestBlockCertificate(lastHeight - 1)
+	prevCert := ts.GenerateTestCertificate(lastHeight - 1)
 	lastSeed := ts.RandSeed()
 	lastBlock := block.MakeBlock(1, time.Now(), block.Txs{trx},
 		prevHash,
@@ -79,7 +79,7 @@ func setup(t *testing.T) *testData {
 		prevCert, lastSeed, val2.Address())
 
 	sig := ts.RandBLSSignature()
-	lastCert := certificate.NewBlockCertificate(lastHeight, 0)
+	lastCert := certificate.NewCertificate(lastHeight, 0)
 	lastCert.SetSignature(committers, []int32{}, sig)
 	mockStore.SaveBlock(lastBlock, lastCert)
 	assert.Equal(t, lastHeight, mockStore.LastHeight)

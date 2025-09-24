@@ -4,7 +4,7 @@ import (
 	"context"
 	"net"
 
-	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
@@ -25,14 +25,14 @@ type Server struct {
 	state         state.Facade
 	net           network.Network
 	sync          sync.Synchronizer
-	consMgr       consensus.ManagerReader
+	consMgr       manager.ManagerReader
 	walletMgr     *wallet.Manager
 	zmqPublishers []zmq.Publisher
 	logger        *logger.SubLogger
 }
 
 func NewServer(ctx context.Context, conf *Config, state state.Facade, sync sync.Synchronizer,
-	network network.Network, consMgr consensus.ManagerReader,
+	network network.Network, consMgr manager.ManagerReader,
 	walletMgr *wallet.Manager,
 	zmqPublishers []zmq.Publisher,
 ) *Server {

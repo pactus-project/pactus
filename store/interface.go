@@ -97,7 +97,7 @@ type Reader interface {
 	IterateValidators(consumer func(*validator.Validator) (stop bool))
 	IterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool))
 	TotalValidators() int32
-	LastCertificate() *certificate.BlockCertificate
+	LastCertificate() *certificate.Certificate
 	IsBanned(addr crypto.Address) bool
 	IsPruned() bool
 	PruningHeight() uint32
@@ -109,7 +109,7 @@ type Store interface {
 	UpdateAccount(addr crypto.Address, acc *account.Account)
 	UpdateValidator(val *validator.Validator)
 	UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version)
-	SaveBlock(blk *block.Block, cert *certificate.BlockCertificate)
+	SaveBlock(blk *block.Block, cert *certificate.Certificate)
 	Prune(callback func(pruned bool, pruningHeight uint32) bool) error
 	WriteBatch() error
 	Close()
