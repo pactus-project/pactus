@@ -3,6 +3,7 @@ package vault
 import (
 	"cmp"
 	"encoding/json"
+	"maps"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -176,9 +177,7 @@ func (v *Vault) Neuter() *Vault {
 		Purposes:  v.Purposes,
 	}
 
-	for addr, info := range v.Addresses {
-		neutered.Addresses[addr] = info
-	}
+	maps.Copy(neutered.Addresses, v.Addresses)
 
 	return neutered
 }

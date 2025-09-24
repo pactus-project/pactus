@@ -1,6 +1,8 @@
 package voteset
 
 import (
+	"maps"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/validator"
@@ -41,9 +43,7 @@ func newBlockVoteSet(voteSet *voteSet) *BlockVoteSet {
 func (vs *BlockVoteSet) BlockVotes(blockHash hash.Hash) map[crypto.Address]*vote.Vote {
 	votes := map[crypto.Address]*vote.Vote{}
 	blockVotes := vs.mustGetBlockVotes(blockHash)
-	for a, v := range blockVotes.votes {
-		votes[a] = v
-	}
+	maps.Copy(votes, blockVotes.votes)
 
 	return votes
 }
