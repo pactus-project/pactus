@@ -93,7 +93,8 @@ func (*mainWindow) onAboutGtk() {
 
 func (*mainWindow) onAbout() {
 	dlg := aboutDialog()
-	dlg.ShowAll()
+
+	runDialog(&dlg.Dialog)
 }
 
 func (mw *mainWindow) OnTransactionTransfer() {

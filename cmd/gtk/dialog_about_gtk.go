@@ -34,5 +34,5 @@ func showAboutGTKDialog() {
 
 	dlg.SetModal(true)
 
-	dlg.Show()
+	runDialog(&dlg.Dialog)
 }
