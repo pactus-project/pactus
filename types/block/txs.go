@@ -50,3 +50,7 @@ func (txs Txs) Len() int {
 func (txs Txs) Get(i int) *tx.Tx {
 	return txs[i]
 }
+
+func (txs Txs) Subsidy() *tx.Tx {
+	return txs[0]
+}

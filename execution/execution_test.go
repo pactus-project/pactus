@@ -3,10 +3,8 @@ package execution
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/execution/executor"
 	"github.com/pactus-project/pactus/sandbox"
-	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
 )
@@ -15,12 +13,7 @@ func TestTransferLockTime(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	sbx := sandbox.MockingSandbox(ts)
-	rndPubKey, rndPrvKey := ts.RandEd25519KeyPair()
-	rndAccAddr := rndPubKey.AccountAddress()
-	rndAcc := sbx.MakeNewAccount(rndAccAddr)
-	rndAcc.AddToBalance(1000e9)
-	sbx.UpdateAccount(rndAccAddr, rndAcc)
-	_ = sbx.TestStore.AddTestBlock(8642)
+	sbx.TestStore.AddTestBlock(8642)
 
 	tests := []struct {
 		name         string
@@ -62,8 +55,8 @@ func TestTransferLockTime(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			trx := tx.NewTransferTx(tt.lockTime, rndAccAddr, ts.RandAccAddress(), 1000, 1000)
-			ts.HelperSignTransaction(rndPrvKey, trx)
+			trx := ts.GenerateTestTransferTx(
+				testsuite.TransactionWithLockTime(tt.lockTime))
 
 			strictErr := CheckLockTime(trx, sbx, true)
 			assert.ErrorIs(t, strictErr, tt.strictErr)
@@ -79,12 +72,7 @@ func TestSortitionLockTime(t *testing.T) {
 
 	sbx := sandbox.MockingSandbox(ts)
 	sbx.TestAcceptSortition = true
-	rndPubKey, rndPrvKey := ts.RandBLSKeyPair()
-	rndValAddr := rndPubKey.ValidatorAddress()
-	rndVal := sbx.MakeNewValidator(rndPubKey)
-	rndVal.AddToStake(1000 * 1e9)
-	sbx.UpdateValidator(rndVal)
-	_ = sbx.TestStore.AddTestBlock(8642)
+	sbx.TestStore.AddTestBlock(8642)
 
 	tests := []struct {
 		name         string
@@ -126,8 +114,8 @@ func TestSortitionLockTime(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			trx := tx.NewSortitionTx(tt.lockTime, rndValAddr, ts.RandProof())
-			ts.HelperSignTransaction(rndPrvKey, trx)
+			trx := ts.GenerateTestSortitionTx(
+				testsuite.TransactionWithLockTime(tt.lockTime))
 
 			strictErr := CheckLockTime(trx, sbx, true)
 			assert.ErrorIs(t, strictErr, tt.strictErr)
@@ -142,7 +130,7 @@ func TestSubsidyLockTime(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	sbx := sandbox.MockingSandbox(ts)
-	_ = sbx.TestStore.AddTestBlock(8642)
+	sbx.TestStore.AddTestBlock(8642)
 
 	tests := []struct {
 		name         string
@@ -172,7 +160,8 @@ func TestSubsidyLockTime(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			trx := tx.NewSubsidyTxLegacy(tt.lockTime, ts.RandAccAddress(), 1000)
+			trx := ts.GenerateTestSubsidyTx(
+				testsuite.TransactionWithLockTime(tt.lockTime))
 
 			strictErr := CheckLockTime(trx, sbx, true)
 			assert.ErrorIs(t, strictErr, tt.strictErr)
@@ -187,20 +176,27 @@ func TestExecute(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	sbx := sandbox.MockingSandbox(ts)
-	_ = sbx.TestStore.AddTestBlock(8642)
+	sbx.TestStore.AddTestBlock(8642)
+	knownPub, knownSigner := ts.RandEd25519KeyPair()
+	sbx.TestStore.AddTestAccount(
+		testsuite.AccountWithAddress(knownPub.AccountAddress()))
 	lockTime := sbx.CurrentHeight()
 
-	t.Run("Invalid transaction, Should return error", func(t *testing.T) {
-		randAddr := ts.RandAccAddress()
-		trx := tx.NewTransferTx(lockTime, randAddr, ts.RandAccAddress(),
-			ts.RandAmount(), ts.RandFee())
+	t.Run("Unknown Signer", func(t *testing.T) {
+		_, unknownSigner := ts.RandKeyPair()
+		trx := ts.GenerateTestTransferTx(
+			testsuite.TransactionWithLockTime(lockTime),
+			testsuite.TransactionWithSigner(unknownSigner))
 
 		err := Execute(trx, sbx)
-		assert.ErrorIs(t, err, executor.AccountNotFoundError{Address: randAddr})
+		assert.ErrorIs(t, err, executor.AccountNotFoundError{Address: trx.Payload().Signer()})
 	})
 
-	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewSubsidyTxLegacy(lockTime, ts.RandAccAddress(), 1000)
+	t.Run("Valid Transaction", func(t *testing.T) {
+		trx := ts.GenerateTestTransferTx(
+			testsuite.TransactionWithLockTime(lockTime),
+			testsuite.TransactionWithSigner(knownSigner))
+
 		err := Execute(trx, sbx)
 		assert.NoError(t, err)
 
@@ -212,39 +208,49 @@ func TestCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	sbx := sandbox.MockingSandbox(ts)
-	_ = sbx.TestStore.AddTestBlock(8642)
+	sbx.TestStore.AddTestBlock(8642)
+	knownPub, knownSigner := ts.RandEd25519KeyPair()
+	_, testAcc := sbx.TestStore.AddTestAccount(
+		testsuite.AccountWithAddress(knownPub.AccountAddress()))
 	lockTime := sbx.CurrentHeight()
 
+	t.Run("Unknown Sender", func(t *testing.T) {
+		_, unknownSigner := ts.RandKeyPair()
+		trx := ts.GenerateTestTransferTx(
+			testsuite.TransactionWithLockTime(lockTime),
+			testsuite.TransactionWithSigner(unknownSigner))
+
+		err := CheckAndExecute(trx, sbx, true)
+		assert.ErrorIs(t, err, executor.AccountNotFoundError{Address: trx.Payload().Signer()})
+	})
+
 	t.Run("Invalid lock-time, Should return error", func(t *testing.T) {
-		invalidLocoTme := lockTime + 1
-		trx := tx.NewTransferTx(invalidLocoTme, crypto.TreasuryAddress, ts.RandAccAddress(), ts.RandAmount(), 0)
+		invalidLockTime := lockTime + 1
+		trx := ts.GenerateTestTransferTx(
+			testsuite.TransactionWithLockTime(invalidLockTime),
+			testsuite.TransactionWithSigner(knownSigner))
 
 		err := CheckAndExecute(trx, sbx, true)
-		assert.ErrorIs(t, err, LockTimeInFutureError{LockTime: invalidLocoTme})
+		assert.ErrorIs(t, err, LockTimeInFutureError{LockTime: invalidLockTime})
 	})
 
 	t.Run("Invalid transaction, Should return error", func(t *testing.T) {
-		randAddr := ts.RandAccAddress()
-		trx := tx.NewTransferTx(lockTime, randAddr, ts.RandAccAddress(), ts.RandAmount(), ts.RandFee())
+		trx := ts.GenerateTestTransferTx(
+			testsuite.TransactionWithLockTime(lockTime),
+			testsuite.TransactionWithSigner(knownSigner),
+			testsuite.TransactionWithAmount(testAcc.Balance()+1))
 
 		err := CheckAndExecute(trx, sbx, true)
-		assert.ErrorIs(t, err, executor.AccountNotFoundError{Address: randAddr})
-	})
-
-	t.Run("Invalid transaction, Should return error", func(t *testing.T) {
-		valAddr := sbx.TestCommittee.Validators()[0].Address()
-		sbx.TestAcceptSortition = false
-		trx := tx.NewSortitionTx(lockTime, valAddr, ts.RandProof())
-
-		err := CheckAndExecute(trx, sbx, true)
-		assert.ErrorIs(t, err, executor.ErrInvalidSortitionProof)
+		assert.ErrorIs(t, err, executor.ErrInsufficientFunds)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		trx := tx.NewSubsidyTxLegacy(lockTime, ts.RandAccAddress(), 1000)
+		trx := ts.GenerateTestTransferTx(
+			testsuite.TransactionWithLockTime(lockTime),
+			testsuite.TransactionWithSigner(knownSigner))
+
 		err := CheckAndExecute(trx, sbx, true)
 		assert.NoError(t, err)
-
 		assert.True(t, sbx.RecentTransaction(trx.ID()))
 	})
 }
@@ -253,14 +259,13 @@ func TestReplay(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	sbx := sandbox.MockingSandbox(ts)
-	rndPubKey, rndPrvKey := ts.RandEd25519KeyPair()
-	rndAccAddr := rndPubKey.AccountAddress()
-	rndAcc := sbx.MakeNewAccount(rndAccAddr)
-	rndAcc.AddToBalance(1000e9)
-	sbx.UpdateAccount(rndAccAddr, rndAcc)
+	sbx.TestStore.AddTestBlock(8642)
+	knownPub, knownSigner := ts.RandEd25519KeyPair()
+	sbx.TestStore.AddTestAccount(
+		testsuite.AccountWithAddress(knownPub.AccountAddress()))
 
 	trx := ts.GenerateTestTransferTx(
-		testsuite.TransactionWithEd25519Signer(rndPrvKey))
+		testsuite.TransactionWithSigner(knownSigner))
 
 	err := Execute(trx, sbx)
 	assert.NoError(t, err)

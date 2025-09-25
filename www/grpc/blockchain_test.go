@@ -175,7 +175,7 @@ func TestGetAccount(t *testing.T) {
 	td := setup(t, nil)
 	conn, client := td.blockchainClient(t)
 
-	acc, addr := td.mockState.TestStore.AddTestAccount()
+	addr, acc := td.mockState.TestStore.AddTestAccount()
 
 	t.Run("Should return error for non-parsable address ", func(t *testing.T) {
 		res, err := client.GetAccount(context.Background(),

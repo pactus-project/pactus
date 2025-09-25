@@ -19,18 +19,6 @@ func NewSubsidyTx(lockTime uint32,
 		opts...)
 }
 
-func NewSubsidyTxLegacy(lockTime uint32,
-	receiver crypto.Address, amt amount.Amount, opts ...TxOption,
-) *Tx {
-	return NewTransferTx(
-		lockTime,
-		crypto.TreasuryAddress,
-		receiver,
-		amt,
-		0,
-		opts...)
-}
-
 func NewTransferTx(lockTime uint32,
 	sender, receiver crypto.Address,
 	amt, fee amount.Amount, opts ...TxOption,

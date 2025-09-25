@@ -320,9 +320,7 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 }
 
 func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amount.Amount) *tx.Tx {
-	// TODO: simplify this code after enabling the split fork
 	lockTime := st.lastInfo.BlockHeight() + 1
-	legacySubsidyTx := tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
 
 	addressIndex := int(lockTime) % len(st.params.FoundationAddress)
 	foundationAddress := st.params.FoundationAddress[addressIndex]
@@ -336,19 +334,8 @@ func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amoun
 			Amount: st.params.BlockReward - st.params.FoundationReward + accumulatedFee,
 		},
 	}
-	newSubsidyTx := tx.NewSubsidyTx(lockTime, recipients)
 
-	if st.params.BlockVersion >= protocol.ProtocolVersion2 {
-		return newSubsidyTx
-	}
-
-	if st.committee.SupportProtocolVersion(protocol.ProtocolVersion2) {
-		st.params.BlockVersion = protocol.ProtocolVersion2
-
-		return newSubsidyTx
-	}
-
-	return legacySubsidyTx
+	return tx.NewSubsidyTx(lockTime, recipients)
 }
 
 func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address) (*block.Block, error) {

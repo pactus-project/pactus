@@ -163,11 +163,11 @@ func TestStrippedPublicKey(t *testing.T) {
 	lastHeight := td.store.LastCertificate().Height()
 	_, blsPrv := td.RandBLSKeyPair()
 	committedTrx1 := td.GenerateTestTransferTx(
-		testsuite.TransactionWithBLSSigner(blsPrv),
+		testsuite.TransactionWithSigner(blsPrv),
 	)
 	_, ed25519Prv := td.RandEd25519KeyPair()
 	committedTrx2 := td.GenerateTestTransferTx(
-		testsuite.TransactionWithEd25519Signer(ed25519Prv),
+		testsuite.TransactionWithSigner(ed25519Prv),
 	)
 	blk0, cert0 := td.GenerateTestBlock(lastHeight+1,
 		testsuite.BlockWithTransactions([]*tx.Tx{committedTrx1, committedTrx2}))
@@ -177,16 +177,16 @@ func TestStrippedPublicKey(t *testing.T) {
 
 	// We have some known and index public key, run tests...
 	trx1 := td.GenerateTestTransferTx(
-		testsuite.TransactionWithBLSSigner(blsPrv),
+		testsuite.TransactionWithSigner(blsPrv),
 	)
 	trx2 := td.GenerateTestTransferTx(
-		testsuite.TransactionWithEd25519Signer(ed25519Prv),
+		testsuite.TransactionWithSigner(ed25519Prv),
 	)
 	trx3 := td.GenerateTestTransferTx(
-		testsuite.TransactionWithBLSSigner(blsPrv),
+		testsuite.TransactionWithSigner(blsPrv),
 	)
 	trx4 := td.GenerateTestTransferTx(
-		testsuite.TransactionWithEd25519Signer(ed25519Prv),
+		testsuite.TransactionWithSigner(ed25519Prv),
 	)
 	trx5 := td.GenerateTestTransferTx()
 
