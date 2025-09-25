@@ -81,8 +81,14 @@ func TestGetBlock(t *testing.T) {
 			assert.Equal(t, trx.Id, blockTrx.ID().String())
 			assert.Empty(t, trx.Data)
 			assert.Equal(t, trx.LockTime, blockTrx.LockTime())
-			assert.Equal(t, trx.Signature, blockTrx.Signature().String())
-			assert.Equal(t, trx.PublicKey, blockTrx.PublicKey().String())
+			if blockTrx.IsSubsidyTx() {
+				assert.Empty(t, trx.Signature)
+				assert.Empty(t, trx.PublicKey)
+			} else {
+				assert.Equal(t, trx.Signature, blockTrx.Signature().String())
+				assert.Equal(t, trx.PublicKey, blockTrx.PublicKey().String())
+			}
+
 		}
 	})
 

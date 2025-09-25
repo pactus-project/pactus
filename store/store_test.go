@@ -133,7 +133,7 @@ func TestIndexingPublicKeys(t *testing.T) {
 	t.Run("Query existing public key", func(t *testing.T) {
 		cBlk, _ := td.store.Block(1)
 		blk, _ := cBlk.ToBlock()
-		for _, trx := range blk.Transactions() {
+		for _, trx := range blk.Transactions()[1:] {
 			addr := trx.Payload().Signer()
 			pub, err := td.store.PublicKey(addr)
 			assert.NoError(t, err)

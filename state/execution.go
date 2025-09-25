@@ -50,11 +50,15 @@ func (st *state) executeBlock(blk *block.Block, sbx sandbox.Sandbox, check bool)
 }
 
 func (st *state) checkSubsidy(trx *tx.Tx, shouldBeSubsidyTx bool) error {
-	if !shouldBeSubsidyTx && trx.IsSubsidyTx() {
-		return ErrDuplicatedSubsidyTransaction
+	if !shouldBeSubsidyTx {
+		if trx.IsSubsidyTx() {
+			return ErrDuplicatedSubsidyTransaction
+		}
+
+		return nil
 	}
 
-	if shouldBeSubsidyTx && !trx.IsSubsidyTx() {
+	if !trx.IsSubsidyTx() {
 		return ErrInvalidSubsidyTransaction
 	}
 
