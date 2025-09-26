@@ -1,6 +1,8 @@
 package voteset
 
 import (
+	"maps"
+
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
@@ -155,9 +157,7 @@ func (vs *BinaryVoteSet) BinaryVotes(cpRound int16, cpValue vote.CPValue) map[cr
 	votes := map[crypto.Address]*vote.Vote{}
 	roundVotes := vs.mustGetRoundVotes(cpRound)
 	voteBox := roundVotes.voteBoxes[cpValue]
-	for a, v := range voteBox.votes {
-		votes[a] = v
-	}
+	maps.Copy(votes, voteBox.votes)
 
 	return votes
 }
