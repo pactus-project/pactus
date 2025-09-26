@@ -57,6 +57,8 @@ func testConfig() *Config {
 		PeerStorePath:             util.TempFilePath(),
 		StreamTimeout:             10 * time.Second,
 		CheckConnectivityInterval: 1 * time.Second,
+		MaxGossipMessageSize:      1 * 1024 * 1024, // 1 MB
+		MaxStreamMessageSize:      8 * 1024 * 1024, // 8 MB
 	}
 }
 
