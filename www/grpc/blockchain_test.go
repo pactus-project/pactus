@@ -88,7 +88,6 @@ func TestGetBlock(t *testing.T) {
 				assert.Equal(t, trx.Signature, blockTrx.Signature().String())
 				assert.Equal(t, trx.PublicKey, blockTrx.PublicKey().String())
 			}
-
 		}
 	})
 
