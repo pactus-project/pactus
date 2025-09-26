@@ -334,7 +334,7 @@ func (*testData) changeProposerTimeout(cons *consensusV2) {
 
 func (*testData) queryVoteTimeout(cons *consensusV2) {
 	cons.lk.Lock()
-	cons.currentState.onTimeout(&ticker{0, cons.height, cons.round, tickerTargetQueryVote})
+	cons.currentState.onTimeout(&ticker{time.Hour, cons.height, cons.round, tickerTargetQueryVote})
 	cons.lk.Unlock()
 }
 
