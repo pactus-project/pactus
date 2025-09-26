@@ -178,8 +178,7 @@ func TestExecute(t *testing.T) {
 	sbx := sandbox.MockingSandbox(ts)
 	sbx.TestStore.AddTestBlock(8642)
 	knownPub, knownSigner := ts.RandEd25519KeyPair()
-	sbx.TestStore.AddTestAccount(
-		testsuite.AccountWithAddress(knownPub.AccountAddress()))
+	sbx.TestStore.AddTestAccount(testsuite.AccountWithAddress(knownPub.AccountAddress()))
 	lockTime := sbx.CurrentHeight()
 
 	t.Run("Unknown Signer", func(t *testing.T) {
@@ -210,8 +209,7 @@ func TestCheck(t *testing.T) {
 	sbx := sandbox.MockingSandbox(ts)
 	sbx.TestStore.AddTestBlock(8642)
 	knownPub, knownSigner := ts.RandEd25519KeyPair()
-	_, testAcc := sbx.TestStore.AddTestAccount(
-		testsuite.AccountWithAddress(knownPub.AccountAddress()))
+	_, testAcc := sbx.TestStore.AddTestAccount(testsuite.AccountWithAddress(knownPub.AccountAddress()))
 	lockTime := sbx.CurrentHeight()
 
 	t.Run("Unknown Sender", func(t *testing.T) {
