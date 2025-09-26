@@ -1,8 +1,14 @@
 package certificate
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
+)
+
+var (
+	ErrTooManyCommitters = errors.New("too many committers in certificate")
+	ErrTooManyAbsentees  = errors.New("too many absentees in certificate")
 )
 
 // BasicCheckError is returned when the basic check on the certificate fails.

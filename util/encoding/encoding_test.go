@@ -9,6 +9,7 @@ package encoding
 import (
 	"bytes"
 	"crypto/rand"
+	"fmt"
 	"io"
 	"math/big"
 	"reflect"
@@ -412,6 +413,14 @@ func TestWriteElements(t *testing.T) {
 	err := WriteElements(&buf, &el1, &el2, &el3, &el4)
 	assert.NoError(t, err)
 	assert.Equal(t, buf.Bytes(), []byte{0x1, 0x2, 0x0, 0x3, 0x0, 0x0, 0x0, 0x4, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0})
+}
+
+func TestWriteElements2(t *testing.T) {
+	el3 := uint64(52)
+	var buf bytes.Buffer
+	err := WriteVarInt(&buf, el3)
+	assert.NoError(t, err)
+	fmt.Printf("\n--%x--\n", buf.Bytes())
 }
 
 func TestReadElements(t *testing.T) {
