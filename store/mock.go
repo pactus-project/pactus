@@ -251,18 +251,18 @@ func (*MockStore) WriteBatch() error {
 	return nil
 }
 
-func (m *MockStore) AddTestValidator() *validator.Validator {
-	val := m.ts.GenerateTestValidator()
+func (m *MockStore) AddTestValidator(options ...func(*testsuite.ValidatorMaker)) *validator.Validator {
+	val := m.ts.GenerateTestValidator(options...)
 	m.UpdateValidator(val)
 
 	return val
 }
 
-func (m *MockStore) AddTestAccount() (*account.Account, crypto.Address) {
-	acc, addr := m.ts.GenerateTestAccount()
+func (m *MockStore) AddTestAccount(options ...func(*testsuite.AccountMaker)) (crypto.Address, *account.Account) {
+	acc, addr := m.ts.GenerateTestAccount(options...)
 	m.UpdateAccount(addr, acc)
 
-	return acc, addr
+	return addr, acc
 }
 
 func (m *MockStore) AddTestBlock(height uint32) *block.Block {

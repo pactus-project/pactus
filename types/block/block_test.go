@@ -367,7 +367,7 @@ func TestMakeBlock(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	blk0, _ := ts.GenerateTestBlock(ts.RandHeight())
-	blk1 := block.MakeBlock(1, blk0.Header().Time(), blk0.Transactions(),
+	blk1 := block.MakeBlock(protocol.ProtocolVersion2, blk0.Header().Time(), blk0.Transactions(),
 		blk0.Header().PrevBlockHash(),
 		blk0.Header().StateRoot(),
 		blk0.PrevCertificate(),

@@ -201,7 +201,7 @@ func TestBalance(t *testing.T) {
 	defer td.Close()
 
 	t.Run("existing account", func(t *testing.T) {
-		acc, addr := td.mockState.TestStore.AddTestAccount()
+		addr, acc := td.mockState.TestStore.AddTestAccount()
 		amt, err := td.wallet.Balance(addr.String())
 		assert.NoError(t, err)
 		assert.Equal(t, amt, acc.Balance())

@@ -60,6 +60,7 @@ func setup(t *testing.T) *testData {
 	genParams := genesis.DefaultGenesisParams()
 	genParams.CommitteeSize = 7
 	genParams.BondInterval = 10
+	genParams.BlockVersion = protocol.ProtocolVersion2
 
 	genAcc1 := account.NewAccount(0)
 	genAcc1.AddToBalance(21 * 1e15) // 21,000,000.000,000,000
@@ -155,21 +156,14 @@ func TestBlockSubsidyTx(t *testing.T) {
 	rewardAddr := td.RandAccAddress()
 	randAccumulatedFee := td.RandFee()
 	trx := td.state.createSubsidyTx(rewardAddr, randAccumulatedFee)
+	payload := trx.Payload().(*payload.BatchTransferPayload)
 	assert.True(t, trx.IsSubsidyTx())
-	assert.Equal(t, td.state.params.BlockReward+randAccumulatedFee, trx.Payload().Value())
-	assert.Equal(t, crypto.TreasuryAddress, trx.Payload().(*payload.TransferPayload).From)
-	assert.Equal(t, rewardAddr, trx.Payload().(*payload.TransferPayload).To)
-}
-
-func TestGenesisHash(t *testing.T) {
-	td := setup(t)
-
-	gen := td.state.Genesis()
-	genAccs := gen.Accounts()
-	genVals := gen.Validators()
-
-	assert.NotNil(t, genAccs, td.genAccKey.PublicKeyNative().AccountAddress())
-	assert.NotNil(t, genVals, td.genValKeys[0].Address())
+	assert.Equal(t, td.state.params.BlockReward+randAccumulatedFee, payload.Value())
+	assert.Equal(t, crypto.TreasuryAddress, payload.Signer())
+	assert.Equal(t, rewardAddr, payload.Recipients[1].To)
+	assert.Equal(t, td.state.params.FoundationReward, payload.Recipients[0].Amount)
+	assert.Equal(t, td.state.params.BlockReward-td.state.params.FoundationReward+randAccumulatedFee,
+		payload.Recipients[1].Amount)
 }
 
 func TestTryCommitInvalidCertificate(t *testing.T) {
@@ -545,7 +539,7 @@ func TestLoadState(t *testing.T) {
 	assert.Equal(t, td.state.Params(), newState.Params())
 	assert.ElementsMatch(t, td.state.ValidatorAddresses(), newState.ValidatorAddresses())
 
-	assert.Equal(t, int32(11), td.state.TotalAccounts()) // 9 subsidy addrs + 2 genesis addrs
+	assert.Equal(t, int32(20), td.state.TotalAccounts()) // 9 subsidy addrs + 9 foundation addrs + 2 genesis addrs
 	assert.Equal(t, int32(5), td.state.TotalValidators())
 
 	// Try committing the next block

@@ -14,7 +14,7 @@ func TestTransaction(t *testing.T) {
 	td := setup(t)
 
 	testBlock := td.mockState.TestStore.AddTestBlock(1)
-	testTx := testBlock.Transactions()[0]
+	testTx := testBlock.Transactions()[1]
 
 	t.Run("Shall return a transaction", func(t *testing.T) {
 		w := httptest.NewRecorder()

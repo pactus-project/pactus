@@ -105,7 +105,7 @@ func TestBlock(t *testing.T) {
 func TestAccount(t *testing.T) {
 	td := setup(t)
 
-	acc, addr := td.mockState.TestStore.AddTestAccount()
+	addr, acc := td.mockState.TestStore.AddTestAccount()
 
 	t.Run("Shall return an account", func(t *testing.T) {
 		w := httptest.NewRecorder()

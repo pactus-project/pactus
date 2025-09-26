@@ -42,7 +42,6 @@ func TestBlockValidation(t *testing.T) {
 
 	t.Run("Invalid version, less than current", func(t *testing.T) {
 		blk0, _ := td.makeBlockAndCertificate(t, round)
-		td.state.params.BlockVersion = protocol.ProtocolVersion2
 		invBlockVersion := protocol.ProtocolVersion1
 		blk := block.MakeBlock(
 			invBlockVersion,

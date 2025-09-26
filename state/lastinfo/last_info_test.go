@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -73,7 +74,7 @@ func setup(t *testing.T) *testData {
 	lastHeight := ts.RandHeight()
 	prevCert := ts.GenerateTestCertificate(lastHeight - 1)
 	lastSeed := ts.RandSeed()
-	lastBlock := block.MakeBlock(1, time.Now(), block.Txs{trx},
+	lastBlock := block.MakeBlock(protocol.ProtocolVersion2, time.Now(), block.Txs{trx},
 		prevHash,
 		ts.RandHash(),
 		prevCert, lastSeed, val2.Address())

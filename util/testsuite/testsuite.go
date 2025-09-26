@@ -163,9 +163,9 @@ func (ts *TestSuite) RandRound() int16 {
 }
 
 // RandAmount returns a random amount between [1e9, max).
-// If max is not set, it defaults to 1000e9.
+// If max is not set, it defaults to 100e9.
 func (ts *TestSuite) RandAmount(max ...amount.Amount) amount.Amount {
-	maxAmt := amount.Amount(1000e9) // default max amount
+	maxAmt := amount.Amount(100e9) // default max amount
 	if len(max) > 0 {
 		maxAmt = max[0]
 	}
@@ -231,6 +231,18 @@ func (*TestSuite) DecodingHex(in string) []byte {
 	d, _ := hex.DecodeString(in)
 
 	return d
+}
+
+func (ts *TestSuite) RandKeyPair() (crypto.PublicKey, crypto.PrivateKey) {
+	switch ts.RandInt(2) {
+	case 0:
+		return ts.RandBLSKeyPair()
+	case 1:
+		return ts.RandEd25519KeyPair()
+	}
+
+	// Impossible
+	return nil, nil
 }
 
 // RandBLSKeyPair generates a random BLS key pair for testing purposes.
@@ -330,13 +342,22 @@ func (ts *TestSuite) RandMultiAddress() string {
 type AccountMaker struct {
 	Number  int32
 	Balance amount.Amount
+	Address crypto.Address
 }
 
 // NewAccountMaker creates a new instance of AccountMaker with random values.
 func (ts *TestSuite) NewAccountMaker() *AccountMaker {
 	return &AccountMaker{
 		Number:  ts.RandInt32NonZero(100000),
-		Balance: ts.RandAmount(100e9),
+		Balance: ts.RandAmountRange(100e9, 1000e9),
+		Address: ts.RandAccAddress(),
+	}
+}
+
+// AccountWithAddress sets the address for the generated test account.
+func AccountWithAddress(address crypto.Address) func(*AccountMaker) {
+	return func(am *AccountMaker) {
+		am.Address = address
 	}
 }
 
@@ -363,7 +384,7 @@ func (ts *TestSuite) GenerateTestAccount(options ...func(*AccountMaker)) (*accou
 	acc := account.NewAccount(amk.Number)
 	acc.AddToBalance(amk.Balance)
 
-	return acc, ts.RandAccAddress()
+	return acc, amk.Address
 }
 
 type ValidatorMaker struct {
@@ -376,7 +397,7 @@ type ValidatorMaker struct {
 func (ts *TestSuite) NewValidatorMaker() *ValidatorMaker {
 	return &ValidatorMaker{
 		Number:    ts.RandInt32(100000),
-		Stake:     ts.RandAmount(100e9),
+		Stake:     ts.RandAmountRange(100e9, 1000e9),
 		PublicKey: ts.RandValKey().PublicKey(),
 	}
 }
@@ -429,12 +450,14 @@ type BlockMaker struct {
 // NewBlockMaker creates a new BlockMaker instance.
 func (ts *TestSuite) NewBlockMaker() *BlockMaker {
 	txs := block.NewTxs()
+	tx0 := ts.GenerateTestSubsidyTx()
 	tx1 := ts.GenerateTestTransferTx()
 	tx2 := ts.GenerateTestSortitionTx()
 	tx3 := ts.GenerateTestBondTx()
 	tx4 := ts.GenerateTestUnbondTx()
 	tx5 := ts.GenerateTestWithdrawTx()
 
+	txs.Append(tx0)
 	txs.Append(tx1)
 	txs.Append(tx2)
 	txs.Append(tx3)
@@ -442,7 +465,7 @@ func (ts *TestSuite) NewBlockMaker() *BlockMaker {
 	txs.Append(tx5)
 
 	return &BlockMaker{
-		Version:  1,
+		Version:  protocol.ProtocolVersion2,
 		Txs:      txs,
 		Proposer: ts.RandValAddress(),
 		Time:     time.Now(),
@@ -581,11 +604,12 @@ func (ts *TestSuite) GenerateTestProposal(height uint32, round int16,
 }
 
 type TransactionMaker struct {
-	LockTime  uint32
-	Amount    amount.Amount
-	Fee       amount.Amount
-	Signer    crypto.PrivateKey
-	ValPubKey *bls.PublicKey
+	LockTime   uint32
+	Amount     amount.Amount
+	Fee        amount.Amount
+	Signer     crypto.PrivateKey
+	ValPubKey  *bls.PublicKey
+	Recipients []payload.BatchRecipient
 }
 
 func (tm *TransactionMaker) SignerAccountAddress() crypto.Address {
@@ -606,12 +630,23 @@ func (tm *TransactionMaker) SignerValidatorAddress() crypto.Address {
 
 // NewTransactionMaker creates a new TransactionMaker instance.
 func (ts *TestSuite) NewTransactionMaker() *TransactionMaker {
+	numOfRecipients := ts.RandInt(6) + 2
+	recipients := make([]payload.BatchRecipient, numOfRecipients)
+
+	for i := 0; i < numOfRecipients; i++ {
+		recipients[i] = payload.BatchRecipient{
+			To:     ts.RandAccAddress(),
+			Amount: ts.RandAmount(10e9),
+		}
+	}
+
 	return &TransactionMaker{
-		LockTime:  ts.RandHeight(),
-		Amount:    ts.RandAmount(),
-		Fee:       ts.RandFee(),
-		Signer:    nil,
-		ValPubKey: nil,
+		LockTime:   ts.RandHeight(),
+		Amount:     ts.RandAmount(),
+		Fee:        ts.RandFee(),
+		Signer:     nil,
+		ValPubKey:  nil,
+		Recipients: recipients,
 	}
 }
 
@@ -636,15 +671,8 @@ func TransactionWithFee(fee amount.Amount) func(*TransactionMaker) {
 	}
 }
 
-// TransactionWithBLSSigner sets the BLS signer to sign the test transaction.
-func TransactionWithBLSSigner(signer *bls.PrivateKey) func(*TransactionMaker) {
-	return func(tm *TransactionMaker) {
-		tm.Signer = signer
-	}
-}
-
-// TransactionWithEd25519Signer sets the Ed25519 signer to sign the test transaction.
-func TransactionWithEd25519Signer(signer *ed25519.PrivateKey) func(*TransactionMaker) {
+// TransactionWithSigner sets the BLS signer to sign the test transaction.
+func TransactionWithSigner(signer crypto.PrivateKey) func(*TransactionMaker) {
 	return func(tm *TransactionMaker) {
 		tm.Signer = signer
 	}
@@ -654,6 +682,13 @@ func TransactionWithEd25519Signer(signer *ed25519.PrivateKey) func(*TransactionM
 func TransactionWithValidatorPublicKey(pubKey *bls.PublicKey) func(*TransactionMaker) {
 	return func(tm *TransactionMaker) {
 		tm.ValPubKey = pubKey
+	}
+}
+
+// TransactionWithRecipients sets the recipients for the Bath Transfer transaction.
+func TransactionWithRecipients(recipients []payload.BatchRecipient) func(*TransactionMaker) {
+	return func(tm *TransactionMaker) {
+		tm.Recipients = recipients
 	}
 }
 
@@ -712,11 +747,23 @@ func (ts *TestSuite) GenerateTestBatchTransferTx(options ...func(*TransactionMak
 		}
 	}
 
-	sender := tmk.SignerAccountAddress()
-	trx := tx.NewBatchTransferTx(tmk.LockTime, sender, recipients, tmk.Fee)
+	trx := tx.NewBatchTransferTx(tmk.LockTime, tmk.SignerAccountAddress(), tmk.Recipients, tmk.Fee)
 	ts.HelperSignTransaction(tmk.Signer, trx)
 
 	return trx
+}
+
+// GenerateTestSubsidyTx creates a subsidy transaction for testing.
+func (ts *TestSuite) GenerateTestSubsidyTx(options ...func(tm *TransactionMaker)) *tx.Tx {
+	tmk := ts.NewTransactionMaker()
+	for _, opt := range options {
+		opt(tmk)
+	}
+	if tmk.LockTime == 0 {
+		tmk.LockTime = ts.RandHeight()
+	}
+
+	return tx.NewSubsidyTx(tmk.LockTime, tmk.Recipients)
 }
 
 // GenerateTestBondTx generates a bond transaction for testing purposes.
