@@ -93,7 +93,11 @@ func (b *Bundle) Encode() ([]byte, error) {
 
 func (b *Bundle) Decode(r io.Reader) (int, error) {
 	var bdl _Bundle
-	d := cbor.NewDecoder(r)
+	decOpts := cbor.DecOptions{}
+	decOpts.MaxArrayElements = 65_536 // default in 131072
+	decOpts.MaxMapPairs = 65_536      // default in 131072
+	decMode, _ := decOpts.DecMode()
+	d := decMode.NewDecoder(r)
 	err := d.Decode(&bdl)
 	bytesRead := d.NumBytesRead()
 	if err != nil {
