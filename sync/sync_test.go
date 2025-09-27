@@ -45,7 +45,7 @@ func testConfig() *Config {
 		SessionTimeoutStr:   "1s",
 		BlockPerMessage:     11,
 		MaxSessions:         4,
-		BlockPerSession:     23,
+		BlockPerSession:     27,
 		PruneWindow:         13,
 		Firewall:            firewall.DefaultConfig(),
 		LatestSupportingVer: DefaultConfig().LatestSupportingVer,
