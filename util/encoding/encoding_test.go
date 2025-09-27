@@ -9,7 +9,6 @@ package encoding
 import (
 	"bytes"
 	"crypto/rand"
-	"fmt"
 	"io"
 	"math/big"
 	"reflect"
