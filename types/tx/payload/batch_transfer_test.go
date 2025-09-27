@@ -36,6 +36,15 @@ func TestBatchTransferDecoding(t *testing.T) {
 		{
 			raw: []byte{
 				0x00, // sender (Treasury)
+				0x09, // number Of Recipients (9)
+			},
+			value:    0,
+			readErr:  ErrTooManyRecipients,
+			basicErr: nil,
+		},
+		{
+			raw: []byte{
+				0x00, // sender (Treasury)
 				0x02, // number Of Recipients (2)
 				0x02, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
 				0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,

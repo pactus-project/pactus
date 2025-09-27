@@ -18,64 +18,91 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func TestCertificate(t *testing.T) {
-	data, _ := hex.DecodeString(
-		"04030201" + // Height
-			"0100" + // Round
-			"06010203040506" + // Committers
-			"0102" + // Absentees
-			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6") // Signature
-
-	certHash, _ := hash.FromString("ac755295a6850b141286bde42bb8ba06ae1671f0562cbef90043924091177815")
-	r := bytes.NewReader(data)
-	cert := new(certificate.Certificate)
-	err := cert.Decode(r)
-	assert.NoError(t, err)
-	assert.Equal(t, uint32(0x01020304), cert.Height())
-	assert.Equal(t, int16(0x0001), cert.Round())
-	assert.Equal(t, []int32{1, 2, 3, 4, 5, 6}, cert.Committers())
-	assert.Equal(t, []int32{2}, cert.Absentees())
-	assert.Equal(t, certHash, cert.Hash())
-
-	blockHash, _ := hash.FromString("000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f")
-	expectedPrepareSignByte, _ := hex.DecodeString(
-		"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
+func TestDecoding(t *testing.T) {
+	t.Run("Too many committers", func(t *testing.T) {
+		data, _ := hex.DecodeString(
 			"04030201" + // Height
-			"0100" + // Round
-			"50524550415245") // PREPARE
-	expectedPrecommitSignByte, _ := hex.DecodeString(
-		"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
-			"04030201" + // Height
-			"0100") // Round
-	expectedCPPreVoteSignByte, _ := hex.DecodeString(
-		"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
-			"04030201" + // Height
-			"0100" + // Round
-			"5052452d564f5445" + // PRE-VOTE
-			"0100" + // CP Round
-			"02") // CP Value
+				"0100" + // Round
+				"34") // Committers: Len (52)
 
-	expectedCPMainVoteSignByte, _ := hex.DecodeString(
-		"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
-			"04030201" + // Height
-			"0100" + // Round
-			"4d41494e2d564f5445" + // MAIN-VOTE
-			"0100" + // CP Round
-			"02") // CP Value
+		r := bytes.NewReader(data)
+		cert := new(certificate.Certificate)
+		err := cert.Decode(r)
+		assert.ErrorIs(t, err, certificate.ErrTooManyCommitters)
+	})
 
-	expectedCPDecidedSignByte, _ := hex.DecodeString(
-		"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
+	t.Run("Too many absentees", func(t *testing.T) {
+		data, _ := hex.DecodeString(
 			"04030201" + // Height
-			"0100" + // Round
-			"44454349444544" + // DECIDED
-			"0100" + // CP Round
-			"02") // CP Value
+				"0100" + // Round
+				"0102" + // Committers
+				"34") // Absentees: Len (52)
 
-	assert.Equal(t, expectedPrepareSignByte, cert.SignBytesPrepare(blockHash))
-	assert.Equal(t, expectedPrecommitSignByte, cert.SignBytesPrecommit(blockHash))
-	assert.Equal(t, expectedCPPreVoteSignByte, cert.SignBytesCPPreVote(blockHash, 1, 2))
-	assert.Equal(t, expectedCPMainVoteSignByte, cert.SignBytesCPMainVote(blockHash, 1, 2))
-	assert.Equal(t, expectedCPDecidedSignByte, cert.SignBytesCPDecided(blockHash, 1, 2))
+		r := bytes.NewReader(data)
+		cert := new(certificate.Certificate)
+		err := cert.Decode(r)
+		assert.ErrorIs(t, err, certificate.ErrTooManyAbsentees)
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		data, _ := hex.DecodeString(
+			"04030201" + // Height
+				"0100" + // Round
+				"06010203040506" + // Committers
+				"0102" + // Absentees
+				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6") // Signature
+
+		certHash, _ := hash.FromString("ac755295a6850b141286bde42bb8ba06ae1671f0562cbef90043924091177815")
+		r := bytes.NewReader(data)
+		cert := new(certificate.Certificate)
+		err := cert.Decode(r)
+		assert.NoError(t, err)
+		assert.Equal(t, uint32(0x01020304), cert.Height())
+		assert.Equal(t, int16(0x0001), cert.Round())
+		assert.Equal(t, []int32{1, 2, 3, 4, 5, 6}, cert.Committers())
+		assert.Equal(t, []int32{2}, cert.Absentees())
+		assert.Equal(t, certHash, cert.Hash())
+
+		blockHash, _ := hash.FromString("000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f")
+		expectedPrepareSignByte, _ := hex.DecodeString(
+			"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
+				"04030201" + // Height
+				"0100" + // Round
+				"50524550415245") // PREPARE
+		expectedPrecommitSignByte, _ := hex.DecodeString(
+			"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
+				"04030201" + // Height
+				"0100") // Round
+		expectedCPPreVoteSignByte, _ := hex.DecodeString(
+			"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
+				"04030201" + // Height
+				"0100" + // Round
+				"5052452d564f5445" + // PRE-VOTE
+				"0100" + // CP Round
+				"02") // CP Value
+
+		expectedCPMainVoteSignByte, _ := hex.DecodeString(
+			"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
+				"04030201" + // Height
+				"0100" + // Round
+				"4d41494e2d564f5445" + // MAIN-VOTE
+				"0100" + // CP Round
+				"02") // CP Value
+
+		expectedCPDecidedSignByte, _ := hex.DecodeString(
+			"000102030405060708090a0b0c0d0e0f000102030405060708090a0b0c0d0e0f" + // Block hash
+				"04030201" + // Height
+				"0100" + // Round
+				"44454349444544" + // DECIDED
+				"0100" + // CP Round
+				"02") // CP Value
+
+		assert.Equal(t, expectedPrepareSignByte, cert.SignBytesPrepare(blockHash))
+		assert.Equal(t, expectedPrecommitSignByte, cert.SignBytesPrecommit(blockHash))
+		assert.Equal(t, expectedCPPreVoteSignByte, cert.SignBytesCPPreVote(blockHash, 1, 2))
+		assert.Equal(t, expectedCPMainVoteSignByte, cert.SignBytesCPMainVote(blockHash, 1, 2))
+		assert.Equal(t, expectedCPDecidedSignByte, cert.SignBytesCPDecided(blockHash, 1, 2))
+	})
 }
 
 func TestCertificateCBORMarshaling(t *testing.T) {
@@ -97,7 +124,7 @@ func TestCertificateCBORMarshaling(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestInvalidCertificate(t *testing.T) {
+func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("Invalid height", func(t *testing.T) {

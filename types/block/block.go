@@ -208,6 +208,13 @@ func (b *Block) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+
+	// We set 1000 as a hardcoded value,
+	// matching the maximum number of transactions allowed in a block.
+	if length > 1000 {
+		return ErrTooManyTransactions
+	}
+
 	b.data.Txs = make([]*tx.Tx, length)
 	for i := 0; i < int(length); i++ {
 		trx := new(tx.Tx)
