@@ -236,22 +236,22 @@ func TestNetwork(t *testing.T) {
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkB.ReachabilityStatus()
 			require.Equal(c, "Public", reachability)
-		}, time.Second*2, 100*time.Millisecond)
+		}, time.Second*2, 500*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkM.ReachabilityStatus()
 			require.Equal(c, "Private", reachability)
-		}, time.Second*2, 100*time.Millisecond)
+		}, time.Second*2, 500*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkN.ReachabilityStatus()
 			require.Equal(c, "Private", reachability)
-		}, time.Second*2, 100*time.Millisecond)
+		}, time.Second*2, 500*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkP.ReachabilityStatus()
 			require.Equal(c, "Public", reachability)
-		}, time.Second*2, 100*time.Millisecond)
+		}, time.Second*2, 500*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkP.ReachabilityStatus()
