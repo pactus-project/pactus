@@ -33,6 +33,8 @@ type Config struct {
 	PeerStorePath               string        `toml:"-"`
 	StreamTimeout               time.Duration `toml:"-"`
 	CheckConnectivityInterval   time.Duration `toml:"-"`
+	MaxGossipMessageSize        int           `toml:"-"`
+	MaxStreamMessageSize        int           `toml:"-"`
 }
 
 func DefaultConfig() *Config {
@@ -55,6 +57,8 @@ func DefaultConfig() *Config {
 		PeerStorePath:             "peers.json",
 		StreamTimeout:             20 * time.Second,
 		CheckConnectivityInterval: 60 * time.Second,
+		MaxGossipMessageSize:      1 * 1024 * 1024, // 1 MB
+		MaxStreamMessageSize:      8 * 1024 * 1024, // 8 MB
 	}
 }
 

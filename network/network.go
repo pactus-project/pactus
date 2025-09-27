@@ -260,7 +260,7 @@ func makeNetwork(ctx context.Context, conf *Config,
 	}
 
 	self.peerMgr = newPeerMgr(ctx, host, conf, self.logger)
-	self.dht = newDHTService(ctx, host, kadProtocolID, conf, self.logger)
+	self.dht = newDHTService(ctx, host, conf, kadProtocolID, self.logger)
 	self.stream = newStreamService(ctx, host, conf, streamProtocolID, self.networkPipe, self.logger)
 	self.gossip = newGossipService(ctx, host, conf, self.networkPipe, self.logger)
 	self.notifee = newNotifeeService(ctx, host, self.networkPipe, self.peerMgr, streamProtocolID, self.logger)

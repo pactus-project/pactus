@@ -1,8 +1,10 @@
 package util
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -237,4 +239,75 @@ func TestListFilesInDir(t *testing.T) {
 	assert.Len(t, files, 2)
 	assert.Contains(t, files, file1Path)
 	assert.Contains(t, files, file2Path)
+}
+
+func TestLimitReaderClose(t *testing.T) {
+	// Helper to create a ReadCloser from a byte slice
+	newReadCloser := func(data []byte) io.ReadCloser {
+		return io.NopCloser(bytes.NewReader(data))
+	}
+
+	t.Run("Read less than limit", func(t *testing.T) {
+		data := []byte("hello world")
+		limit := int64(5)
+		r := LimitReaderClose(newReadCloser(data), limit)
+		buf := make([]byte, 10)
+		n, err := r.Read(buf)
+
+		assert.NoError(t, err)
+		assert.Equal(t, int(limit), n)
+		assert.Equal(t, data[:limit], buf[:n])
+
+		// Next read should return EOF
+		n, err = r.Read(buf)
+		assert.Equal(t, 0, n)
+		assert.Equal(t, io.EOF, err)
+		assert.NoError(t, r.Close())
+	})
+
+	t.Run("Read exactly limit", func(t *testing.T) {
+		data := []byte("hello world")
+		limit := int64(len(data))
+		r := LimitReaderClose(newReadCloser(data), limit)
+		buf := make([]byte, limit)
+		n, err := r.Read(buf)
+
+		assert.NoError(t, err)
+		assert.Equal(t, int(limit), n)
+		assert.Equal(t, data, buf)
+
+		n, err = r.Read(buf)
+		assert.Equal(t, 0, n)
+		assert.Equal(t, io.EOF, err)
+
+		assert.NoError(t, r.Close())
+	})
+
+	t.Run("Read with zero limit", func(t *testing.T) {
+		data := []byte("hello world")
+		r := LimitReaderClose(newReadCloser(data), 0)
+		buf := make([]byte, 10)
+		n, err := r.Read(buf)
+		assert.Equal(t, 0, n)
+		assert.Equal(t, io.EOF, err)
+
+		assert.NoError(t, r.Close())
+	})
+
+	t.Run("Underlying reader returns EOF before limit", func(t *testing.T) {
+		data := []byte("short")
+		limit := int64(10)
+		r := LimitReaderClose(newReadCloser(data), limit)
+		buf := make([]byte, 10)
+		n, err := r.Read(buf)
+		assert.NoError(t, err)
+		assert.Equal(t, len(data), n)
+		assert.Equal(t, data, buf[:n])
+
+		n, err = r.Read(buf)
+		assert.Equal(t, 0, n)
+		assert.Equal(t, io.EOF, err)
+
+		assert.NoError(t, r.Close())
+	})
 }

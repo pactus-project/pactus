@@ -37,6 +37,7 @@ func newGossipService(ctx context.Context, host lp2phost.Host, conf *Config,
 		lp2pps.WithNoAuthor(),
 		lp2pps.WithMessageIdFn(MessageIDFunc),
 		lp2pps.WithSeenMessagesTTL(60 * time.Second),
+		lp2pps.WithMaxMessageSize(conf.MaxGossipMessageSize),
 	}
 
 	if conf.IsBootstrapper {

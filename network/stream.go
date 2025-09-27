@@ -8,29 +8,32 @@ import (
 	lp2phost "github.com/libp2p/go-libp2p/core/host"
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	lp2peer "github.com/libp2p/go-libp2p/core/peer"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/pipeline"
 )
 
 type streamService struct {
-	ctx         context.Context
-	host        lp2phost.Host
-	protocolID  lp2pcore.ProtocolID
-	timeout     time.Duration
-	networkPipe pipeline.Pipeline[Event]
-	logger      *logger.SubLogger
+	ctx            context.Context
+	host           lp2phost.Host
+	protocolID     lp2pcore.ProtocolID
+	timeout        time.Duration
+	networkPipe    pipeline.Pipeline[Event]
+	maxMessageSize int64
+	logger         *logger.SubLogger
 }
 
 func newStreamService(ctx context.Context, host lp2phost.Host, conf *Config,
 	protocolID lp2pcore.ProtocolID, networkPipe pipeline.Pipeline[Event], log *logger.SubLogger,
 ) *streamService {
 	service := &streamService{
-		ctx:         ctx,
-		host:        host,
-		protocolID:  protocolID,
-		timeout:     conf.StreamTimeout,
-		networkPipe: networkPipe,
-		logger:      log,
+		ctx:            ctx,
+		host:           host,
+		protocolID:     protocolID,
+		timeout:        conf.StreamTimeout,
+		networkPipe:    networkPipe,
+		maxMessageSize: int64(conf.MaxStreamMessageSize),
+		logger:         log,
 	}
 
 	service.host.SetStreamHandler(protocolID, service.handleStream)
@@ -46,9 +49,10 @@ func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
 	from := stream.Conn().RemotePeer()
 
 	s.logger.Debug("receiving stream", "from", from)
+	limitReader := util.LimitReaderClose(stream, s.maxMessageSize)
 	event := &StreamMessage{
 		From:   from,
-		Reader: stream,
+		Reader: limitReader,
 	}
 
 	s.networkPipe.Send(event)

@@ -17,8 +17,8 @@ type dhtService struct {
 	logger   *logger.SubLogger
 }
 
-func newDHTService(ctx context.Context, host lp2phost.Host, protocolID lp2pcore.ProtocolID,
-	conf *Config, log *logger.SubLogger,
+func newDHTService(ctx context.Context, host lp2phost.Host, conf *Config,
+	protocolID lp2pcore.ProtocolID, log *logger.SubLogger,
 ) *dhtService {
 	// A dirty code in LibP2P!!!
 	// prevent apply default bootstrap node of libp2p
