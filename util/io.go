@@ -307,3 +307,38 @@ func ListFilesInDir(dir string) ([]string, error) {
 
 	return files, nil
 }
+
+// LimitReaderClose returns a ReadCloser that reads from r
+// but stops with EOF after n bytes.
+// The returned ReadCloser always forwards Close to r.
+// The underlying implementation is a *LimitedReadCloser.
+func LimitReaderClose(r io.ReadCloser, n int64) io.ReadCloser {
+	return &LimitedReadCloser{R: r, N: n}
+}
+
+// LimitedReadCloser reads from R but limits the amount of
+// data returned to just N bytes. Each call to Read updates N
+// to reflect the new amount remaining. Read returns EOF when
+// N <= 0 or when the underlying R returns EOF.
+// Close always calls R.Close.
+type LimitedReadCloser struct {
+	R io.ReadCloser // underlying reader with close support
+	N int64         // max bytes remaining
+}
+
+func (l *LimitedReadCloser) Read(buf []byte) (n int, err error) {
+	if l.N <= 0 {
+		return 0, io.EOF
+	}
+	if int64(len(buf)) > l.N {
+		buf = buf[:l.N]
+	}
+	n, err = l.R.Read(buf)
+	l.N -= int64(n)
+
+	return n, err
+}
+
+func (l *LimitedReadCloser) Close() error {
+	return l.R.Close()
+}

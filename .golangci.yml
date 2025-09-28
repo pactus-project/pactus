@@ -158,6 +158,7 @@ linters:
         - ip
         - "no"
         - tt
+        - n
         - i
         - j
         - l
