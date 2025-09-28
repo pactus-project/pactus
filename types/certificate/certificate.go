@@ -175,6 +175,13 @@ func (cert *Certificate) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+
+	// We set 51 as a hardcoded value,
+	// matching the maximum number of committers allowed in a block.
+	if lenCommitters > 51 {
+		return ErrTooManyCommitters
+	}
+
 	committers := make([]int32, lenCommitters)
 	for i := 0; i < int(lenCommitters); i++ {
 		n, err := encoding.ReadVarInt(r)
@@ -188,6 +195,12 @@ func (cert *Certificate) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+	// We set 51 as a hardcoded value,
+	// matching the maximum number of committers allowed in a block.
+	if lenAbsentees > 51 {
+		return ErrTooManyAbsentees
+	}
+
 	absentees := make([]int32, lenAbsentees)
 	for i := 0; i < int(lenAbsentees); i++ {
 		n, err := encoding.ReadVarInt(r)
