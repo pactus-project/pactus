@@ -63,7 +63,7 @@ func TestHandlerBlocksRequestParsingMessages(t *testing.T) {
 			bdl := td.shouldPublishMessageWithThisType(t, message.TypeBlocksResponse)
 			res := bdl.Message.(*message.BlocksResponseMessage)
 			assert.Equal(t, message.ResponseCodeRejected, res.ResponseCode)
-			assert.Contains(t, res.Reason, "requested block range 10-33 exceeds the allowed 23 blocks per session")
+			assert.Contains(t, res.Reason, "requested block range 10-37 exceeds the allowed 27 blocks per session")
 		})
 
 		t.Run("Accept request within `BlockPerSession`", func(t *testing.T) {

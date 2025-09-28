@@ -153,3 +153,21 @@ func TestEncodingData(t *testing.T) {
 		assert.Equal(t, uint32(0x12), bdl.ConsensusHeight)
 	})
 }
+
+func TestCBORLengthAttack(t *testing.T) {
+	tests := []struct {
+		data string
+		msg  string
+	}{
+		{"9A00010001", "exceeded max number of elements 65536"},        // Major type 4 (100x xxxx): Array
+		{"BA00010001", "exceeded max number of key-value pairs 65536"}, // Major type 5 (101x xxxx): Map
+	}
+
+	for _, tt := range tests {
+		data, _ := hex.DecodeString(tt.data)
+		bdl := new(Bundle)
+		_, err := bdl.Decode(bytes.NewReader(data))
+
+		assert.ErrorContains(t, err, tt.msg)
+	}
+}
