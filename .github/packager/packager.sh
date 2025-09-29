@@ -27,6 +27,7 @@ rm -rf ${PACKAGE_DIR}
 mkdir -p ${PACKAGE_DIR}
 mkdir -p ${PACKAGE_DIR}/js/{pactus-grpc,pactus-jsonrpc}
 mkdir -p ${PACKAGE_DIR}/python/{pactus-grpc,pactus-jsonrpc}
+mkdir -p ${PACKAGE_DIR}/rust/{pactus-grpc,pactus-jsonrpc}
 
 echo "== Building pactus-grpc package for JavaScript"
 cp -R ${ROOT_DIR}/.github/packager/js/grpc/package.json ${PACKAGE_DIR}/js/pactus-grpc
@@ -76,3 +77,10 @@ cp ${ORPC_DIR}/out/python/pactus-open-rpc-http-client/pactus_open_rpc_http_clien
 cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/python/pactus-jsonrpc
 cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/python/pactus-jsonrpc
 replace_in_place "s/{{ VERSION }}/$VERSION/g" ${PACKAGE_DIR}/python/pactus-jsonrpc/setup.py
+
+echo "== Building pactus-grpc package for Rust"
+cp -R ${ROOT_DIR}/.github/packager/rust/grpc/* ${PACKAGE_DIR}/rust/pactus-grpc
+cp -R ${PROTO_GEN_DIR}/rust/* ${PACKAGE_DIR}/rust/pactus-grpc/src
+cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/rust/pactus-grpc
+cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/rust/pactus-grpc
+replace_in_place "s/{{ VERSION }}/$VERSION/g" ${PACKAGE_DIR}/rust/pactus-grpc/Cargo.toml
