@@ -37,7 +37,7 @@ cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/js/pactus-grpc
 replace_in_place "s/{{ VERSION }}/$VERSION/g" "${PACKAGE_DIR}/js/pactus-grpc/package.json"
 
 echo "== Building pactus-jsonrpc package for JavaScript"
-GENERATOR_DIR="${PACKAGE_DIR}/js/generator"
+GENERATOR_DIR="${PACKAGE_DIR}/generator"
 git clone https://github.com/pactus-project/generator.git "$GENERATOR_DIR" && cd "$GENERATOR_DIR"
 npm install && npm run build
 cd "$ROOT_DIR" && $GENERATOR_DIR/build/cli.js generate \
@@ -45,12 +45,12 @@ cd "$ROOT_DIR" && $GENERATOR_DIR/build/cli.js generate \
   -l typescript \
   -n pactus-jsonrpc \
   -d "${ROOT_DIR}/www/grpc/gen/open-rpc/pactus-openrpc.json" \
-  -o "$GENERATOR_DIR/gen"
-cd "$GENERATOR_DIR/gen/client/typescript"
+  -o "$GENERATOR_DIR/js"
+cd "$GENERATOR_DIR/js/client/typescript"
 npm install && tsc
-cp $GENERATOR_DIR/gen/client/typescript/build/index.d.ts ${PACKAGE_DIR}/js/pactus-jsonrpc
-cp $GENERATOR_DIR/gen/client/typescript/build/index.js ${PACKAGE_DIR}/js/pactus-jsonrpc
-cp $GENERATOR_DIR/gen/client/typescript/build/index.js.map ${PACKAGE_DIR}/js/pactus-jsonrpc
+cp $GENERATOR_DIR/js/client/typescript/build/index.d.ts ${PACKAGE_DIR}/js/pactus-jsonrpc
+cp $GENERATOR_DIR/js/client/typescript/build/index.js ${PACKAGE_DIR}/js/pactus-jsonrpc
+cp $GENERATOR_DIR/js/client/typescript/build/index.js.map ${PACKAGE_DIR}/js/pactus-jsonrpc
 cp ${ROOT_DIR}/.github/packager/js/jsonrpc/package.json ${PACKAGE_DIR}/js/pactus-jsonrpc
 cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/js/pactus-jsonrpc
 cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/js/pactus-jsonrpc
@@ -66,7 +66,7 @@ replace_in_place "s/{{ VERSION }}/$VERSION/g" ${PACKAGE_DIR}/python/pactus-grpc/
 
 echo "== Building pactus-jsonrpc package for Python"
 pip install openrpcclientgenerator
-ORPC_DIR="${PACKAGE_DIR}/python/orpc"
+ORPC_DIR="${PACKAGE_DIR}/orpc"
 mkdir -p ${ORPC_DIR}
 cp "${ROOT_DIR}/www/grpc/gen/open-rpc/pactus-openrpc.json" ${ORPC_DIR}/openrpc.json
 cd ${ORPC_DIR}
@@ -84,3 +84,16 @@ cp -R ${PROTO_GEN_DIR}/rust/* ${PACKAGE_DIR}/rust/pactus-grpc/src
 cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/rust/pactus-grpc
 cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/rust/pactus-grpc
 replace_in_place "s/{{ VERSION }}/$VERSION/g" ${PACKAGE_DIR}/rust/pactus-grpc/Cargo.toml
+
+echo "== Building pactus-jsonrpc package for Rust"
+cd "$ROOT_DIR" && $GENERATOR_DIR/build/cli.js generate \
+  -t client \
+  -l rust \
+  -n pactus-jsonrpc \
+  -d "${ROOT_DIR}/www/grpc/gen/open-rpc/pactus-openrpc.json" \
+  -o "$GENERATOR_DIR/rust"
+cp -R ${ROOT_DIR}/.github/packager/rust/jsonrpc/* ${PACKAGE_DIR}/rust/pactus-jsonrpc
+cp $GENERATOR_DIR/rust/client/rust/src/index.rs ${PACKAGE_DIR}/rust/pactus-jsonrpc/src/pactus.rs
+cp ${ROOT_DIR}/LICENSE ${PACKAGE_DIR}/rust/pactus-jsonrpc
+cp ${ROOT_DIR}/README.md ${PACKAGE_DIR}/rust/pactus-jsonrpc
+replace_in_place "s/{{ VERSION }}/$VERSION/g" "${PACKAGE_DIR}/rust/pactus-jsonrpc/Cargo.toml"

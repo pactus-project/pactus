@@ -13,7 +13,7 @@
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     let channel = Channel::from_static("http://bootstrap1.pactus.org:50051")
+//!     let channel = Channel::from_static("http://testnet1.pactus.org:50052")
 //!         .connect()
 //!         .await?;
 //!
