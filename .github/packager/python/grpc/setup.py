@@ -11,7 +11,6 @@ setup(
     description="Python client for interacting with the Pactus blockchain via gRPC",
     long_description=Path("README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
-    url="https://github.com/pactus-project/pactus",
     license="MIT",
     packages=find_packages(),
     keywords=["pactus", "blockchain", "grpc"],
