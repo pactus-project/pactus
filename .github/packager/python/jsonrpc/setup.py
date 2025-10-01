@@ -11,7 +11,6 @@ setup(
     description="Python client for interacting with the Pactus blockchain via JSON-RPC",
     long_description=Path("README.md").read_text(encoding="utf-8"),
     long_description_content_type="text/markdown",
-    url="https://github.com/pactus-project/pactus",
     packages=find_packages(),
     license="MIT",
     install_requires=[

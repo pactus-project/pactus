@@ -21,6 +21,9 @@ if [[ -z "$VERSION" ]]; then
   exit 1
 fi
 
+# Remove 'v' prefix from version if present
+VERSION=${VERSION#v}
+
 echo "Packing Version:" ${VERSION}
 
 rm -rf ${PACKAGE_DIR}
