@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.9.2](https://github.com/pactus-project/pactus/compare/v1.9.1...v1.9.2) (2025-10-01)
+
+### Feat
+
+- **packager**: add rust-jsonrpc package ([#1911](https://github.com/pactus-project/pactus/pull/1911))
+- **packager**: add rust-grpc package ([#1909](https://github.com/pactus-project/pactus/pull/1909))
+
+### Fix
+
+- **grpc**: define map as object in OpenRPC sepc ([#1910](https://github.com/pactus-project/pactus/pull/1910))
+
 ## [1.9.1](https://github.com/pactus-project/pactus/compare/v1.9.0...v1.9.1) (2025-09-24)
 
 ### Fix
