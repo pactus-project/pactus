@@ -91,8 +91,8 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: npm
-      url: https://www.npmjs.com/package/pactus-grpc
+      name: npmjs.com
+      url: https://npmjs.com/package/pactus-grpc
 
     steps:
       - name: Download JavaScript Package
@@ -117,8 +117,8 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: npm
-      url: https://www.npmjs.com/package/pactus-jsonrpc
+      name: npmjs.com
+      url: https://npmjs.com/package/pactus-jsonrpc
 
     steps:
       - name: Download JavaScript Package
@@ -143,7 +143,7 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: pypi
+      name: pypi.org
       url: https://pypi.org/p/pactus-grpc
 
     steps:
@@ -171,7 +171,7 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: pypi
+      name: pypi.org
       url: https://pypi.org/p/pactus-jsonrpc
 
     steps:
@@ -201,7 +201,7 @@ jobs:
       image: rust:1.87
 
     environment:
-      name: crates
+      name: crates.io
       url: https://crates.io/crates/pactus-grpc
 
     steps:
@@ -223,7 +223,7 @@ jobs:
       image: rust:1.87
 
     environment:
-      name: crates
+      name: crates.io
       url: https://crates.io/crates/pactus-jsonrpc
 
     steps:
