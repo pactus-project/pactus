@@ -200,6 +200,10 @@ jobs:
     container:
       image: rust:1.87
 
+    environment:
+      name: crates
+      url: https://crates.io/crates/pactus-grpc
+
     steps:
       - name: Download Rust Package
         uses: actions/download-artifact@v4
@@ -217,6 +221,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: rust:1.87
+
+    environment:
+      name: crates
+      url: https://crates.io/crates/pactus-jsonrpc
 
     steps:
       - name: Download Rust Package
