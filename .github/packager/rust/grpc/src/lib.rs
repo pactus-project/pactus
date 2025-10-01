@@ -5,15 +5,12 @@
 //! ## Example
 //!
 //! ```rust
-//! use pactus_grpc::{
-//!     blockchain_client::BlockchainClient,
-//!     GetBlockchainInfoRequest,
-//! };
+//! use pactus_grpc::{blockchain_client::BlockchainClient, GetBlockchainInfoRequest};
 //! use tonic::transport::Channel;
 //!
 //! #[tokio::main]
 //! async fn main() -> Result<(), Box<dyn std::error::Error>> {
-//!     let channel = Channel::from_static("http://testnet1.pactus.org:50052")
+//!     let channel = Channel::from_static("http://127.0.0.1:50051")
 //!         .connect()
 //!         .await?;
 //!
@@ -23,7 +20,9 @@
 //!     let response = client.get_blockchain_info(request).await?;
 //!     let info = response.into_inner();
 //!
-//!     println!("get_blockchain_info Response: {:?}", info);    Ok(())
+//!     println!("get_blockchain_info Response: {:?}", info);
+//!
+//!     Ok(())
 //! }
 //! ```
 
