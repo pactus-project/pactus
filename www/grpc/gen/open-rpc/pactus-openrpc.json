@@ -518,11 +518,7 @@
 }
 },"is_pruned": { "type": "boolean" },"pruning_height": { "type": "integer" },"last_block_time": { "type": "integer" },"committee_protocol_versions": 
 {
-  "type": "array",
-  "items": {
-  "type": "object",
-  "properties": {}
-}
+  "type": "object"
 }}
           }
         }
@@ -775,18 +771,10 @@
   "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
 },"message_sent": 
 {
-  "type": "array",
-  "items": {
-  "type": "object",
-  "properties": {}
-}
+  "type": "object"
 },"message_received": 
 {
-  "type": "array",
-  "items": {
-  "type": "object",
-  "properties": {}
-}
+  "type": "object"
 }}
 },"outbound_hello_sent": { "type": "boolean" }}
 }
@@ -803,18 +791,10 @@
   "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
 },"message_sent": 
 {
-  "type": "array",
-  "items": {
-  "type": "object",
-  "properties": {}
-}
+  "type": "object"
 },"message_received": 
 {
-  "type": "array",
-  "items": {
-  "type": "object",
-  "properties": {}
-}
+  "type": "object"
 }}
 }}
           }
