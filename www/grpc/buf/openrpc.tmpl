@@ -56,7 +56,11 @@
 {{/* --- Helpers --- */}}
 
 {{ define "renderFieldSchema" }}
-{{- if .IsRepeated }}
+{{- if .IsMap }}
+{
+  "type": "object"
+}
+{{- else if .IsRepeated }}
 {
   "type": "array",
   "items": {{ template "renderFieldItemSchema" . }}
