@@ -34,11 +34,18 @@
         "name": "fields",
         "schema": {
           "type": "object",
-          "properties": {
 {{- with getMessage .ResponseLongType -}}
+          "required": [
+          {{- $firstField := true -}}
+          {{- range .Fields -}}
+            {{- if not $firstField }},{{- end -}}
+            {{- $firstField = false -}}
+            "{{ .SnakeName }}"
+          {{- end -}} ],
+          "properties": {
   {{- $firstField := true -}}
   {{- range .Fields -}}
-              {{- if not $firstField }},{{ end -}}
+              {{- if not $firstField }},{{- end -}}
               {{- $firstField = false -}}
               "{{ .SnakeName }}": {{ template "renderFieldSchema" . -}}
   {{- end -}}
@@ -76,8 +83,15 @@
 {{- else -}}
 {
   "type": "object",
-  "properties": {
 {{- with getMessage .LongType -}}
+  "required": [
+    {{- $firstField := true -}}
+    {{- range .Fields -}}
+      {{- if not $firstField }},{{- end -}}
+      {{- $firstField = false -}}
+      "{{ .SnakeName }}"
+    {{- end -}} ],
+  "properties": {
   {{- $first := true -}}
   {{- range .Fields -}}
     {{- if not $first -}},{{- end -}}
