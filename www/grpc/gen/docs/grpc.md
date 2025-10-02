@@ -19,6 +19,7 @@ For seamless integration with Pactus, you can use these client libraries:
 
 - <i class="fa-brands fa-js"></i> [pactus-grpc](https://www.npmjs.com/package/pactus-grpc/) package for Javascript
 - <i class="fa-brands fa-python"></i> [pactus-grpc](https://pypi.org/project/pactus-grpc/) package for Python
+- <i class="fa-brands fa-rust"></i> [pactus-grpc](https://crates.io/crates/pactus-grpc) package for Rust
 
 ## gRPC Services
 
