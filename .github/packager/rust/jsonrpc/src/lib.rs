@@ -5,15 +5,15 @@
 //! ## Example
 //!
 //! ```rust
-//! use jsonrpc_client_http::HttpTransport;
+//! use jsonrpsee::http_client::HttpClient;
 //! use pactus_jsonrpc::pactus::PactusOpenRPC;
 //!
-//! fn main() {
-//!     let transport = HttpTransport::new().standalone().unwrap();
-//!     let handle = transport.handle("http://127.0.0.1:8545").unwrap();
-//!     let mut client = PactusOpenRPC::new(handle);
+//! #[tokio::main]
+//! async fn main() {
+//!     let client = HttpClient::builder().build("http://127.0.0.1:8545").unwrap();
+//!     let rpc: PactusOpenRPC<HttpClient> = PactusOpenRPC::new(client);
 //!
-//!     let info = client.pactus_blockchain_get_blockchain_info().call().unwrap();
+//!     let info = rpc.pactus_blockchain_get_blockchain_info().await.unwrap();
 //!     println!("get_blockchain_info Response: {:?}", info);
 //! }
 //! ```

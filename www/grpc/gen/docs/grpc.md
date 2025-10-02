@@ -735,7 +735,7 @@ For seamless integration with Pactus, you can use these client libraries:
     <td class="fw-bold">public_key</td>
     <td> string</td>
     <td>
-    The public key of the validator.
+    The public key of the validator. Optional, but required when registering a new validator.
     </td>
   </tr>
   <tr>
