@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.9.4](https://github.com/pactus-project/pactus/compare/v1.9.3...v1.9.4) (2025-10-03)
+
+### Fix
+
+- **grpc**: set required fields in OpenRPC spec ([#1920](https://github.com/pactus-project/pactus/pull/1920))
+
 ## [1.9.3](https://github.com/pactus-project/pactus/compare/v1.9.2...v1.9.3) (2025-10-01)
 
 ## [1.9.2](https://github.com/pactus-project/pactus/compare/v1.9.1...v1.9.2) (2025-10-01)
