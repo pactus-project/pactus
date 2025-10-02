@@ -108,7 +108,7 @@ message GetRawBondTransactionRequest {
   string receiver = 3;
   // The stake amount in NanoPAC. Must be greater than 0.
   int64 stake = 4;
-  // The public key of the validator.
+  // The public key of the validator. Optional, but required when registering a new validator.
   string public_key = 5;
   // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
   int64 fee = 6;
