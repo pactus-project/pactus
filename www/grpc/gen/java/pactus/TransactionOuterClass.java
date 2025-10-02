@@ -5528,7 +5528,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * The public key of the validator.
+     * The public key of the validator. Optional, but required when registering a new validator.
      * </pre>
      *
      * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -5537,7 +5537,7 @@ public final class TransactionOuterClass {
     java.lang.String getPublicKey();
     /**
      * <pre>
-     * The public key of the validator.
+     * The public key of the validator. Optional, but required when registering a new validator.
      * </pre>
      *
      * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -5750,7 +5750,7 @@ public final class TransactionOuterClass {
     private volatile java.lang.Object publicKey_ = "";
     /**
      * <pre>
-     * The public key of the validator.
+     * The public key of the validator. Optional, but required when registering a new validator.
      * </pre>
      *
      * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -5771,7 +5771,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * The public key of the validator.
+     * The public key of the validator. Optional, but required when registering a new validator.
      * </pre>
      *
      * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -6570,7 +6570,7 @@ public final class TransactionOuterClass {
       private java.lang.Object publicKey_ = "";
       /**
        * <pre>
-       * The public key of the validator.
+       * The public key of the validator. Optional, but required when registering a new validator.
        * </pre>
        *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -6590,7 +6590,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The public key of the validator.
+       * The public key of the validator. Optional, but required when registering a new validator.
        * </pre>
        *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -6611,7 +6611,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The public key of the validator.
+       * The public key of the validator. Optional, but required when registering a new validator.
        * </pre>
        *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -6628,7 +6628,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The public key of the validator.
+       * The public key of the validator. Optional, but required when registering a new validator.
        * </pre>
        *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
@@ -6642,7 +6642,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The public key of the validator.
+       * The public key of the validator. Optional, but required when registering a new validator.
        * </pre>
        *
        * <code>string public_key = 5 [json_name = "publicKey"];</code>
