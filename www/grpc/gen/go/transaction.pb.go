@@ -571,7 +571,7 @@ type GetRawBondTransactionRequest struct {
 	Receiver string `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty"`
 	// The stake amount in NanoPAC. Must be greater than 0.
 	Stake int64 `protobuf:"varint,4,opt,name=stake,proto3" json:"stake,omitempty"`
-	// The public key of the validator.
+	// The public key of the validator. Optional, but required when registering a new validator.
 	PublicKey string `protobuf:"bytes,5,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
 	// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
 	Fee int64 `protobuf:"varint,6,opt,name=fee,proto3" json:"fee,omitempty"`

@@ -10,7 +10,7 @@
   {{- range .Services -}}{{- $ServiceName := .SnakeName -}}
     {{ range .Methods }}
       {{- if not $firstMethod -}},{{- end -}}
-      {{- $firstMethod = false }}
+      {{- $firstMethod = false -}}
     {
       "name": "{{ .SnakeName }}",
       "description": "{{ .Description | nobr }}",
@@ -21,14 +21,14 @@
   {{- $firstParam := true -}}
   {{ range .Fields }}
     {{- if not $firstParam -}},{{- end -}}
-    {{- $firstParam = false }}
+    {{- $firstParam = false -}}
         {
           "name": "{{ .SnakeName }}",
           "description": "{{ .Description | nobr }}",
           "schema": {{ template "renderFieldSchema" . }}
         }
   {{- end -}}
-{{- end }}
+{{- end -}}
       ],
       "result": {
         "name": "fields",
@@ -38,14 +38,14 @@
           "required": [
           {{- $firstField := true -}}
           {{- range .Fields -}}
-            {{- if not $firstField }},{{- end -}}
+            {{- if not $firstField -}},{{- end -}}
             {{- $firstField = false -}}
             "{{ .SnakeName }}"
           {{- end -}} ],
           "properties": {
   {{- $firstField := true -}}
   {{- range .Fields -}}
-              {{- if not $firstField }},{{- end -}}
+              {{- if not $firstField -}},{{- end -}}
               {{- $firstField = false -}}
               "{{ .SnakeName }}": {{ template "renderFieldSchema" . -}}
   {{- end -}}
@@ -54,25 +54,25 @@
           }
         }
       }
-    {{ end }}
-  {{ end }}
-{{ end }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
   ]
 }
 
 {{/* --- Helpers --- */}}
 
 {{ define "renderFieldSchema" }}
-{{- if .IsMap }}
+{{- if .IsMap -}}
 {
   "type": "object"
 }
-{{- else if .IsRepeated }}
+{{- else if .IsRepeated -}}
 {
   "type": "array",
   "items": {{ template "renderFieldItemSchema" . }}
 }
-{{- else }}
+{{- else -}}
 {{- template "renderFieldItemSchema" . -}}
 {{- end -}}
 {{- end -}}
@@ -87,7 +87,7 @@
   "required": [
     {{- $firstField := true -}}
     {{- range .Fields -}}
-      {{- if not $firstField }},{{- end -}}
+      {{- if not $firstField -}},{{- end -}}
       {{- $firstField = false -}}
       "{{ .SnakeName }}"
     {{- end -}} ],

@@ -2170,7 +2170,7 @@
         },
         "publicKey": {
           "type": "string",
-          "description": "The public key of the validator."
+          "description": "The public key of the validator. Optional, but required when registering a new validator."
         },
         "fee": {
           "type": "string",
