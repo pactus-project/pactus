@@ -192,25 +192,13 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 }
 
 func (st *state) loadMerkels() {
-	totalAccount := st.store.TotalAccounts()
 	st.store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
-		// Let's keep this check, even we have tested it
-		if acc.Number() >= totalAccount {
-			panic(fmt.Sprintf(
-				"Account number is out of range: %v >= %v", acc.Number(), totalAccount))
-		}
 		st.accountMerkle.SetHash(acc.Number(), acc.Hash())
 
 		return false
 	})
 
-	totalValidator := st.store.TotalValidators()
 	st.store.IterateValidators(func(val *validator.Validator) bool {
-		// Let's keep this check, even we have tested it
-		if val.Number() >= totalValidator {
-			panic(fmt.Sprintf(
-				"Validator number is out of range: %v >= %v", val.Number(), totalValidator))
-		}
 		st.validatorMerkle.SetHash(val.Number(), val.Hash())
 
 		return false
@@ -509,7 +497,7 @@ func (st *state) evaluateSortition() bool {
 			continue
 		}
 
-		if val.UnbondingHeight() > 0 {
+		if val.IsUnbonded() {
 			// we have Unbonded
 			continue
 		}
@@ -603,20 +591,6 @@ func (st *state) validateBlockTime(blockTime time.Time) error {
 	return nil
 }
 
-func (st *state) TotalPower() int64 {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
-
-	return st.totalPower
-}
-
-func (st *state) CommitteePower() int64 {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
-
-	return st.committee.TotalPower()
-}
-
 func (st *state) proposeNextBlockTime() time.Time {
 	timestamp := st.lastInfo.BlockTime().Add(st.params.BlockInterval())
 
@@ -634,14 +608,6 @@ func (st *state) CommitteeValidators() []*validator.Validator {
 	defer st.lk.RUnlock()
 
 	return st.committee.Validators()
-}
-
-func (st *state) TotalAccounts() int32 {
-	return st.store.TotalAccounts()
-}
-
-func (st *state) TotalValidators() int32 {
-	return st.store.TotalValidators()
 }
 
 func (st *state) IsInCommittee(addr crypto.Address) bool {
@@ -663,10 +629,6 @@ func (st *state) IsProposer(addr crypto.Address, round int16) bool {
 	defer st.lk.RUnlock()
 
 	return st.committee.IsProposer(addr, round)
-}
-
-func (st *state) IsValidator(addr crypto.Address) bool {
-	return st.store.HasValidator(addr)
 }
 
 func (st *state) CommittedBlock(height uint32) *store.CommittedBlock {
@@ -770,14 +732,6 @@ func (st *state) AllPendingTxs() []*tx.Tx {
 	return st.txPool.AllPendingTxs()
 }
 
-func (st *state) IsPruned() bool {
-	return st.store.IsPruned()
-}
-
-func (st *state) PruningHeight() uint32 {
-	return st.store.PruningHeight()
-}
-
 func (st *state) publishEvent(msg any) {
 	st.eventPipe.Send(msg)
 }
@@ -791,4 +745,22 @@ func (st *state) CommitteeProtocolVersions() map[protocol.Version]float64 {
 	defer st.lk.RUnlock()
 
 	return st.committee.ProtocolVersions()
+}
+
+func (st *state) Stats() *Stats {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return &Stats{
+		LastBlockHeight:  st.lastInfo.BlockHeight(),
+		LastBlockHash:    st.lastInfo.BlockHash(),
+		LastBlockTime:    st.lastInfo.BlockTime(),
+		TotalPower:       st.totalPower,
+		CommitteePower:   st.committee.TotalPower(),
+		TotalAccounts:    st.store.TotalAccounts(),
+		TotalValidators:  st.store.TotalValidators(),
+		ActiveValidators: st.store.ActiveValidators(),
+		IsPruned:         st.store.IsPruned(),
+		PruningHeight:    st.store.PruningHeight(),
+	}
 }

@@ -423,8 +423,8 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["last_block_height","last_block_hash","total_accounts","total_validators","total_power","committee_power","committee_validators","is_pruned","pruning_height","last_block_time","committee_protocol_versions"],
-          "properties": {"last_block_height": { "type": "integer" },"last_block_hash": { "type": "string" },"total_accounts": { "type": "integer" },"total_validators": { "type": "integer" },"total_power": { "type": "integer" },"committee_power": { "type": "integer" },"committee_validators": {
+          "type": "object","required": ["last_block_height","last_block_hash","total_accounts","total_validators","active_validators","total_power","committee_power","committee_validators","is_pruned","pruning_height","last_block_time","committee_protocol_versions"],
+          "properties": {"last_block_height": { "type": "integer" },"last_block_hash": { "type": "string" },"total_accounts": { "type": "integer" },"total_validators": { "type": "integer" },"active_validators": { "type": "integer" },"total_power": { "type": "integer" },"committee_power": { "type": "integer" },"committee_validators": {
   "type": "array",
   "items": {
   "type": "object","required": ["hash","data","public_key","number","stake","last_bonding_height","last_sortition_height","unbonding_height","address","availability_score","protocol_version"],

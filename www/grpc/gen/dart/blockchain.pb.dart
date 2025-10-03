@@ -933,6 +933,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     $core.int? pruningHeight,
     $fixnum.Int64? lastBlockTime,
     $pb.PbMap<$core.int, $core.double>? committeeProtocolVersions,
+    $core.int? activeValidators,
   }) {
     final $result = create();
     if (lastBlockHeight != null) {
@@ -968,6 +969,9 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     if (committeeProtocolVersions != null) {
       $result.committeeProtocolVersions.addAll(committeeProtocolVersions);
     }
+    if (activeValidators != null) {
+      $result.activeValidators = activeValidators;
+    }
     return $result;
   }
   GetBlockchainInfoResponse._() : super();
@@ -986,6 +990,7 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
     ..a<$core.int>(9, _omitFieldNames ? '' : 'pruningHeight', $pb.PbFieldType.OU3)
     ..aInt64(10, _omitFieldNames ? '' : 'lastBlockTime')
     ..m<$core.int, $core.double>(11, _omitFieldNames ? '' : 'committeeProtocolVersions', entryClassName: 'GetBlockchainInfoResponse.CommitteeProtocolVersionsEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.OD, packageName: const $pb.PackageName('pactus'))
+    ..a<$core.int>(12, _omitFieldNames ? '' : 'activeValidators', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -1107,6 +1112,16 @@ class GetBlockchainInfoResponse extends $pb.GeneratedMessage {
   /// Map of protocol versions and their percentages in the committee.
   @$pb.TagNumber(11)
   $pb.PbMap<$core.int, $core.double> get committeeProtocolVersions => $_getMap(10);
+
+  /// The number of active (not unbonded) validators in the blockchain.
+  @$pb.TagNumber(12)
+  $core.int get activeValidators => $_getIZ(11);
+  @$pb.TagNumber(12)
+  set activeValidators($core.int v) { $_setSignedInt32(11, v); }
+  @$pb.TagNumber(12)
+  $core.bool hasActiveValidators() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearActiveValidators() => $_clearField(12);
 }
 
 /// Request message for retrieving consensus information.

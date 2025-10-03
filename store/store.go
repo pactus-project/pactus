@@ -286,26 +286,27 @@ func (s *store) Transaction(txID tx.ID) (*CommittedTx, error) {
 // The time window for recent transactions is determined by the
 // TransactionToLive interval, which is part of the consensus parameters.
 func (s *store) RecentTransaction(txID tx.ID) bool {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.txStore.recentTransaction(txID)
 }
 
 func (s *store) HasAccount(addr crypto.Address) bool {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.accountStore.hasAccount(addr)
 }
 
 func (s *store) Account(addr crypto.Address) (*account.Account, error) {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.accountStore.account(addr)
 }
 
+// TotalAccounts returns the total number of accounts.
 func (s *store) TotalAccounts() int32 {
 	s.lk.Lock()
 	defer s.lk.Unlock()
@@ -328,8 +329,8 @@ func (s *store) UpdateAccount(addr crypto.Address, acc *account.Account) {
 }
 
 func (s *store) HasValidator(addr crypto.Address) bool {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.validatorStore.hasValidator(addr)
 }
@@ -342,24 +343,33 @@ func (s *store) ValidatorAddresses() []crypto.Address {
 }
 
 func (s *store) Validator(addr crypto.Address) (*validator.Validator, error) {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.validatorStore.validator(addr)
 }
 
 func (s *store) ValidatorByNumber(num int32) (*validator.Validator, error) {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.validatorStore.validatorByNumber(num)
 }
 
+// TotalValidators returns the total number of validators.
 func (s *store) TotalValidators() int32 {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.validatorStore.total
+}
+
+// ActiveValidators returns the number of active (not unbonded) validators.
+func (s *store) ActiveValidators() int32 {
+	s.lk.RLock()
+	defer s.lk.RUnlock()
+
+	return s.validatorStore.active
 }
 
 func (s *store) IterateValidators(consumer func(*validator.Validator) (stop bool)) {
@@ -384,8 +394,8 @@ func (s *store) UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol
 }
 
 func (s *store) LastCertificate() *certificate.Certificate {
-	s.lk.Lock()
-	defer s.lk.Unlock()
+	s.lk.RLock()
+	defer s.lk.RUnlock()
 
 	return s.lastCertificate()
 }

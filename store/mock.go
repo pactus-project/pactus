@@ -209,6 +209,10 @@ func (m *MockStore) TotalValidators() int32 {
 	return int32(len(m.Validators))
 }
 
+func (m *MockStore) ActiveValidators() int32 {
+	return int32(len(m.Validators))
+}
+
 func (*MockStore) Close() {}
 
 func (m *MockStore) HasAnyBlock() bool {

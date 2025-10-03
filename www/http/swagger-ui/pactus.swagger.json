@@ -1931,6 +1931,11 @@
           "format": "int32",
           "description": "The total number of validators in the blockchain."
         },
+        "activeValidators": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The number of active (not unbonded) validators in the blockchain."
+        },
         "totalPower": {
           "type": "string",
           "format": "int64",

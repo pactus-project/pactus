@@ -1809,6 +1809,13 @@ Parameters has no fields.
     </td>
   </tr>
      <tr>
+    <td class="fw-bold">active_validators</td>
+    <td> numeric</td>
+    <td>
+    The number of active (not unbonded) validators in the blockchain.
+    </td>
+  </tr>
+     <tr>
     <td class="fw-bold">total_power</td>
     <td> numeric</td>
     <td>

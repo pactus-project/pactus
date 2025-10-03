@@ -378,8 +378,7 @@ func TestSortition(t *testing.T) {
 
 	secValKey := td.state.valKeys[1]
 	assert.False(t, td.state.evaluateSortition()) //  not a validator
-	assert.False(t, td.state.IsValidator(secValKey.Address()))
-	assert.Equal(t, int64(4), td.state.CommitteePower())
+	assert.Equal(t, int64(4), td.state.Stats().CommitteePower)
 
 	trx := tx.NewBondTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
 		secValKey.Address(), secValKey.PublicKey(), 1000000000, 100000)
@@ -389,8 +388,7 @@ func TestSortition(t *testing.T) {
 	td.commitBlocks(t, 1)
 
 	assert.False(t, td.state.evaluateSortition()) // bonding period
-	assert.True(t, td.state.IsValidator(secValKey.Address()))
-	assert.Equal(t, int64(4), td.state.CommitteePower())
+	assert.Equal(t, int64(4), td.state.Stats().CommitteePower)
 	assert.False(t, td.state.committee.Contains(secValKey.Address())) // Not in the committee
 
 	// Committing another 10 blocks
@@ -401,8 +399,7 @@ func TestSortition(t *testing.T) {
 
 	td.commitBlocks(t, 1)
 
-	assert.True(t, td.state.IsValidator(secValKey.Address()))
-	assert.Equal(t, int64(1000000004), td.state.CommitteePower())
+	assert.Equal(t, int64(1000000004), td.state.Stats().CommitteePower)
 	assert.True(t, td.state.committee.Contains(secValKey.Address())) // In the committee
 }
 
@@ -532,34 +529,26 @@ func TestLoadState(t *testing.T) {
 		td.state.store, td.commonTxPool, eventPipe)
 	require.NoError(t, err)
 
-	assert.Equal(t, td.state.TotalAccounts(), newState.TotalAccounts())
-	assert.Equal(t, td.state.TotalValidators(), newState.TotalValidators())
-	assert.Equal(t, td.state.CommitteePower(), newState.CommitteePower())
-	assert.Equal(t, td.state.TotalPower(), newState.TotalPower())
 	assert.Equal(t, td.state.Params(), newState.Params())
 	assert.ElementsMatch(t, td.state.ValidatorAddresses(), newState.ValidatorAddresses())
-
-	assert.Equal(t, int32(20), td.state.TotalAccounts()) // 9 subsidy addrs + 9 foundation addrs + 2 genesis addrs
-	assert.Equal(t, int32(5), td.state.TotalValidators())
+	assert.Equal(t, td.state.Stats(), newState.Stats())
 
 	// Try committing the next block
 	require.NoError(t, newState.CommitBlock(blk6, cert6))
 }
 
-func TestIsValidator(t *testing.T) {
+func TestIsInCommittee(t *testing.T) {
 	td := setup(t)
 
 	assert.True(t, td.state.IsInCommittee(td.genValKeys[0].Address()))
 	assert.True(t, td.state.IsProposer(td.genValKeys[0].Address(), 0))
 	assert.True(t, td.state.IsProposer(td.genValKeys[1].Address(), 1))
 	assert.True(t, td.state.IsInCommittee(td.genValKeys[1].Address()))
-	assert.True(t, td.state.IsValidator(td.genValKeys[1].Address()))
 
 	addr := td.RandAccAddress()
 	assert.False(t, td.state.IsInCommittee(addr))
 	assert.False(t, td.state.IsProposer(addr, 0))
 	assert.False(t, td.state.IsInCommittee(addr))
-	assert.False(t, td.state.IsValidator(addr))
 }
 
 func TestCalculateFee(t *testing.T) {

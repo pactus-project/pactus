@@ -97,6 +97,7 @@ type Reader interface {
 	IterateValidators(consumer func(*validator.Validator) (stop bool))
 	IterateAccounts(consumer func(crypto.Address, *account.Account) (stop bool))
 	TotalValidators() int32
+	ActiveValidators() int32
 	LastCertificate() *certificate.Certificate
 	IsBanned(addr crypto.Address) bool
 	IsPruned() bool
