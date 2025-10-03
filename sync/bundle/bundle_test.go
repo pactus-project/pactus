@@ -30,31 +30,38 @@ func TestMessageCompress(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	blocksData := [][]byte{}
-	for i := 0; i < 10; i++ {
+	for i := 0; i < ts.RandInt(40); i++ {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight())
 		data, _ := blk.Bytes()
 		blocksData = append(blocksData, data)
 	}
-	msg := message.NewBlocksResponseMessage(message.ResponseCodeOK, message.ResponseCodeOK.String(),
+	msg1 := message.NewBlocksResponseMessage(message.ResponseCodeOK, message.ResponseCodeOK.String(),
 		1234, 888, blocksData, nil)
-	bdl := NewBundle(msg)
+	bdl := NewBundle(msg1)
 	bs0, err := bdl.Encode()
 	assert.NoError(t, err)
+	assert.False(t, util.IsFlagSet(bdl.Flags, BundleFlagCompressed))
+
 	bdl.CompressIt()
 	bs1, err := bdl.Encode()
 	assert.NoError(t, err)
+	assert.True(t, util.IsFlagSet(bdl.Flags, BundleFlagCompressed))
+
 	fmt.Printf("Compressed :%v%%\n", 100-len(bs1)*100/(len(bs0)))
 	fmt.Printf("Uncompressed len :%v\n", len(bs0))
 	fmt.Printf("Compressed len :%v\n", len(bs1))
+
 	msg2 := new(Bundle)
-	msg3 := new(Bundle)
-	_, err = msg2.Decode(bytes.NewReader(bs0))
+	bytesRead1, err := msg2.Decode(bytes.NewReader(bs0))
 	assert.NoError(t, err)
-	_, err = msg3.Decode(bytes.NewReader(bs1))
-	assert.NoError(t, err)
+	assert.Equal(t, len(bs0), bytesRead1)
 	assert.NoError(t, msg2.BasicCheck())
+
+	msg3 := new(Bundle)
+	bytesRead2, err := msg3.Decode(bytes.NewReader(bs1))
+	assert.NoError(t, err)
+	assert.Equal(t, len(bs1), bytesRead2)
 	assert.NoError(t, msg3.BasicCheck())
-	assert.True(t, util.IsFlagSet(bdl.Flags, BundleFlagCompressed))
 }
 
 func TestDecodeVoteMessage(t *testing.T) {
@@ -98,10 +105,14 @@ func TestDecodeVoteCBOR(t *testing.T) {
 
 	bdl1 := new(Bundle)
 	bdl2 := new(Bundle)
-	_, err := bdl1.Decode(bytes.NewReader(dat1))
+	bytesRead1, err := bdl1.Decode(bytes.NewReader(dat1))
 	require.NoError(t, err)
-	_, err = bdl2.Decode(bytes.NewReader(data2))
+	assert.Equal(t, len(dat1), bytesRead1)
+	assert.NoError(t, bdl1.BasicCheck())
+
+	bytesRead2, err := bdl2.Decode(bytes.NewReader(data2))
 	require.NoError(t, err)
+	assert.Equal(t, len(data2), bytesRead2)
 	assert.NoError(t, bdl2.BasicCheck())
 
 	assert.Equal(t, bdl1.Message, bdl2.Message)
@@ -110,7 +121,7 @@ func TestDecodeVoteCBOR(t *testing.T) {
 	assert.Contains(t, bdl1.String(), "vote")
 
 	assert.Equal(t, uint32(0x1234), bdl1.ConsensusHeight)
-	assert.Equal(t, uint32(0x1234), bdl1.ConsensusHeight)
+	assert.Equal(t, uint32(0x1234), bdl2.ConsensusHeight)
 }
 
 func TestEncodingData(t *testing.T) {
