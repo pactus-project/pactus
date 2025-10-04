@@ -587,6 +587,9 @@ pub struct GetBlockchainInfoResponse {
     /// The total number of validators in the blockchain.
     #[prost(int32, tag="4")]
     pub total_validators: i32,
+    /// The number of active (not unbonded) validators in the blockchain.
+    #[prost(int32, tag="12")]
+    pub active_validators: i32,
     /// The total power of the blockchain.
     #[prost(int64, tag="5")]
     pub total_power: i64,

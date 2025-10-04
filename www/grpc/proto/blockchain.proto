@@ -157,6 +157,8 @@ message GetBlockchainInfoResponse {
   int32 total_accounts = 3;
   // The total number of validators in the blockchain.
   int32 total_validators = 4;
+  // The number of active (not unbonded) validators in the blockchain.
+  int32 active_validators = 12;
   // The total power of the blockchain.
   int64 total_power = 5;
   // The power of the committee.

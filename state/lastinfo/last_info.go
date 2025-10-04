@@ -2,7 +2,6 @@ package lastinfo
 
 import (
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/pactus-project/pactus/committee"
@@ -17,8 +16,6 @@ import (
 )
 
 type LastInfo struct {
-	lk sync.RWMutex // TODO: this lock looks unnecessary
-
 	lastSortitionSeed sortition.VerifiableSeed
 	lastBlockHash     hash.Hash
 	lastCert          *certificate.Certificate
@@ -31,16 +28,10 @@ func NewLastInfo() *LastInfo {
 }
 
 func (li *LastInfo) SortitionSeed() sortition.VerifiableSeed {
-	li.lk.RLock()
-	defer li.lk.RUnlock()
-
 	return li.lastSortitionSeed
 }
 
 func (li *LastInfo) BlockHeight() uint32 {
-	li.lk.RLock()
-	defer li.lk.RUnlock()
-
 	if li.lastCert == nil {
 		return 0
 	}
@@ -49,65 +40,38 @@ func (li *LastInfo) BlockHeight() uint32 {
 }
 
 func (li *LastInfo) BlockHash() hash.Hash {
-	li.lk.RLock()
-	defer li.lk.RUnlock()
-
 	return li.lastBlockHash
 }
 
 func (li *LastInfo) Certificate() *certificate.Certificate {
-	li.lk.RLock()
-	defer li.lk.RUnlock()
-
 	return li.lastCert
 }
 
 func (li *LastInfo) BlockTime() time.Time {
-	li.lk.RLock()
-	defer li.lk.RUnlock()
-
 	return li.lastBlockTime
 }
 
 func (li *LastInfo) Validators() []*validator.Validator {
-	li.lk.RLock()
-	defer li.lk.RUnlock()
-
 	return li.lastValidators
 }
 
 func (li *LastInfo) UpdateSortitionSeed(lastSortitionSeed sortition.VerifiableSeed) {
-	li.lk.Lock()
-	defer li.lk.Unlock()
-
 	li.lastSortitionSeed = lastSortitionSeed
 }
 
 func (li *LastInfo) UpdateBlockHash(lastBlockHash hash.Hash) {
-	li.lk.Lock()
-	defer li.lk.Unlock()
-
 	li.lastBlockHash = lastBlockHash
 }
 
 func (li *LastInfo) UpdateCertificate(lastCertificate *certificate.Certificate) {
-	li.lk.Lock()
-	defer li.lk.Unlock()
-
 	li.lastCert = lastCertificate
 }
 
 func (li *LastInfo) UpdateBlockTime(lastBlockTime time.Time) {
-	li.lk.Lock()
-	defer li.lk.Unlock()
-
 	li.lastBlockTime = lastBlockTime
 }
 
 func (li *LastInfo) UpdateValidators(vals []*validator.Validator) {
-	li.lk.Lock()
-	defer li.lk.Unlock()
-
 	li.lastValidators = vals
 }
 

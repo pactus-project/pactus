@@ -97,6 +97,11 @@ func (val *Validator) UnbondingHeight() uint32 {
 	return val.data.UnbondingHeight
 }
 
+// IsUnbonded returns true if the validator is unbonded.
+func (val *Validator) IsUnbonded() bool {
+	return val.data.UnbondingHeight > 0
+}
+
 // LastSortitionHeight returns the last height in which the validator evaluated sortition.
 func (val *Validator) LastSortitionHeight() uint32 {
 	return val.data.LastSortitionHeight

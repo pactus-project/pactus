@@ -3056,6 +3056,7 @@ lastBlockHeight: jspb.Message.getFieldWithDefault(msg, 1, 0),
 lastBlockHash: jspb.Message.getFieldWithDefault(msg, 2, ""),
 totalAccounts: jspb.Message.getFieldWithDefault(msg, 3, 0),
 totalValidators: jspb.Message.getFieldWithDefault(msg, 4, 0),
+activeValidators: jspb.Message.getFieldWithDefault(msg, 12, 0),
 totalPower: jspb.Message.getFieldWithDefault(msg, 5, 0),
 committeePower: jspb.Message.getFieldWithDefault(msg, 6, 0),
 committeeValidatorsList: jspb.Message.toObjectList(msg.getCommitteeValidatorsList(),
@@ -3115,6 +3116,10 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
     case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setTotalValidators(value);
+      break;
+    case 12:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setActiveValidators(value);
       break;
     case 5:
       var value = /** @type {number} */ (reader.readInt64());
@@ -3201,6 +3206,13 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
   if (f !== 0) {
     writer.writeInt32(
       4,
+      f
+    );
+  }
+  f = message.getActiveValidators();
+  if (f !== 0) {
+    writer.writeInt32(
+      12,
       f
     );
   }
@@ -3323,6 +3335,24 @@ proto.pactus.GetBlockchainInfoResponse.prototype.getTotalValidators = function()
  */
 proto.pactus.GetBlockchainInfoResponse.prototype.setTotalValidators = function(value) {
   return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional int32 active_validators = 12;
+ * @return {number}
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.getActiveValidators = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 12, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.GetBlockchainInfoResponse} returns this
+ */
+proto.pactus.GetBlockchainInfoResponse.prototype.setActiveValidators = function(value) {
+  return jspb.Message.setProto3IntField(this, 12, value);
 };
 
 

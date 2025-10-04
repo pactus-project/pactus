@@ -18,31 +18,38 @@ func TestValidatorCounter(t *testing.T) {
 	val := td.GenerateTestValidator()
 
 	t.Run("Add new validator, should increase the total validators number", func(t *testing.T) {
-		assert.Zero(t, td.store.TotalValidators())
+		newVal := val.Clone()
+		td.store.UpdateValidator(newVal)
 
-		td.store.UpdateValidator(val)
-		assert.NoError(t, td.store.WriteBatch())
 		assert.Equal(t, int32(1), td.store.TotalValidators())
+		assert.Equal(t, int32(1), td.store.ActiveValidators())
 	})
 
-	t.Run("Update validator, should not increase the total validators number", func(t *testing.T) {
-		val.AddToStake(1)
-		td.store.UpdateValidator(val)
+	t.Run("Update validator, should not change the total and active validators number", func(t *testing.T) {
+		newVal := val.Clone()
+		newVal.AddToStake(1)
+		td.store.UpdateValidator(newVal)
 
-		assert.NoError(t, td.store.WriteBatch())
 		assert.Equal(t, int32(1), td.store.TotalValidators())
+		assert.Equal(t, int32(1), td.store.ActiveValidators())
 	})
 
-	t.Run("Get validator", func(t *testing.T) {
-		val1, err := td.store.Validator(val.Address())
-		assert.NoError(t, err)
+	t.Run("Unbond validator, should decrease the active validators number", func(t *testing.T) {
+		newVal := val.Clone()
+		newVal.UpdateUnbondingHeight(td.RandHeight())
+		td.store.UpdateValidator(newVal)
 
-		val2, err := td.store.ValidatorByNumber(val.Number())
-		assert.NoError(t, err)
-
-		assert.Equal(t, val1.Hash(), val2.Hash())
 		assert.Equal(t, int32(1), td.store.TotalValidators())
-		assert.True(t, td.store.HasValidator(val.Address()))
+		assert.Equal(t, int32(0), td.store.ActiveValidators())
+	})
+
+	t.Run("Update unbonded validator, should not change the active validators number", func(t *testing.T) {
+		newVal := val.Clone()
+		newVal.UpdateUnbondingHeight(td.RandHeight())
+		td.store.UpdateValidator(newVal)
+
+		assert.Equal(t, int32(1), td.store.TotalValidators())
+		assert.Equal(t, int32(0), td.store.ActiveValidators())
 	})
 }
 

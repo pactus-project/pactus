@@ -38,16 +38,19 @@ func (s *blockchainServer) GetBlockchainInfo(_ context.Context,
 		committeeProtocolVersions[int32(k)] = v
 	}
 
+	stats := s.state.Stats()
+
 	return &pactus.GetBlockchainInfoResponse{
-		LastBlockHeight:           s.state.LastBlockHeight(),
-		LastBlockHash:             s.state.LastBlockHash().String(),
-		TotalAccounts:             s.state.TotalAccounts(),
-		TotalValidators:           s.state.TotalValidators(),
-		TotalPower:                s.state.TotalPower(),
-		CommitteePower:            s.state.CommitteePower(),
-		IsPruned:                  s.state.IsPruned(),
-		PruningHeight:             s.state.PruningHeight(),
-		LastBlockTime:             s.state.LastBlockTime().Unix(),
+		LastBlockHeight:           stats.LastBlockHeight,
+		LastBlockHash:             stats.LastBlockHash.String(),
+		TotalAccounts:             stats.TotalAccounts,
+		TotalValidators:           stats.TotalValidators,
+		ActiveValidators:          stats.ActiveValidators,
+		TotalPower:                stats.TotalPower,
+		CommitteePower:            stats.CommitteePower,
+		IsPruned:                  stats.IsPruned,
+		PruningHeight:             stats.PruningHeight,
+		LastBlockTime:             stats.LastBlockTime.Unix(),
 		CommitteeValidators:       valInfos,
 		CommitteeProtocolVersions: committeeProtocolVersions,
 	}, nil
