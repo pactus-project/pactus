@@ -3,7 +3,6 @@ package grpc
 import (
 	"context"
 	"net"
-	"os"
 	"path/filepath"
 	"testing"
 
@@ -55,10 +54,7 @@ func setup(t *testing.T, conf *Config) *testData {
 	ts := testsuite.NewTestSuite(t)
 
 	// for saving test wallets in temp directory
-	err := os.Chdir(util.TempDirPath())
-	if err != nil {
-		panic(err)
-	}
+	t.Chdir(util.TempDirPath())
 
 	const bufSize = 1024 * 1024
 

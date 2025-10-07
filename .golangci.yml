@@ -60,6 +60,7 @@ linters:
     - unconvert
     - unparam
     - usestdlibvars
+    - usetesting
     - varnamelen
     - wastedassign
     - whitespace
@@ -181,10 +182,6 @@ linters:
           - maintidx
           - nestif
         path: _test.go
-      - linters:
-          - gosmopolitan
-          - misspell
-        path: util/bip39/wordlists/
       - path: (.+)\.go$
         text: 'shadow: declaration of "err" shadows'
       - path: (.+)\.go$
