@@ -4,7 +4,7 @@
   "description": "JavaScript client for interacting with the Pactus blockchain via gRPC",
   "author": "Pactus Development Team",
   "license": "MIT",
-  "homepage": "https://github.com/pactus-project/pactus#readme",
+  "homepage": "https://pactus.org",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pactus-project/pactus.git"

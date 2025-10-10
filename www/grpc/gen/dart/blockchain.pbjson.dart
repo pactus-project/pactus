@@ -259,6 +259,7 @@ const GetBlockchainInfoResponse$json = {
     {'1': 'last_block_hash', '3': 2, '4': 1, '5': 9, '10': 'lastBlockHash'},
     {'1': 'total_accounts', '3': 3, '4': 1, '5': 5, '10': 'totalAccounts'},
     {'1': 'total_validators', '3': 4, '4': 1, '5': 5, '10': 'totalValidators'},
+    {'1': 'active_validators', '3': 12, '4': 1, '5': 5, '10': 'activeValidators'},
     {'1': 'total_power', '3': 5, '4': 1, '5': 3, '10': 'totalPower'},
     {'1': 'committee_power', '3': 6, '4': 1, '5': 3, '10': 'committeePower'},
     {'1': 'committee_validators', '3': 7, '4': 3, '5': 11, '6': '.pactus.ValidatorInfo', '10': 'committeeValidators'},
@@ -285,15 +286,16 @@ final $typed_data.Uint8List getBlockchainInfoResponseDescriptor = $convert.base6
     'ChlHZXRCbG9ja2NoYWluSW5mb1Jlc3BvbnNlEioKEWxhc3RfYmxvY2tfaGVpZ2h0GAEgASgNUg'
     '9sYXN0QmxvY2tIZWlnaHQSJgoPbGFzdF9ibG9ja19oYXNoGAIgASgJUg1sYXN0QmxvY2tIYXNo'
     'EiUKDnRvdGFsX2FjY291bnRzGAMgASgFUg10b3RhbEFjY291bnRzEikKEHRvdGFsX3ZhbGlkYX'
-    'RvcnMYBCABKAVSD3RvdGFsVmFsaWRhdG9ycxIfCgt0b3RhbF9wb3dlchgFIAEoA1IKdG90YWxQ'
-    'b3dlchInCg9jb21taXR0ZWVfcG93ZXIYBiABKANSDmNvbW1pdHRlZVBvd2VyEkgKFGNvbW1pdH'
-    'RlZV92YWxpZGF0b3JzGAcgAygLMhUucGFjdHVzLlZhbGlkYXRvckluZm9SE2NvbW1pdHRlZVZh'
-    'bGlkYXRvcnMSGwoJaXNfcHJ1bmVkGAggASgIUghpc1BydW5lZBIlCg5wcnVuaW5nX2hlaWdodB'
-    'gJIAEoDVINcHJ1bmluZ0hlaWdodBImCg9sYXN0X2Jsb2NrX3RpbWUYCiABKANSDWxhc3RCbG9j'
-    'a1RpbWUSgAEKG2NvbW1pdHRlZV9wcm90b2NvbF92ZXJzaW9ucxgLIAMoCzJALnBhY3R1cy5HZX'
-    'RCbG9ja2NoYWluSW5mb1Jlc3BvbnNlLkNvbW1pdHRlZVByb3RvY29sVmVyc2lvbnNFbnRyeVIZ'
-    'Y29tbWl0dGVlUHJvdG9jb2xWZXJzaW9ucxpMCh5Db21taXR0ZWVQcm90b2NvbFZlcnNpb25zRW'
-    '50cnkSEAoDa2V5GAEgASgFUgNrZXkSFAoFdmFsdWUYAiABKAFSBXZhbHVlOgI4AQ==');
+    'RvcnMYBCABKAVSD3RvdGFsVmFsaWRhdG9ycxIrChFhY3RpdmVfdmFsaWRhdG9ycxgMIAEoBVIQ'
+    'YWN0aXZlVmFsaWRhdG9ycxIfCgt0b3RhbF9wb3dlchgFIAEoA1IKdG90YWxQb3dlchInCg9jb2'
+    '1taXR0ZWVfcG93ZXIYBiABKANSDmNvbW1pdHRlZVBvd2VyEkgKFGNvbW1pdHRlZV92YWxpZGF0'
+    'b3JzGAcgAygLMhUucGFjdHVzLlZhbGlkYXRvckluZm9SE2NvbW1pdHRlZVZhbGlkYXRvcnMSGw'
+    'oJaXNfcHJ1bmVkGAggASgIUghpc1BydW5lZBIlCg5wcnVuaW5nX2hlaWdodBgJIAEoDVINcHJ1'
+    'bmluZ0hlaWdodBImCg9sYXN0X2Jsb2NrX3RpbWUYCiABKANSDWxhc3RCbG9ja1RpbWUSgAEKG2'
+    'NvbW1pdHRlZV9wcm90b2NvbF92ZXJzaW9ucxgLIAMoCzJALnBhY3R1cy5HZXRCbG9ja2NoYWlu'
+    'SW5mb1Jlc3BvbnNlLkNvbW1pdHRlZVByb3RvY29sVmVyc2lvbnNFbnRyeVIZY29tbWl0dGVlUH'
+    'JvdG9jb2xWZXJzaW9ucxpMCh5Db21taXR0ZWVQcm90b2NvbFZlcnNpb25zRW50cnkSEAoDa2V5'
+    'GAEgASgFUgNrZXkSFAoFdmFsdWUYAiABKAFSBXZhbHVlOgI4AQ==');
 
 @$core.Deprecated('Use getConsensusInfoRequestDescriptor instead')
 const GetConsensusInfoRequest$json = {

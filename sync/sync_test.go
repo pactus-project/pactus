@@ -8,6 +8,7 @@ import (
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
 	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
@@ -33,7 +34,6 @@ type testData struct {
 
 	config    *Config
 	state     *state.MockState
-	consMgr   consensus.Manager
 	consMocks []*consensus.MockConsensus
 	network   *network.MockNetwork
 	sync      *synchronizer
@@ -45,7 +45,7 @@ func testConfig() *Config {
 		SessionTimeoutStr:   "1s",
 		BlockPerMessage:     11,
 		MaxSessions:         4,
-		BlockPerSession:     23,
+		BlockPerSession:     27,
 		PruneWindow:         13,
 		Firewall:            firewall.DefaultConfig(),
 		LatestSupportingVer: DefaultConfig().LatestSupportingVer,
@@ -65,14 +65,17 @@ func setup(t *testing.T, config *Config) *testData {
 	valKeys := []*bls.ValidatorKey{ts.RandValKey(), ts.RandValKey()}
 	mockState := state.MockingState(ts)
 
-	consMgr, consMocks := consensus.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
-	consMgr.MoveToNewHeight()
+	consV1Mgr, consMocks := manager.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
+	consV1Mgr.MoveToNewHeight()
+
+	consV2Mgr, _ := manager.MockingManager(ts, mockState, []*bls.ValidatorKey{valKeys[0], valKeys[1]})
+	consV2Mgr.MoveToNewHeight()
 
 	mockNetwork := network.MockingNetwork(ts, ts.RandPeerID())
 	broadcastPipe := pipeline.MockingPipeline[message.Message]()
 
 	syncInst, err := NewSynchronizer(config, valKeys,
-		mockState, consMgr, mockNetwork, broadcastPipe, mockNetwork.EventPipe)
+		mockState, consV1Mgr, consV2Mgr, mockNetwork, broadcastPipe, mockNetwork.EventPipe)
 	assert.NoError(t, err)
 	sync := syncInst.(*synchronizer)
 
@@ -80,7 +83,6 @@ func setup(t *testing.T, config *Config) *testData {
 		TestSuite: ts,
 		config:    config,
 		state:     mockState,
-		consMgr:   consMgr,
 		consMocks: consMocks,
 		network:   mockNetwork,
 		sync:      sync,
@@ -340,7 +342,7 @@ func TestDownload(t *testing.T) {
 
 		pid := td.addPeer(t, status.StatusConnected, service.New(service.None))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		baMsg := message.NewBlockAnnounceMessage(blk, cert)
+		baMsg := message.NewBlockAnnounceMessage(blk, cert, nil)
 		td.receivingNewMessage(td.sync, baMsg, pid)
 
 		td.shouldNotPublishAnyMessage(t)
@@ -352,7 +354,7 @@ func TestDownload(t *testing.T) {
 
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.None))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		baMsg := message.NewBlockAnnounceMessage(blk, cert)
+		baMsg := message.NewBlockAnnounceMessage(blk, cert, nil)
 		td.receivingNewMessage(td.sync, baMsg, pid)
 
 		td.shouldNotPublishAnyMessage(t)
@@ -364,7 +366,7 @@ func TestDownload(t *testing.T) {
 
 		pid := td.addPeer(t, status.StatusKnown, service.New(service.FullNode))
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		baMsg := message.NewBlockAnnounceMessage(blk, cert)
+		baMsg := message.NewBlockAnnounceMessage(blk, cert, nil)
 		td.receivingNewMessage(td.sync, baMsg, pid)
 
 		td.shouldPublishMessageWithThisType(t, message.TypeBlocksRequest)
@@ -390,7 +392,7 @@ func TestBroadcastBlockAnnounce(t *testing.T) {
 
 	t.Run("Should announce the block", func(t *testing.T) {
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		msg := message.NewBlockAnnounceMessage(blk, cert)
+		msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 
 		td.sync.broadcast(msg)
 
@@ -399,7 +401,7 @@ func TestBroadcastBlockAnnounce(t *testing.T) {
 
 	t.Run("Should NOT announce the block", func(t *testing.T) {
 		blk, cert := td.GenerateTestBlock(td.RandHeight())
-		msg := message.NewBlockAnnounceMessage(blk, cert)
+		msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 
 		td.sync.cache.AddBlock(blk)
 		td.sync.broadcast(msg)

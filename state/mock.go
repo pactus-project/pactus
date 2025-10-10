@@ -56,11 +56,15 @@ func MockingState(ts *testsuite.TestSuite) *MockState {
 
 func (m *MockState) CommitTestBlocks(num int) {
 	for i := 0; i < num; i++ {
-		height := m.LastBlockHeight() + 1
+		height := m.TestStore.LastHeight + 1
 		blk, cert := m.ts.GenerateTestBlock(height)
 
 		m.TestStore.SaveBlock(blk, cert)
 	}
+}
+
+func (m *MockState) Genesis() *genesis.Genesis {
+	return m.TestGenesis
 }
 
 func (m *MockState) LastBlockHeight() uint32 {
@@ -68,10 +72,6 @@ func (m *MockState) LastBlockHeight() uint32 {
 	defer m.lk.RUnlock()
 
 	return m.TestStore.LastHeight
-}
-
-func (m *MockState) Genesis() *genesis.Genesis {
-	return m.TestGenesis
 }
 
 func (m *MockState) LastBlockHash() hash.Hash {
@@ -92,7 +92,7 @@ func (m *MockState) LastBlockTime() time.Time {
 	return m.Genesis().GenesisTime()
 }
 
-func (m *MockState) LastCertificate() *certificate.BlockCertificate {
+func (m *MockState) LastCertificate() *certificate.Certificate {
 	m.lk.RLock()
 	defer m.lk.RUnlock()
 
@@ -103,7 +103,7 @@ func (*MockState) UpdateLastCertificate(_ *vote.Vote) error {
 	return nil
 }
 
-func (m *MockState) CommitBlock(blk *block.Block, cert *certificate.BlockCertificate) error {
+func (m *MockState) CommitBlock(blk *block.Block, cert *certificate.Certificate) error {
 	m.lk.Lock()
 	defer m.lk.Unlock()
 
@@ -142,29 +142,6 @@ func (m *MockState) IsProposer(addr crypto.Address, round int16) bool {
 
 func (m *MockState) IsValidator(addr crypto.Address) bool {
 	return m.TestStore.HasValidator(addr)
-}
-
-func (m *MockState) TotalValidators() int32 {
-	return m.TestStore.TotalAccounts()
-}
-
-func (m *MockState) TotalAccounts() int32 {
-	return m.TestStore.TotalAccounts()
-}
-
-func (m *MockState) TotalPower() int64 {
-	power := int64(0)
-	m.TestStore.IterateValidators(func(val *validator.Validator) bool {
-		power += val.Power()
-
-		return false
-	})
-
-	return power
-}
-
-func (m *MockState) CommitteePower() int64 {
-	return m.TestCommittee.TotalPower()
 }
 
 func (m *MockState) CommittedBlock(height uint32) *store.CommittedBlock {
@@ -259,18 +236,25 @@ func (m *MockState) AllPendingTxs() []*tx.Tx {
 	return m.TestPool.Txs
 }
 
-func (m *MockState) IsPruned() bool {
-	return m.TestStore.IsPruned()
-}
-
-func (m *MockState) PruningHeight() uint32 {
-	return m.TestStore.PruningHeight()
-}
-
 func (m *MockState) UpdateValidatorProtocolVersion(addr crypto.Address, ver protocol.Version) {
 	m.TestStore.UpdateValidatorProtocolVersion(addr, ver)
 }
 
 func (m *MockState) CommitteeProtocolVersions() map[protocol.Version]float64 {
 	return m.TestCommittee.ProtocolVersions()
+}
+
+func (m *MockState) Stats() *Stats {
+	return &Stats{
+		LastBlockHeight:  m.LastBlockHeight(),
+		LastBlockHash:    m.LastBlockHash(),
+		LastBlockTime:    m.LastBlockTime(),
+		TotalPower:       m.TestCommittee.TotalPower(),
+		CommitteePower:   m.TestCommittee.TotalPower(),
+		TotalAccounts:    m.TestStore.TotalAccounts(),
+		TotalValidators:  m.TestStore.TotalValidators(),
+		ActiveValidators: m.TestStore.ActiveValidators(),
+		IsPruned:         m.TestStore.IsPruned(),
+		PruningHeight:    m.TestStore.PruningHeight(),
+	}
 }

@@ -8,16 +8,16 @@ import (
 )
 
 type BlocksResponseMessage struct {
-	ResponseCode    ResponseCode                  `cbor:"1,keyasint"`
-	SessionID       int                           `cbor:"2,keyasint"`
-	From            uint32                        `cbor:"3,keyasint"`
-	BlocksData      [][]byte                      `cbor:"4,keyasint"`
-	LastCertificate *certificate.BlockCertificate `cbor:"5,keyasint"`
-	Reason          string                        `cbor:"6,keyasint"`
+	ResponseCode    ResponseCode             `cbor:"1,keyasint"`
+	SessionID       int                      `cbor:"2,keyasint"`
+	From            uint32                   `cbor:"3,keyasint"`
+	BlocksData      [][]byte                 `cbor:"4,keyasint"`
+	LastCertificate *certificate.Certificate `cbor:"5,keyasint"`
+	Reason          string                   `cbor:"6,keyasint"`
 }
 
 func NewBlocksResponseMessage(code ResponseCode, reason string, sid int, from uint32,
-	blocksData [][]byte, lastCert *certificate.BlockCertificate,
+	blocksData [][]byte, lastCert *certificate.Certificate,
 ) *BlocksResponseMessage {
 	return &BlocksResponseMessage{
 		ResponseCode:    code,

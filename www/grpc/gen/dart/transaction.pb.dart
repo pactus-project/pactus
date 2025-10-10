@@ -663,7 +663,7 @@ class GetRawBondTransactionRequest extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   void clearStake() => $_clearField(4);
 
-  /// The public key of the validator.
+  /// The public key of the validator. Optional, but required when registering a new validator.
   @$pb.TagNumber(5)
   $core.String get publicKey => $_getSZ(4);
   @$pb.TagNumber(5)

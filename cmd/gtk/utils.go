@@ -3,6 +3,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -38,6 +39,7 @@ func showQuestionDialog(parent gtk.IWindow, msg string) bool {
 		gtk.DIALOG_MODAL, gtk.MESSAGE_QUESTION, gtk.BUTTONS_YES_NO, "%s", msg)
 	updateMessageDialog(dlg)
 	res := runDialog(&dlg.Dialog)
+
 	return res == gtk.RESPONSE_YES
 }
 
@@ -267,7 +269,7 @@ func openURLInBrowser(address string) error {
 	}
 	args = append(args, address)
 
-	return exec.Command(cmd, args...).Start()
+	return exec.CommandContext(context.Background(), cmd, args...).Start()
 }
 
 func buildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {

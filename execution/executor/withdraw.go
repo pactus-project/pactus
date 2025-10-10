@@ -44,7 +44,7 @@ func (e *WithdrawExecutor) Check(_ bool) error {
 		return ErrInsufficientFunds
 	}
 
-	if e.sender.UnbondingHeight() == 0 {
+	if !e.sender.IsUnbonded() {
 		return ErrValidatorBonded
 	}
 

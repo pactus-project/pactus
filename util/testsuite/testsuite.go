@@ -163,9 +163,9 @@ func (ts *TestSuite) RandRound() int16 {
 }
 
 // RandAmount returns a random amount between [1e9, max).
-// If max is not set, it defaults to 1000e9.
+// If max is not set, it defaults to 100e9.
 func (ts *TestSuite) RandAmount(max ...amount.Amount) amount.Amount {
-	maxAmt := amount.Amount(1000e9) // default max amount
+	maxAmt := amount.Amount(100e9) // default max amount
 	if len(max) > 0 {
 		maxAmt = max[0]
 	}
@@ -194,10 +194,7 @@ func (ts *TestSuite) RandFee(max ...amount.Amount) amount.Amount {
 // RandBytes returns a slice of random bytes of the given length.
 func (ts *TestSuite) RandBytes(length int) []byte {
 	buf := make([]byte, length)
-	_, err := ts.Rand.Read(buf)
-	if err != nil {
-		panic(err)
-	}
+	_, _ = ts.Rand.Read(buf)
 
 	return buf
 }
@@ -231,21 +228,26 @@ func (ts *TestSuite) RandString(length int) string {
 
 // DecodingHex decodes the input string from hexadecimal format and returns the resulting byte slice.
 func (*TestSuite) DecodingHex(in string) []byte {
-	d, err := hex.DecodeString(in)
-	if err != nil {
-		panic(err)
-	}
+	d, _ := hex.DecodeString(in)
 
 	return d
 }
 
+func (ts *TestSuite) RandKeyPair() (crypto.PublicKey, crypto.PrivateKey) {
+	switch ts.RandInt(2) {
+	case 0:
+		return ts.RandBLSKeyPair()
+	case 1:
+		return ts.RandEd25519KeyPair()
+	}
+
+	// Impossible
+	return nil, nil
+}
+
 // RandBLSKeyPair generates a random BLS key pair for testing purposes.
 func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
-	buf := make([]byte, bls.PrivateKeySize)
-	_, err := ts.Rand.Read(buf)
-	if err != nil {
-		panic(err)
-	}
+	buf := ts.RandBytes(bls.PrivateKeySize)
 	prv, _ := bls.PrivateKeyFromBytes(buf)
 	pub := prv.PublicKeyNative()
 
@@ -254,11 +256,7 @@ func (ts *TestSuite) RandBLSKeyPair() (*bls.PublicKey, *bls.PrivateKey) {
 
 // RandEd25519KeyPair generates a random Ed25519 key pair for testing purposes.
 func (ts *TestSuite) RandEd25519KeyPair() (*ed25519.PublicKey, *ed25519.PrivateKey) {
-	buf := make([]byte, ed25519.PrivateKeySize)
-	_, err := ts.Rand.Read(buf)
-	if err != nil {
-		panic(err)
-	}
+	buf := ts.RandBytes(ed25519.PrivateKeySize)
 	prv, _ := ed25519.PrivateKeyFromBytes(buf)
 	pub := prv.PublicKeyNative()
 
@@ -344,13 +342,22 @@ func (ts *TestSuite) RandMultiAddress() string {
 type AccountMaker struct {
 	Number  int32
 	Balance amount.Amount
+	Address crypto.Address
 }
 
 // NewAccountMaker creates a new instance of AccountMaker with random values.
 func (ts *TestSuite) NewAccountMaker() *AccountMaker {
 	return &AccountMaker{
 		Number:  ts.RandInt32NonZero(100000),
-		Balance: ts.RandAmount(100e9),
+		Balance: ts.RandAmountRange(100e9, 1000e9),
+		Address: ts.RandAccAddress(),
+	}
+}
+
+// AccountWithAddress sets the address for the generated test account.
+func AccountWithAddress(address crypto.Address) func(*AccountMaker) {
+	return func(am *AccountMaker) {
+		am.Address = address
 	}
 }
 
@@ -377,7 +384,7 @@ func (ts *TestSuite) GenerateTestAccount(options ...func(*AccountMaker)) (*accou
 	acc := account.NewAccount(amk.Number)
 	acc.AddToBalance(amk.Balance)
 
-	return acc, ts.RandAccAddress()
+	return acc, amk.Address
 }
 
 type ValidatorMaker struct {
@@ -390,7 +397,7 @@ type ValidatorMaker struct {
 func (ts *TestSuite) NewValidatorMaker() *ValidatorMaker {
 	return &ValidatorMaker{
 		Number:    ts.RandInt32(100000),
-		Stake:     ts.RandAmount(100e9),
+		Stake:     ts.RandAmountRange(100e9, 1000e9),
 		PublicKey: ts.RandValKey().PublicKey(),
 	}
 }
@@ -437,18 +444,20 @@ type BlockMaker struct {
 	StateHash hash.Hash
 	PrevHash  hash.Hash
 	Seed      sortition.VerifiableSeed
-	PrevCert  *certificate.BlockCertificate
+	PrevCert  *certificate.Certificate
 }
 
 // NewBlockMaker creates a new BlockMaker instance.
 func (ts *TestSuite) NewBlockMaker() *BlockMaker {
 	txs := block.NewTxs()
+	tx0 := ts.GenerateTestSubsidyTx()
 	tx1 := ts.GenerateTestTransferTx()
 	tx2 := ts.GenerateTestSortitionTx()
 	tx3 := ts.GenerateTestBondTx()
 	tx4 := ts.GenerateTestUnbondTx()
 	tx5 := ts.GenerateTestWithdrawTx()
 
+	txs.Append(tx0)
 	txs.Append(tx1)
 	txs.Append(tx2)
 	txs.Append(tx3)
@@ -456,7 +465,7 @@ func (ts *TestSuite) NewBlockMaker() *BlockMaker {
 	txs.Append(tx5)
 
 	return &BlockMaker{
-		Version:  1,
+		Version:  protocol.ProtocolVersion2,
 		Txs:      txs,
 		Proposer: ts.RandValAddress(),
 		Time:     time.Now(),
@@ -509,7 +518,7 @@ func BlockWithSeed(seed sortition.VerifiableSeed) func(*BlockMaker) {
 }
 
 // BlockWithPrevCert sets previous block certificate to the block.
-func BlockWithPrevCert(cert *certificate.BlockCertificate) func(*BlockMaker) {
+func BlockWithPrevCert(cert *certificate.Certificate) func(*BlockMaker) {
 	return func(bm *BlockMaker) {
 		bm.PrevCert = cert
 	}
@@ -524,10 +533,10 @@ func BlockWithTransactions(txs block.Txs) func(*BlockMaker) {
 
 // GenerateTestBlock generates a block for testing purposes with optional configuration.
 func (ts *TestSuite) GenerateTestBlock(height uint32, options ...func(*BlockMaker)) (
-	*block.Block, *certificate.BlockCertificate,
+	*block.Block, *certificate.Certificate,
 ) {
 	bmk := ts.NewBlockMaker()
-	bmk.PrevCert = ts.GenerateTestBlockCertificate(height - 1)
+	bmk.PrevCert = ts.GenerateTestCertificate(height - 1)
 
 	if height == 1 {
 		bmk.PrevCert = nil
@@ -541,38 +550,20 @@ func (ts *TestSuite) GenerateTestBlock(height uint32, options ...func(*BlockMake
 	header := block.NewHeader(bmk.Version, bmk.Time, bmk.PrevHash, bmk.PrevHash, bmk.Seed, bmk.Proposer)
 	blk := block.NewBlock(header, bmk.PrevCert, bmk.Txs)
 
-	blockCert := ts.GenerateTestBlockCertificate(height)
+	blockCert := ts.GenerateTestCertificate(height)
 
 	return blk, blockCert
 }
 
-// GenerateTestBlockCertificate generates a block certificate for testing purposes.
-func (ts *TestSuite) GenerateTestBlockCertificate(height uint32) *certificate.BlockCertificate {
+// GenerateTestCertificate generates a block certificate for testing purposes.
+func (ts *TestSuite) GenerateTestCertificate(height uint32) *certificate.Certificate {
 	sig := ts.RandBLSSignature()
 
-	cert := certificate.NewBlockCertificate(height, ts.RandRound())
+	cert := certificate.NewCertificate(height, ts.RandRound())
 
-	committers := ts.RandSlice(6)
-	absentees := []int32{committers[5]}
+	committers := ts.RandSlice(4)
+	absentees := []int32{committers[3]}
 	cert.SetSignature(committers, absentees, sig)
-
-	return cert
-}
-
-// GenerateTestPrepareCertificate generates a prepare certificate for testing purposes.
-func (ts *TestSuite) GenerateTestPrepareCertificate(height uint32) *certificate.VoteCertificate {
-	sig := ts.RandBLSSignature()
-
-	cert := certificate.NewVoteCertificate(height, ts.RandRound())
-
-	committers := ts.RandSlice(6)
-	absentees := []int32{committers[5]}
-	cert.SetSignature(committers, absentees, sig)
-
-	err := cert.BasicCheck()
-	if err != nil {
-		panic(err)
-	}
 
 	return cert
 }
@@ -613,11 +604,12 @@ func (ts *TestSuite) GenerateTestProposal(height uint32, round int16,
 }
 
 type TransactionMaker struct {
-	LockTime  uint32
-	Amount    amount.Amount
-	Fee       amount.Amount
-	Signer    crypto.PrivateKey
-	ValPubKey *bls.PublicKey
+	LockTime   uint32
+	Amount     amount.Amount
+	Fee        amount.Amount
+	Signer     crypto.PrivateKey
+	ValPubKey  *bls.PublicKey
+	Recipients []payload.BatchRecipient
 }
 
 func (tm *TransactionMaker) SignerAccountAddress() crypto.Address {
@@ -638,12 +630,23 @@ func (tm *TransactionMaker) SignerValidatorAddress() crypto.Address {
 
 // NewTransactionMaker creates a new TransactionMaker instance.
 func (ts *TestSuite) NewTransactionMaker() *TransactionMaker {
+	numOfRecipients := ts.RandInt(6) + 2
+	recipients := make([]payload.BatchRecipient, numOfRecipients)
+
+	for i := 0; i < numOfRecipients; i++ {
+		recipients[i] = payload.BatchRecipient{
+			To:     ts.RandAccAddress(),
+			Amount: ts.RandAmount(10e9),
+		}
+	}
+
 	return &TransactionMaker{
-		LockTime:  ts.RandHeight(),
-		Amount:    ts.RandAmount(),
-		Fee:       ts.RandFee(),
-		Signer:    nil,
-		ValPubKey: nil,
+		LockTime:   ts.RandHeight(),
+		Amount:     ts.RandAmount(),
+		Fee:        ts.RandFee(),
+		Signer:     nil,
+		ValPubKey:  nil,
+		Recipients: recipients,
 	}
 }
 
@@ -668,15 +671,8 @@ func TransactionWithFee(fee amount.Amount) func(*TransactionMaker) {
 	}
 }
 
-// TransactionWithBLSSigner sets the BLS signer to sign the test transaction.
-func TransactionWithBLSSigner(signer *bls.PrivateKey) func(*TransactionMaker) {
-	return func(tm *TransactionMaker) {
-		tm.Signer = signer
-	}
-}
-
-// TransactionWithEd25519Signer sets the Ed25519 signer to sign the test transaction.
-func TransactionWithEd25519Signer(signer *ed25519.PrivateKey) func(*TransactionMaker) {
+// TransactionWithSigner sets the BLS signer to sign the test transaction.
+func TransactionWithSigner(signer crypto.PrivateKey) func(*TransactionMaker) {
 	return func(tm *TransactionMaker) {
 		tm.Signer = signer
 	}
@@ -686,6 +682,13 @@ func TransactionWithEd25519Signer(signer *ed25519.PrivateKey) func(*TransactionM
 func TransactionWithValidatorPublicKey(pubKey *bls.PublicKey) func(*TransactionMaker) {
 	return func(tm *TransactionMaker) {
 		tm.ValPubKey = pubKey
+	}
+}
+
+// TransactionWithRecipients sets the recipients for the Bath Transfer transaction.
+func TransactionWithRecipients(recipients []payload.BatchRecipient) func(*TransactionMaker) {
+	return func(tm *TransactionMaker) {
+		tm.Recipients = recipients
 	}
 }
 
@@ -744,11 +747,23 @@ func (ts *TestSuite) GenerateTestBatchTransferTx(options ...func(*TransactionMak
 		}
 	}
 
-	sender := tmk.SignerAccountAddress()
-	trx := tx.NewBatchTransferTx(tmk.LockTime, sender, recipients, tmk.Fee)
+	trx := tx.NewBatchTransferTx(tmk.LockTime, tmk.SignerAccountAddress(), tmk.Recipients, tmk.Fee)
 	ts.HelperSignTransaction(tmk.Signer, trx)
 
 	return trx
+}
+
+// GenerateTestSubsidyTx creates a subsidy transaction for testing.
+func (ts *TestSuite) GenerateTestSubsidyTx(options ...func(tm *TransactionMaker)) *tx.Tx {
+	tmk := ts.NewTransactionMaker()
+	for _, opt := range options {
+		opt(tmk)
+	}
+	if tmk.LockTime == 0 {
+		tmk.LockTime = ts.RandHeight()
+	}
+
+	return tx.NewSubsidyTx(tmk.LockTime, tmk.Recipients)
 }
 
 // GenerateTestBondTx generates a bond transaction for testing purposes.
@@ -869,9 +884,6 @@ func (ts *TestSuite) GenerateTestPrepareVote(height uint32, round int16) (*vote.
 // GenerateTestCommittee generates a committee for testing purposes.
 // All committee members have the same power.
 func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls.ValidatorKey) {
-	if num < 4 {
-		panic("the number of committee members must be at least 4")
-	}
 	valKeys := make([]*bls.ValidatorKey, num)
 	vals := make([]*validator.Validator, num)
 	for index := int32(0); index < int32(num); index++ {
@@ -896,10 +908,6 @@ func (ts *TestSuite) GenerateTestCommittee(num int) (committee.Committee, []*bls
 func (*TestSuite) HelperSignVote(valKey *bls.ValidatorKey, v *vote.Vote) {
 	sig := valKey.Sign(v.SignBytes())
 	v.SetSignature(sig)
-
-	if err := v.BasicCheck(); err != nil {
-		panic(err)
-	}
 }
 
 func (*TestSuite) HelperSignProposal(valKey *bls.ValidatorKey, p *proposal.Proposal) {

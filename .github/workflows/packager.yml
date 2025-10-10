@@ -73,14 +73,26 @@ jobs:
           name: package-python-jsonrpc
           path: packages/python/pactus-jsonrpc
 
+      - name: Upload `package-rust-grpc` package
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-rust-grpc
+          path: packages/rust/pactus-grpc
+
+      - name: Upload `package-rust-jsonrpc` package
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-rust-jsonrpc
+          path: packages/rust/pactus-jsonrpc
+
   publish-npm-grpc:
     name: Publish pactus-grpc package to npm
     needs: packager
     runs-on: ubuntu-latest
 
     environment:
-      name: npm
-      url: https://www.npmjs.com/package/pactus-grpc
+      name: npmjs.com
+      url: https://npmjs.com/package/pactus-grpc
 
     steps:
       - name: Download JavaScript Package
@@ -105,8 +117,8 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: npm
-      url: https://www.npmjs.com/package/pactus-jsonrpc
+      name: npmjs.com
+      url: https://npmjs.com/package/pactus-jsonrpc
 
     steps:
       - name: Download JavaScript Package
@@ -131,7 +143,7 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: pypi
+      name: pypi.org
       url: https://pypi.org/p/pactus-grpc
 
     steps:
@@ -159,7 +171,7 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: pypi
+      name: pypi.org
       url: https://pypi.org/p/pactus-jsonrpc
 
     steps:
@@ -180,3 +192,48 @@ jobs:
 
       - name: Publish distribution to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+
+  publish-crates-grpc:
+    name: Publish pactus-grpc package to crates.io
+    needs: packager
+    runs-on: ubuntu-latest
+    container:
+      image: rust:1.87
+
+    environment:
+      name: crates.io
+      url: https://crates.io/crates/pactus-grpc
+
+    steps:
+      - name: Download Rust Package
+        uses: actions/download-artifact@v4
+        with:
+          name: package-rust-grpc
+
+      - name: Publish to crates.io
+        run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  publish-crates-jsonrpc:
+    name: Publish pactus-jsonrpc package to crates.io
+    needs: packager
+    runs-on: ubuntu-latest
+    container:
+      image: rust:1.87
+
+    environment:
+      name: crates.io
+      url: https://crates.io/crates/pactus-jsonrpc
+
+    steps:
+      - name: Download Rust Package
+        uses: actions/download-artifact@v4
+        with:
+          name: package-rust-jsonrpc
+
+      - name: Publish to crates.io
+        run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+

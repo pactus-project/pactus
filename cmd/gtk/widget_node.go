@@ -28,7 +28,7 @@ type widgetNode struct {
 	labelLastBlockHeight *gtk.Label
 	labelBlocksLeft      *gtk.Label
 	labelCommitteeSize   *gtk.Label
-	labelValidatorNum    *gtk.Label
+	labelActiveValidator *gtk.Label
 	labelInCommittee     *gtk.Label
 	labelCommitteeStake  *gtk.Label
 	labelTotalStake      *gtk.Label
@@ -58,7 +58,7 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 	labelNetwork.SetText(model.node.State().Genesis().ChainType().String())
 	labelNetworkID.SetText(model.node.Network().SelfID().String())
 	labelMoniker.SetText(model.node.Sync().Moniker())
-	labelIsPrune.SetText(strconv.FormatBool(model.node.State().IsPruned()))
+	labelIsPrune.SetText(strconv.FormatBool(model.node.State().Stats().IsPruned))
 
 	wdgNode := &widgetNode{
 		Box:                  box,
@@ -70,7 +70,7 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 		labelBlocksLeft:      getLabelObj(builder, "id_label_blocks_left"),
 		progressBarSynced:    getProgressBarObj(builder, "id_progress_synced"),
 		labelCommitteeSize:   getLabelObj(builder, "id_label_committee_size"),
-		labelValidatorNum:    getLabelObj(builder, "id_label_num_validators"),
+		labelActiveValidator: getLabelObj(builder, "id_label_active_validators"),
 		labelInCommittee:     getLabelObj(builder, "id_label_in_committee"),
 		labelCommitteeStake:  getLabelObj(builder, "id_label_committee_power"),
 		labelTotalStake:      getLabelObj(builder, "id_label_total_power"),
@@ -125,10 +125,12 @@ func (wn *widgetNode) timeout1() bool {
 
 func (wn *widgetNode) timeout10() bool {
 	go func() {
+		stats := wn.model.node.State().Stats()
+
 		committeeSize := wn.model.node.State().Params().CommitteeSize
-		committeePower := wn.model.node.State().CommitteePower()
-		totalPower := wn.model.node.State().TotalPower()
-		validatorNum := wn.model.node.State().TotalValidators()
+		committeePower := stats.CommitteePower
+		totalPower := stats.TotalPower
+		activeValidators := stats.ActiveValidators
 		numConnections := fmt.Sprintf("%v (Inbound: %v, Outbound %v)",
 			wn.model.node.Network().NumConnectedPeers(),
 			wn.model.node.Network().NumInbound(),
@@ -165,7 +167,7 @@ func (wn *widgetNode) timeout10() bool {
 			}
 
 			wn.labelCommitteeSize.SetText(fmt.Sprintf("%v", committeeSize))
-			wn.labelValidatorNum.SetText(fmt.Sprintf("%v", validatorNum))
+			wn.labelActiveValidator.SetText(fmt.Sprintf("%v", activeValidators))
 			wn.labelCommitteeStake.SetText(amount.Amount(committeePower).String())
 			wn.labelTotalStake.SetText(amount.Amount(totalPower).String())
 			wn.labelInCommittee.SetText(isInCommittee)

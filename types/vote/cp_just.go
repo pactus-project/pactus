@@ -65,29 +65,36 @@ func makeJust(t JustType) Just {
 }
 
 type JustInitNo struct {
-	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
+	QCert *certificate.Certificate `cbor:"1,keyasint"`
 }
+
 type JustInitYes struct {
 	//
 }
 
 type JustPreVoteSoft struct {
-	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
+	QCert *certificate.Certificate `cbor:"1,keyasint"`
 }
 
 type JustPreVoteHard struct {
-	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
+	QCert *certificate.Certificate `cbor:"1,keyasint"`
 }
 type JustMainVoteConflict struct {
 	JustNo  Just
 	JustYes Just
 }
+
+type JustMainVoteConflictV2 struct {
+	Just1 Just
+	Just2 Just
+}
+
 type JustMainVoteNoConflict struct {
-	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
+	QCert *certificate.Certificate `cbor:"1,keyasint"`
 }
 
 type JustDecided struct {
-	QCert *certificate.VoteCertificate `cbor:"1,keyasint"`
+	QCert *certificate.Certificate `cbor:"1,keyasint"`
 }
 
 func (*JustInitNo) Type() JustType {
@@ -118,7 +125,12 @@ func (*JustDecided) Type() JustType {
 	return JustTypeDecided
 }
 
-func (*JustInitNo) BasicCheck() error {
+func (j *JustInitNo) BasicCheck() error {
+	err := j.QCert.BasicCheck()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

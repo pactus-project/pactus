@@ -75,17 +75,17 @@ func LoadOrNewState(
 	state.logger = logger.NewSubLogger("_state", state)
 	state.store = store
 
-	// Check if the number of accounts is greater than the genesis time;
-	// this indicates we are not at the genesis height anymore.
-	// TODO: We can check the LastCertificate is nil for genesis height.
-	if store.TotalAccounts() > int32(len(genDoc.Accounts())) {
-		err := state.tryLoadLastInfo()
+	// If there is no certificate, we are at the genesis height.
+	// Only the genesis block has no certificate.
+	if store.LastCertificate() == nil {
+		// Initialize the state at genesis.
+		err := state.makeGenesisState(genDoc)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		// We are at the genesis height.
-		err := state.makeGenesisState(genDoc)
+		// Otherwise, try to restore the last known state.
+		err := state.tryLoadLastInfo()
 		if err != nil {
 			return nil, err
 		}
@@ -115,7 +115,7 @@ func LoadOrNewState(
 		// This code decodes the block certificate from the block data
 		// without decoding the header and transactions.
 		r := bytes.NewReader(cBlk.Data[138:]) // Block header is 138 bytes
-		cert := new(certificate.BlockCertificate)
+		cert := new(certificate.Certificate)
 		err = cert.Decode(r)
 		if err != nil {
 			return nil, err
@@ -192,25 +192,13 @@ func (st *state) makeGenesisState(genDoc *genesis.Genesis) error {
 }
 
 func (st *state) loadMerkels() {
-	totalAccount := st.store.TotalAccounts()
 	st.store.IterateAccounts(func(_ crypto.Address, acc *account.Account) bool {
-		// Let's keep this check, even we have tested it
-		if acc.Number() >= totalAccount {
-			panic(fmt.Sprintf(
-				"Account number is out of range: %v >= %v", acc.Number(), totalAccount))
-		}
 		st.accountMerkle.SetHash(acc.Number(), acc.Hash())
 
 		return false
 	})
 
-	totalValidator := st.store.TotalValidators()
 	st.store.IterateValidators(func(val *validator.Validator) bool {
-		// Let's keep this check, even we have tested it
-		if val.Number() >= totalValidator {
-			panic(fmt.Sprintf(
-				"Validator number is out of range: %v >= %v", val.Number(), totalValidator))
-		}
 		st.validatorMerkle.SetHash(val.Number(), val.Hash())
 
 		return false
@@ -272,7 +260,7 @@ func (st *state) LastBlockTime() time.Time {
 	return st.lastInfo.BlockTime()
 }
 
-func (st *state) LastCertificate() *certificate.BlockCertificate {
+func (st *state) LastCertificate() *certificate.Certificate {
 	st.lk.RLock()
 	defer st.lk.RUnlock()
 
@@ -320,9 +308,7 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 }
 
 func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amount.Amount) *tx.Tx {
-	// TODO: simplify this code after enabling the split fork
 	lockTime := st.lastInfo.BlockHeight() + 1
-	legacySubsidyTx := tx.NewSubsidyTxLegacy(lockTime, rewardAddr, st.params.BlockReward+accumulatedFee)
 
 	addressIndex := int(lockTime) % len(st.params.FoundationAddress)
 	foundationAddress := st.params.FoundationAddress[addressIndex]
@@ -336,19 +322,8 @@ func (st *state) createSubsidyTx(rewardAddr crypto.Address, accumulatedFee amoun
 			Amount: st.params.BlockReward - st.params.FoundationReward + accumulatedFee,
 		},
 	}
-	newSubsidyTx := tx.NewSubsidyTx(lockTime, recipients)
 
-	if st.params.BlockVersion >= protocol.ProtocolVersion2 {
-		return newSubsidyTx
-	}
-
-	if st.committee.SupportProtocolVersion(protocol.ProtocolVersion2) {
-		st.params.BlockVersion = protocol.ProtocolVersion2
-
-		return newSubsidyTx
-	}
-
-	return legacySubsidyTx
+	return tx.NewSubsidyTx(lockTime, recipients)
 }
 
 func (st *state) ProposeBlock(valKey *bls.ValidatorKey, rewardAddr crypto.Address) (*block.Block, error) {
@@ -413,7 +388,7 @@ func (st *state) ValidateBlock(blk *block.Block, round int16) error {
 	return st.executeBlock(blk, sb, true)
 }
 
-func (st *state) CommitBlock(blk *block.Block, cert *certificate.BlockCertificate) error {
+func (st *state) CommitBlock(blk *block.Block, cert *certificate.Certificate) error {
 	st.lk.Lock()
 	defer st.lk.Unlock()
 
@@ -522,7 +497,7 @@ func (st *state) evaluateSortition() bool {
 			continue
 		}
 
-		if val.UnbondingHeight() > 0 {
+		if val.IsUnbonded() {
 			// we have Unbonded
 			continue
 		}
@@ -616,20 +591,6 @@ func (st *state) validateBlockTime(blockTime time.Time) error {
 	return nil
 }
 
-func (st *state) TotalPower() int64 {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
-
-	return st.totalPower
-}
-
-func (st *state) CommitteePower() int64 {
-	st.lk.RLock()
-	defer st.lk.RUnlock()
-
-	return st.committee.TotalPower()
-}
-
 func (st *state) proposeNextBlockTime() time.Time {
 	timestamp := st.lastInfo.BlockTime().Add(st.params.BlockInterval())
 
@@ -647,14 +608,6 @@ func (st *state) CommitteeValidators() []*validator.Validator {
 	defer st.lk.RUnlock()
 
 	return st.committee.Validators()
-}
-
-func (st *state) TotalAccounts() int32 {
-	return st.store.TotalAccounts()
-}
-
-func (st *state) TotalValidators() int32 {
-	return st.store.TotalValidators()
 }
 
 func (st *state) IsInCommittee(addr crypto.Address) bool {
@@ -676,10 +629,6 @@ func (st *state) IsProposer(addr crypto.Address, round int16) bool {
 	defer st.lk.RUnlock()
 
 	return st.committee.IsProposer(addr, round)
-}
-
-func (st *state) IsValidator(addr crypto.Address) bool {
-	return st.store.HasValidator(addr)
 }
 
 func (st *state) CommittedBlock(height uint32) *store.CommittedBlock {
@@ -783,14 +732,6 @@ func (st *state) AllPendingTxs() []*tx.Tx {
 	return st.txPool.AllPendingTxs()
 }
 
-func (st *state) IsPruned() bool {
-	return st.store.IsPruned()
-}
-
-func (st *state) PruningHeight() uint32 {
-	return st.store.PruningHeight()
-}
-
 func (st *state) publishEvent(msg any) {
 	st.eventPipe.Send(msg)
 }
@@ -804,4 +745,22 @@ func (st *state) CommitteeProtocolVersions() map[protocol.Version]float64 {
 	defer st.lk.RUnlock()
 
 	return st.committee.ProtocolVersions()
+}
+
+func (st *state) Stats() *Stats {
+	st.lk.RLock()
+	defer st.lk.RUnlock()
+
+	return &Stats{
+		LastBlockHeight:  st.lastInfo.BlockHeight(),
+		LastBlockHash:    st.lastInfo.BlockHash(),
+		LastBlockTime:    st.lastInfo.BlockTime(),
+		TotalPower:       st.totalPower,
+		CommitteePower:   st.committee.TotalPower(),
+		TotalAccounts:    st.store.TotalAccounts(),
+		TotalValidators:  st.store.TotalValidators(),
+		ActiveValidators: st.store.ActiveValidators(),
+		IsPruned:         st.store.IsPruned(),
+		PruningHeight:    st.store.PruningHeight(),
+	}
 }

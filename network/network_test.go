@@ -57,6 +57,8 @@ func testConfig() *Config {
 		PeerStorePath:             util.TempFilePath(),
 		StreamTimeout:             10 * time.Second,
 		CheckConnectivityInterval: 1 * time.Second,
+		MaxGossipMessageSize:      1 * 1024 * 1024, // 1 MB
+		MaxStreamMessageSize:      8 * 1024 * 1024, // 8 MB
 	}
 }
 
@@ -236,22 +238,22 @@ func TestNetwork(t *testing.T) {
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkB.ReachabilityStatus()
 			require.Equal(c, "Public", reachability)
-		}, time.Second*2, 100*time.Millisecond)
+		}, time.Second*2, 500*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkM.ReachabilityStatus()
 			require.Equal(c, "Private", reachability)
-		}, time.Second*2, 100*time.Millisecond)
+		}, time.Second*2, 500*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkN.ReachabilityStatus()
 			require.Equal(c, "Private", reachability)
-		}, time.Second*2, 100*time.Millisecond)
+		}, time.Second*2, 500*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkP.ReachabilityStatus()
 			require.Equal(c, "Public", reachability)
-		}, time.Second*2, 100*time.Millisecond)
+		}, time.Second*2, 500*time.Millisecond)
 
 		require.EventuallyWithT(t, func(c *assert.CollectT) {
 			reachability := networkP.ReachabilityStatus()

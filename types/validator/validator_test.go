@@ -111,3 +111,13 @@ func TestClone(t *testing.T) {
 	assert.Equal(t, val.PublicKey(), cloned.PublicKey())
 	assert.NotEqual(t, val.Stake(), cloned.Stake())
 }
+
+func TestIsUnbonded(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	val := ts.GenerateTestValidator()
+	assert.False(t, val.IsUnbonded())
+
+	val.UpdateUnbondingHeight(ts.RandHeight())
+	assert.True(t, val.IsUnbonded())
+}

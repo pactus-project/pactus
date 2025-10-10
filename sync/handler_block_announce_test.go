@@ -15,16 +15,16 @@ func TestHandlerBlockAnnounceParsingMessages(t *testing.T) {
 	pid := td.RandPeerID()
 	lastHeight := td.state.LastBlockHeight()
 	blk1, cert1 := td.GenerateTestBlock(lastHeight + 1)
-	msg1 := message.NewBlockAnnounceMessage(blk1, cert1)
+	msg1 := message.NewBlockAnnounceMessage(blk1, cert1, nil)
 
 	blk2, cert2 := td.GenerateTestBlock(lastHeight + 2)
-	msg2 := message.NewBlockAnnounceMessage(blk2, cert2)
+	msg2 := message.NewBlockAnnounceMessage(blk2, cert2, nil)
 
 	t.Run("Receiving new block announce message, without committing previous block", func(t *testing.T) {
 		td.receivingNewMessage(td.sync, msg2, pid)
 
 		stateHeight := td.sync.state.LastBlockHeight()
-		consHeight, _ := td.consMgr.HeightRound()
+		consHeight, _ := td.sync.getConsMgr().HeightRound()
 		assert.Equal(t, lastHeight, stateHeight)
 		assert.Equal(t, lastHeight+1, consHeight)
 	})
@@ -40,7 +40,7 @@ func TestHandlerBlockAnnounceBroadcastingMessages(t *testing.T) {
 	td := setup(t, nil)
 
 	blk, cert := td.GenerateTestBlock(td.RandHeight())
-	msg := message.NewBlockAnnounceMessage(blk, cert)
+	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 	td.sync.broadcast(msg)
 
 	msg1 := td.shouldPublishMessageWithThisType(t, message.TypeBlockAnnounce)
@@ -53,8 +53,8 @@ func TestHandlerBlockAnnounceCacheBlock(t *testing.T) {
 	height := td.RandHeight()
 	blk1, cert1 := td.GenerateTestBlock(height)
 	blk2, cert2 := td.GenerateTestBlock(height)
-	msg1 := message.NewBlockAnnounceMessage(blk1, cert1)
-	msg2 := message.NewBlockAnnounceMessage(blk2, cert2)
+	msg1 := message.NewBlockAnnounceMessage(blk1, cert1, nil)
+	msg2 := message.NewBlockAnnounceMessage(blk2, cert2, nil)
 
 	td.receivingNewMessage(td.sync, msg1, td.RandPeerID())
 	td.receivingNewMessage(td.sync, msg2, td.RandPeerID())

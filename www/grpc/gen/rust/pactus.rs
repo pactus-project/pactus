@@ -105,7 +105,7 @@ pub struct GetRawBondTransactionRequest {
     /// The stake amount in NanoPAC. Must be greater than 0.
     #[prost(int64, tag="4")]
     pub stake: i64,
-    /// The public key of the validator.
+    /// The public key of the validator. Optional, but required when registering a new validator.
     #[prost(string, tag="5")]
     pub public_key: ::prost::alloc::string::String,
     /// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
@@ -587,6 +587,9 @@ pub struct GetBlockchainInfoResponse {
     /// The total number of validators in the blockchain.
     #[prost(int32, tag="4")]
     pub total_validators: i32,
+    /// The number of active (not unbonded) validators in the blockchain.
+    #[prost(int32, tag="12")]
+    pub active_validators: i32,
     /// The total power of the blockchain.
     #[prost(int64, tag="5")]
     pub total_power: i64,

@@ -25,11 +25,11 @@ type Block struct {
 
 type blockData struct {
 	Header   *Header
-	PrevCert *certificate.BlockCertificate
+	PrevCert *certificate.Certificate
 	Txs      Txs
 }
 
-func NewBlock(header *Header, prevCert *certificate.BlockCertificate, txs Txs) *Block {
+func NewBlock(header *Header, prevCert *certificate.Certificate, txs Txs) *Block {
 	return &Block{
 		data: blockData{
 			Header:   header,
@@ -52,7 +52,7 @@ func FromBytes(data []byte) (*Block, error) {
 
 func MakeBlock(version protocol.Version, timestamp time.Time, txs Txs,
 	prevBlockHash, stateRoot hash.Hash,
-	prevCert *certificate.BlockCertificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address,
+	prevCert *certificate.Certificate, sortitionSeed sortition.VerifiableSeed, proposer crypto.Address,
 ) *Block {
 	header := NewHeader(version, timestamp,
 		stateRoot, prevBlockHash, sortitionSeed, proposer)
@@ -64,7 +64,7 @@ func (b *Block) Header() *Header {
 	return b.data.Header
 }
 
-func (b *Block) PrevCertificate() *certificate.BlockCertificate {
+func (b *Block) PrevCertificate() *certificate.Certificate {
 	return b.data.PrevCert
 }
 
@@ -199,7 +199,7 @@ func (b *Block) Decode(r io.Reader) error {
 		return err
 	}
 	if !b.data.Header.PrevBlockHash().IsUndef() {
-		b.data.PrevCert = new(certificate.BlockCertificate)
+		b.data.PrevCert = new(certificate.Certificate)
 		if err := b.data.PrevCert.Decode(r); err != nil {
 			return err
 		}
@@ -208,6 +208,13 @@ func (b *Block) Decode(r io.Reader) error {
 	if err != nil {
 		return err
 	}
+
+	// We set 1000 as a hardcoded value,
+	// matching the maximum number of transactions allowed in a block.
+	if length > 1000 {
+		return ErrTooManyTransactions
+	}
+
 	b.data.Txs = make([]*tx.Tx, length)
 	for i := 0; i < int(length); i++ {
 		trx := new(tx.Tx)

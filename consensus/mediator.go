@@ -19,7 +19,7 @@ type ConcreteMediator struct {
 	instances []Consensus
 }
 
-func newConcreteMediator() mediator {
+func NewConcreteMediator() mediator {
 	return &ConcreteMediator{}
 }
 

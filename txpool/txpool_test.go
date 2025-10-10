@@ -121,6 +121,11 @@ func (td *testData) makeValidBatchTransferTx(options ...func(tm *testsuite.Trans
 	return trx
 }
 
+// makeValidSubsidyTx make a valid Batch transfer transaction for test purpose.
+func (td *testData) makeValidSubsidyTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
+	return td.GenerateTestSubsidyTx(options...)
+}
+
 // makeValidBondTx makes a valid Bond transaction for testing purpose.
 func (td *testData) makeValidBondTx(options ...func(tm *testsuite.TransactionMaker)) *tx.Tx {
 	options = append(options, testsuite.TransactionWithLockTime(td.sbx.CurrentHeight()))
@@ -219,22 +224,22 @@ func TestCalculatingConsumption(t *testing.T) {
 	pub4, prv4 := td.RandBLSKeyPair()
 
 	// Generate different types of transactions
-	trx10 := tx.NewSubsidyTxLegacy(1, td.RandAccAddress(), 1e9)
-	trx11 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv1))
-	trx12 := td.makeValidBondTx(testsuite.TransactionWithEd25519Signer(prv2))
-	trx13 := td.makeValidUnbondTx(testsuite.TransactionWithBLSSigner(prv4))
-	trx20 := tx.NewSubsidyTxLegacy(2, td.RandAccAddress(), 1e9)
-	trx21 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv1))
-	trx30 := tx.NewSubsidyTxLegacy(3, td.RandAccAddress(), 1e9)
-	trx31 := td.makeValidBondTx(testsuite.TransactionWithBLSSigner(prv3))
-	trx32 := td.makeValidSortitionTx(testsuite.TransactionWithBLSSigner(prv4))
-	trx40 := tx.NewSubsidyTxLegacy(4, td.RandAccAddress(), 1e9)
-	trx41 := td.makeValidUnbondTx(testsuite.TransactionWithBLSSigner(prv3))
-	trx42 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
-	trx50 := tx.NewSubsidyTxLegacy(5, td.RandAccAddress(), 1e9)
-	trx51 := td.makeValidWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
-	trx52 := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
-	trx53 := td.makeValidBatchTransferTx(testsuite.TransactionWithEd25519Signer(prv2))
+	trx10 := td.makeValidSubsidyTx()
+	trx11 := td.makeValidTransferTx(testsuite.TransactionWithSigner(prv1))
+	trx12 := td.makeValidBondTx(testsuite.TransactionWithSigner(prv2))
+	trx13 := td.makeValidUnbondTx(testsuite.TransactionWithSigner(prv4))
+	trx20 := td.makeValidSubsidyTx()
+	trx21 := td.makeValidTransferTx(testsuite.TransactionWithSigner(prv1))
+	trx30 := td.makeValidSubsidyTx()
+	trx31 := td.makeValidBondTx(testsuite.TransactionWithSigner(prv3))
+	trx32 := td.makeValidSortitionTx(testsuite.TransactionWithSigner(prv4))
+	trx40 := td.makeValidSubsidyTx()
+	trx41 := td.makeValidUnbondTx(testsuite.TransactionWithSigner(prv3))
+	trx42 := td.makeValidTransferTx(testsuite.TransactionWithSigner(prv2))
+	trx50 := td.makeValidSubsidyTx()
+	trx51 := td.makeValidWithdrawTx(testsuite.TransactionWithSigner(prv3))
+	trx52 := td.makeValidTransferTx(testsuite.TransactionWithSigner(prv2))
+	trx53 := td.makeValidBatchTransferTx(testsuite.TransactionWithSigner(prv2))
 
 	// Commit the first block
 	blk1, cert1 := td.GenerateTestBlock(1,
@@ -283,7 +288,7 @@ func TestEstimatedConsumptionalFee(t *testing.T) {
 
 	t.Run("Test indexed signer", func(t *testing.T) {
 		_, accPrv := td.RandEd25519KeyPair()
-		trx := td.makeValidTransferTx(testsuite.TransactionWithEd25519Signer(accPrv))
+		trx := td.makeValidTransferTx(testsuite.TransactionWithSigner(accPrv))
 		blk, cert := td.GenerateTestBlock(td.RandHeight(), testsuite.BlockWithTransactions([]*tx.Tx{trx}))
 		td.sbx.TestStore.SaveBlock(blk, cert)
 
@@ -302,7 +307,7 @@ func TestEstimatedConsumptionalFee(t *testing.T) {
 
 		for _, tt := range tests {
 			testTrx := td.makeValidTransferTx(
-				testsuite.TransactionWithEd25519Signer(accPrv),
+				testsuite.TransactionWithSigner(accPrv),
 				testsuite.TransactionWithFee(tt.fee))
 
 			err := td.pool.AppendTx(testTrx)
@@ -370,15 +375,12 @@ func TestPrepareBlockTransactions(t *testing.T) {
 	_, prv4 := td.RandBLSKeyPair()
 	_, prv5 := td.RandBLSKeyPair()
 
-	// For supporting Batch Transfer transactions
-	td.sbx.TestStore.AddTestBlock(4_800_000)
-
 	transferTx := td.makeValidTransferTx()
 	bondTx := td.makeValidBondTx(testsuite.TransactionWithValidatorPublicKey(pub1))
-	unbondTx := td.makeValidUnbondTx(testsuite.TransactionWithBLSSigner(prv2))
-	withdrawTx := td.makeValidWithdrawTx(testsuite.TransactionWithBLSSigner(prv3))
-	sortitionTx := td.makeValidSortitionTx(testsuite.TransactionWithBLSSigner(prv4))
-	batchTransferTx := td.makeValidBatchTransferTx(testsuite.TransactionWithBLSSigner(prv5))
+	unbondTx := td.makeValidUnbondTx(testsuite.TransactionWithSigner(prv2))
+	withdrawTx := td.makeValidWithdrawTx(testsuite.TransactionWithSigner(prv3))
+	sortitionTx := td.makeValidSortitionTx(testsuite.TransactionWithSigner(prv4))
+	batchTransferTx := td.makeValidBatchTransferTx(testsuite.TransactionWithSigner(prv5))
 
 	assert.NoError(t, td.pool.AppendTx(transferTx))
 	assert.NoError(t, td.pool.AppendTx(unbondTx))
@@ -403,7 +405,7 @@ func TestAddSubsidyTransactions(t *testing.T) {
 
 		randHeight := td.RandHeight()
 		td.sbx.TestStore.AddTestBlock(randHeight)
-		trx := tx.NewSubsidyTxLegacy(randHeight, td.RandAccAddress(), 1e9)
+		trx := td.makeValidSubsidyTx(testsuite.TransactionWithLockTime(randHeight))
 
 		err := td.pool.AppendTx(trx)
 		assert.ErrorIs(t, err, execution.LockTimeExpiredError{
@@ -414,7 +416,9 @@ func TestAddSubsidyTransactions(t *testing.T) {
 	t.Run("valid transaction: Should add it to the pool", func(t *testing.T) {
 		td := setup(t, nil)
 
-		trx := tx.NewSubsidyTxLegacy(td.RandHeight(), td.RandAccAddress(), 1e9)
+		randHeight := td.RandHeight()
+		td.sbx.TestStore.AddTestBlock(randHeight)
+		trx := td.makeValidSubsidyTx(testsuite.TransactionWithLockTime(randHeight + 1))
 
 		err := td.pool.AppendTx(trx)
 		assert.NoError(t, err)
@@ -424,7 +428,7 @@ func TestAddSubsidyTransactions(t *testing.T) {
 func TestRecheckTransactions(t *testing.T) {
 	td := setup(t, nil)
 
-	trx := tx.NewSubsidyTxLegacy(td.RandHeight(), td.RandAccAddress(), 1e9)
+	trx := td.makeValidSubsidyTx()
 
 	err := td.pool.AppendTx(trx)
 	assert.NoError(t, err)
@@ -476,14 +480,11 @@ func TestAllPendingTxs(t *testing.T) {
 	pub1, _ := td.RandBLSKeyPair()
 	_, prv2 := td.RandBLSKeyPair()
 
-	// For supporting Batch Transfer transactions
-	td.sbx.TestStore.AddTestBlock(4_800_000)
-
 	transferTx := td.makeValidTransferTx()
 	bondTx := td.makeValidBondTx(testsuite.TransactionWithValidatorPublicKey(pub1))
 	unbondTx := td.makeValidUnbondTx()
 	withdrawTx := td.makeValidWithdrawTx()
-	sortitionTx := td.makeValidSortitionTx(testsuite.TransactionWithBLSSigner(prv2))
+	sortitionTx := td.makeValidSortitionTx(testsuite.TransactionWithSigner(prv2))
 	batchTransferTx := td.makeValidBatchTransferTx()
 
 	assert.NoError(t, td.pool.AppendTx(transferTx))

@@ -206,7 +206,7 @@ func TestSubsidyTx(t *testing.T) {
 	pub, prv := ts.RandEd25519KeyPair()
 
 	t.Run("Has signature", func(t *testing.T) {
-		trx := tx.NewSubsidyTxLegacy(ts.RandHeight(), pub.AccountAddress(), 2500)
+		trx := ts.GenerateTestSubsidyTx()
 		sig := prv.Sign(trx.SignBytes())
 		trx.SetSignature(sig)
 
@@ -217,7 +217,7 @@ func TestSubsidyTx(t *testing.T) {
 	})
 
 	t.Run("Has public key", func(t *testing.T) {
-		trx := tx.NewSubsidyTxLegacy(ts.RandHeight(), pub.AccountAddress(), 2500)
+		trx := ts.GenerateTestSubsidyTx()
 		trx.SetPublicKey(pub)
 
 		err := trx.BasicCheck()
@@ -227,7 +227,7 @@ func TestSubsidyTx(t *testing.T) {
 	})
 
 	t.Run("Strip public key", func(t *testing.T) {
-		trx := tx.NewSubsidyTxLegacy(ts.RandHeight(), pub.AccountAddress(), 2500)
+		trx := ts.GenerateTestSubsidyTx()
 		trx.StripPublicKey()
 
 		err := trx.BasicCheck()
@@ -288,7 +288,7 @@ func TestInvalidSignature(t *testing.T) {
 
 	t.Run("Invalid sign Bytes", func(t *testing.T) {
 		valKey := ts.RandValKey()
-		trx0 := ts.GenerateTestUnbondTx(testsuite.TransactionWithBLSSigner(valKey.PrivateKey()))
+		trx0 := ts.GenerateTestUnbondTx(testsuite.TransactionWithSigner(valKey.PrivateKey()))
 
 		trx := tx.NewUnbondTx(trx0.LockTime(), valKey.Address(), tx.WithMemo("invalidate signature"))
 		trx.SetPublicKey(trx0.PublicKey())
