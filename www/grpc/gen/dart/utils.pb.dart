@@ -480,6 +480,72 @@ class SignatureAggregationResponse extends $pb.GeneratedMessage {
   void clearSignature() => $_clearField(1);
 }
 
+/// Request message for ping - intentionally empty as specified.
+class PingRequest extends $pb.GeneratedMessage {
+  factory PingRequest() => create();
+  PingRequest._() : super();
+  factory PingRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PingRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PingRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  PingRequest clone() => PingRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  PingRequest copyWith(void Function(PingRequest) updates) => super.copyWith((message) => updates(message as PingRequest)) as PingRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static PingRequest create() => PingRequest._();
+  PingRequest createEmptyInstance() => create();
+  static $pb.PbList<PingRequest> createRepeated() => $pb.PbList<PingRequest>();
+  @$core.pragma('dart2js:noInline')
+  static PingRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PingRequest>(create);
+  static PingRequest? _defaultInstance;
+}
+
+/// Response message for ping - intentionally empty as specified.
+class PingResponse extends $pb.GeneratedMessage {
+  factory PingResponse() => create();
+  PingResponse._() : super();
+  factory PingResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PingResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PingResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  PingResponse clone() => PingResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  PingResponse copyWith(void Function(PingResponse) updates) => super.copyWith((message) => updates(message as PingResponse)) as PingResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static PingResponse create() => PingResponse._();
+  PingResponse createEmptyInstance() => create();
+  static $pb.PbList<PingResponse> createRepeated() => $pb.PbList<PingResponse>();
+  @$core.pragma('dart2js:noInline')
+  static PingResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PingResponse>(create);
+  static PingResponse? _defaultInstance;
+}
+
 /// Utils service defines RPC methods for utility functions such as message
 /// signing, verification, and etc.
 class UtilsApi {
@@ -501,6 +567,10 @@ class UtilsApi {
   /// SignatureAggregation aggregates multiple BLS signatures into a single signature.
   $async.Future<SignatureAggregationResponse> signatureAggregation($pb.ClientContext? ctx, SignatureAggregationRequest request) =>
     _client.invoke<SignatureAggregationResponse>(ctx, 'Utils', 'SignatureAggregation', request, SignatureAggregationResponse())
+  ;
+  /// Ping provides a simple connectivity test and latency measurement.
+  $async.Future<PingResponse> ping($pb.ClientContext? ctx, PingRequest request) =>
+    _client.invoke<PingResponse>(ctx, 'Utils', 'Ping', request, PingResponse())
   ;
 }
 

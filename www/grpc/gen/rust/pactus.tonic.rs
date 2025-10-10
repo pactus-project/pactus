@@ -2543,6 +2543,25 @@ pub mod utils_client {
                 .insert(GrpcMethod::new("pactus.Utils", "SignatureAggregation"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn ping(
+            &mut self,
+            request: impl tonic::IntoRequest<super::PingRequest>,
+        ) -> std::result::Result<tonic::Response<super::PingResponse>, tonic::Status> {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/pactus.Utils/Ping");
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("pactus.Utils", "Ping"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -2580,6 +2599,10 @@ pub mod utils_server {
             tonic::Response<super::SignatureAggregationResponse>,
             tonic::Status,
         >;
+        async fn ping(
+            &self,
+            request: tonic::Request<super::PingRequest>,
+        ) -> std::result::Result<tonic::Response<super::PingResponse>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct UtilsServer<T: Utils> {
@@ -2826,6 +2849,49 @@ pub mod utils_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = SignatureAggregationSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/pactus.Utils/Ping" => {
+                    #[allow(non_camel_case_types)]
+                    struct PingSvc<T: Utils>(pub Arc<T>);
+                    impl<T: Utils> tonic::server::UnaryService<super::PingRequest>
+                    for PingSvc<T> {
+                        type Response = super::PingResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::PingRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Utils>::ping(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = PingSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

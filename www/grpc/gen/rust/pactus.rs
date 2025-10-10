@@ -1179,6 +1179,20 @@ pub struct SignatureAggregationResponse {
     #[prost(string, tag="1")]
     pub signature: ::prost::alloc::string::String,
 }
+/// Request message for ping - intentionally empty as specified.
+///
+/// Empty request payload for measuring round-trip time
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct PingRequest {
+}
+/// Response message for ping - intentionally empty as specified.
+///
+/// Empty response payload for measuring round-trip time
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct PingResponse {
+}
 /// AddressInfo contains detailed information about a wallet address.
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

@@ -963,6 +963,22 @@
           }
         }
       }
+    ,
+    {
+      "name": "pactus.utils.ping",
+      "description": "Ping provides a simple connectivity test and latency measurement.",
+      "tags": [{ "name": "utils"}],
+      "paramStructure": "by-name",
+      "params": [
+      ],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object",
+          "properties": {}
+          }
+        }
+      }
     
   
 ,

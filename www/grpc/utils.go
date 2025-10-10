@@ -55,6 +55,13 @@ func (u *utilServer) VerifyMessage(_ context.Context,
 	}, nil
 }
 
+func (u *utilServer) Ping(_ context.Context,
+	req *pactus.PingRequest,
+) (*pactus.PingResponse, error) {
+	// Simply return an empty response for latency measurement
+	return &pactus.PingResponse{}, nil
+}
+
 func (*utilServer) PublicKeyAggregation(_ context.Context,
 	req *pactus.PublicKeyAggregationRequest,
 ) (*pactus.PublicKeyAggregationResponse, error) {

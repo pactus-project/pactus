@@ -192,6 +192,10 @@ curl --location 'http://localhost:8545/' \
           <a href="#pactus.utils.signature_aggregation">
           <span class="rpc-badge"></span> pactus.utils.signature_aggregation</a>
         </li>
+        <li>
+          <a href="#pactus.utils.ping">
+          <span class="rpc-badge"></span> pactus.utils.ping</a>
+        </li>
         </ul>
     </li>
     <li> Wallet Service
@@ -3349,6 +3353,23 @@ signing, verification, and etc.</p>
     </td>
   </tr>
      </tbody>
+</table>
+
+#### pactus.utils.ping <span id="pactus.utils.ping" class="rpc-badge"></span>
+
+<p>Ping provides a simple connectivity test and latency measurement.</p>
+
+<h4>Parameters</h4>
+
+Parameters has no fields.
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  </tbody>
 </table>
 
 ### Wallet Service
