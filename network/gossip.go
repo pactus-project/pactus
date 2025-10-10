@@ -180,11 +180,8 @@ func (g *gossipService) joinTopic(topicID TopicID, evaluator PropagationEvaluato
 
 	g.topics = append(g.topics, topic)
 	g.subs = append(g.subs, sub)
-	g.wg.Add(1)
 
-	go func() {
-		defer g.wg.Done()
-
+	g.wg.Go(func() {
 		for {
 			lp2pMsg, err := sub.Next(g.ctx)
 			if err != nil {
@@ -201,7 +198,7 @@ func (g *gossipService) joinTopic(topicID TopicID, evaluator PropagationEvaluato
 
 			g.onReceiveMessage(msg)
 		}
-	}()
+	})
 
 	return topic, nil
 }
