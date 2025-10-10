@@ -23,7 +23,7 @@ type MockStore struct {
 	Blocks     map[uint32]*block.Block
 	Accounts   map[crypto.Address]*account.Account
 	Validators map[crypto.Address]*validator.Validator
-	LastCert   *certificate.BlockCertificate
+	LastCert   *certificate.Certificate
 	LastHeight uint32
 }
 
@@ -209,6 +209,10 @@ func (m *MockStore) TotalValidators() int32 {
 	return int32(len(m.Validators))
 }
 
+func (m *MockStore) ActiveValidators() int32 {
+	return int32(len(m.Validators))
+}
+
 func (*MockStore) Close() {}
 
 func (m *MockStore) HasAnyBlock() bool {
@@ -233,13 +237,13 @@ func (m *MockStore) IterateValidators(consumer func(*validator.Validator) (stop 
 	}
 }
 
-func (m *MockStore) SaveBlock(blk *block.Block, cert *certificate.BlockCertificate) {
+func (m *MockStore) SaveBlock(blk *block.Block, cert *certificate.Certificate) {
 	m.Blocks[cert.Height()] = blk
 	m.LastHeight = cert.Height()
 	m.LastCert = cert
 }
 
-func (m *MockStore) LastCertificate() *certificate.BlockCertificate {
+func (m *MockStore) LastCertificate() *certificate.Certificate {
 	if m.LastHeight == 0 {
 		return nil
 	}
@@ -251,18 +255,18 @@ func (*MockStore) WriteBatch() error {
 	return nil
 }
 
-func (m *MockStore) AddTestValidator() *validator.Validator {
-	val := m.ts.GenerateTestValidator()
+func (m *MockStore) AddTestValidator(options ...func(*testsuite.ValidatorMaker)) *validator.Validator {
+	val := m.ts.GenerateTestValidator(options...)
 	m.UpdateValidator(val)
 
 	return val
 }
 
-func (m *MockStore) AddTestAccount() (*account.Account, crypto.Address) {
-	acc, addr := m.ts.GenerateTestAccount()
+func (m *MockStore) AddTestAccount(options ...func(*testsuite.AccountMaker)) (crypto.Address, *account.Account) {
+	acc, addr := m.ts.GenerateTestAccount(options...)
 	m.UpdateAccount(addr, acc)
 
-	return acc, addr
+	return addr, acc
 }
 
 func (m *MockStore) AddTestBlock(height uint32) *block.Block {

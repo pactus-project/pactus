@@ -149,7 +149,7 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 
 	// Add double-click handler to open address details dialog
 	treeViewWallet.Connect("row-activated",
-		func(_ *gtk.TreeView, path *gtk.TreePath, column *gtk.TreeViewColumn) {
+		func(_ *gtk.TreeView, _ *gtk.TreePath, _ *gtk.TreeViewColumn) {
 			wdgWallet.onShowDetails()
 		})
 

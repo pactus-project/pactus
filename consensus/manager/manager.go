@@ -1,13 +1,14 @@
-package consensus
+package manager
 
 import (
+	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensusv2"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync/bundle/message"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/pipeline"
 	"golang.org/x/exp/slices"
 )
@@ -23,11 +24,11 @@ type manager struct {
 	state             state.Facade
 }
 
-// NewManager creates a new manager instance that manages a set of consensus instances,
+// NewManagerV1 creates a new manager instance that manages a set of consensus instances,
 // each associated with a validator key and a reward address.
 // It is not thread-safe.
-func NewManager(
-	conf *Config,
+func NewManagerV1(
+	conf *consensus.Config,
 	state state.Facade,
 	valKeys []*bls.ValidatorKey,
 	rewardAddrs []crypto.Address,
@@ -39,10 +40,10 @@ func NewManager(
 		upcomingProposals: make([]*proposal.Proposal, 0),
 		state:             state,
 	}
-	mediatorConcrete := newConcreteMediator()
+	mediatorConcrete := consensus.NewConcreteMediator()
 
 	for i, key := range valKeys {
-		cons := NewConsensus(conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
+		cons := consensus.NewConsensus(conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
 
 		mgr.instances[i] = cons
 	}
@@ -50,18 +51,28 @@ func NewManager(
 	return mgr
 }
 
-// Start starts the manager.
-func (mgr *manager) Start() error {
-	logger.Debug("starting consensus instances")
-	for _, cons := range mgr.instances {
-		cons.Start()
+func NewManagerV2(
+	conf *consensusv2.Config,
+	state state.Facade,
+	valKeys []*bls.ValidatorKey,
+	rewardAddrs []crypto.Address,
+	broadcastPipe pipeline.Pipeline[message.Message],
+) Manager {
+	mgr := &manager{
+		instances:         make([]Consensus, len(valKeys)),
+		upcomingVotes:     make([]*vote.Vote, 0),
+		upcomingProposals: make([]*proposal.Proposal, 0),
+		state:             state,
+	}
+	mediatorConcrete := consensus.NewConcreteMediator()
+
+	for i, key := range valKeys {
+		cons := consensusv2.NewConsensus(conf, state, key, rewardAddrs[i], broadcastPipe, mediatorConcrete)
+
+		mgr.instances[i] = cons
 	}
 
-	return nil
-}
-
-// Stop stops the manager.
-func (*manager) Stop() {
+	return mgr
 }
 
 // Instances return all consensus instances that are read-only and
@@ -213,4 +224,9 @@ func (mgr *manager) getBestInstance() Consensus {
 	}
 
 	return mgr.instances[0]
+}
+
+// IsDeprecated checks if any of the consensus instances are deprecated.
+func (mgr *manager) IsDeprecated() bool {
+	return mgr.instances[0].IsDeprecated()
 }

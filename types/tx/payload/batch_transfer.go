@@ -148,6 +148,10 @@ func (p *BatchTransferPayload) Decode(r io.Reader) error {
 		return err
 	}
 
+	if numberOfRecipients > maxBatchRecipients {
+		return ErrTooManyRecipients
+	}
+
 	p.Recipients = make([]BatchRecipient, numberOfRecipients)
 	for i := uint64(0); i < numberOfRecipients; i++ {
 		err := p.Recipients[i].Decode(r)

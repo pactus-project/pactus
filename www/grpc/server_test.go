@@ -3,11 +3,11 @@ package grpc
 import (
 	"context"
 	"net"
-	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
@@ -31,7 +31,7 @@ type testData struct {
 	mockState     *state.MockState
 	mockSync      *sync.MockSync
 	consMocks     []*consensus.MockConsensus
-	mockConsMgr   consensus.Manager
+	mockConsMgr   manager.Manager
 	defaultWallet *wallet.Wallet
 	listener      *bufconn.Listener
 	server        *Server
@@ -54,10 +54,7 @@ func setup(t *testing.T, conf *Config) *testData {
 	ts := testsuite.NewTestSuite(t)
 
 	// for saving test wallets in temp directory
-	err := os.Chdir(util.TempDirPath())
-	if err != nil {
-		panic(err)
-	}
+	t.Chdir(util.TempDirPath())
 
 	const bufSize = 1024 * 1024
 
@@ -66,7 +63,7 @@ func setup(t *testing.T, conf *Config) *testData {
 	mockState := state.MockingState(ts)
 	mockNet := network.MockingNetwork(ts, ts.RandPeerID())
 	mockSync := sync.MockingSync(ts)
-	mockConsMgr, consMocks := consensus.MockingManager(ts, mockState, valKeys)
+	mockConsMgr, consMocks := manager.MockingManager(ts, mockState, valKeys)
 
 	mockState.CommitTestBlocks(10)
 

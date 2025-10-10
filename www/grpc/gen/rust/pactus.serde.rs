@@ -3520,6 +3520,9 @@ impl serde::Serialize for GetBlockchainInfoResponse {
         if self.total_validators != 0 {
             len += 1;
         }
+        if self.active_validators != 0 {
+            len += 1;
+        }
         if self.total_power != 0 {
             len += 1;
         }
@@ -3553,6 +3556,9 @@ impl serde::Serialize for GetBlockchainInfoResponse {
         }
         if self.total_validators != 0 {
             struct_ser.serialize_field("totalValidators", &self.total_validators)?;
+        }
+        if self.active_validators != 0 {
+            struct_ser.serialize_field("activeValidators", &self.active_validators)?;
         }
         if self.total_power != 0 {
             #[allow(clippy::needless_borrow)]
@@ -3599,6 +3605,8 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             "totalAccounts",
             "total_validators",
             "totalValidators",
+            "active_validators",
+            "activeValidators",
             "total_power",
             "totalPower",
             "committee_power",
@@ -3621,6 +3629,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
             LastBlockHash,
             TotalAccounts,
             TotalValidators,
+            ActiveValidators,
             TotalPower,
             CommitteePower,
             CommitteeValidators,
@@ -3653,6 +3662,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                             "lastBlockHash" | "last_block_hash" => Ok(GeneratedField::LastBlockHash),
                             "totalAccounts" | "total_accounts" => Ok(GeneratedField::TotalAccounts),
                             "totalValidators" | "total_validators" => Ok(GeneratedField::TotalValidators),
+                            "activeValidators" | "active_validators" => Ok(GeneratedField::ActiveValidators),
                             "totalPower" | "total_power" => Ok(GeneratedField::TotalPower),
                             "committeePower" | "committee_power" => Ok(GeneratedField::CommitteePower),
                             "committeeValidators" | "committee_validators" => Ok(GeneratedField::CommitteeValidators),
@@ -3683,6 +3693,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                 let mut last_block_hash__ = None;
                 let mut total_accounts__ = None;
                 let mut total_validators__ = None;
+                let mut active_validators__ = None;
                 let mut total_power__ = None;
                 let mut committee_power__ = None;
                 let mut committee_validators__ = None;
@@ -3719,6 +3730,14 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                                 return Err(serde::de::Error::duplicate_field("totalValidators"));
                             }
                             total_validators__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::ActiveValidators => {
+                            if active_validators__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("activeValidators"));
+                            }
+                            active_validators__ = 
                                 Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
@@ -3782,6 +3801,7 @@ impl<'de> serde::Deserialize<'de> for GetBlockchainInfoResponse {
                     last_block_hash: last_block_hash__.unwrap_or_default(),
                     total_accounts: total_accounts__.unwrap_or_default(),
                     total_validators: total_validators__.unwrap_or_default(),
+                    active_validators: active_validators__.unwrap_or_default(),
                     total_power: total_power__.unwrap_or_default(),
                     committee_power: committee_power__.unwrap_or_default(),
                     committee_validators: committee_validators__.unwrap_or_default(),

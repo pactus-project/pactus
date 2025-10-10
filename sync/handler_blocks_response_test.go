@@ -6,7 +6,7 @@ import (
 	"time"
 
 	lp2pnetwork "github.com/libp2p/go-libp2p/core/network"
-	"github.com/pactus-project/pactus/consensus"
+	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
@@ -75,7 +75,7 @@ func TestHandlerBlocksResponseStrippedPublicKey(t *testing.T) {
 
 	// Add a new block and keep the signer key
 	_, indexedPrv := td.RandBLSKeyPair()
-	trx0 := td.GenerateTestTransferTx(testsuite.TransactionWithBLSSigner(indexedPrv))
+	trx0 := td.GenerateTestTransferTx(testsuite.TransactionWithSigner(indexedPrv))
 	trxs0 := []*tx.Tx{trx0}
 	blk0, cert0 := td.GenerateTestBlock(lastHeight+1, testsuite.BlockWithTransactions(trxs0))
 	err := td.state.CommitBlock(blk0, cert0)
@@ -84,12 +84,12 @@ func TestHandlerBlocksResponseStrippedPublicKey(t *testing.T) {
 	// -----
 
 	_, rndPrv := td.RandBLSKeyPair()
-	trx1 := td.GenerateTestTransferTx(testsuite.TransactionWithBLSSigner(rndPrv))
+	trx1 := td.GenerateTestTransferTx(testsuite.TransactionWithSigner(rndPrv))
 	trx1.StripPublicKey()
 	trxs1 := []*tx.Tx{trx1}
 	blk1, _ := td.GenerateTestBlock(lastHeight+1, testsuite.BlockWithTransactions(trxs1))
 
-	trx2 := td.GenerateTestTransferTx(testsuite.TransactionWithBLSSigner(indexedPrv))
+	trx2 := td.GenerateTestTransferTx(testsuite.TransactionWithSigner(indexedPrv))
 	trx2.StripPublicKey()
 	trxs2 := []*tx.Tx{trx2}
 	blk2, _ := td.GenerateTestBlock(lastHeight+1, testsuite.BlockWithTransactions(trxs2))
@@ -114,7 +114,7 @@ func TestHandlerBlocksResponseStrippedPublicKey(t *testing.T) {
 	for _, tt := range tests {
 		blkData, _ := tt.receivedBlock.Bytes()
 		sid := td.RandInt(1000)
-		cert := td.GenerateTestBlockCertificate(lastHeight + 1)
+		cert := td.GenerateTestCertificate(lastHeight + 1)
 		msg := message.NewBlocksResponseMessage(message.ResponseCodeMoreBlocks, message.ResponseCodeMoreBlocks.String(), sid,
 			lastHeight+1, [][]byte{blkData}, cert)
 		td.receivingNewMessage(td.sync, msg, pid)
@@ -170,19 +170,21 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	valKeyBob := []*bls.ValidatorKey{ts.RandValKey()}
 	stateAlice := state.MockingState(ts)
 	stateBob := state.MockingState(ts)
-	consMgrAlice, _ := consensus.MockingManager(ts, stateAlice, valKeyAlice)
-	consMgrBob, _ := consensus.MockingManager(ts, stateBob, valKeyBob)
+	consV1MgrAlice, _ := manager.MockingManager(ts, stateAlice, valKeyAlice)
+	consV2MgrAlice, _ := manager.MockingManager(ts, stateAlice, valKeyAlice)
+	consV1MgrBob, _ := manager.MockingManager(ts, stateBob, valKeyBob)
+	consV2MgrBob, _ := manager.MockingManager(ts, stateBob, valKeyBob)
 	broadcastPipe := pipeline.MockingPipeline[message.Message]()
 	networkAlice := network.MockingNetwork(ts, ts.RandPeerID())
 	networkBob := network.MockingNetwork(ts, ts.RandPeerID())
 
 	sync1, err := NewSynchronizer(configAlice, valKeyAlice, stateAlice,
-		consMgrAlice, networkAlice, broadcastPipe, networkAlice.EventPipe)
+		consV1MgrAlice, consV2MgrAlice, networkAlice, broadcastPipe, networkAlice.EventPipe)
 	assert.NoError(t, err)
 	syncAlice := sync1.(*synchronizer)
 
 	sync2, err := NewSynchronizer(configBob, valKeyBob, stateBob,
-		consMgrBob, networkBob, broadcastPipe, networkBob.EventPipe)
+		consV1MgrBob, consV2MgrBob, networkBob, broadcastPipe, networkBob.EventPipe)
 	assert.NoError(t, err)
 	syncBob := sync2.(*synchronizer)
 
@@ -235,7 +237,7 @@ func TestHandlerBlocksResponseIdenticalBundles(t *testing.T) {
 	nets := makeAliceAndBobNetworks(t)
 
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
-	msg := message.NewBlockAnnounceMessage(blk, cert)
+	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 
 	bdlAlice := nets.syncAlice.prepareBundle(msg)
 	bdlBob := nets.syncBob.prepareBundle(msg)
@@ -264,42 +266,36 @@ func TestHandlerBlocksResponseSyncing(t *testing.T) {
 
 	// Announcing a block
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
-	msg := message.NewBlockAnnounceMessage(blk, cert)
+	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 
 	// Perform block syncing
 	assert.Equal(t, uint32(11), nets.syncAlice.config.BlockPerMessage)
-	assert.Equal(t, uint32(23), nets.syncAlice.config.BlockPerSession)
+	assert.Equal(t, uint32(27), nets.syncAlice.config.BlockPerSession)
 
 	shouldPublishBlockRequest(t, nets.networkAlice, 1)
 	shouldPublishBlockResponse(t, nets.networkBob, 1, 11, message.ResponseCodeMoreBlocks)  // 1-11
 	shouldPublishBlockResponse(t, nets.networkBob, 12, 11, message.ResponseCodeMoreBlocks) // 12-22
-	shouldPublishBlockResponse(t, nets.networkBob, 23, 1, message.ResponseCodeMoreBlocks)  // 23-23
+	shouldPublishBlockResponse(t, nets.networkBob, 23, 5, message.ResponseCodeMoreBlocks)  // 23-27
 	shouldPublishBlockResponse(t, nets.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
 
-	shouldPublishBlockRequest(t, nets.networkAlice, 24)
-	shouldPublishBlockResponse(t, nets.networkBob, 24, 11, message.ResponseCodeMoreBlocks) // 24-34
-	shouldPublishBlockResponse(t, nets.networkBob, 35, 11, message.ResponseCodeMoreBlocks) // 35-45
-	shouldPublishBlockResponse(t, nets.networkBob, 46, 1, message.ResponseCodeMoreBlocks)  // 46-46
+	shouldPublishBlockRequest(t, nets.networkAlice, 28)
+	shouldPublishBlockResponse(t, nets.networkBob, 28, 11, message.ResponseCodeMoreBlocks) // 28-38
+	shouldPublishBlockResponse(t, nets.networkBob, 39, 11, message.ResponseCodeMoreBlocks) // 39-49
+	shouldPublishBlockResponse(t, nets.networkBob, 50, 5, message.ResponseCodeMoreBlocks)  // 50-54
 	shouldPublishBlockResponse(t, nets.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
 
-	shouldPublishBlockRequest(t, nets.networkAlice, 47)
-	shouldPublishBlockResponse(t, nets.networkBob, 47, 11, message.ResponseCodeMoreBlocks) // 47-57
-	shouldPublishBlockResponse(t, nets.networkBob, 58, 11, message.ResponseCodeMoreBlocks) // 58-68
-	shouldPublishBlockResponse(t, nets.networkBob, 69, 1, message.ResponseCodeMoreBlocks)  // 69-69
+	shouldPublishBlockRequest(t, nets.networkAlice, 55)
+	shouldPublishBlockResponse(t, nets.networkBob, 55, 11, message.ResponseCodeMoreBlocks) // 55-65
+	shouldPublishBlockResponse(t, nets.networkBob, 66, 11, message.ResponseCodeMoreBlocks) // 66-76
+	shouldPublishBlockResponse(t, nets.networkBob, 77, 5, message.ResponseCodeMoreBlocks)  // 77-81
 	shouldPublishBlockResponse(t, nets.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
 
-	shouldPublishBlockRequest(t, nets.networkAlice, 70)
-	shouldPublishBlockResponse(t, nets.networkBob, 70, 11, message.ResponseCodeMoreBlocks) // 70-80
-	shouldPublishBlockResponse(t, nets.networkBob, 81, 11, message.ResponseCodeMoreBlocks) // 81-91
-	shouldPublishBlockResponse(t, nets.networkBob, 92, 1, message.ResponseCodeMoreBlocks)  // 92-92
-	shouldPublishBlockResponse(t, nets.networkBob, 0, 0, message.ResponseCodeNoMoreBlocks) // NoMoreBlock
-
-	// Last block requests
-	shouldPublishBlockRequest(t, nets.networkAlice, 93)                                   // 93-116
-	shouldPublishBlockResponse(t, nets.networkBob, 93, 8, message.ResponseCodeMoreBlocks) // 93-100
-	shouldPublishBlockResponse(t, nets.networkBob, 100, 0, message.ResponseCodeSynced)    // Synced
+	shouldPublishBlockRequest(t, nets.networkAlice, 82)
+	shouldPublishBlockResponse(t, nets.networkBob, 82, 11, message.ResponseCodeMoreBlocks) // 82-92
+	shouldPublishBlockResponse(t, nets.networkBob, 93, 8, message.ResponseCodeMoreBlocks)  // 93-100
+	shouldPublishBlockResponse(t, nets.networkBob, 100, 0, message.ResponseCodeSynced)     // Synced
 
 	assert.Eventually(t, func() bool {
 		return nets.syncAlice.state.LastBlockHeight() == uint32(100)
@@ -332,7 +328,7 @@ func TestHandlerBlocksResponseSyncingHasBlockInCache(t *testing.T) {
 
 	// Announcing a block
 	blk, cert := nets.GenerateTestBlock(nets.RandHeight())
-	msg := message.NewBlockAnnounceMessage(blk, cert)
+	msg := message.NewBlockAnnounceMessage(blk, cert, nil)
 	nets.syncBob.broadcast(msg)
 	shouldPublishMessageWithThisType(t, nets.networkBob, message.TypeBlockAnnounce)
 

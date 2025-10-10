@@ -4,52 +4,47 @@
     "title": "Pactus OpenRPC",
     "version": "1.2.1"
   },
-  "methods": [
-    {
+  "methods": [{
       "name": "pactus.transaction.get_transaction",
       "description": "GetTransaction retrieves transaction details based on the provided request parameters.",
       "tags": [{ "name": "transaction"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "id",
           "description": "The unique ID of the transaction to retrieve.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "verbosity",
           "description": "The verbosity level for transaction details.",
           "schema": { "type": "integer" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["block_height","block_time","transaction"],
           "properties": {"block_height": { "type": "integer" },"block_time": { "type": "integer" },"transaction": {
-  "type": "object",
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature"],
   "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
-  "type": "object",
+  "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
 },"bond": {
-  "type": "object",
+  "type": "object","required": ["sender","receiver","stake","public_key"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" }}
 },"sortition": {
-  "type": "object",
+  "type": "object","required": ["address","proof"],
   "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
 },"unbond": {
-  "type": "object",
+  "type": "object","required": ["validator"],
   "properties": {"validator": { "type": "string" }}
 },"withdraw": {
-  "type": "object",
+  "type": "object","required": ["validator_address","account_address","amount"],
   "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
 },"batch_transfer": {
-  "type": "object",
-  "properties": {"sender": { "type": "string" },"recipients": 
-{
+  "type": "object","required": ["sender","recipients"],
+  "properties": {"sender": { "type": "string" },"recipients": {
   "type": "array",
   "items": {
-  "type": "object",
+  "type": "object","required": ["receiver","amount"],
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
@@ -57,322 +52,264 @@
 }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.transaction.calculate_fee",
       "description": "CalculateFee calculates the transaction fee based on the specified amount and payload type.",
       "tags": [{ "name": "transaction"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "amount",
           "description": "The amount involved in the transaction, specified in NanoPAC.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "payload_type",
           "description": "The type of transaction payload.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "fixed_amount",
           "description": "Indicates if the amount should be fixed and include the fee.",
           "schema": { "type": "boolean" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["amount","fee"],
           "properties": {"amount": { "type": "integer" },"fee": { "type": "integer" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.transaction.broadcast_transaction",
       "description": "BroadcastTransaction broadcasts a signed transaction to the network.",
       "tags": [{ "name": "transaction"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "signed_raw_transaction",
           "description": "The signed raw transaction data to be broadcasted.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["id"],
           "properties": {"id": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.transaction.get_raw_transfer_transaction",
       "description": "GetRawTransferTransaction retrieves raw details of a transfer transaction.",
       "tags": [{ "name": "transaction"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "lock_time",
           "description": "The lock time for the transaction. If not set, defaults to the last block height.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "sender",
           "description": "The sender's account address.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "receiver",
           "description": "The receiver's account address.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "amount",
           "description": "The amount to be transferred, specified in NanoPAC. Must be greater than 0.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "fee",
           "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "memo",
           "description": "A memo string for the transaction.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["raw_transaction","id"],
           "properties": {"raw_transaction": { "type": "string" },"id": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.transaction.get_raw_bond_transaction",
       "description": "GetRawBondTransaction retrieves raw details of a bond transaction.",
       "tags": [{ "name": "transaction"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "lock_time",
           "description": "The lock time for the transaction. If not set, defaults to the last block height.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "sender",
           "description": "The sender's account address.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "receiver",
           "description": "The receiver's validator address.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "stake",
           "description": "The stake amount in NanoPAC. Must be greater than 0.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "public_key",
-          "description": "The public key of the validator.",
+          "description": "The public key of the validator. Optional, but required when registering a new validator.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "fee",
           "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "memo",
           "description": "A memo string for the transaction.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["raw_transaction","id"],
           "properties": {"raw_transaction": { "type": "string" },"id": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.transaction.get_raw_unbond_transaction",
       "description": "GetRawUnbondTransaction retrieves raw details of an unbond transaction.",
       "tags": [{ "name": "transaction"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "lock_time",
           "description": "The lock time for the transaction. If not set, defaults to the last block height.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "validator_address",
           "description": "The address of the validator to unbond from.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "memo",
           "description": "A memo string for the transaction.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["raw_transaction","id"],
           "properties": {"raw_transaction": { "type": "string" },"id": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.transaction.get_raw_withdraw_transaction",
       "description": "GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.",
       "tags": [{ "name": "transaction"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "lock_time",
           "description": "The lock time for the transaction. If not set, defaults to the last block height.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "validator_address",
           "description": "The address of the validator to withdraw from.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "account_address",
           "description": "The address of the account to withdraw to.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "amount",
           "description": "The withdrawal amount in NanoPAC. Must be greater than 0.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "fee",
           "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "memo",
           "description": "A memo string for the transaction.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["raw_transaction","id"],
           "properties": {"raw_transaction": { "type": "string" },"id": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.transaction.get_raw_batch_transfer_transaction",
       "description": "GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.",
       "tags": [{ "name": "transaction"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "lock_time",
           "description": "The lock time for the transaction. If not set, defaults to the last block height.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "sender",
           "description": "The sender's account address.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "recipients",
           "description": "The recipients list of receiver with amount, min 2 recipients.",
-          "schema": 
-{
+          "schema": {
   "type": "array",
   "items": {
-  "type": "object",
+  "type": "object","required": ["receiver","amount"],
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }
-        },
-        {
+        },{
           "name": "fee",
           "description": "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "memo",
           "description": "A memo string for the transaction.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["raw_transaction","id"],
           "properties": {"raw_transaction": { "type": "string" },"id": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.transaction.decode_raw_transaction",
       "description": "DecodeRawTransaction accepts raw transaction and returns decoded transaction.",
       "tags": [{ "name": "transaction"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "raw_transaction",
           "description": "The raw transaction data in hexadecimal format.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["transaction"],
           "properties": {"transaction": {
-  "type": "object",
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature"],
   "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
-  "type": "object",
+  "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
 },"bond": {
-  "type": "object",
+  "type": "object","required": ["sender","receiver","stake","public_key"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" }}
 },"sortition": {
-  "type": "object",
+  "type": "object","required": ["address","proof"],
   "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
 },"unbond": {
-  "type": "object",
+  "type": "object","required": ["validator"],
   "properties": {"validator": { "type": "string" }}
 },"withdraw": {
-  "type": "object",
+  "type": "object","required": ["validator_address","account_address","amount"],
   "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
 },"batch_transfer": {
-  "type": "object",
-  "properties": {"sender": { "type": "string" },"recipients": 
-{
+  "type": "object","required": ["sender","recipients"],
+  "properties": {"sender": { "type": "string" },"recipients": {
   "type": "array",
   "items": {
-  "type": "object",
+  "type": "object","required": ["receiver","amount"],
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
@@ -380,72 +317,61 @@
 }}
           }
         }
-      }
-    
-  
-,
-    {
+      },{
       "name": "pactus.blockchain.get_block",
       "description": "GetBlock retrieves information about a block based on the provided request parameters.",
       "tags": [{ "name": "blockchain"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "height",
           "description": "The height of the block to retrieve.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "verbosity",
           "description": "The verbosity level for block information.",
           "schema": { "type": "integer" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["height","hash","data","block_time","header","prev_cert","txs"],
           "properties": {"height": { "type": "integer" },"hash": { "type": "string" },"data": { "type": "string" },"block_time": { "type": "integer" },"header": {
-  "type": "object",
+  "type": "object","required": ["version","prev_block_hash","state_root","sortition_seed","proposer_address"],
   "properties": {"version": { "type": "integer" },"prev_block_hash": { "type": "string" },"state_root": { "type": "string" },"sortition_seed": { "type": "string" },"proposer_address": { "type": "string" }}
 },"prev_cert": {
-  "type": "object",
-  "properties": {"hash": { "type": "string" },"round": { "type": "integer" },"committers": 
-{
+  "type": "object","required": ["hash","round","committers","absentees","signature"],
+  "properties": {"hash": { "type": "string" },"round": { "type": "integer" },"committers": {
   "type": "array",
   "items": { "type": "integer" }
-},"absentees": 
-{
+},"absentees": {
   "type": "array",
   "items": { "type": "integer" }
 },"signature": { "type": "string" }}
-},"txs": 
-{
+},"txs": {
   "type": "array",
   "items": {
-  "type": "object",
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature"],
   "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
-  "type": "object",
+  "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
 },"bond": {
-  "type": "object",
+  "type": "object","required": ["sender","receiver","stake","public_key"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" }}
 },"sortition": {
-  "type": "object",
+  "type": "object","required": ["address","proof"],
   "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
 },"unbond": {
-  "type": "object",
+  "type": "object","required": ["validator"],
   "properties": {"validator": { "type": "string" }}
 },"withdraw": {
-  "type": "object",
+  "type": "object","required": ["validator_address","account_address","amount"],
   "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
 },"batch_transfer": {
-  "type": "object",
-  "properties": {"sender": { "type": "string" },"recipients": 
-{
+  "type": "object","required": ["sender","recipients"],
+  "properties": {"sender": { "type": "string" },"recipients": {
   "type": "array",
   "items": {
-  "type": "object",
+  "type": "object","required": ["receiver","amount"],
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
@@ -454,104 +380,82 @@
 }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.blockchain.get_block_hash",
       "description": "GetBlockHash retrieves the hash of a block at the specified height.",
       "tags": [{ "name": "blockchain"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "height",
           "description": "The height of the block to retrieve the hash for.",
           "schema": { "type": "integer" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["hash"],
           "properties": {"hash": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.blockchain.get_block_height",
       "description": "GetBlockHeight retrieves the height of a block with the specified hash.",
       "tags": [{ "name": "blockchain"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "hash",
           "description": "The hash of the block to retrieve the height for.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["height"],
           "properties": {"height": { "type": "integer" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.blockchain.get_blockchain_info",
       "description": "GetBlockchainInfo retrieves general information about the blockchain.",
       "tags": [{ "name": "blockchain"}],
       "paramStructure": "by-name",
-      "params": [
-      ],
+      "params": [],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
-          "properties": {"last_block_height": { "type": "integer" },"last_block_hash": { "type": "string" },"total_accounts": { "type": "integer" },"total_validators": { "type": "integer" },"total_power": { "type": "integer" },"committee_power": { "type": "integer" },"committee_validators": 
-{
+          "type": "object","required": ["last_block_height","last_block_hash","total_accounts","total_validators","active_validators","total_power","committee_power","committee_validators","is_pruned","pruning_height","last_block_time","committee_protocol_versions"],
+          "properties": {"last_block_height": { "type": "integer" },"last_block_hash": { "type": "string" },"total_accounts": { "type": "integer" },"total_validators": { "type": "integer" },"active_validators": { "type": "integer" },"total_power": { "type": "integer" },"committee_power": { "type": "integer" },"committee_validators": {
   "type": "array",
   "items": {
-  "type": "object",
+  "type": "object","required": ["hash","data","public_key","number","stake","last_bonding_height","last_sortition_height","unbonding_height","address","availability_score","protocol_version"],
   "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" }}
 }
-},"is_pruned": { "type": "boolean" },"pruning_height": { "type": "integer" },"last_block_time": { "type": "integer" },"committee_protocol_versions": 
-{
-  "type": "array",
-  "items": {
-  "type": "object",
-  "properties": {}
-}
+},"is_pruned": { "type": "boolean" },"pruning_height": { "type": "integer" },"last_block_time": { "type": "integer" },"committee_protocol_versions": {
+  "type": "object"
 }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.blockchain.get_consensus_info",
       "description": "GetConsensusInfo retrieves information about the consensus instances.",
       "tags": [{ "name": "blockchain"}],
       "paramStructure": "by-name",
-      "params": [
-      ],
+      "params": [],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["proposal","instances"],
           "properties": {"proposal": {
-  "type": "object",
+  "type": "object","required": ["height","round","block_data","signature"],
   "properties": {"height": { "type": "integer" },"round": { "type": "integer" },"block_data": { "type": "string" },"signature": { "type": "string" }}
-},"instances": 
-{
+},"instances": {
   "type": "array",
   "items": {
-  "type": "object",
-  "properties": {"address": { "type": "string" },"active": { "type": "boolean" },"height": { "type": "integer" },"round": { "type": "integer" },"votes": 
-{
+  "type": "object","required": ["address","active","height","round","votes"],
+  "properties": {"address": { "type": "string" },"active": { "type": "boolean" },"height": { "type": "integer" },"round": { "type": "integer" },"votes": {
   "type": "array",
   "items": {
-  "type": "object",
+  "type": "object","required": ["type","voter","block_hash","round","cp_round","cp_value"],
   "properties": {"type": { "type": "integer" },"voter": { "type": "string" },"block_hash": { "type": "string" },"round": { "type": "integer" },"cp_round": { "type": "integer" },"cp_value": { "type": "integer" }}
 }
 }}
@@ -559,164 +463,138 @@
 }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.blockchain.get_account",
       "description": "GetAccount retrieves information about an account based on the provided address.",
       "tags": [{ "name": "blockchain"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "address",
           "description": "The address of the account to retrieve information for.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["account"],
           "properties": {"account": {
-  "type": "object",
+  "type": "object","required": ["hash","data","number","balance","address"],
   "properties": {"hash": { "type": "string" },"data": { "type": "string" },"number": { "type": "integer" },"balance": { "type": "integer" },"address": { "type": "string" }}
 }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.blockchain.get_validator",
       "description": "GetValidator retrieves information about a validator based on the provided address.",
       "tags": [{ "name": "blockchain"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "address",
           "description": "The address of the validator to retrieve information for.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["validator"],
           "properties": {"validator": {
-  "type": "object",
+  "type": "object","required": ["hash","data","public_key","number","stake","last_bonding_height","last_sortition_height","unbonding_height","address","availability_score","protocol_version"],
   "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" }}
 }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.blockchain.get_validator_by_number",
       "description": "GetValidatorByNumber retrieves information about a validator based on the provided number.",
       "tags": [{ "name": "blockchain"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "number",
           "description": "The unique number of the validator to retrieve information for.",
           "schema": { "type": "integer" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["validator"],
           "properties": {"validator": {
-  "type": "object",
+  "type": "object","required": ["hash","data","public_key","number","stake","last_bonding_height","last_sortition_height","unbonding_height","address","availability_score","protocol_version"],
   "properties": {"hash": { "type": "string" },"data": { "type": "string" },"public_key": { "type": "string" },"number": { "type": "integer" },"stake": { "type": "integer" },"last_bonding_height": { "type": "integer" },"last_sortition_height": { "type": "integer" },"unbonding_height": { "type": "integer" },"address": { "type": "string" },"availability_score": { "type": "number" },"protocol_version": { "type": "integer" }}
 }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.blockchain.get_validator_addresses",
       "description": "GetValidatorAddresses retrieves a list of all validator addresses.",
       "tags": [{ "name": "blockchain"}],
       "paramStructure": "by-name",
-      "params": [
-      ],
+      "params": [],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
-          "properties": {"addresses": 
-{
+          "type": "object","required": ["addresses"],
+          "properties": {"addresses": {
   "type": "array",
   "items": { "type": "string" }
 }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.blockchain.get_public_key",
       "description": "GetPublicKey retrieves the public key of an account based on the provided address.",
       "tags": [{ "name": "blockchain"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "address",
           "description": "The address for which to retrieve the public key.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["public_key"],
           "properties": {"public_key": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.blockchain.get_tx_pool_content",
       "description": "GetTxPoolContent retrieves current transactions in the transaction pool.",
       "tags": [{ "name": "blockchain"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "payload_type",
           "description": "The type of transactions to retrieve from the transaction pool. 0 means all types.",
           "schema": { "type": "integer" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
-          "properties": {"txs": 
-{
+          "type": "object","required": ["txs"],
+          "properties": {"txs": {
   "type": "array",
   "items": {
-  "type": "object",
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature"],
   "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
-  "type": "object",
+  "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
 },"bond": {
-  "type": "object",
+  "type": "object","required": ["sender","receiver","stake","public_key"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" }}
 },"sortition": {
-  "type": "object",
+  "type": "object","required": ["address","proof"],
   "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
 },"unbond": {
-  "type": "object",
+  "type": "object","required": ["validator"],
   "properties": {"validator": { "type": "string" }}
 },"withdraw": {
-  "type": "object",
+  "type": "object","required": ["validator_address","account_address","amount"],
   "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
 },"batch_transfer": {
-  "type": "object",
-  "properties": {"sender": { "type": "string" },"recipients": 
-{
+  "type": "object","required": ["sender","recipients"],
+  "properties": {"sender": { "type": "string" },"recipients": {
   "type": "array",
   "items": {
-  "type": "object",
+  "type": "object","required": ["receiver","amount"],
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
@@ -725,682 +603,535 @@
 }}
           }
         }
-      }
-    
-  
-,
-    {
+      },{
       "name": "pactus.network.get_network_info",
       "description": "GetNetworkInfo retrieves information about the overall network.",
       "tags": [{ "name": "network"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "only_connected",
           "description": "If true, returns only peers that are currently connected.",
           "schema": { "type": "boolean" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
-          "properties": {"network_name": { "type": "string" },"connected_peers_count": { "type": "integer" },"connected_peers": 
-{
+          "type": "object","required": ["network_name","connected_peers_count","connected_peers","metric_info"],
+          "properties": {"network_name": { "type": "string" },"connected_peers_count": { "type": "integer" },"connected_peers": {
   "type": "array",
   "items": {
-  "type": "object",
-  "properties": {"status": { "type": "integer" },"moniker": { "type": "string" },"agent": { "type": "string" },"peer_id": { "type": "string" },"consensus_keys": 
-{
+  "type": "object","required": ["status","moniker","agent","peer_id","consensus_keys","consensus_addresses","services","last_block_hash","height","last_sent","last_received","address","direction","protocols","total_sessions","completed_sessions","metric_info","outbound_hello_sent"],
+  "properties": {"status": { "type": "integer" },"moniker": { "type": "string" },"agent": { "type": "string" },"peer_id": { "type": "string" },"consensus_keys": {
   "type": "array",
   "items": { "type": "string" }
-},"consensus_addresses": 
-{
+},"consensus_addresses": {
   "type": "array",
   "items": { "type": "string" }
-},"services": { "type": "integer" },"last_block_hash": { "type": "string" },"height": { "type": "integer" },"last_sent": { "type": "integer" },"last_received": { "type": "integer" },"address": { "type": "string" },"direction": { "type": "integer" },"protocols": 
-{
+},"services": { "type": "integer" },"last_block_hash": { "type": "string" },"height": { "type": "integer" },"last_sent": { "type": "integer" },"last_received": { "type": "integer" },"address": { "type": "string" },"direction": { "type": "integer" },"protocols": {
   "type": "array",
   "items": { "type": "string" }
 },"total_sessions": { "type": "integer" },"completed_sessions": { "type": "integer" },"metric_info": {
-  "type": "object",
+  "type": "object","required": ["total_invalid","total_sent","total_received","message_sent","message_received"],
   "properties": {"total_invalid": {
-  "type": "object",
+  "type": "object","required": ["bytes","bundles"],
   "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
 },"total_sent": {
-  "type": "object",
+  "type": "object","required": ["bytes","bundles"],
   "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
 },"total_received": {
-  "type": "object",
+  "type": "object","required": ["bytes","bundles"],
   "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
-},"message_sent": 
-{
-  "type": "array",
-  "items": {
-  "type": "object",
-  "properties": {}
-}
-},"message_received": 
-{
-  "type": "array",
-  "items": {
-  "type": "object",
-  "properties": {}
-}
+},"message_sent": {
+  "type": "object"
+},"message_received": {
+  "type": "object"
 }}
 },"outbound_hello_sent": { "type": "boolean" }}
 }
 },"metric_info": {
-  "type": "object",
+  "type": "object","required": ["total_invalid","total_sent","total_received","message_sent","message_received"],
   "properties": {"total_invalid": {
-  "type": "object",
+  "type": "object","required": ["bytes","bundles"],
   "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
 },"total_sent": {
-  "type": "object",
+  "type": "object","required": ["bytes","bundles"],
   "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
 },"total_received": {
-  "type": "object",
+  "type": "object","required": ["bytes","bundles"],
   "properties": {"bytes": { "type": "integer" },"bundles": { "type": "integer" }}
-},"message_sent": 
-{
-  "type": "array",
-  "items": {
-  "type": "object",
-  "properties": {}
-}
-},"message_received": 
-{
-  "type": "array",
-  "items": {
-  "type": "object",
-  "properties": {}
-}
+},"message_sent": {
+  "type": "object"
+},"message_received": {
+  "type": "object"
 }}
 }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.network.get_node_info",
       "description": "GetNodeInfo retrieves information about a specific node in the network.",
       "tags": [{ "name": "network"}],
       "paramStructure": "by-name",
-      "params": [
-      ],
+      "params": [],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
-          "properties": {"moniker": { "type": "string" },"agent": { "type": "string" },"peer_id": { "type": "string" },"started_at": { "type": "integer" },"reachability": { "type": "string" },"services": { "type": "integer" },"services_names": { "type": "string" },"local_addrs": 
-{
+          "type": "object","required": ["moniker","agent","peer_id","started_at","reachability","services","services_names","local_addrs","protocols","clock_offset","connection_info","zmq_publishers","current_time"],
+          "properties": {"moniker": { "type": "string" },"agent": { "type": "string" },"peer_id": { "type": "string" },"started_at": { "type": "integer" },"reachability": { "type": "string" },"services": { "type": "integer" },"services_names": { "type": "string" },"local_addrs": {
   "type": "array",
   "items": { "type": "string" }
-},"protocols": 
-{
+},"protocols": {
   "type": "array",
   "items": { "type": "string" }
 },"clock_offset": { "type": "number" },"connection_info": {
-  "type": "object",
+  "type": "object","required": ["connections","inbound_connections","outbound_connections"],
   "properties": {"connections": { "type": "integer" },"inbound_connections": { "type": "integer" },"outbound_connections": { "type": "integer" }}
-},"zmq_publishers": 
-{
+},"zmq_publishers": {
   "type": "array",
   "items": {
-  "type": "object",
+  "type": "object","required": ["topic","address","hwm"],
   "properties": {"topic": { "type": "string" },"address": { "type": "string" },"hwm": { "type": "integer" }}
 }
 },"current_time": { "type": "integer" }}
           }
         }
-      }
-    
-  
-,
-    {
+      },{
       "name": "pactus.utils.sign_message_with_private_key",
       "description": "SignMessageWithPrivateKey signs a message with the provided private key.",
       "tags": [{ "name": "utils"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "private_key",
           "description": "The private key to sign the message.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "message",
           "description": "The message content to be signed.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["signature"],
           "properties": {"signature": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.utils.verify_message",
       "description": "VerifyMessage verifies a signature against the public key and message.",
       "tags": [{ "name": "utils"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "message",
           "description": "The original message content that was signed.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "signature",
           "description": "The signature to verify in hexadecimal format.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "public_key",
           "description": "The public key of the signer.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["is_valid"],
           "properties": {"is_valid": { "type": "boolean" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.utils.public_key_aggregation",
       "description": "PublicKeyAggregation aggregates multiple BLS public keys into a single key.",
       "tags": [{ "name": "utils"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "public_keys",
           "description": "List of BLS public keys to be aggregated.",
-          "schema": 
-{
+          "schema": {
   "type": "array",
   "items": { "type": "string" }
 }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["public_key","address"],
           "properties": {"public_key": { "type": "string" },"address": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.utils.signature_aggregation",
       "description": "SignatureAggregation aggregates multiple BLS signatures into a single signature.",
       "tags": [{ "name": "utils"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "signatures",
           "description": "List of BLS signatures to be aggregated.",
-          "schema": 
-{
+          "schema": {
   "type": "array",
   "items": { "type": "string" }
 }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["signature"],
           "properties": {"signature": { "type": "string" }}
           }
         }
-      }
-    
-  
-,
-    {
+      },{
       "name": "pactus.wallet.create_wallet",
       "description": "CreateWallet creates a new wallet with the specified parameters.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name for the new wallet.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "password",
           "description": "Password to secure the new wallet.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["mnemonic"],
           "properties": {"mnemonic": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.restore_wallet",
       "description": "RestoreWallet restores an existing wallet with the given mnemonic.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name for the restored wallet.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "mnemonic",
           "description": "The mnemonic (seed phrase) for wallet recovery.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "password",
           "description": "Password to secure the restored wallet.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["wallet_name"],
           "properties": {"wallet_name": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.load_wallet",
       "description": "LoadWallet loads an existing wallet with the given name.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name of the wallet to load.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["wallet_name"],
           "properties": {"wallet_name": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.unload_wallet",
       "description": "UnloadWallet unloads a currently loaded wallet with the specified name.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name of the wallet to unload.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["wallet_name"],
           "properties": {"wallet_name": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.get_total_balance",
       "description": "GetTotalBalance returns the total available balance of the wallet.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name of the wallet to get the total balance.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["wallet_name","total_balance"],
           "properties": {"wallet_name": { "type": "string" },"total_balance": { "type": "integer" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.sign_raw_transaction",
       "description": "SignRawTransaction signs a raw transaction for a specified wallet.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name of the wallet used for signing.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "raw_transaction",
           "description": "The raw transaction data to be signed.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "password",
           "description": "Wallet password required for signing.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["transaction_id","signed_raw_transaction"],
           "properties": {"transaction_id": { "type": "string" },"signed_raw_transaction": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.get_validator_address",
       "description": "GetValidatorAddress retrieves the validator address associated with a public key.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "public_key",
           "description": "The public key of the validator.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["address"],
           "properties": {"address": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.get_new_address",
       "description": "GetNewAddress generates a new address for the specified wallet.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name of the wallet to generate a new address.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "address_type",
           "description": "The type of address to generate.",
           "schema": { "type": "integer" }
-        },
-        {
+        },{
           "name": "label",
           "description": "A label for the new address.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "password",
           "description": "Password for the new address. It's required when address_type is Ed25519 type.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["wallet_name","address_info"],
           "properties": {"wallet_name": { "type": "string" },"address_info": {
-  "type": "object",
+  "type": "object","required": ["address","public_key","label","path"],
   "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" }}
 }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.get_address_history",
       "description": "GetAddressHistory retrieves the transaction history of an address.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name of the wallet containing the address.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "address",
           "description": "The address to retrieve history for.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
-          "properties": {"history_info": 
-{
+          "type": "object","required": ["history_info"],
+          "properties": {"history_info": {
   "type": "array",
   "items": {
-  "type": "object",
+  "type": "object","required": ["transaction_id","time","payload_type","description","amount"],
   "properties": {"transaction_id": { "type": "string" },"time": { "type": "integer" },"payload_type": { "type": "string" },"description": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.sign_message",
       "description": "SignMessage signs an arbitrary message using a wallet's private key.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name of the wallet to sign with.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "password",
           "description": "Wallet password required for signing.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "address",
           "description": "The address whose private key should be used for signing the message.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "message",
           "description": "The arbitrary message to be signed.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["signature"],
           "properties": {"signature": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.get_total_stake",
       "description": "GetTotalStake returns the total stake amount in the wallet.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name of the wallet to get the total stake.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["wallet_name","total_stake"],
           "properties": {"wallet_name": { "type": "string" },"total_stake": { "type": "integer" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.get_address_info",
       "description": "GetAddressInfo returns detailed information about a specific address.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name of the wallet containing the address.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "address",
           "description": "The address to query.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["wallet_name","address","label","public_key","path"],
           "properties": {"wallet_name": { "type": "string" },"address": { "type": "string" },"label": { "type": "string" },"public_key": { "type": "string" },"path": { "type": "string" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.set_address_label",
       "description": "SetAddressLabel sets or updates the label for a given address.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name of the wallet containing the address.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "password",
           "description": "Wallet password required for modification.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "address",
           "description": "The address to label.",
           "schema": { "type": "string" }
-        },
-        {
+        },{
           "name": "label",
           "description": "The new label for the address.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": [],
           "properties": {}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.list_wallet",
       "description": "ListWallet returns list of all available wallets.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-      ],
+      "params": [],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
-          "properties": {"wallets": 
-{
+          "type": "object","required": ["wallets"],
+          "properties": {"wallets": {
   "type": "array",
   "items": { "type": "string" }
 }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.get_wallet_info",
       "description": "GetWalletInfo returns detailed information about a specific wallet.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name of the wallet to query.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
+          "type": "object","required": ["wallet_name","version","network","encrypted","uuid","created_at"],
           "properties": {"wallet_name": { "type": "string" },"version": { "type": "integer" },"network": { "type": "string" },"encrypted": { "type": "boolean" },"uuid": { "type": "string" },"created_at": { "type": "integer" }}
           }
         }
-      }
-    ,
-    {
+      },{
       "name": "pactus.wallet.list_address",
       "description": "ListAddress returns all addresses in the specified wallet.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
-      "params": [
-        {
+      "params": [{
           "name": "wallet_name",
           "description": "The name of the queried wallet.",
           "schema": { "type": "string" }
-        }
-      ],
+        }],
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object",
-          "properties": {"wallet_name": { "type": "string" },"data": 
-{
+          "type": "object","required": ["wallet_name","data"],
+          "properties": {"wallet_name": { "type": "string" },"data": {
   "type": "array",
   "items": {
-  "type": "object",
+  "type": "object","required": ["address","public_key","label","path"],
   "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" }}
 }
 }}
           }
         }
-      }
-    
-  
-
-  ]
+      }]
 }
 
 

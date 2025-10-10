@@ -42,6 +42,27 @@ func TestBasicCheck(t *testing.T) {
 		})
 	})
 
+	t.Run("Too many transactions", func(t *testing.T) {
+		data := ts.DecodingHex(
+			"02" + // Version
+				"00000000" + // UnixTime
+				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
+				"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
+				"333333333333333333333333333333333333333333333333" + // SortitionSeed
+				"333333333333333333333333333333333333333333333333" +
+				"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
+				"04030201" + // PrevCert: Height
+				"0100" + // PrevCert: Round
+				"0401020304" + // PrevCert: Committers
+				"0102" + // PrevCert: Absentees
+				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
+				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
+				"e907") // Txs: Len (1001)
+
+		_, err := block.FromBytes(data)
+		assert.ErrorIs(t, err, block.ErrTooManyTransactions)
+	})
+
 	t.Run("Without the previous certificate", func(t *testing.T) {
 		blk, _ := ts.GenerateTestBlock(ts.RandHeight(), testsuite.BlockWithPrevCert(nil))
 
@@ -367,7 +388,7 @@ func TestMakeBlock(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	blk0, _ := ts.GenerateTestBlock(ts.RandHeight())
-	blk1 := block.MakeBlock(1, blk0.Header().Time(), blk0.Transactions(),
+	blk1 := block.MakeBlock(protocol.ProtocolVersion2, blk0.Header().Time(), blk0.Transactions(),
 		blk0.Header().PrevBlockHash(),
 		blk0.Header().StateRoot(),
 		blk0.PrevCertificate(),

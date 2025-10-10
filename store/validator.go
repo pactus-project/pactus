@@ -14,12 +14,14 @@ type validatorStore struct {
 	numberMap  map[int32]*validator.Validator
 	addressMap map[crypto.Address]*validator.Validator
 	total      int32
+	active     int32
 }
 
 func valKey(addr crypto.Address) []byte { return append(validatorPrefix, addr.Bytes()...) }
 
 func newValidatorStore(db *leveldb.DB) *validatorStore {
 	total := int32(0)
+	active := int32(0)
 	numberMap := make(map[int32]*validator.Validator)
 	addressMap := make(map[crypto.Address]*validator.Validator)
 	r := util.BytesPrefix(validatorPrefix)
@@ -35,12 +37,17 @@ func newValidatorStore(db *leveldb.DB) *validatorStore {
 		numberMap[val.Number()] = val
 		addressMap[val.Address()] = val
 		total++
+
+		if !val.IsUnbonded() {
+			active++
+		}
 	}
 	iter.Release()
 
 	return &validatorStore{
 		db:         db,
 		total:      total,
+		active:     active,
 		numberMap:  numberMap,
 		addressMap: addressMap,
 	}
@@ -96,8 +103,13 @@ func (vs *validatorStore) updateValidator(batch *leveldb.Batch, val *validator.V
 	if err != nil {
 		logger.Panic("unable to encode validator", "error", err)
 	}
-	if !vs.hasValidator(val.Address()) {
+
+	oldVal, ok := vs.addressMap[val.Address()]
+	if !ok {
 		vs.total++
+		vs.active++
+	} else if !oldVal.IsUnbonded() && val.IsUnbonded() {
+		vs.active--
 	}
 	vs.numberMap[val.Number()] = val
 	vs.addressMap[val.Address()] = val

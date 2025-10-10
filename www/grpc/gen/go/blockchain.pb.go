@@ -932,6 +932,8 @@ type GetBlockchainInfoResponse struct {
 	TotalAccounts int32 `protobuf:"varint,3,opt,name=total_accounts,json=totalAccounts,proto3" json:"total_accounts,omitempty"`
 	// The total number of validators in the blockchain.
 	TotalValidators int32 `protobuf:"varint,4,opt,name=total_validators,json=totalValidators,proto3" json:"total_validators,omitempty"`
+	// The number of active (not unbonded) validators in the blockchain.
+	ActiveValidators int32 `protobuf:"varint,12,opt,name=active_validators,json=activeValidators,proto3" json:"active_validators,omitempty"`
 	// The total power of the blockchain.
 	TotalPower int64 `protobuf:"varint,5,opt,name=total_power,json=totalPower,proto3" json:"total_power,omitempty"`
 	// The power of the committee.
@@ -1004,6 +1006,13 @@ func (x *GetBlockchainInfoResponse) GetTotalAccounts() int32 {
 func (x *GetBlockchainInfoResponse) GetTotalValidators() int32 {
 	if x != nil {
 		return x.TotalValidators
+	}
+	return 0
+}
+
+func (x *GetBlockchainInfoResponse) GetActiveValidators() int32 {
+	if x != nil {
+		return x.ActiveValidators
 	}
 	return 0
 }
@@ -1912,12 +1921,13 @@ const file_blockchain_proto_rawDesc = "" +
 	"\x04hash\x18\x01 \x01(\tR\x04hash\"0\n" +
 	"\x16GetBlockHeightResponse\x12\x16\n" +
 	"\x06height\x18\x01 \x01(\rR\x06height\"\x1a\n" +
-	"\x18GetBlockchainInfoRequest\"\x92\x05\n" +
+	"\x18GetBlockchainInfoRequest\"\xbf\x05\n" +
 	"\x19GetBlockchainInfoResponse\x12*\n" +
 	"\x11last_block_height\x18\x01 \x01(\rR\x0flastBlockHeight\x12&\n" +
 	"\x0flast_block_hash\x18\x02 \x01(\tR\rlastBlockHash\x12%\n" +
 	"\x0etotal_accounts\x18\x03 \x01(\x05R\rtotalAccounts\x12)\n" +
-	"\x10total_validators\x18\x04 \x01(\x05R\x0ftotalValidators\x12\x1f\n" +
+	"\x10total_validators\x18\x04 \x01(\x05R\x0ftotalValidators\x12+\n" +
+	"\x11active_validators\x18\f \x01(\x05R\x10activeValidators\x12\x1f\n" +
 	"\vtotal_power\x18\x05 \x01(\x03R\n" +
 	"totalPower\x12'\n" +
 	"\x0fcommittee_power\x18\x06 \x01(\x03R\x0ecommitteePower\x12H\n" +

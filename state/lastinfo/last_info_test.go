@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/types/block"
 	"github.com/pactus-project/pactus/types/certificate"
+	"github.com/pactus-project/pactus/types/protocol"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util/testsuite"
@@ -71,15 +72,15 @@ func setup(t *testing.T) *testData {
 	ts.HelperSignTransaction(prv4, trx)
 	prevHash := ts.RandHash()
 	lastHeight := ts.RandHeight()
-	prevCert := ts.GenerateTestBlockCertificate(lastHeight - 1)
+	prevCert := ts.GenerateTestCertificate(lastHeight - 1)
 	lastSeed := ts.RandSeed()
-	lastBlock := block.MakeBlock(1, time.Now(), block.Txs{trx},
+	lastBlock := block.MakeBlock(protocol.ProtocolVersion2, time.Now(), block.Txs{trx},
 		prevHash,
 		ts.RandHash(),
 		prevCert, lastSeed, val2.Address())
 
 	sig := ts.RandBLSSignature()
-	lastCert := certificate.NewBlockCertificate(lastHeight, 0)
+	lastCert := certificate.NewCertificate(lastHeight, 0)
 	lastCert.SetSignature(committers, []int32{}, sig)
 	mockStore.SaveBlock(lastBlock, lastCert)
 	assert.Equal(t, lastHeight, mockStore.LastHeight)

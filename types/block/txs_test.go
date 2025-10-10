@@ -67,3 +67,10 @@ func TestGetTransaction(t *testing.T) {
 	txs.Append(trx2)
 	assert.Equal(t, trx1, txs.Get(0))
 }
+
+func TestSubsidy(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	blk, _ := ts.GenerateTestBlock(ts.RandHeight())
+	assert.Equal(t, blk.Transactions()[0], blk.Transactions().Subsidy())
+}

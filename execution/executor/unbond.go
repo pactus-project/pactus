@@ -29,7 +29,7 @@ func newUnbondExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*UnbondExecutor, error)
 }
 
 func (e *UnbondExecutor) Check(strict bool) error {
-	if e.validator.UnbondingHeight() > 0 {
+	if e.validator.IsUnbonded() {
 		return ErrValidatorUnbonded
 	}
 

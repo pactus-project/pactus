@@ -45,7 +45,7 @@ func newBondExecutor(trx *tx.Tx, sbx sandbox.Sandbox) (*BondExecutor, error) {
 }
 
 func (e *BondExecutor) Check(strict bool) error {
-	if e.receiver.UnbondingHeight() > 0 {
+	if e.receiver.IsUnbonded() {
 		return ErrValidatorUnbonded
 	}
 

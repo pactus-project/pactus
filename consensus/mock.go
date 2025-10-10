@@ -24,24 +24,6 @@ type MockConsensus struct {
 	Round       int16
 }
 
-func MockingManager(ts *testsuite.TestSuite, state *state.MockState,
-	valKeys []*bls.ValidatorKey,
-) (Manager, []*MockConsensus) {
-	mocks := make([]*MockConsensus, len(valKeys))
-	instances := make([]Consensus, len(valKeys))
-	for i, key := range valKeys {
-		cons := MockingConsensus(ts, state, key)
-		mocks[i] = cons
-		instances[i] = cons
-	}
-
-	return &manager{
-		instances:         instances,
-		upcomingVotes:     make([]*vote.Vote, 0),
-		upcomingProposals: make([]*proposal.Proposal, 0),
-	}, mocks
-}
-
 func MockingConsensus(ts *testsuite.TestSuite, state *state.MockState, valKey *bls.ValidatorKey) *MockConsensus {
 	return &MockConsensus{
 		ts:     ts,
@@ -57,8 +39,6 @@ func (m *MockConsensus) ConsensusKey() *bls.PublicKey {
 func (m *MockConsensus) MoveToNewHeight() {
 	m.Height = m.State.LastBlockHeight() + 1
 }
-
-func (*MockConsensus) Start() {}
 
 func (m *MockConsensus) AddVote(v *vote.Vote) {
 	m.Votes = append(m.Votes, v)
@@ -117,4 +97,8 @@ func (m *MockConsensus) IsProposer() bool {
 
 func (m *MockConsensus) SetActive(active bool) {
 	m.Active = active
+}
+
+func (*MockConsensus) IsDeprecated() bool {
+	return false
 }

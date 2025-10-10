@@ -3,6 +3,8 @@ package vault
 import (
 	"cmp"
 	"encoding/json"
+	"fmt"
+	"maps"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -53,10 +55,25 @@ import (
 //  - https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
 //
 
+// VaultType represents the type of vault.
+type VaultType int
+
 const (
-	TypeFull     = int(1)
-	TypeNeutered = int(2)
+	TypeFull     VaultType = iota + 1 // Full vault with private keys.
+	TypeNeutered                      // Neutered vault without private keys.
 )
+
+// String returns the string representation of the VaultType.
+func (vt VaultType) String() string {
+	switch vt {
+	case TypeFull:
+		return "Full"
+	case TypeNeutered:
+		return "Neutered"
+	default:
+		return "Unknown"
+	}
+}
 
 type AddressInfo struct {
 	Address   string `json:"address"`    // Address in the wallet
@@ -75,14 +92,17 @@ const (
 	PurposeImportPrivateKeyHardened = PurposeImportPrivateKey + addresspath.HardenedKeyStart
 )
 
+// AddressGapLimit is the maximum number of consecutive inactive addresses before stopping recovery.
+const AddressGapLimit = 8
+
 type Vault struct {
-	Type       int                    `json:"type"`        // Wallet type. 1: Full keys, 2: Neutered
+	Type       VaultType              `json:"type"`        // Vault type: Full or Neutered
 	CoinType   uint32                 `json:"coin_type"`   // Coin type: 21888 for Mainnet, 21777 for Testnet
-	DefaultFee amount.Amount          `json:"default_fee"` // The Wallet's default fee
-	Addresses  map[string]AddressInfo `json:"addresses"`   // All addresses that are stored in the wallet
+	DefaultFee amount.Amount          `json:"default_fee"` // The Vault's default fee
+	Addresses  map[string]AddressInfo `json:"addresses"`   // All addresses that are stored in the vault
 	Encrypter  encrypter.Encrypter    `json:"encrypter"`   // Encryption algorithm
 	KeyStore   string                 `json:"key_store"`   // KeyStore that stores the secrets and encrypts using Encrypter
-	Purposes   purposes               `json:"purposes"`    // Contains Purpose 12381 for BLS signature
+	Purposes   purposes               `json:"purposes"`    // Contains Purposes of the vault
 }
 
 type keyStore struct {
@@ -176,9 +196,7 @@ func (v *Vault) Neuter() *Vault {
 		Purposes:  v.Purposes,
 	}
 
-	for addr, info := range v.Addresses {
-		neutered.Addresses[addr] = info
-	}
+	maps.Copy(neutered.Addresses, v.Addresses)
 
 	return neutered
 }
@@ -527,7 +545,21 @@ func (v *Vault) NewBLSAccountAddress(label string) (*AddressInfo, error) {
 		return nil, err
 	}
 	index := v.Purposes.PurposeBLS.NextAccountIndex
-	ext, err = ext.DerivePath([]uint32{index})
+	info, err := v.deriveBLSAccountAddressAt(ext, index, label)
+	if err != nil {
+		return nil, err
+	}
+
+	v.Addresses[info.Address] = *info
+	v.Purposes.PurposeBLS.NextAccountIndex++
+
+	return info, nil
+}
+
+func (*Vault) deriveBLSAccountAddressAt(ext *blshdkeychain.ExtendedKey,
+	index uint32, label string,
+) (*AddressInfo, error) {
+	ext, err := ext.DerivePath([]uint32{index})
 	if err != nil {
 		return nil, err
 	}
@@ -544,8 +576,6 @@ func (v *Vault) NewBLSAccountAddress(label string) (*AddressInfo, error) {
 		PublicKey: blsPubKey.String(),
 		Path:      addresspath.NewPath(ext.Path()...).String(),
 	}
-	v.Addresses[addr] = info
-	v.Purposes.PurposeBLS.NextAccountIndex++
 
 	return &info, nil
 }
@@ -562,6 +592,19 @@ func (v *Vault) NewEd25519AccountAddress(label, password string) (*AddressInfo, 
 	}
 
 	index := v.Purposes.PurposeBIP44.NextEd25519Index
+	info, err := v.deriveEd25519AccountAddressAt(masterKey, index, label)
+	if err != nil {
+		return nil, err
+	}
+	v.Addresses[info.Address] = *info
+	v.Purposes.PurposeBIP44.NextEd25519Index++
+
+	return info, nil
+}
+
+func (v *Vault) deriveEd25519AccountAddressAt(masterKey *ed25519hdkeychain.ExtendedKey,
+	index uint32, label string,
+) (*AddressInfo, error) {
 	ext, err := masterKey.DerivePath([]uint32{
 		_H(PurposeBIP44),
 		_H(v.CoinType),
@@ -584,8 +627,6 @@ func (v *Vault) NewEd25519AccountAddress(label, password string) (*AddressInfo, 
 		PublicKey: ed25519PubKey.String(),
 		Path:      addresspath.NewPath(ext.Path()...).String(),
 	}
-	v.Addresses[addr] = info
-	v.Purposes.PurposeBIP44.NextEd25519Index++
 
 	return &info, nil
 }
@@ -686,4 +727,123 @@ func (*Vault) deriveEd25519PrivateKey(mnemonicSeed []byte, path []uint32) (*ed25
 	prvBytes := ext.RawPrivateKey()
 
 	return ed25519.PrivateKeyFromBytes(prvBytes)
+}
+
+// RecoverAddresses automatically recovers used addresses when restoring a wallet from a mnemonic phrase.
+// This implementation follows PIP-41 specification for address recovery.
+//
+// The function recovers both BLS and Ed25519 account addresses, with Ed25519 being the default
+// address type for recovery when the wallet is empty.
+//
+// An address is considered active if its public key is stored in the blockchain database.
+// The hasActivity function should return true if the address has been used before.
+//
+// Limitation: Users cannot automatically recover a used address if it is separated by more than 8
+// inactive or empty addresses. In this case, manual address creation is required.
+//
+// Reference: https://pips.pactus.org/PIPs/pip-41
+func (v *Vault) RecoverAddresses(password string, hasActivity func(addrs string) (bool, error)) error {
+	err := v.recoverBLSAcountAddresses(hasActivity)
+	if err != nil {
+		return err
+	}
+
+	return v.recoverEd25519AcountAddresses(password, hasActivity)
+}
+
+// recoverBLSAcountAddresses recovers BLS account addresses following the PIP-41 specification.
+func (v *Vault) recoverBLSAcountAddresses(hasActivity func(addrs string) (bool, error)) error {
+	ext, err := blshdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
+	if err != nil {
+		return err
+	}
+
+	recoveredCount := 0 // Starting from zero; doesn't recover the first address
+	inactiveCount := 1
+	currentIndex := uint32(0)
+	info, err := v.deriveBLSAccountAddressAt(ext, currentIndex, "")
+	if err != nil {
+		return err
+	}
+
+	for {
+		isActive, err := hasActivity(info.Address)
+		if err != nil {
+			return err
+		}
+
+		if isActive {
+			recoveredCount += inactiveCount
+			inactiveCount = 1
+		} else {
+			inactiveCount++
+			if inactiveCount > AddressGapLimit {
+				break
+			}
+		}
+
+		currentIndex++
+		info, err = v.deriveBLSAccountAddressAt(ext, currentIndex, "")
+		if err != nil {
+			return err
+		}
+	}
+
+	// Recover all addresses up to the total number of recovered addresses according to PIP-41 specification.
+	for i := uint32(0); i < uint32(recoveredCount); i++ {
+		_, _ = v.NewBLSAccountAddress(fmt.Sprintf("BLS Account Address %d", i))
+	}
+
+	return nil
+}
+
+// recoverEd25519AcountAddresses recovers Ed25519 account addresses following the PIP-41 specification.
+func (v *Vault) recoverEd25519AcountAddresses(password string, hasActivity func(addrs string) (bool, error)) error {
+	seed, err := v.MnemonicSeed(password)
+	if err != nil {
+		return err
+	}
+
+	masterKey, err := ed25519hdkeychain.NewMaster(seed)
+	if err != nil {
+		return err
+	}
+
+	recoveredCount := 1 // Starting from 1; recover the first address
+	inactiveCount := 0
+	currentIndex := uint32(0)
+	info, err := v.deriveEd25519AccountAddressAt(masterKey, currentIndex, "")
+	if err != nil {
+		return err
+	}
+
+	for {
+		isActive, err := hasActivity(info.Address)
+		if err != nil {
+			return err
+		}
+
+		if isActive {
+			recoveredCount += inactiveCount
+			inactiveCount = 1
+		} else {
+			inactiveCount++
+			if inactiveCount > AddressGapLimit {
+				break
+			}
+		}
+
+		currentIndex++
+		info, err = v.deriveEd25519AccountAddressAt(masterKey, currentIndex, "")
+		if err != nil {
+			return err
+		}
+	}
+
+	// Recover all addresses up to the total number of recovered addresses according to PIP-41 specification.
+	for i := uint32(0); i < uint32(recoveredCount); i++ {
+		_, _ = v.NewEd25519AccountAddress(fmt.Sprintf("Ed25519 Account Address %d", i), password)
+	}
+
+	return nil
 }

@@ -60,6 +60,7 @@ func setup(t *testing.T) *testData {
 	genParams := genesis.DefaultGenesisParams()
 	genParams.CommitteeSize = 7
 	genParams.BondInterval = 10
+	genParams.BlockVersion = protocol.ProtocolVersion2
 
 	genAcc1 := account.NewAccount(0)
 	genAcc1.AddToBalance(21 * 1e15) // 21,000,000.000,000,000
@@ -96,7 +97,7 @@ func setup(t *testing.T) *testData {
 }
 
 func (td *testData) makeBlockAndCertificate(t *testing.T, round int16) (
-	*block.Block, *certificate.BlockCertificate,
+	*block.Block, *certificate.Certificate,
 ) {
 	t.Helper()
 
@@ -113,13 +114,13 @@ func (td *testData) makeBlockAndCertificate(t *testing.T, round int16) (
 
 func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash,
 	round int16,
-) *certificate.BlockCertificate {
+) *certificate.Certificate {
 	t.Helper()
 
 	sigs := make([]*bls.Signature, 0, len(td.genValKeys))
 	height := td.state.LastBlockHeight()
-	cert := certificate.NewBlockCertificate(height+1, round)
-	signBytes := cert.SignBytes(blockHash)
+	cert := certificate.NewCertificate(height+1, round)
+	signBytes := cert.SignBytesPrecommit(blockHash)
 	committers := []int32{0, 1, 2, 3}
 	absentees := []int32{3}
 
@@ -155,28 +156,21 @@ func TestBlockSubsidyTx(t *testing.T) {
 	rewardAddr := td.RandAccAddress()
 	randAccumulatedFee := td.RandFee()
 	trx := td.state.createSubsidyTx(rewardAddr, randAccumulatedFee)
+	payload := trx.Payload().(*payload.BatchTransferPayload)
 	assert.True(t, trx.IsSubsidyTx())
-	assert.Equal(t, td.state.params.BlockReward+randAccumulatedFee, trx.Payload().Value())
-	assert.Equal(t, crypto.TreasuryAddress, trx.Payload().(*payload.TransferPayload).From)
-	assert.Equal(t, rewardAddr, trx.Payload().(*payload.TransferPayload).To)
-}
-
-func TestGenesisHash(t *testing.T) {
-	td := setup(t)
-
-	gen := td.state.Genesis()
-	genAccs := gen.Accounts()
-	genVals := gen.Validators()
-
-	assert.NotNil(t, genAccs, td.genAccKey.PublicKeyNative().AccountAddress())
-	assert.NotNil(t, genVals, td.genValKeys[0].Address())
+	assert.Equal(t, td.state.params.BlockReward+randAccumulatedFee, payload.Value())
+	assert.Equal(t, crypto.TreasuryAddress, payload.Signer())
+	assert.Equal(t, rewardAddr, payload.Recipients[1].To)
+	assert.Equal(t, td.state.params.FoundationReward, payload.Recipients[0].Amount)
+	assert.Equal(t, td.state.params.BlockReward-td.state.params.FoundationReward+randAccumulatedFee,
+		payload.Recipients[1].Amount)
 }
 
 func TestTryCommitInvalidCertificate(t *testing.T) {
 	td := setup(t)
 
 	blk, _ := td.makeBlockAndCertificate(t, td.RandRound())
-	invCert := td.GenerateTestBlockCertificate(td.state.LastBlockHeight() + 1)
+	invCert := td.GenerateTestCertificate(td.state.LastBlockHeight() + 1)
 
 	assert.Error(t, td.state.CommitBlock(blk, invCert))
 }
@@ -184,17 +178,17 @@ func TestTryCommitInvalidCertificate(t *testing.T) {
 func TestTryCommitValidBlocks(t *testing.T) {
 	td := setup(t)
 
-	blk, crt := td.makeBlockAndCertificate(t, 0)
+	blk, cert := td.makeBlockAndCertificate(t, 0)
 
-	assert.NoError(t, td.state.CommitBlock(blk, crt))
+	assert.NoError(t, td.state.CommitBlock(blk, cert))
 
 	// Commit again
 	// No error here but block is ignored, because the height is invalid
-	assert.NoError(t, td.state.CommitBlock(blk, crt))
+	assert.NoError(t, td.state.CommitBlock(blk, cert))
 
 	assert.Equal(t, blk.Hash(), td.state.LastBlockHash())
 	assert.Equal(t, blk.Header().Time(), td.state.LastBlockTime())
-	assert.Equal(t, crt.Hash(), td.state.LastCertificate().Hash())
+	assert.Equal(t, cert.Hash(), td.state.LastCertificate().Hash())
 	assert.Equal(t, uint32(9), td.state.LastBlockHeight())
 }
 
@@ -360,14 +354,6 @@ func TestBlockProposal(t *testing.T) {
 func TestForkDetection(t *testing.T) {
 	td := setup(t)
 
-	t.Run("Two certificates with different rounds", func(t *testing.T) {
-		blk, certMain := td.makeBlockAndCertificate(t, 0)
-		certFork := td.makeCertificateAndSign(t, blk.Hash(), 1)
-
-		assert.NoError(t, td.state.CommitBlock(blk, certMain))
-		assert.NoError(t, td.state.CommitBlock(blk, certFork)) // TODO: should panic here
-	})
-
 	t.Run("Two blocks with different previous block hashes", func(t *testing.T) {
 		assert.Panics(t, func() {
 			blk0, _ := td.makeBlockAndCertificate(t, 0)
@@ -392,8 +378,7 @@ func TestSortition(t *testing.T) {
 
 	secValKey := td.state.valKeys[1]
 	assert.False(t, td.state.evaluateSortition()) //  not a validator
-	assert.False(t, td.state.IsValidator(secValKey.Address()))
-	assert.Equal(t, int64(4), td.state.CommitteePower())
+	assert.Equal(t, int64(4), td.state.Stats().CommitteePower)
 
 	trx := tx.NewBondTx(1, td.genAccKey.PublicKeyNative().AccountAddress(),
 		secValKey.Address(), secValKey.PublicKey(), 1000000000, 100000)
@@ -403,8 +388,7 @@ func TestSortition(t *testing.T) {
 	td.commitBlocks(t, 1)
 
 	assert.False(t, td.state.evaluateSortition()) // bonding period
-	assert.True(t, td.state.IsValidator(secValKey.Address()))
-	assert.Equal(t, int64(4), td.state.CommitteePower())
+	assert.Equal(t, int64(4), td.state.Stats().CommitteePower)
 	assert.False(t, td.state.committee.Contains(secValKey.Address())) // Not in the committee
 
 	// Committing another 10 blocks
@@ -415,8 +399,7 @@ func TestSortition(t *testing.T) {
 
 	td.commitBlocks(t, 1)
 
-	assert.True(t, td.state.IsValidator(secValKey.Address()))
-	assert.Equal(t, int64(1000000004), td.state.CommitteePower())
+	assert.Equal(t, int64(1000000004), td.state.Stats().CommitteePower)
 	assert.True(t, td.state.committee.Contains(secValKey.Address())) // In the committee
 }
 
@@ -546,34 +529,26 @@ func TestLoadState(t *testing.T) {
 		td.state.store, td.commonTxPool, eventPipe)
 	require.NoError(t, err)
 
-	assert.Equal(t, td.state.TotalAccounts(), newState.TotalAccounts())
-	assert.Equal(t, td.state.TotalValidators(), newState.TotalValidators())
-	assert.Equal(t, td.state.CommitteePower(), newState.CommitteePower())
-	assert.Equal(t, td.state.TotalPower(), newState.TotalPower())
 	assert.Equal(t, td.state.Params(), newState.Params())
 	assert.ElementsMatch(t, td.state.ValidatorAddresses(), newState.ValidatorAddresses())
-
-	assert.Equal(t, int32(11), td.state.TotalAccounts()) // 9 subsidy addrs + 2 genesis addrs
-	assert.Equal(t, int32(5), td.state.TotalValidators())
+	assert.Equal(t, td.state.Stats(), newState.Stats())
 
 	// Try committing the next block
 	require.NoError(t, newState.CommitBlock(blk6, cert6))
 }
 
-func TestIsValidator(t *testing.T) {
+func TestIsInCommittee(t *testing.T) {
 	td := setup(t)
 
 	assert.True(t, td.state.IsInCommittee(td.genValKeys[0].Address()))
 	assert.True(t, td.state.IsProposer(td.genValKeys[0].Address(), 0))
 	assert.True(t, td.state.IsProposer(td.genValKeys[1].Address(), 1))
 	assert.True(t, td.state.IsInCommittee(td.genValKeys[1].Address()))
-	assert.True(t, td.state.IsValidator(td.genValKeys[1].Address()))
 
 	addr := td.RandAccAddress()
 	assert.False(t, td.state.IsInCommittee(addr))
 	assert.False(t, td.state.IsProposer(addr, 0))
 	assert.False(t, td.state.IsInCommittee(addr))
-	assert.False(t, td.state.IsValidator(addr))
 }
 
 func TestCalculateFee(t *testing.T) {

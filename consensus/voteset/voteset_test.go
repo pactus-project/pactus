@@ -273,7 +273,7 @@ func TestAllBlockVotes(t *testing.T) {
 	assert.Equal(t, &hash1, voteSet.QuorumHash())
 
 	_, err = voteSet.AddVote(vote4)
-	assert.ErrorIs(t, err, ErrDuplicatedVote) // duplicated
+	assert.ErrorIs(t, err, ErrDuplicatedVote)
 
 	// Check accumulated power
 	assert.Equal(t, &hash1, voteSet.QuorumHash())
@@ -282,7 +282,7 @@ func TestAllBlockVotes(t *testing.T) {
 	assert.Contains(t, voteSet.AllVotes(), vote1)
 	assert.Contains(t, voteSet.AllVotes(), vote2)
 	assert.Contains(t, voteSet.AllVotes(), vote3)
-	assert.NotContains(t, voteSet.AllVotes(), vote4) // Should add duplicated votes?
+	assert.NotContains(t, voteSet.AllVotes(), vote4)
 }
 
 func TestAllBinaryVotes(t *testing.T) {

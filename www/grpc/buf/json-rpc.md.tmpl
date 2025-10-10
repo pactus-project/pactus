@@ -19,6 +19,7 @@ For seamless integration with Pactus, you can use these client libraries:
 
 - <i class="fa-brands fa-js"></i> [pactus-jsonrpc](https://www.npmjs.com/package/pactus-jsonrpc/) package for Javascript
 - <i class="fa-brands fa-python"></i> [pactus-jsonrpc](https://pypi.org/project/pactus-jsonrpc/) package for Python
+- <i class="fa-brands fa-rust"></i> [pactus-jsonrpc](https://crates.io/crates/pactus-jsonrpc) package for Rust
 
 ## Example
 
