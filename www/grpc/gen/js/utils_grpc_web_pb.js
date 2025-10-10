@@ -318,5 +318,66 @@ proto.pactus.UtilsPromiseClient.prototype.signatureAggregation =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.PingRequest,
+ *   !proto.pactus.PingResponse>}
+ */
+const methodDescriptor_Utils_Ping = new grpc.web.MethodDescriptor(
+  '/pactus.Utils/Ping',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.PingRequest,
+  proto.pactus.PingResponse,
+  /**
+   * @param {!proto.pactus.PingRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.PingResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.PingRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.PingResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.PingResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.UtilsClient.prototype.ping =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Utils/Ping',
+      request,
+      metadata || {},
+      methodDescriptor_Utils_Ping,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.PingRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.PingResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.UtilsPromiseClient.prototype.ping =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Utils/Ping',
+      request,
+      metadata || {},
+      methodDescriptor_Utils_Ping);
+};
+
+
 module.exports = proto.pactus;
 

@@ -143,6 +143,37 @@ public final class UtilsGrpc {
     return getSignatureAggregationMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.UtilsOuterClass.PingRequest,
+      pactus.UtilsOuterClass.PingResponse> getPingMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "Ping",
+      requestType = pactus.UtilsOuterClass.PingRequest.class,
+      responseType = pactus.UtilsOuterClass.PingResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.UtilsOuterClass.PingRequest,
+      pactus.UtilsOuterClass.PingResponse> getPingMethod() {
+    io.grpc.MethodDescriptor<pactus.UtilsOuterClass.PingRequest, pactus.UtilsOuterClass.PingResponse> getPingMethod;
+    if ((getPingMethod = UtilsGrpc.getPingMethod) == null) {
+      synchronized (UtilsGrpc.class) {
+        if ((getPingMethod = UtilsGrpc.getPingMethod) == null) {
+          UtilsGrpc.getPingMethod = getPingMethod =
+              io.grpc.MethodDescriptor.<pactus.UtilsOuterClass.PingRequest, pactus.UtilsOuterClass.PingResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "Ping"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.UtilsOuterClass.PingRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.UtilsOuterClass.PingResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new UtilsMethodDescriptorSupplier("Ping"))
+              .build();
+        }
+      }
+    }
+    return getPingMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -249,6 +280,16 @@ public final class UtilsGrpc {
         io.grpc.stub.StreamObserver<pactus.UtilsOuterClass.SignatureAggregationResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getSignatureAggregationMethod(), responseObserver);
     }
+
+    /**
+     * <pre>
+     * Ping provides a simple connectivity test and latency measurement.
+     * </pre>
+     */
+    default void ping(pactus.UtilsOuterClass.PingRequest request,
+        io.grpc.stub.StreamObserver<pactus.UtilsOuterClass.PingResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getPingMethod(), responseObserver);
+    }
   }
 
   /**
@@ -329,6 +370,17 @@ public final class UtilsGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getSignatureAggregationMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * Ping provides a simple connectivity test and latency measurement.
+     * </pre>
+     */
+    public void ping(pactus.UtilsOuterClass.PingRequest request,
+        io.grpc.stub.StreamObserver<pactus.UtilsOuterClass.PingResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getPingMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -390,6 +442,16 @@ public final class UtilsGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSignatureAggregationMethod(), getCallOptions(), request);
     }
+
+    /**
+     * <pre>
+     * Ping provides a simple connectivity test and latency measurement.
+     * </pre>
+     */
+    public pactus.UtilsOuterClass.PingResponse ping(pactus.UtilsOuterClass.PingRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getPingMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -450,6 +512,16 @@ public final class UtilsGrpc {
     public pactus.UtilsOuterClass.SignatureAggregationResponse signatureAggregation(pactus.UtilsOuterClass.SignatureAggregationRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getSignatureAggregationMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Ping provides a simple connectivity test and latency measurement.
+     * </pre>
+     */
+    public pactus.UtilsOuterClass.PingResponse ping(pactus.UtilsOuterClass.PingRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getPingMethod(), getCallOptions(), request);
     }
   }
 
@@ -516,12 +588,24 @@ public final class UtilsGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getSignatureAggregationMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * Ping provides a simple connectivity test and latency measurement.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.UtilsOuterClass.PingResponse> ping(
+        pactus.UtilsOuterClass.PingRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getPingMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_SIGN_MESSAGE_WITH_PRIVATE_KEY = 0;
   private static final int METHODID_VERIFY_MESSAGE = 1;
   private static final int METHODID_PUBLIC_KEY_AGGREGATION = 2;
   private static final int METHODID_SIGNATURE_AGGREGATION = 3;
+  private static final int METHODID_PING = 4;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -555,6 +639,10 @@ public final class UtilsGrpc {
         case METHODID_SIGNATURE_AGGREGATION:
           serviceImpl.signatureAggregation((pactus.UtilsOuterClass.SignatureAggregationRequest) request,
               (io.grpc.stub.StreamObserver<pactus.UtilsOuterClass.SignatureAggregationResponse>) responseObserver);
+          break;
+        case METHODID_PING:
+          serviceImpl.ping((pactus.UtilsOuterClass.PingRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.UtilsOuterClass.PingResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -602,6 +690,13 @@ public final class UtilsGrpc {
               pactus.UtilsOuterClass.SignatureAggregationRequest,
               pactus.UtilsOuterClass.SignatureAggregationResponse>(
                 service, METHODID_SIGNATURE_AGGREGATION)))
+        .addMethod(
+          getPingMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pactus.UtilsOuterClass.PingRequest,
+              pactus.UtilsOuterClass.PingResponse>(
+                service, METHODID_PING)))
         .build();
   }
 
@@ -654,6 +749,7 @@ public final class UtilsGrpc {
               .addMethod(getVerifyMessageMethod())
               .addMethod(getPublicKeyAggregationMethod())
               .addMethod(getSignatureAggregationMethod())
+              .addMethod(getPingMethod())
               .build();
         }
       }

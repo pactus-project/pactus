@@ -425,6 +425,80 @@ func (x *SignatureAggregationResponse) GetSignature() string {
 	return ""
 }
 
+// Request message for ping - intentionally empty as specified.
+type PingRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PingRequest) Reset() {
+	*x = PingRequest{}
+	mi := &file_utils_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PingRequest) ProtoMessage() {}
+
+func (x *PingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_utils_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PingRequest.ProtoReflect.Descriptor instead.
+func (*PingRequest) Descriptor() ([]byte, []int) {
+	return file_utils_proto_rawDescGZIP(), []int{8}
+}
+
+// Response message for ping - intentionally empty as specified.
+type PingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PingResponse) Reset() {
+	*x = PingResponse{}
+	mi := &file_utils_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PingResponse) ProtoMessage() {}
+
+func (x *PingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_utils_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PingResponse.ProtoReflect.Descriptor instead.
+func (*PingResponse) Descriptor() ([]byte, []int) {
+	return file_utils_proto_rawDescGZIP(), []int{9}
+}
+
 var File_utils_proto protoreflect.FileDescriptor
 
 const file_utils_proto_rawDesc = "" +
@@ -455,12 +529,15 @@ const file_utils_proto_rawDesc = "" +
 	"signatures\x18\x01 \x03(\tR\n" +
 	"signatures\"<\n" +
 	"\x1cSignatureAggregationResponse\x12\x1c\n" +
-	"\tsignature\x18\x01 \x01(\tR\tsignature2\x8d\x03\n" +
+	"\tsignature\x18\x01 \x01(\tR\tsignature\"\r\n" +
+	"\vPingRequest\"\x0e\n" +
+	"\fPingResponse2\xc0\x03\n" +
 	"\x05Utils\x12p\n" +
 	"\x19SignMessageWithPrivateKey\x12(.pactus.SignMessageWithPrivateKeyRequest\x1a).pactus.SignMessageWithPrivateKeyResponse\x12L\n" +
 	"\rVerifyMessage\x12\x1c.pactus.VerifyMessageRequest\x1a\x1d.pactus.VerifyMessageResponse\x12a\n" +
 	"\x14PublicKeyAggregation\x12#.pactus.PublicKeyAggregationRequest\x1a$.pactus.PublicKeyAggregationResponse\x12a\n" +
-	"\x14SignatureAggregation\x12#.pactus.SignatureAggregationRequest\x1a$.pactus.SignatureAggregationResponseB:\n" +
+	"\x14SignatureAggregation\x12#.pactus.SignatureAggregationRequest\x1a$.pactus.SignatureAggregationResponse\x121\n" +
+	"\x04Ping\x12\x13.pactus.PingRequest\x1a\x14.pactus.PingResponseB:\n" +
 	"\x06pactusZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3"
 
 var (
@@ -475,7 +552,7 @@ func file_utils_proto_rawDescGZIP() []byte {
 	return file_utils_proto_rawDescData
 }
 
-var file_utils_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_utils_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_utils_proto_goTypes = []any{
 	(*SignMessageWithPrivateKeyRequest)(nil),  // 0: pactus.SignMessageWithPrivateKeyRequest
 	(*SignMessageWithPrivateKeyResponse)(nil), // 1: pactus.SignMessageWithPrivateKeyResponse
@@ -485,18 +562,22 @@ var file_utils_proto_goTypes = []any{
 	(*PublicKeyAggregationResponse)(nil),      // 5: pactus.PublicKeyAggregationResponse
 	(*SignatureAggregationRequest)(nil),       // 6: pactus.SignatureAggregationRequest
 	(*SignatureAggregationResponse)(nil),      // 7: pactus.SignatureAggregationResponse
+	(*PingRequest)(nil),                       // 8: pactus.PingRequest
+	(*PingResponse)(nil),                      // 9: pactus.PingResponse
 }
 var file_utils_proto_depIdxs = []int32{
 	0, // 0: pactus.Utils.SignMessageWithPrivateKey:input_type -> pactus.SignMessageWithPrivateKeyRequest
 	2, // 1: pactus.Utils.VerifyMessage:input_type -> pactus.VerifyMessageRequest
 	4, // 2: pactus.Utils.PublicKeyAggregation:input_type -> pactus.PublicKeyAggregationRequest
 	6, // 3: pactus.Utils.SignatureAggregation:input_type -> pactus.SignatureAggregationRequest
-	1, // 4: pactus.Utils.SignMessageWithPrivateKey:output_type -> pactus.SignMessageWithPrivateKeyResponse
-	3, // 5: pactus.Utils.VerifyMessage:output_type -> pactus.VerifyMessageResponse
-	5, // 6: pactus.Utils.PublicKeyAggregation:output_type -> pactus.PublicKeyAggregationResponse
-	7, // 7: pactus.Utils.SignatureAggregation:output_type -> pactus.SignatureAggregationResponse
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
+	8, // 4: pactus.Utils.Ping:input_type -> pactus.PingRequest
+	1, // 5: pactus.Utils.SignMessageWithPrivateKey:output_type -> pactus.SignMessageWithPrivateKeyResponse
+	3, // 6: pactus.Utils.VerifyMessage:output_type -> pactus.VerifyMessageResponse
+	5, // 7: pactus.Utils.PublicKeyAggregation:output_type -> pactus.PublicKeyAggregationResponse
+	7, // 8: pactus.Utils.SignatureAggregation:output_type -> pactus.SignatureAggregationResponse
+	9, // 9: pactus.Utils.Ping:output_type -> pactus.PingResponse
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -513,7 +594,7 @@ func file_utils_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_utils_proto_rawDesc), len(file_utils_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

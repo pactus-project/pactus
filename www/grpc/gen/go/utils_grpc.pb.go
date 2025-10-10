@@ -23,6 +23,7 @@ const (
 	Utils_VerifyMessage_FullMethodName             = "/pactus.Utils/VerifyMessage"
 	Utils_PublicKeyAggregation_FullMethodName      = "/pactus.Utils/PublicKeyAggregation"
 	Utils_SignatureAggregation_FullMethodName      = "/pactus.Utils/SignatureAggregation"
+	Utils_Ping_FullMethodName                      = "/pactus.Utils/Ping"
 )
 
 // UtilsClient is the client API for Utils service.
@@ -40,6 +41,8 @@ type UtilsClient interface {
 	PublicKeyAggregation(ctx context.Context, in *PublicKeyAggregationRequest, opts ...grpc.CallOption) (*PublicKeyAggregationResponse, error)
 	// SignatureAggregation aggregates multiple BLS signatures into a single signature.
 	SignatureAggregation(ctx context.Context, in *SignatureAggregationRequest, opts ...grpc.CallOption) (*SignatureAggregationResponse, error)
+	// Ping provides a simple connectivity test and latency measurement.
+	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 }
 
 type utilsClient struct {
@@ -90,6 +93,16 @@ func (c *utilsClient) SignatureAggregation(ctx context.Context, in *SignatureAgg
 	return out, nil
 }
 
+func (c *utilsClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PingResponse)
+	err := c.cc.Invoke(ctx, Utils_Ping_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UtilsServer is the server API for Utils service.
 // All implementations should embed UnimplementedUtilsServer
 // for forward compatibility.
@@ -105,6 +118,8 @@ type UtilsServer interface {
 	PublicKeyAggregation(context.Context, *PublicKeyAggregationRequest) (*PublicKeyAggregationResponse, error)
 	// SignatureAggregation aggregates multiple BLS signatures into a single signature.
 	SignatureAggregation(context.Context, *SignatureAggregationRequest) (*SignatureAggregationResponse, error)
+	// Ping provides a simple connectivity test and latency measurement.
+	Ping(context.Context, *PingRequest) (*PingResponse, error)
 }
 
 // UnimplementedUtilsServer should be embedded to have
@@ -125,6 +140,9 @@ func (UnimplementedUtilsServer) PublicKeyAggregation(context.Context, *PublicKey
 }
 func (UnimplementedUtilsServer) SignatureAggregation(context.Context, *SignatureAggregationRequest) (*SignatureAggregationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SignatureAggregation not implemented")
+}
+func (UnimplementedUtilsServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
 func (UnimplementedUtilsServer) testEmbeddedByValue() {}
 
@@ -218,6 +236,24 @@ func _Utils_SignatureAggregation_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Utils_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UtilsServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Utils_Ping_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UtilsServer).Ping(ctx, req.(*PingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Utils_ServiceDesc is the grpc.ServiceDesc for Utils service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -240,6 +276,10 @@ var Utils_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SignatureAggregation",
 			Handler:    _Utils_SignatureAggregation_Handler,
+		},
+		{
+			MethodName: "Ping",
+			Handler:    _Utils_Ping_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

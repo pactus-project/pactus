@@ -271,3 +271,29 @@ func TestBLSSignatureAggregation(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()
 }
+
+func TestPing(t *testing.T) {
+	conf := testConfig()
+	td := setup(t, conf)
+	conn, client := td.utilClient(t)
+
+	t.Run("Should return empty response for ping", func(t *testing.T) {
+		res, err := client.Ping(context.Background(), &pactus.PingRequest{})
+
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.IsType(t, &pactus.PingResponse{}, res)
+	})
+
+	t.Run("Should handle multiple ping requests", func(t *testing.T) {
+		// Test multiple consecutive pings to ensure consistency
+		for i := 0; i < 5; i++ {
+			res, err := client.Ping(context.Background(), &pactus.PingRequest{})
+			assert.Nil(t, err)
+			assert.NotNil(t, res)
+		}
+	})
+
+	assert.Nil(t, conn.Close(), "Error closing connection")
+	td.StopServer()
+}

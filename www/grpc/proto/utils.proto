@@ -18,6 +18,9 @@ service Utils {
 
   // SignatureAggregation aggregates multiple BLS signatures into a single signature.
   rpc SignatureAggregation(SignatureAggregationRequest) returns (SignatureAggregationResponse);
+
+  // Ping provides a simple connectivity test and latency measurement.
+  rpc Ping(PingRequest) returns (PingResponse);
 }
 
 // Request message for signing a message with a private key.
@@ -74,4 +77,14 @@ message SignatureAggregationRequest {
 message SignatureAggregationResponse {
   // The aggregated BLS signature in hexadecimal format.
   string signature = 1;
+}
+
+// Request message for ping - intentionally empty as specified.
+message PingRequest {
+  // Empty request payload for measuring round-trip time
+}
+
+// Response message for ping - intentionally empty as specified.
+message PingResponse {
+  // Empty response payload for measuring round-trip time
 }

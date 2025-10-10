@@ -61,3 +61,11 @@ class SignatureAggregationResponse(_message.Message):
     SIGNATURE_FIELD_NUMBER: _ClassVar[int]
     signature: str
     def __init__(self, signature: _Optional[str] = ...) -> None: ...
+
+class PingRequest(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
+
+class PingResponse(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...

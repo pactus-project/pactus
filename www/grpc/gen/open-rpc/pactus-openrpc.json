@@ -782,6 +782,19 @@
           }
         }
       },{
+      "name": "pactus.utils.ping",
+      "description": "Ping provides a simple connectivity test and latency measurement.",
+      "tags": [{ "name": "utils"}],
+      "paramStructure": "by-name",
+      "params": [],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": [],
+          "properties": {}
+          }
+        }
+      },{
       "name": "pactus.wallet.create_wallet",
       "description": "CreateWallet creates a new wallet with the specified parameters.",
       "tags": [{ "name": "wallet"}],

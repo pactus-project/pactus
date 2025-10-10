@@ -142,3 +142,6 @@ http:
     - selector: pactus.Utils.SignatureAggregation
       post: "/pactus/Utils/signature_aggregation"
       body: "*"
+
+    - selector: pactus.Utils.Ping
+      get: "/pactus/Utils/ping"

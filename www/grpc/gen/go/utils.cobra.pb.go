@@ -24,6 +24,7 @@ func UtilsClientCommand(options ...client.Option) *cobra.Command {
 		_UtilsVerifyMessageCommand(cfg),
 		_UtilsPublicKeyAggregationCommand(cfg),
 		_UtilsSignatureAggregationCommand(cfg),
+		_UtilsPingCommand(cfg),
 	)
 	return cmd
 }
@@ -195,6 +196,46 @@ func _UtilsSignatureAggregationCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringSliceVar(&req.Signatures, cfg.FlagNamer("Signatures"), nil, "List of BLS signatures to be aggregated.")
+
+	return cmd
+}
+
+func _UtilsPingCommand(cfg *client.Config) *cobra.Command {
+	req := &PingRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("Ping"),
+		Short: "Ping RPC client",
+		Long:  "Ping provides a simple connectivity test and latency measurement.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Utils", "Ping"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewUtilsClient(cc)
+				v := &PingRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.Ping(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
 
 	return cmd
 }
