@@ -55,8 +55,8 @@ func (u *utilServer) VerifyMessage(_ context.Context,
 	}, nil
 }
 
-func (u *utilServer) Ping(_ context.Context,
-	req *pactus.PingRequest,
+func (*utilServer) Ping(_ context.Context,
+	_ *pactus.PingRequest,
 ) (*pactus.PingResponse, error) {
 	// Simply return an empty response for latency measurement
 	return &pactus.PingResponse{}, nil
