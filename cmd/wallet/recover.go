@@ -62,7 +62,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		if err != nil {
 			if wasInterrupted || errors.Is(err, context.Canceled) {
 				cmd.PrintLine()
-				cmd.PrintWarnMsgf("Recovery aborted by user")
+				cmd.PrintWarnMsgf("Recovery aborted")
 			} else {
 				cmd.PrintLine()
 				cmd.PrintWarnMsgf("Recovery addresses failed: %v", err)
@@ -76,7 +76,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Wallet successfully saved at: %s", wlt.Path())
+		cmd.PrintInfoMsgf("Wallet successfully recovered and saved at: %s", wlt.Path())
 
 		// If interrupted, exit with proper code
 		if wasInterrupted {
