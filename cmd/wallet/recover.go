@@ -1,6 +1,9 @@
 package main
 
 import (
+	"context"
+	"errors"
+
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/wallet"
@@ -20,7 +23,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		"recover the wallet for the testnet environment")
 	seedOpt := recoverCmd.Flags().StringP("seed", "s", "", "mnemonic or seed phrase used for wallet recovery")
 
-	recoverCmd.Run = func(_ *cobra.Command, _ []string) {
+	recoverCmd.Run = func(pCmd *cobra.Command, _ []string) {
 		mnemonic := *seedOpt
 		if mnemonic == "" {
 			mnemonic = cmd.PromptInput("Seed")
@@ -31,6 +34,26 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		}
 		wlt, err := wallet.Create(*pathOpt, mnemonic, *passOpt, chainType)
 		cmd.FatalErrorCheck(err)
+
+		ctx, cancel := context.WithCancel(pCmd.Context())
+		defer cancel()
+
+		cmd.PrintInfoMsgf("Recovering wallet addresses (Ctrl+C to abort)...")
+		cmd.PrintLine()
+
+		index := 0
+		err = wlt.RecoveryAddresses(ctx, *passOpt, func(addr string) {
+			cmd.PrintInfoMsgf("%d. %s", index+1, addr)
+			index++
+		})
+		if err != nil {
+			if ctx.Err() != nil || errors.Is(err, context.Canceled) {
+				cmd.PrintWarnMsgf("Recovery aborted")
+			} else {
+				cmd.PrintLine()
+				cmd.PrintWarnMsgf("Recovery addresses failed: %v", err)
+			}
+		}
 
 		err = wlt.Save()
 		cmd.FatalErrorCheck(err)
