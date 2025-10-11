@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"os"
 	"runtime"
@@ -393,8 +394,8 @@ func TestCreateNode(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		validatorAddrs, rewardAddrs, err := CreateNode(
-			tt.numValidators, tt.chain, tt.workingDir, tt.mnemonic, "")
+		validatorAddrs, rewardAddrs, err := CreateNode(context.Background(),
+			tt.numValidators, tt.chain, tt.workingDir, tt.mnemonic, "", nil)
 
 		if tt.withErr {
 			assert.Error(t, err)
