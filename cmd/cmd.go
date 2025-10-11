@@ -3,6 +3,7 @@ package cmd
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -291,8 +292,8 @@ func TrapSignal(cleanupFunc func()) {
 	}()
 }
 
-func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
-	mnemonic string, walletPassword string,
+func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType, workingDir string,
+	mnemonic string, walletPassword string, recoveryEventFunc func(addr string),
 ) ([]string, string, error) {
 	// To make process faster, we update the password after creating the addresses
 	walletPath := PactusDefaultWalletPath(workingDir)
@@ -316,6 +317,17 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		return nil, "", err
 	}
 	rewardAddr := addressInfo.Address
+
+	if recoveryEventFunc != nil {
+		err = wlt.RecoveryAddresses(ctx, walletPassword, recoveryEventFunc)
+		if err != nil {
+			if ctx.Err() != nil || errors.Is(err, context.Canceled) {
+				PrintWarnMsgf("Recovery aborted")
+			} else {
+				PrintWarnMsgf("Recovery addresses failed: %v", err)
+			}
+		}
+	}
 
 	confPath := PactusConfigPath(workingDir)
 	genPath := PactusGenesisPath(workingDir)

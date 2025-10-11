@@ -2,6 +2,7 @@ package vault
 
 import (
 	"cmp"
+	"context"
 	"encoding/json"
 	"fmt"
 	"maps"
@@ -742,17 +743,19 @@ func (*Vault) deriveEd25519PrivateKey(mnemonicSeed []byte, path []uint32) (*ed25
 // inactive or empty addresses. In this case, manual address creation is required.
 //
 // Reference: https://pips.pactus.org/PIPs/pip-41
-func (v *Vault) RecoverAddresses(password string, hasActivity func(addrs string) (bool, error)) error {
-	err := v.recoverBLSAcountAddresses(hasActivity)
+func (v *Vault) RecoverAddresses(ctx context.Context, password string,
+	hasActivity func(addrs string) (bool, error),
+) error {
+	err := v.recoverBLSAcountAddresses(ctx, hasActivity)
 	if err != nil {
 		return err
 	}
 
-	return v.recoverEd25519AcountAddresses(password, hasActivity)
+	return v.recoverEd25519AcountAddresses(ctx, password, hasActivity)
 }
 
 // recoverBLSAcountAddresses recovers BLS account addresses following the PIP-41 specification.
-func (v *Vault) recoverBLSAcountAddresses(hasActivity func(addrs string) (bool, error)) error {
+func (v *Vault) recoverBLSAcountAddresses(ctx context.Context, hasActivity func(addrs string) (bool, error)) error {
 	ext, err := blshdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
 	if err != nil {
 		return err
@@ -767,6 +770,12 @@ func (v *Vault) recoverBLSAcountAddresses(hasActivity func(addrs string) (bool, 
 	}
 
 	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
 		isActive, err := hasActivity(info.Address)
 		if err != nil {
 			return err
@@ -798,7 +807,9 @@ func (v *Vault) recoverBLSAcountAddresses(hasActivity func(addrs string) (bool, 
 }
 
 // recoverEd25519AcountAddresses recovers Ed25519 account addresses following the PIP-41 specification.
-func (v *Vault) recoverEd25519AcountAddresses(password string, hasActivity func(addrs string) (bool, error)) error {
+func (v *Vault) recoverEd25519AcountAddresses(ctx context.Context, password string,
+	hasActivity func(addrs string) (bool, error),
+) error {
 	seed, err := v.MnemonicSeed(password)
 	if err != nil {
 		return err
@@ -818,6 +829,12 @@ func (v *Vault) recoverEd25519AcountAddresses(password string, hasActivity func(
 	}
 
 	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
 		isActive, err := hasActivity(info.Address)
 		if err != nil {
 			return err

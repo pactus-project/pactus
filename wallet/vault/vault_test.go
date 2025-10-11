@@ -1,6 +1,7 @@
 package vault
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -518,7 +519,7 @@ func TestAddressRecovery(t *testing.T) {
 			return false, nil
 		}
 
-		err = vault.RecoverAddresses("", hasActivity)
+		err = vault.RecoverAddresses(context.Background(), "", hasActivity)
 		assert.NoError(t, err)
 
 		// Should have 1 Ed25519 address (the first one)
@@ -537,7 +538,7 @@ func TestAddressRecovery(t *testing.T) {
 				addr == "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns", nil
 		}
 
-		err = vault.RecoverAddresses("", hasActivity)
+		err = vault.RecoverAddresses(context.Background(), "", hasActivity)
 		assert.NoError(t, err)
 
 		// Should have 4 addresses
@@ -561,7 +562,7 @@ func TestAddressRecovery(t *testing.T) {
 				addr == "pc1ztmex7taes23h6z4jf0awwmps0zpzmecuzcsev0", nil
 		}
 
-		err = vault.RecoverAddresses("", hasActivity)
+		err = vault.RecoverAddresses(context.Background(), "", hasActivity)
 		assert.NoError(t, err)
 
 		addresses := vault.AllAccountAddresses()
@@ -586,8 +587,39 @@ func TestAddressRecovery(t *testing.T) {
 			return false, errors.New("blockchain connection error")
 		}
 
-		err = vault.RecoverAddresses("", hasActivity)
+		err = vault.RecoverAddresses(context.Background(), "", hasActivity)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "blockchain connection error")
+	})
+
+	t.Run("cancel recovery with context cancel signal", func(t *testing.T) {
+		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		assert.NoError(t, err)
+
+		// Create a cancellable context
+		ctx, cancel := context.WithCancel(context.Background())
+
+		// Counter to track how many times hasActivity is called
+		callCount := 0
+
+		// Mock hasActivity to cancel context after a few calls
+		hasActivity := func(_ string) (bool, error) {
+			callCount++
+			// Cancel the context after 3 calls to simulate interruption during recovery
+			if callCount >= 3 {
+				cancel()
+			}
+
+			return false, nil
+		}
+
+		err = vault.RecoverAddresses(ctx, "", hasActivity)
+		assert.Error(t, err)
+		assert.Equal(t, context.Canceled, err)
+
+		// Recovery should have been interrupted, so we should have only the first Ed25519 address
+		// or possibly none if cancelled early enough
+		addresses := vault.AllAccountAddresses()
+		assert.LessOrEqual(t, len(addresses), 1)
 	})
 }
