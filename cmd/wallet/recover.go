@@ -77,11 +77,6 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 
 		cmd.PrintLine()
 		cmd.PrintInfoMsgf("Wallet successfully recovered and saved at: %s", wlt.Path())
-
-		// If interrupted, exit with proper code
-		if wasInterrupted {
-			os.Exit(130) // 128 + SIGINT(2)
-		}
 	}
 }
 
