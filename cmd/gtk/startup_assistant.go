@@ -218,6 +218,36 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 
 			snapshotIndex := 0
 
+			// If not in restore mode, create node and skip to summary page
+			if !isRestoreMode {
+				iter, err := comboNumValidators.GetActiveIter()
+				fatalErrorCheck(err)
+
+				val, err := lsNumValidators.GetValue(iter, 0)
+				fatalErrorCheck(err)
+
+				valueInterface, err := val.GoValue()
+				fatalErrorCheck(err)
+
+				numValidators := valueInterface.(int)
+				walletPassword, err := entryPassword.GetText()
+				fatalErrorCheck(err)
+
+				go func() {
+					validatorAddrsLocal, rewardAddrLocal, err := cmd.CreateNode(
+						context.Background(), numValidators, chainType, workingDir,
+						mnemonic, walletPassword, nil)
+
+					glib.IdleAdd(func() {
+						fatalErrorCheck(err)
+						validatorAddrs = validatorAddrsLocal
+						rewardAddr = rewardAddrLocal
+						// Skip to summary page
+						assistant.NextPage()
+					})
+				}()
+			}
+
 			radioImport.Connect("toggled", func() {
 				if radioImport.GetActive() {
 					assistantPageComplete(assistant, wgtNodeType, false)
@@ -327,6 +357,21 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 				}
 			})
 		case pageAddressRecoveryName:
+			// Only handle recovery for restore mode
+			if !isRestoreMode {
+				// Skip this page for new wallets
+				if isForward {
+					log.Printf("jumping forward from addressRecovery page (new wallet)")
+					assistant.NextPage()
+					prevPageAdjust = 1
+				} else {
+					log.Printf("jumping backward from addressRecovery page (new wallet)")
+					assistant.PreviousPage()
+					prevPageAdjust = -1
+				}
+				return
+			}
+
 			iter, err := comboNumValidators.GetActiveIter()
 			fatalErrorCheck(err)
 
@@ -351,65 +396,47 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 			lblRecoveryStatus.SetText("")
 			btnCancelRecovery.SetVisible(false)
 
-			if isRestoreMode {
-				// Show cancel button and start recovery
-				btnCancelRecovery.SetVisible(true)
-				btnCancelRecovery.SetSensitive(true)
-				lblRecoveryStatus.SetText("Processing...")
+			// Show cancel button and start recovery
+			btnCancelRecovery.SetVisible(true)
+			btnCancelRecovery.SetSensitive(true)
+			lblRecoveryStatus.SetText("Processing...")
 
-				go func() {
-					recoveryIndex := 0
-					recoveryEventFunc := func(addr string) {
-						glib.IdleAdd(func() {
-							currentText := getTextViewContent(txtRecoveryLog)
-							newText := fmt.Sprintf("%s%d. %s\n", currentText, recoveryIndex+1, addr)
-							setTextViewContent(txtRecoveryLog, newText)
-							recoveredAddrs = append(recoveredAddrs, addr)
-							recoveryIndex++
-						})
-					}
-
-					validatorAddrsLocal, rewardAddrLocal, err := cmd.CreateNode(
-						recoveryCtx, numValidators, chainType, workingDir,
-						mnemonic, walletPassword, recoveryEventFunc)
-
+			go func() {
+				recoveryIndex := 0
+				recoveryEventFunc := func(addr string) {
 					glib.IdleAdd(func() {
-						if err != nil {
-							if recoveryCtx.Err() != nil || errors.Is(err, context.Canceled) {
-								lblRecoveryStatus.SetText("Recovery cancelled")
-								btnCancelRecovery.SetVisible(false)
-								assistantPageComplete(assistant, wgtAddressRecovery, true)
-							} else {
-								lblRecoveryStatus.SetText(fmt.Sprintf("Recovery failed: %v", err))
-								btnCancelRecovery.SetVisible(false)
-								assistantPageComplete(assistant, wgtAddressRecovery, false)
-							}
-						} else {
-							validatorAddrs = validatorAddrsLocal
-							rewardAddr = rewardAddrLocal
-							lblRecoveryStatus.SetText("Successfully wallet addresses recovered.")
+						currentText := getTextViewContent(txtRecoveryLog)
+						newText := fmt.Sprintf("%s%d. %s\n", currentText, recoveryIndex+1, addr)
+						setTextViewContent(txtRecoveryLog, newText)
+						recoveredAddrs = append(recoveredAddrs, addr)
+						recoveryIndex++
+					})
+				}
+
+				validatorAddrsLocal, rewardAddrLocal, err := cmd.CreateNode(
+					recoveryCtx, numValidators, chainType, workingDir,
+					mnemonic, walletPassword, recoveryEventFunc)
+
+				glib.IdleAdd(func() {
+					if err != nil {
+						if recoveryCtx.Err() != nil || errors.Is(err, context.Canceled) {
+							lblRecoveryStatus.SetText("Recovery cancelled")
 							btnCancelRecovery.SetVisible(false)
 							assistantPageComplete(assistant, wgtAddressRecovery, true)
+						} else {
+							lblRecoveryStatus.SetText(fmt.Sprintf("Recovery failed: %v", err))
+							btnCancelRecovery.SetVisible(false)
+							assistantPageComplete(assistant, wgtAddressRecovery, false)
 						}
-					})
-				}()
-			} else {
-				// For new wallet mode, create node without recovery
-				go func() {
-					validatorAddrsLocal, rewardAddrLocal, err := cmd.CreateNode(
-						context.Background(), numValidators, chainType, workingDir,
-						mnemonic, walletPassword, nil)
-
-					glib.IdleAdd(func() {
-						fatalErrorCheck(err)
+					} else {
 						validatorAddrs = validatorAddrsLocal
 						rewardAddr = rewardAddrLocal
-						lblRecoveryStatus.SetText("Node created successfully.")
+						lblRecoveryStatus.SetText("Successfully wallet addresses recovered.")
+						btnCancelRecovery.SetVisible(false)
 						assistantPageComplete(assistant, wgtAddressRecovery, true)
-					})
-				}()
-			}
-
+					}
+				})
+			}()
 		case pageSummaryName:
 			// Done! showing the node information
 			successful = true
