@@ -329,7 +329,8 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 			walletPassword, err := entryPassword.GetText()
 			fatalErrorCheck(err)
 
-			validatorAddrs, rewardAddrs, err := cmd.CreateNode(numValidators, chainType, workingDir, mnemonic, walletPassword)
+			validatorAddrs, rewardAddrs, err := cmd.CreateNode(context.Background(), numValidators,
+				chainType, workingDir, mnemonic, walletPassword, nil)
 			fatalErrorCheck(err)
 
 			// Done! showing the node information
