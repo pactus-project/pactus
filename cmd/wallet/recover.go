@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"errors"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
@@ -23,7 +26,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		"recover the wallet for the testnet environment")
 	seedOpt := recoverCmd.Flags().StringP("seed", "s", "", "mnemonic or seed phrase used for wallet recovery")
 
-	recoverCmd.Run = func(pCmd *cobra.Command, _ []string) {
+	recoverCmd.Run = func(_ *cobra.Command, _ []string) {
 		mnemonic := *seedOpt
 		if mnemonic == "" {
 			mnemonic = cmd.PromptInput("Seed")
@@ -35,8 +38,14 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		wlt, err := wallet.Create(*pathOpt, mnemonic, *passOpt, chainType)
 		cmd.FatalErrorCheck(err)
 
-		ctx, cancel := context.WithCancel(pCmd.Context())
-		defer cancel()
+		ctx, cancel := context.WithCancel(context.Background())
+		sigChan := make(chan os.Signal, 1)
+		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+		go func() {
+			<-sigChan
+			cancel()
+		}()
 
 		cmd.PrintInfoMsgf("Recovering wallet addresses (Ctrl+C to abort)...")
 		cmd.PrintLine()
@@ -46,20 +55,33 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 			cmd.PrintInfoMsgf("%d. %s", index+1, addr)
 			index++
 		})
+
+		// Check if context was cancelled
+		wasInterrupted := ctx.Err() != nil
+
 		if err != nil {
-			if ctx.Err() != nil || errors.Is(err, context.Canceled) {
-				cmd.PrintWarnMsgf("Recovery aborted")
+			if wasInterrupted || errors.Is(err, context.Canceled) {
+				cmd.PrintLine()
+				cmd.PrintWarnMsgf("Recovery aborted by user")
 			} else {
 				cmd.PrintLine()
 				cmd.PrintWarnMsgf("Recovery addresses failed: %v", err)
 			}
 		}
 
+		// Always save the wallet before exiting
+		cmd.PrintLine()
+		cmd.PrintInfoMsgf("Saving wallet...")
 		err = wlt.Save()
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Wallet successfully recovered and saved at: %s", wlt.Path())
+		cmd.PrintInfoMsgf("Wallet successfully saved at: %s", wlt.Path())
+
+		// If interrupted, exit with proper code
+		if wasInterrupted {
+			os.Exit(130) // 128 + SIGINT(2)
+		}
 	}
 }
 
