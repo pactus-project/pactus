@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"context"
 	_ "embed"
 	"encoding/json"
 	"path"
@@ -18,6 +19,8 @@ import (
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/vault"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Wallet struct {
@@ -117,7 +120,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType,
 		Network:   chain,
 		Vault:     nil,
 	}
-	wallet, err := newWallet(walletPath, store, true, opts)
+	wallet, err := newWallet(walletPath, store, false, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -202,6 +205,31 @@ func (w *Wallet) Save() error {
 	}
 
 	return util.WriteFile(w.path, bs)
+}
+
+// RecoveryAddresses recovers active addresses in the wallet.
+func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
+	eventFunc func(addr string),
+) error {
+	return w.store.Vault.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
+		pub, err := w.grpcClient.getPublicKeyByAddress(ctx, addr)
+		if err != nil {
+			sErr, ok := status.FromError(err)
+			if ok && sErr.Code() == codes.NotFound {
+				return false, nil
+			}
+
+			return false, err
+		}
+
+		ok := pub != ""
+
+		if ok && eventFunc != nil {
+			eventFunc(addr)
+		}
+
+		return ok, nil
+	})
 }
 
 // Balance returns balance of the account associated with the address..
