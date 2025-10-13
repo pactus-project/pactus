@@ -21,6 +21,9 @@ service Network {
 
   // GetNodeInfo retrieves information about a specific node in the network.
   rpc GetNodeInfo(GetNodeInfoRequest) returns (GetNodeInfoResponse);
+
+  // Ping provides a simple connectivity test and latency measurement.
+  rpc Ping(PingRequest) returns (PingResponse);
 }
 
 // Request message for retrieving overall network information.
@@ -155,4 +158,14 @@ message CounterInfo {
   uint64 bytes = 1;
   // Total number of bundles.
   uint64 bundles = 2;
+}
+
+// Request message for ping - intentionally empty for measuring round-trip time.
+message PingRequest {
+  // Empty request payload for measuring round-trip time
+}
+
+// Response message for ping - intentionally empty for measuring round-trip time.
+message PingResponse {
+  // Empty response payload for measuring round-trip time
 }

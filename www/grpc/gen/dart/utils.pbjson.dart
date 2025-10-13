@@ -120,24 +120,6 @@ final $typed_data.Uint8List signatureAggregationResponseDescriptor = $convert.ba
     'ChxTaWduYXR1cmVBZ2dyZWdhdGlvblJlc3BvbnNlEhwKCXNpZ25hdHVyZRgBIAEoCVIJc2lnbm'
     'F0dXJl');
 
-@$core.Deprecated('Use pingRequestDescriptor instead')
-const PingRequest$json = {
-  '1': 'PingRequest',
-};
-
-/// Descriptor for `PingRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List pingRequestDescriptor = $convert.base64Decode(
-    'CgtQaW5nUmVxdWVzdA==');
-
-@$core.Deprecated('Use pingResponseDescriptor instead')
-const PingResponse$json = {
-  '1': 'PingResponse',
-};
-
-/// Descriptor for `PingResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List pingResponseDescriptor = $convert.base64Decode(
-    'CgxQaW5nUmVzcG9uc2U=');
-
 const $core.Map<$core.String, $core.dynamic> UtilsServiceBase$json = {
   '1': 'Utils',
   '2': [
@@ -145,7 +127,6 @@ const $core.Map<$core.String, $core.dynamic> UtilsServiceBase$json = {
     {'1': 'VerifyMessage', '2': '.pactus.VerifyMessageRequest', '3': '.pactus.VerifyMessageResponse'},
     {'1': 'PublicKeyAggregation', '2': '.pactus.PublicKeyAggregationRequest', '3': '.pactus.PublicKeyAggregationResponse'},
     {'1': 'SignatureAggregation', '2': '.pactus.SignatureAggregationRequest', '3': '.pactus.SignatureAggregationResponse'},
-    {'1': 'Ping', '2': '.pactus.PingRequest', '3': '.pactus.PingResponse'},
   ],
 };
 
@@ -159,8 +140,6 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> UtilsServi
   '.pactus.PublicKeyAggregationResponse': PublicKeyAggregationResponse$json,
   '.pactus.SignatureAggregationRequest': SignatureAggregationRequest$json,
   '.pactus.SignatureAggregationResponse': SignatureAggregationResponse$json,
-  '.pactus.PingRequest': PingRequest$json,
-  '.pactus.PingResponse': PingResponse$json,
 };
 
 /// Descriptor for `Utils`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -172,6 +151,5 @@ final $typed_data.Uint8List utilsServiceDescriptor = $convert.base64Decode(
     'bhIjLnBhY3R1cy5QdWJsaWNLZXlBZ2dyZWdhdGlvblJlcXVlc3QaJC5wYWN0dXMuUHVibGljS2'
     'V5QWdncmVnYXRpb25SZXNwb25zZRJhChRTaWduYXR1cmVBZ2dyZWdhdGlvbhIjLnBhY3R1cy5T'
     'aWduYXR1cmVBZ2dyZWdhdGlvblJlcXVlc3QaJC5wYWN0dXMuU2lnbmF0dXJlQWdncmVnYXRpb2'
-    '5SZXNwb25zZRIxCgRQaW5nEhMucGFjdHVzLlBpbmdSZXF1ZXN0GhQucGFjdHVzLlBpbmdSZXNw'
-    'b25zZQ==');
+    '5SZXNwb25zZQ==');
 

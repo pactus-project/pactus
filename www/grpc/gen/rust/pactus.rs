@@ -1073,6 +1073,20 @@ pub struct CounterInfo {
     #[prost(uint64, tag="2")]
     pub bundles: u64,
 }
+/// Request message for ping - intentionally empty for measuring round-trip time.
+///
+/// Empty request payload for measuring round-trip time
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct PingRequest {
+}
+/// Response message for ping - intentionally empty for measuring round-trip time.
+///
+/// Empty response payload for measuring round-trip time
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct PingResponse {
+}
 /// Direction represents the connection direction between peers.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -1181,20 +1195,6 @@ pub struct SignatureAggregationResponse {
     /// The aggregated BLS signature in hexadecimal format.
     #[prost(string, tag="1")]
     pub signature: ::prost::alloc::string::String,
-}
-/// Request message for ping - intentionally empty as specified.
-///
-/// Empty request payload for measuring round-trip time
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
-pub struct PingRequest {
-}
-/// Response message for ping - intentionally empty as specified.
-///
-/// Empty response payload for measuring round-trip time
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
-pub struct PingResponse {
 }
 /// AddressInfo contains detailed information about a wallet address.
 #[allow(clippy::derive_partial_eq_without_eq)]

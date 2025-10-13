@@ -163,3 +163,11 @@ class CounterInfo(_message.Message):
     bytes: int
     bundles: int
     def __init__(self, bytes: _Optional[int] = ..., bundles: _Optional[int] = ...) -> None: ...
+
+class PingRequest(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...
+
+class PingResponse(_message.Message):
+    __slots__ = ()
+    def __init__(self) -> None: ...

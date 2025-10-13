@@ -696,6 +696,19 @@
           }
         }
       },{
+      "name": "pactus.network.ping",
+      "description": "Ping provides a simple connectivity test and latency measurement.",
+      "tags": [{ "name": "network"}],
+      "paramStructure": "by-name",
+      "params": [],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": [],
+          "properties": {}
+          }
+        }
+      },{
       "name": "pactus.utils.sign_message_with_private_key",
       "description": "SignMessageWithPrivateKey signs a message with the provided private key.",
       "tags": [{ "name": "utils"}],
@@ -779,19 +792,6 @@
         "schema": {
           "type": "object","required": ["signature"],
           "properties": {"signature": { "type": "string" }}
-          }
-        }
-      },{
-      "name": "pactus.utils.ping",
-      "description": "Ping provides a simple connectivity test and latency measurement.",
-      "tags": [{ "name": "utils"}],
-      "paramStructure": "by-name",
-      "params": [],
-      "result": {
-        "name": "fields",
-        "schema": {
-          "type": "object","required": [],
-          "properties": {}
           }
         }
       },{

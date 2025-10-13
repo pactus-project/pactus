@@ -123,6 +123,10 @@ For seamless integration with Pactus, you can use these client libraries:
           <a href="#pactus.Network.GetNodeInfo">
           <span class="rpc-badge"></span> GetNodeInfo</a>
         </li>
+        <li>
+          <a href="#pactus.Network.Ping">
+          <span class="rpc-badge"></span> Ping</a>
+        </li>
         </ul>
     </li>
     <li> Utils Service
@@ -142,10 +146,6 @@ For seamless integration with Pactus, you can use these client libraries:
         <li>
           <a href="#pactus.Utils.SignatureAggregation">
           <span class="rpc-badge"></span> SignatureAggregation</a>
-        </li>
-        <li>
-          <a href="#pactus.Utils.Ping">
-          <span class="rpc-badge"></span> Ping</a>
         </li>
         </ul>
     </li>
@@ -3132,6 +3132,23 @@ maximum number of messages to queue before dropping older ones.
      </tbody>
 </table>
 
+#### Ping <span id="pactus.Network.Ping" class="rpc-badge"></span>
+
+<p>Ping provides a simple connectivity test and latency measurement.</p>
+
+<h4>PingRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+Message has no fields.
+  <h4>PingResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  </tbody>
+</table>
+
 ### Utils Service
 
 <p>Utils service defines RPC methods for utility functions such as message
@@ -3311,23 +3328,6 @@ signing, verification, and etc.</p>
     </td>
   </tr>
      </tbody>
-</table>
-
-#### Ping <span id="pactus.Utils.Ping" class="rpc-badge"></span>
-
-<p>Ping provides a simple connectivity test and latency measurement.</p>
-
-<h4>PingRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
-
-Message has no fields.
-  <h4>PingResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  </tbody>
 </table>
 
 ### Wallet Service

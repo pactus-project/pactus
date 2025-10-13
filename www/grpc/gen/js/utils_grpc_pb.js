@@ -4,28 +4,6 @@
 var grpc = require('@grpc/grpc-js');
 var utils_pb = require('./utils_pb.js');
 
-function serialize_pactus_PingRequest(arg) {
-  if (!(arg instanceof utils_pb.PingRequest)) {
-    throw new Error('Expected argument of type pactus.PingRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_PingRequest(buffer_arg) {
-  return utils_pb.PingRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_pactus_PingResponse(arg) {
-  if (!(arg instanceof utils_pb.PingResponse)) {
-    throw new Error('Expected argument of type pactus.PingResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_PingResponse(buffer_arg) {
-  return utils_pb.PingResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_pactus_PublicKeyAggregationRequest(arg) {
   if (!(arg instanceof utils_pb.PublicKeyAggregationRequest)) {
     throw new Error('Expected argument of type pactus.PublicKeyAggregationRequest');
@@ -165,18 +143,6 @@ signatureAggregation: {
     requestDeserialize: deserialize_pactus_SignatureAggregationRequest,
     responseSerialize: serialize_pactus_SignatureAggregationResponse,
     responseDeserialize: deserialize_pactus_SignatureAggregationResponse,
-  },
-  // Ping provides a simple connectivity test and latency measurement.
-ping: {
-    path: '/pactus.Utils/Ping',
-    requestStream: false,
-    responseStream: false,
-    requestType: utils_pb.PingRequest,
-    responseType: utils_pb.PingResponse,
-    requestSerialize: serialize_pactus_PingRequest,
-    requestDeserialize: deserialize_pactus_PingRequest,
-    responseSerialize: serialize_pactus_PingResponse,
-    responseDeserialize: deserialize_pactus_PingResponse,
   },
 };
 

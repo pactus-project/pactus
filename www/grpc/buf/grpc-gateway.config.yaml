@@ -143,5 +143,5 @@ http:
       post: "/pactus/Utils/signature_aggregation"
       body: "*"
 
-    - selector: pactus.Utils.Ping
-      get: "/pactus/Utils/ping"
+    - selector: pactus.Network.Ping
+      get: "/pactus/network/ping"

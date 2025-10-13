@@ -849,6 +849,80 @@ func (x *CounterInfo) GetBundles() uint64 {
 	return 0
 }
 
+// Request message for ping - intentionally empty for measuring round-trip time.
+type PingRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PingRequest) Reset() {
+	*x = PingRequest{}
+	mi := &file_network_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PingRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PingRequest) ProtoMessage() {}
+
+func (x *PingRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_network_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PingRequest.ProtoReflect.Descriptor instead.
+func (*PingRequest) Descriptor() ([]byte, []int) {
+	return file_network_proto_rawDescGZIP(), []int{9}
+}
+
+// Response message for ping - intentionally empty for measuring round-trip time.
+type PingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PingResponse) Reset() {
+	*x = PingResponse{}
+	mi := &file_network_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PingResponse) ProtoMessage() {}
+
+func (x *PingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_network_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PingResponse.ProtoReflect.Descriptor instead.
+func (*PingResponse) Descriptor() ([]byte, []int) {
+	return file_network_proto_rawDescGZIP(), []int{10}
+}
+
 var File_network_proto protoreflect.FileDescriptor
 
 const file_network_proto_rawDesc = "" +
@@ -924,14 +998,17 @@ const file_network_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\v2\x13.pactus.CounterInfoR\x05value:\x028\x01\"=\n" +
 	"\vCounterInfo\x12\x14\n" +
 	"\x05bytes\x18\x01 \x01(\x04R\x05bytes\x12\x18\n" +
-	"\abundles\x18\x02 \x01(\x04R\abundles*Q\n" +
+	"\abundles\x18\x02 \x01(\x04R\abundles\"\r\n" +
+	"\vPingRequest\"\x0e\n" +
+	"\fPingResponse*Q\n" +
 	"\tDirection\x12\x15\n" +
 	"\x11DIRECTION_UNKNOWN\x10\x00\x12\x15\n" +
 	"\x11DIRECTION_INBOUND\x10\x01\x12\x16\n" +
-	"\x12DIRECTION_OUTBOUND\x10\x022\xa2\x01\n" +
+	"\x12DIRECTION_OUTBOUND\x10\x022\xd5\x01\n" +
 	"\aNetwork\x12O\n" +
 	"\x0eGetNetworkInfo\x12\x1d.pactus.GetNetworkInfoRequest\x1a\x1e.pactus.GetNetworkInfoResponse\x12F\n" +
-	"\vGetNodeInfo\x12\x1a.pactus.GetNodeInfoRequest\x1a\x1b.pactus.GetNodeInfoResponseB:\n" +
+	"\vGetNodeInfo\x12\x1a.pactus.GetNodeInfoRequest\x1a\x1b.pactus.GetNodeInfoResponse\x121\n" +
+	"\x04Ping\x12\x13.pactus.PingRequest\x1a\x14.pactus.PingResponseB:\n" +
 	"\x06pactusZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3"
 
 var (
@@ -947,7 +1024,7 @@ func file_network_proto_rawDescGZIP() []byte {
 }
 
 var file_network_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_network_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_network_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_network_proto_goTypes = []any{
 	(Direction)(0),                 // 0: pactus.Direction
 	(*GetNetworkInfoRequest)(nil),  // 1: pactus.GetNetworkInfoRequest
@@ -959,8 +1036,10 @@ var file_network_proto_goTypes = []any{
 	(*ConnectionInfo)(nil),         // 7: pactus.ConnectionInfo
 	(*MetricInfo)(nil),             // 8: pactus.MetricInfo
 	(*CounterInfo)(nil),            // 9: pactus.CounterInfo
-	nil,                            // 10: pactus.MetricInfo.MessageSentEntry
-	nil,                            // 11: pactus.MetricInfo.MessageReceivedEntry
+	(*PingRequest)(nil),            // 10: pactus.PingRequest
+	(*PingResponse)(nil),           // 11: pactus.PingResponse
+	nil,                            // 12: pactus.MetricInfo.MessageSentEntry
+	nil,                            // 13: pactus.MetricInfo.MessageReceivedEntry
 }
 var file_network_proto_depIdxs = []int32{
 	6,  // 0: pactus.GetNetworkInfoResponse.connected_peers:type_name -> pactus.PeerInfo
@@ -972,16 +1051,18 @@ var file_network_proto_depIdxs = []int32{
 	9,  // 6: pactus.MetricInfo.total_invalid:type_name -> pactus.CounterInfo
 	9,  // 7: pactus.MetricInfo.total_sent:type_name -> pactus.CounterInfo
 	9,  // 8: pactus.MetricInfo.total_received:type_name -> pactus.CounterInfo
-	10, // 9: pactus.MetricInfo.message_sent:type_name -> pactus.MetricInfo.MessageSentEntry
-	11, // 10: pactus.MetricInfo.message_received:type_name -> pactus.MetricInfo.MessageReceivedEntry
+	12, // 9: pactus.MetricInfo.message_sent:type_name -> pactus.MetricInfo.MessageSentEntry
+	13, // 10: pactus.MetricInfo.message_received:type_name -> pactus.MetricInfo.MessageReceivedEntry
 	9,  // 11: pactus.MetricInfo.MessageSentEntry.value:type_name -> pactus.CounterInfo
 	9,  // 12: pactus.MetricInfo.MessageReceivedEntry.value:type_name -> pactus.CounterInfo
 	1,  // 13: pactus.Network.GetNetworkInfo:input_type -> pactus.GetNetworkInfoRequest
 	3,  // 14: pactus.Network.GetNodeInfo:input_type -> pactus.GetNodeInfoRequest
-	2,  // 15: pactus.Network.GetNetworkInfo:output_type -> pactus.GetNetworkInfoResponse
-	4,  // 16: pactus.Network.GetNodeInfo:output_type -> pactus.GetNodeInfoResponse
-	15, // [15:17] is the sub-list for method output_type
-	13, // [13:15] is the sub-list for method input_type
+	10, // 15: pactus.Network.Ping:input_type -> pactus.PingRequest
+	2,  // 16: pactus.Network.GetNetworkInfo:output_type -> pactus.GetNetworkInfoResponse
+	4,  // 17: pactus.Network.GetNodeInfo:output_type -> pactus.GetNodeInfoResponse
+	11, // 18: pactus.Network.Ping:output_type -> pactus.PingResponse
+	16, // [16:19] is the sub-list for method output_type
+	13, // [13:16] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name
 	13, // [13:13] is the sub-list for extension extendee
 	0,  // [0:13] is the sub-list for field type_name
@@ -998,7 +1079,7 @@ func file_network_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_network_proto_rawDesc), len(file_network_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   11,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

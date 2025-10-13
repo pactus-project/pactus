@@ -104,22 +104,5 @@ func (s *UtilsJsonRPC) Methods() map[string]func(ctx context.Context, message js
 
 			return s.client.SignatureAggregation(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
-
-		"pactus.utils.ping": func(ctx context.Context, data json.RawMessage) (any, error) {
-			req := new(PingRequest)
-
-			var jrpcData paramsAndHeadersUtils
-
-			if err := json.Unmarshal(data, &jrpcData); err != nil {
-				return nil, err
-			}
-
-			err := protojson.Unmarshal(jrpcData.Params, req)
-			if err != nil {
-				return nil, err
-			}
-
-			return s.client.Ping(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
-		},
 	}
 }

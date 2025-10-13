@@ -25,7 +25,6 @@ abstract class UtilsServiceBase extends $pb.GeneratedService {
   $async.Future<$3.VerifyMessageResponse> verifyMessage($pb.ServerContext ctx, $3.VerifyMessageRequest request);
   $async.Future<$3.PublicKeyAggregationResponse> publicKeyAggregation($pb.ServerContext ctx, $3.PublicKeyAggregationRequest request);
   $async.Future<$3.SignatureAggregationResponse> signatureAggregation($pb.ServerContext ctx, $3.SignatureAggregationRequest request);
-  $async.Future<$3.PingResponse> ping($pb.ServerContext ctx, $3.PingRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
@@ -33,7 +32,6 @@ abstract class UtilsServiceBase extends $pb.GeneratedService {
       case 'VerifyMessage': return $3.VerifyMessageRequest();
       case 'PublicKeyAggregation': return $3.PublicKeyAggregationRequest();
       case 'SignatureAggregation': return $3.SignatureAggregationRequest();
-      case 'Ping': return $3.PingRequest();
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }
@@ -44,7 +42,6 @@ abstract class UtilsServiceBase extends $pb.GeneratedService {
       case 'VerifyMessage': return this.verifyMessage(ctx, request as $3.VerifyMessageRequest);
       case 'PublicKeyAggregation': return this.publicKeyAggregation(ctx, request as $3.PublicKeyAggregationRequest);
       case 'SignatureAggregation': return this.signatureAggregation(ctx, request as $3.SignatureAggregationRequest);
-      case 'Ping': return this.ping(ctx, request as $3.PingRequest);
       default: throw $core.ArgumentError('Unknown method: $methodName');
     }
   }

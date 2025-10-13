@@ -42,29 +42,6 @@
     "application/json"
   ],
   "paths": {
-    "/pactus/Utils/ping": {
-      "get": {
-        "summary": "Ping provides a simple connectivity test and latency measurement.",
-        "operationId": "Utils_Ping",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pactusPingResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "Utils"
-        ]
-      }
-    },
     "/pactus/Utils/public_key_aggregation": {
       "post": {
         "summary": "PublicKeyAggregation aggregates multiple BLS public keys into a single key.",
@@ -570,6 +547,29 @@
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/pactusGetNodeInfoResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Network"
+        ]
+      }
+    },
+    "/pactus/network/ping": {
+      "get": {
+        "summary": "Ping provides a simple connectivity test and latency measurement.",
+        "operationId": "Network_Ping",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusPingResponse"
             }
           },
           "default": {
@@ -2754,7 +2754,7 @@
     },
     "pactusPingResponse": {
       "type": "object",
-      "description": "Response message for ping - intentionally empty as specified.\n\nEmpty response payload for measuring round-trip time"
+      "description": "Response message for ping - intentionally empty for measuring round-trip time.\n\nEmpty response payload for measuring round-trip time"
     },
     "pactusProposalInfo": {
       "type": "object",
