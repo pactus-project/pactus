@@ -67,6 +67,7 @@ func TestGetNodeInfo(t *testing.T) {
 	assert.Nil(t, conn.Close(), "Error closing connection")
 	td.StopServer()
 }
+
 func TestPing(t *testing.T) {
 	conf := testConfig()
 	td := setup(t, conf)
