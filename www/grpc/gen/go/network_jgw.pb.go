@@ -70,5 +70,22 @@ func (s *NetworkJsonRPC) Methods() map[string]func(ctx context.Context, message 
 
 			return s.client.GetNodeInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
+
+		"pactus.network.ping": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(PingRequest)
+
+			var jrpcData paramsAndHeadersNetwork
+
+			if err := json.Unmarshal(data, &jrpcData); err != nil {
+				return nil, err
+			}
+
+			err := protojson.Unmarshal(jrpcData.Params, req)
+			if err != nil {
+				return nil, err
+			}
+
+			return s.client.Ping(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+		},
 	}
 }

@@ -173,6 +173,10 @@ curl --location 'http://localhost:8545/' \
           <a href="#pactus.network.get_node_info">
           <span class="rpc-badge"></span> pactus.network.get_node_info</a>
         </li>
+        <li>
+          <a href="#pactus.network.ping">
+          <span class="rpc-badge"></span> pactus.network.ping</a>
+        </li>
         </ul>
     </li>
     <li> Utils Service
@@ -3176,6 +3180,23 @@ maximum number of messages to queue before dropping older ones.
     </td>
   </tr>
      </tbody>
+</table>
+
+#### pactus.network.ping <span id="pactus.network.ping" class="rpc-badge"></span>
+
+<p>Ping provides a simple connectivity test and latency measurement.</p>
+
+<h4>Parameters</h4>
+
+Parameters has no fields.
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  </tbody>
 </table>
 
 ### Utils Service

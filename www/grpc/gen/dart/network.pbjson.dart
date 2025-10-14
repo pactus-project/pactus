@@ -232,11 +232,30 @@ final $typed_data.Uint8List counterInfoDescriptor = $convert.base64Decode(
     'CgtDb3VudGVySW5mbxIUCgVieXRlcxgBIAEoBFIFYnl0ZXMSGAoHYnVuZGxlcxgCIAEoBFIHYn'
     'VuZGxlcw==');
 
+@$core.Deprecated('Use pingRequestDescriptor instead')
+const PingRequest$json = {
+  '1': 'PingRequest',
+};
+
+/// Descriptor for `PingRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List pingRequestDescriptor = $convert.base64Decode(
+    'CgtQaW5nUmVxdWVzdA==');
+
+@$core.Deprecated('Use pingResponseDescriptor instead')
+const PingResponse$json = {
+  '1': 'PingResponse',
+};
+
+/// Descriptor for `PingResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List pingResponseDescriptor = $convert.base64Decode(
+    'CgxQaW5nUmVzcG9uc2U=');
+
 const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = {
   '1': 'Network',
   '2': [
     {'1': 'GetNetworkInfo', '2': '.pactus.GetNetworkInfoRequest', '3': '.pactus.GetNetworkInfoResponse'},
     {'1': 'GetNodeInfo', '2': '.pactus.GetNodeInfoRequest', '3': '.pactus.GetNodeInfoResponse'},
+    {'1': 'Ping', '2': '.pactus.PingRequest', '3': '.pactus.PingResponse'},
   ],
 };
 
@@ -253,11 +272,14 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> NetworkSer
   '.pactus.GetNodeInfoResponse': GetNodeInfoResponse$json,
   '.pactus.ConnectionInfo': ConnectionInfo$json,
   '.pactus.ZMQPublisherInfo': ZMQPublisherInfo$json,
+  '.pactus.PingRequest': PingRequest$json,
+  '.pactus.PingResponse': PingResponse$json,
 };
 
 /// Descriptor for `Network`. Decode as a `google.protobuf.ServiceDescriptorProto`.
 final $typed_data.Uint8List networkServiceDescriptor = $convert.base64Decode(
     'CgdOZXR3b3JrEk8KDkdldE5ldHdvcmtJbmZvEh0ucGFjdHVzLkdldE5ldHdvcmtJbmZvUmVxdW'
     'VzdBoeLnBhY3R1cy5HZXROZXR3b3JrSW5mb1Jlc3BvbnNlEkYKC0dldE5vZGVJbmZvEhoucGFj'
-    'dHVzLkdldE5vZGVJbmZvUmVxdWVzdBobLnBhY3R1cy5HZXROb2RlSW5mb1Jlc3BvbnNl');
+    'dHVzLkdldE5vZGVJbmZvUmVxdWVzdBobLnBhY3R1cy5HZXROb2RlSW5mb1Jlc3BvbnNlEjEKBF'
+    'BpbmcSEy5wYWN0dXMuUGluZ1JlcXVlc3QaFC5wYWN0dXMuUGluZ1Jlc3BvbnNl');
 

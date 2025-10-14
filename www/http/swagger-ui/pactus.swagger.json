@@ -561,6 +561,29 @@
         ]
       }
     },
+    "/pactus/network/ping": {
+      "get": {
+        "summary": "Ping provides a simple connectivity test and latency measurement.",
+        "operationId": "Network_Ping",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusPingResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Network"
+        ]
+      }
+    },
     "/pactus/transaction/broadcast_transaction": {
       "post": {
         "summary": "BroadcastTransaction broadcasts a signed transaction to the network.",
@@ -2728,6 +2751,10 @@
         }
       },
       "description": "PeerInfo contains information about a peer in the network."
+    },
+    "pactusPingResponse": {
+      "type": "object",
+      "description": "Response message for ping - intentionally empty for measuring round-trip time.\n\nEmpty response payload for measuring round-trip time"
     },
     "pactusProposalInfo": {
       "type": "object",

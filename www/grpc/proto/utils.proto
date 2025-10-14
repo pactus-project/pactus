@@ -18,6 +18,7 @@ service Utils {
 
   // SignatureAggregation aggregates multiple BLS signatures into a single signature.
   rpc SignatureAggregation(SignatureAggregationRequest) returns (SignatureAggregationResponse);
+
 }
 
 // Request message for signing a message with a private key.

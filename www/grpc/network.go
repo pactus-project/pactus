@@ -154,3 +154,10 @@ func metricToProto(metric metric.Metric) *pactus.MetricInfo {
 
 	return metricInfo
 }
+
+func (*networkServer) Ping(_ context.Context,
+	_ *pactus.PingRequest,
+) (*pactus.PingResponse, error) {
+	// Simply return an empty response for latency measurement
+	return &pactus.PingResponse{}, nil
+}

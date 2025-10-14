@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Network_GetNetworkInfo_FullMethodName = "/pactus.Network/GetNetworkInfo"
 	Network_GetNodeInfo_FullMethodName    = "/pactus.Network/GetNodeInfo"
+	Network_Ping_FullMethodName           = "/pactus.Network/Ping"
 )
 
 // NetworkClient is the client API for Network service.
@@ -33,6 +34,8 @@ type NetworkClient interface {
 	GetNetworkInfo(ctx context.Context, in *GetNetworkInfoRequest, opts ...grpc.CallOption) (*GetNetworkInfoResponse, error)
 	// GetNodeInfo retrieves information about a specific node in the network.
 	GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest, opts ...grpc.CallOption) (*GetNodeInfoResponse, error)
+	// Ping provides a simple connectivity test and latency measurement.
+	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 }
 
 type networkClient struct {
@@ -63,6 +66,16 @@ func (c *networkClient) GetNodeInfo(ctx context.Context, in *GetNodeInfoRequest,
 	return out, nil
 }
 
+func (c *networkClient) Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PingResponse)
+	err := c.cc.Invoke(ctx, Network_Ping_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NetworkServer is the server API for Network service.
 // All implementations should embed UnimplementedNetworkServer
 // for forward compatibility.
@@ -73,6 +86,8 @@ type NetworkServer interface {
 	GetNetworkInfo(context.Context, *GetNetworkInfoRequest) (*GetNetworkInfoResponse, error)
 	// GetNodeInfo retrieves information about a specific node in the network.
 	GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error)
+	// Ping provides a simple connectivity test and latency measurement.
+	Ping(context.Context, *PingRequest) (*PingResponse, error)
 }
 
 // UnimplementedNetworkServer should be embedded to have
@@ -87,6 +102,9 @@ func (UnimplementedNetworkServer) GetNetworkInfo(context.Context, *GetNetworkInf
 }
 func (UnimplementedNetworkServer) GetNodeInfo(context.Context, *GetNodeInfoRequest) (*GetNodeInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNodeInfo not implemented")
+}
+func (UnimplementedNetworkServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
 func (UnimplementedNetworkServer) testEmbeddedByValue() {}
 
@@ -144,6 +162,24 @@ func _Network_GetNodeInfo_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Network_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NetworkServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Network_Ping_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NetworkServer).Ping(ctx, req.(*PingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Network_ServiceDesc is the grpc.ServiceDesc for Network service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -158,6 +194,10 @@ var Network_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetNodeInfo",
 			Handler:    _Network_GetNodeInfo_Handler,
+		},
+		{
+			MethodName: "Ping",
+			Handler:    _Network_Ping_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

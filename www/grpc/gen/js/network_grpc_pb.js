@@ -48,6 +48,28 @@ function deserialize_pactus_GetNodeInfoResponse(buffer_arg) {
   return network_pb.GetNodeInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_PingRequest(arg) {
+  if (!(arg instanceof network_pb.PingRequest)) {
+    throw new Error('Expected argument of type pactus.PingRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_PingRequest(buffer_arg) {
+  return network_pb.PingRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_PingResponse(arg) {
+  if (!(arg instanceof network_pb.PingResponse)) {
+    throw new Error('Expected argument of type pactus.PingResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_PingResponse(buffer_arg) {
+  return network_pb.PingResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 
 // Network service provides RPCs for retrieving information about the network.
 var NetworkService = exports.NetworkService = {
@@ -74,6 +96,18 @@ getNodeInfo: {
     requestDeserialize: deserialize_pactus_GetNodeInfoRequest,
     responseSerialize: serialize_pactus_GetNodeInfoResponse,
     responseDeserialize: deserialize_pactus_GetNodeInfoResponse,
+  },
+  // Ping provides a simple connectivity test and latency measurement.
+ping: {
+    path: '/pactus.Network/Ping',
+    requestStream: false,
+    responseStream: false,
+    requestType: network_pb.PingRequest,
+    responseType: network_pb.PingResponse,
+    requestSerialize: serialize_pactus_PingRequest,
+    requestDeserialize: deserialize_pactus_PingRequest,
+    responseSerialize: serialize_pactus_PingResponse,
+    responseDeserialize: deserialize_pactus_PingResponse,
   },
 };
 

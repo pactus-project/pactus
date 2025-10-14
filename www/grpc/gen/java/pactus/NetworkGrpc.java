@@ -80,6 +80,37 @@ public final class NetworkGrpc {
     return getGetNodeInfoMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.NetworkOuterClass.PingRequest,
+      pactus.NetworkOuterClass.PingResponse> getPingMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "Ping",
+      requestType = pactus.NetworkOuterClass.PingRequest.class,
+      responseType = pactus.NetworkOuterClass.PingResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.NetworkOuterClass.PingRequest,
+      pactus.NetworkOuterClass.PingResponse> getPingMethod() {
+    io.grpc.MethodDescriptor<pactus.NetworkOuterClass.PingRequest, pactus.NetworkOuterClass.PingResponse> getPingMethod;
+    if ((getPingMethod = NetworkGrpc.getPingMethod) == null) {
+      synchronized (NetworkGrpc.class) {
+        if ((getPingMethod = NetworkGrpc.getPingMethod) == null) {
+          NetworkGrpc.getPingMethod = getPingMethod =
+              io.grpc.MethodDescriptor.<pactus.NetworkOuterClass.PingRequest, pactus.NetworkOuterClass.PingResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "Ping"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.NetworkOuterClass.PingRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.NetworkOuterClass.PingResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new NetworkMethodDescriptorSupplier("Ping"))
+              .build();
+        }
+      }
+    }
+    return getPingMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -165,6 +196,16 @@ public final class NetworkGrpc {
         io.grpc.stub.StreamObserver<pactus.NetworkOuterClass.GetNodeInfoResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetNodeInfoMethod(), responseObserver);
     }
+
+    /**
+     * <pre>
+     * Ping provides a simple connectivity test and latency measurement.
+     * </pre>
+     */
+    default void ping(pactus.NetworkOuterClass.PingRequest request,
+        io.grpc.stub.StreamObserver<pactus.NetworkOuterClass.PingResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getPingMethod(), responseObserver);
+    }
   }
 
   /**
@@ -221,6 +262,17 @@ public final class NetworkGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetNodeInfoMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * Ping provides a simple connectivity test and latency measurement.
+     * </pre>
+     */
+    public void ping(pactus.NetworkOuterClass.PingRequest request,
+        io.grpc.stub.StreamObserver<pactus.NetworkOuterClass.PingResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getPingMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -261,6 +313,16 @@ public final class NetworkGrpc {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetNodeInfoMethod(), getCallOptions(), request);
     }
+
+    /**
+     * <pre>
+     * Ping provides a simple connectivity test and latency measurement.
+     * </pre>
+     */
+    public pactus.NetworkOuterClass.PingResponse ping(pactus.NetworkOuterClass.PingRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getPingMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -300,6 +362,16 @@ public final class NetworkGrpc {
     public pactus.NetworkOuterClass.GetNodeInfoResponse getNodeInfo(pactus.NetworkOuterClass.GetNodeInfoRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetNodeInfoMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * Ping provides a simple connectivity test and latency measurement.
+     * </pre>
+     */
+    public pactus.NetworkOuterClass.PingResponse ping(pactus.NetworkOuterClass.PingRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getPingMethod(), getCallOptions(), request);
     }
   }
 
@@ -343,10 +415,22 @@ public final class NetworkGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetNodeInfoMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * Ping provides a simple connectivity test and latency measurement.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.NetworkOuterClass.PingResponse> ping(
+        pactus.NetworkOuterClass.PingRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getPingMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_GET_NETWORK_INFO = 0;
   private static final int METHODID_GET_NODE_INFO = 1;
+  private static final int METHODID_PING = 2;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -372,6 +456,10 @@ public final class NetworkGrpc {
         case METHODID_GET_NODE_INFO:
           serviceImpl.getNodeInfo((pactus.NetworkOuterClass.GetNodeInfoRequest) request,
               (io.grpc.stub.StreamObserver<pactus.NetworkOuterClass.GetNodeInfoResponse>) responseObserver);
+          break;
+        case METHODID_PING:
+          serviceImpl.ping((pactus.NetworkOuterClass.PingRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.NetworkOuterClass.PingResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -405,6 +493,13 @@ public final class NetworkGrpc {
               pactus.NetworkOuterClass.GetNodeInfoRequest,
               pactus.NetworkOuterClass.GetNodeInfoResponse>(
                 service, METHODID_GET_NODE_INFO)))
+        .addMethod(
+          getPingMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pactus.NetworkOuterClass.PingRequest,
+              pactus.NetworkOuterClass.PingResponse>(
+                service, METHODID_PING)))
         .build();
   }
 
@@ -455,6 +550,7 @@ public final class NetworkGrpc {
               .setSchemaDescriptor(new NetworkFileDescriptorSupplier())
               .addMethod(getGetNetworkInfoMethod())
               .addMethod(getGetNodeInfoMethod())
+              .addMethod(getPingMethod())
               .build();
         }
       }
