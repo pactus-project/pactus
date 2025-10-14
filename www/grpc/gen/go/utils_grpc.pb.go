@@ -30,7 +30,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // Utils service defines RPC methods for utility functions such as message
-// signing, verification, and etc.
+// signing, verification, and other cryptographic operations.
 type UtilsClient interface {
 	// SignMessageWithPrivateKey signs a message with the provided private key.
 	SignMessageWithPrivateKey(ctx context.Context, in *SignMessageWithPrivateKeyRequest, opts ...grpc.CallOption) (*SignMessageWithPrivateKeyResponse, error)
@@ -95,7 +95,7 @@ func (c *utilsClient) SignatureAggregation(ctx context.Context, in *SignatureAgg
 // for forward compatibility.
 //
 // Utils service defines RPC methods for utility functions such as message
-// signing, verification, and etc.
+// signing, verification, and other cryptographic operations.
 type UtilsServer interface {
 	// SignMessageWithPrivateKey signs a message with the provided private key.
 	SignMessageWithPrivateKey(context.Context, *SignMessageWithPrivateKeyRequest) (*SignMessageWithPrivateKeyResponse, error)

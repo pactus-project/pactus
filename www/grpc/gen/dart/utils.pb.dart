@@ -481,7 +481,7 @@ class SignatureAggregationResponse extends $pb.GeneratedMessage {
 }
 
 /// Utils service defines RPC methods for utility functions such as message
-/// signing, verification, and etc.
+/// signing, verification, and other cryptographic operations.
 class UtilsApi {
   $pb.RpcClient _client;
   UtilsApi(this._client);

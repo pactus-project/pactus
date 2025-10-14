@@ -984,7 +984,7 @@ class GetRawBatchTransferTransactionRequest extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   void clearSender() => $_clearField(2);
 
-  /// The recipients list of receiver with amount, min 2 recipients.
+  /// The list of recipients with their amounts. Minimum 2 recipients required.
   @$pb.TagNumber(3)
   $pb.PbList<Recipient> get recipients => $_getList(2);
 
@@ -1512,7 +1512,7 @@ class PayloadBatchTransfer extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearSender() => $_clearField(1);
 
-  /// The recipients of list receiver with amount.
+  /// The list of recipients with their amounts.
   @$pb.TagNumber(2)
   $pb.PbList<Recipient> get recipients => $_getList(1);
 }

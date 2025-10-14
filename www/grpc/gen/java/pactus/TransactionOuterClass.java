@@ -8912,7 +8912,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * The recipients list of receiver with amount, min 2 recipients.
+     * The list of recipients with their amounts. Minimum 2 recipients required.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -8921,7 +8921,7 @@ public final class TransactionOuterClass {
         getRecipientsList();
     /**
      * <pre>
-     * The recipients list of receiver with amount, min 2 recipients.
+     * The list of recipients with their amounts. Minimum 2 recipients required.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -8929,7 +8929,7 @@ public final class TransactionOuterClass {
     pactus.TransactionOuterClass.Recipient getRecipients(int index);
     /**
      * <pre>
-     * The recipients list of receiver with amount, min 2 recipients.
+     * The list of recipients with their amounts. Minimum 2 recipients required.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -8937,7 +8937,7 @@ public final class TransactionOuterClass {
     int getRecipientsCount();
     /**
      * <pre>
-     * The recipients list of receiver with amount, min 2 recipients.
+     * The list of recipients with their amounts. Minimum 2 recipients required.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -8946,7 +8946,7 @@ public final class TransactionOuterClass {
         getRecipientsOrBuilderList();
     /**
      * <pre>
-     * The recipients list of receiver with amount, min 2 recipients.
+     * The list of recipients with their amounts. Minimum 2 recipients required.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9095,7 +9095,7 @@ public final class TransactionOuterClass {
     private java.util.List<pactus.TransactionOuterClass.Recipient> recipients_;
     /**
      * <pre>
-     * The recipients list of receiver with amount, min 2 recipients.
+     * The list of recipients with their amounts. Minimum 2 recipients required.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9106,7 +9106,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * The recipients list of receiver with amount, min 2 recipients.
+     * The list of recipients with their amounts. Minimum 2 recipients required.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9118,7 +9118,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * The recipients list of receiver with amount, min 2 recipients.
+     * The list of recipients with their amounts. Minimum 2 recipients required.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9129,7 +9129,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * The recipients list of receiver with amount, min 2 recipients.
+     * The list of recipients with their amounts. Minimum 2 recipients required.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9140,7 +9140,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * The recipients list of receiver with amount, min 2 recipients.
+     * The list of recipients with their amounts. Minimum 2 recipients required.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9804,7 +9804,7 @@ public final class TransactionOuterClass {
 
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9818,7 +9818,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9832,7 +9832,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9846,7 +9846,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9867,7 +9867,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9885,7 +9885,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9905,7 +9905,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9926,7 +9926,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9944,7 +9944,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9962,7 +9962,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9981,7 +9981,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -9998,7 +9998,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -10015,7 +10015,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -10026,7 +10026,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -10040,7 +10040,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -10055,7 +10055,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -10066,7 +10066,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -10078,7 +10078,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients list of receiver with amount, min 2 recipients.
+       * The list of recipients with their amounts. Minimum 2 recipients required.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 3 [json_name = "recipients"];</code>
@@ -15022,7 +15022,7 @@ public final class TransactionOuterClass {
 
     /**
      * <pre>
-     * The recipients of list receiver with amount.
+     * The list of recipients with their amounts.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15031,7 +15031,7 @@ public final class TransactionOuterClass {
         getRecipientsList();
     /**
      * <pre>
-     * The recipients of list receiver with amount.
+     * The list of recipients with their amounts.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15039,7 +15039,7 @@ public final class TransactionOuterClass {
     pactus.TransactionOuterClass.Recipient getRecipients(int index);
     /**
      * <pre>
-     * The recipients of list receiver with amount.
+     * The list of recipients with their amounts.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15047,7 +15047,7 @@ public final class TransactionOuterClass {
     int getRecipientsCount();
     /**
      * <pre>
-     * The recipients of list receiver with amount.
+     * The list of recipients with their amounts.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15056,7 +15056,7 @@ public final class TransactionOuterClass {
         getRecipientsOrBuilderList();
     /**
      * <pre>
-     * The recipients of list receiver with amount.
+     * The list of recipients with their amounts.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15159,7 +15159,7 @@ public final class TransactionOuterClass {
     private java.util.List<pactus.TransactionOuterClass.Recipient> recipients_;
     /**
      * <pre>
-     * The recipients of list receiver with amount.
+     * The list of recipients with their amounts.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15170,7 +15170,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * The recipients of list receiver with amount.
+     * The list of recipients with their amounts.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15182,7 +15182,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * The recipients of list receiver with amount.
+     * The list of recipients with their amounts.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15193,7 +15193,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * The recipients of list receiver with amount.
+     * The list of recipients with their amounts.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15204,7 +15204,7 @@ public final class TransactionOuterClass {
     }
     /**
      * <pre>
-     * The recipients of list receiver with amount.
+     * The list of recipients with their amounts.
      * </pre>
      *
      * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15691,7 +15691,7 @@ public final class TransactionOuterClass {
 
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15705,7 +15705,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15719,7 +15719,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15733,7 +15733,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15754,7 +15754,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15772,7 +15772,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15792,7 +15792,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15813,7 +15813,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15831,7 +15831,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15849,7 +15849,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15868,7 +15868,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15885,7 +15885,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15902,7 +15902,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15913,7 +15913,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15927,7 +15927,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15942,7 +15942,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15953,7 +15953,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>
@@ -15965,7 +15965,7 @@ public final class TransactionOuterClass {
       }
       /**
        * <pre>
-       * The recipients of list receiver with amount.
+       * The list of recipients with their amounts.
        * </pre>
        *
        * <code>repeated .pactus.Recipient recipients = 2 [json_name = "recipients"];</code>

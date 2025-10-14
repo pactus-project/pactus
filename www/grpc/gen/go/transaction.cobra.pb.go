@@ -387,7 +387,7 @@ func _TransactionGetRawBatchTransferTransactionCommand(cfg *client.Config) *cobr
 
 	cmd.PersistentFlags().Uint32Var(&req.LockTime, cfg.FlagNamer("LockTime"), 0, "The lock time for the transaction. If not set, defaults to the last block height.")
 	cmd.PersistentFlags().StringVar(&req.Sender, cfg.FlagNamer("Sender"), "", "The sender's account address.")
-	flag.SliceVar(cmd.PersistentFlags(), flag.ParseMessageE[*Recipient], &req.Recipients, cfg.FlagNamer("Recipients"), "The recipients list of receiver with amount, min 2 recipients.")
+	flag.SliceVar(cmd.PersistentFlags(), flag.ParseMessageE[*Recipient], &req.Recipients, cfg.FlagNamer("Recipients"), "The list of recipients with their amounts. Minimum 2 recipients required.")
 	cmd.PersistentFlags().Int64Var(&req.Fee, cfg.FlagNamer("Fee"), 0, "The transaction fee in NanoPAC. If not set, it is set to the estimated fee.")
 	cmd.PersistentFlags().StringVar(&req.Memo, cfg.FlagNamer("Memo"), "", "A memo string for the transaction.")
 

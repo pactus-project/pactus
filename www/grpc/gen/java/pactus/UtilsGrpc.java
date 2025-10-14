@@ -5,7 +5,7 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
 /**
  * <pre>
  * Utils service defines RPC methods for utility functions such as message
- * signing, verification, and etc.
+ * signing, verification, and other cryptographic operations.
  * </pre>
  */
 @javax.annotation.Generated(
@@ -205,7 +205,7 @@ public final class UtilsGrpc {
   /**
    * <pre>
    * Utils service defines RPC methods for utility functions such as message
-   * signing, verification, and etc.
+   * signing, verification, and other cryptographic operations.
    * </pre>
    */
   public interface AsyncService {
@@ -255,7 +255,7 @@ public final class UtilsGrpc {
    * Base class for the server implementation of the service Utils.
    * <pre>
    * Utils service defines RPC methods for utility functions such as message
-   * signing, verification, and etc.
+   * signing, verification, and other cryptographic operations.
    * </pre>
    */
   public static abstract class UtilsImplBase
@@ -270,7 +270,7 @@ public final class UtilsGrpc {
    * A stub to allow clients to do asynchronous rpc calls to service Utils.
    * <pre>
    * Utils service defines RPC methods for utility functions such as message
-   * signing, verification, and etc.
+   * signing, verification, and other cryptographic operations.
    * </pre>
    */
   public static final class UtilsStub
@@ -335,7 +335,7 @@ public final class UtilsGrpc {
    * A stub to allow clients to do synchronous rpc calls to service Utils.
    * <pre>
    * Utils service defines RPC methods for utility functions such as message
-   * signing, verification, and etc.
+   * signing, verification, and other cryptographic operations.
    * </pre>
    */
   public static final class UtilsBlockingV2Stub
@@ -396,7 +396,7 @@ public final class UtilsGrpc {
    * A stub to allow clients to do limited synchronous rpc calls to service Utils.
    * <pre>
    * Utils service defines RPC methods for utility functions such as message
-   * signing, verification, and etc.
+   * signing, verification, and other cryptographic operations.
    * </pre>
    */
   public static final class UtilsBlockingStub
@@ -457,7 +457,7 @@ public final class UtilsGrpc {
    * A stub to allow clients to do ListenableFuture-style rpc calls to service Utils.
    * <pre>
    * Utils service defines RPC methods for utility functions such as message
-   * signing, verification, and etc.
+   * signing, verification, and other cryptographic operations.
    * </pre>
    */
   public static final class UtilsFutureStub

@@ -5,7 +5,7 @@ option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus";
 
 // Utils service defines RPC methods for utility functions such as message
-// signing, verification, and etc.
+// signing, verification, and other cryptographic operations.
 service Utils {
   // SignMessageWithPrivateKey signs a message with the provided private key.
   rpc SignMessageWithPrivateKey(SignMessageWithPrivateKeyRequest) returns (SignMessageWithPrivateKeyResponse);

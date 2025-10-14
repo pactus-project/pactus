@@ -515,7 +515,7 @@ setAddressLabel: {
     responseSerialize: serialize_pactus_SetAddressLabelResponse,
     responseDeserialize: deserialize_pactus_SetAddressLabelResponse,
   },
-  // ListWallet returns list of all available wallets.
+  // ListWallet returns a list of all available wallets.
 listWallet: {
     path: '/pactus.Wallet/ListWallet',
     requestStream: false,

@@ -822,7 +822,7 @@ type GetRawBatchTransferTransactionRequest struct {
 	LockTime uint32 `protobuf:"varint,1,opt,name=lock_time,json=lockTime,proto3" json:"lock_time,omitempty"`
 	// The sender's account address.
 	Sender string `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`
-	// The recipients list of receiver with amount, min 2 recipients.
+	// The list of recipients with their amounts. Minimum 2 recipients required.
 	Recipients []*Recipient `protobuf:"bytes,3,rep,name=recipients,proto3" json:"recipients,omitempty"`
 	// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
 	Fee int64 `protobuf:"varint,4,opt,name=fee,proto3" json:"fee,omitempty"`
@@ -1259,7 +1259,7 @@ type PayloadBatchTransfer struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The sender's address.
 	Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
-	// The recipients of list receiver with amount.
+	// The list of recipients with their amounts.
 	Recipients    []*Recipient `protobuf:"bytes,2,rep,name=recipients,proto3" json:"recipients,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

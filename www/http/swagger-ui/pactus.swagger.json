@@ -1239,7 +1239,7 @@
     },
     "/pactus/wallet/list_wallet": {
       "get": {
-        "summary": "ListWallet returns list of all available wallets.",
+        "summary": "ListWallet returns a list of all available wallets.",
         "operationId": "Wallet_ListWallet",
         "responses": {
           "200": {
@@ -1906,7 +1906,7 @@
         },
         "data": {
           "type": "string",
-          "description": "Block data, available only if verbosity level is set to BLOCK_DATA."
+          "description": "Block data, available only if verbosity level is set to BLOCK_VERBOSITY_DATA."
         },
         "blockTime": {
           "type": "integer",
@@ -1927,7 +1927,7 @@
             "type": "object",
             "$ref": "#/definitions/pactusTransactionInfo"
           },
-          "description": "List of transactions in the block, available when verbosity level is set to\nBLOCK_TRANSACTIONS."
+          "description": "List of transactions in the block, available when verbosity level is set to\nBLOCK_VERBOSITY_TRANSACTIONS."
         }
       },
       "description": "Response message contains block information."
@@ -2161,7 +2161,7 @@
             "type": "object",
             "$ref": "#/definitions/pactusRecipient"
           },
-          "description": "The recipients list of receiver with amount, min 2 recipients."
+          "description": "The list of recipients with their amounts. Minimum 2 recipients required."
         },
         "fee": {
           "type": "string",
@@ -2416,8 +2416,8 @@
           "description": "The name of the wallet to query."
         },
         "version": {
-          "type": "string",
-          "format": "int64",
+          "type": "integer",
+          "format": "int32",
           "description": "The wallet format version."
         },
         "network": {
@@ -2436,6 +2436,11 @@
           "type": "string",
           "format": "int64",
           "description": "Unix timestamp of wallet creation."
+        },
+        "defaultFee": {
+          "type": "string",
+          "format": "int64",
+          "description": "The default fee of the wallet."
         }
       },
       "description": "Response message contains wallet details."
@@ -2481,7 +2486,7 @@
             "type": "object",
             "$ref": "#/definitions/pactusAddressInfo"
           },
-          "description": "ist of all addresses in the wallet with their details."
+          "description": "List of all addresses in the wallet with their details."
         }
       },
       "description": "Response message contains wallet addresses."
@@ -2554,7 +2559,7 @@
             "type": "object",
             "$ref": "#/definitions/pactusRecipient"
           },
-          "description": "The recipients of list receiver with amount."
+          "description": "The list of recipients with their amounts."
         }
       },
       "description": "Payload for a batch transfer transaction."

@@ -45,7 +45,7 @@ service Wallet {
   // SetAddressLabel sets or updates the label for a given address.
   rpc SetAddressLabel(SetAddressLabelRequest) returns (SetAddressLabelResponse);
 
-  // ListWallet returns list of all available wallets.
+  // ListWallet returns a list of all available wallets.
   rpc ListWallet(ListWalletRequest) returns (ListWalletResponse);
 
   // GetWalletInfo returns detailed information about a specific wallet.
@@ -316,7 +316,7 @@ message GetWalletInfoResponse {
   // The name of the wallet to query.
   string wallet_name = 1;
   // The wallet format version.
-  int64 version = 2;
+  int32 version = 2;
   // The network the wallet is connected to (e.g., mainnet, testnet).
   string network = 3;
   // Indicates if the wallet is encrypted.
@@ -325,6 +325,8 @@ message GetWalletInfoResponse {
   string uuid = 5;
   // Unix timestamp of wallet creation.
   int64 created_at = 6;
+  // The default fee of the wallet.
+  int64 default_fee = 7;
 }
 
 // Request message for listing wallet addresses.
@@ -337,6 +339,6 @@ message ListAddressRequest {
 message ListAddressResponse {
   // The name of the queried wallet.
   string wallet_name = 1;
-  // ist of all addresses in the wallet with their details.
+  // List of all addresses in the wallet with their details.
   repeated AddressInfo data = 2;
 }
