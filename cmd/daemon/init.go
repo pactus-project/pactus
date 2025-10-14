@@ -1,7 +1,11 @@
 package main
 
 import (
+	"context"
+	"os"
+	"os/signal"
 	"path/filepath"
+	"syscall"
 
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
@@ -46,6 +50,12 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			return
 		}
 
+		index := 0
+		recoveryEventFunc := func(addr string) {
+			cmd.PrintInfoMsgf("%d. %s", index+1, addr)
+			index++
+		}
+
 		var mnemonic string
 		if *restoreOpt == "" {
 			mnemonic, _ = wallet.GenerateMnemonic(*entropyOpt)
@@ -60,6 +70,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			if !confirmed {
 				return
 			}
+			recoveryEventFunc = nil
 		} else {
 			mnemonic = *restoreOpt
 			err := wallet.CheckMnemonic(*restoreOpt)
@@ -99,7 +110,24 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		if *localnetOpt {
 			chain = genesis.Localnet
 		}
-		validatorAddrs, rewardAddrs, err := cmd.CreateNode(valNum, chain, workingDir, mnemonic, password)
+
+		ctx, cancel := context.WithCancel(context.Background())
+		sigChan := make(chan os.Signal, 1)
+		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+		go func() {
+			<-sigChan
+			cancel()
+		}()
+
+		if recoveryEventFunc != nil {
+			cmd.PrintLine()
+			cmd.PrintInfoMsgf("Recovering wallet addresses (Ctrl+C to abort)...")
+			cmd.PrintLine()
+		}
+
+		validatorAddrs, rewardAddrs, err := cmd.CreateNode(ctx, valNum, chain, workingDir, mnemonic,
+			password, recoveryEventFunc)
 		cmd.FatalErrorCheck(err)
 
 		cmd.PrintLine()
