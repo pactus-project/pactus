@@ -745,18 +745,18 @@ func (*Vault) deriveEd25519PrivateKey(mnemonicSeed []byte, path []uint32) (*ed25
 //
 // Reference: https://pips.pactus.org/PIPs/pip-41
 func (v *Vault) RecoverAddresses(ctx context.Context, password string,
-	hasActivity func(addrs string) (bool, error),
+	hasActivity func(addr string) (bool, error),
 ) error {
-	err := v.recoverBLSAcountAddresses(ctx, hasActivity)
+	err := v.recoverBLSAccountAddresses(ctx, hasActivity)
 	if err != nil {
 		return err
 	}
 
-	return v.recoverEd25519AcountAddresses(ctx, password, hasActivity)
+	return v.recoverEd25519AccountAddresses(ctx, password, hasActivity)
 }
 
-// recoverBLSAcountAddresses recovers BLS account addresses following the PIP-41 specification.
-func (v *Vault) recoverBLSAcountAddresses(ctx context.Context, hasActivity func(addrs string) (bool, error)) error {
+// recoverBLSAccountAddresses recovers BLS account addresses following the PIP-41 specification.
+func (v *Vault) recoverBLSAccountAddresses(ctx context.Context, hasActivity func(addrs string) (bool, error)) error {
 	ext, err := blshdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
 	if err != nil {
 		return err
@@ -807,8 +807,8 @@ func (v *Vault) recoverBLSAcountAddresses(ctx context.Context, hasActivity func(
 	return nil
 }
 
-// recoverEd25519AcountAddresses recovers Ed25519 account addresses following the PIP-41 specification.
-func (v *Vault) recoverEd25519AcountAddresses(ctx context.Context, password string,
+// recoverEd25519AccountAddresses recovers Ed25519 account addresses following the PIP-41 specification.
+func (v *Vault) recoverEd25519AccountAddresses(ctx context.Context, password string,
 	hasActivity func(addrs string) (bool, error),
 ) error {
 	seed, err := v.MnemonicSeed(password)

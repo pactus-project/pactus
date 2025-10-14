@@ -214,8 +214,8 @@ func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 	return w.store.Vault.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
 		_, err := w.grpcClient.getAccount(addr)
 		if err != nil {
-			sErr, ok := status.FromError(err)
-			if ok && sErr.Code() == codes.NotFound {
+			s, ok := status.FromError(err)
+			if ok && s.Code() == codes.NotFound {
 				return false, nil
 			}
 
