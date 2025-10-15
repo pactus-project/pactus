@@ -1044,6 +1044,72 @@ class CounterInfo extends $pb.GeneratedMessage {
   void clearBundles() => $_clearField(2);
 }
 
+/// Request message for ping - intentionally empty for measuring round-trip time.
+class PingRequest extends $pb.GeneratedMessage {
+  factory PingRequest() => create();
+  PingRequest._() : super();
+  factory PingRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PingRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PingRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  PingRequest clone() => PingRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  PingRequest copyWith(void Function(PingRequest) updates) => super.copyWith((message) => updates(message as PingRequest)) as PingRequest;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static PingRequest create() => PingRequest._();
+  PingRequest createEmptyInstance() => create();
+  static $pb.PbList<PingRequest> createRepeated() => $pb.PbList<PingRequest>();
+  @$core.pragma('dart2js:noInline')
+  static PingRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PingRequest>(create);
+  static PingRequest? _defaultInstance;
+}
+
+/// Response message for ping - intentionally empty for measuring round-trip time.
+class PingResponse extends $pb.GeneratedMessage {
+  factory PingResponse() => create();
+  PingResponse._() : super();
+  factory PingResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory PingResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PingResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
+    ..hasRequiredFields = false
+  ;
+
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  PingResponse clone() => PingResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  PingResponse copyWith(void Function(PingResponse) updates) => super.copyWith((message) => updates(message as PingResponse)) as PingResponse;
+
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static PingResponse create() => PingResponse._();
+  PingResponse createEmptyInstance() => create();
+  static $pb.PbList<PingResponse> createRepeated() => $pb.PbList<PingResponse>();
+  @$core.pragma('dart2js:noInline')
+  static PingResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PingResponse>(create);
+  static PingResponse? _defaultInstance;
+}
+
 /// Network service provides RPCs for retrieving information about the network.
 class NetworkApi {
   $pb.RpcClient _client;
@@ -1056,6 +1122,10 @@ class NetworkApi {
   /// GetNodeInfo retrieves information about a specific node in the network.
   $async.Future<GetNodeInfoResponse> getNodeInfo($pb.ClientContext? ctx, GetNodeInfoRequest request) =>
     _client.invoke<GetNodeInfoResponse>(ctx, 'Network', 'GetNodeInfo', request, GetNodeInfoResponse())
+  ;
+  /// Ping provides a simple connectivity test and latency measurement.
+  $async.Future<PingResponse> ping($pb.ClientContext? ctx, PingRequest request) =>
+    _client.invoke<PingResponse>(ctx, 'Network', 'Ping', request, PingResponse())
   ;
 }
 
