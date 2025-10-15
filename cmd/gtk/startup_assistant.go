@@ -4,6 +4,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"path/filepath"
@@ -63,6 +64,10 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 	// -- page_node_type
 	wgtNodeType, gridImport, radioImport, pageNodeTypeName := pageNodeType(assistant, assistFunc)
 
+	// --- page_address_recovery
+	wgtAddressRecovery, txtRecoveryLog, btnCancelRecovery, lblRecoveryStatus,
+		pageAddressRecoveryName := pageAddressRecovery(assistant, assistFunc)
+
 	// --- page_summary
 	wgtSummary, txtNodeInfo, pageSummaryName := pageSummary(assistant, assistFunc)
 
@@ -77,18 +82,24 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 		gtk.MainQuit()
 	})
 
-	assistant.SetPageType(wgtWalletMode, gtk.ASSISTANT_PAGE_INTRO)      // page 0
-	assistant.SetPageType(wgtSeedGenerate, gtk.ASSISTANT_PAGE_CONTENT)  // page 1
-	assistant.SetPageType(wgtSeedConfirm, gtk.ASSISTANT_PAGE_CONTENT)   // page 2
-	assistant.SetPageType(wgtSeedRestore, gtk.ASSISTANT_PAGE_CONTENT)   // page 3
-	assistant.SetPageType(wgtPassword, gtk.ASSISTANT_PAGE_CONTENT)      // page 4
-	assistant.SetPageType(wgtNumValidators, gtk.ASSISTANT_PAGE_CONTENT) // page 5
-	assistant.SetPageType(wgtNodeType, gtk.ASSISTANT_PAGE_CONTENT)      // page 6
-	assistant.SetPageType(wgtSummary, gtk.ASSISTANT_PAGE_SUMMARY)       // page 7
+	assistant.SetPageType(wgtWalletMode, gtk.ASSISTANT_PAGE_INTRO)        // page 0
+	assistant.SetPageType(wgtSeedGenerate, gtk.ASSISTANT_PAGE_CONTENT)    // page 1
+	assistant.SetPageType(wgtSeedConfirm, gtk.ASSISTANT_PAGE_CONTENT)     // page 2
+	assistant.SetPageType(wgtSeedRestore, gtk.ASSISTANT_PAGE_CONTENT)     // page 3
+	assistant.SetPageType(wgtPassword, gtk.ASSISTANT_PAGE_CONTENT)        // page 4
+	assistant.SetPageType(wgtNumValidators, gtk.ASSISTANT_PAGE_CONTENT)   // page 5
+	assistant.SetPageType(wgtNodeType, gtk.ASSISTANT_PAGE_CONTENT)        // page 6
+	assistant.SetPageType(wgtAddressRecovery, gtk.ASSISTANT_PAGE_CONTENT) // page 7
+	assistant.SetPageType(wgtSummary, gtk.ASSISTANT_PAGE_SUMMARY)         // page 8
 
 	mnemonic := ""
 	prevPageIndex := -1
 	prevPageAdjust := 0
+	validatorAddrs := []string{}
+	rewardAddr := ""
+	recoveredAddrs := []string{}
+	recoveryCtx, cancelRecovery := context.WithCancel(context.Background())
+
 	assistant.Connect("prepare", func(assistant *gtk.Assistant, page *gtk.Widget) {
 		isRestoreMode := radioRestoreWallet.GetActive()
 		curPageName, err := page.GetName()
@@ -207,6 +218,36 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 
 			snapshotIndex := 0
 
+			// If not in restore mode, create node and skip to summary page
+			if !isRestoreMode {
+				iter, err := comboNumValidators.GetActiveIter()
+				fatalErrorCheck(err)
+
+				val, err := lsNumValidators.GetValue(iter, 0)
+				fatalErrorCheck(err)
+
+				valueInterface, err := val.GoValue()
+				fatalErrorCheck(err)
+
+				numValidators := valueInterface.(int)
+				walletPassword, err := entryPassword.GetText()
+				fatalErrorCheck(err)
+
+				go func() {
+					validatorAddrsLocal, rewardAddrLocal, err := cmd.CreateNode(
+						context.Background(), numValidators, chainType, workingDir,
+						mnemonic, walletPassword, nil)
+
+					glib.IdleAdd(func() {
+						fatalErrorCheck(err)
+						validatorAddrs = validatorAddrsLocal
+						rewardAddr = rewardAddrLocal
+						// Skip to summary page
+						assistant.NextPage()
+					})
+				}()
+			}
+
 			radioImport.Connect("toggled", func() {
 				if radioImport.GetActive() {
 					assistantPageComplete(assistant, wgtNodeType, false)
@@ -315,7 +356,22 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 					ssPBLabel.SetVisible(false)
 				}
 			})
-		case pageSummaryName:
+		case pageAddressRecoveryName:
+			// Only handle recovery for restore mode
+			if !isRestoreMode {
+				// Skip this page for new wallets
+				if isForward {
+					log.Printf("jumping forward from addressRecovery page (new wallet)")
+					assistant.NextPage()
+					prevPageAdjust = 1
+				} else {
+					log.Printf("jumping backward from addressRecovery page (new wallet)")
+					assistant.PreviousPage()
+					prevPageAdjust = -1
+				}
+				return
+			}
+
 			iter, err := comboNumValidators.GetActiveIter()
 			fatalErrorCheck(err)
 
@@ -329,25 +385,87 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 			walletPassword, err := entryPassword.GetText()
 			fatalErrorCheck(err)
 
-			validatorAddrs, rewardAddrs, err := cmd.CreateNode(context.Background(), numValidators,
-				chainType, workingDir, mnemonic, walletPassword, nil)
-			fatalErrorCheck(err)
+			// Disable next button initially
+			assistantPageComplete(assistant, wgtAddressRecovery, false)
 
+			// Reset recovery context
+			recoveryCtx, cancelRecovery = context.WithCancel(context.Background())
+
+			// Clear previous recovery log
+			setTextViewContent(txtRecoveryLog, "")
+			lblRecoveryStatus.SetText("")
+			btnCancelRecovery.SetVisible(false)
+
+			// Show cancel button and start recovery
+			btnCancelRecovery.SetVisible(true)
+			btnCancelRecovery.SetSensitive(true)
+			lblRecoveryStatus.SetText("Processing...")
+
+			go func() {
+				recoveryIndex := 0
+				recoveryEventFunc := func(addr string) {
+					glib.IdleAdd(func() {
+						currentText := getTextViewContent(txtRecoveryLog)
+						newText := fmt.Sprintf("%s%d. %s\n", currentText, recoveryIndex+1, addr)
+						setTextViewContent(txtRecoveryLog, newText)
+						recoveredAddrs = append(recoveredAddrs, addr)
+						recoveryIndex++
+					})
+				}
+
+				validatorAddrsLocal, rewardAddrLocal, err := cmd.CreateNode(
+					recoveryCtx, numValidators, chainType, workingDir,
+					mnemonic, walletPassword, recoveryEventFunc)
+
+				glib.IdleAdd(func() {
+					if err != nil {
+						if recoveryCtx.Err() != nil || errors.Is(err, context.Canceled) {
+							lblRecoveryStatus.SetText("Recovery cancelled")
+							btnCancelRecovery.SetVisible(false)
+							assistantPageComplete(assistant, wgtAddressRecovery, true)
+						} else {
+							lblRecoveryStatus.SetText(fmt.Sprintf("Recovery failed: %v", err))
+							btnCancelRecovery.SetVisible(false)
+							assistantPageComplete(assistant, wgtAddressRecovery, false)
+						}
+					} else {
+						validatorAddrs = validatorAddrsLocal
+						rewardAddr = rewardAddrLocal
+						lblRecoveryStatus.SetText("Successfully wallet addresses recovered.")
+						btnCancelRecovery.SetVisible(false)
+						assistantPageComplete(assistant, wgtAddressRecovery, true)
+					}
+				})
+			}()
+		case pageSummaryName:
 			// Done! showing the node information
 			successful = true
 			nodeInfo := fmt.Sprintf("Working directory: %s\n", workingDir)
 			nodeInfo += fmt.Sprintf("Network: %s\n", chainType.String())
+
+			nodeInfo += "\nRecovered addresses:\n"
+			for i, addr := range recoveredAddrs {
+				nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)
+			}
+
 			nodeInfo += "\nValidator addresses:\n"
 			for i, addr := range validatorAddrs {
 				nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)
 			}
 
 			nodeInfo += "\nReward address:\n"
-			nodeInfo += fmt.Sprintf("%s", rewardAddrs)
+			nodeInfo += fmt.Sprintf("%s", rewardAddr)
 
 			setTextViewContent(txtNodeInfo, nodeInfo)
 		}
 		prevPageIndex = curPageIndex + prevPageAdjust
+	})
+
+	// Setup cancel recovery button handler
+	btnCancelRecovery.Connect("clicked", func() {
+		lblRecoveryStatus.SetText("Cancelling...")
+		cancelRecovery()
+		btnCancelRecovery.SetSensitive(false)
 	})
 
 	assistant.SetModal(true)
@@ -712,6 +830,63 @@ For more information, look <a href="https://pactus.org/user-guides/run-pactus-gu
 		pageNumValidatorsDesc)
 
 	return pageWidget, lsNumValidators, comboNumValidators, pageNumValidatorsName
+}
+
+func pageAddressRecovery(assistant *gtk.Assistant, assistFunc assistantFunc) (
+	*gtk.Widget, *gtk.TextView, *gtk.Button, *gtk.Label, string,
+) {
+	var pageWidget *gtk.Widget
+
+	// Create a vertical box to hold all elements
+	vbox, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 10)
+	fatalErrorCheck(err)
+
+	// Create TextView for recovery log (read-only, scrollable)
+	textViewRecoveryLog, err := gtk.TextViewNew()
+	fatalErrorCheck(err)
+	setMargin(textViewRecoveryLog, 6, 6, 6, 6)
+	textViewRecoveryLog.SetWrapMode(gtk.WRAP_WORD)
+	textViewRecoveryLog.SetEditable(false)
+	textViewRecoveryLog.SetMonospace(true)
+
+	// Create scrolled window for the text view
+	scrolledWindow, err := gtk.ScrolledWindowNew(nil, nil)
+	fatalErrorCheck(err)
+	scrolledWindow.SetSizeRequest(0, 200)
+	scrolledWindow.Add(textViewRecoveryLog)
+
+	// Create status label
+	lblRecoveryStatus, err := gtk.LabelNew("")
+	fatalErrorCheck(err)
+	setMargin(lblRecoveryStatus, 6, 6, 6, 6)
+	lblRecoveryStatus.SetHAlign(gtk.ALIGN_START)
+
+	// Create cancel button
+	btnCancelRecovery, err := gtk.ButtonNewWithLabel("Cancel")
+	fatalErrorCheck(err)
+	setMargin(btnCancelRecovery, 6, 6, 6, 6)
+	btnCancelRecovery.SetHAlign(gtk.ALIGN_CENTER)
+	btnCancelRecovery.SetSizeRequest(150, -1)
+
+	// Add widgets to vbox
+	vbox.PackStart(scrolledWindow, true, true, 0)
+	vbox.PackStart(lblRecoveryStatus, false, false, 0)
+	vbox.PackStart(btnCancelRecovery, false, false, 0)
+
+	pageAddressRecoveryName := "page_address_recovery"
+	pageAddressRecoveryTitle := "Address Recovery"
+	pageAddressRecoverySubject := "Recovered Addresses"
+	pageAddressRecoveryDesc := `Please wait for the wallet addresses will be recovered automatically.`
+
+	pageWidget = assistFunc(
+		assistant,
+		vbox,
+		pageAddressRecoveryName,
+		pageAddressRecoveryTitle,
+		pageAddressRecoverySubject,
+		pageAddressRecoveryDesc)
+
+	return pageWidget, textViewRecoveryLog, btnCancelRecovery, lblRecoveryStatus, pageAddressRecoveryName
 }
 
 func pageSummary(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.TextView, string) {
