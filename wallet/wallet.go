@@ -212,7 +212,7 @@ func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 	eventFunc func(addr string),
 ) error {
 	return w.store.Vault.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
-		pub, err := w.grpcClient.getPublicKeyByAddress(ctx, addr)
+		_, err := w.grpcClient.getAccount(addr)
 		if err != nil {
 			sErr, ok := status.FromError(err)
 			if ok && sErr.Code() == codes.NotFound {
@@ -222,13 +222,11 @@ func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 			return false, err
 		}
 
-		ok := pub != ""
-
-		if ok && eventFunc != nil {
+		if eventFunc != nil {
 			eventFunc(addr)
 		}
 
-		return ok, nil
+		return true, nil
 	})
 }
 
