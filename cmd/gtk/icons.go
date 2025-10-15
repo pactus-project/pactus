@@ -30,6 +30,9 @@ var (
 
 	//go:embed assets/icons/send.svg
 	iconSend []byte
+
+	//go:embed assets/icons/fee.png
+	iconFee []byte
 )
 
 func pixbufToIcon16(pixbuf *gdk.Pixbuf) *gtk.Image {
@@ -86,6 +89,12 @@ func SeedIcon() *gtk.Image {
 
 func SendIcon() *gtk.Image {
 	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconSend)
+
+	return pixbufToIcon16(pixbuf)
+}
+
+func FeeIcon() *gtk.Image {
+	pixbuf, _ := gdk.PixbufNewFromDataOnly(iconFee)
 
 	return pixbufToIcon16(pixbuf)
 }

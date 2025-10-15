@@ -28,7 +28,13 @@ type widgetWallet struct {
 
 	treeViewWallet    *gtk.TreeView
 	labelTotalBalance *gtk.Label
+	labelDefaultFee   *gtk.Label
+	labelTotalStake   *gtk.Label
+	labelEncrypted    *gtk.Label
 	model             *walletModel
+
+	// Timeout ID for cleanup
+	timeoutID glib.SourceHandle
 }
 
 // Add a column to the tree view (during the initialization of the tree view).
@@ -56,21 +62,16 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 	labelLocation := getLabelObj(builder, "id_label_wallet_location")
 	labelEncrypted := getLabelObj(builder, "id_label_wallet_encrypted")
 	labelTotalBalance := getLabelObj(builder, "id_label_wallet_total_balance")
+	labelTotalStake := getLabelObj(builder, "id_label_wallet_total_stake")
+	labelDefaultFee := getLabelObj(builder, "id_label_wallet_default_fee")
 
 	getToolButtonObj(builder, "id_button_new_address").SetIconWidget(AddIcon())
+	getToolButtonObj(builder, "id_button_set_default_fee").SetIconWidget(FeeIcon())
 	getToolButtonObj(builder, "id_button_change_password").SetIconWidget(PasswordIcon())
 	getToolButtonObj(builder, "id_button_show_seed").SetIconWidget(SeedIcon())
 
 	labelName.SetText(model.wallet.Name())
 	labelLocation.SetText(model.wallet.Path())
-	if model.wallet.IsEncrypted() {
-		labelEncrypted.SetText("Yes")
-	} else {
-		labelEncrypted.SetText("No")
-	}
-
-	totalBalance, _ := model.wallet.TotalBalance()
-	labelTotalBalance.SetText(totalBalance.String())
 
 	colNo := createColumn("No", IDAddressesColumnNo)
 	colAddress := createColumn("Address", IDAddressesColumnAddress)
@@ -91,6 +92,9 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 		Box:               box,
 		treeViewWallet:    treeViewWallet,
 		labelTotalBalance: labelTotalBalance,
+		labelTotalStake:   labelTotalStake,
+		labelDefaultFee:   labelDefaultFee,
+		labelEncrypted:    labelEncrypted,
 		model:             model,
 	}
 
@@ -155,22 +159,29 @@ func buildWidgetWallet(model *walletModel) (*widgetWallet, error) {
 
 	signals := map[string]any{
 		"on_new_address":     wdgWallet.onNewAddress,
+		"on_set_default_fee": wdgWallet.onSetDefaultFee,
 		"on_change_password": wdgWallet.onChangePassword,
 		"on_show_seed":       wdgWallet.onShowSeed,
 	}
 	builder.ConnectSignals(signals)
 
-	glib.TimeoutAdd(15000, wdgWallet.timeout) // each 15 seconds
+	wdgWallet.timeoutID = glib.TimeoutAdd(15000, wdgWallet.timeout) // each 15 seconds
+
+	wdgWallet.rebuild()
 
 	return wdgWallet, nil
 }
 
 func (ww *widgetWallet) onChangePassword() {
-	changePassword(ww.model.wallet)
+	changePassword(ww)
 }
 
 func (ww *widgetWallet) onNewAddress() {
 	createAddress(ww)
+}
+
+func (ww *widgetWallet) onSetDefaultFee() {
+	setDefaultFee(ww)
 }
 
 func (ww *widgetWallet) onShowSeed() {
@@ -190,11 +201,29 @@ func (ww *widgetWallet) onShowSeed() {
 }
 
 func (ww *widgetWallet) timeout() bool {
-	totalBalance, _ := ww.model.wallet.TotalBalance()
-	ww.model.rebuildModel()
-	ww.labelTotalBalance.SetText(totalBalance.String())
+	ww.rebuild()
 
 	return true
+}
+
+func (ww *widgetWallet) rebuild() {
+	ww.model.rebuildModel()
+
+	totalBalance, _ := ww.model.wallet.TotalBalance()
+	totalStake, _ := ww.model.wallet.TotalStake()
+
+	// Get wallet info and set default fee
+	walletInfo := ww.model.wallet.Info()
+
+	ww.labelTotalBalance.SetText(totalBalance.String())
+	ww.labelTotalStake.SetText(totalStake.String())
+	ww.labelDefaultFee.SetText(walletInfo.DefaultFee.String())
+
+	if walletInfo.Encrypted {
+		ww.labelEncrypted.SetText("Yes")
+	} else {
+		ww.labelEncrypted.SetText("No")
+	}
 }
 
 func (ww *widgetWallet) onUpdateLabel() {
@@ -246,4 +275,12 @@ func (ww *widgetWallet) getSelectedAddress() string {
 	}
 
 	return ""
+}
+
+// cleanup cancels all timeouts to prevent memory leaks and potential panics.
+func (ww *widgetWallet) cleanup() {
+	if ww.timeoutID != 0 {
+		glib.SourceRemove(ww.timeoutID)
+		ww.timeoutID = 0
+	}
 }

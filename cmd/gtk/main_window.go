@@ -58,13 +58,17 @@ func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel) *mainWindow
 	// Map the handlers to callback functions, and connect the signals
 	// to the Builder.
 	signals := map[string]any{
-		"on_about_gtk":            mainWnd.onAboutGtk,
-		"on_about":                mainWnd.onAbout,
-		"on_quit":                 mainWnd.onQuit,
-		"on_transaction_transfer": mainWnd.OnTransactionTransfer,
-		"on_transaction_bond":     mainWnd.OnTransactionBond,
-		"on_transaction_unbond":   mainWnd.OnTransactionUnbond,
-		"on_transaction_withdraw": mainWnd.OnTransactionWithdraw,
+		"on_about_gtk":              mainWnd.onAboutGtk,
+		"on_about":                  mainWnd.onAbout,
+		"on_quit":                   mainWnd.onQuit,
+		"on_transaction_transfer":   mainWnd.OnTransactionTransfer,
+		"on_transaction_bond":       mainWnd.OnTransactionBond,
+		"on_transaction_unbond":     mainWnd.OnTransactionUnbond,
+		"on_transaction_withdraw":   mainWnd.OnTransactionWithdraw,
+		"on_wallet_new_address":     mainWnd.onWalletNewAddress,
+		"on_wallet_change_password": mainWnd.onWalletChangePassword,
+		"on_wallet_show_seed":       mainWnd.onWalletShowSeed,
+		"on_wallet_set_default_fee": mainWnd.onWalletSetDefaultFee,
 	}
 	builder.ConnectSignals(signals)
 
@@ -84,6 +88,9 @@ func buildMainWindow(nodeModel *nodeModel, walletModel *walletModel) *mainWindow
 }
 
 func (mw *mainWindow) onQuit() {
+	// Cleanup widgets
+	mw.widgetNode.cleanup()
+	mw.widgetWallet.cleanup()
 	mw.Close()
 }
 
@@ -129,4 +136,20 @@ func (*mainWindow) onMenuItemActivateDocumentation(_ *gtk.MenuItem) {
 	if err := openURLInBrowser("https://docs.pactus.org/"); err != nil {
 		fatalErrorCheck(err)
 	}
+}
+
+func (mw *mainWindow) onWalletNewAddress() {
+	mw.widgetWallet.onNewAddress()
+}
+
+func (mw *mainWindow) onWalletChangePassword() {
+	mw.widgetWallet.onChangePassword()
+}
+
+func (mw *mainWindow) onWalletShowSeed() {
+	mw.widgetWallet.onShowSeed()
+}
+
+func (mw *mainWindow) onWalletSetDefaultFee() {
+	mw.widgetWallet.onSetDefaultFee()
 }
