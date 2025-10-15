@@ -31,7 +31,7 @@ type Wallet struct {
 
 type Info struct {
 	WalletName string
-	Version    int64
+	Version    int
 	Network    string
 	DefaultFee amount.Amount
 	UUID       string
@@ -565,7 +565,7 @@ func (w *Wallet) Network() genesis.ChainType {
 func (w *Wallet) Info() *Info {
 	return &Info{
 		WalletName: w.Name(),
-		Version:    int64(w.store.Version),
+		Version:    w.store.Version,
 		Network:    w.store.Network.String(),
 		DefaultFee: w.store.Vault.DefaultFee,
 		UUID:       w.store.UUID.String(),

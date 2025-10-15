@@ -148,7 +148,7 @@ message GetRawBatchTransferTransactionRequest {
   uint32 lock_time = 1;
   // The sender's account address.
   string sender = 2;
-  // The recipients list of receiver with amount, min 2 recipients.
+  // The list of recipients with their amounts. Minimum 2 recipients required.
   repeated Recipient recipients = 3;
   // The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
   int64 fee = 4;
@@ -214,7 +214,7 @@ message PayloadWithdraw {
 message PayloadBatchTransfer {
   // The sender's address.
   string sender = 1;
-  // The recipients of list receiver with amount.
+  // The list of recipients with their amounts.
   repeated Recipient recipients = 2;
 }
 

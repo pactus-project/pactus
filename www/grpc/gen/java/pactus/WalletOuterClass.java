@@ -22805,10 +22805,10 @@ public final class WalletOuterClass {
      * The wallet format version.
      * </pre>
      *
-     * <code>int64 version = 2 [json_name = "version"];</code>
+     * <code>int32 version = 2 [json_name = "version"];</code>
      * @return The version.
      */
-    long getVersion();
+    int getVersion();
 
     /**
      * <pre>
@@ -22869,6 +22869,16 @@ public final class WalletOuterClass {
      * @return The createdAt.
      */
     long getCreatedAt();
+
+    /**
+     * <pre>
+     * The default fee of the wallet.
+     * </pre>
+     *
+     * <code>int64 default_fee = 7 [json_name = "defaultFee"];</code>
+     * @return The defaultFee.
+     */
+    long getDefaultFee();
   }
   /**
    * <pre>
@@ -22962,17 +22972,17 @@ public final class WalletOuterClass {
     }
 
     public static final int VERSION_FIELD_NUMBER = 2;
-    private long version_ = 0L;
+    private int version_ = 0;
     /**
      * <pre>
      * The wallet format version.
      * </pre>
      *
-     * <code>int64 version = 2 [json_name = "version"];</code>
+     * <code>int32 version = 2 [json_name = "version"];</code>
      * @return The version.
      */
     @java.lang.Override
-    public long getVersion() {
+    public int getVersion() {
       return version_;
     }
 
@@ -23100,6 +23110,21 @@ public final class WalletOuterClass {
       return createdAt_;
     }
 
+    public static final int DEFAULT_FEE_FIELD_NUMBER = 7;
+    private long defaultFee_ = 0L;
+    /**
+     * <pre>
+     * The default fee of the wallet.
+     * </pre>
+     *
+     * <code>int64 default_fee = 7 [json_name = "defaultFee"];</code>
+     * @return The defaultFee.
+     */
+    @java.lang.Override
+    public long getDefaultFee() {
+      return defaultFee_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -23117,8 +23142,8 @@ public final class WalletOuterClass {
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(walletName_)) {
         com.google.protobuf.GeneratedMessage.writeString(output, 1, walletName_);
       }
-      if (version_ != 0L) {
-        output.writeInt64(2, version_);
+      if (version_ != 0) {
+        output.writeInt32(2, version_);
       }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(network_)) {
         com.google.protobuf.GeneratedMessage.writeString(output, 3, network_);
@@ -23132,6 +23157,9 @@ public final class WalletOuterClass {
       if (createdAt_ != 0L) {
         output.writeInt64(6, createdAt_);
       }
+      if (defaultFee_ != 0L) {
+        output.writeInt64(7, defaultFee_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -23144,9 +23172,9 @@ public final class WalletOuterClass {
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(walletName_)) {
         size += com.google.protobuf.GeneratedMessage.computeStringSize(1, walletName_);
       }
-      if (version_ != 0L) {
+      if (version_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(2, version_);
+          .computeInt32Size(2, version_);
       }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(network_)) {
         size += com.google.protobuf.GeneratedMessage.computeStringSize(3, network_);
@@ -23161,6 +23189,10 @@ public final class WalletOuterClass {
       if (createdAt_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(6, createdAt_);
+      }
+      if (defaultFee_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(7, defaultFee_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -23189,6 +23221,8 @@ public final class WalletOuterClass {
           .equals(other.getUuid())) return false;
       if (getCreatedAt()
           != other.getCreatedAt()) return false;
+      if (getDefaultFee()
+          != other.getDefaultFee()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -23203,8 +23237,7 @@ public final class WalletOuterClass {
       hash = (37 * hash) + WALLET_NAME_FIELD_NUMBER;
       hash = (53 * hash) + getWalletName().hashCode();
       hash = (37 * hash) + VERSION_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getVersion());
+      hash = (53 * hash) + getVersion();
       hash = (37 * hash) + NETWORK_FIELD_NUMBER;
       hash = (53 * hash) + getNetwork().hashCode();
       hash = (37 * hash) + ENCRYPTED_FIELD_NUMBER;
@@ -23215,6 +23248,9 @@ public final class WalletOuterClass {
       hash = (37 * hash) + CREATED_AT_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getCreatedAt());
+      hash = (37 * hash) + DEFAULT_FEE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getDefaultFee());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -23351,11 +23387,12 @@ public final class WalletOuterClass {
         super.clear();
         bitField0_ = 0;
         walletName_ = "";
-        version_ = 0L;
+        version_ = 0;
         network_ = "";
         encrypted_ = false;
         uuid_ = "";
         createdAt_ = 0L;
+        defaultFee_ = 0L;
         return this;
       }
 
@@ -23407,6 +23444,9 @@ public final class WalletOuterClass {
         if (((from_bitField0_ & 0x00000020) != 0)) {
           result.createdAt_ = createdAt_;
         }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          result.defaultFee_ = defaultFee_;
+        }
       }
 
       @java.lang.Override
@@ -23426,7 +23466,7 @@ public final class WalletOuterClass {
           bitField0_ |= 0x00000001;
           onChanged();
         }
-        if (other.getVersion() != 0L) {
+        if (other.getVersion() != 0) {
           setVersion(other.getVersion());
         }
         if (!other.getNetwork().isEmpty()) {
@@ -23444,6 +23484,9 @@ public final class WalletOuterClass {
         }
         if (other.getCreatedAt() != 0L) {
           setCreatedAt(other.getCreatedAt());
+        }
+        if (other.getDefaultFee() != 0L) {
+          setDefaultFee(other.getDefaultFee());
         }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
@@ -23477,7 +23520,7 @@ public final class WalletOuterClass {
                 break;
               } // case 10
               case 16: {
-                version_ = input.readInt64();
+                version_ = input.readInt32();
                 bitField0_ |= 0x00000002;
                 break;
               } // case 16
@@ -23501,6 +23544,11 @@ public final class WalletOuterClass {
                 bitField0_ |= 0x00000020;
                 break;
               } // case 48
+              case 56: {
+                defaultFee_ = input.readInt64();
+                bitField0_ |= 0x00000040;
+                break;
+              } // case 56
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -23610,17 +23658,17 @@ public final class WalletOuterClass {
         return this;
       }
 
-      private long version_ ;
+      private int version_ ;
       /**
        * <pre>
        * The wallet format version.
        * </pre>
        *
-       * <code>int64 version = 2 [json_name = "version"];</code>
+       * <code>int32 version = 2 [json_name = "version"];</code>
        * @return The version.
        */
       @java.lang.Override
-      public long getVersion() {
+      public int getVersion() {
         return version_;
       }
       /**
@@ -23628,11 +23676,11 @@ public final class WalletOuterClass {
        * The wallet format version.
        * </pre>
        *
-       * <code>int64 version = 2 [json_name = "version"];</code>
+       * <code>int32 version = 2 [json_name = "version"];</code>
        * @param value The version to set.
        * @return This builder for chaining.
        */
-      public Builder setVersion(long value) {
+      public Builder setVersion(int value) {
 
         version_ = value;
         bitField0_ |= 0x00000002;
@@ -23644,12 +23692,12 @@ public final class WalletOuterClass {
        * The wallet format version.
        * </pre>
        *
-       * <code>int64 version = 2 [json_name = "version"];</code>
+       * <code>int32 version = 2 [json_name = "version"];</code>
        * @return This builder for chaining.
        */
       public Builder clearVersion() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        version_ = 0L;
+        version_ = 0;
         onChanged();
         return this;
       }
@@ -23922,6 +23970,50 @@ public final class WalletOuterClass {
       public Builder clearCreatedAt() {
         bitField0_ = (bitField0_ & ~0x00000020);
         createdAt_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long defaultFee_ ;
+      /**
+       * <pre>
+       * The default fee of the wallet.
+       * </pre>
+       *
+       * <code>int64 default_fee = 7 [json_name = "defaultFee"];</code>
+       * @return The defaultFee.
+       */
+      @java.lang.Override
+      public long getDefaultFee() {
+        return defaultFee_;
+      }
+      /**
+       * <pre>
+       * The default fee of the wallet.
+       * </pre>
+       *
+       * <code>int64 default_fee = 7 [json_name = "defaultFee"];</code>
+       * @param value The defaultFee to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDefaultFee(long value) {
+
+        defaultFee_ = value;
+        bitField0_ |= 0x00000040;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The default fee of the wallet.
+       * </pre>
+       *
+       * <code>int64 default_fee = 7 [json_name = "defaultFee"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearDefaultFee() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        defaultFee_ = 0L;
         onChanged();
         return this;
       }
@@ -24557,7 +24649,7 @@ public final class WalletOuterClass {
 
     /**
      * <pre>
-     * ist of all addresses in the wallet with their details.
+     * List of all addresses in the wallet with their details.
      * </pre>
      *
      * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -24566,7 +24658,7 @@ public final class WalletOuterClass {
         getDataList();
     /**
      * <pre>
-     * ist of all addresses in the wallet with their details.
+     * List of all addresses in the wallet with their details.
      * </pre>
      *
      * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -24574,7 +24666,7 @@ public final class WalletOuterClass {
     pactus.WalletOuterClass.AddressInfo getData(int index);
     /**
      * <pre>
-     * ist of all addresses in the wallet with their details.
+     * List of all addresses in the wallet with their details.
      * </pre>
      *
      * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -24582,7 +24674,7 @@ public final class WalletOuterClass {
     int getDataCount();
     /**
      * <pre>
-     * ist of all addresses in the wallet with their details.
+     * List of all addresses in the wallet with their details.
      * </pre>
      *
      * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -24591,7 +24683,7 @@ public final class WalletOuterClass {
         getDataOrBuilderList();
     /**
      * <pre>
-     * ist of all addresses in the wallet with their details.
+     * List of all addresses in the wallet with their details.
      * </pre>
      *
      * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -24694,7 +24786,7 @@ public final class WalletOuterClass {
     private java.util.List<pactus.WalletOuterClass.AddressInfo> data_;
     /**
      * <pre>
-     * ist of all addresses in the wallet with their details.
+     * List of all addresses in the wallet with their details.
      * </pre>
      *
      * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -24705,7 +24797,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * ist of all addresses in the wallet with their details.
+     * List of all addresses in the wallet with their details.
      * </pre>
      *
      * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -24717,7 +24809,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * ist of all addresses in the wallet with their details.
+     * List of all addresses in the wallet with their details.
      * </pre>
      *
      * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -24728,7 +24820,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * ist of all addresses in the wallet with their details.
+     * List of all addresses in the wallet with their details.
      * </pre>
      *
      * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -24739,7 +24831,7 @@ public final class WalletOuterClass {
     }
     /**
      * <pre>
-     * ist of all addresses in the wallet with their details.
+     * List of all addresses in the wallet with their details.
      * </pre>
      *
      * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25226,7 +25318,7 @@ public final class WalletOuterClass {
 
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25240,7 +25332,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25254,7 +25346,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25268,7 +25360,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25289,7 +25381,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25307,7 +25399,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25327,7 +25419,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25348,7 +25440,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25366,7 +25458,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25384,7 +25476,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25403,7 +25495,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25420,7 +25512,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25437,7 +25529,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25448,7 +25540,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25462,7 +25554,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25477,7 +25569,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25488,7 +25580,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25500,7 +25592,7 @@ public final class WalletOuterClass {
       }
       /**
        * <pre>
-       * ist of all addresses in the wallet with their details.
+       * List of all addresses in the wallet with their details.
        * </pre>
        *
        * <code>repeated .pactus.AddressInfo data = 2 [json_name = "data"];</code>
@@ -25821,52 +25913,53 @@ public final class WalletOuterClass {
       "istWalletRequest\".\n\022ListWalletResponse\022\030" +
       "\n\007wallets\030\001 \003(\tR\007wallets\"7\n\024GetWalletInf" +
       "oRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletNam" +
-      "e\"\275\001\n\025GetWalletInfoResponse\022\037\n\013wallet_na" +
-      "me\030\001 \001(\tR\nwalletName\022\030\n\007version\030\002 \001(\003R\007v" +
+      "e\"\336\001\n\025GetWalletInfoResponse\022\037\n\013wallet_na" +
+      "me\030\001 \001(\tR\nwalletName\022\030\n\007version\030\002 \001(\005R\007v" +
       "ersion\022\030\n\007network\030\003 \001(\tR\007network\022\034\n\tencr" +
       "ypted\030\004 \001(\010R\tencrypted\022\022\n\004uuid\030\005 \001(\tR\004uu" +
-      "id\022\035\n\ncreated_at\030\006 \001(\003R\tcreatedAt\"5\n\022Lis" +
-      "tAddressRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwa" +
-      "lletName\"_\n\023ListAddressResponse\022\037\n\013walle" +
-      "t_name\030\001 \001(\tR\nwalletName\022\'\n\004data\030\002 \003(\0132\023" +
-      ".pactus.AddressInfoR\004data*\204\001\n\013AddressTyp" +
-      "e\022\031\n\025ADDRESS_TYPE_TREASURY\020\000\022\032\n\026ADDRESS_" +
-      "TYPE_VALIDATOR\020\001\022\034\n\030ADDRESS_TYPE_BLS_ACC" +
-      "OUNT\020\002\022 \n\034ADDRESS_TYPE_ED25519_ACCOUNT\020\003" +
-      "2\200\n\n\006Wallet\022I\n\014CreateWallet\022\033.pactus.Cre" +
-      "ateWalletRequest\032\034.pactus.CreateWalletRe" +
-      "sponse\022L\n\rRestoreWallet\022\034.pactus.Restore" +
-      "WalletRequest\032\035.pactus.RestoreWalletResp" +
-      "onse\022C\n\nLoadWallet\022\031.pactus.LoadWalletRe" +
-      "quest\032\032.pactus.LoadWalletResponse\022I\n\014Unl" +
-      "oadWallet\022\033.pactus.UnloadWalletRequest\032\034" +
-      ".pactus.UnloadWalletResponse\022R\n\017GetTotal" +
-      "Balance\022\036.pactus.GetTotalBalanceRequest\032" +
-      "\037.pactus.GetTotalBalanceResponse\022[\n\022Sign" +
-      "RawTransaction\022!.pactus.SignRawTransacti" +
-      "onRequest\032\".pactus.SignRawTransactionRes" +
-      "ponse\022^\n\023GetValidatorAddress\022\".pactus.Ge" +
-      "tValidatorAddressRequest\032#.pactus.GetVal" +
-      "idatorAddressResponse\022L\n\rGetNewAddress\022\034" +
-      ".pactus.GetNewAddressRequest\032\035.pactus.Ge" +
-      "tNewAddressResponse\022X\n\021GetAddressHistory" +
-      "\022 .pactus.GetAddressHistoryRequest\032!.pac" +
-      "tus.GetAddressHistoryResponse\022F\n\013SignMes" +
-      "sage\022\032.pactus.SignMessageRequest\032\033.pactu" +
-      "s.SignMessageResponse\022L\n\rGetTotalStake\022\034" +
-      ".pactus.GetTotalStakeRequest\032\035.pactus.Ge" +
-      "tTotalStakeResponse\022O\n\016GetAddressInfo\022\035." +
-      "pactus.GetAddressInfoRequest\032\036.pactus.Ge" +
-      "tAddressInfoResponse\022R\n\017SetAddressLabel\022" +
-      "\036.pactus.SetAddressLabelRequest\032\037.pactus" +
-      ".SetAddressLabelResponse\022C\n\nListWallet\022\031" +
-      ".pactus.ListWalletRequest\032\032.pactus.ListW" +
-      "alletResponse\022L\n\rGetWalletInfo\022\034.pactus." +
-      "GetWalletInfoRequest\032\035.pactus.GetWalletI" +
-      "nfoResponse\022F\n\013ListAddress\022\032.pactus.List" +
-      "AddressRequest\032\033.pactus.ListAddressRespo" +
-      "nseB:\n\006pactusZ0github.com/pactus-project" +
-      "/pactus/www/grpc/pactusb\006proto3"
+      "id\022\035\n\ncreated_at\030\006 \001(\003R\tcreatedAt\022\037\n\013def" +
+      "ault_fee\030\007 \001(\003R\ndefaultFee\"5\n\022ListAddres" +
+      "sRequest\022\037\n\013wallet_name\030\001 \001(\tR\nwalletNam" +
+      "e\"_\n\023ListAddressResponse\022\037\n\013wallet_name\030" +
+      "\001 \001(\tR\nwalletName\022\'\n\004data\030\002 \003(\0132\023.pactus" +
+      ".AddressInfoR\004data*\204\001\n\013AddressType\022\031\n\025AD" +
+      "DRESS_TYPE_TREASURY\020\000\022\032\n\026ADDRESS_TYPE_VA" +
+      "LIDATOR\020\001\022\034\n\030ADDRESS_TYPE_BLS_ACCOUNT\020\002\022" +
+      " \n\034ADDRESS_TYPE_ED25519_ACCOUNT\020\0032\200\n\n\006Wa" +
+      "llet\022I\n\014CreateWallet\022\033.pactus.CreateWall" +
+      "etRequest\032\034.pactus.CreateWalletResponse\022" +
+      "L\n\rRestoreWallet\022\034.pactus.RestoreWalletR" +
+      "equest\032\035.pactus.RestoreWalletResponse\022C\n" +
+      "\nLoadWallet\022\031.pactus.LoadWalletRequest\032\032" +
+      ".pactus.LoadWalletResponse\022I\n\014UnloadWall" +
+      "et\022\033.pactus.UnloadWalletRequest\032\034.pactus" +
+      ".UnloadWalletResponse\022R\n\017GetTotalBalance" +
+      "\022\036.pactus.GetTotalBalanceRequest\032\037.pactu" +
+      "s.GetTotalBalanceResponse\022[\n\022SignRawTran" +
+      "saction\022!.pactus.SignRawTransactionReque" +
+      "st\032\".pactus.SignRawTransactionResponse\022^" +
+      "\n\023GetValidatorAddress\022\".pactus.GetValida" +
+      "torAddressRequest\032#.pactus.GetValidatorA" +
+      "ddressResponse\022L\n\rGetNewAddress\022\034.pactus" +
+      ".GetNewAddressRequest\032\035.pactus.GetNewAdd" +
+      "ressResponse\022X\n\021GetAddressHistory\022 .pact" +
+      "us.GetAddressHistoryRequest\032!.pactus.Get" +
+      "AddressHistoryResponse\022F\n\013SignMessage\022\032." +
+      "pactus.SignMessageRequest\032\033.pactus.SignM" +
+      "essageResponse\022L\n\rGetTotalStake\022\034.pactus" +
+      ".GetTotalStakeRequest\032\035.pactus.GetTotalS" +
+      "takeResponse\022O\n\016GetAddressInfo\022\035.pactus." +
+      "GetAddressInfoRequest\032\036.pactus.GetAddres" +
+      "sInfoResponse\022R\n\017SetAddressLabel\022\036.pactu" +
+      "s.SetAddressLabelRequest\032\037.pactus.SetAdd" +
+      "ressLabelResponse\022C\n\nListWallet\022\031.pactus" +
+      ".ListWalletRequest\032\032.pactus.ListWalletRe" +
+      "sponse\022L\n\rGetWalletInfo\022\034.pactus.GetWall" +
+      "etInfoRequest\032\035.pactus.GetWalletInfoResp" +
+      "onse\022F\n\013ListAddress\022\032.pactus.ListAddress" +
+      "Request\032\033.pactus.ListAddressResponseB:\n\006" +
+      "pactusZ0github.com/pactus-project/pactus" +
+      "/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -26063,7 +26156,7 @@ public final class WalletOuterClass {
     internal_static_pactus_GetWalletInfoResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_GetWalletInfoResponse_descriptor,
-        new java.lang.String[] { "WalletName", "Version", "Network", "Encrypted", "Uuid", "CreatedAt", });
+        new java.lang.String[] { "WalletName", "Version", "Network", "Encrypted", "Uuid", "CreatedAt", "DefaultFee", });
     internal_static_pactus_ListAddressRequest_descriptor =
       getDescriptor().getMessageTypes().get(32);
     internal_static_pactus_ListAddressRequest_fieldAccessorTable = new

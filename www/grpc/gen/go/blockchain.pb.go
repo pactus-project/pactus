@@ -606,7 +606,7 @@ type GetBlockResponse struct {
 	Height uint32 `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`
 	// The hash of the block.
 	Hash string `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
-	// Block data, available only if verbosity level is set to BLOCK_DATA.
+	// Block data, available only if verbosity level is set to BLOCK_VERBOSITY_DATA.
 	Data string `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
 	// The timestamp of the block.
 	BlockTime uint32 `protobuf:"varint,4,opt,name=block_time,json=blockTime,proto3" json:"block_time,omitempty"`
@@ -615,7 +615,7 @@ type GetBlockResponse struct {
 	// Certificate information of the previous block.
 	PrevCert *CertificateInfo `protobuf:"bytes,6,opt,name=prev_cert,json=prevCert,proto3" json:"prev_cert,omitempty"`
 	// List of transactions in the block, available when verbosity level is set to
-	// BLOCK_TRANSACTIONS.
+	// BLOCK_VERBOSITY_TRANSACTIONS.
 	Txs           []*TransactionInfo `protobuf:"bytes,7,rep,name=txs,proto3" json:"txs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

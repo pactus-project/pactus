@@ -16,7 +16,7 @@ func UtilsClientCommand(options ...client.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("Utils"),
 		Short: "Utils service client",
-		Long:  "Utils service defines RPC methods for utility functions such as message\n signing, verification, and etc.",
+		Long:  "Utils service defines RPC methods for utility functions such as message\n signing, verification, and other cryptographic operations.",
 	}
 	cfg.BindFlags(cmd.PersistentFlags())
 	cmd.AddCommand(

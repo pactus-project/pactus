@@ -69,7 +69,7 @@ type WalletClient interface {
 	GetAddressInfo(ctx context.Context, in *GetAddressInfoRequest, opts ...grpc.CallOption) (*GetAddressInfoResponse, error)
 	// SetAddressLabel sets or updates the label for a given address.
 	SetAddressLabel(ctx context.Context, in *SetAddressLabelRequest, opts ...grpc.CallOption) (*SetAddressLabelResponse, error)
-	// ListWallet returns list of all available wallets.
+	// ListWallet returns a list of all available wallets.
 	ListWallet(ctx context.Context, in *ListWalletRequest, opts ...grpc.CallOption) (*ListWalletResponse, error)
 	// GetWalletInfo returns detailed information about a specific wallet.
 	GetWalletInfo(ctx context.Context, in *GetWalletInfoRequest, opts ...grpc.CallOption) (*GetWalletInfoResponse, error)
@@ -277,7 +277,7 @@ type WalletServer interface {
 	GetAddressInfo(context.Context, *GetAddressInfoRequest) (*GetAddressInfoResponse, error)
 	// SetAddressLabel sets or updates the label for a given address.
 	SetAddressLabel(context.Context, *SetAddressLabelRequest) (*SetAddressLabelResponse, error)
-	// ListWallet returns list of all available wallets.
+	// ListWallet returns a list of all available wallets.
 	ListWallet(context.Context, *ListWalletRequest) (*ListWalletResponse, error)
 	// GetWalletInfo returns detailed information about a specific wallet.
 	GetWalletInfo(context.Context, *GetWalletInfoRequest) (*GetWalletInfoResponse, error)

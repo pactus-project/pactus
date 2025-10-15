@@ -262,11 +262,12 @@ func (s *walletServer) GetWalletInfo(_ context.Context,
 
 	return &pactus.GetWalletInfoResponse{
 		WalletName: info.WalletName,
-		Version:    info.Version,
+		Version:    int32(info.Version),
 		Network:    info.Network,
 		Encrypted:  info.Encrypted,
 		Uuid:       info.UUID,
 		CreatedAt:  info.CreatedAt.Unix(),
+		DefaultFee: info.DefaultFee.ToNanoPAC(),
 	}, nil
 }
 

@@ -537,7 +537,7 @@ curl --location 'http://localhost:8545/' \
             <td class="fw-bold">transaction.batch_transfer.recipients</td>
             <td>repeated object (Recipient)</td>
             <td>
-            The recipients of list receiver with amount.
+            The list of recipients with their amounts.
             </td>
           </tr>
           <tr>
@@ -999,7 +999,7 @@ curl --location 'http://localhost:8545/' \
     <td class="fw-bold">recipients</td>
     <td>repeated object (Recipient)</td>
     <td>
-    The recipients list of receiver with amount, min 2 recipients.
+    The list of recipients with their amounts. Minimum 2 recipients required.
     </td>
   </tr>
   <tr>
@@ -1278,7 +1278,7 @@ curl --location 'http://localhost:8545/' \
             <td class="fw-bold">transaction.batch_transfer.recipients</td>
             <td>repeated object (Recipient)</td>
             <td>
-            The recipients of list receiver with amount.
+            The list of recipients with their amounts.
             </td>
           </tr>
           <tr>
@@ -1366,7 +1366,7 @@ curl --location 'http://localhost:8545/' \
     <td class="fw-bold">data</td>
     <td> string</td>
     <td>
-    Block data, available only if verbosity level is set to BLOCK_DATA.
+    Block data, available only if verbosity level is set to BLOCK_VERBOSITY_DATA.
     </td>
   </tr>
      <tr>
@@ -1465,7 +1465,7 @@ curl --location 'http://localhost:8545/' \
     <td>repeated object (TransactionInfo)</td>
     <td>
     List of transactions in the block, available when verbosity level is set to
-BLOCK_TRANSACTIONS.
+BLOCK_VERBOSITY_TRANSACTIONS.
     </td>
   </tr>
      <tr>
@@ -1670,7 +1670,7 @@ BLOCK_TRANSACTIONS.
             <td class="fw-bold">txs[].batch_transfer.recipients</td>
             <td>repeated object (Recipient)</td>
             <td>
-            The recipients of list receiver with amount.
+            The list of recipients with their amounts.
             </td>
           </tr>
           <tr>
@@ -2699,7 +2699,7 @@ Parameters has no fields.
             <td class="fw-bold">txs[].batch_transfer.recipients</td>
             <td>repeated object (Recipient)</td>
             <td>
-            The recipients of list receiver with amount.
+            The list of recipients with their amounts.
             </td>
           </tr>
           <tr>
@@ -3202,7 +3202,7 @@ Parameters has no fields.
 ### Utils Service
 
 <p>Utils service defines RPC methods for utility functions such as message
-signing, verification, and etc.</p>
+signing, verification, and other cryptographic operations.</p>
 
 #### pactus.utils.sign_message_with_private_key <span id="pactus.utils.sign_message_with_private_key" class="rpc-badge"></span>
 
@@ -4099,7 +4099,7 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
 
 #### pactus.wallet.list_wallet <span id="pactus.wallet.list_wallet" class="rpc-badge"></span>
 
-<p>ListWallet returns list of all available wallets.</p>
+<p>ListWallet returns a list of all available wallets.</p>
 
 <h4>Parameters</h4>
 
@@ -4190,6 +4190,13 @@ Parameters has no fields.
     Unix timestamp of wallet creation.
     </td>
   </tr>
+     <tr>
+    <td class="fw-bold">default_fee</td>
+    <td> numeric</td>
+    <td>
+    The default fee of the wallet.
+    </td>
+  </tr>
      </tbody>
 </table>
 
@@ -4231,7 +4238,7 @@ Parameters has no fields.
     <td class="fw-bold">data</td>
     <td>repeated object (AddressInfo)</td>
     <td>
-    ist of all addresses in the wallet with their details.
+    List of all addresses in the wallet with their details.
     </td>
   </tr>
      <tr>

@@ -173,11 +173,12 @@ func CreateVaultFromMnemonic(mnemonic string, coinType uint32) (*Vault, error) {
 	}
 
 	return &Vault{
-		Type:      TypeFull,
-		CoinType:  coinType,
-		Encrypter: enc,
-		Addresses: make(map[string]AddressInfo),
-		KeyStore:  string(storeDate),
+		Type:       TypeFull,
+		CoinType:   coinType,
+		Encrypter:  enc,
+		Addresses:  make(map[string]AddressInfo),
+		KeyStore:   string(storeDate),
+		DefaultFee: amount.Amount(10_000_000),
 		Purposes: purposes{
 			PurposeBLS: purposeBLS{
 				XPubValidator: xPubValidator.Neuter().String(),

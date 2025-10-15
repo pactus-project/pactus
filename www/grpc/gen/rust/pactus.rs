@@ -162,7 +162,7 @@ pub struct GetRawBatchTransferTransactionRequest {
     /// The sender's account address.
     #[prost(string, tag="2")]
     pub sender: ::prost::alloc::string::String,
-    /// The recipients list of receiver with amount, min 2 recipients.
+    /// The list of recipients with their amounts. Minimum 2 recipients required.
     #[prost(message, repeated, tag="3")]
     pub recipients: ::prost::alloc::vec::Vec<Recipient>,
     /// The transaction fee in NanoPAC. If not set, it is set to the estimated fee.
@@ -254,7 +254,7 @@ pub struct PayloadBatchTransfer {
     /// The sender's address.
     #[prost(string, tag="1")]
     pub sender: ::prost::alloc::string::String,
-    /// The recipients of list receiver with amount.
+    /// The list of recipients with their amounts.
     #[prost(message, repeated, tag="2")]
     pub recipients: ::prost::alloc::vec::Vec<Recipient>,
 }
@@ -517,7 +517,7 @@ pub struct GetBlockResponse {
     /// The hash of the block.
     #[prost(string, tag="2")]
     pub hash: ::prost::alloc::string::String,
-    /// Block data, available only if verbosity level is set to BLOCK_DATA.
+    /// Block data, available only if verbosity level is set to BLOCK_VERBOSITY_DATA.
     #[prost(string, tag="3")]
     pub data: ::prost::alloc::string::String,
     /// The timestamp of the block.
@@ -530,7 +530,7 @@ pub struct GetBlockResponse {
     #[prost(message, optional, tag="6")]
     pub prev_cert: ::core::option::Option<CertificateInfo>,
     /// List of transactions in the block, available when verbosity level is set to
-    /// BLOCK_TRANSACTIONS.
+    /// BLOCK_VERBOSITY_TRANSACTIONS.
     #[prost(message, repeated, tag="7")]
     pub txs: ::prost::alloc::vec::Vec<TransactionInfo>,
 }
@@ -1539,8 +1539,8 @@ pub struct GetWalletInfoResponse {
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
     /// The wallet format version.
-    #[prost(int64, tag="2")]
-    pub version: i64,
+    #[prost(int32, tag="2")]
+    pub version: i32,
     /// The network the wallet is connected to (e.g., mainnet, testnet).
     #[prost(string, tag="3")]
     pub network: ::prost::alloc::string::String,
@@ -1553,6 +1553,9 @@ pub struct GetWalletInfoResponse {
     /// Unix timestamp of wallet creation.
     #[prost(int64, tag="6")]
     pub created_at: i64,
+    /// The default fee of the wallet.
+    #[prost(int64, tag="7")]
+    pub default_fee: i64,
 }
 /// Request message for listing wallet addresses.
 #[allow(clippy::derive_partial_eq_without_eq)]
@@ -1569,7 +1572,7 @@ pub struct ListAddressResponse {
     /// The name of the queried wallet.
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
-    /// ist of all addresses in the wallet with their details.
+    /// List of all addresses in the wallet with their details.
     #[prost(message, repeated, tag="2")]
     pub data: ::prost::alloc::vec::Vec<AddressInfo>,
 }

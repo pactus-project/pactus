@@ -608,7 +608,7 @@ func _WalletListWalletCommand(cfg *client.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   cfg.CommandNamer("ListWallet"),
 		Short: "ListWallet RPC client",
-		Long:  "ListWallet returns list of all available wallets.",
+		Long:  "ListWallet returns a list of all available wallets.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {

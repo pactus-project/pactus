@@ -7,7 +7,7 @@ import utils_pb2 as utils__pb2
 
 class UtilsStub(object):
     """Utils service defines RPC methods for utility functions such as message
-    signing, verification, and etc.
+    signing, verification, and other cryptographic operations.
     """
 
     def __init__(self, channel):
@@ -40,7 +40,7 @@ class UtilsStub(object):
 
 class UtilsServicer(object):
     """Utils service defines RPC methods for utility functions such as message
-    signing, verification, and etc.
+    signing, verification, and other cryptographic operations.
     """
 
     def SignMessageWithPrivateKey(self, request, context):
@@ -104,7 +104,7 @@ def add_UtilsServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class Utils(object):
     """Utils service defines RPC methods for utility functions such as message
-    signing, verification, and etc.
+    signing, verification, and other cryptographic operations.
     """
 
     @staticmethod

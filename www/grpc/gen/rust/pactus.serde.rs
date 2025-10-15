@@ -7620,14 +7620,15 @@ impl serde::Serialize for GetWalletInfoResponse {
         if self.created_at != 0 {
             len += 1;
         }
+        if self.default_fee != 0 {
+            len += 1;
+        }
         let mut struct_ser = serializer.serialize_struct("pactus.GetWalletInfoResponse", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
         if self.version != 0 {
-            #[allow(clippy::needless_borrow)]
-            #[allow(clippy::needless_borrows_for_generic_args)]
-            struct_ser.serialize_field("version", ToString::to_string(&self.version).as_str())?;
+            struct_ser.serialize_field("version", &self.version)?;
         }
         if !self.network.is_empty() {
             struct_ser.serialize_field("network", &self.network)?;
@@ -7642,6 +7643,11 @@ impl serde::Serialize for GetWalletInfoResponse {
             #[allow(clippy::needless_borrow)]
             #[allow(clippy::needless_borrows_for_generic_args)]
             struct_ser.serialize_field("createdAt", ToString::to_string(&self.created_at).as_str())?;
+        }
+        if self.default_fee != 0 {
+            #[allow(clippy::needless_borrow)]
+            #[allow(clippy::needless_borrows_for_generic_args)]
+            struct_ser.serialize_field("defaultFee", ToString::to_string(&self.default_fee).as_str())?;
         }
         struct_ser.end()
     }
@@ -7661,6 +7667,8 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
             "uuid",
             "created_at",
             "createdAt",
+            "default_fee",
+            "defaultFee",
         ];
 
         #[allow(clippy::enum_variant_names)]
@@ -7671,6 +7679,7 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
             Encrypted,
             Uuid,
             CreatedAt,
+            DefaultFee,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -7698,6 +7707,7 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                             "encrypted" => Ok(GeneratedField::Encrypted),
                             "uuid" => Ok(GeneratedField::Uuid),
                             "createdAt" | "created_at" => Ok(GeneratedField::CreatedAt),
+                            "defaultFee" | "default_fee" => Ok(GeneratedField::DefaultFee),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -7723,6 +7733,7 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                 let mut encrypted__ = None;
                 let mut uuid__ = None;
                 let mut created_at__ = None;
+                let mut default_fee__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
@@ -7765,6 +7776,14 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                                 Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
                             ;
                         }
+                        GeneratedField::DefaultFee => {
+                            if default_fee__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("defaultFee"));
+                            }
+                            default_fee__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                     }
                 }
                 Ok(GetWalletInfoResponse {
@@ -7774,6 +7793,7 @@ impl<'de> serde::Deserialize<'de> for GetWalletInfoResponse {
                     encrypted: encrypted__.unwrap_or_default(),
                     uuid: uuid__.unwrap_or_default(),
                     created_at: created_at__.unwrap_or_default(),
+                    default_fee: default_fee__.unwrap_or_default(),
                 })
             }
         }

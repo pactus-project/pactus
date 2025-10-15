@@ -464,20 +464,21 @@ const GetWalletInfoResponse$json = {
   '1': 'GetWalletInfoResponse',
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
-    {'1': 'version', '3': 2, '4': 1, '5': 3, '10': 'version'},
+    {'1': 'version', '3': 2, '4': 1, '5': 5, '10': 'version'},
     {'1': 'network', '3': 3, '4': 1, '5': 9, '10': 'network'},
     {'1': 'encrypted', '3': 4, '4': 1, '5': 8, '10': 'encrypted'},
     {'1': 'uuid', '3': 5, '4': 1, '5': 9, '10': 'uuid'},
     {'1': 'created_at', '3': 6, '4': 1, '5': 3, '10': 'createdAt'},
+    {'1': 'default_fee', '3': 7, '4': 1, '5': 3, '10': 'defaultFee'},
   ],
 };
 
 /// Descriptor for `GetWalletInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getWalletInfoResponseDescriptor = $convert.base64Decode(
     'ChVHZXRXYWxsZXRJbmZvUmVzcG9uc2USHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbW'
-    'USGAoHdmVyc2lvbhgCIAEoA1IHdmVyc2lvbhIYCgduZXR3b3JrGAMgASgJUgduZXR3b3JrEhwK'
+    'USGAoHdmVyc2lvbhgCIAEoBVIHdmVyc2lvbhIYCgduZXR3b3JrGAMgASgJUgduZXR3b3JrEhwK'
     'CWVuY3J5cHRlZBgEIAEoCFIJZW5jcnlwdGVkEhIKBHV1aWQYBSABKAlSBHV1aWQSHQoKY3JlYX'
-    'RlZF9hdBgGIAEoA1IJY3JlYXRlZEF0');
+    'RlZF9hdBgGIAEoA1IJY3JlYXRlZEF0Eh8KC2RlZmF1bHRfZmVlGAcgASgDUgpkZWZhdWx0RmVl');
 
 @$core.Deprecated('Use listAddressRequestDescriptor instead')
 const ListAddressRequest$json = {

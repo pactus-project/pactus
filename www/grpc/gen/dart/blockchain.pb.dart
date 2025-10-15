@@ -628,7 +628,7 @@ class GetBlockResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   void clearHash() => $_clearField(2);
 
-  /// Block data, available only if verbosity level is set to BLOCK_DATA.
+  /// Block data, available only if verbosity level is set to BLOCK_VERBOSITY_DATA.
   @$pb.TagNumber(3)
   $core.String get data => $_getSZ(2);
   @$pb.TagNumber(3)
@@ -673,7 +673,7 @@ class GetBlockResponse extends $pb.GeneratedMessage {
   CertificateInfo ensurePrevCert() => $_ensure(5);
 
   /// List of transactions in the block, available when verbosity level is set to
-  /// BLOCK_TRANSACTIONS.
+  /// BLOCK_VERBOSITY_TRANSACTIONS.
   @$pb.TagNumber(7)
   $pb.PbList<$0.TransactionInfo> get txs => $_getList(6);
 }

@@ -30,6 +30,8 @@ func (s *Server) BlockchainHandler(w http.ResponseWriter, r *http.Request) {
 	tmk.addRowInt("Last Block Height", int(res.LastBlockHeight))
 	tmk.addRowBool("Is Pruned", res.IsPruned)
 	tmk.addRowInt("Pruning Height", int(res.PruningHeight))
+	tmk.addRowInt("Total Validators", int(res.TotalValidators))
+	tmk.addRowInt("Active Validators", int(res.ActiveValidators))
 	tmk.addRowString("--- Committee", "---")
 	tmk.addRowPower("Total Power", res.TotalPower)
 	tmk.addRowPower("Committee Power", res.CommitteePower)

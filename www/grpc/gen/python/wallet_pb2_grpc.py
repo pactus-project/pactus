@@ -193,7 +193,7 @@ class WalletServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def ListWallet(self, request, context):
-        """ListWallet returns list of all available wallets.
+        """ListWallet returns a list of all available wallets.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')

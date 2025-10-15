@@ -712,7 +712,7 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListWallet returns list of all available wallets.
+     * ListWallet returns a list of all available wallets.
      * </pre>
      */
     default void listWallet(pactus.WalletOuterClass.ListWalletRequest request,
@@ -919,7 +919,7 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListWallet returns list of all available wallets.
+     * ListWallet returns a list of all available wallets.
      * </pre>
      */
     public void listWallet(pactus.WalletOuterClass.ListWalletRequest request,
@@ -1102,7 +1102,7 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListWallet returns list of all available wallets.
+     * ListWallet returns a list of all available wallets.
      * </pre>
      */
     public pactus.WalletOuterClass.ListWalletResponse listWallet(pactus.WalletOuterClass.ListWalletRequest request) {
@@ -1282,7 +1282,7 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListWallet returns list of all available wallets.
+     * ListWallet returns a list of all available wallets.
      * </pre>
      */
     public pactus.WalletOuterClass.ListWalletResponse listWallet(pactus.WalletOuterClass.ListWalletRequest request) {
@@ -1475,7 +1475,7 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListWallet returns list of all available wallets.
+     * ListWallet returns a list of all available wallets.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.ListWalletResponse> listWallet(

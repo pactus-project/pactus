@@ -94,7 +94,7 @@ function deserialize_pactus_VerifyMessageResponse(buffer_arg) {
 
 
 // Utils service defines RPC methods for utility functions such as message
-// signing, verification, and etc.
+// signing, verification, and other cryptographic operations.
 var UtilsService = exports.UtilsService = {
   // SignMessageWithPrivateKey signs a message with the provided private key.
 signMessageWithPrivateKey: {
