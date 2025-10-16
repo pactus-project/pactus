@@ -77,7 +77,7 @@ func TestHandlerHelloParsingMessages(t *testing.T) {
 			nodeAgent := version.NodeAgent
 			nodeAgent.Version = version.Version{
 				Major: 1,
-				Minor: 4,
+				Minor: 8,
 				Patch: 0,
 			}
 			msg.Agent = nodeAgent.String()
