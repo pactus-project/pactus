@@ -63,6 +63,7 @@ func (c *grpcClient) connect() error {
 		transactionClient := pactus.NewTransactionClient(conn)
 
 		// Check if client is responding
+		// TODO: Use Ping API in version 1.11.0
 		_, err = blockchainClient.GetBlockchainInfo(c.ctx,
 			&pactus.GetBlockchainInfoRequest{})
 		if err != nil {
