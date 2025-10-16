@@ -46,6 +46,11 @@ func (*streamService) Start() {}
 func (*streamService) Stop() {}
 
 func (s *streamService) handleStream(stream lp2pnetwork.Stream) {
+	// Set a deadline for both reading and writing to ensure
+	// this stream will eventually be closed.
+	// In very rare cases, the read or write channel may get stuck.
+	_ = stream.SetDeadline(time.Now().Add(s.timeout))
+
 	from := stream.Conn().RemotePeer()
 
 	s.logger.Debug("receiving stream", "from", from)
@@ -72,7 +77,7 @@ func (s *streamService) SendTo(msg []byte, pid lp2peer.ID) (lp2pnetwork.Stream, 
 	}
 
 	// To prevent a broken stream from being open forever.
-	ctxWithTimeout, cancel := context.WithTimeout(s.ctx, 5*time.Second)
+	ctxWithTimeout, cancel := context.WithTimeout(s.ctx, s.timeout)
 	defer cancel()
 
 	// Attempt to open a new stream to the peer, assuming there's already a direct connection.
@@ -81,6 +86,8 @@ func (s *streamService) SendTo(msg []byte, pid lp2peer.ID) (lp2pnetwork.Stream, 
 	if err != nil {
 		return nil, LibP2PError{Err: err}
 	}
+
+	_ = stream.SetDeadline(time.Now().Add(s.timeout))
 
 	_, err = stream.Write(msg)
 	if err != nil {
