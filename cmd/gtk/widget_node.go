@@ -35,6 +35,10 @@ type widgetNode struct {
 	labelNumConnections  *gtk.Label
 	labelReachability    *gtk.Label
 	progressBarSynced    *gtk.ProgressBar
+
+	// Timeout IDs for cleanup
+	timeout1ID  glib.SourceHandle
+	timeout10ID glib.SourceHandle
 }
 
 func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
@@ -81,8 +85,8 @@ func buildWidgetNode(model *nodeModel) (*widgetNode, error) {
 	signals := map[string]any{}
 	builder.ConnectSignals(signals)
 
-	glib.TimeoutAdd(1000, wdgNode.timeout1)
-	glib.TimeoutAdd(10000, wdgNode.timeout10)
+	wdgNode.timeout1ID = glib.TimeoutAdd(1000, wdgNode.timeout1)
+	wdgNode.timeout10ID = glib.TimeoutAdd(10000, wdgNode.timeout10)
 
 	// Update widget for the first time
 	wdgNode.timeout1()
@@ -184,4 +188,16 @@ func (wn *widgetNode) timeout10() bool {
 	}()
 
 	return true
+}
+
+// cleanup cancels all timeouts to prevent memory leaks and potential panics.
+func (wn *widgetNode) cleanup() {
+	if wn.timeout1ID != 0 {
+		glib.SourceRemove(wn.timeout1ID)
+		wn.timeout1ID = 0
+	}
+	if wn.timeout10ID != 0 {
+		glib.SourceRemove(wn.timeout10ID)
+		wn.timeout10ID = 0
+	}
 }

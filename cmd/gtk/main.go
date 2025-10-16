@@ -93,6 +93,8 @@ func main() {
 	node, wlt, err := newNode(workingDir)
 	fatalErrorCheck(err)
 
+	var mainWindow *mainWindow
+
 	// Connect function to application activate event
 	app.Connect("activate", func() {
 		log.Println("application activate")
@@ -117,7 +119,7 @@ func main() {
 
 		// Running the run-up logic in a separate goroutine
 		glib.TimeoutAdd(uint(100), func() bool {
-			run(node, wlt, app)
+			mainWindow = run(node, wlt, app)
 			splashDlg.Destroy()
 
 			// Ensures the function is not called again
@@ -125,18 +127,23 @@ func main() {
 		})
 	})
 
+	shutdown := func() {
+		if mainWindow != nil {
+			mainWindow.onQuit()
+		}
+		node.Stop()
+		_ = fileLock.Unlock()
+	}
+
 	// Connect function to application shutdown event, this is not required.
 	app.Connect("shutdown", func() {
 		log.Println("Application shutdown")
-		node.Stop()
-		_ = fileLock.Unlock()
+		shutdown()
 	})
 
 	cmd.TrapSignal(func() {
 		cmd.PrintInfoMsgf("Exiting...")
-
-		node.Stop()
-		_ = fileLock.Unlock()
+		shutdown()
 	})
 
 	// Launch the application
@@ -166,7 +173,7 @@ func newNode(workingDir string) (*node.Node, *wallet.Wallet, error) {
 	return n, wlt, nil
 }
 
-func run(n *node.Node, wlt *wallet.Wallet, app *gtk.Application) {
+func run(n *node.Node, wlt *wallet.Wallet, app *gtk.Application) *mainWindow {
 	grpcAddr := n.GRPC().Address()
 	cmd.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
 
@@ -182,4 +189,6 @@ func run(n *node.Node, wlt *wallet.Wallet, app *gtk.Application) {
 	walletModel.rebuildModel()
 
 	app.AddWindow(win)
+
+	return win
 }
