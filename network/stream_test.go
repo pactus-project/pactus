@@ -61,7 +61,7 @@ func TestCloseStream(t *testing.T) {
 			}
 		}
 
-		return hasStream
+		return !hasStream
 	}
 
 	t.Run("Normal Case", func(t *testing.T) {
@@ -74,6 +74,7 @@ func TestCloseStream(t *testing.T) {
 		assert.EventuallyWithT(t, func(collect *assert.CollectT) {
 			e := <-networkB.networkPipe.UnsafeGetChannel()
 			streamMsg, ok := e.(*StreamMessage)
+			assert.True(collect, ok)
 			if ok {
 				receivedMsg := make([]byte, len(sentMsg))
 				_, _ = streamMsg.Reader.Read(receivedMsg)
@@ -85,7 +86,7 @@ func TestCloseStream(t *testing.T) {
 
 		// NetworkA should receive EOF and close/remove the stream
 		assert.EventuallyWithT(t, func(collect *assert.CollectT) {
-			assert.False(collect, streamClosed(networkA, networkB, stream.ID()))
+			assert.True(collect, streamClosed(networkA, networkB, stream.ID()))
 		}, 5*time.Second, 100*time.Millisecond)
 	})
 
@@ -112,7 +113,7 @@ func TestCloseStream(t *testing.T) {
 
 		// NetworkA should close/remove the stream after timeout.
 		assert.EventuallyWithT(t, func(collect *assert.CollectT) {
-			assert.False(collect, streamClosed(networkA, networkB, stream.ID()))
+			assert.True(collect, streamClosed(networkA, networkB, stream.ID()))
 		}, 5*time.Second, 100*time.Millisecond)
 	})
 
@@ -134,7 +135,7 @@ func TestCloseStream(t *testing.T) {
 
 		// NetworkA should close/remove the stream as well.
 		assert.EventuallyWithT(t, func(collect *assert.CollectT) {
-			assert.False(collect, streamClosed(networkA, networkB, stream.ID()))
+			assert.True(collect, streamClosed(networkA, networkB, stream.ID()))
 		}, 5*time.Second, 100*time.Millisecond)
 	})
 }
