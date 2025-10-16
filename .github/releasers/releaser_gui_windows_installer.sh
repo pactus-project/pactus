@@ -56,7 +56,7 @@ EOF
 
 # Build installer
 INNO_PATH="/c/Program Files (x86)/Inno Setup 6"
-INNO_DIR=$(cygpath -w -s '${INNO_PATH}')
+INNO_DIR=$(cygpath -w -s "${INNO_PATH}")
 "${INNO_DIR}/ISCC.exe" "${ROOT_DIR}/inno.iss"
 mv "Output/mysetup.exe" "${BUILD_DIR}/unsigned/${FILE_NAME}_installer.exe"
 
