@@ -195,7 +195,7 @@ func updateFeeHint(_ *gtk.Label, _ *wallet.Wallet, _ payload.Type) {
 func updateBalanceHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
 	balance, err := wlt.Balance(addr)
 	if err == nil {
-		updateHintLabel(lbl, fmt.Sprintf("Total Balance: %s", balance))
+		updateHintLabel(lbl, fmt.Sprintf("Account Balance: %s", balance))
 	} else {
 		updateHintLabel(lbl, "")
 	}
@@ -204,7 +204,7 @@ func updateBalanceHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
 func updateStakeHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
 	stake, err := wlt.Stake(addr)
 	if err == nil {
-		updateHintLabel(lbl, fmt.Sprintf("Total Stake: %s", stake))
+		updateHintLabel(lbl, fmt.Sprintf("Validator Stake: %s", stake))
 	} else {
 		updateHintLabel(lbl, "")
 	}
