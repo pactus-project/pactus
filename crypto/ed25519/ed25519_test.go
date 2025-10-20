@@ -12,13 +12,13 @@ import (
 func TestSigning(t *testing.T) {
 	msg := []byte("pactus")
 	prv, _ := ed25519.PrivateKeyFromString(
-		"SECRET1RYY62A96X25ZAL4DPL5Z63G83GCSFCCQ7K0CMQD3MFNLYK3A6R26QUUK3Y0")
+		"SECRET1R3K02X58V70X9RFVWN5QUN0CKHKYXWD7R40G3HX47L8W9HXJQHMASKGEPH2")
 	pub, _ := ed25519.PublicKeyFromString(
-		"public1rvqxnpfph8tnc3ck55z85w285t5jetylmmktr9wlzs0zvx7kx500szxfudh")
+		"public1rd5p573yq3j5wkvnasslqa7ne5vw87qcj5a0wlwxcj2t2xlaca9lstzm8u5")
 	sig, _ := ed25519.SignatureFromString(
-		"361aaa09c408bfcf7e79dd90c583eeeaefe7c732ca5643cfb2ea7a6d22105b87" +
-			"4a412080525a855bbd5df94110a7d0083d6e386e016ecf8b7f522c339f79d305")
-	addr, _ := crypto.AddressFromString("pc1r7jkvfnegf0rf5ua05fzu9krjhjxcrrygl3v4nl")
+		"d444363761156890e781e73ae545951826d640a9d5ba44effa67fd5a77fad92a" +
+			"fb3d46f82a86c7d283d7713e72bbd8ed39e7ac505d996f4f214e39b0a3b95f0a")
+	addr, _ := crypto.AddressFromString("pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3")
 
 	sig1 := prv.Sign(msg)
 	assert.Equal(t, sig.Bytes(), sig1.Bytes())
