@@ -101,15 +101,13 @@ func DecompressBuffer(s []byte) ([]byte, error) {
 	return res.Bytes(), nil
 }
 
-// Subtracts subtracts slice2 from slice1 in order.
+// Subtracts removes elements of slice2 from slice1 while preserving order.
 // Examples:
 //
 //	[1,2,3,4] - [1,2] = [3,4]
 //	[1,2,3,4] - [2,4] = [1,3]
 //	[1,2,3,4] - [4,2] = [1,3]
 //	[1,2,3,4] - [4,5] = [1,2,3]
-//
-// .
 func Subtracts(slice1, slice2 []int32) []int32 {
 	sub := []int32{}
 	if slice2 == nil {
@@ -153,8 +151,8 @@ func Merge[T any](slices ...[]T) []T {
 	return merged
 }
 
-// Reverse replace the contents of a slice with the same elements but in
-// reverse order.
+// Reverse replaces the contents of a slice with the same elements in reverse
+// order.
 func Reverse[S ~[]E, E any](slice S) {
 	for i, j := 0, len(slice)-1; i < j; i, j = i+1, j-1 {
 		slice[i], slice[j] = slice[j], slice[i]
@@ -226,7 +224,7 @@ func Trim[T any](slice []T, newLength int) []T {
 	return slice
 }
 
-// Shuffle shuffles a slice of any type.
+// Shuffle randomly permutes the elements of slice in place.
 func Shuffle[T any](slice []T) {
 	rand.Shuffle(len(slice), func(i, j int) {
 		slice[i], slice[j] = slice[j], slice[i]

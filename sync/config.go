@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/version"
 )
 
+// Config defines parameters for the sync module.
 type Config struct {
 	Moniker           string           `toml:"moniker"`
 	SessionTimeoutStr string           `toml:"session_timeout"`

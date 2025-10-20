@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx/payload"
 )
 
+// Reader exposes read-only operations on the transaction pool.
 type Reader interface {
 	PrepareBlockTransactions() block.Txs
 	PendingTx(txID tx.ID) *tx.Tx
@@ -17,6 +18,8 @@ type Reader interface {
 	AllPendingTxs() []*tx.Tx
 }
 
+// TxPool defines the full transaction pool interface with read and write
+// operations.
 type TxPool interface {
 	Reader
 

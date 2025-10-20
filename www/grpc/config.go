@@ -2,6 +2,7 @@ package grpc
 
 import "github.com/pactus-project/pactus/util/htpasswd"
 
+// Config defines parameters for the gRPC server.
 type Config struct {
 	Enable       bool   `toml:"enable"`
 	EnableWallet bool   `toml:"enable_wallet"`

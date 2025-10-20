@@ -2,6 +2,7 @@ package zmq
 
 import "github.com/pactus-project/pactus/types/block"
 
+// MockPublisher is a mock implementation of the Publisher interface for testing.
 type MockPublisher struct {
 	MockAddress   string
 	MockTopicName string

@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// mockConnMultiaddrs is a mock implementation of the ConnMultiaddrs interface for testing.
 type mockConnMultiaddrs struct {
 	remote multiaddr.Multiaddr
 }

@@ -2,6 +2,7 @@ package consensusv2
 
 import "time"
 
+// Config defines parameters for the consensusv2 algorithm.
 type Config struct {
 	ChangeProposerTimeout    time.Duration `toml:"-"`
 	ChangeProposerDelta      time.Duration `toml:"-"`

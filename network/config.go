@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 )
 
+// Config defines parameters for the network module.
 type Config struct {
 	NetworkKey           string   `toml:"network_key"`
 	PublicAddrString     string   `toml:"public_addr"`

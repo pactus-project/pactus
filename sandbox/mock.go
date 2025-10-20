@@ -17,7 +17,7 @@ import (
 
 var _ Sandbox = &MockSandbox{}
 
-// MockSandbox is a testing mock for sandbox.
+// MockSandbox is a mock implementation of the Sandbox interface for testing.
 type MockSandbox struct {
 	ts *testsuite.TestSuite
 

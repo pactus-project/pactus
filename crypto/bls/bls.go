@@ -1,10 +1,18 @@
+// Package bls implements BLS signatures over the BLS12-381 pairing-friendly curve.
+//
+// This package uses the gnark-crypto BLS12-381 implementation and provides
+// the main primitives used across Pactus: PrivateKey, PublicKey, and
+// Signature. It also exposes helpers for aggregating signatures and public
+// keys when multiple participants are involved.
+//
+// The ciphersuite/domain separation follows `BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_`.
 package bls
 
 import (
 	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
 )
 
-// set Ciphersuite for Basic mode
+// Ciphersuite for basic mode as defined in:
 // https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bls-signature-04#section-4.2.1
 var (
 	dst     = []byte("BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_")
@@ -16,6 +24,9 @@ func init() {
 	_, gen2Jac, _, gen2Aff = bls12381.Generators()
 }
 
+// SignatureAggregate aggregates one or more BLS signatures into a single
+// signature. It returns nil if no signatures are provided or if the first
+// signature fails to decode to a valid point.
 func SignatureAggregate(sigs ...*Signature) *Signature {
 	if len(sigs) == 0 {
 		return nil
@@ -38,6 +49,9 @@ func SignatureAggregate(sigs ...*Signature) *Signature {
 	}
 }
 
+// PublicKeyAggregate aggregates one or more BLS public keys into a single
+// public key. It returns nil if no public keys are provided or if the first
+// public key fails to decode to a valid point.
 func PublicKeyAggregate(pubs ...*PublicKey) *PublicKey {
 	if len(pubs) == 0 {
 		return nil

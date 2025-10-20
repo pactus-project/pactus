@@ -11,6 +11,7 @@ import (
 
 var _ Consensus = &MockConsensus{}
 
+// MockConsensus is a mock implementation of the Consensus interface for testing.
 type MockConsensus struct {
 	ts *testsuite.TestSuite
 

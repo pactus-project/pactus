@@ -13,6 +13,7 @@ import (
 
 var _ Synchronizer = &MockSync{}
 
+// MockSync is a mock implementation of the Synchronizer interface for testing.
 type MockSync struct {
 	TestID       peer.ID
 	TestPeerSet  *peerset.PeerSet

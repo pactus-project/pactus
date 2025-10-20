@@ -9,6 +9,7 @@ import (
 
 const blockPerDay = 8640
 
+// Config defines parameters for the store module.
 type Config struct {
 	Path          string `toml:"path"`
 	RetentionDays uint32 `toml:"retention_days"`

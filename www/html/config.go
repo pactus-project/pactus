@@ -1,5 +1,6 @@
 package html
 
+// Config defines parameters for the HTML UI server.
 type Config struct {
 	Enable      bool   `toml:"enable"`
 	Listen      string `toml:"listen"`
