@@ -3,6 +3,7 @@ package state
 import (
 	"bytes"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
@@ -285,7 +286,7 @@ func (st *state) UpdateLastCertificate(vte *vote.Vote) error {
 		return err
 	}
 
-	if !util.Contains(lastCert.Absentees(), val.Number()) {
+	if !slices.Contains(lastCert.Absentees(), val.Number()) {
 		return InvalidVoteForCertificateError{
 			Vote: vte,
 		}

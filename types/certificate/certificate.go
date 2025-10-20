@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"slices"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -317,7 +318,7 @@ func (cert *Certificate) validate(validators []*validator.Validator,
 			}
 		}
 
-		if !util.Contains(cert.absentees, num) {
+		if !slices.Contains(cert.absentees, num) {
 			pubs = append(pubs, val.PublicKey())
 			signedPower += val.Power()
 		}
