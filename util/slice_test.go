@@ -165,22 +165,6 @@ func TestSubtractAndSubset(t *testing.T) {
 	})
 }
 
-func TestEqual(t *testing.T) {
-	assert.True(t, Equal([]int32{1, 2, 3}, []int32{1, 2, 3}))
-	assert.False(t, Equal([]int32{1, 2, 3}, []int32{1, 3, 2}))
-	assert.False(t, Equal([]int32{1, 2, 3}, []int32{1, 2, 3, 4}))
-	assert.True(t, Equal([]int32{}, []int32{}))
-	assert.True(t, Equal([]int32{}, nil))
-}
-
-func TestContains(t *testing.T) {
-	assert.True(t, Contains([]int32{1, 2, 3, 4}, 2))
-	assert.False(t, Contains([]int{1, 2, 3, 4}, 5))
-	assert.False(t, Contains([]int64{}, 0))
-	assert.True(t, Contains([]string{"foo", "bar"}, "foo"))
-	assert.False(t, Contains([]string{"foo", "bar"}, "zoo"))
-}
-
 func TestSafeCmp(t *testing.T) {
 	assert.True(t, SafeCmp([]byte{1, 2, 3}, []byte{1, 2, 3}))
 	assert.False(t, SafeCmp([]byte{1, 2, 3, 3}, []byte{1, 2, 3}))
@@ -222,7 +206,7 @@ func TestReverse(t *testing.T) {
 	}
 }
 
-func TestExtendSlice(t *testing.T) {
+func TestPadToLeft(t *testing.T) {
 	tests := []struct {
 		in   []int
 		size int
@@ -232,12 +216,31 @@ func TestExtendSlice(t *testing.T) {
 		{[]int{1, 2, 3}, 3, []int{1, 2, 3}},
 		{[]int{1, 2, 3}, 2, []int{1, 2, 3}},
 		{[]int{}, 5, []int{0, 0, 0, 0, 0}},
+		{[]int{}, 0, []int{}},
 	}
 
 	for _, tt := range tests {
-		inCopy := tt.in
-		inCopy = Extend(inCopy, tt.size)
-		assert.Equal(t, tt.want, inCopy, "ExtendSlice(%v, %v) == %v, want %v", tt.in, tt.size, tt.in, tt.want)
+		got := PadToLeft(tt.in, tt.size)
+		assert.Equal(t, tt.want, got, "PadToLeft failed, got %v, want %v", got, tt.want)
+	}
+}
+
+func TestPadToRight(t *testing.T) {
+	tests := []struct {
+		in   []int
+		size int
+		want []int
+	}{
+		{[]int{1, 2, 3}, 5, []int{1, 2, 3, 0, 0}},
+		{[]int{1, 2, 3}, 3, []int{1, 2, 3}},
+		{[]int{1, 2, 3}, 2, []int{1, 2, 3}},
+		{[]int{}, 4, []int{0, 0, 0, 0}},
+		{[]int{}, 0, []int{}},
+	}
+
+	for _, tt := range tests {
+		got := PadToRight(tt.in, tt.size)
+		assert.Equal(t, tt.want, got, "PadToRight failed, got %v, want %v", got, tt.want)
 	}
 }
 
@@ -309,7 +312,7 @@ func TestRemoveFirstOccurrenceOf(t *testing.T) {
 			removed: true,
 		},
 		{
-			name:    "element in slice",
+			name:    "two elements in slice",
 			s:       []int{1, 2, 2, 3},
 			e:       2,
 			want:    []int{1, 2, 3},
@@ -318,15 +321,10 @@ func TestRemoveFirstOccurrenceOf(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, removed := RemoveFirstOccurrenceOf(tt.s, tt.e)
-			if !Equal(got, tt.want) {
-				t.Errorf("got %v, want %v", got, tt.want)
-			}
-			if removed != tt.removed {
-				t.Errorf("got %v, want %v", removed, tt.removed)
-			}
-		})
+		got, removed := RemoveFirstOccurrenceOf(tt.s, tt.e)
+
+		assert.Equal(t, tt.want, got, "%s failed: got %v, want %v", tt.name, got, tt.want)
+		assert.Equal(t, tt.removed, removed, "%s failed: got %v, want %v", tt.name, removed, tt.removed)
 	}
 }
 

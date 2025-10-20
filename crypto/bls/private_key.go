@@ -112,7 +112,7 @@ func (prv *PrivateKey) String() string {
 // Bytes return the raw bytes of the private key.
 func (prv *PrivateKey) Bytes() []byte {
 	data := prv.scalar.Bytes()
-	data = util.Extend(data, PrivateKeySize)
+	data = util.PadToLeft(data, PrivateKeySize)
 
 	return data
 }

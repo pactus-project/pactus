@@ -126,26 +126,6 @@ func Subtracts(slice1, slice2 []int32) []int32 {
 	return sub
 }
 
-// Contains checks whether the given slice has a specific item.
-func Contains[T comparable](slice []T, item T) bool {
-	return slices.Contains(slice, item)
-}
-
-// Equal tells whether a and b contain the same elements.
-// A nil argument is equivalent to an empty slice.
-func Equal[T comparable](a, b []T) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i, v := range a {
-		if v != b[i] {
-			return false
-		}
-	}
-
-	return true
-}
-
 // SafeCmp compares two slices with constant time.
 // Note that we are using the subtle.ConstantTimeCompare() function for this
 // to help prevent timing attacks.
@@ -181,11 +161,23 @@ func Reverse[S ~[]E, E any](slice S) {
 	}
 }
 
-// Extend extends the slice to the given length by appending zero-valued elements.
-func Extend[T any](slice []T, length int) []T {
+// PadToLeft grows the slice to the given length by prepending zero-valued
+// elements if necessary.
+func PadToLeft[T any](slice []T, length int) []T {
 	if len(slice) < length {
 		pad := make([]T, length-len(slice), length+len(slice))
 		slice = append(pad, slice...)
+	}
+
+	return slice
+}
+
+// PadToRight grows the slice to the given length by appending zero-valued
+// elements if necessary.
+func PadToRight[T any](slice []T, length int) []T {
+	if len(slice) < length {
+		pad := make([]T, length-len(slice))
+		slice = append(slice, pad...)
 	}
 
 	return slice
@@ -225,6 +217,7 @@ func RemoveFirstOccurrenceOf[T comparable](slice []T, element T) ([]T, bool) {
 	return slice, false
 }
 
+// Trim truncates a slice to the given length.
 func Trim[T any](slice []T, newLength int) []T {
 	if newLength <= len(slice) {
 		return slice[:newLength]

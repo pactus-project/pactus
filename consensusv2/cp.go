@@ -2,11 +2,11 @@ package consensusv2
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/proposal"
 	"github.com/pactus-project/pactus/types/vote"
-	"github.com/pactus-project/pactus/util"
 )
 
 type changeProposer struct {
@@ -25,7 +25,7 @@ func (cp *changeProposer) onTimeout(t *ticker) {
 }
 
 func (*changeProposer) cpCheckCPValue(value vote.CPValue, allowedValues ...vote.CPValue) error {
-	if util.Contains(allowedValues, value) {
+	if slices.Contains(allowedValues, value) {
 		return nil
 	}
 
