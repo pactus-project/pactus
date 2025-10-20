@@ -124,28 +124,9 @@ func Subtracts(slice1, slice2 []int32) []int32 {
 	return sub
 }
 
-// Contains checks whether the given slice has a specific item.
-func Contains[T comparable](slice []T, item T) bool {
-	return slices.Contains(slice, item)
-}
-
-// Equal reports whether a and b contain the same elements in the same order.
-// A nil slice is considered equal to an empty slice.
-func Equal[T comparable](a, b []T) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i, v := range a {
-		if v != b[i] {
-			return false
-		}
-	}
-
-	return true
-}
-
-// SafeCmp compares two byte slices in constant time using
-// `subtle.ConstantTimeCompare` to help prevent timing attacks.
+// SafeCmp compares two slices with constant time.
+// Note that we are using the subtle.ConstantTimeCompare() function for this
+// to help prevent timing attacks.
 func SafeCmp(left, right []byte) bool {
 	return subtle.ConstantTimeCompare(left, right) == 1
 }
@@ -178,8 +159,9 @@ func Reverse[S ~[]E, E any](slice S) {
 	}
 }
 
-// Extend extends the slice to the given length by appending zero-valued elements.
-func Extend[T any](slice []T, length int) []T {
+// PadToLeft grows the slice to the given length by prepending zero-valued
+// elements if necessary.
+func PadToLeft[T any](slice []T, length int) []T {
 	if len(slice) < length {
 		pad := make([]T, length-len(slice), length+len(slice))
 		slice = append(pad, slice...)
@@ -188,8 +170,19 @@ func Extend[T any](slice []T, length int) []T {
 	return slice
 }
 
-// IsSubset reports whether subSet is a subsequence of parentSet.
-// It returns true if all elements of subSet appear in parentSet in order.
+// PadToRight grows the slice to the given length by appending zero-valued
+// elements if necessary.
+func PadToRight[T any](slice []T, length int) []T {
+	if len(slice) < length {
+		pad := make([]T, length-len(slice))
+		slice = append(slice, pad...)
+	}
+
+	return slice
+}
+
+// IsSubset checks if subSet is a subset of parentSet.
+// It returns true if all elements of subSet are in parentSet.
 func IsSubset[T comparable](parentSet, subSet []T) bool {
 	lastIndex := 0
 	for i := 0; i < len(subSet); i++ {
@@ -222,6 +215,7 @@ func RemoveFirstOccurrenceOf[T comparable](slice []T, element T) ([]T, bool) {
 	return slice, false
 }
 
+// Trim truncates a slice to the given length.
 func Trim[T any](slice []T, newLength int) []T {
 	if newLength <= len(slice) {
 		return slice[:newLength]
