@@ -41,13 +41,13 @@ func DefaultFeeConfig() *FeeConfig {
 func (conf *Config) BasicCheck() error {
 	if conf.MaxSize < 10 {
 		return ConfigError{
-			Reason: "maxSize cannot be less than 10",
+			Reason: "maxSize can't be less than 10",
 		}
 	}
 
 	if conf.Fee.DailyLimit <= 0 {
 		return ConfigError{
-			Reason: "dailyLimit must be positive",
+			Reason: "dailyLimit should be positive",
 		}
 	}
 
