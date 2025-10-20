@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// Config defines parameters for the ZeroMQ publishers.
 type Config struct {
 	ZmqPubBlockInfo string `toml:"zmqpubblockinfo"`
 	ZmqPubTxInfo    string `toml:"zmqpubtxinfo"`

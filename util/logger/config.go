@@ -1,5 +1,6 @@
 package logger
 
+// Config defines parameters for the logger module.
 type Config struct {
 	Colorful           bool              `toml:"colorful"`
 	MaxBackups         int               `toml:"max_backups"`

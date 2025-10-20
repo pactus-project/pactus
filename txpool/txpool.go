@@ -31,8 +31,9 @@ type txPool struct {
 	logger         *logger.SubLogger
 }
 
-// NewTxPool constructs a new transaction pool with various sub-pools for different transaction types.
-// The transaction pool also maintains a consumption map for tracking byte usage per address.
+// NewTxPool constructs a new transaction pool with sub-pools per transaction
+// type. The pool also maintains a consumption map for tracking per-address
+// daily byte usage.
 func NewTxPool(conf *Config, storeReader store.Reader, messagePipe pipeline.Pipeline[message.Message]) TxPool {
 	pools := make(map[payload.Type]pool)
 	pools[payload.TypeTransfer] = newPool(conf.transferPoolSize(), conf.fixedFee())
@@ -56,7 +57,7 @@ func NewTxPool(conf *Config, storeReader store.Reader, messagePipe pipeline.Pipe
 }
 
 // SetNewSandboxAndRecheck updates the sandbox and rechecks all transactions,
-// removing expired or invalid ones.
+// removing transactions that are now invalid.
 func (p *txPool) SetNewSandboxAndRecheck(sbx sandbox.Sandbox) {
 	p.lk.Lock()
 	defer p.lk.Unlock()
@@ -97,8 +98,8 @@ func (p *txPool) AppendTx(trx *tx.Tx) error {
 	return nil
 }
 
-// AppendTxAndBroadcast validates the transaction, adds it to the transaction pool
-// if the fee is acceptable, and broadcasts it regardless of the fee status.
+// AppendTxAndBroadcast validates the transaction, adds it to the transaction
+// pool if the fee is acceptable, and broadcasts it in any case.
 func (p *txPool) AppendTxAndBroadcast(trx *tx.Tx) error {
 	p.lk.Lock()
 	defer p.lk.Unlock()
@@ -233,8 +234,8 @@ func (p *txPool) removeTx(txID tx.ID) {
 	}
 }
 
-// PendingTx searches inside the transaction pool and returns the associated transaction.
-// If transaction doesn't exist inside the pool, it returns nil.
+// PendingTx searches the transaction pool and returns the associated
+// transaction. If it doesn't exist in the pool, it returns nil.
 func (p *txPool) PendingTx(txID tx.ID) *tx.Tx {
 	p.lk.Lock()
 	defer p.lk.Unlock()
@@ -330,7 +331,8 @@ func (p *txPool) fixedFee() amount.Amount {
 	return p.config.fixedFee()
 }
 
-// consumptionalFee calculates based on the amount of data each address consumes daily.
+// consumptionalFee calculates the dynamic fee based on the amount of data an
+// address consumes daily.
 func (p *txPool) consumptionalFee(trx *tx.Tx) amount.Amount {
 	if !p.config.calculateConsumption() {
 		return 0

@@ -2,6 +2,7 @@ package consensus
 
 import "time"
 
+// Config defines parameters for the legacy consensus algorithm.
 type Config struct {
 	ChangeProposerTimeout    time.Duration `toml:"-"`
 	ChangeProposerDelta      time.Duration `toml:"-"`

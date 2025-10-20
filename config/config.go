@@ -36,6 +36,7 @@ var (
 	bannedAddrBytes []byte
 )
 
+// Config defines parameters for the root application configuration.
 type Config struct {
 	Node    *NodeConfig     `toml:"node"`
 	Store   *store.Config   `toml:"store"`

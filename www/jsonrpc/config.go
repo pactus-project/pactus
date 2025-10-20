@@ -1,5 +1,6 @@
 package jsonrpc
 
+// Config defines parameters for the JSON-RPC server.
 type Config struct {
 	Enable  bool     `toml:"enable"`
 	Listen  string   `toml:"listen"`

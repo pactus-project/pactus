@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// Config defines parameters for the HTTP server.
 type Config struct {
 	Enable     bool   `toml:"enable"`
 	Listen     string `toml:"listen"`

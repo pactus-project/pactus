@@ -13,7 +13,7 @@ import (
 
 var _ TxPool = &MockTxPool{}
 
-// MockTxPool is a testing mock.
+// MockTxPool is a mock implementation of the TxPool interface for testing.
 type MockTxPool struct {
 	Txs         []*tx.Tx
 	AppendError error

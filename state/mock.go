@@ -26,6 +26,7 @@ import (
 
 var _ Facade = &MockState{}
 
+// MockState is a mock implementation of the State interface for testing.
 type MockState struct {
 	// This locks prevents the Data Race in tests
 	lk sync.RWMutex

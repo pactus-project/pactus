@@ -10,6 +10,7 @@ type RateLimit struct {
 	ConsensusTopic   int `toml:"consensus_topic"`
 }
 
+// Config defines parameters for the firewall module.
 type Config struct {
 	BannedNets []string  `toml:"banned_nets"`
 	RateLimit  RateLimit `toml:"rate_limit"`

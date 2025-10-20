@@ -101,15 +101,13 @@ func DecompressBuffer(s []byte) ([]byte, error) {
 	return res.Bytes(), nil
 }
 
-// Subtracts subtracts slice2 from slice1 in order.
+// Subtracts removes elements of slice2 from slice1 while preserving order.
 // Examples:
 //
 //	[1,2,3,4] - [1,2] = [3,4]
 //	[1,2,3,4] - [2,4] = [1,3]
 //	[1,2,3,4] - [4,2] = [1,3]
 //	[1,2,3,4] - [4,5] = [1,2,3]
-//
-// .
 func Subtracts(slice1, slice2 []int32) []int32 {
 	sub := []int32{}
 	if slice2 == nil {
@@ -131,8 +129,8 @@ func Contains[T comparable](slice []T, item T) bool {
 	return slices.Contains(slice, item)
 }
 
-// Equal tells whether a and b contain the same elements.
-// A nil argument is equivalent to an empty slice.
+// Equal reports whether a and b contain the same elements in the same order.
+// A nil slice is considered equal to an empty slice.
 func Equal[T comparable](a, b []T) bool {
 	if len(a) != len(b) {
 		return false
@@ -146,9 +144,8 @@ func Equal[T comparable](a, b []T) bool {
 	return true
 }
 
-// SafeCmp compares two slices with constant time.
-// Note that we are using the subtle.ConstantTimeCompare() function for this
-// to help prevent timing attacks.
+// SafeCmp compares two byte slices in constant time using
+// `subtle.ConstantTimeCompare` to help prevent timing attacks.
 func SafeCmp(left, right []byte) bool {
 	return subtle.ConstantTimeCompare(left, right) == 1
 }
@@ -173,8 +170,8 @@ func Merge[T any](slices ...[]T) []T {
 	return merged
 }
 
-// Reverse replace the contents of a slice with the same elements but in
-// reverse order.
+// Reverse replaces the contents of a slice with the same elements in reverse
+// order.
 func Reverse[S ~[]E, E any](slice S) {
 	for i, j := 0, len(slice)-1; i < j; i, j = i+1, j-1 {
 		slice[i], slice[j] = slice[j], slice[i]
@@ -191,8 +188,8 @@ func Extend[T any](slice []T, length int) []T {
 	return slice
 }
 
-// IsSubset checks if subSet is a subset of parentSet.
-// It returns true if all elements of subSet are in parentSet.
+// IsSubset reports whether subSet is a subsequence of parentSet.
+// It returns true if all elements of subSet appear in parentSet in order.
 func IsSubset[T comparable](parentSet, subSet []T) bool {
 	lastIndex := 0
 	for i := 0; i < len(subSet); i++ {
@@ -233,7 +230,7 @@ func Trim[T any](slice []T, newLength int) []T {
 	return slice
 }
 
-// Shuffle shuffles a slice of any type.
+// Shuffle randomly permutes the elements of slice in place.
 func Shuffle[T any](slice []T) {
 	rand.Shuffle(len(slice), func(i, j int) {
 		slice[i], slice[j] = slice[j], slice[i]

@@ -17,6 +17,7 @@ import (
 
 var _ Store = &MockStore{}
 
+// MockStore is a mock implementation of the Store interface for testing.
 type MockStore struct {
 	ts *testsuite.TestSuite
 

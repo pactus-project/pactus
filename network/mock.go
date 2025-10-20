@@ -19,6 +19,7 @@ type PublishData struct {
 	Target *lp2pcore.PeerID
 }
 
+// MockNetwork is a mock implementation of the Network interface for testing.
 type MockNetwork struct {
 	*testsuite.TestSuite
 
