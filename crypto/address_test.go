@@ -28,9 +28,9 @@ func TestAddressType(t *testing.T) {
 		account   bool
 		validator bool
 	}{
-		{address: "pc1p0hrct7eflrpw4ccrttxzs4qud2axex4dcdzdfr", account: false, validator: true},
-		{address: "pc1zzqkzzu4vyddss052as6c37qrdcfptegquw826x", account: true, validator: false},
-		{address: "pc1rspm7ps49gar9ft5g0tkl6lhxs8ygeakq87quh3", account: true, validator: false},
+		{address: "pc1pjneygutecly9gtandrdt8j36v8g4fl42k4y5xp", account: false, validator: true},
+		{address: "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf", account: true, validator: false},
+		{address: "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", account: true, validator: false},
 	}
 
 	for _, tt := range tests {

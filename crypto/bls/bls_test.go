@@ -15,34 +15,37 @@ import (
 func TestSigning(t *testing.T) {
 	msg := []byte("pactus")
 	prv, _ := bls.PrivateKeyFromString(
-		"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
+		"SECRET1P9QAUKRJAU7SQ7AT6ZZ6HXHYLMKPQSQYTGDL2VMH5Q5N0P5Q2QW0QL45AY3")
 	pub, _ := bls.PublicKeyFromString(
-		"public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
-			"vqcvf4sudcapz52ctcwc8r9wz3z2gwxs38880cgvfy49ta5ssyjut05myd4zgmjqstggmetyuyg7v5jhx47a")
+		"public1p5dwsgfwmacjpuhaxhy0522j87qc5390v56ndh92f7flxge7vt3zfuxlvuwpnk7tdeed4s4l2r5nj" +
+			"5zuyjfh0uzjmvrauf4t5xfvff5cpljvpqqpk7pzhv0hxfhf9gt5896vnllsf89ux8kc7anqlu7nxvvxcclw7")
 	sig, _ := bls.SignatureFromString(
-		"923d67a8624cbb7972b29328e15ec76cc846076ccf00a9e94d991c677846f334ae4ba4551396fbcd6d1cab7593baf3b7")
-	addr, _ := crypto.AddressFromString("pc1p5x2a0lkt5nrrdqe0rkcv6r4pfkmdhrr3xk73tq")
+		"8c3ba687e8e4c016293a2c369493faa565065987544a59baba7aadae3f17ada07883552b6c7d1d7eb49f46fbdf0975c4")
+	accAddr, _ := crypto.AddressFromString("pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf")
+	valAddr, _ := crypto.AddressFromString("pc1p0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpf5uf6u5")
 
 	sig1 := prv.Sign(msg)
 	assert.Equal(t, sig.Bytes(), sig1.Bytes())
 	assert.NoError(t, pub.Verify(msg, sig))
 	assert.Equal(t, pub, prv.PublicKey())
-	assert.Equal(t, addr, pub.ValidatorAddress())
+	assert.Equal(t, valAddr, pub.ValidatorAddress())
+	assert.Equal(t, accAddr, pub.AccountAddress())
 }
 
 func TestSignatureAggregate(t *testing.T) {
 	msg := []byte("pactus")
 	prv1, _ := bls.PrivateKeyFromString(
-		"SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67")
+		"SECRET1P9QAUKRJAU7SQ7AT6ZZ6HXHYLMKPQSQYTGDL2VMH5Q5N0P5Q2QW0QL45AY3")
 	prv2, _ := bls.PrivateKeyFromString(
-		"SECRET1PDUV97560CWDGW2DR453YPUT84REN04G0DZFAPJQL5DV0CKDAN75QCJEV6F")
-	agg, _ := bls.SignatureFromString(
-		"ad747172697127cb08dda29a386e106eb24ab0edfbc044014c3bd7a5f583cc38b3a223ff2c1df9c0b4df110630e6946b")
-	sig1 := prv1.Sign(msg).(*bls.Signature)
-	sig2 := prv2.Sign(msg).(*bls.Signature)
+		"SECRET1PVJHEKQ3F4NX5CA9L69CSLLNWMYWPAXDQ64ZLEQHFSV4JLFGXMXWQPDPHR0")
 
-	assert.True(t, bls.SignatureAggregate(sig1, sig2).EqualsTo(agg))
-	assert.False(t, prv1.EqualsTo(prv2))
+	sig1 := prv1.SignNative(msg)
+	sig2 := prv2.SignNative(msg)
+	agg := bls.SignatureAggregate(sig1, sig2)
+	aggExpected, _ := bls.SignatureFromString(
+		"a74f05102c6217d06527cfcd1854ba6c38f4047f75a74958ad01fe66a5120c77c5416bfd875669588566670dc61f1168")
+
+	assert.True(t, agg.EqualsTo(aggExpected))
 }
 
 func TestAggregateFailed(t *testing.T) {
@@ -52,8 +55,8 @@ func TestAggregateFailed(t *testing.T) {
 	pub2, prv2 := ts.RandBLSKeyPair()
 	pub3, prv3 := ts.RandBLSKeyPair()
 	pub4, prv4 := ts.RandBLSKeyPair()
-	msg1 := []byte("pactus")
-	msg2 := []byte("pactus0")
+	msg1 := ts.RandBytes(14)
+	msg2 := ts.RandBytes(16)
 
 	sig1 := prv1.Sign(msg1).(*bls.Signature)
 	sig11 := prv1.Sign(msg2).(*bls.Signature)
