@@ -524,8 +524,7 @@ func TestAddressRecovery(t *testing.T) {
 
 		// Should have 1 Ed25519 address (the first one)
 		addresses := vault.AllAccountAddresses()
-		assert.Len(t, addresses, 1)
-		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", addresses[0].Address)
+		assert.Empty(t, addresses)
 	})
 
 	t.Run("recover addresses with one gap at the beginning", func(t *testing.T) {

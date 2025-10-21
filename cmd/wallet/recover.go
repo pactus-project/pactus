@@ -56,11 +56,8 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 			index++
 		})
 
-		// Check if context was cancelled
-		wasInterrupted := ctx.Err() != nil
-
 		if err != nil {
-			if wasInterrupted || errors.Is(err, context.Canceled) {
+			if errors.Is(err, context.Canceled) {
 				cmd.PrintLine()
 				cmd.PrintWarnMsgf("Recovery aborted")
 			} else {

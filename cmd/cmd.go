@@ -321,11 +321,12 @@ func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType,
 	if recoveryEventFunc != nil {
 		err = wlt.RecoveryAddresses(ctx, walletPassword, recoveryEventFunc)
 		if err != nil {
-			if ctx.Err() != nil || errors.Is(err, context.Canceled) {
-				PrintWarnMsgf("Recovery aborted")
-			} else {
-				PrintWarnMsgf("Recovery addresses failed: %v", err)
-			}
+			return nil, "", err
+			// if ctx.Err() != nil || errors.Is(err, context.Canceled) {
+			// 	PrintWarnMsgf("Recovery aborted")
+			// } else {
+			// 	PrintWarnMsgf("Recovery addresses failed: %v", err)
+			// }
 		}
 	}
 
