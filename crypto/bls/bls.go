@@ -9,6 +9,8 @@
 package bls
 
 import (
+	"errors"
+
 	bls12381 "github.com/consensys/gnark-crypto/ecc/bls12-381"
 )
 
@@ -25,19 +27,22 @@ func init() {
 }
 
 // SignatureAggregate aggregates one or more BLS signatures into a single
-// signature. It returns nil if no signatures are provided or if the first
+// signature. It returns an error if no signatures are provided or if any
 // signature fails to decode to a valid point.
-func SignatureAggregate(sigs ...*Signature) *Signature {
+func SignatureAggregate(sigs ...*Signature) (*Signature, error) {
 	if len(sigs) == 0 {
-		return nil
+		return nil, errors.New("no signatures provided")
 	}
 	grp1 := new(bls12381.G1Affine)
 	aggPointG1, err := sigs[0].PointG1()
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	for i := 1; i < len(sigs); i++ {
-		pointG1, _ := sigs[i].PointG1()
+		pointG1, err := sigs[i].PointG1()
+		if err != nil {
+			return nil, err
+		}
 		aggPointG1 = grp1.Add(aggPointG1, pointG1)
 	}
 
@@ -46,23 +51,26 @@ func SignatureAggregate(sigs ...*Signature) *Signature {
 	return &Signature{
 		data:    data[:],
 		pointG1: aggPointG1,
-	}
+	}, nil
 }
 
 // PublicKeyAggregate aggregates one or more BLS public keys into a single
-// public key. It returns nil if no public keys are provided or if the first
+// public key. It returns an error if no public keys are provided or if any
 // public key fails to decode to a valid point.
-func PublicKeyAggregate(pubs ...*PublicKey) *PublicKey {
+func PublicKeyAggregate(pubs ...*PublicKey) (*PublicKey, error) {
 	if len(pubs) == 0 {
-		return nil
+		return nil, errors.New("no public keys provided")
 	}
 	grp2 := new(bls12381.G2Affine)
 	aggPointG2, err := pubs[0].PointG2()
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	for i := 1; i < len(pubs); i++ {
-		pointG2, _ := pubs[i].PointG2()
+		pointG2, err := pubs[i].PointG2()
+		if err != nil {
+			return nil, err
+		}
 		aggPointG2 = grp2.Add(aggPointG2, pointG2)
 	}
 
@@ -71,5 +79,5 @@ func PublicKeyAggregate(pubs ...*PublicKey) *PublicKey {
 	return &PublicKey{
 		data:    data[:],
 		pointG2: aggPointG2,
-	}
+	}, nil
 }

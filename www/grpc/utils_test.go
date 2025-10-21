@@ -160,7 +160,7 @@ func TestVerifyED25519Message(t *testing.T) {
 	td.StopServer()
 }
 
-func TestBLSPublicKeyAggregation(t *testing.T) {
+func TestPublicKeyAggregation(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 	conf := testConfig()
 	td := setup(t, conf)
@@ -169,10 +169,10 @@ func TestBLSPublicKeyAggregation(t *testing.T) {
 	pub1, _ := ts.RandBLSKeyPair()
 	pub2, _ := ts.RandBLSKeyPair()
 	pub3, _ := ts.RandBLSKeyPair()
-	aggPub := bls.PublicKeyAggregate(pub1, pub2, pub3)
+	aggPub, _ := bls.PublicKeyAggregate(pub1, pub2, pub3)
 	invalidPub := "invalidpub"
 
-	t.Run("zero public keys", func(t *testing.T) {
+	t.Run("no public keys", func(t *testing.T) {
 		res, err := client.PublicKeyAggregation(context.Background(),
 			&pactus.PublicKeyAggregationRequest{
 				PublicKeys: []string{},
@@ -216,7 +216,7 @@ func TestBLSPublicKeyAggregation(t *testing.T) {
 	td.StopServer()
 }
 
-func TestBLSSignatureAggregation(t *testing.T) {
+func TestSignatureAggregation(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 	conf := testConfig()
 	td := setup(t, conf)
@@ -225,10 +225,10 @@ func TestBLSSignatureAggregation(t *testing.T) {
 	sig1 := ts.RandBLSSignature()
 	sig2 := ts.RandBLSSignature()
 	sig3 := ts.RandBLSSignature()
-	aggSig := bls.SignatureAggregate(sig1, sig2, sig3)
+	aggSig, _ := bls.SignatureAggregate(sig1, sig2, sig3)
 	invalidSig := "invalidsig"
 
-	t.Run("zero signatures", func(t *testing.T) {
+	t.Run("no signatures", func(t *testing.T) {
 		res, err := client.SignatureAggregation(context.Background(),
 			&pactus.SignatureAggregationRequest{
 				Signatures: []string{},

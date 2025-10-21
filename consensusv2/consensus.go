@@ -398,7 +398,7 @@ func (cs *consensusV2) makeCertificate(votes map[crypto.Address]*vote.Vote,
 		committers[i] = val.Number()
 	}
 
-	aggSig := bls.SignatureAggregate(sigs...)
+	aggSig, _ := bls.SignatureAggregate(sigs...)
 	cert.SetSignature(committers, absentees, aggSig)
 
 	return cert

@@ -52,15 +52,25 @@ func TestHelloMessage(t *testing.T) {
 		assert.ErrorIs(t, err, BasicCheckError{"no public key"})
 	})
 
-	t.Run("MyTimeUnixMilli of time1 is less or equal than hello message time", func(t *testing.T) {
-		time1 := time.Now()
-		myTimeUnixMilli := time1.UnixMilli()
+	t.Run("Invalid PublicKey", func(t *testing.T) {
+		valKey := ts.RandValKey()
+		msg := NewHelloMessage(ts.RandPeerID(), "Oscar", service.New(service.FullNode),
+			ts.RandHeight(), ts.RandHash(), ts.RandHash())
+		msg.Sign([]*bls.ValidatorKey{valKey})
+		msg.PublicKeys = []*bls.PublicKey{{}}
 
+		err := msg.BasicCheck()
+		assert.ErrorIs(t, err, BasicCheckError{"short buffer"})
+	})
+
+	t.Run("Check hello message time", func(t *testing.T) {
+		time1 := time.Now()
 		msg := NewHelloMessage(ts.RandPeerID(), "Alice", service.New(service.FullNode),
 			ts.RandHeight(), ts.RandHash(), ts.RandHash())
+		time2 := time.Now()
 
-		assert.LessOrEqual(t, msg.MyTimeUnixMilli, time.Now().UnixMilli())
-		assert.GreaterOrEqual(t, msg.MyTimeUnixMilli, myTimeUnixMilli)
+		assert.GreaterOrEqual(t, msg.MyTime().UnixMilli(), time1.UnixMilli())
+		assert.LessOrEqual(t, msg.MyTime().UnixMilli(), time2.UnixMilli())
 	})
 
 	t.Run("Ok", func(t *testing.T) {

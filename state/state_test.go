@@ -129,7 +129,8 @@ func (td *testData) makeCertificateAndSign(t *testing.T, blockHash hash.Hash,
 		sigs = append(sigs, sig)
 	}
 
-	cert.SetSignature(committers, absentees, bls.SignatureAggregate(sigs...))
+	aggSig, _ := bls.SignatureAggregate(sigs...)
+	cert.SetSignature(committers, absentees, aggSig)
 
 	return cert
 }
