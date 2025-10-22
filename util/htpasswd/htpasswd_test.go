@@ -109,9 +109,8 @@ func BenchmarkParseHtpasswd(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, a := range auth {
 			_, _, err := ExtractBasicAuth(a)
 			if err != nil {
@@ -150,9 +149,8 @@ func BenchmarkCompareBasicAuth(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, tt := range tests {
 			_ = CompareBasicAuth(tt.input, tt.user, tt.password)
 		}
