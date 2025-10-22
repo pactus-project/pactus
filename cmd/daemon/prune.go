@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/prompt"
+	"github.com/pactus-project/pactus/util/signal"
 	"github.com/spf13/cobra"
 )
 
@@ -69,7 +70,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		canceled := false
 		closed := make(chan bool, 1)
 
-		cmd.TrapSignal(func() {
+		signal.HandleInterrupt(func() {
 			canceled = true
 			<-closed
 		})

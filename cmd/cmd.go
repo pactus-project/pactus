@@ -8,11 +8,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/signal"
 	"os/user"
 	"path/filepath"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/k0kubun/go-ansi"
@@ -143,26 +141,6 @@ func PactusConfigPath(home string) string {
 
 func PactusDefaultWalletPath(home string) string {
 	return filepath.Join(PactusWalletDir(home), DefaultWalletName)
-}
-
-// TrapSignal traps SIGINT and SIGTERM and terminates the server correctly.
-func TrapSignal(cleanupFunc func()) {
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		sig := <-sigs
-		if cleanupFunc != nil {
-			cleanupFunc()
-		}
-		exitCode := 128
-		switch sig {
-		case syscall.SIGINT:
-			exitCode += int(syscall.SIGINT)
-		case syscall.SIGTERM:
-			exitCode += int(syscall.SIGTERM)
-		}
-		os.Exit(exitCode)
-	}()
 }
 
 func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType, workingDir string,
