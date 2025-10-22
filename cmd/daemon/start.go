@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/prompt"
+	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -117,7 +118,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		node, _, err := cmd.StartNode(workingDir, passwordFetcher, configModifier)
 		cmd.FatalErrorCheck(err)
 
-		cmd.TrapSignal(func() {
+		signal.HandleInterrupt(func() {
 			cmd.PrintInfoMsgf("Exiting...")
 
 			_ = fileLock.Unlock()

@@ -141,7 +141,7 @@ func main() {
 		shutdown()
 	})
 
-	cmd.TrapSignal(func() {
+	cmd.HandleInterrupt(func() {
 		cmd.PrintInfoMsgf("Exiting...")
 		shutdown()
 	})

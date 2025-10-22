@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/downloader"
 	"github.com/pactus-project/pactus/util/prompt"
+	"github.com/pactus-project/pactus/util/signal"
 	"github.com/spf13/cobra"
 )
 
@@ -76,7 +77,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		selected := metadata[choice]
 
-		cmd.TrapSignal(func() {
+		signal.HandleInterrupt(func() {
 			_ = fileLock.Unlock()
 			_ = importer.Cleanup()
 		})
