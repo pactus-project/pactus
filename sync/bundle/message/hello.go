@@ -47,9 +47,12 @@ func (m *HelloMessage) BasicCheck() error {
 	if len(m.PublicKeys) == 0 {
 		return BasicCheckError{"no public key"}
 	}
-	aggPublicKey := bls.PublicKeyAggregate(m.PublicKeys...)
+	aggPub, err := bls.PublicKeyAggregate(m.PublicKeys...)
+	if err != nil {
+		return BasicCheckError{err.Error()}
+	}
 
-	return aggPublicKey.Verify(m.SignBytes(), m.Signature)
+	return aggPub.Verify(m.SignBytes(), m.Signature)
 }
 
 func (m *HelloMessage) MyTime() time.Time {
@@ -88,7 +91,7 @@ func (m *HelloMessage) Sign(valKeys []*bls.ValidatorKey) {
 		signatures[i] = key.Sign(signBytes)
 		publicKeys[i] = key.PublicKey()
 	}
-	aggSignature := bls.SignatureAggregate(signatures...)
-	m.Signature = aggSignature
+	aggSig, _ := bls.SignatureAggregate(signatures...)
+	m.Signature = aggSig
 	m.PublicKeys = publicKeys
 }

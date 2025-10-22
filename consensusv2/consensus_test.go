@@ -369,7 +369,7 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	sigY := td.consY.valKey.Sign(sb)
 	sigP := td.consP.valKey.Sign(sb)
 
-	sig := bls.SignatureAggregate(sigX, sigY, sigP)
+	sig, _ := bls.SignatureAggregate(sigX, sigY, sigP)
 	cert.SetSignature([]int32{tIndexX, tIndexY, tIndexB, tIndexP}, []int32{tIndexB}, sig)
 	blk := prop.Block()
 
@@ -446,7 +446,7 @@ func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Has
 			committers = append(committers, val.Number())
 			sigs = append(sigs, td.valKeys[i].Sign(signBytes))
 		}
-		aggSig := bls.SignatureAggregate(sigs...)
+		aggSig, _ := bls.SignatureAggregate(sigs...)
 		cert := certificate.NewCertificate(height, round)
 		cert.SetSignature(committers, []int32{}, aggSig)
 
@@ -469,7 +469,7 @@ func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Has
 		preVoteCommitters = append(preVoteCommitters, val.Number())
 		preVoteSigs = append(preVoteSigs, td.valKeys[i].Sign(signBytes))
 	}
-	preVoteAggSig := bls.SignatureAggregate(preVoteSigs...)
+	preVoteAggSig, _ := bls.SignatureAggregate(preVoteSigs...)
 	certPreVote := certificate.NewCertificate(height, round)
 	certPreVote.SetSignature(preVoteCommitters, []int32{}, preVoteAggSig)
 	mainVoteJust = &vote.JustMainVoteNoConflict{QCert: certPreVote}
@@ -485,7 +485,7 @@ func (td *testData) makeChangeProposerJusts(t *testing.T, propBlockHash hash.Has
 		mainVoteCommitters = append(mainVoteCommitters, val.Number())
 		mainVoteSigs = append(mainVoteSigs, td.valKeys[i].Sign(signBytes))
 	}
-	mainVoteAggSig := bls.SignatureAggregate(mainVoteSigs...)
+	mainVoteAggSig, _ := bls.SignatureAggregate(mainVoteSigs...)
 	certMainVote := certificate.NewCertificate(height, round)
 	certMainVote.SetSignature(mainVoteCommitters, []int32{}, mainVoteAggSig)
 	decidedJust = &vote.JustDecided{QCert: certMainVote}
@@ -1017,8 +1017,8 @@ func (td *testData) executeConsensusByzantine(t *testing.T) *certificate.Certifi
 	td.HelperSignVote(td.consB.valKey, byzVote1)
 	td.HelperSignVote(td.consB.valKey, byzVote2)
 
-	aggSig1 := bls.SignatureAggregate(voteX.Signature(), voteY.Signature())
-	aggSig2 := bls.SignatureAggregate(voteP.Signature(), byzVote1.Signature())
+	aggSig1, _ := bls.SignatureAggregate(voteX.Signature(), voteY.Signature())
+	aggSig2, _ := bls.SignatureAggregate(voteP.Signature(), byzVote1.Signature())
 	cert1 := certificate.NewCertificate(height, round)
 	cert1.SetSignature([]int32{tIndexX, tIndexY, tIndexB, tIndexP}, []int32{tIndexB, tIndexP}, aggSig1)
 

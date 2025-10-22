@@ -41,7 +41,7 @@ func TestSignatureAggregate(t *testing.T) {
 
 	sig1 := prv1.SignNative(msg)
 	sig2 := prv2.SignNative(msg)
-	agg := bls.SignatureAggregate(sig1, sig2)
+	agg, _ := bls.SignatureAggregate(sig1, sig2)
 	aggExpected, _ := bls.SignatureFromString(
 		"a74f05102c6217d06527cfcd1854ba6c38f4047f75a74958ad01fe66a5120c77c5416bfd875669588566670dc61f1168")
 
@@ -64,21 +64,21 @@ func TestAggregateFailed(t *testing.T) {
 	sig3 := prv3.Sign(msg1).(*bls.Signature)
 	sig4 := prv4.Sign(msg1).(*bls.Signature)
 
-	agg1 := bls.SignatureAggregate(sig1, sig2, sig3)
-	agg2 := bls.SignatureAggregate(sig1, sig2, sig4)
-	agg3 := bls.SignatureAggregate(sig11, sig2, sig3)
-	agg4 := bls.SignatureAggregate(sig1, sig2)
-	agg5 := bls.SignatureAggregate(sig3, sig2, sig1)
+	agg1, _ := bls.SignatureAggregate(sig1, sig2, sig3)
+	agg2, _ := bls.SignatureAggregate(sig1, sig2, sig4)
+	agg3, _ := bls.SignatureAggregate(sig11, sig2, sig3)
+	agg4, _ := bls.SignatureAggregate(sig1, sig2)
+	agg5, _ := bls.SignatureAggregate(sig3, sig2, sig1)
 
 	pubs1 := []*bls.PublicKey{pub1, pub2, pub3}
 	pubs2 := []*bls.PublicKey{pub1, pub2, pub4}
 	pubs3 := []*bls.PublicKey{pub1, pub2}
 	pubs4 := []*bls.PublicKey{pub3, pub2, pub1}
 
-	pubAgg1 := bls.PublicKeyAggregate(pubs1...)
-	pubAgg2 := bls.PublicKeyAggregate(pubs2...)
-	pubAgg3 := bls.PublicKeyAggregate(pubs3...)
-	pubAgg4 := bls.PublicKeyAggregate(pubs4...)
+	pubAgg1, _ := bls.PublicKeyAggregate(pubs1...)
+	pubAgg2, _ := bls.PublicKeyAggregate(pubs2...)
+	pubAgg3, _ := bls.PublicKeyAggregate(pubs3...)
+	pubAgg4, _ := bls.PublicKeyAggregate(pubs4...)
 
 	assert.NoError(t, pub1.Verify(msg1, sig1))
 	assert.NoError(t, pub2.Verify(msg1, sig2))
@@ -109,7 +109,7 @@ func TestAggregateOnlyOneSignature(t *testing.T) {
 	_, prv1 := ts.RandBLSKeyPair()
 	msg1 := []byte("pactus")
 	sig1 := prv1.Sign(msg1).(*bls.Signature)
-	agg1 := bls.SignatureAggregate(sig1)
+	agg1, _ := bls.SignatureAggregate(sig1)
 
 	assert.True(t, agg1.EqualsTo(sig1))
 }
@@ -118,7 +118,7 @@ func TestAggregateOnlyOnePublicKey(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	pub1, _ := ts.RandBLSKeyPair()
-	agg1 := bls.PublicKeyAggregate(pub1)
+	agg1, _ := bls.PublicKeyAggregate(pub1)
 
 	assert.True(t, agg1.EqualsTo(pub1))
 }
@@ -135,14 +135,14 @@ func TestDuplicatedAggregate(t *testing.T) {
 	sig1 := prv1.Sign(msg1).(*bls.Signature)
 	sig2 := prv2.Sign(msg1).(*bls.Signature)
 
-	agg1 := bls.SignatureAggregate(sig1, sig2, sig1)
-	agg2 := bls.SignatureAggregate(sig1, sig2)
+	agg1, _ := bls.SignatureAggregate(sig1, sig2, sig1)
+	agg2, _ := bls.SignatureAggregate(sig1, sig2)
 	assert.False(t, agg1.EqualsTo(agg2))
 
 	pubs1 := []*bls.PublicKey{pub1, pub2}
 	pubs2 := []*bls.PublicKey{pub1, pub2, pub1}
-	pubAgg1 := bls.PublicKeyAggregate(pubs1...)
-	pubAgg2 := bls.PublicKeyAggregate(pubs2...)
+	pubAgg1, _ := bls.PublicKeyAggregate(pubs1...)
+	pubAgg2, _ := bls.PublicKeyAggregate(pubs2...)
 	assert.False(t, pubAgg1.EqualsTo(pubAgg2))
 }
 
@@ -200,4 +200,76 @@ func TestHashToCurve(t *testing.T) {
 		assert.Equal(t, expectedPoint, mappedPoint,
 			"test %v: not match", no)
 	}
+}
+
+// TestSignatureAggregateErrorHandling tests error scenarios for SignatureAggregate.
+func TestSignatureAggregateErrorHandling(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	t.Run("EmptyInput", func(t *testing.T) {
+		aggSig, err := bls.SignatureAggregate()
+		assert.Error(t, err)
+		assert.Nil(t, aggSig)
+		assert.Contains(t, err.Error(), "no signatures provided")
+	})
+
+	t.Run("InvalidSignature", func(t *testing.T) {
+		// Point at infinity
+		invalidSig, err := bls.SignatureFromString(
+			"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+		assert.NoError(t, err)
+
+		aggSig, err := bls.SignatureAggregate(invalidSig)
+		assert.Error(t, err)
+		assert.Nil(t, aggSig)
+	})
+
+	t.Run("MixedValidAndInvalid", func(t *testing.T) {
+		validSig := ts.RandBLSSignature()
+
+		invalidSig, err := bls.SignatureFromString(
+			"C00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+		assert.NoError(t, err)
+
+		aggSig, err := bls.SignatureAggregate(validSig, invalidSig)
+		assert.Error(t, err)
+		assert.Nil(t, aggSig)
+	})
+}
+
+// TestPublicKeyAggregateErrorHandling tests error scenarios for PublicKeyAggregate.
+func TestPublicKeyAggregateErrorHandling(t *testing.T) {
+	ts := testsuite.NewTestSuite(t)
+
+	t.Run("EmptyInput", func(t *testing.T) {
+		aggPub, err := bls.PublicKeyAggregate()
+		assert.Error(t, err)
+		assert.Nil(t, aggPub)
+		assert.Contains(t, err.Error(), "no public keys provided")
+	})
+
+	t.Run("InvalidPublicKeyData", func(t *testing.T) {
+		// Point at infinity
+		invalidPub, err := bls.PublicKeyFromString(
+			"public1pcqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
+				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9")
+		assert.NoError(t, err)
+
+		aggPub, err := bls.PublicKeyAggregate(invalidPub)
+		assert.Error(t, err)
+		assert.Nil(t, aggPub)
+	})
+
+	t.Run("MixedValidAndInvalid", func(t *testing.T) {
+		validPub, _ := ts.RandBLSKeyPair()
+
+		invalidPub, err := bls.PublicKeyFromString(
+			"public1pcqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" +
+				"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqglnhh9")
+		assert.NoError(t, err)
+
+		aggPub, err := bls.PublicKeyAggregate(validPub, invalidPub)
+		assert.Error(t, err)
+		assert.Nil(t, aggPub)
+	})
 }

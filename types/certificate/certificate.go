@@ -335,7 +335,7 @@ func (cert *Certificate) validate(validators []*validator.Validator,
 		}
 	}
 
-	aggPub := bls.PublicKeyAggregate(pubs...)
+	aggPub, _ := bls.PublicKeyAggregate(pubs...)
 
 	return aggPub.Verify(signBytes, cert.signature)
 }
@@ -346,7 +346,8 @@ func (cert *Certificate) validate(validators []*validator.Validator,
 func (cert *Certificate) AddSignature(valNum int32, sig *bls.Signature) {
 	absentees, removed := util.RemoveFirstOccurrenceOf(cert.absentees, valNum)
 	if removed {
-		cert.signature = bls.SignatureAggregate(cert.signature, sig)
+		aggSig, _ := bls.SignatureAggregate(cert.signature, sig)
+		cert.signature = aggSig
 		cert.absentees = absentees
 	}
 }

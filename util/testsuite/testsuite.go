@@ -273,17 +273,15 @@ func (ts *TestSuite) RandValKey() *bls.ValidatorKey {
 // RandBLSSignature generates a random BLS signature for testing purposes.
 func (ts *TestSuite) RandBLSSignature() *bls.Signature {
 	_, prv := ts.RandBLSKeyPair()
-	sig := prv.Sign(ts.RandBytes(8))
 
-	return sig.(*bls.Signature)
+	return prv.SignNative(ts.RandBytes(8))
 }
 
 // RandEd25519Signature generates a random BLS signature for testing purposes.
 func (ts *TestSuite) RandEd25519Signature() *ed25519.Signature {
 	_, prv := ts.RandEd25519KeyPair()
-	sig := prv.Sign(ts.RandBytes(8))
 
-	return sig.(*ed25519.Signature)
+	return prv.SignNative(ts.RandBytes(8))
 }
 
 // RandHash generates a random hash for testing purposes.

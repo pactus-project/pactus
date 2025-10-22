@@ -432,7 +432,7 @@ func (cs *consensus) signersInfo(votes map[crypto.Address]*vote.Vote) (
 		committers[i] = val.Number()
 	}
 
-	aggSig = bls.SignatureAggregate(sigs...)
+	aggSig, _ = bls.SignatureAggregate(sigs...)
 
 	return committers, absentees, aggSig
 }

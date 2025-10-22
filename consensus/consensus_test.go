@@ -350,7 +350,7 @@ func (td *testData) commitBlockForAllStates(t *testing.T) (*block.Block, *certif
 	sig3 := td.consB.valKey.Sign(signBytes)
 	sig4 := td.consP.valKey.Sign(signBytes)
 
-	sig := bls.SignatureAggregate(sig1, sig2, sig3, sig4)
+	sig, _ := bls.SignatureAggregate(sig1, sig2, sig3, sig4)
 	cert.SetSignature([]int32{tIndexX, tIndexY, tIndexB, tIndexP}, []int32{}, sig)
 	blk := prop.Block()
 
@@ -413,7 +413,7 @@ func (td *testData) makeMainCertificate(t *testing.T,
 		preVoteCommitters = append(preVoteCommitters, val.Number())
 		preVoteSigs = append(preVoteSigs, td.valKeys[i].Sign(sbPreVote))
 	}
-	preVoteAggSig := bls.SignatureAggregate(preVoteSigs...)
+	preVoteAggSig, _ := bls.SignatureAggregate(preVoteSigs...)
 	certPreVote := certificate.NewCertificate(height, round)
 	certPreVote.SetSignature(preVoteCommitters, []int32{}, preVoteAggSig)
 
@@ -429,7 +429,7 @@ func (td *testData) makeMainCertificate(t *testing.T,
 		mainVoteCommitters = append(mainVoteCommitters, val.Number())
 		mainVoteSigs = append(mainVoteSigs, td.valKeys[i].Sign(sbMainVote))
 	}
-	mainVoteAggSig := bls.SignatureAggregate(mainVoteSigs...)
+	mainVoteAggSig, _ := bls.SignatureAggregate(mainVoteSigs...)
 	certMainVote := certificate.NewCertificate(height, round)
 	certMainVote.SetSignature(mainVoteCommitters, []int32{}, mainVoteAggSig)
 

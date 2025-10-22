@@ -245,7 +245,7 @@ func TestAddSignature(t *testing.T) {
 	}
 
 	absentees := committers[3:]
-	aggSig := bls.SignatureAggregate(sigs[:3]...)
+	aggSig, _ := bls.SignatureAggregate(sigs[:3]...)
 	cert.SetSignature(committers, absentees, aggSig)
 
 	err := cert.ValidatePrecommit(validators, blockHash)
@@ -296,7 +296,8 @@ func TestCertificateValidatePrepare(t *testing.T) {
 
 	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
 		absentees := committers[2:]
-		aggSig := bls.SignatureAggregate(sigs[:2]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:2]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrepare(validators, blockHash)
@@ -308,7 +309,8 @@ func TestCertificateValidatePrepare(t *testing.T) {
 
 	t.Run("Ok, should return no error", func(t *testing.T) {
 		absentees := committers[3:]
-		aggSig := bls.SignatureAggregate(sigs[:3]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrepare(validators, blockHash)
@@ -341,7 +343,8 @@ func TestCertificateValidatePrecommit(t *testing.T) {
 		invCommitters := slices.Clone(committers)
 		invCommitters = append(invCommitters, ts.Rand.Int31n(10000))
 		absentees := committers[4:]
-		aggSig := bls.SignatureAggregate(sigs[:4]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:4]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(invCommitters, absentees, aggSig)
 
 		err := cert.ValidatePrecommit(validators, blockHash)
@@ -352,7 +355,8 @@ func TestCertificateValidatePrecommit(t *testing.T) {
 
 	t.Run("Invalid validator", func(t *testing.T) {
 		absentees := committers[4:]
-		aggSig := bls.SignatureAggregate(sigs[:4]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:4]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		invValidators := slices.Clone(validators)
@@ -365,7 +369,8 @@ func TestCertificateValidatePrecommit(t *testing.T) {
 
 	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
 		absentees := committers[2:]
-		aggSig := bls.SignatureAggregate(sigs[:2]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:2]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrecommit(validators, blockHash)
@@ -377,7 +382,8 @@ func TestCertificateValidatePrecommit(t *testing.T) {
 
 	t.Run("One signature short, should return an error for invalid signature", func(t *testing.T) {
 		absentees := committers[4:]
-		aggSig := bls.SignatureAggregate(sigs[3:]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[3:]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrecommit(validators, blockHash)
@@ -386,7 +392,8 @@ func TestCertificateValidatePrecommit(t *testing.T) {
 
 	t.Run("Invalid block hash", func(t *testing.T) {
 		absentees := committers[3:]
-		aggSig := bls.SignatureAggregate(sigs[:3]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrecommit(validators, ts.RandHash())
@@ -395,7 +402,8 @@ func TestCertificateValidatePrecommit(t *testing.T) {
 
 	t.Run("Ok, should return no error", func(t *testing.T) {
 		absentees := committers[3:]
-		aggSig := bls.SignatureAggregate(sigs[:3]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidatePrecommit(validators, blockHash)
@@ -428,7 +436,8 @@ func TestCertificateValidateCPPreVote(t *testing.T) {
 
 	t.Run("Invalid cpValue", func(t *testing.T) {
 		absentees := committers[3:]
-		aggSig := bls.SignatureAggregate(sigs[:3]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidateCPPreVote(validators, blockHash, cpRound, byte(0))
@@ -437,7 +446,8 @@ func TestCertificateValidateCPPreVote(t *testing.T) {
 
 	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
 		absentees := committers[2:]
-		aggSig := bls.SignatureAggregate(sigs[:2]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:2]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidateCPPreVote(validators, blockHash, cpRound, cpValue)
@@ -449,7 +459,8 @@ func TestCertificateValidateCPPreVote(t *testing.T) {
 
 	t.Run("Ok, should return no error", func(t *testing.T) {
 		absentees := committers[3:]
-		aggSig := bls.SignatureAggregate(sigs[:3]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidateCPPreVote(validators, blockHash, cpRound, cpValue)
@@ -482,7 +493,8 @@ func TestCertificateValidateCPMainVote(t *testing.T) {
 
 	t.Run("Invalid cpValue", func(t *testing.T) {
 		absentees := committers[3:]
-		aggSig := bls.SignatureAggregate(sigs[:3]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidateCPMainVote(validators, blockHash, cpRound, byte(0))
@@ -491,7 +503,8 @@ func TestCertificateValidateCPMainVote(t *testing.T) {
 
 	t.Run("Doesn't have 2f+1 majority", func(t *testing.T) {
 		absentees := committers[2:]
-		aggSig := bls.SignatureAggregate(sigs[:2]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:2]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidateCPMainVote(validators, blockHash, cpRound, cpValue)
@@ -503,7 +516,8 @@ func TestCertificateValidateCPMainVote(t *testing.T) {
 
 	t.Run("Ok, should return no error", func(t *testing.T) {
 		absentees := committers[3:]
-		aggSig := bls.SignatureAggregate(sigs[:3]...)
+		aggSig, sigErr := bls.SignatureAggregate(sigs[:3]...)
+		assert.NoError(t, sigErr)
 		cert.SetSignature(committers, absentees, aggSig)
 
 		err := cert.ValidateCPMainVote(validators, blockHash, cpRound, cpValue)
