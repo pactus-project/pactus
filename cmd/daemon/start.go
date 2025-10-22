@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -81,7 +82,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 
 				password = strings.TrimSpace(string(b))
 			} else {
-				password = cmd.PromptPassword("Wallet password", false)
+				password = prompt.PromptPassword("Wallet password", false)
 			}
 
 			return password, true

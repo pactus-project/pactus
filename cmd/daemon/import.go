@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/downloader"
+	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/spf13/cobra"
 )
 
@@ -71,7 +72,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		cmd.PrintLine()
 
-		choice := cmd.PromptSelect("Please select a snapshot", snapshots)
+		choice := prompt.PromptSelect("Please select a snapshot", snapshots)
 
 		selected := metadata[choice]
 
