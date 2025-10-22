@@ -17,6 +17,7 @@ import (
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
 )
@@ -141,7 +142,7 @@ func main() {
 		shutdown()
 	})
 
-	cmd.HandleInterrupt(func() {
+	signal.HandleInterrupt(func() {
 		cmd.PrintInfoMsgf("Exiting...")
 		shutdown()
 	})
