@@ -9,6 +9,7 @@ import (
 
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -29,7 +30,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 	recoverCmd.Run = func(_ *cobra.Command, _ []string) {
 		mnemonic := *seedOpt
 		if mnemonic == "" {
-			mnemonic = cmd.PromptInput("Seed")
+			mnemonic = prompt.PromptInput("Seed")
 		}
 		chainType := genesis.Mainnet
 		if *testnetOpt {

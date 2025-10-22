@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -21,7 +22,7 @@ func buildCreateCmd(parentCmd *cobra.Command) {
 		"specify the entropy bit length")
 
 	generateCmd.Run = func(_ *cobra.Command, _ []string) {
-		password := cmd.PromptPassword("Password", true)
+		password := prompt.PromptPassword("Password", true)
 		mnemonic, err := wallet.GenerateMnemonic(*entropyOpt)
 		cmd.FatalErrorCheck(err)
 
@@ -57,7 +58,7 @@ func buildChangePasswordCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		oldPassword := getPassword(wlt, *passOpt)
-		newPassword := cmd.PromptPassword("New Password", true)
+		newPassword := prompt.PromptPassword("New Password", true)
 
 		err = wlt.UpdatePassword(oldPassword, newPassword)
 		cmd.FatalErrorCheck(err)

@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
+	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/wallet/vault"
 	"github.com/spf13/cobra"
 )
@@ -85,7 +86,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		var err error
 
 		if *label == "" {
-			labelIn := cmd.PromptInput("Label")
+			labelIn := prompt.PromptInput("Label")
 			label = &labelIn
 		}
 		wlt, err := openWallet()
@@ -96,7 +97,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		} else if *addressType == crypto.AddressTypeEd25519Account.String() {
 			password := ""
 			if wlt.IsEncrypted() {
-				password = cmd.PromptPassword("Password", false)
+				password = prompt.PromptPassword("Password", false)
 			}
 			addressInfo, err = wlt.NewEd25519AccountAddress(*label, password)
 		} else if *addressType == crypto.AddressTypeValidator.String() {
@@ -207,7 +208,7 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 	passOpt := addPasswordOption(importPrivateKeyCmd)
 
 	importPrivateKeyCmd.Run = func(_ *cobra.Command, _ []string) {
-		prvStr := cmd.PromptInput("Private Key")
+		prvStr := prompt.PromptInput("Private Key")
 
 		wlt, err := openWallet()
 		cmd.FatalErrorCheck(err)
@@ -270,7 +271,7 @@ func buildSetLabelCmd(parentCmd *cobra.Command) {
 		cmd.FatalErrorCheck(err)
 
 		oldLabel := wlt.Label(addr)
-		newLabel := cmd.PromptInputWithSuggestion("Label", oldLabel)
+		newLabel := prompt.PromptInputWithSuggestion("Label", oldLabel)
 
 		err = wlt.SetLabel(addr, newLabel)
 		cmd.FatalErrorCheck(err)

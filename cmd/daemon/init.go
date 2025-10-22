@@ -10,6 +10,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -66,7 +67,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			cmd.PrintLine()
 			cmd.PrintWarnMsgf("Write down this seed on a piece of paper to recover your validator key in the future.")
 			cmd.PrintLine()
-			confirmed := cmd.PromptConfirm("Do you want to continue")
+			confirmed := prompt.PromptConfirm("Do you want to continue")
 			if !confirmed {
 				return
 			}
@@ -81,7 +82,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		if *passwordOpt == "" {
 			cmd.PrintLine()
 			cmd.PrintInfoMsgf("Enter a password for wallet")
-			password = cmd.PromptPassword("Password", true)
+			password = prompt.PromptPassword("Password", true)
 		} else {
 			password = *passwordOpt
 		}
@@ -92,7 +93,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			cmd.PrintInfoMsgBoldf("How many validators do you want to create?")
 			cmd.PrintInfoMsgf("Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.")
 			cmd.PrintInfoMsgf("You can define validators based on the amount of coins you want to stake.")
-			valNum = cmd.PromptInputWithRange("Number of Validators", 7, 1, 32)
+			valNum = prompt.PromptInputWithRange("Number of Validators", 7, 1, 32)
 		} else {
 			if *valNumOpt < 1 || *valNumOpt > 32 {
 				cmd.PrintErrorMsgf("%v is not in valid range of validator number, it should be between 1 and 32", *valNumOpt)

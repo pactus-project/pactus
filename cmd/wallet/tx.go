@@ -4,6 +4,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
+	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -216,7 +217,7 @@ func signAndPublishTx(wlt *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass strin
 		if !noConfirm {
 			cmd.PrintInfoMsgf("You are going to broadcast the signed transition:")
 			cmd.PrintWarnMsgf("THIS ACTION IS NOT REVERSIBLE")
-			confirmed := cmd.PromptConfirm("Do you want to continue")
+			confirmed := prompt.PromptConfirm("Do you want to continue")
 			if !confirmed {
 				return
 			}
@@ -234,7 +235,7 @@ func signAndPublishTx(wlt *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass strin
 func getPassword(wlt *wallet.Wallet, passOpt string) string {
 	password := passOpt
 	if wlt.IsEncrypted() && password == "" {
-		password = cmd.PromptPassword("Wallet password", false)
+		password = prompt.PromptPassword("Wallet password", false)
 	}
 
 	return password

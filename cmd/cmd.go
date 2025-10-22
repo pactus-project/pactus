@@ -11,13 +11,11 @@ import (
 	"os/signal"
 	"os/user"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"syscall"
 	"time"
 
 	"github.com/k0kubun/go-ansi"
-	"github.com/manifoldco/promptui"
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -50,131 +48,6 @@ func CheckTerminalSupported() bool {
 	bad := map[string]bool{"": true, "dumb": true, "cons25": true}
 
 	return !bad[strings.ToLower(os.Getenv("TERM"))]
-}
-
-// PromptPassword prompts the user for a password. Set confirmation to true
-// to require the user to confirm the password.
-func PromptPassword(label string, confirmation bool) string {
-	prompt := promptui.Prompt{
-		Label:   label,
-		Mask:    '*',
-		Pointer: promptui.PipeCursor,
-	}
-	password, err := prompt.Run()
-	FatalErrorCheck(err)
-
-	if confirmation {
-		validate := func(input string) error {
-			if input != password {
-				return errors.New("passwords do not match")
-			}
-
-			return nil
-		}
-
-		confirmPrompt := promptui.Prompt{
-			Label:    "Confirm password",
-			Validate: validate,
-			Mask:     '*',
-			Pointer:  promptui.PipeCursor,
-		}
-
-		_, err := confirmPrompt.Run()
-		FatalErrorCheck(err)
-	}
-
-	return password
-}
-
-// PromptConfirm prompts user to confirm the operation.
-func PromptConfirm(label string) bool {
-	prompt := promptui.Prompt{
-		Label:     label,
-		IsConfirm: true,
-		Pointer:   promptui.PipeCursor,
-	}
-	result, err := prompt.Run()
-	if err != nil {
-		if !errors.Is(err, promptui.ErrAbort) {
-			PrintErrorMsgf("prompt error: %v", err)
-		} else {
-			PrintWarnMsgf("Aborted.")
-		}
-		os.Exit(1)
-	}
-
-	if result != "" && strings.ToUpper(result[:1]) == "Y" {
-		return true
-	}
-
-	return false
-}
-
-// PromptInput prompts for an input string.
-func PromptInput(label string) string {
-	prompt := promptui.Prompt{
-		Label:   label,
-		Pointer: promptui.PipeCursor,
-	}
-	result, err := prompt.Run()
-	FatalErrorCheck(err)
-
-	return result
-}
-
-// PromptSelect prompts create choice menu for select by user.
-func PromptSelect(label string, items []string) int {
-	prompt := promptui.Select{
-		Label:   label,
-		Items:   items,
-		Pointer: promptui.PipeCursor,
-	}
-
-	choice, _, err := prompt.Run()
-	FatalErrorCheck(err)
-
-	return choice
-}
-
-// PromptInputWithSuggestion prompts the user for an input string with a suggestion.
-func PromptInputWithSuggestion(label, suggestion string) string {
-	prompt := promptui.Prompt{
-		Label:   label,
-		Default: suggestion,
-		Pointer: promptui.PipeCursor,
-	}
-	result, err := prompt.Run()
-	FatalErrorCheck(err)
-
-	return result
-}
-
-// PromptInputWithRange prompts the user for an input integer within a specified range.
-func PromptInputWithRange(label string, def, min, max int) int {
-	prompt := promptui.Prompt{
-		Label:     label,
-		Default:   fmt.Sprintf("%v", def),
-		IsVimMode: true,
-		Pointer:   promptui.PipeCursor,
-		Validate: func(input string) error {
-			num, err := strconv.Atoi(input)
-			if err != nil {
-				return err
-			}
-			if num < min || num > max {
-				return fmt.Errorf("enter a number between %v and %v", min, max)
-			}
-
-			return nil
-		},
-	}
-	result, err := prompt.Run()
-	FatalErrorCheck(err)
-
-	num, err := strconv.Atoi(result)
-	FatalErrorCheck(err)
-
-	return num
 }
 
 func FatalErrorCheck(err error) {

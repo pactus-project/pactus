@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/store"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/spf13/cobra"
 )
 
@@ -53,7 +54,7 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		cmd.PrintWarnMsgf("This command removes all the blocks and transactions up to %d days ago "+
 			"and converts the node to prune mode.", conf.Store.RetentionDays)
 		cmd.PrintLine()
-		confirmed := cmd.PromptConfirm("Do you want to continue")
+		confirmed := prompt.PromptConfirm("Do you want to continue")
 		if !confirmed {
 			return
 		}
