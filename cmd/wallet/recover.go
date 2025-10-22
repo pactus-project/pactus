@@ -7,9 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util/prompt"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -37,7 +37,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 			chainType = genesis.Testnet
 		}
 		wlt, err := wallet.Create(*pathOpt, mnemonic, *passOpt, chainType)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		ctx, cancel := context.WithCancel(context.Background())
 		sigChan := make(chan os.Signal, 1)
@@ -48,12 +48,12 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 			cancel()
 		}()
 
-		cmd.PrintInfoMsgf("Recovering wallet addresses (Ctrl+C to abort)...")
-		cmd.PrintLine()
+		terminal.PrintInfoMsgf("Recovering wallet addresses (Ctrl+C to abort)...")
+		terminal.PrintLine()
 
 		index := 0
 		err = wlt.RecoveryAddresses(ctx, *passOpt, func(addr string) {
-			cmd.PrintInfoMsgf("%d. %s", index+1, addr)
+			terminal.PrintInfoMsgf("%d. %s", index+1, addr)
 			index++
 		})
 
@@ -62,22 +62,22 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 
 		if err != nil {
 			if wasInterrupted || errors.Is(err, context.Canceled) {
-				cmd.PrintLine()
-				cmd.PrintWarnMsgf("Recovery aborted")
+				terminal.PrintLine()
+				terminal.PrintWarnMsgf("Recovery aborted")
 			} else {
-				cmd.PrintLine()
-				cmd.PrintWarnMsgf("Recovery addresses failed: %v", err)
+				terminal.PrintLine()
+				terminal.PrintWarnMsgf("Recovery addresses failed: %v", err)
 			}
 		}
 
 		// Always save the wallet before exiting
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Saving wallet...")
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("Saving wallet...")
 		err = wlt.Save()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Wallet successfully recovered and saved at: %s", wlt.Path())
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("Wallet successfully recovered and saved at: %s", wlt.Path())
 	}
 }
 
@@ -93,13 +93,13 @@ func buildGetSeedCmd(parentCmd *cobra.Command) {
 
 	getSeedCmd.Run = func(_ *cobra.Command, _ []string) {
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		password := getPassword(wlt, *passOpt)
 		mnemonic, err := wlt.Mnemonic(password)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Your wallet's seed phrase is: \"%v\"", mnemonic)
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("Your wallet's seed phrase is: \"%v\"", mnemonic)
 	}
 }

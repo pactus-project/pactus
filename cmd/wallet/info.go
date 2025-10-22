@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/spf13/cobra"
 )
 
@@ -18,15 +18,15 @@ func buildInfoCmd(parentCmd *cobra.Command) {
 
 	infoCmd.Run = func(_ *cobra.Command, _ []string) {
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		info := wlt.Info()
 
-		cmd.PrintInfoMsgf("Version: %d", info.Version)
-		cmd.PrintInfoMsgf("UUID: %s", info.UUID)
-		cmd.PrintInfoMsgf("Default fee: %s", info.DefaultFee.String())
-		cmd.PrintInfoMsgf("Created at: %s", info.CreatedAt.Format(time.RFC3339))
-		cmd.PrintInfoMsgf("Is encrtypted: %t", info.Encrypted)
-		cmd.PrintInfoMsgf("Network: %s", info.Network)
+		terminal.PrintInfoMsgf("Version: %d", info.Version)
+		terminal.PrintInfoMsgf("UUID: %s", info.UUID)
+		terminal.PrintInfoMsgf("Default fee: %s", info.DefaultFee.String())
+		terminal.PrintInfoMsgf("Created at: %s", info.CreatedAt.Format(time.RFC3339))
+		terminal.PrintInfoMsgf("Is encrtypted: %t", info.Encrypted)
+		terminal.PrintInfoMsgf("Network: %s", info.Network)
 	}
 }

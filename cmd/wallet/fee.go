@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/spf13/cobra"
 )
 
@@ -18,16 +18,16 @@ func buildFeeCmd(parentCmd *cobra.Command) {
 
 	feeCmd.Run = func(_ *cobra.Command, args []string) {
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		fee, err := amount.FromString(args[0])
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		wlt.SetDefaultFee(fee)
 
 		err = wlt.Save()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintInfoMsgf("Default fee is set to %s", fee.String())
+		terminal.PrintInfoMsgf("Default fee is set to %s", fee.String())
 	}
 }

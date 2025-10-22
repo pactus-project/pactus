@@ -8,8 +8,8 @@ import (
 	"github.com/NathanBaulch/protoc-gen-cobra/naming"
 	"github.com/c-bata/go-prompt"
 	"github.com/inancgumus/screen"
-	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/util/shell"
+	"github.com/pactus-project/pactus/util/terminal"
 	pb "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -61,9 +61,9 @@ func createRootCommand() *cobra.Command {
 
 	interactive.PreRun = func(_ *cobra.Command, _ []string) {
 		cls()
-		cmd.PrintInfoMsgf("Welcome to PactusBlockchain interactive mode\n\n- Home: https://pactus.org\n- " +
+		terminal.PrintInfoMsgf("Welcome to PactusBlockchain interactive mode\n\n- Home: https://pactus.org\n- " +
 			"Docs: https://docs.pactus.org")
-		cmd.PrintLine()
+		terminal.PrintLine()
 		_prefix = fmt.Sprintf("pactus@%s > ", serverAddr)
 	}
 
@@ -104,7 +104,7 @@ func main() {
 
 	err := rootCmd.Execute()
 	if err != nil {
-		cmd.PrintErrorMsgf(err.Error())
+		terminal.PrintErrorMsgf(err.Error())
 	}
 }
 

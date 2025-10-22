@@ -1,19 +1,14 @@
-//nolint:forbidigo // enable printing function for cmd package
 package cmd
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 	"os/user"
 	"path/filepath"
-	"strings"
 	"time"
 
-	"github.com/k0kubun/go-ansi"
 	"github.com/pactus-project/pactus/config"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -22,10 +17,10 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/vault"
-	"github.com/schollz/progressbar/v3"
 )
 
 const (
@@ -34,92 +29,11 @@ const (
 	DefaultWalletName     = "default_wallet"
 )
 
-var terminalSupported = false
-
-func init() {
-	terminalSupported = CheckTerminalSupported()
-}
-
-// CheckTerminalSupported returns true if the current terminal supports
-// line editing features.
-func CheckTerminalSupported() bool {
-	bad := map[string]bool{"": true, "dumb": true, "cons25": true}
-
-	return !bad[strings.ToLower(os.Getenv("TERM"))]
-}
-
-func FatalErrorCheck(err error) {
-	if err != nil {
-		if terminalSupported {
-			fmt.Printf("\033[31m%s\033[0m\n", err.Error())
-		} else {
-			fmt.Printf("%s\n", err.Error())
-		}
-
-		os.Exit(1)
-	}
-}
-
-func PrintErrorMsgf(format string, args ...any) {
-	format = "[ERROR] " + format
-	if terminalSupported {
-		// Print error msg with red color
-		format = fmt.Sprintf("\033[31m%s\033[0m", format)
-	}
-	fmt.Printf(format+"\n", args...)
-}
-
-func PrintSuccessMsgf(format string, a ...any) {
-	if terminalSupported {
-		// Print successful msg with green color
-		format = fmt.Sprintf("\033[32m%s\033[0m", format)
-	}
-	fmt.Printf(format+"\n", a...)
-}
-
-func PrintWarnMsgf(format string, a ...any) {
-	if terminalSupported {
-		// Print warning msg with yellow color
-		format = fmt.Sprintf("\033[33m%s\033[0m", format)
-	}
-	fmt.Printf(format+"\n", a...)
-}
-
-func PrintInfoMsgf(format string, a ...any) {
-	fmt.Printf(format+"\n", a...)
-}
-
-func PrintInfoMsgBoldf(format string, a ...any) {
-	if terminalSupported {
-		format = fmt.Sprintf("\033[1m%s\033[0m", format)
-	}
-	fmt.Printf(format+"\n", a...)
-}
-
-func PrintLine() {
-	fmt.Println()
-}
-
-func PrintJSONData(data []byte) {
-	var out bytes.Buffer
-	err := json.Indent(&out, data, "", "   ")
-	FatalErrorCheck(err)
-
-	PrintInfoMsgf(out.String())
-}
-
-func PrintJSONObject(obj any) {
-	data, err := json.Marshal(obj)
-	FatalErrorCheck(err)
-
-	PrintJSONData(data)
-}
-
 func PactusDefaultHomeDir() string {
 	home := ""
 	usr, err := user.Current()
 	if err != nil {
-		PrintWarnMsgf("unable to get current user: %v", err)
+		terminal.PrintWarnMsgf("unable to get current user: %v", err)
 	} else {
 		home = filepath.Join(usr.HomeDir, home, DefaultHomeDirName)
 	}
@@ -173,9 +87,9 @@ func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType,
 		err = wlt.RecoveryAddresses(ctx, walletPassword, recoveryEventFunc)
 		if err != nil {
 			if ctx.Err() != nil || errors.Is(err, context.Canceled) {
-				PrintWarnMsgf("Recovery aborted")
+				terminal.PrintWarnMsgf("Recovery aborted")
 			} else {
-				PrintWarnMsgf("Recovery addresses failed: %v", err)
+				terminal.PrintWarnMsgf("Recovery addresses failed: %v", err)
 			}
 		}
 	}
@@ -258,7 +172,7 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	if len(valAddrsInfo) > 32 {
-		PrintWarnMsgf("wallet has more than 32 validator addresses, only the first 32 will be used")
+		terminal.PrintWarnMsgf("wallet has more than 32 validator addresses, only the first 32 will be used")
 		valAddrsInfo = valAddrsInfo[:32]
 	}
 
@@ -341,8 +255,8 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 
 	conf, err := config.LoadFromFile(confPath, true, defConf)
 	if err != nil {
-		PrintWarnMsgf("Unable to load the config: %s", err)
-		PrintInfoMsgf("Attempting to update or restore the config file...")
+		terminal.PrintWarnMsgf("Unable to load the config: %s", err)
+		terminal.PrintInfoMsgf("Attempting to update or restore the config file...")
 
 		conf, err = RecoverConfig(confPath, defConf, chainType)
 		if err != nil {
@@ -389,7 +303,7 @@ func RecoverConfig(confPath string, defConf *config.Config, chainType genesis.Ch
 		if err != nil {
 			return nil, err
 		}
-		PrintSuccessMsgf("Config updated.")
+		terminal.PrintSuccessMsgf("Config updated.")
 	} else {
 		switch chainType {
 		case genesis.Mainnet:
@@ -406,7 +320,7 @@ func RecoverConfig(confPath string, defConf *config.Config, chainType genesis.Ch
 			}
 		}
 
-		PrintSuccessMsgf("Config restored to the default values")
+		terminal.PrintSuccessMsgf("Config restored to the default values")
 		conf, _ = config.LoadFromFile(confPath, true, defConf) // This time it should be OK
 	}
 
@@ -501,28 +415,4 @@ func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []vault.Addres
 	}
 
 	return valKeys, nil
-}
-
-func TerminalProgressBar(totalSize int64, barWidth int) *progressbar.ProgressBar {
-	if barWidth < 15 {
-		barWidth = 15
-	}
-
-	opts := []progressbar.Option{
-		progressbar.OptionSetWriter(ansi.NewAnsiStdout()),
-		progressbar.OptionEnableColorCodes(true),
-		progressbar.OptionSetWidth(barWidth),
-		progressbar.OptionSetElapsedTime(false),
-		progressbar.OptionSetPredictTime(false),
-		progressbar.OptionShowDescriptionAtLineEnd(),
-		progressbar.OptionSetTheme(progressbar.Theme{
-			Saucer:        "[green]=[reset]",
-			SaucerHead:    "[green]>[reset]",
-			SaucerPadding: " ",
-			BarStart:      "[",
-			BarEnd:        "]",
-		}),
-	}
-
-	return progressbar.NewOptions64(totalSize, opts...)
 }

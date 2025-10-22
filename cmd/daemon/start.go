@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/signal"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -53,17 +54,17 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
 		// change working directory
 		err := os.Chdir(workingDir)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		// Define the lock file path
 		lockFilePath := filepath.Join(workingDir, ".pactus.lock")
 		fileLock := flock.New(lockFilePath)
 
 		locked, err := fileLock.TryLock()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		if !locked {
-			cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
+			terminal.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
 
 			return
 		}
@@ -79,7 +80,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 				password = *passwordOpt
 			} else if *passwordFromFileOpt != "" {
 				b, err := util.ReadFile(*passwordFromFileOpt)
-				cmd.FatalErrorCheck(err)
+				terminal.FatalErrorCheck(err)
 
 				password = strings.TrimSpace(string(b))
 			} else {
@@ -116,10 +117,10 @@ func buildStartCmd(parentCmd *cobra.Command) {
 		}
 
 		node, _, err := cmd.StartNode(workingDir, passwordFetcher, configModifier)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		signal.HandleInterrupt(func() {
-			cmd.PrintInfoMsgf("Exiting...")
+			terminal.PrintInfoMsgf("Exiting...")
 
 			_ = fileLock.Unlock()
 			node.Stop()

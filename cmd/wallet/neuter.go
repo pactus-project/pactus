@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ipfs/boxo/util"
-	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/spf13/cobra"
 )
 
@@ -17,19 +17,19 @@ func buildNeuterCmd(parentCmd *cobra.Command) {
 
 	neuterCmd.Run = func(_ *cobra.Command, _ []string) {
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		path := wlt.Path() + ".neutered"
 
 		if util.FileExists(path) {
-			cmd.FatalErrorCheck(fmt.Errorf("neutered wallet already exists, at %s", path))
+			terminal.FatalErrorCheck(fmt.Errorf("neutered wallet already exists, at %s", path))
 		}
 
 		neuteredWallet := wlt.Neuter(path)
 
 		err = neuteredWallet.Save()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintSuccessMsgf("neutered wallet created at %s", path)
+		terminal.PrintSuccessMsgf("neutered wallet created at %s", path)
 	}
 }

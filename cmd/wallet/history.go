@@ -3,8 +3,8 @@ package main
 import (
 	"time"
 
-	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto/hash"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/spf13/cobra"
 )
 
@@ -33,18 +33,18 @@ func buildAddToHistoryCmd(parentCmd *cobra.Command) {
 		txID := args[0]
 
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		id, err := hash.FromString(txID)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		err = wlt.AddTransaction(id)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		err = wlt.Save()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintInfoMsgf("Transaction successfully added to the wallet.")
+		terminal.PrintInfoMsgf("Transaction successfully added to the wallet.")
 	}
 }
 
@@ -61,15 +61,15 @@ func buildShowHistoryCmd(parentCmd *cobra.Command) {
 		addr := args[0]
 
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		history := wlt.History(addr)
 		for i, item := range history {
 			if item.Time != nil {
-				cmd.PrintInfoMsgf("%d %v %v %v %s\t%v",
+				terminal.PrintInfoMsgf("%d %v %v %v %s\t%v",
 					i+1, item.Time.Format(time.RFC822), item.TxID, item.PayloadType, item.Desc, item.Amount)
 			} else {
-				cmd.PrintInfoMsgf("%d              %v  %s\t%v",
+				terminal.PrintInfoMsgf("%d              %v  %s\t%v",
 					i+1, item.TxID, item.Desc, item.Amount)
 			}
 		}

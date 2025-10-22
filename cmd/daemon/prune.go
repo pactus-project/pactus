@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/signal"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/spf13/cobra"
 )
 
@@ -29,40 +30,40 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
 		// change working directory
 		err := os.Chdir(workingDir)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		// Define the lock file path
 		lockFilePath := filepath.Join(workingDir, ".pactus.lock")
 		fileLock := flock.New(lockFilePath)
 
 		locked, err := fileLock.TryLock()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		if !locked {
-			cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
+			terminal.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
 
 			return
 		}
 
 		conf, _, err := cmd.MakeConfig(workingDir)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		// Disable logger
 		conf.Logger.Targets = []string{}
 		logger.InitGlobalLogger(conf.Logger)
 
-		cmd.PrintLine()
-		cmd.PrintWarnMsgf("This command removes all the blocks and transactions up to %d days ago "+
+		terminal.PrintLine()
+		terminal.PrintWarnMsgf("This command removes all the blocks and transactions up to %d days ago "+
 			"and converts the node to prune mode.", conf.Store.RetentionDays)
-		cmd.PrintLine()
+		terminal.PrintLine()
 		confirmed := prompt.PromptConfirm("Do you want to continue")
 		if !confirmed {
 			return
 		}
-		cmd.PrintLine()
+		terminal.PrintLine()
 
 		store, err := store.NewStore(conf.Store)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		prunedCount := uint32(0)
 		skippedCount := uint32(0)
@@ -90,24 +91,24 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 
 			return canceled
 		})
-		cmd.PrintLine()
-		cmd.FatalErrorCheck(err)
+		terminal.PrintLine()
+		terminal.FatalErrorCheck(err)
 
 		if canceled {
-			cmd.PrintLine()
-			cmd.PrintInfoMsgf("❌ The operation canceled.")
-			cmd.PrintLine()
+			terminal.PrintLine()
+			terminal.PrintInfoMsgf("❌ The operation canceled.")
+			terminal.PrintLine()
 		} else if prunedCount == 0 {
-			cmd.PrintLine()
-			cmd.PrintInfoMsgf("⚠️ Your node is not passed the retention_days set in config or it's already a pruned node.")
-			cmd.PrintLine()
-			cmd.PrintInfoMsgf("Make sure you try to prune a node after retention_days specified in config.toml")
+			terminal.PrintLine()
+			terminal.PrintInfoMsgf("⚠️ Your node is not passed the retention_days set in config or it's already a pruned node.")
+			terminal.PrintLine()
+			terminal.PrintInfoMsgf("Make sure you try to prune a node after retention_days specified in config.toml")
 		} else {
-			cmd.PrintLine()
-			cmd.PrintInfoMsgf("✅ Your node successfully pruned and changed to prune mode.")
-			cmd.PrintLine()
-			cmd.PrintInfoMsgf("You can start the node by running this command:")
-			cmd.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
+			terminal.PrintLine()
+			terminal.PrintInfoMsgf("✅ Your node successfully pruned and changed to prune mode.")
+			terminal.PrintLine()
+			terminal.PrintInfoMsgf("You can start the node by running this command:")
+			terminal.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
 		}
 
 		store.Close()
@@ -118,8 +119,8 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 }
 
 func pruningProgressBar(prunedCount, skippedCount, totalCount uint32) {
-	bar := cmd.TerminalProgressBar(int64(totalCount), 30)
+	bar := terminal.ProgressBar(int64(totalCount), 30)
 	bar.Describe(fmt.Sprintf("Pruned: %d | Skipped: %d", prunedCount, skippedCount))
 	err := bar.Add(int(prunedCount + skippedCount))
-	cmd.FatalErrorCheck(err)
+	terminal.FatalErrorCheck(err)
 }

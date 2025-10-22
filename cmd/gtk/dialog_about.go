@@ -7,7 +7,7 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/version"
 )
 
@@ -27,7 +27,7 @@ func aboutDialog() *gtk.AboutDialog {
 
 	pxLogo, err := gdk.PixbufNewFromBytesOnly(pactusLogo)
 	if err != nil {
-		cmd.PrintErrorMsgf("Failed to load Logo Pixbuf: %v", err)
+		terminal.PrintErrorMsgf("Failed to load Logo Pixbuf: %v", err)
 	} else {
 		dlg.SetLogo(pxLogo)
 	}
