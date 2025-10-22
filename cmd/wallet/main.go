@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -69,6 +70,6 @@ func main() {
 
 	err := rootCmd.Execute()
 	if err != nil {
-		cmd.PrintErrorMsgf("%s", err)
+		terminal.PrintErrorMsgf("%s", err)
 	}
 }

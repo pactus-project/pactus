@@ -7,7 +7,7 @@ import (
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/util/terminal"
 )
 
 var (
@@ -27,7 +27,7 @@ func showAboutGTKDialog() {
 	pixbuf, err := gdk.PixbufNewFromBytesOnly(imageGtk)
 	if err != nil {
 		// Handle error gracefully instead of fatal
-		cmd.PrintErrorMsgf("Failed to load Logo Pixbuf: %v", err)
+		terminal.PrintErrorMsgf("Failed to load Logo Pixbuf: %v", err)
 	} else {
 		dlg.SetLogo(pixbuf)
 	}

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/util/prompt"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet/vault"
 	"github.com/spf13/cobra"
 )
@@ -46,9 +46,9 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 
 	allAddressCmd.Run = func(_ *cobra.Command, _ []string) {
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
+		terminal.PrintLine()
 		for i, info := range wlt.AddressInfos() {
 			line := fmt.Sprintf("%v- %s\t", i+1, info.Address)
 
@@ -63,7 +63,7 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 			}
 
 			line += info.Label
-			cmd.PrintInfoMsgf(line)
+			terminal.PrintInfoMsgf(line)
 		}
 	}
 }
@@ -90,7 +90,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 			label = &labelIn
 		}
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		if *addressType == crypto.AddressTypeBLSAccount.String() {
 			addressInfo, err = wlt.NewBLSAccountAddress(*label)
@@ -105,13 +105,13 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		} else {
 			err = fmt.Errorf("invalid address type '%s'", *addressType)
 		}
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		err = wlt.Save()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("%s", addressInfo.Address)
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("%s", addressInfo.Address)
 	}
 }
 
@@ -128,13 +128,13 @@ func buildBalanceCmd(parentCmd *cobra.Command) {
 		addr := args[0]
 
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
+		terminal.PrintLine()
 
 		balance, _ := wlt.Balance(addr)
 		stake, _ := wlt.Stake(addr)
-		cmd.PrintInfoMsgf("balance: %s\tstake: %s",
+		terminal.PrintInfoMsgf("balance: %s\tstake: %s",
 			balance.String(), stake.String())
 	}
 }
@@ -155,14 +155,14 @@ func buildPrivateKeyCmd(parentCmd *cobra.Command) {
 		addr := args[0]
 
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		password := getPassword(wlt, *passOpt)
 		prv, err := wlt.PrivateKey(password, addr)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
-		cmd.PrintWarnMsgf("Private Key: %v", prv)
+		terminal.PrintLine()
+		terminal.PrintWarnMsgf("Private Key: %v", prv)
 	}
 }
 
@@ -180,19 +180,19 @@ func buildPublicKeyCmd(parentCmd *cobra.Command) {
 		addr := args[0]
 
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		info := wlt.AddressInfo(addr)
 		if info == nil {
-			cmd.PrintErrorMsgf("Address not found")
+			terminal.PrintErrorMsgf("Address not found")
 
 			return
 		}
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Public Key: %v", info.PublicKey)
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("Public Key: %v", info.PublicKey)
 		if info.Path != "" {
-			cmd.PrintInfoMsgf("Path: %v", info.Path)
+			terminal.PrintInfoMsgf("Path: %v", info.Path)
 		}
 	}
 }
@@ -211,7 +211,7 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 		prvStr := prompt.PromptInput("Private Key")
 
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		password := getPassword(wlt, *passOpt)
 
@@ -228,30 +228,30 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 		switch {
 		case maybeBLSPrivateKey(prvStr):
 			blsPrv, err := bls.PrivateKeyFromString(prvStr)
-			cmd.FatalErrorCheck(err)
+			terminal.FatalErrorCheck(err)
 
 			err = wlt.ImportBLSPrivateKey(password, blsPrv)
-			cmd.FatalErrorCheck(err)
+			terminal.FatalErrorCheck(err)
 
 		case maybeEd25519PrivateKey(prvStr):
 			ed25519Prv, err := ed25519.PrivateKeyFromString(prvStr)
-			cmd.FatalErrorCheck(err)
+			terminal.FatalErrorCheck(err)
 
 			err = wlt.ImportEd25519PrivateKey(password, ed25519Prv)
-			cmd.FatalErrorCheck(err)
+			terminal.FatalErrorCheck(err)
 
 		default:
 			// The private key cannot be decoded as either BLS or Ed25519.
-			cmd.PrintErrorMsgf("Invalid private key.")
+			terminal.PrintErrorMsgf("Invalid private key.")
 
 			return
 		}
 
 		err = wlt.Save()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
-		cmd.PrintSuccessMsgf("Private Key imported successfully.")
+		terminal.PrintLine()
+		terminal.PrintSuccessMsgf("Private Key imported successfully.")
 	}
 }
 
@@ -268,18 +268,18 @@ func buildSetLabelCmd(parentCmd *cobra.Command) {
 		addr := args[0]
 
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		oldLabel := wlt.Label(addr)
 		newLabel := prompt.PromptInputWithSuggestion("Label", oldLabel)
 
 		err = wlt.SetLabel(addr, newLabel)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		err = wlt.Save()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
-		cmd.PrintSuccessMsgf("Label set successfully")
+		terminal.PrintLine()
+		terminal.PrintSuccessMsgf("Label set successfully")
 	}
 }

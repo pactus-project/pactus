@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/prompt"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -46,14 +47,14 @@ func buildInitCmd(parentCmd *cobra.Command) {
 	initCmd.Run = func(_ *cobra.Command, _ []string) {
 		workingDir, _ := filepath.Abs(*workingDirOpt)
 		if !util.IsDirNotExistsOrEmpty(workingDir) {
-			cmd.PrintErrorMsgf("The working directory is not empty: %s", workingDir)
+			terminal.PrintErrorMsgf("The working directory is not empty: %s", workingDir)
 
 			return
 		}
 
 		index := 0
 		recoveryEventFunc := func(addr string) {
-			cmd.PrintInfoMsgf("%d. %s", index+1, addr)
+			terminal.PrintInfoMsgf("%d. %s", index+1, addr)
 			index++
 		}
 
@@ -61,12 +62,12 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		if *restoreOpt == "" {
 			mnemonic, _ = wallet.GenerateMnemonic(*entropyOpt)
 
-			cmd.PrintLine()
-			cmd.PrintInfoMsgf("Your wallet seed is:")
-			cmd.PrintInfoMsgBoldf("   " + mnemonic)
-			cmd.PrintLine()
-			cmd.PrintWarnMsgf("Write down this seed on a piece of paper to recover your validator key in the future.")
-			cmd.PrintLine()
+			terminal.PrintLine()
+			terminal.PrintInfoMsgf("Your wallet seed is:")
+			terminal.PrintInfoMsgBoldf("   " + mnemonic)
+			terminal.PrintLine()
+			terminal.PrintWarnMsgf("Write down this seed on a piece of paper to recover your validator key in the future.")
+			terminal.PrintLine()
 			confirmed := prompt.PromptConfirm("Do you want to continue")
 			if !confirmed {
 				return
@@ -75,13 +76,13 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		} else {
 			mnemonic = *restoreOpt
 			err := wallet.CheckMnemonic(*restoreOpt)
-			cmd.FatalErrorCheck(err)
+			terminal.FatalErrorCheck(err)
 		}
 
 		var password string
 		if *passwordOpt == "" {
-			cmd.PrintLine()
-			cmd.PrintInfoMsgf("Enter a password for wallet")
+			terminal.PrintLine()
+			terminal.PrintInfoMsgf("Enter a password for wallet")
 			password = prompt.PromptPassword("Password", true)
 		} else {
 			password = *passwordOpt
@@ -89,14 +90,14 @@ func buildInitCmd(parentCmd *cobra.Command) {
 
 		var valNum int
 		if *valNumOpt == 0 {
-			cmd.PrintLine()
-			cmd.PrintInfoMsgBoldf("How many validators do you want to create?")
-			cmd.PrintInfoMsgf("Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.")
-			cmd.PrintInfoMsgf("You can define validators based on the amount of coins you want to stake.")
+			terminal.PrintLine()
+			terminal.PrintInfoMsgBoldf("How many validators do you want to create?")
+			terminal.PrintInfoMsgf("Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.")
+			terminal.PrintInfoMsgf("You can define validators based on the amount of coins you want to stake.")
 			valNum = prompt.PromptInputWithRange("Number of Validators", 7, 1, 32)
 		} else {
 			if *valNumOpt < 1 || *valNumOpt > 32 {
-				cmd.PrintErrorMsgf("%v is not in valid range of validator number, it should be between 1 and 32", *valNumOpt)
+				terminal.PrintErrorMsgf("%v is not in valid range of validator number, it should be between 1 and 32", *valNumOpt)
 
 				return
 			}
@@ -122,31 +123,31 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		}()
 
 		if recoveryEventFunc != nil {
-			cmd.PrintLine()
-			cmd.PrintInfoMsgf("Recovering wallet addresses (Ctrl+C to abort)...")
-			cmd.PrintLine()
+			terminal.PrintLine()
+			terminal.PrintInfoMsgf("Recovering wallet addresses (Ctrl+C to abort)...")
+			terminal.PrintLine()
 		}
 
 		validatorAddrs, rewardAddrs, err := cmd.CreateNode(ctx, valNum, chain, workingDir, mnemonic,
 			password, recoveryEventFunc)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgBoldf("Validator addresses:")
+		terminal.PrintLine()
+		terminal.PrintInfoMsgBoldf("Validator addresses:")
 		for i, addr := range validatorAddrs {
-			cmd.PrintInfoMsgf("%v- %s", i+1, addr)
+			terminal.PrintInfoMsgf("%v- %s", i+1, addr)
 		}
-		cmd.PrintLine()
+		terminal.PrintLine()
 
-		cmd.PrintInfoMsgBoldf("Reward address:")
-		cmd.PrintInfoMsgf("%s", rewardAddrs)
+		terminal.PrintInfoMsgBoldf("Reward address:")
+		terminal.PrintInfoMsgf("%s", rewardAddrs)
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgBoldf("Network: %v", chain.String())
-		cmd.PrintLine()
-		cmd.PrintSuccessMsgf("A pactus node is successfully initialized at %v", workingDir)
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("You can start the node by running this command:")
-		cmd.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
+		terminal.PrintLine()
+		terminal.PrintInfoMsgBoldf("Network: %v", chain.String())
+		terminal.PrintLine()
+		terminal.PrintSuccessMsgf("A pactus node is successfully initialized at %v", workingDir)
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("You can start the node by running this command:")
+		terminal.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
 	}
 }

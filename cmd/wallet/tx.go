@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util/prompt"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
@@ -39,10 +39,10 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 		sender := args[0]
 		receiver := args[1]
 		amt, err := amount.FromString(args[2])
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
 			wallet.OptionFee(*feeOpt),
@@ -51,15 +51,15 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 		}
 
 		trx, err := wlt.MakeTransferTx(sender, receiver, amt, opts...)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("You are going to sign this \033[1mTransfer\033[0m transition:")
-		cmd.PrintInfoMsgf("From  : %s", sender)
-		cmd.PrintInfoMsgf("To    : %s", receiver)
-		cmd.PrintInfoMsgf("Amount: %s", amt)
-		cmd.PrintInfoMsgf("Fee   : %s", trx.Fee())
-		cmd.PrintInfoMsgf("Memo  : %s", trx.Memo())
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("You are going to sign this \033[1mTransfer\033[0m transition:")
+		terminal.PrintInfoMsgf("From  : %s", sender)
+		terminal.PrintInfoMsgf("To    : %s", receiver)
+		terminal.PrintInfoMsgf("Amount: %s", amt)
+		terminal.PrintInfoMsgf("Fee   : %s", trx.Fee())
+		terminal.PrintInfoMsgf("Memo  : %s", trx.Memo())
 
 		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
@@ -82,10 +82,10 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 		sender := args[0]
 		receiver := args[1]
 		amt, err := amount.FromString(args[2])
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
 			wallet.OptionFee(*feeOpt),
@@ -94,15 +94,15 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 		}
 
 		trx, err := wlt.MakeBondTx(sender, receiver, *pubKeyOpt, amt, opts...)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("You are going to sign this \033[1mBond\033[0m transition:")
-		cmd.PrintInfoMsgf("Account  : %s", sender)
-		cmd.PrintInfoMsgf("Validator: %s", receiver)
-		cmd.PrintInfoMsgf("Stake    : %s", amt)
-		cmd.PrintInfoMsgf("Fee      : %s", trx.Fee())
-		cmd.PrintInfoMsgf("Memo     : %s", trx.Memo())
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("You are going to sign this \033[1mBond\033[0m transition:")
+		terminal.PrintInfoMsgf("Account  : %s", sender)
+		terminal.PrintInfoMsgf("Validator: %s", receiver)
+		terminal.PrintInfoMsgf("Stake    : %s", amt)
+		terminal.PrintInfoMsgf("Fee      : %s", trx.Fee())
+		terminal.PrintInfoMsgf("Memo     : %s", trx.Memo())
 
 		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
@@ -124,7 +124,7 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 		from := args[0]
 
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
 			wallet.OptionFee(*feeOpt),
@@ -133,13 +133,13 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 		}
 
 		trx, err := wlt.MakeUnbondTx(from, opts...)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("You are going to sign this \033[1mUnbond\033[0m transition:")
-		cmd.PrintInfoMsgf("Validator: %s", from)
-		cmd.PrintInfoMsgf("Fee      : %s", trx.Fee())
-		cmd.PrintInfoMsgf("Memo     : %s", trx.Memo())
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("You are going to sign this \033[1mUnbond\033[0m transition:")
+		terminal.PrintInfoMsgf("Validator: %s", from)
+		terminal.PrintInfoMsgf("Fee      : %s", trx.Fee())
+		terminal.PrintInfoMsgf("Memo     : %s", trx.Memo())
 
 		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
@@ -161,10 +161,10 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		sender := args[0]
 		receiver := args[1]
 		amt, err := amount.FromString(args[2])
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		wlt, err := openWallet()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		opts := []wallet.TxOption{
 			wallet.OptionFee(*feeOpt),
@@ -173,15 +173,15 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		}
 
 		trx, err := wlt.MakeWithdrawTx(sender, receiver, amt, opts...)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("You are going to sign this \033[1mWithdraw\033[0m transition:")
-		cmd.PrintInfoMsgf("Validator: %s", sender)
-		cmd.PrintInfoMsgf("Account  : %s", receiver)
-		cmd.PrintInfoMsgf("Amount   : %s", amt)
-		cmd.PrintInfoMsgf("Fee      : %s", trx.Fee())
-		cmd.PrintInfoMsgf("Memo     : %s", trx.Memo())
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("You are going to sign this \033[1mWithdraw\033[0m transition:")
+		terminal.PrintInfoMsgf("Validator: %s", sender)
+		terminal.PrintInfoMsgf("Account  : %s", receiver)
+		terminal.PrintInfoMsgf("Amount   : %s", amt)
+		terminal.PrintInfoMsgf("Fee      : %s", trx.Fee())
+		terminal.PrintInfoMsgf("Memo     : %s", trx.Memo())
 
 		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
@@ -204,31 +204,31 @@ func addCommonTxOptions(cobra *cobra.Command) (lockTimeOpt *int, feeOpt, memoOpt
 }
 
 func signAndPublishTx(wlt *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass string) {
-	cmd.PrintLine()
+	terminal.PrintLine()
 	password := getPassword(wlt, pass)
 	err := wlt.SignTransaction(password, trx)
-	cmd.FatalErrorCheck(err)
+	terminal.FatalErrorCheck(err)
 
 	bs, _ := trx.Bytes()
-	cmd.PrintInfoMsgf("Signed transaction data: %x", bs)
-	cmd.PrintLine()
+	terminal.PrintInfoMsgf("Signed transaction data: %x", bs)
+	terminal.PrintLine()
 
 	if !wlt.IsOffline() {
 		if !noConfirm {
-			cmd.PrintInfoMsgf("You are going to broadcast the signed transition:")
-			cmd.PrintWarnMsgf("THIS ACTION IS NOT REVERSIBLE")
+			terminal.PrintInfoMsgf("You are going to broadcast the signed transition:")
+			terminal.PrintWarnMsgf("THIS ACTION IS NOT REVERSIBLE")
 			confirmed := prompt.PromptConfirm("Do you want to continue")
 			if !confirmed {
 				return
 			}
 		}
 		res, err := wlt.BroadcastTransaction(trx)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		err = wlt.Save()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintInfoMsgf("Transaction hash: %s", res)
+		terminal.PrintInfoMsgf("Transaction hash: %s", res)
 	}
 }
 

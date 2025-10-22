@@ -18,6 +18,7 @@ import (
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/signal"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/version"
 	"github.com/pactus-project/pactus/wallet"
 )
@@ -57,7 +58,7 @@ func main() {
 
 	workingDir, err := filepath.Abs(*workingDirOpt)
 	if err != nil {
-		cmd.PrintErrorMsgf("Aborted! %v", err)
+		terminal.PrintErrorMsgf("Aborted! %v", err)
 
 		return
 	}
@@ -81,7 +82,7 @@ func main() {
 	fatalErrorCheck(err)
 
 	if !locked {
-		cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
+		terminal.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
 
 		return
 	}
@@ -143,7 +144,7 @@ func main() {
 	})
 
 	signal.HandleInterrupt(func() {
-		cmd.PrintInfoMsgf("Exiting...")
+		terminal.PrintInfoMsgf("Exiting...")
 		shutdown()
 	})
 
@@ -176,7 +177,7 @@ func newNode(workingDir string) (*node.Node, *wallet.Wallet, error) {
 
 func run(n *node.Node, wlt *wallet.Wallet, app *gtk.Application) *mainWindow {
 	grpcAddr := n.GRPC().Address()
-	cmd.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
+	terminal.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
 
 	nodeModel := newNodeModel(n)
 	walletModel := newWalletModel(wlt, n)

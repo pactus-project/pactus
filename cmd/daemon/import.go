@@ -11,6 +11,7 @@ import (
 	"github.com/pactus-project/pactus/util/downloader"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/signal"
+	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/spf13/cobra"
 )
 
@@ -27,27 +28,27 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 	importCmd.Run = func(cobra *cobra.Command, _ []string) {
 		workingDir, err := filepath.Abs(*workingDirOpt)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		err = os.Chdir(workingDir)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		conf, gen, err := cmd.MakeConfig(workingDir)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		lockFilePath := filepath.Join(workingDir, ".pactus.lock")
 		fileLock := flock.New(lockFilePath)
 
 		locked, err := fileLock.TryLock()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		if !locked {
-			cmd.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
+			terminal.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
 
 			return
 		}
 
-		cmd.PrintLine()
+		terminal.PrintLine()
 
 		snapshotURL := *serverAddrOpt
 		importer, err := cmd.NewImporter(
@@ -55,10 +56,10 @@ func buildImportCmd(parentCmd *cobra.Command) {
 			snapshotURL,
 			conf.Store.DataPath(),
 		)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		metadata, err := importer.GetMetadata(cobra.Context())
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		snapshots := make([]string, 0, len(metadata))
 
@@ -71,7 +72,7 @@ func buildImportCmd(parentCmd *cobra.Command) {
 			snapshots = append(snapshots, item)
 		}
 
-		cmd.PrintLine()
+		terminal.PrintLine()
 
 		choice := prompt.PromptSelect("Please select a snapshot", snapshots)
 
@@ -82,40 +83,40 @@ func buildImportCmd(parentCmd *cobra.Command) {
 			_ = importer.Cleanup()
 		})
 
-		cmd.PrintLine()
+		terminal.PrintLine()
 
 		err = importer.Download(cobra.Context(), &selected, downloadProgressBar)
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintLine()
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("Extracting files...")
+		terminal.PrintLine()
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("Extracting files...")
 
 		err = importer.ExtractAndStoreFiles()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
-		cmd.PrintInfoMsgf("Moving data...")
+		terminal.PrintInfoMsgf("Moving data...")
 		err = importer.MoveStore()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		err = importer.Cleanup()
-		cmd.FatalErrorCheck(err)
+		terminal.FatalErrorCheck(err)
 
 		_ = fileLock.Unlock()
 
-		cmd.PrintLine()
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("✅ Your node successfully imported prune data.")
-		cmd.PrintLine()
-		cmd.PrintInfoMsgf("You can start the node by running this command:")
-		cmd.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
+		terminal.PrintLine()
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("✅ Your node successfully imported prune data.")
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("You can start the node by running this command:")
+		terminal.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
 	}
 }
 
 func downloadProgressBar(fileName string) func(stats downloader.Stats) {
 	return func(stats downloader.Stats) {
 		if !stats.Completed {
-			bar := cmd.TerminalProgressBar(stats.TotalSize, 30)
+			bar := terminal.ProgressBar(stats.TotalSize, 30)
 			bar.Describe(fmt.Sprintf("%s (%s/%s)",
 				fileName,
 				util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
