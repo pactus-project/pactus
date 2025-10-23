@@ -650,6 +650,7 @@ func TestGetServerList(t *testing.T) {
 		for _, srv := range servers {
 			if strings.Contains(srv.Address, "bootstrap") && strings.Contains(srv.Address, "pactus.org") {
 				foundBootstrap = true
+
 				break
 			}
 		}
@@ -678,17 +679,4 @@ func TestGetServerList(t *testing.T) {
 		require.NoError(t, err)
 		assert.Empty(t, servers, "Should return empty list for localnet")
 	})
-}
-func TestServerInfoStructure(t *testing.T) {
-	// Test that ServerInfo can be properly marshaled/unmarshaled
-	servers, err := wallet.GetServerList("mainnet")
-	require.NoError(t, err)
-	require.NotEmpty(t, servers)
-
-	// Verify that the first server has the expected fields
-	firstServer := servers[0]
-	assert.IsType(t, "", firstServer.Name)
-	assert.IsType(t, "", firstServer.Email)
-	assert.IsType(t, "", firstServer.Website)
-	assert.IsType(t, "", firstServer.Address)
 }

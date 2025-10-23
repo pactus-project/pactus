@@ -259,11 +259,13 @@ func TestGetBootstrapNodes(t *testing.T) {
 			foundPactusBootstrap = true
 			assert.Equal(t, "info@pactus.org", node.Email)
 			assert.Equal(t, "https://pactus.org", node.Website)
+
 			break
 		}
 	}
 	assert.True(t, foundPactusBootstrap, "Should contain at least one official Pactus bootstrap node")
 }
+
 func TestBootstrapInfoStructure(t *testing.T) {
 	nodes, err := GetBootstrapNodes()
 	require.NoError(t, err)
