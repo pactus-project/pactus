@@ -317,3 +317,12 @@ func (conf *Config) BasicCheck() error {
 
 	return conf.HTTP.BasicCheck()
 }
+
+func GetBootstrapNodes() ([]BootstrapInfo, error) {
+	bootstrapNodes := make([]BootstrapInfo, 0)
+	if err := json.Unmarshal(bootstrapInfoBytes, &bootstrapNodes); err != nil {
+		return nil, err
+	}
+
+	return bootstrapNodes, nil
+}

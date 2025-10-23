@@ -23,7 +23,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type serverInfo struct {
+type ServerInfo struct {
 	Name    string `json:"name"`
 	Email   string `json:"email"`
 	Website string `json:"website"`
@@ -158,7 +158,7 @@ func newWallet(walletPath string, store *Store, offline bool, option *walletOpt)
 	}
 
 	if !offline {
-		serversData := map[string][]serverInfo{}
+		serversData := map[string][]ServerInfo{}
 		err := json.Unmarshal(serversJSON, &serversData)
 		if err != nil {
 			return nil, err
@@ -616,4 +616,19 @@ func (w *Wallet) makeTxBuilder(options ...TxOption) (*txBuilder, error) {
 
 func (w *Wallet) SetDefaultFee(fee amount.Amount) {
 	w.store.Vault.DefaultFee = fee
+}
+
+func GetServerList(network string) ([]ServerInfo, error) {
+	serversData := map[string][]ServerInfo{}
+	err := json.Unmarshal(serversJSON, &serversData)
+	if err != nil {
+		return nil, err
+	}
+
+	servers, exists := serversData[network]
+	if !exists {
+		return []ServerInfo{}, nil
+	}
+
+	return servers, nil
 }

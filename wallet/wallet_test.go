@@ -3,6 +3,7 @@ package wallet_test
 import (
 	"context"
 	"path"
+	"strings"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -630,4 +631,64 @@ func TestTestnetKeyInfo(t *testing.T) {
 
 	assert.NotEqual(t, prv1.Bytes(), prv2.Bytes(),
 		"Should generate different private key for the testnet")
+}
+
+func TestGetServerList(t *testing.T) {
+	t.Run("Get mainnet servers", func(t *testing.T) {
+		servers, err := wallet.GetServerList("mainnet")
+		require.NoError(t, err)
+		assert.NotEmpty(t, servers)
+
+		// Verify structure
+		for _, srv := range servers {
+			assert.NotEmpty(t, srv.Address, "Server address should not be empty")
+			// Name, Email, Website can be empty for some servers
+		}
+
+		// Check that at least official Pactus bootstrap servers exist
+		foundBootstrap := false
+		for _, srv := range servers {
+			if strings.Contains(srv.Address, "bootstrap") && strings.Contains(srv.Address, "pactus.org") {
+				foundBootstrap = true
+				break
+			}
+		}
+		assert.True(t, foundBootstrap, "Should contain at least one official bootstrap server")
+	})
+
+	t.Run("Get testnet servers", func(t *testing.T) {
+		servers, err := wallet.GetServerList("testnet")
+		require.NoError(t, err)
+		assert.NotEmpty(t, servers)
+
+		// Verify structure
+		for _, srv := range servers {
+			assert.NotEmpty(t, srv.Address, "Server address should not be empty")
+		}
+	})
+
+	t.Run("Get servers for non-existent network", func(t *testing.T) {
+		servers, err := wallet.GetServerList("nonexistent")
+		require.NoError(t, err)
+		assert.Empty(t, servers, "Should return empty list for unknown network")
+	})
+
+	t.Run("Get servers for localnet", func(t *testing.T) {
+		servers, err := wallet.GetServerList("localnet")
+		require.NoError(t, err)
+		assert.Empty(t, servers, "Should return empty list for localnet")
+	})
+}
+func TestServerInfoStructure(t *testing.T) {
+	// Test that ServerInfo can be properly marshaled/unmarshaled
+	servers, err := wallet.GetServerList("mainnet")
+	require.NoError(t, err)
+	require.NotEmpty(t, servers)
+
+	// Verify that the first server has the expected fields
+	firstServer := servers[0]
+	assert.IsType(t, "", firstServer.Name)
+	assert.IsType(t, "", firstServer.Email)
+	assert.IsType(t, "", firstServer.Website)
+	assert.IsType(t, "", firstServer.Address)
 }
