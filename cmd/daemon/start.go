@@ -20,7 +20,7 @@ import (
 func buildStartCmd(parentCmd *cobra.Command) {
 	startCmd := &cobra.Command{
 		Use:   "start",
-		Short: "start the Pactus Blockchain node",
+		Short: "start the Pactus blockchain node",
 	}
 
 	parentCmd.AddCommand(startCmd)

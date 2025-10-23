@@ -235,10 +235,16 @@ func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, wlt *wallet.Wal
 		}
 
 		err = wlt.Save()
-		fatalErrorCheck(err)
+		if err != nil {
+			showError(err)
+
+			return
+		}
 
 		showInfoDialog(parent,
-			fmt.Sprintf("Transaction Hash: <a href=\"https://pacviewer.com/transaction/%s\">%s</a>", txID, txID))
+			fmt.Sprintf("✅ Transaction sent successfully!\n\nTransaction Hash: <a href=\"https://pacviewer.com/transaction/%s\">%s</a>", txID, txID))
+
+		parent.Close()
 	}
 }
 

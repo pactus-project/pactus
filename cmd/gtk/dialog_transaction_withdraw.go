@@ -87,20 +87,22 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 			return
 		}
 		msg := fmt.Sprintf(`
-You are going to sign and broadcast this transaction:
+📝 Transaction Details:
 <tt>
+Type:   Withdraw
 From:   %s
 To:     %s
 Amount: %s
 Fee:    %s
 Memo:   %s
 </tt>
-<b>THIS ACTION IS NOT REVERSIBLE. Do you want to continue?</b>`,
+
+You are going to sign and broadcast this transaction.
+<b>⚠️ This action cannot be undone.</b>
+Do you want to continue with this transaction?`,
 			sender, receiver, amt, trx.Fee(), trx.Memo())
 
 		signAndBroadcastTransaction(dlg, msg, wlt, trx)
-
-		dlg.Close()
 	}
 
 	onClose := func() {

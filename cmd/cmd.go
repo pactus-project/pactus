@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/pactus-project/pactus/config"
@@ -53,8 +54,20 @@ func PactusConfigPath(home string) string {
 	return filepath.Join(home, "config.toml")
 }
 
+func PactusLockFilePath(home string) string {
+	return filepath.Join(home, ".pactus.lock")
+}
+
 func PactusDefaultWalletPath(home string) string {
 	return filepath.Join(PactusWalletDir(home), DefaultWalletName)
+}
+
+func PactusDaemonName() string {
+	if runtime.GOOS == "windows" {
+		return "pactus-daemon.exe"
+	}
+
+	return "./pactus-daemon"
 }
 
 func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType, workingDir string,
@@ -119,7 +132,7 @@ func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType,
 
 	case genesis.Localnet:
 		if numValidators < 4 {
-			return nil, "", errors.New("LocalNeed needs at least 4 validators")
+			return nil, "", errors.New("localnet needs at least 4 validators")
 		}
 		genDoc := makeLocalGenesis(*wlt)
 		if err := genDoc.SaveToFile(genPath); err != nil {

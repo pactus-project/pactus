@@ -55,7 +55,7 @@ func main() {
 	offlineOpt = rootCmd.PersistentFlags().Bool("offline", false, "offline mode")
 	serverAddrsOpt = rootCmd.PersistentFlags().StringSlice("servers", []string{}, "servers gRPC address")
 	timeoutOpt = rootCmd.PersistentFlags().Int("timeout", 1,
-		"specifies the timeout duration for the client connection in seconds")
+		"specifies the timeout duration for the connection in seconds")
 
 	buildCreateCmd(rootCmd)
 	buildRecoverCmd(rootCmd)

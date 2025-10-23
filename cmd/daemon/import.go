@@ -90,26 +90,26 @@ func buildImportCmd(parentCmd *cobra.Command) {
 
 		terminal.PrintLine()
 		terminal.PrintLine()
-		terminal.PrintInfoMsgf("Extracting files...")
+		terminal.PrintInfoMsgf("📦 Extracting snapshot files...")
 
 		err = importer.ExtractAndStoreFiles()
 		terminal.FatalErrorCheck(err)
 
-		terminal.PrintInfoMsgf("Moving data...")
+		terminal.PrintInfoMsgf("📁 Moving data to node directory...")
 		err = importer.MoveStore()
 		terminal.FatalErrorCheck(err)
 
+		terminal.PrintInfoMsgf("🧹 Cleaning up temporary files...")
 		err = importer.Cleanup()
 		terminal.FatalErrorCheck(err)
 
 		_ = fileLock.Unlock()
 
 		terminal.PrintLine()
+		terminal.PrintSuccessMsgf("✅ Node successfully imported pruned data!")
 		terminal.PrintLine()
-		terminal.PrintInfoMsgf("✅ Your node successfully imported prune data.")
-		terminal.PrintLine()
-		terminal.PrintInfoMsgf("You can start the node by running this command:")
-		terminal.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
+		terminal.PrintInfoMsgf("🚀 To start your node, run:")
+		terminal.PrintInfoMsgBoldf("   %s start -w %s", cmd.PactusDaemonName(), workingDir)
 	}
 }
 

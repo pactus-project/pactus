@@ -38,7 +38,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 	fatalErrorCheck(err)
 
 	assistant.SetDefaultSize(600, 400)
-	assistant.SetTitle("Pactus - Init Wizard")
+	assistant.SetTitle("Pactus - Node Setup Wizard")
 
 	assistFunc := pageAssistant()
 
@@ -175,7 +175,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 				mnemonic = getTextViewContent(textRestoreSeed)
 
 				if err := wallet.CheckMnemonic(mnemonic); err != nil {
-					showErrorDialog(assistant, "mnemonic is invalid")
+					showErrorDialog(assistant, "Invalid seed phrase. Please check your seed phrase and try again.")
 					assistant.PreviousPage()
 				}
 			}
@@ -277,7 +277,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 							mdCh := getMetadata(ctx, importer, listBox)
 
 							if md := <-mdCh; md == nil {
-								ssLabel.SetText("   ❌ Failed to get snapshot list, please try again later.")
+								ssLabel.SetText("   ❌ Failed to get snapshot list. Please try again later.")
 							} else {
 								ssLabel.SetText("   🔽 Please select a snapshot to download:")
 								listBox.SetVisible(true)
@@ -431,7 +431,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 					} else {
 						validatorAddrs = validatorAddrsLocal
 						rewardAddr = rewardAddrLocal
-						lblRecoveryStatus.SetText("Successfully wallet addresses recovered.")
+						lblRecoveryStatus.SetText("✅ Wallet addresses successfully recovered")
 						btnCancelRecovery.SetVisible(false)
 						assistantPageComplete(assistant, wgtAddressRecovery, true)
 					}
@@ -463,7 +463,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 
 	// Setup cancel recovery button handler
 	btnCancelRecovery.Connect("clicked", func() {
-		lblRecoveryStatus.SetText("Cancelling...")
+		lblRecoveryStatus.SetText("Cancelling recovery...")
 		cancelRecovery()
 		btnCancelRecovery.SetSensitive(false)
 	})
@@ -515,11 +515,11 @@ func pageAssistant() assistantFunc {
 
 func pageWalletMode(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widget, *gtk.RadioButton, string) {
 	var mode *gtk.Widget
-	newWalletRadio, err := gtk.RadioButtonNewWithLabel(nil, "Create a new wallet from the scratch")
+	newWalletRadio, err := gtk.RadioButtonNewWithLabel(nil, "Create a new wallet from scratch")
 	fatalErrorCheck(err)
 
 	restoreWalletRadio, err := gtk.RadioButtonNewWithLabelFromWidget(newWalletRadio,
-		"Restore a wallet from the seed phrase")
+		"Restore a wallet from seed phrase")
 	fatalErrorCheck(err)
 
 	radioBox, err := gtk.BoxNew(gtk.ORIENTATION_VERTICAL, 0)
@@ -533,7 +533,7 @@ func pageWalletMode(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Wi
 	pageModeName := "page_wallet_mode"
 	pageModeTitle := "Wallet Mode"
 	pageModeSubject := "How to create your wallet?"
-	pageModeDesc := "If you are running the node for the first time, choose the first option."
+	pageModeDesc := "If you are setting up the node for the first time, choose the first option."
 	mode = assistFunc(
 		assistant,
 		radioBox,
@@ -558,13 +558,10 @@ func pageSeedGenerate(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.
 
 	pageSeedName := "page_seed_generate"
 	pageSeedTitle := "Wallet Seed"
-	pageSeedSubject := "Your wallet generation seed is:"
-	pageSeedDesc := `Please write these 12 words on paper.
-This seed will allow you to recover your wallet in case of computer failure.
-<b>WARNING:</b>
-  - Never disclose your seed.
-  - Never type it on a website.
-  - Do not store it electronically.`
+	pageSeedSubject := "Your wallet seed phrase:"
+	pageSeedDesc := `<b>⚠️ CRITICAL: Write down this seed phrase and store it safely!</b>
+     This is the ONLY way to recover your wallet if needed.
+     Never share it with anyone or store it electronically.`
 
 	pageWidget = assistFunc(
 		assistant,
@@ -590,8 +587,8 @@ func pageSeedRestore(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.W
 
 	pageSeedName := "page_seed_restore"
 	pageSeedTitle := "Wallet Seed Restore"
-	pageSeedSubject := "Enter your wallet seed:"
-	pageSeedDesc := "Please enter your 12 words mnemonics backup to restore your wallet."
+	pageSeedSubject := "Enter your wallet seed phrase:"
+	pageSeedDesc := "Please enter your wallet seed phrase to restore your wallet."
 
 	pageWidget = assistFunc(
 		assistant,
@@ -618,7 +615,7 @@ func pageSeedConfirm(assistant *gtk.Assistant, assistFunc assistantFunc,
 	textViewConfirmSeed.SetSizeRequest(0, 80)
 
 	textViewConfirmSeed.Connect("paste_clipboard", func(_ *gtk.TextView) {
-		showInfoDialog(assistant, "Opps, no copy paste!")
+		showInfoDialog(assistant, "Copy and paste is not allowed")
 		textViewConfirmSeed.StopEmission("paste_clipboard")
 	})
 
@@ -641,8 +638,8 @@ func pageSeedConfirm(assistant *gtk.Assistant, assistFunc assistantFunc,
 	pageSeedConfirmName := "page_seed_confirm"
 	pageSeedConfirmTitle := "Confirm Seed"
 	pageSeedConfirmSubject := "What was your seed?"
-	pageSeedConfirmDesc := `Your seed is important!
-To make sure that you have properly saved your seed, please retype it here.`
+	pageSeedConfirmDesc := `Your seed phrase is critical for wallet recovery!
+To ensure you have properly saved your seed phrase, please retype it here.`
 
 	pageWidget = assistFunc(
 		assistant,
@@ -691,9 +688,9 @@ func pageNodeType(assistant *gtk.Assistant, assistFunc assistantFunc) (
 	pageName := "page_node_type"
 	pageTitle := "Node Type"
 	pageSubject := "How do you want to start your node?"
-	pageDesc := `A pruned node doesn’t keep all the historical data.
+	pageDesc := `A pruned node doesn't keep all the historical blockchain data.
 Instead, it only retains the most recent part of the blockchain, deleting older data to save disk space.
-Offline data is available at: <a href="https://snapshot.pactus.org/">https://snapshot.pactus.org/</a>.`
+Historical data is available at: <a href="https://snapshot.pactus.org/">https://snapshot.pactus.org/</a>`
 
 	// Create and return the page widget using assistFunc
 	pageWidget = assistFunc(
@@ -764,7 +761,7 @@ func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widg
 	pagePasswordName := "page_password"
 	pagePasswordTitle := "Wallet Password"
 	pagePasswordSubject := "Enter password for your wallet:"
-	pagePsswrdDesc := "Please choose a strong password for your wallet."
+	pagePsswrdDesc := "Please choose a strong password to protect your wallet."
 
 	pageWidget = assistFunc(
 		assistant,

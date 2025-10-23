@@ -12,7 +12,7 @@ import (
 func buildCreateCmd(parentCmd *cobra.Command) {
 	generateCmd := &cobra.Command{
 		Use:   "create",
-		Short: "creating a new wallet",
+		Short: "create a new wallet",
 	}
 	parentCmd.AddCommand(generateCmd)
 
@@ -37,10 +37,14 @@ func buildCreateCmd(parentCmd *cobra.Command) {
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
-		terminal.PrintSuccessMsgf("Your wallet was successfully created at: %s", wlt.Path())
-		terminal.PrintInfoMsgf("Seed phrase: \"%v\"", mnemonic)
-		terminal.PrintWarnMsgf("Please keep your seed in a safe place; " +
-			"if you lose it, you will not be able to restore your wallet.")
+		terminal.PrintSuccessMsgf("✅ Wallet successfully created at: %s", wlt.Path())
+		terminal.PrintLine()
+		terminal.PrintInfoMsgf("🌱 Your wallet seed phrase:")
+		terminal.PrintInfoMsgBoldf("   %v", mnemonic)
+		terminal.PrintLine()
+		terminal.PrintWarnMsgf("⚠️  CRITICAL: Write down this seed phrase and store it safely!")
+		terminal.PrintWarnMsgf("   This is the ONLY way to recover your wallet if needed.")
+		terminal.PrintWarnMsgf("   Never share it with anyone or store it electronically.")
 	}
 }
 

@@ -48,25 +48,12 @@
           </packing>
         </child>
         <child>
-          <!-- n-columns=2 n-rows=3 -->
+          <!-- n-columns=2 n-rows=2 -->
           <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="row-spacing">8</property>
             <property name="column-spacing">8</property>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="label" translatable="yes">Wallet seed:</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">0</property>
-                <property name="width">2</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkTextView" id="id_textview_seed">
                 <property name="visible">True</property>
@@ -74,10 +61,14 @@
                 <property name="hexpand">True</property>
                 <property name="editable">False</property>
                 <property name="wrap-mode">word</property>
+                <property name="left-margin">2</property>
+                <property name="right-margin">2</property>
+                <property name="top-margin">2</property>
+                <property name="bottom-margin">2</property>
               </object>
               <packing>
                 <property name="left-attach">1</property>
-                <property name="top-attach">1</property>
+                <property name="top-attach">0</property>
               </packing>
             </child>
             <child>
@@ -88,34 +79,27 @@
               </object>
               <packing>
                 <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">&lt;span allow_breaks="true"&gt;
+&lt;b&gt;⚠️ CRITICAL: Write down this seed phrase and store it safely!&lt;/b&gt;
+     This is the ONLY way to recover your wallet if needed.
+     Never share it with anyone or store it electronically.&lt;/span&gt;
+                </property>
+                <property name="use-markup">True</property>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
                 <property name="top-attach">1</property>
               </packing>
             </child>
             <child>
-              <object class="GtkFixed">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="hexpand">True</property>
-                <property name="vexpand">True</property>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">&lt;span allow_breaks="true"&gt;Please write these 12 words on paper.
-This seed will allow you to recover your wallet in case of computer failure.
-&lt;b&gt;WARNING:&lt;/b&gt;
-  - Never disclose your seed.
-  - Never type it on a website.
-  - Do not store it electronically.&lt;/span&gt;</property>
-                    <property name="use-markup">True</property>
-                  </object>
-                </child>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">2</property>
-                <property name="width">2</property>
-              </packing>
+              <placeholder/>
             </child>
           </object>
           <packing>

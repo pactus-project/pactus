@@ -20,7 +20,7 @@ import (
 func buildInitCmd(parentCmd *cobra.Command) {
 	initCmd := &cobra.Command{
 		Use:   "init",
-		Short: "initialize the Pactus Blockchain node",
+		Short: "initialize the Pactus blockchain node",
 	}
 	parentCmd.AddCommand(initCmd)
 
@@ -63,12 +63,14 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			mnemonic, _ = wallet.GenerateMnemonic(*entropyOpt)
 
 			terminal.PrintLine()
-			terminal.PrintInfoMsgf("Your wallet seed is:")
-			terminal.PrintInfoMsgBoldf("   " + mnemonic)
+			terminal.PrintInfoMsgf("🌱 Your wallet seed phrase:")
+			terminal.PrintInfoMsgBoldf("   %s", mnemonic)
 			terminal.PrintLine()
-			terminal.PrintWarnMsgf("Write down this seed on a piece of paper to recover your validator key in the future.")
+			terminal.PrintWarnMsgf("⚠️  CRITICAL: Write down this seed phrase and store it safely!")
+			terminal.PrintWarnMsgf("   This is the ONLY way to recover your wallet if needed.")
+			terminal.PrintWarnMsgf("   Never share it with anyone or store it electronically.")
 			terminal.PrintLine()
-			confirmed := prompt.PromptConfirm("Do you want to continue")
+			confirmed := prompt.PromptConfirm("Have you written down the seed phrase? Continue with initialization")
 			if !confirmed {
 				return
 			}
@@ -82,8 +84,9 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		var password string
 		if *passwordOpt == "" {
 			terminal.PrintLine()
-			terminal.PrintInfoMsgf("Enter a password for wallet")
-			password = prompt.PromptPassword("Password", true)
+			terminal.PrintInfoMsgf("🔐 Set a password for your wallet")
+			terminal.PrintInfoMsgf("   This password will be required to access your wallet")
+			password = prompt.PromptPassword("Wallet Password", true)
 		} else {
 			password = *passwordOpt
 		}
@@ -91,9 +94,11 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		var valNum int
 		if *valNumOpt == 0 {
 			terminal.PrintLine()
-			terminal.PrintInfoMsgBoldf("How many validators do you want to create?")
-			terminal.PrintInfoMsgf("Each node can run up to 32 validators, and each validator can hold up to 1000 staked coins.")
-			terminal.PrintInfoMsgf("You can define validators based on the amount of coins you want to stake.")
+			terminal.PrintInfoMsgBoldf("🏛️  How many validators do you want to create?")
+			terminal.PrintInfoMsgf("   • Each node can run up to 32 validators")
+			terminal.PrintInfoMsgf("   • Each validator can stake up to 1,000 coins")
+			terminal.PrintInfoMsgf("   • Choose based on your total stake amount")
+			terminal.PrintLine()
 			valNum = prompt.PromptInputWithRange("Number of Validators", 7, 1, 32)
 		} else {
 			if *valNumOpt < 1 || *valNumOpt > 32 {
@@ -124,7 +129,8 @@ func buildInitCmd(parentCmd *cobra.Command) {
 
 		if recoveryEventFunc != nil {
 			terminal.PrintLine()
-			terminal.PrintInfoMsgf("Recovering wallet addresses (Ctrl+C to abort)...")
+			terminal.PrintInfoMsgf("🔄 Recovering wallet addresses...")
+			terminal.PrintInfoMsgf("   Press Ctrl+C to abort if needed")
 			terminal.PrintLine()
 		}
 
@@ -133,21 +139,22 @@ func buildInitCmd(parentCmd *cobra.Command) {
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
-		terminal.PrintInfoMsgBoldf("Validator addresses:")
+		terminal.PrintSuccessMsgf("✅ Pactus node successfully initialized!")
+		terminal.PrintLine()
+		terminal.PrintInfoMsgBoldf("🏛️  Validator Addresses:")
 		for i, addr := range validatorAddrs {
-			terminal.PrintInfoMsgf("%v- %s", i+1, addr)
+			terminal.PrintInfoMsgf("   %d. %s", i+1, addr)
 		}
 		terminal.PrintLine()
 
-		terminal.PrintInfoMsgBoldf("Reward address:")
-		terminal.PrintInfoMsgf("%s", rewardAddrs)
+		terminal.PrintInfoMsgBoldf("💰 Reward Address:")
+		terminal.PrintInfoMsgf("   %s", rewardAddrs)
+		terminal.PrintLine()
 
+		terminal.PrintInfoMsgf("🌐 Network: %v", chain.String())
+		terminal.PrintInfoMsgf("📁 Working Directory: %v", workingDir)
 		terminal.PrintLine()
-		terminal.PrintInfoMsgBoldf("Network: %v", chain.String())
-		terminal.PrintLine()
-		terminal.PrintSuccessMsgf("A pactus node is successfully initialized at %v", workingDir)
-		terminal.PrintLine()
-		terminal.PrintInfoMsgf("You can start the node by running this command:")
-		terminal.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
+		terminal.PrintInfoMsgf("🚀 To start your node, run:")
+		terminal.PrintInfoMsgBoldf("   %s start -w %s", cmd.PactusDaemonName(), workingDir)
 	}
 }
