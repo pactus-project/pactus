@@ -25,9 +25,9 @@
             "address": "bootstrap4.pactus.org:50051"
         },
         {
-            "name": "Pactus",
-            "email": "info@pactus.org",
-            "website": "https://pactus.org",
+            "name": "",
+            "email": "",
+            "website": "",
             "address": "rpc.javad.dev:50051"
         }
     ],
