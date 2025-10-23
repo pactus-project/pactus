@@ -13,7 +13,7 @@ import (
 func buildAllTransactionCmd(parentCmd *cobra.Command) {
 	txCmd := &cobra.Command{
 		Use:   "tx",
-		Short: "creating, signing and publishing a transaction",
+		Short: "create, sign and publish a transaction",
 	}
 
 	parentCmd.AddCommand(txCmd)
@@ -54,12 +54,13 @@ func buildTransferTxCmd(parentCmd *cobra.Command) {
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
-		terminal.PrintInfoMsgf("You are going to sign this \033[1mTransfer\033[0m transition:")
-		terminal.PrintInfoMsgf("From  : %s", sender)
-		terminal.PrintInfoMsgf("To    : %s", receiver)
-		terminal.PrintInfoMsgf("Amount: %s", amt)
-		terminal.PrintInfoMsgf("Fee   : %s", trx.Fee())
-		terminal.PrintInfoMsgf("Memo  : %s", trx.Memo())
+		terminal.PrintInfoMsgf("📝 Transaction Details:")
+		terminal.PrintInfoMsgf("   Type   : Transfer")
+		terminal.PrintInfoMsgf("   From   : %s", sender)
+		terminal.PrintInfoMsgf("   To     : %s", receiver)
+		terminal.PrintInfoMsgf("   Amount : %s", amt)
+		terminal.PrintInfoMsgf("   Fee    : %s", trx.Fee())
+		terminal.PrintInfoMsgf("   Memo   : %s", trx.Memo())
 
 		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
@@ -97,12 +98,13 @@ func buildBondTxCmd(parentCmd *cobra.Command) {
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
-		terminal.PrintInfoMsgf("You are going to sign this \033[1mBond\033[0m transition:")
-		terminal.PrintInfoMsgf("Account  : %s", sender)
-		terminal.PrintInfoMsgf("Validator: %s", receiver)
-		terminal.PrintInfoMsgf("Stake    : %s", amt)
-		terminal.PrintInfoMsgf("Fee      : %s", trx.Fee())
-		terminal.PrintInfoMsgf("Memo     : %s", trx.Memo())
+		terminal.PrintInfoMsgf("📝 Transaction Details:")
+		terminal.PrintInfoMsgf("   Type     : Bond")
+		terminal.PrintInfoMsgf("   Account  : %s", sender)
+		terminal.PrintInfoMsgf("   Validator: %s", receiver)
+		terminal.PrintInfoMsgf("   Stake    : %s", amt)
+		terminal.PrintInfoMsgf("   Fee      : %s", trx.Fee())
+		terminal.PrintInfoMsgf("   Memo     : %s", trx.Memo())
 
 		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
@@ -136,10 +138,11 @@ func buildUnbondTxCmd(parentCmd *cobra.Command) {
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
-		terminal.PrintInfoMsgf("You are going to sign this \033[1mUnbond\033[0m transition:")
-		terminal.PrintInfoMsgf("Validator: %s", from)
-		terminal.PrintInfoMsgf("Fee      : %s", trx.Fee())
-		terminal.PrintInfoMsgf("Memo     : %s", trx.Memo())
+		terminal.PrintInfoMsgf("📝 Transaction Details:")
+		terminal.PrintInfoMsgf("   Type     : Unbond")
+		terminal.PrintInfoMsgf("   Validator: %s", from)
+		terminal.PrintInfoMsgf("   Fee      : %s", trx.Fee())
+		terminal.PrintInfoMsgf("   Memo     : %s", trx.Memo())
 
 		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
@@ -176,12 +179,13 @@ func buildWithdrawTxCmd(parentCmd *cobra.Command) {
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
-		terminal.PrintInfoMsgf("You are going to sign this \033[1mWithdraw\033[0m transition:")
-		terminal.PrintInfoMsgf("Validator: %s", sender)
-		terminal.PrintInfoMsgf("Account  : %s", receiver)
-		terminal.PrintInfoMsgf("Amount   : %s", amt)
-		terminal.PrintInfoMsgf("Fee      : %s", trx.Fee())
-		terminal.PrintInfoMsgf("Memo     : %s", trx.Memo())
+		terminal.PrintInfoMsgf("📝 Transaction Details:")
+		terminal.PrintInfoMsgf("   Type     : Withdraw")
+		terminal.PrintInfoMsgf("   Validator: %s", sender)
+		terminal.PrintInfoMsgf("   Account  : %s", receiver)
+		terminal.PrintInfoMsgf("   Amount   : %s", amt)
+		terminal.PrintInfoMsgf("   Fee      : %s", trx.Fee())
+		terminal.PrintInfoMsgf("   Memo     : %s", trx.Memo())
 
 		signAndPublishTx(wlt, trx, *noConfirmOpt, *passOpt)
 	}
@@ -210,13 +214,16 @@ func signAndPublishTx(wlt *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass strin
 	terminal.FatalErrorCheck(err)
 
 	bs, _ := trx.Bytes()
-	terminal.PrintInfoMsgf("Signed transaction data: %x", bs)
+	terminal.PrintLine()
+	terminal.PrintSuccessMsgf("✅ Transaction signed successfully")
+	terminal.PrintInfoMsgf("   Signed transaction data: %x", bs)
 	terminal.PrintLine()
 
 	if !wlt.IsOffline() {
 		if !noConfirm {
-			terminal.PrintInfoMsgf("You are going to broadcast the signed transition:")
-			terminal.PrintWarnMsgf("THIS ACTION IS NOT REVERSIBLE")
+			terminal.PrintWarnMsgf("⚠️  You are going to broadcast the signed transaction")
+			terminal.PrintWarnMsgf("   This action cannot be undone")
+			terminal.PrintLine()
 			confirmed := prompt.PromptConfirm("Do you want to continue")
 			if !confirmed {
 				return
@@ -228,7 +235,9 @@ func signAndPublishTx(wlt *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass strin
 		err = wlt.Save()
 		terminal.FatalErrorCheck(err)
 
-		terminal.PrintInfoMsgf("Transaction hash: %s", res)
+		terminal.PrintLine()
+		terminal.PrintSuccessMsgf("✅ Transaction broadcast successfully!")
+		terminal.PrintInfoMsgf("   Transaction ID: %s", res)
 	}
 }
 

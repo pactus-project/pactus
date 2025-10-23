@@ -18,9 +18,9 @@ import (
 func buildPruneCmd(parentCmd *cobra.Command) {
 	pruneCmd := &cobra.Command{
 		Use:   "prune",
-		Short: "prune old blocks and transactions from client",
+		Short: "prune old blocks and transactions from the node",
 		Long: "The prune command optimizes blockchain storage by removing outdated blocks and transactions, " +
-			"freeing up disk space and enhancing client performance.",
+			"freeing up disk space and enhancing node performance.",
 	}
 	parentCmd.AddCommand(pruneCmd)
 
@@ -53,10 +53,12 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 		logger.InitGlobalLogger(conf.Logger)
 
 		terminal.PrintLine()
-		terminal.PrintWarnMsgf("This command removes all the blocks and transactions up to %d days ago "+
-			"and converts the node to prune mode.", conf.Store.RetentionDays)
+		terminal.PrintWarnMsgf("⚠️  PRUNE OPERATION WARNING")
+		terminal.PrintWarnMsgf("   This will remove all blocks and transactions older than %d days", conf.Store.RetentionDays)
+		terminal.PrintWarnMsgf("   and convert your node to prune mode.")
+		terminal.PrintWarnMsgf("   This action cannot be undone.")
 		terminal.PrintLine()
-		confirmed := prompt.PromptConfirm("Do you want to continue")
+		confirmed := prompt.PromptConfirm("Are you sure you want to continue")
 		if !confirmed {
 			return
 		}
@@ -96,19 +98,20 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 
 		if canceled {
 			terminal.PrintLine()
-			terminal.PrintInfoMsgf("❌ The operation canceled.")
+			terminal.PrintWarnMsgf("❌ Prune operation cancelled.")
 			terminal.PrintLine()
 		} else if prunedCount == 0 {
 			terminal.PrintLine()
-			terminal.PrintInfoMsgf("⚠️ Your node is not passed the retention_days set in config or it's already a pruned node.")
+			terminal.PrintInfoMsgf("ℹ️  No pruning needed")
+			terminal.PrintInfoMsgf("   Your node has not reached the retention period (%d days)", conf.Store.RetentionDays)
+			terminal.PrintInfoMsgf("   or is already in prune mode.")
 			terminal.PrintLine()
-			terminal.PrintInfoMsgf("Make sure you try to prune a node after retention_days specified in config.toml")
 		} else {
 			terminal.PrintLine()
-			terminal.PrintInfoMsgf("✅ Your node successfully pruned and changed to prune mode.")
+			terminal.PrintSuccessMsgf("✅ Your node successfully pruned and changed to prune mode.")
 			terminal.PrintLine()
-			terminal.PrintInfoMsgf("You can start the node by running this command:")
-			terminal.PrintInfoMsgf("./pactus-daemon start -w %v", workingDir)
+			terminal.PrintInfoMsgf("🚀 To start your node, run:")
+			terminal.PrintInfoMsgBoldf("   %s start -w %s", cmd.PactusDaemonName(), workingDir)
 		}
 
 		store.Close()
@@ -119,6 +122,10 @@ func buildPruneCmd(parentCmd *cobra.Command) {
 }
 
 func pruningProgressBar(prunedCount, skippedCount, totalCount uint32) {
+	if (prunedCount+skippedCount)%1000 != 0 {
+		return
+	}
+
 	bar := terminal.ProgressBar(int64(totalCount), 30)
 	bar.Describe(fmt.Sprintf("Pruned: %d | Skipped: %d", prunedCount, skippedCount))
 	err := bar.Add(int(prunedCount + skippedCount))

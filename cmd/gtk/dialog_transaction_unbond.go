@@ -51,17 +51,19 @@ func broadcastTransactionUnbond(wlt *wallet.Wallet) {
 			return
 		}
 		msg := fmt.Sprintf(`
-You are going to sign and broadcast this transaction:
+📝 Transaction Details:
 <tt>
+Type:     Unbond
 Validator: %s
 Fee:       %s
 Memo:      %s
 </tt>
-<b>THIS ACTION IS NOT REVERSIBLE. Do you want to continue?</b>`, validator, trx.Fee(), trx.Memo())
+
+You are going to sign and broadcast this transaction.
+<b>⚠️ This action cannot be undone.</b>
+Do you want to continue with this transaction?`, validator, trx.Fee(), trx.Memo())
 
 		signAndBroadcastTransaction(dlg, msg, wlt, trx)
-
-		dlg.Close()
 	}
 
 	onClose := func() {

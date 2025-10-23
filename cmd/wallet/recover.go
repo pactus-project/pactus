@@ -18,7 +18,7 @@ import (
 func buildRecoverCmd(parentCmd *cobra.Command) {
 	recoverCmd := &cobra.Command{
 		Use:   "recover",
-		Short: "recovering wallet from the seed phrase or mnemonic",
+		Short: "recover wallet from the seed phrase or mnemonic",
 	}
 	parentCmd.AddCommand(recoverCmd)
 
@@ -48,7 +48,8 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 			cancel()
 		}()
 
-		terminal.PrintInfoMsgf("Recovering wallet addresses (Ctrl+C to abort)...")
+		terminal.PrintInfoMsgf("🔄 Recovering wallet addresses...")
+		terminal.PrintInfoMsgf("   Press Ctrl+C to abort if needed")
 		terminal.PrintLine()
 
 		index := 0
@@ -63,7 +64,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		if err != nil {
 			if wasInterrupted || errors.Is(err, context.Canceled) {
 				terminal.PrintLine()
-				terminal.PrintWarnMsgf("Recovery aborted")
+				terminal.PrintWarnMsgf("⚠️  Recovery aborted by user")
 			} else {
 				terminal.PrintLine()
 				terminal.PrintWarnMsgf("Recovery addresses failed: %v", err)
@@ -72,12 +73,12 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 
 		// Always save the wallet before exiting
 		terminal.PrintLine()
-		terminal.PrintInfoMsgf("Saving wallet...")
+		terminal.PrintInfoMsgf("💾 Saving wallet...")
 		err = wlt.Save()
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
-		terminal.PrintInfoMsgf("Wallet successfully recovered and saved at: %s", wlt.Path())
+		terminal.PrintSuccessMsgf("✅ Wallet successfully recovered and saved at: %s", wlt.Path())
 	}
 }
 
@@ -85,7 +86,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 func buildGetSeedCmd(parentCmd *cobra.Command) {
 	getSeedCmd := &cobra.Command{
 		Use:   "seed",
-		Short: "displays the mnemonic or seed phrase that can be used to recover this wallet",
+		Short: "displays the seed phrase that can be used to recover this wallet",
 	}
 	parentCmd.AddCommand(getSeedCmd)
 
@@ -100,6 +101,11 @@ func buildGetSeedCmd(parentCmd *cobra.Command) {
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
-		terminal.PrintInfoMsgf("Your wallet's seed phrase is: \"%v\"", mnemonic)
+		terminal.PrintInfoMsgf("🌱 Your wallet seed phrase:")
+		terminal.PrintInfoMsgBoldf("   %v", mnemonic)
+		terminal.PrintLine()
+		terminal.PrintWarnMsgf("⚠️  CRITICAL: Write down this seed phrase and store it safely!")
+		terminal.PrintWarnMsgf("   This is the ONLY way to recover your wallet if needed.")
+		terminal.PrintWarnMsgf("   Never share it with anyone or store it electronically.")
 	}
 }

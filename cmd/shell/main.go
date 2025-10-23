@@ -57,7 +57,7 @@ func createRootCommand() *cobra.Command {
 		"username for gRPC basic authentication")
 
 	interactive.Flags().StringVar(&password, "auth-password", "",
-		"username for gRPC basic authentication")
+		"password for gRPC basic authentication")
 
 	interactive.PreRun = func(_ *cobra.Command, _ []string) {
 		cls()
