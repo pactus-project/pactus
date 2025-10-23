@@ -23,6 +23,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+type serverInfo struct {
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	Website string `json:"website"`
+	Address string `json:"address"`
+}
+
 type Wallet struct {
 	store      *Store
 	path       string
@@ -151,8 +158,8 @@ func newWallet(walletPath string, store *Store, offline bool, option *walletOpt)
 	}
 
 	if !offline {
-		serversInfo := map[string][]string{}
-		err := json.Unmarshal(serversJSON, &serversInfo)
+		serversData := map[string][]serverInfo{}
+		err := json.Unmarshal(serversJSON, &serversData)
 		if err != nil {
 			return nil, err
 		}
@@ -160,10 +167,14 @@ func newWallet(walletPath string, store *Store, offline bool, option *walletOpt)
 		var netServers []string
 		switch wlt.store.Network {
 		case genesis.Mainnet:
-			netServers = serversInfo["mainnet"]
+			for _, srv := range serversData["mainnet"] {
+				netServers = append(netServers, srv.Address)
+			}
 
 		case genesis.Testnet:
-			netServers = serversInfo["testnet"]
+			for _, srv := range serversData["testnet"] {
+				netServers = append(netServers, srv.Address)
+			}
 
 		case genesis.Localnet:
 			netServers = []string{"localhost:50052"}

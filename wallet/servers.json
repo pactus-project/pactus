@@ -1,19 +1,84 @@
 {
     "mainnet": [
-        "localhost:50051",
-        "bootstrap1.pactus.org:50051",
-        "bootstrap2.pactus.org:50051",
-        "bootstrap3.pactus.org:50051",
-        "bootstrap4.pactus.org:50051",
-        "rpc.javad.dev:50051",
-        "65.109.234.125:50051"
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "localhost:50051"
+        },
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "bootstrap1.pactus.org:50051"
+        },
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "bootstrap2.pactus.org:50051"
+        },
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "bootstrap3.pactus.org:50051"
+        },
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "bootstrap4.pactus.org:50051"
+        },
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "rpc.javad.dev:50051"
+        },
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "65.109.234.125:50051"
+        }
     ],
-    "testnet": [
-        "localhost:50052",
-        "testnet1.pactus.org:50052",
-        "testnet2.pactus.org:50052",
-        "testnet3.pactus.org:50052",
-        "testnet4.pactus.org:50052",
-        "testnet-rpc.javad.dev:50052"
+    "testnet": [    
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "localhost:50052"
+        },
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "testnet1.pactus.org:50052"
+        },
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "testnet2.pactus.org:50052"
+        },
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "testnet3.pactus.org:50052"
+        },
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "testnet4.pactus.org:50052"
+        },
+        {
+            "name": "Pactus",
+            "email": "info@pactus.org",
+            "website": "https://pactus.org",
+            "address": "testnet-rpc.javad.dev:50052"
+        }
     ]
 }
