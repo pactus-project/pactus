@@ -99,7 +99,6 @@ Do you want to continue with this transaction?`,
 	}
 
 	onClose := func() {
-		fmt.Printf("33333")
 		dlg.Close()
 	}
 

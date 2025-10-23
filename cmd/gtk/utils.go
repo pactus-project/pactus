@@ -242,7 +242,8 @@ func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, wlt *wallet.Wal
 		}
 
 		showInfoDialog(parent,
-			fmt.Sprintf("✅ Transaction sent successfully!\n\nTransaction Hash: <a href=\"https://pacviewer.com/transaction/%s\">%s</a>", txID, txID))
+			fmt.Sprintf("✅ Transaction sent successfully!\n\n"+
+				"Transaction ID: <a href=\"https://pacviewer.com/transaction/%s\">%s</a>", txID, txID))
 
 		parent.Close()
 	}
