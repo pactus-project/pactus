@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSaveMainnetConfig(t *testing.T) {
@@ -231,4 +232,49 @@ func TestNodeConfigBasicCheck(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestGetBootstrapNodes(t *testing.T) {
+	nodes, err := GetBootstrapNodes()
+	require.NoError(t, err)
+	assert.NotEmpty(t, nodes, "Bootstrap nodes list should not be empty")
+
+	// Verify structure of bootstrap nodes
+	for _, node := range nodes {
+		assert.NotEmpty(t, node.Address, "Bootstrap node address should not be empty")
+		// Name, Email, Website might be empty for some nodes, but Address must exist
+
+		// Verify address format (should be multiaddr format)
+		assert.True(t,
+			strings.HasPrefix(node.Address, "/dns/") ||
+				strings.HasPrefix(node.Address, "/ip4/") ||
+				strings.HasPrefix(node.Address, "/ip6/"),
+			"Address should be in multiaddr format: %s", node.Address)
+	}
+
+	// Check that official Pactus bootstrap nodes exist
+	foundPactusBootstrap := false
+	for _, node := range nodes {
+		if node.Name == "Pactus" && strings.Contains(node.Address, "bootstrap") {
+			foundPactusBootstrap = true
+			assert.Equal(t, "info@pactus.org", node.Email)
+			assert.Equal(t, "https://pactus.org", node.Website)
+
+			break
+		}
+	}
+	assert.True(t, foundPactusBootstrap, "Should contain at least one official Pactus bootstrap node")
+}
+
+func TestBootstrapInfoStructure(t *testing.T) {
+	nodes, err := GetBootstrapNodes()
+	require.NoError(t, err)
+	require.NotEmpty(t, nodes)
+
+	// Verify that the first node has the expected field types
+	firstNode := nodes[0]
+	assert.IsType(t, "", firstNode.Name)
+	assert.IsType(t, "", firstNode.Email)
+	assert.IsType(t, "", firstNode.Website)
+	assert.IsType(t, "", firstNode.Address)
 }
