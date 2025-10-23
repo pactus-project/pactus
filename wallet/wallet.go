@@ -619,6 +619,11 @@ func (w *Wallet) SetDefaultFee(fee amount.Amount) {
 }
 
 func GetServerList(network string) ([]ServerInfo, error) {
+	// Default to mainnet if network is empty
+	if network == "" {
+		network = "mainnet"
+	}
+
 	serversData := map[string][]ServerInfo{}
 	err := json.Unmarshal(serversJSON, &serversData)
 	if err != nil {
