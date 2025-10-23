@@ -415,8 +415,8 @@ func BenchmarkEncodeDecodeCycle(b *testing.B) {
 	// (that is, one Encode() and one Decode() operation), we expect at most
 	// 2 allocations per reported test op.
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for b.Loop() {
 		str, err := Encode(hrp, base32Input)
 		if err != nil {
 			b.Fatalf("failed to encode input: %v", err)
@@ -560,8 +560,8 @@ func BenchmarkConvertBitsDown(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for b.Loop() {
 		_, err := ConvertBits(inputData, 8, 5, true)
 		if err != nil {
 			b.Fatalf("error converting bits: %v", err)
@@ -584,8 +584,8 @@ func BenchmarkConvertBitsUp(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+
+	for b.Loop() {
 		_, err := ConvertBits(inputData, 8, 5, true)
 		if err != nil {
 			b.Fatalf("error converting bits: %v", err)
