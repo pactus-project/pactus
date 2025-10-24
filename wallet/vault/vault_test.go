@@ -524,8 +524,7 @@ func TestAddressRecovery(t *testing.T) {
 
 		// Should have 1 Ed25519 address (the first one)
 		addresses := vault.AllAccountAddresses()
-		assert.Len(t, addresses, 1)
-		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", addresses[0].Address)
+		assert.Empty(t, addresses)
 	})
 
 	t.Run("recover addresses with one gap at the beginning", func(t *testing.T) {
@@ -576,6 +575,26 @@ func TestAddressRecovery(t *testing.T) {
 		assert.Equal(t, "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns", addresses[5].Address)
 		assert.Equal(t, "pc1zaj6dzh6zg8zsgzy2rrtvyyeg0l4d32p8e6xn5h", addresses[6].Address)
 		assert.Equal(t, "pc1ztmex7taes23h6z4jf0awwmps0zpzmecuzcsev0", addresses[7].Address)
+	})
+
+	t.Run("prevent recovering existing address", func(t *testing.T) {
+		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		assert.NoError(t, err)
+
+		existing, _ := vault.NewEd25519AccountAddress("existing address", "")
+
+		hasActivity := func(addr string) (bool, error) {
+			return addr == "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", nil
+		}
+
+		err = vault.RecoverAddresses(context.Background(), "", hasActivity)
+		assert.NoError(t, err)
+
+		addresses := vault.AllAccountAddresses()
+		assert.Len(t, addresses, 1)
+
+		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", addresses[0].Address)
+		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", existing.Address)
 	})
 
 	t.Run("error handling", func(t *testing.T) {

@@ -306,7 +306,7 @@ func buildExtendedEntry(builder *gtk.Builder, overlayID string) *gtk.Entry {
 
 	// Set the click event for the Button
 	button.Connect("clicked", func() {
-		buffer, _ := entry.GetText()
+		buffer := getEntryText(entry)
 		clipboard, _ := gtk.ClipboardGet(gdk.SELECTION_CLIPBOARD)
 		clipboard.SetText(buffer)
 	})
@@ -334,4 +334,68 @@ func runDialog(dlg *gtk.Dialog) gtk.ResponseType {
 	dlg.Destroy()
 
 	return response
+}
+
+func comboBoxActiveValue(combo *gtk.ComboBox) int {
+	iter, err := combo.GetActiveIter()
+	fatalErrorCheck(err)
+
+	model, err := combo.GetModel()
+	fatalErrorCheck(err)
+
+	val, err := model.ToTreeModel().GetValue(iter, 0)
+	fatalErrorCheck(err)
+
+	valueInterface, err := val.GoValue()
+	fatalErrorCheck(err)
+
+	return valueInterface.(int)
+}
+
+func getEntryText(entry *gtk.Entry) string {
+	txt, err := entry.GetText()
+	fatalErrorCheck(err)
+
+	return txt
+}
+
+// Color represents different text colors for UI elements.
+type Color int
+
+const (
+	ColorRed Color = iota
+	ColorGreen
+	ColorBlue
+	ColorYellow
+	ColorOrange
+	ColorPurple
+	ColorGray
+)
+
+// getColorHex returns the hex color code for the given Color enum.
+func getColorHex(color Color) string {
+	switch color {
+	case ColorRed:
+		return "#FF0000"
+	case ColorGreen:
+		return "#00FF00"
+	case ColorBlue:
+		return "#0000FF"
+	case ColorYellow:
+		return "#FFFF00"
+	case ColorOrange:
+		return "#FFA500"
+	case ColorPurple:
+		return "#800080"
+	case ColorGray:
+		return "#808080"
+	default:
+		return "#000000" // Default to black
+	}
+}
+
+func setColoredText(label *gtk.Label, str string, color Color) {
+	colorHex := getColorHex(color)
+	formattedText := fmt.Sprintf("<span color='%s'>%s</span>", colorHex, str)
+	label.SetMarkup(formattedText)
 }

@@ -25,8 +25,7 @@ func getAddressLabel(oldLabel string) (string, bool) {
 	newLabel := ""
 	ok := false
 	onOk := func() {
-		newLabel, err = labelEntry.GetText()
-		fatalErrorCheck(err)
+		newLabel = getEntryText(labelEntry)
 
 		ok = true
 		dlg.Close()

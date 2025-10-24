@@ -32,8 +32,7 @@ func setDefaultFee(wdgWallet *widgetWallet) {
 	feeEntry.SetText(strings.ReplaceAll(currentFee.String(), " PAC", ""))
 
 	onOk := func() {
-		feeStr, err := feeEntry.GetText()
-		fatalErrorCheck(err)
+		feeStr := getEntryText(feeEntry)
 
 		feeAmount, err := amount.FromString(feeStr)
 		if err != nil {

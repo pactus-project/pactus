@@ -755,31 +755,33 @@ func (v *Vault) RecoverAddresses(ctx context.Context, password string,
 	return v.recoverEd25519AccountAddresses(ctx, password, hasActivity)
 }
 
-// recoverBLSAccountAddresses recovers BLS account addresses following the PIP-41 specification.
-func (v *Vault) recoverBLSAccountAddresses(ctx context.Context, hasActivity func(addrs string) (bool, error)) error {
-	ext, err := blshdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
-	if err != nil {
-		return err
-	}
-
-	recoveredCount := 0 // Starting from zero; doesn't recover the first address
+// scanRecoveredCount scans derived addresses until the gap limit is exceeded and
+// returns how many addresses should be recovered according to PIP-41.
+func (*Vault) scanRecoveredCount(
+	ctx context.Context,
+	startIndex uint32,
+	deriveAt func(index uint32) (*AddressInfo, error),
+	hasActivity func(addr string) (bool, error),
+) (int, error) {
+	recoveredCount := 0
 	inactiveCount := 1
-	currentIndex := uint32(0)
-	info, err := v.deriveBLSAccountAddressAt(ext, currentIndex, "")
+	currentIndex := startIndex
+
+	info, err := deriveAt(currentIndex)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	for {
 		select {
 		case <-ctx.Done():
-			return ctx.Err()
+			return 0, ctx.Err()
 		default:
 		}
 
 		isActive, err := hasActivity(info.Address)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 		if isActive {
@@ -793,14 +795,35 @@ func (v *Vault) recoverBLSAccountAddresses(ctx context.Context, hasActivity func
 		}
 
 		currentIndex++
-		info, err = v.deriveBLSAccountAddressAt(ext, currentIndex, "")
+		info, err = deriveAt(currentIndex)
 		if err != nil {
-			return err
+			return 0, err
 		}
 	}
 
-	// Recover all addresses up to the total number of recovered addresses according to PIP-41 specification.
-	for i := uint32(0); i < uint32(recoveredCount); i++ {
+	return recoveredCount, nil
+}
+
+// recoverBLSAccountAddresses recovers BLS account addresses following the PIP-41 specification.
+func (v *Vault) recoverBLSAccountAddresses(ctx context.Context, hasActivity func(addrs string) (bool, error)) error {
+	ext, err := blshdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
+	if err != nil {
+		return err
+	}
+
+	recoveredCount, err := v.scanRecoveredCount(
+		ctx,
+		v.Purposes.PurposeBLS.NextAccountIndex,
+		func(index uint32) (*AddressInfo, error) {
+			return v.deriveBLSAccountAddressAt(ext, index, "")
+		},
+		hasActivity,
+	)
+	if err != nil {
+		return err
+	}
+
+	for i := 0; i < recoveredCount; i++ {
 		_, _ = v.NewBLSAccountAddress(fmt.Sprintf("BLS Account Address %d", i))
 	}
 
@@ -821,45 +844,19 @@ func (v *Vault) recoverEd25519AccountAddresses(ctx context.Context, password str
 		return err
 	}
 
-	recoveredCount := 1 // Starting from 1; recover the first address
-	inactiveCount := 0
-	currentIndex := uint32(0)
-	info, err := v.deriveEd25519AccountAddressAt(masterKey, currentIndex, "")
+	recoveredCount, err := v.scanRecoveredCount(
+		ctx,
+		v.Purposes.PurposeBIP44.NextEd25519Index,
+		func(index uint32) (*AddressInfo, error) {
+			return v.deriveEd25519AccountAddressAt(masterKey, index, "")
+		},
+		hasActivity,
+	)
 	if err != nil {
 		return err
 	}
 
-	for {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		default:
-		}
-
-		isActive, err := hasActivity(info.Address)
-		if err != nil {
-			return err
-		}
-
-		if isActive {
-			recoveredCount += inactiveCount
-			inactiveCount = 1
-		} else {
-			inactiveCount++
-			if inactiveCount > AddressGapLimit {
-				break
-			}
-		}
-
-		currentIndex++
-		info, err = v.deriveEd25519AccountAddressAt(masterKey, currentIndex, "")
-		if err != nil {
-			return err
-		}
-	}
-
-	// Recover all addresses up to the total number of recovered addresses according to PIP-41 specification.
-	for i := uint32(0); i < uint32(recoveredCount); i++ {
+	for i := 0; i < recoveredCount; i++ {
 		_, _ = v.NewEd25519AccountAddress(fmt.Sprintf("Ed25519 Account Address %d", i), password)
 	}
 

@@ -47,7 +47,7 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 	}
 
 	onReceiverChanged := func() {
-		receiverStr, _ := receiverEntry.GetText()
+		receiverStr := getEntryText(receiverEntry)
 		updateAccountHint(receiverHint, receiverStr, wlt)
 	}
 	onFeeChanged := func() {
@@ -56,9 +56,9 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 
 	onSend := func() {
 		sender := senderEntry.GetActiveID()
-		receiver, _ := receiverEntry.GetText()
-		amountStr, _ := amountEntry.GetText()
-		memo, _ := memoEntry.GetText()
+		receiver := getEntryText(receiverEntry)
+		amountStr := getEntryText(amountEntry)
+		memo := getEntryText(memoEntry)
 
 		amt, err := amount.FromString(amountStr)
 		if err != nil {
@@ -67,7 +67,7 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 			return
 		}
 
-		feeStr, _ := feeEntry.GetText()
+		feeStr := getEntryText(feeEntry)
 		opts := []wallet.TxOption{
 			wallet.OptionMemo(memo),
 			wallet.OptionFee(feeStr),

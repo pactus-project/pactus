@@ -108,9 +108,7 @@ func (wm *Manager) UnloadWallet(
 	return nil
 }
 
-func (wm *Manager) TotalBalance(
-	walletName string,
-) (amount.Amount, error) {
+func (wm *Manager) TotalBalance(walletName string) (amount.Amount, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return 0, status.Errorf(codes.NotFound, "wallet is not loaded")

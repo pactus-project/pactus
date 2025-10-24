@@ -54,7 +54,7 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 
 	onReceiverChanged := func() {
 		receiverEntry, _ := receiverCombo.GetEntry()
-		receiverStr, _ := receiverEntry.GetText()
+		receiverStr := getEntryText(receiverEntry)
 		updateValidatorHint(receiverHint, receiverStr, wlt)
 	}
 
@@ -65,10 +65,10 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 	onSend := func() {
 		sender := senderEntry.GetActiveID()
 		receiverEntry, _ := receiverCombo.GetEntry()
-		receiver, _ := receiverEntry.GetText()
-		publicKey, _ := publicKeyEntry.GetText()
-		amountStr, _ := amountEntry.GetText()
-		memo, _ := memoEntry.GetText()
+		receiver := getEntryText(receiverEntry)
+		publicKey := getEntryText(publicKeyEntry)
+		amountStr := getEntryText(amountEntry)
+		memo := getEntryText(memoEntry)
 
 		amt, err := amount.FromString(amountStr)
 		if err != nil {
@@ -77,7 +77,7 @@ func broadcastTransactionBond(wlt *wallet.Wallet) {
 			return
 		}
 
-		feeStr, _ := feeEntry.GetText()
+		feeStr := getEntryText(feeEntry)
 		opts := []wallet.TxOption{
 			wallet.OptionMemo(memo),
 			wallet.OptionFee(feeStr),
