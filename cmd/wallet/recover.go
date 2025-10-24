@@ -1,12 +1,7 @@
 package main
 
 import (
-	"context"
-	"errors"
-	"os"
-	"os/signal"
-	"syscall"
-
+	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
@@ -39,37 +34,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		wlt, err := wallet.Create(*pathOpt, mnemonic, *passOpt, chainType)
 		terminal.FatalErrorCheck(err)
 
-		ctx, cancel := context.WithCancel(context.Background())
-		sigChan := make(chan os.Signal, 1)
-		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-
-		go func() {
-			<-sigChan
-			cancel()
-		}()
-
-		terminal.PrintInfoMsgf("🔄 Recovering wallet addresses...")
-		terminal.PrintInfoMsgf("   Press Ctrl+C to abort if needed")
-		terminal.PrintLine()
-
-		index := 0
-		err = wlt.RecoveryAddresses(ctx, *passOpt, func(addr string) {
-			terminal.PrintInfoMsgf("%d. %s", index+1, addr)
-			index++
-		})
-
-		// Check if context was cancelled
-		wasInterrupted := ctx.Err() != nil
-
-		if err != nil {
-			if wasInterrupted || errors.Is(err, context.Canceled) {
-				terminal.PrintLine()
-				terminal.PrintWarnMsgf("⚠️  Recovery aborted by user")
-			} else {
-				terminal.PrintLine()
-				terminal.PrintWarnMsgf("Recovery addresses failed: %v", err)
-			}
-		}
+		cmd.RecoverWalletAddresses(wlt, *passOpt)
 
 		// Always save the wallet before exiting
 		terminal.PrintLine()

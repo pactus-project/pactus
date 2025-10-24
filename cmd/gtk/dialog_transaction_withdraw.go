@@ -52,7 +52,7 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 
 	onReceiverChanged := func() {
 		receiverEntry, _ := receiverCombo.GetEntry()
-		receiverStr, _ := receiverEntry.GetText()
+		receiverStr := getEntryText(receiverEntry)
 		updateAccountHint(receiverHint, receiverStr, wlt)
 	}
 
@@ -63,9 +63,9 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 	onSend := func() {
 		sender := validatorEntry.GetActiveID()
 		receiverEntry, _ := receiverCombo.GetEntry()
-		receiver, _ := receiverEntry.GetText()
-		amountStr, _ := stakeEntry.GetText()
-		memo, _ := memoEntry.GetText()
+		receiver := getEntryText(receiverEntry)
+		amountStr := getEntryText(stakeEntry)
+		memo := getEntryText(memoEntry)
 
 		amt, err := amount.FromString(amountStr)
 		if err != nil {
@@ -74,7 +74,7 @@ func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
 			return
 		}
 
-		feeStr, _ := feeEntry.GetText()
+		feeStr := getEntryText(feeEntry)
 		opts := []wallet.TxOption{
 			wallet.OptionMemo(memo),
 			wallet.OptionFee(feeStr),

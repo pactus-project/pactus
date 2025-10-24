@@ -58,7 +58,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 	wgtPassword, entryPassword, pagePasswordName := pagePassword(assistant, assistFunc)
 
 	// --- page_num_validators
-	wgtNumValidators, lsNumValidators, comboNumValidators,
+	wgtNumValidators, comboNumValidators,
 		pageNumValidatorsName := pageNumValidators(assistant, assistFunc)
 
 	// -- page_node_type
@@ -95,10 +95,11 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 	mnemonic := ""
 	prevPageIndex := -1
 	prevPageAdjust := 0
-	validatorAddrs := []string{}
 	rewardAddr := ""
 	recoveredAddrs := []string{}
-	recoveryCtx, cancelRecovery := context.WithCancel(context.Background())
+	nodeCreated := false
+	addressedRecovered := false
+	var nodeWallet *wallet.Wallet
 
 	assistant.Connect("prepare", func(assistant *gtk.Assistant, page *gtk.Widget) {
 		isRestoreMode := radioRestoreWallet.GetActive()
@@ -121,12 +122,12 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 			if isRestoreMode {
 				if isForward {
 					// forward
-					log.Printf("jumping forward from seedGenerate page")
+					log.Print("jumping forward from seedGenerate page")
 					assistant.NextPage()
 					prevPageAdjust = 1
 				} else {
 					// backward
-					log.Printf("jumping backward from seedGenerate page")
+					log.Print("jumping backward from seedGenerate page")
 					assistant.PreviousPage()
 					prevPageAdjust = -1
 				}
@@ -140,12 +141,12 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 			if isRestoreMode {
 				if isForward {
 					// forward
-					log.Printf("jumping forward from seedConfirm page")
+					log.Print("jumping forward from seedConfirm page")
 					assistant.NextPage()
 					prevPageAdjust = 1
 				} else {
 					// backward
-					log.Printf("jumping backward from seedConfirm page")
+					log.Print("jumping backward from seedConfirm page")
 					assistant.PreviousPage()
 					prevPageAdjust = -1
 				}
@@ -157,12 +158,12 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 			if !isRestoreMode {
 				if isForward {
 					// forward
-					log.Printf("jumping forward from seedRestore page")
+					log.Print("jumping forward from seedRestore page")
 					assistant.NextPage()
 					prevPageAdjust = 1
 				} else {
 					// backward
-					log.Printf("jumping backward from seedRestore page")
+					log.Print("jumping backward from seedRestore page")
 					assistant.PreviousPage()
 					prevPageAdjust = -1
 				}
@@ -187,24 +188,24 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 			assistantPageComplete(assistant, wgtNodeType, true)
 			ssLabel, err := gtk.LabelNew("")
 			fatalErrorCheck(err)
-			setMargin(ssLabel, 5, 5, 1, 1)
+			setMargin(ssLabel, 6, 6, 6, 6)
 			ssLabel.SetHAlign(gtk.ALIGN_START)
 
 			listBox, err := gtk.ListBoxNew()
 			fatalErrorCheck(err)
-			setMargin(listBox, 5, 5, 1, 1)
+			setMargin(listBox, 6, 6, 6, 6)
 			listBox.SetHAlign(gtk.ALIGN_CENTER)
 			listBox.SetSizeRequest(700, -1)
 
 			ssDLBtn, err := gtk.ButtonNewWithLabel("⏬ Download")
 			fatalErrorCheck(err)
-			setMargin(ssDLBtn, 10, 5, 1, 1)
+			setMargin(ssDLBtn, 6, 6, 6, 6)
 			ssDLBtn.SetHAlign(gtk.ALIGN_CENTER)
 			ssDLBtn.SetSizeRequest(700, -1)
 
 			ssPBLabel, err := gtk.LabelNew("")
 			fatalErrorCheck(err)
-			setMargin(ssPBLabel, 5, 10, 1, 1)
+			setMargin(ssPBLabel, 6, 6, 6, 6)
 			ssPBLabel.SetHAlign(gtk.ALIGN_START)
 
 			gridImport.Attach(ssLabel, 0, 1, 1, 1)
@@ -218,34 +219,19 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 
 			snapshotIndex := 0
 
-			// If not in restore mode, create node and skip to summary page
-			if !isRestoreMode {
-				iter, err := comboNumValidators.GetActiveIter()
-				fatalErrorCheck(err)
+			if !nodeCreated {
+				numValidators := comboBoxActiveValue(comboNumValidators)
+				walletPassword := getEntryText(entryPassword)
 
-				val, err := lsNumValidators.GetValue(iter, 0)
-				fatalErrorCheck(err)
+				nodeWallet, rewardAddr, err = cmd.CreateNode(numValidators, chainType, workingDir, mnemonic, walletPassword)
+				if err != nil {
+					showError(err)
 
-				valueInterface, err := val.GoValue()
-				fatalErrorCheck(err)
+					return
+				}
 
-				numValidators := valueInterface.(int)
-				walletPassword, err := entryPassword.GetText()
-				fatalErrorCheck(err)
-
-				go func() {
-					validatorAddrsLocal, rewardAddrLocal, err := cmd.CreateNode(
-						context.Background(), numValidators, chainType, workingDir,
-						mnemonic, walletPassword, nil)
-
-					glib.IdleAdd(func() {
-						fatalErrorCheck(err)
-						validatorAddrs = validatorAddrsLocal
-						rewardAddr = rewardAddrLocal
-						// Skip to summary page
-						assistant.NextPage()
-					})
-				}()
+				// Prevent re-entry
+				nodeCreated = true
 			}
 
 			radioImport.Connect("toggled", func() {
@@ -253,7 +239,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 					assistantPageComplete(assistant, wgtNodeType, false)
 
 					ssLabel.SetVisible(true)
-					ssLabel.SetText("   ♻️ Please wait, loading snapshot list...")
+					ssLabel.SetText("♻️ Please wait, loading snapshot list...")
 
 					go func() {
 						time.Sleep(1 * time.Second)
@@ -276,10 +262,10 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 							ctx := context.Background()
 							mdCh := getMetadata(ctx, importer, listBox)
 
-							if md := <-mdCh; md == nil {
-								ssLabel.SetText("   ❌ Failed to get snapshot list. Please try again later.")
+							if metadata := <-mdCh; metadata == nil {
+								setColoredText(ssLabel, "❌ Failed to get snapshot list. Please try again later.", ColorRed)
 							} else {
-								ssLabel.SetText("   🔽 Please select a snapshot to download:")
+								ssLabel.SetText("🔽 Please select a snapshot to download:")
 								listBox.SetVisible(true)
 
 								listBox.Connect("row-selected", func(_ *gtk.ListBox, row *gtk.ListBoxRow) {
@@ -302,9 +288,10 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 									listBox.SetSelectionMode(gtk.SELECTION_NONE)
 
 									go func() {
-										log.Printf("start downloading...\n")
+										log.Print("start downloading...\n")
 
-										err := importer.Download(ctx, &md[snapshotIndex],
+										time.Sleep(5 * time.Second)
+										err := importer.Download(ctx, &metadata[snapshotIndex],
 											func(fileName string) func(stats downloader.Stats) {
 												return func(stats downloader.Stats) {
 													if !stats.Completed {
@@ -316,7 +303,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 																util.FormatBytesToHumanReadable(uint64(stats.Downloaded)),
 																util.FormatBytesToHumanReadable(uint64(stats.TotalSize)),
 															)
-															ssPBLabel.SetText("   " + dlMessage)
+															ssPBLabel.SetText(dlMessage)
 														})
 													}
 												}
@@ -324,23 +311,39 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 										)
 
 										glib.IdleAdd(func() {
-											fatalErrorCheck(err)
+											if err != nil {
+												setColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), ColorRed)
 
-											log.Printf("extracting data...\n")
-											ssPBLabel.SetText("   " + "📂 Extracting downloaded files...")
+												return
+											}
+
+											log.Print("extracting data...\n")
+											ssPBLabel.SetText("📂 Extracting downloaded files...")
 											err := importer.ExtractAndStoreFiles()
-											fatalErrorCheck(err)
+											if err != nil {
+												setColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), ColorRed)
 
-											log.Printf("moving data...\n")
-											ssPBLabel.SetText("   " + "📑 Moving data...")
+												return
+											}
+
+											log.Print("moving data...\n")
+											ssPBLabel.SetText("📑 Moving data...")
 											err = importer.MoveStore()
-											fatalErrorCheck(err)
+											if err != nil {
+												setColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), ColorRed)
 
-											log.Printf("cleanup...\n")
+												return
+											}
+
+											log.Print("cleanup...\n")
 											err = importer.Cleanup()
-											fatalErrorCheck(err)
+											if err != nil {
+												setColoredText(ssPBLabel, fmt.Sprintf("❌ Import failed: %v", err), ColorRed)
 
-											ssPBLabel.SetText("   " + "✅ Import completed.")
+												return
+											}
+
+											setColoredText(ssPBLabel, "✅ Import completed.", ColorGreen)
 											assistantPageComplete(assistant, wgtNodeType, true)
 										})
 									}()
@@ -361,111 +364,95 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 			if !isRestoreMode {
 				// Skip this page for new wallets
 				if isForward {
-					log.Printf("jumping forward from addressRecovery page (new wallet)")
+					log.Print("jumping forward from addressRecovery page")
 					assistant.NextPage()
 					prevPageAdjust = 1
 				} else {
-					log.Printf("jumping backward from addressRecovery page (new wallet)")
+					log.Print("jumping backward from addressRecovery page")
 					assistant.PreviousPage()
 					prevPageAdjust = -1
 				}
+
 				return
 			}
 
-			iter, err := comboNumValidators.GetActiveIter()
-			fatalErrorCheck(err)
+			if !addressedRecovered {
+				// Prevent re-entry
+				addressedRecovered = true
 
-			val, err := lsNumValidators.GetValue(iter, 0)
-			fatalErrorCheck(err)
+				// Disable next button initially
+				assistantPageComplete(assistant, wgtAddressRecovery, false)
 
-			valueInterface, err := val.GoValue()
-			fatalErrorCheck(err)
+				lblRecoveryStatus.SetText("Processing...")
 
-			numValidators := valueInterface.(int)
-			walletPassword, err := entryPassword.GetText()
-			fatalErrorCheck(err)
+				// Reset recovery context
+				recoveryCtx, cancelRecovery := context.WithCancel(context.Background())
 
-			// Disable next button initially
-			assistantPageComplete(assistant, wgtAddressRecovery, false)
+				// Setup cancel recovery button handler
+				btnCancelRecovery.Connect("clicked", func() {
+					lblRecoveryStatus.SetText("Cancelling recovery...")
+					cancelRecovery()
+					btnCancelRecovery.SetSensitive(false)
+				})
 
-			// Reset recovery context
-			recoveryCtx, cancelRecovery = context.WithCancel(context.Background())
+				go func() {
+					walletPassword := getEntryText(entryPassword)
 
-			// Clear previous recovery log
-			setTextViewContent(txtRecoveryLog, "")
-			lblRecoveryStatus.SetText("")
-			btnCancelRecovery.SetVisible(false)
-
-			// Show cancel button and start recovery
-			btnCancelRecovery.SetVisible(true)
-			btnCancelRecovery.SetSensitive(true)
-			lblRecoveryStatus.SetText("Processing...")
-
-			go func() {
-				recoveryIndex := 0
-				recoveryEventFunc := func(addr string) {
-					glib.IdleAdd(func() {
-						currentText := getTextViewContent(txtRecoveryLog)
-						newText := fmt.Sprintf("%s%d. %s\n", currentText, recoveryIndex+1, addr)
-						setTextViewContent(txtRecoveryLog, newText)
-						recoveredAddrs = append(recoveredAddrs, addr)
-						recoveryIndex++
+					recoveryIndex := 0
+					err = nodeWallet.RecoveryAddresses(recoveryCtx, walletPassword, func(addr string) {
+						glib.IdleAdd(func() {
+							currentText := getTextViewContent(txtRecoveryLog)
+							newText := fmt.Sprintf("%s%d. %s\n", currentText, recoveryIndex+1, addr)
+							setTextViewContent(txtRecoveryLog, newText)
+							recoveredAddrs = append(recoveredAddrs, addr)
+							recoveryIndex++
+						})
 					})
-				}
 
-				validatorAddrsLocal, rewardAddrLocal, err := cmd.CreateNode(
-					recoveryCtx, numValidators, chainType, workingDir,
-					mnemonic, walletPassword, recoveryEventFunc)
-
-				glib.IdleAdd(func() {
-					if err != nil {
-						if recoveryCtx.Err() != nil || errors.Is(err, context.Canceled) {
-							lblRecoveryStatus.SetText("Recovery cancelled")
+					glib.IdleAdd(func() {
+						if err != nil {
+							if errors.Is(err, context.Canceled) {
+								setColoredText(lblRecoveryStatus, "Address recovery aborted", ColorYellow)
+								btnCancelRecovery.SetVisible(false)
+								assistantPageComplete(assistant, wgtAddressRecovery, true)
+							} else {
+								setColoredText(lblRecoveryStatus, fmt.Sprintf("Address recovery failed: %v", err), ColorRed)
+								btnCancelRecovery.SetVisible(false)
+								assistantPageComplete(assistant, wgtAddressRecovery, true)
+							}
+						} else {
+							setColoredText(lblRecoveryStatus, "✅ Wallet addresses successfully recovered", ColorGreen)
 							btnCancelRecovery.SetVisible(false)
 							assistantPageComplete(assistant, wgtAddressRecovery, true)
-						} else {
-							lblRecoveryStatus.SetText(fmt.Sprintf("Recovery failed: %v", err))
-							btnCancelRecovery.SetVisible(false)
-							assistantPageComplete(assistant, wgtAddressRecovery, false)
 						}
-					} else {
-						validatorAddrs = validatorAddrsLocal
-						rewardAddr = rewardAddrLocal
-						lblRecoveryStatus.SetText("✅ Wallet addresses successfully recovered")
-						btnCancelRecovery.SetVisible(false)
-						assistantPageComplete(assistant, wgtAddressRecovery, true)
-					}
-				})
-			}()
+					})
+				}()
+			}
+
 		case pageSummaryName:
 			// Done! showing the node information
 			successful = true
-			nodeInfo := fmt.Sprintf("Working directory: %s\n", workingDir)
-			nodeInfo += fmt.Sprintf("Network: %s\n", chainType.String())
+			nodeInfo := ""
 
-			nodeInfo += "\nRecovered addresses:\n"
+			nodeInfo += "🔄 Recovered Addresses:\n"
 			for i, addr := range recoveredAddrs {
 				nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)
 			}
 
-			nodeInfo += "\nValidator addresses:\n"
-			for i, addr := range validatorAddrs {
-				nodeInfo += fmt.Sprintf("%v- %s\n", i+1, addr)
+			nodeInfo += "\n🏛️ Validator Addresses:\n"
+			for i, info := range nodeWallet.AllValidatorAddresses() {
+				nodeInfo += fmt.Sprintf("%v- %s\n", i+1, info.Address)
 			}
 
-			nodeInfo += "\nReward address:\n"
-			nodeInfo += fmt.Sprintf("%s", rewardAddr)
+			nodeInfo += "\n💰 Reward Address:\n"
+			nodeInfo += fmt.Sprintf("%s\n", rewardAddr)
+
+			nodeInfo += fmt.Sprintf("\n📁 Working Directory: %s", workingDir)
+			nodeInfo += fmt.Sprintf("\n🌐 Network: %s\n", chainType.String())
 
 			setTextViewContent(txtNodeInfo, nodeInfo)
 		}
 		prevPageIndex = curPageIndex + prevPageAdjust
-	})
-
-	// Setup cancel recovery button handler
-	btnCancelRecovery.Connect("clicked", func() {
-		lblRecoveryStatus.SetText("Cancelling recovery...")
-		cancelRecovery()
-		btnCancelRecovery.SetSensitive(false)
 	})
 
 	assistant.SetModal(true)
@@ -712,41 +699,46 @@ func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widg
 
 	setMargin(entryPassword, 6, 6, 6, 6)
 	entryPassword.SetVisibility(false)
-	labelConfirmPassword, err := gtk.LabelNew("Password: ")
+	labelPassword, err := gtk.LabelNew("Password: ")
 	fatalErrorCheck(err)
 
-	labelConfirmPassword.SetHAlign(gtk.ALIGN_START)
-	setMargin(labelConfirmPassword, 6, 6, 6, 6)
+	labelPassword.SetHAlign(gtk.ALIGN_START)
+	setMargin(labelPassword, 6, 6, 6, 6)
 
 	entryConfirmPassword, err := gtk.EntryNew()
 	fatalErrorCheck(err)
 
 	setMargin(entryConfirmPassword, 6, 6, 6, 6)
 	entryConfirmPassword.SetVisibility(false)
-	labelConfirmation, err := gtk.LabelNew("Confirmation: ")
+	labelConfirmPassword, err := gtk.LabelNew("Confirmation: ")
 	fatalErrorCheck(err)
 
-	labelConfirmation.SetHAlign(gtk.ALIGN_START)
-	setMargin(labelConfirmation, 6, 6, 6, 6)
+	labelConfirmPassword.SetHAlign(gtk.ALIGN_START)
+	setMargin(labelConfirmPassword, 6, 6, 6, 6)
 
 	grid, err := gtk.GridNew()
 	fatalErrorCheck(err)
 
-	grid.Add(labelConfirmPassword)
+	labelMessage, err := gtk.LabelNew("")
+	fatalErrorCheck(err)
+
+	grid.Attach(labelPassword, 0, 0, 1, 1)
 	grid.Attach(entryPassword, 1, 0, 1, 1)
-	grid.AttachNextTo(labelConfirmation, labelConfirmPassword, gtk.POS_BOTTOM, 1, 1)
-	grid.AttachNextTo(entryConfirmPassword, entryPassword, gtk.POS_BOTTOM, 1, 1)
+	grid.Attach(labelConfirmPassword, 0, 1, 1, 1)
+	grid.Attach(entryConfirmPassword, 1, 1, 1, 1)
+	grid.Attach(labelMessage, 1, 2, 1, 1)
 
 	validatePassword := func() {
-		pass1, err := entryPassword.GetText()
-		fatalErrorCheck(err)
-
-		pass2, err := entryConfirmPassword.GetText()
-		fatalErrorCheck(err)
+		pass1 := getEntryText(entryPassword)
+		pass2 := getEntryText(entryConfirmPassword)
 
 		if pass1 == pass2 {
+			labelMessage.SetText("")
 			assistantPageComplete(assistant, pageWidget, true)
 		} else {
+			if pass2 != "" {
+				setColoredText(labelMessage, "Passwords do not match", ColorYellow)
+			}
 			assistantPageComplete(assistant, pageWidget, false)
 		}
 	}
@@ -776,7 +768,7 @@ func pagePassword(assistant *gtk.Assistant, assistFunc assistantFunc) (*gtk.Widg
 
 func pageNumValidators(assistant *gtk.Assistant,
 	assistFunc assistantFunc,
-) (*gtk.Widget, *gtk.ListStore, *gtk.ComboBox, string) {
+) (*gtk.Widget, *gtk.ComboBox, string) {
 	var pageWidget *gtk.Widget
 	lsNumValidators, err := gtk.ListStoreNew(glib.TYPE_INT)
 	fatalErrorCheck(err)
@@ -826,7 +818,7 @@ For more information, look <a href="https://pactus.org/user-guides/run-pactus-gu
 		pageNumValidatorsSubject,
 		pageNumValidatorsDesc)
 
-	return pageWidget, lsNumValidators, comboNumValidators, pageNumValidatorsName
+	return pageWidget, comboNumValidators, pageNumValidatorsName
 }
 
 func pageAddressRecovery(assistant *gtk.Assistant, assistFunc assistantFunc) (
@@ -873,7 +865,7 @@ func pageAddressRecovery(assistant *gtk.Assistant, assistFunc assistantFunc) (
 	pageAddressRecoveryName := "page_address_recovery"
 	pageAddressRecoveryTitle := "Address Recovery"
 	pageAddressRecoverySubject := "Recovered Addresses"
-	pageAddressRecoveryDesc := `Please wait for the wallet addresses will be recovered automatically.`
+	pageAddressRecoveryDesc := `Please wait while wallet addresses are recovered...`
 
 	pageWidget = assistFunc(
 		assistant,

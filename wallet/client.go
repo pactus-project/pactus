@@ -82,14 +82,30 @@ func (c *grpcClient) connect() error {
 	return errors.New("unable to connect to the servers")
 }
 
+// disconnect closes the gRPC connection if exists.
+func (c *grpcClient) disconnect() {
+	if c.conn != nil {
+		_ = c.conn.Close()
+
+		c.conn = nil
+		c.blockchainClient = nil
+		c.transactionClient = nil
+	}
+}
+
 func (c *grpcClient) getBlockchainInfo() (*pactus.GetBlockchainInfoResponse, error) {
 	if err := c.connect(); err != nil {
 		return nil, err
 	}
 
-	info, err := c.blockchainClient.GetBlockchainInfo(c.ctx,
+	ctx, cancel := context.WithTimeout(c.ctx, c.timeout)
+	defer cancel()
+
+	info, err := c.blockchainClient.GetBlockchainInfo(ctx,
 		&pactus.GetBlockchainInfoRequest{})
 	if err != nil {
+		c.disconnect()
+
 		return nil, err
 	}
 
@@ -101,9 +117,14 @@ func (c *grpcClient) getAccount(addrStr string) (*pactus.AccountInfo, error) {
 		return nil, err
 	}
 
-	res, err := c.blockchainClient.GetAccount(c.ctx,
+	ctx, cancel := context.WithTimeout(c.ctx, c.timeout)
+	defer cancel()
+
+	res, err := c.blockchainClient.GetAccount(ctx,
 		&pactus.GetAccountRequest{Address: addrStr})
 	if err != nil {
+		c.disconnect()
+
 		return nil, err
 	}
 
@@ -115,9 +136,14 @@ func (c *grpcClient) getValidator(addrStr string) (*pactus.ValidatorInfo, error)
 		return nil, err
 	}
 
-	res, err := c.blockchainClient.GetValidator(c.ctx,
+	ctx, cancel := context.WithTimeout(c.ctx, c.timeout)
+	defer cancel()
+
+	res, err := c.blockchainClient.GetValidator(ctx,
 		&pactus.GetValidatorRequest{Address: addrStr})
 	if err != nil {
+		c.disconnect()
+
 		return nil, err
 	}
 
@@ -133,27 +159,38 @@ func (c *grpcClient) sendTx(trx *tx.Tx) (tx.ID, error) {
 	if err != nil {
 		return hash.UndefHash, err
 	}
-	res, err := c.transactionClient.BroadcastTransaction(c.ctx,
+
+	ctx, cancel := context.WithTimeout(c.ctx, c.timeout)
+	defer cancel()
+
+	res, err := c.transactionClient.BroadcastTransaction(ctx,
 		&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 	if err != nil {
+		c.disconnect()
+
 		return hash.UndefHash, err
 	}
 
+	// TODO: return  *pactus.BroadcastTransactionResponse to be consistent with others.
 	return hash.FromString(res.Id)
 }
 
-// TODO: check the return value type.
 func (c *grpcClient) getTransaction(txID tx.ID) (*pactus.GetTransactionResponse, error) {
 	if err := c.connect(); err != nil {
 		return nil, err
 	}
 
-	res, err := c.transactionClient.GetTransaction(c.ctx,
+	ctx, cancel := context.WithTimeout(c.ctx, c.timeout)
+	defer cancel()
+
+	res, err := c.transactionClient.GetTransaction(ctx,
 		&pactus.GetTransactionRequest{
 			Id:        txID.String(),
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_INFO,
 		})
 	if err != nil {
+		c.disconnect()
+
 		return nil, err
 	}
 

@@ -1,11 +1,7 @@
 package main
 
 import (
-	"context"
-	"os"
-	"os/signal"
 	"path/filepath"
-	"syscall"
 
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
@@ -52,12 +48,6 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			return
 		}
 
-		index := 0
-		recoveryEventFunc := func(addr string) {
-			terminal.PrintInfoMsgf("%d. %s", index+1, addr)
-			index++
-		}
-
 		var mnemonic string
 		if *restoreOpt == "" {
 			mnemonic, _ = wallet.GenerateMnemonic(*entropyOpt)
@@ -74,7 +64,6 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			if !confirmed {
 				return
 			}
-			recoveryEventFunc = nil
 		} else {
 			mnemonic = *restoreOpt
 			err := wallet.CheckMnemonic(*restoreOpt)
@@ -118,32 +107,18 @@ func buildInitCmd(parentCmd *cobra.Command) {
 			chain = genesis.Localnet
 		}
 
-		ctx, cancel := context.WithCancel(context.Background())
-		sigChan := make(chan os.Signal, 1)
-		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-
-		go func() {
-			<-sigChan
-			cancel()
-		}()
-
-		if recoveryEventFunc != nil {
-			terminal.PrintLine()
-			terminal.PrintInfoMsgf("🔄 Recovering wallet addresses...")
-			terminal.PrintInfoMsgf("   Press Ctrl+C to abort if needed")
-			terminal.PrintLine()
-		}
-
-		validatorAddrs, rewardAddrs, err := cmd.CreateNode(ctx, valNum, chain, workingDir, mnemonic,
-			password, recoveryEventFunc)
+		wlt, rewardAddrs, err := cmd.CreateNode(valNum, chain, workingDir, mnemonic, password)
 		terminal.FatalErrorCheck(err)
 
-		terminal.PrintLine()
-		terminal.PrintSuccessMsgf("✅ Pactus node successfully initialized!")
+		// Recovering addresses
+		if *restoreOpt != "" {
+			cmd.RecoverWalletAddresses(wlt, password)
+		}
+
 		terminal.PrintLine()
 		terminal.PrintInfoMsgBoldf("🏛️  Validator Addresses:")
-		for i, addr := range validatorAddrs {
-			terminal.PrintInfoMsgf("   %d. %s", i+1, addr)
+		for i, addrInfo := range wlt.AllValidatorAddresses() {
+			terminal.PrintInfoMsgf("   %d. %s", i+1, addrInfo.Address)
 		}
 		terminal.PrintLine()
 
@@ -153,6 +128,8 @@ func buildInitCmd(parentCmd *cobra.Command) {
 
 		terminal.PrintInfoMsgf("🌐 Network: %v", chain.String())
 		terminal.PrintInfoMsgf("📁 Working Directory: %v", workingDir)
+		terminal.PrintLine()
+		terminal.PrintSuccessMsgf("✅ Pactus node successfully initialized!")
 		terminal.PrintLine()
 		terminal.PrintInfoMsgf("🚀 To start your node, run:")
 		terminal.PrintInfoMsgBoldf("   %s start -w %s", cmd.PactusDaemonName(), workingDir)

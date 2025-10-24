@@ -1,4 +1,4 @@
-//nolint:forbidigo // enable printing function for cmd package
+//nolint:forbidigo // enable printing function for terminal package
 package terminal
 
 import (

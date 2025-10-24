@@ -222,6 +222,7 @@ func (w *Wallet) Save() error {
 func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 	eventFunc func(addr string),
 ) error {
+	//nolint:contextcheck // client manages timeout internally, external context would interfere
 	return w.store.Vault.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
 		_, err := w.grpcClient.getAccount(addr)
 		if err != nil {

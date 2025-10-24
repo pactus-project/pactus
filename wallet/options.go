@@ -10,7 +10,7 @@ type walletOpt struct {
 type Option func(*walletOpt)
 
 var defaultWalletOpt = &walletOpt{
-	timeout: 1 * time.Second,
+	timeout: 5 * time.Second,
 	servers: make([]string, 0),
 }
 

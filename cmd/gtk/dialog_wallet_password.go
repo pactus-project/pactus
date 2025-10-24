@@ -29,8 +29,7 @@ func getWalletPassword(wlt *wallet.Wallet) (string, bool) {
 
 	ok := false
 	onOk := func() {
-		password, err = passwordEntry.GetText()
-		fatalErrorCheck(err)
+		password = getEntryText(passwordEntry)
 
 		ok = true
 		dlg.Close()

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"runtime"
 	"testing"
 
@@ -319,14 +318,13 @@ func TestCreateNode(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		validatorAddrs, rewardAddrs, err := CreateNode(context.Background(),
-			tt.numValidators, tt.chain, tt.workingDir, tt.mnemonic, "", nil)
+		wlt, rewardAddrs, err := CreateNode(tt.numValidators, tt.chain, tt.workingDir, tt.mnemonic, "")
 
 		if tt.withErr {
 			assert.Error(t, err)
 		} else {
 			assert.NoError(t, err)
-			assert.Equal(t, tt.validatorAddrs, validatorAddrs)
+			assert.Equal(t, tt.validatorAddrs, wlt.AllValidatorAddresses())
 			assert.Equal(t, tt.rewardAddrs, rewardAddrs)
 		}
 	}

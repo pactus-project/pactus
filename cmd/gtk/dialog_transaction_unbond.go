@@ -31,14 +31,14 @@ func broadcastTransactionUnbond(wlt *wallet.Wallet) {
 
 	onValidatorChanged := func() {
 		receiverEntry, _ := validatorCombo.GetEntry()
-		receiverStr, _ := receiverEntry.GetText()
+		receiverStr := getEntryText(receiverEntry)
 		updateValidatorHint(validatorHint, receiverStr, wlt)
 	}
 
 	onSend := func() {
 		validatorEntry, _ := validatorCombo.GetEntry()
-		validator, _ := validatorEntry.GetText()
-		memo, _ := memoEntry.GetText()
+		validator := getEntryText(validatorEntry)
+		memo := getEntryText(memoEntry)
 
 		opts := []wallet.TxOption{
 			wallet.OptionMemo(memo),

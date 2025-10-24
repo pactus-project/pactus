@@ -44,8 +44,7 @@ func createAddress(wdgWallet *widgetWallet) {
 	onOk := func() {
 		okBtn.SetSensitive(false)
 
-		walletAddressLabel, err := addressLabel.GetText()
-		fatalErrorCheck(err)
+		walletAddressLabel := getEntryText(addressLabel)
 
 		walletAddressType := addressTypeCombo.GetActiveID()
 		fatalErrorCheck(err)

@@ -30,14 +30,11 @@ func changePassword(wdgWallet *widgetWallet) {
 	}
 
 	onOk := func() {
-		oldPassword, err := oldPasswordEntry.GetText()
-		fatalErrorCheck(err)
+		oldPassword := getEntryText(oldPasswordEntry)
 
-		newPassword, err := newPasswordEntry.GetText()
-		fatalErrorCheck(err)
+		newPassword := getEntryText(newPasswordEntry)
 
-		repeatPassword, err := repeatPasswordEntry.GetText()
-		fatalErrorCheck(err)
+		repeatPassword := getEntryText(repeatPasswordEntry)
 
 		if newPassword != repeatPassword {
 			showWarningDialog(dlg, "Passwords do not match")

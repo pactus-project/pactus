@@ -8,6 +8,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"syscall"
 	"time"
 
 	"github.com/pactus-project/pactus/config"
@@ -18,6 +19,7 @@ import (
 	"github.com/pactus-project/pactus/types/account"
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/addresspath"
@@ -70,9 +72,9 @@ func PactusDaemonName() string {
 	return "./pactus-daemon"
 }
 
-func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType, workingDir string,
-	mnemonic string, walletPassword string, recoveryEventFunc func(addr string),
-) ([]string, string, error) {
+func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
+	mnemonic string, walletPassword string,
+) (*wallet.Wallet, string, error) {
 	// To make process faster, we update the password after creating the addresses
 	walletPath := PactusDefaultWalletPath(workingDir)
 	wlt, err := wallet.Create(walletPath, mnemonic, "", chain)
@@ -80,32 +82,10 @@ func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType,
 		return nil, "", err
 	}
 
-	validatorAddrs := []string{}
 	for i := 0; i < numValidators; i++ {
-		addressInfo, err := wlt.NewValidatorAddress(fmt.Sprintf("Validator address %v", i+1))
-		if err != nil {
-			return nil, "", err
-		}
-		validatorAddrs = append(validatorAddrs, addressInfo.Address)
+		_, _ = wlt.NewValidatorAddress(fmt.Sprintf("Validator address %v", i+1))
 	}
-
-	addressInfo, err := wlt.NewEd25519AccountAddress(
-		"Reward address", "")
-	if err != nil {
-		return nil, "", err
-	}
-	rewardAddr := addressInfo.Address
-
-	if recoveryEventFunc != nil {
-		err = wlt.RecoveryAddresses(ctx, walletPassword, recoveryEventFunc)
-		if err != nil {
-			if ctx.Err() != nil || errors.Is(err, context.Canceled) {
-				terminal.PrintWarnMsgf("Recovery aborted")
-			} else {
-				terminal.PrintWarnMsgf("Recovery addresses failed: %v", err)
-			}
-		}
-	}
+	rewardAddrInfo, _ := wlt.NewEd25519AccountAddress("Reward address", "")
 
 	confPath := PactusConfigPath(workingDir)
 	genPath := PactusGenesisPath(workingDir)
@@ -153,7 +133,7 @@ func CreateNode(ctx context.Context, numValidators int, chain genesis.ChainType,
 		return nil, "", err
 	}
 
-	return validatorAddrs, rewardAddr, nil
+	return wlt, rewardAddrInfo.Address, nil
 }
 
 // StartNode starts the node from the given working directory.
@@ -428,4 +408,28 @@ func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []vault.Addres
 	}
 
 	return valKeys, nil
+}
+
+func RecoverWalletAddresses(wlt *wallet.Wallet, password string) {
+	ctx, cancel := context.WithCancel(context.Background())
+	signal.HandleSignals(func(os.Signal) {
+		cancel()
+	}, syscall.SIGINT, syscall.SIGTERM)
+
+	terminal.PrintInfoMsgf("🔄 Recovering wallet addresses...")
+	terminal.PrintInfoMsgf("   Press 'Ctrl+C' to abort if needed")
+	terminal.PrintLine()
+
+	index := 0
+	err := wlt.RecoveryAddresses(ctx, password, func(addr string) {
+		terminal.PrintInfoMsgf("%d. %s", index+1, addr)
+		index++
+	})
+	if err != nil {
+		if errors.Is(err, context.Canceled) {
+			terminal.PrintWarnMsgf("Address recovery aborted")
+		} else {
+			terminal.PrintErrorMsgf("Address recovery failed: %v", err)
+		}
+	}
 }
