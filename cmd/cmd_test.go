@@ -324,7 +324,11 @@ func TestCreateNode(t *testing.T) {
 			assert.Error(t, err)
 		} else {
 			assert.NoError(t, err)
-			assert.Equal(t, tt.validatorAddrs, wlt.AllValidatorAddresses())
+
+			valInfos := wlt.AllValidatorAddresses()
+			for i, addr := range tt.validatorAddrs {
+				assert.Equal(t, valInfos[i].Address, addr)
+			}
 			assert.Equal(t, tt.rewardAddrs, rewardAddrs)
 		}
 	}
