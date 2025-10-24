@@ -175,7 +175,6 @@ jobs:
             mingw-w64-x86_64-adwaita-icon-theme
             mingw-w64-x86_64-hicolor-icon-theme
 
-
       - name: Get Version
         id: get_version
         run: |
