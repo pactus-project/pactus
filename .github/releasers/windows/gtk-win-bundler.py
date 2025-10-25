@@ -140,10 +140,9 @@ class GTKBundler:
         Path(settings_file).parent.mkdir(parents=True, exist_ok=True)
         with open(settings_file, 'w') as f:
             f.write("[Settings]\n")
-            f.write("gtk-theme-name=Adwaita\n")
-            f.write("gtk-icon-theme-name=Adwaita\n")
+            f.write("gtk-theme-name=Windows10\n")
             f.write("gtk-font-name=Segoe UI 9\n")
-            f.write("gtk-application-prefer-dark-theme=false\n")
+            f.write("gtk-application-prefer-dark-theme=true\n")
         print("  Created settings.ini")
 
     def copy_gtk_executables(self, target_exe_dir: Path) -> None:

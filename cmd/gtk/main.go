@@ -56,6 +56,12 @@ func main() {
 	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_NON_UNIQUE)
 	fatalErrorCheck(err)
 
+	settings, err := gtk.SettingsGetDefault()
+	fatalErrorCheck(err)
+
+	err = settings.Object.Set("gtk-application-prefer-dark-theme", true)
+	fatalErrorCheck(err)
+
 	workingDir, err := filepath.Abs(*workingDirOpt)
 	if err != nil {
 		terminal.PrintErrorMsgf("Aborted! %v", err)

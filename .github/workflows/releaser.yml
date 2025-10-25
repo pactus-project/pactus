@@ -172,6 +172,8 @@ jobs:
             mingw-w64-x86_64-glib2
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-pkg-config
+            mingw-w64-x86_64-adwaita-icon-theme
+            mingw-w64-x86_64-hicolor-icon-theme
 
       - name: Get Version
         id: get_version
