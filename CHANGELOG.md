@@ -1,5 +1,52 @@
 # Changelog
 
+## [1.10.0](https://github.com/pactus-project/pactus/compare/v1.9.0...v1.10.0) (2025-10-27)
+
+### Feat
+
+- **gtk**: prefer dark theme ([#1965](https://github.com/pactus-project/pactus/pull/1965))
+- **wallet**: export the bootstrap and gRPC server list ([#1961](https://github.com/pactus-project/pactus/pull/1961))
+- **util**: operating system signal handling package ([#1959](https://github.com/pactus-project/pactus/pull/1959))
+- **util**: rename Extend to PadToLeft; add PadToRight ([#1953](https://github.com/pactus-project/pactus/pull/1953))
+- **gtk**: set default fee dialog ([#1946](https://github.com/pactus-project/pactus/pull/1946))
+- **gtk**: add address recovery page for restore wallet ([#1940](https://github.com/pactus-project/pactus/pull/1940))
+- **cmd**: update daemon init for recovery addresses ([#1939](https://github.com/pactus-project/pactus/pull/1939))
+- **grpc**: impl gRPC ping api for latency measurement ([#1936](https://github.com/pactus-project/pactus/pull/1936))
+- **wallet**: implement check activity on wallet ([#1938](https://github.com/pactus-project/pactus/pull/1938))
+- **wallet**: introduce address recovery ([#1934](https://github.com/pactus-project/pactus/pull/1934))
+- **state**: calculate the number of active validators ([#1927](https://github.com/pactus-project/pactus/pull/1927))
+- **packager**: add rust-jsonrpc package ([#1911](https://github.com/pactus-project/pactus/pull/1911))
+- **packager**: add rust-grpc package ([#1909](https://github.com/pactus-project/pactus/pull/1909))
+- **consensus**: the Cheetah implementation ([#1858](https://github.com/pactus-project/pactus/pull/1858))
+
+### Fix
+
+- **sync**: set supporting version to 1.9.0 ([#1949](https://github.com/pactus-project/pactus/pull/1949))
+- **network**: set deadline for streams ([#1947](https://github.com/pactus-project/pactus/pull/1947))
+- **grpc**: set default fee for WalletInfo API ([#1944](https://github.com/pactus-project/pactus/pull/1944))
+- **wallet**: use GetAccount API to check active account ([#1945](https://github.com/pactus-project/pactus/pull/1945))
+- **grpc**: set required fields in OpenRPC spec ([#1920](https://github.com/pactus-project/pactus/pull/1920))
+- **grpc**: define map as object in OpenRPC sepc ([#1910](https://github.com/pactus-project/pactus/pull/1910))
+- **network**: set limit for network message size ([#1904](https://github.com/pactus-project/pactus/pull/1904))
+- **cbor**: set limit for Map and Array in CBOR decoder ([#1905](https://github.com/pactus-project/pactus/pull/1905))
+- **encoding**: prevent data-length attack ([#1907](https://github.com/pactus-project/pactus/pull/1907))
+- **gtk**: ensure GTK starts on main thread ([#1885](https://github.com/pactus-project/pactus/pull/1885))
+- **gtk**: change fontmap backend for macOS ([#1884](https://github.com/pactus-project/pactus/pull/1884))
+- **gtk**: resolve crash issue on MacOs  ([#1882](https://github.com/pactus-project/pactus/pull/1882))
+
+### Refactor
+
+- **cmd, gtk**: separate address recovery from node creation flow ([#1964](https://github.com/pactus-project/pactus/pull/1964))
+- **util**: use b.Loop() to simplify the code and improve performance ([#1957](https://github.com/pactus-project/pactus/pull/1957))
+- **wallet**: re-structure the server list ([#1962](https://github.com/pactus-project/pactus/pull/1962))
+- **util**: define terminal package ([#1960](https://github.com/pactus-project/pactus/pull/1960))
+- **cmd**: move prompt to util package ([#1958](https://github.com/pactus-project/pactus/pull/1958))
+- **crypto**: check BLS aggregate primitive error ([#1956](https://github.com/pactus-project/pactus/pull/1956))
+- **network**: use WaitGroup.Go to simplify code ([#1935](https://github.com/pactus-project/pactus/pull/1935))
+- **state**: refactor reward transaction ([#1901](https://github.com/pactus-project/pactus/pull/1901))
+- **state**: check genesis state using certificate presence ([#1899](https://github.com/pactus-project/pactus/pull/1899))
+- **other**: use maps.Copy for cleaner map handling ([#1900](https://github.com/pactus-project/pactus/pull/1900))
+
 ## [1.9.0](https://github.com/pactus-project/pactus/compare/v1.8.0...v1.9.0) (2025-09-10)
 
 ### Feat
