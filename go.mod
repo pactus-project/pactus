@@ -6,7 +6,7 @@ require (
 	github.com/NathanBaulch/protoc-gen-cobra v1.2.1
 	github.com/beevik/ntp v1.4.3
 	github.com/c-bata/go-prompt v0.2.6
-	github.com/consensys/gnark-crypto v0.19.0
+	github.com/consensys/gnark-crypto v0.19.1
 	github.com/fxamacker/cbor/v2 v2.9.0
 	github.com/go-zeromq/zmq4 v0.17.0
 	github.com/gofrs/flock v0.12.1
