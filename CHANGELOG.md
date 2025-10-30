@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/pactus-project/pactus/compare/v1.10.0...v1.10.1) (2025-10-31)
+
+### Fix
+
+- **gtk**: fix dark theme issue in Windows ([#1973](https://github.com/pactus-project/pactus/pull/1973))
+- **wallet**: panic on disconnect of wallet client connection ([#1971](https://github.com/pactus-project/pactus/pull/1971))
+
 ## [1.10.0](https://github.com/pactus-project/pactus/compare/v1.9.0...v1.10.0) (2025-10-27)
 
 ### Feat
