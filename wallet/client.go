@@ -82,17 +82,6 @@ func (c *grpcClient) connect() error {
 	return errors.New("unable to connect to the servers")
 }
 
-// disconnect closes the gRPC connection if exists.
-func (c *grpcClient) disconnect() {
-	if c.conn != nil {
-		_ = c.conn.Close()
-
-		c.conn = nil
-		c.blockchainClient = nil
-		c.transactionClient = nil
-	}
-}
-
 func (c *grpcClient) getBlockchainInfo() (*pactus.GetBlockchainInfoResponse, error) {
 	if err := c.connect(); err != nil {
 		return nil, err
@@ -104,8 +93,6 @@ func (c *grpcClient) getBlockchainInfo() (*pactus.GetBlockchainInfoResponse, err
 	info, err := c.blockchainClient.GetBlockchainInfo(ctx,
 		&pactus.GetBlockchainInfoRequest{})
 	if err != nil {
-		c.disconnect()
-
 		return nil, err
 	}
 
@@ -123,8 +110,6 @@ func (c *grpcClient) getAccount(addrStr string) (*pactus.AccountInfo, error) {
 	res, err := c.blockchainClient.GetAccount(ctx,
 		&pactus.GetAccountRequest{Address: addrStr})
 	if err != nil {
-		c.disconnect()
-
 		return nil, err
 	}
 
@@ -142,8 +127,6 @@ func (c *grpcClient) getValidator(addrStr string) (*pactus.ValidatorInfo, error)
 	res, err := c.blockchainClient.GetValidator(ctx,
 		&pactus.GetValidatorRequest{Address: addrStr})
 	if err != nil {
-		c.disconnect()
-
 		return nil, err
 	}
 
@@ -166,8 +149,6 @@ func (c *grpcClient) sendTx(trx *tx.Tx) (tx.ID, error) {
 	res, err := c.transactionClient.BroadcastTransaction(ctx,
 		&pactus.BroadcastTransactionRequest{SignedRawTransaction: hex.EncodeToString(data)})
 	if err != nil {
-		c.disconnect()
-
 		return hash.UndefHash, err
 	}
 
@@ -189,8 +170,6 @@ func (c *grpcClient) getTransaction(txID tx.ID) (*pactus.GetTransactionResponse,
 			Verbosity: pactus.TransactionVerbosity_TRANSACTION_VERBOSITY_INFO,
 		})
 	if err != nil {
-		c.disconnect()
-
 		return nil, err
 	}
 
