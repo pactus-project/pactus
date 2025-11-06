@@ -11,6 +11,8 @@ import (
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/pactus-project/pactus/util"
 )
 
 const (
@@ -22,9 +24,9 @@ const (
 )
 
 // Unit describes a method of converting an Amount to something
-// other than the base unit of a Pactus.  The value of the Unit
-// is the exponent component of the decadic multiple to convert from
-// an amount in Pactus to an amount counted in units.
+// other than the base unit of PAC.  The value of the Unit
+// is the exponent component of the decimal multiple to convert from
+// an amount in PAC to an amount counted in units.
 type Unit int
 
 // These constants define various units used when describing a Pactus
@@ -40,7 +42,7 @@ const (
 
 // String returns the unit as a string.  For recognized units, the SI
 // prefix is used, or "NanoPAC" for the base unit.  For all unrecognized
-// units, "1eN PAC" is returned, where N is the AmountUnit.
+// units, "1eN PAC" is returned, where N is the Unit.
 func (u Unit) String() string {
 	switch u {
 	case UnitMegaPAC:
@@ -61,7 +63,7 @@ func (u Unit) String() string {
 }
 
 // Amount represents the atomic unit in Pactus blockchain.
-// Each unit equals to 1e-9 of a PAC.
+// Each unit equals 1e-9 of a PAC.
 type Amount int64
 
 // round converts a floating point number, which may or may not be representable
@@ -101,6 +103,7 @@ func NewAmount(pac float64) (Amount, error) {
 // It then uses NewAmount to create an Amount based on the parsed
 // floating-point value.
 // If the parsing of the string fails, it returns an error.
+// TODO: Parse Unit and remove delimiters...
 func FromString(str string) (Amount, error) {
 	str = strings.Replace(str, "PAC", "", 1)
 	str = strings.TrimSpace(str)
@@ -112,37 +115,83 @@ func FromString(str string) (Amount, error) {
 	return NewAmount(f)
 }
 
-// ToUnit converts a monetary amount counted in Pactus base units to a
-// floating-point value representing an amount of Pactus (PAC).
+// ToUnit converts a monetary amount counted in NanoPAC (base units) to a
+// floating-point value representing an amount in the specified unit.
 func (a Amount) ToUnit(u Unit) float64 {
 	return float64(a) / math.Pow10(int(u+9))
 }
 
-// ToPAC is equivalent to calling ToUnit with AmountPAC.
+// ToPAC is equivalent to calling ToUnit with UnitPAC.
 func (a Amount) ToPAC() float64 {
 	return a.ToUnit(UnitPAC)
 }
 
-// ToNanoPAC is equivalent to calling ToUnit with AmountNanoPAC.
-// It returns the amount of NanoPAC or atomic unit as a 64-bit integer.
+// ToNanoPAC returns the amount of NanoPAC (atomic units) as a 64-bit integer.
 func (a Amount) ToNanoPAC() int64 {
 	return int64(a)
+}
+
+// formatOptions holds options for formatting amounts.
+type formatOptions struct {
+	unit           Unit
+	WithUnit       bool
+	withDelimiters bool
+}
+
+// FormatOption is a function that configures formatting options.
+type FormatOption func(*formatOptions)
+
+// WithUnit sets the unit for formatting.
+func WithUnit(u Unit) FormatOption {
+	return func(opts *formatOptions) {
+		opts.unit = u
+		opts.WithUnit = true
+	}
+}
+
+// WithDelimiters enables delimiter formatting (e.g., "1,234.56").
+func WithDelimiters() FormatOption {
+	return func(opts *formatOptions) {
+		opts.withDelimiters = true
+	}
 }
 
 // Format formats a monetary amount counted in Pactus base units as a
 // string for a given unit.  The conversion will succeed for any unit,
 // however, known units will be formatted with an appended label describing
 // the units with SI notation, and "NanoPAC" for the base unit.
-func (a Amount) Format(u Unit) string {
-	units := " " + u.String()
-	formatted := strconv.FormatFloat(a.ToUnit(u), 'f', -int(u+9), 64)
+//
+// Format accepts options:
+//   - WithUnit(u Unit): sets the unit for formatting (defaults to no unit)
+//   - WithDelimiters(): enables comma delimiters in the formatted number (defaults to false)
+func (a Amount) Format(opts ...FormatOption) string {
+	options := &formatOptions{}
 
-	return formatted + units
+	// Apply options
+	for _, opt := range opts {
+		opt(options)
+	}
+
+	precision := -int(options.unit + 9)
+	value := a.ToUnit(options.unit)
+
+	var formatted string
+	if options.withDelimiters {
+		formatted = util.FormatFloatWithDelimiters(value, precision)
+	} else {
+		formatted = strconv.FormatFloat(value, 'f', precision, 64)
+	}
+
+	if options.WithUnit {
+		formatted += " " + options.unit.String()
+	}
+
+	return formatted
 }
 
-// String is the equivalent of calling Format with AmountPAC.
+// String is the equivalent of calling Format with UnitPAC.
 func (a Amount) String() string {
-	return a.Format(UnitPAC)
+	return a.Format(WithUnit(UnitPAC), WithDelimiters())
 }
 
 // MulF64 multiplies an Amount by a floating point value.
