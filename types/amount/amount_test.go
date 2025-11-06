@@ -138,7 +138,7 @@ func TestAmountUnitConversions(t *testing.T) {
 			amount:    444_333_222_111_000,
 			unit:      amount.UnitPAC,
 			converted: 444_333.222_111,
-			str:       "444333.222111 PAC",
+			str:       "444,333.222111 PAC",
 		},
 		{
 			name:      "a thousand NanoPAC as PAC",
@@ -166,28 +166,28 @@ func TestAmountUnitConversions(t *testing.T) {
 			amount:    444_333_222_111_000,
 			unit:      amount.UnitMilliPAC,
 			converted: 444_333_222.111_000,
-			str:       "444333222.111 mPAC",
+			str:       "444,333,222.111 mPAC",
 		},
 		{
 			name:      "μPAC",
 			amount:    444_333_222_111_000,
 			unit:      amount.UnitMicroPAC,
 			converted: 444_333_222_111.000,
-			str:       "444333222111 μPAC",
+			str:       "444,333,222,111 μPAC",
 		},
 		{
 			name:      "NanoPAC",
 			amount:    444_333_222_111_000,
 			unit:      amount.UnitNanoPAC,
 			converted: 444_333_222_111_000,
-			str:       "444333222111000 NanoPAC",
+			str:       "444,333,222,111,000 NanoPAC",
 		},
 		{
 			name:      "non-standard unit",
 			amount:    444_333_222_111_000,
 			unit:      amount.Unit(-1),
 			converted: 4_443_332.221_110_00,
-			str:       "4443332.22111 1e-1 PAC",
+			str:       "4,443,332.22111 1e-1 PAC",
 		},
 	}
 
@@ -196,7 +196,7 @@ func TestAmountUnitConversions(t *testing.T) {
 		assert.Equal(t, tt.converted, f,
 			"%v: converted value %v does not match expected %v", tt.name, f, tt.converted)
 
-		str := tt.amount.Format(tt.unit)
+		str := tt.amount.Format(amount.WithUnit(tt.unit), amount.WithDelimiters())
 		assert.Equal(t, tt.str, str,
 			"%v: format '%v' does not match expected '%v'", tt.name, str, tt.str)
 
@@ -207,10 +207,49 @@ func TestAmountUnitConversions(t *testing.T) {
 			"%v: ToPAC does not match ToUnit(AmountPAC): %v != %v", tt.name, f1, f2)
 
 		// Verify that Amount.String works as advertised.
-		s1 := tt.amount.Format(amount.UnitPAC)
+		s1 := tt.amount.Format(amount.WithUnit(amount.UnitPAC), amount.WithDelimiters())
 		s2 := tt.amount.String()
 		assert.Equal(t, s1, s2,
 			"%v: String does not match Format(AmountPac): %v != %v", tt.name, s1, s2)
+	}
+}
+
+func TestFormatOptions(t *testing.T) {
+	tests := []struct {
+		name     string
+		amt      amount.Amount
+		opts     []amount.FormatOption
+		expected string
+	}{
+		{
+			name:     "default",
+			amt:      123456e7,
+			opts:     []amount.FormatOption{},
+			expected: "1234.56",
+		},
+		{
+			name:     "with unit",
+			amt:      123456e7,
+			opts:     []amount.FormatOption{amount.WithUnit(amount.UnitPAC)},
+			expected: "1234.56 PAC",
+		},
+		{
+			name:     "with delimiters",
+			amt:      123456e7,
+			opts:     []amount.FormatOption{amount.WithDelimiters()},
+			expected: "1,234.56",
+		},
+		{
+			name:     "with unit and delimiters",
+			amt:      123456e7,
+			opts:     []amount.FormatOption{amount.WithUnit(amount.UnitPAC), amount.WithDelimiters()},
+			expected: "1,234.56 PAC",
+		},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.expected, tt.amt.Format(tt.opts...),
+			"%v: Format does not match expected %v", tt.name, tt.expected)
 	}
 }
 
@@ -321,7 +360,7 @@ func TestAmountMulF64(t *testing.T) {
 	}
 }
 
-func TestCoinToChangeConversion(t *testing.T) {
+func TestFromString(t *testing.T) {
 	tests := []struct {
 		amount  string
 		PAC     float64
