@@ -60,10 +60,6 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	chainType := genDoc.ChainType()
 
-	logger.Info("You are running a Pactus blockchain",
-		"version", version.NodeVersion().StringWithAlias(),
-		"network", chainType)
-
 	broadcastPipe := pipeline.New[message.Message](ctx, "Broadcast Pipeline", 100)
 	networkPipe := pipeline.New[network.Event](ctx, "Network Pipeline", 500)
 	eventPipe := pipeline.New[any](ctx, "Event Pipeline", 100)
@@ -74,6 +70,10 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 		return nil, err
 	}
+
+	logger.Info("You are running a Pactus blockchain",
+		"version", version.NodeVersion().StringWithAlias(),
+		"network", chainType, "pruned", store.IsPruned())
 
 	txPool := txpool.NewTxPool(conf.TxPool, store, broadcastPipe)
 
