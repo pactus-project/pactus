@@ -33,7 +33,7 @@ func (s *newHeightState) decide() {
 func (s *newHeightState) onAddVote(_ *vote.Vote) {
 	prepares := s.log.PrepareVoteSet(s.round)
 	if prepares.HasQuorumHash() {
-		// Added logic to detect when the network majority has voted for a block,
+		// Add logic to detect when the network majority has voted for a block,
 		// but the new height timer has not yet started. This situation can occur if the system
 		// time is lagging behind the network time.
 		s.logger.Warn("detected network majority voting for a block, but the new height timer has not started yet. " +
