@@ -127,5 +127,5 @@ func TestConstants(t *testing.T) {
 func TestClsFunction(t *testing.T) {
 	require.NotPanics(t, func() {
 		cls()
-	}, "calling cls() shoul not panic")
+	}, "calling cls() should not panic")
 }
