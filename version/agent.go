@@ -28,8 +28,8 @@ type Agent struct {
 func ParseAgent(agentStr string) (Agent, error) {
 	var agent Agent
 
-	parts := strings.Split(agentStr, "/")
-	for _, part := range parts {
+	parts := strings.SplitSeq(agentStr, "/")
+	for part := range parts {
 		fields := strings.Split(part, "=")
 		if len(fields) != 2 {
 			return agent, errors.New("invalid field format in agent string")
