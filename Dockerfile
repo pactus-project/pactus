@@ -1,4 +1,4 @@
-FROM golang:1.25.1-alpine3.22 AS builder
+FROM golang:1.25.4-alpine3.22 AS builder
 
 RUN apk add --no-cache git gmp-dev build-base g++ openssl-dev
 ADD . /pactus
