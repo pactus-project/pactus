@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	lp2p "github.com/libp2p/go-libp2p"
@@ -47,11 +48,12 @@ type network struct {
 
 func loadOrCreateKey(path string) (lp2pcrypto.PrivKey, error) {
 	if util.PathExists(path) {
-		h, err := util.ReadFile(path)
+		data, err := util.ReadFile(path)
 		if err != nil {
 			return nil, err
 		}
-		bs, err := hex.DecodeString(string(h))
+		h := strings.TrimSpace(string(data))
+		bs, err := hex.DecodeString(h)
 		if err != nil {
 			return nil, err
 		}
