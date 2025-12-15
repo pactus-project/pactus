@@ -107,13 +107,11 @@ func (d *Downloader) download(ctx context.Context) {
 
 	var wg sync.WaitGroup
 	for _, chk := range d.chunks {
-		wg.Add(1)
-		go func(chk *chunk) {
-			defer wg.Done()
+		wg.Go(func() {
 			if err := d.downloadChunk(ctx, out, chk, totalSize); err != nil {
 				d.handleError(err)
 			}
-		}(chk)
+		})
 	}
 
 	wg.Wait()

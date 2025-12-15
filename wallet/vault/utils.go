@@ -14,9 +14,7 @@ func GenerateMnemonic(bitSize int) (string, error) {
 		return "", err
 	}
 
-	mnemonic, err := bip39.NewMnemonic(entropy)
-
-	return mnemonic, err
+	return bip39.NewMnemonic(entropy)
 }
 
 // CheckMnemonic validates a mnemonic (seed phrase) based on BIP-39.

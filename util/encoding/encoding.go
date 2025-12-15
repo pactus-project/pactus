@@ -186,11 +186,7 @@ func ReadElement(r io.Reader, elm any) error {
 	case *bool:
 		val := uint8(0)
 		err = binarySerializer.Uint8(r, &val)
-		if val == 0x00 {
-			*elm = false
-		} else {
-			*elm = true
-		}
+		*elm = val != 0x00
 	case *int8:
 		val := uint8(0)
 		err = binarySerializer.Uint8(r, &val)

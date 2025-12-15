@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global =
-    (typeof globalThis !== 'undefined' && globalThis) ||
-    (typeof window !== 'undefined' && window) ||
-    (typeof global !== 'undefined' && global) ||
-    (typeof self !== 'undefined' && self) ||
-    (function () { return this; }).call(null) ||
-    Function('return this')();
+var global = globalThis;
 
 goog.exportSymbol('proto.pactus.ConnectionInfo', null, global);
 goog.exportSymbol('proto.pactus.CounterInfo', null, global);
@@ -309,7 +303,7 @@ onlyConnected: jspb.Message.getBooleanFieldWithDefault(msg, 1, false)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetNetworkInfoRequest}
  */
 proto.pactus.GetNetworkInfoRequest.deserializeBinary = function(bytes) {
@@ -450,7 +444,7 @@ metricInfo: (f = msg.getMetricInfo()) && proto.pactus.MetricInfo.toObject(includ
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetNetworkInfoResponse}
  */
 proto.pactus.GetNetworkInfoResponse.deserializeBinary = function(bytes) {
@@ -475,7 +469,7 @@ proto.pactus.GetNetworkInfoResponse.deserializeBinaryFromReader = function(msg, 
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setNetworkName(value);
       break;
     case 2:
@@ -710,7 +704,7 @@ proto.pactus.GetNodeInfoRequest.toObject = function(includeInstance, msg) {
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetNodeInfoRequest}
  */
 proto.pactus.GetNodeInfoRequest.deserializeBinary = function(bytes) {
@@ -831,7 +825,7 @@ currentTime: jspb.Message.getFieldWithDefault(msg, 16, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetNodeInfoResponse}
  */
 proto.pactus.GetNodeInfoResponse.deserializeBinary = function(bytes) {
@@ -856,15 +850,15 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setMoniker(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setAgent(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setPeerId(value);
       break;
     case 4:
@@ -872,7 +866,7 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
       msg.setStartedAt(value);
       break;
     case 5:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setReachability(value);
       break;
     case 6:
@@ -880,15 +874,15 @@ proto.pactus.GetNodeInfoResponse.deserializeBinaryFromReader = function(msg, rea
       msg.setServices(value);
       break;
     case 7:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setServicesNames(value);
       break;
     case 8:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.addLocalAddrs(value);
       break;
     case 9:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.addProtocols(value);
       break;
     case 13:
@@ -1392,7 +1386,7 @@ hwm: jspb.Message.getFieldWithDefault(msg, 3, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.ZMQPublisherInfo}
  */
 proto.pactus.ZMQPublisherInfo.deserializeBinary = function(bytes) {
@@ -1417,11 +1411,11 @@ proto.pactus.ZMQPublisherInfo.deserializeBinaryFromReader = function(msg, reader
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setTopic(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setAddress(value);
       break;
     case 3:
@@ -1604,7 +1598,7 @@ outboundHelloSent: jspb.Message.getBooleanFieldWithDefault(msg, 18, false)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.PeerInfo}
  */
 proto.pactus.PeerInfo.deserializeBinary = function(bytes) {
@@ -1633,23 +1627,23 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setStatus(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setMoniker(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setAgent(value);
       break;
     case 4:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setPeerId(value);
       break;
     case 5:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.addConsensusKeys(value);
       break;
     case 6:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.addConsensusAddresses(value);
       break;
     case 7:
@@ -1657,7 +1651,7 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setServices(value);
       break;
     case 8:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setLastBlockHash(value);
       break;
     case 9:
@@ -1673,7 +1667,7 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setLastReceived(value);
       break;
     case 12:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setAddress(value);
       break;
     case 13:
@@ -1681,7 +1675,7 @@ proto.pactus.PeerInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setDirection(value);
       break;
     case 14:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.addProtocols(value);
       break;
     case 15:
@@ -2307,7 +2301,7 @@ outboundConnections: jspb.Message.getFieldWithDefault(msg, 3, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.ConnectionInfo}
  */
 proto.pactus.ConnectionInfo.deserializeBinary = function(bytes) {
@@ -2499,7 +2493,7 @@ messageReceivedMap: (f = msg.getMessageReceivedMap()) ? f.toObject(includeInstan
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.MetricInfo}
  */
 proto.pactus.MetricInfo.deserializeBinary = function(bytes) {
@@ -2605,11 +2599,23 @@ proto.pactus.MetricInfo.serializeBinaryToWriter = function(message, writer) {
   }
   f = message.getMessageSentMap(true);
   if (f && f.getLength() > 0) {
-    f.serializeBinary(4, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeMessage, proto.pactus.CounterInfo.serializeBinaryToWriter);
+jspb.internal.public_for_gencode.serializeMapToBinary(
+    message.getMessageSentMap(true),
+    4,
+    writer,
+    jspb.BinaryWriter.prototype.writeInt32,
+    jspb.BinaryWriter.prototype.writeMessage,
+    proto.pactus.CounterInfo.serializeBinaryToWriter);
   }
   f = message.getMessageReceivedMap(true);
   if (f && f.getLength() > 0) {
-    f.serializeBinary(5, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeMessage, proto.pactus.CounterInfo.serializeBinaryToWriter);
+jspb.internal.public_for_gencode.serializeMapToBinary(
+    message.getMessageReceivedMap(true),
+    5,
+    writer,
+    jspb.BinaryWriter.prototype.writeInt32,
+    jspb.BinaryWriter.prototype.writeMessage,
+    proto.pactus.CounterInfo.serializeBinaryToWriter);
   }
 };
 
@@ -2817,7 +2823,7 @@ bundles: jspb.Message.getFieldWithDefault(msg, 2, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.CounterInfo}
  */
 proto.pactus.CounterInfo.deserializeBinary = function(bytes) {
@@ -2976,7 +2982,7 @@ proto.pactus.PingRequest.toObject = function(includeInstance, msg) {
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.PingRequest}
  */
 proto.pactus.PingRequest.deserializeBinary = function(bytes) {
@@ -3077,7 +3083,7 @@ proto.pactus.PingResponse.toObject = function(includeInstance, msg) {
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.PingResponse}
  */
 proto.pactus.PingResponse.deserializeBinary = function(bytes) {

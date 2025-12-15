@@ -8,9 +8,6 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  * signing, verification, and other cryptographic operations.
  * </pre>
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.71.0)",
-    comments = "Source: utils.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class UtilsGrpc {
 
@@ -356,8 +353,8 @@ public final class UtilsGrpc {
      * SignMessageWithPrivateKey signs a message with the provided private key.
      * </pre>
      */
-    public pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse signMessageWithPrivateKey(pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.UtilsOuterClass.SignMessageWithPrivateKeyResponse signMessageWithPrivateKey(pactus.UtilsOuterClass.SignMessageWithPrivateKeyRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getSignMessageWithPrivateKeyMethod(), getCallOptions(), request);
     }
 
@@ -366,8 +363,8 @@ public final class UtilsGrpc {
      * VerifyMessage verifies a signature against the public key and message.
      * </pre>
      */
-    public pactus.UtilsOuterClass.VerifyMessageResponse verifyMessage(pactus.UtilsOuterClass.VerifyMessageRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.UtilsOuterClass.VerifyMessageResponse verifyMessage(pactus.UtilsOuterClass.VerifyMessageRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getVerifyMessageMethod(), getCallOptions(), request);
     }
 
@@ -376,8 +373,8 @@ public final class UtilsGrpc {
      * PublicKeyAggregation aggregates multiple BLS public keys into a single key.
      * </pre>
      */
-    public pactus.UtilsOuterClass.PublicKeyAggregationResponse publicKeyAggregation(pactus.UtilsOuterClass.PublicKeyAggregationRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.UtilsOuterClass.PublicKeyAggregationResponse publicKeyAggregation(pactus.UtilsOuterClass.PublicKeyAggregationRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getPublicKeyAggregationMethod(), getCallOptions(), request);
     }
 
@@ -386,8 +383,8 @@ public final class UtilsGrpc {
      * SignatureAggregation aggregates multiple BLS signatures into a single signature.
      * </pre>
      */
-    public pactus.UtilsOuterClass.SignatureAggregationResponse signatureAggregation(pactus.UtilsOuterClass.SignatureAggregationRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.UtilsOuterClass.SignatureAggregationResponse signatureAggregation(pactus.UtilsOuterClass.SignatureAggregationRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getSignatureAggregationMethod(), getCallOptions(), request);
     }
   }

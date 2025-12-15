@@ -20,7 +20,7 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -39,7 +39,7 @@ jobs:
           git checkout $LATEST_TAG
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
@@ -50,37 +50,37 @@ jobs:
           VERSION: ${{ env.LATEST_TAG }}
 
       - name: Upload `package-js-grpc` package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: package-js-grpc
           path: packages/js/pactus-grpc
 
       - name: Upload `package-js-jsonrpc` package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: package-js-jsonrpc
           path: packages/js/pactus-jsonrpc
 
       - name: Upload `package-python-grpc` package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: package-python-grpc
           path: packages/python/pactus-grpc
 
       - name: Upload `package-python-jsonrpc` package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: package-python-jsonrpc
           path: packages/python/pactus-jsonrpc
 
       - name: Upload `package-rust-grpc` package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: package-rust-grpc
           path: packages/rust/pactus-grpc
 
       - name: Upload `package-rust-jsonrpc` package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: package-rust-jsonrpc
           path: packages/rust/pactus-jsonrpc
@@ -96,12 +96,12 @@ jobs:
 
     steps:
       - name: Download JavaScript Package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: package-js-grpc
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
@@ -122,12 +122,12 @@ jobs:
 
     steps:
       - name: Download JavaScript Package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: package-js-jsonrpc
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
@@ -148,12 +148,12 @@ jobs:
 
     steps:
       - name: Download Python Package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: package-python-grpc
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.13"
 
@@ -176,12 +176,12 @@ jobs:
 
     steps:
       - name: Download Python Package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: package-python-jsonrpc
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.13"
 
@@ -206,7 +206,7 @@ jobs:
 
     steps:
       - name: Download Rust Package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: package-rust-grpc
 
@@ -228,7 +228,7 @@ jobs:
 
     steps:
       - name: Download Rust Package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: package-rust-jsonrpc
 
