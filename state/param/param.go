@@ -7,6 +7,7 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/protocol"
@@ -71,8 +72,7 @@ func FromGenesis(genDoc *genesis.Genesis) *Params {
 
 	case genesis.Localnet:
 		for i := 0; i < 100; i++ {
-			buf := make([]byte, bls.PrivateKeySize)
-			buf[0] = byte(i)
+			buf := hash.CalcHash([]byte{byte(i)}).Bytes()
 			prv, _ := bls.PrivateKeyFromBytes(buf)
 
 			foundationAddressList = append(foundationAddressList, prv.PublicKeyNative().AccountAddress().String())

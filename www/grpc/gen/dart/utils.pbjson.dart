@@ -1,13 +1,15 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: utils.proto
-//
+// Generated from utils.proto.
+
 // @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
+// ignore_for_file: unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -23,9 +25,10 @@ const SignMessageWithPrivateKeyRequest$json = {
 };
 
 /// Descriptor for `SignMessageWithPrivateKeyRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signMessageWithPrivateKeyRequestDescriptor = $convert.base64Decode(
-    'CiBTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5UmVxdWVzdBIfCgtwcml2YXRlX2tleRgBIAEoCV'
-    'IKcHJpdmF0ZUtleRIYCgdtZXNzYWdlGAIgASgJUgdtZXNzYWdl');
+final $typed_data.Uint8List signMessageWithPrivateKeyRequestDescriptor =
+    $convert.base64Decode(
+        'CiBTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5UmVxdWVzdBIfCgtwcml2YXRlX2tleRgBIAEoCV'
+        'IKcHJpdmF0ZUtleRIYCgdtZXNzYWdlGAIgASgJUgdtZXNzYWdl');
 
 @$core.Deprecated('Use signMessageWithPrivateKeyResponseDescriptor instead')
 const SignMessageWithPrivateKeyResponse$json = {
@@ -36,9 +39,10 @@ const SignMessageWithPrivateKeyResponse$json = {
 };
 
 /// Descriptor for `SignMessageWithPrivateKeyResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signMessageWithPrivateKeyResponseDescriptor = $convert.base64Decode(
-    'CiFTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5UmVzcG9uc2USHAoJc2lnbmF0dXJlGAEgASgJUg'
-    'lzaWduYXR1cmU=');
+final $typed_data.Uint8List signMessageWithPrivateKeyResponseDescriptor =
+    $convert.base64Decode(
+        'CiFTaWduTWVzc2FnZVdpdGhQcml2YXRlS2V5UmVzcG9uc2USHAoJc2lnbmF0dXJlGAEgASgJUg'
+        'lzaWduYXR1cmU=');
 
 @$core.Deprecated('Use verifyMessageRequestDescriptor instead')
 const VerifyMessageRequest$json = {
@@ -64,8 +68,9 @@ const VerifyMessageResponse$json = {
 };
 
 /// Descriptor for `VerifyMessageResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List verifyMessageResponseDescriptor = $convert.base64Decode(
-    'ChVWZXJpZnlNZXNzYWdlUmVzcG9uc2USGQoIaXNfdmFsaWQYASABKAhSB2lzVmFsaWQ=');
+final $typed_data.Uint8List verifyMessageResponseDescriptor =
+    $convert.base64Decode(
+        'ChVWZXJpZnlNZXNzYWdlUmVzcG9uc2USGQoIaXNfdmFsaWQYASABKAhSB2lzVmFsaWQ=');
 
 @$core.Deprecated('Use publicKeyAggregationRequestDescriptor instead')
 const PublicKeyAggregationRequest$json = {
@@ -76,9 +81,10 @@ const PublicKeyAggregationRequest$json = {
 };
 
 /// Descriptor for `PublicKeyAggregationRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List publicKeyAggregationRequestDescriptor = $convert.base64Decode(
-    'ChtQdWJsaWNLZXlBZ2dyZWdhdGlvblJlcXVlc3QSHwoLcHVibGljX2tleXMYASADKAlSCnB1Ym'
-    'xpY0tleXM=');
+final $typed_data.Uint8List publicKeyAggregationRequestDescriptor =
+    $convert.base64Decode(
+        'ChtQdWJsaWNLZXlBZ2dyZWdhdGlvblJlcXVlc3QSHwoLcHVibGljX2tleXMYASADKAlSCnB1Ym'
+        'xpY0tleXM=');
 
 @$core.Deprecated('Use publicKeyAggregationResponseDescriptor instead')
 const PublicKeyAggregationResponse$json = {
@@ -90,9 +96,10 @@ const PublicKeyAggregationResponse$json = {
 };
 
 /// Descriptor for `PublicKeyAggregationResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List publicKeyAggregationResponseDescriptor = $convert.base64Decode(
-    'ChxQdWJsaWNLZXlBZ2dyZWdhdGlvblJlc3BvbnNlEh0KCnB1YmxpY19rZXkYASABKAlSCXB1Ym'
-    'xpY0tleRIYCgdhZGRyZXNzGAIgASgJUgdhZGRyZXNz');
+final $typed_data.Uint8List publicKeyAggregationResponseDescriptor =
+    $convert.base64Decode(
+        'ChxQdWJsaWNLZXlBZ2dyZWdhdGlvblJlc3BvbnNlEh0KCnB1YmxpY19rZXkYASABKAlSCXB1Ym'
+        'xpY0tleRIYCgdhZGRyZXNzGAIgASgJUgdhZGRyZXNz');
 
 @$core.Deprecated('Use signatureAggregationRequestDescriptor instead')
 const SignatureAggregationRequest$json = {
@@ -103,9 +110,10 @@ const SignatureAggregationRequest$json = {
 };
 
 /// Descriptor for `SignatureAggregationRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signatureAggregationRequestDescriptor = $convert.base64Decode(
-    'ChtTaWduYXR1cmVBZ2dyZWdhdGlvblJlcXVlc3QSHgoKc2lnbmF0dXJlcxgBIAMoCVIKc2lnbm'
-    'F0dXJlcw==');
+final $typed_data.Uint8List signatureAggregationRequestDescriptor =
+    $convert.base64Decode(
+        'ChtTaWduYXR1cmVBZ2dyZWdhdGlvblJlcXVlc3QSHgoKc2lnbmF0dXJlcxgBIAMoCVIKc2lnbm'
+        'F0dXJlcw==');
 
 @$core.Deprecated('Use signatureAggregationResponseDescriptor instead')
 const SignatureAggregationResponse$json = {
@@ -116,24 +124,44 @@ const SignatureAggregationResponse$json = {
 };
 
 /// Descriptor for `SignatureAggregationResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signatureAggregationResponseDescriptor = $convert.base64Decode(
-    'ChxTaWduYXR1cmVBZ2dyZWdhdGlvblJlc3BvbnNlEhwKCXNpZ25hdHVyZRgBIAEoCVIJc2lnbm'
-    'F0dXJl');
+final $typed_data.Uint8List signatureAggregationResponseDescriptor =
+    $convert.base64Decode(
+        'ChxTaWduYXR1cmVBZ2dyZWdhdGlvblJlc3BvbnNlEhwKCXNpZ25hdHVyZRgBIAEoCVIJc2lnbm'
+        'F0dXJl');
 
 const $core.Map<$core.String, $core.dynamic> UtilsServiceBase$json = {
   '1': 'Utils',
   '2': [
-    {'1': 'SignMessageWithPrivateKey', '2': '.pactus.SignMessageWithPrivateKeyRequest', '3': '.pactus.SignMessageWithPrivateKeyResponse'},
-    {'1': 'VerifyMessage', '2': '.pactus.VerifyMessageRequest', '3': '.pactus.VerifyMessageResponse'},
-    {'1': 'PublicKeyAggregation', '2': '.pactus.PublicKeyAggregationRequest', '3': '.pactus.PublicKeyAggregationResponse'},
-    {'1': 'SignatureAggregation', '2': '.pactus.SignatureAggregationRequest', '3': '.pactus.SignatureAggregationResponse'},
+    {
+      '1': 'SignMessageWithPrivateKey',
+      '2': '.pactus.SignMessageWithPrivateKeyRequest',
+      '3': '.pactus.SignMessageWithPrivateKeyResponse'
+    },
+    {
+      '1': 'VerifyMessage',
+      '2': '.pactus.VerifyMessageRequest',
+      '3': '.pactus.VerifyMessageResponse'
+    },
+    {
+      '1': 'PublicKeyAggregation',
+      '2': '.pactus.PublicKeyAggregationRequest',
+      '3': '.pactus.PublicKeyAggregationResponse'
+    },
+    {
+      '1': 'SignatureAggregation',
+      '2': '.pactus.SignatureAggregationRequest',
+      '3': '.pactus.SignatureAggregationResponse'
+    },
   ],
 };
 
 @$core.Deprecated('Use utilsServiceDescriptor instead')
-const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> UtilsServiceBase$messageJson = {
-  '.pactus.SignMessageWithPrivateKeyRequest': SignMessageWithPrivateKeyRequest$json,
-  '.pactus.SignMessageWithPrivateKeyResponse': SignMessageWithPrivateKeyResponse$json,
+const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
+    UtilsServiceBase$messageJson = {
+  '.pactus.SignMessageWithPrivateKeyRequest':
+      SignMessageWithPrivateKeyRequest$json,
+  '.pactus.SignMessageWithPrivateKeyResponse':
+      SignMessageWithPrivateKeyResponse$json,
   '.pactus.VerifyMessageRequest': VerifyMessageRequest$json,
   '.pactus.VerifyMessageResponse': VerifyMessageResponse$json,
   '.pactus.PublicKeyAggregationRequest': PublicKeyAggregationRequest$json,
@@ -152,4 +180,3 @@ final $typed_data.Uint8List utilsServiceDescriptor = $convert.base64Decode(
     'V5QWdncmVnYXRpb25SZXNwb25zZRJhChRTaWduYXR1cmVBZ2dyZWdhdGlvbhIjLnBhY3R1cy5T'
     'aWduYXR1cmVBZ2dyZWdhdGlvblJlcXVlc3QaJC5wYWN0dXMuU2lnbmF0dXJlQWdncmVnYXRpb2'
     '5SZXNwb25zZQ==');
-

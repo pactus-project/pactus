@@ -18,8 +18,8 @@
     "grpc"
   ],
   "dependencies": {
-    "@grpc/grpc-js": "^1.12",
-    "grpc-web": "^1.5",
-    "google-protobuf": "^3.21"
+    "@grpc/grpc-js": "^1.14.1",
+    "grpc-web": "^2.0.2",
+    "google-protobuf": "^4.0.1"
   }
 }

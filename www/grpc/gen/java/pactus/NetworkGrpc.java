@@ -7,9 +7,6 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  * Network service provides RPCs for retrieving information about the network.
  * </pre>
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.71.0)",
-    comments = "Source: network.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class NetworkGrpc {
 
@@ -299,8 +296,8 @@ public final class NetworkGrpc {
      * GetNetworkInfo retrieves information about the overall network.
      * </pre>
      */
-    public pactus.NetworkOuterClass.GetNetworkInfoResponse getNetworkInfo(pactus.NetworkOuterClass.GetNetworkInfoRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.NetworkOuterClass.GetNetworkInfoResponse getNetworkInfo(pactus.NetworkOuterClass.GetNetworkInfoRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetNetworkInfoMethod(), getCallOptions(), request);
     }
 
@@ -309,8 +306,8 @@ public final class NetworkGrpc {
      * GetNodeInfo retrieves information about a specific node in the network.
      * </pre>
      */
-    public pactus.NetworkOuterClass.GetNodeInfoResponse getNodeInfo(pactus.NetworkOuterClass.GetNodeInfoRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.NetworkOuterClass.GetNodeInfoResponse getNodeInfo(pactus.NetworkOuterClass.GetNodeInfoRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetNodeInfoMethod(), getCallOptions(), request);
     }
 
@@ -319,8 +316,8 @@ public final class NetworkGrpc {
      * Ping provides a simple connectivity test and latency measurement.
      * </pre>
      */
-    public pactus.NetworkOuterClass.PingResponse ping(pactus.NetworkOuterClass.PingRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.NetworkOuterClass.PingResponse ping(pactus.NetworkOuterClass.PingRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getPingMethod(), getCallOptions(), request);
     }
   }
