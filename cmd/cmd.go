@@ -431,5 +431,7 @@ func RecoverWalletAddresses(wlt *wallet.Wallet, password string) {
 		} else {
 			terminal.PrintErrorMsgf("Address recovery failed: %v", err)
 		}
+	} else {
+		_ = wlt.Save()
 	}
 }

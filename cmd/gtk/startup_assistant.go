@@ -174,6 +174,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 		case pagePasswordName:
 			if isRestoreMode {
 				mnemonic = getTextViewContent(textRestoreSeed)
+				mnemonic = strings.TrimSpace(mnemonic)
 
 				if err := wallet.CheckMnemonic(mnemonic); err != nil {
 					showErrorDialog(assistant, "Invalid seed phrase. Please check your seed phrase and try again.")
@@ -421,6 +422,8 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 								assistantPageComplete(assistant, wgtAddressRecovery, true)
 							}
 						} else {
+							_ = nodeWallet.Save()
+
 							setColoredText(lblRecoveryStatus, "✅ Wallet addresses successfully recovered", ColorGreen)
 							btnCancelRecovery.SetVisible(false)
 							assistantPageComplete(assistant, wgtAddressRecovery, true)
