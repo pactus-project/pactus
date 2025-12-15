@@ -132,6 +132,14 @@ linters:
           disabled: true
         - name: enforce-switch-style
           disabled: true
+        - name: identical-switch-branches
+          disabled: true
+        - name: var-naming
+          arguments:
+            - [] # AllowList
+            - [] # DenyList
+            - - 
+                skip-package-name-checks: true
         - name: unhandled-error
           arguments:
             - fmt.Printf
@@ -190,10 +198,6 @@ linters:
         text: 'builtinShadow: shadowing of predeclared identifier: max'
       - path: (.+)\.go$
         text: 'builtinShadow: shadowing of predeclared identifier: len'
-      - linters:
-          - revive
-        path: 'util/*'
-        text: 'var-naming: avoid meaningless package names'
     paths:
       - third_party$
       - builtin$

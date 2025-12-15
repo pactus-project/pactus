@@ -19,7 +19,7 @@ ADDRESS_TYPE_BLS_ACCOUNT: AddressType
 ADDRESS_TYPE_ED25519_ACCOUNT: AddressType
 
 class AddressInfo(_message.Message):
-    __slots__ = ("address", "public_key", "label", "path")
+    __slots__ = ()
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
     LABEL_FIELD_NUMBER: _ClassVar[int]
@@ -31,7 +31,7 @@ class AddressInfo(_message.Message):
     def __init__(self, address: _Optional[str] = ..., public_key: _Optional[str] = ..., label: _Optional[str] = ..., path: _Optional[str] = ...) -> None: ...
 
 class HistoryInfo(_message.Message):
-    __slots__ = ("transaction_id", "time", "payload_type", "description", "amount")
+    __slots__ = ()
     TRANSACTION_ID_FIELD_NUMBER: _ClassVar[int]
     TIME_FIELD_NUMBER: _ClassVar[int]
     PAYLOAD_TYPE_FIELD_NUMBER: _ClassVar[int]
@@ -45,7 +45,7 @@ class HistoryInfo(_message.Message):
     def __init__(self, transaction_id: _Optional[str] = ..., time: _Optional[int] = ..., payload_type: _Optional[str] = ..., description: _Optional[str] = ..., amount: _Optional[int] = ...) -> None: ...
 
 class GetAddressHistoryRequest(_message.Message):
-    __slots__ = ("wallet_name", "address")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
@@ -53,13 +53,13 @@ class GetAddressHistoryRequest(_message.Message):
     def __init__(self, wallet_name: _Optional[str] = ..., address: _Optional[str] = ...) -> None: ...
 
 class GetAddressHistoryResponse(_message.Message):
-    __slots__ = ("history_info",)
+    __slots__ = ()
     HISTORY_INFO_FIELD_NUMBER: _ClassVar[int]
     history_info: _containers.RepeatedCompositeFieldContainer[HistoryInfo]
     def __init__(self, history_info: _Optional[_Iterable[_Union[HistoryInfo, _Mapping]]] = ...) -> None: ...
 
 class GetNewAddressRequest(_message.Message):
-    __slots__ = ("wallet_name", "address_type", "label", "password")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_TYPE_FIELD_NUMBER: _ClassVar[int]
     LABEL_FIELD_NUMBER: _ClassVar[int]
@@ -71,7 +71,7 @@ class GetNewAddressRequest(_message.Message):
     def __init__(self, wallet_name: _Optional[str] = ..., address_type: _Optional[_Union[AddressType, str]] = ..., label: _Optional[str] = ..., password: _Optional[str] = ...) -> None: ...
 
 class GetNewAddressResponse(_message.Message):
-    __slots__ = ("wallet_name", "address_info")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_INFO_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
@@ -79,7 +79,7 @@ class GetNewAddressResponse(_message.Message):
     def __init__(self, wallet_name: _Optional[str] = ..., address_info: _Optional[_Union[AddressInfo, _Mapping]] = ...) -> None: ...
 
 class RestoreWalletRequest(_message.Message):
-    __slots__ = ("wallet_name", "mnemonic", "password")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     MNEMONIC_FIELD_NUMBER: _ClassVar[int]
     PASSWORD_FIELD_NUMBER: _ClassVar[int]
@@ -89,13 +89,13 @@ class RestoreWalletRequest(_message.Message):
     def __init__(self, wallet_name: _Optional[str] = ..., mnemonic: _Optional[str] = ..., password: _Optional[str] = ...) -> None: ...
 
 class RestoreWalletResponse(_message.Message):
-    __slots__ = ("wallet_name",)
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
 
 class CreateWalletRequest(_message.Message):
-    __slots__ = ("wallet_name", "password")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     PASSWORD_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
@@ -103,49 +103,49 @@ class CreateWalletRequest(_message.Message):
     def __init__(self, wallet_name: _Optional[str] = ..., password: _Optional[str] = ...) -> None: ...
 
 class CreateWalletResponse(_message.Message):
-    __slots__ = ("mnemonic",)
+    __slots__ = ()
     MNEMONIC_FIELD_NUMBER: _ClassVar[int]
     mnemonic: str
     def __init__(self, mnemonic: _Optional[str] = ...) -> None: ...
 
 class LoadWalletRequest(_message.Message):
-    __slots__ = ("wallet_name",)
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
 
 class LoadWalletResponse(_message.Message):
-    __slots__ = ("wallet_name",)
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
 
 class UnloadWalletRequest(_message.Message):
-    __slots__ = ("wallet_name",)
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
 
 class UnloadWalletResponse(_message.Message):
-    __slots__ = ("wallet_name",)
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
 
 class GetValidatorAddressRequest(_message.Message):
-    __slots__ = ("public_key",)
+    __slots__ = ()
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
     public_key: str
     def __init__(self, public_key: _Optional[str] = ...) -> None: ...
 
 class GetValidatorAddressResponse(_message.Message):
-    __slots__ = ("address",)
+    __slots__ = ()
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
     address: str
     def __init__(self, address: _Optional[str] = ...) -> None: ...
 
 class SignRawTransactionRequest(_message.Message):
-    __slots__ = ("wallet_name", "raw_transaction", "password")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     RAW_TRANSACTION_FIELD_NUMBER: _ClassVar[int]
     PASSWORD_FIELD_NUMBER: _ClassVar[int]
@@ -155,7 +155,7 @@ class SignRawTransactionRequest(_message.Message):
     def __init__(self, wallet_name: _Optional[str] = ..., raw_transaction: _Optional[str] = ..., password: _Optional[str] = ...) -> None: ...
 
 class SignRawTransactionResponse(_message.Message):
-    __slots__ = ("transaction_id", "signed_raw_transaction")
+    __slots__ = ()
     TRANSACTION_ID_FIELD_NUMBER: _ClassVar[int]
     SIGNED_RAW_TRANSACTION_FIELD_NUMBER: _ClassVar[int]
     transaction_id: str
@@ -163,13 +163,13 @@ class SignRawTransactionResponse(_message.Message):
     def __init__(self, transaction_id: _Optional[str] = ..., signed_raw_transaction: _Optional[str] = ...) -> None: ...
 
 class GetTotalBalanceRequest(_message.Message):
-    __slots__ = ("wallet_name",)
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
 
 class GetTotalBalanceResponse(_message.Message):
-    __slots__ = ("wallet_name", "total_balance")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     TOTAL_BALANCE_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
@@ -177,7 +177,7 @@ class GetTotalBalanceResponse(_message.Message):
     def __init__(self, wallet_name: _Optional[str] = ..., total_balance: _Optional[int] = ...) -> None: ...
 
 class SignMessageRequest(_message.Message):
-    __slots__ = ("wallet_name", "password", "address", "message")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     PASSWORD_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
@@ -189,19 +189,19 @@ class SignMessageRequest(_message.Message):
     def __init__(self, wallet_name: _Optional[str] = ..., password: _Optional[str] = ..., address: _Optional[str] = ..., message: _Optional[str] = ...) -> None: ...
 
 class SignMessageResponse(_message.Message):
-    __slots__ = ("signature",)
+    __slots__ = ()
     SIGNATURE_FIELD_NUMBER: _ClassVar[int]
     signature: str
     def __init__(self, signature: _Optional[str] = ...) -> None: ...
 
 class GetTotalStakeRequest(_message.Message):
-    __slots__ = ("wallet_name",)
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
 
 class GetTotalStakeResponse(_message.Message):
-    __slots__ = ("wallet_name", "total_stake")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     TOTAL_STAKE_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
@@ -209,7 +209,7 @@ class GetTotalStakeResponse(_message.Message):
     def __init__(self, wallet_name: _Optional[str] = ..., total_stake: _Optional[int] = ...) -> None: ...
 
 class GetAddressInfoRequest(_message.Message):
-    __slots__ = ("wallet_name", "address")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
@@ -217,7 +217,7 @@ class GetAddressInfoRequest(_message.Message):
     def __init__(self, wallet_name: _Optional[str] = ..., address: _Optional[str] = ...) -> None: ...
 
 class GetAddressInfoResponse(_message.Message):
-    __slots__ = ("wallet_name", "address", "label", "public_key", "path")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
     LABEL_FIELD_NUMBER: _ClassVar[int]
@@ -231,7 +231,7 @@ class GetAddressInfoResponse(_message.Message):
     def __init__(self, wallet_name: _Optional[str] = ..., address: _Optional[str] = ..., label: _Optional[str] = ..., public_key: _Optional[str] = ..., path: _Optional[str] = ...) -> None: ...
 
 class SetAddressLabelRequest(_message.Message):
-    __slots__ = ("wallet_name", "password", "address", "label")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     PASSWORD_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
@@ -251,19 +251,19 @@ class ListWalletRequest(_message.Message):
     def __init__(self) -> None: ...
 
 class ListWalletResponse(_message.Message):
-    __slots__ = ("wallets",)
+    __slots__ = ()
     WALLETS_FIELD_NUMBER: _ClassVar[int]
     wallets: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, wallets: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class GetWalletInfoRequest(_message.Message):
-    __slots__ = ("wallet_name",)
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
 
 class GetWalletInfoResponse(_message.Message):
-    __slots__ = ("wallet_name", "version", "network", "encrypted", "uuid", "created_at", "default_fee")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     VERSION_FIELD_NUMBER: _ClassVar[int]
     NETWORK_FIELD_NUMBER: _ClassVar[int]
@@ -278,16 +278,16 @@ class GetWalletInfoResponse(_message.Message):
     uuid: str
     created_at: int
     default_fee: int
-    def __init__(self, wallet_name: _Optional[str] = ..., version: _Optional[int] = ..., network: _Optional[str] = ..., encrypted: bool = ..., uuid: _Optional[str] = ..., created_at: _Optional[int] = ..., default_fee: _Optional[int] = ...) -> None: ...
+    def __init__(self, wallet_name: _Optional[str] = ..., version: _Optional[int] = ..., network: _Optional[str] = ..., encrypted: _Optional[bool] = ..., uuid: _Optional[str] = ..., created_at: _Optional[int] = ..., default_fee: _Optional[int] = ...) -> None: ...
 
 class ListAddressRequest(_message.Message):
-    __slots__ = ("wallet_name",)
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
 
 class ListAddressResponse(_message.Message):
-    __slots__ = ("wallet_name", "data")
+    __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     DATA_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
