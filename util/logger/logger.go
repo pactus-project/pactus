@@ -244,12 +244,12 @@ func Panic(msg string, keyvals ...any) {
 	addFields(log.Panic(), keyvals...).Msg(msg)
 }
 
-func isNil(i any) bool {
-	if i == nil {
+func isNil(val any) bool {
+	if val == nil {
 		return true
 	}
-	if reflect.TypeOf(i).Kind() == reflect.Ptr {
-		return reflect.ValueOf(i).IsNil()
+	if reflect.TypeOf(val).Kind() == reflect.Ptr {
+		return reflect.ValueOf(val).IsNil()
 	}
 
 	return false

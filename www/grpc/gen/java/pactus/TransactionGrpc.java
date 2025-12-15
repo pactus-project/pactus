@@ -7,9 +7,6 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  * Transaction service defines various RPC methods for interacting with transactions.
  * </pre>
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.71.0)",
-    comments = "Source: transaction.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class TransactionGrpc {
 
@@ -611,8 +608,8 @@ public final class TransactionGrpc {
      * GetTransaction retrieves transaction details based on the provided request parameters.
      * </pre>
      */
-    public pactus.TransactionOuterClass.GetTransactionResponse getTransaction(pactus.TransactionOuterClass.GetTransactionRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.TransactionOuterClass.GetTransactionResponse getTransaction(pactus.TransactionOuterClass.GetTransactionRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetTransactionMethod(), getCallOptions(), request);
     }
 
@@ -621,8 +618,8 @@ public final class TransactionGrpc {
      * CalculateFee calculates the transaction fee based on the specified amount and payload type.
      * </pre>
      */
-    public pactus.TransactionOuterClass.CalculateFeeResponse calculateFee(pactus.TransactionOuterClass.CalculateFeeRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.TransactionOuterClass.CalculateFeeResponse calculateFee(pactus.TransactionOuterClass.CalculateFeeRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getCalculateFeeMethod(), getCallOptions(), request);
     }
 
@@ -631,8 +628,8 @@ public final class TransactionGrpc {
      * BroadcastTransaction broadcasts a signed transaction to the network.
      * </pre>
      */
-    public pactus.TransactionOuterClass.BroadcastTransactionResponse broadcastTransaction(pactus.TransactionOuterClass.BroadcastTransactionRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.TransactionOuterClass.BroadcastTransactionResponse broadcastTransaction(pactus.TransactionOuterClass.BroadcastTransactionRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getBroadcastTransactionMethod(), getCallOptions(), request);
     }
 
@@ -641,8 +638,8 @@ public final class TransactionGrpc {
      * GetRawTransferTransaction retrieves raw details of a transfer transaction.
      * </pre>
      */
-    public pactus.TransactionOuterClass.GetRawTransactionResponse getRawTransferTransaction(pactus.TransactionOuterClass.GetRawTransferTransactionRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.TransactionOuterClass.GetRawTransactionResponse getRawTransferTransaction(pactus.TransactionOuterClass.GetRawTransferTransactionRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetRawTransferTransactionMethod(), getCallOptions(), request);
     }
 
@@ -651,8 +648,8 @@ public final class TransactionGrpc {
      * GetRawBondTransaction retrieves raw details of a bond transaction.
      * </pre>
      */
-    public pactus.TransactionOuterClass.GetRawTransactionResponse getRawBondTransaction(pactus.TransactionOuterClass.GetRawBondTransactionRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.TransactionOuterClass.GetRawTransactionResponse getRawBondTransaction(pactus.TransactionOuterClass.GetRawBondTransactionRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetRawBondTransactionMethod(), getCallOptions(), request);
     }
 
@@ -661,8 +658,8 @@ public final class TransactionGrpc {
      * GetRawUnbondTransaction retrieves raw details of an unbond transaction.
      * </pre>
      */
-    public pactus.TransactionOuterClass.GetRawTransactionResponse getRawUnbondTransaction(pactus.TransactionOuterClass.GetRawUnbondTransactionRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.TransactionOuterClass.GetRawTransactionResponse getRawUnbondTransaction(pactus.TransactionOuterClass.GetRawUnbondTransactionRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetRawUnbondTransactionMethod(), getCallOptions(), request);
     }
 
@@ -671,8 +668,8 @@ public final class TransactionGrpc {
      * GetRawWithdrawTransaction retrieves raw details of a withdraw transaction.
      * </pre>
      */
-    public pactus.TransactionOuterClass.GetRawTransactionResponse getRawWithdrawTransaction(pactus.TransactionOuterClass.GetRawWithdrawTransactionRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.TransactionOuterClass.GetRawTransactionResponse getRawWithdrawTransaction(pactus.TransactionOuterClass.GetRawWithdrawTransactionRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetRawWithdrawTransactionMethod(), getCallOptions(), request);
     }
 
@@ -681,8 +678,8 @@ public final class TransactionGrpc {
      * GetRawBatchTransferTransaction retrieves raw details of batch transfer transaction.
      * </pre>
      */
-    public pactus.TransactionOuterClass.GetRawTransactionResponse getRawBatchTransferTransaction(pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.TransactionOuterClass.GetRawTransactionResponse getRawBatchTransferTransaction(pactus.TransactionOuterClass.GetRawBatchTransferTransactionRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetRawBatchTransferTransactionMethod(), getCallOptions(), request);
     }
 
@@ -691,8 +688,8 @@ public final class TransactionGrpc {
      * DecodeRawTransaction accepts raw transaction and returns decoded transaction.
      * </pre>
      */
-    public pactus.TransactionOuterClass.DecodeRawTransactionResponse decodeRawTransaction(pactus.TransactionOuterClass.DecodeRawTransactionRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.TransactionOuterClass.DecodeRawTransactionResponse decodeRawTransaction(pactus.TransactionOuterClass.DecodeRawTransactionRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getDecodeRawTransactionMethod(), getCallOptions(), request);
     }
   }

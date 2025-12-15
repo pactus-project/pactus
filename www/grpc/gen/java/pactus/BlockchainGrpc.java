@@ -7,9 +7,6 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  * Blockchain service defines RPC methods for interacting with the blockchain.
  * </pre>
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.71.0)",
-    comments = "Source: blockchain.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class BlockchainGrpc {
 
@@ -715,8 +712,8 @@ public final class BlockchainGrpc {
      * GetBlock retrieves information about a block based on the provided request parameters.
      * </pre>
      */
-    public pactus.BlockchainOuterClass.GetBlockResponse getBlock(pactus.BlockchainOuterClass.GetBlockRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.BlockchainOuterClass.GetBlockResponse getBlock(pactus.BlockchainOuterClass.GetBlockRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetBlockMethod(), getCallOptions(), request);
     }
 
@@ -725,8 +722,8 @@ public final class BlockchainGrpc {
      * GetBlockHash retrieves the hash of a block at the specified height.
      * </pre>
      */
-    public pactus.BlockchainOuterClass.GetBlockHashResponse getBlockHash(pactus.BlockchainOuterClass.GetBlockHashRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.BlockchainOuterClass.GetBlockHashResponse getBlockHash(pactus.BlockchainOuterClass.GetBlockHashRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetBlockHashMethod(), getCallOptions(), request);
     }
 
@@ -735,8 +732,8 @@ public final class BlockchainGrpc {
      * GetBlockHeight retrieves the height of a block with the specified hash.
      * </pre>
      */
-    public pactus.BlockchainOuterClass.GetBlockHeightResponse getBlockHeight(pactus.BlockchainOuterClass.GetBlockHeightRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.BlockchainOuterClass.GetBlockHeightResponse getBlockHeight(pactus.BlockchainOuterClass.GetBlockHeightRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetBlockHeightMethod(), getCallOptions(), request);
     }
 
@@ -745,8 +742,8 @@ public final class BlockchainGrpc {
      * GetBlockchainInfo retrieves general information about the blockchain.
      * </pre>
      */
-    public pactus.BlockchainOuterClass.GetBlockchainInfoResponse getBlockchainInfo(pactus.BlockchainOuterClass.GetBlockchainInfoRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.BlockchainOuterClass.GetBlockchainInfoResponse getBlockchainInfo(pactus.BlockchainOuterClass.GetBlockchainInfoRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetBlockchainInfoMethod(), getCallOptions(), request);
     }
 
@@ -755,8 +752,8 @@ public final class BlockchainGrpc {
      * GetConsensusInfo retrieves information about the consensus instances.
      * </pre>
      */
-    public pactus.BlockchainOuterClass.GetConsensusInfoResponse getConsensusInfo(pactus.BlockchainOuterClass.GetConsensusInfoRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.BlockchainOuterClass.GetConsensusInfoResponse getConsensusInfo(pactus.BlockchainOuterClass.GetConsensusInfoRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetConsensusInfoMethod(), getCallOptions(), request);
     }
 
@@ -765,8 +762,8 @@ public final class BlockchainGrpc {
      * GetAccount retrieves information about an account based on the provided address.
      * </pre>
      */
-    public pactus.BlockchainOuterClass.GetAccountResponse getAccount(pactus.BlockchainOuterClass.GetAccountRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.BlockchainOuterClass.GetAccountResponse getAccount(pactus.BlockchainOuterClass.GetAccountRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetAccountMethod(), getCallOptions(), request);
     }
 
@@ -775,8 +772,8 @@ public final class BlockchainGrpc {
      * GetValidator retrieves information about a validator based on the provided address.
      * </pre>
      */
-    public pactus.BlockchainOuterClass.GetValidatorResponse getValidator(pactus.BlockchainOuterClass.GetValidatorRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.BlockchainOuterClass.GetValidatorResponse getValidator(pactus.BlockchainOuterClass.GetValidatorRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetValidatorMethod(), getCallOptions(), request);
     }
 
@@ -785,8 +782,8 @@ public final class BlockchainGrpc {
      * GetValidatorByNumber retrieves information about a validator based on the provided number.
      * </pre>
      */
-    public pactus.BlockchainOuterClass.GetValidatorResponse getValidatorByNumber(pactus.BlockchainOuterClass.GetValidatorByNumberRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.BlockchainOuterClass.GetValidatorResponse getValidatorByNumber(pactus.BlockchainOuterClass.GetValidatorByNumberRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetValidatorByNumberMethod(), getCallOptions(), request);
     }
 
@@ -795,8 +792,8 @@ public final class BlockchainGrpc {
      * GetValidatorAddresses retrieves a list of all validator addresses.
      * </pre>
      */
-    public pactus.BlockchainOuterClass.GetValidatorAddressesResponse getValidatorAddresses(pactus.BlockchainOuterClass.GetValidatorAddressesRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.BlockchainOuterClass.GetValidatorAddressesResponse getValidatorAddresses(pactus.BlockchainOuterClass.GetValidatorAddressesRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetValidatorAddressesMethod(), getCallOptions(), request);
     }
 
@@ -805,8 +802,8 @@ public final class BlockchainGrpc {
      * GetPublicKey retrieves the public key of an account based on the provided address.
      * </pre>
      */
-    public pactus.BlockchainOuterClass.GetPublicKeyResponse getPublicKey(pactus.BlockchainOuterClass.GetPublicKeyRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.BlockchainOuterClass.GetPublicKeyResponse getPublicKey(pactus.BlockchainOuterClass.GetPublicKeyRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetPublicKeyMethod(), getCallOptions(), request);
     }
 
@@ -815,8 +812,8 @@ public final class BlockchainGrpc {
      * GetTxPoolContent retrieves current transactions in the transaction pool.
      * </pre>
      */
-    public pactus.BlockchainOuterClass.GetTxPoolContentResponse getTxPoolContent(pactus.BlockchainOuterClass.GetTxPoolContentRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.BlockchainOuterClass.GetTxPoolContentResponse getTxPoolContent(pactus.BlockchainOuterClass.GetTxPoolContentRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetTxPoolContentMethod(), getCallOptions(), request);
     }
   }

@@ -7,7 +7,7 @@ from typing import ClassVar as _ClassVar, Optional as _Optional
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class SignMessageWithPrivateKeyRequest(_message.Message):
-    __slots__ = ("private_key", "message")
+    __slots__ = ()
     PRIVATE_KEY_FIELD_NUMBER: _ClassVar[int]
     MESSAGE_FIELD_NUMBER: _ClassVar[int]
     private_key: str
@@ -15,13 +15,13 @@ class SignMessageWithPrivateKeyRequest(_message.Message):
     def __init__(self, private_key: _Optional[str] = ..., message: _Optional[str] = ...) -> None: ...
 
 class SignMessageWithPrivateKeyResponse(_message.Message):
-    __slots__ = ("signature",)
+    __slots__ = ()
     SIGNATURE_FIELD_NUMBER: _ClassVar[int]
     signature: str
     def __init__(self, signature: _Optional[str] = ...) -> None: ...
 
 class VerifyMessageRequest(_message.Message):
-    __slots__ = ("message", "signature", "public_key")
+    __slots__ = ()
     MESSAGE_FIELD_NUMBER: _ClassVar[int]
     SIGNATURE_FIELD_NUMBER: _ClassVar[int]
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
@@ -31,19 +31,19 @@ class VerifyMessageRequest(_message.Message):
     def __init__(self, message: _Optional[str] = ..., signature: _Optional[str] = ..., public_key: _Optional[str] = ...) -> None: ...
 
 class VerifyMessageResponse(_message.Message):
-    __slots__ = ("is_valid",)
+    __slots__ = ()
     IS_VALID_FIELD_NUMBER: _ClassVar[int]
     is_valid: bool
-    def __init__(self, is_valid: bool = ...) -> None: ...
+    def __init__(self, is_valid: _Optional[bool] = ...) -> None: ...
 
 class PublicKeyAggregationRequest(_message.Message):
-    __slots__ = ("public_keys",)
+    __slots__ = ()
     PUBLIC_KEYS_FIELD_NUMBER: _ClassVar[int]
     public_keys: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, public_keys: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class PublicKeyAggregationResponse(_message.Message):
-    __slots__ = ("public_key", "address")
+    __slots__ = ()
     PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
     public_key: str
@@ -51,13 +51,13 @@ class PublicKeyAggregationResponse(_message.Message):
     def __init__(self, public_key: _Optional[str] = ..., address: _Optional[str] = ...) -> None: ...
 
 class SignatureAggregationRequest(_message.Message):
-    __slots__ = ("signatures",)
+    __slots__ = ()
     SIGNATURES_FIELD_NUMBER: _ClassVar[int]
     signatures: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, signatures: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class SignatureAggregationResponse(_message.Message):
-    __slots__ = ("signature",)
+    __slots__ = ()
     SIGNATURE_FIELD_NUMBER: _ClassVar[int]
     signature: str
     def __init__(self, signature: _Optional[str] = ...) -> None: ...

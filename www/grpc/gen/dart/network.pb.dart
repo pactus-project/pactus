@@ -1,13 +1,14 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: network.proto
-//
+// Generated from network.proto.
+
 // @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
 
 import 'dart:async' as $async;
 import 'dart:core' as $core;
@@ -26,47 +27,52 @@ class GetNetworkInfoRequest extends $pb.GeneratedMessage {
   factory GetNetworkInfoRequest({
     $core.bool? onlyConnected,
   }) {
-    final $result = create();
-    if (onlyConnected != null) {
-      $result.onlyConnected = onlyConnected;
-    }
-    return $result;
+    final result = create();
+    if (onlyConnected != null) result.onlyConnected = onlyConnected;
+    return result;
   }
-  GetNetworkInfoRequest._() : super();
-  factory GetNetworkInfoRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GetNetworkInfoRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetNetworkInfoRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
+  GetNetworkInfoRequest._();
+
+  factory GetNetworkInfoRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetNetworkInfoRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetNetworkInfoRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
     ..aOB(1, _omitFieldNames ? '' : 'onlyConnected')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  GetNetworkInfoRequest clone() => GetNetworkInfoRequest()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  GetNetworkInfoRequest copyWith(void Function(GetNetworkInfoRequest) updates) => super.copyWith((message) => updates(message as GetNetworkInfoRequest)) as GetNetworkInfoRequest;
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetNetworkInfoRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetNetworkInfoRequest copyWith(
+          void Function(GetNetworkInfoRequest) updates) =>
+      super.copyWith((message) => updates(message as GetNetworkInfoRequest))
+          as GetNetworkInfoRequest;
 
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static GetNetworkInfoRequest create() => GetNetworkInfoRequest._();
+  @$core.override
   GetNetworkInfoRequest createEmptyInstance() => create();
-  static $pb.PbList<GetNetworkInfoRequest> createRepeated() => $pb.PbList<GetNetworkInfoRequest>();
   @$core.pragma('dart2js:noInline')
-  static GetNetworkInfoRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetNetworkInfoRequest>(create);
+  static GetNetworkInfoRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetNetworkInfoRequest>(create);
   static GetNetworkInfoRequest? _defaultInstance;
 
   /// If true, returns only peers that are currently connected.
   @$pb.TagNumber(1)
   $core.bool get onlyConnected => $_getBF(0);
   @$pb.TagNumber(1)
-  set onlyConnected($core.bool v) { $_setBool(0, v); }
+  set onlyConnected($core.bool value) => $_setBool(0, value);
   @$pb.TagNumber(1)
   $core.bool hasOnlyConnected() => $_has(0);
   @$pb.TagNumber(1)
@@ -81,59 +87,62 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
     $core.Iterable<PeerInfo>? connectedPeers,
     MetricInfo? metricInfo,
   }) {
-    final $result = create();
-    if (networkName != null) {
-      $result.networkName = networkName;
-    }
-    if (connectedPeersCount != null) {
-      $result.connectedPeersCount = connectedPeersCount;
-    }
-    if (connectedPeers != null) {
-      $result.connectedPeers.addAll(connectedPeers);
-    }
-    if (metricInfo != null) {
-      $result.metricInfo = metricInfo;
-    }
-    return $result;
+    final result = create();
+    if (networkName != null) result.networkName = networkName;
+    if (connectedPeersCount != null)
+      result.connectedPeersCount = connectedPeersCount;
+    if (connectedPeers != null) result.connectedPeers.addAll(connectedPeers);
+    if (metricInfo != null) result.metricInfo = metricInfo;
+    return result;
   }
-  GetNetworkInfoResponse._() : super();
-  factory GetNetworkInfoResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GetNetworkInfoResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetNetworkInfoResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
+  GetNetworkInfoResponse._();
+
+  factory GetNetworkInfoResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetNetworkInfoResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetNetworkInfoResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'networkName')
-    ..a<$core.int>(2, _omitFieldNames ? '' : 'connectedPeersCount', $pb.PbFieldType.OU3)
-    ..pc<PeerInfo>(3, _omitFieldNames ? '' : 'connectedPeers', $pb.PbFieldType.PM, subBuilder: PeerInfo.create)
-    ..aOM<MetricInfo>(4, _omitFieldNames ? '' : 'metricInfo', subBuilder: MetricInfo.create)
-    ..hasRequiredFields = false
-  ;
+    ..aI(2, _omitFieldNames ? '' : 'connectedPeersCount',
+        fieldType: $pb.PbFieldType.OU3)
+    ..pPM<PeerInfo>(3, _omitFieldNames ? '' : 'connectedPeers',
+        subBuilder: PeerInfo.create)
+    ..aOM<MetricInfo>(4, _omitFieldNames ? '' : 'metricInfo',
+        subBuilder: MetricInfo.create)
+    ..hasRequiredFields = false;
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  GetNetworkInfoResponse clone() => GetNetworkInfoResponse()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  GetNetworkInfoResponse copyWith(void Function(GetNetworkInfoResponse) updates) => super.copyWith((message) => updates(message as GetNetworkInfoResponse)) as GetNetworkInfoResponse;
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetNetworkInfoResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetNetworkInfoResponse copyWith(
+          void Function(GetNetworkInfoResponse) updates) =>
+      super.copyWith((message) => updates(message as GetNetworkInfoResponse))
+          as GetNetworkInfoResponse;
 
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static GetNetworkInfoResponse create() => GetNetworkInfoResponse._();
+  @$core.override
   GetNetworkInfoResponse createEmptyInstance() => create();
-  static $pb.PbList<GetNetworkInfoResponse> createRepeated() => $pb.PbList<GetNetworkInfoResponse>();
   @$core.pragma('dart2js:noInline')
-  static GetNetworkInfoResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetNetworkInfoResponse>(create);
+  static GetNetworkInfoResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetNetworkInfoResponse>(create);
   static GetNetworkInfoResponse? _defaultInstance;
 
   /// Name of the network.
   @$pb.TagNumber(1)
   $core.String get networkName => $_getSZ(0);
   @$pb.TagNumber(1)
-  set networkName($core.String v) { $_setString(0, v); }
+  set networkName($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
   $core.bool hasNetworkName() => $_has(0);
   @$pb.TagNumber(1)
@@ -143,7 +152,7 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   $core.int get connectedPeersCount => $_getIZ(1);
   @$pb.TagNumber(2)
-  set connectedPeersCount($core.int v) { $_setUnsignedInt32(1, v); }
+  set connectedPeersCount($core.int value) => $_setUnsignedInt32(1, value);
   @$pb.TagNumber(2)
   $core.bool hasConnectedPeersCount() => $_has(1);
   @$pb.TagNumber(2)
@@ -157,7 +166,7 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   MetricInfo get metricInfo => $_getN(3);
   @$pb.TagNumber(4)
-  set metricInfo(MetricInfo v) { $_setField(4, v); }
+  set metricInfo(MetricInfo value) => $_setField(4, value);
   @$pb.TagNumber(4)
   $core.bool hasMetricInfo() => $_has(3);
   @$pb.TagNumber(4)
@@ -169,33 +178,39 @@ class GetNetworkInfoResponse extends $pb.GeneratedMessage {
 /// Request message for retrieving information of the node.
 class GetNodeInfoRequest extends $pb.GeneratedMessage {
   factory GetNodeInfoRequest() => create();
-  GetNodeInfoRequest._() : super();
-  factory GetNodeInfoRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GetNodeInfoRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetNodeInfoRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
-    ..hasRequiredFields = false
-  ;
+  GetNodeInfoRequest._();
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  GetNodeInfoRequest clone() => GetNodeInfoRequest()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  GetNodeInfoRequest copyWith(void Function(GetNodeInfoRequest) updates) => super.copyWith((message) => updates(message as GetNodeInfoRequest)) as GetNodeInfoRequest;
+  factory GetNodeInfoRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetNodeInfoRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetNodeInfoRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetNodeInfoRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetNodeInfoRequest copyWith(void Function(GetNodeInfoRequest) updates) =>
+      super.copyWith((message) => updates(message as GetNodeInfoRequest))
+          as GetNodeInfoRequest;
+
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static GetNodeInfoRequest create() => GetNodeInfoRequest._();
+  @$core.override
   GetNodeInfoRequest createEmptyInstance() => create();
-  static $pb.PbList<GetNodeInfoRequest> createRepeated() => $pb.PbList<GetNodeInfoRequest>();
   @$core.pragma('dart2js:noInline')
-  static GetNodeInfoRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetNodeInfoRequest>(create);
+  static GetNodeInfoRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetNodeInfoRequest>(create);
   static GetNodeInfoRequest? _defaultInstance;
 }
 
@@ -216,95 +231,81 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
     $core.Iterable<ZMQPublisherInfo>? zmqPublishers,
     $fixnum.Int64? currentTime,
   }) {
-    final $result = create();
-    if (moniker != null) {
-      $result.moniker = moniker;
-    }
-    if (agent != null) {
-      $result.agent = agent;
-    }
-    if (peerId != null) {
-      $result.peerId = peerId;
-    }
-    if (startedAt != null) {
-      $result.startedAt = startedAt;
-    }
-    if (reachability != null) {
-      $result.reachability = reachability;
-    }
-    if (services != null) {
-      $result.services = services;
-    }
-    if (servicesNames != null) {
-      $result.servicesNames = servicesNames;
-    }
-    if (localAddrs != null) {
-      $result.localAddrs.addAll(localAddrs);
-    }
-    if (protocols != null) {
-      $result.protocols.addAll(protocols);
-    }
-    if (clockOffset != null) {
-      $result.clockOffset = clockOffset;
-    }
-    if (connectionInfo != null) {
-      $result.connectionInfo = connectionInfo;
-    }
-    if (zmqPublishers != null) {
-      $result.zmqPublishers.addAll(zmqPublishers);
-    }
-    if (currentTime != null) {
-      $result.currentTime = currentTime;
-    }
-    return $result;
+    final result = create();
+    if (moniker != null) result.moniker = moniker;
+    if (agent != null) result.agent = agent;
+    if (peerId != null) result.peerId = peerId;
+    if (startedAt != null) result.startedAt = startedAt;
+    if (reachability != null) result.reachability = reachability;
+    if (services != null) result.services = services;
+    if (servicesNames != null) result.servicesNames = servicesNames;
+    if (localAddrs != null) result.localAddrs.addAll(localAddrs);
+    if (protocols != null) result.protocols.addAll(protocols);
+    if (clockOffset != null) result.clockOffset = clockOffset;
+    if (connectionInfo != null) result.connectionInfo = connectionInfo;
+    if (zmqPublishers != null) result.zmqPublishers.addAll(zmqPublishers);
+    if (currentTime != null) result.currentTime = currentTime;
+    return result;
   }
-  GetNodeInfoResponse._() : super();
-  factory GetNodeInfoResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory GetNodeInfoResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'GetNodeInfoResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
+  GetNodeInfoResponse._();
+
+  factory GetNodeInfoResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory GetNodeInfoResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'GetNodeInfoResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'moniker')
     ..aOS(2, _omitFieldNames ? '' : 'agent')
     ..aOS(3, _omitFieldNames ? '' : 'peerId')
-    ..a<$fixnum.Int64>(4, _omitFieldNames ? '' : 'startedAt', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$fixnum.Int64>(
+        4, _omitFieldNames ? '' : 'startedAt', $pb.PbFieldType.OU6,
+        defaultOrMaker: $fixnum.Int64.ZERO)
     ..aOS(5, _omitFieldNames ? '' : 'reachability')
-    ..a<$core.int>(6, _omitFieldNames ? '' : 'services', $pb.PbFieldType.O3)
+    ..aI(6, _omitFieldNames ? '' : 'services')
     ..aOS(7, _omitFieldNames ? '' : 'servicesNames')
     ..pPS(8, _omitFieldNames ? '' : 'localAddrs')
     ..pPS(9, _omitFieldNames ? '' : 'protocols')
-    ..a<$core.double>(13, _omitFieldNames ? '' : 'clockOffset', $pb.PbFieldType.OD)
-    ..aOM<ConnectionInfo>(14, _omitFieldNames ? '' : 'connectionInfo', subBuilder: ConnectionInfo.create)
-    ..pc<ZMQPublisherInfo>(15, _omitFieldNames ? '' : 'zmqPublishers', $pb.PbFieldType.PM, subBuilder: ZMQPublisherInfo.create)
-    ..a<$fixnum.Int64>(16, _omitFieldNames ? '' : 'currentTime', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..hasRequiredFields = false
-  ;
+    ..aD(13, _omitFieldNames ? '' : 'clockOffset')
+    ..aOM<ConnectionInfo>(14, _omitFieldNames ? '' : 'connectionInfo',
+        subBuilder: ConnectionInfo.create)
+    ..pPM<ZMQPublisherInfo>(15, _omitFieldNames ? '' : 'zmqPublishers',
+        subBuilder: ZMQPublisherInfo.create)
+    ..a<$fixnum.Int64>(
+        16, _omitFieldNames ? '' : 'currentTime', $pb.PbFieldType.OU6,
+        defaultOrMaker: $fixnum.Int64.ZERO)
+    ..hasRequiredFields = false;
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  GetNodeInfoResponse clone() => GetNodeInfoResponse()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  GetNodeInfoResponse copyWith(void Function(GetNodeInfoResponse) updates) => super.copyWith((message) => updates(message as GetNodeInfoResponse)) as GetNodeInfoResponse;
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetNodeInfoResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  GetNodeInfoResponse copyWith(void Function(GetNodeInfoResponse) updates) =>
+      super.copyWith((message) => updates(message as GetNodeInfoResponse))
+          as GetNodeInfoResponse;
 
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static GetNodeInfoResponse create() => GetNodeInfoResponse._();
+  @$core.override
   GetNodeInfoResponse createEmptyInstance() => create();
-  static $pb.PbList<GetNodeInfoResponse> createRepeated() => $pb.PbList<GetNodeInfoResponse>();
   @$core.pragma('dart2js:noInline')
-  static GetNodeInfoResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetNodeInfoResponse>(create);
+  static GetNodeInfoResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<GetNodeInfoResponse>(create);
   static GetNodeInfoResponse? _defaultInstance;
 
   /// Moniker or Human-readable name identifying this node in the network.
   @$pb.TagNumber(1)
   $core.String get moniker => $_getSZ(0);
   @$pb.TagNumber(1)
-  set moniker($core.String v) { $_setString(0, v); }
+  set moniker($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
   $core.bool hasMoniker() => $_has(0);
   @$pb.TagNumber(1)
@@ -314,7 +315,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   $core.String get agent => $_getSZ(1);
   @$pb.TagNumber(2)
-  set agent($core.String v) { $_setString(1, v); }
+  set agent($core.String value) => $_setString(1, value);
   @$pb.TagNumber(2)
   $core.bool hasAgent() => $_has(1);
   @$pb.TagNumber(2)
@@ -324,7 +325,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(3)
   $core.String get peerId => $_getSZ(2);
   @$pb.TagNumber(3)
-  set peerId($core.String v) { $_setString(2, v); }
+  set peerId($core.String value) => $_setString(2, value);
   @$pb.TagNumber(3)
   $core.bool hasPeerId() => $_has(2);
   @$pb.TagNumber(3)
@@ -334,7 +335,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   $fixnum.Int64 get startedAt => $_getI64(3);
   @$pb.TagNumber(4)
-  set startedAt($fixnum.Int64 v) { $_setInt64(3, v); }
+  set startedAt($fixnum.Int64 value) => $_setInt64(3, value);
   @$pb.TagNumber(4)
   $core.bool hasStartedAt() => $_has(3);
   @$pb.TagNumber(4)
@@ -344,7 +345,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(5)
   $core.String get reachability => $_getSZ(4);
   @$pb.TagNumber(5)
-  set reachability($core.String v) { $_setString(4, v); }
+  set reachability($core.String value) => $_setString(4, value);
   @$pb.TagNumber(5)
   $core.bool hasReachability() => $_has(4);
   @$pb.TagNumber(5)
@@ -354,7 +355,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(6)
   $core.int get services => $_getIZ(5);
   @$pb.TagNumber(6)
-  set services($core.int v) { $_setSignedInt32(5, v); }
+  set services($core.int value) => $_setSignedInt32(5, value);
   @$pb.TagNumber(6)
   $core.bool hasServices() => $_has(5);
   @$pb.TagNumber(6)
@@ -364,7 +365,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(7)
   $core.String get servicesNames => $_getSZ(6);
   @$pb.TagNumber(7)
-  set servicesNames($core.String v) { $_setString(6, v); }
+  set servicesNames($core.String value) => $_setString(6, value);
   @$pb.TagNumber(7)
   $core.bool hasServicesNames() => $_has(6);
   @$pb.TagNumber(7)
@@ -382,7 +383,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(13)
   $core.double get clockOffset => $_getN(9);
   @$pb.TagNumber(13)
-  set clockOffset($core.double v) { $_setDouble(9, v); }
+  set clockOffset($core.double value) => $_setDouble(9, value);
   @$pb.TagNumber(13)
   $core.bool hasClockOffset() => $_has(9);
   @$pb.TagNumber(13)
@@ -392,7 +393,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(14)
   ConnectionInfo get connectionInfo => $_getN(10);
   @$pb.TagNumber(14)
-  set connectionInfo(ConnectionInfo v) { $_setField(14, v); }
+  set connectionInfo(ConnectionInfo value) => $_setField(14, value);
   @$pb.TagNumber(14)
   $core.bool hasConnectionInfo() => $_has(10);
   @$pb.TagNumber(14)
@@ -408,7 +409,7 @@ class GetNodeInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(16)
   $fixnum.Int64 get currentTime => $_getI64(12);
   @$pb.TagNumber(16)
-  set currentTime($fixnum.Int64 v) { $_setInt64(12, v); }
+  set currentTime($fixnum.Int64 value) => $_setInt64(12, value);
   @$pb.TagNumber(16)
   $core.bool hasCurrentTime() => $_has(12);
   @$pb.TagNumber(16)
@@ -422,55 +423,55 @@ class ZMQPublisherInfo extends $pb.GeneratedMessage {
     $core.String? address,
     $core.int? hwm,
   }) {
-    final $result = create();
-    if (topic != null) {
-      $result.topic = topic;
-    }
-    if (address != null) {
-      $result.address = address;
-    }
-    if (hwm != null) {
-      $result.hwm = hwm;
-    }
-    return $result;
+    final result = create();
+    if (topic != null) result.topic = topic;
+    if (address != null) result.address = address;
+    if (hwm != null) result.hwm = hwm;
+    return result;
   }
-  ZMQPublisherInfo._() : super();
-  factory ZMQPublisherInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory ZMQPublisherInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ZMQPublisherInfo', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
+  ZMQPublisherInfo._();
+
+  factory ZMQPublisherInfo.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ZMQPublisherInfo.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ZMQPublisherInfo',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'topic')
     ..aOS(2, _omitFieldNames ? '' : 'address')
-    ..a<$core.int>(3, _omitFieldNames ? '' : 'hwm', $pb.PbFieldType.O3)
-    ..hasRequiredFields = false
-  ;
+    ..aI(3, _omitFieldNames ? '' : 'hwm')
+    ..hasRequiredFields = false;
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  ZMQPublisherInfo clone() => ZMQPublisherInfo()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  ZMQPublisherInfo copyWith(void Function(ZMQPublisherInfo) updates) => super.copyWith((message) => updates(message as ZMQPublisherInfo)) as ZMQPublisherInfo;
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ZMQPublisherInfo clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ZMQPublisherInfo copyWith(void Function(ZMQPublisherInfo) updates) =>
+      super.copyWith((message) => updates(message as ZMQPublisherInfo))
+          as ZMQPublisherInfo;
 
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static ZMQPublisherInfo create() => ZMQPublisherInfo._();
+  @$core.override
   ZMQPublisherInfo createEmptyInstance() => create();
-  static $pb.PbList<ZMQPublisherInfo> createRepeated() => $pb.PbList<ZMQPublisherInfo>();
   @$core.pragma('dart2js:noInline')
-  static ZMQPublisherInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ZMQPublisherInfo>(create);
+  static ZMQPublisherInfo getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ZMQPublisherInfo>(create);
   static ZMQPublisherInfo? _defaultInstance;
 
   /// The topic associated with the publisher.
   @$pb.TagNumber(1)
   $core.String get topic => $_getSZ(0);
   @$pb.TagNumber(1)
-  set topic($core.String v) { $_setString(0, v); }
+  set topic($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
   $core.bool hasTopic() => $_has(0);
   @$pb.TagNumber(1)
@@ -480,7 +481,7 @@ class ZMQPublisherInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   $core.String get address => $_getSZ(1);
   @$pb.TagNumber(2)
-  set address($core.String v) { $_setString(1, v); }
+  set address($core.String value) => $_setString(1, value);
   @$pb.TagNumber(2)
   $core.bool hasAddress() => $_has(1);
   @$pb.TagNumber(2)
@@ -491,7 +492,7 @@ class ZMQPublisherInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(3)
   $core.int get hwm => $_getIZ(2);
   @$pb.TagNumber(3)
-  set hwm($core.int v) { $_setSignedInt32(2, v); }
+  set hwm($core.int value) => $_setSignedInt32(2, value);
   @$pb.TagNumber(3)
   $core.bool hasHwm() => $_has(2);
   @$pb.TagNumber(3)
@@ -520,115 +521,87 @@ class PeerInfo extends $pb.GeneratedMessage {
     MetricInfo? metricInfo,
     $core.bool? outboundHelloSent,
   }) {
-    final $result = create();
-    if (status != null) {
-      $result.status = status;
-    }
-    if (moniker != null) {
-      $result.moniker = moniker;
-    }
-    if (agent != null) {
-      $result.agent = agent;
-    }
-    if (peerId != null) {
-      $result.peerId = peerId;
-    }
-    if (consensusKeys != null) {
-      $result.consensusKeys.addAll(consensusKeys);
-    }
-    if (consensusAddresses != null) {
-      $result.consensusAddresses.addAll(consensusAddresses);
-    }
-    if (services != null) {
-      $result.services = services;
-    }
-    if (lastBlockHash != null) {
-      $result.lastBlockHash = lastBlockHash;
-    }
-    if (height != null) {
-      $result.height = height;
-    }
-    if (lastSent != null) {
-      $result.lastSent = lastSent;
-    }
-    if (lastReceived != null) {
-      $result.lastReceived = lastReceived;
-    }
-    if (address != null) {
-      $result.address = address;
-    }
-    if (direction != null) {
-      $result.direction = direction;
-    }
-    if (protocols != null) {
-      $result.protocols.addAll(protocols);
-    }
-    if (totalSessions != null) {
-      $result.totalSessions = totalSessions;
-    }
-    if (completedSessions != null) {
-      $result.completedSessions = completedSessions;
-    }
-    if (metricInfo != null) {
-      $result.metricInfo = metricInfo;
-    }
-    if (outboundHelloSent != null) {
-      $result.outboundHelloSent = outboundHelloSent;
-    }
-    return $result;
+    final result = create();
+    if (status != null) result.status = status;
+    if (moniker != null) result.moniker = moniker;
+    if (agent != null) result.agent = agent;
+    if (peerId != null) result.peerId = peerId;
+    if (consensusKeys != null) result.consensusKeys.addAll(consensusKeys);
+    if (consensusAddresses != null)
+      result.consensusAddresses.addAll(consensusAddresses);
+    if (services != null) result.services = services;
+    if (lastBlockHash != null) result.lastBlockHash = lastBlockHash;
+    if (height != null) result.height = height;
+    if (lastSent != null) result.lastSent = lastSent;
+    if (lastReceived != null) result.lastReceived = lastReceived;
+    if (address != null) result.address = address;
+    if (direction != null) result.direction = direction;
+    if (protocols != null) result.protocols.addAll(protocols);
+    if (totalSessions != null) result.totalSessions = totalSessions;
+    if (completedSessions != null) result.completedSessions = completedSessions;
+    if (metricInfo != null) result.metricInfo = metricInfo;
+    if (outboundHelloSent != null) result.outboundHelloSent = outboundHelloSent;
+    return result;
   }
-  PeerInfo._() : super();
-  factory PeerInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory PeerInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PeerInfo', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$core.int>(1, _omitFieldNames ? '' : 'status', $pb.PbFieldType.O3)
+  PeerInfo._();
+
+  factory PeerInfo.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory PeerInfo.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'PeerInfo',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aI(1, _omitFieldNames ? '' : 'status')
     ..aOS(2, _omitFieldNames ? '' : 'moniker')
     ..aOS(3, _omitFieldNames ? '' : 'agent')
     ..aOS(4, _omitFieldNames ? '' : 'peerId')
     ..pPS(5, _omitFieldNames ? '' : 'consensusKeys')
     ..pPS(6, _omitFieldNames ? '' : 'consensusAddresses')
-    ..a<$core.int>(7, _omitFieldNames ? '' : 'services', $pb.PbFieldType.OU3)
+    ..aI(7, _omitFieldNames ? '' : 'services', fieldType: $pb.PbFieldType.OU3)
     ..aOS(8, _omitFieldNames ? '' : 'lastBlockHash')
-    ..a<$core.int>(9, _omitFieldNames ? '' : 'height', $pb.PbFieldType.OU3)
+    ..aI(9, _omitFieldNames ? '' : 'height', fieldType: $pb.PbFieldType.OU3)
     ..aInt64(10, _omitFieldNames ? '' : 'lastSent')
     ..aInt64(11, _omitFieldNames ? '' : 'lastReceived')
     ..aOS(12, _omitFieldNames ? '' : 'address')
-    ..e<Direction>(13, _omitFieldNames ? '' : 'direction', $pb.PbFieldType.OE, defaultOrMaker: Direction.DIRECTION_UNKNOWN, valueOf: Direction.valueOf, enumValues: Direction.values)
+    ..aE<Direction>(13, _omitFieldNames ? '' : 'direction',
+        enumValues: Direction.values)
     ..pPS(14, _omitFieldNames ? '' : 'protocols')
-    ..a<$core.int>(15, _omitFieldNames ? '' : 'totalSessions', $pb.PbFieldType.O3)
-    ..a<$core.int>(16, _omitFieldNames ? '' : 'completedSessions', $pb.PbFieldType.O3)
-    ..aOM<MetricInfo>(17, _omitFieldNames ? '' : 'metricInfo', subBuilder: MetricInfo.create)
+    ..aI(15, _omitFieldNames ? '' : 'totalSessions')
+    ..aI(16, _omitFieldNames ? '' : 'completedSessions')
+    ..aOM<MetricInfo>(17, _omitFieldNames ? '' : 'metricInfo',
+        subBuilder: MetricInfo.create)
     ..aOB(18, _omitFieldNames ? '' : 'outboundHelloSent')
-    ..hasRequiredFields = false
-  ;
+    ..hasRequiredFields = false;
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  PeerInfo clone() => PeerInfo()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  PeerInfo copyWith(void Function(PeerInfo) updates) => super.copyWith((message) => updates(message as PeerInfo)) as PeerInfo;
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  PeerInfo clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  PeerInfo copyWith(void Function(PeerInfo) updates) =>
+      super.copyWith((message) => updates(message as PeerInfo)) as PeerInfo;
 
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static PeerInfo create() => PeerInfo._();
+  @$core.override
   PeerInfo createEmptyInstance() => create();
-  static $pb.PbList<PeerInfo> createRepeated() => $pb.PbList<PeerInfo>();
   @$core.pragma('dart2js:noInline')
-  static PeerInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PeerInfo>(create);
+  static PeerInfo getDefault() =>
+      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PeerInfo>(create);
   static PeerInfo? _defaultInstance;
 
   /// Current status of the peer (e.g., connected, disconnected).
   @$pb.TagNumber(1)
   $core.int get status => $_getIZ(0);
   @$pb.TagNumber(1)
-  set status($core.int v) { $_setSignedInt32(0, v); }
+  set status($core.int value) => $_setSignedInt32(0, value);
   @$pb.TagNumber(1)
   $core.bool hasStatus() => $_has(0);
   @$pb.TagNumber(1)
@@ -638,7 +611,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   $core.String get moniker => $_getSZ(1);
   @$pb.TagNumber(2)
-  set moniker($core.String v) { $_setString(1, v); }
+  set moniker($core.String value) => $_setString(1, value);
   @$pb.TagNumber(2)
   $core.bool hasMoniker() => $_has(1);
   @$pb.TagNumber(2)
@@ -648,7 +621,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(3)
   $core.String get agent => $_getSZ(2);
   @$pb.TagNumber(3)
-  set agent($core.String v) { $_setString(2, v); }
+  set agent($core.String value) => $_setString(2, value);
   @$pb.TagNumber(3)
   $core.bool hasAgent() => $_has(2);
   @$pb.TagNumber(3)
@@ -658,7 +631,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(4)
   $core.String get peerId => $_getSZ(3);
   @$pb.TagNumber(4)
-  set peerId($core.String v) { $_setString(3, v); }
+  set peerId($core.String value) => $_setString(3, value);
   @$pb.TagNumber(4)
   $core.bool hasPeerId() => $_has(3);
   @$pb.TagNumber(4)
@@ -676,7 +649,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(7)
   $core.int get services => $_getIZ(6);
   @$pb.TagNumber(7)
-  set services($core.int v) { $_setUnsignedInt32(6, v); }
+  set services($core.int value) => $_setUnsignedInt32(6, value);
   @$pb.TagNumber(7)
   $core.bool hasServices() => $_has(6);
   @$pb.TagNumber(7)
@@ -686,7 +659,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(8)
   $core.String get lastBlockHash => $_getSZ(7);
   @$pb.TagNumber(8)
-  set lastBlockHash($core.String v) { $_setString(7, v); }
+  set lastBlockHash($core.String value) => $_setString(7, value);
   @$pb.TagNumber(8)
   $core.bool hasLastBlockHash() => $_has(7);
   @$pb.TagNumber(8)
@@ -696,7 +669,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(9)
   $core.int get height => $_getIZ(8);
   @$pb.TagNumber(9)
-  set height($core.int v) { $_setUnsignedInt32(8, v); }
+  set height($core.int value) => $_setUnsignedInt32(8, value);
   @$pb.TagNumber(9)
   $core.bool hasHeight() => $_has(8);
   @$pb.TagNumber(9)
@@ -706,7 +679,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(10)
   $fixnum.Int64 get lastSent => $_getI64(9);
   @$pb.TagNumber(10)
-  set lastSent($fixnum.Int64 v) { $_setInt64(9, v); }
+  set lastSent($fixnum.Int64 value) => $_setInt64(9, value);
   @$pb.TagNumber(10)
   $core.bool hasLastSent() => $_has(9);
   @$pb.TagNumber(10)
@@ -716,7 +689,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(11)
   $fixnum.Int64 get lastReceived => $_getI64(10);
   @$pb.TagNumber(11)
-  set lastReceived($fixnum.Int64 v) { $_setInt64(10, v); }
+  set lastReceived($fixnum.Int64 value) => $_setInt64(10, value);
   @$pb.TagNumber(11)
   $core.bool hasLastReceived() => $_has(10);
   @$pb.TagNumber(11)
@@ -726,7 +699,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(12)
   $core.String get address => $_getSZ(11);
   @$pb.TagNumber(12)
-  set address($core.String v) { $_setString(11, v); }
+  set address($core.String value) => $_setString(11, value);
   @$pb.TagNumber(12)
   $core.bool hasAddress() => $_has(11);
   @$pb.TagNumber(12)
@@ -736,7 +709,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(13)
   Direction get direction => $_getN(12);
   @$pb.TagNumber(13)
-  set direction(Direction v) { $_setField(13, v); }
+  set direction(Direction value) => $_setField(13, value);
   @$pb.TagNumber(13)
   $core.bool hasDirection() => $_has(12);
   @$pb.TagNumber(13)
@@ -750,7 +723,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(15)
   $core.int get totalSessions => $_getIZ(14);
   @$pb.TagNumber(15)
-  set totalSessions($core.int v) { $_setSignedInt32(14, v); }
+  set totalSessions($core.int value) => $_setSignedInt32(14, value);
   @$pb.TagNumber(15)
   $core.bool hasTotalSessions() => $_has(14);
   @$pb.TagNumber(15)
@@ -760,7 +733,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(16)
   $core.int get completedSessions => $_getIZ(15);
   @$pb.TagNumber(16)
-  set completedSessions($core.int v) { $_setSignedInt32(15, v); }
+  set completedSessions($core.int value) => $_setSignedInt32(15, value);
   @$pb.TagNumber(16)
   $core.bool hasCompletedSessions() => $_has(15);
   @$pb.TagNumber(16)
@@ -770,7 +743,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(17)
   MetricInfo get metricInfo => $_getN(16);
   @$pb.TagNumber(17)
-  set metricInfo(MetricInfo v) { $_setField(17, v); }
+  set metricInfo(MetricInfo value) => $_setField(17, value);
   @$pb.TagNumber(17)
   $core.bool hasMetricInfo() => $_has(16);
   @$pb.TagNumber(17)
@@ -782,7 +755,7 @@ class PeerInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(18)
   $core.bool get outboundHelloSent => $_getBF(17);
   @$pb.TagNumber(18)
-  set outboundHelloSent($core.bool v) { $_setBool(17, v); }
+  set outboundHelloSent($core.bool value) => $_setBool(17, value);
   @$pb.TagNumber(18)
   $core.bool hasOutboundHelloSent() => $_has(17);
   @$pb.TagNumber(18)
@@ -796,55 +769,63 @@ class ConnectionInfo extends $pb.GeneratedMessage {
     $fixnum.Int64? inboundConnections,
     $fixnum.Int64? outboundConnections,
   }) {
-    final $result = create();
-    if (connections != null) {
-      $result.connections = connections;
-    }
-    if (inboundConnections != null) {
-      $result.inboundConnections = inboundConnections;
-    }
-    if (outboundConnections != null) {
-      $result.outboundConnections = outboundConnections;
-    }
-    return $result;
+    final result = create();
+    if (connections != null) result.connections = connections;
+    if (inboundConnections != null)
+      result.inboundConnections = inboundConnections;
+    if (outboundConnections != null)
+      result.outboundConnections = outboundConnections;
+    return result;
   }
-  ConnectionInfo._() : super();
-  factory ConnectionInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory ConnectionInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'ConnectionInfo', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'connections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..a<$fixnum.Int64>(2, _omitFieldNames ? '' : 'inboundConnections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..a<$fixnum.Int64>(3, _omitFieldNames ? '' : 'outboundConnections', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..hasRequiredFields = false
-  ;
+  ConnectionInfo._();
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  ConnectionInfo clone() => ConnectionInfo()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  ConnectionInfo copyWith(void Function(ConnectionInfo) updates) => super.copyWith((message) => updates(message as ConnectionInfo)) as ConnectionInfo;
+  factory ConnectionInfo.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ConnectionInfo.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ConnectionInfo',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..a<$fixnum.Int64>(
+        1, _omitFieldNames ? '' : 'connections', $pb.PbFieldType.OU6,
+        defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$fixnum.Int64>(
+        2, _omitFieldNames ? '' : 'inboundConnections', $pb.PbFieldType.OU6,
+        defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$fixnum.Int64>(
+        3, _omitFieldNames ? '' : 'outboundConnections', $pb.PbFieldType.OU6,
+        defaultOrMaker: $fixnum.Int64.ZERO)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ConnectionInfo clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ConnectionInfo copyWith(void Function(ConnectionInfo) updates) =>
+      super.copyWith((message) => updates(message as ConnectionInfo))
+          as ConnectionInfo;
+
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static ConnectionInfo create() => ConnectionInfo._();
+  @$core.override
   ConnectionInfo createEmptyInstance() => create();
-  static $pb.PbList<ConnectionInfo> createRepeated() => $pb.PbList<ConnectionInfo>();
   @$core.pragma('dart2js:noInline')
-  static ConnectionInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ConnectionInfo>(create);
+  static ConnectionInfo getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ConnectionInfo>(create);
   static ConnectionInfo? _defaultInstance;
 
   /// Total number of connections.
   @$pb.TagNumber(1)
   $fixnum.Int64 get connections => $_getI64(0);
   @$pb.TagNumber(1)
-  set connections($fixnum.Int64 v) { $_setInt64(0, v); }
+  set connections($fixnum.Int64 value) => $_setInt64(0, value);
   @$pb.TagNumber(1)
   $core.bool hasConnections() => $_has(0);
   @$pb.TagNumber(1)
@@ -854,7 +835,7 @@ class ConnectionInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   $fixnum.Int64 get inboundConnections => $_getI64(1);
   @$pb.TagNumber(2)
-  set inboundConnections($fixnum.Int64 v) { $_setInt64(1, v); }
+  set inboundConnections($fixnum.Int64 value) => $_setInt64(1, value);
   @$pb.TagNumber(2)
   $core.bool hasInboundConnections() => $_has(1);
   @$pb.TagNumber(2)
@@ -864,7 +845,7 @@ class ConnectionInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(3)
   $fixnum.Int64 get outboundConnections => $_getI64(2);
   @$pb.TagNumber(3)
-  set outboundConnections($fixnum.Int64 v) { $_setInt64(2, v); }
+  set outboundConnections($fixnum.Int64 value) => $_setInt64(2, value);
   @$pb.TagNumber(3)
   $core.bool hasOutboundConnections() => $_has(2);
   @$pb.TagNumber(3)
@@ -877,66 +858,77 @@ class MetricInfo extends $pb.GeneratedMessage {
     CounterInfo? totalInvalid,
     CounterInfo? totalSent,
     CounterInfo? totalReceived,
-    $pb.PbMap<$core.int, CounterInfo>? messageSent,
-    $pb.PbMap<$core.int, CounterInfo>? messageReceived,
+    $core.Iterable<$core.MapEntry<$core.int, CounterInfo>>? messageSent,
+    $core.Iterable<$core.MapEntry<$core.int, CounterInfo>>? messageReceived,
   }) {
-    final $result = create();
-    if (totalInvalid != null) {
-      $result.totalInvalid = totalInvalid;
-    }
-    if (totalSent != null) {
-      $result.totalSent = totalSent;
-    }
-    if (totalReceived != null) {
-      $result.totalReceived = totalReceived;
-    }
-    if (messageSent != null) {
-      $result.messageSent.addAll(messageSent);
-    }
-    if (messageReceived != null) {
-      $result.messageReceived.addAll(messageReceived);
-    }
-    return $result;
+    final result = create();
+    if (totalInvalid != null) result.totalInvalid = totalInvalid;
+    if (totalSent != null) result.totalSent = totalSent;
+    if (totalReceived != null) result.totalReceived = totalReceived;
+    if (messageSent != null) result.messageSent.addEntries(messageSent);
+    if (messageReceived != null)
+      result.messageReceived.addEntries(messageReceived);
+    return result;
   }
-  MetricInfo._() : super();
-  factory MetricInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory MetricInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'MetricInfo', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
-    ..aOM<CounterInfo>(1, _omitFieldNames ? '' : 'totalInvalid', subBuilder: CounterInfo.create)
-    ..aOM<CounterInfo>(2, _omitFieldNames ? '' : 'totalSent', subBuilder: CounterInfo.create)
-    ..aOM<CounterInfo>(3, _omitFieldNames ? '' : 'totalReceived', subBuilder: CounterInfo.create)
-    ..m<$core.int, CounterInfo>(4, _omitFieldNames ? '' : 'messageSent', entryClassName: 'MetricInfo.MessageSentEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.OM, valueCreator: CounterInfo.create, valueDefaultOrMaker: CounterInfo.getDefault, packageName: const $pb.PackageName('pactus'))
-    ..m<$core.int, CounterInfo>(5, _omitFieldNames ? '' : 'messageReceived', entryClassName: 'MetricInfo.MessageReceivedEntry', keyFieldType: $pb.PbFieldType.O3, valueFieldType: $pb.PbFieldType.OM, valueCreator: CounterInfo.create, valueDefaultOrMaker: CounterInfo.getDefault, packageName: const $pb.PackageName('pactus'))
-    ..hasRequiredFields = false
-  ;
+  MetricInfo._();
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  MetricInfo clone() => MetricInfo()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  MetricInfo copyWith(void Function(MetricInfo) updates) => super.copyWith((message) => updates(message as MetricInfo)) as MetricInfo;
+  factory MetricInfo.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory MetricInfo.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'MetricInfo',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOM<CounterInfo>(1, _omitFieldNames ? '' : 'totalInvalid',
+        subBuilder: CounterInfo.create)
+    ..aOM<CounterInfo>(2, _omitFieldNames ? '' : 'totalSent',
+        subBuilder: CounterInfo.create)
+    ..aOM<CounterInfo>(3, _omitFieldNames ? '' : 'totalReceived',
+        subBuilder: CounterInfo.create)
+    ..m<$core.int, CounterInfo>(4, _omitFieldNames ? '' : 'messageSent',
+        entryClassName: 'MetricInfo.MessageSentEntry',
+        keyFieldType: $pb.PbFieldType.O3,
+        valueFieldType: $pb.PbFieldType.OM,
+        valueCreator: CounterInfo.create,
+        valueDefaultOrMaker: CounterInfo.getDefault,
+        packageName: const $pb.PackageName('pactus'))
+    ..m<$core.int, CounterInfo>(5, _omitFieldNames ? '' : 'messageReceived',
+        entryClassName: 'MetricInfo.MessageReceivedEntry',
+        keyFieldType: $pb.PbFieldType.O3,
+        valueFieldType: $pb.PbFieldType.OM,
+        valueCreator: CounterInfo.create,
+        valueDefaultOrMaker: CounterInfo.getDefault,
+        packageName: const $pb.PackageName('pactus'))
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MetricInfo clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  MetricInfo copyWith(void Function(MetricInfo) updates) =>
+      super.copyWith((message) => updates(message as MetricInfo)) as MetricInfo;
+
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static MetricInfo create() => MetricInfo._();
+  @$core.override
   MetricInfo createEmptyInstance() => create();
-  static $pb.PbList<MetricInfo> createRepeated() => $pb.PbList<MetricInfo>();
   @$core.pragma('dart2js:noInline')
-  static MetricInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MetricInfo>(create);
+  static MetricInfo getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<MetricInfo>(create);
   static MetricInfo? _defaultInstance;
 
   /// Total number of invalid bundles.
   @$pb.TagNumber(1)
   CounterInfo get totalInvalid => $_getN(0);
   @$pb.TagNumber(1)
-  set totalInvalid(CounterInfo v) { $_setField(1, v); }
+  set totalInvalid(CounterInfo value) => $_setField(1, value);
   @$pb.TagNumber(1)
   $core.bool hasTotalInvalid() => $_has(0);
   @$pb.TagNumber(1)
@@ -948,7 +940,7 @@ class MetricInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   CounterInfo get totalSent => $_getN(1);
   @$pb.TagNumber(2)
-  set totalSent(CounterInfo v) { $_setField(2, v); }
+  set totalSent(CounterInfo value) => $_setField(2, value);
   @$pb.TagNumber(2)
   $core.bool hasTotalSent() => $_has(1);
   @$pb.TagNumber(2)
@@ -960,7 +952,7 @@ class MetricInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(3)
   CounterInfo get totalReceived => $_getN(2);
   @$pb.TagNumber(3)
-  set totalReceived(CounterInfo v) { $_setField(3, v); }
+  set totalReceived(CounterInfo value) => $_setField(3, value);
   @$pb.TagNumber(3)
   $core.bool hasTotalReceived() => $_has(2);
   @$pb.TagNumber(3)
@@ -983,51 +975,55 @@ class CounterInfo extends $pb.GeneratedMessage {
     $fixnum.Int64? bytes,
     $fixnum.Int64? bundles,
   }) {
-    final $result = create();
-    if (bytes != null) {
-      $result.bytes = bytes;
-    }
-    if (bundles != null) {
-      $result.bundles = bundles;
-    }
-    return $result;
+    final result = create();
+    if (bytes != null) result.bytes = bytes;
+    if (bundles != null) result.bundles = bundles;
+    return result;
   }
-  CounterInfo._() : super();
-  factory CounterInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory CounterInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'CounterInfo', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
-    ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'bytes', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..a<$fixnum.Int64>(2, _omitFieldNames ? '' : 'bundles', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..hasRequiredFields = false
-  ;
+  CounterInfo._();
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  CounterInfo clone() => CounterInfo()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  CounterInfo copyWith(void Function(CounterInfo) updates) => super.copyWith((message) => updates(message as CounterInfo)) as CounterInfo;
+  factory CounterInfo.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory CounterInfo.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'CounterInfo',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..a<$fixnum.Int64>(1, _omitFieldNames ? '' : 'bytes', $pb.PbFieldType.OU6,
+        defaultOrMaker: $fixnum.Int64.ZERO)
+    ..a<$fixnum.Int64>(2, _omitFieldNames ? '' : 'bundles', $pb.PbFieldType.OU6,
+        defaultOrMaker: $fixnum.Int64.ZERO)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  CounterInfo clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  CounterInfo copyWith(void Function(CounterInfo) updates) =>
+      super.copyWith((message) => updates(message as CounterInfo))
+          as CounterInfo;
+
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static CounterInfo create() => CounterInfo._();
+  @$core.override
   CounterInfo createEmptyInstance() => create();
-  static $pb.PbList<CounterInfo> createRepeated() => $pb.PbList<CounterInfo>();
   @$core.pragma('dart2js:noInline')
-  static CounterInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CounterInfo>(create);
+  static CounterInfo getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<CounterInfo>(create);
   static CounterInfo? _defaultInstance;
 
   /// Total number of bytes.
   @$pb.TagNumber(1)
   $fixnum.Int64 get bytes => $_getI64(0);
   @$pb.TagNumber(1)
-  set bytes($fixnum.Int64 v) { $_setInt64(0, v); }
+  set bytes($fixnum.Int64 value) => $_setInt64(0, value);
   @$pb.TagNumber(1)
   $core.bool hasBytes() => $_has(0);
   @$pb.TagNumber(1)
@@ -1037,7 +1033,7 @@ class CounterInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(2)
   $fixnum.Int64 get bundles => $_getI64(1);
   @$pb.TagNumber(2)
-  set bundles($fixnum.Int64 v) { $_setInt64(1, v); }
+  set bundles($fixnum.Int64 value) => $_setInt64(1, value);
   @$pb.TagNumber(2)
   $core.bool hasBundles() => $_has(1);
   @$pb.TagNumber(2)
@@ -1047,88 +1043,107 @@ class CounterInfo extends $pb.GeneratedMessage {
 /// Request message for ping - intentionally empty for measuring round-trip time.
 class PingRequest extends $pb.GeneratedMessage {
   factory PingRequest() => create();
-  PingRequest._() : super();
-  factory PingRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory PingRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PingRequest', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
-    ..hasRequiredFields = false
-  ;
+  PingRequest._();
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  PingRequest clone() => PingRequest()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  PingRequest copyWith(void Function(PingRequest) updates) => super.copyWith((message) => updates(message as PingRequest)) as PingRequest;
+  factory PingRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory PingRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'PingRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  PingRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  PingRequest copyWith(void Function(PingRequest) updates) =>
+      super.copyWith((message) => updates(message as PingRequest))
+          as PingRequest;
+
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static PingRequest create() => PingRequest._();
+  @$core.override
   PingRequest createEmptyInstance() => create();
-  static $pb.PbList<PingRequest> createRepeated() => $pb.PbList<PingRequest>();
   @$core.pragma('dart2js:noInline')
-  static PingRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PingRequest>(create);
+  static PingRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<PingRequest>(create);
   static PingRequest? _defaultInstance;
 }
 
 /// Response message for ping - intentionally empty for measuring round-trip time.
 class PingResponse extends $pb.GeneratedMessage {
   factory PingResponse() => create();
-  PingResponse._() : super();
-  factory PingResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory PingResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'PingResponse', package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'), createEmptyInstance: create)
-    ..hasRequiredFields = false
-  ;
+  PingResponse._();
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
-  PingResponse clone() => PingResponse()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  PingResponse copyWith(void Function(PingResponse) updates) => super.copyWith((message) => updates(message as PingResponse)) as PingResponse;
+  factory PingResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory PingResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'PingResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  PingResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  PingResponse copyWith(void Function(PingResponse) updates) =>
+      super.copyWith((message) => updates(message as PingResponse))
+          as PingResponse;
+
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static PingResponse create() => PingResponse._();
+  @$core.override
   PingResponse createEmptyInstance() => create();
-  static $pb.PbList<PingResponse> createRepeated() => $pb.PbList<PingResponse>();
   @$core.pragma('dart2js:noInline')
-  static PingResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<PingResponse>(create);
+  static PingResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<PingResponse>(create);
   static PingResponse? _defaultInstance;
 }
 
 /// Network service provides RPCs for retrieving information about the network.
 class NetworkApi {
-  $pb.RpcClient _client;
+  final $pb.RpcClient _client;
+
   NetworkApi(this._client);
 
   /// GetNetworkInfo retrieves information about the overall network.
-  $async.Future<GetNetworkInfoResponse> getNetworkInfo($pb.ClientContext? ctx, GetNetworkInfoRequest request) =>
-    _client.invoke<GetNetworkInfoResponse>(ctx, 'Network', 'GetNetworkInfo', request, GetNetworkInfoResponse())
-  ;
+  $async.Future<GetNetworkInfoResponse> getNetworkInfo(
+          $pb.ClientContext? ctx, GetNetworkInfoRequest request) =>
+      _client.invoke<GetNetworkInfoResponse>(
+          ctx, 'Network', 'GetNetworkInfo', request, GetNetworkInfoResponse());
+
   /// GetNodeInfo retrieves information about a specific node in the network.
-  $async.Future<GetNodeInfoResponse> getNodeInfo($pb.ClientContext? ctx, GetNodeInfoRequest request) =>
-    _client.invoke<GetNodeInfoResponse>(ctx, 'Network', 'GetNodeInfo', request, GetNodeInfoResponse())
-  ;
+  $async.Future<GetNodeInfoResponse> getNodeInfo(
+          $pb.ClientContext? ctx, GetNodeInfoRequest request) =>
+      _client.invoke<GetNodeInfoResponse>(
+          ctx, 'Network', 'GetNodeInfo', request, GetNodeInfoResponse());
+
   /// Ping provides a simple connectivity test and latency measurement.
-  $async.Future<PingResponse> ping($pb.ClientContext? ctx, PingRequest request) =>
-    _client.invoke<PingResponse>(ctx, 'Network', 'Ping', request, PingResponse())
-  ;
+  $async.Future<PingResponse> ping(
+          $pb.ClientContext? ctx, PingRequest request) =>
+      _client.invoke<PingResponse>(
+          ctx, 'Network', 'Ping', request, PingResponse());
 }
 
-
-const _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
-const _omitMessageNames = $core.bool.fromEnvironment('protobuf.omit_message_names');
+const $core.bool _omitFieldNames =
+    $core.bool.fromEnvironment('protobuf.omit_field_names');
+const $core.bool _omitMessageNames =
+    $core.bool.fromEnvironment('protobuf.omit_message_names');

@@ -7,9 +7,6 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  * Wallet service provides RPC methods for wallet management operations.
  * </pre>
  */
-@javax.annotation.Generated(
-    value = "by gRPC proto compiler (version 1.71.0)",
-    comments = "Source: wallet.proto")
 @io.grpc.stub.annotations.GrpcGenerated
 public final class WalletGrpc {
 
@@ -975,8 +972,8 @@ public final class WalletGrpc {
      * CreateWallet creates a new wallet with the specified parameters.
      * </pre>
      */
-    public pactus.WalletOuterClass.CreateWalletResponse createWallet(pactus.WalletOuterClass.CreateWalletRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.CreateWalletResponse createWallet(pactus.WalletOuterClass.CreateWalletRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getCreateWalletMethod(), getCallOptions(), request);
     }
 
@@ -985,8 +982,8 @@ public final class WalletGrpc {
      * RestoreWallet restores an existing wallet with the given mnemonic.
      * </pre>
      */
-    public pactus.WalletOuterClass.RestoreWalletResponse restoreWallet(pactus.WalletOuterClass.RestoreWalletRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.RestoreWalletResponse restoreWallet(pactus.WalletOuterClass.RestoreWalletRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getRestoreWalletMethod(), getCallOptions(), request);
     }
 
@@ -995,8 +992,8 @@ public final class WalletGrpc {
      * LoadWallet loads an existing wallet with the given name.
      * </pre>
      */
-    public pactus.WalletOuterClass.LoadWalletResponse loadWallet(pactus.WalletOuterClass.LoadWalletRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.LoadWalletResponse loadWallet(pactus.WalletOuterClass.LoadWalletRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getLoadWalletMethod(), getCallOptions(), request);
     }
 
@@ -1005,8 +1002,8 @@ public final class WalletGrpc {
      * UnloadWallet unloads a currently loaded wallet with the specified name.
      * </pre>
      */
-    public pactus.WalletOuterClass.UnloadWalletResponse unloadWallet(pactus.WalletOuterClass.UnloadWalletRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.UnloadWalletResponse unloadWallet(pactus.WalletOuterClass.UnloadWalletRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getUnloadWalletMethod(), getCallOptions(), request);
     }
 
@@ -1015,8 +1012,8 @@ public final class WalletGrpc {
      * GetTotalBalance returns the total available balance of the wallet.
      * </pre>
      */
-    public pactus.WalletOuterClass.GetTotalBalanceResponse getTotalBalance(pactus.WalletOuterClass.GetTotalBalanceRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.GetTotalBalanceResponse getTotalBalance(pactus.WalletOuterClass.GetTotalBalanceRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetTotalBalanceMethod(), getCallOptions(), request);
     }
 
@@ -1025,8 +1022,8 @@ public final class WalletGrpc {
      * SignRawTransaction signs a raw transaction for a specified wallet.
      * </pre>
      */
-    public pactus.WalletOuterClass.SignRawTransactionResponse signRawTransaction(pactus.WalletOuterClass.SignRawTransactionRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.SignRawTransactionResponse signRawTransaction(pactus.WalletOuterClass.SignRawTransactionRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getSignRawTransactionMethod(), getCallOptions(), request);
     }
 
@@ -1035,8 +1032,8 @@ public final class WalletGrpc {
      * GetValidatorAddress retrieves the validator address associated with a public key.
      * </pre>
      */
-    public pactus.WalletOuterClass.GetValidatorAddressResponse getValidatorAddress(pactus.WalletOuterClass.GetValidatorAddressRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.GetValidatorAddressResponse getValidatorAddress(pactus.WalletOuterClass.GetValidatorAddressRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetValidatorAddressMethod(), getCallOptions(), request);
     }
 
@@ -1045,8 +1042,8 @@ public final class WalletGrpc {
      * GetNewAddress generates a new address for the specified wallet.
      * </pre>
      */
-    public pactus.WalletOuterClass.GetNewAddressResponse getNewAddress(pactus.WalletOuterClass.GetNewAddressRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.GetNewAddressResponse getNewAddress(pactus.WalletOuterClass.GetNewAddressRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetNewAddressMethod(), getCallOptions(), request);
     }
 
@@ -1055,8 +1052,8 @@ public final class WalletGrpc {
      * GetAddressHistory retrieves the transaction history of an address.
      * </pre>
      */
-    public pactus.WalletOuterClass.GetAddressHistoryResponse getAddressHistory(pactus.WalletOuterClass.GetAddressHistoryRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.GetAddressHistoryResponse getAddressHistory(pactus.WalletOuterClass.GetAddressHistoryRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetAddressHistoryMethod(), getCallOptions(), request);
     }
 
@@ -1065,8 +1062,8 @@ public final class WalletGrpc {
      * SignMessage signs an arbitrary message using a wallet's private key.
      * </pre>
      */
-    public pactus.WalletOuterClass.SignMessageResponse signMessage(pactus.WalletOuterClass.SignMessageRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.SignMessageResponse signMessage(pactus.WalletOuterClass.SignMessageRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getSignMessageMethod(), getCallOptions(), request);
     }
 
@@ -1075,8 +1072,8 @@ public final class WalletGrpc {
      * GetTotalStake returns the total stake amount in the wallet.
      * </pre>
      */
-    public pactus.WalletOuterClass.GetTotalStakeResponse getTotalStake(pactus.WalletOuterClass.GetTotalStakeRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.GetTotalStakeResponse getTotalStake(pactus.WalletOuterClass.GetTotalStakeRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetTotalStakeMethod(), getCallOptions(), request);
     }
 
@@ -1085,8 +1082,8 @@ public final class WalletGrpc {
      * GetAddressInfo returns detailed information about a specific address.
      * </pre>
      */
-    public pactus.WalletOuterClass.GetAddressInfoResponse getAddressInfo(pactus.WalletOuterClass.GetAddressInfoRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.GetAddressInfoResponse getAddressInfo(pactus.WalletOuterClass.GetAddressInfoRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetAddressInfoMethod(), getCallOptions(), request);
     }
 
@@ -1095,8 +1092,8 @@ public final class WalletGrpc {
      * SetAddressLabel sets or updates the label for a given address.
      * </pre>
      */
-    public pactus.WalletOuterClass.SetAddressLabelResponse setAddressLabel(pactus.WalletOuterClass.SetAddressLabelRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.SetAddressLabelResponse setAddressLabel(pactus.WalletOuterClass.SetAddressLabelRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getSetAddressLabelMethod(), getCallOptions(), request);
     }
 
@@ -1105,8 +1102,8 @@ public final class WalletGrpc {
      * ListWallet returns a list of all available wallets.
      * </pre>
      */
-    public pactus.WalletOuterClass.ListWalletResponse listWallet(pactus.WalletOuterClass.ListWalletRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.ListWalletResponse listWallet(pactus.WalletOuterClass.ListWalletRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getListWalletMethod(), getCallOptions(), request);
     }
 
@@ -1115,8 +1112,8 @@ public final class WalletGrpc {
      * GetWalletInfo returns detailed information about a specific wallet.
      * </pre>
      */
-    public pactus.WalletOuterClass.GetWalletInfoResponse getWalletInfo(pactus.WalletOuterClass.GetWalletInfoRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.GetWalletInfoResponse getWalletInfo(pactus.WalletOuterClass.GetWalletInfoRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getGetWalletInfoMethod(), getCallOptions(), request);
     }
 
@@ -1125,8 +1122,8 @@ public final class WalletGrpc {
      * ListAddress returns all addresses in the specified wallet.
      * </pre>
      */
-    public pactus.WalletOuterClass.ListAddressResponse listAddress(pactus.WalletOuterClass.ListAddressRequest request) {
-      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+    public pactus.WalletOuterClass.ListAddressResponse listAddress(pactus.WalletOuterClass.ListAddressRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getListAddressMethod(), getCallOptions(), request);
     }
   }
