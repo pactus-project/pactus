@@ -19,7 +19,7 @@ runs:
   steps:
     - name: upload-unsigned-artifact
       id: upload-unsigned-artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: ${{ inputs.artifact-name }}
         # Based on current SignPath configuration, we can only sign one file per request.
@@ -27,7 +27,7 @@ runs:
 
     - name: sign-artifact
       id: sign-artifact
-      uses: signpath/github-action-submit-signing-request@v1.2
+      uses: signpath/github-action-submit-signing-request@v2
       with:
         api-token: "${{ inputs.signpath-api-token }}"
         organization-id: "208fe1b4-fd9d-41c8-be2e-8ebd037cd0db"

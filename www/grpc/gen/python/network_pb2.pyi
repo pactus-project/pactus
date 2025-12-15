@@ -17,13 +17,13 @@ DIRECTION_INBOUND: Direction
 DIRECTION_OUTBOUND: Direction
 
 class GetNetworkInfoRequest(_message.Message):
-    __slots__ = ("only_connected",)
+    __slots__ = ()
     ONLY_CONNECTED_FIELD_NUMBER: _ClassVar[int]
     only_connected: bool
-    def __init__(self, only_connected: bool = ...) -> None: ...
+    def __init__(self, only_connected: _Optional[bool] = ...) -> None: ...
 
 class GetNetworkInfoResponse(_message.Message):
-    __slots__ = ("network_name", "connected_peers_count", "connected_peers", "metric_info")
+    __slots__ = ()
     NETWORK_NAME_FIELD_NUMBER: _ClassVar[int]
     CONNECTED_PEERS_COUNT_FIELD_NUMBER: _ClassVar[int]
     CONNECTED_PEERS_FIELD_NUMBER: _ClassVar[int]
@@ -39,7 +39,7 @@ class GetNodeInfoRequest(_message.Message):
     def __init__(self) -> None: ...
 
 class GetNodeInfoResponse(_message.Message):
-    __slots__ = ("moniker", "agent", "peer_id", "started_at", "reachability", "services", "services_names", "local_addrs", "protocols", "clock_offset", "connection_info", "zmq_publishers", "current_time")
+    __slots__ = ()
     MONIKER_FIELD_NUMBER: _ClassVar[int]
     AGENT_FIELD_NUMBER: _ClassVar[int]
     PEER_ID_FIELD_NUMBER: _ClassVar[int]
@@ -69,7 +69,7 @@ class GetNodeInfoResponse(_message.Message):
     def __init__(self, moniker: _Optional[str] = ..., agent: _Optional[str] = ..., peer_id: _Optional[str] = ..., started_at: _Optional[int] = ..., reachability: _Optional[str] = ..., services: _Optional[int] = ..., services_names: _Optional[str] = ..., local_addrs: _Optional[_Iterable[str]] = ..., protocols: _Optional[_Iterable[str]] = ..., clock_offset: _Optional[float] = ..., connection_info: _Optional[_Union[ConnectionInfo, _Mapping]] = ..., zmq_publishers: _Optional[_Iterable[_Union[ZMQPublisherInfo, _Mapping]]] = ..., current_time: _Optional[int] = ...) -> None: ...
 
 class ZMQPublisherInfo(_message.Message):
-    __slots__ = ("topic", "address", "hwm")
+    __slots__ = ()
     TOPIC_FIELD_NUMBER: _ClassVar[int]
     ADDRESS_FIELD_NUMBER: _ClassVar[int]
     HWM_FIELD_NUMBER: _ClassVar[int]
@@ -79,7 +79,7 @@ class ZMQPublisherInfo(_message.Message):
     def __init__(self, topic: _Optional[str] = ..., address: _Optional[str] = ..., hwm: _Optional[int] = ...) -> None: ...
 
 class PeerInfo(_message.Message):
-    __slots__ = ("status", "moniker", "agent", "peer_id", "consensus_keys", "consensus_addresses", "services", "last_block_hash", "height", "last_sent", "last_received", "address", "direction", "protocols", "total_sessions", "completed_sessions", "metric_info", "outbound_hello_sent")
+    __slots__ = ()
     STATUS_FIELD_NUMBER: _ClassVar[int]
     MONIKER_FIELD_NUMBER: _ClassVar[int]
     AGENT_FIELD_NUMBER: _ClassVar[int]
@@ -116,10 +116,10 @@ class PeerInfo(_message.Message):
     completed_sessions: int
     metric_info: MetricInfo
     outbound_hello_sent: bool
-    def __init__(self, status: _Optional[int] = ..., moniker: _Optional[str] = ..., agent: _Optional[str] = ..., peer_id: _Optional[str] = ..., consensus_keys: _Optional[_Iterable[str]] = ..., consensus_addresses: _Optional[_Iterable[str]] = ..., services: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., height: _Optional[int] = ..., last_sent: _Optional[int] = ..., last_received: _Optional[int] = ..., address: _Optional[str] = ..., direction: _Optional[_Union[Direction, str]] = ..., protocols: _Optional[_Iterable[str]] = ..., total_sessions: _Optional[int] = ..., completed_sessions: _Optional[int] = ..., metric_info: _Optional[_Union[MetricInfo, _Mapping]] = ..., outbound_hello_sent: bool = ...) -> None: ...
+    def __init__(self, status: _Optional[int] = ..., moniker: _Optional[str] = ..., agent: _Optional[str] = ..., peer_id: _Optional[str] = ..., consensus_keys: _Optional[_Iterable[str]] = ..., consensus_addresses: _Optional[_Iterable[str]] = ..., services: _Optional[int] = ..., last_block_hash: _Optional[str] = ..., height: _Optional[int] = ..., last_sent: _Optional[int] = ..., last_received: _Optional[int] = ..., address: _Optional[str] = ..., direction: _Optional[_Union[Direction, str]] = ..., protocols: _Optional[_Iterable[str]] = ..., total_sessions: _Optional[int] = ..., completed_sessions: _Optional[int] = ..., metric_info: _Optional[_Union[MetricInfo, _Mapping]] = ..., outbound_hello_sent: _Optional[bool] = ...) -> None: ...
 
 class ConnectionInfo(_message.Message):
-    __slots__ = ("connections", "inbound_connections", "outbound_connections")
+    __slots__ = ()
     CONNECTIONS_FIELD_NUMBER: _ClassVar[int]
     INBOUND_CONNECTIONS_FIELD_NUMBER: _ClassVar[int]
     OUTBOUND_CONNECTIONS_FIELD_NUMBER: _ClassVar[int]
@@ -129,16 +129,16 @@ class ConnectionInfo(_message.Message):
     def __init__(self, connections: _Optional[int] = ..., inbound_connections: _Optional[int] = ..., outbound_connections: _Optional[int] = ...) -> None: ...
 
 class MetricInfo(_message.Message):
-    __slots__ = ("total_invalid", "total_sent", "total_received", "message_sent", "message_received")
+    __slots__ = ()
     class MessageSentEntry(_message.Message):
-        __slots__ = ("key", "value")
+        __slots__ = ()
         KEY_FIELD_NUMBER: _ClassVar[int]
         VALUE_FIELD_NUMBER: _ClassVar[int]
         key: int
         value: CounterInfo
         def __init__(self, key: _Optional[int] = ..., value: _Optional[_Union[CounterInfo, _Mapping]] = ...) -> None: ...
     class MessageReceivedEntry(_message.Message):
-        __slots__ = ("key", "value")
+        __slots__ = ()
         KEY_FIELD_NUMBER: _ClassVar[int]
         VALUE_FIELD_NUMBER: _ClassVar[int]
         key: int
@@ -157,7 +157,7 @@ class MetricInfo(_message.Message):
     def __init__(self, total_invalid: _Optional[_Union[CounterInfo, _Mapping]] = ..., total_sent: _Optional[_Union[CounterInfo, _Mapping]] = ..., total_received: _Optional[_Union[CounterInfo, _Mapping]] = ..., message_sent: _Optional[_Mapping[int, CounterInfo]] = ..., message_received: _Optional[_Mapping[int, CounterInfo]] = ...) -> None: ...
 
 class CounterInfo(_message.Message):
-    __slots__ = ("bytes", "bundles")
+    __slots__ = ()
     BYTES_FIELD_NUMBER: _ClassVar[int]
     BUNDLES_FIELD_NUMBER: _ClassVar[int]
     bytes: int

@@ -1,13 +1,15 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: wallet.proto
-//
+// Generated from wallet.proto.
+
 // @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
+// ignore_for_file: unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -75,29 +77,45 @@ const GetAddressHistoryRequest$json = {
 };
 
 /// Descriptor for `GetAddressHistoryRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getAddressHistoryRequestDescriptor = $convert.base64Decode(
-    'ChhHZXRBZGRyZXNzSGlzdG9yeVJlcXVlc3QSHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE'
-    '5hbWUSGAoHYWRkcmVzcxgCIAEoCVIHYWRkcmVzcw==');
+final $typed_data.Uint8List getAddressHistoryRequestDescriptor =
+    $convert.base64Decode(
+        'ChhHZXRBZGRyZXNzSGlzdG9yeVJlcXVlc3QSHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE'
+        '5hbWUSGAoHYWRkcmVzcxgCIAEoCVIHYWRkcmVzcw==');
 
 @$core.Deprecated('Use getAddressHistoryResponseDescriptor instead')
 const GetAddressHistoryResponse$json = {
   '1': 'GetAddressHistoryResponse',
   '2': [
-    {'1': 'history_info', '3': 1, '4': 3, '5': 11, '6': '.pactus.HistoryInfo', '10': 'historyInfo'},
+    {
+      '1': 'history_info',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.HistoryInfo',
+      '10': 'historyInfo'
+    },
   ],
 };
 
 /// Descriptor for `GetAddressHistoryResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getAddressHistoryResponseDescriptor = $convert.base64Decode(
-    'ChlHZXRBZGRyZXNzSGlzdG9yeVJlc3BvbnNlEjYKDGhpc3RvcnlfaW5mbxgBIAMoCzITLnBhY3'
-    'R1cy5IaXN0b3J5SW5mb1ILaGlzdG9yeUluZm8=');
+final $typed_data.Uint8List getAddressHistoryResponseDescriptor =
+    $convert.base64Decode(
+        'ChlHZXRBZGRyZXNzSGlzdG9yeVJlc3BvbnNlEjYKDGhpc3RvcnlfaW5mbxgBIAMoCzITLnBhY3'
+        'R1cy5IaXN0b3J5SW5mb1ILaGlzdG9yeUluZm8=');
 
 @$core.Deprecated('Use getNewAddressRequestDescriptor instead')
 const GetNewAddressRequest$json = {
   '1': 'GetNewAddressRequest',
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
-    {'1': 'address_type', '3': 2, '4': 1, '5': 14, '6': '.pactus.AddressType', '10': 'addressType'},
+    {
+      '1': 'address_type',
+      '3': 2,
+      '4': 1,
+      '5': 14,
+      '6': '.pactus.AddressType',
+      '10': 'addressType'
+    },
     {'1': 'label', '3': 3, '4': 1, '5': 9, '10': 'label'},
     {'1': 'password', '3': 4, '4': 1, '5': 9, '10': 'password'},
   ],
@@ -114,7 +132,14 @@ const GetNewAddressResponse$json = {
   '1': 'GetNewAddressResponse',
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
-    {'1': 'address_info', '3': 2, '4': 1, '5': 11, '6': '.pactus.AddressInfo', '10': 'addressInfo'},
+    {
+      '1': 'address_info',
+      '3': 2,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.AddressInfo',
+      '10': 'addressInfo'
+    },
   ],
 };
 
@@ -175,8 +200,9 @@ const CreateWalletResponse$json = {
 };
 
 /// Descriptor for `CreateWalletResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List createWalletResponseDescriptor = $convert.base64Decode(
-    'ChRDcmVhdGVXYWxsZXRSZXNwb25zZRIaCghtbmVtb25pYxgCIAEoCVIIbW5lbW9uaWM=');
+final $typed_data.Uint8List createWalletResponseDescriptor =
+    $convert.base64Decode(
+        'ChRDcmVhdGVXYWxsZXRSZXNwb25zZRIaCghtbmVtb25pYxgCIAEoCVIIbW5lbW9uaWM=');
 
 @$core.Deprecated('Use loadWalletRequestDescriptor instead')
 const LoadWalletRequest$json = {
@@ -236,9 +262,10 @@ const GetValidatorAddressRequest$json = {
 };
 
 /// Descriptor for `GetValidatorAddressRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getValidatorAddressRequestDescriptor = $convert.base64Decode(
-    'ChpHZXRWYWxpZGF0b3JBZGRyZXNzUmVxdWVzdBIdCgpwdWJsaWNfa2V5GAEgASgJUglwdWJsaW'
-    'NLZXk=');
+final $typed_data.Uint8List getValidatorAddressRequestDescriptor =
+    $convert.base64Decode(
+        'ChpHZXRWYWxpZGF0b3JBZGRyZXNzUmVxdWVzdBIdCgpwdWJsaWNfa2V5GAEgASgJUglwdWJsaW'
+        'NLZXk=');
 
 @$core.Deprecated('Use getValidatorAddressResponseDescriptor instead')
 const GetValidatorAddressResponse$json = {
@@ -249,9 +276,10 @@ const GetValidatorAddressResponse$json = {
 };
 
 /// Descriptor for `GetValidatorAddressResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getValidatorAddressResponseDescriptor = $convert.base64Decode(
-    'ChtHZXRWYWxpZGF0b3JBZGRyZXNzUmVzcG9uc2USGAoHYWRkcmVzcxgBIAEoCVIHYWRkcmVzcw'
-    '==');
+final $typed_data.Uint8List getValidatorAddressResponseDescriptor =
+    $convert.base64Decode(
+        'ChtHZXRWYWxpZGF0b3JBZGRyZXNzUmVzcG9uc2USGAoHYWRkcmVzcxgBIAEoCVIHYWRkcmVzcw'
+        '==');
 
 @$core.Deprecated('Use signRawTransactionRequestDescriptor instead')
 const SignRawTransactionRequest$json = {
@@ -274,15 +302,22 @@ const SignRawTransactionResponse$json = {
   '1': 'SignRawTransactionResponse',
   '2': [
     {'1': 'transaction_id', '3': 1, '4': 1, '5': 9, '10': 'transactionId'},
-    {'1': 'signed_raw_transaction', '3': 2, '4': 1, '5': 9, '10': 'signedRawTransaction'},
+    {
+      '1': 'signed_raw_transaction',
+      '3': 2,
+      '4': 1,
+      '5': 9,
+      '10': 'signedRawTransaction'
+    },
   ],
 };
 
 /// Descriptor for `SignRawTransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signRawTransactionResponseDescriptor = $convert.base64Decode(
-    'ChpTaWduUmF3VHJhbnNhY3Rpb25SZXNwb25zZRIlCg50cmFuc2FjdGlvbl9pZBgBIAEoCVINdH'
-    'JhbnNhY3Rpb25JZBI0ChZzaWduZWRfcmF3X3RyYW5zYWN0aW9uGAIgASgJUhRzaWduZWRSYXdU'
-    'cmFuc2FjdGlvbg==');
+final $typed_data.Uint8List signRawTransactionResponseDescriptor =
+    $convert.base64Decode(
+        'ChpTaWduUmF3VHJhbnNhY3Rpb25SZXNwb25zZRIlCg50cmFuc2FjdGlvbl9pZBgBIAEoCVINdH'
+        'JhbnNhY3Rpb25JZBI0ChZzaWduZWRfcmF3X3RyYW5zYWN0aW9uGAIgASgJUhRzaWduZWRSYXdU'
+        'cmFuc2FjdGlvbg==');
 
 @$core.Deprecated('Use getTotalBalanceRequestDescriptor instead')
 const GetTotalBalanceRequest$json = {
@@ -293,9 +328,10 @@ const GetTotalBalanceRequest$json = {
 };
 
 /// Descriptor for `GetTotalBalanceRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getTotalBalanceRequestDescriptor = $convert.base64Decode(
-    'ChZHZXRUb3RhbEJhbGFuY2VSZXF1ZXN0Eh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW'
-    '1l');
+final $typed_data.Uint8List getTotalBalanceRequestDescriptor =
+    $convert.base64Decode(
+        'ChZHZXRUb3RhbEJhbGFuY2VSZXF1ZXN0Eh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW'
+        '1l');
 
 @$core.Deprecated('Use getTotalBalanceResponseDescriptor instead')
 const GetTotalBalanceResponse$json = {
@@ -307,9 +343,10 @@ const GetTotalBalanceResponse$json = {
 };
 
 /// Descriptor for `GetTotalBalanceResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getTotalBalanceResponseDescriptor = $convert.base64Decode(
-    'ChdHZXRUb3RhbEJhbGFuY2VSZXNwb25zZRIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0Tm'
-    'FtZRIjCg10b3RhbF9iYWxhbmNlGAIgASgDUgx0b3RhbEJhbGFuY2U=');
+final $typed_data.Uint8List getTotalBalanceResponseDescriptor =
+    $convert.base64Decode(
+        'ChdHZXRUb3RhbEJhbGFuY2VSZXNwb25zZRIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0Tm'
+        'FtZRIjCg10b3RhbF9iYWxhbmNlGAIgASgDUgx0b3RhbEJhbGFuY2U=');
 
 @$core.Deprecated('Use signMessageRequestDescriptor instead')
 const SignMessageRequest$json = {
@@ -337,8 +374,9 @@ const SignMessageResponse$json = {
 };
 
 /// Descriptor for `SignMessageResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signMessageResponseDescriptor = $convert.base64Decode(
-    'ChNTaWduTWVzc2FnZVJlc3BvbnNlEhwKCXNpZ25hdHVyZRgBIAEoCVIJc2lnbmF0dXJl');
+final $typed_data.Uint8List signMessageResponseDescriptor =
+    $convert.base64Decode(
+        'ChNTaWduTWVzc2FnZVJlc3BvbnNlEhwKCXNpZ25hdHVyZRgBIAEoCVIJc2lnbmF0dXJl');
 
 @$core.Deprecated('Use getTotalStakeRequestDescriptor instead')
 const GetTotalStakeRequest$json = {
@@ -422,8 +460,8 @@ const SetAddressLabelResponse$json = {
 };
 
 /// Descriptor for `SetAddressLabelResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List setAddressLabelResponseDescriptor = $convert.base64Decode(
-    'ChdTZXRBZGRyZXNzTGFiZWxSZXNwb25zZQ==');
+final $typed_data.Uint8List setAddressLabelResponseDescriptor =
+    $convert.base64Decode('ChdTZXRBZGRyZXNzTGFiZWxSZXNwb25zZQ==');
 
 @$core.Deprecated('Use listWalletRequestDescriptor instead')
 const ListWalletRequest$json = {
@@ -431,8 +469,8 @@ const ListWalletRequest$json = {
 };
 
 /// Descriptor for `ListWalletRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listWalletRequestDescriptor = $convert.base64Decode(
-    'ChFMaXN0V2FsbGV0UmVxdWVzdA==');
+final $typed_data.Uint8List listWalletRequestDescriptor =
+    $convert.base64Decode('ChFMaXN0V2FsbGV0UmVxdWVzdA==');
 
 @$core.Deprecated('Use listWalletResponseDescriptor instead')
 const ListWalletResponse$json = {
@@ -443,8 +481,9 @@ const ListWalletResponse$json = {
 };
 
 /// Descriptor for `ListWalletResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listWalletResponseDescriptor = $convert.base64Decode(
-    'ChJMaXN0V2FsbGV0UmVzcG9uc2USGAoHd2FsbGV0cxgBIAMoCVIHd2FsbGV0cw==');
+final $typed_data.Uint8List listWalletResponseDescriptor =
+    $convert.base64Decode(
+        'ChJMaXN0V2FsbGV0UmVzcG9uc2USGAoHd2FsbGV0cxgBIAMoCVIHd2FsbGV0cw==');
 
 @$core.Deprecated('Use getWalletInfoRequestDescriptor instead')
 const GetWalletInfoRequest$json = {
@@ -497,7 +536,14 @@ const ListAddressResponse$json = {
   '1': 'ListAddressResponse',
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
-    {'1': 'data', '3': 2, '4': 3, '5': 11, '6': '.pactus.AddressInfo', '10': 'data'},
+    {
+      '1': 'data',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.AddressInfo',
+      '10': 'data'
+    },
   ],
 };
 
@@ -509,27 +555,92 @@ final $typed_data.Uint8List listAddressResponseDescriptor = $convert.base64Decod
 const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = {
   '1': 'Wallet',
   '2': [
-    {'1': 'CreateWallet', '2': '.pactus.CreateWalletRequest', '3': '.pactus.CreateWalletResponse'},
-    {'1': 'RestoreWallet', '2': '.pactus.RestoreWalletRequest', '3': '.pactus.RestoreWalletResponse'},
-    {'1': 'LoadWallet', '2': '.pactus.LoadWalletRequest', '3': '.pactus.LoadWalletResponse'},
-    {'1': 'UnloadWallet', '2': '.pactus.UnloadWalletRequest', '3': '.pactus.UnloadWalletResponse'},
-    {'1': 'GetTotalBalance', '2': '.pactus.GetTotalBalanceRequest', '3': '.pactus.GetTotalBalanceResponse'},
-    {'1': 'SignRawTransaction', '2': '.pactus.SignRawTransactionRequest', '3': '.pactus.SignRawTransactionResponse'},
-    {'1': 'GetValidatorAddress', '2': '.pactus.GetValidatorAddressRequest', '3': '.pactus.GetValidatorAddressResponse'},
-    {'1': 'GetNewAddress', '2': '.pactus.GetNewAddressRequest', '3': '.pactus.GetNewAddressResponse'},
-    {'1': 'GetAddressHistory', '2': '.pactus.GetAddressHistoryRequest', '3': '.pactus.GetAddressHistoryResponse'},
-    {'1': 'SignMessage', '2': '.pactus.SignMessageRequest', '3': '.pactus.SignMessageResponse'},
-    {'1': 'GetTotalStake', '2': '.pactus.GetTotalStakeRequest', '3': '.pactus.GetTotalStakeResponse'},
-    {'1': 'GetAddressInfo', '2': '.pactus.GetAddressInfoRequest', '3': '.pactus.GetAddressInfoResponse'},
-    {'1': 'SetAddressLabel', '2': '.pactus.SetAddressLabelRequest', '3': '.pactus.SetAddressLabelResponse'},
-    {'1': 'ListWallet', '2': '.pactus.ListWalletRequest', '3': '.pactus.ListWalletResponse'},
-    {'1': 'GetWalletInfo', '2': '.pactus.GetWalletInfoRequest', '3': '.pactus.GetWalletInfoResponse'},
-    {'1': 'ListAddress', '2': '.pactus.ListAddressRequest', '3': '.pactus.ListAddressResponse'},
+    {
+      '1': 'CreateWallet',
+      '2': '.pactus.CreateWalletRequest',
+      '3': '.pactus.CreateWalletResponse'
+    },
+    {
+      '1': 'RestoreWallet',
+      '2': '.pactus.RestoreWalletRequest',
+      '3': '.pactus.RestoreWalletResponse'
+    },
+    {
+      '1': 'LoadWallet',
+      '2': '.pactus.LoadWalletRequest',
+      '3': '.pactus.LoadWalletResponse'
+    },
+    {
+      '1': 'UnloadWallet',
+      '2': '.pactus.UnloadWalletRequest',
+      '3': '.pactus.UnloadWalletResponse'
+    },
+    {
+      '1': 'GetTotalBalance',
+      '2': '.pactus.GetTotalBalanceRequest',
+      '3': '.pactus.GetTotalBalanceResponse'
+    },
+    {
+      '1': 'SignRawTransaction',
+      '2': '.pactus.SignRawTransactionRequest',
+      '3': '.pactus.SignRawTransactionResponse'
+    },
+    {
+      '1': 'GetValidatorAddress',
+      '2': '.pactus.GetValidatorAddressRequest',
+      '3': '.pactus.GetValidatorAddressResponse'
+    },
+    {
+      '1': 'GetNewAddress',
+      '2': '.pactus.GetNewAddressRequest',
+      '3': '.pactus.GetNewAddressResponse'
+    },
+    {
+      '1': 'GetAddressHistory',
+      '2': '.pactus.GetAddressHistoryRequest',
+      '3': '.pactus.GetAddressHistoryResponse'
+    },
+    {
+      '1': 'SignMessage',
+      '2': '.pactus.SignMessageRequest',
+      '3': '.pactus.SignMessageResponse'
+    },
+    {
+      '1': 'GetTotalStake',
+      '2': '.pactus.GetTotalStakeRequest',
+      '3': '.pactus.GetTotalStakeResponse'
+    },
+    {
+      '1': 'GetAddressInfo',
+      '2': '.pactus.GetAddressInfoRequest',
+      '3': '.pactus.GetAddressInfoResponse'
+    },
+    {
+      '1': 'SetAddressLabel',
+      '2': '.pactus.SetAddressLabelRequest',
+      '3': '.pactus.SetAddressLabelResponse'
+    },
+    {
+      '1': 'ListWallet',
+      '2': '.pactus.ListWalletRequest',
+      '3': '.pactus.ListWalletResponse'
+    },
+    {
+      '1': 'GetWalletInfo',
+      '2': '.pactus.GetWalletInfoRequest',
+      '3': '.pactus.GetWalletInfoResponse'
+    },
+    {
+      '1': 'ListAddress',
+      '2': '.pactus.ListAddressRequest',
+      '3': '.pactus.ListAddressResponse'
+    },
   ],
 };
 
 @$core.Deprecated('Use walletServiceDescriptor instead')
-const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> WalletServiceBase$messageJson = {
+const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
+    WalletServiceBase$messageJson = {
   '.pactus.CreateWalletRequest': CreateWalletRequest$json,
   '.pactus.CreateWalletResponse': CreateWalletResponse$json,
   '.pactus.RestoreWalletRequest': RestoreWalletRequest$json,
@@ -592,4 +703,3 @@ final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode(
     'RJbmZvUmVxdWVzdBodLnBhY3R1cy5HZXRXYWxsZXRJbmZvUmVzcG9uc2USRgoLTGlzdEFkZHJl'
     'c3MSGi5wYWN0dXMuTGlzdEFkZHJlc3NSZXF1ZXN0GhsucGFjdHVzLkxpc3RBZGRyZXNzUmVzcG'
     '9uc2U=');
-

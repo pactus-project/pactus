@@ -369,8 +369,8 @@ func MakeRewardAddresses(wlt *wallet.Wallet, valAddrsInfo []vault.AddressInfo,
 
 	// Case 3: Each validator has a corresponding reward address in the config file.
 	case len(confRewardAddrs) == len(valAddrsInfo):
-		for i := 0; i < len(valAddrsInfo); i++ {
-			addr, _ := crypto.AddressFromString(confRewardAddrs[i])
+		for _, addrStr := range confRewardAddrs {
+			addr, _ := crypto.AddressFromString(addrStr)
 			rewardAddrs = append(rewardAddrs, addr)
 		}
 

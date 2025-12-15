@@ -13,13 +13,7 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global =
-    (typeof globalThis !== 'undefined' && globalThis) ||
-    (typeof window !== 'undefined' && window) ||
-    (typeof global !== 'undefined' && global) ||
-    (typeof self !== 'undefined' && self) ||
-    (function () { return this; }).call(null) ||
-    Function('return this')();
+var global = globalThis;
 
 var transaction_pb = require('./transaction_pb.js');
 goog.object.extend(proto, transaction_pb);
@@ -686,7 +680,7 @@ address: jspb.Message.getFieldWithDefault(msg, 1, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetAccountRequest}
  */
 proto.pactus.GetAccountRequest.deserializeBinary = function(bytes) {
@@ -711,7 +705,7 @@ proto.pactus.GetAccountRequest.deserializeBinaryFromReader = function(msg, reade
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setAddress(value);
       break;
     default:
@@ -816,7 +810,7 @@ account: (f = msg.getAccount()) && proto.pactus.AccountInfo.toObject(includeInst
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetAccountResponse}
  */
 proto.pactus.GetAccountResponse.deserializeBinary = function(bytes) {
@@ -967,7 +961,7 @@ proto.pactus.GetValidatorAddressesRequest.toObject = function(includeInstance, m
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetValidatorAddressesRequest}
  */
 proto.pactus.GetValidatorAddressesRequest.deserializeBinary = function(bytes) {
@@ -1075,7 +1069,7 @@ addressesList: (f = jspb.Message.getRepeatedField(msg, 1)) == null ? undefined :
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetValidatorAddressesResponse}
  */
 proto.pactus.GetValidatorAddressesResponse.deserializeBinary = function(bytes) {
@@ -1100,7 +1094,7 @@ proto.pactus.GetValidatorAddressesResponse.deserializeBinaryFromReader = functio
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.addAddresses(value);
       break;
     default:
@@ -1224,7 +1218,7 @@ address: jspb.Message.getFieldWithDefault(msg, 1, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetValidatorRequest}
  */
 proto.pactus.GetValidatorRequest.deserializeBinary = function(bytes) {
@@ -1249,7 +1243,7 @@ proto.pactus.GetValidatorRequest.deserializeBinaryFromReader = function(msg, rea
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setAddress(value);
       break;
     default:
@@ -1354,7 +1348,7 @@ number: jspb.Message.getFieldWithDefault(msg, 1, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetValidatorByNumberRequest}
  */
 proto.pactus.GetValidatorByNumberRequest.deserializeBinary = function(bytes) {
@@ -1484,7 +1478,7 @@ validator: (f = msg.getValidator()) && proto.pactus.ValidatorInfo.toObject(inclu
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetValidatorResponse}
  */
 proto.pactus.GetValidatorResponse.deserializeBinary = function(bytes) {
@@ -1635,7 +1629,7 @@ address: jspb.Message.getFieldWithDefault(msg, 1, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetPublicKeyRequest}
  */
 proto.pactus.GetPublicKeyRequest.deserializeBinary = function(bytes) {
@@ -1660,7 +1654,7 @@ proto.pactus.GetPublicKeyRequest.deserializeBinaryFromReader = function(msg, rea
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setAddress(value);
       break;
     default:
@@ -1765,7 +1759,7 @@ publicKey: jspb.Message.getFieldWithDefault(msg, 1, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetPublicKeyResponse}
  */
 proto.pactus.GetPublicKeyResponse.deserializeBinary = function(bytes) {
@@ -1790,7 +1784,7 @@ proto.pactus.GetPublicKeyResponse.deserializeBinaryFromReader = function(msg, re
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setPublicKey(value);
       break;
     default:
@@ -1896,7 +1890,7 @@ verbosity: jspb.Message.getFieldWithDefault(msg, 2, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetBlockRequest}
  */
 proto.pactus.GetBlockRequest.deserializeBinary = function(bytes) {
@@ -2069,7 +2063,7 @@ txsList: jspb.Message.toObjectList(msg.getTxsList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetBlockResponse}
  */
 proto.pactus.GetBlockResponse.deserializeBinary = function(bytes) {
@@ -2098,11 +2092,11 @@ proto.pactus.GetBlockResponse.deserializeBinaryFromReader = function(msg, reader
       msg.setHeight(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setHash(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setData(value);
       break;
     case 4:
@@ -2437,7 +2431,7 @@ height: jspb.Message.getFieldWithDefault(msg, 1, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetBlockHashRequest}
  */
 proto.pactus.GetBlockHashRequest.deserializeBinary = function(bytes) {
@@ -2567,7 +2561,7 @@ hash: jspb.Message.getFieldWithDefault(msg, 1, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetBlockHashResponse}
  */
 proto.pactus.GetBlockHashResponse.deserializeBinary = function(bytes) {
@@ -2592,7 +2586,7 @@ proto.pactus.GetBlockHashResponse.deserializeBinaryFromReader = function(msg, re
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setHash(value);
       break;
     default:
@@ -2697,7 +2691,7 @@ hash: jspb.Message.getFieldWithDefault(msg, 1, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetBlockHeightRequest}
  */
 proto.pactus.GetBlockHeightRequest.deserializeBinary = function(bytes) {
@@ -2722,7 +2716,7 @@ proto.pactus.GetBlockHeightRequest.deserializeBinaryFromReader = function(msg, r
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setHash(value);
       break;
     default:
@@ -2827,7 +2821,7 @@ height: jspb.Message.getFieldWithDefault(msg, 1, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetBlockHeightResponse}
  */
 proto.pactus.GetBlockHeightResponse.deserializeBinary = function(bytes) {
@@ -2957,7 +2951,7 @@ proto.pactus.GetBlockchainInfoRequest.toObject = function(includeInstance, msg) 
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetBlockchainInfoRequest}
  */
 proto.pactus.GetBlockchainInfoRequest.deserializeBinary = function(bytes) {
@@ -3077,7 +3071,7 @@ committeeProtocolVersionsMap: (f = msg.getCommitteeProtocolVersionsMap()) ? f.to
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetBlockchainInfoResponse}
  */
 proto.pactus.GetBlockchainInfoResponse.deserializeBinary = function(bytes) {
@@ -3106,7 +3100,7 @@ proto.pactus.GetBlockchainInfoResponse.deserializeBinaryFromReader = function(ms
       msg.setLastBlockHeight(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setLastBlockHash(value);
       break;
     case 3:
@@ -3261,7 +3255,12 @@ proto.pactus.GetBlockchainInfoResponse.serializeBinaryToWriter = function(messag
   }
   f = message.getCommitteeProtocolVersionsMap(true);
   if (f && f.getLength() > 0) {
-    f.serializeBinary(11, writer, jspb.BinaryWriter.prototype.writeInt32, jspb.BinaryWriter.prototype.writeDouble);
+jspb.internal.public_for_gencode.serializeMapToBinary(
+    message.getCommitteeProtocolVersionsMap(true),
+    11,
+    writer,
+    jspb.BinaryWriter.prototype.writeInt32,
+    jspb.BinaryWriter.prototype.writeDouble);
   }
 };
 
@@ -3552,7 +3551,7 @@ proto.pactus.GetConsensusInfoRequest.toObject = function(includeInstance, msg) {
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetConsensusInfoRequest}
  */
 proto.pactus.GetConsensusInfoRequest.deserializeBinary = function(bytes) {
@@ -3662,7 +3661,7 @@ instancesList: jspb.Message.toObjectList(msg.getInstancesList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetConsensusInfoResponse}
  */
 proto.pactus.GetConsensusInfoResponse.deserializeBinary = function(bytes) {
@@ -3864,7 +3863,7 @@ payloadType: jspb.Message.getFieldWithDefault(msg, 1, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetTxPoolContentRequest}
  */
 proto.pactus.GetTxPoolContentRequest.deserializeBinary = function(bytes) {
@@ -4002,7 +4001,7 @@ txsList: jspb.Message.toObjectList(msg.getTxsList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.GetTxPoolContentResponse}
  */
 proto.pactus.GetTxPoolContentResponse.deserializeBinary = function(bytes) {
@@ -4164,7 +4163,7 @@ protocolVersion: jspb.Message.getFieldWithDefault(msg, 11, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.ValidatorInfo}
  */
 proto.pactus.ValidatorInfo.deserializeBinary = function(bytes) {
@@ -4189,15 +4188,15 @@ proto.pactus.ValidatorInfo.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setHash(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setData(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setPublicKey(value);
       break;
     case 4:
@@ -4221,7 +4220,7 @@ proto.pactus.ValidatorInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setUnbondingHeight(value);
       break;
     case 9:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setAddress(value);
       break;
     case 10:
@@ -4588,7 +4587,7 @@ address: jspb.Message.getFieldWithDefault(msg, 5, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.AccountInfo}
  */
 proto.pactus.AccountInfo.deserializeBinary = function(bytes) {
@@ -4613,11 +4612,11 @@ proto.pactus.AccountInfo.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setHash(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setData(value);
       break;
     case 3:
@@ -4629,7 +4628,7 @@ proto.pactus.AccountInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setBalance(value);
       break;
     case 5:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setAddress(value);
       break;
     default:
@@ -4838,7 +4837,7 @@ proposerAddress: jspb.Message.getFieldWithDefault(msg, 5, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.BlockHeaderInfo}
  */
 proto.pactus.BlockHeaderInfo.deserializeBinary = function(bytes) {
@@ -4867,19 +4866,19 @@ proto.pactus.BlockHeaderInfo.deserializeBinaryFromReader = function(msg, reader)
       msg.setVersion(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setPrevBlockHash(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setStateRoot(value);
       break;
     case 4:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setSortitionSeed(value);
       break;
     case 5:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setProposerAddress(value);
       break;
     default:
@@ -5095,7 +5094,7 @@ signature: jspb.Message.getFieldWithDefault(msg, 5, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.CertificateInfo}
  */
 proto.pactus.CertificateInfo.deserializeBinary = function(bytes) {
@@ -5120,7 +5119,7 @@ proto.pactus.CertificateInfo.deserializeBinaryFromReader = function(msg, reader)
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setHash(value);
       break;
     case 2:
@@ -5128,19 +5127,13 @@ proto.pactus.CertificateInfo.deserializeBinaryFromReader = function(msg, reader)
       msg.setRound(value);
       break;
     case 3:
-      var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedInt32() : [reader.readInt32()]);
-      for (var i = 0; i < values.length; i++) {
-        msg.addCommitters(values[i]);
-      }
+      reader.readPackableInt32Into(msg.getCommittersList());
       break;
     case 4:
-      var values = /** @type {!Array<number>} */ (reader.isDelimited() ? reader.readPackedInt32() : [reader.readInt32()]);
-      for (var i = 0; i < values.length; i++) {
-        msg.addAbsentees(values[i]);
-      }
+      reader.readPackableInt32Into(msg.getAbsenteesList());
       break;
     case 5:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setSignature(value);
       break;
     default:
@@ -5388,7 +5381,7 @@ cpValue: jspb.Message.getFieldWithDefault(msg, 6, 0)
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.VoteInfo}
  */
 proto.pactus.VoteInfo.deserializeBinary = function(bytes) {
@@ -5417,11 +5410,11 @@ proto.pactus.VoteInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setType(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setVoter(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setBlockHash(value);
       break;
     case 4:
@@ -5675,7 +5668,7 @@ votesList: jspb.Message.toObjectList(msg.getVotesList(),
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.ConsensusInfo}
  */
 proto.pactus.ConsensusInfo.deserializeBinary = function(bytes) {
@@ -5700,7 +5693,7 @@ proto.pactus.ConsensusInfo.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setAddress(value);
       break;
     case 2:
@@ -5946,7 +5939,7 @@ signature: jspb.Message.getFieldWithDefault(msg, 4, "")
 
 /**
  * Deserializes binary data (in protobuf wire format).
- * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @param {jspb.binary.bytesource.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.pactus.ProposalInfo}
  */
 proto.pactus.ProposalInfo.deserializeBinary = function(bytes) {
@@ -5979,11 +5972,11 @@ proto.pactus.ProposalInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setRound(value);
       break;
     case 3:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setBlockData(value);
       break;
     case 4:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setSignature(value);
       break;
     default:
