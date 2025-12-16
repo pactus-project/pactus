@@ -1,13 +1,15 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: network.proto
-//
+// Generated from network.proto.
+
 // @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
+// ignore_for_file: unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -46,9 +48,29 @@ const GetNetworkInfoResponse$json = {
   '1': 'GetNetworkInfoResponse',
   '2': [
     {'1': 'network_name', '3': 1, '4': 1, '5': 9, '10': 'networkName'},
-    {'1': 'connected_peers_count', '3': 2, '4': 1, '5': 13, '10': 'connectedPeersCount'},
-    {'1': 'connected_peers', '3': 3, '4': 3, '5': 11, '6': '.pactus.PeerInfo', '10': 'connectedPeers'},
-    {'1': 'metric_info', '3': 4, '4': 1, '5': 11, '6': '.pactus.MetricInfo', '10': 'metricInfo'},
+    {
+      '1': 'connected_peers_count',
+      '3': 2,
+      '4': 1,
+      '5': 13,
+      '10': 'connectedPeersCount'
+    },
+    {
+      '1': 'connected_peers',
+      '3': 3,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.PeerInfo',
+      '10': 'connectedPeers'
+    },
+    {
+      '1': 'metric_info',
+      '3': 4,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.MetricInfo',
+      '10': 'metricInfo'
+    },
   ],
 };
 
@@ -66,8 +88,8 @@ const GetNodeInfoRequest$json = {
 };
 
 /// Descriptor for `GetNodeInfoRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getNodeInfoRequestDescriptor = $convert.base64Decode(
-    'ChJHZXROb2RlSW5mb1JlcXVlc3Q=');
+final $typed_data.Uint8List getNodeInfoRequestDescriptor =
+    $convert.base64Decode('ChJHZXROb2RlSW5mb1JlcXVlc3Q=');
 
 @$core.Deprecated('Use getNodeInfoResponseDescriptor instead')
 const GetNodeInfoResponse$json = {
@@ -83,8 +105,22 @@ const GetNodeInfoResponse$json = {
     {'1': 'local_addrs', '3': 8, '4': 3, '5': 9, '10': 'localAddrs'},
     {'1': 'protocols', '3': 9, '4': 3, '5': 9, '10': 'protocols'},
     {'1': 'clock_offset', '3': 13, '4': 1, '5': 1, '10': 'clockOffset'},
-    {'1': 'connection_info', '3': 14, '4': 1, '5': 11, '6': '.pactus.ConnectionInfo', '10': 'connectionInfo'},
-    {'1': 'zmq_publishers', '3': 15, '4': 3, '5': 11, '6': '.pactus.ZMQPublisherInfo', '10': 'zmqPublishers'},
+    {
+      '1': 'connection_info',
+      '3': 14,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.ConnectionInfo',
+      '10': 'connectionInfo'
+    },
+    {
+      '1': 'zmq_publishers',
+      '3': 15,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.ZMQPublisherInfo',
+      '10': 'zmqPublishers'
+    },
     {'1': 'current_time', '3': 16, '4': 1, '5': 4, '10': 'currentTime'},
   ],
 };
@@ -125,19 +161,51 @@ const PeerInfo$json = {
     {'1': 'agent', '3': 3, '4': 1, '5': 9, '10': 'agent'},
     {'1': 'peer_id', '3': 4, '4': 1, '5': 9, '10': 'peerId'},
     {'1': 'consensus_keys', '3': 5, '4': 3, '5': 9, '10': 'consensusKeys'},
-    {'1': 'consensus_addresses', '3': 6, '4': 3, '5': 9, '10': 'consensusAddresses'},
+    {
+      '1': 'consensus_addresses',
+      '3': 6,
+      '4': 3,
+      '5': 9,
+      '10': 'consensusAddresses'
+    },
     {'1': 'services', '3': 7, '4': 1, '5': 13, '10': 'services'},
     {'1': 'last_block_hash', '3': 8, '4': 1, '5': 9, '10': 'lastBlockHash'},
     {'1': 'height', '3': 9, '4': 1, '5': 13, '10': 'height'},
     {'1': 'last_sent', '3': 10, '4': 1, '5': 3, '10': 'lastSent'},
     {'1': 'last_received', '3': 11, '4': 1, '5': 3, '10': 'lastReceived'},
     {'1': 'address', '3': 12, '4': 1, '5': 9, '10': 'address'},
-    {'1': 'direction', '3': 13, '4': 1, '5': 14, '6': '.pactus.Direction', '10': 'direction'},
+    {
+      '1': 'direction',
+      '3': 13,
+      '4': 1,
+      '5': 14,
+      '6': '.pactus.Direction',
+      '10': 'direction'
+    },
     {'1': 'protocols', '3': 14, '4': 3, '5': 9, '10': 'protocols'},
     {'1': 'total_sessions', '3': 15, '4': 1, '5': 5, '10': 'totalSessions'},
-    {'1': 'completed_sessions', '3': 16, '4': 1, '5': 5, '10': 'completedSessions'},
-    {'1': 'metric_info', '3': 17, '4': 1, '5': 11, '6': '.pactus.MetricInfo', '10': 'metricInfo'},
-    {'1': 'outbound_hello_sent', '3': 18, '4': 1, '5': 8, '10': 'outboundHelloSent'},
+    {
+      '1': 'completed_sessions',
+      '3': 16,
+      '4': 1,
+      '5': 5,
+      '10': 'completedSessions'
+    },
+    {
+      '1': 'metric_info',
+      '3': 17,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.MetricInfo',
+      '10': 'metricInfo'
+    },
+    {
+      '1': 'outbound_hello_sent',
+      '3': 18,
+      '4': 1,
+      '5': 8,
+      '10': 'outboundHelloSent'
+    },
   ],
 };
 
@@ -161,8 +229,20 @@ const ConnectionInfo$json = {
   '1': 'ConnectionInfo',
   '2': [
     {'1': 'connections', '3': 1, '4': 1, '5': 4, '10': 'connections'},
-    {'1': 'inbound_connections', '3': 2, '4': 1, '5': 4, '10': 'inboundConnections'},
-    {'1': 'outbound_connections', '3': 3, '4': 1, '5': 4, '10': 'outboundConnections'},
+    {
+      '1': 'inbound_connections',
+      '3': 2,
+      '4': 1,
+      '5': 4,
+      '10': 'inboundConnections'
+    },
+    {
+      '1': 'outbound_connections',
+      '3': 3,
+      '4': 1,
+      '5': 4,
+      '10': 'outboundConnections'
+    },
   ],
 };
 
@@ -176,11 +256,46 @@ final $typed_data.Uint8List connectionInfoDescriptor = $convert.base64Decode(
 const MetricInfo$json = {
   '1': 'MetricInfo',
   '2': [
-    {'1': 'total_invalid', '3': 1, '4': 1, '5': 11, '6': '.pactus.CounterInfo', '10': 'totalInvalid'},
-    {'1': 'total_sent', '3': 2, '4': 1, '5': 11, '6': '.pactus.CounterInfo', '10': 'totalSent'},
-    {'1': 'total_received', '3': 3, '4': 1, '5': 11, '6': '.pactus.CounterInfo', '10': 'totalReceived'},
-    {'1': 'message_sent', '3': 4, '4': 3, '5': 11, '6': '.pactus.MetricInfo.MessageSentEntry', '10': 'messageSent'},
-    {'1': 'message_received', '3': 5, '4': 3, '5': 11, '6': '.pactus.MetricInfo.MessageReceivedEntry', '10': 'messageReceived'},
+    {
+      '1': 'total_invalid',
+      '3': 1,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.CounterInfo',
+      '10': 'totalInvalid'
+    },
+    {
+      '1': 'total_sent',
+      '3': 2,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.CounterInfo',
+      '10': 'totalSent'
+    },
+    {
+      '1': 'total_received',
+      '3': 3,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.CounterInfo',
+      '10': 'totalReceived'
+    },
+    {
+      '1': 'message_sent',
+      '3': 4,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.MetricInfo.MessageSentEntry',
+      '10': 'messageSent'
+    },
+    {
+      '1': 'message_received',
+      '3': 5,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.MetricInfo.MessageReceivedEntry',
+      '10': 'messageReceived'
+    },
   ],
   '3': [MetricInfo_MessageSentEntry$json, MetricInfo_MessageReceivedEntry$json],
 };
@@ -190,7 +305,14 @@ const MetricInfo_MessageSentEntry$json = {
   '1': 'MessageSentEntry',
   '2': [
     {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
-    {'1': 'value', '3': 2, '4': 1, '5': 11, '6': '.pactus.CounterInfo', '10': 'value'},
+    {
+      '1': 'value',
+      '3': 2,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.CounterInfo',
+      '10': 'value'
+    },
   ],
   '7': {'7': true},
 };
@@ -200,7 +322,14 @@ const MetricInfo_MessageReceivedEntry$json = {
   '1': 'MessageReceivedEntry',
   '2': [
     {'1': 'key', '3': 1, '4': 1, '5': 5, '10': 'key'},
-    {'1': 'value', '3': 2, '4': 1, '5': 11, '6': '.pactus.CounterInfo', '10': 'value'},
+    {
+      '1': 'value',
+      '3': 2,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.CounterInfo',
+      '10': 'value'
+    },
   ],
   '7': {'7': true},
 };
@@ -238,8 +367,8 @@ const PingRequest$json = {
 };
 
 /// Descriptor for `PingRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List pingRequestDescriptor = $convert.base64Decode(
-    'CgtQaW5nUmVxdWVzdA==');
+final $typed_data.Uint8List pingRequestDescriptor =
+    $convert.base64Decode('CgtQaW5nUmVxdWVzdA==');
 
 @$core.Deprecated('Use pingResponseDescriptor instead')
 const PingResponse$json = {
@@ -247,27 +376,37 @@ const PingResponse$json = {
 };
 
 /// Descriptor for `PingResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List pingResponseDescriptor = $convert.base64Decode(
-    'CgxQaW5nUmVzcG9uc2U=');
+final $typed_data.Uint8List pingResponseDescriptor =
+    $convert.base64Decode('CgxQaW5nUmVzcG9uc2U=');
 
 const $core.Map<$core.String, $core.dynamic> NetworkServiceBase$json = {
   '1': 'Network',
   '2': [
-    {'1': 'GetNetworkInfo', '2': '.pactus.GetNetworkInfoRequest', '3': '.pactus.GetNetworkInfoResponse'},
-    {'1': 'GetNodeInfo', '2': '.pactus.GetNodeInfoRequest', '3': '.pactus.GetNodeInfoResponse'},
+    {
+      '1': 'GetNetworkInfo',
+      '2': '.pactus.GetNetworkInfoRequest',
+      '3': '.pactus.GetNetworkInfoResponse'
+    },
+    {
+      '1': 'GetNodeInfo',
+      '2': '.pactus.GetNodeInfoRequest',
+      '3': '.pactus.GetNodeInfoResponse'
+    },
     {'1': 'Ping', '2': '.pactus.PingRequest', '3': '.pactus.PingResponse'},
   ],
 };
 
 @$core.Deprecated('Use networkServiceDescriptor instead')
-const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> NetworkServiceBase$messageJson = {
+const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
+    NetworkServiceBase$messageJson = {
   '.pactus.GetNetworkInfoRequest': GetNetworkInfoRequest$json,
   '.pactus.GetNetworkInfoResponse': GetNetworkInfoResponse$json,
   '.pactus.PeerInfo': PeerInfo$json,
   '.pactus.MetricInfo': MetricInfo$json,
   '.pactus.CounterInfo': CounterInfo$json,
   '.pactus.MetricInfo.MessageSentEntry': MetricInfo_MessageSentEntry$json,
-  '.pactus.MetricInfo.MessageReceivedEntry': MetricInfo_MessageReceivedEntry$json,
+  '.pactus.MetricInfo.MessageReceivedEntry':
+      MetricInfo_MessageReceivedEntry$json,
   '.pactus.GetNodeInfoRequest': GetNodeInfoRequest$json,
   '.pactus.GetNodeInfoResponse': GetNodeInfoResponse$json,
   '.pactus.ConnectionInfo': ConnectionInfo$json,
@@ -282,4 +421,3 @@ final $typed_data.Uint8List networkServiceDescriptor = $convert.base64Decode(
     'VzdBoeLnBhY3R1cy5HZXROZXR3b3JrSW5mb1Jlc3BvbnNlEkYKC0dldE5vZGVJbmZvEhoucGFj'
     'dHVzLkdldE5vZGVJbmZvUmVxdWVzdBobLnBhY3R1cy5HZXROb2RlSW5mb1Jlc3BvbnNlEjEKBF'
     'BpbmcSEy5wYWN0dXMuUGluZ1JlcXVlc3QaFC5wYWN0dXMuUGluZ1Jlc3BvbnNl');
-

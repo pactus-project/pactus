@@ -1,13 +1,15 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: blockchain.proto
-//
+// Generated from blockchain.proto.
+
 // @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
+// ignore_for_file: unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -66,7 +68,14 @@ final $typed_data.Uint8List getAccountRequestDescriptor = $convert.base64Decode(
 const GetAccountResponse$json = {
   '1': 'GetAccountResponse',
   '2': [
-    {'1': 'account', '3': 1, '4': 1, '5': 11, '6': '.pactus.AccountInfo', '10': 'account'},
+    {
+      '1': 'account',
+      '3': 1,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.AccountInfo',
+      '10': 'account'
+    },
   ],
 };
 
@@ -81,8 +90,8 @@ const GetValidatorAddressesRequest$json = {
 };
 
 /// Descriptor for `GetValidatorAddressesRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getValidatorAddressesRequestDescriptor = $convert.base64Decode(
-    'ChxHZXRWYWxpZGF0b3JBZGRyZXNzZXNSZXF1ZXN0');
+final $typed_data.Uint8List getValidatorAddressesRequestDescriptor =
+    $convert.base64Decode('ChxHZXRWYWxpZGF0b3JBZGRyZXNzZXNSZXF1ZXN0');
 
 @$core.Deprecated('Use getValidatorAddressesResponseDescriptor instead')
 const GetValidatorAddressesResponse$json = {
@@ -93,9 +102,10 @@ const GetValidatorAddressesResponse$json = {
 };
 
 /// Descriptor for `GetValidatorAddressesResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getValidatorAddressesResponseDescriptor = $convert.base64Decode(
-    'Ch1HZXRWYWxpZGF0b3JBZGRyZXNzZXNSZXNwb25zZRIcCglhZGRyZXNzZXMYASADKAlSCWFkZH'
-    'Jlc3Nlcw==');
+final $typed_data.Uint8List getValidatorAddressesResponseDescriptor =
+    $convert.base64Decode(
+        'Ch1HZXRWYWxpZGF0b3JBZGRyZXNzZXNSZXNwb25zZRIcCglhZGRyZXNzZXMYASADKAlSCWFkZH'
+        'Jlc3Nlcw==');
 
 @$core.Deprecated('Use getValidatorRequestDescriptor instead')
 const GetValidatorRequest$json = {
@@ -106,8 +116,9 @@ const GetValidatorRequest$json = {
 };
 
 /// Descriptor for `GetValidatorRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getValidatorRequestDescriptor = $convert.base64Decode(
-    'ChNHZXRWYWxpZGF0b3JSZXF1ZXN0EhgKB2FkZHJlc3MYASABKAlSB2FkZHJlc3M=');
+final $typed_data.Uint8List getValidatorRequestDescriptor =
+    $convert.base64Decode(
+        'ChNHZXRWYWxpZGF0b3JSZXF1ZXN0EhgKB2FkZHJlc3MYASABKAlSB2FkZHJlc3M=');
 
 @$core.Deprecated('Use getValidatorByNumberRequestDescriptor instead')
 const GetValidatorByNumberRequest$json = {
@@ -118,14 +129,22 @@ const GetValidatorByNumberRequest$json = {
 };
 
 /// Descriptor for `GetValidatorByNumberRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getValidatorByNumberRequestDescriptor = $convert.base64Decode(
-    'ChtHZXRWYWxpZGF0b3JCeU51bWJlclJlcXVlc3QSFgoGbnVtYmVyGAEgASgFUgZudW1iZXI=');
+final $typed_data.Uint8List getValidatorByNumberRequestDescriptor =
+    $convert.base64Decode(
+        'ChtHZXRWYWxpZGF0b3JCeU51bWJlclJlcXVlc3QSFgoGbnVtYmVyGAEgASgFUgZudW1iZXI=');
 
 @$core.Deprecated('Use getValidatorResponseDescriptor instead')
 const GetValidatorResponse$json = {
   '1': 'GetValidatorResponse',
   '2': [
-    {'1': 'validator', '3': 1, '4': 1, '5': 11, '6': '.pactus.ValidatorInfo', '10': 'validator'},
+    {
+      '1': 'validator',
+      '3': 1,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.ValidatorInfo',
+      '10': 'validator'
+    },
   ],
 };
 
@@ -143,8 +162,9 @@ const GetPublicKeyRequest$json = {
 };
 
 /// Descriptor for `GetPublicKeyRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getPublicKeyRequestDescriptor = $convert.base64Decode(
-    'ChNHZXRQdWJsaWNLZXlSZXF1ZXN0EhgKB2FkZHJlc3MYASABKAlSB2FkZHJlc3M=');
+final $typed_data.Uint8List getPublicKeyRequestDescriptor =
+    $convert.base64Decode(
+        'ChNHZXRQdWJsaWNLZXlSZXF1ZXN0EhgKB2FkZHJlc3MYASABKAlSB2FkZHJlc3M=');
 
 @$core.Deprecated('Use getPublicKeyResponseDescriptor instead')
 const GetPublicKeyResponse$json = {
@@ -163,7 +183,14 @@ const GetBlockRequest$json = {
   '1': 'GetBlockRequest',
   '2': [
     {'1': 'height', '3': 1, '4': 1, '5': 13, '10': 'height'},
-    {'1': 'verbosity', '3': 2, '4': 1, '5': 14, '6': '.pactus.BlockVerbosity', '10': 'verbosity'},
+    {
+      '1': 'verbosity',
+      '3': 2,
+      '4': 1,
+      '5': 14,
+      '6': '.pactus.BlockVerbosity',
+      '10': 'verbosity'
+    },
   ],
 };
 
@@ -180,9 +207,30 @@ const GetBlockResponse$json = {
     {'1': 'hash', '3': 2, '4': 1, '5': 9, '10': 'hash'},
     {'1': 'data', '3': 3, '4': 1, '5': 9, '10': 'data'},
     {'1': 'block_time', '3': 4, '4': 1, '5': 13, '10': 'blockTime'},
-    {'1': 'header', '3': 5, '4': 1, '5': 11, '6': '.pactus.BlockHeaderInfo', '10': 'header'},
-    {'1': 'prev_cert', '3': 6, '4': 1, '5': 11, '6': '.pactus.CertificateInfo', '10': 'prevCert'},
-    {'1': 'txs', '3': 7, '4': 3, '5': 11, '6': '.pactus.TransactionInfo', '10': 'txs'},
+    {
+      '1': 'header',
+      '3': 5,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.BlockHeaderInfo',
+      '10': 'header'
+    },
+    {
+      '1': 'prev_cert',
+      '3': 6,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.CertificateInfo',
+      '10': 'prevCert'
+    },
+    {
+      '1': 'txs',
+      '3': 7,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.TransactionInfo',
+      '10': 'txs'
+    },
   ],
 };
 
@@ -203,8 +251,9 @@ const GetBlockHashRequest$json = {
 };
 
 /// Descriptor for `GetBlockHashRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getBlockHashRequestDescriptor = $convert.base64Decode(
-    'ChNHZXRCbG9ja0hhc2hSZXF1ZXN0EhYKBmhlaWdodBgBIAEoDVIGaGVpZ2h0');
+final $typed_data.Uint8List getBlockHashRequestDescriptor =
+    $convert.base64Decode(
+        'ChNHZXRCbG9ja0hhc2hSZXF1ZXN0EhYKBmhlaWdodBgBIAEoDVIGaGVpZ2h0');
 
 @$core.Deprecated('Use getBlockHashResponseDescriptor instead')
 const GetBlockHashResponse$json = {
@@ -215,8 +264,8 @@ const GetBlockHashResponse$json = {
 };
 
 /// Descriptor for `GetBlockHashResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getBlockHashResponseDescriptor = $convert.base64Decode(
-    'ChRHZXRCbG9ja0hhc2hSZXNwb25zZRISCgRoYXNoGAEgASgJUgRoYXNo');
+final $typed_data.Uint8List getBlockHashResponseDescriptor = $convert
+    .base64Decode('ChRHZXRCbG9ja0hhc2hSZXNwb25zZRISCgRoYXNoGAEgASgJUgRoYXNo');
 
 @$core.Deprecated('Use getBlockHeightRequestDescriptor instead')
 const GetBlockHeightRequest$json = {
@@ -227,8 +276,9 @@ const GetBlockHeightRequest$json = {
 };
 
 /// Descriptor for `GetBlockHeightRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getBlockHeightRequestDescriptor = $convert.base64Decode(
-    'ChVHZXRCbG9ja0hlaWdodFJlcXVlc3QSEgoEaGFzaBgBIAEoCVIEaGFzaA==');
+final $typed_data.Uint8List getBlockHeightRequestDescriptor =
+    $convert.base64Decode(
+        'ChVHZXRCbG9ja0hlaWdodFJlcXVlc3QSEgoEaGFzaBgBIAEoCVIEaGFzaA==');
 
 @$core.Deprecated('Use getBlockHeightResponseDescriptor instead')
 const GetBlockHeightResponse$json = {
@@ -239,8 +289,9 @@ const GetBlockHeightResponse$json = {
 };
 
 /// Descriptor for `GetBlockHeightResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getBlockHeightResponseDescriptor = $convert.base64Decode(
-    'ChZHZXRCbG9ja0hlaWdodFJlc3BvbnNlEhYKBmhlaWdodBgBIAEoDVIGaGVpZ2h0');
+final $typed_data.Uint8List getBlockHeightResponseDescriptor =
+    $convert.base64Decode(
+        'ChZHZXRCbG9ja0hlaWdodFJlc3BvbnNlEhYKBmhlaWdodBgBIAEoDVIGaGVpZ2h0');
 
 @$core.Deprecated('Use getBlockchainInfoRequestDescriptor instead')
 const GetBlockchainInfoRequest$json = {
@@ -248,25 +299,51 @@ const GetBlockchainInfoRequest$json = {
 };
 
 /// Descriptor for `GetBlockchainInfoRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getBlockchainInfoRequestDescriptor = $convert.base64Decode(
-    'ChhHZXRCbG9ja2NoYWluSW5mb1JlcXVlc3Q=');
+final $typed_data.Uint8List getBlockchainInfoRequestDescriptor =
+    $convert.base64Decode('ChhHZXRCbG9ja2NoYWluSW5mb1JlcXVlc3Q=');
 
 @$core.Deprecated('Use getBlockchainInfoResponseDescriptor instead')
 const GetBlockchainInfoResponse$json = {
   '1': 'GetBlockchainInfoResponse',
   '2': [
-    {'1': 'last_block_height', '3': 1, '4': 1, '5': 13, '10': 'lastBlockHeight'},
+    {
+      '1': 'last_block_height',
+      '3': 1,
+      '4': 1,
+      '5': 13,
+      '10': 'lastBlockHeight'
+    },
     {'1': 'last_block_hash', '3': 2, '4': 1, '5': 9, '10': 'lastBlockHash'},
     {'1': 'total_accounts', '3': 3, '4': 1, '5': 5, '10': 'totalAccounts'},
     {'1': 'total_validators', '3': 4, '4': 1, '5': 5, '10': 'totalValidators'},
-    {'1': 'active_validators', '3': 12, '4': 1, '5': 5, '10': 'activeValidators'},
+    {
+      '1': 'active_validators',
+      '3': 12,
+      '4': 1,
+      '5': 5,
+      '10': 'activeValidators'
+    },
     {'1': 'total_power', '3': 5, '4': 1, '5': 3, '10': 'totalPower'},
     {'1': 'committee_power', '3': 6, '4': 1, '5': 3, '10': 'committeePower'},
-    {'1': 'committee_validators', '3': 7, '4': 3, '5': 11, '6': '.pactus.ValidatorInfo', '10': 'committeeValidators'},
+    {
+      '1': 'committee_validators',
+      '3': 7,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.ValidatorInfo',
+      '10': 'committeeValidators'
+    },
     {'1': 'is_pruned', '3': 8, '4': 1, '5': 8, '10': 'isPruned'},
     {'1': 'pruning_height', '3': 9, '4': 1, '5': 13, '10': 'pruningHeight'},
     {'1': 'last_block_time', '3': 10, '4': 1, '5': 3, '10': 'lastBlockTime'},
-    {'1': 'committee_protocol_versions', '3': 11, '4': 3, '5': 11, '6': '.pactus.GetBlockchainInfoResponse.CommitteeProtocolVersionsEntry', '10': 'committeeProtocolVersions'},
+    {
+      '1': 'committee_protocol_versions',
+      '3': 11,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.GetBlockchainInfoResponse.CommitteeProtocolVersionsEntry',
+      '10': 'committeeProtocolVersions'
+    },
   ],
   '3': [GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry$json],
 };
@@ -303,15 +380,29 @@ const GetConsensusInfoRequest$json = {
 };
 
 /// Descriptor for `GetConsensusInfoRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getConsensusInfoRequestDescriptor = $convert.base64Decode(
-    'ChdHZXRDb25zZW5zdXNJbmZvUmVxdWVzdA==');
+final $typed_data.Uint8List getConsensusInfoRequestDescriptor =
+    $convert.base64Decode('ChdHZXRDb25zZW5zdXNJbmZvUmVxdWVzdA==');
 
 @$core.Deprecated('Use getConsensusInfoResponseDescriptor instead')
 const GetConsensusInfoResponse$json = {
   '1': 'GetConsensusInfoResponse',
   '2': [
-    {'1': 'proposal', '3': 1, '4': 1, '5': 11, '6': '.pactus.ProposalInfo', '10': 'proposal'},
-    {'1': 'instances', '3': 2, '4': 3, '5': 11, '6': '.pactus.ConsensusInfo', '10': 'instances'},
+    {
+      '1': 'proposal',
+      '3': 1,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.ProposalInfo',
+      '10': 'proposal'
+    },
+    {
+      '1': 'instances',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.ConsensusInfo',
+      '10': 'instances'
+    },
   ],
 };
 
@@ -325,27 +416,43 @@ final $typed_data.Uint8List getConsensusInfoResponseDescriptor = $convert.base64
 const GetTxPoolContentRequest$json = {
   '1': 'GetTxPoolContentRequest',
   '2': [
-    {'1': 'payload_type', '3': 1, '4': 1, '5': 14, '6': '.pactus.PayloadType', '10': 'payloadType'},
+    {
+      '1': 'payload_type',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.pactus.PayloadType',
+      '10': 'payloadType'
+    },
   ],
 };
 
 /// Descriptor for `GetTxPoolContentRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getTxPoolContentRequestDescriptor = $convert.base64Decode(
-    'ChdHZXRUeFBvb2xDb250ZW50UmVxdWVzdBI2CgxwYXlsb2FkX3R5cGUYASABKA4yEy5wYWN0dX'
-    'MuUGF5bG9hZFR5cGVSC3BheWxvYWRUeXBl');
+final $typed_data.Uint8List getTxPoolContentRequestDescriptor =
+    $convert.base64Decode(
+        'ChdHZXRUeFBvb2xDb250ZW50UmVxdWVzdBI2CgxwYXlsb2FkX3R5cGUYASABKA4yEy5wYWN0dX'
+        'MuUGF5bG9hZFR5cGVSC3BheWxvYWRUeXBl');
 
 @$core.Deprecated('Use getTxPoolContentResponseDescriptor instead')
 const GetTxPoolContentResponse$json = {
   '1': 'GetTxPoolContentResponse',
   '2': [
-    {'1': 'txs', '3': 1, '4': 3, '5': 11, '6': '.pactus.TransactionInfo', '10': 'txs'},
+    {
+      '1': 'txs',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.TransactionInfo',
+      '10': 'txs'
+    },
   ],
 };
 
 /// Descriptor for `GetTxPoolContentResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List getTxPoolContentResponseDescriptor = $convert.base64Decode(
-    'ChhHZXRUeFBvb2xDb250ZW50UmVzcG9uc2USKQoDdHhzGAEgAygLMhcucGFjdHVzLlRyYW5zYW'
-    'N0aW9uSW5mb1IDdHhz');
+final $typed_data.Uint8List getTxPoolContentResponseDescriptor =
+    $convert.base64Decode(
+        'ChhHZXRUeFBvb2xDb250ZW50UmVzcG9uc2USKQoDdHhzGAEgAygLMhcucGFjdHVzLlRyYW5zYW'
+        'N0aW9uSW5mb1IDdHhz');
 
 @$core.Deprecated('Use validatorInfoDescriptor instead')
 const ValidatorInfo$json = {
@@ -356,11 +463,29 @@ const ValidatorInfo$json = {
     {'1': 'public_key', '3': 3, '4': 1, '5': 9, '10': 'publicKey'},
     {'1': 'number', '3': 4, '4': 1, '5': 5, '10': 'number'},
     {'1': 'stake', '3': 5, '4': 1, '5': 3, '10': 'stake'},
-    {'1': 'last_bonding_height', '3': 6, '4': 1, '5': 13, '10': 'lastBondingHeight'},
-    {'1': 'last_sortition_height', '3': 7, '4': 1, '5': 13, '10': 'lastSortitionHeight'},
+    {
+      '1': 'last_bonding_height',
+      '3': 6,
+      '4': 1,
+      '5': 13,
+      '10': 'lastBondingHeight'
+    },
+    {
+      '1': 'last_sortition_height',
+      '3': 7,
+      '4': 1,
+      '5': 13,
+      '10': 'lastSortitionHeight'
+    },
     {'1': 'unbonding_height', '3': 8, '4': 1, '5': 13, '10': 'unbondingHeight'},
     {'1': 'address', '3': 9, '4': 1, '5': 9, '10': 'address'},
-    {'1': 'availability_score', '3': 10, '4': 1, '5': 1, '10': 'availabilityScore'},
+    {
+      '1': 'availability_score',
+      '3': 10,
+      '4': 1,
+      '5': 1,
+      '10': 'availabilityScore'
+    },
     {'1': 'protocol_version', '3': 11, '4': 1, '5': 5, '10': 'protocolVersion'},
   ],
 };
@@ -435,7 +560,14 @@ final $typed_data.Uint8List certificateInfoDescriptor = $convert.base64Decode(
 const VoteInfo$json = {
   '1': 'VoteInfo',
   '2': [
-    {'1': 'type', '3': 1, '4': 1, '5': 14, '6': '.pactus.VoteType', '10': 'type'},
+    {
+      '1': 'type',
+      '3': 1,
+      '4': 1,
+      '5': 14,
+      '6': '.pactus.VoteType',
+      '10': 'type'
+    },
     {'1': 'voter', '3': 2, '4': 1, '5': 9, '10': 'voter'},
     {'1': 'block_hash', '3': 3, '4': 1, '5': 9, '10': 'blockHash'},
     {'1': 'round', '3': 4, '4': 1, '5': 5, '10': 'round'},
@@ -459,7 +591,14 @@ const ConsensusInfo$json = {
     {'1': 'active', '3': 2, '4': 1, '5': 8, '10': 'active'},
     {'1': 'height', '3': 3, '4': 1, '5': 13, '10': 'height'},
     {'1': 'round', '3': 4, '4': 1, '5': 5, '10': 'round'},
-    {'1': 'votes', '3': 5, '4': 3, '5': 11, '6': '.pactus.VoteInfo', '10': 'votes'},
+    {
+      '1': 'votes',
+      '3': 5,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.VoteInfo',
+      '10': 'votes'
+    },
   ],
 };
 
@@ -489,22 +628,67 @@ final $typed_data.Uint8List proposalInfoDescriptor = $convert.base64Decode(
 const $core.Map<$core.String, $core.dynamic> BlockchainServiceBase$json = {
   '1': 'Blockchain',
   '2': [
-    {'1': 'GetBlock', '2': '.pactus.GetBlockRequest', '3': '.pactus.GetBlockResponse'},
-    {'1': 'GetBlockHash', '2': '.pactus.GetBlockHashRequest', '3': '.pactus.GetBlockHashResponse'},
-    {'1': 'GetBlockHeight', '2': '.pactus.GetBlockHeightRequest', '3': '.pactus.GetBlockHeightResponse'},
-    {'1': 'GetBlockchainInfo', '2': '.pactus.GetBlockchainInfoRequest', '3': '.pactus.GetBlockchainInfoResponse'},
-    {'1': 'GetConsensusInfo', '2': '.pactus.GetConsensusInfoRequest', '3': '.pactus.GetConsensusInfoResponse'},
-    {'1': 'GetAccount', '2': '.pactus.GetAccountRequest', '3': '.pactus.GetAccountResponse'},
-    {'1': 'GetValidator', '2': '.pactus.GetValidatorRequest', '3': '.pactus.GetValidatorResponse'},
-    {'1': 'GetValidatorByNumber', '2': '.pactus.GetValidatorByNumberRequest', '3': '.pactus.GetValidatorResponse'},
-    {'1': 'GetValidatorAddresses', '2': '.pactus.GetValidatorAddressesRequest', '3': '.pactus.GetValidatorAddressesResponse'},
-    {'1': 'GetPublicKey', '2': '.pactus.GetPublicKeyRequest', '3': '.pactus.GetPublicKeyResponse'},
-    {'1': 'GetTxPoolContent', '2': '.pactus.GetTxPoolContentRequest', '3': '.pactus.GetTxPoolContentResponse'},
+    {
+      '1': 'GetBlock',
+      '2': '.pactus.GetBlockRequest',
+      '3': '.pactus.GetBlockResponse'
+    },
+    {
+      '1': 'GetBlockHash',
+      '2': '.pactus.GetBlockHashRequest',
+      '3': '.pactus.GetBlockHashResponse'
+    },
+    {
+      '1': 'GetBlockHeight',
+      '2': '.pactus.GetBlockHeightRequest',
+      '3': '.pactus.GetBlockHeightResponse'
+    },
+    {
+      '1': 'GetBlockchainInfo',
+      '2': '.pactus.GetBlockchainInfoRequest',
+      '3': '.pactus.GetBlockchainInfoResponse'
+    },
+    {
+      '1': 'GetConsensusInfo',
+      '2': '.pactus.GetConsensusInfoRequest',
+      '3': '.pactus.GetConsensusInfoResponse'
+    },
+    {
+      '1': 'GetAccount',
+      '2': '.pactus.GetAccountRequest',
+      '3': '.pactus.GetAccountResponse'
+    },
+    {
+      '1': 'GetValidator',
+      '2': '.pactus.GetValidatorRequest',
+      '3': '.pactus.GetValidatorResponse'
+    },
+    {
+      '1': 'GetValidatorByNumber',
+      '2': '.pactus.GetValidatorByNumberRequest',
+      '3': '.pactus.GetValidatorResponse'
+    },
+    {
+      '1': 'GetValidatorAddresses',
+      '2': '.pactus.GetValidatorAddressesRequest',
+      '3': '.pactus.GetValidatorAddressesResponse'
+    },
+    {
+      '1': 'GetPublicKey',
+      '2': '.pactus.GetPublicKeyRequest',
+      '3': '.pactus.GetPublicKeyResponse'
+    },
+    {
+      '1': 'GetTxPoolContent',
+      '2': '.pactus.GetTxPoolContentRequest',
+      '3': '.pactus.GetTxPoolContentResponse'
+    },
   ],
 };
 
 @$core.Deprecated('Use blockchainServiceDescriptor instead')
-const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> BlockchainServiceBase$messageJson = {
+const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
+    BlockchainServiceBase$messageJson = {
   '.pactus.GetBlockRequest': GetBlockRequest$json,
   '.pactus.GetBlockResponse': GetBlockResponse$json,
   '.pactus.BlockHeaderInfo': BlockHeaderInfo$json,
@@ -524,7 +708,8 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>> Blockchain
   '.pactus.GetBlockchainInfoRequest': GetBlockchainInfoRequest$json,
   '.pactus.GetBlockchainInfoResponse': GetBlockchainInfoResponse$json,
   '.pactus.ValidatorInfo': ValidatorInfo$json,
-  '.pactus.GetBlockchainInfoResponse.CommitteeProtocolVersionsEntry': GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry$json,
+  '.pactus.GetBlockchainInfoResponse.CommitteeProtocolVersionsEntry':
+      GetBlockchainInfoResponse_CommitteeProtocolVersionsEntry$json,
   '.pactus.GetConsensusInfoRequest': GetConsensusInfoRequest$json,
   '.pactus.GetConsensusInfoResponse': GetConsensusInfoResponse$json,
   '.pactus.ProposalInfo': ProposalInfo$json,
@@ -563,4 +748,3 @@ final $typed_data.Uint8List blockchainServiceDescriptor = $convert.base64Decode(
     'bGljS2V5UmVxdWVzdBocLnBhY3R1cy5HZXRQdWJsaWNLZXlSZXNwb25zZRJVChBHZXRUeFBvb2'
     'xDb250ZW50Eh8ucGFjdHVzLkdldFR4UG9vbENvbnRlbnRSZXF1ZXN0GiAucGFjdHVzLkdldFR4'
     'UG9vbENvbnRlbnRSZXNwb25zZQ==');
-
