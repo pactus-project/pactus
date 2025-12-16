@@ -407,7 +407,7 @@ func (sync *synchronizer) updateBlockchain() {
 		"numOfBlocks", numOfBlocks, "height", downloadHeight)
 
 	if numOfBlocks > sync.config.PruneWindow {
-		// Don't have blocks for mre than 10 days
+		// Don't have blocks for more than 10 days
 		sync.downloadBlocks(downloadHeight, true)
 	} else {
 		sync.downloadBlocks(downloadHeight, false)
