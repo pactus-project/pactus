@@ -542,7 +542,8 @@ func TestLoadOrCreateKey(t *testing.T) {
 		tempFilePath := util.TempFilePath()
 
 		err := util.WriteFile(tempFilePath,
-			[]byte(" 080112406da99c6b29ac8093fad3a92327aaf87acf22dbb60927786db25880f025c04cb6f80873898709981d9b75795a191eab2d29bc7983ebcb4826e2b44566c85ea194 \r\n"))
+			[]byte(" 080112406da99c6b29ac8093fad3a92327aaf87acf22dbb60927786db25880f025c0"+
+				"4cb6f80873898709981d9b75795a191eab2d29bc7983ebcb4826e2b44566c85ea194 \r\n"))
 		assert.NoError(t, err)
 
 		key, err := loadOrCreateKey(tempFilePath)
