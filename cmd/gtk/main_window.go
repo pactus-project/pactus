@@ -105,19 +105,19 @@ func (*mainWindow) onAbout() {
 }
 
 func (mw *mainWindow) OnTransactionTransfer() {
-	broadcastTransactionTransfer(mw.widgetWallet.model.wallet)
+	broadcastTransactionTransfer(mw.widgetWallet.model)
 }
 
 func (mw *mainWindow) OnTransactionBond() {
-	broadcastTransactionBond(mw.widgetWallet.model.wallet)
+	broadcastTransactionBond(mw.widgetWallet.model)
 }
 
 func (mw *mainWindow) OnTransactionUnbond() {
-	broadcastTransactionUnbond(mw.widgetWallet.model.wallet)
+	broadcastTransactionUnbond(mw.widgetWallet.model)
 }
 
 func (mw *mainWindow) OnTransactionWithdraw() {
-	broadcastTransactionWithdraw(mw.widgetWallet.model.wallet)
+	broadcastTransactionWithdraw(mw.widgetWallet.model)
 }
 
 func (*mainWindow) onMenuItemActivateWebsite(_ *gtk.MenuItem) {

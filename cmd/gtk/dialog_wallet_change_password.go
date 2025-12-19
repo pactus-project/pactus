@@ -49,9 +49,6 @@ func changePassword(wdgWallet *widgetWallet) {
 			return
 		}
 
-		err = wdgWallet.model.Save()
-		fatalErrorCheck(err)
-
 		dlg.Close()
 
 		wdgWallet.rebuild()

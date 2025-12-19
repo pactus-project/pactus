@@ -253,7 +253,7 @@ func (ww *widgetWallet) onShowDetails() {
 func (ww *widgetWallet) onShowPrivateKey() {
 	addr := ww.getSelectedAddress()
 	if addr != "" {
-		showAddressPrivateKey(ww.model.wallet, addr)
+		showAddressPrivateKey(ww.model, addr)
 	}
 }
 

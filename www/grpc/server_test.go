@@ -6,14 +6,14 @@ import (
 	"testing"
 
 	"github.com/pactus-project/pactus/consensus"
-	"github.com/pactus-project/pactus/consensus/manager"
+	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
-	walletMgr "github.com/pactus-project/pactus/wallet/manager"
+	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/assert"
@@ -28,8 +28,8 @@ type testData struct {
 	mockState     *state.MockState
 	mockSync      *sync.MockSync
 	consMocks     []*consensus.MockConsensus
-	mockConsMgr   manager.Manager
-	mockWalletMgr *walletMgr.MockIManager
+	mockConsMgr   consmgr.Manager
+	mockWalletMgr *wltmgr.MockIManager
 	listener      *bufconn.Listener
 	server        *Server
 }
@@ -60,10 +60,10 @@ func setup(t *testing.T, conf *Config) *testData {
 	mockState := state.MockingState(ts)
 	mockNet := network.MockingNetwork(ts, ts.RandPeerID())
 	mockSync := sync.MockingSync(ts)
-	mockConsMgr, consMocks := manager.MockingManager(ts, mockState, valKeys)
+	mockConsMgr, consMocks := consmgr.MockingManager(ts, mockState, valKeys)
 
 	mockState.CommitTestBlocks(10)
-	mockWalletMgr := walletMgr.NewMockIManager(ts.MockingController())
+	mockWalletMgr := wltmgr.NewMockIManager(ts.MockingController())
 
 	zmqPublishers := []zmq.Publisher{
 		zmq.MockingPublisher("zmq_address", "zmq_topic", 100),

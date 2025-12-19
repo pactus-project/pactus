@@ -4,13 +4,15 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/node"
+	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/vault"
 )
 
 type walletModel struct {
@@ -101,23 +103,29 @@ func (model *walletModel) rebuildModel() {
 }
 
 func (model *walletModel) IsEncrypted() bool {
-	info, err := model.node.WalletManager().WalletInfo(model.walletName)
-	if err != nil {
-		log.Println("failed to get wallet info: %s", err.Error())
-
-		return false
-	}
+	info, _ := model.WalletInfo()
 
 	return info.Encrypted
 }
 
+func (model *walletModel) WalletInfo() (*wallet.Info, error) {
+	return model.node.WalletManager().WalletInfo(model.walletName)
+}
+
 func (model *walletModel) UpdatePassword(oldPassword, newPassword string) error {
-	model.node.WalletManager().UpdatePassword(model.walletName, oldPassword, newPassword)
-	if err != nil {
-		log.Println("failed to load wallet: %s", err.Error())
-
-		return err
-	}
-
 	return model.node.WalletManager().UpdatePassword(model.walletName, oldPassword, newPassword)
+}
+
+func (model *walletModel) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
+	return model.node.WalletManager().PrivateKey(model.walletName, password, addr)
+}
+
+func (model *walletModel) NewAddress(addressType crypto.AddressType, label string,
+	opts ...wallet.NewAddressOption,
+) (*vault.AddressInfo, error) {
+	return model.node.WalletManager().NewAddress(model.walletName, label, opts...)
+}
+
+func (model *walletModel) SetDefaultFee(fee amount.Amount) error {
+	return model.node.WalletManager().SetDefaultFee(model.walletName, fee)
 }

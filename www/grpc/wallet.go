@@ -7,16 +7,16 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/wallet"
-	walletMgr "github.com/pactus-project/pactus/wallet/manager"
+	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type walletServer struct {
 	*Server
-	walletManager walletMgr.IManager
+	walletManager wltmgr.IManager
 }
 
-func newWalletServer(server *Server, manager walletMgr.IManager) *walletServer {
+func newWalletServer(server *Server, manager wltmgr.IManager) *walletServer {
 	return &walletServer{
 		Server:        server,
 		walletManager: manager,

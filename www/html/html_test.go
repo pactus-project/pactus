@@ -7,13 +7,13 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/pactus-project/pactus/consensus/manager"
+	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util/testsuite"
-	walletMgr "github.com/pactus-project/pactus/wallet/manager"
+	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +24,7 @@ type testData struct {
 
 	mockState   *state.MockState
 	mockSync    *sync.MockSync
-	mockConsMgr manager.Manager
+	mockConsMgr consmgr.Manager
 	gRPCServer  *grpc.Server
 	httpServer  *Server
 }
@@ -48,7 +48,7 @@ func setup(t *testing.T) *testData {
 	mockState := state.MockingState(ts)
 	mockSync := sync.MockingSync(ts)
 	mockNet := network.MockingNetwork(ts, ts.RandPeerID())
-	mockConsMgr, _ := manager.MockingManager(ts, mockState, valKeys)
+	mockConsMgr, _ := consmgr.MockingManager(ts, mockState, valKeys)
 
 	mockConsMgr.MoveToNewHeight()
 
@@ -61,7 +61,7 @@ func setup(t *testing.T) *testData {
 		Listen: "[::]:0",
 	}
 
-	mockWalletMgr := walletMgr.NewMockIManager(ts.MockingController())
+	mockWalletMgr := wltmgr.NewMockIManager(ts.MockingController())
 
 	zmqPublishers := []zmq.Publisher{
 		zmq.MockingPublisher("zmq_address", "zmq_topic", 100),

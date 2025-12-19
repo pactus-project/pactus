@@ -245,7 +245,6 @@ func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 
 		return true, nil
 	})
-
 	if err != nil {
 		return err
 	}
@@ -545,24 +544,24 @@ func (w *Wallet) NewAddress(addressType crypto.AddressType, label string,
 	return info, nil
 }
 
-// // NewBLSAccountAddress create a new BLS-based account address and
-// // associates it with the given label.
-// func (w *Wallet) NewBLSAccountAddress(label string) (*vault.AddressInfo, error) {
-// 	return w.store.Vault.NewBLSAccountAddress(label)
-// }
+// NewBLSAccountAddress create a new BLS-based account address and
+// associates it with the given label.
+func (w *Wallet) NewBLSAccountAddress(label string) (*vault.AddressInfo, error) {
+	return w.NewAddress(crypto.AddressTypeBLSAccount, label)
+}
 
-// // NewEd25519AccountAddress create a new Ed25519-based account address and
-// // associates it with the given label.
-// // The password is required to access the master private key needed for address generation.
-// func (w *Wallet) NewEd25519AccountAddress(label, password string) (*vault.AddressInfo, error) {
-// 	return w.store.Vault.NewEd25519AccountAddress(label, password)
-// }
+// NewEd25519AccountAddress create a new Ed25519-based account address and
+// associates it with the given label.
+// The password is required to access the master private key needed for address generation.
+func (w *Wallet) NewEd25519AccountAddress(label, password string) (*vault.AddressInfo, error) {
+	return w.NewAddress(crypto.AddressTypeEd25519Account, label, WithPassword(password))
+}
 
-// // NewValidatorAddress creates a new BLS validator address and
-// // associates it with the given label.
-// func (w *Wallet) NewValidatorAddress(label string) (*vault.AddressInfo, error) {
-// 	return w.store.Vault.NewValidatorAddress(label)
-// }
+// NewValidatorAddress creates a new BLS validator address and
+// associates it with the given label.
+func (w *Wallet) NewValidatorAddress(label string) (*vault.AddressInfo, error) {
+	return w.NewAddress(crypto.AddressTypeValidator, label)
+}
 
 func (w *Wallet) Contains(addr string) bool {
 	return w.store.Vault.Contains(addr)

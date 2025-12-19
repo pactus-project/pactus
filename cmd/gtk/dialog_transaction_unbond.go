@@ -13,7 +13,7 @@ import (
 //go:embed assets/ui/dialog_transaction_unbond.ui
 var uiTransactionUnbondDialog []byte
 
-func broadcastTransactionUnbond(wlt *wallet.Wallet) {
+func broadcastTransactionUnbond(model *walletModel) {
 	builder, err := gtk.BuilderNewFromString(string(uiTransactionUnbondDialog))
 	fatalErrorCheck(err)
 

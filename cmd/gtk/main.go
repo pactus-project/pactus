@@ -20,7 +20,6 @@ import (
 	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/version"
-	"github.com/pactus-project/pactus/wallet"
 )
 
 const appID = "com.github.pactus-project.pactus.pactus-gui"
@@ -166,12 +165,12 @@ func newNode(workingDir string) (*node.Node, error) {
 		return nil, err
 	}
 
-	passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
+	passwordFetcher := func() (string, bool) {
 		if *passwordOpt != "" {
 			return *passwordOpt, true
 		}
 
-		return getWalletPassword(wlt)
+		return getWalletPassword(nil)
 	}
 	n, err := cmd.StartNode(workingDir, passwordFetcher, nil)
 	if err != nil {
@@ -186,7 +185,7 @@ func run(n *node.Node, app *gtk.Application) *mainWindow {
 	terminal.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
 
 	nodeModel := newNodeModel(n)
-	walletModel := newWalletModel(n)
+	walletModel := newWalletModel(n, cmd.DefaultWalletName)
 
 	// building main window
 	win := buildMainWindow(nodeModel, walletModel)

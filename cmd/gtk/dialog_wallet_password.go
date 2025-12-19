@@ -6,15 +6,14 @@ import (
 	_ "embed"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/wallet"
 )
 
 //go:embed assets/ui/dialog_wallet_password.ui
 var uiPasswordDialog []byte
 
-func getWalletPassword(wlt *wallet.Wallet) (string, bool) {
+func getWalletPassword(model *walletModel) (string, bool) {
 	password := ""
-	if !wlt.IsEncrypted() {
+	if model != nil && !model.IsEncrypted() {
 		return password, true
 	}
 

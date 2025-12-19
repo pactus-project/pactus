@@ -137,7 +137,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 // The passwordFetcher will be used to fetch the password for the default_wallet if it is encrypted.
 // It returns an error if the genesis doc or default_wallet can't be found inside the working directory.
 // TODO: write test for me.
-func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool),
+func StartNode(workingDir string, passwordFetcher func() (string, bool),
 	configModifier func(cfg *config.Config) *config.Config,
 ) (*node.Node, error) {
 	conf, gen, err := MakeConfig(workingDir)
@@ -380,7 +380,7 @@ func MakeRewardAddresses(wlt *wallet.Wallet, valAddrsInfo []vault.AddressInfo,
 }
 
 func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []vault.AddressInfo,
-	passwordFetcher func(*wallet.Wallet) (string, bool),
+	passwordFetcher func() (string, bool),
 ) ([]*bls.ValidatorKey, error) {
 	valAddrs := make([]string, len(valAddrsInfo))
 	for i := 0; i < len(valAddrs); i++ {
@@ -392,11 +392,18 @@ func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []vault.Addres
 	}
 
 	valKeys := make([]*bls.ValidatorKey, len(valAddrsInfo))
-	password, ok := passwordFetcher(walletInstance)
-	if !ok {
-		return nil, errors.New("aborted")
+
+	walletPassword := ""
+	if walletInstance.IsEncrypted() {
+		password, ok := passwordFetcher()
+		if !ok {
+			return nil, errors.New("aborted")
+		}
+
+		walletPassword = password
 	}
-	prvKeys, err := walletInstance.PrivateKeys(password, valAddrs)
+
+	prvKeys, err := walletInstance.PrivateKeys(walletPassword, valAddrs)
 	if err != nil {
 		return nil, err
 	}

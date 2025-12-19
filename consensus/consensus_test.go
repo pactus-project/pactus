@@ -73,7 +73,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 
 	fmt.Printf("=== test %s, seed: %d\n", t.Name(), seed)
 
-	ts := testsuite.NewTestSuiteFromSeed(seed)
+	ts := testsuite.NewTestSuiteFromSeed(t, seed)
 
 	_, valKeys := ts.GenerateTestCommittee(4)
 	txPool := txpool.MockingTxPool()
