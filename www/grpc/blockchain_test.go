@@ -11,7 +11,7 @@ import (
 
 func TestGetBlock(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.blockchainClient(t)
+	client := td.blockchainClient(t)
 
 	height := uint32(100)
 	blk := td.mockState.TestStore.AddTestBlock(height)
@@ -90,14 +90,11 @@ func TestGetBlock(t *testing.T) {
 			}
 		}
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestGetBlockHash(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.blockchainClient(t)
+	client := td.blockchainClient(t)
 
 	height := td.RandHeight()
 	blk := td.mockState.TestStore.AddTestBlock(height)
@@ -117,14 +114,11 @@ func TestGetBlockHash(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, blk.Hash().String(), res.Hash)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestGetBlockHeight(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.blockchainClient(t)
+	client := td.blockchainClient(t)
 
 	height := td.RandHeight()
 	blk := td.mockState.TestStore.AddTestBlock(height)
@@ -152,14 +146,11 @@ func TestGetBlockHeight(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, height, res.Height)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestGetBlockchainInfo(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.blockchainClient(t)
+	client := td.blockchainClient(t)
 
 	t.Run("Should return the last block height", func(t *testing.T) {
 		res, err := client.GetBlockchainInfo(context.Background(),
@@ -171,14 +162,11 @@ func TestGetBlockchainInfo(t *testing.T) {
 		assert.Zero(t, res.PruningHeight)
 		assert.False(t, res.IsPruned)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestGetAccount(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.blockchainClient(t)
+	client := td.blockchainClient(t)
 
 	addr, acc := td.mockState.TestStore.AddTestAccount()
 
@@ -207,14 +195,11 @@ func TestGetAccount(t *testing.T) {
 		assert.Equal(t, acc.Balance().ToNanoPAC(), res.Account.Balance)
 		assert.Equal(t, acc.Number(), res.Account.Number)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestGetValidator(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.blockchainClient(t)
+	client := td.blockchainClient(t)
 
 	val1 := td.mockState.TestStore.AddTestValidator()
 
@@ -242,14 +227,11 @@ func TestGetValidator(t *testing.T) {
 		assert.NotNil(t, res)
 		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestGetValidatorByNumber(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.blockchainClient(t)
+	client := td.blockchainClient(t)
 
 	val1 := td.mockState.TestStore.AddTestValidator()
 
@@ -278,14 +260,11 @@ func TestGetValidatorByNumber(t *testing.T) {
 		assert.Equal(t, val1.PublicKey().String(), res.GetValidator().PublicKey)
 		assert.Equal(t, val1.Number(), res.GetValidator().GetNumber())
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestGetValidatorAddresses(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.blockchainClient(t)
+	client := td.blockchainClient(t)
 
 	t.Run("should return list of validator addresses", func(t *testing.T) {
 		td.mockState.TestStore.AddTestValidator()
@@ -298,14 +277,11 @@ func TestGetValidatorAddresses(t *testing.T) {
 		assert.NotNil(t, res)
 		assert.Equal(t, 2, len(res.GetAddresses()))
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestGetPublicKey(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.blockchainClient(t)
+	client := td.blockchainClient(t)
 
 	val := td.mockState.TestStore.AddTestValidator()
 
@@ -333,14 +309,11 @@ func TestGetPublicKey(t *testing.T) {
 		assert.NotNil(t, res)
 		assert.Equal(t, val.PublicKey().String(), res.PublicKey)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestConsensusInfo(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.blockchainClient(t)
+	client := td.blockchainClient(t)
 
 	consHeight := td.RandHeight()
 	consRound := td.RandRound()
@@ -380,14 +353,11 @@ func TestConsensusInfo(t *testing.T) {
 		assert.Equal(t, int32(consRound), res.Proposal.Round)
 		assert.Equal(t, prop.Signature().String(), res.Proposal.Signature)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestGetTxPoolContent(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.blockchainClient(t)
+	client := td.blockchainClient(t)
 
 	_ = td.mockState.AddPendingTx(td.GenerateTestBondTx())
 	_ = td.mockState.AddPendingTx(td.GenerateTestBondTx())
@@ -484,7 +454,4 @@ func TestGetTxPoolContent(t *testing.T) {
 			assert.Equal(t, pactus.PayloadType_PAYLOAD_TYPE_WITHDRAW, tx.PayloadType)
 		}
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }

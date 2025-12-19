@@ -12,9 +12,8 @@ import (
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
-	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
-	"github.com/pactus-project/pactus/wallet"
+	walletMgr "github.com/pactus-project/pactus/wallet/manager"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/assert"
@@ -62,10 +61,7 @@ func setup(t *testing.T) *testData {
 		Listen: "[::]:0",
 	}
 
-	walletMgrConf := &wallet.Config{
-		WalletsDir: util.TempDirPath(),
-		ChainType:  mockState.Genesis().ChainType(),
-	}
+	mockWalletMgr := walletMgr.NewMockIManager(ts.MockingController())
 
 	zmqPublishers := []zmq.Publisher{
 		zmq.MockingPublisher("zmq_address", "zmq_topic", 100),
@@ -73,7 +69,7 @@ func setup(t *testing.T) *testData {
 
 	gRPCServer := grpc.NewServer(context.Background(), grpcConf,
 		mockState, mockSync, mockNet, mockConsMgr,
-		wallet.NewWalletManager(walletMgrConf), zmqPublishers,
+		mockWalletMgr, zmqPublishers,
 	)
 	assert.NoError(t, gRPCServer.StartServer())
 

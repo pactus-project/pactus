@@ -16,7 +16,7 @@ import (
 
 func TestGetTransaction(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.transactionClient(t)
+	client := td.transactionClient(t)
 
 	blockHeight := td.RandHeight()
 	valPubKey, _ := td.RandBLSKeyPair()
@@ -87,14 +87,11 @@ func TestGetTransaction(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestSendRawTransaction(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.transactionClient(t)
+	client := td.transactionClient(t)
 
 	t.Run("Should fail, invalid cbor", func(t *testing.T) {
 		res, err := client.BroadcastTransaction(context.Background(),
@@ -126,14 +123,11 @@ func TestSendRawTransaction(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestGetRawTransaction(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.transactionClient(t)
+	client := td.transactionClient(t)
 
 	t.Run("Transfer", func(t *testing.T) {
 		amt := td.RandAmount()
@@ -279,14 +273,11 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.Equal(t, expectedLockTime, decodedTrx.LockTime())
 		assert.Equal(t, expectedFee, decodedTrx.Fee())
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestCalculateFee(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.transactionClient(t)
+	client := td.transactionClient(t)
 
 	t.Run("Not fixed amount", func(t *testing.T) {
 		amt := amount.Amount(100e9)
@@ -329,14 +320,11 @@ func TestCalculateFee(t *testing.T) {
 		assert.Negative(t, res.Amount)
 		assert.Equal(t, expectedFee.ToNanoPAC(), res.Fee)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestDecodeRawTransaction(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.transactionClient(t)
+	client := td.transactionClient(t)
 
 	t.Run("Should decode valid raw transaction", func(t *testing.T) {
 		trx := td.GenerateTestTransferTx()
@@ -360,7 +348,4 @@ func TestDecodeRawTransaction(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }

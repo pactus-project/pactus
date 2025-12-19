@@ -3607,7 +3607,8 @@ signing, verification, and other cryptographic operations.</p>
 
 #### GetValidatorAddress <span id="pactus.Wallet.GetValidatorAddress" class="rpc-badge"></span>
 
-<p>GetValidatorAddress retrieves the validator address associated with a public key.</p>
+<p>GetValidatorAddress retrieves the validator address associated with a public key.
+Deprecated: Will move into utils.</p>
 
 <h4>GetValidatorAddressRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
@@ -4044,7 +4045,28 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
   </thead>
   <tbody class="table-group-divider">
-  </tbody>
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet where the address label was updated.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    The address where the label was updated.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">label</td>
+    <td> string</td>
+    <td>
+    The new label for the address.
+    </td>
+  </tr>
+     </tbody>
 </table>
 
 #### ListWallet <span id="pactus.Wallet.ListWallet" class="rpc-badge"></span>

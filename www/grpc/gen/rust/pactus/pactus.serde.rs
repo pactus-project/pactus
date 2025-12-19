@@ -10864,8 +10864,26 @@ impl serde::Serialize for SetAddressLabelResponse {
         S: serde::Serializer,
     {
         use serde::ser::SerializeStruct;
-        let len = 0;
-        let struct_ser = serializer.serialize_struct("pactus.SetAddressLabelResponse", len)?;
+        let mut len = 0;
+        if !self.wallet_name.is_empty() {
+            len += 1;
+        }
+        if !self.address.is_empty() {
+            len += 1;
+        }
+        if !self.label.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.SetAddressLabelResponse", len)?;
+        if !self.wallet_name.is_empty() {
+            struct_ser.serialize_field("walletName", &self.wallet_name)?;
+        }
+        if !self.address.is_empty() {
+            struct_ser.serialize_field("address", &self.address)?;
+        }
+        if !self.label.is_empty() {
+            struct_ser.serialize_field("label", &self.label)?;
+        }
         struct_ser.end()
     }
 }
@@ -10876,10 +10894,17 @@ impl<'de> serde::Deserialize<'de> for SetAddressLabelResponse {
         D: serde::Deserializer<'de>,
     {
         const FIELDS: &[&str] = &[
+            "wallet_name",
+            "walletName",
+            "address",
+            "label",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
+            WalletName,
+            Address,
+            Label,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -10900,7 +10925,12 @@ impl<'de> serde::Deserialize<'de> for SetAddressLabelResponse {
                     where
                         E: serde::de::Error,
                     {
-                            Err(serde::de::Error::unknown_field(value, FIELDS))
+                        match value {
+                            "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
+                            "address" => Ok(GeneratedField::Address),
+                            "label" => Ok(GeneratedField::Label),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
                     }
                 }
                 deserializer.deserialize_identifier(GeneratedVisitor)
@@ -10918,10 +10948,35 @@ impl<'de> serde::Deserialize<'de> for SetAddressLabelResponse {
                 where
                     V: serde::de::MapAccess<'de>,
             {
-                while map_.next_key::<GeneratedField>()?.is_some() {
-                    let _ = map_.next_value::<serde::de::IgnoredAny>()?;
+                let mut wallet_name__ = None;
+                let mut address__ = None;
+                let mut label__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::WalletName => {
+                            if wallet_name__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("walletName"));
+                            }
+                            wallet_name__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Address => {
+                            if address__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("address"));
+                            }
+                            address__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Label => {
+                            if label__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("label"));
+                            }
+                            label__ = Some(map_.next_value()?);
+                        }
+                    }
                 }
                 Ok(SetAddressLabelResponse {
+                    wallet_name: wallet_name__.unwrap_or_default(),
+                    address: address__.unwrap_or_default(),
+                    label: label__.unwrap_or_default(),
                 })
             }
         }

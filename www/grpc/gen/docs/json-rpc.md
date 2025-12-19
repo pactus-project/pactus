@@ -3657,7 +3657,8 @@ signing, verification, and other cryptographic operations.</p>
 
 #### pactus.wallet.get_validator_address <span id="pactus.wallet.get_validator_address" class="rpc-badge"></span>
 
-<p>GetValidatorAddress retrieves the validator address associated with a public key.</p>
+<p>GetValidatorAddress retrieves the validator address associated with a public key.
+Deprecated: Will move into utils.</p>
 
 <h4>Parameters</h4>
 
@@ -4094,7 +4095,28 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     <tr><td>Field</td><td>Type</td><td>Description</td></tr>
   </thead>
   <tbody class="table-group-divider">
-  </tbody>
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet where the address label was updated.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    The address where the label was updated.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">label</td>
+    <td> string</td>
+    <td>
+    The new label for the address.
+    </td>
+  </tr>
+     </tbody>
 </table>
 
 #### pactus.wallet.list_wallet <span id="pactus.wallet.list_wallet" class="rpc-badge"></span>

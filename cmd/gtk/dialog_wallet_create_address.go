@@ -51,16 +51,16 @@ func createAddress(wdgWallet *widgetWallet) {
 
 		switch walletAddressType {
 		case crypto.AddressTypeEd25519Account.String():
-			password, ok := getWalletPassword(wdgWallet.model.wallet)
+			password, ok := getWalletPassword(wdgWallet.model)
 			if !ok {
 				return
 			}
 
-			_, err = wdgWallet.model.wallet.NewEd25519AccountAddress(walletAddressLabel, password)
+			_, err = wdgWallet.model.NewEd25519AccountAddress(walletAddressLabel, password)
 		case crypto.AddressTypeBLSAccount.String():
-			_, err = wdgWallet.model.wallet.NewBLSAccountAddress(walletAddressLabel)
+			_, err = wdgWallet.model.NewBLSAccountAddress(walletAddressLabel)
 		case crypto.AddressTypeValidator.String():
-			_, err = wdgWallet.model.wallet.NewValidatorAddress(walletAddressLabel)
+			_, err = wdgWallet.model.NewValidatorAddress(walletAddressLabel)
 		}
 
 		if err != nil {
@@ -70,7 +70,7 @@ func createAddress(wdgWallet *widgetWallet) {
 			return
 		}
 
-		err = wdgWallet.model.wallet.Save()
+		err = wdgWallet.model.Save()
 		fatalErrorCheck(err)
 
 		wdgWallet.model.rebuildModel()

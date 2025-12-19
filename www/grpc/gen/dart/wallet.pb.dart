@@ -681,7 +681,7 @@ class CreateWalletRequest extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
-    ..aOS(4, _omitFieldNames ? '' : 'password')
+    ..aOS(2, _omitFieldNames ? '' : 'password')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -714,14 +714,14 @@ class CreateWalletRequest extends $pb.GeneratedMessage {
   void clearWalletName() => $_clearField(1);
 
   /// Password to secure the new wallet.
-  @$pb.TagNumber(4)
+  @$pb.TagNumber(2)
   $core.String get password => $_getSZ(1);
-  @$pb.TagNumber(4)
+  @$pb.TagNumber(2)
   set password($core.String value) => $_setString(1, value);
-  @$pb.TagNumber(4)
+  @$pb.TagNumber(2)
   $core.bool hasPassword() => $_has(1);
-  @$pb.TagNumber(4)
-  void clearPassword() => $_clearField(4);
+  @$pb.TagNumber(2)
+  void clearPassword() => $_clearField(2);
 }
 
 /// Response message contains wallet recovery mnemonic (seed phrase).
@@ -1889,9 +1889,9 @@ class SetAddressLabelRequest extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
-    ..aOS(3, _omitFieldNames ? '' : 'password')
-    ..aOS(4, _omitFieldNames ? '' : 'address')
-    ..aOS(5, _omitFieldNames ? '' : 'label')
+    ..aOS(2, _omitFieldNames ? '' : 'password')
+    ..aOS(3, _omitFieldNames ? '' : 'address')
+    ..aOS(4, _omitFieldNames ? '' : 'label')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1925,39 +1925,49 @@ class SetAddressLabelRequest extends $pb.GeneratedMessage {
   void clearWalletName() => $_clearField(1);
 
   /// Wallet password required for modification.
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(2)
   $core.String get password => $_getSZ(1);
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(2)
   set password($core.String value) => $_setString(1, value);
-  @$pb.TagNumber(3)
+  @$pb.TagNumber(2)
   $core.bool hasPassword() => $_has(1);
-  @$pb.TagNumber(3)
-  void clearPassword() => $_clearField(3);
+  @$pb.TagNumber(2)
+  void clearPassword() => $_clearField(2);
 
   /// The address to label.
-  @$pb.TagNumber(4)
+  @$pb.TagNumber(3)
   $core.String get address => $_getSZ(2);
-  @$pb.TagNumber(4)
+  @$pb.TagNumber(3)
   set address($core.String value) => $_setString(2, value);
-  @$pb.TagNumber(4)
+  @$pb.TagNumber(3)
   $core.bool hasAddress() => $_has(2);
-  @$pb.TagNumber(4)
-  void clearAddress() => $_clearField(4);
+  @$pb.TagNumber(3)
+  void clearAddress() => $_clearField(3);
 
   /// The new label for the address.
-  @$pb.TagNumber(5)
+  @$pb.TagNumber(4)
   $core.String get label => $_getSZ(3);
-  @$pb.TagNumber(5)
+  @$pb.TagNumber(4)
   set label($core.String value) => $_setString(3, value);
-  @$pb.TagNumber(5)
+  @$pb.TagNumber(4)
   $core.bool hasLabel() => $_has(3);
-  @$pb.TagNumber(5)
-  void clearLabel() => $_clearField(5);
+  @$pb.TagNumber(4)
+  void clearLabel() => $_clearField(4);
 }
 
-/// Response message for address label update.
+/// Response message for updated address label.
 class SetAddressLabelResponse extends $pb.GeneratedMessage {
-  factory SetAddressLabelResponse() => create();
+  factory SetAddressLabelResponse({
+    $core.String? walletName,
+    $core.String? address,
+    $core.String? label,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    if (address != null) result.address = address;
+    if (label != null) result.label = label;
+    return result;
+  }
 
   SetAddressLabelResponse._();
 
@@ -1972,6 +1982,9 @@ class SetAddressLabelResponse extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'SetAddressLabelResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..aOS(2, _omitFieldNames ? '' : 'address')
+    ..aOS(3, _omitFieldNames ? '' : 'label')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1993,6 +2006,36 @@ class SetAddressLabelResponse extends $pb.GeneratedMessage {
   static SetAddressLabelResponse getDefault() => _defaultInstance ??=
       $pb.GeneratedMessage.$_defaultFor<SetAddressLabelResponse>(create);
   static SetAddressLabelResponse? _defaultInstance;
+
+  /// The name of the wallet where the address label was updated.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+
+  /// The address where the label was updated.
+  @$pb.TagNumber(2)
+  $core.String get address => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set address($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasAddress() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearAddress() => $_clearField(2);
+
+  /// The new label for the address.
+  @$pb.TagNumber(3)
+  $core.String get label => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set label($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasLabel() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearLabel() => $_clearField(3);
 }
 
 /// Request message for listing all wallets.
@@ -2438,6 +2481,7 @@ class WalletApi {
           'SignRawTransaction', request, SignRawTransactionResponse());
 
   /// GetValidatorAddress retrieves the validator address associated with a public key.
+  /// Deprecated: Will move into utils.
   $async.Future<GetValidatorAddressResponse> getValidatorAddress(
           $pb.ClientContext? ctx, GetValidatorAddressRequest request) =>
       _client.invoke<GetValidatorAddressResponse>(ctx, 'Wallet',

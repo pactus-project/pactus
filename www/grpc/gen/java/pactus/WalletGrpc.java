@@ -640,6 +640,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * GetValidatorAddress retrieves the validator address associated with a public key.
+     * Deprecated: Will move into utils.
      * </pre>
      */
     default void getValidatorAddress(pactus.WalletOuterClass.GetValidatorAddressRequest request,
@@ -840,6 +841,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * GetValidatorAddress retrieves the validator address associated with a public key.
+     * Deprecated: Will move into utils.
      * </pre>
      */
     public void getValidatorAddress(pactus.WalletOuterClass.GetValidatorAddressRequest request,
@@ -1030,6 +1032,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * GetValidatorAddress retrieves the validator address associated with a public key.
+     * Deprecated: Will move into utils.
      * </pre>
      */
     public pactus.WalletOuterClass.GetValidatorAddressResponse getValidatorAddress(pactus.WalletOuterClass.GetValidatorAddressRequest request) throws io.grpc.StatusException {
@@ -1210,6 +1213,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * GetValidatorAddress retrieves the validator address associated with a public key.
+     * Deprecated: Will move into utils.
      * </pre>
      */
     public pactus.WalletOuterClass.GetValidatorAddressResponse getValidatorAddress(pactus.WalletOuterClass.GetValidatorAddressRequest request) {
@@ -1396,6 +1400,7 @@ public final class WalletGrpc {
     /**
      * <pre>
      * GetValidatorAddress retrieves the validator address associated with a public key.
+     * Deprecated: Will move into utils.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.GetValidatorAddressResponse> getValidatorAddress(

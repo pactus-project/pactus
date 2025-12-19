@@ -56,6 +56,7 @@ type WalletClient interface {
 	// SignRawTransaction signs a raw transaction for a specified wallet.
 	SignRawTransaction(ctx context.Context, in *SignRawTransactionRequest, opts ...grpc.CallOption) (*SignRawTransactionResponse, error)
 	// GetValidatorAddress retrieves the validator address associated with a public key.
+	// Deprecated: Will move into utils.
 	GetValidatorAddress(ctx context.Context, in *GetValidatorAddressRequest, opts ...grpc.CallOption) (*GetValidatorAddressResponse, error)
 	// GetNewAddress generates a new address for the specified wallet.
 	GetNewAddress(ctx context.Context, in *GetNewAddressRequest, opts ...grpc.CallOption) (*GetNewAddressResponse, error)
@@ -264,6 +265,7 @@ type WalletServer interface {
 	// SignRawTransaction signs a raw transaction for a specified wallet.
 	SignRawTransaction(context.Context, *SignRawTransactionRequest) (*SignRawTransactionResponse, error)
 	// GetValidatorAddress retrieves the validator address associated with a public key.
+	// Deprecated: Will move into utils.
 	GetValidatorAddress(context.Context, *GetValidatorAddressRequest) (*GetValidatorAddressResponse, error)
 	// GetNewAddress generates a new address for the specified wallet.
 	GetNewAddress(context.Context, *GetNewAddressRequest) (*GetNewAddressResponse, error)

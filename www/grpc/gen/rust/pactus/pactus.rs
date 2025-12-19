@@ -1231,7 +1231,7 @@ pub struct CreateWalletRequest {
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
     /// Password to secure the new wallet.
-    #[prost(string, tag="4")]
+    #[prost(string, tag="2")]
     pub password: ::prost::alloc::string::String,
 }
 /// Response message contains wallet recovery mnemonic (seed phrase).
@@ -1399,18 +1399,27 @@ pub struct SetAddressLabelRequest {
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
     /// Wallet password required for modification.
-    #[prost(string, tag="3")]
+    #[prost(string, tag="2")]
     pub password: ::prost::alloc::string::String,
     /// The address to label.
-    #[prost(string, tag="4")]
+    #[prost(string, tag="3")]
     pub address: ::prost::alloc::string::String,
     /// The new label for the address.
-    #[prost(string, tag="5")]
+    #[prost(string, tag="4")]
     pub label: ::prost::alloc::string::String,
 }
-/// Response message for address label update.
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+/// Response message for updated address label.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct SetAddressLabelResponse {
+    /// The name of the wallet where the address label was updated.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// The address where the label was updated.
+    #[prost(string, tag="2")]
+    pub address: ::prost::alloc::string::String,
+    /// The new label for the address.
+    #[prost(string, tag="3")]
+    pub label: ::prost::alloc::string::String,
 }
 /// Request message for listing all wallets.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]

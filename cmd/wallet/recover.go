@@ -39,8 +39,6 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		// Always save the wallet before exiting
 		terminal.PrintLine()
 		terminal.PrintInfoMsgf("💾 Saving wallet...")
-		err = wlt.Save()
-		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
 		terminal.PrintSuccessMsgf("✅ Wallet successfully recovered and saved at: %s", wlt.Path())

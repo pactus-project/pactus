@@ -3,23 +3,20 @@ package grpc
 import (
 	"context"
 	"net"
-	"path/filepath"
 	"testing"
 
 	"github.com/pactus-project/pactus/consensus"
 	"github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto/bls"
-	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
-	"github.com/pactus-project/pactus/wallet"
+	walletMgr "github.com/pactus-project/pactus/wallet/manager"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
@@ -32,7 +29,7 @@ type testData struct {
 	mockSync      *sync.MockSync
 	consMocks     []*consensus.MockConsensus
 	mockConsMgr   manager.Manager
-	defaultWallet *wallet.Wallet
+	mockWalletMgr *walletMgr.MockIManager
 	listener      *bufconn.Listener
 	server        *Server
 }
@@ -66,16 +63,7 @@ func setup(t *testing.T, conf *Config) *testData {
 	mockConsMgr, consMocks := manager.MockingManager(ts, mockState, valKeys)
 
 	mockState.CommitTestBlocks(10)
-
-	wltPath := filepath.Join(conf.WalletsDir, "default_wallet")
-	mnemonic, _ := wallet.GenerateMnemonic(128)
-	defaultWallet, err := wallet.Create(wltPath, mnemonic, "", genesis.Mainnet)
-	require.NoError(t, err)
-	require.NoError(t, defaultWallet.Save())
-
-	mockWalletMgrConf := wallet.DefaultConfig()
-	mockWalletMgrConf.WalletsDir = conf.WalletsDir
-	mockWalletMgrConf.ChainType = mockState.Genesis().ChainType()
+	mockWalletMgr := walletMgr.NewMockIManager(ts.MockingController())
 
 	zmqPublishers := []zmq.Publisher{
 		zmq.MockingPublisher("zmq_address", "zmq_topic", 100),
@@ -83,9 +71,9 @@ func setup(t *testing.T, conf *Config) *testData {
 
 	server := NewServer(context.Background(), conf,
 		mockState, mockSync, mockNet, mockConsMgr,
-		wallet.NewWalletManager(mockWalletMgrConf), zmqPublishers,
+		mockWalletMgr, zmqPublishers,
 	)
-	err = server.startListening(listener)
+	err := server.startListening(listener)
 	assert.NoError(t, err)
 
 	return &testData{
@@ -94,7 +82,7 @@ func setup(t *testing.T, conf *Config) *testData {
 		mockSync:      mockSync,
 		consMocks:     consMocks,
 		mockConsMgr:   mockConsMgr,
-		defaultWallet: defaultWallet,
+		mockWalletMgr: mockWalletMgr,
 		server:        server,
 		listener:      listener,
 	}
@@ -109,7 +97,7 @@ func (td *testData) bufDialer(context.Context, string) (net.Conn, error) {
 	return td.listener.Dial()
 }
 
-func (td *testData) blockchainClient(t *testing.T) (*grpc.ClientConn, pactus.BlockchainClient) {
+func (td *testData) newClient(t *testing.T) *grpc.ClientConn {
 	t.Helper()
 
 	conn, err := grpc.NewClient("passthrough://bufnet",
@@ -117,49 +105,40 @@ func (td *testData) blockchainClient(t *testing.T) (*grpc.ClientConn, pactus.Blo
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	assert.NoError(t, err)
 
-	return conn, pactus.NewBlockchainClient(conn)
+	t.Cleanup(func() {
+		assert.Nil(t, conn.Close())
+		td.StopServer()
+	})
+
+	return conn
 }
 
-func (td *testData) networkClient(t *testing.T) (*grpc.ClientConn, pactus.NetworkClient) {
+func (td *testData) blockchainClient(t *testing.T) pactus.BlockchainClient {
 	t.Helper()
 
-	conn, err := grpc.NewClient("passthrough://bufnet",
-		grpc.WithContextDialer(td.bufDialer),
-		grpc.WithTransportCredentials(insecure.NewCredentials()))
-	assert.NoError(t, err)
-
-	return conn, pactus.NewNetworkClient(conn)
+	return pactus.NewBlockchainClient(td.newClient(t))
 }
 
-func (td *testData) transactionClient(t *testing.T) (*grpc.ClientConn, pactus.TransactionClient) {
+func (td *testData) networkClient(t *testing.T) pactus.NetworkClient {
 	t.Helper()
 
-	conn, err := grpc.NewClient("passthrough://bufnet",
-		grpc.WithContextDialer(td.bufDialer),
-		grpc.WithTransportCredentials(insecure.NewCredentials()))
-	assert.NoError(t, err)
-
-	return conn, pactus.NewTransactionClient(conn)
+	return pactus.NewNetworkClient(td.newClient(t))
 }
 
-func (td *testData) walletClient(t *testing.T) (*grpc.ClientConn, pactus.WalletClient) {
+func (td *testData) transactionClient(t *testing.T) pactus.TransactionClient {
 	t.Helper()
 
-	conn, err := grpc.NewClient("passthrough://bufnet",
-		grpc.WithContextDialer(td.bufDialer),
-		grpc.WithTransportCredentials(insecure.NewCredentials()))
-	assert.NoError(t, err)
-
-	return conn, pactus.NewWalletClient(conn)
+	return pactus.NewTransactionClient(td.newClient(t))
 }
 
-func (td *testData) utilClient(t *testing.T) (*grpc.ClientConn, pactus.UtilsClient) {
+func (td *testData) walletClient(t *testing.T) pactus.WalletClient {
 	t.Helper()
 
-	conn, err := grpc.NewClient("passthrough://bufnet",
-		grpc.WithContextDialer(td.bufDialer),
-		grpc.WithTransportCredentials(insecure.NewCredentials()))
-	assert.NoError(t, err)
+	return pactus.NewWalletClient(td.newClient(t))
+}
 
-	return conn, pactus.NewUtilsClient(conn)
+func (td *testData) utilClient(t *testing.T) pactus.UtilsClient {
+	t.Helper()
+
+	return pactus.NewUtilsClient(td.newClient(t))
 }

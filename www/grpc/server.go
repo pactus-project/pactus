@@ -5,12 +5,13 @@ import (
 	"net"
 
 	"github.com/pactus-project/pactus/consensus/manager"
+	consMgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/network"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/sync"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/wallet"
+	walletMgr "github.com/pactus-project/pactus/wallet/manager"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/pactus-project/pactus/www/zmq"
 	"google.golang.org/grpc"
@@ -25,15 +26,15 @@ type Server struct {
 	state         state.Facade
 	net           network.Network
 	sync          sync.Synchronizer
-	consMgr       manager.ManagerReader
-	walletMgr     *wallet.Manager
+	consMgr       consMgr.ManagerReader
+	walletMgr     walletMgr.IManager
 	zmqPublishers []zmq.Publisher
 	logger        *logger.SubLogger
 }
 
 func NewServer(ctx context.Context, conf *Config, state state.Facade, sync sync.Synchronizer,
 	network network.Network, consMgr manager.ManagerReader,
-	walletMgr *wallet.Manager,
+	walletMgr walletMgr.IManager,
 	zmqPublishers []zmq.Publisher,
 ) *Server {
 	return &Server{

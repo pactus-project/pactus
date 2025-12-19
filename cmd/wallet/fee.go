@@ -23,9 +23,7 @@ func buildFeeCmd(parentCmd *cobra.Command) {
 		fee, err := amount.FromString(args[0])
 		terminal.FatalErrorCheck(err)
 
-		wlt.SetDefaultFee(fee)
-
-		err = wlt.Save()
+		err = wlt.SetDefaultFee(fee)
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintInfoMsgf("Default fee is set to %s", fee.String())

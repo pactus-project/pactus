@@ -1143,7 +1143,7 @@
     },
     "/pactus/wallet/get_validator_address": {
       "get": {
-        "summary": "GetValidatorAddress retrieves the validator address associated with a public key.",
+        "summary": "GetValidatorAddress retrieves the validator address associated with a public key.\nDeprecated: Will move into utils.",
         "operationId": "Wallet_GetValidatorAddress",
         "responses": {
           "200": {
@@ -2839,7 +2839,21 @@
     },
     "pactusSetAddressLabelResponse": {
       "type": "object",
-      "description": "Response message for address label update."
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet where the address label was updated."
+        },
+        "address": {
+          "type": "string",
+          "description": "The address where the label was updated."
+        },
+        "label": {
+          "type": "string",
+          "description": "The new label for the address."
+        }
+      },
+      "description": "Response message for updated address label."
     },
     "pactusSignMessageResponse": {
       "type": "object",

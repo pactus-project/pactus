@@ -7,18 +7,16 @@ import (
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/wallet"
+	walletMgr "github.com/pactus-project/pactus/wallet/manager"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
-//
-// TODO: default_wallet should be loaded on starting the node.
-
 type walletServer struct {
 	*Server
-	walletManager *wallet.Manager
+	walletManager walletMgr.IManager
 }
 
-func newWalletServer(server *Server, manager *wallet.Manager) *walletServer {
+func newWalletServer(server *Server, manager walletMgr.IManager) *walletServer {
 	return &walletServer{
 		Server:        server,
 		walletManager: manager,
@@ -132,6 +130,21 @@ func (s *walletServer) GetTotalBalance(_ context.Context,
 	}, nil
 }
 
+func (s *walletServer) GetTotalStake(_ context.Context,
+	req *pactus.GetTotalStakeRequest,
+) (*pactus.GetTotalStakeResponse, error) {
+	//nolint:contextcheck // client manages timeout internally, external context would interfere
+	stake, err := s.walletManager.TotalStake(req.WalletName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.GetTotalStakeResponse{
+		TotalStake: stake.ToNanoPAC(),
+		WalletName: req.WalletName,
+	}, nil
+}
+
 func (s *walletServer) SignRawTransaction(_ context.Context,
 	req *pactus.SignRawTransactionRequest,
 ) (*pactus.SignRawTransactionResponse, error) {
@@ -150,6 +163,19 @@ func (s *walletServer) SignRawTransaction(_ context.Context,
 	return &pactus.SignRawTransactionResponse{
 		TransactionId:        hex.EncodeToString(txID),
 		SignedRawTransaction: hex.EncodeToString(data),
+	}, nil
+}
+
+func (s *walletServer) SignMessage(_ context.Context,
+	req *pactus.SignMessageRequest,
+) (*pactus.SignMessageResponse, error) {
+	sig, err := s.walletManager.SignMessage(req.WalletName, req.Password, req.Address, req.Message)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.SignMessageResponse{
+		Signature: sig,
 	}, nil
 }
 
@@ -190,34 +216,6 @@ func (s *walletServer) GetAddressHistory(_ context.Context,
 	}, nil
 }
 
-func (s *walletServer) SignMessage(_ context.Context,
-	req *pactus.SignMessageRequest,
-) (*pactus.SignMessageResponse, error) {
-	sig, err := s.walletManager.SignMessage(req.Message, req.Password, req.Address, req.WalletName)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pactus.SignMessageResponse{
-		Signature: sig,
-	}, nil
-}
-
-func (s *walletServer) GetTotalStake(_ context.Context,
-	req *pactus.GetTotalStakeRequest,
-) (*pactus.GetTotalStakeResponse, error) {
-	//nolint:contextcheck // client manages timeout internally, external context would interfere
-	stake, err := s.walletManager.TotalStake(req.WalletName)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pactus.GetTotalStakeResponse{
-		TotalStake: stake.ToNanoPAC(),
-		WalletName: req.WalletName,
-	}, nil
-}
-
 func (s *walletServer) GetAddressInfo(_ context.Context,
 	req *pactus.GetAddressInfoRequest,
 ) (*pactus.GetAddressInfoResponse, error) {
@@ -238,7 +236,16 @@ func (s *walletServer) GetAddressInfo(_ context.Context,
 func (s *walletServer) SetAddressLabel(_ context.Context,
 	req *pactus.SetAddressLabelRequest,
 ) (*pactus.SetAddressLabelResponse, error) {
-	return &pactus.SetAddressLabelResponse{}, s.walletMgr.SetAddressLabel(req.WalletName, req.Address, req.Label)
+	err := s.walletManager.SetAddressLabel(req.WalletName, req.Address, req.Label)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.SetAddressLabelResponse{
+		WalletName: req.WalletName,
+		Address:    req.Address,
+		Label:      req.Label,
+	}, nil
 }
 
 func (s *walletServer) ListWallet(_ context.Context,
@@ -292,6 +299,7 @@ func (s *walletServer) ListAddress(_ context.Context,
 	}
 
 	return &pactus.ListAddressResponse{
-		Data: addrsPB,
+		WalletName: req.WalletName,
+		Data:       addrsPB,
 	}, nil
 }

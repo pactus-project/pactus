@@ -16,7 +16,7 @@ import (
 	"github.com/pactus-project/pactus/txpool"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
-	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/manager"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/html"
 	"github.com/pactus-project/pactus/www/http"
@@ -52,7 +52,7 @@ type Config struct {
 
 	Consensus     *consensus.Config   `toml:"-"` // Deprecated: replaced by new consensus algorithm
 	ConsensusV2   *consensusv2.Config `toml:"-"`
-	WalletManager *wallet.Config      `toml:"-"`
+	WalletManager *manager.Config     `toml:"-"`
 }
 
 type BootstrapInfo struct {
@@ -107,7 +107,7 @@ func defaultConfig() *Config {
 		HTTP:          http.DefaultConfig(),
 		JSONRPC:       jsonrpc.DefaultConfig(),
 		ZeroMq:        zmq.DefaultConfig(),
-		WalletManager: wallet.DefaultConfig(),
+		WalletManager: manager.DefaultConfig(),
 	}
 
 	return conf

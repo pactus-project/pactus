@@ -24,7 +24,7 @@ func changePassword(wdgWallet *widgetWallet) {
 	getButtonObj(builder, "id_button_ok").SetImage(OkIcon())
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 
-	if !wdgWallet.model.wallet.IsEncrypted() {
+	if !wdgWallet.model.IsEncrypted() {
 		oldPasswordEntry.SetVisible(false)
 		oldPasswordLabel.SetVisible(false)
 	}
@@ -42,14 +42,14 @@ func changePassword(wdgWallet *widgetWallet) {
 			return
 		}
 
-		err = wdgWallet.model.wallet.UpdatePassword(oldPassword, newPassword)
+		err = wdgWallet.model.UpdatePassword(oldPassword, newPassword)
 		if err != nil {
 			showError(err)
 
 			return
 		}
 
-		err = wdgWallet.model.wallet.Save()
+		err = wdgWallet.model.Save()
 		fatalErrorCheck(err)
 
 		dlg.Close()

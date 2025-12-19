@@ -116,7 +116,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			return cfg
 		}
 
-		node, _, err := cmd.StartNode(workingDir, passwordFetcher, configModifier)
+		node, err := cmd.StartNode(workingDir, passwordFetcher, configModifier)
 		terminal.FatalErrorCheck(err)
 
 		signal.HandleInterrupt(func() {

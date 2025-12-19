@@ -27,6 +27,7 @@ import (
 	"github.com/pactus-project/pactus/types/validator"
 	"github.com/pactus-project/pactus/types/vote"
 	"github.com/pactus-project/pactus/util"
+	"go.uber.org/mock/gomock"
 	"golang.org/x/exp/slices"
 )
 
@@ -38,6 +39,7 @@ import (
 type TestSuite struct {
 	Seed int64
 	Rand *rand.Rand
+	Ctrl *gomock.Controller
 }
 
 func GenerateSeed() int64 {
@@ -45,11 +47,15 @@ func GenerateSeed() int64 {
 }
 
 // NewTestSuiteFromSeed creates a new TestSuite with the given seed.
-func NewTestSuiteFromSeed(seed int64) *TestSuite {
+func NewTestSuiteFromSeed(t *testing.T, seed int64) *TestSuite {
+	ctrl := gomock.NewController(t)
+	t.Cleanup(ctrl.Finish)
+
 	return &TestSuite{
 		Seed: seed,
 		//nolint:gosec // to reproduce the failed tests
 		Rand: rand.New(rand.NewSource(seed)),
+		Ctrl: ctrl,
 	}
 }
 
@@ -60,11 +66,11 @@ func NewTestSuite(t *testing.T) *TestSuite {
 	seed := GenerateSeed()
 	t.Logf("%v seed is %v", t.Name(), seed)
 
-	return &TestSuite{
-		Seed: seed,
-		//nolint:gosec // to reproduce the failed tests
-		Rand: rand.New(rand.NewSource(seed)),
-	}
+	return NewTestSuiteFromSeed(t, seed)
+}
+
+func (ts *TestSuite) MockingController() *gomock.Controller {
+	return ts.Ctrl
 }
 
 // RandBool returns a random boolean value.

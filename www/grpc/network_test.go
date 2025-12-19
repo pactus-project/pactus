@@ -13,7 +13,7 @@ import (
 
 func TestGetNetworkInfo(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.networkClient(t)
+	client := td.networkClient(t)
 
 	t.Run("Should return node PeerID", func(t *testing.T) {
 		res, err := client.GetNetworkInfo(context.Background(),
@@ -44,14 +44,11 @@ func TestGetNetworkInfo(t *testing.T) {
 			}
 		}
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestGetNodeInfo(t *testing.T) {
 	td := setup(t, nil)
-	conn, client := td.networkClient(t)
+	client := td.networkClient(t)
 
 	res, err := client.GetNodeInfo(context.Background(),
 		&pactus.GetNodeInfoRequest{})
@@ -63,15 +60,12 @@ func TestGetNodeInfo(t *testing.T) {
 	assert.Equal(t, res.ZmqPublishers[0].Address, "zmq_address")
 	assert.Equal(t, res.ZmqPublishers[0].Topic, "zmq_topic")
 	assert.Equal(t, res.ZmqPublishers[0].Hwm, int32(100))
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestPing(t *testing.T) {
 	conf := testConfig()
 	td := setup(t, conf)
-	conn, client := td.networkClient(t)
+	client := td.networkClient(t)
 
 	t.Run("Should return empty response for ping", func(t *testing.T) {
 		res, err := client.Ping(context.Background(), &pactus.PingRequest{})
@@ -89,7 +83,4 @@ func TestPing(t *testing.T) {
 			assert.NotNil(t, res)
 		}
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }

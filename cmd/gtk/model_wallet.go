@@ -4,22 +4,22 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/node"
-	"github.com/pactus-project/pactus/wallet"
 )
 
 type walletModel struct {
-	wallet    *wallet.Wallet
-	listStore *gtk.ListStore
-	node      *node.Node
+	node       *node.Node
+	walletName string
+	listStore  *gtk.ListStore
 }
 
-func newWalletModel(wlt *wallet.Wallet, nde *node.Node) *walletModel {
+func newWalletModel(nde *node.Node, walletName string) *walletModel {
 	listStore, _ := gtk.ListStoreNew(
 		glib.TYPE_STRING, // Column no
 		glib.TYPE_STRING, // Address
@@ -29,7 +29,6 @@ func newWalletModel(wlt *wallet.Wallet, nde *node.Node) *walletModel {
 		glib.TYPE_STRING) // Availability Score
 
 	return &walletModel{
-		wallet:    wlt,
 		node:      nde,
 		listStore: listStore,
 	}
@@ -99,4 +98,26 @@ func (model *walletModel) rebuildModel() {
 			return false
 		})
 	}()
+}
+
+func (model *walletModel) IsEncrypted() bool {
+	info, err := model.node.WalletManager().WalletInfo(model.walletName)
+	if err != nil {
+		log.Println("failed to get wallet info: %s", err.Error())
+
+		return false
+	}
+
+	return info.Encrypted
+}
+
+func (model *walletModel) UpdatePassword(oldPassword, newPassword string) error {
+	model.node.WalletManager().UpdatePassword(model.walletName, oldPassword, newPassword)
+	if err != nil {
+		log.Println("failed to load wallet: %s", err.Error())
+
+		return err
+	}
+
+	return model.node.WalletManager().UpdatePassword(model.walletName, oldPassword, newPassword)
 }
