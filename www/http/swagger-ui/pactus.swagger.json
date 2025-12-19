@@ -1784,6 +1784,10 @@
     "pactusCreateWalletResponse": {
       "type": "object",
       "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name for the new wallet."
+        },
         "mnemonic": {
           "type": "string",
           "description": "The mnemonic (seed phrase) for wallet recovery."

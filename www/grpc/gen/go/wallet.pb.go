@@ -632,6 +632,8 @@ func (x *CreateWalletRequest) GetPassword() string {
 // Response message contains wallet recovery mnemonic (seed phrase).
 type CreateWalletResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name for the new wallet.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
 	// The mnemonic (seed phrase) for wallet recovery.
 	Mnemonic      string `protobuf:"bytes,2,opt,name=mnemonic,proto3" json:"mnemonic,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -666,6 +668,13 @@ func (x *CreateWalletResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateWalletResponse.ProtoReflect.Descriptor instead.
 func (*CreateWalletResponse) Descriptor() ([]byte, []int) {
 	return file_wallet_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *CreateWalletResponse) GetWalletName() string {
+	if x != nil {
+		return x.WalletName
+	}
+	return ""
 }
 
 func (x *CreateWalletResponse) GetMnemonic() string {
@@ -2039,8 +2048,10 @@ const file_wallet_proto_rawDesc = "" +
 	"\x13CreateWalletRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"2\n" +
-	"\x14CreateWalletResponse\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"S\n" +
+	"\x14CreateWalletResponse\x12\x1f\n" +
+	"\vwallet_name\x18\x01 \x01(\tR\n" +
+	"walletName\x12\x1a\n" +
 	"\bmnemonic\x18\x02 \x01(\tR\bmnemonic\"4\n" +
 	"\x11LoadWalletRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +

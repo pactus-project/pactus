@@ -167,33 +167,33 @@ func setTextViewContent(tv *gtk.TextView, content string) {
 	buf.SetText(content)
 }
 
-func updateValidatorHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
-	stake, _ := wlt.Stake(addr)
+func updateValidatorHint(lbl *gtk.Label, addr string, model *walletModel) {
+	stake, _ := model.Stake(addr)
 	hint := fmt.Sprintf("stake: %s", stake)
 
-	info := wlt.AddressInfo(addr)
+	info := model.AddressInfo(addr)
 	if info != nil && info.Label != "" {
 		hint += ", label: " + info.Label
 	}
 	updateHintLabel(lbl, hint)
 }
 
-func updateAccountHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
-	info := wlt.AddressInfo(addr)
+func updateAccountHint(lbl *gtk.Label, addr string, model *walletModel) {
+	info := model.AddressInfo(addr)
 	if info != nil && info.Label != "" {
 		updateHintLabel(lbl, fmt.Sprintf("label: %s", info.Label))
 	}
 }
 
-func updateFeeHint(_ *gtk.Label, _ *wallet.Wallet, _ payload.Type) {
+func updateFeeHint(_ *gtk.Label, _ *walletModel, _ payload.Type) {
 	// Nothing for now!
 	// The goal is to show an estimate of how long it takes for a transaction
 	// with the given fee to be confirmed (confirmation time).
 	// We can analyze data from past blocks to estimate the confirmation time.
 }
 
-func updateBalanceHint(lbl *gtk.Label, addr string, wlt *wallet.Wallet) {
-	balance, err := wlt.Balance(addr)
+func updateBalanceHint(lbl *gtk.Label, addr string, model *walletModel) {
+	balance, err := model.Balance(addr)
 	if err == nil {
 		updateHintLabel(lbl, fmt.Sprintf("Account Balance: %s", balance))
 	} else {
@@ -215,26 +215,19 @@ func updateHintLabel(lbl *gtk.Label, hint string) {
 		fmt.Sprintf("<span foreground='gray' size='small'>%s</span>", hint))
 }
 
-func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, wlt *wallet.Wallet, trx *tx.Tx) {
+func signAndBroadcastTransaction(parent *gtk.Dialog, msg string, model *walletModel, trx *tx.Tx) {
 	if showQuestionDialog(parent, msg) {
-		password, ok := getWalletPassword(wlt)
+		password, ok := getWalletPassword(model)
 		if !ok {
 			return
 		}
-		err := wlt.SignTransaction(password, trx)
+		err := model.SignTransaction(password, trx)
 		if err != nil {
 			showError(err)
 
 			return
 		}
-		txID, err := wlt.BroadcastTransaction(trx)
-		if err != nil {
-			showError(err)
-
-			return
-		}
-
-		err = wlt.Save()
+		txID, err := model.BroadcastTransaction(trx)
 		if err != nil {
 			showError(err)
 

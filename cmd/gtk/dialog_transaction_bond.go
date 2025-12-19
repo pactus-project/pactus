@@ -34,13 +34,13 @@ func broadcastTransactionBond(model *walletModel) {
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
-	feeEntry.SetText(fmt.Sprintf("%g", wlt.Info().DefaultFee.ToPAC()))
+	feeEntry.SetText(fmt.Sprintf("%g", model.WalletInfo().DefaultFee.ToPAC()))
 
-	for _, ai := range wlt.AllAccountAddresses() {
+	for _, ai := range model.AllAccountAddresses() {
 		senderEntry.Append(ai.Address, ai.Address)
 	}
 
-	for _, ai := range wlt.AllValidatorAddresses() {
+	for _, ai := range model.AllValidatorAddresses() {
 		receiverCombo.Append(ai.Address, ai.Address)
 	}
 
@@ -48,18 +48,18 @@ func broadcastTransactionBond(model *walletModel) {
 
 	onSenderChanged := func() {
 		senderStr := senderEntry.GetActiveID()
-		updateAccountHint(senderHint, senderStr, wlt)
-		updateBalanceHint(amountHint, senderEntry.GetActiveID(), wlt)
+		updateAccountHint(senderHint, senderStr, model)
+		updateBalanceHint(amountHint, senderEntry.GetActiveID(), model)
 	}
 
 	onReceiverChanged := func() {
 		receiverEntry, _ := receiverCombo.GetEntry()
 		receiverStr := getEntryText(receiverEntry)
-		updateValidatorHint(receiverHint, receiverStr, wlt)
+		updateValidatorHint(receiverHint, receiverStr, model)
 	}
 
 	onFeeChanged := func() {
-		updateFeeHint(feeHint, wlt, payload.TypeTransfer)
+		updateFeeHint(feeHint, model, payload.TypeTransfer)
 	}
 
 	onSend := func() {
@@ -83,7 +83,7 @@ func broadcastTransactionBond(model *walletModel) {
 			wallet.OptionFee(feeStr),
 		}
 
-		trx, err := wlt.MakeBondTx(sender, receiver, publicKey, amt, opts...)
+		trx, err := model.MakeBondTx(sender, receiver, publicKey, amt, opts...)
 		if err != nil {
 			showError(err)
 
@@ -105,7 +105,7 @@ You are going to sign and broadcast this transaction.
 Do you want to continue with this transaction?`,
 			sender, receiver, amt, trx.Fee(), trx.Memo())
 
-		signAndBroadcastTransaction(dlg, msg, wlt, trx)
+		signAndBroadcastTransaction(dlg, msg, model, trx)
 	}
 
 	onClose := func() {

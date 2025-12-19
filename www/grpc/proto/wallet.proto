@@ -156,6 +156,8 @@ message CreateWalletRequest {
 
 // Response message contains wallet recovery mnemonic (seed phrase).
 message CreateWalletResponse {
+  // The name for the new wallet.
+  string wallet_name = 1;
   // The mnemonic (seed phrase) for wallet recovery.
   string mnemonic = 2;
 }

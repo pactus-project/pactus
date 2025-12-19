@@ -727,9 +727,11 @@ class CreateWalletRequest extends $pb.GeneratedMessage {
 /// Response message contains wallet recovery mnemonic (seed phrase).
 class CreateWalletResponse extends $pb.GeneratedMessage {
   factory CreateWalletResponse({
+    $core.String? walletName,
     $core.String? mnemonic,
   }) {
     final result = create();
+    if (walletName != null) result.walletName = walletName;
     if (mnemonic != null) result.mnemonic = mnemonic;
     return result;
   }
@@ -747,6 +749,7 @@ class CreateWalletResponse extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'CreateWalletResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..aOS(2, _omitFieldNames ? '' : 'mnemonic')
     ..hasRequiredFields = false;
 
@@ -769,13 +772,23 @@ class CreateWalletResponse extends $pb.GeneratedMessage {
       $pb.GeneratedMessage.$_defaultFor<CreateWalletResponse>(create);
   static CreateWalletResponse? _defaultInstance;
 
+  /// The name for the new wallet.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+
   /// The mnemonic (seed phrase) for wallet recovery.
   @$pb.TagNumber(2)
-  $core.String get mnemonic => $_getSZ(0);
+  $core.String get mnemonic => $_getSZ(1);
   @$pb.TagNumber(2)
-  set mnemonic($core.String value) => $_setString(0, value);
+  set mnemonic($core.String value) => $_setString(1, value);
   @$pb.TagNumber(2)
-  $core.bool hasMnemonic() => $_has(0);
+  $core.bool hasMnemonic() => $_has(1);
   @$pb.TagNumber(2)
   void clearMnemonic() => $_clearField(2);
 }

@@ -1237,6 +1237,9 @@ pub struct CreateWalletRequest {
 /// Response message contains wallet recovery mnemonic (seed phrase).
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct CreateWalletResponse {
+    /// The name for the new wallet.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
     /// The mnemonic (seed phrase) for wallet recovery.
     #[prost(string, tag="2")]
     pub mnemonic: ::prost::alloc::string::String,

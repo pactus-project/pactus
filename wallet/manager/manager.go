@@ -11,7 +11,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
-	wallet "github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/vault"
 )
 
@@ -51,7 +51,7 @@ func (wm *Manager) createWalletWithMnemonic(
 	return nil
 }
 
-// deprecated: Move it to the utils service.
+// Deprecated: Move it to the utils service.
 func (*Manager) GetValidatorAddress(
 	publicKey string,
 ) (string, error) {

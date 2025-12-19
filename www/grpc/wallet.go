@@ -66,7 +66,8 @@ func (s *walletServer) CreateWallet(_ context.Context,
 	}
 
 	return &pactus.CreateWalletResponse{
-		Mnemonic: mnemonic,
+		WalletName: req.WalletName,
+		Mnemonic:   mnemonic,
 	}, nil
 }
 
@@ -118,7 +119,6 @@ func (s *walletServer) UnloadWallet(_ context.Context,
 func (s *walletServer) GetTotalBalance(_ context.Context,
 	req *pactus.GetTotalBalanceRequest,
 ) (*pactus.GetTotalBalanceResponse, error) {
-	//nolint:contextcheck // client manages timeout internally, external context would interfere
 	balance, err := s.walletManager.TotalBalance(req.WalletName)
 	if err != nil {
 		return nil, err
@@ -133,7 +133,6 @@ func (s *walletServer) GetTotalBalance(_ context.Context,
 func (s *walletServer) GetTotalStake(_ context.Context,
 	req *pactus.GetTotalStakeRequest,
 ) (*pactus.GetTotalStakeResponse, error) {
-	//nolint:contextcheck // client manages timeout internally, external context would interfere
 	stake, err := s.walletManager.TotalStake(req.WalletName)
 	if err != nil {
 		return nil, err

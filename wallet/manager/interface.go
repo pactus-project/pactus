@@ -3,11 +3,11 @@ package manager
 import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
-	wallet "github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/vault"
 )
 
-// WalletManager defines the public API of the wallet manager.
+// IManager defines the public API of the wallet manager.
 type IManager interface {
 	GetValidatorAddress(publicKey string) (string, error)
 	CreateWallet(walletName, password string) (string, error)

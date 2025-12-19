@@ -811,8 +811,8 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["mnemonic"],
-          "properties": {"mnemonic": { "type": "string" }}
+          "type": "object","required": ["wallet_name","mnemonic"],
+          "properties": {"wallet_name": { "type": "string" },"mnemonic": { "type": "string" }}
           }
         }
       },{

@@ -195,14 +195,15 @@ final $typed_data.Uint8List createWalletRequestDescriptor = $convert.base64Decod
 const CreateWalletResponse$json = {
   '1': 'CreateWalletResponse',
   '2': [
+    {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
     {'1': 'mnemonic', '3': 2, '4': 1, '5': 9, '10': 'mnemonic'},
   ],
 };
 
 /// Descriptor for `CreateWalletResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List createWalletResponseDescriptor =
-    $convert.base64Decode(
-        'ChRDcmVhdGVXYWxsZXRSZXNwb25zZRIaCghtbmVtb25pYxgCIAEoCVIIbW5lbW9uaWM=');
+final $typed_data.Uint8List createWalletResponseDescriptor = $convert.base64Decode(
+    'ChRDcmVhdGVXYWxsZXRSZXNwb25zZRIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZR'
+    'IaCghtbmVtb25pYxgCIAEoCVIIbW5lbW9uaWM=');
 
 @$core.Deprecated('Use loadWalletRequestDescriptor instead')
 const LoadWalletRequest$json = {

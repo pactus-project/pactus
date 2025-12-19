@@ -74,6 +74,8 @@ func TestCreateWallet(t *testing.T) {
 			})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
+		assert.Equal(t, "test", res.WalletName)
+		assert.Equal(t, "mnemonic", res.Mnemonic)
 	})
 }
 
@@ -116,6 +118,7 @@ func TestRestoreWallet(t *testing.T) {
 			})
 		assert.NoError(t, err)
 		assert.NotNil(t, res)
+		assert.Equal(t, "test", res.WalletName)
 	})
 }
 

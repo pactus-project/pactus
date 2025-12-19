@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/gotk3/gotk3/glib"
@@ -11,6 +12,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/vault"
 )
@@ -108,8 +110,15 @@ func (model *walletModel) IsEncrypted() bool {
 	return info.Encrypted
 }
 
-func (model *walletModel) WalletInfo() (*wallet.Info, error) {
-	return model.node.WalletManager().WalletInfo(model.walletName)
+func (model *walletModel) WalletInfo() wallet.Info {
+	info, err := model.node.WalletManager().WalletInfo(model.walletName)
+	if err != nil {
+		log.Printf("failed to get wallet info: %v", err)
+
+		return wallet.Info{}
+	}
+
+	return *info
 }
 
 func (model *walletModel) UpdatePassword(oldPassword, newPassword string) error {
@@ -128,4 +137,28 @@ func (model *walletModel) NewAddress(addressType crypto.AddressType, label strin
 
 func (model *walletModel) SetDefaultFee(fee amount.Amount) error {
 	return model.node.WalletManager().SetDefaultFee(model.walletName, fee)
+}
+
+func (model *walletModel) AllAccountAddresses() []vault.AddressInfo {
+	return model.node.WalletManager().AllAccountAddresses(model.walletName)
+}
+
+func (model *walletModel) AllValidatorAddresses() []vault.AddressInfo {
+	return model.node.WalletManager().AllValidatorAddresses(model.walletName)
+}
+
+func (model *walletModel) AddressInfo(addr string) *vault.AddressInfo {
+	return model.node.WalletManager().AddressInfo(model.walletName, addr)
+}
+
+func (model *walletModel) Balance(addr string) amount.Amount {
+	return model.node.WalletManager().Balance(model.walletName, addr)
+}
+
+func (model *walletModel) Stake(addr string) amount.Amount {
+	return model.node.WalletManager().Stake(model.walletName, addr)
+}
+
+func (model *walletModel) MakeBondTx(sender, receiver, publicKey string, amount amount.Amount, opts ...wallet.TxOption) (*tx.Tx, error) {
+	return model.node.WalletManager().MakeBondTx(model.walletName, sender, receiver, publicKey, amount, opts...)
 }

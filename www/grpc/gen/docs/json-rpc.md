@@ -3419,6 +3419,13 @@ signing, verification, and other cryptographic operations.</p>
   </thead>
   <tbody class="table-group-divider">
   <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name for the new wallet.
+    </td>
+  </tr>
+     <tr>
     <td class="fw-bold">mnemonic</td>
     <td> string</td>
     <td>

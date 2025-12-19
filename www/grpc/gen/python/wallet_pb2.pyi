@@ -104,9 +104,11 @@ class CreateWalletRequest(_message.Message):
 
 class CreateWalletResponse(_message.Message):
     __slots__ = ()
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     MNEMONIC_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
     mnemonic: str
-    def __init__(self, mnemonic: _Optional[str] = ...) -> None: ...
+    def __init__(self, wallet_name: _Optional[str] = ..., mnemonic: _Optional[str] = ...) -> None: ...
 
 class LoadWalletRequest(_message.Message):
     __slots__ = ()

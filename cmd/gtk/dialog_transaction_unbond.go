@@ -63,7 +63,7 @@ You are going to sign and broadcast this transaction.
 <b>⚠️ This action cannot be undone.</b>
 Do you want to continue with this transaction?`, validator, trx.Fee(), trx.Memo())
 
-		signAndBroadcastTransaction(dlg, msg, wlt, trx)
+		signAndBroadcastTransaction(dlg, msg, model, trx)
 	}
 
 	onClose := func() {

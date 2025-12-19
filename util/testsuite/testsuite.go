@@ -48,6 +48,8 @@ func GenerateSeed() int64 {
 
 // NewTestSuiteFromSeed creates a new TestSuite with the given seed.
 func NewTestSuiteFromSeed(t *testing.T, seed int64) *TestSuite {
+	t.Helper()
+
 	ctrl := gomock.NewController(t)
 	t.Cleanup(ctrl.Finish)
 

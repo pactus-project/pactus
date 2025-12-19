@@ -2467,6 +2467,7 @@ proto.pactus.CreateWalletResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.pactus.CreateWalletResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
+walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
 mnemonic: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
@@ -2504,6 +2505,10 @@ proto.pactus.CreateWalletResponse.deserializeBinaryFromReader = function(msg, re
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      msg.setWalletName(value);
+      break;
     case 2:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setMnemonic(value);
@@ -2537,6 +2542,13 @@ proto.pactus.CreateWalletResponse.prototype.serializeBinary = function() {
  */
 proto.pactus.CreateWalletResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getWalletName();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
   f = message.getMnemonic();
   if (f.length > 0) {
     writer.writeString(
@@ -2544,6 +2556,24 @@ proto.pactus.CreateWalletResponse.serializeBinaryToWriter = function(message, wr
       f
     );
   }
+};
+
+
+/**
+ * optional string wallet_name = 1;
+ * @return {string}
+ */
+proto.pactus.CreateWalletResponse.prototype.getWalletName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.CreateWalletResponse} returns this
+ */
+proto.pactus.CreateWalletResponse.prototype.setWalletName = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
