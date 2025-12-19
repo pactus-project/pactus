@@ -145,6 +145,7 @@ class WalletServicer(object):
 
     def GetValidatorAddress(self, request, context):
         """GetValidatorAddress retrieves the validator address associated with a public key.
+        Deprecated: Will move into utils.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')

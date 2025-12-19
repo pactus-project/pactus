@@ -1,4 +1,4 @@
-package wallet
+package manager
 
 import (
 	"fmt"
@@ -11,20 +11,21 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
+	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/vault"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
+var _ IManager = (*Manager)(nil)
+
 type Manager struct {
-	wallets         map[string]*Wallet
+	wallets         map[string]*wallet.Wallet
 	chainType       genesis.ChainType
 	walletDirectory string
 }
 
-func NewWalletManager(conf *Config) *Manager {
+func NewManager(conf *Config) IManager {
 	return &Manager{
-		wallets:         make(map[string]*Wallet),
+		wallets:         make(map[string]*wallet.Wallet),
 		chainType:       conf.ChainType,
 		walletDirectory: conf.WalletsDir,
 	}
@@ -39,17 +40,18 @@ func (wm *Manager) createWalletWithMnemonic(
 ) error {
 	walletPath := wm.getWalletPath(walletName)
 	if isExists := util.PathExists(walletPath); isExists {
-		return status.Errorf(codes.AlreadyExists, "wallet already exists")
+		return ErrWalletAlreadyExists
 	}
 
-	wlt, err := Create(walletPath, mnemonic, password, wm.chainType)
+	_, err := wallet.Create(walletPath, mnemonic, password, wm.chainType)
 	if err != nil {
 		return err
 	}
 
-	return wlt.Save()
+	return nil
 }
 
+// Deprecated: Move it to the utils service.
 func (*Manager) GetValidatorAddress(
 	publicKey string,
 ) (string, error) {
@@ -64,7 +66,7 @@ func (*Manager) GetValidatorAddress(
 func (wm *Manager) CreateWallet(
 	walletName, password string,
 ) (string, error) {
-	mnemonic, err := GenerateMnemonic(128)
+	mnemonic, err := wallet.GenerateMnemonic(128)
 	if err != nil {
 		return "", err
 	}
@@ -82,11 +84,11 @@ func (wm *Manager) RestoreWallet(walletName, mnemonic, password string) error {
 
 func (wm *Manager) LoadWallet(walletName, serverAddr string) error {
 	if _, ok := wm.wallets[walletName]; ok {
-		return status.Errorf(codes.AlreadyExists, "wallet already loaded")
+		return ErrWalletAlreadyLoaded
 	}
 
 	walletPath := util.MakeAbs(filepath.Join(wm.walletDirectory, walletName))
-	wlt, err := Open(walletPath, true, WithCustomServers([]string{serverAddr}))
+	wlt, err := wallet.Open(walletPath, true, wallet.WithCustomServers([]string{serverAddr}))
 	if err != nil {
 		return err
 	}
@@ -100,7 +102,7 @@ func (wm *Manager) UnloadWallet(
 	walletName string,
 ) error {
 	if _, ok := wm.wallets[walletName]; !ok {
-		return status.Errorf(codes.NotFound, "wallet is not loaded")
+		return ErrWalletNotLoaded
 	}
 
 	delete(wm.wallets, walletName)
@@ -111,7 +113,7 @@ func (wm *Manager) UnloadWallet(
 func (wm *Manager) TotalBalance(walletName string) (amount.Amount, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
-		return 0, status.Errorf(codes.NotFound, "wallet is not loaded")
+		return 0, ErrWalletNotLoaded
 	}
 
 	return wlt.TotalBalance()
@@ -120,7 +122,7 @@ func (wm *Manager) TotalBalance(walletName string) (amount.Amount, error) {
 func (wm *Manager) TotalStake(walletName string) (amount.Amount, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
-		return 0, status.Errorf(codes.NotFound, "wallet is not loaded")
+		return 0, ErrWalletNotLoaded
 	}
 
 	return wlt.TotalStake()
@@ -131,7 +133,7 @@ func (wm *Manager) SignRawTransaction(
 ) (txID, data []byte, err error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
-		return nil, nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+		return nil, nil, ErrWalletNotLoaded
 	}
 
 	trx, err := tx.FromBytes(rawTx)
@@ -157,56 +159,23 @@ func (wm *Manager) GetNewAddress(
 ) (*vault.AddressInfo, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
-		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+		return nil, ErrWalletNotLoaded
 	}
 
-	var addressInfo *vault.AddressInfo
-	switch addressType {
-	case crypto.AddressTypeValidator:
-		info, err := wlt.NewValidatorAddress(label)
-		if err != nil {
-			return nil, err
-		}
-		addressInfo = info
-
-	case crypto.AddressTypeBLSAccount:
-		info, err := wlt.NewBLSAccountAddress(label)
-		if err != nil {
-			return nil, err
-		}
-		addressInfo = info
-
-	case crypto.AddressTypeEd25519Account:
-		if password == "" {
-			return nil, status.Errorf(codes.InvalidArgument, "password cannot be empty when address type is Ed25519")
-		}
-
-		info, err := wlt.NewEd25519AccountAddress(label, password)
-		if err != nil {
-			return nil, err
-		}
-
-		addressInfo = info
-	case crypto.AddressTypeTreasury:
-		return nil, status.Errorf(codes.InvalidArgument, "invalid address type")
-
-	default:
-		return nil, status.Errorf(codes.InvalidArgument, "invalid address type")
-	}
-
-	if err := wlt.Save(); err != nil {
+	info, err := wlt.NewAddress(addressType, label, wallet.WithPassword(password))
+	if err != nil {
 		return nil, err
 	}
 
-	return addressInfo, nil
+	return info, nil
 }
 
 func (wm *Manager) AddressHistory(
 	walletName, address string,
-) ([]HistoryInfo, error) {
+) ([]wallet.HistoryInfo, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
-		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+		return nil, ErrWalletNotLoaded
 	}
 
 	return wlt.History(address), nil
@@ -215,7 +184,7 @@ func (wm *Manager) AddressHistory(
 func (wm *Manager) SignMessage(walletName, password, addr, msg string) (string, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
-		return "", status.Errorf(codes.NotFound, "wallet is not loaded")
+		return "", ErrWalletNotLoaded
 	}
 
 	return wlt.SignMessage(password, addr, msg)
@@ -224,7 +193,7 @@ func (wm *Manager) SignMessage(walletName, password, addr, msg string) (string, 
 func (wm *Manager) GetAddressInfo(walletName, address string) (*vault.AddressInfo, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
-		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+		return nil, ErrWalletNotLoaded
 	}
 
 	return wlt.AddressInfo(address), nil
@@ -233,21 +202,16 @@ func (wm *Manager) GetAddressInfo(walletName, address string) (*vault.AddressInf
 func (wm *Manager) SetAddressLabel(walletName, address, label string) error {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
-		return status.Errorf(codes.NotFound, "wallet is not loaded")
+		return ErrWalletNotLoaded
 	}
 
-	err := wlt.SetLabel(address, label)
-	if err != nil {
-		return status.Error(codes.NotFound, err.Error())
-	}
-
-	return wlt.Save()
+	return wlt.SetLabel(address, label)
 }
 
-func (wm *Manager) WalletInfo(walletName string) (*Info, error) {
+func (wm *Manager) WalletInfo(walletName string) (*wallet.Info, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
-		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+		return nil, ErrWalletNotLoaded
 	}
 
 	return wlt.Info(), nil
@@ -262,7 +226,7 @@ func (wm *Manager) ListWallet() ([]string, error) {
 	}
 
 	for _, file := range files {
-		_, err = Open(file, true)
+		_, err = wallet.Open(file, true)
 		if err != nil {
 			logger.Warn(fmt.Sprintf("file %s is not wallet", file))
 
@@ -278,8 +242,17 @@ func (wm *Manager) ListWallet() ([]string, error) {
 func (wm *Manager) ListAddress(walletName string) ([]vault.AddressInfo, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
-		return nil, status.Errorf(codes.NotFound, "wallet is not loaded")
+		return nil, ErrWalletNotLoaded
 	}
 
 	return wlt.AddressInfos(), nil
+}
+
+func (wm *Manager) UpdatePassword(walletName, oldPassword, newPassword string) error {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return ErrWalletNotLoaded
+	}
+
+	return wlt.UpdatePassword(oldPassword, newPassword)
 }

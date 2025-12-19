@@ -6,22 +6,21 @@ import (
 	_ "embed"
 
 	"github.com/gotk3/gotk3/gtk"
-	"github.com/pactus-project/pactus/wallet"
 )
 
 //go:embed assets/ui/dialog_address_private_key.ui
 var uiAddressPrivateKeyDialog []byte
 
-func showAddressPrivateKey(wlt *wallet.Wallet, addr string) {
+func showAddressPrivateKey(model *walletModel, addr string) {
 	builder, err := gtk.BuilderNewFromString(string(uiAddressPrivateKeyDialog))
 	fatalErrorCheck(err)
 
-	password, ok := getWalletPassword(wlt)
+	password, ok := getWalletPassword(model)
 	if !ok {
 		return
 	}
 
-	prv, err := wlt.PrivateKey(password, addr)
+	prv, err := model.PrivateKey(password, addr)
 	if err != nil {
 		showError(err)
 

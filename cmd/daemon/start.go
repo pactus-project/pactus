@@ -12,7 +12,6 @@ import (
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/util/terminal"
-	"github.com/pactus-project/pactus/wallet"
 	"github.com/spf13/cobra"
 )
 
@@ -69,11 +68,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			return
 		}
 
-		passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
-			if !wlt.IsEncrypted() {
-				return "", true
-			}
-
+		passwordFetcher := func() (string, bool) {
 			var password string
 
 			if *passwordOpt != "" {
@@ -116,7 +111,7 @@ func buildStartCmd(parentCmd *cobra.Command) {
 			return cfg
 		}
 
-		node, _, err := cmd.StartNode(workingDir, passwordFetcher, configModifier)
+		node, err := cmd.StartNode(workingDir, passwordFetcher, configModifier)
 		terminal.FatalErrorCheck(err)
 
 		signal.HandleInterrupt(func() {

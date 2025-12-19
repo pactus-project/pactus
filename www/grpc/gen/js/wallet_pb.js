@@ -2308,7 +2308,7 @@ proto.pactus.CreateWalletRequest.prototype.toObject = function(opt_includeInstan
 proto.pactus.CreateWalletRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
 walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
-password: jspb.Message.getFieldWithDefault(msg, 4, "")
+password: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -2349,7 +2349,7 @@ proto.pactus.CreateWalletRequest.deserializeBinaryFromReader = function(msg, rea
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setWalletName(value);
       break;
-    case 4:
+    case 2:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setPassword(value);
       break;
@@ -2392,7 +2392,7 @@ proto.pactus.CreateWalletRequest.serializeBinaryToWriter = function(message, wri
   f = message.getPassword();
   if (f.length > 0) {
     writer.writeString(
-      4,
+      2,
       f
     );
   }
@@ -2418,11 +2418,11 @@ proto.pactus.CreateWalletRequest.prototype.setWalletName = function(value) {
 
 
 /**
- * optional string password = 4;
+ * optional string password = 2;
  * @return {string}
  */
 proto.pactus.CreateWalletRequest.prototype.getPassword = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
@@ -2431,7 +2431,7 @@ proto.pactus.CreateWalletRequest.prototype.getPassword = function() {
  * @return {!proto.pactus.CreateWalletRequest} returns this
  */
 proto.pactus.CreateWalletRequest.prototype.setPassword = function(value) {
-  return jspb.Message.setProto3StringField(this, 4, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
@@ -2467,6 +2467,7 @@ proto.pactus.CreateWalletResponse.prototype.toObject = function(opt_includeInsta
  */
 proto.pactus.CreateWalletResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
+walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
 mnemonic: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
@@ -2504,6 +2505,10 @@ proto.pactus.CreateWalletResponse.deserializeBinaryFromReader = function(msg, re
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      msg.setWalletName(value);
+      break;
     case 2:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setMnemonic(value);
@@ -2537,6 +2542,13 @@ proto.pactus.CreateWalletResponse.prototype.serializeBinary = function() {
  */
 proto.pactus.CreateWalletResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getWalletName();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
   f = message.getMnemonic();
   if (f.length > 0) {
     writer.writeString(
@@ -2544,6 +2556,24 @@ proto.pactus.CreateWalletResponse.serializeBinaryToWriter = function(message, wr
       f
     );
   }
+};
+
+
+/**
+ * optional string wallet_name = 1;
+ * @return {string}
+ */
+proto.pactus.CreateWalletResponse.prototype.getWalletName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.CreateWalletResponse} returns this
+ */
+proto.pactus.CreateWalletResponse.prototype.setWalletName = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
@@ -5068,9 +5098,9 @@ proto.pactus.SetAddressLabelRequest.prototype.toObject = function(opt_includeIns
 proto.pactus.SetAddressLabelRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
 walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
-password: jspb.Message.getFieldWithDefault(msg, 3, ""),
-address: jspb.Message.getFieldWithDefault(msg, 4, ""),
-label: jspb.Message.getFieldWithDefault(msg, 5, "")
+password: jspb.Message.getFieldWithDefault(msg, 2, ""),
+address: jspb.Message.getFieldWithDefault(msg, 3, ""),
+label: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -5111,15 +5141,15 @@ proto.pactus.SetAddressLabelRequest.deserializeBinaryFromReader = function(msg, 
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setWalletName(value);
       break;
-    case 3:
+    case 2:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setPassword(value);
       break;
-    case 4:
+    case 3:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setAddress(value);
       break;
-    case 5:
+    case 4:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setLabel(value);
       break;
@@ -5162,21 +5192,21 @@ proto.pactus.SetAddressLabelRequest.serializeBinaryToWriter = function(message, 
   f = message.getPassword();
   if (f.length > 0) {
     writer.writeString(
-      3,
+      2,
       f
     );
   }
   f = message.getAddress();
   if (f.length > 0) {
     writer.writeString(
-      4,
+      3,
       f
     );
   }
   f = message.getLabel();
   if (f.length > 0) {
     writer.writeString(
-      5,
+      4,
       f
     );
   }
@@ -5202,11 +5232,11 @@ proto.pactus.SetAddressLabelRequest.prototype.setWalletName = function(value) {
 
 
 /**
- * optional string password = 3;
+ * optional string password = 2;
  * @return {string}
  */
 proto.pactus.SetAddressLabelRequest.prototype.getPassword = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
@@ -5215,16 +5245,16 @@ proto.pactus.SetAddressLabelRequest.prototype.getPassword = function() {
  * @return {!proto.pactus.SetAddressLabelRequest} returns this
  */
 proto.pactus.SetAddressLabelRequest.prototype.setPassword = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
+  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional string address = 4;
+ * optional string address = 3;
  * @return {string}
  */
 proto.pactus.SetAddressLabelRequest.prototype.getAddress = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
@@ -5233,16 +5263,16 @@ proto.pactus.SetAddressLabelRequest.prototype.getAddress = function() {
  * @return {!proto.pactus.SetAddressLabelRequest} returns this
  */
 proto.pactus.SetAddressLabelRequest.prototype.setAddress = function(value) {
-  return jspb.Message.setProto3StringField(this, 4, value);
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
 /**
- * optional string label = 5;
+ * optional string label = 4;
  * @return {string}
  */
 proto.pactus.SetAddressLabelRequest.prototype.getLabel = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
 };
 
 
@@ -5251,7 +5281,7 @@ proto.pactus.SetAddressLabelRequest.prototype.getLabel = function() {
  * @return {!proto.pactus.SetAddressLabelRequest} returns this
  */
 proto.pactus.SetAddressLabelRequest.prototype.setLabel = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 
@@ -5287,7 +5317,9 @@ proto.pactus.SetAddressLabelResponse.prototype.toObject = function(opt_includeIn
  */
 proto.pactus.SetAddressLabelResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
+address: jspb.Message.getFieldWithDefault(msg, 2, ""),
+label: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -5324,6 +5356,18 @@ proto.pactus.SetAddressLabelResponse.deserializeBinaryFromReader = function(msg,
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      msg.setWalletName(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      msg.setAddress(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readStringRequireUtf8());
+      msg.setLabel(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -5353,6 +5397,81 @@ proto.pactus.SetAddressLabelResponse.prototype.serializeBinary = function() {
  */
 proto.pactus.SetAddressLabelResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getWalletName();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+  f = message.getAddress();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+  f = message.getLabel();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string wallet_name = 1;
+ * @return {string}
+ */
+proto.pactus.SetAddressLabelResponse.prototype.getWalletName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.SetAddressLabelResponse} returns this
+ */
+proto.pactus.SetAddressLabelResponse.prototype.setWalletName = function(value) {
+  return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string address = 2;
+ * @return {string}
+ */
+proto.pactus.SetAddressLabelResponse.prototype.getAddress = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.SetAddressLabelResponse} returns this
+ */
+proto.pactus.SetAddressLabelResponse.prototype.setAddress = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string label = 3;
+ * @return {string}
+ */
+proto.pactus.SetAddressLabelResponse.prototype.getLabel = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pactus.SetAddressLabelResponse} returns this
+ */
+proto.pactus.SetAddressLabelResponse.prototype.setLabel = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 

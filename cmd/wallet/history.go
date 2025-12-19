@@ -41,9 +41,6 @@ func buildAddToHistoryCmd(parentCmd *cobra.Command) {
 		err = wlt.AddTransaction(id)
 		terminal.FatalErrorCheck(err)
 
-		err = wlt.Save()
-		terminal.FatalErrorCheck(err)
-
 		terminal.PrintInfoMsgf("Transaction successfully added to the wallet.")
 	}
 }

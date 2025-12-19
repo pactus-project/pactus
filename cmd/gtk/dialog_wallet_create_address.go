@@ -8,6 +8,7 @@ import (
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/wallet"
 )
 
 //go:embed assets/ui/dialog_wallet_create_address.ui
@@ -51,16 +52,17 @@ func createAddress(wdgWallet *widgetWallet) {
 
 		switch walletAddressType {
 		case crypto.AddressTypeEd25519Account.String():
-			password, ok := getWalletPassword(wdgWallet.model.wallet)
+			password, ok := getWalletPassword(wdgWallet.model)
 			if !ok {
 				return
 			}
 
-			_, err = wdgWallet.model.wallet.NewEd25519AccountAddress(walletAddressLabel, password)
+			_, err = wdgWallet.model.NewAddress(crypto.AddressTypeEd25519Account, walletAddressLabel,
+				wallet.WithPassword(password))
 		case crypto.AddressTypeBLSAccount.String():
-			_, err = wdgWallet.model.wallet.NewBLSAccountAddress(walletAddressLabel)
+			_, err = wdgWallet.model.NewAddress(crypto.AddressTypeBLSAccount, walletAddressLabel)
 		case crypto.AddressTypeValidator.String():
-			_, err = wdgWallet.model.wallet.NewValidatorAddress(walletAddressLabel)
+			_, err = wdgWallet.model.NewAddress(crypto.AddressTypeValidator, walletAddressLabel)
 		}
 
 		if err != nil {
@@ -69,9 +71,6 @@ func createAddress(wdgWallet *widgetWallet) {
 
 			return
 		}
-
-		err = wdgWallet.model.wallet.Save()
-		fatalErrorCheck(err)
 
 		wdgWallet.model.rebuildModel()
 

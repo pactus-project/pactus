@@ -15,7 +15,7 @@ import (
 //go:embed assets/ui/dialog_transaction_transfer.ui
 var uiTransactionTransferDialog []byte
 
-func broadcastTransactionTransfer(wlt *wallet.Wallet) {
+func broadcastTransactionTransfer(model *walletModel) {
 	builder, err := gtk.BuilderNewFromString(string(uiTransactionTransferDialog))
 	fatalErrorCheck(err)
 
@@ -33,25 +33,25 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 	getButtonObj(builder, "id_button_send").SetImage(SendIcon())
 
-	feeEntry.SetText(fmt.Sprintf("%g", wlt.Info().DefaultFee.ToPAC()))
+	feeEntry.SetText(fmt.Sprintf("%g", model.WalletInfo().DefaultFee.ToPAC()))
 
-	for _, i := range wlt.AllAccountAddresses() {
+	for _, i := range model.AllAccountAddresses() {
 		senderEntry.Append(i.Address, i.Address)
 	}
 	senderEntry.SetActive(0)
 
 	onSenderChanged := func() {
 		senderStr := senderEntry.GetActiveID()
-		updateAccountHint(senderHint, senderStr, wlt)
+		updateAccountHint(senderHint, senderStr, model)
 		updateBalanceHint(amountHint, senderEntry.GetActiveID(), wlt)
 	}
 
 	onReceiverChanged := func() {
 		receiverStr := getEntryText(receiverEntry)
-		updateAccountHint(receiverHint, receiverStr, wlt)
+		updateAccountHint(receiverHint, receiverStr, model)
 	}
 	onFeeChanged := func() {
-		updateFeeHint(feeHint, wlt, payload.TypeTransfer)
+		updateFeeHint(feeHint, model, payload.TypeTransfer)
 	}
 
 	onSend := func() {
@@ -73,7 +73,7 @@ func broadcastTransactionTransfer(wlt *wallet.Wallet) {
 			wallet.OptionFee(feeStr),
 		}
 
-		trx, err := wlt.MakeTransferTx(sender, receiver, amt, opts...)
+		trx, err := model.MakeTransferTx(sender, receiver, amt, opts...)
 		if err != nil {
 			showError(err)
 
@@ -95,7 +95,7 @@ You are going to sign and broadcast this transaction.
 Do you want to continue with this transaction?`,
 			sender, receiver, amt, trx.Fee(), trx.Memo())
 
-		signAndBroadcastTransaction(dlg, msg, wlt, trx)
+		signAndBroadcastTransaction(dlg, msg, model, trx)
 	}
 
 	onClose := func() {

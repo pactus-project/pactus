@@ -15,7 +15,7 @@ import (
 //go:embed assets/ui/dialog_transaction_withdraw.ui
 var uiTransactionWithdrawDialog []byte
 
-func broadcastTransactionWithdraw(wlt *wallet.Wallet) {
+func broadcastTransactionWithdraw(model *walletModel) {
 	builder, err := gtk.BuilderNewFromString(string(uiTransactionWithdrawDialog))
 	fatalErrorCheck(err)
 
@@ -102,7 +102,7 @@ You are going to sign and broadcast this transaction.
 Do you want to continue with this transaction?`,
 			sender, receiver, amt, trx.Fee(), trx.Memo())
 
-		signAndBroadcastTransaction(dlg, msg, wlt, trx)
+		signAndBroadcastTransaction(dlg, msg, model, trx)
 	}
 
 	onClose := func() {

@@ -13,7 +13,7 @@ import (
 func TestSignMessageWithPrivateKey(t *testing.T) {
 	conf := testConfig()
 	td := setup(t, conf)
-	conn, client := td.utilClient(t)
+	client := td.utilClient(t)
 
 	msg := "pactus"
 	prvStr := "SECRET1PDRWTLP5PX0FAHDX39GXZJP7FKZFALML0D5U9TT9KVQHDUC99CMGQQJVK67"
@@ -41,15 +41,12 @@ func TestSignMessageWithPrivateKey(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Nil(t, res)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestSignMessageWithED25519PrivateKey(t *testing.T) {
 	conf := testConfig()
 	td := setup(t, conf)
-	conn, client := td.utilClient(t)
+	client := td.utilClient(t)
 
 	msg := "pactus"
 	prvStr := "SECRET1RYY62A96X25ZAL4DPL5Z63G83GCSFCCQ7K0CMQD3MFNLYK3A6R26QUUK3Y0"
@@ -78,15 +75,12 @@ func TestSignMessageWithED25519PrivateKey(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Nil(t, res)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestVerifyMessage(t *testing.T) {
 	conf := testConfig()
 	td := setup(t, conf)
-	conn, client := td.utilClient(t)
+	client := td.utilClient(t)
 
 	msg := "pactus"
 	pubStr := "public1p4u8hfytl2pj6l9rj0t54gxcdmna4hq52ncqkkqjf3arha5mlk3x4mzpyjkhmdl20jae7f65aamjr" +
@@ -116,15 +110,12 @@ func TestVerifyMessage(t *testing.T) {
 		assert.Nil(t, err)
 		assert.False(t, res.IsValid)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestVerifyED25519Message(t *testing.T) {
 	conf := testConfig()
 	td := setup(t, conf)
-	conn, client := td.utilClient(t)
+	client := td.utilClient(t)
 
 	msg := "pactus"
 	pubStr := "public1rvqxnpfph8tnc3ck55z85w285t5jetylmmktr9wlzs0zvx7kx500szxfudh"
@@ -155,16 +146,13 @@ func TestVerifyED25519Message(t *testing.T) {
 		assert.Nil(t, err)
 		assert.False(t, res.IsValid)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestPublicKeyAggregation(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 	conf := testConfig()
 	td := setup(t, conf)
-	conn, client := td.utilClient(t)
+	client := td.utilClient(t)
 
 	pub1, _ := ts.RandBLSKeyPair()
 	pub2, _ := ts.RandBLSKeyPair()
@@ -211,16 +199,13 @@ func TestPublicKeyAggregation(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, aggPub.String(), res.PublicKey)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }
 
 func TestSignatureAggregation(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 	conf := testConfig()
 	td := setup(t, conf)
-	conn, client := td.utilClient(t)
+	client := td.utilClient(t)
 
 	sig1 := ts.RandBLSSignature()
 	sig2 := ts.RandBLSSignature()
@@ -267,7 +252,4 @@ func TestSignatureAggregation(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, aggSig.String(), res.Signature)
 	})
-
-	assert.Nil(t, conn.Close(), "Error closing connection")
-	td.StopServer()
 }

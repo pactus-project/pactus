@@ -182,27 +182,28 @@ const CreateWalletRequest$json = {
   '1': 'CreateWalletRequest',
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
-    {'1': 'password', '3': 4, '4': 1, '5': 9, '10': 'password'},
+    {'1': 'password', '3': 2, '4': 1, '5': 9, '10': 'password'},
   ],
 };
 
 /// Descriptor for `CreateWalletRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List createWalletRequestDescriptor = $convert.base64Decode(
     'ChNDcmVhdGVXYWxsZXRSZXF1ZXN0Eh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW1lEh'
-    'oKCHBhc3N3b3JkGAQgASgJUghwYXNzd29yZA==');
+    'oKCHBhc3N3b3JkGAIgASgJUghwYXNzd29yZA==');
 
 @$core.Deprecated('Use createWalletResponseDescriptor instead')
 const CreateWalletResponse$json = {
   '1': 'CreateWalletResponse',
   '2': [
+    {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
     {'1': 'mnemonic', '3': 2, '4': 1, '5': 9, '10': 'mnemonic'},
   ],
 };
 
 /// Descriptor for `CreateWalletResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List createWalletResponseDescriptor =
-    $convert.base64Decode(
-        'ChRDcmVhdGVXYWxsZXRSZXNwb25zZRIaCghtbmVtb25pYxgCIAEoCVIIbW5lbW9uaWM=');
+final $typed_data.Uint8List createWalletResponseDescriptor = $convert.base64Decode(
+    'ChRDcmVhdGVXYWxsZXRSZXNwb25zZRIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZR'
+    'IaCghtbmVtb25pYxgCIAEoCVIIbW5lbW9uaWM=');
 
 @$core.Deprecated('Use loadWalletRequestDescriptor instead')
 const LoadWalletRequest$json = {
@@ -442,26 +443,32 @@ const SetAddressLabelRequest$json = {
   '1': 'SetAddressLabelRequest',
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
-    {'1': 'password', '3': 3, '4': 1, '5': 9, '10': 'password'},
-    {'1': 'address', '3': 4, '4': 1, '5': 9, '10': 'address'},
-    {'1': 'label', '3': 5, '4': 1, '5': 9, '10': 'label'},
+    {'1': 'password', '3': 2, '4': 1, '5': 9, '10': 'password'},
+    {'1': 'address', '3': 3, '4': 1, '5': 9, '10': 'address'},
+    {'1': 'label', '3': 4, '4': 1, '5': 9, '10': 'label'},
   ],
 };
 
 /// Descriptor for `SetAddressLabelRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List setAddressLabelRequestDescriptor = $convert.base64Decode(
     'ChZTZXRBZGRyZXNzTGFiZWxSZXF1ZXN0Eh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW'
-    '1lEhoKCHBhc3N3b3JkGAMgASgJUghwYXNzd29yZBIYCgdhZGRyZXNzGAQgASgJUgdhZGRyZXNz'
-    'EhQKBWxhYmVsGAUgASgJUgVsYWJlbA==');
+    '1lEhoKCHBhc3N3b3JkGAIgASgJUghwYXNzd29yZBIYCgdhZGRyZXNzGAMgASgJUgdhZGRyZXNz'
+    'EhQKBWxhYmVsGAQgASgJUgVsYWJlbA==');
 
 @$core.Deprecated('Use setAddressLabelResponseDescriptor instead')
 const SetAddressLabelResponse$json = {
   '1': 'SetAddressLabelResponse',
+  '2': [
+    {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    {'1': 'address', '3': 2, '4': 1, '5': 9, '10': 'address'},
+    {'1': 'label', '3': 3, '4': 1, '5': 9, '10': 'label'},
+  ],
 };
 
 /// Descriptor for `SetAddressLabelResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List setAddressLabelResponseDescriptor =
-    $convert.base64Decode('ChdTZXRBZGRyZXNzTGFiZWxSZXNwb25zZQ==');
+final $typed_data.Uint8List setAddressLabelResponseDescriptor = $convert.base64Decode(
+    'ChdTZXRBZGRyZXNzTGFiZWxSZXNwb25zZRIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0Tm'
+    'FtZRIYCgdhZGRyZXNzGAIgASgJUgdhZGRyZXNzEhQKBWxhYmVsGAMgASgJUgVsYWJlbA==');
 
 @$core.Deprecated('Use listWalletRequestDescriptor instead')
 const ListWalletRequest$json = {

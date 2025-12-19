@@ -141,6 +141,11 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType,
 	}
 	wallet.store.Vault = vlt
 
+	err = wallet.save()
+	if err != nil {
+		return nil, err
+	}
+
 	return wallet, nil
 }
 
@@ -209,7 +214,7 @@ func (w *Wallet) Path() string {
 	return w.path
 }
 
-func (w *Wallet) Save() error {
+func (w *Wallet) save() error {
 	bs, err := w.store.ToBytes()
 	if err != nil {
 		return err
@@ -223,7 +228,7 @@ func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 	eventFunc func(addr string),
 ) error {
 	//nolint:contextcheck // client manages timeout internally, external context would interfere
-	return w.store.Vault.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
+	err := w.store.Vault.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
 		_, err := w.grpcClient.getAccount(addr)
 		if err != nil {
 			s, ok := status.FromError(err)
@@ -240,6 +245,11 @@ func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 
 		return true, nil
 	})
+	if err != nil {
+		return err
+	}
+
+	return w.save()
 }
 
 // Balance returns balance of the account associated with the address..
@@ -408,11 +418,21 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	data, _ := trx.Bytes()
 	w.store.History.addPending(trx.Payload().Signer().String(), trx.Payload().Value(), txID, data)
 
+	err = w.save()
+	if err != nil {
+		return "", err
+	}
+
 	return txID.String(), nil
 }
 
 func (w *Wallet) UpdatePassword(oldPassword, newPassword string, opts ...encrypter.Option) error {
-	return w.store.Vault.UpdatePassword(oldPassword, newPassword, opts...)
+	err := w.store.Vault.UpdatePassword(oldPassword, newPassword, opts...)
+	if err != nil {
+		return err
+	}
+
+	return w.save()
 }
 
 func (w *Wallet) IsEncrypted() bool {
@@ -445,11 +465,21 @@ func (w *Wallet) AddressFromPath(p string) *vault.AddressInfo {
 }
 
 func (w *Wallet) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) error {
-	return w.store.Vault.ImportBLSPrivateKey(password, prv)
+	err := w.store.Vault.ImportBLSPrivateKey(password, prv)
+	if err != nil {
+		return err
+	}
+
+	return w.save()
 }
 
 func (w *Wallet) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKey) error {
-	return w.store.Vault.ImportEd25519PrivateKey(password, prv)
+	err := w.store.Vault.ImportEd25519PrivateKey(password, prv)
+	if err != nil {
+		return err
+	}
+
+	return w.save()
 }
 
 func (w *Wallet) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
@@ -465,23 +495,72 @@ func (w *Wallet) PrivateKeys(password string, addrs []string) ([]crypto.PrivateK
 	return w.store.Vault.PrivateKeys(password, addrs)
 }
 
+type addressBuilder struct {
+	password string
+}
+
+type NewAddressOption func(*addressBuilder)
+
+func WithPassword(password string) NewAddressOption {
+	return func(opt *addressBuilder) {
+		opt.password = password
+	}
+}
+
+func (w *Wallet) NewAddress(addressType crypto.AddressType, label string,
+	opts ...NewAddressOption,
+) (*vault.AddressInfo, error) {
+	builder := &addressBuilder{}
+
+	for _, opt := range opts {
+		opt(builder)
+	}
+
+	var info *vault.AddressInfo
+	var err error
+	switch addressType {
+	case crypto.AddressTypeValidator:
+		info, err = w.store.Vault.NewValidatorAddress(label)
+	case crypto.AddressTypeBLSAccount:
+		info, err = w.store.Vault.NewBLSAccountAddress(label)
+	case crypto.AddressTypeEd25519Account:
+		info, err = w.store.Vault.NewEd25519AccountAddress(label, builder.password)
+	case crypto.AddressTypeTreasury:
+		return nil, ErrInvalidAddressType
+
+	default:
+		return nil, ErrInvalidAddressType
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = w.save()
+	if err != nil {
+		return nil, err
+	}
+
+	return info, nil
+}
+
 // NewBLSAccountAddress create a new BLS-based account address and
 // associates it with the given label.
 func (w *Wallet) NewBLSAccountAddress(label string) (*vault.AddressInfo, error) {
-	return w.store.Vault.NewBLSAccountAddress(label)
+	return w.NewAddress(crypto.AddressTypeBLSAccount, label)
 }
 
 // NewEd25519AccountAddress create a new Ed25519-based account address and
 // associates it with the given label.
 // The password is required to access the master private key needed for address generation.
 func (w *Wallet) NewEd25519AccountAddress(label, password string) (*vault.AddressInfo, error) {
-	return w.store.Vault.NewEd25519AccountAddress(label, password)
+	return w.NewAddress(crypto.AddressTypeEd25519Account, label, WithPassword(password))
 }
 
 // NewValidatorAddress creates a new BLS validator address and
 // associates it with the given label.
 func (w *Wallet) NewValidatorAddress(label string) (*vault.AddressInfo, error) {
-	return w.store.Vault.NewValidatorAddress(label)
+	return w.NewAddress(crypto.AddressTypeValidator, label)
 }
 
 func (w *Wallet) Contains(addr string) bool {
@@ -499,7 +578,12 @@ func (w *Wallet) Label(addr string) string {
 
 // SetLabel sets label for addr.
 func (w *Wallet) SetLabel(addr, label string) error {
-	return w.store.Vault.SetLabel(addr, label)
+	err := w.store.Vault.SetLabel(addr, label)
+	if err != nil {
+		return err
+	}
+
+	return w.save()
 }
 
 func (w *Wallet) AddTransaction(txID tx.ID) error {
@@ -546,7 +630,7 @@ func (w *Wallet) AddTransaction(txID tx.ID) error {
 		}
 	}
 
-	return nil
+	return w.save()
 }
 
 func (w *Wallet) History(addr string) []HistoryInfo {
@@ -587,7 +671,7 @@ func (w *Wallet) Info() *Info {
 }
 
 // Neuter clones the wallet and neuters it and saves it at the given path.
-func (w *Wallet) Neuter(path string) *Wallet {
+func (w *Wallet) Neuter(path string) (*Wallet, error) {
 	clonedStore := w.store.Clone()
 	clonedStore.Vault = w.store.Vault.Neuter()
 
@@ -596,7 +680,12 @@ func (w *Wallet) Neuter(path string) *Wallet {
 		path:  path,
 	}
 
-	return neuteredWallet
+	err := neuteredWallet.save()
+	if err != nil {
+		return nil, err
+	}
+
+	return neuteredWallet, nil
 }
 
 // makeTxBuilder initializes a txBuilder with provided options, allowing for flexible configuration of the transaction.
@@ -615,8 +704,10 @@ func (w *Wallet) makeTxBuilder(options ...TxOption) (*txBuilder, error) {
 	return builder, nil
 }
 
-func (w *Wallet) SetDefaultFee(fee amount.Amount) {
+func (w *Wallet) SetDefaultFee(fee amount.Amount) error {
 	w.store.Vault.DefaultFee = fee
+
+	return w.save()
 }
 
 func GetServerList(network string) ([]ServerInfo, error) {

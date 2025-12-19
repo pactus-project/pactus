@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/config"
-	"github.com/pactus-project/pactus/consensus/manager"
+	consmgr "github.com/pactus-project/pactus/consensus/manager"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/genesis"
@@ -19,7 +19,7 @@ import (
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/util/pipeline"
 	"github.com/pactus-project/pactus/version"
-	"github.com/pactus-project/pactus/wallet"
+	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/pactus-project/pactus/www/html"
 	"github.com/pactus-project/pactus/www/http"
@@ -36,10 +36,11 @@ type Node struct {
 	state         state.Facade
 	store         store.Store
 	txPool        txpool.TxPool
-	consV1Mgr     manager.Manager // Deprecated:: replaced by new consensus algorithm
-	consV2Mgr     manager.Manager
+	consV1Mgr     consmgr.Manager // Deprecated:: replaced by new consensus algorithm
+	consV2Mgr     consmgr.Manager
 	network       network.Network
 	sync          sync.Synchronizer
+	walletMgr     wltmgr.IManager
 	grpc          *grpc.Server
 	html          *html.Server
 	http          *http.Server
@@ -91,9 +92,9 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		return nil, err
 	}
 
-	consV1Mgr := manager.NewManagerV1(conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
-	consV2Mgr := manager.NewManagerV2(conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe)
-	walletMgr := wallet.NewWalletManager(conf.WalletManager)
+	consV1Mgr := consmgr.NewManagerV1(conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
+	consV2Mgr := consmgr.NewManagerV2(conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe)
+	walletMgr := wltmgr.NewManager(conf.WalletManager)
 
 	if !store.IsPruned() {
 		conf.Sync.Services.Append(service.FullNode)
@@ -135,6 +136,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 		consV2Mgr:     consV2Mgr,
 		sync:          sync,
 		store:         store,
+		walletMgr:     walletMgr,
 		grpc:          grpcServer,
 		html:          htmlServer,
 		http:          httpServer,
@@ -223,7 +225,7 @@ func (n *Node) Stop() {
 
 // these methods are using by GUI.
 
-func (n *Node) ConsManager() manager.ManagerReader {
+func (n *Node) ConsManager() consmgr.ManagerReader {
 	return n.consV1Mgr
 }
 
@@ -241,4 +243,8 @@ func (n *Node) GRPC() *grpc.Server {
 
 func (n *Node) Network() network.Network {
 	return n.network
+}
+
+func (n *Node) WalletManager() wltmgr.IManager {
+	return n.walletMgr
 }

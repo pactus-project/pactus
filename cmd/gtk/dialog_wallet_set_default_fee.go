@@ -25,7 +25,14 @@ func setDefaultFee(wdgWallet *widgetWallet) {
 	getButtonObj(builder, "id_button_ok").SetImage(OkIcon())
 	getButtonObj(builder, "id_button_cancel").SetImage(CancelIcon())
 
-	currentFee := wdgWallet.model.wallet.Info().DefaultFee
+	info, err := wdgWallet.model.WalletInfo()
+	if err != nil {
+		showErrorDialog(dlg, fmt.Sprintf("Failed to get wallet info: %v", err))
+
+		return
+	}
+
+	currentFee := info.DefaultFee
 	currentFeeLabel.SetText(currentFee.String())
 
 	// Set initial value in entry without unit
@@ -41,11 +48,9 @@ func setDefaultFee(wdgWallet *widgetWallet) {
 			return
 		}
 
-		wdgWallet.model.wallet.SetDefaultFee(feeAmount)
-
-		err = wdgWallet.model.wallet.Save()
+		err = wdgWallet.model.SetDefaultFee(feeAmount)
 		if err != nil {
-			showErrorDialog(dlg, fmt.Sprintf("Failed to save wallet: %v", err))
+			showErrorDialog(dlg, fmt.Sprintf("Failed to set default fee: %v", err))
 
 			return
 		}

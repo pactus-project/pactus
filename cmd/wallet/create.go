@@ -33,9 +33,6 @@ func buildCreateCmd(parentCmd *cobra.Command) {
 		wlt, err := wallet.Create(*pathOpt, mnemonic, password, network)
 		terminal.FatalErrorCheck(err)
 
-		err = wlt.Save()
-		terminal.FatalErrorCheck(err)
-
 		terminal.PrintLine()
 		terminal.PrintSuccessMsgf("✅ Wallet successfully created at: %s", wlt.Path())
 		terminal.PrintLine()
@@ -65,9 +62,6 @@ func buildChangePasswordCmd(parentCmd *cobra.Command) {
 		newPassword := prompt.PromptPassword("New Password", true)
 
 		err = wlt.UpdatePassword(oldPassword, newPassword)
-		terminal.FatalErrorCheck(err)
-
-		err = wlt.Save()
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()

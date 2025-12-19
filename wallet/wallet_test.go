@@ -14,6 +14,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
+	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -41,15 +42,13 @@ func setup(t *testing.T) *testData {
 		Enable: true,
 		Listen: "[::]:0",
 	}
-	walletMgrConf := &wallet.Config{
-		WalletsDir: util.TempDirPath(),
-		ChainType:  genesis.Mainnet,
-	}
+
 	mockState := state.MockingState(ts)
+	walletMgr := wltmgr.NewMockIManager(ts.MockingController())
 	gRPCServer := grpc.NewServer(context.Background(),
 		grpcConf, mockState,
 		nil, nil, nil,
-		wallet.NewWalletManager(walletMgrConf), nil)
+		walletMgr, nil)
 
 	assert.NoError(t, gRPCServer.StartServer())
 
@@ -77,10 +76,6 @@ func (td *testData) Close() {
 func TestOpenWallet(t *testing.T) {
 	td := setup(t)
 	defer td.Close()
-
-	t.Run("Save the wallet", func(t *testing.T) {
-		assert.NoError(t, td.wallet.Save())
-	})
 
 	t.Run("Re-open the wallet", func(t *testing.T) {
 		_, err := wallet.Open(td.wallet.Path(), true)
@@ -117,10 +112,6 @@ func TestRecoverWallet(t *testing.T) {
 	mnemonic, _ := td.wallet.Mnemonic(td.password)
 	password := ""
 	t.Run("Wallet exists", func(t *testing.T) {
-		// Save the test wallet first then
-		// try to recover a wallet at the same place
-		assert.NoError(t, td.wallet.Save())
-
 		_, err := wallet.Create(td.wallet.Path(), mnemonic, password, 0)
 		assert.ErrorIs(t, err, wallet.ExitsError{
 			Path: td.wallet.Path(),
@@ -140,9 +131,6 @@ func TestRecoverWallet(t *testing.T) {
 
 		addrInfo1, err := recovered.NewBLSAccountAddress("addr-1")
 		assert.NoError(t, err)
-
-		assert.NoFileExists(t, walletPath)
-		assert.NoError(t, recovered.Save())
 
 		assert.FileExists(t, walletPath)
 		assert.True(t, recovered.Contains(addrInfo1.Address))

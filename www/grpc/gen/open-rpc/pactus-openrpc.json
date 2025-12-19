@@ -811,8 +811,8 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["mnemonic"],
-          "properties": {"mnemonic": { "type": "string" }}
+          "type": "object","required": ["wallet_name","mnemonic"],
+          "properties": {"wallet_name": { "type": "string" },"mnemonic": { "type": "string" }}
           }
         }
       },{
@@ -918,7 +918,7 @@
         }
       },{
       "name": "pactus.wallet.get_validator_address",
-      "description": "GetValidatorAddress retrieves the validator address associated with a public key.",
+      "description": "GetValidatorAddress retrieves the validator address associated with a public key. Deprecated: Will move into utils.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
       "params": [{
@@ -1084,8 +1084,8 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": [],
-          "properties": {}
+          "type": "object","required": ["wallet_name","address","label"],
+          "properties": {"wallet_name": { "type": "string" },"address": { "type": "string" },"label": { "type": "string" }}
           }
         }
       },{

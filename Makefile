@@ -25,6 +25,7 @@ devtools:
 	go install github.com/bufbuild/buf/cmd/buf@v1.61
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/pacviewer/jrpc-gateway/protoc-gen-jrpc-gateway@v0.6
+	go install go.uber.org/mock/mockgen@latest
 
 ########################################
 ### Building
@@ -42,6 +43,11 @@ build_gui:
 
 ########################################
 ### Testing
+mocks:
+	@echo "Generating mocks..."
+	@mkdir -p mocks
+	mockgen -source=wallet/manager/interface.go -destination=wallet/manager/manager_mock.go -package=manager
+
 unit_test:
 	go test $(PACKAGES)
 
@@ -83,6 +89,6 @@ check:
 # unless there is a reason not to.
 # https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html
 .PHONY: build build_gui
-.PHONY: test unit_test test_race
+.PHONY: test unit_test test_race mocks
 .PHONY: proto proto-format proto-check
 .PHONY: devtools fmt check docker

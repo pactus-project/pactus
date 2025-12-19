@@ -432,6 +432,7 @@ signRawTransaction: {
     responseDeserialize: deserialize_pactus_SignRawTransactionResponse,
   },
   // GetValidatorAddress retrieves the validator address associated with a public key.
+// Deprecated: Will move into utils.
 getValidatorAddress: {
     path: '/pactus.Wallet/GetValidatorAddress',
     requestStream: false,

@@ -1,4 +1,4 @@
-package wallet
+package manager
 
 import (
 	"github.com/pactus-project/pactus/genesis"
@@ -7,8 +7,9 @@ import (
 // Config defines parameters for the wallet module.
 type Config struct {
 	// private config
-	WalletsDir string            `toml:"-"`
-	ChainType  genesis.ChainType `toml:"-"`
+	ChainType         genesis.ChainType `toml:"-"`
+	WalletsDir        string            `toml:"-"`
+	DefaultWalletName string            `toml:"-"`
 }
 
 func DefaultConfig() *Config {

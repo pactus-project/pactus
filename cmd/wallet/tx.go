@@ -232,9 +232,6 @@ func signAndPublishTx(wlt *wallet.Wallet, trx *tx.Tx, noConfirm bool, pass strin
 		res, err := wlt.BroadcastTransaction(trx)
 		terminal.FatalErrorCheck(err)
 
-		err = wlt.Save()
-		terminal.FatalErrorCheck(err)
-
 		terminal.PrintLine()
 		terminal.PrintSuccessMsgf("✅ Transaction broadcast successfully!")
 		terminal.PrintInfoMsgf("   Transaction ID: %s", res)

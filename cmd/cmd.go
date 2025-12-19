@@ -83,9 +83,10 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 	}
 
 	for i := 0; i < numValidators; i++ {
-		_, _ = wlt.NewValidatorAddress(fmt.Sprintf("Validator address %v", i+1))
+		_, _ = wlt.NewAddress(crypto.AddressTypeValidator, fmt.Sprintf("Validator address %v", i+1))
 	}
-	rewardAddrInfo, _ := wlt.NewEd25519AccountAddress("Reward address", "")
+	rewardAddrInfo, _ := wlt.NewAddress(crypto.AddressTypeEd25519Account, "Reward address",
+		wallet.WithPassword(walletPassword))
 
 	confPath := PactusConfigPath(workingDir)
 	genPath := PactusGenesisPath(workingDir)
@@ -129,10 +130,6 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		return nil, "", err
 	}
 
-	if err := wlt.Save(); err != nil {
-		return nil, "", err
-	}
-
 	return wlt, rewardAddrInfo.Address, nil
 }
 
@@ -140,12 +137,12 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 // The passwordFetcher will be used to fetch the password for the default_wallet if it is encrypted.
 // It returns an error if the genesis doc or default_wallet can't be found inside the working directory.
 // TODO: write test for me.
-func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, bool),
+func StartNode(workingDir string, passwordFetcher func() (string, bool),
 	configModifier func(cfg *config.Config) *config.Config,
-) (*node.Node, *wallet.Wallet, error) {
+) (*node.Node, error) {
 	conf, gen, err := MakeConfig(workingDir)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	if configModifier != nil {
@@ -153,15 +150,14 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 	}
 
 	defaultWalletPath := PactusDefaultWalletPath(workingDir)
-	wlt, err := wallet.Open(defaultWalletPath, true,
-		wallet.WithCustomServers([]string{conf.GRPC.Listen}))
+	wlt, err := wallet.Open(defaultWalletPath, true)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	valAddrsInfo := wlt.AllValidatorAddresses()
 	if len(valAddrsInfo) == 0 {
-		return nil, nil, errors.New("no validator addresses found in the wallet")
+		return nil, errors.New("no validator addresses found in the wallet")
 	}
 
 	if len(valAddrsInfo) > 32 {
@@ -171,25 +167,25 @@ func StartNode(workingDir string, passwordFetcher func(*wallet.Wallet) (string, 
 
 	rewardAddrs, err := MakeRewardAddresses(wlt, valAddrsInfo, conf.Node.RewardAddresses)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	valKeys, err := MakeValidatorKey(wlt, valAddrsInfo, passwordFetcher)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	node, err := node.NewNode(gen, conf, valKeys, rewardAddrs)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	err = node.Start()
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return node, wlt, nil
+	return node, nil
 }
 
 // makeLocalGenesis makes genesis file for the local network.
@@ -270,6 +266,7 @@ func MakeConfig(workingDir string) (*config.Config, *genesis.Genesis, error) {
 
 	conf.WalletManager.ChainType = chainType
 	conf.WalletManager.WalletsDir = walletsDir
+	conf.WalletManager.DefaultWalletName = DefaultWalletName
 
 	if err := conf.BasicCheck(); err != nil {
 		return nil, nil, err
@@ -383,7 +380,7 @@ func MakeRewardAddresses(wlt *wallet.Wallet, valAddrsInfo []vault.AddressInfo,
 }
 
 func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []vault.AddressInfo,
-	passwordFetcher func(*wallet.Wallet) (string, bool),
+	passwordFetcher func() (string, bool),
 ) ([]*bls.ValidatorKey, error) {
 	valAddrs := make([]string, len(valAddrsInfo))
 	for i := 0; i < len(valAddrs); i++ {
@@ -395,11 +392,18 @@ func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []vault.Addres
 	}
 
 	valKeys := make([]*bls.ValidatorKey, len(valAddrsInfo))
-	password, ok := passwordFetcher(walletInstance)
-	if !ok {
-		return nil, errors.New("aborted")
+
+	walletPassword := ""
+	if walletInstance.IsEncrypted() {
+		password, ok := passwordFetcher()
+		if !ok {
+			return nil, errors.New("aborted")
+		}
+
+		walletPassword = password
 	}
-	prvKeys, err := walletInstance.PrivateKeys(password, valAddrs)
+
+	prvKeys, err := walletInstance.PrivateKeys(walletPassword, valAddrs)
 	if err != nil {
 		return nil, err
 	}

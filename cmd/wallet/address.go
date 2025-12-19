@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
+	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/vault"
 	"github.com/spf13/cobra"
 )
@@ -92,22 +93,22 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 		wlt, err := openWallet()
 		terminal.FatalErrorCheck(err)
 
-		if *addressType == crypto.AddressTypeBLSAccount.String() {
-			addressInfo, err = wlt.NewBLSAccountAddress(*label)
-		} else if *addressType == crypto.AddressTypeEd25519Account.String() {
+		switch *addressType {
+		case crypto.AddressTypeValidator.String():
+			addressInfo, err = wlt.NewAddress(crypto.AddressTypeValidator, *label)
+		case crypto.AddressTypeBLSAccount.String():
+			addressInfo, err = wlt.NewAddress(crypto.AddressTypeBLSAccount, *label)
+		case crypto.AddressTypeEd25519Account.String():
 			password := ""
 			if wlt.IsEncrypted() {
 				password = prompt.PromptPassword("Password", false)
 			}
-			addressInfo, err = wlt.NewEd25519AccountAddress(*label, password)
-		} else if *addressType == crypto.AddressTypeValidator.String() {
-			addressInfo, err = wlt.NewValidatorAddress(*label)
-		} else {
+			addressInfo, err = wlt.NewAddress(crypto.AddressTypeEd25519Account, *label,
+				wallet.WithPassword(password))
+		default:
 			err = fmt.Errorf("invalid address type '%s'", *addressType)
 		}
-		terminal.FatalErrorCheck(err)
 
-		err = wlt.Save()
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
@@ -247,9 +248,6 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 			return
 		}
 
-		err = wlt.Save()
-		terminal.FatalErrorCheck(err)
-
 		terminal.PrintLine()
 		terminal.PrintSuccessMsgf("Private Key imported successfully.")
 	}
@@ -274,9 +272,6 @@ func buildSetLabelCmd(parentCmd *cobra.Command) {
 		newLabel := prompt.PromptInputWithSuggestion("Label", oldLabel)
 
 		err = wlt.SetLabel(addr, newLabel)
-		terminal.FatalErrorCheck(err)
-
-		err = wlt.Save()
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()

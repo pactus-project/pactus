@@ -15,6 +15,9 @@ var (
 	// ErrHistoryExists describes an error in which the transaction already exists
 	// in history.
 	ErrHistoryExists = errors.New("transaction already exists")
+
+	// ErrInvalidAddressType describes an error in which the address type is invalid.
+	ErrInvalidAddressType = errors.New("invalid address type")
 )
 
 // CRCNotMatchError describes an error in which the wallet CRC is not matched.

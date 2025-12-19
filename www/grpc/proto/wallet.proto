@@ -25,6 +25,7 @@ service Wallet {
   rpc SignRawTransaction(SignRawTransactionRequest) returns (SignRawTransactionResponse);
 
   // GetValidatorAddress retrieves the validator address associated with a public key.
+  // Deprecated: Will move into utils.
   rpc GetValidatorAddress(GetValidatorAddressRequest) returns (GetValidatorAddressResponse);
 
   // GetNewAddress generates a new address for the specified wallet.
@@ -150,11 +151,13 @@ message CreateWalletRequest {
   // The name for the new wallet.
   string wallet_name = 1;
   // Password to secure the new wallet.
-  string password = 4;
+  string password = 2;
 }
 
 // Response message contains wallet recovery mnemonic (seed phrase).
 message CreateWalletResponse {
+  // The name for the new wallet.
+  string wallet_name = 1;
   // The mnemonic (seed phrase) for wallet recovery.
   string mnemonic = 2;
 }
@@ -286,15 +289,22 @@ message SetAddressLabelRequest {
   // The name of the wallet containing the address.
   string wallet_name = 1;
   // Wallet password required for modification.
-  string password = 3;
+  string password = 2;
   // The address to label.
-  string address = 4;
+  string address = 3;
   // The new label for the address.
-  string label = 5;
+  string label = 4;
 }
 
-// Response message for address label update.
-message SetAddressLabelResponse {}
+// Response message for updated address label.
+message SetAddressLabelResponse {
+  // The name of the wallet where the address label was updated.
+  string wallet_name = 1;
+  // The address where the label was updated.
+  string address = 2;
+  // The new label for the address.
+  string label = 3;
+}
 
 // Request message for listing all wallets.
 message ListWalletRequest {}

@@ -20,7 +20,6 @@ import (
 	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/version"
-	"github.com/pactus-project/pactus/wallet"
 )
 
 const appID = "com.github.pactus-project.pactus.pactus-gui"
@@ -98,7 +97,7 @@ func main() {
 		log.Println("application startup")
 	})
 
-	node, wlt, err := newNode(workingDir)
+	node, err := newNode(workingDir)
 	fatalErrorCheck(err)
 
 	var mainWindow *mainWindow
@@ -127,7 +126,7 @@ func main() {
 
 		// Running the run-up logic in a separate goroutine
 		glib.TimeoutAdd(uint(100), func() bool {
-			mainWindow = run(node, wlt, app)
+			mainWindow = run(node, app)
 			splashDlg.Destroy()
 
 			// Ensures the function is not called again
@@ -158,35 +157,35 @@ func main() {
 	os.Exit(app.Run(nil))
 }
 
-func newNode(workingDir string) (*node.Node, *wallet.Wallet, error) {
+func newNode(workingDir string) (*node.Node, error) {
 	// change working directory
 	if err := os.Chdir(workingDir); err != nil {
 		log.Println("Aborted! Unable to changes working directory. " + err.Error())
 
-		return nil, nil, err
+		return nil, err
 	}
 
-	passwordFetcher := func(wlt *wallet.Wallet) (string, bool) {
+	passwordFetcher := func() (string, bool) {
 		if *passwordOpt != "" {
 			return *passwordOpt, true
 		}
 
-		return getWalletPassword(wlt)
+		return getWalletPassword(nil)
 	}
-	n, wlt, err := cmd.StartNode(workingDir, passwordFetcher, nil)
+	n, err := cmd.StartNode(workingDir, passwordFetcher, nil)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return n, wlt, nil
+	return n, nil
 }
 
-func run(n *node.Node, wlt *wallet.Wallet, app *gtk.Application) *mainWindow {
+func run(n *node.Node, app *gtk.Application) *mainWindow {
 	grpcAddr := n.GRPC().Address()
 	terminal.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
 
 	nodeModel := newNodeModel(n)
-	walletModel := newWalletModel(wlt, n)
+	walletModel := newWalletModel(n, cmd.DefaultWalletName)
 
 	// building main window
 	win := buildMainWindow(nodeModel, walletModel)
