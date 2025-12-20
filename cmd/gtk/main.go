@@ -14,6 +14,10 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
+	gtkapp "github.com/pactus-project/pactus/cmd/gtk/app"
+	"github.com/pactus-project/pactus/cmd/gtk/assets"
+	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
+	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/node"
 	"github.com/pactus-project/pactus/util"
@@ -53,13 +57,15 @@ func main() {
 
 	// Create a new app.
 	app, err := gtk.ApplicationNew(appID, glib.APPLICATION_NON_UNIQUE)
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	settings, err := gtk.SettingsGetDefault()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	err = settings.Object.Set("gtk-application-prefer-dark-theme", true)
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
+
+	assets.InitAssets()
 
 	workingDir, err := filepath.Abs(*workingDirOpt)
 	if err != nil {
@@ -84,7 +90,7 @@ func main() {
 	fileLock := flock.New(lockFilePath)
 
 	locked, err := fileLock.TryLock()
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
 	if !locked {
 		terminal.PrintWarnMsgf("Could not lock '%s', another instance is running?", lockFilePath)
@@ -98,16 +104,17 @@ func main() {
 	})
 
 	node, err := newNode(workingDir)
-	fatalErrorCheck(err)
+	gtkutil.FatalErrorCheck(err)
 
-	var mainWindow *mainWindow
+	var gui *gtkapp.GUI
 
 	// Connect function to application activate event
 	app.Connect("activate", func() {
 		log.Println("application activate")
 
 		// Show about dialog as splash screen
-		splashDlg := aboutDialog()
+		splashDlg := view.NewAboutDialog()
+		splashDlg.SetVersion(version.NodeVersion().StringWithAlias())
 		splashDlg.SetDecorated(false)
 		splashDlg.SetResizable(false)
 		splashDlg.SetPosition(gtk.WIN_POS_CENTER)
@@ -126,7 +133,8 @@ func main() {
 
 		// Running the run-up logic in a separate goroutine
 		glib.TimeoutAdd(uint(100), func() bool {
-			mainWindow = run(node, app)
+			gui, err = gtkapp.Run(node, app)
+			gtkutil.FatalErrorCheck(err)
 			splashDlg.Destroy()
 
 			// Ensures the function is not called again
@@ -135,8 +143,8 @@ func main() {
 	})
 
 	shutdown := func() {
-		if mainWindow != nil {
-			mainWindow.onQuit()
+		if gui != nil && gui.Cleanup != nil {
+			gui.Cleanup()
 		}
 		node.Stop()
 		_ = fileLock.Unlock()
@@ -169,8 +177,14 @@ func newNode(workingDir string) (*node.Node, error) {
 		if *passwordOpt != "" {
 			return *passwordOpt, true
 		}
+		pwd, ok, err := gtkapp.PromptWalletPassword()
+		if err != nil {
+			gtkutil.ShowError(err)
 
-		return getWalletPassword(nil)
+			return "", false
+		}
+
+		return pwd, ok
 	}
 	n, err := cmd.StartNode(workingDir, passwordFetcher, nil)
 	if err != nil {
@@ -178,24 +192,4 @@ func newNode(workingDir string) (*node.Node, error) {
 	}
 
 	return n, nil
-}
-
-func run(n *node.Node, app *gtk.Application) *mainWindow {
-	grpcAddr := n.GRPC().Address()
-	terminal.PrintInfoMsgf("connect wallet to grpc server: %s\n", grpcAddr)
-
-	nodeModel := newNodeModel(n)
-	walletModel := newWalletModel(n, cmd.DefaultWalletName)
-
-	// building main window
-	win := buildMainWindow(nodeModel, walletModel)
-
-	// Show the Window and all of its components.
-	win.ShowAll()
-
-	walletModel.rebuildModel()
-
-	app.AddWindow(win)
-
-	return win
 }
