@@ -11,7 +11,8 @@ import (
 type WalletDefaultFeeDialogView struct {
 	ViewBuilder
 
-	Dialog          *gtk.Dialog
+	Dialog *gtk.Dialog
+
 	FeeEntry        *gtk.Entry
 	CurrentFeeLabel *gtk.Label
 	ButtonOK        *gtk.Button
@@ -22,12 +23,13 @@ func NewWalletDefaultFeeDialogView() *WalletDefaultFeeDialogView {
 	builder := NewViewBuilder(assets.WalletSetDefaultFeeDialogUI)
 
 	view := &WalletDefaultFeeDialogView{
-		Dialog:          builder.GetDialogObj("id_dialog_wallet_set_default_fee"),
+		ViewBuilder: builder,
+		Dialog:      builder.GetDialogObj("id_dialog_wallet_set_default_fee"),
+
 		FeeEntry:        builder.GetEntryObj("id_entry_default_fee"),
 		CurrentFeeLabel: builder.GetLabelObj("id_label_current_fee_value"),
 		ButtonOK:        builder.GetButtonObj("id_button_ok"),
 		ButtonCancel:    builder.GetButtonObj("id_button_cancel"),
-		ViewBuilder:     builder,
 	}
 
 	view.ButtonOK.SetImage(gtkutil.ImageFromPixbuf(assets.IconOkPixbuf16))

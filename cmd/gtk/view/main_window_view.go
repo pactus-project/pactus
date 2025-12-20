@@ -11,7 +11,8 @@ import (
 type MainWindowView struct {
 	ViewBuilder
 
-	Window           *gtk.ApplicationWindow
+	Window *gtk.ApplicationWindow
+
 	BoxNode          *gtk.Box
 	BoxDefaultWallet *gtk.Box
 
@@ -23,20 +24,19 @@ type MainWindowView struct {
 func NewMainWindowView() (*MainWindowView, error) {
 	builder := NewViewBuilder(assets.MainWindowUI)
 
-	appWindow := builder.GetApplicationWindowObj("id_main_window")
 	boxNode := builder.GetBoxObj("id_box_node")
 	boxDefaultWallet := builder.GetBoxObj("id_box_default_wallet")
 
 	view := &MainWindowView{
-		Window:           appWindow,
+		ViewBuilder: builder,
+		Window:      builder.GetApplicationWindowObj("id_main_window"),
+
 		BoxNode:          boxNode,
 		BoxDefaultWallet: boxDefaultWallet,
 
 		ExplorerMenuItem:      builder.GetMenuItem("id_explorer_menu"),
 		WebsiteMenuItem:       builder.GetMenuItem("id_website_menu"),
 		DocumentationMenuItem: builder.GetMenuItem("id_documentation_menu"),
-
-		ViewBuilder: builder,
 	}
 
 	// apply custom css

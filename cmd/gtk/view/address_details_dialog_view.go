@@ -24,15 +24,14 @@ func NewAddressDetailsDialogView() *AddressDetailsDialogView {
 	builder := NewViewBuilder(assets.AddressDetailsDialogUI)
 
 	view := &AddressDetailsDialogView{
-		Dialog: builder.GetDialogObj("id_dialog_address_details"),
+		ViewBuilder: builder,
+		Dialog:      builder.GetDialogObj("id_dialog_address_details"),
 
 		AddressEntry: builder.BuildExtendedEntry("id_overlay_address"),
 		PubKeyEntry:  builder.BuildExtendedEntry("id_overlay_public_key"),
 		PathEntry:    builder.GetEntryObj("id_entry_path"),
 
 		ButtonClose: builder.GetButtonObj("id_button_close"),
-
-		ViewBuilder: builder,
 	}
 
 	view.ButtonClose.SetImage(gtkutil.ImageFromPixbuf(assets.IconClosePixbuf16))

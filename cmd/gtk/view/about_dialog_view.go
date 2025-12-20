@@ -11,8 +11,7 @@ func NewAboutDialog() *gtk.AboutDialog {
 	builder := NewViewBuilder(assets.DialogAboutUI)
 	dlg := builder.GetAboutDialogObj("id_dialog_about")
 
-	pxLogo := assets.ImagePactusLogoPixbuf
-	dlg.SetLogo(pxLogo)
+	dlg.SetLogo(assets.ImagePactusLogoPixbuf)
 
 	return dlg
 }

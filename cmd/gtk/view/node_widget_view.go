@@ -36,7 +36,8 @@ func NewNodeWidgetView() (*NodeWidgetView, error) {
 	builder := NewViewBuilder(assets.NodeWidgetUI)
 
 	view := &NodeWidgetView{
-		Box: builder.GetBoxObj("id_box_node"),
+		ViewBuilder: builder,
+		Box:         builder.GetBoxObj("id_box_node"),
 
 		LabelWorkingDirectory: builder.GetLabelObj("id_label_working_directory"),
 		LabelNetwork:          builder.GetLabelObj("id_label_network"),
@@ -56,8 +57,6 @@ func NewNodeWidgetView() (*NodeWidgetView, error) {
 		LabelTotalStake:      builder.GetLabelObj("id_label_total_power"),
 		LabelNumConnections:  builder.GetLabelObj("id_label_num_connections"),
 		LabelReachability:    builder.GetLabelObj("id_label_reachability"),
-
-		ViewBuilder: builder,
 	}
 
 	return view, nil

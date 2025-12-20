@@ -5,6 +5,7 @@ package controller
 import (
 	"fmt"
 
+	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
@@ -14,111 +15,112 @@ import (
 	"github.com/pactus-project/pactus/wallet/vault"
 )
 
-type WithdrawTxModel interface {
+type TxBondModel interface {
 	WalletInfo() (wallet.Info, error)
-	AllValidatorAddresses() []vault.AddressInfo
 	AllAccountAddresses() []vault.AddressInfo
+	AllValidatorAddresses() []vault.AddressInfo
 	AddressInfo(addr string) *vault.AddressInfo
+	Balance(addr string) (amount.Amount, error)
 	Stake(addr string) (amount.Amount, error)
 
-	MakeWithdrawTx(sender, receiver string, amt amount.Amount, opts ...wallet.TxOption) (*tx.Tx, error)
+	MakeBondTx(sender, receiver, publicKey string, amt amount.Amount, opts ...wallet.TxOption) (*tx.Tx, error)
 	SignTransaction(password string, trx *tx.Tx) error
 	BroadcastTransaction(trx *tx.Tx) (string, error)
 }
 
-type WithdrawTxController struct {
-	view   *view.TxWithdrawDialogView
-	model  WithdrawTxModel
-	getPwd TxPasswordProvider
+type TxBondDialogController struct {
+	view   *view.TxBondDialogView
+	model  TxBondModel
+	getPwd PasswordProvider
 }
 
-func NewWithdrawTxController(
-	view *view.TxWithdrawDialogView,
-	model WithdrawTxModel,
-	getPassword TxPasswordProvider,
-) *WithdrawTxController {
-	return &WithdrawTxController{view: view, model: model, getPwd: getPassword}
+func NewTxBondDialogController(
+	view *view.TxBondDialogView,
+	model TxBondModel,
+	getPwd PasswordProvider,
+) *TxBondDialogController {
+	return &TxBondDialogController{view: view, model: model, getPwd: getPwd}
 }
 
-func (c *WithdrawTxController) BindAndRun() {
-	c.applyDefaults()
-	c.populateCombos()
+func setHint(lbl *gtk.Label, hint string) {
+	if hint == "" {
+		lbl.SetMarkup("")
 
-	onCancel := func() { c.view.Dialog.Close() }
+		return
+	}
+	lbl.SetMarkup(gtkutil.SmallGray(hint))
+}
+
+func (c *TxBondDialogController) Run() {
+	if info, err := c.model.WalletInfo(); err == nil {
+		c.view.FeeEntry.SetText(fmt.Sprintf("%g", info.DefaultFee.ToPAC()))
+	}
+
+	for _, ai := range c.model.AllAccountAddresses() {
+		c.view.SenderCombo.Append(ai.Address, ai.Address)
+	}
+	for _, vi := range c.model.AllValidatorAddresses() {
+		c.view.ReceiverCombo.Append(vi.Address, vi.Address)
+	}
+	c.view.SenderCombo.SetActive(0)
 
 	c.view.ConnectSignals(map[string]any{
-		"on_sender_changed":   func() { c.onSenderChanged() },
-		"on_receiver_changed": func() { c.onReceiverChanged() },
-		"on_fee_changed":      func() { c.onFeeChanged() },
-		"on_send":             func() { c.onSend() },
-		"on_cancel":           onCancel,
+		"on_sender_changed":   c.onSenderChanged,
+		"on_receiver_changed": c.onReceiverChanged,
+		"on_fee_changed":      c.onFeeChanged,
+		"on_send":             c.onSend,
+		"on_cancel":           c.onCancel,
 	})
 
 	c.onSenderChanged()
 	gtkutil.RunDialog(c.view.Dialog)
 }
 
-func (c *WithdrawTxController) applyDefaults() {
-	if info, err := c.model.WalletInfo(); err == nil {
-		c.view.FeeEntry.SetText(fmt.Sprintf("%g", info.DefaultFee.ToPAC()))
+func (c *TxBondDialogController) onSenderChanged() {
+	sender := c.view.SenderCombo.GetActiveID()
+	if info := c.model.AddressInfo(sender); info != nil && info.Label != "" {
+		setHint(c.view.SenderHint, fmt.Sprintf("label: %s", info.Label))
+	} else {
+		setHint(c.view.SenderHint, "")
+	}
+
+	bal, err := c.model.Balance(sender)
+	if err == nil {
+		setHint(c.view.AmountHint, fmt.Sprintf("Account Balance: %s", bal))
+	} else {
+		setHint(c.view.AmountHint, "")
 	}
 }
 
-func (c *WithdrawTxController) populateCombos() {
-	for _, ai := range c.model.AllValidatorAddresses() {
-		c.view.ValidatorCombo.Append(ai.Address, ai.Address)
-	}
-	c.view.ValidatorCombo.SetActive(0)
+func (c *TxBondDialogController) onReceiverChanged() {
+	receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
+	receiver := gtkutil.GetEntryText(receiverEntry)
 
-	for _, ai := range c.model.AllAccountAddresses() {
-		c.view.ReceiverCombo.Append(ai.Address, ai.Address)
-	}
-}
-
-func (c *WithdrawTxController) onSenderChanged() {
-	sender := c.view.ValidatorCombo.GetActiveID()
-
-	stake, err := c.model.Stake(sender)
-
+	stake, err := c.model.Stake(receiver)
 	hint := ""
 	if err == nil {
 		hint = fmt.Sprintf("stake: %s", stake)
 	}
-	if info := c.model.AddressInfo(sender); info != nil && info.Label != "" {
+	if info := c.model.AddressInfo(receiver); info != nil && info.Label != "" {
 		if hint != "" {
 			hint += ", "
 		}
 		hint += "label: " + info.Label
 	}
-	setHintLabel(c.view.ValidatorHint, hint)
-
-	if err == nil {
-		setHintLabel(c.view.StakeHint, fmt.Sprintf("Validator Stake: %s", stake))
-	} else {
-		setHintLabel(c.view.StakeHint, "")
-	}
+	setHint(c.view.ReceiverHint, hint)
 }
 
-func (c *WithdrawTxController) onReceiverChanged() {
+func (c *TxBondDialogController) onFeeChanged() {
+	_ = payload.TypeBond
+	setHint(c.view.FeeHint, "")
+}
+
+func (c *TxBondDialogController) onSend() {
+	sender := c.view.SenderCombo.GetActiveID()
 	receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
 	receiver := gtkutil.GetEntryText(receiverEntry)
-	if info := c.model.AddressInfo(receiver); info != nil && info.Label != "" {
-		setHintLabel(c.view.ReceiverHint, fmt.Sprintf("label: %s", info.Label))
-	} else {
-		setHintLabel(c.view.ReceiverHint, "")
-	}
-}
-
-func (c *WithdrawTxController) onFeeChanged() {
-	_ = payload.TypeWithdraw
-	setHintLabel(c.view.FeeHint, "")
-}
-
-func (c *WithdrawTxController) onSend() {
-	sender := c.view.ValidatorCombo.GetActiveID()
-	receiverEntry, _ := c.view.ReceiverCombo.GetEntry()
-	receiver := gtkutil.GetEntryText(receiverEntry)
-	amountStr := gtkutil.GetEntryText(c.view.StakeEntry)
+	publicKey := gtkutil.GetEntryText(c.view.PublicKeyEntry)
+	amountStr := gtkutil.GetEntryText(c.view.AmountEntry)
 	memo := gtkutil.GetEntryText(c.view.MemoEntry)
 
 	amt, err := amount.FromString(amountStr)
@@ -131,7 +133,7 @@ func (c *WithdrawTxController) onSend() {
 	feeStr := gtkutil.GetEntryText(c.view.FeeEntry)
 	opts := []wallet.TxOption{wallet.OptionMemo(memo), wallet.OptionFee(feeStr)}
 
-	trx, err := c.model.MakeWithdrawTx(sender, receiver, amt, opts...)
+	trx, err := c.model.MakeBondTx(sender, receiver, publicKey, amt, opts...)
 	if err != nil {
 		gtkutil.ShowError(err)
 
@@ -141,7 +143,7 @@ func (c *WithdrawTxController) onSend() {
 	msg := fmt.Sprintf(`
 📝 Transaction Details:
 <tt>
-Type:   Withdraw
+Type:   Bond
 From:   %s
 To:     %s
 Amount: %s
@@ -177,5 +179,9 @@ Do you want to continue with this transaction?`, sender, receiver, amt, trx.Fee(
 	gtkutil.ShowInfoDialog(c.view.Dialog,
 		fmt.Sprintf("✅ Transaction sent successfully!\n\n"+
 			"Transaction ID: <a href=\"https://pacviewer.com/transaction/%s\">%s</a>", txID, txID))
+	c.view.Dialog.Close()
+}
+
+func (c *TxBondDialogController) onCancel() {
 	c.view.Dialog.Close()
 }

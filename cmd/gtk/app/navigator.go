@@ -11,7 +11,6 @@ import (
 )
 
 // Navigator owns dialog creation and UI flows (open -> run -> post-actions).
-// It is intentionally UI-level (it depends on view/controller/gtkutil).
 type Navigator struct {
 	model *model.WalletModel
 }
@@ -20,7 +19,7 @@ func NewNavigator(model *model.WalletModel) *Navigator {
 	return &Navigator{model: model}
 }
 
-func (n *Navigator) PasswordProvider() controller.TxPasswordProvider {
+func (n *Navigator) PasswordProvider() controller.PasswordProvider {
 	return func() (string, bool) {
 		if n.model == nil || !n.model.IsEncrypted() {
 			return "", true
@@ -41,7 +40,7 @@ func (*Navigator) ShowAbout() {
 
 func (*Navigator) ShowAboutGTK() {
 	dlg := view.NewAboutGTKDialog()
-	dlg.SetModal(true)
+	dlg.Dialog.SetModal(true)
 	gtkutil.RunDialog(&dlg.Dialog)
 }
 
@@ -63,46 +62,34 @@ func (n *Navigator) ShowSeed() {
 	gtkutil.RunDialog(dlgView.Dialog)
 }
 
-func (n *Navigator) ShowCreateAddress(afterCreate func()) {
+func (n *Navigator) ShowCreateAddress() {
 	dlgView := view.NewWalletCreateAddressDialogView()
 	dlgCtrl := controller.NewWalletCreateAddressDialogController(dlgView, n.model, n.PasswordProvider())
-	dlgCtrl.Run(afterCreate)
+	dlgCtrl.Run()
 }
 
-func (n *Navigator) ShowSetDefaultFee(afterChange func()) {
+func (n *Navigator) ShowSetDefaultFee() {
 	dlgView := view.NewWalletDefaultFeeDialogView()
-	dlgCtrl := controller.NewWalletDefaultFeeDialogController(dlgView)
-	dlgCtrl.Run(n.model, afterChange)
+	dlgCtrl := controller.NewWalletDefaultFeeDialogController(dlgView, n.model)
+	dlgCtrl.Run()
 }
 
-func (n *Navigator) ShowChangePassword(afterChange func()) {
+func (n *Navigator) ShowChangePassword() {
 	dlgView := view.NewWalletChangePasswordDialogView()
-	dlgCtrl := controller.NewWalletChangePasswordDialogController(dlgView)
-	dlgCtrl.Run(n.model, afterChange)
+	dlgCtrl := controller.NewWalletChangePasswordDialogController(dlgView, n.model)
+	dlgCtrl.Run()
 }
 
-func (n *Navigator) ShowUpdateLabel(address string, afterChange func()) {
-	oldLabel := n.model.Label(address)
+func (n *Navigator) ShowUpdateLabel(address string) {
 	dlgView := view.NewAddressLabelDialogView()
-	dlgCtrl := controller.NewAddressLabelDialogController(dlgView)
-	newLabel, ok := dlgCtrl.Run(oldLabel)
-	if !ok {
-		return
-	}
-	if err := n.model.SetLabel(address, newLabel); err != nil {
-		gtkutil.ShowError(err)
-
-		return
-	}
-	if afterChange != nil {
-		afterChange()
-	}
+	dlgCtrl := controller.NewAddressLabelDialogController(dlgView, n.model)
+	dlgCtrl.Run(address)
 }
 
 func (n *Navigator) ShowAddressDetails(address string) {
 	dlgView := view.NewAddressDetailsDialogView()
-	dlgCtrl := controller.NewAddressDetailsDialogController(dlgView)
-	_ = dlgCtrl.Run(n.model, address)
+	dlgCtrl := controller.NewAddressDetailsDialogController(dlgView, n.model)
+	dlgCtrl.Run(address)
 }
 
 func (n *Navigator) ShowPrivateKey(address string) {
@@ -113,24 +100,24 @@ func (n *Navigator) ShowPrivateKey(address string) {
 
 func (n *Navigator) ShowTransferTx() {
 	dialogView := view.NewTxTransferDialogView()
-	ctrl := controller.NewTransferTxController(dialogView, n.model, n.PasswordProvider())
-	ctrl.BindAndRun()
+	ctrl := controller.NewTxTransferDialogController(dialogView, n.model, n.PasswordProvider())
+	ctrl.Run()
 }
 
 func (n *Navigator) ShowBondTx() {
 	dialogView := view.NewTxBondDialogView()
-	ctrl := controller.NewBondTxController(dialogView, n.model, n.PasswordProvider())
-	ctrl.BindAndRun()
+	ctrl := controller.NewTxBondDialogController(dialogView, n.model, n.PasswordProvider())
+	ctrl.Run()
 }
 
 func (n *Navigator) ShowUnbondTx() {
 	dialogView := view.NewTxUnbondDialogView()
-	ctrl := controller.NewUnbondTxController(dialogView, n.model, n.PasswordProvider())
-	ctrl.BindAndRun()
+	ctrl := controller.NewTxUnbondDialogController(dialogView, n.model, n.PasswordProvider())
+	ctrl.Run()
 }
 
 func (n *Navigator) ShowWithdrawTx() {
 	dialogView := view.NewTxWithdrawDialogView()
-	ctrl := controller.NewWithdrawTxController(dialogView, n.model, n.PasswordProvider())
-	ctrl.BindAndRun()
+	ctrl := controller.NewTxWithdrawDialogController(dialogView, n.model, n.PasswordProvider())
+	ctrl.Run()
 }

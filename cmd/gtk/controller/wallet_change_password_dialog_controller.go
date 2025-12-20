@@ -13,17 +13,19 @@ type WalletChangePasswordModel interface {
 }
 
 type WalletChangePasswordDialogController struct {
-	view *view.WalletChangePasswordDialogView
+	view  *view.WalletChangePasswordDialogView
+	model WalletChangePasswordModel
 }
 
 func NewWalletChangePasswordDialogController(
 	view *view.WalletChangePasswordDialogView,
+	model WalletChangePasswordModel,
 ) *WalletChangePasswordDialogController {
-	return &WalletChangePasswordDialogController{view: view}
+	return &WalletChangePasswordDialogController{view: view, model: model}
 }
 
-func (c *WalletChangePasswordDialogController) Run(model WalletChangePasswordModel, afterSave func()) {
-	if !model.IsEncrypted() {
+func (c *WalletChangePasswordDialogController) Run() {
+	if !c.model.IsEncrypted() {
 		c.view.OldPasswordEntry.SetVisible(false)
 		c.view.OldPasswordLabel.SetVisible(false)
 	}
@@ -38,15 +40,12 @@ func (c *WalletChangePasswordDialogController) Run(model WalletChangePasswordMod
 
 			return
 		}
-		if err := model.UpdatePassword(oldPassword, newPassword); err != nil {
+		if err := c.model.UpdatePassword(oldPassword, newPassword); err != nil {
 			gtkutil.ShowError(err)
 
 			return
 		}
 		c.view.Dialog.Close()
-		if afterSave != nil {
-			afterSave()
-		}
 	}
 
 	onCancel := func() { c.view.Dialog.Close() }

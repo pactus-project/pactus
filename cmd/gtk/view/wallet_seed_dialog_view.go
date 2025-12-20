@@ -11,7 +11,8 @@ import (
 type WalletSeedDialogView struct {
 	ViewBuilder
 
-	Dialog      *gtk.Dialog
+	Dialog *gtk.Dialog
+
 	TextView    *gtk.TextView
 	Image       *gtk.Image
 	ButtonClose *gtk.Button
@@ -21,11 +22,12 @@ func NewWalletSeedDialogView() *WalletSeedDialogView {
 	builder := NewViewBuilder(assets.WalletShowSeedDialogUI)
 
 	view := &WalletSeedDialogView{
+		ViewBuilder: builder,
 		Dialog:      builder.GetDialogObj("id_dialog_wallet_show_seed"),
+
 		TextView:    builder.GetTextViewObj("id_textview_seed"),
 		Image:       builder.GetImageObj("id_image_seed"),
 		ButtonClose: builder.GetButtonObj("id_button_close"),
-		ViewBuilder: builder,
 	}
 
 	view.Image.SetFromPixbuf(assets.ImageSeedPixbuf)

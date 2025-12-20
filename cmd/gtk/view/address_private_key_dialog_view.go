@@ -22,11 +22,12 @@ func NewAddressPrivateKeyDialogView() *AddressPrivateKeyDialogView {
 	builder := NewViewBuilder(assets.AddressPrivateKeyDialogUI)
 
 	view := &AddressPrivateKeyDialogView{
-		Dialog:       builder.GetDialogObj("id_dialog_address_private_key"),
+		ViewBuilder: builder,
+		Dialog:      builder.GetDialogObj("id_dialog_address_private_key"),
+
 		AddressEntry: builder.GetEntryObj("id_entry_address"),
 		PrvKeyEntry:  builder.GetEntryObj("id_entry_private_key"),
 		ButtonClose:  builder.GetButtonObj("id_button_close"),
-		ViewBuilder:  builder,
 	}
 
 	view.ButtonClose.SetImage(gtkutil.ImageFromPixbuf(assets.IconClosePixbuf16))

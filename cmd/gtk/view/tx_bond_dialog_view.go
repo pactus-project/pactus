@@ -32,7 +32,8 @@ func NewTxBondDialogView() *TxBondDialogView {
 	builder := NewViewBuilder(assets.TxBondDialogUI)
 
 	view := &TxBondDialogView{
-		Dialog: builder.GetDialogObj("id_dialog_transaction_bond"),
+		ViewBuilder: builder,
+		Dialog:      builder.GetDialogObj("id_dialog_transaction_bond"),
 
 		SenderCombo:    builder.GetComboBoxTextObj("id_combo_sender"),
 		SenderHint:     builder.GetLabelObj("id_hint_sender"),
@@ -47,8 +48,6 @@ func NewTxBondDialogView() *TxBondDialogView {
 
 		ButtonCancel: builder.GetButtonObj("id_button_cancel"),
 		ButtonSend:   builder.GetButtonObj("id_button_send"),
-
-		ViewBuilder: builder,
 	}
 
 	view.ButtonCancel.SetImage(gtkutil.ImageFromPixbuf(assets.IconCancelPixbuf16))

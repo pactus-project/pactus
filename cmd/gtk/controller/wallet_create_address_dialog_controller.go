@@ -17,18 +17,18 @@ type WalletCreateAddressModel interface {
 type WalletCreateAddressDialogController struct {
 	view   *view.WalletCreateAddressDialogView
 	model  WalletCreateAddressModel
-	getPwd TxPasswordProvider
+	getPwd PasswordProvider
 }
 
 func NewWalletCreateAddressDialogController(
 	view *view.WalletCreateAddressDialogView,
 	model WalletCreateAddressModel,
-	getPassword TxPasswordProvider,
+	getPwd PasswordProvider,
 ) *WalletCreateAddressDialogController {
-	return &WalletCreateAddressDialogController{view: view, model: model, getPwd: getPassword}
+	return &WalletCreateAddressDialogController{view: view, model: model, getPwd: getPwd}
 }
 
-func (c *WalletCreateAddressDialogController) Run(afterCreate func()) {
+func (c *WalletCreateAddressDialogController) Run() {
 	combo := c.view.AddressTypeCombo
 	combo.Append(crypto.AddressTypeEd25519Account.String(), "ED25519 Account")
 	combo.Append(crypto.AddressTypeBLSAccount.String(), "BLS Account")
@@ -69,9 +69,6 @@ func (c *WalletCreateAddressDialogController) Run(afterCreate func()) {
 		}
 
 		c.view.Dialog.Close()
-		if afterCreate != nil {
-			afterCreate()
-		}
 	}
 
 	onCancel := func() { c.view.Dialog.Close() }

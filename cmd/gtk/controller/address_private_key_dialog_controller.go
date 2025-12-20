@@ -15,15 +15,15 @@ type AddressPrivateKeyModel interface {
 type AddressPrivateKeyDialogController struct {
 	view   *view.AddressPrivateKeyDialogView
 	model  AddressPrivateKeyModel
-	getPwd TxPasswordProvider
+	getPwd PasswordProvider
 }
 
 func NewAddressPrivateKeyDialogController(
 	view *view.AddressPrivateKeyDialogView,
 	model AddressPrivateKeyModel,
-	getPassword TxPasswordProvider,
+	getPwd PasswordProvider,
 ) *AddressPrivateKeyDialogController {
-	return &AddressPrivateKeyDialogController{view: view, model: model, getPwd: getPassword}
+	return &AddressPrivateKeyDialogController{view: view, model: model, getPwd: getPwd}
 }
 
 func (c *AddressPrivateKeyDialogController) Run(addr string) {

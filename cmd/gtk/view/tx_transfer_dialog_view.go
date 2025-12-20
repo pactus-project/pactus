@@ -31,7 +31,8 @@ func NewTxTransferDialogView() *TxTransferDialogView {
 	builder := NewViewBuilder(assets.TxTransferDialogUI)
 
 	view := &TxTransferDialogView{
-		Dialog: builder.GetDialogObj("id_dialog_transaction_transfer"),
+		ViewBuilder: builder,
+		Dialog:      builder.GetDialogObj("id_dialog_transaction_transfer"),
 
 		SenderCombo:   builder.GetComboBoxTextObj("id_combo_sender"),
 		SenderHint:    builder.GetLabelObj("id_hint_sender"),
@@ -45,8 +46,6 @@ func NewTxTransferDialogView() *TxTransferDialogView {
 
 		ButtonCancel: builder.GetButtonObj("id_button_cancel"),
 		ButtonSend:   builder.GetButtonObj("id_button_send"),
-
-		ViewBuilder: builder,
 	}
 
 	view.ButtonCancel.SetImage(gtkutil.ImageFromPixbuf(assets.IconCancelPixbuf16))

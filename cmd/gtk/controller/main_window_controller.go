@@ -33,68 +33,30 @@ func NewMainWindowController(view *view.MainWindowView) *MainWindowController {
 }
 
 func (c *MainWindowController) Bind(h *MainWindowHandlers) {
-	if h == nil {
-		h = &MainWindowHandlers{}
-	}
-
 	// Top menu items.
 	connectMenuItem(c.view.ExplorerMenuItem, h.OnMenuActivateExplorer)
 	connectMenuItem(c.view.WebsiteMenuItem, h.OnMenuActivateWebsite)
 	connectMenuItem(c.view.DocumentationMenuItem, h.OnMenuActivateDocs)
 
 	signals := map[string]any{
-		"on_about_gtk": func() {
-			callIfSet(h.OnAboutGtk)
-		},
-		"on_about": func() {
-			callIfSet(h.OnAbout)
-		},
-		"on_quit": func() {
-			callIfSet(h.OnQuit)
-		},
-		"on_transaction_transfer": func() {
-			callIfSet(h.OnTransactionTransfer)
-		},
-		"on_transaction_bond": func() {
-			callIfSet(h.OnTransactionBond)
-		},
-		"on_transaction_unbond": func() {
-			callIfSet(h.OnTransactionUnbond)
-		},
-		"on_transaction_withdraw": func() {
-			callIfSet(h.OnTransactionWithdraw)
-		},
-		"on_wallet_new_address": func() {
-			callIfSet(h.OnWalletNewAddress)
-		},
-		"on_wallet_change_password": func() {
-			callIfSet(h.OnWalletChangePassword)
-		},
-		"on_wallet_show_seed": func() {
-			callIfSet(h.OnWalletShowSeed)
-		},
-		"on_wallet_set_default_fee": func() {
-			callIfSet(h.OnWalletSetDefaultFee)
-		},
+		"on_about_gtk":              h.OnAboutGtk,
+		"on_about":                  h.OnAbout,
+		"on_quit":                   h.OnQuit,
+		"on_transaction_transfer":   h.OnTransactionTransfer,
+		"on_transaction_bond":       h.OnTransactionBond,
+		"on_transaction_unbond":     h.OnTransactionUnbond,
+		"on_transaction_withdraw":   h.OnTransactionWithdraw,
+		"on_wallet_new_address":     h.OnWalletNewAddress,
+		"on_wallet_change_password": h.OnWalletChangePassword,
+		"on_wallet_show_seed":       h.OnWalletShowSeed,
+		"on_wallet_set_default_fee": h.OnWalletSetDefaultFee,
 	}
 
 	c.view.ConnectSignals(signals)
 }
 
 func connectMenuItem(item *gtk.MenuItem, onActivate func()) {
-	if item == nil {
-		return
-	}
-
 	item.Connect("activate", func(_ *gtk.MenuItem) {
-		callIfSet(onActivate)
+		onActivate()
 	})
-}
-
-func callIfSet(fn func()) {
-	if fn == nil {
-		return
-	}
-
-	fn()
 }

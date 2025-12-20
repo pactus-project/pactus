@@ -7,23 +7,34 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 )
 
+type AddressLabelModel interface {
+	Label(address string) string
+	SetLabel(address string, label string) error
+}
+
 type AddressLabelDialogController struct {
-	view *view.AddressLabelDialogView
+	view  *view.AddressLabelDialogView
+	model AddressLabelModel
 }
 
-func NewAddressLabelDialogController(view *view.AddressLabelDialogView) *AddressLabelDialogController {
-	return &AddressLabelDialogController{view: view}
+func NewAddressLabelDialogController(
+	view *view.AddressLabelDialogView,
+	model AddressLabelModel,
+) *AddressLabelDialogController {
+	return &AddressLabelDialogController{view: view, model: model}
 }
 
-func (c *AddressLabelDialogController) Run(oldLabel string) (string, bool) {
+func (c *AddressLabelDialogController) Run(address string) {
+	oldLabel := c.model.Label(address)
 	c.view.LabelEntry.SetText(oldLabel)
 
-	newLabel := ""
-	ok := false
-
 	onOk := func() {
-		newLabel = gtkutil.GetEntryText(c.view.LabelEntry)
-		ok = true
+		newLabel := gtkutil.GetEntryText(c.view.LabelEntry)
+		if err := c.model.SetLabel(address, newLabel); err != nil {
+			gtkutil.ShowError(err)
+
+			return
+		}
 		c.view.Dialog.Close()
 	}
 	onCancel := func() {
@@ -37,6 +48,4 @@ func (c *AddressLabelDialogController) Run(oldLabel string) (string, bool) {
 
 	c.view.Dialog.SetModal(true)
 	gtkutil.RunDialog(c.view.Dialog)
-
-	return newLabel, ok
 }

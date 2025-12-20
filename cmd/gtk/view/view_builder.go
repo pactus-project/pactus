@@ -9,7 +9,6 @@ import (
 )
 
 // ViewBuilder is a small embedded helper for views created from a gtk.Builder.
-// It provides ConnectSignals so every view doesn't repeat the same boilerplate.
 type ViewBuilder struct {
 	builder *gtk.Builder
 }
@@ -97,8 +96,5 @@ func (vb *ViewBuilder) BuildExtendedEntry(name string) *gtk.Entry {
 }
 
 func (vb *ViewBuilder) ConnectSignals(signals map[string]any) {
-	if vb == nil || vb.builder == nil {
-		return
-	}
 	vb.builder.ConnectSignals(signals)
 }

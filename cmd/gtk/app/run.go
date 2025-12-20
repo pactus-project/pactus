@@ -50,19 +50,19 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 
 	walletCtrl.Bind(controller.WalletWidgetHandlers{
 		OnNewAddress: func() {
-			nav.ShowCreateAddress(func() { walletCtrl.Refresh() })
+			nav.ShowCreateAddress()
 		},
 		OnSetDefaultFee: func() {
-			nav.ShowSetDefaultFee(func() { walletCtrl.Refresh() })
+			nav.ShowSetDefaultFee()
 		},
 		OnChangePassword: func() {
-			nav.ShowChangePassword(func() { walletCtrl.Refresh() })
+			nav.ShowChangePassword()
 		},
 		OnShowSeed: func() {
 			nav.ShowSeed()
 		},
 		OnUpdateLabel: func(address string) {
-			nav.ShowUpdateLabel(address, func() { walletCtrl.Refresh() })
+			nav.ShowUpdateLabel(address)
 		},
 		OnShowDetails: func(address string) {
 			nav.ShowAddressDetails(address)
@@ -99,16 +99,16 @@ func Run(n *node.Node, gtkApp *gtk.Application) (*GUI, error) {
 			nav.ShowWithdrawTx()
 		},
 		OnWalletNewAddress: func() {
-			nav.ShowCreateAddress(func() { walletCtrl.Refresh() })
+			nav.ShowCreateAddress()
 		},
 		OnWalletChangePassword: func() {
-			nav.ShowChangePassword(func() { walletCtrl.Refresh() })
+			nav.ShowChangePassword()
 		},
 		OnWalletShowSeed: func() {
 			nav.ShowSeed()
 		},
 		OnWalletSetDefaultFee: func() {
-			nav.ShowSetDefaultFee(func() { walletCtrl.Refresh() })
+			nav.ShowSetDefaultFee()
 		},
 		OnMenuActivateWebsite: func() {
 			_ = gtkutil.OpenURLInBrowser("https://pactus.org/")

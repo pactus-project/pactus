@@ -177,12 +177,7 @@ func newNode(workingDir string) (*node.Node, error) {
 		if *passwordOpt != "" {
 			return *passwordOpt, true
 		}
-		pwd, ok, err := gtkapp.PromptWalletPassword()
-		if err != nil {
-			gtkutil.ShowError(err)
-
-			return "", false
-		}
+		pwd, ok := gtkapp.PromptWalletPassword()
 
 		return pwd, ok
 	}

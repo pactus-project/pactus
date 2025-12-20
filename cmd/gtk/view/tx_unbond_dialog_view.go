@@ -25,7 +25,8 @@ func NewTxUnbondDialogView() *TxUnbondDialogView {
 	builder := NewViewBuilder(assets.TxUnbondDialogUI)
 
 	view := &TxUnbondDialogView{
-		Dialog: builder.GetDialogObj("id_dialog_transaction_unbond"),
+		ViewBuilder: builder,
+		Dialog:      builder.GetDialogObj("id_dialog_transaction_unbond"),
 
 		ValidatorCombo: builder.GetComboBoxTextObj("id_combo_validator"),
 		ValidatorHint:  builder.GetLabelObj("id_hint_validator"),
@@ -33,8 +34,6 @@ func NewTxUnbondDialogView() *TxUnbondDialogView {
 
 		ButtonCancel: builder.GetButtonObj("id_button_cancel"),
 		ButtonSend:   builder.GetButtonObj("id_button_send"),
-
-		ViewBuilder: builder,
 	}
 
 	view.ButtonCancel.SetImage(gtkutil.ImageFromPixbuf(assets.IconCancelPixbuf16))

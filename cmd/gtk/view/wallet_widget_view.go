@@ -54,11 +54,11 @@ func createTextColumn(title string, columnID int) (*gtk.TreeViewColumn, error) {
 func NewWalletWidgetView(columnTypes ...glib.Type) (*WalletWidgetView, error) {
 	builder := NewViewBuilder(assets.WalletWidgetUI)
 
-	box := builder.GetBoxObj("id_box_wallet")
 	treeViewWallet := builder.GetTreeViewObj("id_treeview_addresses")
 
 	view := &WalletWidgetView{
-		Box: box,
+		ViewBuilder: builder,
+		Box:         builder.GetBoxObj("id_box_wallet"),
 
 		TreeViewWallet: treeViewWallet,
 		LabelName:      builder.GetLabelObj("id_label_wallet_name"),
@@ -73,8 +73,6 @@ func NewWalletWidgetView(columnTypes ...glib.Type) (*WalletWidgetView, error) {
 		BtnSetDefaultFee:  builder.GetToolButtonObj("id_button_set_default_fee"),
 		BtnChangePassword: builder.GetToolButtonObj("id_button_change_password"),
 		BtnShowSeed:       builder.GetToolButtonObj("id_button_show_seed"),
-
-		ViewBuilder: builder,
 	}
 
 	// Toolbar icons.

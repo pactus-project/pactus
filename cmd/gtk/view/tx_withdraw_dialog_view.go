@@ -31,7 +31,8 @@ func NewTxWithdrawDialogView() *TxWithdrawDialogView {
 	builder := NewViewBuilder(assets.TxWithdrawDialogUI)
 
 	view := &TxWithdrawDialogView{
-		Dialog: builder.GetDialogObj("id_dialog_transaction_withdraw"),
+		ViewBuilder: builder,
+		Dialog:      builder.GetDialogObj("id_dialog_transaction_withdraw"),
 
 		ValidatorCombo: builder.GetComboBoxTextObj("id_combo_validator"),
 		ValidatorHint:  builder.GetLabelObj("id_hint_validator"),
@@ -45,8 +46,6 @@ func NewTxWithdrawDialogView() *TxWithdrawDialogView {
 
 		ButtonCancel: builder.GetButtonObj("id_button_cancel"),
 		ButtonSend:   builder.GetButtonObj("id_button_send"),
-
-		ViewBuilder: builder,
 	}
 
 	view.ButtonCancel.SetImage(gtkutil.ImageFromPixbuf(assets.IconCancelPixbuf16))

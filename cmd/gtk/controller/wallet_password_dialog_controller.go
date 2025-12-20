@@ -11,7 +11,9 @@ type WalletPasswordDialogController struct {
 	view *view.WalletPasswordDialogView
 }
 
-func NewWalletPasswordDialogController(view *view.WalletPasswordDialogView) *WalletPasswordDialogController {
+func NewWalletPasswordDialogController(
+	view *view.WalletPasswordDialogView,
+) *WalletPasswordDialogController {
 	return &WalletPasswordDialogController{view: view}
 }
 

@@ -18,15 +18,19 @@ type WalletDefaultFeeModel interface {
 }
 
 type WalletDefaultFeeDialogController struct {
-	view *view.WalletDefaultFeeDialogView
+	view  *view.WalletDefaultFeeDialogView
+	model WalletDefaultFeeModel
 }
 
-func NewWalletDefaultFeeDialogController(view *view.WalletDefaultFeeDialogView) *WalletDefaultFeeDialogController {
-	return &WalletDefaultFeeDialogController{view: view}
+func NewWalletDefaultFeeDialogController(
+	view *view.WalletDefaultFeeDialogView,
+	model WalletDefaultFeeModel,
+) *WalletDefaultFeeDialogController {
+	return &WalletDefaultFeeDialogController{view: view, model: model}
 }
 
-func (c *WalletDefaultFeeDialogController) Run(model WalletDefaultFeeModel, afterSave func()) {
-	info, err := model.WalletInfo()
+func (c *WalletDefaultFeeDialogController) Run() {
+	info, err := c.model.WalletInfo()
 	if err != nil {
 		gtkutil.ShowErrorDialog(c.view.Dialog, fmt.Sprintf("Failed to get wallet info: %v", err))
 
@@ -45,15 +49,12 @@ func (c *WalletDefaultFeeDialogController) Run(model WalletDefaultFeeModel, afte
 
 			return
 		}
-		if err := model.SetDefaultFee(feeAmount); err != nil {
+		if err := c.model.SetDefaultFee(feeAmount); err != nil {
 			gtkutil.ShowErrorDialog(c.view.Dialog, fmt.Sprintf("Failed to set default fee: %v", err))
 
 			return
 		}
 		c.view.Dialog.Close()
-		if afterSave != nil {
-			afterSave()
-		}
 	}
 
 	onCancel := func() { c.view.Dialog.Close() }
