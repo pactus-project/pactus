@@ -35,6 +35,10 @@ func (wm *Manager) getWalletPath(walletName string) string {
 	return util.MakeAbs(filepath.Join(wm.walletDirectory, walletName))
 }
 
+func (wm *Manager) WalletPath(walletName string) string {
+	return wm.getWalletPath(walletName)
+}
+
 func (wm *Manager) createWalletWithMnemonic(
 	walletName, mnemonic, password string,
 ) error {
@@ -87,7 +91,7 @@ func (wm *Manager) LoadWallet(walletName, serverAddr string) error {
 		return ErrWalletAlreadyLoaded
 	}
 
-	walletPath := util.MakeAbs(filepath.Join(wm.walletDirectory, walletName))
+	walletPath := wm.getWalletPath(walletName)
 	wlt, err := wallet.Open(walletPath, true, wallet.WithCustomServers([]string{serverAddr}))
 	if err != nil {
 		return err
@@ -96,6 +100,167 @@ func (wm *Manager) LoadWallet(walletName, serverAddr string) error {
 	wm.wallets[walletName] = wlt
 
 	return nil
+}
+
+func (wm *Manager) NewAddress(
+	walletName string,
+	addressType crypto.AddressType,
+	label string,
+	opts ...wallet.NewAddressOption,
+) (*vault.AddressInfo, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, ErrWalletNotLoaded
+	}
+
+	return wlt.NewAddress(addressType, label, opts...)
+}
+
+func (wm *Manager) PrivateKey(walletName, password, addr string) (crypto.PrivateKey, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, ErrWalletNotLoaded
+	}
+
+	return wlt.PrivateKey(password, addr)
+}
+
+func (wm *Manager) Mnemonic(walletName, password string) (string, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return "", ErrWalletNotLoaded
+	}
+
+	return wlt.Mnemonic(password)
+}
+
+func (wm *Manager) AllAccountAddresses(walletName string) ([]vault.AddressInfo, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, ErrWalletNotLoaded
+	}
+
+	return wlt.AllAccountAddresses(), nil
+}
+
+func (wm *Manager) AllValidatorAddresses(walletName string) ([]vault.AddressInfo, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, ErrWalletNotLoaded
+	}
+
+	return wlt.AllValidatorAddresses(), nil
+}
+
+func (wm *Manager) Label(walletName, addr string) (string, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return "", ErrWalletNotLoaded
+	}
+
+	return wlt.Label(addr), nil
+}
+
+func (wm *Manager) SetLabel(walletName, addr, label string) error {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return ErrWalletNotLoaded
+	}
+
+	return wlt.SetLabel(addr, label)
+}
+
+func (wm *Manager) Balance(walletName, addr string) (amount.Amount, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return 0, ErrWalletNotLoaded
+	}
+
+	return wlt.Balance(addr)
+}
+
+func (wm *Manager) Stake(walletName, addr string) (amount.Amount, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return 0, ErrWalletNotLoaded
+	}
+
+	return wlt.Stake(addr)
+}
+
+func (wm *Manager) SetDefaultFee(walletName string, fee amount.Amount) error {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return ErrWalletNotLoaded
+	}
+
+	return wlt.SetDefaultFee(fee)
+}
+
+func (wm *Manager) MakeTransferTx(
+	walletName, sender, receiver string,
+	amt amount.Amount,
+	opts ...wallet.TxOption,
+) (*tx.Tx, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, ErrWalletNotLoaded
+	}
+
+	return wlt.MakeTransferTx(sender, receiver, amt, opts...)
+}
+
+func (wm *Manager) MakeBondTx(
+	walletName, sender, receiver, publicKey string,
+	amt amount.Amount,
+	opts ...wallet.TxOption,
+) (*tx.Tx, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, ErrWalletNotLoaded
+	}
+
+	return wlt.MakeBondTx(sender, receiver, publicKey, amt, opts...)
+}
+
+func (wm *Manager) MakeUnbondTx(walletName, validator string, opts ...wallet.TxOption) (*tx.Tx, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, ErrWalletNotLoaded
+	}
+
+	return wlt.MakeUnbondTx(validator, opts...)
+}
+
+func (wm *Manager) MakeWithdrawTx(
+	walletName, sender, receiver string,
+	amt amount.Amount,
+	opts ...wallet.TxOption,
+) (*tx.Tx, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, ErrWalletNotLoaded
+	}
+
+	return wlt.MakeWithdrawTx(sender, receiver, amt, opts...)
+}
+
+func (wm *Manager) SignTransaction(walletName, password string, trx *tx.Tx) error {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return ErrWalletNotLoaded
+	}
+
+	return wlt.SignTransaction(password, trx)
+}
+
+func (wm *Manager) BroadcastTransaction(walletName string, trx *tx.Tx) (string, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return "", ErrWalletNotLoaded
+	}
+
+	return wlt.BroadcastTransaction(trx)
 }
 
 func (wm *Manager) UnloadWallet(

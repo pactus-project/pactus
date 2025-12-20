@@ -15,6 +15,7 @@ import (
 	"github.com/gotk3/gotk3/glib"
 	"github.com/gotk3/gotk3/gtk"
 	"github.com/pactus-project/pactus/cmd"
+	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/downloader"
@@ -29,6 +30,41 @@ func setMargin(widget gtk.IWidget, top, bottom, start, end int) {
 	widget.ToWidget().SetMarginBottom(bottom)
 	widget.ToWidget().SetMarginStart(start)
 	widget.ToWidget().SetMarginEnd(end)
+}
+
+// ---- Local shims for startup assistant only (boot flow) ----
+// The rest of cmd/gtk should call gtkutil directly.
+
+type Color = gtkutil.Color
+
+const (
+	ColorRed    = gtkutil.ColorRed
+	ColorGreen  = gtkutil.ColorGreen
+	ColorBlue   = gtkutil.ColorBlue
+	ColorYellow = gtkutil.ColorYellow
+	ColorOrange = gtkutil.ColorOrange
+	ColorPurple = gtkutil.ColorPurple
+	ColorGray   = gtkutil.ColorGray
+)
+
+func fatalErrorCheck(err error) { gtkutil.FatalErrorCheck(err) }
+
+func showErrorDialog(parent gtk.IWindow, msg string) { gtkutil.ShowErrorDialog(parent, msg) }
+
+func showInfoDialog(parent gtk.IWindow, msg string) { gtkutil.ShowInfoDialog(parent, msg) }
+
+func showError(err error) { gtkutil.ShowError(err) }
+
+func getTextViewContent(tv *gtk.TextView) string { return gtkutil.GetTextViewContent(tv) }
+
+func setTextViewContent(tv *gtk.TextView, content string) { gtkutil.SetTextViewContent(tv, content) }
+
+func getEntryText(entry *gtk.Entry) string { return gtkutil.GetEntryText(entry) }
+
+func comboBoxActiveValue(combo *gtk.ComboBox) int { return gtkutil.ComboBoxActiveValue(combo) }
+
+func setColoredText(label *gtk.Label, str string, color Color) {
+	gtkutil.SetColoredText(label, str, color)
 }
 
 //nolint:all  // complexity can't be reduced more. It needs to refactor.
