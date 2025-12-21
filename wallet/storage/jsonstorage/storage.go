@@ -17,7 +17,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/vault"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
@@ -74,24 +74,27 @@ func (s *Storage) Save() error {
 	return util.WriteFile(s.path, data)
 }
 
+func (s *Storage) WalletInfo() *types.WalletInfo {
+	return &types.WalletInfo{
+		Version:    s.store.Version,
+		Network:    s.store.Network.String(),
+		DefaultFee: s.store.DefaultFee,
+		UUID:       s.store.UUID.String(),
+		Encrypted:  s.IsEncrypted(),
+		CreatedAt:  s.store.CreatedAt,
+	}
+}
+
 func (s *Storage) Version() int {
 	return s.store.Version
-}
-
-func (s *Storage) CreatedAt() time.Time {
-	return s.store.CreatedAt
-}
-
-func (s *Storage) UUID() uuid.UUID {
-	return s.store.UUID
 }
 
 func (s *Storage) Network() genesis.ChainType {
 	return s.store.Network
 }
 
-func (s *Storage) CoinType() addresspath.CoinType {
-	return s.store.Vault.CoinType
+func (s *Storage) Path() string {
+	return s.path
 }
 
 func (s *Storage) IsEncrypted() bool {
@@ -126,7 +129,7 @@ func (s *Storage) HasAddress(addr string) bool {
 	return ok
 }
 
-func (s *Storage) AddressInfo(addr string) *storage.AddressInfo {
+func (s *Storage) AddressInfo(addr string) *types.AddressInfo {
 	info, ok := s.store.Addresses[addr]
 	if !ok {
 		return nil
@@ -156,18 +159,8 @@ func (s *Storage) SetAddressLabel(addr, label string) error {
 	return nil
 }
 
-func (s *Storage) AddressByPath(path string) *storage.AddressInfo {
-	for _, info := range s.store.Addresses {
-		if info.Path == path {
-			return &info
-		}
-	}
-
-	return nil
-}
-
-func (s *Storage) ListAddresses() []storage.AddressInfo {
-	infos := make([]storage.AddressInfo, 0, s.AddressCount())
+func (s *Storage) ListAddresses(opts ...types.ListAddressOption) []types.AddressInfo {
+	infos := make([]types.AddressInfo, 0, s.AddressCount())
 	for _, addrInfo := range s.store.Addresses {
 		infos = append(infos, addrInfo)
 	}
@@ -179,38 +172,8 @@ func (s *Storage) ListAddresses() []storage.AddressInfo {
 	return infos
 }
 
-func (s *Storage) ListValidatorAddresses() []storage.AddressInfo {
-	infos := make([]storage.AddressInfo, 0, s.AddressCount())
-	for _, addrInfo := range s.store.Addresses {
-		addrPath, _ := addresspath.FromString(addrInfo.Path)
-		if addrPath.AddressType() == crypto.AddressTypeValidator {
-			infos = append(infos, addrInfo)
-		}
-	}
-
-	s.sortAddressesByAddressIndex(infos...)
-	s.sortAddressesByPurpose(infos...)
-
-	return infos
-}
-
-func (s *Storage) ListAccountAddresses() []storage.AddressInfo {
-	addrs := make([]storage.AddressInfo, 0, s.AddressCount())
-	for _, addrInfo := range s.store.Addresses {
-		addrPath, _ := addresspath.FromString(addrInfo.Path)
-		if addrPath.AddressType() != crypto.AddressTypeValidator {
-			addrs = append(addrs, addrInfo)
-		}
-	}
-
-	s.sortAddressesByAddressIndex(addrs...)
-	s.sortAddressesByPurpose(addrs...)
-
-	return addrs
-}
-
-func (*Storage) sortAddressesByPurpose(addrs ...storage.AddressInfo) {
-	slices.SortStableFunc(addrs, func(a, b storage.AddressInfo) int {
+func (*Storage) sortAddressesByPurpose(addrs ...types.AddressInfo) {
+	slices.SortStableFunc(addrs, func(a, b types.AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
 
@@ -218,8 +181,8 @@ func (*Storage) sortAddressesByPurpose(addrs ...storage.AddressInfo) {
 	})
 }
 
-func (*Storage) sortAddressesByAddressType(addrs ...storage.AddressInfo) {
-	slices.SortStableFunc(addrs, func(a, b storage.AddressInfo) int {
+func (*Storage) sortAddressesByAddressType(addrs ...types.AddressInfo) {
+	slices.SortStableFunc(addrs, func(a, b types.AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
 
@@ -227,8 +190,8 @@ func (*Storage) sortAddressesByAddressType(addrs ...storage.AddressInfo) {
 	})
 }
 
-func (*Storage) sortAddressesByAddressIndex(addrs ...storage.AddressInfo) {
-	slices.SortStableFunc(addrs, func(a, b storage.AddressInfo) int {
+func (*Storage) sortAddressesByAddressIndex(addrs ...types.AddressInfo) {
+	slices.SortStableFunc(addrs, func(a, b types.AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
 
@@ -322,7 +285,7 @@ func (s *Storage) PrivateKeys(password string, addrs []string) ([]crypto.Private
 	return s.store.Vault.PrivateKeys(password, paths)
 }
 
-func (s *Storage) NewValidatorAddress(label string) (*storage.AddressInfo, error) {
+func (s *Storage) NewValidatorAddress(label string) (*types.AddressInfo, error) {
 	info, err := s.store.Vault.NewValidatorAddress(label)
 	if err != nil {
 		return nil, err
@@ -333,7 +296,7 @@ func (s *Storage) NewValidatorAddress(label string) (*storage.AddressInfo, error
 	return info, nil
 }
 
-func (s *Storage) NewBLSAccountAddress(label string) (*storage.AddressInfo, error) {
+func (s *Storage) NewBLSAccountAddress(label string) (*types.AddressInfo, error) {
 	info, err := s.store.Vault.NewBLSAccountAddress(label)
 	if err != nil {
 		return nil, err
@@ -344,7 +307,7 @@ func (s *Storage) NewBLSAccountAddress(label string) (*storage.AddressInfo, erro
 	return info, nil
 }
 
-func (s *Storage) NewEd25519AccountAddress(label, password string) (*storage.AddressInfo, error) {
+func (s *Storage) NewEd25519AccountAddress(label, password string) (*types.AddressInfo, error) {
 	info, err := s.store.Vault.NewEd25519AccountAddress(label, password)
 	if err != nil {
 		return nil, err
@@ -363,7 +326,7 @@ func (s *Storage) HasTransaction(id string) bool {
 	return s.store.History.hasTransaction(id)
 }
 
-func (s *Storage) GetAddrHistory(addr string) []storage.HistoryInfo {
+func (s *Storage) GetAddrHistory(addr string) []types.HistoryInfo {
 	return s.store.History.getAddrHistory(addr)
 }
 

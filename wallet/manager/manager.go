@@ -12,7 +12,7 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 )
 
 var _ IManager = (*Manager)(nil)
@@ -102,12 +102,9 @@ func (wm *Manager) LoadWallet(walletName, serverAddr string) error {
 	return nil
 }
 
-func (wm *Manager) NewAddress(
-	walletName string,
-	addressType crypto.AddressType,
-	label string,
-	opts ...wallet.NewAddressOption,
-) (*storage.AddressInfo, error) {
+func (wm *Manager) NewAddress(walletName string, addressType crypto.AddressType, label string,
+	opts ...types.NewAddressOption,
+) (*types.AddressInfo, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return nil, ErrWalletNotLoaded
@@ -132,24 +129,6 @@ func (wm *Manager) Mnemonic(walletName, password string) (string, error) {
 	}
 
 	return wlt.Mnemonic(password)
-}
-
-func (wm *Manager) ListAccountAddresses(walletName string) ([]storage.AddressInfo, error) {
-	wlt, ok := wm.wallets[walletName]
-	if !ok {
-		return nil, ErrWalletNotLoaded
-	}
-
-	return wlt.ListAccountAddresses(), nil
-}
-
-func (wm *Manager) ListValidatorAddresses(walletName string) ([]storage.AddressInfo, error) {
-	wlt, ok := wm.wallets[walletName]
-	if !ok {
-		return nil, ErrWalletNotLoaded
-	}
-
-	return wlt.ListValidatorAddresses(), nil
 }
 
 func (wm *Manager) AddressLabel(walletName, addr string) (string, error) {
@@ -321,13 +300,13 @@ func (wm *Manager) SignRawTransaction(
 func (wm *Manager) GetNewAddress(
 	walletName, label, password string,
 	addressType crypto.AddressType,
-) (*storage.AddressInfo, error) {
+) (*types.AddressInfo, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return nil, ErrWalletNotLoaded
 	}
 
-	info, err := wlt.NewAddress(addressType, label, wallet.WithPassword(password))
+	info, err := wlt.NewAddress(addressType, label, types.WithPassword(password))
 	if err != nil {
 		return nil, err
 	}
@@ -344,7 +323,7 @@ func (wm *Manager) SignMessage(walletName, password, addr, msg string) (string, 
 	return wlt.SignMessage(password, addr, msg)
 }
 
-func (wm *Manager) AddressInfo(walletName, address string) (*storage.AddressInfo, error) {
+func (wm *Manager) AddressInfo(walletName, address string) (*types.AddressInfo, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return nil, ErrWalletNotLoaded
@@ -353,7 +332,7 @@ func (wm *Manager) AddressInfo(walletName, address string) (*storage.AddressInfo
 	return wlt.AddressInfo(address), nil
 }
 
-func (wm *Manager) WalletInfo(walletName string) (*wallet.Info, error) {
+func (wm *Manager) WalletInfo(walletName string) (*types.WalletInfo, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return nil, ErrWalletNotLoaded
@@ -384,13 +363,13 @@ func (wm *Manager) ListWallets() ([]string, error) {
 	return wallets, nil
 }
 
-func (wm *Manager) ListAddresses(walletName string) ([]storage.AddressInfo, error) {
+func (wm *Manager) ListAddresses(walletName string, opts ...types.ListAddressOption) ([]types.AddressInfo, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return nil, ErrWalletNotLoaded
 	}
 
-	return wlt.ListAddresses(), nil
+	return wlt.ListAddresses(opts...), nil
 }
 
 func (wm *Manager) UpdatePassword(walletName, oldPassword, newPassword string) error {

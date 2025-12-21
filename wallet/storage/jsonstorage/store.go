@@ -8,20 +8,20 @@ import (
 	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/vault"
 )
 
 type Store struct {
-	Version    int                            `json:"version"`
-	UUID       uuid.UUID                      `json:"uuid"`
-	CreatedAt  time.Time                      `json:"created_at"`
-	Network    genesis.ChainType              `json:"network"`
-	VaultCRC   uint32                         `json:"crc"`
-	Vault      vault.Vault                    `json:"vault"`
-	DefaultFee amount.Amount                  `json:"default_fee"`
-	Addresses  map[string]storage.AddressInfo `json:"addresses"`
-	History    history                        `json:"history"`
+	Version    int                          `json:"version"`
+	UUID       uuid.UUID                    `json:"uuid"`
+	CreatedAt  time.Time                    `json:"created_at"`
+	Network    genesis.ChainType            `json:"network"`
+	VaultCRC   uint32                       `json:"crc"`
+	Vault      vault.Vault                  `json:"vault"`
+	DefaultFee amount.Amount                `json:"default_fee"`
+	Addresses  map[string]types.AddressInfo `json:"addresses"`
+	History    history                      `json:"history"`
 }
 
 func (s *Store) ValidateCRC() error {

@@ -10,7 +10,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet/addresspath"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/version"
 )
 
@@ -63,7 +63,7 @@ func (u *upgrader) Upgrade() error {
 
 		now := time.Now()
 		for addr, ai := range u.store.Vault.AddressesDeprecated {
-			u.store.Addresses[addr] = storage.AddressInfo{
+			u.store.Addresses[addr] = types.AddressInfo{
 				Address:   ai.Address,
 				PublicKey: ai.PublicKey,
 				Label:     ai.Label,

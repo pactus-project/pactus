@@ -12,13 +12,13 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 )
 
 type TxTransferModel interface {
-	WalletInfo() (wallet.Info, error)
-	ListAccountAddresses() []storage.AddressInfo
-	AddressInfo(addr string) *storage.AddressInfo
+	WalletInfo() (types.WalletInfo, error)
+	ListAddresses(opts ...types.ListAddressOption) []types.AddressInfo
+	AddressInfo(addr string) *types.AddressInfo
 	Balance(addr string) (amount.Amount, error)
 
 	MakeTransferTx(sender, receiver string, amt amount.Amount, opts ...wallet.TxOption) (*tx.Tx, error)
@@ -56,7 +56,7 @@ func (c *TxTransferDialogController) Run() {
 	}
 
 	// Fill sender accounts
-	for _, ai := range c.model.ListAccountAddresses() {
+	for _, ai := range c.model.ListAddresses(types.OnlyAccountAddresses()) {
 		c.view.SenderCombo.Append(ai.Address, ai.Address)
 	}
 	c.view.SenderCombo.SetActive(0)

@@ -11,7 +11,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/wallet"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 )
 
 type WalletModel struct {
@@ -60,13 +60,13 @@ func (model *WalletModel) IsEncrypted() bool {
 	return info.Encrypted
 }
 
-func (model *WalletModel) WalletInfo() (wallet.Info, error) {
+func (model *WalletModel) WalletInfo() (types.WalletInfo, error) {
 	info, err := model.Node.WalletManager().WalletInfo(model.WalletKey)
 	if err != nil {
-		return wallet.Info{}, err
+		return types.WalletInfo{}, err
 	}
 	if info == nil {
-		return wallet.Info{}, wltmgr.ErrWalletNotLoaded
+		return types.WalletInfo{}, wltmgr.ErrWalletNotLoaded
 	}
 
 	return *info, nil
@@ -80,7 +80,7 @@ func (model *WalletModel) TotalStake() (amount.Amount, error) {
 	return model.Node.WalletManager().TotalStake(model.WalletKey)
 }
 
-func (model *WalletModel) AddressInfo(addr string) *storage.AddressInfo {
+func (model *WalletModel) AddressInfo(addr string) *types.AddressInfo {
 	info, err := model.Node.WalletManager().AddressInfo(model.WalletKey, addr)
 	if err != nil {
 		return nil
@@ -89,17 +89,8 @@ func (model *WalletModel) AddressInfo(addr string) *storage.AddressInfo {
 	return info
 }
 
-func (model *WalletModel) ListAccountAddresses() []storage.AddressInfo {
-	infos, err := model.Node.WalletManager().ListAccountAddresses(model.WalletKey)
-	if err != nil {
-		return nil
-	}
-
-	return infos
-}
-
-func (model *WalletModel) ListValidatorAddresses() []storage.AddressInfo {
-	infos, err := model.Node.WalletManager().ListValidatorAddresses(model.WalletKey)
+func (model *WalletModel) ListAddresses(opts ...types.ListAddressOption) []types.AddressInfo {
+	infos, err := model.Node.WalletManager().ListAddresses(model.WalletKey, opts...)
 	if err != nil {
 		return nil
 	}
@@ -134,12 +125,12 @@ func (model *WalletModel) SetDefaultFee(fee amount.Amount) error {
 func (model *WalletModel) NewAddress(
 	addressType crypto.AddressType,
 	label string,
-	opts ...wallet.NewAddressOption,
-) (*storage.AddressInfo, error) {
+	opts ...types.NewAddressOption,
+) (*types.AddressInfo, error) {
 	return model.Node.WalletManager().NewAddress(model.WalletKey, addressType, label, opts...)
 }
 
-func (model *WalletModel) Label(addr string) string {
+func (model *WalletModel) AddressLabel(addr string) string {
 	label, err := model.Node.WalletManager().AddressLabel(model.WalletKey, addr)
 	if err != nil {
 		return ""
@@ -148,7 +139,7 @@ func (model *WalletModel) Label(addr string) string {
 	return label
 }
 
-func (model *WalletModel) SetLabel(addr, label string) error {
+func (model *WalletModel) SetAddressLabel(addr, label string) error {
 	return model.Node.WalletManager().SetAddressLabel(model.WalletKey, addr, label)
 }
 

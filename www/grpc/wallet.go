@@ -6,8 +6,8 @@ import (
 	"errors"
 
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/wallet"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
+	"github.com/pactus-project/pactus/wallet/types"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
@@ -23,7 +23,7 @@ func newWalletServer(server *Server, manager wltmgr.IManager) *walletServer {
 	}
 }
 
-func (*walletServer) mapHistoryInfo(his []wallet.HistoryInfo) []*pactus.HistoryInfo {
+func (*walletServer) mapHistoryInfo(his []types.HistoryInfo) []*pactus.HistoryInfo {
 	historyInfo := make([]*pactus.HistoryInfo, 0)
 	for _, info := range his {
 		historyInfo = append(historyInfo, &pactus.HistoryInfo{
@@ -185,7 +185,7 @@ func (s *walletServer) GetNewAddress(_ context.Context,
 		req.WalletName,
 		crypto.AddressType(req.AddressType),
 		req.Label,
-		wallet.WithPassword(req.Password),
+		types.WithPassword(req.Password),
 	)
 	if err != nil {
 		return nil, err
@@ -262,7 +262,7 @@ func (s *walletServer) GetWalletInfo(_ context.Context,
 	}
 
 	return &pactus.GetWalletInfoResponse{
-		WalletName: info.WalletName,
+		WalletName: req.WalletName,
 		Version:    int32(info.Version),
 		Network:    info.Network,
 		Encrypted:  info.Encrypted,

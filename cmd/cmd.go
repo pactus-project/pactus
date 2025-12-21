@@ -22,8 +22,7 @@ import (
 	"github.com/pactus-project/pactus/util/signal"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/addresspath"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 )
 
 const (
@@ -86,7 +85,7 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 		_, _ = wlt.NewAddress(crypto.AddressTypeValidator, fmt.Sprintf("Validator address %v", i+1))
 	}
 	rewardAddrInfo, _ := wlt.NewAddress(crypto.AddressTypeEd25519Account, "Reward address",
-		wallet.WithPassword(walletPassword))
+		types.WithPassword(walletPassword))
 
 	confPath := PactusConfigPath(workingDir)
 	genPath := PactusGenesisPath(workingDir)
@@ -155,7 +154,7 @@ func StartNode(workingDir string, passwordFetcher func() (string, bool),
 		return nil, err
 	}
 
-	valList := wlt.ListValidatorAddresses()
+	valList := wlt.ListAddresses(types.OnlyValidatorAddresses())
 	if len(valList) == 0 {
 		return nil, errors.New("no validator addresses found in the wallet")
 	}
@@ -199,8 +198,9 @@ func makeLocalGenesis(wlt wallet.Wallet) *genesis.Genesis {
 
 	genValNum := 4
 	vals := make([]*validator.Validator, genValNum)
+	addrs := wlt.ListAddresses(types.OnlyValidatorAddresses())
 	for i := 0; i < genValNum; i++ {
-		info := wlt.AddressInfo(wlt.ListValidatorAddresses()[i].Address)
+		info := wlt.AddressInfo(addrs[i].Address)
 		pub, _ := bls.PublicKeyFromString(info.PublicKey)
 		vals[i] = validator.NewValidator(pub, int32(i))
 	}
@@ -320,7 +320,7 @@ func RecoverConfig(confPath string, defConf *config.Config, chainType genesis.Ch
 // MakeRewardAddresses generates a list of reward addresses based on wallet and configuration.
 // If no reward addresses are provided in the config,
 // the function attempts to use Ed25519 or BLS addresses from the wallet.
-func MakeRewardAddresses(wlt *wallet.Wallet, valList []storage.AddressInfo,
+func MakeRewardAddresses(wlt *wallet.Wallet, valList []types.AddressInfo,
 	confRewardAddrs []string,
 ) ([]crypto.Address, error) {
 	rewardAddrs := make([]crypto.Address, 0, len(valList))
@@ -328,27 +328,19 @@ func MakeRewardAddresses(wlt *wallet.Wallet, valList []storage.AddressInfo,
 	switch {
 	// Case 1: No reward addresses in the config file.
 	case len(confRewardAddrs) == 0:
+		var addrInfo *types.AddressInfo
 		// Try to use the first Ed25519 address from the wallet as the reward address.
-		firstEd25519AddrPath := addresspath.NewPath(
-			addresspath.Harden(addresspath.PurposeBIP44),
-			addresspath.Harden(wlt.CoinType()),
-			addresspath.Harden(crypto.AddressTypeEd25519Account),
-			addresspath.Harden(0))
-
-		addrInfo := wlt.AddressByPath(firstEd25519AddrPath.String())
-		if addrInfo == nil {
+		ed25519Addrs := wlt.ListAddresses(types.WithAddressType(crypto.AddressTypeEd25519Account))
+		if len(ed25519Addrs) == 0 {
 			// If no Ed25519 address is found, try the first BLS address instead.
-			firstBLSAddrPath := addresspath.NewPath(
-				addresspath.Harden(addresspath.PurposeBLS12381),
-				addresspath.Harden(wlt.CoinType()),
-				addresspath.Harden(crypto.AddressTypeBLSAccount),
-				uint32(0))
-
-			addrInfo = wlt.AddressByPath(firstBLSAddrPath.String())
-
-			if addrInfo == nil {
+			blsAddrs := wlt.ListAddresses(types.WithAddressType(crypto.AddressTypeBLSAccount))
+			if len(blsAddrs) == 0 {
 				return nil, errors.New("unable to find a reward address in the wallet")
+			} else {
+				addrInfo = &blsAddrs[0]
 			}
+		} else {
+			addrInfo = &ed25519Addrs[0]
 		}
 
 		addr, _ := crypto.AddressFromString(addrInfo.Address)
@@ -379,7 +371,7 @@ func MakeRewardAddresses(wlt *wallet.Wallet, valList []storage.AddressInfo,
 	return rewardAddrs, nil
 }
 
-func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []storage.AddressInfo,
+func MakeValidatorKey(walletInstance *wallet.Wallet, valAddrsInfo []types.AddressInfo,
 	passwordFetcher func() (string, bool),
 ) ([]*bls.ValidatorKey, error) {
 	valAddrs := make([]string, len(valAddrsInfo))

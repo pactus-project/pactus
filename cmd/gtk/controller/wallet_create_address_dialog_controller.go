@@ -6,12 +6,11 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/crypto"
-	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 )
 
 type WalletCreateAddressModel interface {
-	NewAddress(addressType crypto.AddressType, label string, opts ...wallet.NewAddressOption) (*storage.AddressInfo, error)
+	NewAddress(addressType crypto.AddressType, label string, opts ...types.NewAddressOption) (*types.AddressInfo, error)
 }
 
 type WalletCreateAddressDialogController struct {
@@ -52,7 +51,7 @@ func (c *WalletCreateAddressDialogController) Run() {
 			_, err = c.model.NewAddress(
 				crypto.AddressTypeEd25519Account,
 				label,
-				wallet.WithPassword(password),
+				types.WithPassword(password),
 			)
 		case crypto.AddressTypeBLSAccount.String():
 			_, err = c.model.NewAddress(crypto.AddressTypeBLSAccount, label)

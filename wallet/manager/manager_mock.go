@@ -16,7 +16,7 @@ import (
 	amount "github.com/pactus-project/pactus/types/amount"
 	tx "github.com/pactus-project/pactus/types/tx"
 	wallet "github.com/pactus-project/pactus/wallet"
-	storage "github.com/pactus-project/pactus/wallet/storage"
+	types "github.com/pactus-project/pactus/wallet/types"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -45,10 +45,10 @@ func (m *MockIManager) EXPECT() *MockIManagerMockRecorder {
 }
 
 // AddressInfo mocks base method.
-func (m *MockIManager) AddressInfo(walletName, address string) (*storage.AddressInfo, error) {
+func (m *MockIManager) AddressInfo(walletName, address string) (*types.AddressInfo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddressInfo", walletName, address)
-	ret0, _ := ret[0].(*storage.AddressInfo)
+	ret0, _ := ret[0].(*types.AddressInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -134,49 +134,24 @@ func (mr *MockIManagerMockRecorder) GetValidatorAddress(publicKey any) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetValidatorAddress", reflect.TypeOf((*MockIManager)(nil).GetValidatorAddress), publicKey)
 }
 
-// ListAccountAddresses mocks base method.
-func (m *MockIManager) ListAccountAddresses(walletName string) ([]storage.AddressInfo, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListAccountAddresses", walletName)
-	ret0, _ := ret[0].([]storage.AddressInfo)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ListAccountAddresses indicates an expected call of ListAccountAddresses.
-func (mr *MockIManagerMockRecorder) ListAccountAddresses(walletName any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAccountAddresses", reflect.TypeOf((*MockIManager)(nil).ListAccountAddresses), walletName)
-}
-
 // ListAddresses mocks base method.
-func (m *MockIManager) ListAddresses(walletName string) ([]storage.AddressInfo, error) {
+func (m *MockIManager) ListAddresses(walletName string, opts ...types.ListAddressOption) ([]types.AddressInfo, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListAddresses", walletName)
-	ret0, _ := ret[0].([]storage.AddressInfo)
+	varargs := []any{walletName}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListAddresses", varargs...)
+	ret0, _ := ret[0].([]types.AddressInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ListAddresses indicates an expected call of ListAddresses.
-func (mr *MockIManagerMockRecorder) ListAddresses(walletName any) *gomock.Call {
+func (mr *MockIManagerMockRecorder) ListAddresses(walletName any, opts ...any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAddresses", reflect.TypeOf((*MockIManager)(nil).ListAddresses), walletName)
-}
-
-// ListValidatorAddresses mocks base method.
-func (m *MockIManager) ListValidatorAddresses(walletName string) ([]storage.AddressInfo, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ListValidatorAddresses", walletName)
-	ret0, _ := ret[0].([]storage.AddressInfo)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ListValidatorAddresses indicates an expected call of ListValidatorAddresses.
-func (mr *MockIManagerMockRecorder) ListValidatorAddresses(walletName any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListValidatorAddresses", reflect.TypeOf((*MockIManager)(nil).ListValidatorAddresses), walletName)
+	varargs := append([]any{walletName}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAddresses", reflect.TypeOf((*MockIManager)(nil).ListAddresses), varargs...)
 }
 
 // ListWallets mocks base method.
@@ -304,14 +279,14 @@ func (mr *MockIManagerMockRecorder) Mnemonic(walletName, password any) *gomock.C
 }
 
 // NewAddress mocks base method.
-func (m *MockIManager) NewAddress(walletName string, addressType crypto.AddressType, label string, opts ...wallet.NewAddressOption) (*storage.AddressInfo, error) {
+func (m *MockIManager) NewAddress(walletName string, addressType crypto.AddressType, label string, opts ...types.NewAddressOption) (*types.AddressInfo, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{walletName, addressType, label}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "NewAddress", varargs...)
-	ret0, _ := ret[0].(*storage.AddressInfo)
+	ret0, _ := ret[0].(*types.AddressInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -499,10 +474,10 @@ func (mr *MockIManagerMockRecorder) UpdatePassword(walletName, oldPassword, newP
 }
 
 // WalletInfo mocks base method.
-func (m *MockIManager) WalletInfo(walletName string) (*wallet.Info, error) {
+func (m *MockIManager) WalletInfo(walletName string) (*types.WalletInfo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "WalletInfo", walletName)
-	ret0, _ := ret[0].(*wallet.Info)
+	ret0, _ := ret[0].(*types.WalletInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

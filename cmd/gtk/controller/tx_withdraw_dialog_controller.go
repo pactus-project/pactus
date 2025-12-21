@@ -11,14 +11,13 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 )
 
 type TxWithdrawModel interface {
-	WalletInfo() (wallet.Info, error)
-	ListValidatorAddresses() []storage.AddressInfo
-	ListAccountAddresses() []storage.AddressInfo
-	AddressInfo(addr string) *storage.AddressInfo
+	WalletInfo() (types.WalletInfo, error)
+	ListAddresses(opts ...types.ListAddressOption) []types.AddressInfo
+	AddressInfo(addr string) *types.AddressInfo
 	Stake(addr string) (amount.Amount, error)
 
 	MakeWithdrawTx(sender, receiver string, amt amount.Amount, opts ...wallet.TxOption) (*tx.Tx, error)
@@ -65,12 +64,12 @@ func (c *TxWithdrawDialogController) applyDefaults() {
 }
 
 func (c *TxWithdrawDialogController) populateCombos() {
-	for _, ai := range c.model.ListValidatorAddresses() {
+	for _, ai := range c.model.ListAddresses(types.OnlyValidatorAddresses()) {
 		c.view.ValidatorCombo.Append(ai.Address, ai.Address)
 	}
 	c.view.ValidatorCombo.SetActive(0)
 
-	for _, ai := range c.model.ListAccountAddresses() {
+	for _, ai := range c.model.ListAddresses(types.OnlyAccountAddresses()) {
 		c.view.ReceiverCombo.Append(ai.Address, ai.Address)
 	}
 }

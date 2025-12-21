@@ -8,7 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
@@ -84,12 +84,12 @@ func (h *history) addPending(addr string, amt amount.Amount, txID hash.Hash, dat
 	h.Pendings[addr] = append(h.Pendings[addr], pnd)
 }
 
-func (h *history) getAddrHistory(addr string) []storage.HistoryInfo {
+func (h *history) getAddrHistory(addr string) []types.HistoryInfo {
 	addrActs := h.Activities[addr]
 	addrPnds := h.Pendings[addr]
-	history := make([]storage.HistoryInfo, 0, len(addrActs)+len(addrPnds))
+	history := make([]types.HistoryInfo, 0, len(addrActs)+len(addrPnds))
 	for _, pnd := range addrPnds {
-		history = append(history, storage.HistoryInfo{
+		history = append(history, types.HistoryInfo{
 			Amount: pnd.Amount,
 			TxID:   pnd.TxID,
 			Desc:   "Pending...",
@@ -100,7 +100,7 @@ func (h *history) getAddrHistory(addr string) []storage.HistoryInfo {
 	for _, act := range addrActs {
 		trx := h.Transactions[act.TxID]
 		tme := time.Unix(int64(trx.BlockTime), 0)
-		history = append(history, storage.HistoryInfo{
+		history = append(history, types.HistoryInfo{
 			Amount:      act.Amount,
 			TxID:        act.TxID,
 			Desc:        act.Desc,

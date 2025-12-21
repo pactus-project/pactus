@@ -5,7 +5,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 )
 
 // IManager defines the public API of the wallet manager.
@@ -18,7 +18,7 @@ type IManager interface {
 	UnloadWallet(walletName string) error
 	ListWallets() ([]string, error)
 	WalletPath(walletName string) string
-	WalletInfo(walletName string) (*wallet.Info, error)
+	WalletInfo(walletName string) (*types.WalletInfo, error)
 	UpdatePassword(walletName, oldPassword, newPassword string) error
 	TotalBalance(walletName string) (amount.Amount, error)
 	TotalStake(walletName string) (amount.Amount, error)
@@ -30,11 +30,9 @@ type IManager interface {
 	Mnemonic(walletName, password string) (string, error)
 
 	NewAddress(walletName string, addressType crypto.AddressType, label string,
-		opts ...wallet.NewAddressOption) (*storage.AddressInfo, error)
-	ListAddresses(walletName string) ([]storage.AddressInfo, error)
-	ListAccountAddresses(walletName string) ([]storage.AddressInfo, error)
-	ListValidatorAddresses(walletName string) ([]storage.AddressInfo, error)
-	AddressInfo(walletName, address string) (*storage.AddressInfo, error)
+		opts ...types.NewAddressOption) (*types.AddressInfo, error)
+	ListAddresses(walletName string, opts ...types.ListAddressOption) ([]types.AddressInfo, error)
+	AddressInfo(walletName, address string) (*types.AddressInfo, error)
 	AddressLabel(walletName, addr string) (string, error)
 	SetAddressLabel(walletName, addr, label string) error
 	Balance(walletName, addr string) (amount.Amount, error)

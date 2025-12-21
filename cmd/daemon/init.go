@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/spf13/cobra"
 )
 
@@ -117,7 +118,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 
 		terminal.PrintLine()
 		terminal.PrintInfoMsgBoldf("🏛️  Validator Addresses:")
-		for i, addrInfo := range wlt.ListValidatorAddresses() {
+		for i, addrInfo := range wlt.ListAddresses(types.OnlyValidatorAddresses()) {
 			terminal.PrintInfoMsgf("   %d. %s", i+1, addrInfo.Address)
 		}
 		terminal.PrintLine()

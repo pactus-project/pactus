@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/types"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -409,7 +410,7 @@ func TestNewAddress(t *testing.T) {
 	t.Run("Get new address successfully", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
 			NewAddress("test", "label", "password", crypto.AddressTypeBLSAccount).
-			Return(&storage.AddressInfoDeprecated{
+			Return(&types.AddressInfo{
 				Address:   "addr",
 				Label:     "label",
 				PublicKey: "pub",
@@ -458,7 +459,7 @@ func TestAddressInfo(t *testing.T) {
 	t.Run("Get address info successfully", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
 			AddressInfo("test", "addr").
-			Return(&storage.AddressInfoDeprecated{
+			Return(&types.AddressInfo{
 				Address:   "addr",
 				Label:     "label",
 				PublicKey: "pub",
@@ -574,8 +575,7 @@ func TestGetWalletInfo(t *testing.T) {
 		createdAt := time.Unix(123, 0).UTC()
 		td.mockWalletMgr.EXPECT().
 			WalletInfo("test").
-			Return(&wallet.Info{
-				WalletName: "test",
+			Return(&types.WalletInfo{
 				Version:    7,
 				Network:    "testnet",
 				Encrypted:  true,
@@ -619,7 +619,7 @@ func TestListAddress(t *testing.T) {
 	t.Run("List addresses successfully", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
 			ListAddresses("test").
-			Return([]storage.AddressInfoDeprecated{
+			Return([]types.AddressInfo{
 				{
 					Address:   "addr1",
 					Label:     "label1",

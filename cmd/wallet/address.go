@@ -9,8 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
-	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/spf13/cobra"
 )
 
@@ -83,7 +82,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 	label := newAddressCmd.Flags().String("label", "", "a label for the address")
 
 	newAddressCmd.Run = func(_ *cobra.Command, _ []string) {
-		var addressInfo *storage.AddressInfo
+		var addressInfo *types.AddressInfo
 		var err error
 
 		if *label == "" {
@@ -104,7 +103,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 				password = prompt.PromptPassword("Password", false)
 			}
 			addressInfo, err = wlt.NewAddress(crypto.AddressTypeEd25519Account, *label,
-				wallet.WithPassword(password))
+				types.WithPassword(password))
 		default:
 			err = fmt.Errorf("invalid address type '%s'", *addressType)
 		}

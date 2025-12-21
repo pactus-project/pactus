@@ -4,8 +4,6 @@ import (
 	"context"
 	_ "embed"
 	"encoding/json"
-	"path"
-	"time"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -19,6 +17,7 @@ import (
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/storage/jsonstorage"
+	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/vault"
 	"github.com/pactus-project/pactus/wallet/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -33,28 +32,9 @@ type ServerInfo struct {
 	Address string `json:"address"`
 }
 
-type HistoryInfo struct {
-	TxID        string
-	Time        *time.Time
-	PayloadType string
-	Desc        string
-	Amount      amount.Amount
-}
-
 type Wallet struct {
 	storage    storage.IStorage
-	path       string
 	grpcClient *grpcClient
-}
-
-type Info struct {
-	WalletName string
-	Version    int
-	Network    string
-	DefaultFee amount.Amount
-	UUID       string
-	Encrypted  bool
-	CreatedAt  time.Time
 }
 
 //go:embed servers.json
@@ -151,7 +131,6 @@ func newWallet(walletPath string, storage storage.IStorage, offline bool, option
 
 	wlt := &Wallet{
 		storage:    storage,
-		path:       walletPath,
 		grpcClient: client,
 	}
 
@@ -195,20 +174,12 @@ func newWallet(walletPath string, storage storage.IStorage, offline bool, option
 	return wlt, nil
 }
 
-func (w *Wallet) Name() string {
-	return path.Base(w.path)
-}
-
-func (w *Wallet) CoinType() addresspath.CoinType {
-	return w.storage.CoinType()
-}
-
 func (w *Wallet) IsOffline() bool {
 	return len(w.grpcClient.servers) == 0
 }
 
 func (w *Wallet) Path() string {
-	return w.path
+	return w.storage.Path()
 }
 
 func (w *Wallet) save() error {
@@ -267,7 +238,7 @@ func (w *Wallet) Stake(addrStr string) (amount.Amount, error) {
 // TotalBalance return the total available balance of the wallet.
 func (w *Wallet) TotalBalance() (amount.Amount, error) {
 	totalBalance := int64(0)
-	infos := w.storage.ListAccountAddresses()
+	infos := w.storage.ListAddresses(types.OnlyAccountAddresses())
 	for _, info := range infos {
 		acc, _ := w.grpcClient.getAccount(info.Address)
 		if acc != nil {
@@ -282,7 +253,7 @@ func (w *Wallet) TotalBalance() (amount.Amount, error) {
 func (w *Wallet) TotalStake() (amount.Amount, error) {
 	totalStake := int64(0)
 
-	infos := w.storage.ListValidatorAddresses()
+	infos := w.storage.ListAddresses(types.OnlyValidatorAddresses())
 	for _, info := range infos {
 		val, _ := w.grpcClient.getValidator(info.Address)
 		if val != nil {
@@ -431,29 +402,17 @@ func (w *Wallet) IsEncrypted() bool {
 	return w.storage.IsEncrypted()
 }
 
-func (w *Wallet) AddressInfo(addr string) *storage.AddressInfo {
+func (w *Wallet) AddressInfo(addr string) *types.AddressInfo {
 	return w.storage.AddressInfo(addr)
 }
 
-func (w *Wallet) ListAddresses() []storage.AddressInfo {
+func (w *Wallet) ListAddresses(opts ...types.ListAddressOption) []types.AddressInfo {
 	return w.storage.ListAddresses()
 }
 
 // AddressCount returns the number of addresses inside the wallet.
 func (w *Wallet) AddressCount() int {
 	return w.storage.AddressCount()
-}
-
-func (w *Wallet) ListValidatorAddresses() []storage.AddressInfo {
-	return w.storage.ListValidatorAddresses()
-}
-
-func (w *Wallet) ListAccountAddresses() []storage.AddressInfo {
-	return w.storage.ListAccountAddresses()
-}
-
-func (w *Wallet) AddressByPath(p string) *storage.AddressInfo {
-	return w.storage.AddressByPath(p)
 }
 
 func (w *Wallet) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) error {
@@ -487,28 +446,16 @@ func (w *Wallet) PrivateKeys(password string, addrs []string) ([]crypto.PrivateK
 	return w.storage.PrivateKeys(password, addrs)
 }
 
-type addressBuilder struct {
-	password string
-}
-
-type NewAddressOption func(*addressBuilder)
-
-func WithPassword(password string) NewAddressOption {
-	return func(opt *addressBuilder) {
-		opt.password = password
-	}
-}
-
 func (w *Wallet) NewAddress(addressType crypto.AddressType, label string,
-	opts ...NewAddressOption,
-) (*storage.AddressInfo, error) {
-	builder := &addressBuilder{}
+	opts ...types.NewAddressOption,
+) (*types.AddressInfo, error) {
+	options := &types.NewAddressOptions{}
 
 	for _, opt := range opts {
-		opt(builder)
+		opt(options)
 	}
 
-	var info *storage.AddressInfo
+	var info *types.AddressInfo
 	var err error
 	switch addressType {
 	case crypto.AddressTypeValidator:
@@ -516,7 +463,7 @@ func (w *Wallet) NewAddress(addressType crypto.AddressType, label string,
 	case crypto.AddressTypeBLSAccount:
 		info, err = w.storage.NewBLSAccountAddress(label)
 	case crypto.AddressTypeEd25519Account:
-		info, err = w.storage.NewEd25519AccountAddress(label, builder.password)
+		info, err = w.storage.NewEd25519AccountAddress(label, options.Password)
 	case crypto.AddressTypeTreasury:
 		return nil, jsonstorage.ErrInvalidAddressType
 
@@ -538,20 +485,20 @@ func (w *Wallet) NewAddress(addressType crypto.AddressType, label string,
 
 // NewBLSAccountAddress create a new BLS-based account address and
 // associates it with the given label.
-func (w *Wallet) NewBLSAccountAddress(label string) (*storage.AddressInfo, error) {
+func (w *Wallet) NewBLSAccountAddress(label string) (*types.AddressInfo, error) {
 	return w.NewAddress(crypto.AddressTypeBLSAccount, label)
 }
 
 // NewEd25519AccountAddress create a new Ed25519-based account address and
 // associates it with the given label.
 // The password is required to access the master private key needed for address generation.
-func (w *Wallet) NewEd25519AccountAddress(label, password string) (*storage.AddressInfo, error) {
-	return w.NewAddress(crypto.AddressTypeEd25519Account, label, WithPassword(password))
+func (w *Wallet) NewEd25519AccountAddress(label, password string) (*types.AddressInfo, error) {
+	return w.NewAddress(crypto.AddressTypeEd25519Account, label, types.WithPassword(password))
 }
 
 // NewValidatorAddress creates a new BLS validator address and
 // associates it with the given label.
-func (w *Wallet) NewValidatorAddress(label string) (*storage.AddressInfo, error) {
+func (w *Wallet) NewValidatorAddress(label string) (*types.AddressInfo, error) {
 	return w.NewAddress(crypto.AddressTypeValidator, label)
 }
 
@@ -625,7 +572,7 @@ func (w *Wallet) AddTransaction(txID tx.ID) error {
 	return w.save()
 }
 
-func (w *Wallet) History(addr string) []storage.HistoryInfo {
+func (w *Wallet) History(addr string) []types.HistoryInfo {
 	return w.storage.GetAddrHistory(addr)
 }
 
@@ -642,24 +589,8 @@ func (w *Wallet) Version() int {
 	return w.storage.Version()
 }
 
-func (w *Wallet) CreationTime() time.Time {
-	return w.storage.CreatedAt()
-}
-
-func (w *Wallet) Network() genesis.ChainType {
-	return w.storage.Network()
-}
-
-func (w *Wallet) Info() *Info {
-	return &Info{
-		WalletName: w.Name(),
-		Version:    w.storage.Version(),
-		Network:    w.storage.Network().String(),
-		DefaultFee: w.storage.DefaultFee(),
-		UUID:       w.storage.UUID().String(),
-		Encrypted:  w.IsEncrypted(),
-		CreatedAt:  w.storage.CreatedAt(),
-	}
+func (w *Wallet) Info() *types.WalletInfo {
+	return w.storage.WalletInfo()
 }
 
 // Neuter clones the wallet and neuters it and saves it at the given path.

@@ -10,12 +10,12 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 )
 
 type TxUnbondModel interface {
-	ListValidatorAddresses() []storage.AddressInfo
-	AddressInfo(addr string) *storage.AddressInfo
+	ListAddresses(opts ...types.ListAddressOption) []types.AddressInfo
+	AddressInfo(addr string) *types.AddressInfo
 	Stake(addr string) (amount.Amount, error)
 
 	MakeUnbondTx(validator string, opts ...wallet.TxOption) (*tx.Tx, error)
@@ -38,7 +38,7 @@ func NewTxUnbondDialogController(
 }
 
 func (c *TxUnbondDialogController) Run() {
-	for _, ai := range c.model.ListValidatorAddresses() {
+	for _, ai := range c.model.ListAddresses(types.OnlyValidatorAddresses()) {
 		c.view.ValidatorCombo.Append(ai.Address, ai.Address)
 	}
 

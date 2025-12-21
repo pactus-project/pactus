@@ -12,14 +12,13 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
 )
 
 type TxBondModel interface {
-	WalletInfo() (wallet.Info, error)
-	ListAccountAddresses() []storage.AddressInfo
-	ListValidatorAddresses() []storage.AddressInfo
-	AddressInfo(addr string) *storage.AddressInfo
+	WalletInfo() (types.WalletInfo, error)
+	ListAddresses(opts ...types.ListAddressOption) []types.AddressInfo
+	AddressInfo(addr string) *types.AddressInfo
 	Balance(addr string) (amount.Amount, error)
 	Stake(addr string) (amount.Amount, error)
 
@@ -56,10 +55,10 @@ func (c *TxBondDialogController) Run() {
 		c.view.FeeEntry.SetText(fmt.Sprintf("%g", info.DefaultFee.ToPAC()))
 	}
 
-	for _, ai := range c.model.ListAccountAddresses() {
+	for _, ai := range c.model.ListAddresses(types.OnlyAccountAddresses()) {
 		c.view.SenderCombo.Append(ai.Address, ai.Address)
 	}
-	for _, vi := range c.model.ListValidatorAddresses() {
+	for _, vi := range c.model.ListAddresses(types.OnlyValidatorAddresses()) {
 		c.view.ReceiverCombo.Append(vi.Address, vi.Address)
 	}
 	c.view.SenderCombo.SetActive(0)

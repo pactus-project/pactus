@@ -13,14 +13,14 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/types"
 )
 
 type WalletWidgetModel interface {
 	WalletName() string
 	WalletPath() string
 	IsEncrypted() bool
-	WalletInfo() (wallet.Info, error)
+	WalletInfo() (types.WalletInfo, error)
 	TotalBalance() (amount.Amount, error)
 	TotalStake() (amount.Amount, error)
 	AddressRows() []model.AddressRow
