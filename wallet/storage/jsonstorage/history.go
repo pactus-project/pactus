@@ -1,4 +1,4 @@
-package wallet
+package jsonstorage
 
 import (
 	"encoding/hex"
@@ -8,16 +8,9 @@ import (
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/wallet/storage"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
-
-type HistoryInfo struct {
-	TxID        string
-	Time        *time.Time
-	PayloadType string
-	Desc        string
-	Amount      amount.Amount
-}
 
 type transaction struct {
 	BlockHeight uint32 `json:"height"`
@@ -91,12 +84,12 @@ func (h *history) addPending(addr string, amt amount.Amount, txID hash.Hash, dat
 	h.Pendings[addr] = append(h.Pendings[addr], pnd)
 }
 
-func (h *history) getAddrHistory(addr string) []HistoryInfo {
+func (h *history) getAddrHistory(addr string) []storage.HistoryInfo {
 	addrActs := h.Activities[addr]
 	addrPnds := h.Pendings[addr]
-	history := make([]HistoryInfo, 0, len(addrActs)+len(addrPnds))
+	history := make([]storage.HistoryInfo, 0, len(addrActs)+len(addrPnds))
 	for _, pnd := range addrPnds {
-		history = append(history, HistoryInfo{
+		history = append(history, storage.HistoryInfo{
 			Amount: pnd.Amount,
 			TxID:   pnd.TxID,
 			Desc:   "Pending...",
@@ -107,7 +100,7 @@ func (h *history) getAddrHistory(addr string) []HistoryInfo {
 	for _, act := range addrActs {
 		trx := h.Transactions[act.TxID]
 		tme := time.Unix(int64(trx.BlockTime), 0)
-		history = append(history, HistoryInfo{
+		history = append(history, storage.HistoryInfo{
 			Amount:      act.Amount,
 			TxID:        act.TxID,
 			Desc:        act.Desc,

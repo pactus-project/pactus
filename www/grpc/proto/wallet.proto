@@ -46,14 +46,14 @@ service Wallet {
   // SetAddressLabel sets or updates the label for a given address.
   rpc SetAddressLabel(SetAddressLabelRequest) returns (SetAddressLabelResponse);
 
-  // ListWallet returns a list of all available wallets.
-  rpc ListWallet(ListWalletRequest) returns (ListWalletResponse);
+  // ListWallets returns a list of all available wallets.
+  rpc ListWallets(ListWalletsRequest) returns (ListWalletsResponse);
 
   // GetWalletInfo returns detailed information about a specific wallet.
   rpc GetWalletInfo(GetWalletInfoRequest) returns (GetWalletInfoResponse);
 
-  // ListAddress returns all addresses in the specified wallet.
-  rpc ListAddress(ListAddressRequest) returns (ListAddressResponse);
+  // ListAddresses returns all addresses in the specified wallet.
+  rpc ListAddresses(ListAddressesRequest) returns (ListAddressesResponse);
 }
 
 // AddressType defines different types of blockchain addresses.
@@ -307,10 +307,10 @@ message SetAddressLabelResponse {
 }
 
 // Request message for listing all wallets.
-message ListWalletRequest {}
+message ListWalletsRequest {}
 
 // Response message contains wallet names.
-message ListWalletResponse {
+message ListWalletsResponse {
   // Array of wallet names.
   repeated string wallets = 1;
 }
@@ -340,13 +340,13 @@ message GetWalletInfoResponse {
 }
 
 // Request message for listing wallet addresses.
-message ListAddressRequest {
+message ListAddressesRequest {
   // The name of the queried wallet.
   string wallet_name = 1;
 }
 
 // Response message contains wallet addresses.
-message ListAddressResponse {
+message ListAddressesResponse {
   // The name of the queried wallet.
   string wallet_name = 1;
   // List of all addresses in the wallet with their details.

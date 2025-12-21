@@ -418,35 +418,35 @@ public final class WalletGrpc {
     return getSetAddressLabelMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.ListWalletRequest,
-      pactus.WalletOuterClass.ListWalletResponse> getListWalletMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.ListWalletsRequest,
+      pactus.WalletOuterClass.ListWalletsResponse> getListWalletsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "ListWallet",
-      requestType = pactus.WalletOuterClass.ListWalletRequest.class,
-      responseType = pactus.WalletOuterClass.ListWalletResponse.class,
+      fullMethodName = SERVICE_NAME + '/' + "ListWallets",
+      requestType = pactus.WalletOuterClass.ListWalletsRequest.class,
+      responseType = pactus.WalletOuterClass.ListWalletsResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.WalletOuterClass.ListWalletRequest,
-      pactus.WalletOuterClass.ListWalletResponse> getListWalletMethod() {
-    io.grpc.MethodDescriptor<pactus.WalletOuterClass.ListWalletRequest, pactus.WalletOuterClass.ListWalletResponse> getListWalletMethod;
-    if ((getListWalletMethod = WalletGrpc.getListWalletMethod) == null) {
+  public static io.grpc.MethodDescriptor<pactus.WalletOuterClass.ListWalletsRequest,
+      pactus.WalletOuterClass.ListWalletsResponse> getListWalletsMethod() {
+    io.grpc.MethodDescriptor<pactus.WalletOuterClass.ListWalletsRequest, pactus.WalletOuterClass.ListWalletsResponse> getListWalletsMethod;
+    if ((getListWalletsMethod = WalletGrpc.getListWalletsMethod) == null) {
       synchronized (WalletGrpc.class) {
-        if ((getListWalletMethod = WalletGrpc.getListWalletMethod) == null) {
-          WalletGrpc.getListWalletMethod = getListWalletMethod =
-              io.grpc.MethodDescriptor.<pactus.WalletOuterClass.ListWalletRequest, pactus.WalletOuterClass.ListWalletResponse>newBuilder()
+        if ((getListWalletsMethod = WalletGrpc.getListWalletsMethod) == null) {
+          WalletGrpc.getListWalletsMethod = getListWalletsMethod =
+              io.grpc.MethodDescriptor.<pactus.WalletOuterClass.ListWalletsRequest, pactus.WalletOuterClass.ListWalletsResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ListWallet"))
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ListWallets"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.WalletOuterClass.ListWalletRequest.getDefaultInstance()))
+                  pactus.WalletOuterClass.ListWalletsRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.WalletOuterClass.ListWalletResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("ListWallet"))
+                  pactus.WalletOuterClass.ListWalletsResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("ListWallets"))
               .build();
         }
       }
     }
-    return getListWalletMethod;
+    return getListWalletsMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.GetWalletInfoRequest,
@@ -480,35 +480,35 @@ public final class WalletGrpc {
     return getGetWalletInfoMethod;
   }
 
-  private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.ListAddressRequest,
-      pactus.WalletOuterClass.ListAddressResponse> getListAddressMethod;
+  private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.ListAddressesRequest,
+      pactus.WalletOuterClass.ListAddressesResponse> getListAddressesMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "ListAddress",
-      requestType = pactus.WalletOuterClass.ListAddressRequest.class,
-      responseType = pactus.WalletOuterClass.ListAddressResponse.class,
+      fullMethodName = SERVICE_NAME + '/' + "ListAddresses",
+      requestType = pactus.WalletOuterClass.ListAddressesRequest.class,
+      responseType = pactus.WalletOuterClass.ListAddressesResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<pactus.WalletOuterClass.ListAddressRequest,
-      pactus.WalletOuterClass.ListAddressResponse> getListAddressMethod() {
-    io.grpc.MethodDescriptor<pactus.WalletOuterClass.ListAddressRequest, pactus.WalletOuterClass.ListAddressResponse> getListAddressMethod;
-    if ((getListAddressMethod = WalletGrpc.getListAddressMethod) == null) {
+  public static io.grpc.MethodDescriptor<pactus.WalletOuterClass.ListAddressesRequest,
+      pactus.WalletOuterClass.ListAddressesResponse> getListAddressesMethod() {
+    io.grpc.MethodDescriptor<pactus.WalletOuterClass.ListAddressesRequest, pactus.WalletOuterClass.ListAddressesResponse> getListAddressesMethod;
+    if ((getListAddressesMethod = WalletGrpc.getListAddressesMethod) == null) {
       synchronized (WalletGrpc.class) {
-        if ((getListAddressMethod = WalletGrpc.getListAddressMethod) == null) {
-          WalletGrpc.getListAddressMethod = getListAddressMethod =
-              io.grpc.MethodDescriptor.<pactus.WalletOuterClass.ListAddressRequest, pactus.WalletOuterClass.ListAddressResponse>newBuilder()
+        if ((getListAddressesMethod = WalletGrpc.getListAddressesMethod) == null) {
+          WalletGrpc.getListAddressesMethod = getListAddressesMethod =
+              io.grpc.MethodDescriptor.<pactus.WalletOuterClass.ListAddressesRequest, pactus.WalletOuterClass.ListAddressesResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ListAddress"))
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ListAddresses"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.WalletOuterClass.ListAddressRequest.getDefaultInstance()))
+                  pactus.WalletOuterClass.ListAddressesRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  pactus.WalletOuterClass.ListAddressResponse.getDefaultInstance()))
-              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("ListAddress"))
+                  pactus.WalletOuterClass.ListAddressesResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("ListAddresses"))
               .build();
         }
       }
     }
-    return getListAddressMethod;
+    return getListAddressesMethod;
   }
 
   /**
@@ -710,12 +710,12 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListWallet returns a list of all available wallets.
+     * ListWallets returns a list of all available wallets.
      * </pre>
      */
-    default void listWallet(pactus.WalletOuterClass.ListWalletRequest request,
-        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListWalletResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListWalletMethod(), responseObserver);
+    default void listWallets(pactus.WalletOuterClass.ListWalletsRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListWalletsResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListWalletsMethod(), responseObserver);
     }
 
     /**
@@ -730,12 +730,12 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListAddress returns all addresses in the specified wallet.
+     * ListAddresses returns all addresses in the specified wallet.
      * </pre>
      */
-    default void listAddress(pactus.WalletOuterClass.ListAddressRequest request,
-        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListAddressResponse> responseObserver) {
-      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListAddressMethod(), responseObserver);
+    default void listAddresses(pactus.WalletOuterClass.ListAddressesRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListAddressesResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListAddressesMethod(), responseObserver);
     }
   }
 
@@ -918,13 +918,13 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListWallet returns a list of all available wallets.
+     * ListWallets returns a list of all available wallets.
      * </pre>
      */
-    public void listWallet(pactus.WalletOuterClass.ListWalletRequest request,
-        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListWalletResponse> responseObserver) {
+    public void listWallets(pactus.WalletOuterClass.ListWalletsRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListWalletsResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getListWalletMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getListWalletsMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
@@ -940,13 +940,13 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListAddress returns all addresses in the specified wallet.
+     * ListAddresses returns all addresses in the specified wallet.
      * </pre>
      */
-    public void listAddress(pactus.WalletOuterClass.ListAddressRequest request,
-        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListAddressResponse> responseObserver) {
+    public void listAddresses(pactus.WalletOuterClass.ListAddressesRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListAddressesResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getListAddressMethod(), getCallOptions()), request, responseObserver);
+          getChannel().newCall(getListAddressesMethod(), getCallOptions()), request, responseObserver);
     }
   }
 
@@ -1102,12 +1102,12 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListWallet returns a list of all available wallets.
+     * ListWallets returns a list of all available wallets.
      * </pre>
      */
-    public pactus.WalletOuterClass.ListWalletResponse listWallet(pactus.WalletOuterClass.ListWalletRequest request) throws io.grpc.StatusException {
+    public pactus.WalletOuterClass.ListWalletsResponse listWallets(pactus.WalletOuterClass.ListWalletsRequest request) throws io.grpc.StatusException {
       return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
-          getChannel(), getListWalletMethod(), getCallOptions(), request);
+          getChannel(), getListWalletsMethod(), getCallOptions(), request);
     }
 
     /**
@@ -1122,12 +1122,12 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListAddress returns all addresses in the specified wallet.
+     * ListAddresses returns all addresses in the specified wallet.
      * </pre>
      */
-    public pactus.WalletOuterClass.ListAddressResponse listAddress(pactus.WalletOuterClass.ListAddressRequest request) throws io.grpc.StatusException {
+    public pactus.WalletOuterClass.ListAddressesResponse listAddresses(pactus.WalletOuterClass.ListAddressesRequest request) throws io.grpc.StatusException {
       return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
-          getChannel(), getListAddressMethod(), getCallOptions(), request);
+          getChannel(), getListAddressesMethod(), getCallOptions(), request);
     }
   }
 
@@ -1283,12 +1283,12 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListWallet returns a list of all available wallets.
+     * ListWallets returns a list of all available wallets.
      * </pre>
      */
-    public pactus.WalletOuterClass.ListWalletResponse listWallet(pactus.WalletOuterClass.ListWalletRequest request) {
+    public pactus.WalletOuterClass.ListWalletsResponse listWallets(pactus.WalletOuterClass.ListWalletsRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getListWalletMethod(), getCallOptions(), request);
+          getChannel(), getListWalletsMethod(), getCallOptions(), request);
     }
 
     /**
@@ -1303,12 +1303,12 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListAddress returns all addresses in the specified wallet.
+     * ListAddresses returns all addresses in the specified wallet.
      * </pre>
      */
-    public pactus.WalletOuterClass.ListAddressResponse listAddress(pactus.WalletOuterClass.ListAddressRequest request) {
+    public pactus.WalletOuterClass.ListAddressesResponse listAddresses(pactus.WalletOuterClass.ListAddressesRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getListAddressMethod(), getCallOptions(), request);
+          getChannel(), getListAddressesMethod(), getCallOptions(), request);
     }
   }
 
@@ -1477,13 +1477,13 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListWallet returns a list of all available wallets.
+     * ListWallets returns a list of all available wallets.
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.ListWalletResponse> listWallet(
-        pactus.WalletOuterClass.ListWalletRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.ListWalletsResponse> listWallets(
+        pactus.WalletOuterClass.ListWalletsRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getListWalletMethod(), getCallOptions()), request);
+          getChannel().newCall(getListWalletsMethod(), getCallOptions()), request);
     }
 
     /**
@@ -1499,13 +1499,13 @@ public final class WalletGrpc {
 
     /**
      * <pre>
-     * ListAddress returns all addresses in the specified wallet.
+     * ListAddresses returns all addresses in the specified wallet.
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.ListAddressResponse> listAddress(
-        pactus.WalletOuterClass.ListAddressRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.ListAddressesResponse> listAddresses(
+        pactus.WalletOuterClass.ListAddressesRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getListAddressMethod(), getCallOptions()), request);
+          getChannel().newCall(getListAddressesMethod(), getCallOptions()), request);
     }
   }
 
@@ -1522,9 +1522,9 @@ public final class WalletGrpc {
   private static final int METHODID_GET_TOTAL_STAKE = 10;
   private static final int METHODID_GET_ADDRESS_INFO = 11;
   private static final int METHODID_SET_ADDRESS_LABEL = 12;
-  private static final int METHODID_LIST_WALLET = 13;
+  private static final int METHODID_LIST_WALLETS = 13;
   private static final int METHODID_GET_WALLET_INFO = 14;
-  private static final int METHODID_LIST_ADDRESS = 15;
+  private static final int METHODID_LIST_ADDRESSES = 15;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1595,17 +1595,17 @@ public final class WalletGrpc {
           serviceImpl.setAddressLabel((pactus.WalletOuterClass.SetAddressLabelRequest) request,
               (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.SetAddressLabelResponse>) responseObserver);
           break;
-        case METHODID_LIST_WALLET:
-          serviceImpl.listWallet((pactus.WalletOuterClass.ListWalletRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListWalletResponse>) responseObserver);
+        case METHODID_LIST_WALLETS:
+          serviceImpl.listWallets((pactus.WalletOuterClass.ListWalletsRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListWalletsResponse>) responseObserver);
           break;
         case METHODID_GET_WALLET_INFO:
           serviceImpl.getWalletInfo((pactus.WalletOuterClass.GetWalletInfoRequest) request,
               (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.GetWalletInfoResponse>) responseObserver);
           break;
-        case METHODID_LIST_ADDRESS:
-          serviceImpl.listAddress((pactus.WalletOuterClass.ListAddressRequest) request,
-              (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListAddressResponse>) responseObserver);
+        case METHODID_LIST_ADDRESSES:
+          serviceImpl.listAddresses((pactus.WalletOuterClass.ListAddressesRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListAddressesResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1717,12 +1717,12 @@ public final class WalletGrpc {
               pactus.WalletOuterClass.SetAddressLabelResponse>(
                 service, METHODID_SET_ADDRESS_LABEL)))
         .addMethod(
-          getListWalletMethod(),
+          getListWalletsMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              pactus.WalletOuterClass.ListWalletRequest,
-              pactus.WalletOuterClass.ListWalletResponse>(
-                service, METHODID_LIST_WALLET)))
+              pactus.WalletOuterClass.ListWalletsRequest,
+              pactus.WalletOuterClass.ListWalletsResponse>(
+                service, METHODID_LIST_WALLETS)))
         .addMethod(
           getGetWalletInfoMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -1731,12 +1731,12 @@ public final class WalletGrpc {
               pactus.WalletOuterClass.GetWalletInfoResponse>(
                 service, METHODID_GET_WALLET_INFO)))
         .addMethod(
-          getListAddressMethod(),
+          getListAddressesMethod(),
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
-              pactus.WalletOuterClass.ListAddressRequest,
-              pactus.WalletOuterClass.ListAddressResponse>(
-                service, METHODID_LIST_ADDRESS)))
+              pactus.WalletOuterClass.ListAddressesRequest,
+              pactus.WalletOuterClass.ListAddressesResponse>(
+                service, METHODID_LIST_ADDRESSES)))
         .build();
   }
 
@@ -1798,9 +1798,9 @@ public final class WalletGrpc {
               .addMethod(getGetTotalStakeMethod())
               .addMethod(getGetAddressInfoMethod())
               .addMethod(getSetAddressLabelMethod())
-              .addMethod(getListWalletMethod())
+              .addMethod(getListWalletsMethod())
               .addMethod(getGetWalletInfoMethod())
-              .addMethod(getListAddressMethod())
+              .addMethod(getListAddressesMethod())
               .build();
         }
       }

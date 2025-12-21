@@ -476,7 +476,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 			}
 
 			nodeInfo += "\n🏛️ Validator Addresses:\n"
-			for i, info := range nodeWallet.AllValidatorAddresses() {
+			for i, info := range nodeWallet.ListValidatorAddresses() {
 				nodeInfo += fmt.Sprintf("%v- %s\n", i+1, info.Address)
 			}
 

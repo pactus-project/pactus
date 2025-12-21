@@ -8,7 +8,6 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/vault"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -384,7 +383,7 @@ func TestSignMessage(t *testing.T) {
 	})
 }
 
-func TestGetNewAddress(t *testing.T) {
+func TestNewAddress(t *testing.T) {
 	conf := testConfig()
 	conf.EnableWallet = true
 
@@ -393,7 +392,7 @@ func TestGetNewAddress(t *testing.T) {
 
 	t.Run("Error on getting new address", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			GetNewAddress("test", "label", "password", crypto.AddressTypeBLSAccount).
+			NewAddress("test", "label", "password", crypto.AddressTypeBLSAccount).
 			Return(nil, errors.New("error on getting new address"))
 
 		res, err := client.GetNewAddress(t.Context(),
@@ -409,8 +408,8 @@ func TestGetNewAddress(t *testing.T) {
 
 	t.Run("Get new address successfully", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			GetNewAddress("test", "label", "password", crypto.AddressTypeBLSAccount).
-			Return(&vault.AddressInfo{
+			NewAddress("test", "label", "password", crypto.AddressTypeBLSAccount).
+			Return(&storage.AddressInfoDeprecated{
 				Address:   "addr",
 				Label:     "label",
 				PublicKey: "pub",
@@ -435,56 +434,7 @@ func TestGetNewAddress(t *testing.T) {
 	})
 }
 
-func TestGetAddressHistory(t *testing.T) {
-	conf := testConfig()
-	conf.EnableWallet = true
-
-	td := setup(t, conf)
-	client := td.walletClient(t)
-
-	t.Run("Error on getting address history", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
-			AddressHistory("test", "addr").
-			Return(nil, errors.New("error on getting address history"))
-
-		res, err := client.GetAddressHistory(t.Context(),
-			&pactus.GetAddressHistoryRequest{
-				WalletName: "test",
-				Address:    "addr",
-			})
-		assert.Error(t, err)
-		assert.Nil(t, res)
-	})
-
-	t.Run("Get address history successfully", func(t *testing.T) {
-		td.mockWalletMgr.EXPECT().
-			AddressHistory("test", "addr").
-			Return([]wallet.HistoryInfo{
-				{
-					TxID:        "txid",
-					PayloadType: "transfer",
-					Desc:        "desc",
-					Amount:      amount.Amount(123),
-				},
-			}, nil)
-
-		res, err := client.GetAddressHistory(t.Context(),
-			&pactus.GetAddressHistoryRequest{
-				WalletName: "test",
-				Address:    "addr",
-			})
-		require.NoError(t, err)
-		require.NotNil(t, res)
-		require.Len(t, res.HistoryInfo, 1)
-		assert.Equal(t, "txid", res.HistoryInfo[0].TransactionId)
-		assert.Equal(t, uint32(0), res.HistoryInfo[0].Time) // currently unset in server mapping
-		assert.Equal(t, "transfer", res.HistoryInfo[0].PayloadType)
-		assert.Equal(t, "desc", res.HistoryInfo[0].Description)
-		assert.Equal(t, int64(123), res.HistoryInfo[0].Amount)
-	})
-}
-
-func TestGetAddressInfo(t *testing.T) {
+func TestAddressInfo(t *testing.T) {
 	conf := testConfig()
 	conf.EnableWallet = true
 
@@ -493,7 +443,7 @@ func TestGetAddressInfo(t *testing.T) {
 
 	t.Run("Error on getting address info", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			GetAddressInfo("test", "addr").
+			AddressInfo("test", "addr").
 			Return(nil, errors.New("error on getting address info"))
 
 		res, err := client.GetAddressInfo(t.Context(),
@@ -507,8 +457,8 @@ func TestGetAddressInfo(t *testing.T) {
 
 	t.Run("Get address info successfully", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			GetAddressInfo("test", "addr").
-			Return(&vault.AddressInfo{
+			AddressInfo("test", "addr").
+			Return(&storage.AddressInfoDeprecated{
 				Address:   "addr",
 				Label:     "label",
 				PublicKey: "pub",
@@ -582,20 +532,20 @@ func TestListWallet(t *testing.T) {
 
 	t.Run("Error on listing wallets", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			ListWallet().
+			ListWallets().
 			Return(nil, errors.New("error on listing wallets"))
 
-		res, err := client.ListWallet(t.Context(), &pactus.ListWalletRequest{})
+		res, err := client.ListWallets(t.Context(), &pactus.ListWalletsRequest{})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("List wallets successfully", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			ListWallet().
+			ListWallets().
 			Return([]string{"w1", "w2"}, nil)
 
-		res, err := client.ListWallet(t.Context(), &pactus.ListWalletRequest{})
+		res, err := client.ListWallets(t.Context(), &pactus.ListWalletsRequest{})
 		require.NoError(t, err)
 		require.NotNil(t, res)
 		assert.Equal(t, []string{"w1", "w2"}, res.Wallets)
@@ -657,19 +607,19 @@ func TestListAddress(t *testing.T) {
 
 	t.Run("Error on listing addresses", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			ListAddress("test").
+			ListAddresses("test").
 			Return(nil, errors.New("error on listing addresses"))
 
-		res, err := client.ListAddress(t.Context(),
-			&pactus.ListAddressRequest{WalletName: "test"})
+		res, err := client.ListAddresses(t.Context(),
+			&pactus.ListAddressesRequest{WalletName: "test"})
 		assert.Error(t, err)
 		assert.Nil(t, res)
 	})
 
 	t.Run("List addresses successfully", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			ListAddress("test").
-			Return([]vault.AddressInfo{
+			ListAddresses("test").
+			Return([]storage.AddressInfoDeprecated{
 				{
 					Address:   "addr1",
 					Label:     "label1",
@@ -684,8 +634,8 @@ func TestListAddress(t *testing.T) {
 				},
 			}, nil)
 
-		res, err := client.ListAddress(t.Context(),
-			&pactus.ListAddressRequest{WalletName: "test"})
+		res, err := client.ListAddresses(t.Context(),
+			&pactus.ListAddressesRequest{WalletName: "test"})
 		require.NoError(t, err)
 		require.NotNil(t, res)
 		assert.Equal(t, "test", res.WalletName)

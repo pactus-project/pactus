@@ -1675,26 +1675,26 @@ func (x *SetAddressLabelResponse) GetLabel() string {
 }
 
 // Request message for listing all wallets.
-type ListWalletRequest struct {
+type ListWalletsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListWalletRequest) Reset() {
-	*x = ListWalletRequest{}
+func (x *ListWalletsRequest) Reset() {
+	*x = ListWalletsRequest{}
 	mi := &file_wallet_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListWalletRequest) String() string {
+func (x *ListWalletsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListWalletRequest) ProtoMessage() {}
+func (*ListWalletsRequest) ProtoMessage() {}
 
-func (x *ListWalletRequest) ProtoReflect() protoreflect.Message {
+func (x *ListWalletsRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_wallet_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1706,13 +1706,13 @@ func (x *ListWalletRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListWalletRequest.ProtoReflect.Descriptor instead.
-func (*ListWalletRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListWalletsRequest.ProtoReflect.Descriptor instead.
+func (*ListWalletsRequest) Descriptor() ([]byte, []int) {
 	return file_wallet_proto_rawDescGZIP(), []int{28}
 }
 
 // Response message contains wallet names.
-type ListWalletResponse struct {
+type ListWalletsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Array of wallet names.
 	Wallets       []string `protobuf:"bytes,1,rep,name=wallets,proto3" json:"wallets,omitempty"`
@@ -1720,20 +1720,20 @@ type ListWalletResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListWalletResponse) Reset() {
-	*x = ListWalletResponse{}
+func (x *ListWalletsResponse) Reset() {
+	*x = ListWalletsResponse{}
 	mi := &file_wallet_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListWalletResponse) String() string {
+func (x *ListWalletsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListWalletResponse) ProtoMessage() {}
+func (*ListWalletsResponse) ProtoMessage() {}
 
-func (x *ListWalletResponse) ProtoReflect() protoreflect.Message {
+func (x *ListWalletsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_wallet_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1745,12 +1745,12 @@ func (x *ListWalletResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListWalletResponse.ProtoReflect.Descriptor instead.
-func (*ListWalletResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListWalletsResponse.ProtoReflect.Descriptor instead.
+func (*ListWalletsResponse) Descriptor() ([]byte, []int) {
 	return file_wallet_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *ListWalletResponse) GetWallets() []string {
+func (x *ListWalletsResponse) GetWallets() []string {
 	if x != nil {
 		return x.Wallets
 	}
@@ -1904,7 +1904,7 @@ func (x *GetWalletInfoResponse) GetDefaultFee() int64 {
 }
 
 // Request message for listing wallet addresses.
-type ListAddressRequest struct {
+type ListAddressesRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The name of the queried wallet.
 	WalletName    string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
@@ -1912,20 +1912,20 @@ type ListAddressRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListAddressRequest) Reset() {
-	*x = ListAddressRequest{}
+func (x *ListAddressesRequest) Reset() {
+	*x = ListAddressesRequest{}
 	mi := &file_wallet_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListAddressRequest) String() string {
+func (x *ListAddressesRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListAddressRequest) ProtoMessage() {}
+func (*ListAddressesRequest) ProtoMessage() {}
 
-func (x *ListAddressRequest) ProtoReflect() protoreflect.Message {
+func (x *ListAddressesRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_wallet_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1937,12 +1937,12 @@ func (x *ListAddressRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListAddressRequest.ProtoReflect.Descriptor instead.
-func (*ListAddressRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListAddressesRequest.ProtoReflect.Descriptor instead.
+func (*ListAddressesRequest) Descriptor() ([]byte, []int) {
 	return file_wallet_proto_rawDescGZIP(), []int{32}
 }
 
-func (x *ListAddressRequest) GetWalletName() string {
+func (x *ListAddressesRequest) GetWalletName() string {
 	if x != nil {
 		return x.WalletName
 	}
@@ -1950,7 +1950,7 @@ func (x *ListAddressRequest) GetWalletName() string {
 }
 
 // Response message contains wallet addresses.
-type ListAddressResponse struct {
+type ListAddressesResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The name of the queried wallet.
 	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
@@ -1960,20 +1960,20 @@ type ListAddressResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ListAddressResponse) Reset() {
-	*x = ListAddressResponse{}
+func (x *ListAddressesResponse) Reset() {
+	*x = ListAddressesResponse{}
 	mi := &file_wallet_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ListAddressResponse) String() string {
+func (x *ListAddressesResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListAddressResponse) ProtoMessage() {}
+func (*ListAddressesResponse) ProtoMessage() {}
 
-func (x *ListAddressResponse) ProtoReflect() protoreflect.Message {
+func (x *ListAddressesResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_wallet_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1985,19 +1985,19 @@ func (x *ListAddressResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListAddressResponse.ProtoReflect.Descriptor instead.
-func (*ListAddressResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListAddressesResponse.ProtoReflect.Descriptor instead.
+func (*ListAddressesResponse) Descriptor() ([]byte, []int) {
 	return file_wallet_proto_rawDescGZIP(), []int{33}
 }
 
-func (x *ListAddressResponse) GetWalletName() string {
+func (x *ListAddressesResponse) GetWalletName() string {
 	if x != nil {
 		return x.WalletName
 	}
 	return ""
 }
 
-func (x *ListAddressResponse) GetData() []*AddressInfo {
+func (x *ListAddressesResponse) GetData() []*AddressInfo {
 	if x != nil {
 		return x.Data
 	}
@@ -2123,9 +2123,9 @@ const file_wallet_proto_rawDesc = "" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x12\x18\n" +
 	"\aaddress\x18\x02 \x01(\tR\aaddress\x12\x14\n" +
-	"\x05label\x18\x03 \x01(\tR\x05label\"\x13\n" +
-	"\x11ListWalletRequest\".\n" +
-	"\x12ListWalletResponse\x12\x18\n" +
+	"\x05label\x18\x03 \x01(\tR\x05label\"\x14\n" +
+	"\x12ListWalletsRequest\"/\n" +
+	"\x13ListWalletsResponse\x12\x18\n" +
 	"\awallets\x18\x01 \x03(\tR\awallets\"7\n" +
 	"\x14GetWalletInfoRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
@@ -2140,11 +2140,11 @@ const file_wallet_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x06 \x01(\x03R\tcreatedAt\x12\x1f\n" +
 	"\vdefault_fee\x18\a \x01(\x03R\n" +
-	"defaultFee\"5\n" +
-	"\x12ListAddressRequest\x12\x1f\n" +
+	"defaultFee\"7\n" +
+	"\x14ListAddressesRequest\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
-	"walletName\"_\n" +
-	"\x13ListAddressResponse\x12\x1f\n" +
+	"walletName\"a\n" +
+	"\x15ListAddressesResponse\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x12'\n" +
 	"\x04data\x18\x02 \x03(\v2\x13.pactus.AddressInfoR\x04data*\x84\x01\n" +
@@ -2152,7 +2152,7 @@ const file_wallet_proto_rawDesc = "" +
 	"\x15ADDRESS_TYPE_TREASURY\x10\x00\x12\x1a\n" +
 	"\x16ADDRESS_TYPE_VALIDATOR\x10\x01\x12\x1c\n" +
 	"\x18ADDRESS_TYPE_BLS_ACCOUNT\x10\x02\x12 \n" +
-	"\x1cADDRESS_TYPE_ED25519_ACCOUNT\x10\x032\x80\n" +
+	"\x1cADDRESS_TYPE_ED25519_ACCOUNT\x10\x032\x89\n" +
 	"\n" +
 	"\x06Wallet\x12I\n" +
 	"\fCreateWallet\x12\x1b.pactus.CreateWalletRequest\x1a\x1c.pactus.CreateWalletResponse\x12L\n" +
@@ -2168,11 +2168,10 @@ const file_wallet_proto_rawDesc = "" +
 	"\vSignMessage\x12\x1a.pactus.SignMessageRequest\x1a\x1b.pactus.SignMessageResponse\x12L\n" +
 	"\rGetTotalStake\x12\x1c.pactus.GetTotalStakeRequest\x1a\x1d.pactus.GetTotalStakeResponse\x12O\n" +
 	"\x0eGetAddressInfo\x12\x1d.pactus.GetAddressInfoRequest\x1a\x1e.pactus.GetAddressInfoResponse\x12R\n" +
-	"\x0fSetAddressLabel\x12\x1e.pactus.SetAddressLabelRequest\x1a\x1f.pactus.SetAddressLabelResponse\x12C\n" +
-	"\n" +
-	"ListWallet\x12\x19.pactus.ListWalletRequest\x1a\x1a.pactus.ListWalletResponse\x12L\n" +
-	"\rGetWalletInfo\x12\x1c.pactus.GetWalletInfoRequest\x1a\x1d.pactus.GetWalletInfoResponse\x12F\n" +
-	"\vListAddress\x12\x1a.pactus.ListAddressRequest\x1a\x1b.pactus.ListAddressResponseB:\n" +
+	"\x0fSetAddressLabel\x12\x1e.pactus.SetAddressLabelRequest\x1a\x1f.pactus.SetAddressLabelResponse\x12F\n" +
+	"\vListWallets\x12\x1a.pactus.ListWalletsRequest\x1a\x1b.pactus.ListWalletsResponse\x12L\n" +
+	"\rGetWalletInfo\x12\x1c.pactus.GetWalletInfoRequest\x1a\x1d.pactus.GetWalletInfoResponse\x12L\n" +
+	"\rListAddresses\x12\x1c.pactus.ListAddressesRequest\x1a\x1d.pactus.ListAddressesResponseB:\n" +
 	"\x06pactusZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3"
 
 var (
@@ -2219,18 +2218,18 @@ var file_wallet_proto_goTypes = []any{
 	(*GetAddressInfoResponse)(nil),      // 26: pactus.GetAddressInfoResponse
 	(*SetAddressLabelRequest)(nil),      // 27: pactus.SetAddressLabelRequest
 	(*SetAddressLabelResponse)(nil),     // 28: pactus.SetAddressLabelResponse
-	(*ListWalletRequest)(nil),           // 29: pactus.ListWalletRequest
-	(*ListWalletResponse)(nil),          // 30: pactus.ListWalletResponse
+	(*ListWalletsRequest)(nil),          // 29: pactus.ListWalletsRequest
+	(*ListWalletsResponse)(nil),         // 30: pactus.ListWalletsResponse
 	(*GetWalletInfoRequest)(nil),        // 31: pactus.GetWalletInfoRequest
 	(*GetWalletInfoResponse)(nil),       // 32: pactus.GetWalletInfoResponse
-	(*ListAddressRequest)(nil),          // 33: pactus.ListAddressRequest
-	(*ListAddressResponse)(nil),         // 34: pactus.ListAddressResponse
+	(*ListAddressesRequest)(nil),        // 33: pactus.ListAddressesRequest
+	(*ListAddressesResponse)(nil),       // 34: pactus.ListAddressesResponse
 }
 var file_wallet_proto_depIdxs = []int32{
 	2,  // 0: pactus.GetAddressHistoryResponse.history_info:type_name -> pactus.HistoryInfo
 	0,  // 1: pactus.GetNewAddressRequest.address_type:type_name -> pactus.AddressType
 	1,  // 2: pactus.GetNewAddressResponse.address_info:type_name -> pactus.AddressInfo
-	1,  // 3: pactus.ListAddressResponse.data:type_name -> pactus.AddressInfo
+	1,  // 3: pactus.ListAddressesResponse.data:type_name -> pactus.AddressInfo
 	9,  // 4: pactus.Wallet.CreateWallet:input_type -> pactus.CreateWalletRequest
 	7,  // 5: pactus.Wallet.RestoreWallet:input_type -> pactus.RestoreWalletRequest
 	11, // 6: pactus.Wallet.LoadWallet:input_type -> pactus.LoadWalletRequest
@@ -2244,9 +2243,9 @@ var file_wallet_proto_depIdxs = []int32{
 	23, // 14: pactus.Wallet.GetTotalStake:input_type -> pactus.GetTotalStakeRequest
 	25, // 15: pactus.Wallet.GetAddressInfo:input_type -> pactus.GetAddressInfoRequest
 	27, // 16: pactus.Wallet.SetAddressLabel:input_type -> pactus.SetAddressLabelRequest
-	29, // 17: pactus.Wallet.ListWallet:input_type -> pactus.ListWalletRequest
+	29, // 17: pactus.Wallet.ListWallets:input_type -> pactus.ListWalletsRequest
 	31, // 18: pactus.Wallet.GetWalletInfo:input_type -> pactus.GetWalletInfoRequest
-	33, // 19: pactus.Wallet.ListAddress:input_type -> pactus.ListAddressRequest
+	33, // 19: pactus.Wallet.ListAddresses:input_type -> pactus.ListAddressesRequest
 	10, // 20: pactus.Wallet.CreateWallet:output_type -> pactus.CreateWalletResponse
 	8,  // 21: pactus.Wallet.RestoreWallet:output_type -> pactus.RestoreWalletResponse
 	12, // 22: pactus.Wallet.LoadWallet:output_type -> pactus.LoadWalletResponse
@@ -2260,9 +2259,9 @@ var file_wallet_proto_depIdxs = []int32{
 	24, // 30: pactus.Wallet.GetTotalStake:output_type -> pactus.GetTotalStakeResponse
 	26, // 31: pactus.Wallet.GetAddressInfo:output_type -> pactus.GetAddressInfoResponse
 	28, // 32: pactus.Wallet.SetAddressLabel:output_type -> pactus.SetAddressLabelResponse
-	30, // 33: pactus.Wallet.ListWallet:output_type -> pactus.ListWalletResponse
+	30, // 33: pactus.Wallet.ListWallets:output_type -> pactus.ListWalletsResponse
 	32, // 34: pactus.Wallet.GetWalletInfo:output_type -> pactus.GetWalletInfoResponse
-	34, // 35: pactus.Wallet.ListAddress:output_type -> pactus.ListAddressResponse
+	34, // 35: pactus.Wallet.ListAddresses:output_type -> pactus.ListAddressesResponse
 	20, // [20:36] is the sub-list for method output_type
 	4,  // [4:20] is the sub-list for method input_type
 	4,  // [4:4] is the sub-list for extension type_name

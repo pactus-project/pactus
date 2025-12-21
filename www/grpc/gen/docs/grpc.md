@@ -204,16 +204,16 @@ For seamless integration with Pactus, you can use these client libraries:
           <span class="rpc-badge"></span> SetAddressLabel</a>
         </li>
         <li>
-          <a href="#pactus.Wallet.ListWallet">
-          <span class="rpc-badge"></span> ListWallet</a>
+          <a href="#pactus.Wallet.ListWallets">
+          <span class="rpc-badge"></span> ListWallets</a>
         </li>
         <li>
           <a href="#pactus.Wallet.GetWalletInfo">
           <span class="rpc-badge"></span> GetWalletInfo</a>
         </li>
         <li>
-          <a href="#pactus.Wallet.ListAddress">
-          <span class="rpc-badge"></span> ListAddress</a>
+          <a href="#pactus.Wallet.ListAddresses">
+          <span class="rpc-badge"></span> ListAddresses</a>
         </li>
         </ul>
     </li>
@@ -4076,14 +4076,14 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
      </tbody>
 </table>
 
-#### ListWallet <span id="pactus.Wallet.ListWallet" class="rpc-badge"></span>
+#### ListWallets <span id="pactus.Wallet.ListWallets" class="rpc-badge"></span>
 
-<p>ListWallet returns a list of all available wallets.</p>
+<p>ListWallets returns a list of all available wallets.</p>
 
-<h4>ListWalletRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<h4>ListWalletsRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
 Message has no fields.
-  <h4>ListWalletResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+  <h4>ListWalletsResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -4179,11 +4179,11 @@ Message has no fields.
      </tbody>
 </table>
 
-#### ListAddress <span id="pactus.Wallet.ListAddress" class="rpc-badge"></span>
+#### ListAddresses <span id="pactus.Wallet.ListAddresses" class="rpc-badge"></span>
 
-<p>ListAddress returns all addresses in the specified wallet.</p>
+<p>ListAddresses returns all addresses in the specified wallet.</p>
 
-<h4>ListAddressRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+<h4>ListAddressesRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>
@@ -4199,7 +4199,7 @@ Message has no fields.
   </tr>
   </tbody>
 </table>
-  <h4>ListAddressResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+  <h4>ListAddressesResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
 
 <table class="table table-bordered table-responsive table-sm">
   <thead>

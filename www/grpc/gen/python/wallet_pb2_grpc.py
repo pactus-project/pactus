@@ -80,20 +80,20 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.SetAddressLabelRequest.SerializeToString,
                 response_deserializer=wallet__pb2.SetAddressLabelResponse.FromString,
                 _registered_method=True)
-        self.ListWallet = channel.unary_unary(
-                '/pactus.Wallet/ListWallet',
-                request_serializer=wallet__pb2.ListWalletRequest.SerializeToString,
-                response_deserializer=wallet__pb2.ListWalletResponse.FromString,
+        self.ListWallets = channel.unary_unary(
+                '/pactus.Wallet/ListWallets',
+                request_serializer=wallet__pb2.ListWalletsRequest.SerializeToString,
+                response_deserializer=wallet__pb2.ListWalletsResponse.FromString,
                 _registered_method=True)
         self.GetWalletInfo = channel.unary_unary(
                 '/pactus.Wallet/GetWalletInfo',
                 request_serializer=wallet__pb2.GetWalletInfoRequest.SerializeToString,
                 response_deserializer=wallet__pb2.GetWalletInfoResponse.FromString,
                 _registered_method=True)
-        self.ListAddress = channel.unary_unary(
-                '/pactus.Wallet/ListAddress',
-                request_serializer=wallet__pb2.ListAddressRequest.SerializeToString,
-                response_deserializer=wallet__pb2.ListAddressResponse.FromString,
+        self.ListAddresses = channel.unary_unary(
+                '/pactus.Wallet/ListAddresses',
+                request_serializer=wallet__pb2.ListAddressesRequest.SerializeToString,
+                response_deserializer=wallet__pb2.ListAddressesResponse.FromString,
                 _registered_method=True)
 
 
@@ -193,8 +193,8 @@ class WalletServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ListWallet(self, request, context):
-        """ListWallet returns a list of all available wallets.
+    def ListWallets(self, request, context):
+        """ListWallets returns a list of all available wallets.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -207,8 +207,8 @@ class WalletServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ListAddress(self, request, context):
-        """ListAddress returns all addresses in the specified wallet.
+    def ListAddresses(self, request, context):
+        """ListAddresses returns all addresses in the specified wallet.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -282,20 +282,20 @@ def add_WalletServicer_to_server(servicer, server):
                     request_deserializer=wallet__pb2.SetAddressLabelRequest.FromString,
                     response_serializer=wallet__pb2.SetAddressLabelResponse.SerializeToString,
             ),
-            'ListWallet': grpc.unary_unary_rpc_method_handler(
-                    servicer.ListWallet,
-                    request_deserializer=wallet__pb2.ListWalletRequest.FromString,
-                    response_serializer=wallet__pb2.ListWalletResponse.SerializeToString,
+            'ListWallets': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListWallets,
+                    request_deserializer=wallet__pb2.ListWalletsRequest.FromString,
+                    response_serializer=wallet__pb2.ListWalletsResponse.SerializeToString,
             ),
             'GetWalletInfo': grpc.unary_unary_rpc_method_handler(
                     servicer.GetWalletInfo,
                     request_deserializer=wallet__pb2.GetWalletInfoRequest.FromString,
                     response_serializer=wallet__pb2.GetWalletInfoResponse.SerializeToString,
             ),
-            'ListAddress': grpc.unary_unary_rpc_method_handler(
-                    servicer.ListAddress,
-                    request_deserializer=wallet__pb2.ListAddressRequest.FromString,
-                    response_serializer=wallet__pb2.ListAddressResponse.SerializeToString,
+            'ListAddresses': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListAddresses,
+                    request_deserializer=wallet__pb2.ListAddressesRequest.FromString,
+                    response_serializer=wallet__pb2.ListAddressesResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -661,7 +661,7 @@ class Wallet(object):
             _registered_method=True)
 
     @staticmethod
-    def ListWallet(request,
+    def ListWallets(request,
             target,
             options=(),
             channel_credentials=None,
@@ -674,9 +674,9 @@ class Wallet(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.Wallet/ListWallet',
-            wallet__pb2.ListWalletRequest.SerializeToString,
-            wallet__pb2.ListWalletResponse.FromString,
+            '/pactus.Wallet/ListWallets',
+            wallet__pb2.ListWalletsRequest.SerializeToString,
+            wallet__pb2.ListWalletsResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -715,7 +715,7 @@ class Wallet(object):
             _registered_method=True)
 
     @staticmethod
-    def ListAddress(request,
+    def ListAddresses(request,
             target,
             options=(),
             channel_credentials=None,
@@ -728,9 +728,9 @@ class Wallet(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pactus.Wallet/ListAddress',
-            wallet__pb2.ListAddressRequest.SerializeToString,
-            wallet__pb2.ListAddressResponse.FromString,
+            '/pactus.Wallet/ListAddresses',
+            wallet__pb2.ListAddressesRequest.SerializeToString,
+            wallet__pb2.ListAddressesResponse.FromString,
             options,
             channel_credentials,
             insecure,

@@ -1089,8 +1089,8 @@
           }
         }
       },{
-      "name": "pactus.wallet.list_wallet",
-      "description": "ListWallet returns a list of all available wallets.",
+      "name": "pactus.wallet.list_wallets",
+      "description": "ListWallets returns a list of all available wallets.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
       "params": [],
@@ -1122,8 +1122,8 @@
           }
         }
       },{
-      "name": "pactus.wallet.list_address",
-      "description": "ListAddress returns all addresses in the specified wallet.",
+      "name": "pactus.wallet.list_addresses",
+      "description": "ListAddresses returns all addresses in the specified wallet.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
       "params": [{

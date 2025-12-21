@@ -180,48 +180,48 @@ function deserialize_pactus_GetWalletInfoResponse(buffer_arg) {
   return wallet_pb.GetWalletInfoResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_ListAddressRequest(arg) {
-  if (!(arg instanceof wallet_pb.ListAddressRequest)) {
-    throw new Error('Expected argument of type pactus.ListAddressRequest');
+function serialize_pactus_ListAddressesRequest(arg) {
+  if (!(arg instanceof wallet_pb.ListAddressesRequest)) {
+    throw new Error('Expected argument of type pactus.ListAddressesRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_ListAddressRequest(buffer_arg) {
-  return wallet_pb.ListAddressRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_ListAddressesRequest(buffer_arg) {
+  return wallet_pb.ListAddressesRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_ListAddressResponse(arg) {
-  if (!(arg instanceof wallet_pb.ListAddressResponse)) {
-    throw new Error('Expected argument of type pactus.ListAddressResponse');
+function serialize_pactus_ListAddressesResponse(arg) {
+  if (!(arg instanceof wallet_pb.ListAddressesResponse)) {
+    throw new Error('Expected argument of type pactus.ListAddressesResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_ListAddressResponse(buffer_arg) {
-  return wallet_pb.ListAddressResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_ListAddressesResponse(buffer_arg) {
+  return wallet_pb.ListAddressesResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_ListWalletRequest(arg) {
-  if (!(arg instanceof wallet_pb.ListWalletRequest)) {
-    throw new Error('Expected argument of type pactus.ListWalletRequest');
+function serialize_pactus_ListWalletsRequest(arg) {
+  if (!(arg instanceof wallet_pb.ListWalletsRequest)) {
+    throw new Error('Expected argument of type pactus.ListWalletsRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_ListWalletRequest(buffer_arg) {
-  return wallet_pb.ListWalletRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_ListWalletsRequest(buffer_arg) {
+  return wallet_pb.ListWalletsRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_ListWalletResponse(arg) {
-  if (!(arg instanceof wallet_pb.ListWalletResponse)) {
-    throw new Error('Expected argument of type pactus.ListWalletResponse');
+function serialize_pactus_ListWalletsResponse(arg) {
+  if (!(arg instanceof wallet_pb.ListWalletsResponse)) {
+    throw new Error('Expected argument of type pactus.ListWalletsResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_pactus_ListWalletResponse(buffer_arg) {
-  return wallet_pb.ListWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_pactus_ListWalletsResponse(buffer_arg) {
+  return wallet_pb.ListWalletsResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_pactus_LoadWalletRequest(arg) {
@@ -516,17 +516,17 @@ setAddressLabel: {
     responseSerialize: serialize_pactus_SetAddressLabelResponse,
     responseDeserialize: deserialize_pactus_SetAddressLabelResponse,
   },
-  // ListWallet returns a list of all available wallets.
-listWallet: {
-    path: '/pactus.Wallet/ListWallet',
+  // ListWallets returns a list of all available wallets.
+listWallets: {
+    path: '/pactus.Wallet/ListWallets',
     requestStream: false,
     responseStream: false,
-    requestType: wallet_pb.ListWalletRequest,
-    responseType: wallet_pb.ListWalletResponse,
-    requestSerialize: serialize_pactus_ListWalletRequest,
-    requestDeserialize: deserialize_pactus_ListWalletRequest,
-    responseSerialize: serialize_pactus_ListWalletResponse,
-    responseDeserialize: deserialize_pactus_ListWalletResponse,
+    requestType: wallet_pb.ListWalletsRequest,
+    responseType: wallet_pb.ListWalletsResponse,
+    requestSerialize: serialize_pactus_ListWalletsRequest,
+    requestDeserialize: deserialize_pactus_ListWalletsRequest,
+    responseSerialize: serialize_pactus_ListWalletsResponse,
+    responseDeserialize: deserialize_pactus_ListWalletsResponse,
   },
   // GetWalletInfo returns detailed information about a specific wallet.
 getWalletInfo: {
@@ -540,17 +540,17 @@ getWalletInfo: {
     responseSerialize: serialize_pactus_GetWalletInfoResponse,
     responseDeserialize: deserialize_pactus_GetWalletInfoResponse,
   },
-  // ListAddress returns all addresses in the specified wallet.
-listAddress: {
-    path: '/pactus.Wallet/ListAddress',
+  // ListAddresses returns all addresses in the specified wallet.
+listAddresses: {
+    path: '/pactus.Wallet/ListAddresses',
     requestStream: false,
     responseStream: false,
-    requestType: wallet_pb.ListAddressRequest,
-    responseType: wallet_pb.ListAddressResponse,
-    requestSerialize: serialize_pactus_ListAddressRequest,
-    requestDeserialize: deserialize_pactus_ListAddressRequest,
-    responseSerialize: serialize_pactus_ListAddressResponse,
-    responseDeserialize: deserialize_pactus_ListAddressResponse,
+    requestType: wallet_pb.ListAddressesRequest,
+    responseType: wallet_pb.ListAddressesResponse,
+    requestSerialize: serialize_pactus_ListAddressesRequest,
+    requestDeserialize: deserialize_pactus_ListAddressesRequest,
+    responseSerialize: serialize_pactus_ListAddressesResponse,
+    responseDeserialize: deserialize_pactus_ListAddressesResponse,
   },
 };
 

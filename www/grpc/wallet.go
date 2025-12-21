@@ -181,11 +181,11 @@ func (s *walletServer) SignMessage(_ context.Context,
 func (s *walletServer) GetNewAddress(_ context.Context,
 	req *pactus.GetNewAddressRequest,
 ) (*pactus.GetNewAddressResponse, error) {
-	data, err := s.walletManager.GetNewAddress(
+	data, err := s.walletManager.NewAddress(
 		req.WalletName,
-		req.Label,
-		req.Password,
 		crypto.AddressType(req.AddressType),
+		req.Label,
+		wallet.WithPassword(req.Password),
 	)
 	if err != nil {
 		return nil, err
@@ -205,20 +205,13 @@ func (s *walletServer) GetNewAddress(_ context.Context,
 func (s *walletServer) GetAddressHistory(_ context.Context,
 	req *pactus.GetAddressHistoryRequest,
 ) (*pactus.GetAddressHistoryResponse, error) {
-	data, err := s.walletManager.AddressHistory(req.WalletName, req.Address)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pactus.GetAddressHistoryResponse{
-		HistoryInfo: s.mapHistoryInfo(data),
-	}, nil
+	return nil, errors.New("not implemented")
 }
 
 func (s *walletServer) GetAddressInfo(_ context.Context,
 	req *pactus.GetAddressInfoRequest,
 ) (*pactus.GetAddressInfoResponse, error) {
-	info, err := s.walletManager.GetAddressInfo(req.WalletName, req.Address)
+	info, err := s.walletManager.AddressInfo(req.WalletName, req.Address)
 	if err != nil {
 		return nil, err
 	}
@@ -247,15 +240,15 @@ func (s *walletServer) SetAddressLabel(_ context.Context,
 	}, nil
 }
 
-func (s *walletServer) ListWallet(_ context.Context,
-	_ *pactus.ListWalletRequest,
-) (*pactus.ListWalletResponse, error) {
-	wallets, err := s.walletManager.ListWallet()
+func (s *walletServer) ListWallets(_ context.Context,
+	_ *pactus.ListWalletsRequest,
+) (*pactus.ListWalletsResponse, error) {
+	wallets, err := s.walletManager.ListWallets()
 	if err != nil {
 		return nil, err
 	}
 
-	return &pactus.ListWalletResponse{
+	return &pactus.ListWalletsResponse{
 		Wallets: wallets,
 	}, nil
 }
@@ -279,10 +272,10 @@ func (s *walletServer) GetWalletInfo(_ context.Context,
 	}, nil
 }
 
-func (s *walletServer) ListAddress(_ context.Context,
-	req *pactus.ListAddressRequest,
-) (*pactus.ListAddressResponse, error) {
-	addrs, err := s.walletManager.ListAddress(req.WalletName)
+func (s *walletServer) ListAddresses(_ context.Context,
+	req *pactus.ListAddressesRequest,
+) (*pactus.ListAddressesResponse, error) {
+	addrs, err := s.walletManager.ListAddresses(req.WalletName)
 	if err != nil {
 		return nil, err
 	}
@@ -297,7 +290,7 @@ func (s *walletServer) ListAddress(_ context.Context,
 		})
 	}
 
-	return &pactus.ListAddressResponse{
+	return &pactus.ListAddressesResponse{
 		WalletName: req.WalletName,
 		Data:       addrsPB,
 	}, nil

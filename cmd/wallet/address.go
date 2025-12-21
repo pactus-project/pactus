@@ -10,7 +10,7 @@ import (
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/vault"
+	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/spf13/cobra"
 )
 
@@ -50,7 +50,7 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()
-		for i, info := range wlt.AddressInfos() {
+		for i, info := range wlt.ListAddresses() {
 			line := fmt.Sprintf("%v- %s\t", i+1, info.Address)
 
 			if *balanceOpt {
@@ -83,7 +83,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 	label := newAddressCmd.Flags().String("label", "", "a label for the address")
 
 	newAddressCmd.Run = func(_ *cobra.Command, _ []string) {
-		var addressInfo *vault.AddressInfo
+		var addressInfo *storage.AddressInfo
 		var err error
 
 		if *label == "" {
@@ -268,10 +268,10 @@ func buildSetLabelCmd(parentCmd *cobra.Command) {
 		wlt, err := openWallet()
 		terminal.FatalErrorCheck(err)
 
-		oldLabel := wlt.Label(addr)
+		oldLabel := wlt.AddressLabel(addr)
 		newLabel := prompt.PromptInputWithSuggestion("Label", oldLabel)
 
-		err = wlt.SetLabel(addr, newLabel)
+		err = wlt.SetAddressLabel(addr, newLabel)
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintLine()

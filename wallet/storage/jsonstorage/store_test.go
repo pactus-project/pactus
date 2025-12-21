@@ -1,4 +1,4 @@
-package wallet
+package jsonstorage
 
 import (
 	"testing"

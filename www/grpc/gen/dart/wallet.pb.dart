@@ -2052,47 +2052,47 @@ class SetAddressLabelResponse extends $pb.GeneratedMessage {
 }
 
 /// Request message for listing all wallets.
-class ListWalletRequest extends $pb.GeneratedMessage {
-  factory ListWalletRequest() => create();
+class ListWalletsRequest extends $pb.GeneratedMessage {
+  factory ListWalletsRequest() => create();
 
-  ListWalletRequest._();
+  ListWalletsRequest._();
 
-  factory ListWalletRequest.fromBuffer($core.List<$core.int> data,
+  factory ListWalletsRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory ListWalletRequest.fromJson($core.String json,
+  factory ListWalletsRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'ListWalletRequest',
+      _omitMessageNames ? '' : 'ListWalletsRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ListWalletRequest clone() => deepCopy();
+  ListWalletsRequest clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ListWalletRequest copyWith(void Function(ListWalletRequest) updates) =>
-      super.copyWith((message) => updates(message as ListWalletRequest))
-          as ListWalletRequest;
+  ListWalletsRequest copyWith(void Function(ListWalletsRequest) updates) =>
+      super.copyWith((message) => updates(message as ListWalletsRequest))
+          as ListWalletsRequest;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static ListWalletRequest create() => ListWalletRequest._();
+  static ListWalletsRequest create() => ListWalletsRequest._();
   @$core.override
-  ListWalletRequest createEmptyInstance() => create();
+  ListWalletsRequest createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static ListWalletRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ListWalletRequest>(create);
-  static ListWalletRequest? _defaultInstance;
+  static ListWalletsRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ListWalletsRequest>(create);
+  static ListWalletsRequest? _defaultInstance;
 }
 
 /// Response message contains wallet names.
-class ListWalletResponse extends $pb.GeneratedMessage {
-  factory ListWalletResponse({
+class ListWalletsResponse extends $pb.GeneratedMessage {
+  factory ListWalletsResponse({
     $core.Iterable<$core.String>? wallets,
   }) {
     final result = create();
@@ -2100,40 +2100,40 @@ class ListWalletResponse extends $pb.GeneratedMessage {
     return result;
   }
 
-  ListWalletResponse._();
+  ListWalletsResponse._();
 
-  factory ListWalletResponse.fromBuffer($core.List<$core.int> data,
+  factory ListWalletsResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory ListWalletResponse.fromJson($core.String json,
+  factory ListWalletsResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'ListWalletResponse',
+      _omitMessageNames ? '' : 'ListWalletsResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..pPS(1, _omitFieldNames ? '' : 'wallets')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ListWalletResponse clone() => deepCopy();
+  ListWalletsResponse clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ListWalletResponse copyWith(void Function(ListWalletResponse) updates) =>
-      super.copyWith((message) => updates(message as ListWalletResponse))
-          as ListWalletResponse;
+  ListWalletsResponse copyWith(void Function(ListWalletsResponse) updates) =>
+      super.copyWith((message) => updates(message as ListWalletsResponse))
+          as ListWalletsResponse;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static ListWalletResponse create() => ListWalletResponse._();
+  static ListWalletsResponse create() => ListWalletsResponse._();
   @$core.override
-  ListWalletResponse createEmptyInstance() => create();
+  ListWalletsResponse createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static ListWalletResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ListWalletResponse>(create);
-  static ListWalletResponse? _defaultInstance;
+  static ListWalletsResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ListWalletsResponse>(create);
+  static ListWalletsResponse? _defaultInstance;
 
   /// Array of wallet names.
   @$pb.TagNumber(1)
@@ -2332,8 +2332,8 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
 }
 
 /// Request message for listing wallet addresses.
-class ListAddressRequest extends $pb.GeneratedMessage {
-  factory ListAddressRequest({
+class ListAddressesRequest extends $pb.GeneratedMessage {
+  factory ListAddressesRequest({
     $core.String? walletName,
   }) {
     final result = create();
@@ -2341,40 +2341,40 @@ class ListAddressRequest extends $pb.GeneratedMessage {
     return result;
   }
 
-  ListAddressRequest._();
+  ListAddressesRequest._();
 
-  factory ListAddressRequest.fromBuffer($core.List<$core.int> data,
+  factory ListAddressesRequest.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory ListAddressRequest.fromJson($core.String json,
+  factory ListAddressesRequest.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'ListAddressRequest',
+      _omitMessageNames ? '' : 'ListAddressesRequest',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ListAddressRequest clone() => deepCopy();
+  ListAddressesRequest clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ListAddressRequest copyWith(void Function(ListAddressRequest) updates) =>
-      super.copyWith((message) => updates(message as ListAddressRequest))
-          as ListAddressRequest;
+  ListAddressesRequest copyWith(void Function(ListAddressesRequest) updates) =>
+      super.copyWith((message) => updates(message as ListAddressesRequest))
+          as ListAddressesRequest;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static ListAddressRequest create() => ListAddressRequest._();
+  static ListAddressesRequest create() => ListAddressesRequest._();
   @$core.override
-  ListAddressRequest createEmptyInstance() => create();
+  ListAddressesRequest createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static ListAddressRequest getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ListAddressRequest>(create);
-  static ListAddressRequest? _defaultInstance;
+  static ListAddressesRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ListAddressesRequest>(create);
+  static ListAddressesRequest? _defaultInstance;
 
   /// The name of the queried wallet.
   @$pb.TagNumber(1)
@@ -2388,8 +2388,8 @@ class ListAddressRequest extends $pb.GeneratedMessage {
 }
 
 /// Response message contains wallet addresses.
-class ListAddressResponse extends $pb.GeneratedMessage {
-  factory ListAddressResponse({
+class ListAddressesResponse extends $pb.GeneratedMessage {
+  factory ListAddressesResponse({
     $core.String? walletName,
     $core.Iterable<AddressInfo>? data,
   }) {
@@ -2399,17 +2399,17 @@ class ListAddressResponse extends $pb.GeneratedMessage {
     return result;
   }
 
-  ListAddressResponse._();
+  ListAddressesResponse._();
 
-  factory ListAddressResponse.fromBuffer($core.List<$core.int> data,
+  factory ListAddressesResponse.fromBuffer($core.List<$core.int> data,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(data, registry);
-  factory ListAddressResponse.fromJson($core.String json,
+  factory ListAddressesResponse.fromJson($core.String json,
           [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
-      _omitMessageNames ? '' : 'ListAddressResponse',
+      _omitMessageNames ? '' : 'ListAddressesResponse',
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
@@ -2418,23 +2418,24 @@ class ListAddressResponse extends $pb.GeneratedMessage {
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ListAddressResponse clone() => deepCopy();
+  ListAddressesResponse clone() => deepCopy();
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
-  ListAddressResponse copyWith(void Function(ListAddressResponse) updates) =>
-      super.copyWith((message) => updates(message as ListAddressResponse))
-          as ListAddressResponse;
+  ListAddressesResponse copyWith(
+          void Function(ListAddressesResponse) updates) =>
+      super.copyWith((message) => updates(message as ListAddressesResponse))
+          as ListAddressesResponse;
 
   @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
-  static ListAddressResponse create() => ListAddressResponse._();
+  static ListAddressesResponse create() => ListAddressesResponse._();
   @$core.override
-  ListAddressResponse createEmptyInstance() => create();
+  ListAddressesResponse createEmptyInstance() => create();
   @$core.pragma('dart2js:noInline')
-  static ListAddressResponse getDefault() => _defaultInstance ??=
-      $pb.GeneratedMessage.$_defaultFor<ListAddressResponse>(create);
-  static ListAddressResponse? _defaultInstance;
+  static ListAddressesResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ListAddressesResponse>(create);
+  static ListAddressesResponse? _defaultInstance;
 
   /// The name of the queried wallet.
   @$pb.TagNumber(1)
@@ -2536,11 +2537,11 @@ class WalletApi {
       _client.invoke<SetAddressLabelResponse>(
           ctx, 'Wallet', 'SetAddressLabel', request, SetAddressLabelResponse());
 
-  /// ListWallet returns a list of all available wallets.
-  $async.Future<ListWalletResponse> listWallet(
-          $pb.ClientContext? ctx, ListWalletRequest request) =>
-      _client.invoke<ListWalletResponse>(
-          ctx, 'Wallet', 'ListWallet', request, ListWalletResponse());
+  /// ListWallets returns a list of all available wallets.
+  $async.Future<ListWalletsResponse> listWallets(
+          $pb.ClientContext? ctx, ListWalletsRequest request) =>
+      _client.invoke<ListWalletsResponse>(
+          ctx, 'Wallet', 'ListWallets', request, ListWalletsResponse());
 
   /// GetWalletInfo returns detailed information about a specific wallet.
   $async.Future<GetWalletInfoResponse> getWalletInfo(
@@ -2548,11 +2549,11 @@ class WalletApi {
       _client.invoke<GetWalletInfoResponse>(
           ctx, 'Wallet', 'GetWalletInfo', request, GetWalletInfoResponse());
 
-  /// ListAddress returns all addresses in the specified wallet.
-  $async.Future<ListAddressResponse> listAddress(
-          $pb.ClientContext? ctx, ListAddressRequest request) =>
-      _client.invoke<ListAddressResponse>(
-          ctx, 'Wallet', 'ListAddress', request, ListAddressResponse());
+  /// ListAddresses returns all addresses in the specified wallet.
+  $async.Future<ListAddressesResponse> listAddresses(
+          $pb.ClientContext? ctx, ListAddressesRequest request) =>
+      _client.invoke<ListAddressesResponse>(
+          ctx, 'Wallet', 'ListAddresses', request, ListAddressesResponse());
 }
 
 const $core.bool _omitFieldNames =

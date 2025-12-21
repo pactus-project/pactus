@@ -7,11 +7,11 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/vault"
+	"github.com/pactus-project/pactus/wallet/storage"
 )
 
 type WalletCreateAddressModel interface {
-	NewAddress(addressType crypto.AddressType, label string, opts ...wallet.NewAddressOption) (*vault.AddressInfo, error)
+	NewAddress(addressType crypto.AddressType, label string, opts ...wallet.NewAddressOption) (*storage.AddressInfo, error)
 }
 
 type WalletCreateAddressDialogController struct {

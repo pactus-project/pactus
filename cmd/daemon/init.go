@@ -117,7 +117,7 @@ func buildInitCmd(parentCmd *cobra.Command) {
 
 		terminal.PrintLine()
 		terminal.PrintInfoMsgBoldf("🏛️  Validator Addresses:")
-		for i, addrInfo := range wlt.AllValidatorAddresses() {
+		for i, addrInfo := range wlt.ListValidatorAddresses() {
 			terminal.PrintInfoMsgf("   %d. %s", i+1, addrInfo.Address)
 		}
 		terminal.PrintLine()

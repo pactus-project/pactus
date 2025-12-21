@@ -254,11 +254,11 @@ class SetAddressLabelResponse(_message.Message):
     label: str
     def __init__(self, wallet_name: _Optional[str] = ..., address: _Optional[str] = ..., label: _Optional[str] = ...) -> None: ...
 
-class ListWalletRequest(_message.Message):
+class ListWalletsRequest(_message.Message):
     __slots__ = ()
     def __init__(self) -> None: ...
 
-class ListWalletResponse(_message.Message):
+class ListWalletsResponse(_message.Message):
     __slots__ = ()
     WALLETS_FIELD_NUMBER: _ClassVar[int]
     wallets: _containers.RepeatedScalarFieldContainer[str]
@@ -288,13 +288,13 @@ class GetWalletInfoResponse(_message.Message):
     default_fee: int
     def __init__(self, wallet_name: _Optional[str] = ..., version: _Optional[int] = ..., network: _Optional[str] = ..., encrypted: _Optional[bool] = ..., uuid: _Optional[str] = ..., created_at: _Optional[int] = ..., default_fee: _Optional[int] = ...) -> None: ...
 
-class ListAddressRequest(_message.Message):
+class ListAddressesRequest(_message.Message):
     __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
 
-class ListAddressResponse(_message.Message):
+class ListAddressesResponse(_message.Message):
     __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     DATA_FIELD_NUMBER: _ClassVar[int]

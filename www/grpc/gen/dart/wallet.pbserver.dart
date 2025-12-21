@@ -47,12 +47,12 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $0.GetAddressInfoRequest request);
   $async.Future<$0.SetAddressLabelResponse> setAddressLabel(
       $pb.ServerContext ctx, $0.SetAddressLabelRequest request);
-  $async.Future<$0.ListWalletResponse> listWallet(
-      $pb.ServerContext ctx, $0.ListWalletRequest request);
+  $async.Future<$0.ListWalletsResponse> listWallets(
+      $pb.ServerContext ctx, $0.ListWalletsRequest request);
   $async.Future<$0.GetWalletInfoResponse> getWalletInfo(
       $pb.ServerContext ctx, $0.GetWalletInfoRequest request);
-  $async.Future<$0.ListAddressResponse> listAddress(
-      $pb.ServerContext ctx, $0.ListAddressRequest request);
+  $async.Future<$0.ListAddressesResponse> listAddresses(
+      $pb.ServerContext ctx, $0.ListAddressesRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
@@ -82,12 +82,12 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return $0.GetAddressInfoRequest();
       case 'SetAddressLabel':
         return $0.SetAddressLabelRequest();
-      case 'ListWallet':
-        return $0.ListWalletRequest();
+      case 'ListWallets':
+        return $0.ListWalletsRequest();
       case 'GetWalletInfo':
         return $0.GetWalletInfoRequest();
-      case 'ListAddress':
-        return $0.ListAddressRequest();
+      case 'ListAddresses':
+        return $0.ListAddressesRequest();
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }
@@ -123,12 +123,12 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return getAddressInfo(ctx, request as $0.GetAddressInfoRequest);
       case 'SetAddressLabel':
         return setAddressLabel(ctx, request as $0.SetAddressLabelRequest);
-      case 'ListWallet':
-        return listWallet(ctx, request as $0.ListWalletRequest);
+      case 'ListWallets':
+        return listWallets(ctx, request as $0.ListWalletsRequest);
       case 'GetWalletInfo':
         return getWalletInfo(ctx, request as $0.GetWalletInfoRequest);
-      case 'ListAddress':
-        return listAddress(ctx, request as $0.ListAddressRequest);
+      case 'ListAddresses':
+        return listAddresses(ctx, request as $0.ListAddressesRequest);
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }

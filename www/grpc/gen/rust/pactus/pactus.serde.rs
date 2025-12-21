@@ -7985,7 +7985,7 @@ impl<'de> serde::Deserialize<'de> for HistoryInfo {
         deserializer.deserialize_struct("pactus.HistoryInfo", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for ListAddressRequest {
+impl serde::Serialize for ListAddressesRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -7996,14 +7996,14 @@ impl serde::Serialize for ListAddressRequest {
         if !self.wallet_name.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("pactus.ListAddressRequest", len)?;
+        let mut struct_ser = serializer.serialize_struct("pactus.ListAddressesRequest", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for ListAddressRequest {
+impl<'de> serde::Deserialize<'de> for ListAddressesRequest {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -8048,13 +8048,13 @@ impl<'de> serde::Deserialize<'de> for ListAddressRequest {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = ListAddressRequest;
+            type Value = ListAddressesRequest;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.ListAddressRequest")
+                formatter.write_str("struct pactus.ListAddressesRequest")
             }
 
-            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListAddressRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListAddressesRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -8069,15 +8069,15 @@ impl<'de> serde::Deserialize<'de> for ListAddressRequest {
                         }
                     }
                 }
-                Ok(ListAddressRequest {
+                Ok(ListAddressesRequest {
                     wallet_name: wallet_name__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.ListAddressRequest", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.ListAddressesRequest", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for ListAddressResponse {
+impl serde::Serialize for ListAddressesResponse {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -8091,7 +8091,7 @@ impl serde::Serialize for ListAddressResponse {
         if !self.data.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("pactus.ListAddressResponse", len)?;
+        let mut struct_ser = serializer.serialize_struct("pactus.ListAddressesResponse", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
@@ -8101,7 +8101,7 @@ impl serde::Serialize for ListAddressResponse {
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for ListAddressResponse {
+impl<'de> serde::Deserialize<'de> for ListAddressesResponse {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -8149,13 +8149,13 @@ impl<'de> serde::Deserialize<'de> for ListAddressResponse {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = ListAddressResponse;
+            type Value = ListAddressesResponse;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.ListAddressResponse")
+                formatter.write_str("struct pactus.ListAddressesResponse")
             }
 
-            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListAddressResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListAddressesResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -8177,16 +8177,16 @@ impl<'de> serde::Deserialize<'de> for ListAddressResponse {
                         }
                     }
                 }
-                Ok(ListAddressResponse {
+                Ok(ListAddressesResponse {
                     wallet_name: wallet_name__.unwrap_or_default(),
                     data: data__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.ListAddressResponse", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.ListAddressesResponse", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for ListWalletRequest {
+impl serde::Serialize for ListWalletsRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -8194,11 +8194,11 @@ impl serde::Serialize for ListWalletRequest {
     {
         use serde::ser::SerializeStruct;
         let len = 0;
-        let struct_ser = serializer.serialize_struct("pactus.ListWalletRequest", len)?;
+        let struct_ser = serializer.serialize_struct("pactus.ListWalletsRequest", len)?;
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for ListWalletRequest {
+impl<'de> serde::Deserialize<'de> for ListWalletsRequest {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -8237,27 +8237,27 @@ impl<'de> serde::Deserialize<'de> for ListWalletRequest {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = ListWalletRequest;
+            type Value = ListWalletsRequest;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.ListWalletRequest")
+                formatter.write_str("struct pactus.ListWalletsRequest")
             }
 
-            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListWalletRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListWalletsRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 while map_.next_key::<GeneratedField>()?.is_some() {
                     let _ = map_.next_value::<serde::de::IgnoredAny>()?;
                 }
-                Ok(ListWalletRequest {
+                Ok(ListWalletsRequest {
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.ListWalletRequest", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.ListWalletsRequest", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for ListWalletResponse {
+impl serde::Serialize for ListWalletsResponse {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -8268,14 +8268,14 @@ impl serde::Serialize for ListWalletResponse {
         if !self.wallets.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("pactus.ListWalletResponse", len)?;
+        let mut struct_ser = serializer.serialize_struct("pactus.ListWalletsResponse", len)?;
         if !self.wallets.is_empty() {
             struct_ser.serialize_field("wallets", &self.wallets)?;
         }
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for ListWalletResponse {
+impl<'de> serde::Deserialize<'de> for ListWalletsResponse {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -8319,13 +8319,13 @@ impl<'de> serde::Deserialize<'de> for ListWalletResponse {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = ListWalletResponse;
+            type Value = ListWalletsResponse;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.ListWalletResponse")
+                formatter.write_str("struct pactus.ListWalletsResponse")
             }
 
-            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListWalletResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListWalletsResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -8340,12 +8340,12 @@ impl<'de> serde::Deserialize<'de> for ListWalletResponse {
                         }
                     }
                 }
-                Ok(ListWalletResponse {
+                Ok(ListWalletsResponse {
                     wallets: wallets__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.ListWalletResponse", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.ListWalletsResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for LoadWalletRequest {

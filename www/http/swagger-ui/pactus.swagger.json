@@ -1205,15 +1205,15 @@
         ]
       }
     },
-    "/pactus/wallet/list_address": {
+    "/pactus/wallet/list_addresses": {
       "get": {
-        "summary": "ListAddress returns all addresses in the specified wallet.",
-        "operationId": "Wallet_ListAddress",
+        "summary": "ListAddresses returns all addresses in the specified wallet.",
+        "operationId": "Wallet_ListAddresses",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusListAddressResponse"
+              "$ref": "#/definitions/pactusListAddressesResponse"
             }
           },
           "default": {
@@ -1237,15 +1237,15 @@
         ]
       }
     },
-    "/pactus/wallet/list_wallet": {
+    "/pactus/wallet/list_wallets": {
       "get": {
-        "summary": "ListWallet returns a list of all available wallets.",
-        "operationId": "Wallet_ListWallet",
+        "summary": "ListWallets returns a list of all available wallets.",
+        "operationId": "Wallet_ListWallets",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusListWalletResponse"
+              "$ref": "#/definitions/pactusListWalletsResponse"
             }
           },
           "default": {
@@ -2477,7 +2477,7 @@
       },
       "description": "HistoryInfo contains transaction history details for an address."
     },
-    "pactusListAddressResponse": {
+    "pactusListAddressesResponse": {
       "type": "object",
       "properties": {
         "walletName": {
@@ -2495,7 +2495,7 @@
       },
       "description": "Response message contains wallet addresses."
     },
-    "pactusListWalletResponse": {
+    "pactusListWalletsResponse": {
       "type": "object",
       "properties": {
         "wallets": {

@@ -7,7 +7,6 @@ import (
 	"path"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
 	"github.com/pactus-project/pactus/crypto/ed25519"
@@ -16,8 +15,12 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
+	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/storage/jsonstorage"
 	"github.com/pactus-project/pactus/wallet/vault"
+	"github.com/pactus-project/pactus/wallet/version"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -30,8 +33,16 @@ type ServerInfo struct {
 	Address string `json:"address"`
 }
 
+type HistoryInfo struct {
+	TxID        string
+	Time        *time.Time
+	PayloadType string
+	Desc        string
+	Amount      amount.Amount
+}
+
 type Wallet struct {
-	store      *Store
+	storage    storage.IStorage
 	path       string
 	grpcClient *grpcClient
 }
@@ -65,17 +76,12 @@ func CheckMnemonic(mnemonic string) error {
 // Offline wallet doesn’t have any connection to any node.
 // Online wallet has a connection to one of the pre-defined servers.
 func Open(walletPath string, offline bool, options ...Option) (*Wallet, error) {
-	data, err := util.ReadFile(walletPath)
+	storage, err := jsonstorage.Open(walletPath)
 	if err != nil {
 		return nil, err
 	}
 
-	store, err := FromBytes(data)
-	if err != nil {
-		return nil, err
-	}
-
-	err = store.UpgradeWallet(walletPath)
+	err = storage.Upgrade()
 	if err != nil {
 		return nil, err
 	}
@@ -85,11 +91,7 @@ func Open(walletPath string, offline bool, options ...Option) (*Wallet, error) {
 		opt(opts)
 	}
 
-	if err := store.ValidateCRC(); err != nil {
-		return nil, err
-	}
-
-	return newWallet(walletPath, store, offline, opts)
+	return newWallet(walletPath, storage, offline, opts)
 }
 
 // Create creates a wallet from mnemonic (seed phrase) and save it at the
@@ -110,36 +112,31 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType,
 		}
 	}
 
-	var coinType uint32
+	var coinType addresspath.CoinType
 	switch chain {
 	case genesis.Mainnet:
-		coinType = 21888
+		coinType = addresspath.CoinTypePactusMainnet
 	case genesis.Testnet, genesis.Localnet:
-		coinType = 21777
+		coinType = addresspath.CoinTypePactusTestnet
 	default:
 		return nil, ErrInvalidNetwork
 	}
 
-	store := &Store{
-		Version:   VersionLatest,
-		UUID:      uuid.New(),
-		CreatedAt: time.Now().Round(time.Second).UTC(),
-		Network:   chain,
-		Vault:     nil,
-	}
-	wallet, err := newWallet(walletPath, store, false, opts)
-	if err != nil {
-		return nil, err
-	}
 	vlt, err := vault.CreateVaultFromMnemonic(mnemonic, coinType)
 	if err != nil {
 		return nil, err
 	}
-	err = vlt.UpdatePassword("", password)
+
+	storage, _ := jsonstorage.Create(walletPath, version.Version5, chain, *vlt)
+	wallet, err := newWallet(walletPath, storage, false, opts)
 	if err != nil {
 		return nil, err
 	}
-	wallet.store.Vault = vlt
+
+	err = storage.UpdatePassword("", password)
+	if err != nil {
+		return nil, err
+	}
 
 	err = wallet.save()
 	if err != nil {
@@ -149,15 +146,11 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType,
 	return wallet, nil
 }
 
-func newWallet(walletPath string, store *Store, offline bool, option *walletOpt) (*Wallet, error) {
-	if !store.Network.IsMainnet() {
-		crypto.ToTestnetHRP()
-	}
-
+func newWallet(walletPath string, storage storage.IStorage, offline bool, option *walletOpt) (*Wallet, error) {
 	client := newGrpcClient(option.timeout, option.servers)
 
 	wlt := &Wallet{
-		store:      store,
+		storage:    storage,
 		path:       walletPath,
 		grpcClient: client,
 	}
@@ -170,18 +163,22 @@ func newWallet(walletPath string, store *Store, offline bool, option *walletOpt)
 		}
 
 		var netServers []string
-		switch wlt.store.Network {
+		switch wlt.storage.Network() {
 		case genesis.Mainnet:
 			for _, srv := range serversData["mainnet"] {
 				netServers = append(netServers, srv.Address)
 			}
 
 		case genesis.Testnet:
+			crypto.ToTestnetHRP()
+
 			for _, srv := range serversData["testnet"] {
 				netServers = append(netServers, srv.Address)
 			}
 
 		case genesis.Localnet:
+			crypto.ToTestnetHRP()
+
 			netServers = []string{"localhost:50052"}
 
 		default:
@@ -202,8 +199,8 @@ func (w *Wallet) Name() string {
 	return path.Base(w.path)
 }
 
-func (w *Wallet) CoinType() uint32 {
-	return w.store.Vault.CoinType
+func (w *Wallet) CoinType() addresspath.CoinType {
+	return w.storage.CoinType()
 }
 
 func (w *Wallet) IsOffline() bool {
@@ -215,12 +212,7 @@ func (w *Wallet) Path() string {
 }
 
 func (w *Wallet) save() error {
-	bs, err := w.store.ToBytes()
-	if err != nil {
-		return err
-	}
-
-	return util.WriteFile(w.path, bs)
+	return w.storage.Save()
 }
 
 // RecoveryAddresses recovers active addresses in the wallet.
@@ -228,7 +220,7 @@ func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 	eventFunc func(addr string),
 ) error {
 	//nolint:contextcheck // client manages timeout internally, external context would interfere
-	err := w.store.Vault.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
+	err := w.storage.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
 		_, err := w.grpcClient.getAccount(addr)
 		if err != nil {
 			s, ok := status.FromError(err)
@@ -275,7 +267,7 @@ func (w *Wallet) Stake(addrStr string) (amount.Amount, error) {
 // TotalBalance return the total available balance of the wallet.
 func (w *Wallet) TotalBalance() (amount.Amount, error) {
 	totalBalance := int64(0)
-	infos := w.store.Vault.AllAccountAddresses()
+	infos := w.storage.ListAccountAddresses()
 	for _, info := range infos {
 		acc, _ := w.grpcClient.getAccount(info.Address)
 		if acc != nil {
@@ -290,7 +282,7 @@ func (w *Wallet) TotalBalance() (amount.Amount, error) {
 func (w *Wallet) TotalStake() (amount.Amount, error) {
 	totalStake := int64(0)
 
-	infos := w.store.Vault.AllValidatorAddresses()
+	infos := w.storage.ListValidatorAddresses()
 	for _, info := range infos {
 		val, _ := w.grpcClient.getValidator(info.Address)
 		if val != nil {
@@ -341,7 +333,7 @@ func (w *Wallet) MakeBondTx(sender, receiver, pubKey string, amt amount.Amount,
 	}
 	if pubKey == "" {
 		// Let's check if we can get public key from the wallet
-		info := w.store.Vault.AddressInfo(receiver)
+		info := w.storage.AddressInfo(receiver)
 		if info != nil {
 			pubKey = info.PublicKey
 		}
@@ -416,7 +408,7 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	}
 
 	data, _ := trx.Bytes()
-	w.store.History.addPending(trx.Payload().Signer().String(), trx.Payload().Value(), txID, data)
+	w.storage.AddPending(trx.Payload().Signer().String(), trx.Payload().Value(), txID, data)
 
 	err = w.save()
 	if err != nil {
@@ -427,7 +419,7 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 }
 
 func (w *Wallet) UpdatePassword(oldPassword, newPassword string, opts ...encrypter.Option) error {
-	err := w.store.Vault.UpdatePassword(oldPassword, newPassword, opts...)
+	err := w.storage.UpdatePassword(oldPassword, newPassword, opts...)
 	if err != nil {
 		return err
 	}
@@ -436,36 +428,36 @@ func (w *Wallet) UpdatePassword(oldPassword, newPassword string, opts ...encrypt
 }
 
 func (w *Wallet) IsEncrypted() bool {
-	return w.store.Vault.IsEncrypted()
+	return w.storage.IsEncrypted()
 }
 
-func (w *Wallet) AddressInfo(addr string) *vault.AddressInfo {
-	return w.store.Vault.AddressInfo(addr)
+func (w *Wallet) AddressInfo(addr string) *storage.AddressInfo {
+	return w.storage.AddressInfo(addr)
 }
 
-func (w *Wallet) AddressInfos() []vault.AddressInfo {
-	return w.store.Vault.AddressInfos()
+func (w *Wallet) ListAddresses() []storage.AddressInfo {
+	return w.storage.ListAddresses()
 }
 
 // AddressCount returns the number of addresses inside the wallet.
 func (w *Wallet) AddressCount() int {
-	return w.store.Vault.AddressCount()
+	return w.storage.AddressCount()
 }
 
-func (w *Wallet) AllValidatorAddresses() []vault.AddressInfo {
-	return w.store.Vault.AllValidatorAddresses()
+func (w *Wallet) ListValidatorAddresses() []storage.AddressInfo {
+	return w.storage.ListValidatorAddresses()
 }
 
-func (w *Wallet) AllAccountAddresses() []vault.AddressInfo {
-	return w.store.Vault.AllAccountAddresses()
+func (w *Wallet) ListAccountAddresses() []storage.AddressInfo {
+	return w.storage.ListAccountAddresses()
 }
 
-func (w *Wallet) AddressFromPath(p string) *vault.AddressInfo {
-	return w.store.Vault.AddressFromPath(p)
+func (w *Wallet) AddressByPath(p string) *storage.AddressInfo {
+	return w.storage.AddressByPath(p)
 }
 
 func (w *Wallet) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) error {
-	err := w.store.Vault.ImportBLSPrivateKey(password, prv)
+	err := w.storage.ImportBLSPrivateKey(password, prv)
 	if err != nil {
 		return err
 	}
@@ -474,7 +466,7 @@ func (w *Wallet) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) error
 }
 
 func (w *Wallet) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKey) error {
-	err := w.store.Vault.ImportEd25519PrivateKey(password, prv)
+	err := w.storage.ImportEd25519PrivateKey(password, prv)
 	if err != nil {
 		return err
 	}
@@ -483,7 +475,7 @@ func (w *Wallet) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKe
 }
 
 func (w *Wallet) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
-	keys, err := w.store.Vault.PrivateKeys(password, []string{addr})
+	keys, err := w.storage.PrivateKeys(password, []string{addr})
 	if err != nil {
 		return nil, err
 	}
@@ -492,7 +484,7 @@ func (w *Wallet) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
 }
 
 func (w *Wallet) PrivateKeys(password string, addrs []string) ([]crypto.PrivateKey, error) {
-	return w.store.Vault.PrivateKeys(password, addrs)
+	return w.storage.PrivateKeys(password, addrs)
 }
 
 type addressBuilder struct {
@@ -509,27 +501,27 @@ func WithPassword(password string) NewAddressOption {
 
 func (w *Wallet) NewAddress(addressType crypto.AddressType, label string,
 	opts ...NewAddressOption,
-) (*vault.AddressInfo, error) {
+) (*storage.AddressInfo, error) {
 	builder := &addressBuilder{}
 
 	for _, opt := range opts {
 		opt(builder)
 	}
 
-	var info *vault.AddressInfo
+	var info *storage.AddressInfo
 	var err error
 	switch addressType {
 	case crypto.AddressTypeValidator:
-		info, err = w.store.Vault.NewValidatorAddress(label)
+		info, err = w.storage.NewValidatorAddress(label)
 	case crypto.AddressTypeBLSAccount:
-		info, err = w.store.Vault.NewBLSAccountAddress(label)
+		info, err = w.storage.NewBLSAccountAddress(label)
 	case crypto.AddressTypeEd25519Account:
-		info, err = w.store.Vault.NewEd25519AccountAddress(label, builder.password)
+		info, err = w.storage.NewEd25519AccountAddress(label, builder.password)
 	case crypto.AddressTypeTreasury:
-		return nil, ErrInvalidAddressType
+		return nil, jsonstorage.ErrInvalidAddressType
 
 	default:
-		return nil, ErrInvalidAddressType
+		return nil, jsonstorage.ErrInvalidAddressType
 	}
 
 	if err != nil {
@@ -546,39 +538,39 @@ func (w *Wallet) NewAddress(addressType crypto.AddressType, label string,
 
 // NewBLSAccountAddress create a new BLS-based account address and
 // associates it with the given label.
-func (w *Wallet) NewBLSAccountAddress(label string) (*vault.AddressInfo, error) {
+func (w *Wallet) NewBLSAccountAddress(label string) (*storage.AddressInfo, error) {
 	return w.NewAddress(crypto.AddressTypeBLSAccount, label)
 }
 
 // NewEd25519AccountAddress create a new Ed25519-based account address and
 // associates it with the given label.
 // The password is required to access the master private key needed for address generation.
-func (w *Wallet) NewEd25519AccountAddress(label, password string) (*vault.AddressInfo, error) {
+func (w *Wallet) NewEd25519AccountAddress(label, password string) (*storage.AddressInfo, error) {
 	return w.NewAddress(crypto.AddressTypeEd25519Account, label, WithPassword(password))
 }
 
 // NewValidatorAddress creates a new BLS validator address and
 // associates it with the given label.
-func (w *Wallet) NewValidatorAddress(label string) (*vault.AddressInfo, error) {
+func (w *Wallet) NewValidatorAddress(label string) (*storage.AddressInfo, error) {
 	return w.NewAddress(crypto.AddressTypeValidator, label)
 }
 
-func (w *Wallet) Contains(addr string) bool {
-	return w.store.Vault.Contains(addr)
+func (w *Wallet) HasAddress(addr string) bool {
+	return w.storage.HasAddress(addr)
 }
 
 func (w *Wallet) Mnemonic(password string) (string, error) {
-	return w.store.Vault.Mnemonic(password)
+	return w.storage.Mnemonic(password)
 }
 
-// Label returns label of addr.
-func (w *Wallet) Label(addr string) string {
-	return w.store.Vault.Label(addr)
+// AddressLabel returns label of the given address.
+func (w *Wallet) AddressLabel(addr string) string {
+	return w.storage.AddressLabel(addr)
 }
 
-// SetLabel sets label for addr.
-func (w *Wallet) SetLabel(addr, label string) error {
-	err := w.store.Vault.SetLabel(addr, label)
+// SetAddressLabel updates the label of the given address.
+func (w *Wallet) SetAddressLabel(addr, label string) error {
+	err := w.storage.SetAddressLabel(addr, label)
 	if err != nil {
 		return err
 	}
@@ -588,8 +580,8 @@ func (w *Wallet) SetLabel(addr, label string) error {
 
 func (w *Wallet) AddTransaction(txID tx.ID) error {
 	idStr := txID.String()
-	if w.store.History.hasTransaction(idStr) {
-		return ErrHistoryExists
+	if w.storage.HasTransaction(idStr) {
+		return jsonstorage.ErrHistoryExists
 	}
 
 	trxRes, err := w.grpcClient.getTransaction(txID)
@@ -618,23 +610,23 @@ func (w *Wallet) AddTransaction(txID tx.ID) error {
 		receiver = nil
 	}
 
-	if w.store.Vault.Contains(sender) {
+	if w.storage.HasAddress(sender) {
 		amt := amount.Amount(-(trxRes.Transaction.Fee + trxRes.Transaction.Value))
-		w.store.History.addActivity(sender, amt, trxRes)
+		w.storage.AddActivity(sender, amt, trxRes)
 	}
 
 	if receiver != nil {
-		if w.store.Vault.Contains(*receiver) {
+		if w.storage.HasAddress(*receiver) {
 			amt := amount.Amount(trxRes.Transaction.Value)
-			w.store.History.addActivity(*receiver, amt, trxRes)
+			w.storage.AddActivity(*receiver, amt, trxRes)
 		}
 	}
 
 	return w.save()
 }
 
-func (w *Wallet) History(addr string) []HistoryInfo {
-	return w.store.History.getAddrHistory(addr)
+func (w *Wallet) History(addr string) []storage.HistoryInfo {
+	return w.storage.GetAddrHistory(addr)
 }
 
 func (w *Wallet) SignMessage(password, addr, msg string) (string, error) {
@@ -647,52 +639,39 @@ func (w *Wallet) SignMessage(password, addr, msg string) (string, error) {
 }
 
 func (w *Wallet) Version() int {
-	return w.store.Version
+	return w.storage.Version()
 }
 
 func (w *Wallet) CreationTime() time.Time {
-	return w.store.CreatedAt
+	return w.storage.CreatedAt()
 }
 
 func (w *Wallet) Network() genesis.ChainType {
-	return w.store.Network
+	return w.storage.Network()
 }
 
 func (w *Wallet) Info() *Info {
 	return &Info{
 		WalletName: w.Name(),
-		Version:    w.store.Version,
-		Network:    w.store.Network.String(),
-		DefaultFee: w.store.Vault.DefaultFee,
-		UUID:       w.store.UUID.String(),
+		Version:    w.storage.Version(),
+		Network:    w.storage.Network().String(),
+		DefaultFee: w.storage.DefaultFee(),
+		UUID:       w.storage.UUID().String(),
 		Encrypted:  w.IsEncrypted(),
-		CreatedAt:  w.store.CreatedAt,
+		CreatedAt:  w.storage.CreatedAt(),
 	}
 }
 
 // Neuter clones the wallet and neuters it and saves it at the given path.
-func (w *Wallet) Neuter(path string) (*Wallet, error) {
-	clonedStore := w.store.Clone()
-	clonedStore.Vault = w.store.Vault.Neuter()
-
-	neuteredWallet := &Wallet{
-		store: clonedStore,
-		path:  path,
-	}
-
-	err := neuteredWallet.save()
-	if err != nil {
-		return nil, err
-	}
-
-	return neuteredWallet, nil
+func (w *Wallet) Neuter(path string) error {
+	return w.storage.Neuter(path)
 }
 
 // makeTxBuilder initializes a txBuilder with provided options, allowing for flexible configuration of the transaction.
 func (w *Wallet) makeTxBuilder(options ...TxOption) (*txBuilder, error) {
 	builder := &txBuilder{
 		client: w.grpcClient,
-		fee:    w.store.Vault.DefaultFee,
+		fee:    w.storage.DefaultFee(),
 	}
 	for _, op := range options {
 		err := op(builder)
@@ -705,7 +684,7 @@ func (w *Wallet) makeTxBuilder(options ...TxOption) (*txBuilder, error) {
 }
 
 func (w *Wallet) SetDefaultFee(fee amount.Amount) error {
-	w.store.Vault.DefaultFee = fee
+	w.storage.SetDefaultFee(fee)
 
 	return w.save()
 }

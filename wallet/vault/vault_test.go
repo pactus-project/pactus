@@ -92,7 +92,7 @@ func TestContains(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Vault should contain all known addresses", func(t *testing.T) {
-		infos := td.vault.AddressInfos()
+		infos := td.storage.AddressInfos()
 		for _, i := range infos {
 			assert.True(t, td.vault.Contains(i.Address))
 		}
@@ -107,7 +107,7 @@ func TestContains(t *testing.T) {
 func TestSortAddressInfo(t *testing.T) {
 	td := setup(t)
 
-	infos := td.vault.AddressInfos()
+	infos := td.storage.AddressInfos()
 
 	// Ed25519 Keys
 	assert.Equal(t, "m/44'/21888'/3'/0'", infos[0].Path)
@@ -120,10 +120,10 @@ func TestSortAddressInfo(t *testing.T) {
 	assert.Equal(t, "m/65535'/21888'/3'/1'", infos[5].Path)
 }
 
-func TestAllAccountAddresses(t *testing.T) {
+func TestListAccountAddresses(t *testing.T) {
 	td := setup(t)
 
-	accountAddrs := td.vault.AllAccountAddresses()
+	accountAddrs := td.vault.ListAccountAddresses()
 	for _, i := range accountAddrs {
 		path, err := addresspath.FromString(i.Path)
 		assert.NoError(t, err)
@@ -132,12 +132,12 @@ func TestAllAccountAddresses(t *testing.T) {
 	}
 }
 
-func TestAllValidatorAddresses(t *testing.T) {
+func TestListValidatorAddresses(t *testing.T) {
 	td := setup(t)
 
-	validatorAddrs := td.vault.AllValidatorAddresses()
+	validatorAddrs := td.vault.ListValidatorAddresses()
 	for _, i := range validatorAddrs {
-		info := td.vault.AddressInfo(i.Address)
+		info := td.storage.AddressInfo(i.Address)
 		assert.Equal(t, i.Address, info.Address)
 
 		path, _ := addresspath.FromString(info.Path)
@@ -155,10 +155,10 @@ func TestAllValidatorAddresses(t *testing.T) {
 	}
 }
 
-func TestSortAllValidatorAddresses(t *testing.T) {
+func TestSortListValidatorAddresses(t *testing.T) {
 	td := setup(t)
 
-	validatorAddrs := td.vault.AllValidatorAddresses()
+	validatorAddrs := td.vault.ListValidatorAddresses()
 
 	assert.Equal(t, "m/12381'/21888'/1'/0", validatorAddrs[0].Path)
 	assert.Equal(t, "m/65535'/21888'/1'/0'", validatorAddrs[len(validatorAddrs)-1].Path)
@@ -174,7 +174,7 @@ func TestAddressFromPath(t *testing.T) {
 
 	t.Run("Ok", func(t *testing.T) {
 		var address string
-		var addrInfo AddressInfo
+		var addrInfo AddressInfoDeprecated
 
 		for addr, ai := range td.vault.Addresses {
 			address = addr
@@ -264,22 +264,22 @@ func TestGetPrivateKeys(t *testing.T) {
 	})
 
 	t.Run("No password", func(t *testing.T) {
-		addr := td.vault.AddressInfos()[0].Address
+		addr := td.storage.AddressInfos()[0].Address
 		_, err := td.vault.PrivateKeys("", []string{addr})
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Invalid password", func(t *testing.T) {
-		addr := td.vault.AddressInfos()[0].Address
+		addr := td.storage.AddressInfos()[0].Address
 		_, err := td.vault.PrivateKeys("wrong_password", []string{addr})
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
 	t.Run("Check all the private keys", func(t *testing.T) {
-		for _, info := range td.vault.AddressInfos() {
+		for _, info := range td.storage.AddressInfos() {
 			prv, err := td.vault.PrivateKeys(tPassword, []string{info.Address})
 			assert.NoError(t, err)
-			addrInfo := td.vault.AddressInfo(info.Address)
+			addrInfo := td.storage.AddressInfo(info.Address)
 			path, _ := addresspath.FromString(info.Path)
 
 			switch _N(path.AddressType()) {
@@ -314,8 +314,8 @@ func TestImportBLSPrivateKey(t *testing.T) {
 		valAddr := prv.PublicKeyNative().ValidatorAddress().String()
 		accAddr := prv.PublicKeyNative().AccountAddress().String()
 
-		valAddrInfo := td.vault.AddressInfo(valAddr)
-		accAddrInfo := td.vault.AddressInfo(accAddr)
+		valAddrInfo := td.storage.AddressInfo(valAddr)
+		accAddrInfo := td.storage.AddressInfo(accAddr)
 
 		assert.True(t, td.vault.Contains(valAddr))
 		assert.True(t, td.vault.Contains(accAddr))
@@ -352,7 +352,7 @@ func TestImportEd25519PrivateKey(t *testing.T) {
 
 		accAddr := prv.PublicKeyNative().AccountAddress().String()
 
-		accAddrInfo := td.vault.AddressInfo(accAddr)
+		accAddrInfo := td.storage.AddressInfo(accAddr)
 		assert.True(t, td.vault.Contains(accAddr))
 		assert.Equal(t, accAddr, accAddrInfo.Address)
 		assert.Equal(t, prv.PublicKeyNative().String(), accAddrInfo.PublicKey)
@@ -399,7 +399,7 @@ func TestUpdatePassword(t *testing.T) {
 		encrypter.OptionParallelism(1),
 	}
 
-	addrInfos := td.vault.AddressInfos()
+	addrInfos := td.storage.AddressInfos()
 	newPassword := "new-password"
 
 	t.Run("Empty password", func(t *testing.T) {
@@ -415,7 +415,7 @@ func TestUpdatePassword(t *testing.T) {
 	t.Run("Valid password update", func(t *testing.T) {
 		assert.NoError(t, td.vault.UpdatePassword(tPassword, newPassword, opts...))
 		assert.True(t, td.vault.IsEncrypted())
-		assert.Equal(t, addrInfos, td.vault.AddressInfos())
+		assert.Equal(t, addrInfos, td.storage.AddressInfos())
 	})
 
 	t.Run("Old password should no longer be valid", func(t *testing.T) {
@@ -426,7 +426,7 @@ func TestUpdatePassword(t *testing.T) {
 	t.Run("Set vault password to empty", func(t *testing.T) {
 		assert.NoError(t, td.vault.UpdatePassword(newPassword, ""))
 		assert.False(t, td.vault.IsEncrypted())
-		assert.Equal(t, addrInfos, td.vault.AddressInfos())
+		assert.Equal(t, addrInfos, td.storage.AddressInfos())
 	})
 }
 
@@ -441,14 +441,14 @@ func TestSetLabel(t *testing.T) {
 	})
 
 	t.Run("Update label", func(t *testing.T) {
-		testAddr := td.vault.AddressInfos()[0].Address
+		testAddr := td.storage.AddressInfos()[0].Address
 		err := td.vault.SetLabel(testAddr, "I have a label")
 		assert.NoError(t, err)
 		assert.Equal(t, "I have a label", td.vault.Label(testAddr))
 	})
 
 	t.Run("Remove label", func(t *testing.T) {
-		testAddr := td.vault.AddressInfos()[0].Address
+		testAddr := td.storage.AddressInfos()[0].Address
 		err := td.vault.SetLabel(testAddr, "")
 		assert.NoError(t, err)
 		var ok bool
@@ -523,7 +523,7 @@ func TestAddressRecovery(t *testing.T) {
 		assert.NoError(t, err)
 
 		// Should have 1 Ed25519 address (the first one)
-		addresses := vault.AllAccountAddresses()
+		addresses := vault.ListAccountAddresses()
 		assert.Empty(t, addresses)
 	})
 
@@ -541,7 +541,7 @@ func TestAddressRecovery(t *testing.T) {
 		assert.NoError(t, err)
 
 		// Should have 4 addresses
-		addresses := vault.AllAccountAddresses()
+		addresses := vault.ListAccountAddresses()
 		assert.Len(t, addresses, 4)
 		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", addresses[0].Address)
 		assert.Equal(t, "pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94", addresses[1].Address)
@@ -564,7 +564,7 @@ func TestAddressRecovery(t *testing.T) {
 		err = vault.RecoverAddresses(context.Background(), "", hasActivity)
 		assert.NoError(t, err)
 
-		addresses := vault.AllAccountAddresses()
+		addresses := vault.ListAccountAddresses()
 		assert.Len(t, addresses, 8)
 
 		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", addresses[0].Address)
@@ -590,7 +590,7 @@ func TestAddressRecovery(t *testing.T) {
 		err = vault.RecoverAddresses(context.Background(), "", hasActivity)
 		assert.NoError(t, err)
 
-		addresses := vault.AllAccountAddresses()
+		addresses := vault.ListAccountAddresses()
 		assert.Len(t, addresses, 1)
 
 		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", addresses[0].Address)
@@ -638,7 +638,7 @@ func TestAddressRecovery(t *testing.T) {
 
 		// Recovery should have been interrupted, so we should have only the first Ed25519 address
 		// or possibly none if cancelled early enough
-		addresses := vault.AllAccountAddresses()
+		addresses := vault.ListAccountAddresses()
 		assert.LessOrEqual(t, len(addresses), 1)
 	})
 }

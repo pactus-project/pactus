@@ -470,27 +470,27 @@ final $typed_data.Uint8List setAddressLabelResponseDescriptor = $convert.base64D
     'ChdTZXRBZGRyZXNzTGFiZWxSZXNwb25zZRIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0Tm'
     'FtZRIYCgdhZGRyZXNzGAIgASgJUgdhZGRyZXNzEhQKBWxhYmVsGAMgASgJUgVsYWJlbA==');
 
-@$core.Deprecated('Use listWalletRequestDescriptor instead')
-const ListWalletRequest$json = {
-  '1': 'ListWalletRequest',
+@$core.Deprecated('Use listWalletsRequestDescriptor instead')
+const ListWalletsRequest$json = {
+  '1': 'ListWalletsRequest',
 };
 
-/// Descriptor for `ListWalletRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listWalletRequestDescriptor =
-    $convert.base64Decode('ChFMaXN0V2FsbGV0UmVxdWVzdA==');
+/// Descriptor for `ListWalletsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listWalletsRequestDescriptor =
+    $convert.base64Decode('ChJMaXN0V2FsbGV0c1JlcXVlc3Q=');
 
-@$core.Deprecated('Use listWalletResponseDescriptor instead')
-const ListWalletResponse$json = {
-  '1': 'ListWalletResponse',
+@$core.Deprecated('Use listWalletsResponseDescriptor instead')
+const ListWalletsResponse$json = {
+  '1': 'ListWalletsResponse',
   '2': [
     {'1': 'wallets', '3': 1, '4': 3, '5': 9, '10': 'wallets'},
   ],
 };
 
-/// Descriptor for `ListWalletResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listWalletResponseDescriptor =
+/// Descriptor for `ListWalletsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listWalletsResponseDescriptor =
     $convert.base64Decode(
-        'ChJMaXN0V2FsbGV0UmVzcG9uc2USGAoHd2FsbGV0cxgBIAMoCVIHd2FsbGV0cw==');
+        'ChNMaXN0V2FsbGV0c1Jlc3BvbnNlEhgKB3dhbGxldHMYASADKAlSB3dhbGxldHM=');
 
 @$core.Deprecated('Use getWalletInfoRequestDescriptor instead')
 const GetWalletInfoRequest$json = {
@@ -526,21 +526,22 @@ final $typed_data.Uint8List getWalletInfoResponseDescriptor = $convert.base64Dec
     'CWVuY3J5cHRlZBgEIAEoCFIJZW5jcnlwdGVkEhIKBHV1aWQYBSABKAlSBHV1aWQSHQoKY3JlYX'
     'RlZF9hdBgGIAEoA1IJY3JlYXRlZEF0Eh8KC2RlZmF1bHRfZmVlGAcgASgDUgpkZWZhdWx0RmVl');
 
-@$core.Deprecated('Use listAddressRequestDescriptor instead')
-const ListAddressRequest$json = {
-  '1': 'ListAddressRequest',
+@$core.Deprecated('Use listAddressesRequestDescriptor instead')
+const ListAddressesRequest$json = {
+  '1': 'ListAddressesRequest',
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
   ],
 };
 
-/// Descriptor for `ListAddressRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listAddressRequestDescriptor = $convert.base64Decode(
-    'ChJMaXN0QWRkcmVzc1JlcXVlc3QSHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbWU=');
+/// Descriptor for `ListAddressesRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listAddressesRequestDescriptor = $convert.base64Decode(
+    'ChRMaXN0QWRkcmVzc2VzUmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZQ'
+    '==');
 
-@$core.Deprecated('Use listAddressResponseDescriptor instead')
-const ListAddressResponse$json = {
-  '1': 'ListAddressResponse',
+@$core.Deprecated('Use listAddressesResponseDescriptor instead')
+const ListAddressesResponse$json = {
+  '1': 'ListAddressesResponse',
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
     {
@@ -554,10 +555,10 @@ const ListAddressResponse$json = {
   ],
 };
 
-/// Descriptor for `ListAddressResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List listAddressResponseDescriptor = $convert.base64Decode(
-    'ChNMaXN0QWRkcmVzc1Jlc3BvbnNlEh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW1lEi'
-    'cKBGRhdGEYAiADKAsyEy5wYWN0dXMuQWRkcmVzc0luZm9SBGRhdGE=');
+/// Descriptor for `ListAddressesResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listAddressesResponseDescriptor = $convert.base64Decode(
+    'ChVMaXN0QWRkcmVzc2VzUmVzcG9uc2USHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbW'
+    'USJwoEZGF0YRgCIAMoCzITLnBhY3R1cy5BZGRyZXNzSW5mb1IEZGF0YQ==');
 
 const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = {
   '1': 'Wallet',
@@ -628,9 +629,9 @@ const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = {
       '3': '.pactus.SetAddressLabelResponse'
     },
     {
-      '1': 'ListWallet',
-      '2': '.pactus.ListWalletRequest',
-      '3': '.pactus.ListWalletResponse'
+      '1': 'ListWallets',
+      '2': '.pactus.ListWalletsRequest',
+      '3': '.pactus.ListWalletsResponse'
     },
     {
       '1': 'GetWalletInfo',
@@ -638,9 +639,9 @@ const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = {
       '3': '.pactus.GetWalletInfoResponse'
     },
     {
-      '1': 'ListAddress',
-      '2': '.pactus.ListAddressRequest',
-      '3': '.pactus.ListAddressResponse'
+      '1': 'ListAddresses',
+      '2': '.pactus.ListAddressesRequest',
+      '3': '.pactus.ListAddressesResponse'
     },
   ],
 };
@@ -676,12 +677,12 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
   '.pactus.GetAddressInfoResponse': GetAddressInfoResponse$json,
   '.pactus.SetAddressLabelRequest': SetAddressLabelRequest$json,
   '.pactus.SetAddressLabelResponse': SetAddressLabelResponse$json,
-  '.pactus.ListWalletRequest': ListWalletRequest$json,
-  '.pactus.ListWalletResponse': ListWalletResponse$json,
+  '.pactus.ListWalletsRequest': ListWalletsRequest$json,
+  '.pactus.ListWalletsResponse': ListWalletsResponse$json,
   '.pactus.GetWalletInfoRequest': GetWalletInfoRequest$json,
   '.pactus.GetWalletInfoResponse': GetWalletInfoResponse$json,
-  '.pactus.ListAddressRequest': ListAddressRequest$json,
-  '.pactus.ListAddressResponse': ListAddressResponse$json,
+  '.pactus.ListAddressesRequest': ListAddressesRequest$json,
+  '.pactus.ListAddressesResponse': ListAddressesResponse$json,
 };
 
 /// Descriptor for `Wallet`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -705,8 +706,8 @@ final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode(
     'UmVzcG9uc2USTwoOR2V0QWRkcmVzc0luZm8SHS5wYWN0dXMuR2V0QWRkcmVzc0luZm9SZXF1ZX'
     'N0Gh4ucGFjdHVzLkdldEFkZHJlc3NJbmZvUmVzcG9uc2USUgoPU2V0QWRkcmVzc0xhYmVsEh4u'
     'cGFjdHVzLlNldEFkZHJlc3NMYWJlbFJlcXVlc3QaHy5wYWN0dXMuU2V0QWRkcmVzc0xhYmVsUm'
-    'VzcG9uc2USQwoKTGlzdFdhbGxldBIZLnBhY3R1cy5MaXN0V2FsbGV0UmVxdWVzdBoaLnBhY3R1'
-    'cy5MaXN0V2FsbGV0UmVzcG9uc2USTAoNR2V0V2FsbGV0SW5mbxIcLnBhY3R1cy5HZXRXYWxsZX'
-    'RJbmZvUmVxdWVzdBodLnBhY3R1cy5HZXRXYWxsZXRJbmZvUmVzcG9uc2USRgoLTGlzdEFkZHJl'
-    'c3MSGi5wYWN0dXMuTGlzdEFkZHJlc3NSZXF1ZXN0GhsucGFjdHVzLkxpc3RBZGRyZXNzUmVzcG'
-    '9uc2U=');
+    'VzcG9uc2USRgoLTGlzdFdhbGxldHMSGi5wYWN0dXMuTGlzdFdhbGxldHNSZXF1ZXN0GhsucGFj'
+    'dHVzLkxpc3RXYWxsZXRzUmVzcG9uc2USTAoNR2V0V2FsbGV0SW5mbxIcLnBhY3R1cy5HZXRXYW'
+    'xsZXRJbmZvUmVxdWVzdBodLnBhY3R1cy5HZXRXYWxsZXRJbmZvUmVzcG9uc2USTAoNTGlzdEFk'
+    'ZHJlc3NlcxIcLnBhY3R1cy5MaXN0QWRkcmVzc2VzUmVxdWVzdBodLnBhY3R1cy5MaXN0QWRkcm'
+    'Vzc2VzUmVzcG9uc2U=');

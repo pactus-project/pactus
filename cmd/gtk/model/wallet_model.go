@@ -11,7 +11,7 @@ import (
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/wallet"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
-	"github.com/pactus-project/pactus/wallet/vault"
+	"github.com/pactus-project/pactus/wallet/storage"
 )
 
 type WalletModel struct {
@@ -80,8 +80,8 @@ func (model *WalletModel) TotalStake() (amount.Amount, error) {
 	return model.Node.WalletManager().TotalStake(model.WalletKey)
 }
 
-func (model *WalletModel) AddressInfo(addr string) *vault.AddressInfo {
-	info, err := model.Node.WalletManager().GetAddressInfo(model.WalletKey, addr)
+func (model *WalletModel) AddressInfo(addr string) *storage.AddressInfo {
+	info, err := model.Node.WalletManager().AddressInfo(model.WalletKey, addr)
 	if err != nil {
 		return nil
 	}
@@ -89,8 +89,8 @@ func (model *WalletModel) AddressInfo(addr string) *vault.AddressInfo {
 	return info
 }
 
-func (model *WalletModel) AllAccountAddresses() []vault.AddressInfo {
-	infos, err := model.Node.WalletManager().AllAccountAddresses(model.WalletKey)
+func (model *WalletModel) ListAccountAddresses() []storage.AddressInfo {
+	infos, err := model.Node.WalletManager().ListAccountAddresses(model.WalletKey)
 	if err != nil {
 		return nil
 	}
@@ -98,8 +98,8 @@ func (model *WalletModel) AllAccountAddresses() []vault.AddressInfo {
 	return infos
 }
 
-func (model *WalletModel) AllValidatorAddresses() []vault.AddressInfo {
-	infos, err := model.Node.WalletManager().AllValidatorAddresses(model.WalletKey)
+func (model *WalletModel) ListValidatorAddresses() []storage.AddressInfo {
+	infos, err := model.Node.WalletManager().ListValidatorAddresses(model.WalletKey)
 	if err != nil {
 		return nil
 	}
@@ -135,12 +135,12 @@ func (model *WalletModel) NewAddress(
 	addressType crypto.AddressType,
 	label string,
 	opts ...wallet.NewAddressOption,
-) (*vault.AddressInfo, error) {
+) (*storage.AddressInfo, error) {
 	return model.Node.WalletManager().NewAddress(model.WalletKey, addressType, label, opts...)
 }
 
 func (model *WalletModel) Label(addr string) string {
-	label, err := model.Node.WalletManager().Label(model.WalletKey, addr)
+	label, err := model.Node.WalletManager().AddressLabel(model.WalletKey, addr)
 	if err != nil {
 		return ""
 	}
@@ -149,13 +149,13 @@ func (model *WalletModel) Label(addr string) string {
 }
 
 func (model *WalletModel) SetLabel(addr, label string) error {
-	return model.Node.WalletManager().SetLabel(model.WalletKey, addr, label)
+	return model.Node.WalletManager().SetAddressLabel(model.WalletKey, addr, label)
 }
 
 // AddressRows returns typed address rows with domain data only.
 func (model *WalletModel) AddressRows() []AddressRow {
 	rows := make([]AddressRow, 0)
-	infos, err := model.Node.WalletManager().ListAddress(model.WalletKey)
+	infos, err := model.Node.WalletManager().ListAddresses(model.WalletKey)
 	if err != nil {
 		return rows
 	}

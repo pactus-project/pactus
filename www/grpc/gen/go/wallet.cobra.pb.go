@@ -33,9 +33,9 @@ func WalletClientCommand(options ...client.Option) *cobra.Command {
 		_WalletGetTotalStakeCommand(cfg),
 		_WalletGetAddressInfoCommand(cfg),
 		_WalletSetAddressLabelCommand(cfg),
-		_WalletListWalletCommand(cfg),
+		_WalletListWalletsCommand(cfg),
 		_WalletGetWalletInfoCommand(cfg),
-		_WalletListAddressCommand(cfg),
+		_WalletListAddressesCommand(cfg),
 	)
 	return cmd
 }
@@ -602,32 +602,32 @@ func _WalletSetAddressLabelCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletListWalletCommand(cfg *client.Config) *cobra.Command {
-	req := &ListWalletRequest{}
+func _WalletListWalletsCommand(cfg *client.Config) *cobra.Command {
+	req := &ListWalletsRequest{}
 
 	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("ListWallet"),
-		Short: "ListWallet RPC client",
-		Long:  "ListWallet returns a list of all available wallets.",
+		Use:   cfg.CommandNamer("ListWallets"),
+		Short: "ListWallets RPC client",
+		Long:  "ListWallets returns a list of all available wallets.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "ListWallet"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "ListWallets"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewWalletClient(cc)
-				v := &ListWalletRequest{}
+				v := &ListWalletsRequest{}
 
 				if err := in(v); err != nil {
 					return err
 				}
 				proto.Merge(v, req)
 
-				res, err := cli.ListWallet(cmd.Context(), v)
+				res, err := cli.ListWallets(cmd.Context(), v)
 
 				if err != nil {
 					return err
@@ -684,32 +684,32 @@ func _WalletGetWalletInfoCommand(cfg *client.Config) *cobra.Command {
 	return cmd
 }
 
-func _WalletListAddressCommand(cfg *client.Config) *cobra.Command {
-	req := &ListAddressRequest{}
+func _WalletListAddressesCommand(cfg *client.Config) *cobra.Command {
+	req := &ListAddressesRequest{}
 
 	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("ListAddress"),
-		Short: "ListAddress RPC client",
-		Long:  "ListAddress returns all addresses in the specified wallet.",
+		Use:   cfg.CommandNamer("ListAddresses"),
+		Short: "ListAddresses RPC client",
+		Long:  "ListAddresses returns all addresses in the specified wallet.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if cfg.UseEnvVars {
 				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
 					return err
 				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "ListAddress"); err != nil {
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "ListAddresses"); err != nil {
 					return err
 				}
 			}
 			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
 				cli := NewWalletClient(cc)
-				v := &ListAddressRequest{}
+				v := &ListAddressesRequest{}
 
 				if err := in(v); err != nil {
 					return err
 				}
 				proto.Merge(v, req)
 
-				res, err := cli.ListAddress(cmd.Context(), v)
+				res, err := cli.ListAddresses(cmd.Context(), v)
 
 				if err != nil {
 					return err

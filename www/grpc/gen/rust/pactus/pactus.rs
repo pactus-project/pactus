@@ -1426,11 +1426,11 @@ pub struct SetAddressLabelResponse {
 }
 /// Request message for listing all wallets.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ListWalletRequest {
+pub struct ListWalletsRequest {
 }
 /// Response message contains wallet names.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ListWalletResponse {
+pub struct ListWalletsResponse {
     /// Array of wallet names.
     #[prost(string, repeated, tag="1")]
     pub wallets: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
@@ -1469,14 +1469,14 @@ pub struct GetWalletInfoResponse {
 }
 /// Request message for listing wallet addresses.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ListAddressRequest {
+pub struct ListAddressesRequest {
     /// The name of the queried wallet.
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
 }
 /// Response message contains wallet addresses.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ListAddressResponse {
+pub struct ListAddressesResponse {
     /// The name of the queried wallet.
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,

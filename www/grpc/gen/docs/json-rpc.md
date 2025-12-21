@@ -254,16 +254,16 @@ curl --location 'http://localhost:8545/' \
           <span class="rpc-badge"></span> pactus.wallet.set_address_label</a>
         </li>
         <li>
-          <a href="#pactus.wallet.list_wallet">
-          <span class="rpc-badge"></span> pactus.wallet.list_wallet</a>
+          <a href="#pactus.wallet.list_wallets">
+          <span class="rpc-badge"></span> pactus.wallet.list_wallets</a>
         </li>
         <li>
           <a href="#pactus.wallet.get_wallet_info">
           <span class="rpc-badge"></span> pactus.wallet.get_wallet_info</a>
         </li>
         <li>
-          <a href="#pactus.wallet.list_address">
-          <span class="rpc-badge"></span> pactus.wallet.list_address</a>
+          <a href="#pactus.wallet.list_addresses">
+          <span class="rpc-badge"></span> pactus.wallet.list_addresses</a>
         </li>
         </ul>
     </li>
@@ -4126,9 +4126,9 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
      </tbody>
 </table>
 
-#### pactus.wallet.list_wallet <span id="pactus.wallet.list_wallet" class="rpc-badge"></span>
+#### pactus.wallet.list_wallets <span id="pactus.wallet.list_wallets" class="rpc-badge"></span>
 
-<p>ListWallet returns a list of all available wallets.</p>
+<p>ListWallets returns a list of all available wallets.</p>
 
 <h4>Parameters</h4>
 
@@ -4229,9 +4229,9 @@ Parameters has no fields.
      </tbody>
 </table>
 
-#### pactus.wallet.list_address <span id="pactus.wallet.list_address" class="rpc-badge"></span>
+#### pactus.wallet.list_addresses <span id="pactus.wallet.list_addresses" class="rpc-badge"></span>
 
-<p>ListAddress returns all addresses in the specified wallet.</p>
+<p>ListAddresses returns all addresses in the specified wallet.</p>
 
 <h4>Parameters</h4>
 
