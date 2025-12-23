@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/types"
@@ -48,7 +49,7 @@ func TestCreateWallet(t *testing.T) {
 		assert.Nil(t, res)
 	})
 
-	t.Run("Error on creating wallet", func(t *testing.T) {
+	t.Run("Create wallet failed", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
 			CreateWallet("test", "password").
 			Return("", errors.New("error on creating wallet"))
@@ -97,6 +98,24 @@ func TestRestoreWallet(t *testing.T) {
 		res, err := client.RestoreWallet(t.Context(),
 			&pactus.RestoreWalletRequest{
 				WalletName: "test",
+			})
+		assert.Error(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("Restore wallet failed", func(t *testing.T) {
+		mnemonic, err := wallet.GenerateMnemonic(128)
+		assert.NoError(t, err)
+
+		td.mockWalletMgr.EXPECT().
+			RestoreWallet("test", mnemonic, "password").
+			Return(errors.New("error on restoring wallet"))
+
+		res, err := client.RestoreWallet(t.Context(),
+			&pactus.RestoreWalletRequest{
+				WalletName: "test",
+				Mnemonic:   mnemonic,
+				Password:   "password",
 			})
 		assert.Error(t, err)
 		assert.Nil(t, res)
@@ -393,7 +412,7 @@ func TestNewAddress(t *testing.T) {
 
 	t.Run("Error on getting new address", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			NewAddress("test", "label", "password", crypto.AddressTypeBLSAccount).
+			NewAddress("test", crypto.AddressTypeBLSAccount, "label", gomock.Any()).
 			Return(nil, errors.New("error on getting new address"))
 
 		res, err := client.GetNewAddress(t.Context(),
@@ -409,7 +428,7 @@ func TestNewAddress(t *testing.T) {
 
 	t.Run("Get new address successfully", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			NewAddress("test", "label", "password", crypto.AddressTypeBLSAccount).
+			NewAddress("test", crypto.AddressTypeBLSAccount, "label", gomock.Any()).
 			Return(&types.AddressInfo{
 				Address:   "addr",
 				Label:     "label",
@@ -474,10 +493,10 @@ func TestAddressInfo(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, res)
 		assert.Equal(t, "test", res.WalletName)
-		assert.Equal(t, "addr", res.Address)
-		assert.Equal(t, "label", res.Label)
-		assert.Equal(t, "pub", res.PublicKey)
-		assert.Equal(t, "path", res.Path)
+		assert.Equal(t, "addr", res.AddressInfo.Address)
+		assert.Equal(t, "label", res.AddressInfo.Label)
+		assert.Equal(t, "pub", res.AddressInfo.PublicKey)
+		assert.Equal(t, "path", res.AddressInfo.Path)
 	})
 }
 
@@ -577,7 +596,7 @@ func TestGetWalletInfo(t *testing.T) {
 			WalletInfo("test").
 			Return(&types.WalletInfo{
 				Version:    7,
-				Network:    "testnet",
+				Network:    genesis.Mainnet,
 				Encrypted:  true,
 				UUID:       "uuid",
 				CreatedAt:  createdAt,
@@ -590,7 +609,7 @@ func TestGetWalletInfo(t *testing.T) {
 		require.NotNil(t, res)
 		assert.Equal(t, "test", res.WalletName)
 		assert.Equal(t, int32(7), res.Version)
-		assert.Equal(t, "testnet", res.Network)
+		assert.Equal(t, "Mainnet", res.Network)
 		assert.True(t, res.Encrypted)
 		assert.Equal(t, "uuid", res.Uuid)
 		assert.Equal(t, createdAt.Unix(), res.CreatedAt)
@@ -607,7 +626,7 @@ func TestListAddress(t *testing.T) {
 
 	t.Run("Error on listing addresses", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			ListAddresses("test").
+			ListAddresses("test", gomock.Any()).
 			Return(nil, errors.New("error on listing addresses"))
 
 		res, err := client.ListAddresses(t.Context(),
@@ -618,7 +637,7 @@ func TestListAddress(t *testing.T) {
 
 	t.Run("List addresses successfully", func(t *testing.T) {
 		td.mockWalletMgr.EXPECT().
-			ListAddresses("test").
+			ListAddresses("test", gomock.Any()).
 			Return([]types.AddressInfo{
 				{
 					Address:   "addr1",

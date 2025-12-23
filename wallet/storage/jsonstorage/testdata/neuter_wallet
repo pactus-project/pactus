@@ -1,0 +1,29 @@
+{
+  "version": 5,
+  "uuid": "44156117-268a-49f0-a906-400659b7a051",
+  "created_at": "2024-08-27T16:45:08Z",
+  "network": 0,
+  "crc": 2985143697,
+  "default_fee": 20000000,
+  "vault": {
+    "type": 1,
+    "coin_type": 21888,
+    "encrypter": null,
+    "key_store": "",
+    "purposes": {
+      "purpose_bls": {
+        "xpub_account": "xpublic1pqdwnqqyqsp2spqqpqqqgqgxj6mlduay8ase6hkefwa2lk2esz0gn2yu59tnk3w2tgnlfk5hleuqxpqdlt5q2f207qrwq9gasqscpckjv8hggc57n044gvml7u05cpzu8ra0zq2s3x3mak6xhtzga27tdx5pypnqxhlkf9aedptzcsd8l3q6m7ch6g4lphzsdv20fvc3dsu7mlj8kdy3n5fyllg07wecmpr8y6nsr95zlz",
+        "xpub_validator": "xpublic1pqdwnqqyqsp2spqqzqqqgqgx4n38q9n6qtvgrnx5r8atntrfnj4thwj6my5tx8tfe6ex6p89y7qqxptrfzgmnu62rut65lddgxl5nujdn82tusz5w2wqpjqpdpgplj0zx3gaaz9wv93yqcls6clepehlvhsvdp2ndwphhmag3j3hgsfxxz434hduxvqq4n8njxh4x9mnal2wma4sw5kp6y680tkut62gk6trfjscmsdumc",
+        "next_account_index": 0,
+        "next_validator_index": 0
+      }
+    }
+  },
+  "addresses": {
+  },
+  "history": {
+    "transactions": null,
+    "activities": null,
+    "pendings": null
+  }
+}

@@ -1,4 +1,4 @@
-package version
+package jsonstorage
 
 const (
 	Version1 = 1 // Initial version

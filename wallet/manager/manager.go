@@ -92,7 +92,7 @@ func (wm *Manager) LoadWallet(walletName, serverAddr string) error {
 	}
 
 	walletPath := wm.getWalletPath(walletName)
-	wlt, err := wallet.Open(walletPath, true, wallet.WithCustomServers([]string{serverAddr}))
+	wlt, err := wallet.Open(walletPath, wallet.WithCustomServers([]string{serverAddr}))
 	if err != nil {
 		return err
 	}
@@ -103,7 +103,7 @@ func (wm *Manager) LoadWallet(walletName, serverAddr string) error {
 }
 
 func (wm *Manager) NewAddress(walletName string, addressType crypto.AddressType, label string,
-	opts ...types.NewAddressOption,
+	opts ...wallet.NewAddressOption,
 ) (*types.AddressInfo, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
@@ -297,23 +297,6 @@ func (wm *Manager) SignRawTransaction(
 	return trx.ID().Bytes(), data, nil
 }
 
-func (wm *Manager) GetNewAddress(
-	walletName, label, password string,
-	addressType crypto.AddressType,
-) (*types.AddressInfo, error) {
-	wlt, ok := wm.wallets[walletName]
-	if !ok {
-		return nil, ErrWalletNotLoaded
-	}
-
-	info, err := wlt.NewAddress(addressType, label, types.WithPassword(password))
-	if err != nil {
-		return nil, err
-	}
-
-	return info, nil
-}
-
 func (wm *Manager) SignMessage(walletName, password, addr, msg string) (string, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
@@ -350,7 +333,7 @@ func (wm *Manager) ListWallets() ([]string, error) {
 	}
 
 	for _, file := range files {
-		_, err = wallet.Open(file, true)
+		_, err = wallet.Open(file, wallet.WithOfflineMode())
 		if err != nil {
 			logger.Warn(fmt.Sprintf("file %s is not wallet", file))
 
@@ -363,7 +346,7 @@ func (wm *Manager) ListWallets() ([]string, error) {
 	return wallets, nil
 }
 
-func (wm *Manager) ListAddresses(walletName string, opts ...types.ListAddressOption) ([]types.AddressInfo, error) {
+func (wm *Manager) ListAddresses(walletName string, opts ...wallet.ListAddressOption) ([]types.AddressInfo, error) {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {
 		return nil, ErrWalletNotLoaded

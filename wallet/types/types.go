@@ -3,10 +3,11 @@ package types
 import (
 	"time"
 
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 )
 
-// AddressInfo represents an address entry in the wallet.
+// AddressInfo represents the information about a wallet address.
 type AddressInfo struct {
 	Address   string    `json:"address"`
 	PublicKey string    `json:"public_key"`
@@ -24,10 +25,11 @@ type HistoryInfo struct {
 	Amount      amount.Amount
 }
 
-// WalletInfo contains wallet metadata.
+// WalletInfo represents the information about the wallet.
 type WalletInfo struct {
 	Version    int
-	Network    string
+	Path       string
+	Network    genesis.ChainType
 	DefaultFee amount.Amount
 	UUID       string
 	Encrypted  bool

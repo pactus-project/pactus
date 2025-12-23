@@ -1,6 +1,7 @@
 package jsonstorage
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -8,62 +9,99 @@ import (
 	"github.com/pactus-project/pactus/crypto/bls"
 	blshdkeychain "github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/logger"
 	"github.com/pactus-project/pactus/wallet/addresspath"
+	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/types"
-	"github.com/pactus-project/pactus/wallet/version"
+	"github.com/pactus-project/pactus/wallet/vault"
 )
 
 type upgrader struct {
-	store *Store
+	path string
+	data []byte
 }
 
-func NewUpgrader(store *Store) *upgrader {
-	return &upgrader{store: store}
+func Upgrade(path string) error {
+	data, err := util.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+
+	upgrader := upgrader{
+		path: path,
+		data: data,
+	}
+
+	return upgrader.upgrade()
 }
 
-func (u *upgrader) Upgrade() error {
-	if !u.store.Network.IsMainnet() {
+type legacyVault struct {
+	Encrypter  encrypter.Encrypter          `json:"encrypter"`
+	Purposes   vault.Purposes               `json:"purposes"` // Contains Purposes of the vault
+	DefaultFee amount.Amount                `json:"default_fee"`
+	Addresses  map[string]types.AddressInfo `json:"addresses"`
+}
+
+type legacyStore struct {
+	Vault legacyVault `json:"vault"`
+}
+
+func (u *upgrader) upgrade() error {
+	store := new(store)
+	err := json.Unmarshal(u.data, store)
+	if err != nil {
+		return err
+	}
+
+	legacyStore := new(legacyStore)
+	err = json.Unmarshal(u.data, &legacyStore)
+	if err != nil {
+		return err
+	}
+
+	if !store.Network.IsMainnet() {
 		crypto.ToTestnetHRP()
 	}
 
-	oldVersion := u.store.Version
-	switch oldVersion {
-	case version.Version1:
-		if err := u.setPublicKeys(); err != nil {
+	switch store.Version {
+	case Version1:
+		if err := u.setPublicKeys(legacyStore); err != nil {
 			return err
 		}
-		u.store.Version = version.Version2
 
 		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
-			version.Version1, version.Version2))
+			Version1, Version2))
 
 		fallthrough
 
-	case version.Version2:
-		if u.store.Vault.IsEncrypted() {
-			u.store.Vault.Encrypter.Params.SetUint32("keylen", 32)
+	case Version2:
+		if legacyStore.Vault.Encrypter.IsEncrypted() {
+			store.Vault.Encrypter.Params.SetUint32("keylen", 32)
 		}
-		u.store.Version = version.Version3
 
 		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
-			version.Version2, version.Version3))
+			Version2, Version3))
 
 		fallthrough
 
-	case version.Version3:
-		u.store.Vault.DefaultFeeDeprecated = amount.Amount(10_000_000) // Set default fee to 0.01 PAC
-		u.store.Version = version.Version4
+	case Version3:
+		legacyStore.Vault.DefaultFee = amount.Amount(10_000_000) // Set default fee to 0.01 PAC
 
 		logger.Info(fmt.Sprintf("wallet upgraded from version %d to version %d",
-			version.Version3, version.Version4))
+			Version3, Version4))
 
-	case version.Version4:
-		u.store.DefaultFee = u.store.Vault.DefaultFeeDeprecated
+		fallthrough
+
+	case Version4:
+		store.DefaultFee = legacyStore.Vault.DefaultFee
+		store.Addresses = make(map[string]types.AddressInfo)
+		store.Version = Version5
+		store.VaultCRC = store.calcVaultCRC()
 
 		now := time.Now()
-		for addr, ai := range u.store.Vault.AddressesDeprecated {
-			u.store.Addresses[addr] = types.AddressInfo{
+		for addr, ai := range legacyStore.Vault.Addresses {
+			store.Addresses[addr] = types.AddressInfo{
 				Address:   ai.Address,
 				PublicKey: ai.PublicKey,
 				Label:     ai.Label,
@@ -73,23 +111,28 @@ func (u *upgrader) Upgrade() error {
 			}
 		}
 
-		u.store.Vault.DefaultFeeDeprecated = 0
-		u.store.Vault.AddressesDeprecated = nil
+		// Save the upgraded wallet
+		data, err := json.Marshal(store)
+		if err != nil {
+			return nil
+		}
 
+		return util.WriteFile(u.path, data)
+
+	case Version5:
+		// Latest version, no need to upgrade.
 		return nil
 
 	default:
 		return UnsupportedVersionError{
-			WalletVersion:    u.store.Version,
-			SupportedVersion: version.VersionLatest,
+			WalletVersion:    store.Version,
+			SupportedVersion: VersionLatest,
 		}
 	}
-
-	return nil
 }
 
-func (u *upgrader) setPublicKeys() error {
-	for addrKey, info := range u.store.Vault.AddressesDeprecated {
+func (u *upgrader) setPublicKeys(store *legacyStore) error {
+	for addrKey, info := range store.Vault.Addresses {
 		if info.PublicKey != "" {
 			continue
 		}
@@ -102,9 +145,9 @@ func (u *upgrader) setPublicKeys() error {
 
 		var xPub string
 		if addr.IsAccountAddress() {
-			xPub = u.store.Vault.Purposes.PurposeBLS.XPubAccount
+			xPub = store.Vault.Purposes.PurposeBLS.XPubAccount
 		} else if addr.IsValidatorAddress() {
-			xPub = u.store.Vault.Purposes.PurposeBLS.XPubValidator
+			xPub = store.Vault.Purposes.PurposeBLS.XPubValidator
 		}
 
 		ext, err := blshdkeychain.NewKeyFromString(xPub)
@@ -128,7 +171,7 @@ func (u *upgrader) setPublicKeys() error {
 		}
 
 		info.PublicKey = blsPubKey.String()
-		u.store.Vault.AddressesDeprecated[addrKey] = info
+		store.Vault.Addresses[addrKey] = info
 	}
 
 	return nil

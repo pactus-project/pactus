@@ -425,18 +425,22 @@ const GetAddressInfoResponse$json = {
   '1': 'GetAddressInfoResponse',
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
-    {'1': 'address', '3': 2, '4': 1, '5': 9, '10': 'address'},
-    {'1': 'label', '3': 3, '4': 1, '5': 9, '10': 'label'},
-    {'1': 'public_key', '3': 4, '4': 1, '5': 9, '10': 'publicKey'},
-    {'1': 'path', '3': 5, '4': 1, '5': 9, '10': 'path'},
+    {
+      '1': 'address_info',
+      '3': 2,
+      '4': 1,
+      '5': 11,
+      '6': '.pactus.AddressInfo',
+      '10': 'addressInfo'
+    },
   ],
 };
 
 /// Descriptor for `GetAddressInfoResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getAddressInfoResponseDescriptor = $convert.base64Decode(
     'ChZHZXRBZGRyZXNzSW5mb1Jlc3BvbnNlEh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW'
-    '1lEhgKB2FkZHJlc3MYAiABKAlSB2FkZHJlc3MSFAoFbGFiZWwYAyABKAlSBWxhYmVsEh0KCnB1'
-    'YmxpY19rZXkYBCABKAlSCXB1YmxpY0tleRISCgRwYXRoGAUgASgJUgRwYXRo');
+    '1lEjYKDGFkZHJlc3NfaW5mbxgCIAEoCzITLnBhY3R1cy5BZGRyZXNzSW5mb1ILYWRkcmVzc0lu'
+    'Zm8=');
 
 @$core.Deprecated('Use setAddressLabelRequestDescriptor instead')
 const SetAddressLabelRequest$json = {
@@ -531,13 +535,22 @@ const ListAddressesRequest$json = {
   '1': 'ListAddressesRequest',
   '2': [
     {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    {
+      '1': 'address_types',
+      '3': 2,
+      '4': 3,
+      '5': 14,
+      '6': '.pactus.AddressType',
+      '10': 'addressTypes'
+    },
   ],
 };
 
 /// Descriptor for `ListAddressesRequest`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List listAddressesRequestDescriptor = $convert.base64Decode(
-    'ChRMaXN0QWRkcmVzc2VzUmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZQ'
-    '==');
+    'ChRMaXN0QWRkcmVzc2VzUmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0TmFtZR'
+    'I4Cg1hZGRyZXNzX3R5cGVzGAIgAygOMhMucGFjdHVzLkFkZHJlc3NUeXBlUgxhZGRyZXNzVHlw'
+    'ZXM=');
 
 @$core.Deprecated('Use listAddressesResponseDescriptor instead')
 const ListAddressesResponse$json = {

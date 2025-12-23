@@ -1055,8 +1055,11 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["wallet_name","address","label","public_key","path"],
-          "properties": {"wallet_name": { "type": "string" },"address": { "type": "string" },"label": { "type": "string" },"public_key": { "type": "string" },"path": { "type": "string" }}
+          "type": "object","required": ["wallet_name","address_info"],
+          "properties": {"wallet_name": { "type": "string" },"address_info": {
+  "type": "object","required": ["address","public_key","label","path"],
+  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" }}
+}}
           }
         }
       },{
@@ -1130,6 +1133,13 @@
           "name": "wallet_name",
           "description": "The name of the queried wallet.",
           "schema": { "type": "string" }
+        },{
+          "name": "address_types",
+          "description": "Filter addresses by their types. If empty, all address types are included.",
+          "schema": {
+  "type": "array",
+  "items": { "type": "integer" }
+}
         }],
       "result": {
         "name": "fields",

@@ -31,7 +31,7 @@
             "address": "rpc.javad.dev:50051"
         }
     ],
-    "testnet": [    
+    "testnet": [
         {
             "address": "localhost:50052"
         },

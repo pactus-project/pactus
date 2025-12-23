@@ -274,14 +274,8 @@ message GetAddressInfoRequest {
 message GetAddressInfoResponse {
   // The name of the wallet containing the address.
   string wallet_name = 1;
-  // The queried address.
-  string address = 2;
-  // The address label.
-  string label = 3;
-  // The public key of the address.
-  string public_key = 4;
-  // The Hierarchical Deterministic (HD) path of the address.
-  string path = 5;
+  // Detailed information about the address.
+  AddressInfo address_info = 2;
 }
 
 // Request message for setting address label.
@@ -343,6 +337,9 @@ message GetWalletInfoResponse {
 message ListAddressesRequest {
   // The name of the queried wallet.
   string wallet_name = 1;
+
+  // Filter addresses by their types. If empty, all address types are included.
+  repeated AddressType address_types = 2;
 }
 
 // Response message contains wallet addresses.

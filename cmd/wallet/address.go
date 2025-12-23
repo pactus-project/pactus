@@ -9,6 +9,7 @@ import (
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/util/prompt"
 	"github.com/pactus-project/pactus/util/terminal"
+	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/spf13/cobra"
 )
@@ -103,7 +104,7 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 				password = prompt.PromptPassword("Password", false)
 			}
 			addressInfo, err = wlt.NewAddress(crypto.AddressTypeEd25519Account, *label,
-				types.WithPassword(password))
+				wallet.WithPassword(password))
 		default:
 			err = fmt.Errorf("invalid address type '%s'", *addressType)
 		}

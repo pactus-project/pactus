@@ -733,7 +733,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.pactus.ListAddressesRequest = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.pactus.ListAddressesRequest.repeatedFields_, null);
 };
 goog.inherits(proto.pactus.ListAddressesRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -4848,10 +4848,7 @@ proto.pactus.GetAddressInfoResponse.prototype.toObject = function(opt_includeIns
 proto.pactus.GetAddressInfoResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
 walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
-address: jspb.Message.getFieldWithDefault(msg, 2, ""),
-label: jspb.Message.getFieldWithDefault(msg, 3, ""),
-publicKey: jspb.Message.getFieldWithDefault(msg, 4, ""),
-path: jspb.Message.getFieldWithDefault(msg, 5, "")
+addressInfo: (f = msg.getAddressInfo()) && proto.pactus.AddressInfo.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -4893,20 +4890,9 @@ proto.pactus.GetAddressInfoResponse.deserializeBinaryFromReader = function(msg, 
       msg.setWalletName(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
-      msg.setAddress(value);
-      break;
-    case 3:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
-      msg.setLabel(value);
-      break;
-    case 4:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
-      msg.setPublicKey(value);
-      break;
-    case 5:
-      var value = /** @type {string} */ (reader.readStringRequireUtf8());
-      msg.setPath(value);
+      var value = new proto.pactus.AddressInfo;
+      reader.readMessage(value,proto.pactus.AddressInfo.deserializeBinaryFromReader);
+      msg.setAddressInfo(value);
       break;
     default:
       reader.skipField();
@@ -4944,32 +4930,12 @@ proto.pactus.GetAddressInfoResponse.serializeBinaryToWriter = function(message, 
       f
     );
   }
-  f = message.getAddress();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getAddressInfo();
+  if (f != null) {
+    writer.writeMessage(
       2,
-      f
-    );
-  }
-  f = message.getLabel();
-  if (f.length > 0) {
-    writer.writeString(
-      3,
-      f
-    );
-  }
-  f = message.getPublicKey();
-  if (f.length > 0) {
-    writer.writeString(
-      4,
-      f
-    );
-  }
-  f = message.getPath();
-  if (f.length > 0) {
-    writer.writeString(
-      5,
-      f
+      f,
+      proto.pactus.AddressInfo.serializeBinaryToWriter
     );
   }
 };
@@ -4994,74 +4960,39 @@ proto.pactus.GetAddressInfoResponse.prototype.setWalletName = function(value) {
 
 
 /**
- * optional string address = 2;
- * @return {string}
+ * optional AddressInfo address_info = 2;
+ * @return {?proto.pactus.AddressInfo}
  */
-proto.pactus.GetAddressInfoResponse.prototype.getAddress = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+proto.pactus.GetAddressInfoResponse.prototype.getAddressInfo = function() {
+  return /** @type{?proto.pactus.AddressInfo} */ (
+    jspb.Message.getWrapperField(this, proto.pactus.AddressInfo, 2));
 };
 
 
 /**
- * @param {string} value
+ * @param {?proto.pactus.AddressInfo|undefined} value
+ * @return {!proto.pactus.GetAddressInfoResponse} returns this
+*/
+proto.pactus.GetAddressInfoResponse.prototype.setAddressInfo = function(value) {
+  return jspb.Message.setWrapperField(this, 2, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
  * @return {!proto.pactus.GetAddressInfoResponse} returns this
  */
-proto.pactus.GetAddressInfoResponse.prototype.setAddress = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
+proto.pactus.GetAddressInfoResponse.prototype.clearAddressInfo = function() {
+  return this.setAddressInfo(undefined);
 };
 
 
 /**
- * optional string label = 3;
- * @return {string}
+ * Returns whether this field is set.
+ * @return {boolean}
  */
-proto.pactus.GetAddressInfoResponse.prototype.getLabel = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.pactus.GetAddressInfoResponse} returns this
- */
-proto.pactus.GetAddressInfoResponse.prototype.setLabel = function(value) {
-  return jspb.Message.setProto3StringField(this, 3, value);
-};
-
-
-/**
- * optional string public_key = 4;
- * @return {string}
- */
-proto.pactus.GetAddressInfoResponse.prototype.getPublicKey = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.pactus.GetAddressInfoResponse} returns this
- */
-proto.pactus.GetAddressInfoResponse.prototype.setPublicKey = function(value) {
-  return jspb.Message.setProto3StringField(this, 4, value);
-};
-
-
-/**
- * optional string path = 5;
- * @return {string}
- */
-proto.pactus.GetAddressInfoResponse.prototype.getPath = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.pactus.GetAddressInfoResponse} returns this
- */
-proto.pactus.GetAddressInfoResponse.prototype.setPath = function(value) {
-  return jspb.Message.setProto3StringField(this, 5, value);
+proto.pactus.GetAddressInfoResponse.prototype.hasAddressInfo = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
@@ -6173,6 +6104,13 @@ proto.pactus.GetWalletInfoResponse.prototype.setDefaultFee = function(value) {
 
 
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.pactus.ListAddressesRequest.repeatedFields_ = [2];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -6204,7 +6142,8 @@ proto.pactus.ListAddressesRequest.prototype.toObject = function(opt_includeInsta
  */
 proto.pactus.ListAddressesRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-walletName: jspb.Message.getFieldWithDefault(msg, 1, "")
+walletName: jspb.Message.getFieldWithDefault(msg, 1, ""),
+addressTypesList: (f = jspb.Message.getRepeatedField(msg, 2)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -6245,6 +6184,9 @@ proto.pactus.ListAddressesRequest.deserializeBinaryFromReader = function(msg, re
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setWalletName(value);
       break;
+    case 2:
+      reader.readPackableEnumInto(msg.getAddressTypesList());
+      break;
     default:
       reader.skipField();
       break;
@@ -6281,6 +6223,13 @@ proto.pactus.ListAddressesRequest.serializeBinaryToWriter = function(message, wr
       f
     );
   }
+  f = message.getAddressTypesList();
+  if (f.length > 0) {
+    writer.writePackedEnum(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -6299,6 +6248,43 @@ proto.pactus.ListAddressesRequest.prototype.getWalletName = function() {
  */
 proto.pactus.ListAddressesRequest.prototype.setWalletName = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * repeated AddressType address_types = 2;
+ * @return {!Array<!proto.pactus.AddressType>}
+ */
+proto.pactus.ListAddressesRequest.prototype.getAddressTypesList = function() {
+  return /** @type {!Array<!proto.pactus.AddressType>} */ (jspb.Message.getRepeatedField(this, 2));
+};
+
+
+/**
+ * @param {!Array<!proto.pactus.AddressType>} value
+ * @return {!proto.pactus.ListAddressesRequest} returns this
+ */
+proto.pactus.ListAddressesRequest.prototype.setAddressTypesList = function(value) {
+  return jspb.Message.setField(this, 2, value || []);
+};
+
+
+/**
+ * @param {!proto.pactus.AddressType} value
+ * @param {number=} opt_index
+ * @return {!proto.pactus.ListAddressesRequest} returns this
+ */
+proto.pactus.ListAddressesRequest.prototype.addAddressTypes = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 2, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.pactus.ListAddressesRequest} returns this
+ */
+proto.pactus.ListAddressesRequest.prototype.clearAddressTypesList = function() {
+  return this.setAddressTypesList([]);
 };
 
 

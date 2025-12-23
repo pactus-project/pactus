@@ -1767,17 +1767,11 @@ class GetAddressInfoRequest extends $pb.GeneratedMessage {
 class GetAddressInfoResponse extends $pb.GeneratedMessage {
   factory GetAddressInfoResponse({
     $core.String? walletName,
-    $core.String? address,
-    $core.String? label,
-    $core.String? publicKey,
-    $core.String? path,
+    AddressInfo? addressInfo,
   }) {
     final result = create();
     if (walletName != null) result.walletName = walletName;
-    if (address != null) result.address = address;
-    if (label != null) result.label = label;
-    if (publicKey != null) result.publicKey = publicKey;
-    if (path != null) result.path = path;
+    if (addressInfo != null) result.addressInfo = addressInfo;
     return result;
   }
 
@@ -1795,10 +1789,8 @@ class GetAddressInfoResponse extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
-    ..aOS(2, _omitFieldNames ? '' : 'address')
-    ..aOS(3, _omitFieldNames ? '' : 'label')
-    ..aOS(4, _omitFieldNames ? '' : 'publicKey')
-    ..aOS(5, _omitFieldNames ? '' : 'path')
+    ..aOM<AddressInfo>(2, _omitFieldNames ? '' : 'addressInfo',
+        subBuilder: AddressInfo.create)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -1831,45 +1823,17 @@ class GetAddressInfoResponse extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   void clearWalletName() => $_clearField(1);
 
-  /// The queried address.
+  /// Detailed information about the address.
   @$pb.TagNumber(2)
-  $core.String get address => $_getSZ(1);
+  AddressInfo get addressInfo => $_getN(1);
   @$pb.TagNumber(2)
-  set address($core.String value) => $_setString(1, value);
+  set addressInfo(AddressInfo value) => $_setField(2, value);
   @$pb.TagNumber(2)
-  $core.bool hasAddress() => $_has(1);
+  $core.bool hasAddressInfo() => $_has(1);
   @$pb.TagNumber(2)
-  void clearAddress() => $_clearField(2);
-
-  /// The address label.
-  @$pb.TagNumber(3)
-  $core.String get label => $_getSZ(2);
-  @$pb.TagNumber(3)
-  set label($core.String value) => $_setString(2, value);
-  @$pb.TagNumber(3)
-  $core.bool hasLabel() => $_has(2);
-  @$pb.TagNumber(3)
-  void clearLabel() => $_clearField(3);
-
-  /// The public key of the address.
-  @$pb.TagNumber(4)
-  $core.String get publicKey => $_getSZ(3);
-  @$pb.TagNumber(4)
-  set publicKey($core.String value) => $_setString(3, value);
-  @$pb.TagNumber(4)
-  $core.bool hasPublicKey() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearPublicKey() => $_clearField(4);
-
-  /// The Hierarchical Deterministic (HD) path of the address.
-  @$pb.TagNumber(5)
-  $core.String get path => $_getSZ(4);
-  @$pb.TagNumber(5)
-  set path($core.String value) => $_setString(4, value);
-  @$pb.TagNumber(5)
-  $core.bool hasPath() => $_has(4);
-  @$pb.TagNumber(5)
-  void clearPath() => $_clearField(5);
+  void clearAddressInfo() => $_clearField(2);
+  @$pb.TagNumber(2)
+  AddressInfo ensureAddressInfo() => $_ensure(1);
 }
 
 /// Request message for setting address label.
@@ -2335,9 +2299,11 @@ class GetWalletInfoResponse extends $pb.GeneratedMessage {
 class ListAddressesRequest extends $pb.GeneratedMessage {
   factory ListAddressesRequest({
     $core.String? walletName,
+    $core.Iterable<AddressType>? addressTypes,
   }) {
     final result = create();
     if (walletName != null) result.walletName = walletName;
+    if (addressTypes != null) result.addressTypes.addAll(addressTypes);
     return result;
   }
 
@@ -2355,6 +2321,11 @@ class ListAddressesRequest extends $pb.GeneratedMessage {
       package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..pc<AddressType>(
+        2, _omitFieldNames ? '' : 'addressTypes', $pb.PbFieldType.KE,
+        valueOf: AddressType.valueOf,
+        enumValues: AddressType.values,
+        defaultEnumValue: AddressType.ADDRESS_TYPE_TREASURY)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -2385,6 +2356,10 @@ class ListAddressesRequest extends $pb.GeneratedMessage {
   $core.bool hasWalletName() => $_has(0);
   @$pb.TagNumber(1)
   void clearWalletName() => $_clearField(1);
+
+  /// Filter addresses by their types. If empty, all address types are included.
+  @$pb.TagNumber(2)
+  $pb.PbList<AddressType> get addressTypes => $_getList(1);
 }
 
 /// Response message contains wallet addresses.

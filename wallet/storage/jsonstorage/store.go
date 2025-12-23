@@ -12,7 +12,7 @@ import (
 	"github.com/pactus-project/pactus/wallet/vault"
 )
 
-type Store struct {
+type store struct {
 	Version    int                          `json:"version"`
 	UUID       uuid.UUID                    `json:"uuid"`
 	CreatedAt  time.Time                    `json:"created_at"`
@@ -24,7 +24,7 @@ type Store struct {
 	History    history                      `json:"history"`
 }
 
-func (s *Store) ValidateCRC() error {
+func (s *store) ValidateCRC() error {
 	crc := s.calcVaultCRC()
 	if s.VaultCRC != crc {
 		return CRCNotMatchError{
@@ -36,19 +36,7 @@ func (s *Store) ValidateCRC() error {
 	return nil
 }
 
-func (s *Store) Upgrade() error {
-	u := NewUpgrader(s)
-	if err := u.Upgrade(); err != nil {
-		return err
-	}
-
-	// Write wallet data.
-	s.VaultCRC = s.calcVaultCRC()
-
-	return nil
-}
-
-func (s *Store) calcVaultCRC() uint32 {
+func (s *store) calcVaultCRC() uint32 {
 	d, err := json.Marshal(s.Vault)
 	if err != nil {
 		return 0

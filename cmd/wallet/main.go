@@ -22,7 +22,7 @@ func addPasswordOption(c *cobra.Command) *string {
 }
 
 func openWallet() (*wallet.Wallet, error) {
-	opts := make([]wallet.Option, 0)
+	opts := make([]wallet.OpenWalletOption, 0)
 
 	if *serverAddrsOpt != nil {
 		opts = append(opts, wallet.WithCustomServers(*serverAddrsOpt))
@@ -32,7 +32,11 @@ func openWallet() (*wallet.Wallet, error) {
 		opts = append(opts, wallet.WithTimeout(time.Duration(*timeoutOpt)*time.Second))
 	}
 
-	wlt, err := wallet.Open(*pathOpt, *offlineOpt, opts...)
+	if *offlineOpt {
+		opts = append(opts, wallet.WithOfflineMode())
+	}
+
+	wlt, err := wallet.Open(*pathOpt, opts...)
 	if err != nil {
 		return nil, err
 	}

@@ -2,7 +2,6 @@ package wallet_test
 
 import (
 	"context"
-	"path"
 	"strings"
 	"testing"
 
@@ -52,12 +51,15 @@ func setup(t *testing.T) *testData {
 
 	assert.NoError(t, gRPCServer.StartServer())
 
+	t.Cleanup(func() {
+		gRPCServer.StopServer()
+	})
+
 	wlt, err := wallet.Create(walletPath, mnemonic, password, genesis.Mainnet,
 		wallet.WithCustomServers([]string{gRPCServer.Address()}))
 	assert.NoError(t, err)
 	assert.False(t, wlt.IsEncrypted())
 	assert.Equal(t, walletPath, wlt.Path())
-	assert.Equal(t, path.Base(walletPath), wlt.Name())
 
 	return &testData{
 		TestSuite: ts,
@@ -68,46 +70,29 @@ func setup(t *testing.T) *testData {
 	}
 }
 
-func (td *testData) Close() {
-	td.server.StopServer()
-	// TODO:  close client (wallet.Close() ??)
-}
-
 func TestOpenWallet(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	t.Run("Re-open the wallet", func(t *testing.T) {
-		_, err := wallet.Open(td.wallet.Path(), true)
+		_, err := wallet.Open(td.wallet.Path())
 		assert.NoError(t, err)
 	})
 
 	t.Run("Invalid wallet path", func(t *testing.T) {
-		_, err := wallet.Open(util.TempFilePath(), true)
+		_, err := wallet.Open(util.TempFilePath())
 		assert.Error(t, err)
 	})
 
-	t.Run("Invalid crc", func(t *testing.T) {
-		assert.NoError(t, util.WriteFile(td.wallet.Path(), []byte("{}")))
+	t.Run("Invalid data", func(t *testing.T) {
+		assert.NoError(t, util.WriteFile(td.wallet.Path(), []byte("invalid_data")))
 
-		_, err := wallet.Open(td.wallet.Path(), true)
-		assert.ErrorIs(t, err, wallet.UnsupportedVersionError{
-			WalletVersion:    0,
-			SupportedVersion: wallet.VersionLatest,
-		})
-	})
-
-	t.Run("Invalid json", func(t *testing.T) {
-		assert.NoError(t, util.WriteFile(td.wallet.Path(), []byte("invalid_json")))
-
-		_, err := wallet.Open(td.wallet.Path(), true)
+		_, err := wallet.Open(td.wallet.Path())
 		assert.Error(t, err)
 	})
 }
 
 func TestRecoverWallet(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	mnemonic, _ := td.wallet.Mnemonic(td.password)
 	password := ""
@@ -133,13 +118,12 @@ func TestRecoverWallet(t *testing.T) {
 		assert.NoError(t, err)
 
 		assert.FileExists(t, walletPath)
-		assert.True(t, recovered.Contains(addrInfo1.Address))
+		assert.True(t, recovered.HasAddress(addrInfo1.Address))
 	})
 }
 
 func TestInvalidAddress(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	addr := td.RandAccAddress().String()
 	_, err := td.wallet.PrivateKey(td.password, addr)
@@ -148,7 +132,6 @@ func TestInvalidAddress(t *testing.T) {
 
 func TestImportPrivateKey(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	_, prv := td.RandBLSKeyPair()
 	assert.NoError(t, td.wallet.ImportBLSPrivateKey(td.password, prv))
@@ -157,8 +140,8 @@ func TestImportPrivateKey(t *testing.T) {
 	accAddr := pub.AccountAddress().String()
 	valAddr := pub.AccountAddress().String()
 
-	assert.True(t, td.wallet.Contains(accAddr))
-	assert.True(t, td.wallet.Contains(valAddr))
+	assert.True(t, td.wallet.HasAddress(accAddr))
+	assert.True(t, td.wallet.HasAddress(valAddr))
 
 	accAddrInfo := td.wallet.AddressInfo(accAddr)
 	valAddrInfo := td.wallet.AddressInfo(accAddr)
@@ -169,7 +152,6 @@ func TestImportPrivateKey(t *testing.T) {
 
 func TestSignMessage(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	msg := "pactus"
 	expectedSig := "8c3ba687e8e4c016293a2c369493faa565065987544a59baba7aadae3f17ada07883552b6c7d1d7eb49f46fbdf0975c4"
@@ -187,7 +169,6 @@ func TestSignMessage(t *testing.T) {
 
 func TestBalance(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	t.Run("existing account", func(t *testing.T) {
 		addr, acc := td.mockState.TestStore.AddTestAccount()
@@ -206,7 +187,6 @@ func TestBalance(t *testing.T) {
 
 func TestStake(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	t.Run("existing validator", func(t *testing.T) {
 		val := td.mockState.TestStore.AddTestValidator()
@@ -225,7 +205,6 @@ func TestStake(t *testing.T) {
 
 func TestSigningTxWithBLS(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	senderInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
 	receiver := td.RandAccAddress()
@@ -254,7 +233,6 @@ func TestSigningTxWithBLS(t *testing.T) {
 
 func TestSigningTxWithEd25519(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	senderInfo, _ := td.wallet.NewEd25519AccountAddress("testing addr", td.password)
 	receiver := td.RandAccAddress()
@@ -283,7 +261,6 @@ func TestSigningTxWithEd25519(t *testing.T) {
 
 func TestMakeTransferTx(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	senderInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
 	receiverInfo := td.RandAccAddress()
@@ -326,7 +303,7 @@ func TestMakeTransferTx(t *testing.T) {
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
-		td.Close()
+		td.server.StopServer()
 
 		_, err := td.wallet.MakeTransferTx(td.RandAccAddress().String(), receiverInfo.String(), amt)
 		assert.Error(t, err)
@@ -335,7 +312,6 @@ func TestMakeTransferTx(t *testing.T) {
 
 func TestMakeBondTx(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	senderInfo, _ := td.wallet.NewValidatorAddress("testing addr")
 	receiver := td.RandValKey()
@@ -448,7 +424,7 @@ func TestMakeBondTx(t *testing.T) {
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
-		td.Close()
+		td.server.StopServer()
 
 		_, err := td.wallet.MakeBondTx(td.RandAccAddress().String(), receiver.Address().String(), "", amt)
 		assert.Error(t, err)
@@ -457,7 +433,6 @@ func TestMakeBondTx(t *testing.T) {
 
 func TestMakeUnbondTx(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	senderInfo, _ := td.wallet.NewValidatorAddress("testing addr")
 
@@ -492,7 +467,7 @@ func TestMakeUnbondTx(t *testing.T) {
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
-		td.Close()
+		td.server.StopServer()
 
 		_, err := td.wallet.MakeUnbondTx(td.RandAccAddress().String())
 		assert.Error(t, err)
@@ -501,7 +476,6 @@ func TestMakeUnbondTx(t *testing.T) {
 
 func TestMakeWithdrawTx(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	senderInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
 	receiverInfo, _ := td.wallet.NewBLSAccountAddress("testing addr")
@@ -539,7 +513,7 @@ func TestMakeWithdrawTx(t *testing.T) {
 	})
 
 	t.Run("unable to get the blockchain info", func(t *testing.T) {
-		td.Close()
+		td.server.StopServer()
 
 		_, err := td.wallet.MakeWithdrawTx(td.RandAccAddress().String(), receiverInfo.Address, amt)
 		assert.Error(t, err)
@@ -553,7 +527,6 @@ func TestCheckMnemonic(t *testing.T) {
 
 func TestTotalBalance(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	addrInfo1, _ := td.wallet.NewBLSAccountAddress("account-1")
 	_, _ = td.wallet.NewBLSAccountAddress("account-2")
@@ -575,7 +548,6 @@ func TestTotalBalance(t *testing.T) {
 
 func TestTotalStake(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	addrInfo1, _ := td.wallet.NewValidatorAddress("val-1")
 	addrInfo2, _ := td.wallet.NewValidatorAddress("val-2")
@@ -595,16 +567,8 @@ func TestTotalStake(t *testing.T) {
 	require.Equal(t, stake, val1.Stake()+val2.Stake())
 }
 
-func TestCoinType(t *testing.T) {
-	td := setup(t)
-	defer td.Close()
-
-	assert.Equal(t, td.wallet.CoinType(), uint32(21888))
-}
-
 func TestTestnetKeyInfo(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	mnemonic, _ := wallet.GenerateMnemonic(128)
 	w1, err := wallet.Create(util.TempFilePath(), mnemonic, td.password, genesis.Mainnet)
@@ -668,3 +632,207 @@ func TestGetServerList(t *testing.T) {
 		assert.Empty(t, servers, "Should return empty list for localnet")
 	})
 }
+
+// func TestAddressCount(t *testing.T) {
+// 	td := setup(t)
+
+// 	assert.Equal(t, 6, td.vault.AddressCount())
+
+// 	// Neutered
+// 	neutered := td.vault.Neuter()
+// 	assert.Equal(t, 6, neutered.AddressCount())
+// }
+
+// func TestHasAddress(t *testing.T) {
+// 	td := setup(t)
+
+// 	t.Run("Vault should contain all known addresses", func(t *testing.T) {
+// 		infos := td.storage.AddressInfos()
+// 		for _, i := range infos {
+// 			assert.True(t, td.vault.HasAddress(i.Address))
+// 		}
+// 	})
+
+// 	t.Run("Vault should not contain unknown address", func(t *testing.T) {
+// 		unknownAddr := td.RandAccAddress().String()
+// 		assert.False(t, td.vault.HasAddress(unknownAddr))
+// 	})
+// }
+
+// func TestSortAddressInfo(t *testing.T) {
+// 	td := setup(t)
+
+// 	infos := td.storage.AddressInfos()
+
+// 	// Ed25519 Keys
+// 	assert.Equal(t, "m/44'/21888'/3'/0'", infos[0].Path)
+// 	// BLS Keys
+// 	assert.Equal(t, "m/12381'/21888'/1'/0", infos[1].Path)
+// 	assert.Equal(t, "m/12381'/21888'/2'/0", infos[2].Path)
+// 	// Imported Keys
+// 	assert.Equal(t, "m/65535'/21888'/1'/0'", infos[3].Path)
+// 	assert.Equal(t, "m/65535'/21888'/2'/0'", infos[4].Path)
+// 	assert.Equal(t, "m/65535'/21888'/3'/1'", infos[5].Path)
+// }
+
+// func TestListAccountAddresses(t *testing.T) {
+// 	td := setup(t)
+
+// 	accountAddrs := td.vault.ListAccountAddresses()
+// 	for _, i := range accountAddrs {
+// 		path, err := addresspath.FromString(i.Path)
+// 		assert.NoError(t, err)
+
+// 		assert.NotEqual(t, _H(crypto.AddressTypeValidator), path.AddressType())
+// 	}
+// }
+
+// func TestListValidatorAddresses(t *testing.T) {
+// 	td := setup(t)
+
+// 	validatorAddrs := td.vault.ListValidatorAddresses()
+// 	for _, i := range validatorAddrs {
+// 		info := td.storage.AddressInfo(i.Address)
+// 		assert.Equal(t, i.Address, info.Address)
+
+// 		path, _ := addresspath.FromString(info.Path)
+
+// 		switch path.Purpose() {
+// 		case _H(PurposeBLS12381):
+// 			assert.Equal(t, fmt.Sprintf("m/%d'/%d'/1'/%d",
+// 				PurposeBLS12381, td.vault.CoinType, path.AddressIndex()), info.Path)
+// 		case _H(PurposeImportPrivateKey):
+// 			assert.Equal(t, fmt.Sprintf("m/%d'/%d'/1'/%d'",
+// 				PurposeImportPrivateKey, td.vault.CoinType, _N(path.AddressIndex())), info.Path)
+// 		default:
+// 			assert.Fail(t, "not supported")
+// 		}
+// 	}
+// }
+
+// func TestSortListValidatorAddresses(t *testing.T) {
+// 	td := setup(t)
+
+// 	validatorAddrs := td.vault.ListValidatorAddresses()
+
+// 	assert.Equal(t, "m/12381'/21888'/1'/0", validatorAddrs[0].Path)
+// 	assert.Equal(t, "m/65535'/21888'/1'/0'", validatorAddrs[len(validatorAddrs)-1].Path)
+// }
+
+// func TestAddressFromPath(t *testing.T) {
+// 	o
+// 	td := setup(t)
+
+// 	t.Run("Could not find address from path", func(t *testing.T) {
+// 		path := "m/12381'/26888'/983'/0"
+// 		assert.Nil(t, td.vault.AddressFromPath(path))
+// 	})
+
+// 	t.Run("Ok", func(t *testing.T) {
+// 		var address string
+// 		var addrInfo AddressInfo
+
+// 		for addr, ai := range td.vault.Addresses {
+// 			address = addr
+// 			addrInfo = ai
+
+// 			break
+// 		}
+
+// 		assert.Equal(t, address, td.vault.AddressFromPath(addrInfo.Path).Address)
+// 	})
+// }
+
+// func TestNewValidatorAddress(t *testing.T) {
+// 	td := setup(t)
+
+// 	label := td.RandString(16)
+// 	addressInfo, err := td.vault.NewValidatorAddress(label)
+// 	assert.NoError(t, err)
+// 	assert.NotEmpty(t, addressInfo.Address)
+// 	assert.NotEmpty(t, addressInfo.PublicKey)
+// 	assert.HasAddress(t, addressInfo.Path, "m/12381'/21888'/1'")
+// 	assert.Equal(t, label, addressInfo.Label)
+
+// 	pub, _ := bls.PublicKeyFromString(addressInfo.PublicKey)
+// 	assert.Equal(t, pub.ValidatorAddress().String(), addressInfo.Address)
+// }
+
+// func TestNewBLSAccountAddress(t *testing.T) {
+// 	td := setup(t)
+
+// 	label := td.RandString(16)
+// 	addressInfo, err := td.vault.NewBLSAccountAddress(label)
+// 	assert.NoError(t, err)
+// 	assert.NotEmpty(t, addressInfo.Address)
+// 	assert.NotEmpty(t, addressInfo.PublicKey)
+// 	assert.HasAddress(t, addressInfo.Path, "m/12381'/21888'/2'")
+// 	assert.Equal(t, label, addressInfo.Label)
+
+// 	pub, _ := bls.PublicKeyFromString(addressInfo.PublicKey)
+// 	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
+// }
+
+// func TestNewE225519AccountAddress(t *testing.T) {
+// 	td := setup(t)
+
+// 	addressInfo, err := td.vault.NewEd25519AccountAddress("addr-2", tPassword)
+// 	assert.NoError(t, err)
+// 	assert.NotEmpty(t, addressInfo.Address)
+// 	assert.NotEmpty(t, addressInfo.PublicKey)
+// 	assert.Equal(t, "m/44'/21888'/3'/1'", addressInfo.Path)
+
+// 	pub, _ := ed25519.PublicKeyFromString(addressInfo.PublicKey)
+// 	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
+// }
+
+// func TestImportBLSPrivateKey(t *testing.T) {
+// 	td := setup(t)
+
+// 	_, prv := td.RandBLSKeyPair()
+
+// 	t.Run("Invalid password", func(t *testing.T) {
+// 		_, _, err := td.vault.ImportBLSPrivateKey("invalid-password", prv)
+// 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+// 	})
+
+// 	t.Run("Ok", func(t *testing.T) {
+// 		accInfo, valInfo, err := td.vault.ImportBLSPrivateKey(tPassword, prv)
+// 		assert.NoError(t, err)
+
+// 		assert.Equal(t, prv.PublicKeyNative().String(), accInfo.PublicKey)
+// 		assert.Equal(t, prv.PublicKeyNative().String(), valInfo.PublicKey)
+
+// 		assert.Equal(t, "m/65535'/21888'/1'/2'", accInfo.Path)
+// 		assert.Equal(t, "m/65535'/21888'/2'/2'", valInfo.Path)
+// 	})
+
+// 	t.Run("Reimporting private key", func(t *testing.T) {
+// 		_, _, err := td.vault.ImportBLSPrivateKey(tPassword, prv)
+// 		assert.ErrorIs(t, err, ErrAddressExists)
+// 	})
+// }
+
+// func TestImportEd25519PrivateKey(t *testing.T) {
+// 	td := setup(t)
+
+// 	_, prv := td.RandEd25519KeyPair()
+
+// 	t.Run("Invalid password", func(t *testing.T) {
+// 		_, err := td.vault.ImportEd25519PrivateKey("invalid-password", prv)
+// 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+// 	})
+
+// 	t.Run("Ok", func(t *testing.T) {
+// 		info, err := td.vault.ImportEd25519PrivateKey(tPassword, prv)
+// 		assert.NoError(t, err)
+
+// 		assert.Equal(t, prv.PublicKeyNative().String(), info.PublicKey)
+// 		assert.Equal(t, "m/65535'/21888'/3'/2'", info.Path)
+// 	})
+
+// 	t.Run("Reimporting private key", func(t *testing.T) {
+// 		_, err := td.vault.ImportEd25519PrivateKey(tPassword, prv)
+// 		assert.ErrorIs(t, err, ErrAddressExists)
+// 	})
+// }

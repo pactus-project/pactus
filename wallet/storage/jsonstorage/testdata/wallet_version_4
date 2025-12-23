@@ -7,7 +7,7 @@
   "vault": {
     "type": 1,
     "coin_type": 21888,
-    "default_fee": 10000000,
+    "default_fee": 20000000,
     "addresses": {
       "pc1p4xuja689hg2434yhr32clhn97x6afw58qlrcyd": {
         "address": "pc1p4xuja689hg2434yhr32clhn97x6afw58qlrcyd",

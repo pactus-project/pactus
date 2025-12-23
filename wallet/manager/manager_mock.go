@@ -135,7 +135,7 @@ func (mr *MockIManagerMockRecorder) GetValidatorAddress(publicKey any) *gomock.C
 }
 
 // ListAddresses mocks base method.
-func (m *MockIManager) ListAddresses(walletName string, opts ...types.ListAddressOption) ([]types.AddressInfo, error) {
+func (m *MockIManager) ListAddresses(walletName string, opts ...wallet.ListAddressOption) ([]types.AddressInfo, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{walletName}
 	for _, a := range opts {
@@ -279,7 +279,7 @@ func (mr *MockIManagerMockRecorder) Mnemonic(walletName, password any) *gomock.C
 }
 
 // NewAddress mocks base method.
-func (m *MockIManager) NewAddress(walletName string, addressType crypto.AddressType, label string, opts ...types.NewAddressOption) (*types.AddressInfo, error) {
+func (m *MockIManager) NewAddress(walletName string, addressType crypto.AddressType, label string, opts ...wallet.NewAddressOption) (*types.AddressInfo, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{walletName, addressType, label}
 	for _, a := range opts {

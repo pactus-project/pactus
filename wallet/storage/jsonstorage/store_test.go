@@ -3,140 +3,37 @@ package jsonstorage
 import (
 	"testing"
 
-	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/wallet/vault"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-//nolint:dupword // duplicated seed phrase words
-var testMnemonic = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus"
+func TestCreate(t *testing.T) {
+	tempPath := util.TempFilePath()
 
-func TestSupportedWallets(t *testing.T) {
-	// password is: "password"
-	tests := []struct {
-		walletPath   string
-		addressCount int
-	}{
-		{"./testdata/wallet_version_1", 4},
-		{"./testdata/wallet_version_2", 5},
-		{"./testdata/wallet_version_3", 5},
-	}
+	vlt, err := vault.CreateVaultFromMnemonic(testMnemonic, 21888)
+	require.NoError(t, err)
 
-	for _, tt := range tests {
-		data, err := util.ReadFile(tt.walletPath)
-		require.NoError(t, err)
+	strg, err := Create(tempPath, genesis.Mainnet, *vlt)
+	require.NoError(t, err)
 
-		tempPath := util.TempFilePath()
-		err = util.WriteFile(tempPath, data)
-		require.NoError(t, err)
-
-		wlt, err := Open(tempPath, true)
-		require.NoError(t, err)
-
-		// TODO: use public method to check version, like Wallet.Info()
-		assert.Equal(t, VersionLatest, wlt.store.Version)
-		assert.Equal(t, tt.addressCount, wlt.AddressCount())
-
-		mnemonic, err := wlt.Mnemonic("password")
-		require.NoError(t, err)
-		assert.Equal(t, testMnemonic, mnemonic)
-	}
+	assert.Equal(t, VersionLatest, strg.WalletInfo().Version)
+	assert.Equal(t, genesis.Mainnet, strg.WalletInfo().Network)
+	assert.Equal(t, vlt, strg.Vault())
 }
 
-func TestUnsupportedWallet(t *testing.T) {
-	_, err := Open("./testdata/unsupported_wallet", true)
-	require.ErrorIs(t, err, UnsupportedVersionError{
-		WalletVersion:    5,
-		SupportedVersion: VersionLatest,
-	})
-}
+func TestOpenNeuterWallet(t *testing.T) {
+	data, err := util.ReadFile("./testdata/neuter_wallet")
+	require.NoError(t, err)
 
-// Tis test ensures that old wallets can be safely upgraded to the latest version.
-// Encryption parameters are intentionally reduced to speed up the test.
-func TestUpgradeWallet(t *testing.T) {
-	password := "password"
+	tempPath := util.TempFilePath()
+	err = util.WriteFile(tempPath, data)
+	require.NoError(t, err)
 
-	t.Run("Upgrade Wallet From Version 1", func(t *testing.T) {
-		// In this upgrade, some addresses may not have a public key.
-		// This test ensures that after the upgrade, all addresses have a public key.
-		data, err := util.ReadFile("./testdata/wallet_version_1")
-		require.NoError(t, err)
+	strg, err := Open(tempPath)
+	require.NoError(t, err)
 
-		tempPath := util.TempFilePath()
-		err = util.WriteFile(tempPath, data)
-		require.NoError(t, err)
-
-		wlt, err := Open(tempPath, true)
-		require.NoError(t, err)
-
-		assert.Equal(t, VersionLatest, wlt.Version())
-
-		for _, info := range wlt.AddressInfos() {
-			assert.NotEmpty(t, info.PublicKey)
-		}
-	})
-
-	t.Run("Upgrade Wallet From Version 2", func(t *testing.T) {
-		// In this upgrade, the IV for AES is generated from derived bytes using the Argon2id hasher.
-		// This test ensures that wallet decryption works after the upgrade.
-		data, err := util.ReadFile("./testdata/wallet_version_2")
-		require.NoError(t, err)
-
-		tempPath := util.TempFilePath()
-		err = util.WriteFile(tempPath, data)
-		require.NoError(t, err)
-
-		wlt, err := Open(tempPath, true)
-		require.NoError(t, err)
-
-		assert.Equal(t, VersionLatest, wlt.Version())
-
-		err = wlt.UpdatePassword(password, password)
-		require.NoError(t, err)
-		assert.Equal(t, "ARGON2ID-AES_256_CTR-MACV1", wlt.store.Vault.Encrypter.Method)
-		assert.Equal(t, uint32(48), wlt.store.Vault.Encrypter.Params.GetUint32("keylen"))
-
-		addrInfo, err := wlt.NewEd25519AccountAddress("", password)
-		require.NoError(t, err)
-		assert.Equal(t, "pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94", addrInfo.Address)
-	})
-
-	t.Run("Upgrade Wallet From Version 3", func(t *testing.T) {
-		data, err := util.ReadFile("./testdata/wallet_version_3")
-		require.NoError(t, err)
-
-		tempPath := util.TempFilePath()
-		err = util.WriteFile(tempPath, data)
-		require.NoError(t, err)
-
-		wlt, err := Open(tempPath, true)
-		require.NoError(t, err)
-
-		assert.Equal(t, VersionLatest, wlt.Version())
-
-		mnemonic, err := wlt.Mnemonic(password)
-		require.NoError(t, err)
-		assert.Equal(t, "ARGON2ID-AES_256_CBC-MACV1", wlt.store.Vault.Encrypter.Method)
-		assert.Equal(t, testMnemonic, mnemonic)
-	})
-
-	t.Run("Upgrade Wallet From Version 4", func(t *testing.T) {
-		data, err := util.ReadFile("./testdata/wallet_version_4")
-		require.NoError(t, err)
-
-		tempPath := util.TempFilePath()
-		err = util.WriteFile(tempPath, data)
-		require.NoError(t, err)
-
-		wlt, err := Open(tempPath, true)
-		require.NoError(t, err)
-
-		assert.Equal(t, VersionLatest, wlt.Version())
-
-		defaultFeeActual := wlt.Info().DefaultFee
-		defaultFeeExpected, _ := amount.FromString("0.01")
-		require.NoError(t, err)
-		assert.Equal(t, defaultFeeExpected, defaultFeeActual)
-	})
+	assert.False(t, strg.Vault().IsNeutered())
 }

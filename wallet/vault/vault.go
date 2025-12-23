@@ -3,7 +3,6 @@ package vault
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"time"
 
@@ -12,21 +11,11 @@ import (
 	blshdkeychain "github.com/pactus-project/pactus/crypto/bls/hdkeychain"
 	"github.com/pactus-project/pactus/crypto/ed25519"
 	ed25519hdkeychain "github.com/pactus-project/pactus/crypto/ed25519/hdkeychain"
-	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util/bip39"
 	"github.com/pactus-project/pactus/wallet/addresspath"
 	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/wallet/types"
 )
-
-var (
-	ErrAddressExists      = errors.New("address already exists")
-	ErrInvalidAddressType = errors.New("invalid address type")
-)
-
-func NewErrAddressNotFound(addr string) error {
-	return fmt.Errorf("address not found: %s", addr)
-}
 
 //
 // Deterministic Hierarchical Derivation Path
@@ -88,22 +77,12 @@ func (vt VaultType) String() string {
 // AddressGapLimit is the maximum number of consecutive inactive addresses before stopping recovery.
 const AddressGapLimit = 8
 
-type AddressInfoDeprecated struct {
-	Address   string `json:"address"`    // Address in the wallet
-	PublicKey string `json:"public_key"` // Public key associated with the address
-	Label     string `json:"label"`      // Label for the address
-	Path      string `json:"path"`       // Path for the address
-}
-
 type Vault struct {
 	Type      VaultType            `json:"type"`      // Vault type: Full or Neutered
 	CoinType  addresspath.CoinType `json:"coin_type"` // Coin type: 21888 for Mainnet, 21777 for Testnet
 	Encrypter encrypter.Encrypter  `json:"encrypter"` // Encryption algorithm
 	KeyStore  string               `json:"key_store"` // KeyStore that stores the secrets and encrypts using Encrypter
-	Purposes  purposes             `json:"purposes"`  // Contains Purposes of the vault
-
-	DefaultFeeDeprecated amount.Amount                    `json:"default_fee"` // The Vault's default fee
-	AddressesDeprecated  map[string]AddressInfoDeprecated `json:"addresses"`   // All addresses that are stored in the vault
+	Purposes  Purposes             `json:"purposes"`  // Contains Purposes of the vault
 }
 
 type keyStore struct {
@@ -115,7 +94,7 @@ type masterNode struct {
 	Mnemonic string `json:"seed,omitempty"` // Seed phrase or mnemonic (encrypted)
 }
 
-type purposes struct {
+type Purposes struct {
 	PurposeBLS   purposeBLS   `json:"purpose_bls"`   // BLS Purpose: m/12381'/21888'/1' or 2'/0
 	PurposeBIP44 purposeBIP44 `json:"purpose_bip44"` // BIP44 Purpose: m/44'/21888'/3'/0'
 }
@@ -177,7 +156,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType addresspath.CoinType) (*V
 		CoinType:  coinType,
 		Encrypter: enc,
 		KeyStore:  string(storeDate),
-		Purposes: purposes{
+		Purposes: Purposes{
 			PurposeBLS: purposeBLS{
 				XPubValidator: xPubValidator.Neuter().String(),
 				XPubAccount:   xPubAccount.Neuter().String(),
@@ -187,6 +166,7 @@ func CreateVaultFromMnemonic(mnemonic string, coinType addresspath.CoinType) (*V
 }
 
 func (v *Vault) Neuter() {
+	v.Type = TypeNeutered
 	v.Encrypter = encrypter.NopeEncrypter()
 	v.KeyStore = ""
 }
@@ -340,7 +320,7 @@ func (v *Vault) PrivateKeys(password string, paths []addresspath.Path) ([]crypto
 			}
 			keys[i] = prvKey
 		case addresspath.PurposeImportPrivateKey:
-			index := uint32(path.AddressIndex())
+			index := addresspath.UnHarden(path.AddressIndex())
 			str := keyStore.ImportedKeys[index]
 
 			var prv crypto.PrivateKey

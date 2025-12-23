@@ -30,8 +30,8 @@ type IManager interface {
 	Mnemonic(walletName, password string) (string, error)
 
 	NewAddress(walletName string, addressType crypto.AddressType, label string,
-		opts ...types.NewAddressOption) (*types.AddressInfo, error)
-	ListAddresses(walletName string, opts ...types.ListAddressOption) ([]types.AddressInfo, error)
+		opts ...wallet.NewAddressOption) (*types.AddressInfo, error)
+	ListAddresses(walletName string, opts ...wallet.ListAddressOption) ([]types.AddressInfo, error)
 	AddressInfo(walletName, address string) (*types.AddressInfo, error)
 	AddressLabel(walletName, addr string) (string, error)
 	SetAddressLabel(walletName, addr, label string) error

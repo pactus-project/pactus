@@ -722,6 +722,7 @@ func _WalletListAddressesCommand(cfg *client.Config) *cobra.Command {
 	}
 
 	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "The name of the queried wallet.")
+	flag.EnumSliceVar(cmd.PersistentFlags(), &req.AddressTypes, cfg.FlagNamer("AddressTypes"), "Filter addresses by their types. If empty, all address types are included.")
 
 	return cmd
 }
