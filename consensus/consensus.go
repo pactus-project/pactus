@@ -115,9 +115,10 @@ func makeConsensus(
 	return cons
 }
 
-func (cs *consensus) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (cs *consensus) LogString() string {
 	return fmt.Sprintf("{%s %d/%d/%s/%d}",
-		cs.valKey.Address().ShortString(),
+		cs.valKey.Address().LogString(),
 		cs.height, cs.round, cs.currentState.name(), cs.cpRound)
 }
 

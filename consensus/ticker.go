@@ -36,6 +36,7 @@ type ticker struct {
 	Target   tickerTarget
 }
 
-func (ti ticker) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (ti ticker) LogString() string {
 	return fmt.Sprintf("%v@ %d/%d/%s", ti.Duration, ti.Height, ti.Round, ti.Target)
 }

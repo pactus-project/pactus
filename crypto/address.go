@@ -79,8 +79,8 @@ func (addr Address) Bytes() []byte {
 	return addr[:]
 }
 
-// ShortString returns a short string for the address useful for logger.
-func (addr Address) ShortString() string {
+// LogString returns a concise string representation intended for use in logs.
+func (addr Address) LogString() string {
 	return addr.String()[0:12]
 }
 

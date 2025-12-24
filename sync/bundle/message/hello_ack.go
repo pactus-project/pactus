@@ -40,6 +40,7 @@ func (*HelloAckMessage) ConsensusHeight() uint32 {
 	return 0
 }
 
-func (m *HelloAckMessage) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (m *HelloAckMessage) LogString() string {
 	return fmt.Sprintf("{%s: %s %v}", m.ResponseCode, m.Reason, m.Height)
 }

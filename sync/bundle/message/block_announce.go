@@ -58,8 +58,9 @@ func (m *BlockAnnounceMessage) ConsensusHeight() uint32 {
 	return m.Certificate.Height()
 }
 
-func (m *BlockAnnounceMessage) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (m *BlockAnnounceMessage) LogString() string {
 	return fmt.Sprintf("{⌘ %d %v}",
 		m.Certificate.Height(),
-		m.Block.Hash().ShortString())
+		m.Block.Hash().LogString())
 }

@@ -141,5 +141,5 @@ type Message interface {
 	// This is applicable for consensus messages, including BlockAnnounce.
 	// For non-consensus messages, this height is set to zero.
 	ConsensusHeight() uint32
-	String() string
+	LogString() string
 }

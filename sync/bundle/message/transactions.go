@@ -47,11 +47,12 @@ func (*TransactionsMessage) ConsensusHeight() uint32 {
 	return 0
 }
 
-func (m *TransactionsMessage) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (m *TransactionsMessage) LogString() string {
 	var builder strings.Builder
 
 	for _, trx := range m.Transactions {
-		builder.WriteString(fmt.Sprintf("%v ", trx.ID().ShortString()))
+		builder.WriteString(fmt.Sprintf("%v ", trx.ID().LogString()))
 	}
 	builder.WriteString(fmt.Sprintf("{%v: ⌘ [%v]}", len(m.Transactions), builder.String()))
 

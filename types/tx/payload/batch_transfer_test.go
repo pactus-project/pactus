@@ -17,7 +17,7 @@ func TestBatchTransferType(t *testing.T) {
 
 func TestBatchTransferString(t *testing.T) {
 	pld := BatchTransferPayload{}
-	assert.Contains(t, pld.String(), "{BatchTransfer ")
+	assert.Contains(t, pld.LogString(), "{BatchTransfer ")
 }
 
 func TestBatchTransferDecoding(t *testing.T) {

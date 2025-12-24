@@ -404,7 +404,8 @@ func (n *network) CloseConnection(pid lp2ppeer.ID) {
 	n.logger.Debug("connection closed", "pid", pid)
 }
 
-func (n *network) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (n *network) LogString() string {
 	return fmt.Sprintf("{%d}", n.NumConnectedPeers())
 }
 

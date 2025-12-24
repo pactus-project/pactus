@@ -18,7 +18,7 @@ func TestBondType(t *testing.T) {
 
 func TestBondString(t *testing.T) {
 	pld := BondPayload{}
-	assert.Contains(t, pld.String(), "{Bond ")
+	assert.Contains(t, pld.LogString(), "{Bond ")
 }
 
 func TestBondDecoding(t *testing.T) {

@@ -17,7 +17,7 @@ func TestUnbondType(t *testing.T) {
 
 func TestUnbondString(t *testing.T) {
 	pld := UnbondPayload{}
-	assert.Contains(t, pld.String(), "{Unbond ")
+	assert.Contains(t, pld.LogString(), "{Unbond ")
 }
 
 func TestUnbondDecoding(t *testing.T) {

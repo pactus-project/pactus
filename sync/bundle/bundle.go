@@ -52,8 +52,9 @@ func (b *Bundle) BasicCheck() error {
 	return b.Message.BasicCheck()
 }
 
-func (b *Bundle) String() string {
-	return fmt.Sprintf("%s%s", b.Message.Type(), b.Message.String())
+// LogString returns a concise string representation intended for use in logs.
+func (b *Bundle) LogString() string {
+	return fmt.Sprintf("%s%s", b.Message.Type(), b.Message.LogString())
 }
 
 func (b *Bundle) CompressIt() {

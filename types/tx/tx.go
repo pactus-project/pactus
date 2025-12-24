@@ -456,11 +456,12 @@ func (tx *Tx) decodePublicKey(r io.Reader) (crypto.PublicKey, error) {
 	}
 }
 
-func (tx *Tx) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (tx *Tx) LogString() string {
 	return fmt.Sprintf("{⌘ %v - %v 🏵 %v}",
-		tx.ID().ShortString(),
+		tx.ID().LogString(),
 		tx.LockTime(),
-		tx.data.Payload.String())
+		tx.data.Payload.LogString())
 }
 
 func (tx *Tx) SignBytes() []byte {

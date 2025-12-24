@@ -83,9 +83,10 @@ func (p *WithdrawPayload) Decode(r io.Reader) error {
 	return nil
 }
 
-func (p *WithdrawPayload) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (p *WithdrawPayload) LogString() string {
 	return fmt.Sprintf("{Withdraw 🧾 %s->%s %s",
-		p.From.ShortString(),
-		p.To.ShortString(),
+		p.From.LogString(),
+		p.To.LogString(),
 		p.Amount)
 }

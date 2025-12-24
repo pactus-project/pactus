@@ -20,6 +20,6 @@ func TestProposalMessage(t *testing.T) {
 		msg := NewProposalMessage(prop)
 
 		assert.NoError(t, msg.BasicCheck())
-		assert.Contains(t, msg.String(), "100")
+		assert.Contains(t, msg.LogString(), "100")
 	})
 }

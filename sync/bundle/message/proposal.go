@@ -44,6 +44,7 @@ func (m *ProposalMessage) Height() uint32 {
 	return m.Proposal.Height()
 }
 
-func (m *ProposalMessage) String() string {
-	return m.Proposal.String()
+// LogString returns a concise string representation intended for use in logs.
+func (m *ProposalMessage) LogString() string {
+	return m.Proposal.LogString()
 }

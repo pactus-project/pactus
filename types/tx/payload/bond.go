@@ -124,9 +124,10 @@ func (p *BondPayload) Decode(r io.Reader) error {
 	return nil
 }
 
-func (p *BondPayload) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (p *BondPayload) LogString() string {
 	return fmt.Sprintf("{Bond 🔐 %s->%s %s",
-		p.From.ShortString(),
-		p.To.ShortString(),
+		p.From.LogString(),
+		p.To.LogString(),
 		p.Stake)
 }

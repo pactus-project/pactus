@@ -246,15 +246,16 @@ func (v *Vote) BasicCheck() error {
 	return nil
 }
 
-func (v *Vote) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (v *Vote) LogString() string {
 	switch v.Type() {
 	case VoteTypePrepare, VoteTypePrecommit:
 		return fmt.Sprintf("{%d/%d/%s ⌘ %v 👤 %s}",
 			v.Height(),
 			v.Round(),
 			v.Type(),
-			v.BlockHash().ShortString(),
-			v.Signer().ShortString(),
+			v.BlockHash().LogString(),
+			v.Signer().LogString(),
 		)
 	case VoteTypeCPPreVote, VoteTypeCPMainVote, VoteTypeCPDecided:
 		return fmt.Sprintf("{%d/%d/%s/%d/%s ⌘ %v 👤 %s}",
@@ -263,8 +264,8 @@ func (v *Vote) String() string {
 			v.Type(),
 			v.CPRound(),
 			v.CPValue(),
-			v.BlockHash().ShortString(),
-			v.Signer().ShortString(),
+			v.BlockHash().LogString(),
+			v.Signer().LogString(),
 		)
 
 	default:

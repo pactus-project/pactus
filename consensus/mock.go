@@ -75,7 +75,7 @@ func (m *MockConsensus) HeightRound() (uint32, int16) {
 	return m.Height, m.Round
 }
 
-func (*MockConsensus) String() string {
+func (*MockConsensus) LogString() string {
 	return ""
 }
 

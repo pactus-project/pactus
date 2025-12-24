@@ -163,9 +163,10 @@ func (p *BatchTransferPayload) Decode(r io.Reader) error {
 	return nil
 }
 
-func (p *BatchTransferPayload) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (p *BatchTransferPayload) LogString() string {
 	return fmt.Sprintf("{BatchTransfer 💸 %s->[%d] %s",
-		p.From.ShortString(),
+		p.From.LogString(),
 		len(p.Recipients),
 		p.Value())
 }

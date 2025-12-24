@@ -75,7 +75,8 @@ func (h Hash) Bytes() []byte {
 	return h[:]
 }
 
-func (h Hash) ShortString() string {
+// LogString returns a concise string representation intended for use in logs.
+func (h Hash) LogString() string {
 	return fmt.Sprintf("%X", h[:6])
 }
 

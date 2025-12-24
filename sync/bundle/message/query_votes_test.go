@@ -26,6 +26,6 @@ func TestQueryVoteMessage(t *testing.T) {
 		msg := NewQueryVoteMessage(100, 0, ts.RandValAddress())
 
 		assert.NoError(t, msg.BasicCheck())
-		assert.Contains(t, msg.String(), "100")
+		assert.Contains(t, msg.LogString(), "100")
 	})
 }

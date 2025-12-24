@@ -40,7 +40,7 @@ func TestBlocksResponseMessage(t *testing.T) {
 			sid, 100, [][]byte{d1, d2}, cert2)
 
 		assert.NoError(t, msg.BasicCheck())
-		assert.Contains(t, msg.String(), "100")
+		assert.Contains(t, msg.LogString(), "100")
 		assert.Equal(t, ResponseCodeMoreBlocks.String(), msg.Reason)
 	})
 }

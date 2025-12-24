@@ -17,7 +17,7 @@ func TestWithdrawType(t *testing.T) {
 
 func TestWithdrawString(t *testing.T) {
 	pld := WithdrawPayload{}
-	assert.Contains(t, pld.String(), "{Withdraw ")
+	assert.Contains(t, pld.LogString(), "{Withdraw ")
 }
 
 func TestWithdrawDecoding(t *testing.T) {

@@ -526,10 +526,11 @@ func (st *state) evaluateSortition() bool {
 	return evaluated
 }
 
-func (st *state) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (st *state) LogString() string {
 	return fmt.Sprintf("{#%d ⌘ %v 🕣 %v}",
 		st.lastInfo.BlockHeight(),
-		st.lastInfo.BlockHash().ShortString(),
+		st.lastInfo.BlockHash().LogString(),
 		st.lastInfo.BlockTime().Format("15.04.05"))
 }
 

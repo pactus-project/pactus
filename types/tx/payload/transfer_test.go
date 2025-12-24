@@ -17,7 +17,7 @@ func TestTransferType(t *testing.T) {
 
 func TestTransferString(t *testing.T) {
 	pld := TransferPayload{}
-	assert.Contains(t, pld.String(), "{Transfer ")
+	assert.Contains(t, pld.LogString(), "{Transfer ")
 }
 
 func TestTransferDecoding(t *testing.T) {

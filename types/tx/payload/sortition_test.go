@@ -17,7 +17,7 @@ func TestSortitionType(t *testing.T) {
 
 func TestSortitionString(t *testing.T) {
 	pld := SortitionPayload{}
-	assert.Contains(t, pld.String(), "{Sortition ")
+	assert.Contains(t, pld.LogString(), "{Sortition ")
 }
 
 func TestSortitionDecoding(t *testing.T) {

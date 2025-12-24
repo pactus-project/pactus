@@ -35,6 +35,7 @@ func (m *VoteMessage) ConsensusHeight() uint32 {
 	return m.Vote.Height()
 }
 
-func (m *VoteMessage) String() string {
-	return m.Vote.String()
+// LogString returns a concise string representation intended for use in logs.
+func (m *VoteMessage) LogString() string {
+	return m.Vote.LogString()
 }

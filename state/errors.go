@@ -44,7 +44,7 @@ type InvalidVoteForCertificateError struct {
 
 func (e InvalidVoteForCertificateError) Error() string {
 	return fmt.Sprintf("invalid vote to update the last certificate: %s",
-		e.Vote.String())
+		e.Vote.Type().String())
 }
 
 // InvalidStateRootHashError is returned when the state root hash of the block
