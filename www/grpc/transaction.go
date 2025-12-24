@@ -65,12 +65,7 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 func (s *transactionServer) BroadcastTransaction(_ context.Context,
 	req *pactus.BroadcastTransactionRequest,
 ) (*pactus.BroadcastTransactionResponse, error) {
-	b, err := hex.DecodeString(req.SignedRawTransaction)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid signed transaction")
-	}
-
-	trx, err := tx.FromBytes(b)
+	trx, err := tx.FromString(req.SignedRawTransaction)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
@@ -374,12 +369,8 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 func (*transactionServer) DecodeRawTransaction(_ context.Context,
 	req *pactus.DecodeRawTransactionRequest,
 ) (*pactus.DecodeRawTransactionResponse, error) {
-	b, err := hex.DecodeString(req.RawTransaction)
-	if err != nil {
-		return nil, status.Errorf(codes.InvalidArgument, "invalid raw transaction")
-	}
 
-	trx, err := tx.FromBytes(b)
+	trx, err := tx.FromString(req.RawTransaction)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())
 	}
