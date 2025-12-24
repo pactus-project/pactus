@@ -3,6 +3,7 @@ package jsonstorage
 import (
 	"testing"
 
+	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
@@ -113,10 +114,29 @@ func TestUpgrade(t *testing.T) {
 		require.NoError(t, err)
 
 		assert.Equal(t, VersionLatest, strg.WalletInfo().Version)
+		assert.Equal(t, genesis.Mainnet, strg.WalletInfo().Network)
 		assert.Equal(t, amount.Amount(2e7), strg.WalletInfo().DefaultFee) // 0.02 PAC
 
 		infos, err := strg.AllAddresses()
 		require.NoError(t, err)
 		assert.Len(t, infos, 5)
 	})
+}
+
+func TestUpgradeTestnet(t *testing.T) {
+	data, err := util.ReadFile("./testdata/testnet_wallet")
+	require.NoError(t, err)
+
+	tempPath := util.TempFilePath()
+	err = util.WriteFile(tempPath, data)
+	require.NoError(t, err)
+
+	err = Upgrade(tempPath)
+	require.NoError(t, err)
+
+	strg, err := Open(tempPath)
+	require.NoError(t, err)
+
+	assert.Equal(t, VersionLatest, strg.WalletInfo().Version)
+	assert.Equal(t, genesis.Testnet, strg.WalletInfo().Network)
 }

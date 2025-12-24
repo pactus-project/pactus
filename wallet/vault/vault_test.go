@@ -1,6 +1,8 @@
 package vault
 
 import (
+	"context"
+	"errors"
 	"testing"
 
 	"github.com/pactus-project/pactus/crypto"
@@ -245,37 +247,6 @@ func TestUpdatePassword(t *testing.T) {
 	})
 }
 
-// func TestSetLabel(t *testing.T) {
-// 	td := setup(t)
-
-// 	t.Run("Set label for unknown address", func(t *testing.T) {
-// 		invAddr := td.RandAccAddress().String()
-// 		err := td.vault.SetLabel(invAddr, "i have label")
-// 		assert.ErrorIs(t, err, NewErrAddressNotFound(invAddr))
-// 		assert.Equal(t, "", td.vault.Label(invAddr))
-// 	})
-
-// 	t.Run("Update label", func(t *testing.T) {
-// 		testAddr := td.storage.AddressInfos()[0].Address
-// 		err := td.vault.SetLabel(testAddr, "I have a label")
-// 		assert.NoError(t, err)
-// 		assert.Equal(t, "I have a label", td.vault.Label(testAddr))
-// 	})
-
-// 	t.Run("Remove label", func(t *testing.T) {
-// 		testAddr := td.storage.AddressInfos()[0].Address
-// 		err := td.vault.SetLabel(testAddr, "")
-// 		assert.NoError(t, err)
-// 		var ok bool
-// 		l := td.vault.Label(testAddr)
-// 		if strings.TrimSpace(l) != "" {
-// 			ok = true
-// 		}
-// 		assert.Empty(t, td.vault.Label(testAddr))
-// 		assert.False(t, ok)
-// 	})
-// }
-
 func TestNeuter(t *testing.T) {
 	td := setup(t)
 
@@ -299,164 +270,151 @@ func TestNeuter(t *testing.T) {
 	assert.ErrorIs(t, err, ErrNeutered)
 }
 
-// // TestAddressRecovery tests the address recovery functionality according to PIP-41 specification.
-// // This test verifies that the RecoverAddresses function correctly identifies and recovers
-// // previously used addresses when restoring a wallet from a mnemonic phrase.
-// //
-// // The first 8 BLS account addresses for the test mnemonic are:
-// // pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf (index 0)
-// // pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns (index 1)
-// // pc1zaj6dzh6zg8zsgzy2rrtvyyeg0l4d32p8e6xn5h (index 2)
-// // pc1ztmex7taes23h6z4jf0awwmps0zpzmecuzcsev0 (index 3)
-// // pc1zkry0kt7fxufqjql6zus54a397w4ukqqg0l2sz4 (index 4)
-// // pc1zqar4tm23a3k0cyy3n86fq59psajah3wgm3hc4x (index 5)
-// // pc1zpmxu83gp7y84ekn89rfkyf099sj6f9jlmututf (index 6)
-// // pc1zydjhrq06ngg6nwqs8n8jkyw6u58qlqc5cqqxht (index 7)
-// //
-// // The first 8 Ed25519 account addresses for the test mnemonic are:
-// // pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3 (index 0)
-// // pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94 (index 1)
-// // pc1ruumtknmwr6ns32rkezfph38tawwx7gesmykk4g (index 2)
-// // pc1r4waddcacrxw2vg4ge8vtlnk9mnccnuv0374xuv (index 3)
-// // pc1re5an4nasvgpmxmuptxxd8hqy6adncqy4qyhj8w (index 4)
-// // pc1rul34wczhq44s5chtxvlgmrgf6dp0xx47zzg9ud (index 5)
-// // pc1r77rvd98gld8vfgzfa89har678dlpm9pkxex4zf (index 6)
-// // pc1rmzpqfhs4ekrevmwwj2gsz6m4kjym3eg99x7zk5 (index 7)
-// //
-// // The test uses a mock hasActivity function to simulate blockchain activity checks.
-// func TestAddressRecovery(t *testing.T) {
-// 	//nolint:dupword // has duplicated words
-// 	testMnemonic := "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus"
+// TestAddressRecovery tests the address recovery functionality according to PIP-41 specification.
+// This test verifies that the RecoverAddresses function correctly identifies and recovers
+// previously used addresses when restoring a wallet from a mnemonic phrase.
+//
+// The first 8 BLS account addresses for the test mnemonic are:
+// pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf (index 0)
+// pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns (index 1)
+// pc1zaj6dzh6zg8zsgzy2rrtvyyeg0l4d32p8e6xn5h (index 2)
+// pc1ztmex7taes23h6z4jf0awwmps0zpzmecuzcsev0 (index 3)
+// pc1zkry0kt7fxufqjql6zus54a397w4ukqqg0l2sz4 (index 4)
+// pc1zqar4tm23a3k0cyy3n86fq59psajah3wgm3hc4x (index 5)
+// pc1zpmxu83gp7y84ekn89rfkyf099sj6f9jlmututf (index 6)
+// pc1zydjhrq06ngg6nwqs8n8jkyw6u58qlqc5cqqxht (index 7)
+//
+// The first 8 Ed25519 account addresses for the test mnemonic are:
+// pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3 (index 0)
+// pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94 (index 1)
+// pc1ruumtknmwr6ns32rkezfph38tawwx7gesmykk4g (index 2)
+// pc1r4waddcacrxw2vg4ge8vtlnk9mnccnuv0374xuv (index 3)
+// pc1re5an4nasvgpmxmuptxxd8hqy6adncqy4qyhj8w (index 4)
+// pc1rul34wczhq44s5chtxvlgmrgf6dp0xx47zzg9ud (index 5)
+// pc1r77rvd98gld8vfgzfa89har678dlpm9pkxex4zf (index 6)
+// pc1rmzpqfhs4ekrevmwwj2gsz6m4kjym3eg99x7zk5 (index 7)
+//
+// The test uses a mock hasActivity function to simulate blockchain activity checks.
+func TestAddressRecovery(t *testing.T) {
+	//nolint:dupword // has duplicated words
+	testMnemonic := "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus"
 
-// 	t.Run("recover addresses from a fresh wallet without any active addresses", func(t *testing.T) {
-// 		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
-// 		assert.NoError(t, err)
+	t.Run("recover addresses from a fresh wallet without any active addresses", func(t *testing.T) {
+		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		assert.NoError(t, err)
 
-// 		// Mock hasActivity to return false for all addresses (no active addresses)
-// 		hasActivity := func(_ string) (bool, error) {
-// 			return false, nil
-// 		}
+		// Mock hasActivity to return false for all addresses (no active addresses)
+		hasActivity := func(_ string) (bool, error) {
+			return false, nil
+		}
 
-// 		err = vault.RecoverAddresses(context.Background(), "", hasActivity)
-// 		assert.NoError(t, err)
+		recovered, err := vault.RecoverAddresses(context.Background(), "", hasActivity)
+		assert.NoError(t, err)
 
-// 		// Should have 1 Ed25519 address (the first one)
-// 		addresses := vault.ListAccountAddresses()
-// 		assert.Empty(t, addresses)
-// 	})
+		assert.Empty(t, recovered)
+	})
 
-// 	t.Run("recover addresses with one gap at the beginning", func(t *testing.T) {
-// 		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
-// 		assert.NoError(t, err)
+	t.Run("recover addresses with one gap at the beginning", func(t *testing.T) {
+		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		assert.NoError(t, err)
 
-// 		// Mock hasActivity to return true only for the first call (address at index 0)
-// 		hasActivity := func(addr string) (bool, error) {
-// 			return addr == "pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94" ||
-// 				addr == "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns", nil
-// 		}
+		// Mock hasActivity to return true only for the first call (address at index 0)
+		hasActivity := func(addr string) (bool, error) {
+			return addr == "pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94" ||
+				addr == "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns", nil
+		}
 
-// 		err = vault.RecoverAddresses(context.Background(), "", hasActivity)
-// 		assert.NoError(t, err)
+		recovered, err := vault.RecoverAddresses(context.Background(), "", hasActivity)
+		assert.NoError(t, err)
 
-// 		// Should have 4 addresses
-// 		addresses := vault.ListAccountAddresses()
-// 		assert.Len(t, addresses, 4)
-// 		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", addresses[0].Address)
-// 		assert.Equal(t, "pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94", addresses[1].Address)
-// 		assert.Equal(t, "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf", addresses[2].Address)
-// 		assert.Equal(t, "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns", addresses[3].Address)
-// 	})
+		// Should have 4 addresses
+		assert.Len(t, recovered, 4)
+		assert.Equal(t, "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf", recovered[0].Address)
+		assert.Equal(t, "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns", recovered[1].Address)
+		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", recovered[2].Address)
+		assert.Equal(t, "pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94", recovered[3].Address)
+	})
 
-// 	t.Run("recover addresses with gaps in the middle of the address list", func(t *testing.T) {
-// 		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
-// 		assert.NoError(t, err)
+	t.Run("recover addresses with gaps in the middle of the address list", func(t *testing.T) {
+		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		assert.NoError(t, err)
 
-// 		hasActivity := func(addr string) (bool, error) {
-// 			return addr == "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3" ||
-// 				addr == "pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94" ||
-// 				addr == "pc1r4waddcacrxw2vg4ge8vtlnk9mnccnuv0374xuv" ||
-// 				addr == "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf" ||
-// 				addr == "pc1ztmex7taes23h6z4jf0awwmps0zpzmecuzcsev0", nil
-// 		}
+		hasActivity := func(addr string) (bool, error) {
+			return addr == "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3" ||
+				addr == "pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94" ||
+				addr == "pc1r4waddcacrxw2vg4ge8vtlnk9mnccnuv0374xuv" ||
+				addr == "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf" ||
+				addr == "pc1ztmex7taes23h6z4jf0awwmps0zpzmecuzcsev0", nil
+		}
 
-// 		err = vault.RecoverAddresses(context.Background(), "", hasActivity)
-// 		assert.NoError(t, err)
+		recovered, err := vault.RecoverAddresses(context.Background(), "", hasActivity)
+		assert.NoError(t, err)
 
-// 		addresses := vault.ListAccountAddresses()
-// 		assert.Len(t, addresses, 8)
+		assert.Len(t, recovered, 8)
 
-// 		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", addresses[0].Address)
-// 		assert.Equal(t, "pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94", addresses[1].Address)
-// 		assert.Equal(t, "pc1ruumtknmwr6ns32rkezfph38tawwx7gesmykk4g", addresses[2].Address)
-// 		assert.Equal(t, "pc1r4waddcacrxw2vg4ge8vtlnk9mnccnuv0374xuv", addresses[3].Address)
-// 		assert.Equal(t, "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf", addresses[4].Address)
-// 		assert.Equal(t, "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns", addresses[5].Address)
-// 		assert.Equal(t, "pc1zaj6dzh6zg8zsgzy2rrtvyyeg0l4d32p8e6xn5h", addresses[6].Address)
-// 		assert.Equal(t, "pc1ztmex7taes23h6z4jf0awwmps0zpzmecuzcsev0", addresses[7].Address)
-// 	})
+		assert.Equal(t, "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf", recovered[0].Address)
+		assert.Equal(t, "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns", recovered[1].Address)
+		assert.Equal(t, "pc1zaj6dzh6zg8zsgzy2rrtvyyeg0l4d32p8e6xn5h", recovered[2].Address)
+		assert.Equal(t, "pc1ztmex7taes23h6z4jf0awwmps0zpzmecuzcsev0", recovered[3].Address)
+		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", recovered[4].Address)
+		assert.Equal(t, "pc1r7aynw9urvh66ktr3fte2gskjjnxzruflkgde94", recovered[5].Address)
+		assert.Equal(t, "pc1ruumtknmwr6ns32rkezfph38tawwx7gesmykk4g", recovered[6].Address)
+		assert.Equal(t, "pc1r4waddcacrxw2vg4ge8vtlnk9mnccnuv0374xuv", recovered[7].Address)
+	})
 
-// 	t.Run("prevent recovering existing address", func(t *testing.T) {
-// 		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
-// 		assert.NoError(t, err)
+	t.Run("prevent recovering existing address", func(t *testing.T) {
+		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		assert.NoError(t, err)
 
-// 		existing, _ := vault.NewEd25519AccountAddress("existing address", "")
+		_, _ = vault.NewEd25519AccountAddress("existing address", "")
 
-// 		hasActivity := func(addr string) (bool, error) {
-// 			return addr == "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", nil
-// 		}
+		hasActivity := func(addr string) (bool, error) {
+			return addr == "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", nil
+		}
 
-// 		err = vault.RecoverAddresses(context.Background(), "", hasActivity)
-// 		assert.NoError(t, err)
+		recovered, err := vault.RecoverAddresses(context.Background(), "", hasActivity)
+		assert.NoError(t, err)
 
-// 		addresses := vault.ListAccountAddresses()
-// 		assert.Len(t, addresses, 1)
+		assert.Len(t, recovered, 0)
+	})
 
-// 		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", addresses[0].Address)
-// 		assert.Equal(t, "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3", existing.Address)
-// 	})
+	t.Run("error handling", func(t *testing.T) {
+		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		assert.NoError(t, err)
 
-// 	t.Run("error handling", func(t *testing.T) {
-// 		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
-// 		assert.NoError(t, err)
+		// Mock hasActivity to return an error
+		hasActivity := func(_ string) (bool, error) {
+			return false, errors.New("blockchain connection error")
+		}
 
-// 		// Mock hasActivity to return an error
-// 		hasActivity := func(_ string) (bool, error) {
-// 			return false, errors.New("blockchain connection error")
-// 		}
+		_, err = vault.RecoverAddresses(context.Background(), "", hasActivity)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "blockchain connection error")
+	})
 
-// 		err = vault.RecoverAddresses(context.Background(), "", hasActivity)
-// 		assert.Error(t, err)
-// 		assert.Contains(t, err.Error(), "blockchain connection error")
-// 	})
+	t.Run("cancel recovery with context cancel signal", func(t *testing.T) {
+		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
+		assert.NoError(t, err)
 
-// 	t.Run("cancel recovery with context cancel signal", func(t *testing.T) {
-// 		vault, err := CreateVaultFromMnemonic(testMnemonic, 21888) // Mainnet
-// 		assert.NoError(t, err)
+		// Create a cancellable context
+		ctx, cancel := context.WithCancel(context.Background())
 
-// 		// Create a cancellable context
-// 		ctx, cancel := context.WithCancel(context.Background())
+		// Counter to track how many times hasActivity is called
+		callCount := 0
 
-// 		// Counter to track how many times hasActivity is called
-// 		callCount := 0
+		// Mock hasActivity to cancel context after a few calls
+		hasActivity := func(_ string) (bool, error) {
+			callCount++
+			// Cancel the context after 3 calls to simulate interruption during recovery
+			if callCount >= 3 {
+				cancel()
+			}
 
-// 		// Mock hasActivity to cancel context after a few calls
-// 		hasActivity := func(_ string) (bool, error) {
-// 			callCount++
-// 			// Cancel the context after 3 calls to simulate interruption during recovery
-// 			if callCount >= 3 {
-// 				cancel()
-// 			}
+			return false, nil
+		}
 
-// 			return false, nil
-// 		}
-
-// 		err = vault.RecoverAddresses(ctx, "", hasActivity)
-// 		assert.Error(t, err)
-// 		assert.Equal(t, context.Canceled, err)
-
-// 		// Recovery should have been interrupted, so we should have only the first Ed25519 address
-// 		// or possibly none if cancelled early enough
-// 		addresses := vault.ListAccountAddresses()
-// 		assert.LessOrEqual(t, len(addresses), 1)
-// 	})
-// }
+		_, err = vault.RecoverAddresses(ctx, "", hasActivity)
+		assert.Error(t, err)
+		assert.Equal(t, context.Canceled, err)
+	})
+}

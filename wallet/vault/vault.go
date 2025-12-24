@@ -575,13 +575,20 @@ func (*Vault) deriveEd25519PrivateKey(mnemonicSeed []byte, path []uint32) (*ed25
 // Reference: https://pips.pactus.org/PIPs/pip-41
 func (v *Vault) RecoverAddresses(ctx context.Context, password string,
 	hasActivity func(addr string) (bool, error),
-) error {
-	err := v.recoverBLSAccountAddresses(ctx, hasActivity)
+) ([]types.AddressInfo, error) {
+	recovered1, err := v.recoverBLSAccountAddresses(ctx, hasActivity)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return v.recoverEd25519AccountAddresses(ctx, password, hasActivity)
+	recovered2, err := v.recoverEd25519AccountAddresses(ctx, password, hasActivity)
+	if err != nil {
+		return nil, err
+	}
+
+	recovered1 = append(recovered1, recovered2...)
+
+	return recovered1, nil
 }
 
 // scanRecoveredCount scans derived addresses until the gap limit is exceeded and
@@ -634,10 +641,12 @@ func (*Vault) scanRecoveredCount(
 }
 
 // recoverBLSAccountAddresses recovers BLS account addresses following the PIP-41 specification.
-func (v *Vault) recoverBLSAccountAddresses(ctx context.Context, hasActivity func(addrs string) (bool, error)) error {
+func (v *Vault) recoverBLSAccountAddresses(ctx context.Context,
+	hasActivity func(addrs string) (bool, error),
+) ([]types.AddressInfo, error) {
 	ext, err := blshdkeychain.NewKeyFromString(v.Purposes.PurposeBLS.XPubAccount)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	recoveredCount, err := v.scanRecoveredCount(
@@ -649,28 +658,30 @@ func (v *Vault) recoverBLSAccountAddresses(ctx context.Context, hasActivity func
 		hasActivity,
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	recovered := make([]types.AddressInfo, 0, recoveredCount)
 	for i := 0; i < recoveredCount; i++ {
-		_, _ = v.NewBLSAccountAddress(fmt.Sprintf("BLS Account Address %d", i))
+		info, _ := v.NewBLSAccountAddress(fmt.Sprintf("BLS Account Address %d", i))
+		recovered = append(recovered, *info)
 	}
 
-	return nil
+	return recovered, nil
 }
 
 // recoverEd25519AccountAddresses recovers Ed25519 account addresses following the PIP-41 specification.
 func (v *Vault) recoverEd25519AccountAddresses(ctx context.Context, password string,
 	hasActivity func(addrs string) (bool, error),
-) error {
+) ([]types.AddressInfo, error) {
 	seed, err := v.MnemonicSeed(password)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	masterKey, err := ed25519hdkeychain.NewMaster(seed)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	recoveredCount, err := v.scanRecoveredCount(
@@ -682,12 +693,14 @@ func (v *Vault) recoverEd25519AccountAddresses(ctx context.Context, password str
 		hasActivity,
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	recovered := make([]types.AddressInfo, 0, recoveredCount)
 	for i := 0; i < recoveredCount; i++ {
-		_, _ = v.NewEd25519AccountAddress(fmt.Sprintf("Ed25519 Account Address %d", i), password)
+		info, _ := v.NewEd25519AccountAddress(fmt.Sprintf("Ed25519 Account Address %d", i), password)
+		recovered = append(recovered, *info)
 	}
 
-	return nil
+	return recovered, nil
 }

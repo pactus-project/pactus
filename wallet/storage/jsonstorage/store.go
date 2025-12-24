@@ -18,8 +18,8 @@ type store struct {
 	CreatedAt  time.Time                    `json:"created_at"`
 	Network    genesis.ChainType            `json:"network"`
 	VaultCRC   uint32                       `json:"crc"`
-	Vault      vault.Vault                  `json:"vault"`
 	DefaultFee amount.Amount                `json:"default_fee"`
+	Vault      vault.Vault                  `json:"vault"`
 	Addresses  map[string]types.AddressInfo `json:"addresses"`
 	History    history                      `json:"history"`
 }

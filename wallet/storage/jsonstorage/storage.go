@@ -2,7 +2,6 @@ package jsonstorage
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/genesis"
@@ -21,12 +20,13 @@ type Storage struct {
 
 func Create(path string, network genesis.ChainType, vault vault.Vault) (*Storage, error) {
 	store := store{
-		Version:   VersionLatest,
-		UUID:      uuid.New(),
-		CreatedAt: time.Now().Round(time.Second).UTC(),
-		Network:   network,
-		Vault:     vault,
-		Addresses: make(map[string]types.AddressInfo),
+		Version:    VersionLatest,
+		UUID:       uuid.New(),
+		CreatedAt:  util.RoundNow(1),
+		Network:    network,
+		DefaultFee: amount.Amount(10_000_000),
+		Vault:      vault,
+		Addresses:  make(map[string]types.AddressInfo),
 	}
 
 	strg := &Storage{
@@ -120,11 +120,13 @@ func (s *Storage) InsertAddress(info *types.AddressInfo) error {
 func (s *Storage) UpdateAddress(info *types.AddressInfo) error {
 	s.store.Addresses[info.Address] = *info
 
-	return nil
+	return s.save()
 }
 
-func (s *Storage) AddPending(addr string, amt amount.Amount, txID tx.ID, data []byte) {
+func (s *Storage) AddPending(addr string, amt amount.Amount, txID tx.ID, data []byte) error {
 	s.store.History.addPending(addr, amt, txID, data)
+
+	return s.save()
 }
 
 func (s *Storage) HasTransaction(id string) bool {
@@ -135,6 +137,8 @@ func (s *Storage) GetAddrHistory(addr string) []types.HistoryInfo {
 	return s.store.History.getAddrHistory(addr)
 }
 
-func (s *Storage) AddActivity(addr string, amt amount.Amount, trx *pactus.GetTransactionResponse) {
+func (s *Storage) AddActivity(addr string, amt amount.Amount, trx *pactus.GetTransactionResponse) error {
 	s.store.History.addActivity(addr, amt, trx)
+
+	return s.save()
 }

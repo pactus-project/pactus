@@ -18,8 +18,8 @@ type IStorage interface {
 	InsertAddress(info *types.AddressInfo) error
 	UpdateAddress(info *types.AddressInfo) error
 
-	AddPending(addr string, amt amount.Amount, txID tx.ID, data []byte)
-	AddActivity(addr string, amt amount.Amount, trx *pactus.GetTransactionResponse)
+	AddPending(addr string, amt amount.Amount, txID tx.ID, data []byte) error
+	AddActivity(addr string, amt amount.Amount, trx *pactus.GetTransactionResponse) error
 	HasTransaction(id string) bool
 	GetAddrHistory(addr string) []types.HistoryInfo
 }

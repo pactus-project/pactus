@@ -9,7 +9,6 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -165,7 +164,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 	t.Run("No reward addresses in wallet", func(t *testing.T) {
 		wlt := setupWallet()
 
-		valAddrsInfo := wlt.ListAddresses(types.OnlyValidatorAddresses())
+		valAddrsInfo := wlt.ListAddresses(wallet.OnlyValidatorAddresses())
 		confRewardAddresses := []string{}
 		_, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
 		assert.ErrorContains(t, err, "unable to find a reward address in the wallet")
@@ -178,7 +177,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 		_, _ = wlt.NewEd25519AccountAddress("", "")
 		_, _ = wlt.NewBLSAccountAddress("")
 
-		valAddrsInfo := wlt.ListAddresses(types.OnlyValidatorAddresses())
+		valAddrsInfo := wlt.ListAddresses(wallet.OnlyValidatorAddresses())
 		confRewardAddresses := []string{}
 		rewardAddrs, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
 		assert.NoError(t, err)
@@ -194,7 +193,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 		addr1Info, _ := wlt.NewBLSAccountAddress("")
 		_, _ = wlt.NewBLSAccountAddress("")
 
-		valAddrsInfo := wlt.ListAddresses(types.OnlyValidatorAddresses())
+		valAddrsInfo := wlt.ListAddresses(wallet.OnlyValidatorAddresses())
 		confRewardAddresses := []string{}
 		rewardAddrs, err := MakeRewardAddresses(wlt, valAddrsInfo, confRewardAddresses)
 		assert.NoError(t, err)
@@ -207,7 +206,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 	t.Run("One reward address in config", func(t *testing.T) {
 		wlt := setupWallet()
 
-		valAddrsInfo := wlt.ListAddresses(types.OnlyValidatorAddresses())
+		valAddrsInfo := wlt.ListAddresses(wallet.OnlyValidatorAddresses())
 		confRewardAddresses := []string{
 			ts.RandAccAddress().String(),
 		}
@@ -222,7 +221,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 	t.Run("Three reward addresses in config", func(t *testing.T) {
 		wlt := setupWallet()
 
-		valAddrsInfo := wlt.ListAddresses(types.OnlyValidatorAddresses())
+		valAddrsInfo := wlt.ListAddresses(wallet.OnlyValidatorAddresses())
 		confRewardAddresses := []string{
 			ts.RandAccAddress().String(),
 			ts.RandAccAddress().String(),
@@ -239,7 +238,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 	t.Run("Insufficient reward addresses in config", func(t *testing.T) {
 		wlt := setupWallet()
 
-		valAddrsInfo := wlt.ListAddresses(types.OnlyValidatorAddresses())
+		valAddrsInfo := wlt.ListAddresses(wallet.OnlyValidatorAddresses())
 		confRewardAddresses := []string{
 			ts.RandAccAddress().String(),
 			ts.RandAccAddress().String(),
@@ -326,7 +325,7 @@ func TestCreateNode(t *testing.T) {
 		} else {
 			assert.NoError(t, err)
 
-			valInfos := wlt.ListAddresses(types.OnlyValidatorAddresses())
+			valInfos := wlt.ListAddresses(wallet.OnlyValidatorAddresses())
 			for i, addr := range tt.validatorAddrs {
 				assert.Equal(t, valInfos[i].Address, addr)
 			}

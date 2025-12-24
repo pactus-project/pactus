@@ -4,16 +4,18 @@ import (
 	"context"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
+	"github.com/pactus-project/pactus/crypto/ed25519"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/state"
 	"github.com/pactus-project/pactus/types/tx/payload"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
-	wltmgr "github.com/pactus-project/pactus/wallet/manager"
+	"github.com/pactus-project/pactus/wallet/encrypter"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -43,11 +45,9 @@ func setup(t *testing.T) *testData {
 	}
 
 	mockState := state.MockingState(ts)
-	walletMgr := wltmgr.NewMockIManager(ts.MockingController())
 	gRPCServer := grpc.NewServer(context.Background(),
 		grpcConf, mockState,
-		nil, nil, nil,
-		walletMgr, nil)
+		nil, nil, nil, nil, nil)
 
 	assert.NoError(t, gRPCServer.StartServer())
 
@@ -70,13 +70,15 @@ func setup(t *testing.T) *testData {
 	}
 }
 
+func TestCheckMnemonic(t *testing.T) {
+	for _, entropy := range []int{128, 160, 192, 224, 256} {
+		mnemonic, _ := wallet.GenerateMnemonic(entropy)
+		assert.NoError(t, wallet.CheckMnemonic(mnemonic))
+	}
+}
+
 func TestOpenWallet(t *testing.T) {
 	td := setup(t)
-
-	t.Run("Re-open the wallet", func(t *testing.T) {
-		_, err := wallet.Open(td.wallet.Path())
-		assert.NoError(t, err)
-	})
 
 	t.Run("Invalid wallet path", func(t *testing.T) {
 		_, err := wallet.Open(util.TempFilePath())
@@ -89,65 +91,48 @@ func TestOpenWallet(t *testing.T) {
 		_, err := wallet.Open(td.wallet.Path())
 		assert.Error(t, err)
 	})
+
+	t.Run("Open custom wallet", func(t *testing.T) {
+		_, err := wallet.Open(td.wallet.Path(),
+			wallet.WithTimeout(time.Second),
+			wallet.WithCustomServers([]string{"1.1.1.1"}),
+			wallet.WithOfflineMode())
+		assert.NoError(t, err)
+	})
 }
 
 func TestRecoverWallet(t *testing.T) {
 	td := setup(t)
 
-	mnemonic, _ := td.wallet.Mnemonic(td.password)
+	mnemonic, _ := wallet.GenerateMnemonic(256)
 	password := ""
 	t.Run("Wallet exists", func(t *testing.T) {
-		_, err := wallet.Create(td.wallet.Path(), mnemonic, password, 0)
+		_, err := wallet.Create(td.wallet.Path(), mnemonic, password, genesis.Mainnet)
 		assert.ErrorIs(t, err, wallet.ExitsError{
 			Path: td.wallet.Path(),
 		})
 	})
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
-		_, err := wallet.Create(util.TempFilePath(),
-			"invalid mnemonic phrase seed", password, 0)
+		_, err := wallet.Create(util.TempFilePath(), "invalid mnemonic", password, genesis.Mainnet)
 		assert.Error(t, err)
+	})
+
+	t.Run("Invalid path", func(t *testing.T) {
+		_, err := wallet.Create("\x00", mnemonic, password, genesis.Mainnet)
+		assert.Error(t, err)
+	})
+
+	t.Run("Unknown network", func(t *testing.T) {
+		_, err := wallet.Create(util.TempFilePath(), mnemonic, password, 3)
+		assert.ErrorIs(t, err, wallet.ErrInvalidNetwork)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		walletPath := util.TempFilePath()
-		recovered, err := wallet.Create(walletPath, mnemonic, password, genesis.Mainnet)
+		_, err := wallet.Create(walletPath, mnemonic, password, genesis.Mainnet)
 		assert.NoError(t, err)
-
-		addrInfo1, err := recovered.NewBLSAccountAddress("addr-1")
-		assert.NoError(t, err)
-
-		assert.FileExists(t, walletPath)
-		assert.True(t, recovered.HasAddress(addrInfo1.Address))
 	})
-}
-
-func TestInvalidAddress(t *testing.T) {
-	td := setup(t)
-
-	addr := td.RandAccAddress().String()
-	_, err := td.wallet.PrivateKey(td.password, addr)
-	assert.Error(t, err)
-}
-
-func TestImportPrivateKey(t *testing.T) {
-	td := setup(t)
-
-	_, prv := td.RandBLSKeyPair()
-	assert.NoError(t, td.wallet.ImportBLSPrivateKey(td.password, prv))
-
-	pub := prv.PublicKeyNative()
-	accAddr := pub.AccountAddress().String()
-	valAddr := pub.AccountAddress().String()
-
-	assert.True(t, td.wallet.HasAddress(accAddr))
-	assert.True(t, td.wallet.HasAddress(valAddr))
-
-	accAddrInfo := td.wallet.AddressInfo(accAddr)
-	valAddrInfo := td.wallet.AddressInfo(accAddr)
-
-	assert.Equal(t, pub.String(), accAddrInfo.PublicKey)
-	assert.Equal(t, pub.String(), valAddrInfo.PublicKey)
 }
 
 func TestSignMessage(t *testing.T) {
@@ -520,11 +505,6 @@ func TestMakeWithdrawTx(t *testing.T) {
 	})
 }
 
-func TestCheckMnemonic(t *testing.T) {
-	mnemonic, _ := wallet.GenerateMnemonic(128)
-	assert.NoError(t, wallet.CheckMnemonic(mnemonic))
-}
-
 func TestTotalBalance(t *testing.T) {
 	td := setup(t)
 
@@ -567,22 +547,29 @@ func TestTotalStake(t *testing.T) {
 	require.Equal(t, stake, val1.Stake()+val2.Stake())
 }
 
-func TestTestnetKeyInfo(t *testing.T) {
+func TestTestnetWallet(t *testing.T) {
 	td := setup(t)
 
-	mnemonic, _ := wallet.GenerateMnemonic(128)
-	w1, err := wallet.Create(util.TempFilePath(), mnemonic, td.password, genesis.Mainnet)
-	assert.NoError(t, err)
-	addrInfo1, _ := w1.NewBLSAccountAddress("")
-	prv1, _ := w1.PrivateKey("", addrInfo1.Address)
+	walletPath := util.TempFilePath()
 
-	w2, err := wallet.Create(util.TempFilePath(), mnemonic, td.password, genesis.Testnet)
-	assert.NoError(t, err)
-	addrInfo2, _ := w2.NewBLSAccountAddress("")
-	prv2, _ := w2.PrivateKey("", addrInfo2.Address)
+	t.Run("Create Testnet wallet", func(t *testing.T) {
+		mnemonic, _ := wallet.GenerateMnemonic(128)
+		wlt, err := wallet.Create(walletPath, mnemonic, td.password, genesis.Testnet)
+		assert.NoError(t, err)
+		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
 
-	assert.NotEqual(t, prv1.Bytes(), prv2.Bytes(),
-		"Should generate different private key for the testnet")
+		addr, err := wlt.NewBLSAccountAddress("testnet-addr-1")
+		assert.Equal(t, "m/12381'/21777'/2'/0", addr.Path)
+	})
+
+	t.Run("Open Testnet wallet", func(t *testing.T) {
+		wlt, err := wallet.Open(walletPath)
+		assert.NoError(t, err)
+		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
+
+		addr, err := wlt.NewBLSAccountAddress("testnet-addr-2")
+		assert.Equal(t, "m/12381'/21777'/2'/1", addr.Path)
+	})
 }
 
 func TestGetServerList(t *testing.T) {
@@ -633,15 +620,29 @@ func TestGetServerList(t *testing.T) {
 	})
 }
 
-// func TestAddressCount(t *testing.T) {
-// 	td := setup(t)
+func TestPrivateKey(t *testing.T) {
+	td := setup(t)
 
-// 	assert.Equal(t, 6, td.vault.AddressCount())
+	t.Run("Unknown address", func(t *testing.T) {
+		addr := td.RandAccAddress().String()
+		_, err := td.wallet.PrivateKey(td.password, addr)
+		assert.ErrorIs(t, err, wallet.NewErrAddressNotFound(addr))
+	})
+}
 
-// 	// Neutered
-// 	neutered := td.vault.Neuter()
-// 	assert.Equal(t, 6, neutered.AddressCount())
-// }
+func TestAddressCount(t *testing.T) {
+	td := setup(t)
+
+	_, _ = td.wallet.NewValidatorAddress("addr-1")
+	_, _ = td.wallet.NewBLSAccountAddress("addr-2")
+	_, _ = td.wallet.NewEd25519AccountAddress("addr-3", td.password)
+
+	assert.Equal(t, 3, td.wallet.AddressCount())
+
+	// // Neutered
+	// neutered := td.wallet.Neuter()
+	// assert.Equal(t, 6, neutered.AddressCount())
+}
 
 // func TestHasAddress(t *testing.T) {
 // 	td := setup(t)
@@ -743,96 +744,125 @@ func TestGetServerList(t *testing.T) {
 // 	})
 // }
 
-// func TestNewValidatorAddress(t *testing.T) {
+func TestNewValidatorAddress(t *testing.T) {
+	td := setup(t)
+
+	label := td.RandString(16)
+	addressInfo, err := td.wallet.NewValidatorAddress(label)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, addressInfo.Address)
+	assert.NotEmpty(t, addressInfo.PublicKey)
+	assert.Equal(t, label, addressInfo.Label)
+	assert.Equal(t, addressInfo.Path, "m/12381'/21888'/1'/0")
+
+	pub, _ := bls.PublicKeyFromString(addressInfo.PublicKey)
+	assert.Equal(t, pub.ValidatorAddress().String(), addressInfo.Address)
+}
+
+func TestNewBLSAccountAddress(t *testing.T) {
+	td := setup(t)
+
+	label := td.RandString(16)
+	addressInfo, err := td.wallet.NewBLSAccountAddress(label)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, addressInfo.Address)
+	assert.NotEmpty(t, addressInfo.PublicKey)
+	assert.Equal(t, label, addressInfo.Label)
+	assert.Equal(t, addressInfo.Path, "m/12381'/21888'/2'/0")
+
+	pub, _ := bls.PublicKeyFromString(addressInfo.PublicKey)
+	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
+}
+
+func TestNewE225519AccountAddress(t *testing.T) {
+	td := setup(t)
+
+	label := td.RandString(16)
+	addressInfo, err := td.wallet.NewEd25519AccountAddress("ed-addr", td.password)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, addressInfo.Address)
+	assert.NotEmpty(t, addressInfo.PublicKey)
+	assert.Equal(t, label, addressInfo.Label)
+	assert.Equal(t, "m/44'/21888'/3'/1'/0'", addressInfo.Path)
+
+	pub, _ := ed25519.PublicKeyFromString(addressInfo.PublicKey)
+	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
+}
+
+func TestImportBLSPrivateKey(t *testing.T) {
+	td := setup(t)
+
+	pub, prv := td.RandBLSKeyPair()
+
+	t.Run("Invalid password", func(t *testing.T) {
+		err := td.wallet.ImportBLSPrivateKey("invalid-password", prv)
+		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		err := td.wallet.ImportBLSPrivateKey(td.password, prv)
+		assert.NoError(t, err)
+
+		assert.True(t, td.wallet.HasAddress(pub.AccountAddress().String()))
+		assert.True(t, td.wallet.HasAddress(pub.ValidatorAddress().String()))
+	})
+
+	t.Run("Reimporting private key", func(t *testing.T) {
+		err := td.wallet.ImportBLSPrivateKey(td.password, prv)
+		assert.ErrorIs(t, err, wallet.ErrAddressExists)
+	})
+}
+
+func TestImportEd25519PrivateKey(t *testing.T) {
+	td := setup(t)
+
+	pub, prv := td.RandEd25519KeyPair()
+
+	t.Run("Invalid password", func(t *testing.T) {
+		err := td.wallet.ImportEd25519PrivateKey("invalid-password", prv)
+		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		err := td.wallet.ImportEd25519PrivateKey(td.password, prv)
+		assert.NoError(t, err)
+
+		assert.True(t, td.wallet.HasAddress(pub.AccountAddress().String()))
+	})
+
+	t.Run("Reimporting private key", func(t *testing.T) {
+		err := td.wallet.ImportEd25519PrivateKey(td.password, prv)
+		assert.ErrorIs(t, err, wallet.ErrAddressExists)
+	})
+}
+
+// func TestSetLabel(t *testing.T) {
 // 	td := setup(t)
 
-// 	label := td.RandString(16)
-// 	addressInfo, err := td.vault.NewValidatorAddress(label)
-// 	assert.NoError(t, err)
-// 	assert.NotEmpty(t, addressInfo.Address)
-// 	assert.NotEmpty(t, addressInfo.PublicKey)
-// 	assert.HasAddress(t, addressInfo.Path, "m/12381'/21888'/1'")
-// 	assert.Equal(t, label, addressInfo.Label)
-
-// 	pub, _ := bls.PublicKeyFromString(addressInfo.PublicKey)
-// 	assert.Equal(t, pub.ValidatorAddress().String(), addressInfo.Address)
-// }
-
-// func TestNewBLSAccountAddress(t *testing.T) {
-// 	td := setup(t)
-
-// 	label := td.RandString(16)
-// 	addressInfo, err := td.vault.NewBLSAccountAddress(label)
-// 	assert.NoError(t, err)
-// 	assert.NotEmpty(t, addressInfo.Address)
-// 	assert.NotEmpty(t, addressInfo.PublicKey)
-// 	assert.HasAddress(t, addressInfo.Path, "m/12381'/21888'/2'")
-// 	assert.Equal(t, label, addressInfo.Label)
-
-// 	pub, _ := bls.PublicKeyFromString(addressInfo.PublicKey)
-// 	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
-// }
-
-// func TestNewE225519AccountAddress(t *testing.T) {
-// 	td := setup(t)
-
-// 	addressInfo, err := td.vault.NewEd25519AccountAddress("addr-2", tPassword)
-// 	assert.NoError(t, err)
-// 	assert.NotEmpty(t, addressInfo.Address)
-// 	assert.NotEmpty(t, addressInfo.PublicKey)
-// 	assert.Equal(t, "m/44'/21888'/3'/1'", addressInfo.Path)
-
-// 	pub, _ := ed25519.PublicKeyFromString(addressInfo.PublicKey)
-// 	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
-// }
-
-// func TestImportBLSPrivateKey(t *testing.T) {
-// 	td := setup(t)
-
-// 	_, prv := td.RandBLSKeyPair()
-
-// 	t.Run("Invalid password", func(t *testing.T) {
-// 		_, _, err := td.vault.ImportBLSPrivateKey("invalid-password", prv)
-// 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
+// 	t.Run("Set label for unknown address", func(t *testing.T) {
+// 		invAddr := td.RandAccAddress().String()
+// 		err := td.vault.SetLabel(invAddr, "i have label")
+// 		assert.ErrorIs(t, err, NewErrAddressNotFound(invAddr))
+// 		assert.Equal(t, "", td.vault.Label(invAddr))
 // 	})
 
-// 	t.Run("Ok", func(t *testing.T) {
-// 		accInfo, valInfo, err := td.vault.ImportBLSPrivateKey(tPassword, prv)
+// 	t.Run("Update label", func(t *testing.T) {
+// 		testAddr := td.storage.AddressInfos()[0].Address
+// 		err := td.vault.SetLabel(testAddr, "I have a label")
 // 		assert.NoError(t, err)
-
-// 		assert.Equal(t, prv.PublicKeyNative().String(), accInfo.PublicKey)
-// 		assert.Equal(t, prv.PublicKeyNative().String(), valInfo.PublicKey)
-
-// 		assert.Equal(t, "m/65535'/21888'/1'/2'", accInfo.Path)
-// 		assert.Equal(t, "m/65535'/21888'/2'/2'", valInfo.Path)
+// 		assert.Equal(t, "I have a label", td.vault.Label(testAddr))
 // 	})
 
-// 	t.Run("Reimporting private key", func(t *testing.T) {
-// 		_, _, err := td.vault.ImportBLSPrivateKey(tPassword, prv)
-// 		assert.ErrorIs(t, err, ErrAddressExists)
-// 	})
-// }
-
-// func TestImportEd25519PrivateKey(t *testing.T) {
-// 	td := setup(t)
-
-// 	_, prv := td.RandEd25519KeyPair()
-
-// 	t.Run("Invalid password", func(t *testing.T) {
-// 		_, err := td.vault.ImportEd25519PrivateKey("invalid-password", prv)
-// 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
-// 	})
-
-// 	t.Run("Ok", func(t *testing.T) {
-// 		info, err := td.vault.ImportEd25519PrivateKey(tPassword, prv)
+// 	t.Run("Remove label", func(t *testing.T) {
+// 		testAddr := td.storage.AddressInfos()[0].Address
+// 		err := td.vault.SetLabel(testAddr, "")
 // 		assert.NoError(t, err)
-
-// 		assert.Equal(t, prv.PublicKeyNative().String(), info.PublicKey)
-// 		assert.Equal(t, "m/65535'/21888'/3'/2'", info.Path)
-// 	})
-
-// 	t.Run("Reimporting private key", func(t *testing.T) {
-// 		_, err := td.vault.ImportEd25519PrivateKey(tPassword, prv)
-// 		assert.ErrorIs(t, err, ErrAddressExists)
+// 		var ok bool
+// 		l := td.vault.Label(testAddr)
+// 		if strings.TrimSpace(l) != "" {
+// 			ok = true
+// 		}
+// 		assert.Empty(t, td.vault.Label(testAddr))
+// 		assert.False(t, ok)
 // 	})
 // }

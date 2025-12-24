@@ -59,6 +59,8 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType, opts
 	case genesis.Mainnet:
 		coinType = addresspath.CoinTypePactusMainnet
 	case genesis.Testnet, genesis.Localnet:
+		crypto.ToTestnetHRP()
+
 		coinType = addresspath.CoinTypePactusTestnet
 	default:
 		return nil, ErrInvalidNetwork
@@ -226,18 +228,13 @@ func (w *Wallet) Neuter(path string) error {
 	return nil
 }
 
-func (w *Wallet) save() error {
-	return nil
-	// return w.storage.Save()
-}
-
 // RecoveryAddresses recovers active addresses in the wallet.
 func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 	eventFunc func(addr string),
 ) error {
 	vault := w.storage.Vault()
 	//nolint:contextcheck // client manages timeout internally, external context would interfere
-	err := vault.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
+	recovered, err := vault.RecoverAddresses(ctx, password, func(addr string) (bool, error) {
 		_, err := w.grpcClient.getAccount(addr)
 		if err != nil {
 			s, ok := status.FromError(err)
@@ -258,7 +255,14 @@ func (w *Wallet) RecoveryAddresses(ctx context.Context, password string,
 		return err
 	}
 
-	return w.save()
+	for _, info := range recovered {
+		err := w.storage.InsertAddress(&info)
+		if err != nil {
+			return err
+		}
+	}
+
+	return w.storage.UpdateVault(vault)
 }
 
 // Balance returns balance of the account associated with the address..
@@ -425,9 +429,7 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 	}
 
 	data, _ := trx.Bytes()
-	w.storage.AddPending(trx.Payload().Signer().String(), trx.Payload().Value(), txID, data)
-
-	err = w.save()
+	err = w.storage.AddPending(trx.Payload().Signer().String(), trx.Payload().Value(), txID, data)
 	if err != nil {
 		return "", err
 	}
@@ -442,9 +444,7 @@ func (w *Wallet) UpdatePassword(oldPassword, newPassword string, opts ...encrypt
 		return err
 	}
 
-	w.storage.UpdateVault(vault)
-
-	return w.save()
+	return w.storage.UpdateVault(vault)
 }
 
 func (w *Wallet) AddressInfo(addr string) *types.AddressInfo {
@@ -579,11 +579,17 @@ func (w *Wallet) ImportBLSPrivateKey(password string, prv *bls.PrivateKey) error
 	w.addressMap[accInfo.Address] = *accInfo
 	w.addressMap[valInfo.Address] = *valInfo
 
-	w.storage.InsertAddress(accInfo)
-	w.storage.InsertAddress(valInfo)
-	w.storage.UpdateVault(vault)
+	err = w.storage.InsertAddress(accInfo)
+	if err != nil {
+		return err
+	}
 
-	return w.save()
+	err = w.storage.InsertAddress(valInfo)
+	if err != nil {
+		return err
+	}
+
+	return w.storage.UpdateVault(vault)
 }
 
 func (w *Wallet) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKey) error {
@@ -602,10 +608,12 @@ func (w *Wallet) ImportEd25519PrivateKey(password string, prv *ed25519.PrivateKe
 
 	w.addressMap[accInfo.Address] = *accInfo
 
-	w.storage.InsertAddress(accInfo)
-	w.storage.UpdateVault(vault)
+	err = w.storage.InsertAddress(accInfo)
+	if err != nil {
+		return err
+	}
 
-	return w.save()
+	return w.storage.UpdateVault(vault)
 }
 
 func (w *Wallet) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
@@ -685,10 +693,12 @@ func (w *Wallet) NewAddress(addressType crypto.AddressType, label string, opts .
 
 	w.addressMap[info.Address] = *info
 
-	w.storage.InsertAddress(info)
-	w.storage.UpdateVault(vault)
+	err = w.storage.InsertAddress(info)
+	if err != nil {
+		return nil, err
+	}
 
-	err = w.save()
+	err = w.storage.UpdateVault(vault)
 	if err != nil {
 		return nil, err
 	}
@@ -788,11 +798,14 @@ func (w *Wallet) AddTransaction(txID tx.ID) error {
 	if receiver != nil {
 		if w.HasAddress(*receiver) {
 			amt := amount.Amount(trxRes.Transaction.Value)
-			w.storage.AddActivity(*receiver, amt, trxRes)
+			err := w.storage.AddActivity(*receiver, amt, trxRes)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
-	return w.save()
+	return nil
 }
 
 func (w *Wallet) History(addr string) []types.HistoryInfo {
@@ -825,9 +838,7 @@ func (w *Wallet) makeTxBuilder(options ...TxOption) (*txBuilder, error) {
 }
 
 func (w *Wallet) SetDefaultFee(fee amount.Amount) error {
-	w.storage.SetDefaultFee(fee)
-
-	return w.save()
+	return w.storage.SetDefaultFee(fee)
 }
 
 func GetServerList(network string) ([]ServerInfo, error) {

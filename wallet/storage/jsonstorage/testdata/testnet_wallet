@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "uuid": "a72f03c0-2f77-4401-afac-16d2ccbf129f",
+  "created_at": "2025-12-24T03:07:00Z",
+  "network": 1,
+  "crc": 885152871,
+  "vault": {
+    "type": 1,
+    "coin_type": 21777,
+    "addresses": {
+      "tpc1zft4nhnr3r7467kzkyay9sm7kydrs7unypgwqtw": {
+        "address": "tpc1zft4nhnr3r7467kzkyay9sm7kydrs7unypgwqtw",
+        "public_key": "tpublic1pnyyphf30dpufuqprmjjrqn2nwzxgpyz7l5awg5ld7qwq06xvfe9vd8zwtrvks9t93jsu09chatl0qqn2ecgxqjst7twl66209hj60m3x7dhs7cv5q3vzppl7h4w4yvwcg5ndqhv5djv0yewahx8ercn2ycx8zask",
+        "label": "Tesnte Address 1",
+        "path": "m/12381'/21777'/2'/0"
+      }
+    },
+    "encrypter": {},
+    "key_store": "{\"master_node\":{\"seed\":\"abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus\"},\"imported_keys\":[]}",
+    "purposes": {
+      "purpose_bls": {
+        "xpub_account": "xpublic1pqdwnqqyqsp2spqqpqqqgqgxj6mlduay8ase6hkefwa2lk2esz0gn2yu59tnk3w2tgnlfk5hleuqxpqdlt5q2f207qrwq9gasqscpckjv8hggc57n044gvml7u05cpzu8ra0zq2s3x3mak6xhtzga27tdx5pypnqxhlkf9aedptzcsd8l3q6m7ch6g4lphzsdv20fvc3dsu7mlj8kdy3n5fyllg07wecmpr8y6nsr95zlz",
+        "xpub_validator": "xpublic1pqdwnqqyqsp2spqqzqqqgqgx4n38q9n6qtvgrnx5r8atntrfnj4thwj6my5tx8tfe6ex6p89y7qqxptrfzgmnu62rut65lddgxl5nujdn82tusz5w2wqpjqpdpgplj0zx3gaaz9wv93yqcls6clepehlvhsvdp2ndwphhmag3j3hgsfxxz434hduxvqq4n8njxh4x9mnal2wma4sw5kp6y680tkut62gk6trfjscmsdumc",
+        "next_account_index": 1,
+        "next_validator_index": 1
+      }
+    }
+  },
+  "history": {
+    "transactions": null,
+    "activities": null,
+    "pendings": null
+  }
+}
