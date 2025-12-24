@@ -2,6 +2,7 @@ package block
 
 import (
 	"bytes"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"time"
@@ -37,6 +38,16 @@ func NewBlock(header *Header, prevCert *certificate.Certificate, txs Txs) *Block
 			Txs:      txs,
 		},
 	}
+}
+
+// FromString creates a new block from a hex-encoded string.
+func FromString(str string) (*Block, error) {
+	bs, err := hex.DecodeString(str)
+	if err != nil {
+		return nil, err
+	}
+
+	return FromBytes(bs)
 }
 
 // FromBytes constructs a new block from byte array.
