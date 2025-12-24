@@ -487,17 +487,3 @@ func (mr *MockIManagerMockRecorder) WalletInfo(walletName any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WalletInfo", reflect.TypeOf((*MockIManager)(nil).WalletInfo), walletName)
 }
-
-// WalletPath mocks base method.
-func (m *MockIManager) WalletPath(walletName string) string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "WalletPath", walletName)
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// WalletPath indicates an expected call of WalletPath.
-func (mr *MockIManagerMockRecorder) WalletPath(walletName any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WalletPath", reflect.TypeOf((*MockIManager)(nil).WalletPath), walletName)
-}

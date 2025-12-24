@@ -17,7 +17,6 @@ type IManager interface {
 	LoadWallet(walletName, serverAddr string) error
 	UnloadWallet(walletName string) error
 	ListWallets() ([]string, error)
-	WalletPath(walletName string) string
 	WalletInfo(walletName string) (*types.WalletInfo, error)
 	UpdatePassword(walletName, oldPassword, newPassword string) error
 	TotalBalance(walletName string) (amount.Amount, error)

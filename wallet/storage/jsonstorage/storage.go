@@ -78,6 +78,7 @@ func (s *Storage) save() error {
 func (s *Storage) WalletInfo() *types.WalletInfo {
 	return &types.WalletInfo{
 		Path:       s.path,
+		Driver:     "JSON (legacy)",
 		Version:    s.store.Version,
 		Network:    s.store.Network,
 		DefaultFee: s.store.DefaultFee,

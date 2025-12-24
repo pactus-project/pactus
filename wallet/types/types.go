@@ -28,6 +28,7 @@ type HistoryInfo struct {
 // WalletInfo represents the information about the wallet.
 type WalletInfo struct {
 	Version    int
+	Driver     string
 	Path       string
 	Network    genesis.ChainType
 	DefaultFee amount.Amount

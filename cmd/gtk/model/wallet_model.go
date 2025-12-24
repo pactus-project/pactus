@@ -35,24 +35,19 @@ type AddressRow struct {
 	AvailabilityScore *float64
 }
 
-func NewWalletModel(n *node.Node, walletName string) (*WalletModel, error) {
-	manager := n.WalletManager()
-	if err := manager.LoadWallet(walletName, n.GRPC().Address()); err != nil &&
+func NewWalletModel(node *node.Node, walletName string) (*WalletModel, error) {
+	manager := node.WalletManager()
+	if err := manager.LoadWallet(walletName, node.GRPC().Address()); err != nil &&
 		!errors.Is(err, wltmgr.ErrWalletAlreadyLoaded) {
 		return nil, err
 	}
 
-	return &WalletModel{manager: manager, walletName: walletName}, nil
+	return &WalletModel{node: node, manager: manager, walletName: walletName}, nil
 }
 
 // WalletName returns the display name used in the UI.
 func (model *WalletModel) WalletName() string {
 	return model.walletName
-}
-
-func (model *WalletModel) WalletPath() string {
-	// Prefer the wallet manager directory (it knows configured wallets dir).
-	return model.manager.WalletPath(model.walletName)
 }
 
 func (model *WalletModel) IsEncrypted() bool {

@@ -35,10 +35,6 @@ func (wm *Manager) getWalletPath(walletName string) string {
 	return util.MakeAbs(filepath.Join(wm.walletDirectory, walletName))
 }
 
-func (wm *Manager) WalletPath(walletName string) string {
-	return wm.getWalletPath(walletName)
-}
-
 func (wm *Manager) createWalletWithMnemonic(
 	walletName, mnemonic, password string,
 ) error {
