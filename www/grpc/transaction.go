@@ -369,7 +369,6 @@ func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
 func (*transactionServer) DecodeRawTransaction(_ context.Context,
 	req *pactus.DecodeRawTransactionRequest,
 ) (*pactus.DecodeRawTransactionResponse, error) {
-
 	trx, err := tx.FromString(req.RawTransaction)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "couldn't decode transaction: %v", err.Error())

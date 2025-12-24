@@ -159,16 +159,15 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid version", func(t *testing.T) {
-		str :=
-			"02" + // Flags
-				"02" + // Version
-				"01020304" + // LockTime
-				"01" + // Fee
-				"00" + // Memo
-				"01" + // PayloadType
-				"00" + // Sender (treasury)
-				"012222222222222222222222222222222222222222" + // Receiver
-				"01" // Amount
+		str := "02" + // Flags
+			"02" + // Version
+			"01020304" + // LockTime
+			"01" + // Fee
+			"00" + // Memo
+			"01" + // PayloadType
+			"00" + // Sender (treasury)
+			"012222222222222222222222222222222222222222" + // Receiver
+			"01" // Amount
 
 		trx, err := tx.FromString(str)
 		assert.NoError(t, err)
@@ -180,16 +179,15 @@ func TestBasicCheck(t *testing.T) {
 }
 
 func TestInvalidPayloadType(t *testing.T) {
-	str :=
-		"02" + // Flags
-			"01" + // Version
-			"01020300" + // LockTime
-			"01" + // Fee
-			"00" + // Memo
-			"07" + // PayloadType
-			"00" + // Sender (treasury)
-			"012222222222222222222222222222222222222222" + // Receiver
-			"01" // Amount
+	str := "02" + // Flags
+		"01" + // Version
+		"01020300" + // LockTime
+		"01" + // Fee
+		"00" + // Memo
+		"07" + // PayloadType
+		"00" + // Sender (treasury)
+		"012222222222222222222222222222222222222222" + // Receiver
+		"01" // Amount
 
 	_, err := tx.FromString(str)
 	assert.ErrorIs(t, err, tx.InvalidPayloadTypeError{
