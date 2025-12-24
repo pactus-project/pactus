@@ -24,12 +24,6 @@ const (
 	CoinTypePactusTestnet CoinType = 21777
 )
 
-// const (
-// 	PurposeBLS12381Hardened         = PurposeBLS12381 + HardenedKeyStart
-// 	PurposeBIP44Hardened            = PurposeBIP44 + HardenedKeyStart
-// 	PurposeImportPrivateKeyHardened = PurposeImportPrivateKey + HardenedKeyStart
-// )
-
 const hardenedKeyStart = uint32(0x80000000) // 2^31
 
 // Harden hardens the integer value 'i' by adding 0x80000000 (2^31) to it.
