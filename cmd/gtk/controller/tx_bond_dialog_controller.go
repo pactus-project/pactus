@@ -16,7 +16,7 @@ import (
 )
 
 type TxBondModel interface {
-	WalletInfo() (types.WalletInfo, error)
+	WalletInfo() (*types.WalletInfo, error)
 	ListAddresses(opts ...wallet.ListAddressOption) []types.AddressInfo
 	AddressInfo(addr string) *types.AddressInfo
 	Balance(addr string) (amount.Amount, error)

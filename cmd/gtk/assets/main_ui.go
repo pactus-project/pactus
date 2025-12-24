@@ -2,7 +2,9 @@
 
 package assets
 
-import _ "embed"
+import (
+	_ "embed"
+)
 
 // Main window / widgets UI and CSS.
 
@@ -14,4 +16,3 @@ var NodeWidgetUI []byte
 
 //go:embed ui/widget_wallet.ui
 var WalletWidgetUI []byte
-

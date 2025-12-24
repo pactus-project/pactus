@@ -53,23 +53,20 @@ func (model *WalletModel) WalletPath() string {
 
 func (model *WalletModel) IsEncrypted() bool {
 	info, err := model.Node.WalletManager().WalletInfo(model.WalletKey)
-	if err != nil || info == nil {
+	if err != nil {
 		return false
 	}
 
 	return info.Encrypted
 }
 
-func (model *WalletModel) WalletInfo() (types.WalletInfo, error) {
+func (model *WalletModel) WalletInfo() (*types.WalletInfo, error) {
 	info, err := model.Node.WalletManager().WalletInfo(model.WalletKey)
 	if err != nil {
-		return types.WalletInfo{}, err
-	}
-	if info == nil {
-		return types.WalletInfo{}, wltmgr.ErrWalletNotLoaded
+		return nil, err
 	}
 
-	return *info, nil
+	return info, nil
 }
 
 func (model *WalletModel) TotalBalance() (amount.Amount, error) {

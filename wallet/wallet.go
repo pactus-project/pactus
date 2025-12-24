@@ -3,7 +3,6 @@ package wallet
 import (
 	"cmp"
 	"context"
-	_ "embed"
 	"encoding/json"
 	"slices"
 	"time"
@@ -76,7 +75,7 @@ func Create(walletPath, mnemonic, password string, chain genesis.ChainType, opts
 		return nil, err
 	}
 
-	storage, err := jsonstorage.Create(walletPath, chain, *vlt)
+	storage, err := jsonstorage.Create(walletPath, chain, vlt)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +134,7 @@ func WithOfflineMode() OpenWalletOption {
 	}
 }
 
-func openWallet(walletPath string, storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
+func openWallet(_ string, storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
 	cfg := defaultOpenWalletConfig
 	for _, opt := range opts {
 		opt(&cfg)
@@ -456,6 +455,7 @@ func (w *Wallet) AddressInfo(addr string) *types.AddressInfo {
 	if !exists {
 		return nil
 	}
+
 	return &info
 }
 
@@ -512,6 +512,7 @@ func (w *Wallet) ListAddresses(opts ...ListAddressOption) []types.AddressInfo {
 	for _, info := range w.addressMap {
 		if len(cfg.addressTypes) == 0 {
 			infos = append(infos, info)
+
 			continue
 		}
 
@@ -523,6 +524,7 @@ func (w *Wallet) ListAddresses(opts ...ListAddressOption) []types.AddressInfo {
 		for _, addrType := range cfg.addressTypes {
 			if addr.Type() == addrType {
 				infos = append(infos, info)
+
 				break
 			}
 		}
@@ -535,7 +537,7 @@ func (w *Wallet) ListAddresses(opts ...ListAddressOption) []types.AddressInfo {
 	return infos
 }
 
-func (w *Wallet) sortAddressesByPurpose(addrs ...types.AddressInfo) {
+func (*Wallet) sortAddressesByPurpose(addrs ...types.AddressInfo) {
 	slices.SortStableFunc(addrs, func(a, b types.AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
@@ -544,7 +546,7 @@ func (w *Wallet) sortAddressesByPurpose(addrs ...types.AddressInfo) {
 	})
 }
 
-func (w *Wallet) sortAddressesByAddressType(addrs ...types.AddressInfo) {
+func (*Wallet) sortAddressesByAddressType(addrs ...types.AddressInfo) {
 	slices.SortStableFunc(addrs, func(a, b types.AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
@@ -553,7 +555,7 @@ func (w *Wallet) sortAddressesByAddressType(addrs ...types.AddressInfo) {
 	})
 }
 
-func (w *Wallet) sortAddressesByAddressIndex(addrs ...types.AddressInfo) {
+func (*Wallet) sortAddressesByAddressIndex(addrs ...types.AddressInfo) {
 	slices.SortStableFunc(addrs, func(a, b types.AddressInfo) int {
 		pathA, _ := addresspath.FromString(a.Path)
 		pathB, _ := addresspath.FromString(b.Path)
@@ -796,7 +798,10 @@ func (w *Wallet) AddTransaction(txID tx.ID) error {
 
 	if w.HasAddress(sender) {
 		amt := amount.Amount(-(trxRes.Transaction.Fee + trxRes.Transaction.Value))
-		w.storage.AddActivity(sender, amt, trxRes)
+		err := w.storage.AddActivity(sender, amt, trxRes)
+		if err != nil {
+			return err
+		}
 	}
 
 	if receiver != nil {

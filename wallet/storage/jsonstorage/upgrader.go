@@ -25,15 +25,15 @@ type upgrader struct {
 func Upgrade(path string) error {
 	data, err := util.ReadFile(path)
 	if err != nil {
-		return nil
+		return err
 	}
 
-	upgrader := upgrader{
+	u := upgrader{
 		path: path,
 		data: data,
 	}
 
-	return upgrader.upgrade()
+	return u.upgrade()
 }
 
 type legacyVault struct {
@@ -114,7 +114,7 @@ func (u *upgrader) upgrade() error {
 		// Save the upgraded wallet
 		data, err := json.Marshal(store)
 		if err != nil {
-			return nil
+			return err
 		}
 
 		return util.WriteFile(u.path, data)
@@ -131,7 +131,7 @@ func (u *upgrader) upgrade() error {
 	}
 }
 
-func (u *upgrader) setPublicKeys(store *legacyStore) error {
+func (*upgrader) setPublicKeys(store *legacyStore) error {
 	for addrKey, info := range store.Vault.Addresses {
 		if info.PublicKey != "" {
 			continue

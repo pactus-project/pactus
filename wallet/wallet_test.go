@@ -837,7 +837,7 @@ func TestTestnetWallet(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
 
-		addr, err := wlt.NewBLSAccountAddress("testnet-addr-1")
+		addr, _ := wlt.NewBLSAccountAddress("testnet-addr-1")
 		assert.Equal(t, "m/12381'/21777'/2'/0", addr.Path)
 	})
 
@@ -846,7 +846,7 @@ func TestTestnetWallet(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
 
-		addr, err := wlt.NewBLSAccountAddress("testnet-addr-2")
+		addr, _ := wlt.NewBLSAccountAddress("testnet-addr-2")
 		assert.Equal(t, "m/12381'/21777'/2'/1", addr.Path)
 	})
 }

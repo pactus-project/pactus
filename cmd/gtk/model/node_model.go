@@ -2,7 +2,9 @@
 
 package model
 
-import "github.com/pactus-project/pactus/node"
+import (
+	"github.com/pactus-project/pactus/node"
+)
 
 type NodeModel struct {
 	Node *node.Node
@@ -11,4 +13,3 @@ type NodeModel struct {
 func NewNodeModel(n *node.Node) *NodeModel {
 	return &NodeModel{Node: n}
 }
-

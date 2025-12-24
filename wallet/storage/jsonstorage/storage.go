@@ -19,14 +19,14 @@ type Storage struct {
 	store store
 }
 
-func Create(path string, network genesis.ChainType, vault vault.Vault) (*Storage, error) {
+func Create(path string, network genesis.ChainType, vault *vault.Vault) (*Storage, error) {
 	store := store{
 		Version:    VersionLatest,
 		UUID:       uuid.New(),
 		CreatedAt:  util.RoundNow(1),
 		Network:    network,
 		DefaultFee: amount.Amount(10_000_000),
-		Vault:      vault,
+		Vault:      *vault,
 		Addresses:  make(map[string]types.AddressInfo),
 	}
 
@@ -105,7 +105,7 @@ func (s *Storage) SetDefaultFee(fee amount.Amount) error {
 }
 
 func (s *Storage) AllAddresses() ([]types.AddressInfo, error) {
-	var addrs []types.AddressInfo
+	addrs := make([]types.AddressInfo, 0, len(s.store.Addresses))
 	for _, info := range s.store.Addresses {
 		addrs = append(addrs, info)
 	}

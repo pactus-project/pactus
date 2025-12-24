@@ -24,21 +24,6 @@ func newWalletServer(server *Server, manager wltmgr.IManager) *walletServer {
 	}
 }
 
-func (*walletServer) historyInfoToProto(his []types.HistoryInfo) []*pactus.HistoryInfo {
-	historyInfo := make([]*pactus.HistoryInfo, 0)
-	for _, info := range his {
-		historyInfo = append(historyInfo, &pactus.HistoryInfo{
-			TransactionId: info.TxID,
-			// Time:          uint32(hi.Time.Unix()),  // TODO: Fix me
-			PayloadType: info.PayloadType,
-			Description: info.Desc,
-			Amount:      info.Amount.ToNanoPAC(),
-		})
-	}
-
-	return historyInfo
-}
-
 func (*walletServer) addressInfoToProto(ai *types.AddressInfo) *pactus.AddressInfo {
 	return &pactus.AddressInfo{
 		Address:   ai.Address,
@@ -207,8 +192,8 @@ func (s *walletServer) GetNewAddress(_ context.Context,
 	}, nil
 }
 
-func (s *walletServer) GetAddressHistory(_ context.Context,
-	req *pactus.GetAddressHistoryRequest,
+func (*walletServer) GetAddressHistory(_ context.Context,
+	_ *pactus.GetAddressHistoryRequest,
 ) (*pactus.GetAddressHistoryResponse, error) {
 	return nil, errors.New("not implemented")
 }

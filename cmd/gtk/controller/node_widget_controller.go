@@ -250,4 +250,3 @@ func (c *NodeWidgetController) Cleanup() {
 		c.cancel = nil
 	}
 }
-

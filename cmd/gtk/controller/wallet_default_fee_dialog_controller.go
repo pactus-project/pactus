@@ -13,7 +13,7 @@ import (
 )
 
 type WalletDefaultFeeModel interface {
-	WalletInfo() (types.WalletInfo, error)
+	WalletInfo() (*types.WalletInfo, error)
 	SetDefaultFee(fee amount.Amount) error
 }
 

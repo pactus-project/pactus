@@ -20,7 +20,7 @@ type WalletWidgetModel interface {
 	WalletName() string
 	WalletPath() string
 	IsEncrypted() bool
-	WalletInfo() (types.WalletInfo, error)
+	WalletInfo() (*types.WalletInfo, error)
 	TotalBalance() (amount.Amount, error)
 	TotalStake() (amount.Amount, error)
 	AddressRows() []model.AddressRow

@@ -16,7 +16,7 @@ func TestCreate(t *testing.T) {
 	vlt, err := vault.CreateVaultFromMnemonic(testMnemonic, 21888)
 	require.NoError(t, err)
 
-	strg, err := Create(tempPath, genesis.Mainnet, *vlt)
+	strg, err := Create(tempPath, genesis.Mainnet, vlt)
 	require.NoError(t, err)
 
 	assert.Equal(t, VersionLatest, strg.WalletInfo().Version)

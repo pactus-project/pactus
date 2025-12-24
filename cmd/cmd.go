@@ -336,9 +336,9 @@ func MakeRewardAddresses(wlt *wallet.Wallet, valList []types.AddressInfo,
 			blsAddrs := wlt.ListAddresses(wallet.WithAddressType(crypto.AddressTypeBLSAccount))
 			if len(blsAddrs) == 0 {
 				return nil, errors.New("unable to find a reward address in the wallet")
-			} else {
-				addrInfo = &blsAddrs[0]
 			}
+
+			addrInfo = &blsAddrs[0]
 		} else {
 			addrInfo = &ed25519Addrs[0]
 		}

@@ -2,7 +2,9 @@
 
 package assets
 
-import _ "embed"
+import (
+	_ "embed"
+)
 
 // Dialogs/UI used by the GTK app.
 
@@ -55,4 +57,3 @@ var TxUnbondDialogUI []byte
 
 //go:embed ui/dialog_transaction_withdraw.ui
 var TxWithdrawDialogUI []byte
-
