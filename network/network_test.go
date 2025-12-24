@@ -502,11 +502,21 @@ func TestLoadOrCreateKey(t *testing.T) {
 		assert.Equal(t, validKey.GetPublic(), previousValidKey.GetPublic())
 	})
 
+	t.Run("Should return error when file contains invalid data", func(t *testing.T) {
+		tempFilePath := util.TempFilePath()
+
+		err := util.WriteFile(tempFilePath, []byte("invalid_data"))
+		assert.NoError(t, err)
+
+		key, err := loadOrCreateKey(tempFilePath)
+		assert.Error(t, err)
+		assert.Nil(t, key)
+	})
+
 	t.Run("Should return error when file contains invalid private key", func(t *testing.T) {
 		tempFilePath := util.TempFilePath()
 
-		// Writes an invalid private key to the file, decoding key will fail later
-		err := util.WriteFile(tempFilePath, []byte("invalid_data"))
+		err := util.WriteFile(tempFilePath, []byte("00"))
 		assert.NoError(t, err)
 
 		key, err := loadOrCreateKey(tempFilePath)
@@ -526,5 +536,18 @@ func TestLoadOrCreateKey(t *testing.T) {
 		key, err := loadOrCreateKey(invalidPath)
 		assert.Error(t, err)
 		assert.Nil(t, key)
+	})
+
+	t.Run("Should trim spaces", func(t *testing.T) {
+		tempFilePath := util.TempFilePath()
+
+		err := util.WriteFile(tempFilePath,
+			[]byte(" 080112406da99c6b29ac8093fad3a92327aaf87acf22dbb60927786db25880f025c0"+
+				"4cb6f80873898709981d9b75795a191eab2d29bc7983ebcb4826e2b44566c85ea194 \r\n"))
+		assert.NoError(t, err)
+
+		key, err := loadOrCreateKey(tempFilePath)
+		assert.NoError(t, err)
+		assert.NotNil(t, key)
 	})
 }
