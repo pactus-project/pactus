@@ -46,5 +46,5 @@ type Payload interface {
 	Encode(io.Writer) error
 	Decode(io.Reader) error
 	BasicCheck() error
-	String() string
+	LogString() string
 }

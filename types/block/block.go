@@ -143,11 +143,12 @@ func (b *Block) Height() uint32 {
 	return b.PrevCertificate().Height() + 1
 }
 
-func (b *Block) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (b *Block) LogString() string {
 	return fmt.Sprintf("{⌘ %v 👤 %v 💻 %v 📨 %d}",
-		b.Hash().ShortString(),
-		b.data.Header.ProposerAddress().ShortString(),
-		b.data.Header.StateRoot().ShortString(),
+		b.Hash().LogString(),
+		b.data.Header.ProposerAddress().LogString(),
+		b.data.Header.StateRoot().LogString(),
 		b.data.Txs.Len(),
 	)
 }

@@ -55,7 +55,8 @@ func (p *SortitionPayload) Decode(r io.Reader) error {
 	return encoding.ReadElements(r, &p.Validator, &p.Proof)
 }
 
-func (p *SortitionPayload) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (p *SortitionPayload) LogString() string {
 	return fmt.Sprintf("{Sortition 🎯 %s",
-		p.Validator.ShortString())
+		p.Validator.LogString())
 }

@@ -192,7 +192,7 @@ func makeAliceAndBobNetworks(t *testing.T) *networkAliceBob {
 	// Better logging during testing
 	overrideLogger := func(sync *synchronizer, name string) {
 		sync.logger = logger.NewSubLogger("_sync",
-			testsuite.NewOverrideStringer(fmt.Sprintf("%s - %s: ", name, t.Name()), sync))
+			testsuite.NewOverrideLogStringer(fmt.Sprintf("%s - %s: ", name, t.Name()), sync))
 	}
 
 	overrideLogger(syncAlice, "Alice")

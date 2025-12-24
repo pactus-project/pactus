@@ -47,8 +47,9 @@ func (p *UnbondPayload) Decode(r io.Reader) error {
 	return p.Validator.Decode(r)
 }
 
-func (p *UnbondPayload) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (p *UnbondPayload) LogString() string {
 	return fmt.Sprintf("{Unbond 🔓 %s",
-		p.Validator.ShortString(),
+		p.Validator.LogString(),
 	)
 }

@@ -14,8 +14,8 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-type ShortStringer interface {
-	ShortString() string
+type LogStringer interface {
+	LogString() string
 }
 
 var (
@@ -34,7 +34,7 @@ type logger struct {
 type SubLogger struct {
 	logger zerolog.Logger
 	name   string
-	obj    fmt.Stringer
+	obj    LogStringer
 }
 
 func getLoggersInst() *logger {
@@ -134,11 +134,11 @@ func addFields(event *zerolog.Event, keyvals ...any) *zerolog.Event {
 			} else {
 				event.Stringer(key, typ)
 			}
-		case ShortStringer:
+		case LogStringer:
 			if isNil(typ) {
 				event.Any(key, typ)
 			} else {
-				event.Str(key, typ.ShortString())
+				event.Str(key, typ.LogString())
 			}
 		case error:
 			event.AnErr(key, typ)
@@ -152,7 +152,7 @@ func addFields(event *zerolog.Event, keyvals ...any) *zerolog.Event {
 	return event
 }
 
-func NewSubLogger(name string, obj fmt.Stringer) *SubLogger {
+func NewSubLogger(name string, obj LogStringer) *SubLogger {
 	inst := getLoggersInst()
 	sub := &SubLogger{
 		logger: zerolog.New(inst.writer).With().Timestamp().Logger(),
@@ -182,7 +182,7 @@ func (sl *SubLogger) logObj(event *zerolog.Event, msg string, keyvals ...any) {
 	}
 
 	if sl.obj != nil {
-		event = event.Str(sl.name, sl.obj.String())
+		event = event.Str(sl.name, sl.obj.LogString())
 	}
 
 	addFields(event, keyvals...).Msg(msg)
@@ -255,6 +255,6 @@ func isNil(val any) bool {
 	return false
 }
 
-func (sl *SubLogger) SetObj(obj fmt.Stringer) {
+func (sl *SubLogger) SetObj(obj LogStringer) {
 	sl.obj = obj
 }

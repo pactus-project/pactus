@@ -47,6 +47,6 @@ func TestBlockAnnounceMessage(t *testing.T) {
 
 		assert.NoError(t, msg.BasicCheck())
 		assert.Equal(t, height, msg.ConsensusHeight())
-		assert.Contains(t, msg.String(), fmt.Sprintf("%d", height))
+		assert.Contains(t, msg.LogString(), fmt.Sprintf("%d", height))
 	})
 }

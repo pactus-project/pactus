@@ -140,7 +140,7 @@ func setupWithSeed(t *testing.T, seed int64) *testData {
 	// Better logging during testing
 	overrideLogger := func(cons *consensusV2, name string) {
 		cons.logger = logger.NewSubLogger("_consensus",
-			testsuite.NewOverrideStringer(fmt.Sprintf("%s - %s: ", name, t.Name()), cons))
+			testsuite.NewOverrideLogStringer(fmt.Sprintf("%s - %s: ", name, t.Name()), cons))
 	}
 
 	overrideLogger(td.consX, "consX")

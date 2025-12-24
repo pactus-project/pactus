@@ -45,6 +45,7 @@ func (m *QueryProposalMessage) ConsensusHeight() uint32 {
 	return m.Height
 }
 
-func (m *QueryProposalMessage) String() string {
-	return fmt.Sprintf("{%v %s}", m.Height, m.Querier.ShortString())
+// LogString returns a concise string representation intended for use in logs.
+func (m *QueryProposalMessage) LogString() string {
+	return fmt.Sprintf("{%v %s}", m.Height, m.Querier.LogString())
 }

@@ -338,7 +338,8 @@ func (sync *synchronizer) processIncomingBundle(bdl *bundle.Bundle, from peer.ID
 	handler.ParseMessage(bdl.Message, from)
 }
 
-func (sync *synchronizer) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (sync *synchronizer) LogString() string {
 	return fmt.Sprintf("{☍ %d ⛃ %d}",
 		sync.peerSet.Len(),
 		sync.cache.Len())

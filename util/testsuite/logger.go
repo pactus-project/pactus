@@ -1,21 +1,21 @@
 package testsuite
 
 import (
-	"fmt"
+	"github.com/pactus-project/pactus/util/logger"
 )
 
 type OverrideStringer struct {
-	obj  fmt.Stringer
+	obj  logger.LogStringer
 	name string
 }
 
-func NewOverrideStringer(name string, obj fmt.Stringer) *OverrideStringer {
+func NewOverrideLogStringer(name string, obj logger.LogStringer) *OverrideStringer {
 	return &OverrideStringer{
 		obj:  obj,
 		name: name,
 	}
 }
 
-func (o *OverrideStringer) String() string {
-	return o.name + o.obj.String()
+func (o *OverrideStringer) LogString() string {
+	return o.name + o.obj.LogString()
 }

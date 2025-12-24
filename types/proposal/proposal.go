@@ -102,10 +102,11 @@ func (p *Proposal) IsForBlock(h hash.Hash) bool {
 	return p.Block().Hash() == h
 }
 
-func (p Proposal) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (p Proposal) LogString() string {
 	b := p.Block()
 
-	return fmt.Sprintf("{%v/%v 🗃 %v}", p.data.Height, p.data.Round, b.String())
+	return fmt.Sprintf("{%v/%v 🗃 %v}", p.data.Height, p.data.Round, b.LogString())
 }
 
 func SignBytes(blockHash hash.Hash, height uint32, round int16) []byte {

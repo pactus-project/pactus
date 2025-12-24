@@ -45,7 +45,7 @@ func TestShortString(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	addr1 := ts.RandAccAddress()
-	assert.Contains(t, addr1.String(), addr1.ShortString())
+	assert.Contains(t, addr1.String(), addr1.LogString())
 }
 
 func TestFromString(t *testing.T) {

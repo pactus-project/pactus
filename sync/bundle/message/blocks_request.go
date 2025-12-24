@@ -51,6 +51,7 @@ func (*BlocksRequestMessage) ConsensusHeight() uint32 {
 	return 0
 }
 
-func (m *BlocksRequestMessage) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (m *BlocksRequestMessage) LogString() string {
 	return fmt.Sprintf("{⚓ %d %v:%v}", m.SessionID, m.From, m.To())
 }

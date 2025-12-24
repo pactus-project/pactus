@@ -477,7 +477,7 @@ func TestSignBytes(t *testing.T) {
 	assert.Contains(t, string(sby5), "DECIDED")
 }
 
-func TestLog(t *testing.T) {
+func TestLogString(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	signer := ts.RandAccAddress()
@@ -491,10 +491,10 @@ func TestLog(t *testing.T) {
 	v3 := vote.NewCPPreVote(blockHash, height, round, 1, vote.CPValueNo, just, signer)
 	v4 := vote.NewCPMainVote(blockHash, height, round, 1, vote.CPValueAbstain, just, signer)
 
-	assert.Contains(t, v1.String(), "100/2/PREPARE")
-	assert.Contains(t, v2.String(), "100/2/PRECOMMIT")
-	assert.Contains(t, v3.String(), "100/2/PRE-VOTE/1")
-	assert.Contains(t, v4.String(), "100/2/MAIN-VOTE/1")
+	assert.Contains(t, v1.LogString(), "100/2/PREPARE")
+	assert.Contains(t, v2.LogString(), "100/2/PRECOMMIT")
+	assert.Contains(t, v3.LogString(), "100/2/PRE-VOTE/1")
+	assert.Contains(t, v4.LogString(), "100/2/MAIN-VOTE/1")
 }
 
 func TestCPValueToString(t *testing.T) {

@@ -79,7 +79,8 @@ func (*HelloMessage) ConsensusHeight() uint32 {
 	return 0
 }
 
-func (m *HelloMessage) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (m *HelloMessage) LogString() string {
 	return fmt.Sprintf("{%s %d %s}", m.Moniker, m.Height, m.Services)
 }
 

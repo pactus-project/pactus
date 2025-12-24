@@ -45,6 +45,7 @@ func (m *QueryVoteMessage) ConsensusHeight() uint32 {
 	return m.Height
 }
 
-func (m *QueryVoteMessage) String() string {
-	return fmt.Sprintf("{%d/%d %s}", m.Height, m.Round, m.Querier.ShortString())
+// LogString returns a concise string representation intended for use in logs.
+func (m *QueryVoteMessage) LogString() string {
+	return fmt.Sprintf("{%d/%d %s}", m.Height, m.Round, m.Querier.LogString())
 }

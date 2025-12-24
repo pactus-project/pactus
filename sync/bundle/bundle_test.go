@@ -118,7 +118,7 @@ func TestDecodeVoteCBOR(t *testing.T) {
 	assert.Equal(t, bdl1.Message, bdl2.Message)
 	assert.Equal(t, 0x0000, bdl1.Flags)
 	assert.Equal(t, 0x0100, bdl2.Flags)
-	assert.Contains(t, bdl1.String(), "vote")
+	assert.Contains(t, bdl1.LogString(), "vote")
 
 	assert.Equal(t, uint32(0x1234), bdl1.ConsensusHeight)
 	assert.Equal(t, uint32(0x1234), bdl2.ConsensusHeight)

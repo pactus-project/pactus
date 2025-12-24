@@ -83,9 +83,10 @@ func (p *TransferPayload) Decode(r io.Reader) error {
 	return nil
 }
 
-func (p *TransferPayload) String() string {
+// LogString returns a concise string representation intended for use in logs.
+func (p *TransferPayload) LogString() string {
 	return fmt.Sprintf("{Transfer 💸 %s->%s %s",
-		p.From.ShortString(),
-		p.To.ShortString(),
+		p.From.LogString(),
+		p.To.LogString(),
 		p.Amount)
 }

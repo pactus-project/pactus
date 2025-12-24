@@ -31,7 +31,7 @@ func makeTestNetwork(t *testing.T, conf *Config, opts []lp2p.Option) *network {
 	net, err := makeNetwork(context.Background(), conf, log, pipe, opts)
 	require.NoError(t, err)
 
-	log.SetObj(testsuite.NewOverrideStringer(
+	log.SetObj(testsuite.NewOverrideLogStringer(
 		fmt.Sprintf("%s - %s: ", net.SelfID().ShortString(), t.Name()), net))
 
 	assert.NoError(t, net.Start())

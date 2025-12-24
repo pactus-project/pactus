@@ -28,6 +28,6 @@ func TestVoteMessage(t *testing.T) {
 		msg := NewVoteMessage(vte)
 
 		assert.NoError(t, msg.BasicCheck())
-		assert.Contains(t, msg.String(), vte.String())
+		assert.Contains(t, msg.LogString(), vte.LogString())
 	})
 }

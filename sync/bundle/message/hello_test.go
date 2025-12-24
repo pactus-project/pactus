@@ -80,7 +80,7 @@ func TestHelloMessage(t *testing.T) {
 		msg.Sign([]*bls.ValidatorKey{valKey})
 
 		assert.NoError(t, msg.BasicCheck())
-		assert.Contains(t, msg.String(), "Alice")
-		assert.Contains(t, msg.String(), "FULL")
+		assert.Contains(t, msg.LogString(), "Alice")
+		assert.Contains(t, msg.LogString(), "FULL")
 	})
 }
