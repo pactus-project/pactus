@@ -2,6 +2,7 @@ package tx
 
 import (
 	"bytes"
+	"encoding/hex"
 	"fmt"
 	"io"
 
@@ -67,7 +68,17 @@ func newTx(lockTime uint32, pld payload.Payload, fee amount.Amount, opts ...TxOp
 	return &Tx{data: data}
 }
 
-// FromBytes constructs a new transaction from byte array.
+// FromString constructs a new transaction from a hex-encoded string.
+func FromString(str string) (*Tx, error) {
+	bs, err := hex.DecodeString(str)
+	if err != nil {
+		return nil, err
+	}
+
+	return FromBytes(bs)
+}
+
+// FromBytes constructs a new transaction from raw byte data.
 func FromBytes(bs []byte) (*Tx, error) {
 	trx := new(Tx)
 	r := bytes.NewReader(bs)

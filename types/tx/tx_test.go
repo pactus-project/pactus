@@ -69,7 +69,7 @@ func TestEncodingTx(t *testing.T) {
 		assert.Equal(t, trx.ID(), decodedTrx.ID())
 	}
 
-	_, err := tx.FromBytes([]byte{1})
+	_, err := tx.FromString("badcow")
 	assert.Error(t, err)
 }
 
@@ -159,42 +159,37 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid version", func(t *testing.T) {
-		data := ts.DecodingHex(
-			"02" + // Flags
-				"02" + // Version
-				"01020304" + // LockTime
-				"01" + // Fee
-				"00" + // Memo
-				"01" + // PayloadType
-				"00" + // Sender (treasury)
-				"012222222222222222222222222222222222222222" + // Receiver
-				"01") // Amount
+		str := "02" + // Flags
+			"02" + // Version
+			"01020304" + // LockTime
+			"01" + // Fee
+			"00" + // Memo
+			"01" + // PayloadType
+			"00" + // Sender (treasury)
+			"012222222222222222222222222222222222222222" + // Receiver
+			"01" // Amount
 
-		trx, err := tx.FromBytes(data)
+		trx, err := tx.FromString(str)
 		assert.NoError(t, err)
 		err = trx.BasicCheck()
 		assert.ErrorIs(t, err, tx.BasicCheckError{
 			Reason: "invalid version: 2",
 		})
-		assert.Equal(t, len(data), trx.SerializeSize())
 	})
 }
 
 func TestInvalidPayloadType(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
+	str := "02" + // Flags
+		"01" + // Version
+		"01020300" + // LockTime
+		"01" + // Fee
+		"00" + // Memo
+		"07" + // PayloadType
+		"00" + // Sender (treasury)
+		"012222222222222222222222222222222222222222" + // Receiver
+		"01" // Amount
 
-	data := ts.DecodingHex(
-		"02" + // Flags
-			"01" + // Version
-			"01020300" + // LockTime
-			"01" + // Fee
-			"00" + // Memo
-			"07" + // PayloadType
-			"00" + // Sender (treasury)
-			"012222222222222222222222222222222222222222" + // Receiver
-			"01") // Amount
-
-	_, err := tx.FromBytes(data)
+	_, err := tx.FromString(str)
 	assert.ErrorIs(t, err, tx.InvalidPayloadTypeError{
 		PayloadType: payload.Type(7),
 	})

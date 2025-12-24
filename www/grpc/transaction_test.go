@@ -141,7 +141,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, err := tx.FromBytes(td.DecodingHex(res.RawTransaction))
+		decodedTrx, err := tx.FromString(res.RawTransaction)
 		assert.NoError(t, err)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeTransfer)
@@ -175,7 +175,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, err := tx.FromBytes(td.DecodingHex(res.RawTransaction))
+		decodedTrx, err := tx.FromString(res.RawTransaction)
 		assert.NoError(t, err)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(totalAmt, payload.TypeBatchTransfer)
@@ -200,7 +200,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, err := tx.FromBytes(td.DecodingHex(res.RawTransaction))
+		decodedTrx, err := tx.FromString(res.RawTransaction)
 		assert.NoError(t, err)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeBond)
@@ -223,7 +223,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, err := tx.FromBytes(td.DecodingHex(res.RawTransaction))
+		decodedTrx, err := tx.FromString(res.RawTransaction)
 		assert.NoError(t, err)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeBond)
@@ -242,7 +242,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, err := tx.FromBytes(td.DecodingHex(res.RawTransaction))
+		decodedTrx, err := tx.FromString(res.RawTransaction)
 		assert.NoError(t, err)
 		expectedLockTime := td.mockState.LastBlockHeight()
 
@@ -264,7 +264,7 @@ func TestGetRawTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res.RawTransaction)
 
-		decodedTrx, err := tx.FromBytes(td.DecodingHex(res.RawTransaction))
+		decodedTrx, err := tx.FromString(res.RawTransaction)
 		assert.NoError(t, err)
 		expectedLockTime := td.mockState.LastBlockHeight()
 		expectedFee := td.mockState.CalculateFee(amt, payload.TypeWithdraw)
