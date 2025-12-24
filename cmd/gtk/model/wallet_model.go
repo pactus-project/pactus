@@ -15,8 +15,11 @@ import (
 )
 
 type WalletModel struct {
-	Node      *node.Node
-	WalletKey string
+	// TODO: we need node for Availability score.
+	// Any better way?
+	node       *node.Node
+	manager    wltmgr.IManager
+	walletName string
 }
 
 // AddressRow is a UI-friendly but UI-agnostic representation of an address entry.
@@ -33,26 +36,27 @@ type AddressRow struct {
 }
 
 func NewWalletModel(n *node.Node, walletName string) (*WalletModel, error) {
-	if err := n.WalletManager().LoadWallet(walletName, n.GRPC().Address()); err != nil &&
+	manager := n.WalletManager()
+	if err := manager.LoadWallet(walletName, n.GRPC().Address()); err != nil &&
 		!errors.Is(err, wltmgr.ErrWalletAlreadyLoaded) {
 		return nil, err
 	}
 
-	return &WalletModel{Node: n, WalletKey: walletName}, nil
+	return &WalletModel{manager: manager, walletName: walletName}, nil
 }
 
 // WalletName returns the display name used in the UI.
 func (model *WalletModel) WalletName() string {
-	return model.WalletKey
+	return model.walletName
 }
 
 func (model *WalletModel) WalletPath() string {
 	// Prefer the wallet manager directory (it knows configured wallets dir).
-	return model.Node.WalletManager().WalletPath(model.WalletKey)
+	return model.manager.WalletPath(model.walletName)
 }
 
 func (model *WalletModel) IsEncrypted() bool {
-	info, err := model.Node.WalletManager().WalletInfo(model.WalletKey)
+	info, err := model.manager.WalletInfo(model.walletName)
 	if err != nil {
 		return false
 	}
@@ -61,7 +65,7 @@ func (model *WalletModel) IsEncrypted() bool {
 }
 
 func (model *WalletModel) WalletInfo() (*types.WalletInfo, error) {
-	info, err := model.Node.WalletManager().WalletInfo(model.WalletKey)
+	info, err := model.manager.WalletInfo(model.walletName)
 	if err != nil {
 		return nil, err
 	}
@@ -70,15 +74,15 @@ func (model *WalletModel) WalletInfo() (*types.WalletInfo, error) {
 }
 
 func (model *WalletModel) TotalBalance() (amount.Amount, error) {
-	return model.Node.WalletManager().TotalBalance(model.WalletKey)
+	return model.manager.TotalBalance(model.walletName)
 }
 
 func (model *WalletModel) TotalStake() (amount.Amount, error) {
-	return model.Node.WalletManager().TotalStake(model.WalletKey)
+	return model.manager.TotalStake(model.walletName)
 }
 
 func (model *WalletModel) AddressInfo(addr string) *types.AddressInfo {
-	info, err := model.Node.WalletManager().AddressInfo(model.WalletKey, addr)
+	info, err := model.manager.AddressInfo(model.walletName, addr)
 	if err != nil {
 		return nil
 	}
@@ -87,7 +91,7 @@ func (model *WalletModel) AddressInfo(addr string) *types.AddressInfo {
 }
 
 func (model *WalletModel) ListAddresses(opts ...wallet.ListAddressOption) []types.AddressInfo {
-	infos, err := model.Node.WalletManager().ListAddresses(model.WalletKey, opts...)
+	infos, err := model.manager.ListAddresses(model.walletName, opts...)
 	if err != nil {
 		return nil
 	}
@@ -96,27 +100,27 @@ func (model *WalletModel) ListAddresses(opts ...wallet.ListAddressOption) []type
 }
 
 func (model *WalletModel) Balance(addr string) (amount.Amount, error) {
-	return model.Node.WalletManager().Balance(model.WalletKey, addr)
+	return model.manager.Balance(model.walletName, addr)
 }
 
 func (model *WalletModel) Stake(addr string) (amount.Amount, error) {
-	return model.Node.WalletManager().Stake(model.WalletKey, addr)
+	return model.manager.Stake(model.walletName, addr)
 }
 
 func (model *WalletModel) PrivateKey(password, addr string) (crypto.PrivateKey, error) {
-	return model.Node.WalletManager().PrivateKey(model.WalletKey, password, addr)
+	return model.manager.PrivateKey(model.walletName, password, addr)
 }
 
 func (model *WalletModel) Mnemonic(password string) (string, error) {
-	return model.Node.WalletManager().Mnemonic(model.WalletKey, password)
+	return model.manager.Mnemonic(model.walletName, password)
 }
 
 func (model *WalletModel) UpdatePassword(oldPassword, newPassword string) error {
-	return model.Node.WalletManager().UpdatePassword(model.WalletKey, oldPassword, newPassword)
+	return model.manager.UpdatePassword(model.walletName, oldPassword, newPassword)
 }
 
 func (model *WalletModel) SetDefaultFee(fee amount.Amount) error {
-	return model.Node.WalletManager().SetDefaultFee(model.WalletKey, fee)
+	return model.manager.SetDefaultFee(model.walletName, fee)
 }
 
 func (model *WalletModel) NewAddress(
@@ -124,11 +128,11 @@ func (model *WalletModel) NewAddress(
 	label string,
 	opts ...wallet.NewAddressOption,
 ) (*types.AddressInfo, error) {
-	return model.Node.WalletManager().NewAddress(model.WalletKey, addressType, label, opts...)
+	return model.manager.NewAddress(model.walletName, addressType, label, opts...)
 }
 
 func (model *WalletModel) AddressLabel(addr string) string {
-	label, err := model.Node.WalletManager().AddressLabel(model.WalletKey, addr)
+	label, err := model.manager.AddressLabel(model.walletName, addr)
 	if err != nil {
 		return ""
 	}
@@ -137,26 +141,26 @@ func (model *WalletModel) AddressLabel(addr string) string {
 }
 
 func (model *WalletModel) SetAddressLabel(addr, label string) error {
-	return model.Node.WalletManager().SetAddressLabel(model.WalletKey, addr, label)
+	return model.manager.SetAddressLabel(model.walletName, addr, label)
 }
 
 // AddressRows returns typed address rows with domain data only.
 func (model *WalletModel) AddressRows() []AddressRow {
 	rows := make([]AddressRow, 0)
-	infos, err := model.Node.WalletManager().ListAddresses(model.WalletKey)
+	infos, err := model.manager.ListAddresses(model.walletName)
 	if err != nil {
 		return rows
 	}
 	for no, info := range infos {
-		balance, _ := model.Node.WalletManager().Balance(model.WalletKey, info.Address)
-		stake, _ := model.Node.WalletManager().Stake(model.WalletKey, info.Address)
+		balance, _ := model.manager.Balance(model.walletName, info.Address)
+		stake, _ := model.manager.Stake(model.walletName, info.Address)
 
 		var scorePtr *float64
 		valAddr, err := crypto.AddressFromString(info.Address)
 		if err == nil {
-			val := model.Node.State().ValidatorByAddress(valAddr)
+			val := model.node.State().ValidatorByAddress(valAddr)
 			if val != nil {
-				score := model.Node.State().AvailabilityScore(val.Number())
+				score := model.node.State().AvailabilityScore(val.Number())
 				scorePtr = &score
 			}
 		}
@@ -181,7 +185,7 @@ func (model *WalletModel) MakeTransferTx(
 	amt amount.Amount,
 	opts ...wallet.TxOption,
 ) (*tx.Tx, error) {
-	return model.Node.WalletManager().MakeTransferTx(model.WalletKey, sender, receiver, amt, opts...)
+	return model.manager.MakeTransferTx(model.walletName, sender, receiver, amt, opts...)
 }
 
 func (model *WalletModel) MakeBondTx(
@@ -189,11 +193,11 @@ func (model *WalletModel) MakeBondTx(
 	amt amount.Amount,
 	opts ...wallet.TxOption,
 ) (*tx.Tx, error) {
-	return model.Node.WalletManager().MakeBondTx(model.WalletKey, sender, receiver, publicKey, amt, opts...)
+	return model.manager.MakeBondTx(model.walletName, sender, receiver, publicKey, amt, opts...)
 }
 
 func (model *WalletModel) MakeUnbondTx(validator string, opts ...wallet.TxOption) (*tx.Tx, error) {
-	return model.Node.WalletManager().MakeUnbondTx(model.WalletKey, validator, opts...)
+	return model.manager.MakeUnbondTx(model.walletName, validator, opts...)
 }
 
 func (model *WalletModel) MakeWithdrawTx(
@@ -201,13 +205,13 @@ func (model *WalletModel) MakeWithdrawTx(
 	amt amount.Amount,
 	opts ...wallet.TxOption,
 ) (*tx.Tx, error) {
-	return model.Node.WalletManager().MakeWithdrawTx(model.WalletKey, sender, receiver, amt, opts...)
+	return model.manager.MakeWithdrawTx(model.walletName, sender, receiver, amt, opts...)
 }
 
 func (model *WalletModel) SignTransaction(password string, trx *tx.Tx) error {
-	return model.Node.WalletManager().SignTransaction(model.WalletKey, password, trx)
+	return model.manager.SignTransaction(model.walletName, password, trx)
 }
 
 func (model *WalletModel) BroadcastTransaction(trx *tx.Tx) (string, error) {
-	return model.Node.WalletManager().BroadcastTransaction(model.WalletKey, trx)
+	return model.manager.BroadcastTransaction(model.walletName, trx)
 }
