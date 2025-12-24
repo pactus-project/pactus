@@ -18,23 +18,22 @@ func TestBasicCheck(t *testing.T) {
 	ts := testsuite.NewTestSuite(t)
 
 	t.Run("No transactions", func(t *testing.T) {
-		data := ts.DecodingHex(
-			"01" + // Version
-				"00000000" + // UnixTime
-				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
-				"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
-				"333333333333333333333333333333333333333333333333" + // SortitionSeed
-				"333333333333333333333333333333333333333333333333" +
-				"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
-				"04030201" + // PrevCert: Height
-				"0100" + // PrevCert: Round
-				"0401020304" + // PrevCert: Committers
-				"0102" + // PrevCert: Absentees
-				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
-				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
-				"00") // Txs: Len
+		str := "01" + // Version
+			"00000000" + // UnixTime
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
+			"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
+			"333333333333333333333333333333333333333333333333" + // SortitionSeed
+			"333333333333333333333333333333333333333333333333" +
+			"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
+			"04030201" + // PrevCert: Height
+			"0100" + // PrevCert: Round
+			"0401020304" + // PrevCert: Committers
+			"0102" + // PrevCert: Absentees
+			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
+			"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
+			"00" // Txs: Len
 
-		blk, _ := block.FromBytes(data)
+		blk, _ := block.FromString(str)
 
 		err := blk.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
@@ -43,23 +42,22 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Too many transactions", func(t *testing.T) {
-		data := ts.DecodingHex(
-			"02" + // Version
-				"00000000" + // UnixTime
-				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
-				"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
-				"333333333333333333333333333333333333333333333333" + // SortitionSeed
-				"333333333333333333333333333333333333333333333333" +
-				"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
-				"04030201" + // PrevCert: Height
-				"0100" + // PrevCert: Round
-				"0401020304" + // PrevCert: Committers
-				"0102" + // PrevCert: Absentees
-				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
-				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
-				"e907") // Txs: Len (1001)
+		str := "02" + // Version
+			"00000000" + // UnixTime
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
+			"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
+			"333333333333333333333333333333333333333333333333" + // SortitionSeed
+			"333333333333333333333333333333333333333333333333" +
+			"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
+			"04030201" + // PrevCert: Height
+			"0100" + // PrevCert: Round
+			"0401020304" + // PrevCert: Committers
+			"0102" + // PrevCert: Absentees
+			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
+			"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
+			"e907" // Txs: Len (1001)
 
-		_, err := block.FromBytes(data)
+		_, err := block.FromString(str)
 		assert.ErrorIs(t, err, block.ErrTooManyTransactions)
 	})
 
@@ -73,32 +71,31 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid certificate", func(t *testing.T) {
-		data := ts.DecodingHex(
-			"01" + // Version
-				"00000000" + // UnixTime
-				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
-				"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
-				"333333333333333333333333333333333333333333333333" + // SortitionSeed
-				"333333333333333333333333333333333333333333333333" +
-				"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
-				"00000000" + // PrevCert: Height
-				"0100" + // PrevCert: Round
-				"0401020304" + // PrevCert: Committers
-				"0102" + // PrevCert: Absentees
-				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
-				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
-				"01" + // Txs: Len
-				"02" + // Tx[0]: Flags
-				"01" + // Tx[0]: Version
-				"01000000" + // Tx[0]: LockTime
-				"01" + // Tx[0]: Fee
-				"00" + // Tx[0]: Memo
-				"01" + // Tx[0]: PayloadType
-				"00" + // Tx[0]: Sender (treasury)
-				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
-				"01") // Tx[0]: Amount
+		str := "01" + // Version
+			"00000000" + // UnixTime
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
+			"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
+			"333333333333333333333333333333333333333333333333" + // SortitionSeed
+			"333333333333333333333333333333333333333333333333" +
+			"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
+			"00000000" + // PrevCert: Height
+			"0100" + // PrevCert: Round
+			"0401020304" + // PrevCert: Committers
+			"0102" + // PrevCert: Absentees
+			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
+			"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
+			"01" + // Txs: Len
+			"02" + // Tx[0]: Flags
+			"01" + // Tx[0]: Version
+			"01000000" + // Tx[0]: LockTime
+			"01" + // Tx[0]: Fee
+			"00" + // Tx[0]: Memo
+			"01" + // Tx[0]: PayloadType
+			"00" + // Tx[0]: Sender (treasury)
+			"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
+			"01" // Tx[0]: Amount
 
-		blk, _ := block.FromBytes(data)
+		blk, _ := block.FromString(str)
 
 		err := blk.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
@@ -107,32 +104,31 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid transaction", func(t *testing.T) {
-		data := ts.DecodingHex(
-			"01" + // Version
-				"00000000" + // UnixTime
-				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
-				"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
-				"333333333333333333333333333333333333333333333333" + // SortitionSeed
-				"333333333333333333333333333333333333333333333333" +
-				"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
-				"04030201" + // PrevCert: Height
-				"0100" + // PrevCert: Round
-				"0401020304" + // PrevCert: Committers
-				"0102" + // PrevCert: Absentees
-				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
-				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
-				"01" + // Txs: Len
-				"02" + // Tx[0]: Flags
-				"00" + // Tx[0]: Version
-				"00000000" + // Tx[0]: LockTime
-				"00" + // Tx[0]: Fee
-				"00" + // Tx[0]: Memo
-				"01" + // Tx[0]: PayloadType
-				"00" + // Tx[0]: Sender (treasury)
-				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
-				"01") // Tx[0]: Amount
+		str := "01" + // Version
+			"00000000" + // UnixTime
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
+			"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
+			"333333333333333333333333333333333333333333333333" + // SortitionSeed
+			"333333333333333333333333333333333333333333333333" +
+			"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
+			"04030201" + // PrevCert: Height
+			"0100" + // PrevCert: Round
+			"0401020304" + // PrevCert: Committers
+			"0102" + // PrevCert: Absentees
+			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
+			"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
+			"01" + // Txs: Len
+			"02" + // Tx[0]: Flags
+			"00" + // Tx[0]: Version
+			"00000000" + // Tx[0]: LockTime
+			"00" + // Tx[0]: Fee
+			"00" + // Tx[0]: Memo
+			"01" + // Tx[0]: PayloadType
+			"00" + // Tx[0]: Sender (treasury)
+			"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
+			"01" // Tx[0]: Amount
 
-		blk, _ := block.FromBytes(data)
+		blk, _ := block.FromString(str)
 
 		err := blk.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
@@ -141,62 +137,60 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid previous block hash", func(t *testing.T) {
-		data := ts.DecodingHex(
-			"01" + // Version
-				"00000000" + // UnixTime
-				"0000000000000000000000000000000000000000000000000000000000000000" + // PrevBlockHash
-				"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
-				"333333333333333333333333333333333333333333333333" + // SortitionSeed
-				"333333333333333333333333333333333333333333333333" +
-				"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
-				"04030201" + // PrevCert: Height
-				"0100" + // PrevCert: Round
-				"0401020304" + // PrevCert: Committers
-				"0102" + // PrevCert: Absentees
-				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
-				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
-				"01" + // Txs: Len
-				"00" + // Tx[0]: Flags
-				"01" + // Tx[0]: Version
-				"01000000" + // Tx[0]: LockTime
-				"01" + // Tx[0]: Fee
-				"00" + // Tx[0]: Memo
-				"01" + // Tx[0]: PayloadType
-				"00" + // Tx[0]: Sender (treasury)
-				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
-				"01") // Tx[0]: Amount
+		str := "01" + // Version
+			"00000000" + // UnixTime
+			"0000000000000000000000000000000000000000000000000000000000000000" + // PrevBlockHash
+			"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
+			"333333333333333333333333333333333333333333333333" + // SortitionSeed
+			"333333333333333333333333333333333333333333333333" +
+			"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
+			"04030201" + // PrevCert: Height
+			"0100" + // PrevCert: Round
+			"0401020304" + // PrevCert: Committers
+			"0102" + // PrevCert: Absentees
+			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
+			"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
+			"01" + // Txs: Len
+			"00" + // Tx[0]: Flags
+			"01" + // Tx[0]: Version
+			"01000000" + // Tx[0]: LockTime
+			"01" + // Tx[0]: Fee
+			"00" + // Tx[0]: Memo
+			"01" + // Tx[0]: PayloadType
+			"00" + // Tx[0]: Sender (treasury)
+			"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
+			"01" // Tx[0]: Amount
 
-		_, err := block.FromBytes(data)
+		_, err := block.FromString(str)
 		assert.Error(t, err)
 	})
 
 	t.Run("Invalid proposer address (type is 2)", func(t *testing.T) {
-		data := ts.DecodingHex(
-			"01" + // Version
-				"00000000" + // UnixTime
-				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
-				"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
-				"333333333333333333333333333333333333333333333333" + // SortitionSeed
-				"333333333333333333333333333333333333333333333333" +
-				"02AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
-				"04030201" + // PrevCert: Height
-				"0100" + // PrevCert: Round
-				"0401020304" + // PrevCert: Committers
-				"0102" + // PrevCert: Absentees
-				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
-				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
-				"01" + // Txs: Len
-				"02" + // Tx[0]: Flags
-				"01" + // Tx[0]: Version
-				"01000000" + // Tx[0]: LockTime
-				"01" + // Tx[0]: Fee
-				"00" + // Tx[0]: Memo
-				"01" + // Tx[0]: PayloadType
-				"00" + // Tx[0]: Sender (treasury)
-				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
-				"01") // Tx[0]: Amount
+		str := "01" + // Version
+			"00000000" + // UnixTime
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
+			"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
+			"333333333333333333333333333333333333333333333333" + // SortitionSeed
+			"333333333333333333333333333333333333333333333333" +
+			"02AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
+			"04030201" + // PrevCert: Height
+			"0100" + // PrevCert: Round
+			"0401020304" + // PrevCert: Committers
+			"0102" + // PrevCert: Absentees
+			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
+			"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
+			"01" + // Txs: Len
+			"02" + // Tx[0]: Flags
+			"01" + // Tx[0]: Version
+			"01000000" + // Tx[0]: LockTime
+			"01" + // Tx[0]: Fee
+			"00" + // Tx[0]: Memo
+			"01" + // Tx[0]: PayloadType
+			"00" + // Tx[0]: Sender (treasury)
+			"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
+			"01" // Tx[0]: Amount
 
-		blk, _ := block.FromBytes(data)
+		blk, _ := block.FromString(str)
 		err := blk.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "invalid proposer address: pc1z42424242424242424242424242424242klpmq4",
@@ -204,32 +198,31 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Invalid Version", func(t *testing.T) {
-		data := ts.DecodingHex(
-			"00" + // Version
-				"00000000" + // UnixTime
-				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
-				"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
-				"333333333333333333333333333333333333333333333333" + // SortitionSeed
-				"333333333333333333333333333333333333333333333333" +
-				"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
-				"04030201" + // PrevCert: Height
-				"0100" + // PrevCert: Round
-				"0401020304" + // PrevCert: Committers
-				"0102" + // PrevCert: Absentees
-				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
-				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
-				"01" + // Txs: Len
-				"02" + // Tx[0]: Flags
-				"01" + // Tx[0]: Version
-				"01000000" + // Tx[0]: LockTime
-				"00" + // Tx[0]: Fee
-				"00" + // Tx[0]: Memo
-				"01" + // Tx[0]: PayloadType
-				"00" + // Tx[0]: Sender (treasury)
-				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
-				"01") // Tx[0]: Amount
+		str := "00" + // Version
+			"00000000" + // UnixTime
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
+			"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
+			"333333333333333333333333333333333333333333333333" + // SortitionSeed
+			"333333333333333333333333333333333333333333333333" +
+			"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
+			"04030201" + // PrevCert: Height
+			"0100" + // PrevCert: Round
+			"0401020304" + // PrevCert: Committers
+			"0102" + // PrevCert: Absentees
+			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
+			"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
+			"01" + // Txs: Len
+			"02" + // Tx[0]: Flags
+			"01" + // Tx[0]: Version
+			"01000000" + // Tx[0]: LockTime
+			"00" + // Tx[0]: Fee
+			"00" + // Tx[0]: Memo
+			"01" + // Tx[0]: PayloadType
+			"00" + // Tx[0]: Sender (treasury)
+			"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
+			"01" // Tx[0]: Amount
 
-		blk, _ := block.FromBytes(data)
+		blk, _ := block.FromString(str)
 		err := blk.BasicCheck()
 		assert.ErrorIs(t, err, block.BasicCheckError{
 			Reason: "invalid block version: 0",
@@ -237,32 +230,31 @@ func TestBasicCheck(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		data := ts.DecodingHex(
-			"02" + // Version
-				"00000000" + // UnixTime
-				"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
-				"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
-				"333333333333333333333333333333333333333333333333" + // SortitionSeed
-				"333333333333333333333333333333333333333333333333" +
-				"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
-				"04030201" + // PrevCert: Height
-				"0100" + // PrevCert: Round
-				"0401020304" + // PrevCert: Committers
-				"0102" + // PrevCert: Absentees
-				"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
-				"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
-				"01" + // Txs: Len
-				"02" + // Tx[0]: Flags
-				"01" + // Tx[0]: Version
-				"01000000" + // Tx[0]: LockTime
-				"00" + // Tx[0]: Fee
-				"00" + // Tx[0]: Memo
-				"01" + // Tx[0]: PayloadType
-				"00" + // Tx[0]: Sender (treasury)
-				"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
-				"01") // Tx[0]: Amount
+		str := "02" + // Version
+			"00000000" + // UnixTime
+			"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" + // PrevBlockHash
+			"DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD" + // StateRoot
+			"333333333333333333333333333333333333333333333333" + // SortitionSeed
+			"333333333333333333333333333333333333333333333333" +
+			"01AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" + // ProposerAddress
+			"04030201" + // PrevCert: Height
+			"0100" + // PrevCert: Round
+			"0401020304" + // PrevCert: Committers
+			"0102" + // PrevCert: Absentees
+			"b53d79e156e9417e010fa21f2b2a96bee6be46fcd233295d" +
+			"2f697cdb9e782b6112ac01c80d0d9d64c2320664c77fa2a6" + // PrevCert: Signature
+			"01" + // Txs: Len
+			"02" + // Tx[0]: Flags
+			"01" + // Tx[0]: Version
+			"01000000" + // Tx[0]: LockTime
+			"00" + // Tx[0]: Fee
+			"00" + // Tx[0]: Memo
+			"01" + // Tx[0]: PayloadType
+			"00" + // Tx[0]: Sender (treasury)
+			"022222222222222222222222222222222222222222" + // Tx[0]: Receiver
+			"01" // Tx[0]: Amount
 
-		blk, _ := block.FromBytes(data)
+		blk, _ := block.FromString(str)
 		assert.NoError(t, blk.BasicCheck())
 		assert.Zero(t, blk.Header().UnixTime())
 		assert.Equal(t, protocol.ProtocolVersionLatest, blk.Header().Version())
@@ -313,18 +305,8 @@ func TestEncodingBlock(t *testing.T) {
 	assert.Equal(t, blk.Header(), blk2.Header())
 }
 
-func TestTxFromBytes(t *testing.T) {
-	ts := testsuite.NewTestSuite(t)
-
-	blk, _ := ts.GenerateTestBlock(ts.RandHeight())
-	bs, _ := blk.Bytes()
-	_, err := block.FromBytes(bs)
-	assert.NoError(t, err)
-	_, err = blk.Bytes()
-	assert.NoError(t, err)
-
-	// Invalid data
-	_, err = block.FromBytes([]byte{1})
+func TestInvalidString(t *testing.T) {
+	_, err := block.FromString("badcow")
 	assert.Error(t, err)
 }
 
