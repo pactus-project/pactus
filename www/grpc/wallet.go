@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/wallet"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
+	"github.com/pactus-project/pactus/wallet/types"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
@@ -23,19 +24,13 @@ func newWalletServer(server *Server, manager wltmgr.IManager) *walletServer {
 	}
 }
 
-func (*walletServer) mapHistoryInfo(his []wallet.HistoryInfo) []*pactus.HistoryInfo {
-	historyInfo := make([]*pactus.HistoryInfo, 0)
-	for _, info := range his {
-		historyInfo = append(historyInfo, &pactus.HistoryInfo{
-			TransactionId: info.TxID,
-			// Time:          uint32(hi.Time.Unix()),  // TODO: Fix me
-			PayloadType: info.PayloadType,
-			Description: info.Desc,
-			Amount:      info.Amount.ToNanoPAC(),
-		})
+func (*walletServer) addressInfoToProto(ai *types.AddressInfo) *pactus.AddressInfo {
+	return &pactus.AddressInfo{
+		Address:   ai.Address,
+		Label:     ai.Label,
+		PublicKey: ai.PublicKey,
+		Path:      ai.Path,
 	}
-
-	return historyInfo
 }
 
 func (s *walletServer) GetValidatorAddress(_ context.Context,
@@ -181,54 +176,39 @@ func (s *walletServer) SignMessage(_ context.Context,
 func (s *walletServer) GetNewAddress(_ context.Context,
 	req *pactus.GetNewAddressRequest,
 ) (*pactus.GetNewAddressResponse, error) {
-	data, err := s.walletManager.GetNewAddress(
+	info, err := s.walletManager.NewAddress(
 		req.WalletName,
-		req.Label,
-		req.Password,
 		crypto.AddressType(req.AddressType),
+		req.Label,
+		wallet.WithPassword(req.Password),
 	)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pactus.GetNewAddressResponse{
-		WalletName: req.WalletName,
-		AddressInfo: &pactus.AddressInfo{
-			Address:   data.Address,
-			Label:     data.Label,
-			PublicKey: data.PublicKey,
-			Path:      data.Path,
-		},
+		WalletName:  req.WalletName,
+		AddressInfo: s.addressInfoToProto(info),
 	}, nil
 }
 
-func (s *walletServer) GetAddressHistory(_ context.Context,
-	req *pactus.GetAddressHistoryRequest,
+func (*walletServer) GetAddressHistory(_ context.Context,
+	_ *pactus.GetAddressHistoryRequest,
 ) (*pactus.GetAddressHistoryResponse, error) {
-	data, err := s.walletManager.AddressHistory(req.WalletName, req.Address)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pactus.GetAddressHistoryResponse{
-		HistoryInfo: s.mapHistoryInfo(data),
-	}, nil
+	return nil, errors.New("not implemented")
 }
 
 func (s *walletServer) GetAddressInfo(_ context.Context,
 	req *pactus.GetAddressInfoRequest,
 ) (*pactus.GetAddressInfoResponse, error) {
-	info, err := s.walletManager.GetAddressInfo(req.WalletName, req.Address)
+	info, err := s.walletManager.AddressInfo(req.WalletName, req.Address)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pactus.GetAddressInfoResponse{
-		Address:    info.Address,
-		Path:       info.Path,
-		PublicKey:  info.PublicKey,
-		Label:      info.Label,
-		WalletName: req.WalletName,
+		WalletName:  req.WalletName,
+		AddressInfo: s.addressInfoToProto(info),
 	}, nil
 }
 
@@ -247,15 +227,15 @@ func (s *walletServer) SetAddressLabel(_ context.Context,
 	}, nil
 }
 
-func (s *walletServer) ListWallet(_ context.Context,
-	_ *pactus.ListWalletRequest,
-) (*pactus.ListWalletResponse, error) {
-	wallets, err := s.walletManager.ListWallet()
+func (s *walletServer) ListWallets(_ context.Context,
+	_ *pactus.ListWalletsRequest,
+) (*pactus.ListWalletsResponse, error) {
+	wallets, err := s.walletManager.ListWallets()
 	if err != nil {
 		return nil, err
 	}
 
-	return &pactus.ListWalletResponse{
+	return &pactus.ListWalletsResponse{
 		Wallets: wallets,
 	}, nil
 }
@@ -269,9 +249,9 @@ func (s *walletServer) GetWalletInfo(_ context.Context,
 	}
 
 	return &pactus.GetWalletInfoResponse{
-		WalletName: info.WalletName,
+		WalletName: req.WalletName,
 		Version:    int32(info.Version),
-		Network:    info.Network,
+		Network:    info.Network.String(),
 		Encrypted:  info.Encrypted,
 		Uuid:       info.UUID,
 		CreatedAt:  info.CreatedAt.Unix(),
@@ -279,25 +259,25 @@ func (s *walletServer) GetWalletInfo(_ context.Context,
 	}, nil
 }
 
-func (s *walletServer) ListAddress(_ context.Context,
-	req *pactus.ListAddressRequest,
-) (*pactus.ListAddressResponse, error) {
-	addrs, err := s.walletManager.ListAddress(req.WalletName)
+func (s *walletServer) ListAddresses(_ context.Context,
+	req *pactus.ListAddressesRequest,
+) (*pactus.ListAddressesResponse, error) {
+	addressTypes := make([]crypto.AddressType, 0)
+	for _, addrType := range req.AddressTypes {
+		addressTypes = append(addressTypes, crypto.AddressType(addrType))
+	}
+
+	addrs, err := s.walletManager.ListAddresses(req.WalletName, wallet.WithAddressTypes(addressTypes))
 	if err != nil {
 		return nil, err
 	}
 
 	addrsPB := make([]*pactus.AddressInfo, 0, len(addrs))
-	for _, addr := range addrs {
-		addrsPB = append(addrsPB, &pactus.AddressInfo{
-			Address:   addr.Address,
-			Label:     addr.Label,
-			PublicKey: addr.PublicKey,
-			Path:      addr.Path,
-		})
+	for _, info := range addrs {
+		addrsPB = append(addrsPB, s.addressInfoToProto(&info))
 	}
 
-	return &pactus.ListAddressResponse{
+	return &pactus.ListAddressesResponse{
 		WalletName: req.WalletName,
 		Data:       addrsPB,
 	}, nil

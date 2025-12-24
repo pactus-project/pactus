@@ -3385,11 +3385,11 @@ pub mod wallet_client {
                 .insert(GrpcMethod::new("pactus.Wallet", "SetAddressLabel"));
             self.inner.unary(req, path, codec).await
         }
-        pub async fn list_wallet(
+        pub async fn list_wallets(
             &mut self,
-            request: impl tonic::IntoRequest<super::ListWalletRequest>,
+            request: impl tonic::IntoRequest<super::ListWalletsRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::ListWalletResponse>,
+            tonic::Response<super::ListWalletsResponse>,
             tonic::Status,
         > {
             self.inner
@@ -3401,9 +3401,11 @@ pub mod wallet_client {
                     )
                 })?;
             let codec = tonic_prost::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static("/pactus.Wallet/ListWallet");
+            let path = http::uri::PathAndQuery::from_static(
+                "/pactus.Wallet/ListWallets",
+            );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "ListWallet"));
+            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "ListWallets"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_wallet_info(
@@ -3430,11 +3432,11 @@ pub mod wallet_client {
                 .insert(GrpcMethod::new("pactus.Wallet", "GetWalletInfo"));
             self.inner.unary(req, path, codec).await
         }
-        pub async fn list_address(
+        pub async fn list_addresses(
             &mut self,
-            request: impl tonic::IntoRequest<super::ListAddressRequest>,
+            request: impl tonic::IntoRequest<super::ListAddressesRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::ListAddressResponse>,
+            tonic::Response<super::ListAddressesResponse>,
             tonic::Status,
         > {
             self.inner
@@ -3447,10 +3449,11 @@ pub mod wallet_client {
                 })?;
             let codec = tonic_prost::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/pactus.Wallet/ListAddress",
+                "/pactus.Wallet/ListAddresses",
             );
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new("pactus.Wallet", "ListAddress"));
+            req.extensions_mut()
+                .insert(GrpcMethod::new("pactus.Wallet", "ListAddresses"));
             self.inner.unary(req, path, codec).await
         }
     }
@@ -3559,11 +3562,11 @@ pub mod wallet_server {
             tonic::Response<super::SetAddressLabelResponse>,
             tonic::Status,
         >;
-        async fn list_wallet(
+        async fn list_wallets(
             &self,
-            request: tonic::Request<super::ListWalletRequest>,
+            request: tonic::Request<super::ListWalletsRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::ListWalletResponse>,
+            tonic::Response<super::ListWalletsResponse>,
             tonic::Status,
         >;
         async fn get_wallet_info(
@@ -3573,11 +3576,11 @@ pub mod wallet_server {
             tonic::Response<super::GetWalletInfoResponse>,
             tonic::Status,
         >;
-        async fn list_address(
+        async fn list_addresses(
             &self,
-            request: tonic::Request<super::ListAddressRequest>,
+            request: tonic::Request<super::ListAddressesRequest>,
         ) -> std::result::Result<
-            tonic::Response<super::ListAddressResponse>,
+            tonic::Response<super::ListAddressesResponse>,
             tonic::Status,
         >;
     }
@@ -4240,23 +4243,25 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/ListWallet" => {
+                "/pactus.Wallet/ListWallets" => {
                     #[allow(non_camel_case_types)]
-                    struct ListWalletSvc<T: Wallet>(pub Arc<T>);
-                    impl<T: Wallet> tonic::server::UnaryService<super::ListWalletRequest>
-                    for ListWalletSvc<T> {
-                        type Response = super::ListWalletResponse;
+                    struct ListWalletsSvc<T: Wallet>(pub Arc<T>);
+                    impl<
+                        T: Wallet,
+                    > tonic::server::UnaryService<super::ListWalletsRequest>
+                    for ListWalletsSvc<T> {
+                        type Response = super::ListWalletsResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::ListWalletRequest>,
+                            request: tonic::Request<super::ListWalletsRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as Wallet>::list_wallet(&inner, request).await
+                                <T as Wallet>::list_wallets(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -4267,7 +4272,7 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let method = ListWalletSvc(inner);
+                        let method = ListWalletsSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -4328,25 +4333,25 @@ pub mod wallet_server {
                     };
                     Box::pin(fut)
                 }
-                "/pactus.Wallet/ListAddress" => {
+                "/pactus.Wallet/ListAddresses" => {
                     #[allow(non_camel_case_types)]
-                    struct ListAddressSvc<T: Wallet>(pub Arc<T>);
+                    struct ListAddressesSvc<T: Wallet>(pub Arc<T>);
                     impl<
                         T: Wallet,
-                    > tonic::server::UnaryService<super::ListAddressRequest>
-                    for ListAddressSvc<T> {
-                        type Response = super::ListAddressResponse;
+                    > tonic::server::UnaryService<super::ListAddressesRequest>
+                    for ListAddressesSvc<T> {
+                        type Response = super::ListAddressesResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
                             tonic::Status,
                         >;
                         fn call(
                             &mut self,
-                            request: tonic::Request<super::ListAddressRequest>,
+                            request: tonic::Request<super::ListAddressesRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as Wallet>::list_address(&inner, request).await
+                                <T as Wallet>::list_addresses(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -4357,7 +4362,7 @@ pub mod wallet_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let method = ListAddressSvc(inner);
+                        let method = ListAddressesSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

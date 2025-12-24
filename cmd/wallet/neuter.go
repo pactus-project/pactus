@@ -25,7 +25,7 @@ func buildNeuterCmd(parentCmd *cobra.Command) {
 			terminal.FatalErrorCheck(fmt.Errorf("neutered wallet already exists, at %s", path))
 		}
 
-		_, err = wlt.Neuter(path)
+		err = wlt.Neuter(path)
 		terminal.FatalErrorCheck(err)
 
 		terminal.PrintSuccessMsgf("neutered wallet created at %s", path)

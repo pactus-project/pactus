@@ -8,8 +8,8 @@ import (
 )
 
 type AddressLabelModel interface {
-	Label(address string) string
-	SetLabel(address string, label string) error
+	AddressLabel(address string) string
+	SetAddressLabel(address string, label string) error
 }
 
 type AddressLabelDialogController struct {
@@ -25,12 +25,12 @@ func NewAddressLabelDialogController(
 }
 
 func (c *AddressLabelDialogController) Run(address string) {
-	oldLabel := c.model.Label(address)
+	oldLabel := c.model.AddressLabel(address)
 	c.view.LabelEntry.SetText(oldLabel)
 
 	onOk := func() {
 		newLabel := gtkutil.GetEntryText(c.view.LabelEntry)
-		if err := c.model.SetLabel(address, newLabel); err != nil {
+		if err := c.model.SetAddressLabel(address, newLabel); err != nil {
 			gtkutil.ShowError(err)
 
 			return

@@ -258,8 +258,8 @@ func (s *WalletJsonRPC) Methods() map[string]func(ctx context.Context, message j
 			return s.client.SetAddressLabel(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.wallet.list_wallet": func(ctx context.Context, data json.RawMessage) (any, error) {
-			req := new(ListWalletRequest)
+		"pactus.wallet.list_wallets": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(ListWalletsRequest)
 
 			var jrpcData paramsAndHeadersWallet
 
@@ -272,7 +272,7 @@ func (s *WalletJsonRPC) Methods() map[string]func(ctx context.Context, message j
 				return nil, err
 			}
 
-			return s.client.ListWallet(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+			return s.client.ListWallets(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
 		"pactus.wallet.get_wallet_info": func(ctx context.Context, data json.RawMessage) (any, error) {
@@ -292,8 +292,8 @@ func (s *WalletJsonRPC) Methods() map[string]func(ctx context.Context, message j
 			return s.client.GetWalletInfo(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 
-		"pactus.wallet.list_address": func(ctx context.Context, data json.RawMessage) (any, error) {
-			req := new(ListAddressRequest)
+		"pactus.wallet.list_addresses": func(ctx context.Context, data json.RawMessage) (any, error) {
+			req := new(ListAddressesRequest)
 
 			var jrpcData paramsAndHeadersWallet
 
@@ -306,7 +306,7 @@ func (s *WalletJsonRPC) Methods() map[string]func(ctx context.Context, message j
 				return nil, err
 			}
 
-			return s.client.ListAddress(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
+			return s.client.ListAddresses(metadata.NewOutgoingContext(ctx, jrpcData.Headers), req)
 		},
 	}
 }

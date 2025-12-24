@@ -1205,15 +1205,15 @@
         ]
       }
     },
-    "/pactus/wallet/list_address": {
+    "/pactus/wallet/list_addresses": {
       "get": {
-        "summary": "ListAddress returns all addresses in the specified wallet.",
-        "operationId": "Wallet_ListAddress",
+        "summary": "ListAddresses returns all addresses in the specified wallet.",
+        "operationId": "Wallet_ListAddresses",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusListAddressResponse"
+              "$ref": "#/definitions/pactusListAddressesResponse"
             }
           },
           "default": {
@@ -1230,6 +1230,23 @@
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "addressTypes",
+            "description": "Filter addresses by their types. If empty, all address types are included.\n\n - ADDRESS_TYPE_TREASURY: Treasury address type.\nShould not be used to generate new addresses.\n - ADDRESS_TYPE_VALIDATOR: Validator address type used for validator nodes.\n - ADDRESS_TYPE_BLS_ACCOUNT: Account address type with BLS signature scheme.\n - ADDRESS_TYPE_ED25519_ACCOUNT: Account address type with Ed25519 signature scheme.\nNote: Generating a new Ed25519 address requires the wallet password.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "ADDRESS_TYPE_TREASURY",
+                "ADDRESS_TYPE_VALIDATOR",
+                "ADDRESS_TYPE_BLS_ACCOUNT",
+                "ADDRESS_TYPE_ED25519_ACCOUNT"
+              ]
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -1237,15 +1254,15 @@
         ]
       }
     },
-    "/pactus/wallet/list_wallet": {
+    "/pactus/wallet/list_wallets": {
       "get": {
-        "summary": "ListWallet returns a list of all available wallets.",
-        "operationId": "Wallet_ListWallet",
+        "summary": "ListWallets returns a list of all available wallets.",
+        "operationId": "Wallet_ListWallets",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pactusListWalletResponse"
+              "$ref": "#/definitions/pactusListWalletsResponse"
             }
           },
           "default": {
@@ -1856,21 +1873,9 @@
           "type": "string",
           "description": "The name of the wallet containing the address."
         },
-        "address": {
-          "type": "string",
-          "description": "The queried address."
-        },
-        "label": {
-          "type": "string",
-          "description": "The address label."
-        },
-        "publicKey": {
-          "type": "string",
-          "description": "The public key of the address."
-        },
-        "path": {
-          "type": "string",
-          "description": "The Hierarchical Deterministic (HD) path of the address."
+        "addressInfo": {
+          "$ref": "#/definitions/pactusAddressInfo",
+          "description": "Detailed information about the address."
         }
       },
       "description": "Response message contains address details."
@@ -2477,7 +2482,7 @@
       },
       "description": "HistoryInfo contains transaction history details for an address."
     },
-    "pactusListAddressResponse": {
+    "pactusListAddressesResponse": {
       "type": "object",
       "properties": {
         "walletName": {
@@ -2495,7 +2500,7 @@
       },
       "description": "Response message contains wallet addresses."
     },
-    "pactusListWalletResponse": {
+    "pactusListWalletsResponse": {
       "type": "object",
       "properties": {
         "wallets": {

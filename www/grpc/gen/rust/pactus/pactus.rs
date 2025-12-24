@@ -1382,18 +1382,9 @@ pub struct GetAddressInfoResponse {
     /// The name of the wallet containing the address.
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
-    /// The queried address.
-    #[prost(string, tag="2")]
-    pub address: ::prost::alloc::string::String,
-    /// The address label.
-    #[prost(string, tag="3")]
-    pub label: ::prost::alloc::string::String,
-    /// The public key of the address.
-    #[prost(string, tag="4")]
-    pub public_key: ::prost::alloc::string::String,
-    /// The Hierarchical Deterministic (HD) path of the address.
-    #[prost(string, tag="5")]
-    pub path: ::prost::alloc::string::String,
+    /// Detailed information about the address.
+    #[prost(message, optional, tag="2")]
+    pub address_info: ::core::option::Option<AddressInfo>,
 }
 /// Request message for setting address label.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
@@ -1426,11 +1417,11 @@ pub struct SetAddressLabelResponse {
 }
 /// Request message for listing all wallets.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ListWalletRequest {
+pub struct ListWalletsRequest {
 }
 /// Response message contains wallet names.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ListWalletResponse {
+pub struct ListWalletsResponse {
     /// Array of wallet names.
     #[prost(string, repeated, tag="1")]
     pub wallets: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
@@ -1469,14 +1460,17 @@ pub struct GetWalletInfoResponse {
 }
 /// Request message for listing wallet addresses.
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct ListAddressRequest {
+pub struct ListAddressesRequest {
     /// The name of the queried wallet.
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
+    /// Filter addresses by their types. If empty, all address types are included.
+    #[prost(enumeration="AddressType", repeated, tag="2")]
+    pub address_types: ::prost::alloc::vec::Vec<i32>,
 }
 /// Response message contains wallet addresses.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ListAddressResponse {
+pub struct ListAddressesResponse {
     /// The name of the queried wallet.
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,

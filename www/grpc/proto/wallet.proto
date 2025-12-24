@@ -46,14 +46,14 @@ service Wallet {
   // SetAddressLabel sets or updates the label for a given address.
   rpc SetAddressLabel(SetAddressLabelRequest) returns (SetAddressLabelResponse);
 
-  // ListWallet returns a list of all available wallets.
-  rpc ListWallet(ListWalletRequest) returns (ListWalletResponse);
+  // ListWallets returns a list of all available wallets.
+  rpc ListWallets(ListWalletsRequest) returns (ListWalletsResponse);
 
   // GetWalletInfo returns detailed information about a specific wallet.
   rpc GetWalletInfo(GetWalletInfoRequest) returns (GetWalletInfoResponse);
 
-  // ListAddress returns all addresses in the specified wallet.
-  rpc ListAddress(ListAddressRequest) returns (ListAddressResponse);
+  // ListAddresses returns all addresses in the specified wallet.
+  rpc ListAddresses(ListAddressesRequest) returns (ListAddressesResponse);
 }
 
 // AddressType defines different types of blockchain addresses.
@@ -274,14 +274,8 @@ message GetAddressInfoRequest {
 message GetAddressInfoResponse {
   // The name of the wallet containing the address.
   string wallet_name = 1;
-  // The queried address.
-  string address = 2;
-  // The address label.
-  string label = 3;
-  // The public key of the address.
-  string public_key = 4;
-  // The Hierarchical Deterministic (HD) path of the address.
-  string path = 5;
+  // Detailed information about the address.
+  AddressInfo address_info = 2;
 }
 
 // Request message for setting address label.
@@ -307,10 +301,10 @@ message SetAddressLabelResponse {
 }
 
 // Request message for listing all wallets.
-message ListWalletRequest {}
+message ListWalletsRequest {}
 
 // Response message contains wallet names.
-message ListWalletResponse {
+message ListWalletsResponse {
   // Array of wallet names.
   repeated string wallets = 1;
 }
@@ -340,13 +334,16 @@ message GetWalletInfoResponse {
 }
 
 // Request message for listing wallet addresses.
-message ListAddressRequest {
+message ListAddressesRequest {
   // The name of the queried wallet.
   string wallet_name = 1;
+
+  // Filter addresses by their types. If empty, all address types are included.
+  repeated AddressType address_types = 2;
 }
 
 // Response message contains wallet addresses.
-message ListAddressResponse {
+message ListAddressesResponse {
   // The name of the queried wallet.
   string wallet_name = 1;
   // List of all addresses in the wallet with their details.

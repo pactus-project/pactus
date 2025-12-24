@@ -8,7 +8,6 @@ import (
 
 func TestGetHistory(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	history := td.wallet.History(td.RandAccAddress().String())
 	assert.Empty(t, history)
@@ -16,7 +15,6 @@ func TestGetHistory(t *testing.T) {
 
 func TestAddDuplicatedTrx(t *testing.T) {
 	td := setup(t)
-	defer td.Close()
 
 	trx := td.GenerateTestTransferTx()
 	id, err := td.wallet.BroadcastTransaction(trx)

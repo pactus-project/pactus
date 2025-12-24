@@ -2,7 +2,9 @@
 
 package assets
 
-import _ "embed"
+import (
+	_ "embed"
+)
 
 // Dialogs/UI used by the GTK app.
 

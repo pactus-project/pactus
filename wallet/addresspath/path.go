@@ -4,9 +4,39 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/pactus-project/pactus/crypto"
+	"golang.org/x/exp/constraints"
 )
 
-const HardenedKeyStart = uint32(0x80000000) // 2^31
+type Purpose uint32
+
+const (
+	PurposeBLS12381         Purpose = 12381
+	PurposeBIP44            Purpose = 44
+	PurposeImportPrivateKey Purpose = 65535
+)
+
+type CoinType uint32
+
+const (
+	CoinTypePactusMainnet CoinType = 21888
+	CoinTypePactusTestnet CoinType = 21777
+)
+
+const hardenedKeyStart = uint32(0x80000000) // 2^31
+
+// Harden hardens the integer value 'i' by adding 0x80000000 (2^31) to it.
+// This function does not check if 'i' is already hardened.
+func Harden[T constraints.Integer](i T) uint32 {
+	return uint32(i) + hardenedKeyStart
+}
+
+// UnHarden unhardens the integer value 'i' by subtracting 0x80000000 (2^31) from it.
+// This function does not check if 'i' is already non-hardened.
+func UnHarden[T constraints.Integer](i T) uint32 {
+	return uint32(i) - hardenedKeyStart
+}
 
 type Path []uint32
 
@@ -30,7 +60,7 @@ func FromString(str string) (Path, error) {
 		indexStr := sub[i]
 		added := uint32(0)
 		if indexStr[len(indexStr)-1] == '\'' {
-			added = HardenedKeyStart
+			added = hardenedKeyStart
 			indexStr = indexStr[:len(indexStr)-1]
 		}
 		val, err := strconv.ParseInt(indexStr, 10, 32)
@@ -47,8 +77,8 @@ func (p Path) String() string {
 	var builder strings.Builder
 	builder.WriteString("m")
 	for _, i := range p {
-		if i >= HardenedKeyStart {
-			builder.WriteString(fmt.Sprintf("/%d'", i-HardenedKeyStart))
+		if i >= hardenedKeyStart {
+			builder.WriteString(fmt.Sprintf("/%d'", i-hardenedKeyStart))
 		} else {
 			builder.WriteString(fmt.Sprintf("/%d", i))
 		}
@@ -59,16 +89,16 @@ func (p Path) String() string {
 
 // TODO: we can add IsBLSPurpose or IsImportedPurpose functions
 
-func (p Path) Purpose() uint32 {
-	return p[0]
+func (p Path) Purpose() Purpose {
+	return Purpose(UnHarden(p[0]))
 }
 
-func (p Path) CoinType() uint32 {
-	return p[len(p)-3]
+func (p Path) CoinType() CoinType {
+	return CoinType(UnHarden(p[len(p)-3]))
 }
 
-func (p Path) AddressType() uint32 {
-	return p[len(p)-2]
+func (p Path) AddressType() crypto.AddressType {
+	return crypto.AddressType(UnHarden(p[len(p)-2]))
 }
 
 func (p Path) AddressIndex() uint32 {

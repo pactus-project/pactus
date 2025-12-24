@@ -4,11 +4,20 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/pactus-project/pactus/crypto"
 	"github.com/stretchr/testify/assert"
 )
 
+func TestHardenedKey(t *testing.T) {
+	num := uint32(12345)
+	hardenedNum := Harden(num)
+	unhardenedNum := UnHarden(hardenedNum)
+
+	assert.Equal(t, num, unhardenedNum)
+}
+
 func TestPathToString(t *testing.T) {
-	h := HardenedKeyStart
+	h := hardenedKeyStart
 	tests := []struct {
 		path    Path
 		wantStr string
@@ -27,7 +36,7 @@ func TestPathToString(t *testing.T) {
 }
 
 func TestStringToPath(t *testing.T) {
-	h := HardenedKeyStart
+	h := hardenedKeyStart
 	tests := []struct {
 		str      string
 		wantPath Path
@@ -52,11 +61,15 @@ func TestStringToPath(t *testing.T) {
 }
 
 func TestPathHelpers(t *testing.T) {
-	purpose, coinType, addressType, addressIndex := 12381, 21888, 2, 0
-	path := Path{12381, 21888, 2, 0}
+	path := Path{
+		12381 + hardenedKeyStart,
+		21888 + hardenedKeyStart,
+		2 + hardenedKeyStart,
+		1,
+	}
 
-	assert.Equal(t, uint32(purpose), path.Purpose())
-	assert.Equal(t, uint32(coinType), path.CoinType())
-	assert.Equal(t, uint32(addressType), path.AddressType())
-	assert.Equal(t, uint32(addressIndex), path.AddressIndex())
+	assert.Equal(t, PurposeBLS12381, path.Purpose())
+	assert.Equal(t, CoinTypePactusMainnet, path.CoinType())
+	assert.Equal(t, crypto.AddressTypeBLSAccount, path.AddressType())
+	assert.Equal(t, uint32(1), path.AddressIndex())
 }

@@ -2618,33 +2618,15 @@ impl serde::Serialize for GetAddressInfoResponse {
         if !self.wallet_name.is_empty() {
             len += 1;
         }
-        if !self.address.is_empty() {
-            len += 1;
-        }
-        if !self.label.is_empty() {
-            len += 1;
-        }
-        if !self.public_key.is_empty() {
-            len += 1;
-        }
-        if !self.path.is_empty() {
+        if self.address_info.is_some() {
             len += 1;
         }
         let mut struct_ser = serializer.serialize_struct("pactus.GetAddressInfoResponse", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
-        if !self.address.is_empty() {
-            struct_ser.serialize_field("address", &self.address)?;
-        }
-        if !self.label.is_empty() {
-            struct_ser.serialize_field("label", &self.label)?;
-        }
-        if !self.public_key.is_empty() {
-            struct_ser.serialize_field("publicKey", &self.public_key)?;
-        }
-        if !self.path.is_empty() {
-            struct_ser.serialize_field("path", &self.path)?;
+        if let Some(v) = self.address_info.as_ref() {
+            struct_ser.serialize_field("addressInfo", v)?;
         }
         struct_ser.end()
     }
@@ -2658,20 +2640,14 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoResponse {
         const FIELDS: &[&str] = &[
             "wallet_name",
             "walletName",
-            "address",
-            "label",
-            "public_key",
-            "publicKey",
-            "path",
+            "address_info",
+            "addressInfo",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             WalletName,
-            Address,
-            Label,
-            PublicKey,
-            Path,
+            AddressInfo,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -2694,10 +2670,7 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoResponse {
                     {
                         match value {
                             "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
-                            "address" => Ok(GeneratedField::Address),
-                            "label" => Ok(GeneratedField::Label),
-                            "publicKey" | "public_key" => Ok(GeneratedField::PublicKey),
-                            "path" => Ok(GeneratedField::Path),
+                            "addressInfo" | "address_info" => Ok(GeneratedField::AddressInfo),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -2718,10 +2691,7 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoResponse {
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
-                let mut address__ = None;
-                let mut label__ = None;
-                let mut public_key__ = None;
-                let mut path__ = None;
+                let mut address_info__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
@@ -2730,38 +2700,17 @@ impl<'de> serde::Deserialize<'de> for GetAddressInfoResponse {
                             }
                             wallet_name__ = Some(map_.next_value()?);
                         }
-                        GeneratedField::Address => {
-                            if address__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("address"));
+                        GeneratedField::AddressInfo => {
+                            if address_info__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("addressInfo"));
                             }
-                            address__ = Some(map_.next_value()?);
-                        }
-                        GeneratedField::Label => {
-                            if label__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("label"));
-                            }
-                            label__ = Some(map_.next_value()?);
-                        }
-                        GeneratedField::PublicKey => {
-                            if public_key__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("publicKey"));
-                            }
-                            public_key__ = Some(map_.next_value()?);
-                        }
-                        GeneratedField::Path => {
-                            if path__.is_some() {
-                                return Err(serde::de::Error::duplicate_field("path"));
-                            }
-                            path__ = Some(map_.next_value()?);
+                            address_info__ = map_.next_value()?;
                         }
                     }
                 }
                 Ok(GetAddressInfoResponse {
                     wallet_name: wallet_name__.unwrap_or_default(),
-                    address: address__.unwrap_or_default(),
-                    label: label__.unwrap_or_default(),
-                    public_key: public_key__.unwrap_or_default(),
-                    path: path__.unwrap_or_default(),
+                    address_info: address_info__,
                 })
             }
         }
@@ -7985,7 +7934,7 @@ impl<'de> serde::Deserialize<'de> for HistoryInfo {
         deserializer.deserialize_struct("pactus.HistoryInfo", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for ListAddressRequest {
+impl serde::Serialize for ListAddressesRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -7996,14 +7945,24 @@ impl serde::Serialize for ListAddressRequest {
         if !self.wallet_name.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("pactus.ListAddressRequest", len)?;
+        if !self.address_types.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.ListAddressesRequest", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
+        }
+        if !self.address_types.is_empty() {
+            let v = self.address_types.iter().cloned().map(|v| {
+                AddressType::try_from(v)
+                    .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", v)))
+                }).collect::<std::result::Result<Vec<_>, _>>()?;
+            struct_ser.serialize_field("addressTypes", &v)?;
         }
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for ListAddressRequest {
+impl<'de> serde::Deserialize<'de> for ListAddressesRequest {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -8012,11 +7971,14 @@ impl<'de> serde::Deserialize<'de> for ListAddressRequest {
         const FIELDS: &[&str] = &[
             "wallet_name",
             "walletName",
+            "address_types",
+            "addressTypes",
         ];
 
         #[allow(clippy::enum_variant_names)]
         enum GeneratedField {
             WalletName,
+            AddressTypes,
         }
         impl<'de> serde::Deserialize<'de> for GeneratedField {
             fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
@@ -8039,6 +8001,7 @@ impl<'de> serde::Deserialize<'de> for ListAddressRequest {
                     {
                         match value {
                             "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
+                            "addressTypes" | "address_types" => Ok(GeneratedField::AddressTypes),
                             _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
                         }
                     }
@@ -8048,17 +8011,18 @@ impl<'de> serde::Deserialize<'de> for ListAddressRequest {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = ListAddressRequest;
+            type Value = ListAddressesRequest;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.ListAddressRequest")
+                formatter.write_str("struct pactus.ListAddressesRequest")
             }
 
-            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListAddressRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListAddressesRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 let mut wallet_name__ = None;
+                let mut address_types__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
                         GeneratedField::WalletName => {
@@ -8067,17 +8031,24 @@ impl<'de> serde::Deserialize<'de> for ListAddressRequest {
                             }
                             wallet_name__ = Some(map_.next_value()?);
                         }
+                        GeneratedField::AddressTypes => {
+                            if address_types__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("addressTypes"));
+                            }
+                            address_types__ = Some(map_.next_value::<Vec<AddressType>>()?.into_iter().map(|x| x as i32).collect());
+                        }
                     }
                 }
-                Ok(ListAddressRequest {
+                Ok(ListAddressesRequest {
                     wallet_name: wallet_name__.unwrap_or_default(),
+                    address_types: address_types__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.ListAddressRequest", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.ListAddressesRequest", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for ListAddressResponse {
+impl serde::Serialize for ListAddressesResponse {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -8091,7 +8062,7 @@ impl serde::Serialize for ListAddressResponse {
         if !self.data.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("pactus.ListAddressResponse", len)?;
+        let mut struct_ser = serializer.serialize_struct("pactus.ListAddressesResponse", len)?;
         if !self.wallet_name.is_empty() {
             struct_ser.serialize_field("walletName", &self.wallet_name)?;
         }
@@ -8101,7 +8072,7 @@ impl serde::Serialize for ListAddressResponse {
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for ListAddressResponse {
+impl<'de> serde::Deserialize<'de> for ListAddressesResponse {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -8149,13 +8120,13 @@ impl<'de> serde::Deserialize<'de> for ListAddressResponse {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = ListAddressResponse;
+            type Value = ListAddressesResponse;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.ListAddressResponse")
+                formatter.write_str("struct pactus.ListAddressesResponse")
             }
 
-            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListAddressResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListAddressesResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -8177,16 +8148,16 @@ impl<'de> serde::Deserialize<'de> for ListAddressResponse {
                         }
                     }
                 }
-                Ok(ListAddressResponse {
+                Ok(ListAddressesResponse {
                     wallet_name: wallet_name__.unwrap_or_default(),
                     data: data__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.ListAddressResponse", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.ListAddressesResponse", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for ListWalletRequest {
+impl serde::Serialize for ListWalletsRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -8194,11 +8165,11 @@ impl serde::Serialize for ListWalletRequest {
     {
         use serde::ser::SerializeStruct;
         let len = 0;
-        let struct_ser = serializer.serialize_struct("pactus.ListWalletRequest", len)?;
+        let struct_ser = serializer.serialize_struct("pactus.ListWalletsRequest", len)?;
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for ListWalletRequest {
+impl<'de> serde::Deserialize<'de> for ListWalletsRequest {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -8237,27 +8208,27 @@ impl<'de> serde::Deserialize<'de> for ListWalletRequest {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = ListWalletRequest;
+            type Value = ListWalletsRequest;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.ListWalletRequest")
+                formatter.write_str("struct pactus.ListWalletsRequest")
             }
 
-            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListWalletRequest, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListWalletsRequest, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
                 while map_.next_key::<GeneratedField>()?.is_some() {
                     let _ = map_.next_value::<serde::de::IgnoredAny>()?;
                 }
-                Ok(ListWalletRequest {
+                Ok(ListWalletsRequest {
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.ListWalletRequest", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.ListWalletsRequest", FIELDS, GeneratedVisitor)
     }
 }
-impl serde::Serialize for ListWalletResponse {
+impl serde::Serialize for ListWalletsResponse {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -8268,14 +8239,14 @@ impl serde::Serialize for ListWalletResponse {
         if !self.wallets.is_empty() {
             len += 1;
         }
-        let mut struct_ser = serializer.serialize_struct("pactus.ListWalletResponse", len)?;
+        let mut struct_ser = serializer.serialize_struct("pactus.ListWalletsResponse", len)?;
         if !self.wallets.is_empty() {
             struct_ser.serialize_field("wallets", &self.wallets)?;
         }
         struct_ser.end()
     }
 }
-impl<'de> serde::Deserialize<'de> for ListWalletResponse {
+impl<'de> serde::Deserialize<'de> for ListWalletsResponse {
     #[allow(deprecated)]
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
@@ -8319,13 +8290,13 @@ impl<'de> serde::Deserialize<'de> for ListWalletResponse {
         }
         struct GeneratedVisitor;
         impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
-            type Value = ListWalletResponse;
+            type Value = ListWalletsResponse;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                formatter.write_str("struct pactus.ListWalletResponse")
+                formatter.write_str("struct pactus.ListWalletsResponse")
             }
 
-            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListWalletResponse, V::Error>
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListWalletsResponse, V::Error>
                 where
                     V: serde::de::MapAccess<'de>,
             {
@@ -8340,12 +8311,12 @@ impl<'de> serde::Deserialize<'de> for ListWalletResponse {
                         }
                     }
                 }
-                Ok(ListWalletResponse {
+                Ok(ListWalletsResponse {
                     wallets: wallets__.unwrap_or_default(),
                 })
             }
         }
-        deserializer.deserialize_struct("pactus.ListWalletResponse", FIELDS, GeneratedVisitor)
+        deserializer.deserialize_struct("pactus.ListWalletsResponse", FIELDS, GeneratedVisitor)
     }
 }
 impl serde::Serialize for LoadWalletRequest {

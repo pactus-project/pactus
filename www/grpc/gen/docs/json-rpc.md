@@ -254,16 +254,16 @@ curl --location 'http://localhost:8545/' \
           <span class="rpc-badge"></span> pactus.wallet.set_address_label</a>
         </li>
         <li>
-          <a href="#pactus.wallet.list_wallet">
-          <span class="rpc-badge"></span> pactus.wallet.list_wallet</a>
+          <a href="#pactus.wallet.list_wallets">
+          <span class="rpc-badge"></span> pactus.wallet.list_wallets</a>
         </li>
         <li>
           <a href="#pactus.wallet.get_wallet_info">
           <span class="rpc-badge"></span> pactus.wallet.get_wallet_info</a>
         </li>
         <li>
-          <a href="#pactus.wallet.list_address">
-          <span class="rpc-badge"></span> pactus.wallet.list_address</a>
+          <a href="#pactus.wallet.list_addresses">
+          <span class="rpc-badge"></span> pactus.wallet.list_addresses</a>
         </li>
         </ul>
     </li>
@@ -4024,34 +4024,41 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     </td>
   </tr>
      <tr>
-    <td class="fw-bold">address</td>
-    <td> string</td>
+    <td class="fw-bold">address_info</td>
+    <td> object (AddressInfo)</td>
     <td>
-    The queried address.
+    Detailed information about the address.
     </td>
   </tr>
      <tr>
-    <td class="fw-bold">label</td>
-    <td> string</td>
-    <td>
-    The address label.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">public_key</td>
-    <td> string</td>
-    <td>
-    The public key of the address.
-    </td>
-  </tr>
-     <tr>
-    <td class="fw-bold">path</td>
-    <td> string</td>
-    <td>
-    The Hierarchical Deterministic (HD) path of the address.
-    </td>
-  </tr>
-     </tbody>
+        <td class="fw-bold">address_info.address</td>
+        <td> string</td>
+        <td>
+        The address string.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">address_info.public_key</td>
+        <td> string</td>
+        <td>
+        The public key associated with the address.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">address_info.label</td>
+        <td> string</td>
+        <td>
+        A human-readable label associated with the address.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">address_info.path</td>
+        <td> string</td>
+        <td>
+        The Hierarchical Deterministic (HD) path of the address within the wallet.
+        </td>
+      </tr>
+         </tbody>
 </table>
 
 #### pactus.wallet.set_address_label <span id="pactus.wallet.set_address_label" class="rpc-badge"></span>
@@ -4126,9 +4133,9 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
      </tbody>
 </table>
 
-#### pactus.wallet.list_wallet <span id="pactus.wallet.list_wallet" class="rpc-badge"></span>
+#### pactus.wallet.list_wallets <span id="pactus.wallet.list_wallets" class="rpc-badge"></span>
 
-<p>ListWallet returns a list of all available wallets.</p>
+<p>ListWallets returns a list of all available wallets.</p>
 
 <h4>Parameters</h4>
 
@@ -4229,9 +4236,9 @@ Parameters has no fields.
      </tbody>
 </table>
 
-#### pactus.wallet.list_address <span id="pactus.wallet.list_address" class="rpc-badge"></span>
+#### pactus.wallet.list_addresses <span id="pactus.wallet.list_addresses" class="rpc-badge"></span>
 
-<p>ListAddress returns all addresses in the specified wallet.</p>
+<p>ListAddresses returns all addresses in the specified wallet.</p>
 
 <h4>Parameters</h4>
 
@@ -4245,6 +4252,21 @@ Parameters has no fields.
     <td> string</td>
     <td>
     The name of the queried wallet.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">address_types</td>
+    <td>repeated numeric</td>
+    <td>
+    (Enum)Filter addresses by their types. If empty, all address types are included.
+    <br>Available values:<ul>
+      <li>ADDRESS_TYPE_TREASURY = 0 (Treasury address type.
+Should not be used to generate new addresses.)</li>
+      <li>ADDRESS_TYPE_VALIDATOR = 1 (Validator address type used for validator nodes.)</li>
+      <li>ADDRESS_TYPE_BLS_ACCOUNT = 2 (Account address type with BLS signature scheme.)</li>
+      <li>ADDRESS_TYPE_ED25519_ACCOUNT = 3 (Account address type with Ed25519 signature scheme.
+Note: Generating a new Ed25519 address requires the wallet password.)</li>
+      </ul>
     </td>
   </tr>
   </tbody>

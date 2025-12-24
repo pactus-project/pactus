@@ -117,14 +117,14 @@ http:
     - selector: pactus.Wallet.SetAddressLabel
       patch: "/pactus/wallet/set_address_label"
 
-    - selector: pactus.Wallet.ListWallet
-      get: "/pactus/wallet/list_wallet"
+    - selector: pactus.Wallet.ListWallets
+      get: "/pactus/wallet/list_wallets"
 
     - selector: pactus.Wallet.GetWalletInfo
       get: "/pactus/wallet/get_wallet_info"
 
-    - selector: pactus.Wallet.ListAddress
-      get: "/pactus/wallet/list_address"
+    - selector: pactus.Wallet.ListAddresses
+      get: "/pactus/wallet/list_addresses"
 
     # Util APIs
     - selector: pactus.Utils.SignMessageWithPrivateKey

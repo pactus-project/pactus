@@ -5,11 +5,11 @@ package controller
 import (
 	"github.com/pactus-project/pactus/cmd/gtk/gtkutil"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
-	"github.com/pactus-project/pactus/wallet/vault"
+	"github.com/pactus-project/pactus/wallet/types"
 )
 
 type AddressDetailsModel interface {
-	AddressInfo(addr string) *vault.AddressInfo
+	AddressInfo(addr string) *types.AddressInfo
 }
 
 type AddressDetailsDialogController struct {

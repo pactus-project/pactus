@@ -2,7 +2,9 @@
 
 package assets
 
-import _ "embed"
+import (
+	_ "embed"
+)
 
 // Main window / widgets UI and CSS.
 

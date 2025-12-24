@@ -221,16 +221,10 @@ class GetAddressInfoRequest(_message.Message):
 class GetAddressInfoResponse(_message.Message):
     __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
-    ADDRESS_FIELD_NUMBER: _ClassVar[int]
-    LABEL_FIELD_NUMBER: _ClassVar[int]
-    PUBLIC_KEY_FIELD_NUMBER: _ClassVar[int]
-    PATH_FIELD_NUMBER: _ClassVar[int]
+    ADDRESS_INFO_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
-    address: str
-    label: str
-    public_key: str
-    path: str
-    def __init__(self, wallet_name: _Optional[str] = ..., address: _Optional[str] = ..., label: _Optional[str] = ..., public_key: _Optional[str] = ..., path: _Optional[str] = ...) -> None: ...
+    address_info: AddressInfo
+    def __init__(self, wallet_name: _Optional[str] = ..., address_info: _Optional[_Union[AddressInfo, _Mapping]] = ...) -> None: ...
 
 class SetAddressLabelRequest(_message.Message):
     __slots__ = ()
@@ -254,11 +248,11 @@ class SetAddressLabelResponse(_message.Message):
     label: str
     def __init__(self, wallet_name: _Optional[str] = ..., address: _Optional[str] = ..., label: _Optional[str] = ...) -> None: ...
 
-class ListWalletRequest(_message.Message):
+class ListWalletsRequest(_message.Message):
     __slots__ = ()
     def __init__(self) -> None: ...
 
-class ListWalletResponse(_message.Message):
+class ListWalletsResponse(_message.Message):
     __slots__ = ()
     WALLETS_FIELD_NUMBER: _ClassVar[int]
     wallets: _containers.RepeatedScalarFieldContainer[str]
@@ -288,13 +282,15 @@ class GetWalletInfoResponse(_message.Message):
     default_fee: int
     def __init__(self, wallet_name: _Optional[str] = ..., version: _Optional[int] = ..., network: _Optional[str] = ..., encrypted: _Optional[bool] = ..., uuid: _Optional[str] = ..., created_at: _Optional[int] = ..., default_fee: _Optional[int] = ...) -> None: ...
 
-class ListAddressRequest(_message.Message):
+class ListAddressesRequest(_message.Message):
     __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    ADDRESS_TYPES_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
-    def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
+    address_types: _containers.RepeatedScalarFieldContainer[AddressType]
+    def __init__(self, wallet_name: _Optional[str] = ..., address_types: _Optional[_Iterable[_Union[AddressType, str]]] = ...) -> None: ...
 
-class ListAddressResponse(_message.Message):
+class ListAddressesResponse(_message.Message):
     __slots__ = ()
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     DATA_FIELD_NUMBER: _ClassVar[int]

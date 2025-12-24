@@ -1055,8 +1055,11 @@
       "result": {
         "name": "fields",
         "schema": {
-          "type": "object","required": ["wallet_name","address","label","public_key","path"],
-          "properties": {"wallet_name": { "type": "string" },"address": { "type": "string" },"label": { "type": "string" },"public_key": { "type": "string" },"path": { "type": "string" }}
+          "type": "object","required": ["wallet_name","address_info"],
+          "properties": {"wallet_name": { "type": "string" },"address_info": {
+  "type": "object","required": ["address","public_key","label","path"],
+  "properties": {"address": { "type": "string" },"public_key": { "type": "string" },"label": { "type": "string" },"path": { "type": "string" }}
+}}
           }
         }
       },{
@@ -1089,8 +1092,8 @@
           }
         }
       },{
-      "name": "pactus.wallet.list_wallet",
-      "description": "ListWallet returns a list of all available wallets.",
+      "name": "pactus.wallet.list_wallets",
+      "description": "ListWallets returns a list of all available wallets.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
       "params": [],
@@ -1122,14 +1125,21 @@
           }
         }
       },{
-      "name": "pactus.wallet.list_address",
-      "description": "ListAddress returns all addresses in the specified wallet.",
+      "name": "pactus.wallet.list_addresses",
+      "description": "ListAddresses returns all addresses in the specified wallet.",
       "tags": [{ "name": "wallet"}],
       "paramStructure": "by-name",
       "params": [{
           "name": "wallet_name",
           "description": "The name of the queried wallet.",
           "schema": { "type": "string" }
+        },{
+          "name": "address_types",
+          "description": "Filter addresses by their types. If empty, all address types are included.",
+          "schema": {
+  "type": "array",
+  "items": { "type": "integer" }
+}
         }],
       "result": {
         "name": "fields",

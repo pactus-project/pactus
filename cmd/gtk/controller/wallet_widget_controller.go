@@ -5,6 +5,7 @@ package controller
 import (
 	"context"
 	"strconv"
+	"time"
 
 	"github.com/gotk3/gotk3/gdk"
 	"github.com/gotk3/gotk3/glib"
@@ -13,14 +14,13 @@ import (
 	"github.com/pactus-project/pactus/cmd/gtk/model"
 	"github.com/pactus-project/pactus/cmd/gtk/view"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/wallet"
+	"github.com/pactus-project/pactus/wallet/types"
 )
 
 type WalletWidgetModel interface {
 	WalletName() string
-	WalletPath() string
 	IsEncrypted() bool
-	WalletInfo() (wallet.Info, error)
+	WalletInfo() (*types.WalletInfo, error)
 	TotalBalance() (amount.Amount, error)
 	TotalStake() (amount.Amount, error)
 	AddressRows() []model.AddressRow
@@ -63,8 +63,13 @@ func (c *WalletWidgetController) Bind(h WalletWidgetHandlers) {
 	}
 	c.ctx, c.cancel = context.WithCancel(context.Background())
 
-	c.view.LabelName.SetText(c.model.WalletName())
-	c.view.LabelLocation.SetText(c.model.WalletPath())
+	info, err := c.model.WalletInfo()
+	if err == nil {
+		c.view.LabelName.SetText(c.model.WalletName())
+		c.view.LabelDriver.SetText(info.Driver)
+		c.view.LabelCreatedAt.SetText(info.CreatedAt.Format(time.RFC1123))
+		c.view.LabelLocation.SetText(info.Path)
+	}
 
 	// Toolbar actions via glade signals.
 	c.view.ConnectSignals(map[string]any{
@@ -160,15 +165,16 @@ func (c *WalletWidgetController) Refresh() {
 		rows := c.model.AddressRows()
 
 		// Update info lines.
-		encryptedStr := gtkutil.YesNo(c.model.IsEncrypted())
 
 		balance, _ := c.model.TotalBalance()
 		stake, _ := c.model.TotalStake()
 		balanceStr := balance.String()
 		stakeStr := stake.String()
 		feeStr := ""
+		encryptedStr := ""
 		if info, err := c.model.WalletInfo(); err == nil {
 			feeStr = info.DefaultFee.String()
+			encryptedStr = gtkutil.YesNo(info.Encrypted)
 		}
 
 		if ctx != nil {

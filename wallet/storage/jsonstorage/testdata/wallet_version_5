@@ -1,0 +1,70 @@
+{
+  "version": 5,
+  "uuid": "44156117-268a-49f0-a906-400659b7a051",
+  "created_at": "2024-08-27T16:45:08Z",
+  "network": 0,
+  "crc": 3937455804,
+  "default_fee": 20000000,
+  "vault": {
+    "type": 1,
+    "coin_type": 21888,
+    "encrypter": {
+      "method": "ARGON2ID-AES_256_CTR-MACV1",
+      "params": {
+        "iterations": "1",
+        "memory": "8",
+        "parallelism": "1",
+        "keylen": "48"
+      }
+    },
+    "key_store": "aLEdVCpZOJmZZz067JTxWivw/41sWooR+E2iM46WYjskjFTE3VviPzc9SQ6gba5g+8CWWcw1q1YT9x1XAg/QAt2Rd7zR2FKL+ACwCbmZ/H+lLPDBt3nlvOkD2qkxi2rjjLpbAtf2UjKrW2b3+/KxSJGuG5GPIqPvPonqHhSWrF1j0nnKqm+btD1gaeJ5IRLchi27BNorMR4qvETMeV7YjkvZlrEFdNffqpWee+o4+bnr33MwysXm4hZU1c4/zzMIODAyxsMRgbrfTDfdQ19c0yjYmDGAPDpAqNAvMmDL07nGKR2f",
+    "purposes": {
+      "purpose_bls": {
+        "xpub_account": "xpublic1pqdwnqqyqsp2spqqpqqqgqgxj6mlduay8ase6hkefwa2lk2esz0gn2yu59tnk3w2tgnlfk5hleuqxpqdlt5q2f207qrwq9gasqscpckjv8hggc57n044gvml7u05cpzu8ra0zq2s3x3mak6xhtzga27tdx5pypnqxhlkf9aedptzcsd8l3q6m7ch6g4lphzsdv20fvc3dsu7mlj8kdy3n5fyllg07wecmpr8y6nsr95zlz",
+        "xpub_validator": "xpublic1pqdwnqqyqsp2spqqzqqqgqgx4n38q9n6qtvgrnx5r8atntrfnj4thwj6my5tx8tfe6ex6p89y7qqxptrfzgmnu62rut65lddgxl5nujdn82tusz5w2wqpjqpdpgplj0zx3gaaz9wv93yqcls6clepehlvhsvdp2ndwphhmag3j3hgsfxxz434hduxvqq4n8njxh4x9mnal2wma4sw5kp6y680tkut62gk6trfjscmsdumc",
+        "next_account_index": 1,
+        "next_validator_index": 1
+      },
+      "purpose_bip44": {
+        "next_ed25519_index": 1
+      }
+    }
+  },
+  "addresses": {
+    "pc1p4xuja689hg2434yhr32clhn97x6afw58qlrcyd": {
+      "address": "pc1p4xuja689hg2434yhr32clhn97x6afw58qlrcyd",
+      "public_key": "public1p3wmdecume03kehtcaks95jjyem2m7pev0da2yx7t0gws66nkgp7vaah5sdd5gv0s4d34y0nqxch0cqq7fnsy9v46kum7e46gx9dua4sss7ne57m5c776h0e9dt0dw8hv24uushps9arv0zk8dc2xe0k7pgk588tf",
+      "label": "Imported Validator Address",
+      "path": "m/65535'/21888'/1'/0'"
+    },
+    "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns": {
+      "address": "pc1z4xuja689hg2434yhr32clhn97x6afw58a5n9ns",
+      "public_key": "public1p3wmdecume03kehtcaks95jjyem2m7pev0da2yx7t0gws66nkgp7vaah5sdd5gv0s4d34y0nqxch0cqq7fnsy9v46kum7e46gx9dua4sss7ne57m5c776h0e9dt0dw8hv24uushps9arv0zk8dc2xe0k7pgk588tf",
+      "label": "Imported Reward Address",
+      "path": "m/65535'/21888'/2'/0'"
+    },
+    "pc1pjneygutecly9gtandrdt8j36v8g4fl42k4y5xp": {
+      "address": "pc1pjneygutecly9gtandrdt8j36v8g4fl42k4y5xp",
+      "public_key": "public1p3mzchmke52mghze9mlsnszvj8jueggxxa9n3va8zhpjzgys82zje93ajrhaye7flzv54g4ydhlauupr5zh4ffsem80xyflzyzkeh79prnkx9jtyxe24kvpkrtfg0f6a6rma8v6x4nsc786s4f35a8ankcueym98h",
+      "label": "Validator Address",
+      "path": "m/12381'/21888'/1'/0"
+    },
+    "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf": {
+      "address": "pc1z0m0vw8sjfgv7f2zgq2hfxutg8rwn7gpffhe8tf",
+      "public_key": "public1p5dwsgfwmacjpuhaxhy0522j87qc5390v56ndh92f7flxge7vt3zfuxlvuwpnk7tdeed4s4l2r5nj5zuyjfh0uzjmvrauf4t5xfvff5cpljvpqqpk7pzhv0hxfhf9gt5896vnllsf89ux8kc7anqlu7nxvvxcclw7",
+      "label": "BLS Account Address",
+      "path": "m/12381'/21888'/2'/0"
+    },
+    "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3": {
+      "address": "pc1rcx9x55nfme5juwdgxd2ksjdcmhvmvkrygmxpa3",
+      "public_key": "public1rd5p573yq3j5wkvnasslqa7ne5vw87qcj5a0wlwxcj2t2xlaca9lstzm8u5",
+      "label": "Ed25519 Account Address",
+      "path": "m/44'/21888'/3'/0'"
+    }
+  },
+  "history": {
+    "transactions": null,
+    "activities": null,
+    "pendings": null
+  }
+}

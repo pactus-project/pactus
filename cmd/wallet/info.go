@@ -24,9 +24,11 @@ func buildInfoCmd(parentCmd *cobra.Command) {
 
 		terminal.PrintInfoMsgf("Version: %d", info.Version)
 		terminal.PrintInfoMsgf("UUID: %s", info.UUID)
-		terminal.PrintInfoMsgf("Default fee: %s", info.DefaultFee.String())
-		terminal.PrintInfoMsgf("Created at: %s", info.CreatedAt.Format(time.RFC3339))
-		terminal.PrintInfoMsgf("Is encrtypted: %t", info.Encrypted)
+		terminal.PrintInfoMsgf("Driver: %s", info.Driver)
+		terminal.PrintInfoMsgf("Created At: %s", info.CreatedAt.Format(time.RFC1123))
+		terminal.PrintInfoMsgf("Default Fee: %s", info.DefaultFee.String())
+		terminal.PrintInfoMsgf("Encrypted: %t", info.Encrypted)
+		terminal.PrintInfoMsgf("Neutered: %t", info.Neutered)
 		terminal.PrintInfoMsgf("Network: %s", info.Network)
 	}
 }

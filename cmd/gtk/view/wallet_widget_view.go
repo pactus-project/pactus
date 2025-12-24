@@ -16,6 +16,8 @@ type WalletWidgetView struct {
 
 	TreeViewWallet    *gtk.TreeView
 	LabelName         *gtk.Label
+	LabelDriver       *gtk.Label
+	LabelCreatedAt    *gtk.Label
 	LabelLocation     *gtk.Label
 	LabelEncrypted    *gtk.Label
 	LabelTotalBalance *gtk.Label
@@ -62,6 +64,8 @@ func NewWalletWidgetView(columnTypes ...glib.Type) (*WalletWidgetView, error) {
 
 		TreeViewWallet: treeViewWallet,
 		LabelName:      builder.GetLabelObj("id_label_wallet_name"),
+		LabelDriver:    builder.GetLabelObj("id_label_wallet_driver"),
+		LabelCreatedAt: builder.GetLabelObj("id_label_wallet_created_at"),
 		LabelLocation:  builder.GetLabelObj("id_label_wallet_location"),
 		LabelEncrypted: builder.GetLabelObj("id_label_wallet_encrypted"),
 

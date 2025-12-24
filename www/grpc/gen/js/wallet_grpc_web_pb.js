@@ -870,61 +870,61 @@ proto.pactus.WalletPromiseClient.prototype.setAddressLabel =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.pactus.ListWalletRequest,
- *   !proto.pactus.ListWalletResponse>}
+ *   !proto.pactus.ListWalletsRequest,
+ *   !proto.pactus.ListWalletsResponse>}
  */
-const methodDescriptor_Wallet_ListWallet = new grpc.web.MethodDescriptor(
-  '/pactus.Wallet/ListWallet',
+const methodDescriptor_Wallet_ListWallets = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/ListWallets',
   grpc.web.MethodType.UNARY,
-  proto.pactus.ListWalletRequest,
-  proto.pactus.ListWalletResponse,
+  proto.pactus.ListWalletsRequest,
+  proto.pactus.ListWalletsResponse,
   /**
-   * @param {!proto.pactus.ListWalletRequest} request
+   * @param {!proto.pactus.ListWalletsRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.pactus.ListWalletResponse.deserializeBinary
+  proto.pactus.ListWalletsResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.pactus.ListWalletRequest} request The
+ * @param {!proto.pactus.ListWalletsRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.pactus.ListWalletResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.ListWalletsResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.pactus.ListWalletResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.ListWalletsResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.pactus.WalletClient.prototype.listWallet =
+proto.pactus.WalletClient.prototype.listWallets =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/pactus.Wallet/ListWallet',
+      '/pactus.Wallet/ListWallets',
       request,
       metadata || {},
-      methodDescriptor_Wallet_ListWallet,
+      methodDescriptor_Wallet_ListWallets,
       callback);
 };
 
 
 /**
- * @param {!proto.pactus.ListWalletRequest} request The
+ * @param {!proto.pactus.ListWalletsRequest} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.pactus.ListWalletResponse>}
+ * @return {!Promise<!proto.pactus.ListWalletsResponse>}
  *     Promise that resolves to the response
  */
-proto.pactus.WalletPromiseClient.prototype.listWallet =
+proto.pactus.WalletPromiseClient.prototype.listWallets =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/pactus.Wallet/ListWallet',
+      '/pactus.Wallet/ListWallets',
       request,
       metadata || {},
-      methodDescriptor_Wallet_ListWallet);
+      methodDescriptor_Wallet_ListWallets);
 };
 
 
@@ -992,61 +992,61 @@ proto.pactus.WalletPromiseClient.prototype.getWalletInfo =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.pactus.ListAddressRequest,
- *   !proto.pactus.ListAddressResponse>}
+ *   !proto.pactus.ListAddressesRequest,
+ *   !proto.pactus.ListAddressesResponse>}
  */
-const methodDescriptor_Wallet_ListAddress = new grpc.web.MethodDescriptor(
-  '/pactus.Wallet/ListAddress',
+const methodDescriptor_Wallet_ListAddresses = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/ListAddresses',
   grpc.web.MethodType.UNARY,
-  proto.pactus.ListAddressRequest,
-  proto.pactus.ListAddressResponse,
+  proto.pactus.ListAddressesRequest,
+  proto.pactus.ListAddressesResponse,
   /**
-   * @param {!proto.pactus.ListAddressRequest} request
+   * @param {!proto.pactus.ListAddressesRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.pactus.ListAddressResponse.deserializeBinary
+  proto.pactus.ListAddressesResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.pactus.ListAddressRequest} request The
+ * @param {!proto.pactus.ListAddressesRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.pactus.ListAddressResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.ListAddressesResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.pactus.ListAddressResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.ListAddressesResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.pactus.WalletClient.prototype.listAddress =
+proto.pactus.WalletClient.prototype.listAddresses =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/pactus.Wallet/ListAddress',
+      '/pactus.Wallet/ListAddresses',
       request,
       metadata || {},
-      methodDescriptor_Wallet_ListAddress,
+      methodDescriptor_Wallet_ListAddresses,
       callback);
 };
 
 
 /**
- * @param {!proto.pactus.ListAddressRequest} request The
+ * @param {!proto.pactus.ListAddressesRequest} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.pactus.ListAddressResponse>}
+ * @return {!Promise<!proto.pactus.ListAddressesResponse>}
  *     Promise that resolves to the response
  */
-proto.pactus.WalletPromiseClient.prototype.listAddress =
+proto.pactus.WalletPromiseClient.prototype.listAddresses =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/pactus.Wallet/ListAddress',
+      '/pactus.Wallet/ListAddresses',
       request,
       metadata || {},
-      methodDescriptor_Wallet_ListAddress);
+      methodDescriptor_Wallet_ListAddresses);
 };
 
 
