@@ -16,7 +16,7 @@ import (
 
 type TxWithdrawModel interface {
 	WalletInfo() (types.WalletInfo, error)
-	ListAddresses(opts ...types.ListAddressOption) []types.AddressInfo
+	ListAddresses(opts ...wallet.ListAddressOption) []types.AddressInfo
 	AddressInfo(addr string) *types.AddressInfo
 	Stake(addr string) (amount.Amount, error)
 
@@ -64,12 +64,12 @@ func (c *TxWithdrawDialogController) applyDefaults() {
 }
 
 func (c *TxWithdrawDialogController) populateCombos() {
-	for _, ai := range c.model.ListAddresses(types.OnlyValidatorAddresses()) {
+	for _, ai := range c.model.ListAddresses(wallet.OnlyValidatorAddresses()) {
 		c.view.ValidatorCombo.Append(ai.Address, ai.Address)
 	}
 	c.view.ValidatorCombo.SetActive(0)
 
-	for _, ai := range c.model.ListAddresses(types.OnlyAccountAddresses()) {
+	for _, ai := range c.model.ListAddresses(wallet.OnlyAccountAddresses()) {
 		c.view.ReceiverCombo.Append(ai.Address, ai.Address)
 	}
 }

@@ -11,3 +11,4 @@ type NodeModel struct {
 func NewNodeModel(n *node.Node) *NodeModel {
 	return &NodeModel{Node: n}
 }
+

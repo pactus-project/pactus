@@ -1,7 +1,6 @@
 package wallet_test
 
 import (
-	"context"
 	"strings"
 	"testing"
 	"time"
@@ -45,7 +44,7 @@ func setup(t *testing.T) *testData {
 	}
 
 	mockState := state.MockingState(ts)
-	gRPCServer := grpc.NewServer(context.Background(),
+	gRPCServer := grpc.NewServer(t.Context(),
 		grpcConf, mockState,
 		nil, nil, nil, nil, nil)
 
@@ -86,18 +85,20 @@ func TestOpenWallet(t *testing.T) {
 	})
 
 	t.Run("Invalid data", func(t *testing.T) {
-		assert.NoError(t, util.WriteFile(td.wallet.Path(), []byte("invalid_data")))
+		path := util.TempFilePath()
+		assert.NoError(t, util.WriteFile(path, []byte("invalid_data")))
 
-		_, err := wallet.Open(td.wallet.Path())
+		_, err := wallet.Open(path)
 		assert.Error(t, err)
 	})
 
 	t.Run("Open custom wallet", func(t *testing.T) {
-		_, err := wallet.Open(td.wallet.Path(),
+		wlt, err := wallet.Open(td.wallet.Path(),
 			wallet.WithTimeout(time.Second),
-			wallet.WithCustomServers([]string{"1.1.1.1"}),
 			wallet.WithOfflineMode())
 		assert.NoError(t, err)
+
+		assert.True(t, wlt.IsOffline())
 	})
 }
 
@@ -133,6 +134,23 @@ func TestRecoverWallet(t *testing.T) {
 		_, err := wallet.Create(walletPath, mnemonic, password, genesis.Mainnet)
 		assert.NoError(t, err)
 	})
+}
+
+func TestSetDefaultFee(t *testing.T) {
+	td := setup(t)
+
+	fee := td.RandFee()
+	err := td.wallet.SetDefaultFee(fee)
+	require.NoError(t, err)
+
+	assert.Equal(t, fee, td.wallet.Info().DefaultFee)
+}
+
+func TestMnemonic(t *testing.T) {
+	td := setup(t)
+
+	mnemonic, _ := td.wallet.Mnemonic(td.password)
+	assert.NoError(t, wallet.CheckMnemonic(mnemonic))
 }
 
 func TestSignMessage(t *testing.T) {
@@ -547,31 +565,6 @@ func TestTotalStake(t *testing.T) {
 	require.Equal(t, stake, val1.Stake()+val2.Stake())
 }
 
-func TestTestnetWallet(t *testing.T) {
-	td := setup(t)
-
-	walletPath := util.TempFilePath()
-
-	t.Run("Create Testnet wallet", func(t *testing.T) {
-		mnemonic, _ := wallet.GenerateMnemonic(128)
-		wlt, err := wallet.Create(walletPath, mnemonic, td.password, genesis.Testnet)
-		assert.NoError(t, err)
-		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
-
-		addr, err := wlt.NewBLSAccountAddress("testnet-addr-1")
-		assert.Equal(t, "m/12381'/21777'/2'/0", addr.Path)
-	})
-
-	t.Run("Open Testnet wallet", func(t *testing.T) {
-		wlt, err := wallet.Open(walletPath)
-		assert.NoError(t, err)
-		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
-
-		addr, err := wlt.NewBLSAccountAddress("testnet-addr-2")
-		assert.Equal(t, "m/12381'/21777'/2'/1", addr.Path)
-	})
-}
-
 func TestGetServerList(t *testing.T) {
 	t.Run("Get mainnet servers", func(t *testing.T) {
 		servers, err := wallet.GetServerList("mainnet")
@@ -638,111 +631,69 @@ func TestAddressCount(t *testing.T) {
 	_, _ = td.wallet.NewEd25519AccountAddress("addr-3", td.password)
 
 	assert.Equal(t, 3, td.wallet.AddressCount())
-
-	// // Neutered
-	// neutered := td.wallet.Neuter()
-	// assert.Equal(t, 6, neutered.AddressCount())
 }
 
-// func TestHasAddress(t *testing.T) {
-// 	td := setup(t)
+func TestHasAddress(t *testing.T) {
+	td := setup(t)
 
-// 	t.Run("Vault should contain all known addresses", func(t *testing.T) {
-// 		infos := td.storage.AddressInfos()
-// 		for _, i := range infos {
-// 			assert.True(t, td.vault.HasAddress(i.Address))
-// 		}
-// 	})
+	info, _ := td.wallet.NewEd25519AccountAddress("test-addr", td.password)
 
-// 	t.Run("Vault should not contain unknown address", func(t *testing.T) {
-// 		unknownAddr := td.RandAccAddress().String()
-// 		assert.False(t, td.vault.HasAddress(unknownAddr))
-// 	})
-// }
+	t.Run("Known address", func(t *testing.T) {
+		assert.True(t, td.wallet.HasAddress(info.Address))
+	})
 
-// func TestSortAddressInfo(t *testing.T) {
-// 	td := setup(t)
+	t.Run("Unknown address", func(t *testing.T) {
+		unknownAddr := td.RandAccAddress().String()
+		assert.False(t, td.wallet.HasAddress(unknownAddr))
+	})
+}
 
-// 	infos := td.storage.AddressInfos()
+func TestListAddresses(t *testing.T) {
+	td := setup(t)
 
-// 	// Ed25519 Keys
-// 	assert.Equal(t, "m/44'/21888'/3'/0'", infos[0].Path)
-// 	// BLS Keys
-// 	assert.Equal(t, "m/12381'/21888'/1'/0", infos[1].Path)
-// 	assert.Equal(t, "m/12381'/21888'/2'/0", infos[2].Path)
-// 	// Imported Keys
-// 	assert.Equal(t, "m/65535'/21888'/1'/0'", infos[3].Path)
-// 	assert.Equal(t, "m/65535'/21888'/2'/0'", infos[4].Path)
-// 	assert.Equal(t, "m/65535'/21888'/3'/1'", infos[5].Path)
-// }
+	_, prv1 := td.RandBLSKeyPair()
+	_, prv2 := td.RandEd25519KeyPair()
+	_ = td.wallet.ImportBLSPrivateKey(td.password, prv1)
+	_ = td.wallet.ImportEd25519PrivateKey(td.password, prv2)
 
-// func TestListAccountAddresses(t *testing.T) {
-// 	td := setup(t)
+	_, _ = td.wallet.NewValidatorAddress("addr-1")
+	_, _ = td.wallet.NewBLSAccountAddress("addr-2")
+	_, _ = td.wallet.NewEd25519AccountAddress("addr-3", td.password)
 
-// 	accountAddrs := td.vault.ListAccountAddresses()
-// 	for _, i := range accountAddrs {
-// 		path, err := addresspath.FromString(i.Path)
-// 		assert.NoError(t, err)
+	t.Run("List should be sorted", func(t *testing.T) {
+		infos := td.wallet.ListAddresses()
 
-// 		assert.NotEqual(t, _H(crypto.AddressTypeValidator), path.AddressType())
-// 	}
-// }
+		// Ed25519 Keys
+		assert.Equal(t, "m/44'/21888'/3'/0'", infos[0].Path)
+		// BLS Keys
+		assert.Equal(t, "m/12381'/21888'/1'/0", infos[1].Path)
+		assert.Equal(t, "m/12381'/21888'/2'/0", infos[2].Path)
+		// Imported Keys
+		assert.Equal(t, "m/65535'/21888'/1'/0'", infos[3].Path)
+		assert.Equal(t, "m/65535'/21888'/2'/0'", infos[4].Path)
+		assert.Equal(t, "m/65535'/21888'/3'/1'", infos[5].Path)
+	})
 
-// func TestListValidatorAddresses(t *testing.T) {
-// 	td := setup(t)
+	t.Run("Only account addresses", func(t *testing.T) {
+		infos := td.wallet.ListAddresses(wallet.OnlyAccountAddresses())
 
-// 	validatorAddrs := td.vault.ListValidatorAddresses()
-// 	for _, i := range validatorAddrs {
-// 		info := td.storage.AddressInfo(i.Address)
-// 		assert.Equal(t, i.Address, info.Address)
+		for _, i := range infos {
+			addr, _ := crypto.AddressFromString(i.Address)
 
-// 		path, _ := addresspath.FromString(info.Path)
+			assert.True(t, addr.IsAccountAddress())
+		}
+	})
 
-// 		switch path.Purpose() {
-// 		case _H(PurposeBLS12381):
-// 			assert.Equal(t, fmt.Sprintf("m/%d'/%d'/1'/%d",
-// 				PurposeBLS12381, td.vault.CoinType, path.AddressIndex()), info.Path)
-// 		case _H(PurposeImportPrivateKey):
-// 			assert.Equal(t, fmt.Sprintf("m/%d'/%d'/1'/%d'",
-// 				PurposeImportPrivateKey, td.vault.CoinType, _N(path.AddressIndex())), info.Path)
-// 		default:
-// 			assert.Fail(t, "not supported")
-// 		}
-// 	}
-// }
+	t.Run("Only validator addresses", func(t *testing.T) {
+		infos := td.wallet.ListAddresses(wallet.OnlyValidatorAddresses())
 
-// func TestSortListValidatorAddresses(t *testing.T) {
-// 	td := setup(t)
+		for _, i := range infos {
+			addr, _ := crypto.AddressFromString(i.Address)
 
-// 	validatorAddrs := td.vault.ListValidatorAddresses()
-
-// 	assert.Equal(t, "m/12381'/21888'/1'/0", validatorAddrs[0].Path)
-// 	assert.Equal(t, "m/65535'/21888'/1'/0'", validatorAddrs[len(validatorAddrs)-1].Path)
-// }
-
-// func TestAddressFromPath(t *testing.T) {
-// 	o
-// 	td := setup(t)
-
-// 	t.Run("Could not find address from path", func(t *testing.T) {
-// 		path := "m/12381'/26888'/983'/0"
-// 		assert.Nil(t, td.vault.AddressFromPath(path))
-// 	})
-
-// 	t.Run("Ok", func(t *testing.T) {
-// 		var address string
-// 		var addrInfo AddressInfo
-
-// 		for addr, ai := range td.vault.Addresses {
-// 			address = addr
-// 			addrInfo = ai
-
-// 			break
-// 		}
-
-// 		assert.Equal(t, address, td.vault.AddressFromPath(addrInfo.Path).Address)
-// 	})
-// }
+			assert.True(t, addr.IsValidatorAddress())
+		}
+	})
+}
 
 func TestNewValidatorAddress(t *testing.T) {
 	td := setup(t)
@@ -778,12 +729,12 @@ func TestNewE225519AccountAddress(t *testing.T) {
 	td := setup(t)
 
 	label := td.RandString(16)
-	addressInfo, err := td.wallet.NewEd25519AccountAddress("ed-addr", td.password)
+	addressInfo, err := td.wallet.NewEd25519AccountAddress(label, td.password)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, addressInfo.Address)
 	assert.NotEmpty(t, addressInfo.PublicKey)
 	assert.Equal(t, label, addressInfo.Label)
-	assert.Equal(t, "m/44'/21888'/3'/1'/0'", addressInfo.Path)
+	assert.Equal(t, "m/44'/21888'/3'/0'", addressInfo.Path)
 
 	pub, _ := ed25519.PublicKeyFromString(addressInfo.PublicKey)
 	assert.Equal(t, pub.AccountAddress().String(), addressInfo.Address)
@@ -836,33 +787,66 @@ func TestImportEd25519PrivateKey(t *testing.T) {
 	})
 }
 
-// func TestSetLabel(t *testing.T) {
-// 	td := setup(t)
+func TestSetAddressLabel(t *testing.T) {
+	td := setup(t)
 
-// 	t.Run("Set label for unknown address", func(t *testing.T) {
-// 		invAddr := td.RandAccAddress().String()
-// 		err := td.vault.SetLabel(invAddr, "i have label")
-// 		assert.ErrorIs(t, err, NewErrAddressNotFound(invAddr))
-// 		assert.Equal(t, "", td.vault.Label(invAddr))
-// 	})
+	testAddr, _ := td.wallet.NewBLSAccountAddress("")
 
-// 	t.Run("Update label", func(t *testing.T) {
-// 		testAddr := td.storage.AddressInfos()[0].Address
-// 		err := td.vault.SetLabel(testAddr, "I have a label")
-// 		assert.NoError(t, err)
-// 		assert.Equal(t, "I have a label", td.vault.Label(testAddr))
-// 	})
+	t.Run("Set label for unknown address", func(t *testing.T) {
+		invAddr := td.RandAccAddress().String()
+		err := td.wallet.SetAddressLabel(invAddr, "i have label")
+		assert.ErrorIs(t, err, wallet.NewErrAddressNotFound(invAddr))
+		assert.Empty(t, td.wallet.AddressLabel(invAddr))
+	})
 
-// 	t.Run("Remove label", func(t *testing.T) {
-// 		testAddr := td.storage.AddressInfos()[0].Address
-// 		err := td.vault.SetLabel(testAddr, "")
-// 		assert.NoError(t, err)
-// 		var ok bool
-// 		l := td.vault.Label(testAddr)
-// 		if strings.TrimSpace(l) != "" {
-// 			ok = true
-// 		}
-// 		assert.Empty(t, td.vault.Label(testAddr))
-// 		assert.False(t, ok)
-// 	})
-// }
+	t.Run("Update label", func(t *testing.T) {
+		err := td.wallet.SetAddressLabel(testAddr.Address, "I have a label")
+		assert.NoError(t, err)
+		assert.Equal(t, "I have a label", td.wallet.AddressLabel(testAddr.Address))
+	})
+
+	t.Run("Remove label", func(t *testing.T) {
+		err := td.wallet.SetAddressLabel(testAddr.Address, "")
+		assert.NoError(t, err)
+		assert.Empty(t, td.wallet.AddressLabel(testAddr.Address))
+	})
+}
+
+func TestNeuter(t *testing.T) {
+	td := setup(t)
+
+	path := util.TempFilePath()
+	err := td.wallet.Neuter(path)
+	require.NoError(t, err)
+
+	wlt, err := wallet.Open(path)
+	require.NoError(t, err)
+
+	assert.True(t, wlt.Info().Neutered)
+	assert.False(t, wlt.Info().Encrypted)
+}
+
+func TestTestnetWallet(t *testing.T) {
+	td := setup(t)
+
+	walletPath := util.TempFilePath()
+
+	t.Run("Create Testnet wallet", func(t *testing.T) {
+		mnemonic, _ := wallet.GenerateMnemonic(128)
+		wlt, err := wallet.Create(walletPath, mnemonic, td.password, genesis.Testnet)
+		assert.NoError(t, err)
+		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
+
+		addr, err := wlt.NewBLSAccountAddress("testnet-addr-1")
+		assert.Equal(t, "m/12381'/21777'/2'/0", addr.Path)
+	})
+
+	t.Run("Open Testnet wallet", func(t *testing.T) {
+		wlt, err := wallet.Open(walletPath)
+		assert.NoError(t, err)
+		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
+
+		addr, err := wlt.NewBLSAccountAddress("testnet-addr-2")
+		assert.Equal(t, "m/12381'/21777'/2'/1", addr.Path)
+	})
+}

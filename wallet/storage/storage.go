@@ -22,4 +22,6 @@ type IStorage interface {
 	AddActivity(addr string, amt amount.Amount, trx *pactus.GetTransactionResponse) error
 	HasTransaction(id string) bool
 	GetAddrHistory(addr string) []types.HistoryInfo
+
+	Clone(path string) (IStorage, error)
 }

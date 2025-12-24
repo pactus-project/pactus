@@ -55,3 +55,4 @@ var TxUnbondDialogUI []byte
 
 //go:embed ui/dialog_transaction_withdraw.ui
 var TxWithdrawDialogUI []byte
+

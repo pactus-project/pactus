@@ -109,7 +109,7 @@ type openWalletConfig struct {
 	offline bool
 }
 
-var defaultOpenWalletConfig = &openWalletConfig{
+var defaultOpenWalletConfig = openWalletConfig{
 	timeout: 5 * time.Second,
 	servers: make([]string, 0),
 	offline: false,
@@ -138,7 +138,7 @@ func WithOfflineMode() OpenWalletOption {
 func openWallet(walletPath string, storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
 	cfg := defaultOpenWalletConfig
 	for _, opt := range opts {
-		opt(cfg)
+		opt(&cfg)
 	}
 
 	addressMap := make(map[string]types.AddressInfo)
@@ -221,11 +221,15 @@ func (w *Wallet) IsEncrypted() bool {
 
 // Neuter clones the wallet and neuters it and saves it at the given path.
 func (w *Wallet) Neuter(path string) error {
-	// w.storage.Vault().Neuter(path)
+	cloned, err := w.storage.Clone(path)
+	if err != nil {
+		return err
+	}
 
-	// return w.storage.Vault().Neuter(path)
+	vault := cloned.Vault()
+	vault.Neuter()
 
-	return nil
+	return cloned.UpdateVault(vault)
 }
 
 // RecoveryAddresses recovers active addresses in the wallet.
@@ -460,7 +464,7 @@ type listAddressConfig struct {
 	addressTypes []crypto.AddressType
 }
 
-var defaultListAddressConfig = &listAddressConfig{
+var defaultListAddressConfig = listAddressConfig{
 	addressTypes: []crypto.AddressType{},
 }
 
@@ -501,7 +505,7 @@ func OnlyAccountAddresses() ListAddressOption {
 func (w *Wallet) ListAddresses(opts ...ListAddressOption) []types.AddressInfo {
 	cfg := defaultListAddressConfig
 	for _, opt := range opts {
-		opt(cfg)
+		opt(&cfg)
 	}
 
 	infos := make([]types.AddressInfo, 0)
@@ -649,7 +653,7 @@ type newAddressConfig struct {
 	password string
 }
 
-var defaultNewAddressConfig = &newAddressConfig{
+var defaultNewAddressConfig = newAddressConfig{
 	password: "",
 }
 
@@ -667,7 +671,7 @@ func (w *Wallet) NewAddress(addressType crypto.AddressType, label string, opts .
 ) (*types.AddressInfo, error) {
 	cfg := defaultNewAddressConfig
 	for _, opt := range opts {
-		opt(cfg)
+		opt(&cfg)
 	}
 
 	vault := w.storage.Vault()

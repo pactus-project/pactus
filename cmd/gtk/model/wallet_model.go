@@ -89,7 +89,7 @@ func (model *WalletModel) AddressInfo(addr string) *types.AddressInfo {
 	return info
 }
 
-func (model *WalletModel) ListAddresses(opts ...types.ListAddressOption) []types.AddressInfo {
+func (model *WalletModel) ListAddresses(opts ...wallet.ListAddressOption) []types.AddressInfo {
 	infos, err := model.Node.WalletManager().ListAddresses(model.WalletKey, opts...)
 	if err != nil {
 		return nil
@@ -125,7 +125,7 @@ func (model *WalletModel) SetDefaultFee(fee amount.Amount) error {
 func (model *WalletModel) NewAddress(
 	addressType crypto.AddressType,
 	label string,
-	opts ...types.NewAddressOption,
+	opts ...wallet.NewAddressOption,
 ) (*types.AddressInfo, error) {
 	return model.Node.WalletManager().NewAddress(model.WalletKey, addressType, label, opts...)
 }

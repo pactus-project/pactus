@@ -20,7 +20,6 @@ import (
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/util/downloader"
 	"github.com/pactus-project/pactus/wallet"
-	"github.com/pactus-project/pactus/wallet/types"
 )
 
 type assistantFunc func(assistant *gtk.Assistant, content gtk.IWidget, name,
@@ -477,7 +476,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 			}
 
 			nodeInfo += "\n🏛️ Validator Addresses:\n"
-			for i, info := range nodeWallet.ListAddresses(types.OnlyValidatorAddresses()) {
+			for i, info := range nodeWallet.ListAddresses(wallet.OnlyValidatorAddresses()) {
 				nodeInfo += fmt.Sprintf("%v- %s\n", i+1, info.Address)
 			}
 

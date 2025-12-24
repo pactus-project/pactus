@@ -8,6 +8,7 @@ import (
 	"github.com/pactus-project/pactus/types/amount"
 	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/vault"
 	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
@@ -82,6 +83,7 @@ func (s *Storage) WalletInfo() *types.WalletInfo {
 		DefaultFee: s.store.DefaultFee,
 		UUID:       s.store.UUID.String(),
 		Encrypted:  s.store.Vault.IsEncrypted(),
+		Neutered:   s.store.Vault.IsNeutered(),
 		CreatedAt:  s.store.CreatedAt,
 	}
 }
@@ -141,4 +143,28 @@ func (s *Storage) AddActivity(addr string, amt amount.Amount, trx *pactus.GetTra
 	s.store.History.addActivity(addr, amt, trx)
 
 	return s.save()
+}
+
+func (s *Storage) Clone(path string) (storage.IStorage, error) {
+	cloned := store{
+		Version:    s.store.Version,
+		UUID:       uuid.New(),
+		CreatedAt:  util.RoundNow(1),
+		Network:    s.store.Network,
+		DefaultFee: s.store.DefaultFee,
+		Vault:      s.store.Vault,
+		Addresses:  s.store.Addresses,
+	}
+
+	strg := &Storage{
+		path:  path,
+		store: cloned,
+	}
+
+	err := strg.save()
+	if err != nil {
+		return nil, err
+	}
+
+	return strg, nil
 }

@@ -17,7 +17,7 @@ import (
 
 type TxTransferModel interface {
 	WalletInfo() (types.WalletInfo, error)
-	ListAddresses(opts ...types.ListAddressOption) []types.AddressInfo
+	ListAddresses(opts ...wallet.ListAddressOption) []types.AddressInfo
 	AddressInfo(addr string) *types.AddressInfo
 	Balance(addr string) (amount.Amount, error)
 
@@ -56,7 +56,7 @@ func (c *TxTransferDialogController) Run() {
 	}
 
 	// Fill sender accounts
-	for _, ai := range c.model.ListAddresses(types.OnlyAccountAddresses()) {
+	for _, ai := range c.model.ListAddresses(wallet.OnlyAccountAddresses()) {
 		c.view.SenderCombo.Append(ai.Address, ai.Address)
 	}
 	c.view.SenderCombo.SetActive(0)

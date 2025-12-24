@@ -24,9 +24,6 @@ func TestCreate(t *testing.T) {
 	assert.Equal(t, vlt, strg.Vault())
 }
 
-func TestOpen(t *testing.T) {
-}
-
 func TestOpenNeuterWallet(t *testing.T) {
 	data, err := util.ReadFile("./testdata/neuter_wallet")
 	require.NoError(t, err)

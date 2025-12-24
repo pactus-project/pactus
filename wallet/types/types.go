@@ -33,5 +33,6 @@ type WalletInfo struct {
 	DefaultFee amount.Amount
 	UUID       string
 	Encrypted  bool
+	Neutered   bool
 	CreatedAt  time.Time
 }

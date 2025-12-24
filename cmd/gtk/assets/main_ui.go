@@ -14,3 +14,4 @@ var NodeWidgetUI []byte
 
 //go:embed ui/widget_wallet.ui
 var WalletWidgetUI []byte
+

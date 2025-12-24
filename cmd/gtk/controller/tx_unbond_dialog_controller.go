@@ -14,7 +14,7 @@ import (
 )
 
 type TxUnbondModel interface {
-	ListAddresses(opts ...types.ListAddressOption) []types.AddressInfo
+	ListAddresses(opts ...wallet.ListAddressOption) []types.AddressInfo
 	AddressInfo(addr string) *types.AddressInfo
 	Stake(addr string) (amount.Amount, error)
 
@@ -38,7 +38,7 @@ func NewTxUnbondDialogController(
 }
 
 func (c *TxUnbondDialogController) Run() {
-	for _, ai := range c.model.ListAddresses(types.OnlyValidatorAddresses()) {
+	for _, ai := range c.model.ListAddresses(wallet.OnlyValidatorAddresses()) {
 		c.view.ValidatorCombo.Append(ai.Address, ai.Address)
 	}
 
