@@ -29,7 +29,7 @@ func NewAccount(number int32) *Account {
 	}
 }
 
-// FromBytes constructs a new account from byte array.
+// FromBytes constructs a new account from raw byte data.
 func FromBytes(data []byte) (*Account, error) {
 	acc := new(Account)
 	r := bytes.NewReader(data)

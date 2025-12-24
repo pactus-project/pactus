@@ -40,7 +40,7 @@ func NewBlock(header *Header, prevCert *certificate.Certificate, txs Txs) *Block
 	}
 }
 
-// FromString creates a new block from a hex-encoded string.
+// FromString constructs a new block from a hex-encoded string.
 func FromString(str string) (*Block, error) {
 	bs, err := hex.DecodeString(str)
 	if err != nil {
@@ -50,7 +50,7 @@ func FromString(str string) (*Block, error) {
 	return FromBytes(bs)
 }
 
-// FromBytes constructs a new block from byte array.
+// FromBytes constructs a new block from raw byte data.
 func FromBytes(data []byte) (*Block, error) {
 	blk := new(Block)
 	reader := bytes.NewReader(data)
