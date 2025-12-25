@@ -420,6 +420,32 @@ func (mr *MockIManagerMockRecorder) Stake(walletName, addr any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Stake", reflect.TypeOf((*MockIManager)(nil).Stake), walletName, addr)
 }
 
+// Start mocks base method.
+func (m *MockIManager) Start() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Start")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Start indicates an expected call of Start.
+func (mr *MockIManagerMockRecorder) Start() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Start", reflect.TypeOf((*MockIManager)(nil).Start))
+}
+
+// Stop mocks base method.
+func (m *MockIManager) Stop() {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Stop")
+}
+
+// Stop indicates an expected call of Stop.
+func (mr *MockIManagerMockRecorder) Stop() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Stop", reflect.TypeOf((*MockIManager)(nil).Stop))
+}
+
 // TotalBalance mocks base method.
 func (m *MockIManager) TotalBalance(walletName string) (amount.Amount, error) {
 	m.ctrl.T.Helper()

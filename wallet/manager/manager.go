@@ -34,7 +34,7 @@ func NewManager(ctx context.Context, conf *Config) IManager {
 	}
 }
 
-func (wm *Manager) Start() error {
+func (*Manager) Start() error {
 	return nil
 }
 

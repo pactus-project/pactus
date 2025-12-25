@@ -10,6 +10,9 @@ import (
 
 // IManager defines the public API of the wallet manager.
 type IManager interface {
+	Start() error
+	Stop()
+
 	GetValidatorAddress(publicKey string) (string, error)
 	CreateWallet(walletName, password string) (string, error)
 	RestoreWallet(walletName, mnemonic, password string) error
