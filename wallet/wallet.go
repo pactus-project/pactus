@@ -192,6 +192,10 @@ func openWallet(storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, er
 	return wlt, nil
 }
 
+func (w *Wallet) Close() error {
+	return w.storage.Close()
+}
+
 func (w *Wallet) IsOffline() bool {
 	return len(w.grpcClient.servers) == 0
 }

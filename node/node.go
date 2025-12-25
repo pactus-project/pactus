@@ -175,7 +175,12 @@ func (n *Node) Start() error {
 	}
 	curConsMgr.MoveToNewHeight()
 
-	err := n.grpc.StartServer()
+	err := n.walletMgr.Start()
+	if err != nil {
+		return errors.Wrap(err, "could not start Wallet Manager")
+	}
+
+	err = n.grpc.StartServer()
 	if err != nil {
 		return errors.Wrap(err, "could not start gRPC server")
 	}
@@ -216,6 +221,7 @@ func (n *Node) Stop() {
 	n.sync.Stop()
 	n.state.Close()
 	n.store.Close()
+	n.walletMgr.Stop()
 	n.grpc.StopServer()
 	n.html.StopServer()
 	n.http.StopServer()
