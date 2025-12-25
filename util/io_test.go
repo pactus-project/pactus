@@ -230,15 +230,28 @@ func TestListFilesInDir(t *testing.T) {
 	require.NoError(t, err)
 	require.NoError(t, file2.Close())
 
-	err = os.Mkdir(filepath.Join(tmpDir, "directory"), 0o750)
+	file3Path := filepath.Join(tmpDir, "directory")
+	err = Mkdir(file3Path)
 	require.NoError(t, err)
 
-	files, err := ListFilesInDir(tmpDir)
-	require.NoError(t, err)
+	t.Run("Exclude Directories", func(t *testing.T) {
+		files, err := ListFilesInDir(tmpDir, ExcludeDirectories())
+		require.NoError(t, err)
 
-	assert.Len(t, files, 2)
-	assert.Contains(t, files, file1Path)
-	assert.Contains(t, files, file2Path)
+		assert.Len(t, files, 2)
+		assert.Contains(t, files, file1Path)
+		assert.Contains(t, files, file2Path)
+	})
+
+	t.Run("Include Directories", func(t *testing.T) {
+		files, err := ListFilesInDir(tmpDir)
+		require.NoError(t, err)
+
+		assert.Len(t, files, 3)
+		assert.Contains(t, files, file1Path)
+		assert.Contains(t, files, file2Path)
+		assert.Contains(t, files, file3Path)
+	})
 }
 
 func TestLimitReaderClose(t *testing.T) {
