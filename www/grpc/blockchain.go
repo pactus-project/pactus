@@ -187,6 +187,8 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 			ProposerAddress: block.Header().ProposerAddress().String(),
 		}
 
+		lastBlockHeight := s.state.LastBlockHeight()
+		confirmations := int(lastBlockHeight) - int(cBlk.Height)
 		trxs := make([]*pactus.TransactionInfo, 0, block.Transactions().Len())
 		for _, trx := range block.Transactions() {
 			if req.Verbosity == pactus.BlockVerbosity_BLOCK_VERBOSITY_INFO {
@@ -196,7 +198,7 @@ func (s *blockchainServer) GetBlock(_ context.Context,
 					Data: hex.EncodeToString(data),
 				})
 			} else {
-				trxs = append(trxs, transactionToProto(trx))
+				trxs = append(trxs, transactionToProto(trx, cBlk.Height, confirmations))
 			}
 		}
 
@@ -293,7 +295,7 @@ func (s *blockchainServer) GetTxPoolContent(_ context.Context,
 	for _, t := range s.state.AllPendingTxs() {
 		if req.PayloadType == pactus.PayloadType_PAYLOAD_TYPE_UNSPECIFIED ||
 			req.PayloadType == pactus.PayloadType(t.Payload().Type()) {
-			result = append(result, transactionToProto(t))
+			result = append(result, transactionToProto(t, 0, 0))
 		}
 	}
 

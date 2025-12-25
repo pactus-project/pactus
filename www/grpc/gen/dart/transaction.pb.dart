@@ -1642,6 +1642,9 @@ class TransactionInfo extends $pb.GeneratedMessage {
     $core.String? memo,
     $core.String? publicKey,
     $core.String? signature,
+    $core.int? blockHeight,
+    $core.bool? confirmed,
+    $core.int? confirmations,
     PayloadTransfer? transfer,
     PayloadBond? bond,
     PayloadSortition? sortition,
@@ -1660,6 +1663,9 @@ class TransactionInfo extends $pb.GeneratedMessage {
     if (memo != null) result.memo = memo;
     if (publicKey != null) result.publicKey = publicKey;
     if (signature != null) result.signature = signature;
+    if (blockHeight != null) result.blockHeight = blockHeight;
+    if (confirmed != null) result.confirmed = confirmed;
+    if (confirmations != null) result.confirmations = confirmations;
     if (transfer != null) result.transfer = transfer;
     if (bond != null) result.bond = bond;
     if (sortition != null) result.sortition = sortition;
@@ -1704,6 +1710,10 @@ class TransactionInfo extends $pb.GeneratedMessage {
     ..aOS(8, _omitFieldNames ? '' : 'memo')
     ..aOS(9, _omitFieldNames ? '' : 'publicKey')
     ..aOS(10, _omitFieldNames ? '' : 'signature')
+    ..aI(11, _omitFieldNames ? '' : 'blockHeight',
+        fieldType: $pb.PbFieldType.OU3)
+    ..aOB(12, _omitFieldNames ? '' : 'confirmed')
+    ..aI(13, _omitFieldNames ? '' : 'confirmations')
     ..aOM<PayloadTransfer>(30, _omitFieldNames ? '' : 'transfer',
         subBuilder: PayloadTransfer.create)
     ..aOM<PayloadBond>(31, _omitFieldNames ? '' : 'bond',
@@ -1853,77 +1863,109 @@ class TransactionInfo extends $pb.GeneratedMessage {
   @$pb.TagNumber(10)
   void clearSignature() => $_clearField(10);
 
+  /// The block height containing the transaction.
+  /// A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+  @$pb.TagNumber(11)
+  $core.int get blockHeight => $_getIZ(10);
+  @$pb.TagNumber(11)
+  set blockHeight($core.int value) => $_setUnsignedInt32(10, value);
+  @$pb.TagNumber(11)
+  $core.bool hasBlockHeight() => $_has(10);
+  @$pb.TagNumber(11)
+  void clearBlockHeight() => $_clearField(11);
+
+  /// Indicates whether the transaction is confirmed.
+  @$pb.TagNumber(12)
+  $core.bool get confirmed => $_getBF(11);
+  @$pb.TagNumber(12)
+  set confirmed($core.bool value) => $_setBool(11, value);
+  @$pb.TagNumber(12)
+  $core.bool hasConfirmed() => $_has(11);
+  @$pb.TagNumber(12)
+  void clearConfirmed() => $_clearField(12);
+
+  /// The number of blocks that have been added to the chain after this transaction was included in a block.
+  /// A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+  @$pb.TagNumber(13)
+  $core.int get confirmations => $_getIZ(12);
+  @$pb.TagNumber(13)
+  set confirmations($core.int value) => $_setSignedInt32(12, value);
+  @$pb.TagNumber(13)
+  $core.bool hasConfirmations() => $_has(12);
+  @$pb.TagNumber(13)
+  void clearConfirmations() => $_clearField(13);
+
   /// Transfer transaction payload.
   @$pb.TagNumber(30)
-  PayloadTransfer get transfer => $_getN(10);
+  PayloadTransfer get transfer => $_getN(13);
   @$pb.TagNumber(30)
   set transfer(PayloadTransfer value) => $_setField(30, value);
   @$pb.TagNumber(30)
-  $core.bool hasTransfer() => $_has(10);
+  $core.bool hasTransfer() => $_has(13);
   @$pb.TagNumber(30)
   void clearTransfer() => $_clearField(30);
   @$pb.TagNumber(30)
-  PayloadTransfer ensureTransfer() => $_ensure(10);
+  PayloadTransfer ensureTransfer() => $_ensure(13);
 
   /// Bond transaction payload.
   @$pb.TagNumber(31)
-  PayloadBond get bond => $_getN(11);
+  PayloadBond get bond => $_getN(14);
   @$pb.TagNumber(31)
   set bond(PayloadBond value) => $_setField(31, value);
   @$pb.TagNumber(31)
-  $core.bool hasBond() => $_has(11);
+  $core.bool hasBond() => $_has(14);
   @$pb.TagNumber(31)
   void clearBond() => $_clearField(31);
   @$pb.TagNumber(31)
-  PayloadBond ensureBond() => $_ensure(11);
+  PayloadBond ensureBond() => $_ensure(14);
 
   /// Sortition transaction payload.
   @$pb.TagNumber(32)
-  PayloadSortition get sortition => $_getN(12);
+  PayloadSortition get sortition => $_getN(15);
   @$pb.TagNumber(32)
   set sortition(PayloadSortition value) => $_setField(32, value);
   @$pb.TagNumber(32)
-  $core.bool hasSortition() => $_has(12);
+  $core.bool hasSortition() => $_has(15);
   @$pb.TagNumber(32)
   void clearSortition() => $_clearField(32);
   @$pb.TagNumber(32)
-  PayloadSortition ensureSortition() => $_ensure(12);
+  PayloadSortition ensureSortition() => $_ensure(15);
 
   /// Unbond transaction payload.
   @$pb.TagNumber(33)
-  PayloadUnbond get unbond => $_getN(13);
+  PayloadUnbond get unbond => $_getN(16);
   @$pb.TagNumber(33)
   set unbond(PayloadUnbond value) => $_setField(33, value);
   @$pb.TagNumber(33)
-  $core.bool hasUnbond() => $_has(13);
+  $core.bool hasUnbond() => $_has(16);
   @$pb.TagNumber(33)
   void clearUnbond() => $_clearField(33);
   @$pb.TagNumber(33)
-  PayloadUnbond ensureUnbond() => $_ensure(13);
+  PayloadUnbond ensureUnbond() => $_ensure(16);
 
   /// Withdraw transaction payload.
   @$pb.TagNumber(34)
-  PayloadWithdraw get withdraw => $_getN(14);
+  PayloadWithdraw get withdraw => $_getN(17);
   @$pb.TagNumber(34)
   set withdraw(PayloadWithdraw value) => $_setField(34, value);
   @$pb.TagNumber(34)
-  $core.bool hasWithdraw() => $_has(14);
+  $core.bool hasWithdraw() => $_has(17);
   @$pb.TagNumber(34)
   void clearWithdraw() => $_clearField(34);
   @$pb.TagNumber(34)
-  PayloadWithdraw ensureWithdraw() => $_ensure(14);
+  PayloadWithdraw ensureWithdraw() => $_ensure(17);
 
   /// Batch Transfer transaction payload.
   @$pb.TagNumber(35)
-  PayloadBatchTransfer get batchTransfer => $_getN(15);
+  PayloadBatchTransfer get batchTransfer => $_getN(18);
   @$pb.TagNumber(35)
   set batchTransfer(PayloadBatchTransfer value) => $_setField(35, value);
   @$pb.TagNumber(35)
-  $core.bool hasBatchTransfer() => $_has(15);
+  $core.bool hasBatchTransfer() => $_has(18);
   @$pb.TagNumber(35)
   void clearBatchTransfer() => $_clearField(35);
   @$pb.TagNumber(35)
-  PayloadBatchTransfer ensureBatchTransfer() => $_ensure(15);
+  PayloadBatchTransfer ensureBatchTransfer() => $_ensure(18);
 }
 
 /// Request message for decoding a raw transaction.

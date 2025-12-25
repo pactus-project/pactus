@@ -3,6 +3,7 @@
 'use strict';
 var grpc = require('@grpc/grpc-js');
 var wallet_pb = require('./wallet_pb.js');
+var transaction_pb = require('./transaction_pb.js');
 
 function serialize_pactus_CreateWalletRequest(arg) {
   if (!(arg instanceof wallet_pb.CreateWalletRequest)) {
@@ -200,6 +201,28 @@ function serialize_pactus_ListAddressesResponse(arg) {
 
 function deserialize_pactus_ListAddressesResponse(buffer_arg) {
   return wallet_pb.ListAddressesResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_ListTransactionsRequest(arg) {
+  if (!(arg instanceof wallet_pb.ListTransactionsRequest)) {
+    throw new Error('Expected argument of type pactus.ListTransactionsRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_ListTransactionsRequest(buffer_arg) {
+  return wallet_pb.ListTransactionsRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_ListTransactionsResponse(arg) {
+  if (!(arg instanceof wallet_pb.ListTransactionsResponse)) {
+    throw new Error('Expected argument of type pactus.ListTransactionsResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_ListTransactionsResponse(buffer_arg) {
+  return wallet_pb.ListTransactionsResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_pactus_ListWalletsRequest(arg) {
@@ -585,6 +608,19 @@ updatePassword: {
     requestDeserialize: deserialize_pactus_UpdatePasswordRequest,
     responseSerialize: serialize_pactus_UpdatePasswordResponse,
     responseDeserialize: deserialize_pactus_UpdatePasswordResponse,
+  },
+  // ListTransactions returns a list of transactions for a wallet,
+// optionally filtered by a specific address, with pagination support.
+listTransactions: {
+    path: '/pactus.Wallet/ListTransactions',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.ListTransactionsRequest,
+    responseType: wallet_pb.ListTransactionsResponse,
+    requestSerialize: serialize_pactus_ListTransactionsRequest,
+    requestDeserialize: deserialize_pactus_ListTransactionsRequest,
+    responseSerialize: serialize_pactus_ListTransactionsResponse,
+    responseDeserialize: deserialize_pactus_ListTransactionsResponse,
   },
 };
 

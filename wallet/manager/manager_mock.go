@@ -154,6 +154,26 @@ func (mr *MockIManagerMockRecorder) ListAddresses(walletName any, opts ...any) *
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAddresses", reflect.TypeOf((*MockIManager)(nil).ListAddresses), varargs...)
 }
 
+// ListTransactions mocks base method.
+func (m *MockIManager) ListTransactions(walletName string, opts ...wallet.ListTransactionsOption) ([]*types.TransactionInfo, error) {
+	m.ctrl.T.Helper()
+	varargs := []any{walletName}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListTransactions", varargs...)
+	ret0, _ := ret[0].([]*types.TransactionInfo)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListTransactions indicates an expected call of ListTransactions.
+func (mr *MockIManagerMockRecorder) ListTransactions(walletName any, opts ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{walletName}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListTransactions", reflect.TypeOf((*MockIManager)(nil).ListTransactions), varargs...)
+}
+
 // ListWallets mocks base method.
 func (m *MockIManager) ListWallets() ([]string, error) {
 	m.ctrl.T.Helper()

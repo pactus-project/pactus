@@ -15,83 +15,87 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import 'wallet.pb.dart' as $0;
+import 'wallet.pb.dart' as $1;
 import 'wallet.pbjson.dart';
 
 export 'wallet.pb.dart';
 
 abstract class WalletServiceBase extends $pb.GeneratedService {
-  $async.Future<$0.CreateWalletResponse> createWallet(
-      $pb.ServerContext ctx, $0.CreateWalletRequest request);
-  $async.Future<$0.RestoreWalletResponse> restoreWallet(
-      $pb.ServerContext ctx, $0.RestoreWalletRequest request);
-  $async.Future<$0.LoadWalletResponse> loadWallet(
-      $pb.ServerContext ctx, $0.LoadWalletRequest request);
-  $async.Future<$0.UnloadWalletResponse> unloadWallet(
-      $pb.ServerContext ctx, $0.UnloadWalletRequest request);
-  $async.Future<$0.GetTotalBalanceResponse> getTotalBalance(
-      $pb.ServerContext ctx, $0.GetTotalBalanceRequest request);
-  $async.Future<$0.SignRawTransactionResponse> signRawTransaction(
-      $pb.ServerContext ctx, $0.SignRawTransactionRequest request);
-  $async.Future<$0.GetValidatorAddressResponse> getValidatorAddress(
-      $pb.ServerContext ctx, $0.GetValidatorAddressRequest request);
-  $async.Future<$0.GetNewAddressResponse> getNewAddress(
-      $pb.ServerContext ctx, $0.GetNewAddressRequest request);
-  $async.Future<$0.GetAddressHistoryResponse> getAddressHistory(
-      $pb.ServerContext ctx, $0.GetAddressHistoryRequest request);
-  $async.Future<$0.SignMessageResponse> signMessage(
-      $pb.ServerContext ctx, $0.SignMessageRequest request);
-  $async.Future<$0.GetTotalStakeResponse> getTotalStake(
-      $pb.ServerContext ctx, $0.GetTotalStakeRequest request);
-  $async.Future<$0.GetAddressInfoResponse> getAddressInfo(
-      $pb.ServerContext ctx, $0.GetAddressInfoRequest request);
-  $async.Future<$0.SetAddressLabelResponse> setAddressLabel(
-      $pb.ServerContext ctx, $0.SetAddressLabelRequest request);
-  $async.Future<$0.ListWalletsResponse> listWallets(
-      $pb.ServerContext ctx, $0.ListWalletsRequest request);
-  $async.Future<$0.GetWalletInfoResponse> getWalletInfo(
-      $pb.ServerContext ctx, $0.GetWalletInfoRequest request);
-  $async.Future<$0.ListAddressesResponse> listAddresses(
-      $pb.ServerContext ctx, $0.ListAddressesRequest request);
-  $async.Future<$0.UpdatePasswordResponse> updatePassword(
-      $pb.ServerContext ctx, $0.UpdatePasswordRequest request);
+  $async.Future<$1.CreateWalletResponse> createWallet(
+      $pb.ServerContext ctx, $1.CreateWalletRequest request);
+  $async.Future<$1.RestoreWalletResponse> restoreWallet(
+      $pb.ServerContext ctx, $1.RestoreWalletRequest request);
+  $async.Future<$1.LoadWalletResponse> loadWallet(
+      $pb.ServerContext ctx, $1.LoadWalletRequest request);
+  $async.Future<$1.UnloadWalletResponse> unloadWallet(
+      $pb.ServerContext ctx, $1.UnloadWalletRequest request);
+  $async.Future<$1.GetTotalBalanceResponse> getTotalBalance(
+      $pb.ServerContext ctx, $1.GetTotalBalanceRequest request);
+  $async.Future<$1.SignRawTransactionResponse> signRawTransaction(
+      $pb.ServerContext ctx, $1.SignRawTransactionRequest request);
+  $async.Future<$1.GetValidatorAddressResponse> getValidatorAddress(
+      $pb.ServerContext ctx, $1.GetValidatorAddressRequest request);
+  $async.Future<$1.GetNewAddressResponse> getNewAddress(
+      $pb.ServerContext ctx, $1.GetNewAddressRequest request);
+  $async.Future<$1.GetAddressHistoryResponse> getAddressHistory(
+      $pb.ServerContext ctx, $1.GetAddressHistoryRequest request);
+  $async.Future<$1.SignMessageResponse> signMessage(
+      $pb.ServerContext ctx, $1.SignMessageRequest request);
+  $async.Future<$1.GetTotalStakeResponse> getTotalStake(
+      $pb.ServerContext ctx, $1.GetTotalStakeRequest request);
+  $async.Future<$1.GetAddressInfoResponse> getAddressInfo(
+      $pb.ServerContext ctx, $1.GetAddressInfoRequest request);
+  $async.Future<$1.SetAddressLabelResponse> setAddressLabel(
+      $pb.ServerContext ctx, $1.SetAddressLabelRequest request);
+  $async.Future<$1.ListWalletsResponse> listWallets(
+      $pb.ServerContext ctx, $1.ListWalletsRequest request);
+  $async.Future<$1.GetWalletInfoResponse> getWalletInfo(
+      $pb.ServerContext ctx, $1.GetWalletInfoRequest request);
+  $async.Future<$1.ListAddressesResponse> listAddresses(
+      $pb.ServerContext ctx, $1.ListAddressesRequest request);
+  $async.Future<$1.UpdatePasswordResponse> updatePassword(
+      $pb.ServerContext ctx, $1.UpdatePasswordRequest request);
+  $async.Future<$1.ListTransactionsResponse> listTransactions(
+      $pb.ServerContext ctx, $1.ListTransactionsRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
       case 'CreateWallet':
-        return $0.CreateWalletRequest();
+        return $1.CreateWalletRequest();
       case 'RestoreWallet':
-        return $0.RestoreWalletRequest();
+        return $1.RestoreWalletRequest();
       case 'LoadWallet':
-        return $0.LoadWalletRequest();
+        return $1.LoadWalletRequest();
       case 'UnloadWallet':
-        return $0.UnloadWalletRequest();
+        return $1.UnloadWalletRequest();
       case 'GetTotalBalance':
-        return $0.GetTotalBalanceRequest();
+        return $1.GetTotalBalanceRequest();
       case 'SignRawTransaction':
-        return $0.SignRawTransactionRequest();
+        return $1.SignRawTransactionRequest();
       case 'GetValidatorAddress':
-        return $0.GetValidatorAddressRequest();
+        return $1.GetValidatorAddressRequest();
       case 'GetNewAddress':
-        return $0.GetNewAddressRequest();
+        return $1.GetNewAddressRequest();
       case 'GetAddressHistory':
-        return $0.GetAddressHistoryRequest();
+        return $1.GetAddressHistoryRequest();
       case 'SignMessage':
-        return $0.SignMessageRequest();
+        return $1.SignMessageRequest();
       case 'GetTotalStake':
-        return $0.GetTotalStakeRequest();
+        return $1.GetTotalStakeRequest();
       case 'GetAddressInfo':
-        return $0.GetAddressInfoRequest();
+        return $1.GetAddressInfoRequest();
       case 'SetAddressLabel':
-        return $0.SetAddressLabelRequest();
+        return $1.SetAddressLabelRequest();
       case 'ListWallets':
-        return $0.ListWalletsRequest();
+        return $1.ListWalletsRequest();
       case 'GetWalletInfo':
-        return $0.GetWalletInfoRequest();
+        return $1.GetWalletInfoRequest();
       case 'ListAddresses':
-        return $0.ListAddressesRequest();
+        return $1.ListAddressesRequest();
       case 'UpdatePassword':
-        return $0.UpdatePasswordRequest();
+        return $1.UpdatePasswordRequest();
+      case 'ListTransactions':
+        return $1.ListTransactionsRequest();
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }
@@ -101,40 +105,42 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       $core.String methodName, $pb.GeneratedMessage request) {
     switch (methodName) {
       case 'CreateWallet':
-        return createWallet(ctx, request as $0.CreateWalletRequest);
+        return createWallet(ctx, request as $1.CreateWalletRequest);
       case 'RestoreWallet':
-        return restoreWallet(ctx, request as $0.RestoreWalletRequest);
+        return restoreWallet(ctx, request as $1.RestoreWalletRequest);
       case 'LoadWallet':
-        return loadWallet(ctx, request as $0.LoadWalletRequest);
+        return loadWallet(ctx, request as $1.LoadWalletRequest);
       case 'UnloadWallet':
-        return unloadWallet(ctx, request as $0.UnloadWalletRequest);
+        return unloadWallet(ctx, request as $1.UnloadWalletRequest);
       case 'GetTotalBalance':
-        return getTotalBalance(ctx, request as $0.GetTotalBalanceRequest);
+        return getTotalBalance(ctx, request as $1.GetTotalBalanceRequest);
       case 'SignRawTransaction':
-        return signRawTransaction(ctx, request as $0.SignRawTransactionRequest);
+        return signRawTransaction(ctx, request as $1.SignRawTransactionRequest);
       case 'GetValidatorAddress':
         return getValidatorAddress(
-            ctx, request as $0.GetValidatorAddressRequest);
+            ctx, request as $1.GetValidatorAddressRequest);
       case 'GetNewAddress':
-        return getNewAddress(ctx, request as $0.GetNewAddressRequest);
+        return getNewAddress(ctx, request as $1.GetNewAddressRequest);
       case 'GetAddressHistory':
-        return getAddressHistory(ctx, request as $0.GetAddressHistoryRequest);
+        return getAddressHistory(ctx, request as $1.GetAddressHistoryRequest);
       case 'SignMessage':
-        return signMessage(ctx, request as $0.SignMessageRequest);
+        return signMessage(ctx, request as $1.SignMessageRequest);
       case 'GetTotalStake':
-        return getTotalStake(ctx, request as $0.GetTotalStakeRequest);
+        return getTotalStake(ctx, request as $1.GetTotalStakeRequest);
       case 'GetAddressInfo':
-        return getAddressInfo(ctx, request as $0.GetAddressInfoRequest);
+        return getAddressInfo(ctx, request as $1.GetAddressInfoRequest);
       case 'SetAddressLabel':
-        return setAddressLabel(ctx, request as $0.SetAddressLabelRequest);
+        return setAddressLabel(ctx, request as $1.SetAddressLabelRequest);
       case 'ListWallets':
-        return listWallets(ctx, request as $0.ListWalletsRequest);
+        return listWallets(ctx, request as $1.ListWalletsRequest);
       case 'GetWalletInfo':
-        return getWalletInfo(ctx, request as $0.GetWalletInfoRequest);
+        return getWalletInfo(ctx, request as $1.GetWalletInfoRequest);
       case 'ListAddresses':
-        return listAddresses(ctx, request as $0.ListAddressesRequest);
+        return listAddresses(ctx, request as $1.ListAddressesRequest);
       case 'UpdatePassword':
-        return updatePassword(ctx, request as $0.UpdatePasswordRequest);
+        return updatePassword(ctx, request as $1.UpdatePasswordRequest);
+      case 'ListTransactions':
+        return listTransactions(ctx, request as $1.ListTransactionsRequest);
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }

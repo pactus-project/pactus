@@ -38,9 +38,12 @@ func txToTable(tmk *tableMaker, trx *pactus.TransactionInfo) {
 	tmk.addRowTxID("ID", trx.Id)
 	tmk.addRowInt("Version", int(trx.Version))
 	tmk.addRowInt("LockTime", int(trx.LockTime))
+	tmk.addRowInt("Block Height", int(trx.BlockHeight))
+	tmk.addRowBool("Confirmed", trx.Confirmed)
+	tmk.addRowInt("Confirmations", int(trx.Confirmations))
 	tmk.addRowAmount("Fee", amount.Amount(trx.Fee))
 	tmk.addRowString("Memo", trx.Memo)
-	tmk.addRowString("Payload type", trx.PayloadType.String())
+	tmk.addRowString("Payload Type", trx.PayloadType.String())
 
 	switch trx.PayloadType {
 	case pactus.PayloadType_PAYLOAD_TYPE_TRANSFER:
@@ -73,12 +76,10 @@ func txToTable(tmk *tableMaker, trx *pactus.TransactionInfo) {
 	case pactus.PayloadType_PAYLOAD_TYPE_BATCH_TRANSFER:
 		pld := trx.Payload.(*pactus.TransactionInfo_BatchTransfer)
 		tmk.addRowAccAddress("Sender", pld.BatchTransfer.Sender)
-		tmk.addRowString("--- Begin Recipients", "---")
 		for i, recip := range pld.BatchTransfer.Recipients {
-			tmk.addRowAccAddress(fmt.Sprintf("Receiver [%d]", i+1), recip.Receiver)
-			tmk.addRowAmount("Amount", amount.Amount(recip.Amount))
+			tmk.addRowAccAddress(fmt.Sprintf("\tReceiver [%d]", i+1), recip.Receiver)
+			tmk.addRowAmount("\tAmount", amount.Amount(recip.Amount))
 		}
-		tmk.addRowString("--- End Recipients", "---")
 
 	case pactus.PayloadType_PAYLOAD_TYPE_UNSPECIFIED:
 		tmk.addRowValAddress("error", "unknown payload type")

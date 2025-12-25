@@ -49,5 +49,28 @@ class AddressType extends $pb.ProtobufEnum {
   const AddressType._(super.value, super.name);
 }
 
+/// TxDirection indicates the direction of a transaction relative to the wallet.
+class TxDirection extends $pb.ProtobufEnum {
+  /// Include only transactions where the wallet receives funds.
+  static const TxDirection TX_DIRECTION_INCOMING =
+      TxDirection._(0, _omitEnumNames ? '' : 'TX_DIRECTION_INCOMING');
+
+  /// Include only transactions where the wallet sends funds.
+  static const TxDirection TX_DIRECTION_OUTGOING =
+      TxDirection._(1, _omitEnumNames ? '' : 'TX_DIRECTION_OUTGOING');
+
+  static const $core.List<TxDirection> values = <TxDirection>[
+    TX_DIRECTION_INCOMING,
+    TX_DIRECTION_OUTGOING,
+  ];
+
+  static final $core.List<TxDirection?> _byValue =
+      $pb.ProtobufEnum.$_initByValueList(values, 1);
+  static TxDirection? valueOf($core.int value) =>
+      value < 0 || value >= _byValue.length ? null : _byValue[value];
+
+  const TxDirection._(super.value, super.name);
+}
+
 const $core.bool _omitEnumNames =
     $core.bool.fromEnvironment('protobuf.omit_enum_names');

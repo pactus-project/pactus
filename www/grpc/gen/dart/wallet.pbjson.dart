@@ -15,6 +15,8 @@ import 'dart:convert' as $convert;
 import 'dart:core' as $core;
 import 'dart:typed_data' as $typed_data;
 
+import 'transaction.pbjson.dart' as $0;
+
 @$core.Deprecated('Use addressTypeDescriptor instead')
 const AddressType$json = {
   '1': 'AddressType',
@@ -31,6 +33,20 @@ final $typed_data.Uint8List addressTypeDescriptor = $convert.base64Decode(
     'CgtBZGRyZXNzVHlwZRIZChVBRERSRVNTX1RZUEVfVFJFQVNVUlkQABIaChZBRERSRVNTX1RZUE'
     'VfVkFMSURBVE9SEAESHAoYQUREUkVTU19UWVBFX0JMU19BQ0NPVU5UEAISIAocQUREUkVTU19U'
     'WVBFX0VEMjU1MTlfQUNDT1VOVBAD');
+
+@$core.Deprecated('Use txDirectionDescriptor instead')
+const TxDirection$json = {
+  '1': 'TxDirection',
+  '2': [
+    {'1': 'TX_DIRECTION_INCOMING', '2': 0},
+    {'1': 'TX_DIRECTION_OUTGOING', '2': 1},
+  ],
+};
+
+/// Descriptor for `TxDirection`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List txDirectionDescriptor = $convert.base64Decode(
+    'CgtUeERpcmVjdGlvbhIZChVUWF9ESVJFQ1RJT05fSU5DT01JTkcQABIZChVUWF9ESVJFQ1RJT0'
+    '5fT1VUR09JTkcQAQ==');
 
 @$core.Deprecated('Use addressInfoDescriptor instead')
 const AddressInfo$json = {
@@ -603,6 +619,54 @@ final $typed_data.Uint8List updatePasswordResponseDescriptor =
         'ChZVcGRhdGVQYXNzd29yZFJlc3BvbnNlEh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW'
         '1l');
 
+@$core.Deprecated('Use listTransactionsRequestDescriptor instead')
+const ListTransactionsRequest$json = {
+  '1': 'ListTransactionsRequest',
+  '2': [
+    {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    {
+      '1': 'direction',
+      '3': 2,
+      '4': 1,
+      '5': 14,
+      '6': '.pactus.TxDirection',
+      '10': 'direction'
+    },
+    {'1': 'address', '3': 3, '4': 1, '5': 9, '10': 'address'},
+    {'1': 'count', '3': 4, '4': 1, '5': 5, '10': 'count'},
+    {'1': 'skip', '3': 5, '4': 1, '5': 5, '10': 'skip'},
+  ],
+};
+
+/// Descriptor for `ListTransactionsRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listTransactionsRequestDescriptor = $convert.base64Decode(
+    'ChdMaXN0VHJhbnNhY3Rpb25zUmVxdWVzdBIfCgt3YWxsZXRfbmFtZRgBIAEoCVIKd2FsbGV0Tm'
+    'FtZRIxCglkaXJlY3Rpb24YAiABKA4yEy5wYWN0dXMuVHhEaXJlY3Rpb25SCWRpcmVjdGlvbhIY'
+    'CgdhZGRyZXNzGAMgASgJUgdhZGRyZXNzEhQKBWNvdW50GAQgASgFUgVjb3VudBISCgRza2lwGA'
+    'UgASgFUgRza2lw');
+
+@$core.Deprecated('Use listTransactionsResponseDescriptor instead')
+const ListTransactionsResponse$json = {
+  '1': 'ListTransactionsResponse',
+  '2': [
+    {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    {
+      '1': 'txs',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.pactus.TransactionInfo',
+      '10': 'txs'
+    },
+  ],
+};
+
+/// Descriptor for `ListTransactionsResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List listTransactionsResponseDescriptor =
+    $convert.base64Decode(
+        'ChhMaXN0VHJhbnNhY3Rpb25zUmVzcG9uc2USHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE'
+        '5hbWUSKQoDdHhzGAIgAygLMhcucGFjdHVzLlRyYW5zYWN0aW9uSW5mb1IDdHhz');
+
 const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = {
   '1': 'Wallet',
   '2': [
@@ -691,6 +755,11 @@ const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = {
       '2': '.pactus.UpdatePasswordRequest',
       '3': '.pactus.UpdatePasswordResponse'
     },
+    {
+      '1': 'ListTransactions',
+      '2': '.pactus.ListTransactionsRequest',
+      '3': '.pactus.ListTransactionsResponse'
+    },
   ],
 };
 
@@ -733,6 +802,16 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
   '.pactus.ListAddressesResponse': ListAddressesResponse$json,
   '.pactus.UpdatePasswordRequest': UpdatePasswordRequest$json,
   '.pactus.UpdatePasswordResponse': UpdatePasswordResponse$json,
+  '.pactus.ListTransactionsRequest': ListTransactionsRequest$json,
+  '.pactus.ListTransactionsResponse': ListTransactionsResponse$json,
+  '.pactus.TransactionInfo': $0.TransactionInfo$json,
+  '.pactus.PayloadTransfer': $0.PayloadTransfer$json,
+  '.pactus.PayloadBond': $0.PayloadBond$json,
+  '.pactus.PayloadSortition': $0.PayloadSortition$json,
+  '.pactus.PayloadUnbond': $0.PayloadUnbond$json,
+  '.pactus.PayloadWithdraw': $0.PayloadWithdraw$json,
+  '.pactus.PayloadBatchTransfer': $0.PayloadBatchTransfer$json,
+  '.pactus.Recipient': $0.Recipient$json,
 };
 
 /// Descriptor for `Wallet`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -761,4 +840,6 @@ final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode(
     'xsZXRJbmZvUmVxdWVzdBodLnBhY3R1cy5HZXRXYWxsZXRJbmZvUmVzcG9uc2USTAoNTGlzdEFk'
     'ZHJlc3NlcxIcLnBhY3R1cy5MaXN0QWRkcmVzc2VzUmVxdWVzdBodLnBhY3R1cy5MaXN0QWRkcm'
     'Vzc2VzUmVzcG9uc2USTwoOVXBkYXRlUGFzc3dvcmQSHS5wYWN0dXMuVXBkYXRlUGFzc3dvcmRS'
-    'ZXF1ZXN0Gh4ucGFjdHVzLlVwZGF0ZVBhc3N3b3JkUmVzcG9uc2U=');
+    'ZXF1ZXN0Gh4ucGFjdHVzLlVwZGF0ZVBhc3N3b3JkUmVzcG9uc2USVQoQTGlzdFRyYW5zYWN0aW'
+    '9ucxIfLnBhY3R1cy5MaXN0VHJhbnNhY3Rpb25zUmVxdWVzdBogLnBhY3R1cy5MaXN0VHJhbnNh'
+    'Y3Rpb25zUmVzcG9uc2U=');

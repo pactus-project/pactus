@@ -488,6 +488,9 @@ const TransactionInfo$json = {
     {'1': 'memo', '3': 8, '4': 1, '5': 9, '10': 'memo'},
     {'1': 'public_key', '3': 9, '4': 1, '5': 9, '10': 'publicKey'},
     {'1': 'signature', '3': 10, '4': 1, '5': 9, '10': 'signature'},
+    {'1': 'block_height', '3': 11, '4': 1, '5': 13, '10': 'blockHeight'},
+    {'1': 'confirmed', '3': 12, '4': 1, '5': 8, '10': 'confirmed'},
+    {'1': 'confirmations', '3': 13, '4': 1, '5': 5, '10': 'confirmations'},
   ],
   '8': [
     {'1': 'payload'},
@@ -507,7 +510,9 @@ final $typed_data.Uint8List transactionInfoDescriptor = $convert.base64Decode(
     'V2l0aGRyYXdIAFIId2l0aGRyYXcSRQoOYmF0Y2hfdHJhbnNmZXIYIyABKAsyHC5wYWN0dXMuUG'
     'F5bG9hZEJhdGNoVHJhbnNmZXJIAFINYmF0Y2hUcmFuc2ZlchISCgRtZW1vGAggASgJUgRtZW1v'
     'Eh0KCnB1YmxpY19rZXkYCSABKAlSCXB1YmxpY0tleRIcCglzaWduYXR1cmUYCiABKAlSCXNpZ2'
-    '5hdHVyZUIJCgdwYXlsb2Fk');
+    '5hdHVyZRIhCgxibG9ja19oZWlnaHQYCyABKA1SC2Jsb2NrSGVpZ2h0EhwKCWNvbmZpcm1lZBgM'
+    'IAEoCFIJY29uZmlybWVkEiQKDWNvbmZpcm1hdGlvbnMYDSABKAVSDWNvbmZpcm1hdGlvbnNCCQ'
+    'oHcGF5bG9hZA==');
 
 @$core.Deprecated('Use decodeRawTransactionRequestDescriptor instead')
 const DecodeRawTransactionRequest$json = {

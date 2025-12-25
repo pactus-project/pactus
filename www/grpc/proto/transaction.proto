@@ -263,6 +263,17 @@ message TransactionInfo {
   string public_key = 9;
   // The signature for the transaction.
   string signature = 10;
+
+  // The block height containing the transaction.
+  // A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+  uint32 block_height = 11;
+
+  // Indicates whether the transaction is confirmed.
+  bool confirmed = 12;
+
+  // The number of blocks that have been added to the chain after this transaction was included in a block.
+  // A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+  int32 confirmations = 13;
 }
 
 // Enumeration for different types of transaction payloads.

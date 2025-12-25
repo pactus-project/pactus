@@ -126,6 +126,9 @@ http:
     - selector: pactus.Wallet.ListAddresses
       get: "/pactus/wallet/list_addresses"
 
+    - selector: pactus.Wallet.ListTransactions
+      get: "/pactus/wallet/list_transactions"
+
     - selector: pactus.Wallet.UpdatePassword
       get: "/pactus/wallet/update_password"
 

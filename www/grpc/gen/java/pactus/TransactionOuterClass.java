@@ -17009,6 +17009,38 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
     com.google.protobuf.ByteString
         getSignatureBytes();
 
+    /**
+     * <pre>
+     * The block height containing the transaction.
+     * A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+     * </pre>
+     *
+     * <code>uint32 block_height = 11 [json_name = "blockHeight"];</code>
+     * @return The blockHeight.
+     */
+    int getBlockHeight();
+
+    /**
+     * <pre>
+     * Indicates whether the transaction is confirmed.
+     * </pre>
+     *
+     * <code>bool confirmed = 12 [json_name = "confirmed"];</code>
+     * @return The confirmed.
+     */
+    boolean getConfirmed();
+
+    /**
+     * <pre>
+     * The number of blocks that have been added to the chain after this transaction was included in a block.
+     * A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+     * </pre>
+     *
+     * <code>int32 confirmations = 13 [json_name = "confirmations"];</code>
+     * @return The confirmations.
+     */
+    int getConfirmations();
+
     pactus.TransactionOuterClass.TransactionInfo.PayloadCase getPayloadCase();
   }
   /**
@@ -17687,6 +17719,53 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       }
     }
 
+    public static final int BLOCK_HEIGHT_FIELD_NUMBER = 11;
+    private int blockHeight_ = 0;
+    /**
+     * <pre>
+     * The block height containing the transaction.
+     * A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+     * </pre>
+     *
+     * <code>uint32 block_height = 11 [json_name = "blockHeight"];</code>
+     * @return The blockHeight.
+     */
+    @java.lang.Override
+    public int getBlockHeight() {
+      return blockHeight_;
+    }
+
+    public static final int CONFIRMED_FIELD_NUMBER = 12;
+    private boolean confirmed_ = false;
+    /**
+     * <pre>
+     * Indicates whether the transaction is confirmed.
+     * </pre>
+     *
+     * <code>bool confirmed = 12 [json_name = "confirmed"];</code>
+     * @return The confirmed.
+     */
+    @java.lang.Override
+    public boolean getConfirmed() {
+      return confirmed_;
+    }
+
+    public static final int CONFIRMATIONS_FIELD_NUMBER = 13;
+    private int confirmations_ = 0;
+    /**
+     * <pre>
+     * The number of blocks that have been added to the chain after this transaction was included in a block.
+     * A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+     * </pre>
+     *
+     * <code>int32 confirmations = 13 [json_name = "confirmations"];</code>
+     * @return The confirmations.
+     */
+    @java.lang.Override
+    public int getConfirmations() {
+      return confirmations_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -17730,6 +17809,15 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       }
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(signature_)) {
         com.google.protobuf.GeneratedMessage.writeString(output, 10, signature_);
+      }
+      if (blockHeight_ != 0) {
+        output.writeUInt32(11, blockHeight_);
+      }
+      if (confirmed_ != false) {
+        output.writeBool(12, confirmed_);
+      }
+      if (confirmations_ != 0) {
+        output.writeInt32(13, confirmations_);
       }
       if (payloadCase_ == 30) {
         output.writeMessage(30, (pactus.TransactionOuterClass.PayloadTransfer) payload_);
@@ -17793,6 +17881,18 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       if (!com.google.protobuf.GeneratedMessage.isStringEmpty(signature_)) {
         size += com.google.protobuf.GeneratedMessage.computeStringSize(10, signature_);
       }
+      if (blockHeight_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt32Size(11, blockHeight_);
+      }
+      if (confirmed_ != false) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBoolSize(12, confirmed_);
+      }
+      if (confirmations_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(13, confirmations_);
+      }
       if (payloadCase_ == 30) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(30, (pactus.TransactionOuterClass.PayloadTransfer) payload_);
@@ -17851,6 +17951,12 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
           .equals(other.getPublicKey())) return false;
       if (!getSignature()
           .equals(other.getSignature())) return false;
+      if (getBlockHeight()
+          != other.getBlockHeight()) return false;
+      if (getConfirmed()
+          != other.getConfirmed()) return false;
+      if (getConfirmations()
+          != other.getConfirmations()) return false;
       if (!getPayloadCase().equals(other.getPayloadCase())) return false;
       switch (payloadCase_) {
         case 30:
@@ -17913,6 +18019,13 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       hash = (53 * hash) + getPublicKey().hashCode();
       hash = (37 * hash) + SIGNATURE_FIELD_NUMBER;
       hash = (53 * hash) + getSignature().hashCode();
+      hash = (37 * hash) + BLOCK_HEIGHT_FIELD_NUMBER;
+      hash = (53 * hash) + getBlockHeight();
+      hash = (37 * hash) + CONFIRMED_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
+          getConfirmed());
+      hash = (37 * hash) + CONFIRMATIONS_FIELD_NUMBER;
+      hash = (53 * hash) + getConfirmations();
       switch (payloadCase_) {
         case 30:
           hash = (37 * hash) + TRANSFER_FIELD_NUMBER;
@@ -18104,6 +18217,9 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         memo_ = "";
         publicKey_ = "";
         signature_ = "";
+        blockHeight_ = 0;
+        confirmed_ = false;
+        confirmations_ = 0;
         payloadCase_ = 0;
         payload_ = null;
         return this;
@@ -18169,6 +18285,15 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         }
         if (((from_bitField0_ & 0x00008000) != 0)) {
           result.signature_ = signature_;
+        }
+        if (((from_bitField0_ & 0x00010000) != 0)) {
+          result.blockHeight_ = blockHeight_;
+        }
+        if (((from_bitField0_ & 0x00020000) != 0)) {
+          result.confirmed_ = confirmed_;
+        }
+        if (((from_bitField0_ & 0x00040000) != 0)) {
+          result.confirmations_ = confirmations_;
         }
       }
 
@@ -18252,6 +18377,15 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
           signature_ = other.signature_;
           bitField0_ |= 0x00008000;
           onChanged();
+        }
+        if (other.getBlockHeight() != 0) {
+          setBlockHeight(other.getBlockHeight());
+        }
+        if (other.getConfirmed() != false) {
+          setConfirmed(other.getConfirmed());
+        }
+        if (other.getConfirmations() != 0) {
+          setConfirmations(other.getConfirmations());
         }
         switch (other.getPayloadCase()) {
           case TRANSFER: {
@@ -18358,6 +18492,21 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
                 bitField0_ |= 0x00008000;
                 break;
               } // case 82
+              case 88: {
+                blockHeight_ = input.readUInt32();
+                bitField0_ |= 0x00010000;
+                break;
+              } // case 88
+              case 96: {
+                confirmed_ = input.readBool();
+                bitField0_ |= 0x00020000;
+                break;
+              } // case 96
+              case 104: {
+                confirmations_ = input.readInt32();
+                bitField0_ |= 0x00040000;
+                break;
+              } // case 104
               case 242: {
                 input.readMessage(
                     internalGetTransferFieldBuilder().getBuilder(),
@@ -20207,6 +20356,144 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
         return this;
       }
 
+      private int blockHeight_ ;
+      /**
+       * <pre>
+       * The block height containing the transaction.
+       * A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+       * </pre>
+       *
+       * <code>uint32 block_height = 11 [json_name = "blockHeight"];</code>
+       * @return The blockHeight.
+       */
+      @java.lang.Override
+      public int getBlockHeight() {
+        return blockHeight_;
+      }
+      /**
+       * <pre>
+       * The block height containing the transaction.
+       * A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+       * </pre>
+       *
+       * <code>uint32 block_height = 11 [json_name = "blockHeight"];</code>
+       * @param value The blockHeight to set.
+       * @return This builder for chaining.
+       */
+      public Builder setBlockHeight(int value) {
+
+        blockHeight_ = value;
+        bitField0_ |= 0x00010000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The block height containing the transaction.
+       * A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+       * </pre>
+       *
+       * <code>uint32 block_height = 11 [json_name = "blockHeight"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearBlockHeight() {
+        bitField0_ = (bitField0_ & ~0x00010000);
+        blockHeight_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private boolean confirmed_ ;
+      /**
+       * <pre>
+       * Indicates whether the transaction is confirmed.
+       * </pre>
+       *
+       * <code>bool confirmed = 12 [json_name = "confirmed"];</code>
+       * @return The confirmed.
+       */
+      @java.lang.Override
+      public boolean getConfirmed() {
+        return confirmed_;
+      }
+      /**
+       * <pre>
+       * Indicates whether the transaction is confirmed.
+       * </pre>
+       *
+       * <code>bool confirmed = 12 [json_name = "confirmed"];</code>
+       * @param value The confirmed to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConfirmed(boolean value) {
+
+        confirmed_ = value;
+        bitField0_ |= 0x00020000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * Indicates whether the transaction is confirmed.
+       * </pre>
+       *
+       * <code>bool confirmed = 12 [json_name = "confirmed"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearConfirmed() {
+        bitField0_ = (bitField0_ & ~0x00020000);
+        confirmed_ = false;
+        onChanged();
+        return this;
+      }
+
+      private int confirmations_ ;
+      /**
+       * <pre>
+       * The number of blocks that have been added to the chain after this transaction was included in a block.
+       * A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+       * </pre>
+       *
+       * <code>int32 confirmations = 13 [json_name = "confirmations"];</code>
+       * @return The confirmations.
+       */
+      @java.lang.Override
+      public int getConfirmations() {
+        return confirmations_;
+      }
+      /**
+       * <pre>
+       * The number of blocks that have been added to the chain after this transaction was included in a block.
+       * A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+       * </pre>
+       *
+       * <code>int32 confirmations = 13 [json_name = "confirmations"];</code>
+       * @param value The confirmations to set.
+       * @return This builder for chaining.
+       */
+      public Builder setConfirmations(int value) {
+
+        confirmations_ = value;
+        bitField0_ |= 0x00040000;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * The number of blocks that have been added to the chain after this transaction was included in a block.
+       * A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+       * </pre>
+       *
+       * <code>int32 confirmations = 13 [json_name = "confirmations"];</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearConfirmations() {
+        bitField0_ = (bitField0_ & ~0x00040000);
+        confirmations_ = 0;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:pactus.TransactionInfo)
     }
 
@@ -21624,8 +21911,8 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       "yloadBatchTransfer\022\026\n\006sender\030\001 \001(\tR\006send" +
       "er\0221\n\nrecipients\030\002 \003(\0132\021.pactus.Recipien" +
       "tR\nrecipients\"?\n\tRecipient\022\032\n\010receiver\030\001" +
-      " \001(\tR\010receiver\022\026\n\006amount\030\002 \001(\003R\006amount\"\363" +
-      "\004\n\017TransactionInfo\022\016\n\002id\030\001 \001(\tR\002id\022\022\n\004da" +
+      " \001(\tR\010receiver\022\026\n\006amount\030\002 \001(\003R\006amount\"\332" +
+      "\005\n\017TransactionInfo\022\016\n\002id\030\001 \001(\tR\002id\022\022\n\004da" +
       "ta\030\002 \001(\tR\004data\022\030\n\007version\030\003 \001(\005R\007version" +
       "\022\033\n\tlock_time\030\004 \001(\rR\010lockTime\022\024\n\005value\030\005" +
       " \001(\003R\005value\022\020\n\003fee\030\006 \001(\003R\003fee\0226\n\014payload" +
@@ -21640,43 +21927,45 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
       "fer\030# \001(\0132\034.pactus.PayloadBatchTransferH" +
       "\000R\rbatchTransfer\022\022\n\004memo\030\010 \001(\tR\004memo\022\035\n\n" +
       "public_key\030\t \001(\tR\tpublicKey\022\034\n\tsignature" +
-      "\030\n \001(\tR\tsignatureB\t\n\007payload\"F\n\033DecodeRa" +
-      "wTransactionRequest\022\'\n\017raw_transaction\030\001" +
-      " \001(\tR\016rawTransaction\"Y\n\034DecodeRawTransac" +
-      "tionResponse\0229\n\013transaction\030\001 \001(\0132\027.pact" +
-      "us.TransactionInfoR\013transaction*\316\001\n\013Payl" +
-      "oadType\022\034\n\030PAYLOAD_TYPE_UNSPECIFIED\020\000\022\031\n" +
-      "\025PAYLOAD_TYPE_TRANSFER\020\001\022\025\n\021PAYLOAD_TYPE" +
-      "_BOND\020\002\022\032\n\026PAYLOAD_TYPE_SORTITION\020\003\022\027\n\023P" +
-      "AYLOAD_TYPE_UNBOND\020\004\022\031\n\025PAYLOAD_TYPE_WIT" +
-      "HDRAW\020\005\022\037\n\033PAYLOAD_TYPE_BATCH_TRANSFER\020\006" +
-      "*V\n\024TransactionVerbosity\022\036\n\032TRANSACTION_" +
-      "VERBOSITY_DATA\020\000\022\036\n\032TRANSACTION_VERBOSIT" +
-      "Y_INFO\020\0012\377\006\n\013Transaction\022O\n\016GetTransacti" +
-      "on\022\035.pactus.GetTransactionRequest\032\036.pact" +
-      "us.GetTransactionResponse\022I\n\014CalculateFe" +
-      "e\022\033.pactus.CalculateFeeRequest\032\034.pactus." +
-      "CalculateFeeResponse\022a\n\024BroadcastTransac" +
-      "tion\022#.pactus.BroadcastTransactionReques" +
-      "t\032$.pactus.BroadcastTransactionResponse\022" +
-      "h\n\031GetRawTransferTransaction\022(.pactus.Ge" +
-      "tRawTransferTransactionRequest\032!.pactus." +
-      "GetRawTransactionResponse\022`\n\025GetRawBondT" +
-      "ransaction\022$.pactus.GetRawBondTransactio" +
-      "nRequest\032!.pactus.GetRawTransactionRespo" +
-      "nse\022d\n\027GetRawUnbondTransaction\022&.pactus." +
-      "GetRawUnbondTransactionRequest\032!.pactus." +
-      "GetRawTransactionResponse\022h\n\031GetRawWithd" +
-      "rawTransaction\022(.pactus.GetRawWithdrawTr" +
-      "ansactionRequest\032!.pactus.GetRawTransact" +
-      "ionResponse\022r\n\036GetRawBatchTransferTransa" +
-      "ction\022-.pactus.GetRawBatchTransferTransa" +
-      "ctionRequest\032!.pactus.GetRawTransactionR" +
-      "esponse\022a\n\024DecodeRawTransaction\022#.pactus" +
-      ".DecodeRawTransactionRequest\032$.pactus.De" +
-      "codeRawTransactionResponseB:\n\006pactusZ0gi" +
-      "thub.com/pactus-project/pactus/www/grpc/" +
-      "pactusb\006proto3"
+      "\030\n \001(\tR\tsignature\022!\n\014block_height\030\013 \001(\rR" +
+      "\013blockHeight\022\034\n\tconfirmed\030\014 \001(\010R\tconfirm" +
+      "ed\022$\n\rconfirmations\030\r \001(\005R\rconfirmations" +
+      "B\t\n\007payload\"F\n\033DecodeRawTransactionReque" +
+      "st\022\'\n\017raw_transaction\030\001 \001(\tR\016rawTransact" +
+      "ion\"Y\n\034DecodeRawTransactionResponse\0229\n\013t" +
+      "ransaction\030\001 \001(\0132\027.pactus.TransactionInf" +
+      "oR\013transaction*\316\001\n\013PayloadType\022\034\n\030PAYLOA" +
+      "D_TYPE_UNSPECIFIED\020\000\022\031\n\025PAYLOAD_TYPE_TRA" +
+      "NSFER\020\001\022\025\n\021PAYLOAD_TYPE_BOND\020\002\022\032\n\026PAYLOA" +
+      "D_TYPE_SORTITION\020\003\022\027\n\023PAYLOAD_TYPE_UNBON" +
+      "D\020\004\022\031\n\025PAYLOAD_TYPE_WITHDRAW\020\005\022\037\n\033PAYLOA" +
+      "D_TYPE_BATCH_TRANSFER\020\006*V\n\024TransactionVe" +
+      "rbosity\022\036\n\032TRANSACTION_VERBOSITY_DATA\020\000\022" +
+      "\036\n\032TRANSACTION_VERBOSITY_INFO\020\0012\377\006\n\013Tran" +
+      "saction\022O\n\016GetTransaction\022\035.pactus.GetTr" +
+      "ansactionRequest\032\036.pactus.GetTransaction" +
+      "Response\022I\n\014CalculateFee\022\033.pactus.Calcul" +
+      "ateFeeRequest\032\034.pactus.CalculateFeeRespo" +
+      "nse\022a\n\024BroadcastTransaction\022#.pactus.Bro" +
+      "adcastTransactionRequest\032$.pactus.Broadc" +
+      "astTransactionResponse\022h\n\031GetRawTransfer" +
+      "Transaction\022(.pactus.GetRawTransferTrans" +
+      "actionRequest\032!.pactus.GetRawTransaction" +
+      "Response\022`\n\025GetRawBondTransaction\022$.pact" +
+      "us.GetRawBondTransactionRequest\032!.pactus" +
+      ".GetRawTransactionResponse\022d\n\027GetRawUnbo" +
+      "ndTransaction\022&.pactus.GetRawUnbondTrans" +
+      "actionRequest\032!.pactus.GetRawTransaction" +
+      "Response\022h\n\031GetRawWithdrawTransaction\022(." +
+      "pactus.GetRawWithdrawTransactionRequest\032" +
+      "!.pactus.GetRawTransactionResponse\022r\n\036Ge" +
+      "tRawBatchTransferTransaction\022-.pactus.Ge" +
+      "tRawBatchTransferTransactionRequest\032!.pa" +
+      "ctus.GetRawTransactionResponse\022a\n\024Decode" +
+      "RawTransaction\022#.pactus.DecodeRawTransac" +
+      "tionRequest\032$.pactus.DecodeRawTransactio" +
+      "nResponseB:\n\006pactusZ0github.com/pactus-p" +
+      "roject/pactus/www/grpc/pactusb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -21801,7 +22090,7 @@ public final class TransactionOuterClass extends com.google.protobuf.GeneratedFi
     internal_static_pactus_TransactionInfo_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_pactus_TransactionInfo_descriptor,
-        new java.lang.String[] { "Id", "Data", "Version", "LockTime", "Value", "Fee", "PayloadType", "Transfer", "Bond", "Sortition", "Unbond", "Withdraw", "BatchTransfer", "Memo", "PublicKey", "Signature", "Payload", });
+        new java.lang.String[] { "Id", "Data", "Version", "LockTime", "Value", "Fee", "PayloadType", "Transfer", "Bond", "Sortition", "Unbond", "Withdraw", "BatchTransfer", "Memo", "PublicKey", "Signature", "BlockHeight", "Confirmed", "Confirmations", "Payload", });
     internal_static_pactus_DecodeRawTransactionRequest_descriptor =
       getDescriptor().getMessageType(20);
     internal_static_pactus_DecodeRawTransactionRequest_fieldAccessorTable = new

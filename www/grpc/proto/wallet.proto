@@ -1,6 +1,8 @@
 syntax = "proto3";
 package pactus;
 
+import "transaction.proto";
+
 option go_package = "github.com/pactus-project/pactus/www/grpc/pactus";
 option java_package = "pactus";
 
@@ -57,6 +59,10 @@ service Wallet {
 
   // UpdatePassword updates the password of an existing wallet.
   rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordResponse);
+
+  // ListTransactions returns a list of transactions for a wallet,
+  // optionally filtered by a specific address, with pagination support.
+  rpc ListTransactions(ListTransactionsRequest) returns (ListTransactionsResponse);
 }
 
 // AddressType defines different types of blockchain addresses.
@@ -349,6 +355,7 @@ message ListAddressesRequest {
 message ListAddressesResponse {
   // The name of the queried wallet.
   string wallet_name = 1;
+
   // List of all addresses in the wallet with their details.
   repeated AddressInfo data = 2;
 }
@@ -367,4 +374,44 @@ message UpdatePasswordRequest {
 message UpdatePasswordResponse {
   // The name of the wallet whose password was updated.
   string wallet_name = 1;
+}
+
+// TxDirection indicates the direction of a transaction relative to the wallet.
+enum TxDirection {
+  // Include only transactions where the wallet receives funds.
+  TX_DIRECTION_INCOMING = 0;
+
+  // Include only transactions where the wallet sends funds.
+  TX_DIRECTION_OUTGOING = 1;
+}
+
+// Request message for listing transactions of a wallet, optionally filtered by a specific address.
+message ListTransactionsRequest {
+  // The name of the wallet to query transactions for.
+  string wallet_name = 1;
+
+  // Filter transactions by direction relative to the wallet.
+  // Defaults to incoming if not set.
+  TxDirection direction = 2;
+
+  // Optional: The address to filter transactions.
+  // If empty or set to "*", transactions for all addresses in the wallet are included.
+  string address = 3;
+
+  // Optional: The maximum number of transactions to return.
+  // Defaults to 10 if not set.
+  int32 count = 4;
+
+  // Optional: The number of transactions to skip (for pagination).
+  // Defaults to 0 if not set.
+  int32 skip = 5;
+}
+
+// Response message containing a list of transactions.
+message ListTransactionsResponse {
+  // The name of the wallet queried.
+  string wallet_name = 1;
+
+  // List of transactions for the wallet, filtered by the specified address if provided.
+  repeated TransactionInfo txs = 2;
 }
