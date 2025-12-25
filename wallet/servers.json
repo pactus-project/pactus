@@ -23,12 +23,6 @@
             "email": "info@pactus.org",
             "website": "https://pactus.org",
             "address": "bootstrap4.pactus.org:50051"
-        },
-        {
-            "name": "",
-            "email": "",
-            "website": "",
-            "address": "rpc.javad.dev:50051"
         }
     ],
     "testnet": [
@@ -46,9 +40,6 @@
         },
         {
             "address": "testnet4.pactus.org:50052"
-        },
-        {
-            "address": "testnet-rpc.javad.dev:50052"
         }
     ]
 }
