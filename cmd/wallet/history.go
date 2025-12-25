@@ -59,9 +59,9 @@ func buildShowHistoryCmd(parentCmd *cobra.Command) {
 		terminal.FatalErrorCheck(err)
 
 		transactions := wlt.ListTransactions(addr)
-		for i, tx := range transactions {
+		for i, trx := range transactions {
 			terminal.PrintInfoMsgf("%d %v %v %v %v\t%v",
-				i+1, tx.CreatedAt.Format("02 Jan 06 15:04"), tx.ID[:12], tx.PayloadType, tx.Status, tx.Amount)
+				i+1, trx.CreatedAt.Format("02 Jan 06 15:04"), trx.ID[:12], trx.PayloadType, trx.Status, trx.Amount)
 		}
 	}
 }

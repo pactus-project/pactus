@@ -1,8 +1,11 @@
 package jsonstorage
 
 import (
+	"errors"
 	"fmt"
 )
+
+var ErrUnsupported = errors.New("operation not supported")
 
 // CRCNotMatchError describes an error in which the wallet CRC is not matched.
 type CRCNotMatchError struct {

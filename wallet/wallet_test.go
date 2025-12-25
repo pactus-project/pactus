@@ -81,7 +81,7 @@ func TestOpenWallet(t *testing.T) {
 	td := setup(t)
 
 	t.Run("Invalid wallet path", func(t *testing.T) {
-		_, err := wallet.Open(util.TempFilePath())
+		_, err := wallet.Open(t.Context(), util.TempFilePath())
 		assert.Error(t, err)
 	})
 
@@ -89,12 +89,12 @@ func TestOpenWallet(t *testing.T) {
 		path := util.TempFilePath()
 		assert.NoError(t, util.WriteFile(path, []byte("invalid_data")))
 
-		_, err := wallet.Open(path)
+		_, err := wallet.Open(t.Context(), path)
 		assert.Error(t, err)
 	})
 
 	t.Run("Open custom wallet", func(t *testing.T) {
-		wlt, err := wallet.Open(td.wallet.Path(),
+		wlt, err := wallet.Open(t.Context(), td.wallet.Path(),
 			wallet.WithTimeout(time.Second),
 			wallet.WithOfflineMode())
 		assert.NoError(t, err)
@@ -820,7 +820,7 @@ func TestNeuter(t *testing.T) {
 	err := td.wallet.Neuter(path)
 	require.NoError(t, err)
 
-	wlt, err := wallet.Open(path)
+	wlt, err := wallet.Open(t.Context(), path)
 	require.NoError(t, err)
 
 	assert.True(t, wlt.Info().Neutered)
@@ -843,7 +843,7 @@ func TestTestnetWallet(t *testing.T) {
 	})
 
 	t.Run("Open Testnet wallet", func(t *testing.T) {
-		wlt, err := wallet.Open(walletPath)
+		wlt, err := wallet.Open(t.Context(), walletPath)
 		assert.NoError(t, err)
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
 

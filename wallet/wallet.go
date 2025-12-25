@@ -28,7 +28,6 @@ type Wallet struct {
 	transactions
 
 	storage storage.IStorage
-	// grpcClient   *grpcClient
 }
 
 // GenerateMnemonic is a wrapper for `vault.GenerateMnemonic`.
@@ -80,26 +79,31 @@ func Create(ctx context.Context, walletPath, mnemonic, password string,
 		return nil, err
 	}
 
-	return openWallet(walletPath, storage, opts...)
+	return openWallet(storage, opts...)
 }
 
 // Open tries to open a wallet at the given path.
-// If the wallet doesn’t exist on this path, it returns an error.
+// It first tries the SQLite backend; if that fails, it falls back to the legacy JSON wallet format.
 // A wallet can be opened in offline or online modes.
 // Offline wallet doesn’t have any connection to any node.
 // Online wallet has a connection to one of the pre-defined servers.
-func Open(walletPath string, opts ...OpenWalletOption) (*Wallet, error) {
-	err := jsonstorage.Upgrade(walletPath)
+func Open(ctx context.Context, walletPath string, opts ...OpenWalletOption) (*Wallet, error) {
+	sqliteStrg, err := sqlitestorage.Open(ctx, walletPath)
+	if err == nil {
+		return openWallet(sqliteStrg, opts...)
+	}
+
+	// Fallback to JSON storage for legacy wallets
+	if err := jsonstorage.Upgrade(walletPath); err != nil {
+		return nil, err
+	}
+
+	jsonStrg, err := jsonstorage.Open(walletPath)
 	if err != nil {
 		return nil, err
 	}
 
-	storage, err := jsonstorage.Open(walletPath)
-	if err != nil {
-		return nil, err
-	}
-
-	return openWallet(walletPath, storage, opts...)
+	return openWallet(jsonStrg, opts...)
 }
 
 type openWalletConfig struct {
@@ -134,7 +138,7 @@ func WithOfflineMode() OpenWalletOption {
 	}
 }
 
-func openWallet(_ string, storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
+func openWallet(storage storage.IStorage, opts ...OpenWalletOption) (*Wallet, error) {
 	cfg := defaultOpenWalletConfig
 	for _, opt := range opts {
 		opt(&cfg)
@@ -142,12 +146,9 @@ func openWallet(_ string, storage storage.IStorage, opts ...OpenWalletOption) (*
 
 	client := newGrpcClient(cfg.timeout, cfg.servers)
 
-	addresses := newAddresses(storage)
-	transactions := newTransactions(storage, client)
-
 	wlt := &Wallet{
-		addresses:    addresses,
-		transactions: transactions,
+		addresses:    newAddresses(storage),
+		transactions: newTransactions(storage, client),
 		storage:      storage,
 	}
 

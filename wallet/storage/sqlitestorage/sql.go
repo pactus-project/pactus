@@ -1,9 +1,9 @@
 package sqlitestorage
 
-// SQL queries and schema definitions
+// SQL queries and schema definitions.
 
 const (
-	// Schema creation queries
+	// Schema creation queries.
 	createWalletTableSQL = `
 		CREATE TABLE wallet (
 			name 			TEXT PRIMARY KEY,
@@ -14,8 +14,8 @@ const (
 		CREATE TABLE addresses (
 			address 		TEXT PRIMARY KEY,
 			public_key 		TEXT UNIQUE NOT NULL,
-			label 			TEXT NOT NULL DEFAULT '',
 			path 			TEXT UNIQUE NOT NULL,
+			label 			TEXT NOT NULL DEFAULT '',
 			created_at 		DATETIME DEFAULT CURRENT_TIMESTAMP,
 			updated_at 		DATETIME DEFAULT CURRENT_TIMESTAMP
 		)`
@@ -38,47 +38,50 @@ const (
 			PRIMARY KEY (id, receiver)
 		)`
 
-	// Wallet table operations
+	// Wallet table operations.
 	insertWalletEntrySQL = `
 		INSERT INTO wallet (name, value) VALUES (?, ?)`
 
 	updateWalletEntrySQL = `
 		UPDATE wallet SET value = ? WHERE name = ?`
 
-	selectWalletEntrySQL = `
-		SELECT value FROM wallet WHERE name = ?`
-
 	selectAllWalletEntriesSQL = `
 		SELECT name, value FROM wallet`
 
-	// Address table operations
+	// Address table operations.
 	insertAddressSQL = `
 		INSERT INTO addresses (address, public_key, label, path)
 		VALUES (?, ?, ?, ?)`
 
 	updateAddressSQL = `
-		UPDATE addresses SET label = ?, public_key = ?, path = ?, updated_at = CURRENT_TIMESTAMP
+		UPDATE addresses SET label = ?, public_key = ?, path = ?
 		WHERE address = ?`
 
 	selectAllAddressesSQL = `
 		SELECT address, public_key, label, path, created_at, updated_at
 		FROM addresses ORDER BY created_at ASC`
 
-	// Transaction table operations
+	// Transaction table operations.
 	insertTransactionSQL = `
 		INSERT INTO transactions (id, sender, receiver, amount, fee, memo, status, block_height, payload_type, data, comment)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
 	updateTransactionStatusSQL = `
-		UPDATE transactions SET status = ?, updated_at = CURRENT_TIMESTAMP
+		UPDATE transactions SET status = ?
 		WHERE id = ?`
 
 	selectTransactionByIDSQL = `
-		SELECT id, sender, receiver, amount, fee, memo, status, block_height, payload_type, data, comment, created_at, updated_at
-		FROM transactions WHERE id = ? LIMIT 1`
+		SELECT
+			id, sender, receiver, amount, fee, memo, status, block_height, payload_type,
+			data, comment, created_at, updated_at
+		FROM transactions
+		WHERE id = ?
+		LIMIT 1`
 
 	selectTransactionsByReceiverSQL = `
-		SELECT id, sender, receiver, amount, fee, memo, status, block_height, payload_type, data, comment, created_at, updated_at
+		SELECT
+			id, sender, receiver, amount, fee, memo, status, block_height, payload_type,
+			data, comment, created_at, updated_at
 		FROM transactions WHERE receiver = ?
 		ORDER BY created_at DESC
 		LIMIT ? OFFSET ?`

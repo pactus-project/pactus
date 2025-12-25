@@ -259,7 +259,7 @@ func startupAssistant(workingDir string, chainType genesis.ChainType) bool {
 				numValidators := comboBoxActiveValue(comboNumValidators)
 				walletPassword := getEntryText(entryPassword)
 
-				nodeWallet, rewardAddr, err = cmd.CreateNode(context.Background(), numValidators, chainType, workingDir, mnemonic, walletPassword)
+				nodeWallet, rewardAddr, err = cmd.CreateNode(numValidators, chainType, workingDir, mnemonic, walletPassword)
 				if err != nil {
 					showError(err)
 

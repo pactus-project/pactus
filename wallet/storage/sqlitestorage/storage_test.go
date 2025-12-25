@@ -39,7 +39,7 @@ func setup(t *testing.T) *testData {
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		strg.Close()
+		_ = strg.Close()
 	})
 
 	return &testData{
@@ -237,7 +237,7 @@ func TestClone(t *testing.T) {
 	clonePath := util.TempFilePath()
 	cloned, err := td.storage.Clone(clonePath)
 	require.NoError(t, err)
-	defer cloned.Close()
+	defer func() { _ = cloned.Close() }()
 
 	// Verify cloned storage has different UUID and CreatedAt
 	originalInfo := td.storage.WalletInfo()

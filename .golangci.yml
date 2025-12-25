@@ -138,7 +138,7 @@ linters:
           arguments:
             - [] # AllowList
             - [] # DenyList
-            - - 
+            - -
                 skip-package-name-checks: true
         - name: unhandled-error
           arguments:
@@ -165,6 +165,7 @@ linters:
       ignore-names:
         - ok
         - ip
+        - db
         - "no"
         - tt
         - n

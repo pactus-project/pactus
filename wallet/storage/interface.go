@@ -23,7 +23,7 @@ type IStorage interface {
 	UpdateTransactionStatus(id string, status types.TransactionStatus) error
 	HasTransaction(id string) bool
 	GetTransaction(id string) (*types.TransactionInfo, error)
-	ListTransactions(receiver string, count int, skip int) ([]types.TransactionInfo, error)
+	ListTransactions(receiver string, count int, skip int) ([]*types.TransactionInfo, error)
 
 	Close() error
 	Clone(path string) (IStorage, error)

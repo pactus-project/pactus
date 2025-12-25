@@ -4,10 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
-	_ "github.com/glebarez/go-sqlite"
+	_ "github.com/glebarez/go-sqlite" // sqlite driver
 	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
@@ -18,7 +19,7 @@ import (
 	"github.com/pactus-project/pactus/wallet/vault"
 )
 
-// Wallet metadata keys
+// Wallet metadata keys.
 const (
 	keyVersion    = "version"
 	keyUUID       = "uuid"
@@ -54,7 +55,7 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 	}
 	for _, query := range tables {
 		if _, err := db.ExecContext(ctx, query); err != nil {
-			db.Close()
+			_ = db.Close()
 
 			return nil, fmt.Errorf("failed to create table: %w", err)
 		}
@@ -63,7 +64,7 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 	// Marshal vault to JSON
 	vaultJSON, err := json.Marshal(vlt)
 	if err != nil {
-		db.Close()
+		_ = db.Close()
 
 		return nil, fmt.Errorf("failed to marshal vault: %w", err)
 	}
@@ -86,7 +87,7 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 
 	for _, entry := range entries {
 		if _, err := db.ExecContext(ctx, insertWalletEntrySQL, entry.Key, entry.Value); err != nil {
-			db.Close()
+			_ = db.Close()
 
 			return nil, fmt.Errorf("failed to insert wallet entry %s: %w", entry.Key, err)
 		}
@@ -115,14 +116,14 @@ func open(ctx context.Context, db *sql.DB, path string) (*Storage, error) {
 
 	// Load wallet info into memory
 	if err := strg.loadWalletInfo(); err != nil {
-		db.Close()
+		_ = db.Close()
 
 		return nil, fmt.Errorf("failed to load wallet info: %w", err)
 	}
 
 	// Load addresses into memory
 	if err := strg.loadAddresses(); err != nil {
-		db.Close()
+		_ = db.Close()
 
 		return nil, fmt.Errorf("failed to load addresses: %w", err)
 	}
@@ -151,7 +152,7 @@ func (s *Storage) loadWalletInfo() error {
 	if err != nil {
 		return fmt.Errorf("failed to query wallet entries: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	entries := make(map[string]string)
 	for rows.Next() {
@@ -166,13 +167,19 @@ func (s *Storage) loadWalletInfo() error {
 	}
 
 	version := 0
-	fmt.Sscanf(entries[keyVersion], "%d", &version)
+	if _, err := fmt.Sscanf(entries[keyVersion], "%d", &version); err != nil {
+		return fmt.Errorf("failed to parse version: %w", err)
+	}
 
 	var defaultFee amount.Amount
-	fmt.Sscanf(entries[keyDefaultFee], "%d", &defaultFee)
+	if _, err := fmt.Sscanf(entries[keyDefaultFee], "%d", &defaultFee); err != nil {
+		return fmt.Errorf("failed to parse default fee: %w", err)
+	}
 
 	var createdAtUnix int64
-	fmt.Sscanf(entries[keyCreatedAt], "%d", &createdAtUnix)
+	if _, err := fmt.Sscanf(entries[keyCreatedAt], "%d", &createdAtUnix); err != nil {
+		return fmt.Errorf("failed to parse created_at: %w", err)
+	}
 	createdAt := time.Unix(createdAtUnix, 0)
 
 	var vlt vault.Vault
@@ -215,7 +222,7 @@ func (s *Storage) loadAddresses() error {
 	if err != nil {
 		return fmt.Errorf("failed to query addresses: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	s.addressMap = make(map[string]types.AddressInfo)
 	for rows.Next() {
@@ -391,7 +398,7 @@ func scanTransaction(s scanner) (*types.TransactionInfo, error) {
 func (s *Storage) GetTransaction(id string) (*types.TransactionInfo, error) {
 	info, err := scanTransaction(s.db.QueryRowContext(s.ctx, selectTransactionByIDSQL, id))
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return nil, storage.ErrNotFound
 		}
 
@@ -402,21 +409,21 @@ func (s *Storage) GetTransaction(id string) (*types.TransactionInfo, error) {
 }
 
 // ListTransactions returns a list of transactions for a receiver with pagination.
-func (s *Storage) ListTransactions(receiver string, count int, skip int) ([]types.TransactionInfo, error) {
+func (s *Storage) ListTransactions(receiver string, count, skip int) ([]*types.TransactionInfo, error) {
 	rows, err := s.db.QueryContext(s.ctx, selectTransactionsByReceiverSQL, receiver, count, skip)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
-	transactions := make([]types.TransactionInfo, 0)
+	transactions := make([]*types.TransactionInfo, 0)
 	for rows.Next() {
 		info, err := scanTransaction(rows)
 		if err != nil {
 			return nil, err
 		}
 
-		transactions = append(transactions, *info)
+		transactions = append(transactions, info)
 	}
 
 	return transactions, rows.Err()
@@ -439,7 +446,7 @@ func (s *Storage) Clone(path string) (storage.IStorage, error) {
 	// Update UUID and CreatedAt for the cloned wallet
 	newUUID := uuid.New().String()
 	if err := clonedStorage.updateWalletEntry(keyUUID, newUUID); err != nil {
-		clonedStorage.Close()
+		_ = clonedStorage.Close()
 
 		return nil, err
 	}
@@ -447,7 +454,7 @@ func (s *Storage) Clone(path string) (storage.IStorage, error) {
 
 	newCreatedAt := util.RoundNow(1)
 	if err := clonedStorage.updateWalletEntry(keyCreatedAt, fmt.Sprintf("%d", newCreatedAt.Unix())); err != nil {
-		clonedStorage.Close()
+		_ = clonedStorage.Close()
 
 		return nil, err
 	}

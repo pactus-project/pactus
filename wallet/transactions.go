@@ -87,7 +87,7 @@ func WithSkip(skip int) ListTransactionsOption {
 	}
 }
 
-func (t *transactions) ListTransactions(addr string, opts ...ListTransactionsOption) []types.TransactionInfo {
+func (t *transactions) ListTransactions(addr string, opts ...ListTransactionsOption) []*types.TransactionInfo {
 	cfg := defaultListTransactionsConfig
 	for _, opt := range opts {
 		opt(&cfg)

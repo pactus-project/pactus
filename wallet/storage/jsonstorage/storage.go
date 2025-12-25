@@ -56,7 +56,7 @@ func Open(path string) (*Storage, error) {
 	}, nil
 }
 
-func (s *Storage) Close() error {
+func (*Storage) Close() error {
 	return nil
 }
 
@@ -134,29 +134,24 @@ func (s *Storage) UpdateAddress(info *types.AddressInfo) error {
 	return s.save()
 }
 
-func (s *Storage) InsertTransaction(info *types.TransactionInfo) error {
-	// Unsupported operation
-	return nil
+func (*Storage) InsertTransaction(_ *types.TransactionInfo) error {
+	return ErrUnsupported
 }
 
-func (s *Storage) UpdateTransactionStatus(id string, status types.TransactionStatus) error {
-	// Unsupported operation
-	return nil
+func (*Storage) UpdateTransactionStatus(_ string, _ types.TransactionStatus) error {
+	return ErrUnsupported
 }
 
-func (s *Storage) HasTransaction(id string) bool {
-	// Unsupported operation
+func (*Storage) HasTransaction(_ string) bool {
 	return false
 }
 
-func (s *Storage) GetTransaction(id string) (*types.TransactionInfo, error) {
-	// Unsupported operation
-	return nil, nil
+func (*Storage) GetTransaction(_ string) (*types.TransactionInfo, error) {
+	return nil, ErrUnsupported
 }
 
-func (s *Storage) ListTransactions(receiver string, count int, skip int) ([]types.TransactionInfo, error) {
-	// Unsupported operation
-	return nil, nil
+func (*Storage) ListTransactions(_ string, _, _ int) ([]*types.TransactionInfo, error) {
+	return nil, ErrUnsupported
 }
 
 func (s *Storage) Clone(path string) (storage.IStorage, error) {

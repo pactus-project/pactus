@@ -150,7 +150,7 @@ func StartNode(workingDir string, passwordFetcher func() (string, bool),
 	}
 
 	defaultWalletPath := PactusDefaultWalletPath(workingDir)
-	wlt, err := wallet.Open(defaultWalletPath, wallet.WithOfflineMode())
+	wlt, err := wallet.Open(context.Background(), defaultWalletPath, wallet.WithOfflineMode())
 	if err != nil {
 		return nil, err
 	}

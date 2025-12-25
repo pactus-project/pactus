@@ -91,7 +91,7 @@ func (wm *Manager) LoadWallet(walletName, serverAddr string) error {
 	}
 
 	walletPath := wm.getWalletPath(walletName)
-	wlt, err := wallet.Open(walletPath, wallet.WithCustomServers([]string{serverAddr}))
+	wlt, err := wallet.Open(wm.ctx, walletPath, wallet.WithCustomServers([]string{serverAddr}))
 	if err != nil {
 		return err
 	}
@@ -332,7 +332,7 @@ func (wm *Manager) ListWallets() ([]string, error) {
 	}
 
 	for _, file := range files {
-		_, err = wallet.Open(file, wallet.WithOfflineMode())
+		_, err = wallet.Open(wm.ctx, file, wallet.WithOfflineMode())
 		if err != nil {
 			logger.Warn(fmt.Sprintf("file %s is not wallet", file))
 

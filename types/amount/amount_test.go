@@ -8,11 +8,11 @@ package amount_test
 
 import (
 	"math"
-	"math/rand/v2"
 	"strconv"
 	"testing"
 
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/util"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -427,7 +427,7 @@ func TestSQLDriver(t *testing.T) {
 	})
 
 	t.Run("Round trip Value and Scan", func(t *testing.T) {
-		original := amount.Amount(rand.Int64())
+		original := amount.Amount(util.RandInt64(1000e9))
 		val, err := original.Value()
 		assert.NoError(t, err)
 
