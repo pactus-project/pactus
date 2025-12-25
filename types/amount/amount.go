@@ -7,7 +7,9 @@
 package amount
 
 import (
+	"database/sql/driver"
 	"errors"
+	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -197,4 +199,27 @@ func (a Amount) String() string {
 // MulF64 multiplies an Amount by a floating point value.
 func (a Amount) MulF64(f float64) Amount {
 	return round(float64(a) * f)
+}
+
+// Scan implements the sql.Scanner interface for SQL database operations.
+// It accepts int64 values representing NanoPAC and converts them to Amount.
+func (a *Amount) Scan(src any) error {
+	if src == nil {
+		return fmt.Errorf("not valid amount data: %v", src)
+	}
+
+	i64, ok := src.(int64)
+	if !ok {
+		return fmt.Errorf("not valid amount data: %v", src)
+	}
+
+	*a = Amount(i64)
+
+	return nil
+}
+
+// Value implements the driver.Valuer interface for SQL database operations.
+// It returns the Amount as NanoPAC (int64) to avoid floating-point precision issues.
+func (a Amount) Value() (driver.Value, error) {
+	return int64(a), nil
 }

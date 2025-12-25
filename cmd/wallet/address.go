@@ -183,9 +183,9 @@ func buildPublicKeyCmd(parentCmd *cobra.Command) {
 		wlt, err := openWallet()
 		terminal.FatalErrorCheck(err)
 
-		info := wlt.AddressInfo(addr)
-		if info == nil {
-			terminal.PrintErrorMsgf("Address not found")
+		info, err := wlt.AddressInfo(addr)
+		if err != nil {
+			terminal.PrintErrorMsgf(err.Error())
 
 			return
 		}

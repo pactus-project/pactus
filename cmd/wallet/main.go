@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"time"
 
 	"github.com/pactus-project/pactus/cmd"
@@ -36,7 +37,7 @@ func openWallet() (*wallet.Wallet, error) {
 		opts = append(opts, wallet.WithOfflineMode())
 	}
 
-	wlt, err := wallet.Open(*pathOpt, opts...)
+	wlt, err := wallet.Open(context.Background(), *pathOpt, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -74,6 +75,6 @@ func main() {
 
 	err := rootCmd.Execute()
 	if err != nil {
-		terminal.PrintErrorMsgf("%s", err)
+		terminal.PrintErrorMsgf(err.Error())
 	}
 }

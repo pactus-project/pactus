@@ -10,9 +10,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-//nolint:dupword // duplicated seed phrase words
-var testMnemonic = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus"
-
 func TestUnsupportedWallet(t *testing.T) {
 	err := Upgrade("./testdata/unsupported_wallet")
 	require.ErrorIs(t, err, UnsupportedVersionError{
@@ -44,8 +41,7 @@ func TestUpgrade(t *testing.T) {
 
 		assert.Equal(t, VersionLatest, strg.WalletInfo().Version)
 
-		infos, err := strg.AllAddresses()
-		require.NoError(t, err)
+		infos := strg.AllAddresses()
 		for _, info := range infos {
 			assert.NotEmpty(t, info.PublicKey)
 		}
@@ -117,8 +113,7 @@ func TestUpgrade(t *testing.T) {
 		assert.Equal(t, genesis.Mainnet, strg.WalletInfo().Network)
 		assert.Equal(t, amount.Amount(2e7), strg.WalletInfo().DefaultFee) // 0.02 PAC
 
-		infos, err := strg.AllAddresses()
-		require.NoError(t, err)
+		infos := strg.AllAddresses()
 		assert.Len(t, infos, 5)
 	})
 }

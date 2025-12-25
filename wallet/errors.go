@@ -18,6 +18,9 @@ var (
 	// ErrAddressExists describes an error in which the address already exist
 	// in wallet.
 	ErrAddressExists = errors.New("address already exists")
+
+	// ErrTransactionExists indicates the transaction already exists in history.
+	ErrTransactionExists = errors.New("transaction already exists")
 )
 
 // ExitsError describes an error in which a wallet exists in the
@@ -28,18 +31,4 @@ type ExitsError struct {
 
 func (e ExitsError) Error() string {
 	return fmt.Sprintf("a wallet exists at: %s", e.Path)
-}
-
-// AddressNotFoundError describes an error in which the address doesn't exist
-// in wallet.
-type AddressNotFoundError struct {
-	addr string
-}
-
-func NewErrAddressNotFound(addr string) error {
-	return AddressNotFoundError{addr: addr}
-}
-
-func (e AddressNotFoundError) Error() string {
-	return fmt.Sprintf("address not found: %s", e.addr)
 }

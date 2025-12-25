@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/pactus-project/pactus/cmd"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/util/prompt"
@@ -31,7 +33,7 @@ func buildRecoverCmd(parentCmd *cobra.Command) {
 		if *testnetOpt {
 			chainType = genesis.Testnet
 		}
-		wlt, err := wallet.Create(*pathOpt, mnemonic, *passOpt, chainType)
+		wlt, err := wallet.Create(context.Background(), *pathOpt, mnemonic, *passOpt, chainType)
 		terminal.FatalErrorCheck(err)
 
 		cmd.RecoverWalletAddresses(wlt, *passOpt)

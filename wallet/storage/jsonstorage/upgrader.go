@@ -3,7 +3,6 @@ package jsonstorage
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -99,25 +98,16 @@ func (u *upgrader) upgrade() error {
 		store.Version = Version5
 		store.VaultCRC = store.calcVaultCRC()
 
-		now := time.Now()
 		for addr, ai := range legacyStore.Vault.Addresses {
 			store.Addresses[addr] = types.AddressInfo{
 				Address:   ai.Address,
 				PublicKey: ai.PublicKey,
 				Label:     ai.Label,
 				Path:      ai.Path,
-				CreatedAt: now,
-				UpdatedAt: now,
 			}
 		}
 
-		// Save the upgraded wallet
-		data, err := json.Marshal(store)
-		if err != nil {
-			return err
-		}
-
-		return util.WriteFile(u.path, data)
+		return store.Save(u.path)
 
 	case Version5:
 		// Latest version, no need to upgrade.

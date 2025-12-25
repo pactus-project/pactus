@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/pactus-project/pactus/crypto"
 	"github.com/pactus-project/pactus/crypto/bls"
@@ -365,14 +364,11 @@ func (v *Vault) NewValidatorAddress(label string) (*types.AddressInfo, error) {
 	}
 
 	addr := blsPubKey.ValidatorAddress().String()
-	now := time.Now()
 	info := types.AddressInfo{
 		Address:   addr,
 		Label:     label,
 		PublicKey: blsPubKey.String(),
 		Path:      addresspath.NewPath(ext.Path()...).String(),
-		CreatedAt: now,
-		UpdatedAt: now,
 	}
 
 	v.Purposes.PurposeBLS.NextValidatorIndex++
@@ -410,14 +406,11 @@ func (*Vault) deriveBLSAccountAddressAt(ext *blshdkeychain.ExtendedKey,
 	}
 
 	addr := blsPubKey.AccountAddress().String()
-	now := time.Now()
 	info := types.AddressInfo{
 		Address:   addr,
 		Label:     label,
 		PublicKey: blsPubKey.String(),
 		Path:      addresspath.NewPath(ext.Path()...).String(),
-		CreatedAt: now,
-		UpdatedAt: now,
 	}
 
 	return &info, nil
@@ -463,14 +456,11 @@ func (v *Vault) deriveEd25519AccountAddressAt(masterKey *ed25519hdkeychain.Exten
 	}
 
 	addr := ed25519PubKey.AccountAddress().String()
-	now := time.Now()
 	info := types.AddressInfo{
 		Address:   addr,
 		Label:     label,
 		PublicKey: ed25519PubKey.String(),
 		Path:      addresspath.NewPath(ext.Path()...).String(),
-		CreatedAt: now,
-		UpdatedAt: now,
 	}
 
 	return &info, nil

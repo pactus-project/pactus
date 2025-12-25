@@ -10,6 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+//nolint:dupword // duplicated seed phrase words
+var testMnemonic = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon cactus"
+
 func TestCreate(t *testing.T) {
 	tempPath := util.TempFilePath()
 

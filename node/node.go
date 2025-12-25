@@ -94,7 +94,7 @@ func NewNode(genDoc *genesis.Genesis, conf *config.Config,
 
 	consV1Mgr := consmgr.NewManagerV1(conf.Consensus, state, valKeys, rewardAddrs, broadcastPipe)
 	consV2Mgr := consmgr.NewManagerV2(conf.ConsensusV2, state, valKeys, rewardAddrs, broadcastPipe)
-	walletMgr := wltmgr.NewManager(conf.WalletManager)
+	walletMgr := wltmgr.NewManager(ctx, conf.WalletManager)
 
 	if !store.IsPruned() {
 		conf.Sync.Services.Append(service.FullNode)

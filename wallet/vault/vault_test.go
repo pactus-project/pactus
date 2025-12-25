@@ -16,13 +16,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const tPassword = "super_secret_password"
-
 type testData struct {
 	*testsuite.TestSuite
 
 	vault     *Vault
 	mnemonic  string
+	password  string
 	testAddrs []*types.AddressInfo
 }
 
@@ -32,6 +31,7 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
+	password := ts.RandString(32)
 	mnemonic, _ := GenerateMnemonic(128)
 	vault, err := CreateVaultFromMnemonic(mnemonic, 21888)
 	assert.NoError(t, err)
@@ -63,13 +63,14 @@ func setup(t *testing.T) *testData {
 		encrypter.OptionParallelism(1),
 	}
 
-	err = vault.UpdatePassword("", tPassword, opts...)
+	err = vault.UpdatePassword("", password, opts...)
 	assert.NoError(t, err)
 	assert.True(t, vault.IsEncrypted())
 
 	return &testData{
 		TestSuite: ts,
 		vault:     vault,
+		password:  password,
 		mnemonic:  mnemonic,
 		testAddrs: testAddrs,
 	}
@@ -112,7 +113,7 @@ func TestGetPrivateKeys(t *testing.T) {
 
 	t.Run("Unknown purpose", func(t *testing.T) {
 		path, _ := addresspath.FromString("m/0")
-		_, err := td.vault.PrivateKeys(tPassword, []addresspath.Path{path})
+		_, err := td.vault.PrivateKeys(td.password, []addresspath.Path{path})
 		assert.ErrorIs(t, err, ErrUnsupportedPurpose)
 	})
 
@@ -131,7 +132,7 @@ func TestGetPrivateKeys(t *testing.T) {
 	t.Run("Check all the private keys", func(t *testing.T) {
 		for _, info := range td.testAddrs {
 			path, _ := addresspath.FromString(info.Path)
-			prv, err := td.vault.PrivateKeys(tPassword, []addresspath.Path{path})
+			prv, err := td.vault.PrivateKeys(td.password, []addresspath.Path{path})
 			assert.NoError(t, err)
 
 			switch path.AddressType() {
@@ -160,7 +161,7 @@ func TestImportBLSPrivateKey(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		accInfo, valInfo, err := td.vault.ImportBLSPrivateKey(tPassword, prv)
+		accInfo, valInfo, err := td.vault.ImportBLSPrivateKey(td.password, prv)
 		assert.NoError(t, err)
 
 		assert.Equal(t, prv.PublicKeyNative().String(), accInfo.PublicKey)
@@ -182,7 +183,7 @@ func TestImportEd25519PrivateKey(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		info, err := td.vault.ImportEd25519PrivateKey(tPassword, prv)
+		info, err := td.vault.ImportEd25519PrivateKey(td.password, prv)
 		assert.NoError(t, err)
 
 		assert.Equal(t, prv.PublicKeyNative().String(), info.PublicKey)
@@ -204,7 +205,7 @@ func TestGetMnemonic(t *testing.T) {
 	})
 
 	t.Run("Ok", func(t *testing.T) {
-		m, err := td.vault.Mnemonic(tPassword)
+		m, err := td.vault.Mnemonic(td.password)
 		assert.NoError(t, err)
 		assert.Equal(t, m, td.mnemonic)
 	})
@@ -232,12 +233,12 @@ func TestUpdatePassword(t *testing.T) {
 	})
 
 	t.Run("Updates password with valid current password", func(t *testing.T) {
-		assert.NoError(t, td.vault.UpdatePassword(tPassword, newPassword, opts...))
+		assert.NoError(t, td.vault.UpdatePassword(td.password, newPassword, opts...))
 		assert.True(t, td.vault.IsEncrypted())
 	})
 
 	t.Run("Old password is no longer valid after update", func(t *testing.T) {
-		err := td.vault.UpdatePassword(tPassword, newPassword)
+		err := td.vault.UpdatePassword(td.password, newPassword)
 		assert.ErrorIs(t, err, encrypter.ErrInvalidPassword)
 	})
 
@@ -254,10 +255,10 @@ func TestNeuter(t *testing.T) {
 
 	assert.True(t, td.vault.IsNeutered())
 
-	_, err := td.vault.Mnemonic(tPassword)
+	_, err := td.vault.Mnemonic(td.password)
 	assert.ErrorIs(t, err, ErrNeutered)
 
-	_, err = td.vault.PrivateKeys(tPassword, []addresspath.Path{})
+	_, err = td.vault.PrivateKeys(td.password, []addresspath.Path{})
 	assert.ErrorIs(t, err, ErrNeutered)
 
 	_, _, err = td.vault.ImportBLSPrivateKey("any", nil)

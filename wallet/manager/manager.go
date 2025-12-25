@@ -1,6 +1,7 @@
 package manager
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 
@@ -18,13 +19,15 @@ import (
 var _ IManager = (*Manager)(nil)
 
 type Manager struct {
+	ctx             context.Context
 	wallets         map[string]*wallet.Wallet
 	chainType       genesis.ChainType
 	walletDirectory string
 }
 
-func NewManager(conf *Config) IManager {
+func NewManager(ctx context.Context, conf *Config) IManager {
 	return &Manager{
+		ctx:             ctx,
 		wallets:         make(map[string]*wallet.Wallet),
 		chainType:       conf.ChainType,
 		walletDirectory: conf.WalletsDir,
@@ -43,7 +46,7 @@ func (wm *Manager) createWalletWithMnemonic(
 		return ErrWalletAlreadyExists
 	}
 
-	_, err := wallet.Create(walletPath, mnemonic, password, wm.chainType)
+	_, err := wallet.Create(wm.ctx, walletPath, mnemonic, password, wm.chainType)
 	if err != nil {
 		return err
 	}
@@ -88,7 +91,7 @@ func (wm *Manager) LoadWallet(walletName, serverAddr string) error {
 	}
 
 	walletPath := wm.getWalletPath(walletName)
-	wlt, err := wallet.Open(walletPath, wallet.WithCustomServers([]string{serverAddr}))
+	wlt, err := wallet.Open(wm.ctx, walletPath, wallet.WithCustomServers([]string{serverAddr}))
 	if err != nil {
 		return err
 	}
@@ -308,7 +311,7 @@ func (wm *Manager) AddressInfo(walletName, address string) (*types.AddressInfo, 
 		return nil, ErrWalletNotLoaded
 	}
 
-	return wlt.AddressInfo(address), nil
+	return wlt.AddressInfo(address)
 }
 
 func (wm *Manager) WalletInfo(walletName string) (*types.WalletInfo, error) {
@@ -329,7 +332,7 @@ func (wm *Manager) ListWallets() ([]string, error) {
 	}
 
 	for _, file := range files {
-		_, err = wallet.Open(file, wallet.WithOfflineMode())
+		_, err = wallet.Open(wm.ctx, file, wallet.WithOfflineMode())
 		if err != nil {
 			logger.Warn(fmt.Sprintf("file %s is not wallet", file))
 

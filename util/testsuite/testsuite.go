@@ -616,6 +616,7 @@ type TransactionMaker struct {
 	Signer     crypto.PrivateKey
 	ValPubKey  *bls.PublicKey
 	Recipients []payload.BatchRecipient
+	Receiver   crypto.Address
 }
 
 func (tm *TransactionMaker) SignerAccountAddress() crypto.Address {
@@ -653,6 +654,7 @@ func (ts *TestSuite) NewTransactionMaker() *TransactionMaker {
 		Signer:     nil,
 		ValPubKey:  nil,
 		Recipients: recipients,
+		Receiver:   ts.RandAccAddress(),
 	}
 }
 
@@ -698,6 +700,13 @@ func TransactionWithRecipients(recipients []payload.BatchRecipient) func(*Transa
 	}
 }
 
+// TransactionWithReceiver sets the receiver for the Transfer transaction.
+func TransactionWithReceiver(receiver crypto.Address) func(*TransactionMaker) {
+	return func(tm *TransactionMaker) {
+		tm.Receiver = receiver
+	}
+}
+
 // GenerateTestTransferTx generates a transfer transaction for testing purposes.
 func (ts *TestSuite) GenerateTestTransferTx(options ...func(*TransactionMaker)) *tx.Tx {
 	tmk := ts.NewTransactionMaker()
@@ -718,7 +727,7 @@ func (ts *TestSuite) GenerateTestTransferTx(options ...func(*TransactionMaker)) 
 	}
 
 	sender := tmk.SignerAccountAddress()
-	trx := tx.NewTransferTx(tmk.LockTime, sender, ts.RandAccAddress(), tmk.Amount, tmk.Fee)
+	trx := tx.NewTransferTx(tmk.LockTime, sender, tmk.Receiver, tmk.Amount, tmk.Fee)
 	ts.HelperSignTransaction(tmk.Signer, trx)
 
 	return trx
@@ -857,7 +866,7 @@ func (ts *TestSuite) GenerateTestWithdrawTx(options ...func(*TransactionMaker)) 
 	}
 
 	sender := tmk.SignerValidatorAddress()
-	trx := tx.NewWithdrawTx(tmk.LockTime, sender, ts.RandAccAddress(), tmk.Amount, tmk.Fee)
+	trx := tx.NewWithdrawTx(tmk.LockTime, sender, tmk.Receiver, tmk.Amount, tmk.Fee)
 	ts.HelperSignTransaction(tmk.Signer, trx)
 
 	return trx
