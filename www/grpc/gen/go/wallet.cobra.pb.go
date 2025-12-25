@@ -36,6 +36,7 @@ func WalletClientCommand(options ...client.Option) *cobra.Command {
 		_WalletListWalletsCommand(cfg),
 		_WalletGetWalletInfoCommand(cfg),
 		_WalletListAddressesCommand(cfg),
+		_WalletUpdatePasswordCommand(cfg),
 	)
 	return cmd
 }
@@ -723,6 +724,50 @@ func _WalletListAddressesCommand(cfg *client.Config) *cobra.Command {
 
 	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "The name of the queried wallet.")
 	flag.EnumSliceVar(cmd.PersistentFlags(), &req.AddressTypes, cfg.FlagNamer("AddressTypes"), "Filter addresses by their types. If empty, all address types are included.")
+
+	return cmd
+}
+
+func _WalletUpdatePasswordCommand(cfg *client.Config) *cobra.Command {
+	req := &UpdatePasswordRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("UpdatePassword"),
+		Short: "UpdatePassword RPC client",
+		Long:  "UpdatePassword updates the password of an existing wallet.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "UpdatePassword"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewWalletClient(cc)
+				v := &UpdatePasswordRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.UpdatePassword(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "The name of the wallet whose password will be updated.")
+	cmd.PersistentFlags().StringVar(&req.OldPassword, cfg.FlagNamer("OldPassword"), "", "The current wallet password.")
+	cmd.PersistentFlags().StringVar(&req.NewPassword, cfg.FlagNamer("NewPassword"), "", "The new wallet password.")
 
 	return cmd
 }

@@ -573,6 +573,36 @@ final $typed_data.Uint8List listAddressesResponseDescriptor = $convert.base64Dec
     'ChVMaXN0QWRkcmVzc2VzUmVzcG9uc2USHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbW'
     'USJwoEZGF0YRgCIAMoCzITLnBhY3R1cy5BZGRyZXNzSW5mb1IEZGF0YQ==');
 
+@$core.Deprecated('Use updatePasswordRequestDescriptor instead')
+const UpdatePasswordRequest$json = {
+  '1': 'UpdatePasswordRequest',
+  '2': [
+    {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+    {'1': 'old_password', '3': 2, '4': 1, '5': 9, '10': 'oldPassword'},
+    {'1': 'new_password', '3': 3, '4': 1, '5': 9, '10': 'newPassword'},
+  ],
+};
+
+/// Descriptor for `UpdatePasswordRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updatePasswordRequestDescriptor = $convert.base64Decode(
+    'ChVVcGRhdGVQYXNzd29yZFJlcXVlc3QSHwoLd2FsbGV0X25hbWUYASABKAlSCndhbGxldE5hbW'
+    'USIQoMb2xkX3Bhc3N3b3JkGAIgASgJUgtvbGRQYXNzd29yZBIhCgxuZXdfcGFzc3dvcmQYAyAB'
+    'KAlSC25ld1Bhc3N3b3Jk');
+
+@$core.Deprecated('Use updatePasswordResponseDescriptor instead')
+const UpdatePasswordResponse$json = {
+  '1': 'UpdatePasswordResponse',
+  '2': [
+    {'1': 'wallet_name', '3': 1, '4': 1, '5': 9, '10': 'walletName'},
+  ],
+};
+
+/// Descriptor for `UpdatePasswordResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List updatePasswordResponseDescriptor =
+    $convert.base64Decode(
+        'ChZVcGRhdGVQYXNzd29yZFJlc3BvbnNlEh8KC3dhbGxldF9uYW1lGAEgASgJUgp3YWxsZXROYW'
+        '1l');
+
 const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = {
   '1': 'Wallet',
   '2': [
@@ -656,6 +686,11 @@ const $core.Map<$core.String, $core.dynamic> WalletServiceBase$json = {
       '2': '.pactus.ListAddressesRequest',
       '3': '.pactus.ListAddressesResponse'
     },
+    {
+      '1': 'UpdatePassword',
+      '2': '.pactus.UpdatePasswordRequest',
+      '3': '.pactus.UpdatePasswordResponse'
+    },
   ],
 };
 
@@ -696,6 +731,8 @@ const $core.Map<$core.String, $core.Map<$core.String, $core.dynamic>>
   '.pactus.GetWalletInfoResponse': GetWalletInfoResponse$json,
   '.pactus.ListAddressesRequest': ListAddressesRequest$json,
   '.pactus.ListAddressesResponse': ListAddressesResponse$json,
+  '.pactus.UpdatePasswordRequest': UpdatePasswordRequest$json,
+  '.pactus.UpdatePasswordResponse': UpdatePasswordResponse$json,
 };
 
 /// Descriptor for `Wallet`. Decode as a `google.protobuf.ServiceDescriptorProto`.
@@ -723,4 +760,5 @@ final $typed_data.Uint8List walletServiceDescriptor = $convert.base64Decode(
     'dHVzLkxpc3RXYWxsZXRzUmVzcG9uc2USTAoNR2V0V2FsbGV0SW5mbxIcLnBhY3R1cy5HZXRXYW'
     'xsZXRJbmZvUmVxdWVzdBodLnBhY3R1cy5HZXRXYWxsZXRJbmZvUmVzcG9uc2USTAoNTGlzdEFk'
     'ZHJlc3NlcxIcLnBhY3R1cy5MaXN0QWRkcmVzc2VzUmVxdWVzdBodLnBhY3R1cy5MaXN0QWRkcm'
-    'Vzc2VzUmVzcG9uc2U=');
+    'Vzc2VzUmVzcG9uc2USTwoOVXBkYXRlUGFzc3dvcmQSHS5wYWN0dXMuVXBkYXRlUGFzc3dvcmRS'
+    'ZXF1ZXN0Gh4ucGFjdHVzLlVwZGF0ZVBhc3N3b3JkUmVzcG9uc2U=');

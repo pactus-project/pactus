@@ -2427,6 +2427,146 @@ class ListAddressesResponse extends $pb.GeneratedMessage {
   $pb.PbList<AddressInfo> get data => $_getList(1);
 }
 
+/// Request message for updating wallet password.
+class UpdatePasswordRequest extends $pb.GeneratedMessage {
+  factory UpdatePasswordRequest({
+    $core.String? walletName,
+    $core.String? oldPassword,
+    $core.String? newPassword,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    if (oldPassword != null) result.oldPassword = oldPassword;
+    if (newPassword != null) result.newPassword = newPassword;
+    return result;
+  }
+
+  UpdatePasswordRequest._();
+
+  factory UpdatePasswordRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory UpdatePasswordRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'UpdatePasswordRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..aOS(2, _omitFieldNames ? '' : 'oldPassword')
+    ..aOS(3, _omitFieldNames ? '' : 'newPassword')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  UpdatePasswordRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  UpdatePasswordRequest copyWith(
+          void Function(UpdatePasswordRequest) updates) =>
+      super.copyWith((message) => updates(message as UpdatePasswordRequest))
+          as UpdatePasswordRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UpdatePasswordRequest create() => UpdatePasswordRequest._();
+  @$core.override
+  UpdatePasswordRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static UpdatePasswordRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<UpdatePasswordRequest>(create);
+  static UpdatePasswordRequest? _defaultInstance;
+
+  /// The name of the wallet whose password will be updated.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+
+  /// The current wallet password.
+  @$pb.TagNumber(2)
+  $core.String get oldPassword => $_getSZ(1);
+  @$pb.TagNumber(2)
+  set oldPassword($core.String value) => $_setString(1, value);
+  @$pb.TagNumber(2)
+  $core.bool hasOldPassword() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearOldPassword() => $_clearField(2);
+
+  /// The new wallet password.
+  @$pb.TagNumber(3)
+  $core.String get newPassword => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set newPassword($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasNewPassword() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearNewPassword() => $_clearField(3);
+}
+
+/// Response message confirming wallet password update.
+class UpdatePasswordResponse extends $pb.GeneratedMessage {
+  factory UpdatePasswordResponse({
+    $core.String? walletName,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    return result;
+  }
+
+  UpdatePasswordResponse._();
+
+  factory UpdatePasswordResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory UpdatePasswordResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'UpdatePasswordResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  UpdatePasswordResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  UpdatePasswordResponse copyWith(
+          void Function(UpdatePasswordResponse) updates) =>
+      super.copyWith((message) => updates(message as UpdatePasswordResponse))
+          as UpdatePasswordResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static UpdatePasswordResponse create() => UpdatePasswordResponse._();
+  @$core.override
+  UpdatePasswordResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static UpdatePasswordResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<UpdatePasswordResponse>(create);
+  static UpdatePasswordResponse? _defaultInstance;
+
+  /// The name of the wallet whose password was updated.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+}
+
 /// Wallet service provides RPC methods for wallet management operations.
 class WalletApi {
   final $pb.RpcClient _client;
@@ -2529,6 +2669,12 @@ class WalletApi {
           $pb.ClientContext? ctx, ListAddressesRequest request) =>
       _client.invoke<ListAddressesResponse>(
           ctx, 'Wallet', 'ListAddresses', request, ListAddressesResponse());
+
+  /// UpdatePassword updates the password of an existing wallet.
+  $async.Future<UpdatePasswordResponse> updatePassword(
+          $pb.ClientContext? ctx, UpdatePasswordRequest request) =>
+      _client.invoke<UpdatePasswordResponse>(
+          ctx, 'Wallet', 'UpdatePassword', request, UpdatePasswordResponse());
 }
 
 const $core.bool _omitFieldNames =

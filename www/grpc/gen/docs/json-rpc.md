@@ -265,6 +265,10 @@ curl --location 'http://localhost:8545/' \
           <a href="#pactus.wallet.list_addresses">
           <span class="rpc-badge"></span> pactus.wallet.list_addresses</a>
         </li>
+        <li>
+          <a href="#pactus.wallet.update_password">
+          <span class="rpc-badge"></span> pactus.wallet.update_password</a>
+        </li>
         </ul>
     </li>
     </ul>
@@ -4321,4 +4325,55 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         </td>
       </tr>
          </tbody>
+</table>
+
+#### pactus.wallet.update_password <span id="pactus.wallet.update_password" class="rpc-badge"></span>
+
+<p>UpdatePassword updates the password of an existing wallet.</p>
+
+<h4>Parameters</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet whose password will be updated.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">old_password</td>
+    <td> string</td>
+    <td>
+    The current wallet password.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">new_password</td>
+    <td> string</td>
+    <td>
+    The new wallet password.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet whose password was updated.
+    </td>
+  </tr>
+     </tbody>
 </table>

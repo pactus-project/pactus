@@ -54,6 +54,9 @@ service Wallet {
 
   // ListAddresses returns all addresses in the specified wallet.
   rpc ListAddresses(ListAddressesRequest) returns (ListAddressesResponse);
+
+  // UpdatePassword updates the password of an existing wallet.
+  rpc UpdatePassword(UpdatePasswordRequest) returns (UpdatePasswordResponse);
 }
 
 // AddressType defines different types of blockchain addresses.
@@ -348,4 +351,20 @@ message ListAddressesResponse {
   string wallet_name = 1;
   // List of all addresses in the wallet with their details.
   repeated AddressInfo data = 2;
+}
+
+// Request message for updating wallet password.
+message UpdatePasswordRequest {
+  // The name of the wallet whose password will be updated.
+  string wallet_name = 1;
+  // The current wallet password.
+  string old_password = 2;
+  // The new wallet password.
+  string new_password = 3;
+}
+
+// Response message confirming wallet password update.
+message UpdatePasswordResponse {
+  // The name of the wallet whose password was updated.
+  string wallet_name = 1;
 }

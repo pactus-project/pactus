@@ -1154,6 +1154,31 @@
 }}
           }
         }
+      },{
+      "name": "pactus.wallet.update_password",
+      "description": "UpdatePassword updates the password of an existing wallet.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "wallet_name",
+          "description": "The name of the wallet whose password will be updated.",
+          "schema": { "type": "string" }
+        },{
+          "name": "old_password",
+          "description": "The current wallet password.",
+          "schema": { "type": "string" }
+        },{
+          "name": "new_password",
+          "description": "The new wallet password.",
+          "schema": { "type": "string" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["wallet_name"],
+          "properties": {"wallet_name": { "type": "string" }}
+          }
+        }
       }]
 }
 

@@ -356,6 +356,28 @@ function deserialize_pactus_UnloadWalletResponse(buffer_arg) {
   return wallet_pb.UnloadWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_pactus_UpdatePasswordRequest(arg) {
+  if (!(arg instanceof wallet_pb.UpdatePasswordRequest)) {
+    throw new Error('Expected argument of type pactus.UpdatePasswordRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_UpdatePasswordRequest(buffer_arg) {
+  return wallet_pb.UpdatePasswordRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_pactus_UpdatePasswordResponse(arg) {
+  if (!(arg instanceof wallet_pb.UpdatePasswordResponse)) {
+    throw new Error('Expected argument of type pactus.UpdatePasswordResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_pactus_UpdatePasswordResponse(buffer_arg) {
+  return wallet_pb.UpdatePasswordResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 
 // Wallet service provides RPC methods for wallet management operations.
 var WalletService = exports.WalletService = {
@@ -551,6 +573,18 @@ listAddresses: {
     requestDeserialize: deserialize_pactus_ListAddressesRequest,
     responseSerialize: serialize_pactus_ListAddressesResponse,
     responseDeserialize: deserialize_pactus_ListAddressesResponse,
+  },
+  // UpdatePassword updates the password of an existing wallet.
+updatePassword: {
+    path: '/pactus.Wallet/UpdatePassword',
+    requestStream: false,
+    responseStream: false,
+    requestType: wallet_pb.UpdatePasswordRequest,
+    responseType: wallet_pb.UpdatePasswordResponse,
+    requestSerialize: serialize_pactus_UpdatePasswordRequest,
+    requestDeserialize: deserialize_pactus_UpdatePasswordRequest,
+    responseSerialize: serialize_pactus_UpdatePasswordResponse,
+    responseDeserialize: deserialize_pactus_UpdatePasswordResponse,
   },
 };
 

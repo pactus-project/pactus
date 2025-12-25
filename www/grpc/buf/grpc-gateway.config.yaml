@@ -126,7 +126,10 @@ http:
     - selector: pactus.Wallet.ListAddresses
       get: "/pactus/wallet/list_addresses"
 
-    # Util APIs
+    - selector: pactus.Wallet.UpdatePassword
+      get: "/pactus/wallet/update_password"
+
+      # Util APIs
     - selector: pactus.Utils.SignMessageWithPrivateKey
       post: "/pactus/Utils/sign_message_with_private_key"
       body: "*"

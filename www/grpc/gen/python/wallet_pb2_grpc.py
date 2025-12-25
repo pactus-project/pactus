@@ -95,6 +95,11 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.ListAddressesRequest.SerializeToString,
                 response_deserializer=wallet__pb2.ListAddressesResponse.FromString,
                 _registered_method=True)
+        self.UpdatePassword = channel.unary_unary(
+                '/pactus.Wallet/UpdatePassword',
+                request_serializer=wallet__pb2.UpdatePasswordRequest.SerializeToString,
+                response_deserializer=wallet__pb2.UpdatePasswordResponse.FromString,
+                _registered_method=True)
 
 
 class WalletServicer(object):
@@ -214,6 +219,13 @@ class WalletServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def UpdatePassword(self, request, context):
+        """UpdatePassword updates the password of an existing wallet.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_WalletServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -296,6 +308,11 @@ def add_WalletServicer_to_server(servicer, server):
                     servicer.ListAddresses,
                     request_deserializer=wallet__pb2.ListAddressesRequest.FromString,
                     response_serializer=wallet__pb2.ListAddressesResponse.SerializeToString,
+            ),
+            'UpdatePassword': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdatePassword,
+                    request_deserializer=wallet__pb2.UpdatePasswordRequest.FromString,
+                    response_serializer=wallet__pb2.UpdatePasswordResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -731,6 +748,33 @@ class Wallet(object):
             '/pactus.Wallet/ListAddresses',
             wallet__pb2.ListAddressesRequest.SerializeToString,
             wallet__pb2.ListAddressesResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UpdatePassword(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Wallet/UpdatePassword',
+            wallet__pb2.UpdatePasswordRequest.SerializeToString,
+            wallet__pb2.UpdatePasswordResponse.FromString,
             options,
             channel_credentials,
             insecure,
