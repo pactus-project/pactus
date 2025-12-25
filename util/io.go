@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -286,18 +287,46 @@ func SanitizeArchivePath(baseDir, archivePath string) (fullPath string, err erro
 	return "", fmt.Errorf("%s: %s", "content filepath is tainted", archivePath)
 }
 
+type listFilesConfig struct {
+	excludeDirs bool
+}
+
+var defaultListFilesConfig = listFilesConfig{
+	excludeDirs: false,
+}
+
+type ListFilesOption func(*listFilesConfig)
+
+// ExcludeDirectories prevents entering subdirectories.
+func ExcludeDirectories() ListFilesOption {
+	return func(c *listFilesConfig) {
+		c.excludeDirs = true
+	}
+}
+
 // ListFilesInDir return list of files in directory.
-func ListFilesInDir(dir string) ([]string, error) {
+func ListFilesInDir(dir string, opts ...ListFilesOption) ([]string, error) {
+	cfg := defaultListFilesConfig
+	for _, opt := range opts {
+		opt(&cfg)
+	}
+
 	files := make([]string, 0)
 
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+	err := filepath.WalkDir(dir, func(path string, entry fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if !info.IsDir() {
-			files = append(files, path)
+		if entry.Name() == filepath.Base(dir) {
+			return nil
 		}
+
+		if cfg.excludeDirs && entry.IsDir() {
+			return nil
+		}
+
+		files = append(files, path)
 
 		return nil
 	})
