@@ -100,6 +100,20 @@ func (mr *MockIStorageMockRecorder) Clone(path any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Clone", reflect.TypeOf((*MockIStorage)(nil).Clone), path)
 }
 
+// Close mocks base method.
+func (m *MockIStorage) Close() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Close")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Close indicates an expected call of Close.
+func (mr *MockIStorageMockRecorder) Close() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockIStorage)(nil).Close))
+}
+
 // GetTransaction mocks base method.
 func (m *MockIStorage) GetTransaction(id string) (*types.TransactionInfo, error) {
 	m.ctrl.T.Helper()
@@ -172,10 +186,10 @@ func (mr *MockIStorageMockRecorder) InsertTransaction(info any) *gomock.Call {
 }
 
 // ListTransactions mocks base method.
-func (m *MockIStorage) ListTransactions(receiver string, count, skip int) ([]types.TransactionInfo, error) {
+func (m *MockIStorage) ListTransactions(receiver string, count, skip int) ([]*types.TransactionInfo, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListTransactions", receiver, count, skip)
-	ret0, _ := ret[0].([]types.TransactionInfo)
+	ret0, _ := ret[0].([]*types.TransactionInfo)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

@@ -34,6 +34,16 @@ func NewManager(ctx context.Context, conf *Config) IManager {
 	}
 }
 
+func (wm *Manager) Start() error {
+	return nil
+}
+
+func (wm *Manager) Stop() {
+	for _, wlt := range wm.wallets {
+		_ = wlt.Close()
+	}
+}
+
 func (wm *Manager) getWalletPath(walletName string) string {
 	return util.MakeAbs(filepath.Join(wm.walletDirectory, walletName))
 }
@@ -85,13 +95,13 @@ func (wm *Manager) RestoreWallet(walletName, mnemonic, password string) error {
 	return wm.createWalletWithMnemonic(walletName, mnemonic, password)
 }
 
-func (wm *Manager) LoadWallet(walletName, serverAddr string) error {
+func (wm *Manager) LoadWallet(walletName string, opts ...wallet.OpenWalletOption) error {
 	if _, ok := wm.wallets[walletName]; ok {
 		return ErrWalletAlreadyLoaded
 	}
 
 	walletPath := wm.getWalletPath(walletName)
-	wlt, err := wallet.Open(wm.ctx, walletPath, wallet.WithCustomServers([]string{serverAddr}))
+	wlt, err := wallet.Open(wm.ctx, walletPath, opts...)
 	if err != nil {
 		return err
 	}

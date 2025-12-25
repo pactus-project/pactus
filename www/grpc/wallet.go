@@ -90,7 +90,8 @@ func (s *walletServer) RestoreWallet(_ context.Context,
 func (s *walletServer) LoadWallet(_ context.Context,
 	req *pactus.LoadWalletRequest,
 ) (*pactus.LoadWalletResponse, error) {
-	if err := s.walletManager.LoadWallet(req.WalletName, s.Address()); err != nil {
+	if err := s.walletManager.LoadWallet(req.WalletName,
+		wallet.WithCustomServers([]string{s.Address()})); err != nil {
 		return nil, err
 	}
 
