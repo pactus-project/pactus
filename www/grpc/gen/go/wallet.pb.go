@@ -1986,6 +1986,116 @@ func (x *ListAddressesResponse) GetData() []*AddressInfo {
 	return nil
 }
 
+// Request message for updating wallet password.
+type UpdatePasswordRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the wallet whose password will be updated.
+	WalletName string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
+	// The current wallet password.
+	OldPassword string `protobuf:"bytes,2,opt,name=old_password,json=oldPassword,proto3" json:"old_password,omitempty"`
+	// The new wallet password.
+	NewPassword   string `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdatePasswordRequest) Reset() {
+	*x = UpdatePasswordRequest{}
+	mi := &file_wallet_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdatePasswordRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdatePasswordRequest) ProtoMessage() {}
+
+func (x *UpdatePasswordRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_wallet_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdatePasswordRequest.ProtoReflect.Descriptor instead.
+func (*UpdatePasswordRequest) Descriptor() ([]byte, []int) {
+	return file_wallet_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *UpdatePasswordRequest) GetWalletName() string {
+	if x != nil {
+		return x.WalletName
+	}
+	return ""
+}
+
+func (x *UpdatePasswordRequest) GetOldPassword() string {
+	if x != nil {
+		return x.OldPassword
+	}
+	return ""
+}
+
+func (x *UpdatePasswordRequest) GetNewPassword() string {
+	if x != nil {
+		return x.NewPassword
+	}
+	return ""
+}
+
+// Response message confirming wallet password update.
+type UpdatePasswordResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The name of the wallet whose password was updated.
+	WalletName    string `protobuf:"bytes,1,opt,name=wallet_name,json=walletName,proto3" json:"wallet_name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdatePasswordResponse) Reset() {
+	*x = UpdatePasswordResponse{}
+	mi := &file_wallet_proto_msgTypes[35]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdatePasswordResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdatePasswordResponse) ProtoMessage() {}
+
+func (x *UpdatePasswordResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_wallet_proto_msgTypes[35]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdatePasswordResponse.ProtoReflect.Descriptor instead.
+func (*UpdatePasswordResponse) Descriptor() ([]byte, []int) {
+	return file_wallet_proto_rawDescGZIP(), []int{35}
+}
+
+func (x *UpdatePasswordResponse) GetWalletName() string {
+	if x != nil {
+		return x.WalletName
+	}
+	return ""
+}
+
 var File_wallet_proto protoreflect.FileDescriptor
 
 const file_wallet_proto_rawDesc = "" +
@@ -2126,12 +2236,20 @@ const file_wallet_proto_rawDesc = "" +
 	"\x15ListAddressesResponse\x12\x1f\n" +
 	"\vwallet_name\x18\x01 \x01(\tR\n" +
 	"walletName\x12'\n" +
-	"\x04data\x18\x02 \x03(\v2\x13.pactus.AddressInfoR\x04data*\x84\x01\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.pactus.AddressInfoR\x04data\"~\n" +
+	"\x15UpdatePasswordRequest\x12\x1f\n" +
+	"\vwallet_name\x18\x01 \x01(\tR\n" +
+	"walletName\x12!\n" +
+	"\fold_password\x18\x02 \x01(\tR\voldPassword\x12!\n" +
+	"\fnew_password\x18\x03 \x01(\tR\vnewPassword\"9\n" +
+	"\x16UpdatePasswordResponse\x12\x1f\n" +
+	"\vwallet_name\x18\x01 \x01(\tR\n" +
+	"walletName*\x84\x01\n" +
 	"\vAddressType\x12\x19\n" +
 	"\x15ADDRESS_TYPE_TREASURY\x10\x00\x12\x1a\n" +
 	"\x16ADDRESS_TYPE_VALIDATOR\x10\x01\x12\x1c\n" +
 	"\x18ADDRESS_TYPE_BLS_ACCOUNT\x10\x02\x12 \n" +
-	"\x1cADDRESS_TYPE_ED25519_ACCOUNT\x10\x032\x89\n" +
+	"\x1cADDRESS_TYPE_ED25519_ACCOUNT\x10\x032\xda\n" +
 	"\n" +
 	"\x06Wallet\x12I\n" +
 	"\fCreateWallet\x12\x1b.pactus.CreateWalletRequest\x1a\x1c.pactus.CreateWalletResponse\x12L\n" +
@@ -2150,7 +2268,8 @@ const file_wallet_proto_rawDesc = "" +
 	"\x0fSetAddressLabel\x12\x1e.pactus.SetAddressLabelRequest\x1a\x1f.pactus.SetAddressLabelResponse\x12F\n" +
 	"\vListWallets\x12\x1a.pactus.ListWalletsRequest\x1a\x1b.pactus.ListWalletsResponse\x12L\n" +
 	"\rGetWalletInfo\x12\x1c.pactus.GetWalletInfoRequest\x1a\x1d.pactus.GetWalletInfoResponse\x12L\n" +
-	"\rListAddresses\x12\x1c.pactus.ListAddressesRequest\x1a\x1d.pactus.ListAddressesResponseB:\n" +
+	"\rListAddresses\x12\x1c.pactus.ListAddressesRequest\x1a\x1d.pactus.ListAddressesResponse\x12O\n" +
+	"\x0eUpdatePassword\x12\x1d.pactus.UpdatePasswordRequest\x1a\x1e.pactus.UpdatePasswordResponseB:\n" +
 	"\x06pactusZ0github.com/pactus-project/pactus/www/grpc/pactusb\x06proto3"
 
 var (
@@ -2166,7 +2285,7 @@ func file_wallet_proto_rawDescGZIP() []byte {
 }
 
 var file_wallet_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_wallet_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
+var file_wallet_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
 var file_wallet_proto_goTypes = []any{
 	(AddressType)(0),                    // 0: pactus.AddressType
 	(*AddressInfo)(nil),                 // 1: pactus.AddressInfo
@@ -2203,6 +2322,8 @@ var file_wallet_proto_goTypes = []any{
 	(*GetWalletInfoResponse)(nil),       // 32: pactus.GetWalletInfoResponse
 	(*ListAddressesRequest)(nil),        // 33: pactus.ListAddressesRequest
 	(*ListAddressesResponse)(nil),       // 34: pactus.ListAddressesResponse
+	(*UpdatePasswordRequest)(nil),       // 35: pactus.UpdatePasswordRequest
+	(*UpdatePasswordResponse)(nil),      // 36: pactus.UpdatePasswordResponse
 }
 var file_wallet_proto_depIdxs = []int32{
 	2,  // 0: pactus.GetAddressHistoryResponse.history_info:type_name -> pactus.HistoryInfo
@@ -2227,24 +2348,26 @@ var file_wallet_proto_depIdxs = []int32{
 	29, // 19: pactus.Wallet.ListWallets:input_type -> pactus.ListWalletsRequest
 	31, // 20: pactus.Wallet.GetWalletInfo:input_type -> pactus.GetWalletInfoRequest
 	33, // 21: pactus.Wallet.ListAddresses:input_type -> pactus.ListAddressesRequest
-	10, // 22: pactus.Wallet.CreateWallet:output_type -> pactus.CreateWalletResponse
-	8,  // 23: pactus.Wallet.RestoreWallet:output_type -> pactus.RestoreWalletResponse
-	12, // 24: pactus.Wallet.LoadWallet:output_type -> pactus.LoadWalletResponse
-	14, // 25: pactus.Wallet.UnloadWallet:output_type -> pactus.UnloadWalletResponse
-	20, // 26: pactus.Wallet.GetTotalBalance:output_type -> pactus.GetTotalBalanceResponse
-	18, // 27: pactus.Wallet.SignRawTransaction:output_type -> pactus.SignRawTransactionResponse
-	16, // 28: pactus.Wallet.GetValidatorAddress:output_type -> pactus.GetValidatorAddressResponse
-	6,  // 29: pactus.Wallet.GetNewAddress:output_type -> pactus.GetNewAddressResponse
-	4,  // 30: pactus.Wallet.GetAddressHistory:output_type -> pactus.GetAddressHistoryResponse
-	22, // 31: pactus.Wallet.SignMessage:output_type -> pactus.SignMessageResponse
-	24, // 32: pactus.Wallet.GetTotalStake:output_type -> pactus.GetTotalStakeResponse
-	26, // 33: pactus.Wallet.GetAddressInfo:output_type -> pactus.GetAddressInfoResponse
-	28, // 34: pactus.Wallet.SetAddressLabel:output_type -> pactus.SetAddressLabelResponse
-	30, // 35: pactus.Wallet.ListWallets:output_type -> pactus.ListWalletsResponse
-	32, // 36: pactus.Wallet.GetWalletInfo:output_type -> pactus.GetWalletInfoResponse
-	34, // 37: pactus.Wallet.ListAddresses:output_type -> pactus.ListAddressesResponse
-	22, // [22:38] is the sub-list for method output_type
-	6,  // [6:22] is the sub-list for method input_type
+	35, // 22: pactus.Wallet.UpdatePassword:input_type -> pactus.UpdatePasswordRequest
+	10, // 23: pactus.Wallet.CreateWallet:output_type -> pactus.CreateWalletResponse
+	8,  // 24: pactus.Wallet.RestoreWallet:output_type -> pactus.RestoreWalletResponse
+	12, // 25: pactus.Wallet.LoadWallet:output_type -> pactus.LoadWalletResponse
+	14, // 26: pactus.Wallet.UnloadWallet:output_type -> pactus.UnloadWalletResponse
+	20, // 27: pactus.Wallet.GetTotalBalance:output_type -> pactus.GetTotalBalanceResponse
+	18, // 28: pactus.Wallet.SignRawTransaction:output_type -> pactus.SignRawTransactionResponse
+	16, // 29: pactus.Wallet.GetValidatorAddress:output_type -> pactus.GetValidatorAddressResponse
+	6,  // 30: pactus.Wallet.GetNewAddress:output_type -> pactus.GetNewAddressResponse
+	4,  // 31: pactus.Wallet.GetAddressHistory:output_type -> pactus.GetAddressHistoryResponse
+	22, // 32: pactus.Wallet.SignMessage:output_type -> pactus.SignMessageResponse
+	24, // 33: pactus.Wallet.GetTotalStake:output_type -> pactus.GetTotalStakeResponse
+	26, // 34: pactus.Wallet.GetAddressInfo:output_type -> pactus.GetAddressInfoResponse
+	28, // 35: pactus.Wallet.SetAddressLabel:output_type -> pactus.SetAddressLabelResponse
+	30, // 36: pactus.Wallet.ListWallets:output_type -> pactus.ListWalletsResponse
+	32, // 37: pactus.Wallet.GetWalletInfo:output_type -> pactus.GetWalletInfoResponse
+	34, // 38: pactus.Wallet.ListAddresses:output_type -> pactus.ListAddressesResponse
+	36, // 39: pactus.Wallet.UpdatePassword:output_type -> pactus.UpdatePasswordResponse
+	23, // [23:40] is the sub-list for method output_type
+	6,  // [6:23] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name
 	6,  // [6:6] is the sub-list for extension extendee
 	0,  // [0:6] is the sub-list for field type_name
@@ -2261,7 +2384,7 @@ func file_wallet_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_wallet_proto_rawDesc), len(file_wallet_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   34,
+			NumMessages:   36,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

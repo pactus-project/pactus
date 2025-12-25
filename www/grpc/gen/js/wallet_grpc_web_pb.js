@@ -1050,5 +1050,66 @@ proto.pactus.WalletPromiseClient.prototype.listAddresses =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.UpdatePasswordRequest,
+ *   !proto.pactus.UpdatePasswordResponse>}
+ */
+const methodDescriptor_Wallet_UpdatePassword = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/UpdatePassword',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.UpdatePasswordRequest,
+  proto.pactus.UpdatePasswordResponse,
+  /**
+   * @param {!proto.pactus.UpdatePasswordRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.UpdatePasswordResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.UpdatePasswordRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.UpdatePasswordResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.UpdatePasswordResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.updatePassword =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/UpdatePassword',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_UpdatePassword,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.UpdatePasswordRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.UpdatePasswordResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.updatePassword =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/UpdatePassword',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_UpdatePassword);
+};
+
+
 module.exports = proto.pactus;
 

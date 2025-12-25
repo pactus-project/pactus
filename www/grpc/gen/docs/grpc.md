@@ -215,6 +215,10 @@ For seamless integration with Pactus, you can use these client libraries:
           <a href="#pactus.Wallet.ListAddresses">
           <span class="rpc-badge"></span> ListAddresses</a>
         </li>
+        <li>
+          <a href="#pactus.Wallet.UpdatePassword">
+          <span class="rpc-badge"></span> UpdatePassword</a>
+        </li>
         </ul>
     </li>
     </ul>
@@ -4271,6 +4275,57 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         </td>
       </tr>
          </tbody>
+</table>
+
+#### UpdatePassword <span id="pactus.Wallet.UpdatePassword" class="rpc-badge"></span>
+
+<p>UpdatePassword updates the password of an existing wallet.</p>
+
+<h4>UpdatePasswordRequest <span class="badge text-bg-info fs-6 align-top">Request</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet whose password will be updated.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">old_password</td>
+    <td> string</td>
+    <td>
+    The current wallet password.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">new_password</td>
+    <td> string</td>
+    <td>
+    The new wallet password.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>UpdatePasswordResponse <span class="badge text-bg-warning fs-6 align-top">Response</span></h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet whose password was updated.
+    </td>
+  </tr>
+     </tbody>
 </table>
 
 ## Scalar Value Types

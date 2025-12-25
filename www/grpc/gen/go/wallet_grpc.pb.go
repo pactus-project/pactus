@@ -35,6 +35,7 @@ const (
 	Wallet_ListWallets_FullMethodName         = "/pactus.Wallet/ListWallets"
 	Wallet_GetWalletInfo_FullMethodName       = "/pactus.Wallet/GetWalletInfo"
 	Wallet_ListAddresses_FullMethodName       = "/pactus.Wallet/ListAddresses"
+	Wallet_UpdatePassword_FullMethodName      = "/pactus.Wallet/UpdatePassword"
 )
 
 // WalletClient is the client API for Wallet service.
@@ -76,6 +77,8 @@ type WalletClient interface {
 	GetWalletInfo(ctx context.Context, in *GetWalletInfoRequest, opts ...grpc.CallOption) (*GetWalletInfoResponse, error)
 	// ListAddresses returns all addresses in the specified wallet.
 	ListAddresses(ctx context.Context, in *ListAddressesRequest, opts ...grpc.CallOption) (*ListAddressesResponse, error)
+	// UpdatePassword updates the password of an existing wallet.
+	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*UpdatePasswordResponse, error)
 }
 
 type walletClient struct {
@@ -246,6 +249,16 @@ func (c *walletClient) ListAddresses(ctx context.Context, in *ListAddressesReque
 	return out, nil
 }
 
+func (c *walletClient) UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*UpdatePasswordResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdatePasswordResponse)
+	err := c.cc.Invoke(ctx, Wallet_UpdatePassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletServer is the server API for Wallet service.
 // All implementations should embed UnimplementedWalletServer
 // for forward compatibility.
@@ -285,6 +298,8 @@ type WalletServer interface {
 	GetWalletInfo(context.Context, *GetWalletInfoRequest) (*GetWalletInfoResponse, error)
 	// ListAddresses returns all addresses in the specified wallet.
 	ListAddresses(context.Context, *ListAddressesRequest) (*ListAddressesResponse, error)
+	// UpdatePassword updates the password of an existing wallet.
+	UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordResponse, error)
 }
 
 // UnimplementedWalletServer should be embedded to have
@@ -341,6 +356,9 @@ func (UnimplementedWalletServer) GetWalletInfo(context.Context, *GetWalletInfoRe
 }
 func (UnimplementedWalletServer) ListAddresses(context.Context, *ListAddressesRequest) (*ListAddressesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListAddresses not implemented")
+}
+func (UnimplementedWalletServer) UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdatePassword not implemented")
 }
 func (UnimplementedWalletServer) testEmbeddedByValue() {}
 
@@ -650,6 +668,24 @@ func _Wallet_ListAddresses_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Wallet_UpdatePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).UpdatePassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_UpdatePassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).UpdatePassword(ctx, req.(*UpdatePasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Wallet_ServiceDesc is the grpc.ServiceDesc for Wallet service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -720,6 +756,10 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListAddresses",
 			Handler:    _Wallet_ListAddresses_Handler,
+		},
+		{
+			MethodName: "UpdatePassword",
+			Handler:    _Wallet_UpdatePassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

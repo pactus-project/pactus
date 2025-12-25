@@ -53,6 +53,8 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
       $pb.ServerContext ctx, $0.GetWalletInfoRequest request);
   $async.Future<$0.ListAddressesResponse> listAddresses(
       $pb.ServerContext ctx, $0.ListAddressesRequest request);
+  $async.Future<$0.UpdatePasswordResponse> updatePassword(
+      $pb.ServerContext ctx, $0.UpdatePasswordRequest request);
 
   $pb.GeneratedMessage createRequest($core.String methodName) {
     switch (methodName) {
@@ -88,6 +90,8 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return $0.GetWalletInfoRequest();
       case 'ListAddresses':
         return $0.ListAddressesRequest();
+      case 'UpdatePassword':
+        return $0.UpdatePasswordRequest();
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }
@@ -129,6 +133,8 @@ abstract class WalletServiceBase extends $pb.GeneratedService {
         return getWalletInfo(ctx, request as $0.GetWalletInfoRequest);
       case 'ListAddresses':
         return listAddresses(ctx, request as $0.ListAddressesRequest);
+      case 'UpdatePassword':
+        return updatePassword(ctx, request as $0.UpdatePasswordRequest);
       default:
         throw $core.ArgumentError('Unknown method: $methodName');
     }

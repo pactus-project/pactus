@@ -511,6 +511,37 @@ public final class WalletGrpc {
     return getListAddressesMethod;
   }
 
+  private static volatile io.grpc.MethodDescriptor<pactus.WalletOuterClass.UpdatePasswordRequest,
+      pactus.WalletOuterClass.UpdatePasswordResponse> getUpdatePasswordMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "UpdatePassword",
+      requestType = pactus.WalletOuterClass.UpdatePasswordRequest.class,
+      responseType = pactus.WalletOuterClass.UpdatePasswordResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<pactus.WalletOuterClass.UpdatePasswordRequest,
+      pactus.WalletOuterClass.UpdatePasswordResponse> getUpdatePasswordMethod() {
+    io.grpc.MethodDescriptor<pactus.WalletOuterClass.UpdatePasswordRequest, pactus.WalletOuterClass.UpdatePasswordResponse> getUpdatePasswordMethod;
+    if ((getUpdatePasswordMethod = WalletGrpc.getUpdatePasswordMethod) == null) {
+      synchronized (WalletGrpc.class) {
+        if ((getUpdatePasswordMethod = WalletGrpc.getUpdatePasswordMethod) == null) {
+          WalletGrpc.getUpdatePasswordMethod = getUpdatePasswordMethod =
+              io.grpc.MethodDescriptor.<pactus.WalletOuterClass.UpdatePasswordRequest, pactus.WalletOuterClass.UpdatePasswordResponse>newBuilder()
+              .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName(generateFullMethodName(SERVICE_NAME, "UpdatePassword"))
+              .setSampledToLocalTracing(true)
+              .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.WalletOuterClass.UpdatePasswordRequest.getDefaultInstance()))
+              .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
+                  pactus.WalletOuterClass.UpdatePasswordResponse.getDefaultInstance()))
+              .setSchemaDescriptor(new WalletMethodDescriptorSupplier("UpdatePassword"))
+              .build();
+        }
+      }
+    }
+    return getUpdatePasswordMethod;
+  }
+
   /**
    * Creates a new async stub that supports all call types for the service
    */
@@ -737,6 +768,16 @@ public final class WalletGrpc {
         io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListAddressesResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getListAddressesMethod(), responseObserver);
     }
+
+    /**
+     * <pre>
+     * UpdatePassword updates the password of an existing wallet.
+     * </pre>
+     */
+    default void updatePassword(pactus.WalletOuterClass.UpdatePasswordRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.UpdatePasswordResponse> responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getUpdatePasswordMethod(), responseObserver);
+    }
   }
 
   /**
@@ -948,6 +989,17 @@ public final class WalletGrpc {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getListAddressesMethod(), getCallOptions()), request, responseObserver);
     }
+
+    /**
+     * <pre>
+     * UpdatePassword updates the password of an existing wallet.
+     * </pre>
+     */
+    public void updatePassword(pactus.WalletOuterClass.UpdatePasswordRequest request,
+        io.grpc.stub.StreamObserver<pactus.WalletOuterClass.UpdatePasswordResponse> responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getUpdatePasswordMethod(), getCallOptions()), request, responseObserver);
+    }
   }
 
   /**
@@ -1129,6 +1181,16 @@ public final class WalletGrpc {
       return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
           getChannel(), getListAddressesMethod(), getCallOptions(), request);
     }
+
+    /**
+     * <pre>
+     * UpdatePassword updates the password of an existing wallet.
+     * </pre>
+     */
+    public pactus.WalletOuterClass.UpdatePasswordResponse updatePassword(pactus.WalletOuterClass.UpdatePasswordRequest request) throws io.grpc.StatusException {
+      return io.grpc.stub.ClientCalls.blockingV2UnaryCall(
+          getChannel(), getUpdatePasswordMethod(), getCallOptions(), request);
+    }
   }
 
   /**
@@ -1309,6 +1371,16 @@ public final class WalletGrpc {
     public pactus.WalletOuterClass.ListAddressesResponse listAddresses(pactus.WalletOuterClass.ListAddressesRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getListAddressesMethod(), getCallOptions(), request);
+    }
+
+    /**
+     * <pre>
+     * UpdatePassword updates the password of an existing wallet.
+     * </pre>
+     */
+    public pactus.WalletOuterClass.UpdatePasswordResponse updatePassword(pactus.WalletOuterClass.UpdatePasswordRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getUpdatePasswordMethod(), getCallOptions(), request);
     }
   }
 
@@ -1507,6 +1579,17 @@ public final class WalletGrpc {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getListAddressesMethod(), getCallOptions()), request);
     }
+
+    /**
+     * <pre>
+     * UpdatePassword updates the password of an existing wallet.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<pactus.WalletOuterClass.UpdatePasswordResponse> updatePassword(
+        pactus.WalletOuterClass.UpdatePasswordRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getUpdatePasswordMethod(), getCallOptions()), request);
+    }
   }
 
   private static final int METHODID_CREATE_WALLET = 0;
@@ -1525,6 +1608,7 @@ public final class WalletGrpc {
   private static final int METHODID_LIST_WALLETS = 13;
   private static final int METHODID_GET_WALLET_INFO = 14;
   private static final int METHODID_LIST_ADDRESSES = 15;
+  private static final int METHODID_UPDATE_PASSWORD = 16;
 
   private static final class MethodHandlers<Req, Resp> implements
       io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -1606,6 +1690,10 @@ public final class WalletGrpc {
         case METHODID_LIST_ADDRESSES:
           serviceImpl.listAddresses((pactus.WalletOuterClass.ListAddressesRequest) request,
               (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.ListAddressesResponse>) responseObserver);
+          break;
+        case METHODID_UPDATE_PASSWORD:
+          serviceImpl.updatePassword((pactus.WalletOuterClass.UpdatePasswordRequest) request,
+              (io.grpc.stub.StreamObserver<pactus.WalletOuterClass.UpdatePasswordResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -1737,6 +1825,13 @@ public final class WalletGrpc {
               pactus.WalletOuterClass.ListAddressesRequest,
               pactus.WalletOuterClass.ListAddressesResponse>(
                 service, METHODID_LIST_ADDRESSES)))
+        .addMethod(
+          getUpdatePasswordMethod(),
+          io.grpc.stub.ServerCalls.asyncUnaryCall(
+            new MethodHandlers<
+              pactus.WalletOuterClass.UpdatePasswordRequest,
+              pactus.WalletOuterClass.UpdatePasswordResponse>(
+                service, METHODID_UPDATE_PASSWORD)))
         .build();
   }
 
@@ -1801,6 +1896,7 @@ public final class WalletGrpc {
               .addMethod(getListWalletsMethod())
               .addMethod(getGetWalletInfoMethod())
               .addMethod(getListAddressesMethod())
+              .addMethod(getUpdatePasswordMethod())
               .build();
         }
       }

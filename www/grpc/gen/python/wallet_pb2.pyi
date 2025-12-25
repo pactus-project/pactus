@@ -297,3 +297,19 @@ class ListAddressesResponse(_message.Message):
     wallet_name: str
     data: _containers.RepeatedCompositeFieldContainer[AddressInfo]
     def __init__(self, wallet_name: _Optional[str] = ..., data: _Optional[_Iterable[_Union[AddressInfo, _Mapping]]] = ...) -> None: ...
+
+class UpdatePasswordRequest(_message.Message):
+    __slots__ = ()
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    OLD_PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    NEW_PASSWORD_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    old_password: str
+    new_password: str
+    def __init__(self, wallet_name: _Optional[str] = ..., old_password: _Optional[str] = ..., new_password: _Optional[str] = ...) -> None: ...
+
+class UpdatePasswordResponse(_message.Message):
+    __slots__ = ()
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...

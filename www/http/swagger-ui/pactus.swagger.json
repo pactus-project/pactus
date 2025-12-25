@@ -1538,6 +1538,52 @@
           "Wallet"
         ]
       }
+    },
+    "/pactus/wallet/update_password": {
+      "get": {
+        "summary": "UpdatePassword updates the password of an existing wallet.",
+        "operationId": "Wallet_UpdatePassword",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusUpdatePasswordResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet whose password will be updated.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "oldPassword",
+            "description": "The current wallet password.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "newPassword",
+            "description": "The new wallet password.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
     }
   },
   "definitions": {
@@ -3027,6 +3073,16 @@
         }
       },
       "description": "Response message confirming wallet unloading."
+    },
+    "pactusUpdatePasswordResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet whose password was updated."
+        }
+      },
+      "description": "Response message confirming wallet password update."
     },
     "pactusValidatorInfo": {
       "type": "object",

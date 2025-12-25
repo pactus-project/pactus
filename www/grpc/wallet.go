@@ -283,3 +283,16 @@ func (s *walletServer) ListAddresses(_ context.Context,
 		Data:       addrsPB,
 	}, nil
 }
+
+func (s *walletServer) UpdatePassword(_ context.Context,
+	req *pactus.UpdatePasswordRequest,
+) (*pactus.UpdatePasswordResponse, error) {
+	err := s.walletManager.UpdatePassword(req.WalletName, req.OldPassword, req.NewPassword)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pactus.UpdatePasswordResponse{
+		WalletName: req.WalletName,
+	}, nil
+}

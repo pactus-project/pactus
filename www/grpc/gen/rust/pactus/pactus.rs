@@ -1478,6 +1478,26 @@ pub struct ListAddressesResponse {
     #[prost(message, repeated, tag="2")]
     pub data: ::prost::alloc::vec::Vec<AddressInfo>,
 }
+/// Request message for updating wallet password.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdatePasswordRequest {
+    /// The name of the wallet whose password will be updated.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// The current wallet password.
+    #[prost(string, tag="2")]
+    pub old_password: ::prost::alloc::string::String,
+    /// The new wallet password.
+    #[prost(string, tag="3")]
+    pub new_password: ::prost::alloc::string::String,
+}
+/// Response message confirming wallet password update.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdatePasswordResponse {
+    /// The name of the wallet whose password was updated.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+}
 /// AddressType defines different types of blockchain addresses.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
