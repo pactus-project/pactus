@@ -8157,6 +8157,281 @@ impl<'de> serde::Deserialize<'de> for ListAddressesResponse {
         deserializer.deserialize_struct("pactus.ListAddressesResponse", FIELDS, GeneratedVisitor)
     }
 }
+impl serde::Serialize for ListTransactionsRequest {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.wallet_name.is_empty() {
+            len += 1;
+        }
+        if self.direction != 0 {
+            len += 1;
+        }
+        if !self.address.is_empty() {
+            len += 1;
+        }
+        if self.count != 0 {
+            len += 1;
+        }
+        if self.skip != 0 {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.ListTransactionsRequest", len)?;
+        if !self.wallet_name.is_empty() {
+            struct_ser.serialize_field("walletName", &self.wallet_name)?;
+        }
+        if self.direction != 0 {
+            let v = TxDirection::try_from(self.direction)
+                .map_err(|_| serde::ser::Error::custom(format!("Invalid variant {}", self.direction)))?;
+            struct_ser.serialize_field("direction", &v)?;
+        }
+        if !self.address.is_empty() {
+            struct_ser.serialize_field("address", &self.address)?;
+        }
+        if self.count != 0 {
+            struct_ser.serialize_field("count", &self.count)?;
+        }
+        if self.skip != 0 {
+            struct_ser.serialize_field("skip", &self.skip)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for ListTransactionsRequest {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "wallet_name",
+            "walletName",
+            "direction",
+            "address",
+            "count",
+            "skip",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            WalletName,
+            Direction,
+            Address,
+            Count,
+            Skip,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
+                            "direction" => Ok(GeneratedField::Direction),
+                            "address" => Ok(GeneratedField::Address),
+                            "count" => Ok(GeneratedField::Count),
+                            "skip" => Ok(GeneratedField::Skip),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = ListTransactionsRequest;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.ListTransactionsRequest")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListTransactionsRequest, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut wallet_name__ = None;
+                let mut direction__ = None;
+                let mut address__ = None;
+                let mut count__ = None;
+                let mut skip__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::WalletName => {
+                            if wallet_name__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("walletName"));
+                            }
+                            wallet_name__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Direction => {
+                            if direction__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("direction"));
+                            }
+                            direction__ = Some(map_.next_value::<TxDirection>()? as i32);
+                        }
+                        GeneratedField::Address => {
+                            if address__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("address"));
+                            }
+                            address__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Count => {
+                            if count__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("count"));
+                            }
+                            count__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Skip => {
+                            if skip__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("skip"));
+                            }
+                            skip__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                    }
+                }
+                Ok(ListTransactionsRequest {
+                    wallet_name: wallet_name__.unwrap_or_default(),
+                    direction: direction__.unwrap_or_default(),
+                    address: address__.unwrap_or_default(),
+                    count: count__.unwrap_or_default(),
+                    skip: skip__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.ListTransactionsRequest", FIELDS, GeneratedVisitor)
+    }
+}
+impl serde::Serialize for ListTransactionsResponse {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        use serde::ser::SerializeStruct;
+        let mut len = 0;
+        if !self.wallet_name.is_empty() {
+            len += 1;
+        }
+        if !self.txs.is_empty() {
+            len += 1;
+        }
+        let mut struct_ser = serializer.serialize_struct("pactus.ListTransactionsResponse", len)?;
+        if !self.wallet_name.is_empty() {
+            struct_ser.serialize_field("walletName", &self.wallet_name)?;
+        }
+        if !self.txs.is_empty() {
+            struct_ser.serialize_field("txs", &self.txs)?;
+        }
+        struct_ser.end()
+    }
+}
+impl<'de> serde::Deserialize<'de> for ListTransactionsResponse {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "wallet_name",
+            "walletName",
+            "txs",
+        ];
+
+        #[allow(clippy::enum_variant_names)]
+        enum GeneratedField {
+            WalletName,
+            Txs,
+        }
+        impl<'de> serde::Deserialize<'de> for GeneratedField {
+            fn deserialize<D>(deserializer: D) -> std::result::Result<GeneratedField, D::Error>
+            where
+                D: serde::Deserializer<'de>,
+            {
+                struct GeneratedVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+                    type Value = GeneratedField;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                        write!(formatter, "expected one of: {:?}", &FIELDS)
+                    }
+
+                    #[allow(unused_variables)]
+                    fn visit_str<E>(self, value: &str) -> std::result::Result<GeneratedField, E>
+                    where
+                        E: serde::de::Error,
+                    {
+                        match value {
+                            "walletName" | "wallet_name" => Ok(GeneratedField::WalletName),
+                            "txs" => Ok(GeneratedField::Txs),
+                            _ => Err(serde::de::Error::unknown_field(value, FIELDS)),
+                        }
+                    }
+                }
+                deserializer.deserialize_identifier(GeneratedVisitor)
+            }
+        }
+        struct GeneratedVisitor;
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = ListTransactionsResponse;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                formatter.write_str("struct pactus.ListTransactionsResponse")
+            }
+
+            fn visit_map<V>(self, mut map_: V) -> std::result::Result<ListTransactionsResponse, V::Error>
+                where
+                    V: serde::de::MapAccess<'de>,
+            {
+                let mut wallet_name__ = None;
+                let mut txs__ = None;
+                while let Some(k) = map_.next_key()? {
+                    match k {
+                        GeneratedField::WalletName => {
+                            if wallet_name__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("walletName"));
+                            }
+                            wallet_name__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Txs => {
+                            if txs__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("txs"));
+                            }
+                            txs__ = Some(map_.next_value()?);
+                        }
+                    }
+                }
+                Ok(ListTransactionsResponse {
+                    wallet_name: wallet_name__.unwrap_or_default(),
+                    txs: txs__.unwrap_or_default(),
+                })
+            }
+        }
+        deserializer.deserialize_struct("pactus.ListTransactionsResponse", FIELDS, GeneratedVisitor)
+    }
+}
 impl serde::Serialize for ListWalletsRequest {
     #[allow(deprecated)]
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
@@ -11863,6 +12138,15 @@ impl serde::Serialize for TransactionInfo {
         if !self.signature.is_empty() {
             len += 1;
         }
+        if self.block_height != 0 {
+            len += 1;
+        }
+        if self.confirmed {
+            len += 1;
+        }
+        if self.confirmations != 0 {
+            len += 1;
+        }
         if self.payload.is_some() {
             len += 1;
         }
@@ -11902,6 +12186,15 @@ impl serde::Serialize for TransactionInfo {
         }
         if !self.signature.is_empty() {
             struct_ser.serialize_field("signature", &self.signature)?;
+        }
+        if self.block_height != 0 {
+            struct_ser.serialize_field("blockHeight", &self.block_height)?;
+        }
+        if self.confirmed {
+            struct_ser.serialize_field("confirmed", &self.confirmed)?;
+        }
+        if self.confirmations != 0 {
+            struct_ser.serialize_field("confirmations", &self.confirmations)?;
         }
         if let Some(v) = self.payload.as_ref() {
             match v {
@@ -11948,6 +12241,10 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
             "public_key",
             "publicKey",
             "signature",
+            "block_height",
+            "blockHeight",
+            "confirmed",
+            "confirmations",
             "transfer",
             "bond",
             "sortition",
@@ -11969,6 +12266,9 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
             Memo,
             PublicKey,
             Signature,
+            BlockHeight,
+            Confirmed,
+            Confirmations,
             Transfer,
             Bond,
             Sortition,
@@ -12006,6 +12306,9 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                             "memo" => Ok(GeneratedField::Memo),
                             "publicKey" | "public_key" => Ok(GeneratedField::PublicKey),
                             "signature" => Ok(GeneratedField::Signature),
+                            "blockHeight" | "block_height" => Ok(GeneratedField::BlockHeight),
+                            "confirmed" => Ok(GeneratedField::Confirmed),
+                            "confirmations" => Ok(GeneratedField::Confirmations),
                             "transfer" => Ok(GeneratedField::Transfer),
                             "bond" => Ok(GeneratedField::Bond),
                             "sortition" => Ok(GeneratedField::Sortition),
@@ -12041,6 +12344,9 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                 let mut memo__ = None;
                 let mut public_key__ = None;
                 let mut signature__ = None;
+                let mut block_height__ = None;
+                let mut confirmed__ = None;
+                let mut confirmations__ = None;
                 let mut payload__ = None;
                 while let Some(k) = map_.next_key()? {
                     match k {
@@ -12112,6 +12418,28 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                             }
                             signature__ = Some(map_.next_value()?);
                         }
+                        GeneratedField::BlockHeight => {
+                            if block_height__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("blockHeight"));
+                            }
+                            block_height__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
+                        GeneratedField::Confirmed => {
+                            if confirmed__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("confirmed"));
+                            }
+                            confirmed__ = Some(map_.next_value()?);
+                        }
+                        GeneratedField::Confirmations => {
+                            if confirmations__.is_some() {
+                                return Err(serde::de::Error::duplicate_field("confirmations"));
+                            }
+                            confirmations__ = 
+                                Some(map_.next_value::<::pbjson::private::NumberDeserialize<_>>()?.0)
+                            ;
+                        }
                         GeneratedField::Transfer => {
                             if payload__.is_some() {
                                 return Err(serde::de::Error::duplicate_field("transfer"));
@@ -12167,6 +12495,9 @@ impl<'de> serde::Deserialize<'de> for TransactionInfo {
                     memo: memo__.unwrap_or_default(),
                     public_key: public_key__.unwrap_or_default(),
                     signature: signature__.unwrap_or_default(),
+                    block_height: block_height__.unwrap_or_default(),
+                    confirmed: confirmed__.unwrap_or_default(),
+                    confirmations: confirmations__.unwrap_or_default(),
                     payload: payload__,
                 })
             }
@@ -12238,6 +12569,77 @@ impl<'de> serde::Deserialize<'de> for TransactionVerbosity {
                 match value {
                     "TRANSACTION_VERBOSITY_DATA" => Ok(TransactionVerbosity::Data),
                     "TRANSACTION_VERBOSITY_INFO" => Ok(TransactionVerbosity::Info),
+                    _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
+                }
+            }
+        }
+        deserializer.deserialize_any(GeneratedVisitor)
+    }
+}
+impl serde::Serialize for TxDirection {
+    #[allow(deprecated)]
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let variant = match self {
+            Self::Incoming => "TX_DIRECTION_INCOMING",
+            Self::Outgoing => "TX_DIRECTION_OUTGOING",
+        };
+        serializer.serialize_str(variant)
+    }
+}
+impl<'de> serde::Deserialize<'de> for TxDirection {
+    #[allow(deprecated)]
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        const FIELDS: &[&str] = &[
+            "TX_DIRECTION_INCOMING",
+            "TX_DIRECTION_OUTGOING",
+        ];
+
+        struct GeneratedVisitor;
+
+        impl<'de> serde::de::Visitor<'de> for GeneratedVisitor {
+            type Value = TxDirection;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                write!(formatter, "expected one of: {:?}", &FIELDS)
+            }
+
+            fn visit_i64<E>(self, v: i64) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                i32::try_from(v)
+                    .ok()
+                    .and_then(|x| x.try_into().ok())
+                    .ok_or_else(|| {
+                        serde::de::Error::invalid_value(serde::de::Unexpected::Signed(v), &self)
+                    })
+            }
+
+            fn visit_u64<E>(self, v: u64) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                i32::try_from(v)
+                    .ok()
+                    .and_then(|x| x.try_into().ok())
+                    .ok_or_else(|| {
+                        serde::de::Error::invalid_value(serde::de::Unexpected::Unsigned(v), &self)
+                    })
+            }
+
+            fn visit_str<E>(self, value: &str) -> std::result::Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                match value {
+                    "TX_DIRECTION_INCOMING" => Ok(TxDirection::Incoming),
+                    "TX_DIRECTION_OUTGOING" => Ok(TxDirection::Outgoing),
                     _ => Err(serde::de::Error::unknown_variant(value, FIELDS)),
                 }
             }

@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/pactus-project/pactus/crypto"
+	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/wallet"
 	wltmgr "github.com/pactus-project/pactus/wallet/manager"
 	"github.com/pactus-project/pactus/wallet/types"
@@ -281,6 +282,36 @@ func (s *walletServer) ListAddresses(_ context.Context,
 	return &pactus.ListAddressesResponse{
 		WalletName: req.WalletName,
 		Data:       addrsPB,
+	}, nil
+}
+
+func (s *walletServer) ListTransactions(_ context.Context,
+	req *pactus.ListTransactionsRequest,
+) (*pactus.ListTransactionsResponse, error) {
+	infos, err := s.walletManager.ListTransactions(req.WalletName,
+		wallet.WithDirection(wallet.TxDirection(req.Direction)),
+		wallet.WithAddress(req.Address),
+		wallet.WithCount(int(req.Count)),
+		wallet.WithSkip(int(req.Skip)))
+	if err != nil {
+		return nil, err
+	}
+
+	lastBlockHeight := s.state.LastBlockHeight()
+	trxs := make([]*pactus.TransactionInfo, 0, len(infos))
+	for _, info := range infos {
+		trx, _ := tx.FromBytes(info.Data)
+
+		confirmations := 0
+		if info.BlockHeight > 0 {
+			confirmations = int(lastBlockHeight) - int(info.BlockHeight)
+		}
+		trxs = append(trxs, transactionToProto(trx, info.BlockHeight, confirmations))
+	}
+
+	return &pactus.ListTransactionsResponse{
+		WalletName: req.WalletName,
+		Txs:        trxs,
 	}, nil
 }
 

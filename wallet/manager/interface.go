@@ -47,4 +47,5 @@ type IManager interface {
 	MakeWithdrawTx(walletName, sender, receiver string, amt amount.Amount, opts ...wallet.TxOption) (*tx.Tx, error)
 	SignTransaction(walletName, password string, trx *tx.Tx) error
 	BroadcastTransaction(walletName string, trx *tx.Tx) (string, error)
+	ListTransactions(walletName string, opts ...wallet.ListTransactionsOption) ([]*types.TransactionInfo, error)
 }

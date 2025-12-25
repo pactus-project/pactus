@@ -4300,7 +4300,10 @@ withdraw: (f = msg.getWithdraw()) && proto.pactus.PayloadWithdraw.toObject(inclu
 batchTransfer: (f = msg.getBatchTransfer()) && proto.pactus.PayloadBatchTransfer.toObject(includeInstance, f),
 memo: jspb.Message.getFieldWithDefault(msg, 8, ""),
 publicKey: jspb.Message.getFieldWithDefault(msg, 9, ""),
-signature: jspb.Message.getFieldWithDefault(msg, 10, "")
+signature: jspb.Message.getFieldWithDefault(msg, 10, ""),
+blockHeight: jspb.Message.getFieldWithDefault(msg, 11, 0),
+confirmed: jspb.Message.getBooleanFieldWithDefault(msg, 12, false),
+confirmations: jspb.Message.getFieldWithDefault(msg, 13, 0)
   };
 
   if (includeInstance) {
@@ -4406,6 +4409,18 @@ proto.pactus.TransactionInfo.deserializeBinaryFromReader = function(msg, reader)
     case 10:
       var value = /** @type {string} */ (reader.readStringRequireUtf8());
       msg.setSignature(value);
+      break;
+    case 11:
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setBlockHeight(value);
+      break;
+    case 12:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setConfirmed(value);
+      break;
+    case 13:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setConfirmations(value);
       break;
     default:
       reader.skipField();
@@ -4551,6 +4566,27 @@ proto.pactus.TransactionInfo.serializeBinaryToWriter = function(message, writer)
   if (f.length > 0) {
     writer.writeString(
       10,
+      f
+    );
+  }
+  f = message.getBlockHeight();
+  if (f !== 0) {
+    writer.writeUint32(
+      11,
+      f
+    );
+  }
+  f = message.getConfirmed();
+  if (f) {
+    writer.writeBool(
+      12,
+      f
+    );
+  }
+  f = message.getConfirmations();
+  if (f !== 0) {
+    writer.writeInt32(
+      13,
       f
     );
   }
@@ -4956,6 +4992,60 @@ proto.pactus.TransactionInfo.prototype.getSignature = function() {
  */
 proto.pactus.TransactionInfo.prototype.setSignature = function(value) {
   return jspb.Message.setProto3StringField(this, 10, value);
+};
+
+
+/**
+ * optional uint32 block_height = 11;
+ * @return {number}
+ */
+proto.pactus.TransactionInfo.prototype.getBlockHeight = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 11, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.TransactionInfo} returns this
+ */
+proto.pactus.TransactionInfo.prototype.setBlockHeight = function(value) {
+  return jspb.Message.setProto3IntField(this, 11, value);
+};
+
+
+/**
+ * optional bool confirmed = 12;
+ * @return {boolean}
+ */
+proto.pactus.TransactionInfo.prototype.getConfirmed = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 12, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.pactus.TransactionInfo} returns this
+ */
+proto.pactus.TransactionInfo.prototype.setConfirmed = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 12, value);
+};
+
+
+/**
+ * optional int32 confirmations = 13;
+ * @return {number}
+ */
+proto.pactus.TransactionInfo.prototype.getConfirmations = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 13, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.pactus.TransactionInfo} returns this
+ */
+proto.pactus.TransactionInfo.prototype.setConfirmations = function(value) {
+  return jspb.Message.setProto3IntField(this, 13, value);
 };
 
 

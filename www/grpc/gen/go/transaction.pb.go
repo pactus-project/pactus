@@ -1397,7 +1397,15 @@ type TransactionInfo struct {
 	// The public key associated with the transaction.
 	PublicKey string `protobuf:"bytes,9,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
 	// The signature for the transaction.
-	Signature     string `protobuf:"bytes,10,opt,name=signature,proto3" json:"signature,omitempty"`
+	Signature string `protobuf:"bytes,10,opt,name=signature,proto3" json:"signature,omitempty"`
+	// The block height containing the transaction.
+	// A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+	BlockHeight uint32 `protobuf:"varint,11,opt,name=block_height,json=blockHeight,proto3" json:"block_height,omitempty"`
+	// Indicates whether the transaction is confirmed.
+	Confirmed bool `protobuf:"varint,12,opt,name=confirmed,proto3" json:"confirmed,omitempty"`
+	// The number of blocks that have been added to the chain after this transaction was included in a block.
+	// A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+	Confirmations int32 `protobuf:"varint,13,opt,name=confirmations,proto3" json:"confirmations,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1561,6 +1569,27 @@ func (x *TransactionInfo) GetSignature() string {
 		return x.Signature
 	}
 	return ""
+}
+
+func (x *TransactionInfo) GetBlockHeight() uint32 {
+	if x != nil {
+		return x.BlockHeight
+	}
+	return 0
+}
+
+func (x *TransactionInfo) GetConfirmed() bool {
+	if x != nil {
+		return x.Confirmed
+	}
+	return false
+}
+
+func (x *TransactionInfo) GetConfirmations() int32 {
+	if x != nil {
+		return x.Confirmations
+	}
+	return 0
 }
 
 type isTransactionInfo_Payload interface {
@@ -1789,7 +1818,7 @@ const file_transaction_proto_rawDesc = "" +
 	"recipients\"?\n" +
 	"\tRecipient\x12\x1a\n" +
 	"\breceiver\x18\x01 \x01(\tR\breceiver\x12\x16\n" +
-	"\x06amount\x18\x02 \x01(\x03R\x06amount\"\xf3\x04\n" +
+	"\x06amount\x18\x02 \x01(\x03R\x06amount\"\xda\x05\n" +
 	"\x0fTransactionInfo\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04data\x18\x02 \x01(\tR\x04data\x12\x18\n" +
@@ -1808,7 +1837,10 @@ const file_transaction_proto_rawDesc = "" +
 	"\n" +
 	"public_key\x18\t \x01(\tR\tpublicKey\x12\x1c\n" +
 	"\tsignature\x18\n" +
-	" \x01(\tR\tsignatureB\t\n" +
+	" \x01(\tR\tsignature\x12!\n" +
+	"\fblock_height\x18\v \x01(\rR\vblockHeight\x12\x1c\n" +
+	"\tconfirmed\x18\f \x01(\bR\tconfirmed\x12$\n" +
+	"\rconfirmations\x18\r \x01(\x05R\rconfirmationsB\t\n" +
 	"\apayload\"F\n" +
 	"\x1bDecodeRawTransactionRequest\x12'\n" +
 	"\x0fraw_transaction\x18\x01 \x01(\tR\x0erawTransaction\"Y\n" +

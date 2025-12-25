@@ -269,6 +269,10 @@ curl --location 'http://localhost:8545/' \
           <a href="#pactus.wallet.update_password">
           <span class="rpc-badge"></span> pactus.wallet.update_password</a>
         </li>
+        <li>
+          <a href="#pactus.wallet.list_transactions">
+          <span class="rpc-badge"></span> pactus.wallet.list_transactions</a>
+        </li>
         </ul>
     </li>
     </ul>
@@ -563,6 +567,29 @@ curl --location 'http://localhost:8545/' \
         <td> string</td>
         <td>
         The signature for the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.block_height</td>
+        <td> numeric</td>
+        <td>
+        The block height containing the transaction.
+A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.confirmed</td>
+        <td> boolean</td>
+        <td>
+        Indicates whether the transaction is confirmed.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.confirmations</td>
+        <td> numeric</td>
+        <td>
+        The number of blocks that have been added to the chain after this transaction was included in a block.
+A value of zero means the transaction is unconfirmed and may still in the transaction pool.
         </td>
       </tr>
          </tbody>
@@ -1306,6 +1333,29 @@ curl --location 'http://localhost:8545/' \
         The signature for the transaction.
         </td>
       </tr>
+         <tr>
+        <td class="fw-bold">transaction.block_height</td>
+        <td> numeric</td>
+        <td>
+        The block height containing the transaction.
+A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.confirmed</td>
+        <td> boolean</td>
+        <td>
+        Indicates whether the transaction is confirmed.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">transaction.confirmations</td>
+        <td> numeric</td>
+        <td>
+        The number of blocks that have been added to the chain after this transaction was included in a block.
+A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+        </td>
+      </tr>
          </tbody>
 </table>
 
@@ -1696,6 +1746,29 @@ BLOCK_VERBOSITY_TRANSACTIONS.
         <td> string</td>
         <td>
         The signature for the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].block_height</td>
+        <td> numeric</td>
+        <td>
+        The block height containing the transaction.
+A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].confirmed</td>
+        <td> boolean</td>
+        <td>
+        Indicates whether the transaction is confirmed.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].confirmations</td>
+        <td> numeric</td>
+        <td>
+        The number of blocks that have been added to the chain after this transaction was included in a block.
+A value of zero means the transaction is unconfirmed and may still in the transaction pool.
         </td>
       </tr>
          </tbody>
@@ -2725,6 +2798,29 @@ Parameters has no fields.
         <td> string</td>
         <td>
         The signature for the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].block_height</td>
+        <td> numeric</td>
+        <td>
+        The block height containing the transaction.
+A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].confirmed</td>
+        <td> boolean</td>
+        <td>
+        Indicates whether the transaction is confirmed.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].confirmations</td>
+        <td> numeric</td>
+        <td>
+        The number of blocks that have been added to the chain after this transaction was included in a block.
+A value of zero means the transaction is unconfirmed and may still in the transaction pool.
         </td>
       </tr>
          </tbody>
@@ -4376,4 +4472,334 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
     </td>
   </tr>
      </tbody>
+</table>
+
+#### pactus.wallet.list_transactions <span id="pactus.wallet.list_transactions" class="rpc-badge"></span>
+
+<p>ListTransactions returns a list of transactions for a wallet,
+optionally filtered by a specific address, with pagination support.</p>
+
+<h4>Parameters</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet to query transactions for.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">direction</td>
+    <td> numeric</td>
+    <td>
+    (Enum)Filter transactions by direction relative to the wallet.
+Defaults to incoming if not set.
+    <br>Available values:<ul>
+      <li>TX_DIRECTION_INCOMING = 0 (Include only transactions where the wallet receives funds.)</li>
+      <li>TX_DIRECTION_OUTGOING = 1 (Include only transactions where the wallet sends funds.)</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">address</td>
+    <td> string</td>
+    <td>
+    Optional: The address to filter transactions.
+If empty or set to "*", transactions for all addresses in the wallet are included.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">count</td>
+    <td> numeric</td>
+    <td>
+    Optional: The maximum number of transactions to return.
+Defaults to 10 if not set.
+    </td>
+  </tr>
+  <tr>
+    <td class="fw-bold">skip</td>
+    <td> numeric</td>
+    <td>
+    Optional: The number of transactions to skip (for pagination).
+Defaults to 0 if not set.
+    </td>
+  </tr>
+  </tbody>
+</table>
+  <h4>Result</h4>
+
+<table class="table table-bordered table-responsive table-sm">
+  <thead>
+    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
+  </thead>
+  <tbody class="table-group-divider">
+  <tr>
+    <td class="fw-bold">wallet_name</td>
+    <td> string</td>
+    <td>
+    The name of the wallet queried.
+    </td>
+  </tr>
+     <tr>
+    <td class="fw-bold">txs</td>
+    <td>repeated object (TransactionInfo)</td>
+    <td>
+    List of transactions for the wallet, filtered by the specified address if provided.
+    </td>
+  </tr>
+     <tr>
+        <td class="fw-bold">txs[].id</td>
+        <td> string</td>
+        <td>
+        The unique ID of the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].data</td>
+        <td> string</td>
+        <td>
+        The raw transaction data in hexadecimal format.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].version</td>
+        <td> numeric</td>
+        <td>
+        The version of the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].lock_time</td>
+        <td> numeric</td>
+        <td>
+        The lock time for the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].value</td>
+        <td> numeric</td>
+        <td>
+        The value of the transaction in NanoPAC.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].fee</td>
+        <td> numeric</td>
+        <td>
+        The fee for the transaction in NanoPAC.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].payload_type</td>
+        <td> numeric</td>
+        <td>
+        (Enum)The type of transaction payload.
+        <br>Available values:<ul>
+          <li>PAYLOAD_TYPE_UNSPECIFIED = 0 (Unspecified payload type.)</li>
+          <li>PAYLOAD_TYPE_TRANSFER = 1 (Transfer payload type.)</li>
+          <li>PAYLOAD_TYPE_BOND = 2 (Bond payload type.)</li>
+          <li>PAYLOAD_TYPE_SORTITION = 3 (Sortition payload type.)</li>
+          <li>PAYLOAD_TYPE_UNBOND = 4 (Unbond payload type.)</li>
+          <li>PAYLOAD_TYPE_WITHDRAW = 5 (Withdraw payload type.)</li>
+          <li>PAYLOAD_TYPE_BATCH_TRANSFER = 6 (Batch transfer payload type.)</li>
+          </ul>
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].transfer</td>
+        <td> object (PayloadTransfer)</td>
+        <td>
+        (OneOf)Transfer transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].transfer.sender</td>
+            <td> string</td>
+            <td>
+            The sender's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].transfer.receiver</td>
+            <td> string</td>
+            <td>
+            The receiver's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].transfer.amount</td>
+            <td> numeric</td>
+            <td>
+            The amount to be transferred in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].bond</td>
+        <td> object (PayloadBond)</td>
+        <td>
+        (OneOf)Bond transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].bond.sender</td>
+            <td> string</td>
+            <td>
+            The sender's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].bond.receiver</td>
+            <td> string</td>
+            <td>
+            The receiver's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].bond.stake</td>
+            <td> numeric</td>
+            <td>
+            The stake amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].bond.public_key</td>
+            <td> string</td>
+            <td>
+            The public key of the validator.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].sortition</td>
+        <td> object (PayloadSortition)</td>
+        <td>
+        (OneOf)Sortition transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].sortition.address</td>
+            <td> string</td>
+            <td>
+            The validator address associated with the sortition proof.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].sortition.proof</td>
+            <td> string</td>
+            <td>
+            The proof for the sortition.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].unbond</td>
+        <td> object (PayloadUnbond)</td>
+        <td>
+        (OneOf)Unbond transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].unbond.validator</td>
+            <td> string</td>
+            <td>
+            The address of the validator to unbond from.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].withdraw</td>
+        <td> object (PayloadWithdraw)</td>
+        <td>
+        (OneOf)Withdraw transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].withdraw.validator_address</td>
+            <td> string</td>
+            <td>
+            The address of the validator to withdraw from.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].withdraw.account_address</td>
+            <td> string</td>
+            <td>
+            The address of the account to withdraw to.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].withdraw.amount</td>
+            <td> numeric</td>
+            <td>
+            The withdrawal amount in NanoPAC.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].batch_transfer</td>
+        <td> object (PayloadBatchTransfer)</td>
+        <td>
+        (OneOf)Batch Transfer transaction payload.
+        </td>
+      </tr>
+         <tr>
+            <td class="fw-bold">txs[].batch_transfer.sender</td>
+            <td> string</td>
+            <td>
+            The sender's address.
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-bold">txs[].batch_transfer.recipients</td>
+            <td>repeated object (Recipient)</td>
+            <td>
+            The list of recipients with their amounts.
+            </td>
+          </tr>
+          <tr>
+        <td class="fw-bold">txs[].memo</td>
+        <td> string</td>
+        <td>
+        A memo string for the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].public_key</td>
+        <td> string</td>
+        <td>
+        The public key associated with the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].signature</td>
+        <td> string</td>
+        <td>
+        The signature for the transaction.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].block_height</td>
+        <td> numeric</td>
+        <td>
+        The block height containing the transaction.
+A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].confirmed</td>
+        <td> boolean</td>
+        <td>
+        Indicates whether the transaction is confirmed.
+        </td>
+      </tr>
+         <tr>
+        <td class="fw-bold">txs[].confirmations</td>
+        <td> numeric</td>
+        <td>
+        The number of blocks that have been added to the chain after this transaction was included in a block.
+A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+        </td>
+      </tr>
+         </tbody>
 </table>

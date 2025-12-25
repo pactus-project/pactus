@@ -283,6 +283,17 @@ pub struct TransactionInfo {
     /// The signature for the transaction.
     #[prost(string, tag="10")]
     pub signature: ::prost::alloc::string::String,
+    /// The block height containing the transaction.
+    /// A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+    #[prost(uint32, tag="11")]
+    pub block_height: u32,
+    /// Indicates whether the transaction is confirmed.
+    #[prost(bool, tag="12")]
+    pub confirmed: bool,
+    /// The number of blocks that have been added to the chain after this transaction was included in a block.
+    /// A value of zero means the transaction is unconfirmed and may still in the transaction pool.
+    #[prost(int32, tag="13")]
+    pub confirmations: i32,
     /// Transaction payload.
     #[prost(oneof="transaction_info::Payload", tags="30, 31, 32, 33, 34, 35")]
     pub payload: ::core::option::Option<transaction_info::Payload>,
@@ -1498,6 +1509,39 @@ pub struct UpdatePasswordResponse {
     #[prost(string, tag="1")]
     pub wallet_name: ::prost::alloc::string::String,
 }
+/// Request message for listing transactions of a wallet, optionally filtered by a specific address.
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct ListTransactionsRequest {
+    /// The name of the wallet to query transactions for.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// Filter transactions by direction relative to the wallet.
+    /// Defaults to incoming if not set.
+    #[prost(enumeration="TxDirection", tag="2")]
+    pub direction: i32,
+    /// Optional: The address to filter transactions.
+    /// If empty or set to "*", transactions for all addresses in the wallet are included.
+    #[prost(string, tag="3")]
+    pub address: ::prost::alloc::string::String,
+    /// Optional: The maximum number of transactions to return.
+    /// Defaults to 10 if not set.
+    #[prost(int32, tag="4")]
+    pub count: i32,
+    /// Optional: The number of transactions to skip (for pagination).
+    /// Defaults to 0 if not set.
+    #[prost(int32, tag="5")]
+    pub skip: i32,
+}
+/// Response message containing a list of transactions.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ListTransactionsResponse {
+    /// The name of the wallet queried.
+    #[prost(string, tag="1")]
+    pub wallet_name: ::prost::alloc::string::String,
+    /// List of transactions for the wallet, filtered by the specified address if provided.
+    #[prost(message, repeated, tag="2")]
+    pub txs: ::prost::alloc::vec::Vec<TransactionInfo>,
+}
 /// AddressType defines different types of blockchain addresses.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -1533,6 +1577,35 @@ impl AddressType {
             "ADDRESS_TYPE_VALIDATOR" => Some(Self::Validator),
             "ADDRESS_TYPE_BLS_ACCOUNT" => Some(Self::BlsAccount),
             "ADDRESS_TYPE_ED25519_ACCOUNT" => Some(Self::Ed25519Account),
+            _ => None,
+        }
+    }
+}
+/// TxDirection indicates the direction of a transaction relative to the wallet.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum TxDirection {
+    /// Include only transactions where the wallet receives funds.
+    Incoming = 0,
+    /// Include only transactions where the wallet sends funds.
+    Outgoing = 1,
+}
+impl TxDirection {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Self::Incoming => "TX_DIRECTION_INCOMING",
+            Self::Outgoing => "TX_DIRECTION_OUTGOING",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "TX_DIRECTION_INCOMING" => Some(Self::Incoming),
+            "TX_DIRECTION_OUTGOING" => Some(Self::Outgoing),
             _ => None,
         }
     }

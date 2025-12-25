@@ -36,6 +36,7 @@ const (
 	Wallet_GetWalletInfo_FullMethodName       = "/pactus.Wallet/GetWalletInfo"
 	Wallet_ListAddresses_FullMethodName       = "/pactus.Wallet/ListAddresses"
 	Wallet_UpdatePassword_FullMethodName      = "/pactus.Wallet/UpdatePassword"
+	Wallet_ListTransactions_FullMethodName    = "/pactus.Wallet/ListTransactions"
 )
 
 // WalletClient is the client API for Wallet service.
@@ -79,6 +80,9 @@ type WalletClient interface {
 	ListAddresses(ctx context.Context, in *ListAddressesRequest, opts ...grpc.CallOption) (*ListAddressesResponse, error)
 	// UpdatePassword updates the password of an existing wallet.
 	UpdatePassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*UpdatePasswordResponse, error)
+	// ListTransactions returns a list of transactions for a wallet,
+	// optionally filtered by a specific address, with pagination support.
+	ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error)
 }
 
 type walletClient struct {
@@ -259,6 +263,16 @@ func (c *walletClient) UpdatePassword(ctx context.Context, in *UpdatePasswordReq
 	return out, nil
 }
 
+func (c *walletClient) ListTransactions(ctx context.Context, in *ListTransactionsRequest, opts ...grpc.CallOption) (*ListTransactionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTransactionsResponse)
+	err := c.cc.Invoke(ctx, Wallet_ListTransactions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletServer is the server API for Wallet service.
 // All implementations should embed UnimplementedWalletServer
 // for forward compatibility.
@@ -300,6 +314,9 @@ type WalletServer interface {
 	ListAddresses(context.Context, *ListAddressesRequest) (*ListAddressesResponse, error)
 	// UpdatePassword updates the password of an existing wallet.
 	UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordResponse, error)
+	// ListTransactions returns a list of transactions for a wallet,
+	// optionally filtered by a specific address, with pagination support.
+	ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error)
 }
 
 // UnimplementedWalletServer should be embedded to have
@@ -359,6 +376,9 @@ func (UnimplementedWalletServer) ListAddresses(context.Context, *ListAddressesRe
 }
 func (UnimplementedWalletServer) UpdatePassword(context.Context, *UpdatePasswordRequest) (*UpdatePasswordResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdatePassword not implemented")
+}
+func (UnimplementedWalletServer) ListTransactions(context.Context, *ListTransactionsRequest) (*ListTransactionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTransactions not implemented")
 }
 func (UnimplementedWalletServer) testEmbeddedByValue() {}
 
@@ -686,6 +706,24 @@ func _Wallet_UpdatePassword_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Wallet_ListTransactions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTransactionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).ListTransactions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_ListTransactions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).ListTransactions(ctx, req.(*ListTransactionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Wallet_ServiceDesc is the grpc.ServiceDesc for Wallet service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -760,6 +798,10 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdatePassword",
 			Handler:    _Wallet_UpdatePassword_Handler,
+		},
+		{
+			MethodName: "ListTransactions",
+			Handler:    _Wallet_ListTransactions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

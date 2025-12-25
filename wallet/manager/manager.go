@@ -364,6 +364,15 @@ func (wm *Manager) ListAddresses(walletName string, opts ...wallet.ListAddressOp
 	return wlt.ListAddresses(opts...), nil
 }
 
+func (wm *Manager) ListTransactions(walletName string, opts ...wallet.ListTransactionsOption) ([]*types.TransactionInfo, error) {
+	wlt, ok := wm.wallets[walletName]
+	if !ok {
+		return nil, ErrWalletNotLoaded
+	}
+
+	return wlt.ListTransactions("", opts...), nil
+}
+
 func (wm *Manager) UpdatePassword(walletName, oldPassword, newPassword string) error {
 	wlt, ok := wm.wallets[walletName]
 	if !ok {

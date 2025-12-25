@@ -1254,6 +1254,73 @@
         ]
       }
     },
+    "/pactus/wallet/list_transactions": {
+      "get": {
+        "summary": "ListTransactions returns a list of transactions for a wallet,\noptionally filtered by a specific address, with pagination support.",
+        "operationId": "Wallet_ListTransactions",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pactusListTransactionsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "walletName",
+            "description": "The name of the wallet to query transactions for.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "direction",
+            "description": "Filter transactions by direction relative to the wallet.\nDefaults to incoming if not set.\n\n - TX_DIRECTION_INCOMING: Include only transactions where the wallet receives funds.\n - TX_DIRECTION_OUTGOING: Include only transactions where the wallet sends funds.",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "TX_DIRECTION_INCOMING",
+              "TX_DIRECTION_OUTGOING"
+            ],
+            "default": "TX_DIRECTION_INCOMING"
+          },
+          {
+            "name": "address",
+            "description": "Optional: The address to filter transactions.\nIf empty or set to \"*\", transactions for all addresses in the wallet are included.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "count",
+            "description": "Optional: The maximum number of transactions to return.\nDefaults to 10 if not set.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "skip",
+            "description": "Optional: The number of transactions to skip (for pagination).\nDefaults to 0 if not set.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
     "/pactus/wallet/list_wallets": {
       "get": {
         "summary": "ListWallets returns a list of all available wallets.",
@@ -2546,6 +2613,24 @@
       },
       "description": "Response message contains wallet addresses."
     },
+    "pactusListTransactionsResponse": {
+      "type": "object",
+      "properties": {
+        "walletName": {
+          "type": "string",
+          "description": "The name of the wallet queried."
+        },
+        "txs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pactusTransactionInfo"
+          },
+          "description": "List of transactions for the wallet, filtered by the specified address if provided."
+        }
+      },
+      "description": "Response message containing a list of transactions."
+    },
     "pactusListWalletsResponse": {
       "type": "object",
       "properties": {
@@ -3051,6 +3136,20 @@
         "signature": {
           "type": "string",
           "description": "The signature for the transaction."
+        },
+        "blockHeight": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The block height containing the transaction.\nA value of zero means the transaction is unconfirmed and may still in the transaction pool."
+        },
+        "confirmed": {
+          "type": "boolean",
+          "description": "Indicates whether the transaction is confirmed."
+        },
+        "confirmations": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The number of blocks that have been added to the chain after this transaction was included in a block.\nA value of zero means the transaction is unconfirmed and may still in the transaction pool."
         }
       },
       "description": "Information about a transaction."
@@ -3063,6 +3162,15 @@
       ],
       "default": "TRANSACTION_VERBOSITY_DATA",
       "description": "Enumeration for verbosity levels when requesting transaction details.\n\n - TRANSACTION_VERBOSITY_DATA: Request transaction data only.\n - TRANSACTION_VERBOSITY_INFO: Request detailed transaction information."
+    },
+    "pactusTxDirection": {
+      "type": "string",
+      "enum": [
+        "TX_DIRECTION_INCOMING",
+        "TX_DIRECTION_OUTGOING"
+      ],
+      "default": "TX_DIRECTION_INCOMING",
+      "description": "TxDirection indicates the direction of a transaction relative to the wallet.\n\n - TX_DIRECTION_INCOMING: Include only transactions where the wallet receives funds.\n - TX_DIRECTION_OUTGOING: Include only transactions where the wallet sends funds."
     },
     "pactusUnloadWalletResponse": {
       "type": "object",

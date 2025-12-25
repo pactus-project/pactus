@@ -37,6 +37,7 @@ func WalletClientCommand(options ...client.Option) *cobra.Command {
 		_WalletGetWalletInfoCommand(cfg),
 		_WalletListAddressesCommand(cfg),
 		_WalletUpdatePasswordCommand(cfg),
+		_WalletListTransactionsCommand(cfg),
 	)
 	return cmd
 }
@@ -768,6 +769,52 @@ func _WalletUpdatePasswordCommand(cfg *client.Config) *cobra.Command {
 	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "The name of the wallet whose password will be updated.")
 	cmd.PersistentFlags().StringVar(&req.OldPassword, cfg.FlagNamer("OldPassword"), "", "The current wallet password.")
 	cmd.PersistentFlags().StringVar(&req.NewPassword, cfg.FlagNamer("NewPassword"), "", "The new wallet password.")
+
+	return cmd
+}
+
+func _WalletListTransactionsCommand(cfg *client.Config) *cobra.Command {
+	req := &ListTransactionsRequest{}
+
+	cmd := &cobra.Command{
+		Use:   cfg.CommandNamer("ListTransactions"),
+		Short: "ListTransactions RPC client",
+		Long:  "ListTransactions returns a list of transactions for a wallet,\n optionally filtered by a specific address, with pagination support.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if cfg.UseEnvVars {
+				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
+					return err
+				}
+				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "ListTransactions"); err != nil {
+					return err
+				}
+			}
+			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
+				cli := NewWalletClient(cc)
+				v := &ListTransactionsRequest{}
+
+				if err := in(v); err != nil {
+					return err
+				}
+				proto.Merge(v, req)
+
+				res, err := cli.ListTransactions(cmd.Context(), v)
+
+				if err != nil {
+					return err
+				}
+
+				return out(res)
+
+			})
+		},
+	}
+
+	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "The name of the wallet to query transactions for.")
+	flag.EnumVar(cmd.PersistentFlags(), &req.Direction, cfg.FlagNamer("Direction"), "Filter transactions by direction relative to the wallet.\n Defaults to incoming if not set.")
+	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "Optional: The address to filter transactions.\n If empty or set to \"*\", transactions for all addresses in the wallet are included.")
+	cmd.PersistentFlags().Int32Var(&req.Count, cfg.FlagNamer("Count"), 0, "Optional: The maximum number of transactions to return.\n Defaults to 10 if not set.")
+	cmd.PersistentFlags().Int32Var(&req.Skip, cfg.FlagNamer("Skip"), 0, "Optional: The number of transactions to skip (for pagination).\n Defaults to 0 if not set.")
 
 	return cmd
 }

@@ -1,3 +1,4 @@
+import transaction_pb2 as _transaction_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
@@ -13,10 +14,17 @@ class AddressType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     ADDRESS_TYPE_VALIDATOR: _ClassVar[AddressType]
     ADDRESS_TYPE_BLS_ACCOUNT: _ClassVar[AddressType]
     ADDRESS_TYPE_ED25519_ACCOUNT: _ClassVar[AddressType]
+
+class TxDirection(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    TX_DIRECTION_INCOMING: _ClassVar[TxDirection]
+    TX_DIRECTION_OUTGOING: _ClassVar[TxDirection]
 ADDRESS_TYPE_TREASURY: AddressType
 ADDRESS_TYPE_VALIDATOR: AddressType
 ADDRESS_TYPE_BLS_ACCOUNT: AddressType
 ADDRESS_TYPE_ED25519_ACCOUNT: AddressType
+TX_DIRECTION_INCOMING: TxDirection
+TX_DIRECTION_OUTGOING: TxDirection
 
 class AddressInfo(_message.Message):
     __slots__ = ()
@@ -313,3 +321,25 @@ class UpdatePasswordResponse(_message.Message):
     WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
     wallet_name: str
     def __init__(self, wallet_name: _Optional[str] = ...) -> None: ...
+
+class ListTransactionsRequest(_message.Message):
+    __slots__ = ()
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    DIRECTION_FIELD_NUMBER: _ClassVar[int]
+    ADDRESS_FIELD_NUMBER: _ClassVar[int]
+    COUNT_FIELD_NUMBER: _ClassVar[int]
+    SKIP_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    direction: TxDirection
+    address: str
+    count: int
+    skip: int
+    def __init__(self, wallet_name: _Optional[str] = ..., direction: _Optional[_Union[TxDirection, str]] = ..., address: _Optional[str] = ..., count: _Optional[int] = ..., skip: _Optional[int] = ...) -> None: ...
+
+class ListTransactionsResponse(_message.Message):
+    __slots__ = ()
+    WALLET_NAME_FIELD_NUMBER: _ClassVar[int]
+    TXS_FIELD_NUMBER: _ClassVar[int]
+    wallet_name: str
+    txs: _containers.RepeatedCompositeFieldContainer[_transaction_pb2.TransactionInfo]
+    def __init__(self, wallet_name: _Optional[str] = ..., txs: _Optional[_Iterable[_Union[_transaction_pb2.TransactionInfo, _Mapping]]] = ...) -> None: ...

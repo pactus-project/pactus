@@ -100,6 +100,11 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.UpdatePasswordRequest.SerializeToString,
                 response_deserializer=wallet__pb2.UpdatePasswordResponse.FromString,
                 _registered_method=True)
+        self.ListTransactions = channel.unary_unary(
+                '/pactus.Wallet/ListTransactions',
+                request_serializer=wallet__pb2.ListTransactionsRequest.SerializeToString,
+                response_deserializer=wallet__pb2.ListTransactionsResponse.FromString,
+                _registered_method=True)
 
 
 class WalletServicer(object):
@@ -226,6 +231,14 @@ class WalletServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ListTransactions(self, request, context):
+        """ListTransactions returns a list of transactions for a wallet,
+        optionally filtered by a specific address, with pagination support.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_WalletServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -313,6 +326,11 @@ def add_WalletServicer_to_server(servicer, server):
                     servicer.UpdatePassword,
                     request_deserializer=wallet__pb2.UpdatePasswordRequest.FromString,
                     response_serializer=wallet__pb2.UpdatePasswordResponse.SerializeToString,
+            ),
+            'ListTransactions': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListTransactions,
+                    request_deserializer=wallet__pb2.ListTransactionsRequest.FromString,
+                    response_serializer=wallet__pb2.ListTransactionsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -775,6 +793,33 @@ class Wallet(object):
             '/pactus.Wallet/UpdatePassword',
             wallet__pb2.UpdatePasswordRequest.SerializeToString,
             wallet__pb2.UpdatePasswordResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListTransactions(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/pactus.Wallet/ListTransactions',
+            wallet__pb2.ListTransactionsRequest.SerializeToString,
+            wallet__pb2.ListTransactionsResponse.FromString,
             options,
             channel_credentials,
             insecure,

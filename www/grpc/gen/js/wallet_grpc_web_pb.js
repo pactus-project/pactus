@@ -19,6 +19,8 @@
 const grpc = {};
 grpc.web = require('grpc-web');
 
+
+var transaction_pb = require('./transaction_pb.js')
 const proto = {};
 proto.pactus = require('./wallet_pb.js');
 
@@ -1108,6 +1110,67 @@ proto.pactus.WalletPromiseClient.prototype.updatePassword =
       request,
       metadata || {},
       methodDescriptor_Wallet_UpdatePassword);
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.pactus.ListTransactionsRequest,
+ *   !proto.pactus.ListTransactionsResponse>}
+ */
+const methodDescriptor_Wallet_ListTransactions = new grpc.web.MethodDescriptor(
+  '/pactus.Wallet/ListTransactions',
+  grpc.web.MethodType.UNARY,
+  proto.pactus.ListTransactionsRequest,
+  proto.pactus.ListTransactionsResponse,
+  /**
+   * @param {!proto.pactus.ListTransactionsRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.pactus.ListTransactionsResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.pactus.ListTransactionsRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.pactus.ListTransactionsResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.pactus.ListTransactionsResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.pactus.WalletClient.prototype.listTransactions =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/pactus.Wallet/ListTransactions',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_ListTransactions,
+      callback);
+};
+
+
+/**
+ * @param {!proto.pactus.ListTransactionsRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.pactus.ListTransactionsResponse>}
+ *     Promise that resolves to the response
+ */
+proto.pactus.WalletPromiseClient.prototype.listTransactions =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/pactus.Wallet/ListTransactions',
+      request,
+      metadata || {},
+      methodDescriptor_Wallet_ListTransactions);
 };
 
 

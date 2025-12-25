@@ -23,7 +23,7 @@
         "schema": {
           "type": "object","required": ["block_height","block_time","transaction"],
           "properties": {"block_height": { "type": "integer" },"block_time": { "type": "integer" },"transaction": {
-  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature"],
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature","block_height","confirmed","confirmations"],
   "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
@@ -48,7 +48,7 @@
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
-},"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" }}
+},"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
 }}
           }
         }
@@ -288,7 +288,7 @@
         "schema": {
           "type": "object","required": ["transaction"],
           "properties": {"transaction": {
-  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature"],
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature","block_height","confirmed","confirmations"],
   "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
@@ -313,7 +313,7 @@
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
-},"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" }}
+},"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
 }}
           }
         }
@@ -350,7 +350,7 @@
 },"txs": {
   "type": "array",
   "items": {
-  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature"],
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature","block_height","confirmed","confirmations"],
   "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
@@ -375,7 +375,7 @@
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
-},"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" }}
+},"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
 }
 }}
           }
@@ -573,7 +573,7 @@
           "properties": {"txs": {
   "type": "array",
   "items": {
-  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature"],
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature","block_height","confirmed","confirmations"],
   "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
   "type": "object","required": ["sender","receiver","amount"],
   "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
@@ -598,7 +598,7 @@
   "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
 }
 }}
-},"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" }}
+},"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
 }
 }}
           }
@@ -1177,6 +1177,69 @@
         "schema": {
           "type": "object","required": ["wallet_name"],
           "properties": {"wallet_name": { "type": "string" }}
+          }
+        }
+      },{
+      "name": "pactus.wallet.list_transactions",
+      "description": "ListTransactions returns a list of transactions for a wallet, optionally filtered by a specific address, with pagination support.",
+      "tags": [{ "name": "wallet"}],
+      "paramStructure": "by-name",
+      "params": [{
+          "name": "wallet_name",
+          "description": "The name of the wallet to query transactions for.",
+          "schema": { "type": "string" }
+        },{
+          "name": "direction",
+          "description": "Filter transactions by direction relative to the wallet. Defaults to incoming if not set.",
+          "schema": { "type": "integer" }
+        },{
+          "name": "address",
+          "description": "Optional: The address to filter transactions. If empty or set to "*", transactions for all addresses in the wallet are included.",
+          "schema": { "type": "string" }
+        },{
+          "name": "count",
+          "description": "Optional: The maximum number of transactions to return. Defaults to 10 if not set.",
+          "schema": { "type": "integer" }
+        },{
+          "name": "skip",
+          "description": "Optional: The number of transactions to skip (for pagination). Defaults to 0 if not set.",
+          "schema": { "type": "integer" }
+        }],
+      "result": {
+        "name": "fields",
+        "schema": {
+          "type": "object","required": ["wallet_name","txs"],
+          "properties": {"wallet_name": { "type": "string" },"txs": {
+  "type": "array",
+  "items": {
+  "type": "object","required": ["id","data","version","lock_time","value","fee","payload_type","transfer","bond","sortition","unbond","withdraw","batch_transfer","memo","public_key","signature","block_height","confirmed","confirmations"],
+  "properties": {"id": { "type": "string" },"data": { "type": "string" },"version": { "type": "integer" },"lock_time": { "type": "integer" },"value": { "type": "integer" },"fee": { "type": "integer" },"payload_type": { "type": "integer" },"transfer": {
+  "type": "object","required": ["sender","receiver","amount"],
+  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"amount": { "type": "integer" }}
+},"bond": {
+  "type": "object","required": ["sender","receiver","stake","public_key"],
+  "properties": {"sender": { "type": "string" },"receiver": { "type": "string" },"stake": { "type": "integer" },"public_key": { "type": "string" }}
+},"sortition": {
+  "type": "object","required": ["address","proof"],
+  "properties": {"address": { "type": "string" },"proof": { "type": "string" }}
+},"unbond": {
+  "type": "object","required": ["validator"],
+  "properties": {"validator": { "type": "string" }}
+},"withdraw": {
+  "type": "object","required": ["validator_address","account_address","amount"],
+  "properties": {"validator_address": { "type": "string" },"account_address": { "type": "string" },"amount": { "type": "integer" }}
+},"batch_transfer": {
+  "type": "object","required": ["sender","recipients"],
+  "properties": {"sender": { "type": "string" },"recipients": {
+  "type": "array",
+  "items": {
+  "type": "object","required": ["receiver","amount"],
+  "properties": {"receiver": { "type": "string" },"amount": { "type": "integer" }}
+}
+}}
+},"memo": { "type": "string" },"public_key": { "type": "string" },"signature": { "type": "string" },"block_height": { "type": "integer" },"confirmed": { "type": "boolean" },"confirmations": { "type": "integer" }}
+}
+}}
           }
         }
       }]

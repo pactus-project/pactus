@@ -56,7 +56,9 @@ func (s *transactionServer) GetTransaction(_ context.Context,
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "%s", err.Error())
 		}
-		res.Transaction = transactionToProto(trx)
+		lastBlockHeight := s.state.LastBlockHeight()
+		confirmations := int(lastBlockHeight) - int(committedTx.Height)
+		res.Transaction = transactionToProto(trx, committedTx.Height, confirmations)
 	}
 
 	return res, nil
@@ -272,15 +274,18 @@ func (s *transactionServer) getLockTime(lockTime uint32) uint32 {
 	return lockTime
 }
 
-func transactionToProto(trx *tx.Tx) *pactus.TransactionInfo {
+func transactionToProto(trx *tx.Tx, blockHeight uint32, confirmations int) *pactus.TransactionInfo {
 	trxInfo := &pactus.TransactionInfo{
-		Id:          trx.ID().String(),
-		Version:     int32(trx.Version()),
-		LockTime:    trx.LockTime(),
-		Fee:         trx.Fee().ToNanoPAC(),
-		Value:       trx.Payload().Value().ToNanoPAC(),
-		PayloadType: pactus.PayloadType(trx.Payload().Type()),
-		Memo:        trx.Memo(),
+		Id:            trx.ID().String(),
+		Version:       int32(trx.Version()),
+		LockTime:      trx.LockTime(),
+		Fee:           trx.Fee().ToNanoPAC(),
+		Value:         trx.Payload().Value().ToNanoPAC(),
+		PayloadType:   pactus.PayloadType(trx.Payload().Type()),
+		Memo:          trx.Memo(),
+		BlockHeight:   blockHeight,
+		Confirmed:     confirmations > 0,
+		Confirmations: int32(confirmations),
 	}
 
 	if trx.PublicKey() != nil {
@@ -375,6 +380,6 @@ func (*transactionServer) DecodeRawTransaction(_ context.Context,
 	}
 
 	return &pactus.DecodeRawTransactionResponse{
-		Transaction: transactionToProto(trx),
+		Transaction: transactionToProto(trx, 0, 0),
 	}, nil
 }

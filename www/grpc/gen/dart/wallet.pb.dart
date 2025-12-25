@@ -16,6 +16,7 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+import 'transaction.pb.dart' as $0;
 import 'wallet.pbenum.dart';
 
 export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
@@ -2567,6 +2568,185 @@ class UpdatePasswordResponse extends $pb.GeneratedMessage {
   void clearWalletName() => $_clearField(1);
 }
 
+/// Request message for listing transactions of a wallet, optionally filtered by a specific address.
+class ListTransactionsRequest extends $pb.GeneratedMessage {
+  factory ListTransactionsRequest({
+    $core.String? walletName,
+    TxDirection? direction,
+    $core.String? address,
+    $core.int? count,
+    $core.int? skip,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    if (direction != null) result.direction = direction;
+    if (address != null) result.address = address;
+    if (count != null) result.count = count;
+    if (skip != null) result.skip = skip;
+    return result;
+  }
+
+  ListTransactionsRequest._();
+
+  factory ListTransactionsRequest.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ListTransactionsRequest.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ListTransactionsRequest',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..aE<TxDirection>(2, _omitFieldNames ? '' : 'direction',
+        enumValues: TxDirection.values)
+    ..aOS(3, _omitFieldNames ? '' : 'address')
+    ..aI(4, _omitFieldNames ? '' : 'count')
+    ..aI(5, _omitFieldNames ? '' : 'skip')
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ListTransactionsRequest clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ListTransactionsRequest copyWith(
+          void Function(ListTransactionsRequest) updates) =>
+      super.copyWith((message) => updates(message as ListTransactionsRequest))
+          as ListTransactionsRequest;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ListTransactionsRequest create() => ListTransactionsRequest._();
+  @$core.override
+  ListTransactionsRequest createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static ListTransactionsRequest getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ListTransactionsRequest>(create);
+  static ListTransactionsRequest? _defaultInstance;
+
+  /// The name of the wallet to query transactions for.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+
+  /// Filter transactions by direction relative to the wallet.
+  /// Defaults to incoming if not set.
+  @$pb.TagNumber(2)
+  TxDirection get direction => $_getN(1);
+  @$pb.TagNumber(2)
+  set direction(TxDirection value) => $_setField(2, value);
+  @$pb.TagNumber(2)
+  $core.bool hasDirection() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearDirection() => $_clearField(2);
+
+  /// Optional: The address to filter transactions.
+  /// If empty or set to "*", transactions for all addresses in the wallet are included.
+  @$pb.TagNumber(3)
+  $core.String get address => $_getSZ(2);
+  @$pb.TagNumber(3)
+  set address($core.String value) => $_setString(2, value);
+  @$pb.TagNumber(3)
+  $core.bool hasAddress() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearAddress() => $_clearField(3);
+
+  /// Optional: The maximum number of transactions to return.
+  /// Defaults to 10 if not set.
+  @$pb.TagNumber(4)
+  $core.int get count => $_getIZ(3);
+  @$pb.TagNumber(4)
+  set count($core.int value) => $_setSignedInt32(3, value);
+  @$pb.TagNumber(4)
+  $core.bool hasCount() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearCount() => $_clearField(4);
+
+  /// Optional: The number of transactions to skip (for pagination).
+  /// Defaults to 0 if not set.
+  @$pb.TagNumber(5)
+  $core.int get skip => $_getIZ(4);
+  @$pb.TagNumber(5)
+  set skip($core.int value) => $_setSignedInt32(4, value);
+  @$pb.TagNumber(5)
+  $core.bool hasSkip() => $_has(4);
+  @$pb.TagNumber(5)
+  void clearSkip() => $_clearField(5);
+}
+
+/// Response message containing a list of transactions.
+class ListTransactionsResponse extends $pb.GeneratedMessage {
+  factory ListTransactionsResponse({
+    $core.String? walletName,
+    $core.Iterable<$0.TransactionInfo>? txs,
+  }) {
+    final result = create();
+    if (walletName != null) result.walletName = walletName;
+    if (txs != null) result.txs.addAll(txs);
+    return result;
+  }
+
+  ListTransactionsResponse._();
+
+  factory ListTransactionsResponse.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory ListTransactionsResponse.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
+
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'ListTransactionsResponse',
+      package: const $pb.PackageName(_omitMessageNames ? '' : 'pactus'),
+      createEmptyInstance: create)
+    ..aOS(1, _omitFieldNames ? '' : 'walletName')
+    ..pPM<$0.TransactionInfo>(2, _omitFieldNames ? '' : 'txs',
+        subBuilder: $0.TransactionInfo.create)
+    ..hasRequiredFields = false;
+
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ListTransactionsResponse clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  ListTransactionsResponse copyWith(
+          void Function(ListTransactionsResponse) updates) =>
+      super.copyWith((message) => updates(message as ListTransactionsResponse))
+          as ListTransactionsResponse;
+
+  @$core.override
+  $pb.BuilderInfo get info_ => _i;
+
+  @$core.pragma('dart2js:noInline')
+  static ListTransactionsResponse create() => ListTransactionsResponse._();
+  @$core.override
+  ListTransactionsResponse createEmptyInstance() => create();
+  @$core.pragma('dart2js:noInline')
+  static ListTransactionsResponse getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ListTransactionsResponse>(create);
+  static ListTransactionsResponse? _defaultInstance;
+
+  /// The name of the wallet queried.
+  @$pb.TagNumber(1)
+  $core.String get walletName => $_getSZ(0);
+  @$pb.TagNumber(1)
+  set walletName($core.String value) => $_setString(0, value);
+  @$pb.TagNumber(1)
+  $core.bool hasWalletName() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearWalletName() => $_clearField(1);
+
+  /// List of transactions for the wallet, filtered by the specified address if provided.
+  @$pb.TagNumber(2)
+  $pb.PbList<$0.TransactionInfo> get txs => $_getList(1);
+}
+
 /// Wallet service provides RPC methods for wallet management operations.
 class WalletApi {
   final $pb.RpcClient _client;
@@ -2675,6 +2855,13 @@ class WalletApi {
           $pb.ClientContext? ctx, UpdatePasswordRequest request) =>
       _client.invoke<UpdatePasswordResponse>(
           ctx, 'Wallet', 'UpdatePassword', request, UpdatePasswordResponse());
+
+  /// ListTransactions returns a list of transactions for a wallet,
+  /// optionally filtered by a specific address, with pagination support.
+  $async.Future<ListTransactionsResponse> listTransactions(
+          $pb.ClientContext? ctx, ListTransactionsRequest request) =>
+      _client.invoke<ListTransactionsResponse>(ctx, 'Wallet',
+          'ListTransactions', request, ListTransactionsResponse());
 }
 
 const $core.bool _omitFieldNames =
