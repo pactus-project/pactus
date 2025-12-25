@@ -14,38 +14,38 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// buildAllAddrCmd builds all sub-commands related to addresses.
-func buildAllAddrCmd(parentCmd *cobra.Command) {
-	addrCmd := &cobra.Command{
+// buildAddressCmd builds all sub-commands related to addresses.
+func buildAddressCmd(parentCmd *cobra.Command) {
+	addressCmd := &cobra.Command{
 		Use:   "address",
 		Short: "manage the address book",
 	}
 
-	parentCmd.AddCommand(addrCmd)
-	buildAllAddressesCmd(addrCmd)
-	buildNewAddressCmd(addrCmd)
-	buildBalanceCmd(addrCmd)
-	buildPrivateKeyCmd(addrCmd)
-	buildPublicKeyCmd(addrCmd)
-	buildImportPrivateKeyCmd(addrCmd)
-	buildSetLabelCmd(addrCmd)
+	parentCmd.AddCommand(addressCmd)
+	buildAddressAllCmd(addressCmd)
+	buildAddressNewCmd(addressCmd)
+	buildAddressBalanceCmd(addressCmd)
+	buildAddressPrivCmd(addressCmd)
+	buildAddressPubCmd(addressCmd)
+	buildAddressImportCmd(addressCmd)
+	buildAddressLabelCmd(addressCmd)
 }
 
-// buildAllAddressesCmd builds a command to list all addresses from the wallet.
-func buildAllAddressesCmd(parentCmd *cobra.Command) {
-	allAddressCmd := &cobra.Command{
+// buildAddressAllCmd builds a command to list all addresses from the wallet.
+func buildAddressAllCmd(parentCmd *cobra.Command) {
+	allCmd := &cobra.Command{
 		Use:   "all",
 		Short: "displays all stored addresses",
 	}
-	parentCmd.AddCommand(allAddressCmd)
+	parentCmd.AddCommand(allCmd)
 
-	balanceOpt := allAddressCmd.Flags().Bool("balance",
+	balanceOpt := allCmd.Flags().Bool("balance",
 		false, "displays the account balance for each address")
 
-	stakeOpt := allAddressCmd.Flags().Bool("stake",
+	stakeOpt := allCmd.Flags().Bool("stake",
 		false, "displays the validator stake for each address")
 
-	allAddressCmd.Run = func(_ *cobra.Command, _ []string) {
+	allCmd.Run = func(_ *cobra.Command, _ []string) {
 		wlt, err := openWallet()
 		terminal.FatalErrorCheck(err)
 
@@ -69,20 +69,20 @@ func buildAllAddressesCmd(parentCmd *cobra.Command) {
 	}
 }
 
-// buildNewAddressCmd builds a command for creating a new wallet address.
-func buildNewAddressCmd(parentCmd *cobra.Command) {
-	newAddressCmd := &cobra.Command{
+// buildAddressNewCmd builds a command for creating a new wallet address.
+func buildAddressNewCmd(parentCmd *cobra.Command) {
+	newCmd := &cobra.Command{
 		Use:   "new",
 		Short: "creating a new address",
 	}
-	parentCmd.AddCommand(newAddressCmd)
+	parentCmd.AddCommand(newCmd)
 
-	addressType := newAddressCmd.Flags().String("type",
+	addressType := newCmd.Flags().String("type",
 		crypto.AddressTypeEd25519Account.String(), "the type of address: ed25519_account, bls_account and validator")
 
-	label := newAddressCmd.Flags().String("label", "", "a label for the address")
+	label := newCmd.Flags().String("label", "", "a label for the address")
 
-	newAddressCmd.Run = func(_ *cobra.Command, _ []string) {
+	newCmd.Run = func(_ *cobra.Command, _ []string) {
 		var addressInfo *types.AddressInfo
 		var err error
 
@@ -116,8 +116,8 @@ func buildNewAddressCmd(parentCmd *cobra.Command) {
 	}
 }
 
-// buildBalanceCmd builds a command to display the balance of a given address.
-func buildBalanceCmd(parentCmd *cobra.Command) {
+// buildAddressBalanceCmd builds a command to display the balance of a given address.
+func buildAddressBalanceCmd(parentCmd *cobra.Command) {
 	balanceCmd := &cobra.Command{
 		Use:   "balance [flags] <ADDRESS>",
 		Short: "displays the balance of an address",
@@ -140,19 +140,19 @@ func buildBalanceCmd(parentCmd *cobra.Command) {
 	}
 }
 
-// buildPrivateKeyCmd builds a command to show the private key of a given address.
-func buildPrivateKeyCmd(parentCmd *cobra.Command) {
-	privateKeyCmd := &cobra.Command{
+// buildAddressPrivCmd builds a command to show the private key of a given address.
+func buildAddressPrivCmd(parentCmd *cobra.Command) {
+	privCmd := &cobra.Command{
 		Use:   "priv [flags] <ADDRESS>",
 		Short: "displays the private key for a specified address",
 		Args:  cobra.ExactArgs(1),
 	}
 
-	parentCmd.AddCommand(privateKeyCmd)
+	parentCmd.AddCommand(privCmd)
 
-	passOpt := addPasswordOption(privateKeyCmd)
+	passOpt := addPasswordOption(privCmd)
 
-	privateKeyCmd.Run = func(_ *cobra.Command, args []string) {
+	privCmd.Run = func(_ *cobra.Command, args []string) {
 		addr := args[0]
 
 		wlt, err := openWallet()
@@ -167,17 +167,17 @@ func buildPrivateKeyCmd(parentCmd *cobra.Command) {
 	}
 }
 
-// buildPublicKeyCmd builds a command to show the public key of a given address.
-func buildPublicKeyCmd(parentCmd *cobra.Command) {
-	publicKeyCmd := &cobra.Command{
+// buildAddressPubCmd builds a command to show the public key of a given address.
+func buildAddressPubCmd(parentCmd *cobra.Command) {
+	pubCmd := &cobra.Command{
 		Use:   "pub [flags] <ADDRESS>",
 		Short: "displays the public key for a specified address",
 		Args:  cobra.ExactArgs(1),
 	}
 
-	parentCmd.AddCommand(publicKeyCmd)
+	parentCmd.AddCommand(pubCmd)
 
-	publicKeyCmd.Run = func(_ *cobra.Command, args []string) {
+	pubCmd.Run = func(_ *cobra.Command, args []string) {
 		addr := args[0]
 
 		wlt, err := openWallet()
@@ -198,17 +198,17 @@ func buildPublicKeyCmd(parentCmd *cobra.Command) {
 	}
 }
 
-// buildImportPrivateKeyCmd build a command to import a private key into the wallet.
-func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
-	importPrivateKeyCmd := &cobra.Command{
+// buildAddressImportCmd build a command to import a private key into the wallet.
+func buildAddressImportCmd(parentCmd *cobra.Command) {
+	importCmd := &cobra.Command{
 		Use:   "import",
 		Short: "imports a private key into wallet",
 	}
-	parentCmd.AddCommand(importPrivateKeyCmd)
+	parentCmd.AddCommand(importCmd)
 
-	passOpt := addPasswordOption(importPrivateKeyCmd)
+	passOpt := addPasswordOption(importCmd)
 
-	importPrivateKeyCmd.Run = func(_ *cobra.Command, _ []string) {
+	importCmd.Run = func(_ *cobra.Command, _ []string) {
 		prvStr := prompt.PromptInput("Private Key")
 
 		wlt, err := openWallet()
@@ -253,16 +253,16 @@ func buildImportPrivateKeyCmd(parentCmd *cobra.Command) {
 	}
 }
 
-// buildSetLabelCmd build a command to set or update the label for an address.
-func buildSetLabelCmd(parentCmd *cobra.Command) {
-	setLabelCmd := &cobra.Command{
+// buildAddressLabelCmd build a command to set or update the label for an address.
+func buildAddressLabelCmd(parentCmd *cobra.Command) {
+	labelCmd := &cobra.Command{
 		Use:   "label [flags] <ADDRESS>",
 		Short: "assigns or update a label for a specific address",
 		Args:  cobra.ExactArgs(1),
 	}
-	parentCmd.AddCommand(setLabelCmd)
+	parentCmd.AddCommand(labelCmd)
 
-	setLabelCmd.Run = func(_ *cobra.Command, args []string) {
+	labelCmd.Run = func(_ *cobra.Command, args []string) {
 		addr := args[0]
 
 		wlt, err := openWallet()

@@ -55,11 +55,6 @@ class WalletStub(object):
                 request_serializer=wallet__pb2.GetNewAddressRequest.SerializeToString,
                 response_deserializer=wallet__pb2.GetNewAddressResponse.FromString,
                 _registered_method=True)
-        self.GetAddressHistory = channel.unary_unary(
-                '/pactus.Wallet/GetAddressHistory',
-                request_serializer=wallet__pb2.GetAddressHistoryRequest.SerializeToString,
-                response_deserializer=wallet__pb2.GetAddressHistoryResponse.FromString,
-                _registered_method=True)
         self.SignMessage = channel.unary_unary(
                 '/pactus.Wallet/SignMessage',
                 request_serializer=wallet__pb2.SignMessageRequest.SerializeToString,
@@ -163,13 +158,6 @@ class WalletServicer(object):
 
     def GetNewAddress(self, request, context):
         """GetNewAddress generates a new address for the specified wallet.
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetAddressHistory(self, request, context):
-        """GetAddressHistory retrieves the transaction history of an address.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -281,11 +269,6 @@ def add_WalletServicer_to_server(servicer, server):
                     servicer.GetNewAddress,
                     request_deserializer=wallet__pb2.GetNewAddressRequest.FromString,
                     response_serializer=wallet__pb2.GetNewAddressResponse.SerializeToString,
-            ),
-            'GetAddressHistory': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetAddressHistory,
-                    request_deserializer=wallet__pb2.GetAddressHistoryRequest.FromString,
-                    response_serializer=wallet__pb2.GetAddressHistoryResponse.SerializeToString,
             ),
             'SignMessage': grpc.unary_unary_rpc_method_handler(
                     servicer.SignMessage,
@@ -550,33 +533,6 @@ class Wallet(object):
             '/pactus.Wallet/GetNewAddress',
             wallet__pb2.GetNewAddressRequest.SerializeToString,
             wallet__pb2.GetNewAddressResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def GetAddressHistory(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/pactus.Wallet/GetAddressHistory',
-            wallet__pb2.GetAddressHistoryRequest.SerializeToString,
-            wallet__pb2.GetAddressHistoryResponse.FromString,
             options,
             channel_credentials,
             insecure,

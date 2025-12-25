@@ -27,28 +27,6 @@ function deserialize_pactus_CreateWalletResponse(buffer_arg) {
   return wallet_pb.CreateWalletResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_pactus_GetAddressHistoryRequest(arg) {
-  if (!(arg instanceof wallet_pb.GetAddressHistoryRequest)) {
-    throw new Error('Expected argument of type pactus.GetAddressHistoryRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_GetAddressHistoryRequest(buffer_arg) {
-  return wallet_pb.GetAddressHistoryRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_pactus_GetAddressHistoryResponse(arg) {
-  if (!(arg instanceof wallet_pb.GetAddressHistoryResponse)) {
-    throw new Error('Expected argument of type pactus.GetAddressHistoryResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_pactus_GetAddressHistoryResponse(buffer_arg) {
-  return wallet_pb.GetAddressHistoryResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_pactus_GetAddressInfoRequest(arg) {
   if (!(arg instanceof wallet_pb.GetAddressInfoRequest)) {
     throw new Error('Expected argument of type pactus.GetAddressInfoRequest');
@@ -500,18 +478,6 @@ getNewAddress: {
     requestDeserialize: deserialize_pactus_GetNewAddressRequest,
     responseSerialize: serialize_pactus_GetNewAddressResponse,
     responseDeserialize: deserialize_pactus_GetNewAddressResponse,
-  },
-  // GetAddressHistory retrieves the transaction history of an address.
-getAddressHistory: {
-    path: '/pactus.Wallet/GetAddressHistory',
-    requestStream: false,
-    responseStream: false,
-    requestType: wallet_pb.GetAddressHistoryRequest,
-    responseType: wallet_pb.GetAddressHistoryResponse,
-    requestSerialize: serialize_pactus_GetAddressHistoryRequest,
-    requestDeserialize: deserialize_pactus_GetAddressHistoryRequest,
-    responseSerialize: serialize_pactus_GetAddressHistoryResponse,
-    responseDeserialize: deserialize_pactus_GetAddressHistoryResponse,
   },
   // SignMessage signs an arbitrary message using a wallet's private key.
 signMessage: {

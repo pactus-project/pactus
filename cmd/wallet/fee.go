@@ -10,7 +10,7 @@ import (
 func buildFeeCmd(parentCmd *cobra.Command) {
 	feeCmd := &cobra.Command{
 		Use:   "fee [flags] <AMOUNT>",
-		Short: "set the default fee for the wallet.",
+		Short: "set the default fee for the wallet",
 		Args:  cobra.ExactArgs(1),
 	}
 

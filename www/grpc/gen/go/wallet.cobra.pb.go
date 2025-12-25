@@ -28,7 +28,6 @@ func WalletClientCommand(options ...client.Option) *cobra.Command {
 		_WalletSignRawTransactionCommand(cfg),
 		_WalletGetValidatorAddressCommand(cfg),
 		_WalletGetNewAddressCommand(cfg),
-		_WalletGetAddressHistoryCommand(cfg),
 		_WalletSignMessageCommand(cfg),
 		_WalletGetTotalStakeCommand(cfg),
 		_WalletGetAddressInfoCommand(cfg),
@@ -382,49 +381,6 @@ func _WalletGetNewAddressCommand(cfg *client.Config) *cobra.Command {
 	flag.EnumVar(cmd.PersistentFlags(), &req.AddressType, cfg.FlagNamer("AddressType"), "The type of address to generate.")
 	cmd.PersistentFlags().StringVar(&req.Label, cfg.FlagNamer("Label"), "", "A label for the new address.")
 	cmd.PersistentFlags().StringVar(&req.Password, cfg.FlagNamer("Password"), "", "Password for the new address. It's required when address_type is Ed25519 type.")
-
-	return cmd
-}
-
-func _WalletGetAddressHistoryCommand(cfg *client.Config) *cobra.Command {
-	req := &GetAddressHistoryRequest{}
-
-	cmd := &cobra.Command{
-		Use:   cfg.CommandNamer("GetAddressHistory"),
-		Short: "GetAddressHistory RPC client",
-		Long:  "GetAddressHistory retrieves the transaction history of an address.",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if cfg.UseEnvVars {
-				if err := flag.SetFlagsFromEnv(cmd.Parent().PersistentFlags(), true, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet"); err != nil {
-					return err
-				}
-				if err := flag.SetFlagsFromEnv(cmd.PersistentFlags(), false, cfg.EnvVarNamer, cfg.EnvVarPrefix, "Wallet", "GetAddressHistory"); err != nil {
-					return err
-				}
-			}
-			return client.RoundTrip(cmd.Context(), cfg, func(cc grpc.ClientConnInterface, in iocodec.Decoder, out iocodec.Encoder) error {
-				cli := NewWalletClient(cc)
-				v := &GetAddressHistoryRequest{}
-
-				if err := in(v); err != nil {
-					return err
-				}
-				proto.Merge(v, req)
-
-				res, err := cli.GetAddressHistory(cmd.Context(), v)
-
-				if err != nil {
-					return err
-				}
-
-				return out(res)
-
-			})
-		},
-	}
-
-	cmd.PersistentFlags().StringVar(&req.WalletName, cfg.FlagNamer("WalletName"), "", "The name of the wallet containing the address.")
-	cmd.PersistentFlags().StringVar(&req.Address, cfg.FlagNamer("Address"), "", "The address to retrieve history for.")
 
 	return cmd
 }

@@ -194,12 +194,6 @@ func (s *walletServer) GetNewAddress(_ context.Context,
 	}, nil
 }
 
-func (*walletServer) GetAddressHistory(_ context.Context,
-	_ *pactus.GetAddressHistoryRequest,
-) (*pactus.GetAddressHistoryResponse, error) {
-	return nil, errors.New("not implemented")
-}
-
 func (s *walletServer) GetAddressInfo(_ context.Context,
 	req *pactus.GetAddressInfoRequest,
 ) (*pactus.GetAddressInfoResponse, error) {

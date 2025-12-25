@@ -19,7 +19,7 @@ var (
 	// in wallet.
 	ErrAddressExists = errors.New("address already exists")
 
-	// ErrTransactionExists indicates the transaction already exists in history.
+	// ErrTransactionExists indicates the transaction already exists in the wallet.
 	ErrTransactionExists = errors.New("transaction already exists")
 )
 

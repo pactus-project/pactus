@@ -61,10 +61,5 @@
       "label": "Ed25519 Account Address",
       "path": "m/44'/21888'/3'/0'"
     }
-  },
-  "history": {
-    "transactions": null,
-    "activities": null,
-    "pendings": null
   }
 }

@@ -567,67 +567,6 @@ proto.pactus.WalletPromiseClient.prototype.getNewAddress =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.pactus.GetAddressHistoryRequest,
- *   !proto.pactus.GetAddressHistoryResponse>}
- */
-const methodDescriptor_Wallet_GetAddressHistory = new grpc.web.MethodDescriptor(
-  '/pactus.Wallet/GetAddressHistory',
-  grpc.web.MethodType.UNARY,
-  proto.pactus.GetAddressHistoryRequest,
-  proto.pactus.GetAddressHistoryResponse,
-  /**
-   * @param {!proto.pactus.GetAddressHistoryRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.pactus.GetAddressHistoryResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.pactus.GetAddressHistoryRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.pactus.GetAddressHistoryResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.pactus.GetAddressHistoryResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.pactus.WalletClient.prototype.getAddressHistory =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/pactus.Wallet/GetAddressHistory',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_GetAddressHistory,
-      callback);
-};
-
-
-/**
- * @param {!proto.pactus.GetAddressHistoryRequest} request The
- *     request proto
- * @param {?Object<string, string>=} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.pactus.GetAddressHistoryResponse>}
- *     Promise that resolves to the response
- */
-proto.pactus.WalletPromiseClient.prototype.getAddressHistory =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/pactus.Wallet/GetAddressHistory',
-      request,
-      metadata || {},
-      methodDescriptor_Wallet_GetAddressHistory);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
  *   !proto.pactus.SignMessageRequest,
  *   !proto.pactus.SignMessageResponse>}
  */

@@ -34,7 +34,7 @@ func New(root *cobra.Command, refresh func() *cobra.Command, opts ...prompt.Opti
 
 	return &cobra.Command{
 		Use:   "interactive",
-		Short: "Start pactus-shell in interactive mode.",
+		Short: "Start pactus-shell in interactive mode",
 		Run: func(cmd *cobra.Command, _ []string) {
 			lexer.saveStdin()
 
@@ -57,7 +57,7 @@ func (s *lexer) editCommandTree(shell *cobra.Command) {
 
 	s.root.AddCommand(&cobra.Command{
 		Use:   "exit",
-		Short: "Exit the interactive shell.",
+		Short: "Exit the interactive shell",
 		Run: func(*cobra.Command, []string) {
 			// TODO: Exit cleanly without help from the os package
 			os.Exit(0)

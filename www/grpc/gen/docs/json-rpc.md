@@ -234,10 +234,6 @@ curl --location 'http://localhost:8545/' \
           <span class="rpc-badge"></span> pactus.wallet.get_new_address</a>
         </li>
         <li>
-          <a href="#pactus.wallet.get_address_history">
-          <span class="rpc-badge"></span> pactus.wallet.get_address_history</a>
-        </li>
-        <li>
           <a href="#pactus.wallet.sign_message">
           <span class="rpc-badge"></span> pactus.wallet.sign_message</a>
         </li>
@@ -3896,85 +3892,6 @@ Note: Generating a new Ed25519 address requires the wallet password.)</li>
         <td> string</td>
         <td>
         The Hierarchical Deterministic (HD) path of the address within the wallet.
-        </td>
-      </tr>
-         </tbody>
-</table>
-
-#### pactus.wallet.get_address_history <span id="pactus.wallet.get_address_history" class="rpc-badge"></span>
-
-<p>GetAddressHistory retrieves the transaction history of an address.</p>
-
-<h4>Parameters</h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">wallet_name</td>
-    <td> string</td>
-    <td>
-    The name of the wallet containing the address.
-    </td>
-  </tr>
-  <tr>
-    <td class="fw-bold">address</td>
-    <td> string</td>
-    <td>
-    The address to retrieve history for.
-    </td>
-  </tr>
-  </tbody>
-</table>
-  <h4>Result</h4>
-
-<table class="table table-bordered table-responsive table-sm">
-  <thead>
-    <tr><td>Field</td><td>Type</td><td>Description</td></tr>
-  </thead>
-  <tbody class="table-group-divider">
-  <tr>
-    <td class="fw-bold">history_info</td>
-    <td>repeated object (HistoryInfo)</td>
-    <td>
-    List of all historical transactions associated with the address.
-    </td>
-  </tr>
-     <tr>
-        <td class="fw-bold">history_info[].transaction_id</td>
-        <td> string</td>
-        <td>
-        The transaction ID in hexadecimal format.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">history_info[].time</td>
-        <td> numeric</td>
-        <td>
-        Unix timestamp of when the transaction was confirmed.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">history_info[].payload_type</td>
-        <td> string</td>
-        <td>
-        The type of transaction payload.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">history_info[].description</td>
-        <td> string</td>
-        <td>
-        Human-readable description of the transaction.
-        </td>
-      </tr>
-         <tr>
-        <td class="fw-bold">history_info[].amount</td>
-        <td> numeric</td>
-        <td>
-        The transaction amount in NanoPAC.
         </td>
       </tr>
          </tbody>
