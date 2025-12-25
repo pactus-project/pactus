@@ -420,7 +420,7 @@ func (w *Wallet) SignTransaction(password string, trx *tx.Tx) error {
 }
 
 func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
-	txID, err := w.grpcClient.sendTx(trx)
+	res, err := w.grpcClient.sendTx(trx)
 	if err != nil {
 		return "", err
 	}
@@ -430,7 +430,7 @@ func (w *Wallet) BroadcastTransaction(trx *tx.Tx) (string, error) {
 		_ = w.storage.InsertTransaction(info)
 	}
 
-	return txID.String(), nil
+	return res.Id, nil
 }
 
 func (w *Wallet) UpdatePassword(oldPassword, newPassword string, opts ...encrypter.Option) error {

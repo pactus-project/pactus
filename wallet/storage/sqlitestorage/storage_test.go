@@ -29,13 +29,11 @@ func setup(t *testing.T) *testData {
 
 	ts := testsuite.NewTestSuite(t)
 
-	// Create a test vault
-
 	vlt, err := vault.CreateVaultFromMnemonic(testMnemonic, addresspath.CoinTypePactusTestnet)
 	require.NoError(t, err)
 
-	// Create storage using in-memory SQLite
-	strg, err := Create(t.Context(), ":memory:", genesis.Testnet, vlt)
+	path := util.TempDirPath()
+	strg, err := Create(t.Context(), path, genesis.Testnet, vlt)
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
@@ -85,7 +83,7 @@ func TestUpdateVault(t *testing.T) {
 
 	// Verify update
 	vlt2 := td.storage.Vault()
-	assert.Equal(t, 1, vlt2.Purposes.PurposeBLS.NextValidatorIndex)
+	assert.Equal(t, uint32(1), vlt2.Purposes.PurposeBLS.NextValidatorIndex)
 }
 
 func TestSetDefaultFee(t *testing.T) {
@@ -234,7 +232,7 @@ func TestListTransactions(t *testing.T) {
 func TestClone(t *testing.T) {
 	td := setup(t)
 
-	clonePath := util.TempFilePath()
+	clonePath := util.TempDirPath()
 	cloned, err := td.storage.Clone(clonePath)
 	require.NoError(t, err)
 	defer func() { _ = cloned.Close() }()

@@ -50,13 +50,13 @@ mocks:
 	mockgen -source=wallet/storage/interface.go -destination=wallet/storage/storage_mock.go -package=storage
 
 unit_test:
-	go test $(PACKAGES)
+	@go test $(PACKAGES)
 
 test:
-	go test ./... -covermode=atomic
+	@go test ./... -covermode=atomic
 
 test_race:
-	go test ./... --race
+	@go test ./... --race
 
 ########################################
 ### Docker

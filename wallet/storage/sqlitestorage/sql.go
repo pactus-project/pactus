@@ -13,7 +13,7 @@ const (
 	createAddressesTableSQL = `
 		CREATE TABLE addresses (
 			address 		TEXT PRIMARY KEY,
-			public_key 		TEXT UNIQUE NOT NULL,
+			public_key 		TEXT NOT NULL,
 			path 			TEXT UNIQUE NOT NULL,
 			label 			TEXT NOT NULL DEFAULT '',
 			created_at 		DATETIME DEFAULT CURRENT_TIMESTAMP,

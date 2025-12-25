@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"path/filepath"
 	"time"
 
 	_ "github.com/glebarez/go-sqlite" // sqlite driver
@@ -40,11 +41,28 @@ type Storage struct {
 	addressMap map[string]types.AddressInfo
 }
 
-// Create creates a new SQLite storage instance and initializes the schema.
-func Create(ctx context.Context, path string, network genesis.ChainType, vlt *vault.Vault) (*Storage, error) {
-	db, err := sql.Open("sqlite", path)
+func dbPath(path string) string {
+	return filepath.Join(path, "wallet.db")
+}
+
+func openDB(path string) (*sql.DB, error) {
+	db, err := sql.Open("sqlite", dbPath(path))
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
+	}
+
+	return db, nil
+}
+
+// Create creates a new SQLite storage instance and initializes the schema.
+func Create(ctx context.Context, path string, network genesis.ChainType, vlt *vault.Vault) (*Storage, error) {
+	if err := util.Mkdir(path); err != nil {
+		return nil, err
+	}
+
+	db, err := openDB(path)
+	if err != nil {
+		return nil, err
 	}
 
 	// Initialize database schema
@@ -98,9 +116,9 @@ func Create(ctx context.Context, path string, network genesis.ChainType, vlt *va
 
 // Open opens an existing SQLite storage instance without creating schema.
 func Open(ctx context.Context, path string) (*Storage, error) {
-	db, err := sql.Open("sqlite", path)
+	db, err := openDB(path)
 	if err != nil {
-		return nil, fmt.Errorf("failed to open database: %w", err)
+		return nil, err
 	}
 
 	return open(ctx, db, path)
@@ -431,8 +449,12 @@ func (s *Storage) ListTransactions(receiver string, count, skip int) ([]*types.T
 
 // Clone creates a copy of the storage at a new path.
 func (s *Storage) Clone(path string) (storage.IStorage, error) {
-	// Use VACUUM INTO to create a backup (SQLite 3.27+)
-	_, err := s.db.ExecContext(s.ctx, fmt.Sprintf("VACUUM INTO '%s'", path))
+	if err := util.Mkdir(path); err != nil {
+		return nil, err
+	}
+
+	// Use VACUUM INTO to create a backup
+	_, err := s.db.ExecContext(s.ctx, fmt.Sprintf("VACUUM INTO '%s'", dbPath(path)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to backup database: %w", err)
 	}
