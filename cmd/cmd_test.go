@@ -151,7 +151,7 @@ func TestMakeRewardAddresses(t *testing.T) {
 	setupWallet := func() *wallet.Wallet {
 		walletPath := util.TempFilePath()
 		mnemonic, _ := wallet.GenerateMnemonic(128)
-		wlt, err := wallet.Create(walletPath, mnemonic, "", genesis.Mainnet)
+		wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, "", genesis.Mainnet)
 		assert.NoError(t, err)
 
 		_, _ = wlt.NewValidatorAddress("Validator 1")

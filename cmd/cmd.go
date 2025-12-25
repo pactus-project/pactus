@@ -76,7 +76,8 @@ func CreateNode(numValidators int, chain genesis.ChainType, workingDir string,
 ) (*wallet.Wallet, string, error) {
 	// To make process faster, we update the password after creating the addresses
 	walletPath := PactusDefaultWalletPath(workingDir)
-	wlt, err := wallet.Create(walletPath, mnemonic, "", chain)
+	wlt, err := wallet.Create(context.Background(),
+		walletPath, mnemonic, "", chain, wallet.WithOfflineMode())
 	if err != nil {
 		return nil, "", err
 	}
@@ -200,7 +201,7 @@ func makeLocalGenesis(wlt wallet.Wallet) *genesis.Genesis {
 	vals := make([]*validator.Validator, genValNum)
 	addrs := wlt.ListAddresses(wallet.OnlyValidatorAddresses())
 	for i := 0; i < genValNum; i++ {
-		info := wlt.AddressInfo(addrs[i].Address)
+		info, _ := wlt.AddressInfo(addrs[i].Address)
 		pub, _ := bls.PublicKeyFromString(info.PublicKey)
 		vals[i] = validator.NewValidator(pub, int32(i))
 	}

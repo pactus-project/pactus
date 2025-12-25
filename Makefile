@@ -47,6 +47,7 @@ mocks:
 	@echo "Generating mocks..."
 	@mkdir -p mocks
 	mockgen -source=wallet/manager/interface.go -destination=wallet/manager/manager_mock.go -package=manager
+	mockgen -source=wallet/storage/interface.go -destination=wallet/storage/storage_mock.go -package=storage
 
 unit_test:
 	go test $(PACKAGES)

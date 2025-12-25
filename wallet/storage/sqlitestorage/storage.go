@@ -1,0 +1,473 @@
+package sqlitestorage
+
+import (
+	"context"
+	"database/sql"
+	"encoding/json"
+	"fmt"
+	"time"
+
+	_ "github.com/glebarez/go-sqlite"
+	"github.com/google/uuid"
+	"github.com/pactus-project/pactus/genesis"
+	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/types/tx/payload"
+	"github.com/pactus-project/pactus/util"
+	"github.com/pactus-project/pactus/wallet/storage"
+	"github.com/pactus-project/pactus/wallet/types"
+	"github.com/pactus-project/pactus/wallet/vault"
+)
+
+// Wallet metadata keys
+const (
+	keyVersion    = "version"
+	keyUUID       = "uuid"
+	keyCreatedAt  = "created_at"
+	keyNetwork    = "network"
+	keyDefaultFee = "default_fee"
+	keyVault      = "vault"
+)
+
+// Storage represents the SQLite-based wallet storage implementing IStorage interface.
+type Storage struct {
+	ctx  context.Context
+	db   *sql.DB
+	path string
+	info *types.WalletInfo
+	vlt  *vault.Vault
+
+	addressMap map[string]types.AddressInfo
+}
+
+// Create creates a new SQLite storage instance and initializes the schema.
+func Create(ctx context.Context, path string, network genesis.ChainType, vlt *vault.Vault) (*Storage, error) {
+	db, err := sql.Open("sqlite", path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open database: %w", err)
+	}
+
+	// Initialize database schema
+	tables := []string{
+		createWalletTableSQL,
+		createAddressesTableSQL,
+		createTransactionsTableSQL,
+	}
+	for _, query := range tables {
+		if _, err := db.ExecContext(ctx, query); err != nil {
+			db.Close()
+
+			return nil, fmt.Errorf("failed to create table: %w", err)
+		}
+	}
+
+	// Marshal vault to JSON
+	vaultJSON, err := json.Marshal(vlt)
+	if err != nil {
+		db.Close()
+
+		return nil, fmt.Errorf("failed to marshal vault: %w", err)
+	}
+
+	// Store wallet metadata
+	// KeyValue represents a key-value pair for wallet entries.
+	type KeyValue struct {
+		Key   string
+		Value string
+	}
+
+	entries := []KeyValue{
+		{Key: keyVersion, Value: fmt.Sprintf("%d", VersionLatest)},
+		{Key: keyUUID, Value: uuid.New().String()},
+		{Key: keyCreatedAt, Value: fmt.Sprintf("%d", util.RoundNow(1).Unix())},
+		{Key: keyNetwork, Value: network.String()},
+		{Key: keyDefaultFee, Value: fmt.Sprintf("%d", amount.Amount(10_000_000))},
+		{Key: keyVault, Value: string(vaultJSON)},
+	}
+
+	for _, entry := range entries {
+		if _, err := db.ExecContext(ctx, insertWalletEntrySQL, entry.Key, entry.Value); err != nil {
+			db.Close()
+
+			return nil, fmt.Errorf("failed to insert wallet entry %s: %w", entry.Key, err)
+		}
+	}
+
+	return open(ctx, db, path)
+}
+
+// Open opens an existing SQLite storage instance without creating schema.
+func Open(ctx context.Context, path string) (*Storage, error) {
+	db, err := sql.Open("sqlite", path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open database: %w", err)
+	}
+
+	return open(ctx, db, path)
+}
+
+// open loads wallet info and returns a Storage instance.
+func open(ctx context.Context, db *sql.DB, path string) (*Storage, error) {
+	strg := &Storage{
+		ctx:  ctx,
+		db:   db,
+		path: path,
+	}
+
+	// Load wallet info into memory
+	if err := strg.loadWalletInfo(); err != nil {
+		db.Close()
+
+		return nil, fmt.Errorf("failed to load wallet info: %w", err)
+	}
+
+	// Load addresses into memory
+	if err := strg.loadAddresses(); err != nil {
+		db.Close()
+
+		return nil, fmt.Errorf("failed to load addresses: %w", err)
+	}
+
+	return strg, nil
+}
+
+// Close closes the database connection.
+func (s *Storage) Close() error {
+	if s.db != nil {
+		return s.db.Close()
+	}
+
+	return nil
+}
+
+// WalletInfo returns the wallet information.
+func (s *Storage) WalletInfo() *types.WalletInfo {
+	return s.info
+}
+
+// loadWalletInfo loads wallet information from the database into memory.
+func (s *Storage) loadWalletInfo() error {
+	// Fetch all wallet entries at once
+	rows, err := s.db.QueryContext(s.ctx, selectAllWalletEntriesSQL)
+	if err != nil {
+		return fmt.Errorf("failed to query wallet entries: %w", err)
+	}
+	defer rows.Close()
+
+	entries := make(map[string]string)
+	for rows.Next() {
+		var name, value string
+		if err := rows.Scan(&name, &value); err != nil {
+			return fmt.Errorf("failed to scan wallet entry: %w", err)
+		}
+		entries[name] = value
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("failed to iterate wallet entries: %w", err)
+	}
+
+	version := 0
+	fmt.Sscanf(entries[keyVersion], "%d", &version)
+
+	var defaultFee amount.Amount
+	fmt.Sscanf(entries[keyDefaultFee], "%d", &defaultFee)
+
+	var createdAtUnix int64
+	fmt.Sscanf(entries[keyCreatedAt], "%d", &createdAtUnix)
+	createdAt := time.Unix(createdAtUnix, 0)
+
+	var vlt vault.Vault
+	if vaultJSON, ok := entries[keyVault]; ok {
+		if err := json.Unmarshal([]byte(vaultJSON), &vlt); err != nil {
+			return fmt.Errorf("failed to unmarshal vault: %w", err)
+		}
+	}
+	s.vlt = &vlt
+
+	// Parse network type
+	var network genesis.ChainType
+	switch entries[keyNetwork] {
+	case genesis.Mainnet.String():
+		network = genesis.Mainnet
+	case genesis.Testnet.String():
+		network = genesis.Testnet
+	case genesis.Localnet.String():
+		network = genesis.Localnet
+	}
+
+	s.info = &types.WalletInfo{
+		Path:       s.path,
+		Driver:     "SQLite",
+		Version:    version,
+		Network:    network,
+		DefaultFee: defaultFee,
+		UUID:       entries[keyUUID],
+		Encrypted:  s.vlt.IsEncrypted(),
+		Neutered:   s.vlt.IsNeutered(),
+		CreatedAt:  createdAt,
+	}
+
+	return nil
+}
+
+// loadAddresses loads addresses into memory.
+func (s *Storage) loadAddresses() error {
+	rows, err := s.db.QueryContext(s.ctx, selectAllAddressesSQL)
+	if err != nil {
+		return fmt.Errorf("failed to query addresses: %w", err)
+	}
+	defer rows.Close()
+
+	s.addressMap = make(map[string]types.AddressInfo)
+	for rows.Next() {
+		var addr types.AddressInfo
+		err := rows.Scan(&addr.Address, &addr.PublicKey, &addr.Label,
+			&addr.Path, &addr.CreatedAt, &addr.UpdatedAt)
+		if err != nil {
+			return fmt.Errorf("failed to scan address: %w", err)
+		}
+
+		s.addressMap[addr.Address] = addr
+	}
+
+	return rows.Err()
+}
+
+// Vault returns the vault.
+func (s *Storage) Vault() *vault.Vault {
+	return s.vlt
+}
+
+// UpdateVault updates the vault in storage.
+func (s *Storage) UpdateVault(vlt *vault.Vault) error {
+	if err := s.saveVault(vlt); err != nil {
+		return err
+	}
+	s.vlt = vlt
+	s.info.Encrypted = vlt.IsEncrypted()
+	s.info.Neutered = vlt.IsNeutered()
+
+	return nil
+}
+
+// SetDefaultFee sets the default fee.
+func (s *Storage) SetDefaultFee(fee amount.Amount) error {
+	if err := s.updateWalletEntry(keyDefaultFee, fmt.Sprintf("%d", fee)); err != nil {
+		return err
+	}
+	s.info.DefaultFee = fee
+
+	return nil
+}
+
+// AllAddresses returns all addresses in the wallet.
+func (s *Storage) AllAddresses() []types.AddressInfo {
+	addresses := make([]types.AddressInfo, 0, len(s.addressMap))
+	for _, addr := range s.addressMap {
+		addresses = append(addresses, addr)
+	}
+
+	return addresses
+}
+
+// AddressCount returns the number of addresses in the wallet.
+func (s *Storage) AddressCount() int {
+	return len(s.addressMap)
+}
+
+// AddressInfo returns the address information for the given address.
+func (s *Storage) AddressInfo(address string) (*types.AddressInfo, error) {
+	info, exists := s.addressMap[address]
+	if !exists {
+		return nil, storage.ErrNotFound
+	}
+
+	return &info, nil
+}
+
+// InsertAddress inserts a new address.
+func (s *Storage) InsertAddress(info *types.AddressInfo) error {
+	_, err := s.db.ExecContext(s.ctx, insertAddressSQL,
+		info.Address, info.PublicKey, info.Label, info.Path)
+	if err != nil {
+		return err
+	}
+
+	return s.loadAddresses()
+}
+
+// UpdateAddress updates an existing address.
+func (s *Storage) UpdateAddress(info *types.AddressInfo) error {
+	_, err := s.db.ExecContext(s.ctx, updateAddressSQL,
+		info.Label, info.PublicKey, info.Path, info.Address)
+	if err != nil {
+		return err
+	}
+
+	return s.loadAddresses()
+}
+
+// HasAddress checks if an address exists.
+func (s *Storage) HasAddress(address string) bool {
+	_, exists := s.addressMap[address]
+
+	return exists
+}
+
+// InsertTransaction inserts a new transaction.
+func (s *Storage) InsertTransaction(info *types.TransactionInfo) error {
+	data := info.Data
+
+	_, err := s.db.ExecContext(s.ctx, insertTransactionSQL,
+		info.ID,
+		info.Sender,
+		info.Receiver,
+		info.Amount,
+		info.Fee,
+		info.Memo,
+		info.Status,
+		info.BlockHeight,
+		int(info.PayloadType),
+		data,
+		info.Comment,
+	)
+
+	return err
+}
+
+// UpdateTransactionStatus updates the status of all transactions with the given ID.
+func (s *Storage) UpdateTransactionStatus(id string, status types.TransactionStatus) error {
+	_, err := s.db.ExecContext(s.ctx, updateTransactionStatusSQL, int(status), id)
+
+	return err
+}
+
+// HasTransaction checks if a transaction exists.
+func (s *Storage) HasTransaction(id string) bool {
+	var count int
+	err := s.db.QueryRowContext(s.ctx, countTransactionByIDSQL, id).Scan(&count)
+	if err != nil {
+		return false
+	}
+
+	return count > 0
+}
+
+// scanner is an interface that both *sql.Row and *sql.Rows satisfy.
+type scanner interface {
+	Scan(dest ...any) error
+}
+
+// scanTransaction scans a row into a TransactionInfo struct.
+func scanTransaction(s scanner) (*types.TransactionInfo, error) {
+	var info types.TransactionInfo
+	var status, payloadType int
+
+	err := s.Scan(
+		&info.ID,
+		&info.Sender,
+		&info.Receiver,
+		&info.Amount,
+		&info.Fee,
+		&info.Memo,
+		&status,
+		&info.BlockHeight,
+		&payloadType,
+		&info.Data,
+		&info.Comment,
+		&info.CreatedAt,
+		&info.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	info.Status = types.TransactionStatus(status)
+	info.PayloadType = payload.Type(payloadType)
+
+	return &info, nil
+}
+
+// GetTransaction retrieves a transaction by ID (returns first match if multiple receivers).
+func (s *Storage) GetTransaction(id string) (*types.TransactionInfo, error) {
+	info, err := scanTransaction(s.db.QueryRowContext(s.ctx, selectTransactionByIDSQL, id))
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, storage.ErrNotFound
+		}
+
+		return nil, err
+	}
+
+	return info, nil
+}
+
+// ListTransactions returns a list of transactions for a receiver with pagination.
+func (s *Storage) ListTransactions(receiver string, count int, skip int) ([]types.TransactionInfo, error) {
+	rows, err := s.db.QueryContext(s.ctx, selectTransactionsByReceiverSQL, receiver, count, skip)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	transactions := make([]types.TransactionInfo, 0)
+	for rows.Next() {
+		info, err := scanTransaction(rows)
+		if err != nil {
+			return nil, err
+		}
+
+		transactions = append(transactions, *info)
+	}
+
+	return transactions, rows.Err()
+}
+
+// Clone creates a copy of the storage at a new path.
+func (s *Storage) Clone(path string) (storage.IStorage, error) {
+	// Use VACUUM INTO to create a backup (SQLite 3.27+)
+	_, err := s.db.ExecContext(s.ctx, fmt.Sprintf("VACUUM INTO '%s'", path))
+	if err != nil {
+		return nil, fmt.Errorf("failed to backup database: %w", err)
+	}
+
+	// Open the cloned database
+	clonedStorage, err := Open(s.ctx, path)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update UUID and CreatedAt for the cloned wallet
+	newUUID := uuid.New().String()
+	if err := clonedStorage.updateWalletEntry(keyUUID, newUUID); err != nil {
+		clonedStorage.Close()
+
+		return nil, err
+	}
+	clonedStorage.info.UUID = newUUID
+
+	newCreatedAt := util.RoundNow(1)
+	if err := clonedStorage.updateWalletEntry(keyCreatedAt, fmt.Sprintf("%d", newCreatedAt.Unix())); err != nil {
+		clonedStorage.Close()
+
+		return nil, err
+	}
+	clonedStorage.info.CreatedAt = newCreatedAt
+	clonedStorage.info.Path = path
+
+	return clonedStorage, nil
+}
+
+func (s *Storage) updateWalletEntry(key, value string) error {
+	_, err := s.db.ExecContext(s.ctx, updateWalletEntrySQL, value, key)
+
+	return err
+}
+
+func (s *Storage) saveVault(vlt *vault.Vault) error {
+	vaultJSON, err := json.Marshal(vlt)
+	if err != nil {
+		return fmt.Errorf("failed to marshal vault: %w", err)
+	}
+
+	return s.updateWalletEntry(keyVault, string(vaultJSON))
+}

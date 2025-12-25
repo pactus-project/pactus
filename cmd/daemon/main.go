@@ -29,7 +29,7 @@ func main() {
 
 	err := rootCmd.Execute()
 	if err != nil {
-		terminal.PrintErrorMsgf("%s", err)
+		terminal.PrintErrorMsgf(err.Error())
 	}
 }
 

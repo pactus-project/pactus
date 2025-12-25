@@ -15,6 +15,7 @@ import (
 	"github.com/pactus-project/pactus/util/testsuite"
 	"github.com/pactus-project/pactus/wallet"
 	"github.com/pactus-project/pactus/wallet/encrypter"
+	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/www/grpc"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -54,7 +55,7 @@ func setup(t *testing.T) *testData {
 		gRPCServer.StopServer()
 	})
 
-	wlt, err := wallet.Create(walletPath, mnemonic, password, genesis.Mainnet,
+	wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, password, genesis.Mainnet,
 		wallet.WithCustomServers([]string{gRPCServer.Address()}))
 	assert.NoError(t, err)
 	assert.False(t, wlt.IsEncrypted())
@@ -102,36 +103,36 @@ func TestOpenWallet(t *testing.T) {
 	})
 }
 
-func TestRecoverWallet(t *testing.T) {
+func TestCreateWallet(t *testing.T) {
 	td := setup(t)
 
 	mnemonic, _ := wallet.GenerateMnemonic(256)
 	password := ""
 	t.Run("Wallet exists", func(t *testing.T) {
-		_, err := wallet.Create(td.wallet.Path(), mnemonic, password, genesis.Mainnet)
+		_, err := wallet.Create(t.Context(), td.wallet.Path(), mnemonic, password, genesis.Mainnet)
 		assert.ErrorIs(t, err, wallet.ExitsError{
 			Path: td.wallet.Path(),
 		})
 	})
 
 	t.Run("Invalid mnemonic", func(t *testing.T) {
-		_, err := wallet.Create(util.TempFilePath(), "invalid mnemonic", password, genesis.Mainnet)
+		_, err := wallet.Create(t.Context(), util.TempFilePath(), "invalid mnemonic", password, genesis.Mainnet)
 		assert.Error(t, err)
 	})
 
 	t.Run("Invalid path", func(t *testing.T) {
-		_, err := wallet.Create("\x00", mnemonic, password, genesis.Mainnet)
+		_, err := wallet.Create(t.Context(), "\x00", mnemonic, password, genesis.Mainnet)
 		assert.Error(t, err)
 	})
 
 	t.Run("Unknown network", func(t *testing.T) {
-		_, err := wallet.Create(util.TempFilePath(), mnemonic, password, 3)
+		_, err := wallet.Create(t.Context(), util.TempFilePath(), mnemonic, password, 3)
 		assert.ErrorIs(t, err, wallet.ErrInvalidNetwork)
 	})
 
 	t.Run("Ok", func(t *testing.T) {
 		walletPath := util.TempFilePath()
-		_, err := wallet.Create(walletPath, mnemonic, password, genesis.Mainnet)
+		_, err := wallet.Create(t.Context(), walletPath, mnemonic, password, genesis.Mainnet)
 		assert.NoError(t, err)
 	})
 }
@@ -378,7 +379,7 @@ func TestMakeBondTx(t *testing.T) {
 
 	t.Run("validator address stored in wallet", func(t *testing.T) {
 		receiver, _ := td.wallet.NewValidatorAddress("validator-address")
-		receiverInfo := td.wallet.AddressInfo(receiver.Address)
+		receiverInfo, _ := td.wallet.AddressInfo(receiver.Address)
 
 		t.Run("validator doesn't exist and public key not set", func(t *testing.T) {
 			trx, err := td.wallet.MakeBondTx(senderInfo.Address, receiver.Address, "", amt)
@@ -619,7 +620,7 @@ func TestPrivateKey(t *testing.T) {
 	t.Run("Unknown address", func(t *testing.T) {
 		addr := td.RandAccAddress().String()
 		_, err := td.wallet.PrivateKey(td.password, addr)
-		assert.ErrorIs(t, err, wallet.NewErrAddressNotFound(addr))
+		assert.ErrorIs(t, err, storage.ErrNotFound)
 	})
 }
 
@@ -795,7 +796,7 @@ func TestSetAddressLabel(t *testing.T) {
 	t.Run("Set label for unknown address", func(t *testing.T) {
 		invAddr := td.RandAccAddress().String()
 		err := td.wallet.SetAddressLabel(invAddr, "i have label")
-		assert.ErrorIs(t, err, wallet.NewErrAddressNotFound(invAddr))
+		assert.ErrorIs(t, err, storage.ErrNotFound)
 		assert.Empty(t, td.wallet.AddressLabel(invAddr))
 	})
 
@@ -833,7 +834,7 @@ func TestTestnetWallet(t *testing.T) {
 
 	t.Run("Create Testnet wallet", func(t *testing.T) {
 		mnemonic, _ := wallet.GenerateMnemonic(128)
-		wlt, err := wallet.Create(walletPath, mnemonic, td.password, genesis.Testnet)
+		wlt, err := wallet.Create(t.Context(), walletPath, mnemonic, td.password, genesis.Testnet)
 		assert.NoError(t, err)
 		assert.Equal(t, genesis.Testnet, wlt.Info().Network)
 

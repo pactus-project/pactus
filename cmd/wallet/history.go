@@ -1,8 +1,6 @@
 package main
 
 import (
-	"time"
-
 	"github.com/pactus-project/pactus/crypto/hash"
 	"github.com/pactus-project/pactus/util/terminal"
 	"github.com/spf13/cobra"
@@ -60,15 +58,10 @@ func buildShowHistoryCmd(parentCmd *cobra.Command) {
 		wlt, err := openWallet()
 		terminal.FatalErrorCheck(err)
 
-		history := wlt.History(addr)
-		for i, item := range history {
-			if item.Time != nil {
-				terminal.PrintInfoMsgf("%d %v %v %v %s\t%v",
-					i+1, item.Time.Format(time.RFC822), item.TxID, item.PayloadType, item.Desc, item.Amount)
-			} else {
-				terminal.PrintInfoMsgf("%d              %v  %s\t%v",
-					i+1, item.TxID, item.Desc, item.Amount)
-			}
+		transactions := wlt.ListTransactions(addr)
+		for i, tx := range transactions {
+			terminal.PrintInfoMsgf("%d %v %v %v %v\t%v",
+				i+1, tx.CreatedAt.Format("02 Jan 06 15:04"), tx.ID[:12], tx.PayloadType, tx.Status, tx.Amount)
 		}
 	}
 }

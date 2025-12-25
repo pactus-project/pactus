@@ -1,13 +1,8 @@
 package jsonstorage
 
 import (
-	"errors"
 	"fmt"
 )
-
-// ErrHistoryExists describes an error in which the transaction already exists
-// in history.
-var ErrHistoryExists = errors.New("transaction already exists")
 
 // CRCNotMatchError describes an error in which the wallet CRC is not matched.
 type CRCNotMatchError struct {

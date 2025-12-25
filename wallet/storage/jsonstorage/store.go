@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
+	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/vault"
 )
@@ -21,7 +22,17 @@ type store struct {
 	DefaultFee amount.Amount                `json:"default_fee"`
 	Vault      vault.Vault                  `json:"vault"`
 	Addresses  map[string]types.AddressInfo `json:"addresses"`
-	History    history                      `json:"history"`
+}
+
+func (s *store) Save(path string) error {
+	s.VaultCRC = s.calcVaultCRC()
+
+	data, err := json.MarshalIndent(s, "  ", "  ")
+	if err != nil {
+		return err
+	}
+
+	return util.WriteFile(path, data)
 }
 
 func (s *store) ValidateCRC() error {

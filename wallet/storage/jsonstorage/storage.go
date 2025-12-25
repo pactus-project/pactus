@@ -6,12 +6,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/pactus-project/pactus/genesis"
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/util"
 	"github.com/pactus-project/pactus/wallet/storage"
 	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/vault"
-	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type Storage struct {
@@ -30,17 +28,11 @@ func Create(path string, network genesis.ChainType, vault *vault.Vault) (*Storag
 		Addresses:  make(map[string]types.AddressInfo),
 	}
 
-	strg := &Storage{
-		path:  path,
-		store: store,
-	}
-
-	err := strg.save()
-	if err != nil {
+	if err := store.Save(path); err != nil {
 		return nil, err
 	}
 
-	return strg, nil
+	return Open(path)
 }
 
 func Open(path string) (*Storage, error) {
@@ -64,15 +56,12 @@ func Open(path string) (*Storage, error) {
 	}, nil
 }
 
+func (s *Storage) Close() error {
+	return nil
+}
+
 func (s *Storage) save() error {
-	s.store.VaultCRC = s.store.calcVaultCRC()
-
-	data, err := json.MarshalIndent(s.store, "  ", "  ")
-	if err != nil {
-		return err
-	}
-
-	return util.WriteFile(s.path, data)
+	return s.store.Save(s.path)
 }
 
 func (s *Storage) WalletInfo() *types.WalletInfo {
@@ -105,13 +94,22 @@ func (s *Storage) SetDefaultFee(fee amount.Amount) error {
 	return s.save()
 }
 
-func (s *Storage) AllAddresses() ([]types.AddressInfo, error) {
+func (s *Storage) AllAddresses() []types.AddressInfo {
 	addrs := make([]types.AddressInfo, 0, len(s.store.Addresses))
 	for _, info := range s.store.Addresses {
 		addrs = append(addrs, info)
 	}
 
-	return addrs, nil
+	return addrs
+}
+
+func (s *Storage) AddressInfo(address string) (*types.AddressInfo, error) {
+	info, exists := s.store.Addresses[address]
+	if !exists {
+		return nil, storage.ErrNotFound
+	}
+
+	return &info, nil
 }
 
 func (s *Storage) InsertAddress(info *types.AddressInfo) error {
@@ -120,30 +118,45 @@ func (s *Storage) InsertAddress(info *types.AddressInfo) error {
 	return s.save()
 }
 
+func (s *Storage) HasAddress(address string) bool {
+	_, exists := s.store.Addresses[address]
+
+	return exists
+}
+
+func (s *Storage) AddressCount() int {
+	return len(s.store.Addresses)
+}
+
 func (s *Storage) UpdateAddress(info *types.AddressInfo) error {
 	s.store.Addresses[info.Address] = *info
 
 	return s.save()
 }
 
-func (s *Storage) AddPending(addr string, amt amount.Amount, txID tx.ID, data []byte) error {
-	s.store.History.addPending(addr, amt, txID, data)
+func (s *Storage) InsertTransaction(info *types.TransactionInfo) error {
+	// Unsupported operation
+	return nil
+}
 
-	return s.save()
+func (s *Storage) UpdateTransactionStatus(id string, status types.TransactionStatus) error {
+	// Unsupported operation
+	return nil
 }
 
 func (s *Storage) HasTransaction(id string) bool {
-	return s.store.History.hasTransaction(id)
+	// Unsupported operation
+	return false
 }
 
-func (s *Storage) GetAddrHistory(addr string) []types.HistoryInfo {
-	return s.store.History.getAddrHistory(addr)
+func (s *Storage) GetTransaction(id string) (*types.TransactionInfo, error) {
+	// Unsupported operation
+	return nil, nil
 }
 
-func (s *Storage) AddActivity(addr string, amt amount.Amount, trx *pactus.GetTransactionResponse) error {
-	s.store.History.addActivity(addr, amt, trx)
-
-	return s.save()
+func (s *Storage) ListTransactions(receiver string, count int, skip int) ([]types.TransactionInfo, error) {
+	// Unsupported operation
+	return nil, nil
 }
 
 func (s *Storage) Clone(path string) (storage.IStorage, error) {

@@ -2,10 +2,8 @@ package storage
 
 import (
 	"github.com/pactus-project/pactus/types/amount"
-	"github.com/pactus-project/pactus/types/tx"
 	"github.com/pactus-project/pactus/wallet/types"
 	"github.com/pactus-project/pactus/wallet/vault"
-	pactus "github.com/pactus-project/pactus/www/grpc/gen/go"
 )
 
 type IStorage interface {
@@ -14,14 +12,19 @@ type IStorage interface {
 	UpdateVault(vault *vault.Vault) error
 	SetDefaultFee(fee amount.Amount) error
 
-	AllAddresses() ([]types.AddressInfo, error)
+	AllAddresses() []types.AddressInfo
+	AddressInfo(address string) (*types.AddressInfo, error)
+	HasAddress(address string) bool
+	AddressCount() int
 	InsertAddress(info *types.AddressInfo) error
 	UpdateAddress(info *types.AddressInfo) error
 
-	AddPending(addr string, amt amount.Amount, txID tx.ID, data []byte) error
-	AddActivity(addr string, amt amount.Amount, trx *pactus.GetTransactionResponse) error
+	InsertTransaction(info *types.TransactionInfo) error
+	UpdateTransactionStatus(id string, status types.TransactionStatus) error
 	HasTransaction(id string) bool
-	GetAddrHistory(addr string) []types.HistoryInfo
+	GetTransaction(id string) (*types.TransactionInfo, error)
+	ListTransactions(receiver string, count int, skip int) ([]types.TransactionInfo, error)
 
+	Close() error
 	Clone(path string) (IStorage, error)
 }

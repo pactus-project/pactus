@@ -8,6 +8,7 @@ package amount_test
 
 import (
 	"math"
+	"math/rand/v2"
 	"strconv"
 	"testing"
 
@@ -393,4 +394,46 @@ func TestFromString(t *testing.T) {
 			assert.ErrorIs(t, err, tt.parsErr)
 		}
 	}
+}
+
+func TestSQLDriver(t *testing.T) {
+	t.Run("Value returns int64", func(t *testing.T) {
+		amt := amount.Amount(123456000000)
+		val, err := amt.Value()
+		assert.NoError(t, err)
+		assert.IsType(t, int64(0), val)
+		assert.Equal(t, int64(123456000000), val.(int64))
+	})
+
+	t.Run("Scan from int64 succeeds", func(t *testing.T) {
+		var amt amount.Amount
+		err := amt.Scan(int64(123456000000))
+		assert.NoError(t, err)
+		assert.Equal(t, int64(123456000000), amt.ToNanoPAC())
+	})
+
+	t.Run("Scan from nil fails", func(t *testing.T) {
+		var amt amount.Amount
+		err := amt.Scan(nil)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "not valid amount data")
+	})
+
+	t.Run("Scan from float64 fails", func(t *testing.T) {
+		var amt amount.Amount
+		err := amt.Scan(123.456)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "not valid amount data")
+	})
+
+	t.Run("Round trip Value and Scan", func(t *testing.T) {
+		original := amount.Amount(rand.Int64())
+		val, err := original.Value()
+		assert.NoError(t, err)
+
+		var scanned amount.Amount
+		err = scanned.Scan(val)
+		assert.NoError(t, err)
+		assert.Equal(t, original.ToNanoPAC(), scanned.ToNanoPAC())
+	})
 }
